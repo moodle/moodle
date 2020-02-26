@@ -381,25 +381,20 @@ class gradebookservices extends service_base {
             $feedbackformat = FORMAT_PLAIN;
         }
 
-        if (!$grade = \grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $userid))) {
-            $grade = new \grade_grade();
-            $grade->userid = $userid;
-            $grade->itemid = $gradeitem->id;
-        }
-        $grade->rawgrademax = $score->scoreMaximum;
-        $grade->timemodified = $timemodified;
-        $grade->feedbackformat = $feedbackformat;
-        $grade->feedback = $feedback;
         if ($gradeitem->is_manual_item()) {
-            $grade->finalgrade = $finalgrade;
-            if (empty($grade->id)) {
-                $result = (bool)$grade->insert($source);
-            } else {
-                $result = $grade->update($source);
-            }
+            $result = $gradeitem->update_final_grade($userid, $finalgrade, null, $feedback, FORMAT_PLAIN, null, $timemodified);
         } else {
+            if (!$grade = \grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $userid))) {
+                $grade = new \grade_grade();
+                $grade->userid = $userid;
+                $grade->itemid = $gradeitem->id;
+            }
+            $grade->rawgrademax = $score->scoreMaximum;
+            $grade->timemodified = $timemodified;
+            $grade->feedbackformat = $feedbackformat;
+            $grade->feedback = $feedback;
             $grade->rawgrade = $finalgrade;
-            $status = \grade_update($source, $gradeitem->courseid,
+            $status = grade_update($source, $gradeitem->courseid,
                          $gradeitem->itemtype, $gradeitem->itemmodule,
                          $gradeitem->iteminstance, $gradeitem->itemnumber,
                          $grade);
