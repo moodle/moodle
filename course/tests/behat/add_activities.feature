@@ -50,25 +50,3 @@ Feature: Add activities to courses
     And I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
     Then I should see "Required"
-
-  Scenario: Add an activity to a course with Javascript disabled
-    Then I should see "Add a resource to section 'Topic 1'"
-    And I should see "Add an activity to section 'Topic 1'"
-    And I should see "Add a resource to section 'Topic 2'"
-    And I should see "Add an activity to section 'Topic 2'"
-    And I should see "Add a resource to section 'Topic 3'"
-    And I should see "Add an activity to section 'Topic 3'"
-    And I add a "Label" to section "2"
-    And I should see "Adding a new Label to Topic 2"
-    And I set the following fields to these values:
-      | Label text | I'm a label |
-    And I press "Save and return to course"
-    And I add a "Database" to section "3"
-    And I should see "Adding a new Database to Topic 3"
-    And I set the following fields to these values:
-      | Name | Test database name |
-      | Description | Test database description |
-    And I press "Save and return to course"
-    And I should not see "Adding a new"
-    And I should see "Test database name"
-    And I should see "I'm a label"
