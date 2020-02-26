@@ -1259,28 +1259,38 @@ class framework implements \H5PFrameworkInterface {
     }
 
     /**
-     * Get the default behaviour for the display option defined.
+     * Get stored setting.
      * Implements getOption.
      *
      * @param string $name Identifier for the setting
      * @param string $default Optional default value if settings is not set
-     * @return mixed Return The default \H5PDisplayOptionBehaviour for this display option
+     * @return mixed Return  Whatever has been stored as the setting
      */
     public function getOption($name, $default = false) {
-        // TODO: Define the default behaviour for each display option.
-        // For now, all them are disabled by default, so only will be rendered when defined in the displayoptions DB field.
-        return \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
+        if ($name == core::DISPLAY_OPTION_DOWNLOAD || $name == core::DISPLAY_OPTION_EMBED) {
+            // For now, the download and the embed displayoptions are disabled by default, so only will be rendered when
+            // defined in the displayoptions DB field.
+            // This check should be removed if they are added as new H5P settings, to let admins to define the default value.
+            return \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
+        }
+
+        $value = get_config('core_h5p', $name);
+        if ($value === false) {
+            return $default;
+        }
+        return $value;
     }
 
     /**
      * Stores the given setting.
+     * For example when did we last check h5p.org for updates to our libraries.
      * Implements setOption.
      *
      * @param string $name Identifier for the setting
      * @param mixed $value Data Whatever we want to store as the setting
      */
     public function setOption($name, $value) {
-        // Currently not storing settings.
+        set_config($name, $value, 'core_h5p');
     }
 
     /**
