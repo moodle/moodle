@@ -2,6 +2,7 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.9 ===
+* New CFPropertyList library has been added to Moodle core in /lib/plist.
 * behat_data_generators::the_following_exist() has been removed, please use
   behat_data_generators::the_following_entities_exist() instead. See MDL-67691 for more info.
 * admin/tool/task/cli/adhoc_task.php now observers the concurrency limits.
