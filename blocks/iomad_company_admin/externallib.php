@@ -848,7 +848,7 @@ class block_iomad_company_admin_external extends external_api {
         global $CFG, $DB;
 
         // Validate parameters
-        $params = self::validate_parameters(self::assign_users_parameters(), array('users' => $users));
+        $params = self::validate_parameters(self::unassign_users_parameters(), array('users' => $users));
 
         // Get/check context/capability
         $context = context_system::instance();
@@ -873,7 +873,7 @@ class block_iomad_company_admin_external extends external_api {
             $eventother = array('companyname' => $company->get_name(),
                                 'companyid' => $company->id,
                                 'usertype' => $userrecord['usertype'],
-                                'usertypename' => $managertypes[$roletype]);
+                                'usertypename' => $managertypes[$userrecord['usertype']]);
             $event = \block_iomad_company_admin\event\company_user_unassigned::create(array('context' => context_system::instance(),
                                                                                             'objectid' => $company->id,
                                                                                             'userid' => $adduser->id,
