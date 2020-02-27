@@ -1960,7 +1960,7 @@ class core_plugin_manager {
 
             'quizaccess' => array(
                 'delaybetweenattempts', 'ipaddress', 'numattempts', 'offlineattempts', 'openclosedate',
-                'password', 'safebrowser', 'securewindow', 'timelimit'
+                'password', 'seb', 'securewindow', 'timelimit'
             ),
 
             'report' => array(
