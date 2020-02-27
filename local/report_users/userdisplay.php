@@ -155,8 +155,8 @@ if (!$table->is_downloading()) {
 // Set up the initial SQL for the form.
 $selectsql = "lit.id,lit.userid,lit.courseid,lit.coursename,lit.licenseid,lit.licensename,lit.licenseallocated,lit.timeenrolled,lit.timestarted,lit.timecompleted,lit.finalscore,lit.id as certsource, cc.timecompleted AS action";
 $fromsql = "{local_iomad_track} lit LEFT JOIN {course_completions} cc ON (lit.courseid = cc.course AND lit.userid = cc.userid AND lit.timecompleted = cc.timecompleted AND lit.timecompleted IS NOT NULL)";
-$wheresql = " lit.userid = :userid";
-$sqlparams = array('userid' => $userid);
+$wheresql = " lit.userid = :userid AND lit.companyid = :companyid";
+$sqlparams = array('userid' => $userid, 'companyid' => $companyid);
 
 // Set up the headers for the form.
 $headers = array(get_string('course', 'local_report_completion'),
