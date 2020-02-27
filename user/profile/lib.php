@@ -726,7 +726,19 @@ function profile_display_fields($userid) {
  * @since Moodle 3.2
  */
 function profile_get_signup_fields() {
-    global $CFG, $DB;
+    global $CFG, $DB, $SESSION;
+
+    // IOMAD - Need to ignore profile fields which belong to another company.
+    if (!empty($SESSION->company)) {
+        $wheresql = " WHERE ic.id IN (
+                       SELECT profileid FROM {company} where id = :companyid)
+                     OR ic.id IN (
+                       SELECT id FROM {user_info_category} WHERE id NOT IN (SELECT profileid from {company})) ";
+        $sqlarray = array('companyid' => $SESSION->company->id);
+    } else {
+        $wheresql = " WHERE ic.id NOT IN (SELECT profileid from {company}) ";
+        $sqlarray = array();
+    }
 
     $profilefields = array();
     // Only retrieve required custom fields (with category information)
@@ -735,9 +747,10 @@ function profile_get_signup_fields() {
                 FROM {user_info_field} uf
                 JOIN {user_info_category} ic
                 ON uf.categoryid = ic.id AND uf.signup = 1 AND uf.visible<>0
+                $wheresql
                 ORDER BY ic.sortorder ASC, uf.sortorder ASC";
 
-    if ($fields = $DB->get_records_sql($sql)) {
+    if ($fields = $DB->get_records_sql($sql, $sqlarray)) {
         foreach ($fields as $field) {
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;

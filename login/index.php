@@ -34,6 +34,14 @@ $anchor      = optional_param('anchor', '', PARAM_RAW);     // Used to restore h
 
 $resendconfirmemail = optional_param('resendconfirmemail', false, PARAM_BOOL);
 
+// IOMAD - deal with any passed company parameters so we can set the theme and other good stuff.
+$wantedcompanyid = optional_param('id', 0, PARAM_INT);
+if (!empty($wantedcompanyid)) {
+    $wantedcompanyshort = required_param('code', PARAM_CLEAN);
+} else {
+    $wantedcompanyshort = '';
+}
+
 // It might be safe to do this for non-Behat sites, or there might
 // be a security risk. For now we only allow it on Behat sites.
 // If you wants to do the analysis, you may be able to remove the
@@ -42,6 +50,30 @@ if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
     $wantsurl    = optional_param('wantsurl', '', PARAM_LOCALURL);   // Overrides $SESSION->wantsurl if given.
     if ($wantsurl !== '') {
         $SESSION->wantsurl = (new moodle_url($wantsurl))->out(false);
+    }
+} else {
+    $wantsurl = optional_param('wantsurl', '', PARAM_RAW);    // Used to set a URL to go to.
+    if (!empty($wantsurl)) {
+        $SESSION->wantsurl = urldecode($wantsurl);
+    }
+}
+
+// Redirect if they are currently logged in and there is a wantsurl.
+if (isloggedin() && !empty($SESSION->wantsurl)) {
+    redirect($SESSION->wantsurl);
+}
+
+// Check if the company being passed is valid.
+if (!empty($wantedcompanyid) && !$company = $DB->get_record('company', array('id'=> $wantedcompanyid, 'shortname'=>$wantedcompanyshort))) {
+    print_error(get_string('unknown_company', 'local_iomad_signup'));
+} else if (!empty($wantedcompanyid)) {
+    // Set the page theme.
+    $SESSION->currenteditingcompany = $company->id;
+    $SESSION->theme = $company->theme;
+    $SESSION->company = $company;
+    if (empty($SESSION->companysetlang)) {
+        $SESSION->lang = $company->lang;
+        $SESSION->companysetlang = true;
     }
 }
 
@@ -358,7 +390,7 @@ if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 518
     $frm->password = "";
 }
 
-// IOMAD changes to display the instructions.
+// IOMAD - changes to display the instructions.
 if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->auth_instructions)) {
     if (!empty($CFG->local_iomad_signup_showinstructions)) {
         $show_instructions = true;
