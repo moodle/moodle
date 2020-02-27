@@ -82,10 +82,12 @@ class api {
     public static function get_dependent_libraries(int $libraryid): array {
         global $DB;
 
-        $sql = 'SELECT DISTINCT hl.*
-                  FROM {h5p_library_dependencies} hld
-                  JOIN {h5p_libraries} hl ON hl.id = hld.libraryid
-                 WHERE hld.requiredlibraryid = :libraryid';
+        $sql = 'SELECT *
+                  FROM {h5p_libraries}
+                 WHERE id IN (SELECT DISTINCT hl.id
+                                FROM {h5p_library_dependencies} hld
+                                JOIN {h5p_libraries} hl ON hl.id = hld.libraryid
+                               WHERE hld.requiredlibraryid = :libraryid)';
         $params = ['libraryid' => $libraryid];
 
         return $DB->get_records_sql($sql, $params);
