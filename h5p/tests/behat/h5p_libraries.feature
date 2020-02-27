@@ -50,7 +50,7 @@ Feature: Upload and list H5P libraries and content types installed
     Given I log in as "admin"
     And I navigate to "H5P > Manage H5P content types" in site administration
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "H5P content type" filemanager
-    And I click on "Upload H5P content types" "button" in the "#fitem_id_submitbutton" "css_element"
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
     And I wait until the page is ready
     And I click on "Installed H5P libraries" "link"
     When I click on "Delete version" "link" in the "H5P.FontIcons" "table_row"
