@@ -63,6 +63,9 @@ class tablelog extends \table_sql implements \renderable {
      */
     protected $cms;
 
+    /** @var array Only fetch users belonging to these groups if defined. */
+    protected $groups;
+
     /**
      * @var int The default number of decimal points to use in this course
      * when a grade item does not itself define the number of decimal points.
@@ -99,6 +102,8 @@ class tablelog extends \table_sql implements \renderable {
         $this->courseid = $this->context->instanceid;
         $this->pagesize = $perpage;
         $this->page = $page;
+        $this->groups = $filters['groups'];
+        unset($filters['groups']);
         $this->filters = (object)$filters;
         $this->gradeitems = \grade_item::fetch_all(array('courseid' => $this->courseid));
         $this->cms = get_fast_modinfo($this->courseid);
@@ -379,6 +384,8 @@ class tablelog extends \table_sql implements \renderable {
      * @return array containing sql to use and an array of params.
      */
     protected function get_sql_and_params($count = false) {
+        global $DB;
+
         $fields = 'ggh.id, ggh.timemodified, ggh.itemid, ggh.userid, ggh.finalgrade, ggh.usermodified,
                    ggh.source, ggh.overridden, ggh.locked, ggh.excluded, ggh.feedback, ggh.feedbackformat,
                    gi.itemtype, gi.itemmodule, gi.iteminstance, gi.itemnumber, ';
@@ -424,12 +431,24 @@ class tablelog extends \table_sql implements \renderable {
 
         list($where, $params) = $this->get_filters_sql_and_params();
 
+        $groupjoinsql = '';
+        $groupwheresql = '';
+        // Generate group filters when necessary.
+        if ($this->groups) {
+            // Add join condition to include users that only belong to the same group as the user.
+            list($insql, $inparams) = $DB->get_in_or_equal(array_keys($this->groups), SQL_PARAMS_NAMED, 'gid');
+            $groupjoinsql = " JOIN {groups_members} gm ON gm.userid = u.id ";
+            $groupwheresql = " AND gm.groupid $insql ";
+            $params = array_merge($params, $inparams);
+        }
+
         $sql =  "SELECT $select
                    FROM {grade_grades_history} ggh
                    JOIN {grade_items} gi ON gi.id = ggh.itemid
                    JOIN {user} u ON u.id = ggh.userid
+                   $groupjoinsql
               LEFT JOIN {user} ug ON ug.id = ggh.usermodified
-                  WHERE $where";
+                  WHERE $where $groupwheresql";
 
         // As prevgrade is a dynamic field, we need to wrap the query. This is the only filtering
         // that should be defined outside the method self::get_filters_sql_and_params().
