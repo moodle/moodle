@@ -90,13 +90,10 @@ class backpack_api {
         $this->backpackapiurl = $sitebackpack->backpackapiurl;
         $this->backpackapiversion = $sitebackpack->apiversion;
         $this->password = $sitebackpack->password;
-        $this->email = !empty($CFG->badges_defaultissuercontact) ? $CFG->badges_defaultissuercontact : '';
+        $this->email = $sitebackpack->backpackemail;
         $this->isuserbackpack = false;
         $this->backpackid = $sitebackpack->id;
         if (!empty($userbackpack)) {
-            if ($userbackpack->externalbackpackid != $sitebackpack->id) {
-                throw new coding_exception('Incorrect backpack');
-            }
             $this->isuserbackpack = true;
             $this->password = $userbackpack->password;
             $this->email = $userbackpack->email;
@@ -602,7 +599,7 @@ class backpack_api {
      * @param integer $backpackid The backpack to disconnect
      * @return boolean
      */
-    public function disconnect_backpack($userid, $backpackid, $externalbackupid) {
+    public function disconnect_backpack($userid, $backpackid) {
         global $DB, $USER;
 
         if (\core\session\manager::is_loggedinas() || $userid != $USER->id) {
@@ -614,7 +611,6 @@ class backpack_api {
 
         $DB->delete_records('badge_external', array('backpackid' => $backpackid));
         $DB->delete_records('badge_backpack', array('userid' => $userid));
-        $DB->delete_records('badge_external_backpack', array('id' => $externalbackupid));
         $badgescache->delete($userid);
         return true;
     }

@@ -72,11 +72,11 @@ class external_backpack extends \moodleform {
         $mform->addElement('hidden', 'id', ($backpack->id ?? null));
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'badgebackpack', 0);
-        $mform->setType('badgebackpack', PARAM_INTEGER);
+        $mform->setType('badgebackpack', PARAM_INT);
         $mform->addElement('hidden', 'userid', 0);
-        $mform->setType('userid', PARAM_INTEGER);
+        $mform->setType('userid', PARAM_INT);
         $mform->addElement('hidden', 'backpackuid', 0);
-        $mform->setType('backpackuid', PARAM_INTEGER);
+        $mform->setType('backpackuid', PARAM_INT);
 
         $mform->addElement('advcheckbox', 'includeauthdetails', null, get_string('includeauthdetails', 'core_badges'));
         if (!empty($backpack->backpackemail) || !empty($backpack->password)) {
@@ -84,14 +84,7 @@ class external_backpack extends \moodleform {
         }
 
         $issuercontact = $CFG->badges_defaultissuercontact;
-        $mform->addElement('text', 'backpackemail', get_string('defaultissuercontact', 'core_badges'));
-        $mform->setType('backpackemail', PARAM_EMAIL);
-        $mform->setDefault('backpackemail', $issuercontact);
-
-        $mform->addElement('passwordunmask', 'password', get_string('defaultissuerpassword', 'core_badges'));
-        $mform->setType('password', PARAM_RAW);
-        $mform->addHelpButton('password', 'defaultissuerpassword', 'badges');
-        $mform->hideIf('password', 'apiversion', 'neq', 2);
+        $this->add_auth_fields($issuercontact);
 
         $oauth2options = badges_get_oauth2_service_options();
         $mform->addElement('select', 'oauth2_issuerid', get_string('oauth2issuer', 'core_badges'), $oauth2options);
@@ -101,6 +94,12 @@ class external_backpack extends \moodleform {
         if ($backpack) {
             $this->set_data($backpack);
         }
+
+        $mform->hideIf('includeauthdetails', 'apiversion', 'in', [OPEN_BADGES_V2P1]);
+        $mform->hideIf('backpackemail', 'includeauthdetails');
+        $mform->hideIf('backpackemail', 'apiversion', 'in', [OPEN_BADGES_V2P1]);
+        $mform->hideIf('password', 'includeauthdetails');
+        $mform->hideIf('password', 'apiversion', 'in', [1, OPEN_BADGES_V2P1]);
 
         // Disable short forms.
         $mform->setDisableShortforms();
@@ -150,5 +149,32 @@ class external_backpack extends \moodleform {
         }
 
         return $data;
+    }
+
+    /**
+     * Add backpack specific auth details.
+     *
+     * @param string|null $email The email addressed provided or null if it's new.
+     * @param boolean|true $includepassword Include the password field.
+     * @throws \coding_exception
+     */
+    protected function add_auth_fields(?string $email, bool $includepassword = true) {
+        $mform = $this->_form;
+        $emailstring = get_string('email');
+        $passwordstring = get_string('password');
+        if (!isset($this->_customdata['userbackpack'])) {
+            $emailstring = get_string('defaultissuercontact', 'core_badges');
+            $passwordstring = get_string('defaultissuerpassword', 'core_badges');
+        }
+
+        $mform->addElement('text', 'backpackemail', $emailstring);
+        $mform->setType('backpackemail', PARAM_EMAIL);
+        $mform->setDefault('backpackemail', $email);
+
+        if ($includepassword) {
+            $mform->addElement('passwordunmask', 'password', $passwordstring);
+            $mform->setType('password', PARAM_RAW);
+            $mform->addHelpButton('password', 'defaultissuerpassword', 'badges');
+        }
     }
 }
