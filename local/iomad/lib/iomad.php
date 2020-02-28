@@ -1689,7 +1689,7 @@ class iomad {
 
         if ($rurl['host'] !=  $wwwroot['host']) {
             if ($companyrec = $DB->get_record('company', array('hostname' => $rurl['host']))) {
-                $redirecturl = new moodle_url($CFG->wwwroot . '/local/iomad_signup/login.php',
+                $redirecturl = new moodle_url($CFG->wwwroot . '/login/index.php',
                                               array('id' => $companyrec->id,
                                                     'code' => $companyrec->shortname));
                 redirect($redirecturl);
