@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20201007" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20201008" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -3188,6 +3188,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="backpackcredentials" TYPE="unique" FIELDS="userid, externalbackpackid"/>
         <KEY NAME="externalbackpack" TYPE="foreign" FIELDS="externalbackpackid" REFTABLE="badge_external_backpack" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
@@ -3275,7 +3276,6 @@
         <FIELD NAME="backpackweburl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="apiversion" TYPE="char" LENGTH="12" NOTNULL="true" DEFAULT="1.0" SEQUENCE="false"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Password to login into external backpack and issue badges."/>
         <FIELD NAME="oauth2_issuerid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="OAuth 2 Issuer"/>
       </FIELDS>
       <KEYS>

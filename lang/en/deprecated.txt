@@ -124,3 +124,4 @@ userfilterplaceholder,core
 sitebackpackverify,core_badges
 filetypesnotwhitelisted,core_form
 modeloutputdirinfo,core_analytics
+backpackneedsupdate,core_badges
