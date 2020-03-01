@@ -97,6 +97,7 @@ require_once($CFG->dirroot . '/backup/util/ui/backup_moodleform.class.php');
 require_once($CFG->dirroot . '/backup/util/ui/backup_ui.class.php');
 require_once($CFG->dirroot . '/backup/util/ui/backup_ui_stage.class.php');
 require_once($CFG->dirroot . '/backup/util/ui/backup_ui_setting.class.php');
+require_once($CFG->dirroot . '/backup/util/ui/classes/copy/copy.php');
 
 // And some moodle stuff too
 require_once($CFG->dirroot.'/course/lib.php');

@@ -85,6 +85,15 @@ abstract class backup implements checksumable {
      */
     const MODE_ASYNC = 70;
 
+    /**
+     * This mode is for course copies.
+     * It is similar to async, but identifies back up and restore tasks
+     * as course copies.
+     *
+     * These copies will run via adhoc scheduled tasks.
+     */
+    const MODE_COPY = 80;
+
     // Target (new/existing/current/adding/deleting)
     const TARGET_CURRENT_DELETING = 0;
     const TARGET_CURRENT_ADDING   = 1;

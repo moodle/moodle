@@ -48,23 +48,25 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
     var typeid; //  The type of operation backup or restore.
     var backupintervalid; //  The id of the setInterval function.
     var allbackupintervalid; //  The id of the setInterval function.
+    var allcopyintervalid; //  The id of the setInterval function.
     var timeout = 2000; // Timeout for ajax requests.
 
     /**
      * Helper function to update UI components.
      *
      * @param {string} backupid The id to match elements on.
+     * @param {string} type The type of operation, backup or restore.
      * @param {number} percentage The completion percentage to apply.
      */
-    function updateElement(backupid, percentage) {
+    function updateElement(backupid, type, percentage) {
         var percentagewidth = Math.round(percentage) + '%';
-        var elementbar = $('#' + backupid + '_bar');
+        var elementbar = document.querySelectorAll("[data-" + type + "id=" + CSS.escape(backupid) + "]")[0];
         var percentagetext = percentage.toFixed(2) + '%';
 
         // Set progress bar percentage indicators
-        elementbar.attr('aria-valuenow', percentagewidth);
-        elementbar.css('width', percentagewidth);
-        elementbar.text(percentagetext);
+        elementbar.setAttribute('aria-valuenow', percentagewidth);
+        elementbar.style.width = percentagewidth;
+        elementbar.innerHTML = percentagetext;
     }
 
     /**
@@ -161,6 +163,56 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
     }
 
     /**
+     * Update copy table row when an course copy completes.
+     *
+     * @param {string} backupid The id to match elements on.
+     */
+    function updateCopyTableRow(backupid) {
+        var elementbar = document.querySelectorAll("[data-restoreid=" + CSS.escape(backupid) + "]")[0];
+        var restorecourse = elementbar.closest('tr').children[1];
+        var coursename = restorecourse.innerHTML;
+        var courselink = document.createElement('a');
+        var elementbarparent = elementbar.closest('td');
+        var operation = elementbarparent.previousElementSibling;
+
+        // Replace the prgress bar.
+        Str.get_string('complete').then(function(content) {
+            operation.innerHTML = content;
+            return;
+        }).catch(function() {
+            notification.exception(new Error('Failed to load string: complete'));
+            return;
+        });
+
+        Templates.render('core/async_copy_complete_cell', {}).then(function(html, js) {
+            Templates.replaceNodeContents(elementbarparent, html, js);
+            return;
+        }).fail(function() {
+            notification.exception(new Error('Failed to load table cell'));
+            return;
+        });
+
+        // Update the destination course name to a link to that course.
+        ajax.call([{
+            methodname: 'core_backup_get_async_backup_links_restore',
+            args: {
+                'backupid': backupid,
+                'contextid': 0
+            },
+        }])[0].done(function(response) {
+            courselink.setAttribute('href', response.restoreurl);
+            courselink.innerHTML = coursename;
+            restorecourse.innerHTML = null;
+            restorecourse.appendChild(courselink);
+
+            return;
+        }).fail(function() {
+            notification.exception(new Error('Failed to update table row'));
+            return;
+        });
+    }
+
+    /**
      * Update the Moodle user interface with the progress of
      * the backup process.
      *
@@ -168,7 +220,8 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
      */
     function updateProgress(progress) {
         var percentage = progress.progress * 100;
-        var elementbar = $('#' + backupid + '_bar');
+        var type = 'backup';
+        var elementbar = document.querySelectorAll("[data-" + type + "id=" + CSS.escape(backupid) + "]")[0];
         var elementstatus = $('#' + backupid + '_status');
         var elementdetail = $('#' + backupid + '_detail');
         var elementbutton = $('#' + backupid + '_button');
@@ -176,16 +229,16 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
 
         if (progress.status == STATUS_EXECUTING) {
             // Process is in progress.
-            // Add in progress class color to bar
-            elementbar.addClass('bg-success');
+            // Add in progress class color to bar.
+            elementbar.classList.add('bg-success');
 
-            updateElement(backupid, percentage);
+            updateElement(backupid, type, percentage);
 
-            // Change heading
+            // Change heading.
             var strProcessing = 'async' + typeid + 'processing';
             Str.get_string(strProcessing, 'backup').then(function(title) {
                 elementstatus.text(title);
-                return title;
+                return;
             }).catch(function() {
                 notification.exception(new Error('Failed to load string: backup ' + strProcessing));
             });
@@ -193,15 +246,15 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
         } else if (progress.status == STATUS_FINISHED_ERR) {
             // Process completed with error.
 
-            // Add in fail class color to bar
-            elementbar.addClass('bg-danger');
+            // Add in fail class color to bar.
+            elementbar.classList.add('bg-danger');
 
-            // Remove in progress class color to bar
-            elementbar.removeClass('bg-success');
+            // Remove in progress class color to bar.
+            elementbar.classList.remove('bg-success');
 
-            updateElement(backupid, 100);
+            updateElement(backupid, type, 100);
 
-            // Change heading and text
+            // Change heading and text.
             var strStatus = 'async' + typeid + 'error';
             var strStatusDetail = 'async' + typeid + 'errordetail';
             stringRequests = [
@@ -212,7 +265,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
                 elementstatus.text(strings[0]);
                 elementdetail.text(strings[1]);
 
-                return strings;
+                return;
             })
             .catch(function() {
                 notification.exception(new Error('Failed to load string'));
@@ -229,15 +282,15 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
             // Process completed successfully.
 
             // Add in progress class color to bar
-            elementbar.addClass('bg-success');
+            elementbar.classList.add('bg-success');
 
-            updateElement(backupid, 100);
+            updateElement(backupid, type, 100);
 
             // Change heading and text
             var strComplete = 'async' + typeid + 'complete';
             Str.get_string(strComplete, 'backup').then(function(title) {
                 elementstatus.text(title);
-                return title;
+                return;
             }).catch(function() {
                 notification.exception(new Error('Failed to load string: backup ' + strComplete));
             });
@@ -262,7 +315,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
                         elementbutton.text(strings[1]);
                         elementbutton.attr('href', response.restoreurl);
 
-                        return strings;
+                        return;
                     })
                     .catch(function() {
                         notification.exception(new Error('Failed to load string'));
@@ -282,7 +335,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
                     elementbutton.text(strings[1]);
                     elementbutton.attr('href', restoreurl);
 
-                    return strings;
+                    return;
                 })
                 .catch(function() {
                     notification.exception(new Error('Failed to load string'));
@@ -301,7 +354,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
 
     /**
      * Update the Moodle user interface with the progress of
-     * all the pending processes.
+     * all the pending processes for backup and restore operations.
      *
      * @param {object} progress The progress and status of the process.
      */
@@ -309,37 +362,37 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
         progress.forEach(function(element) {
             var percentage = element.progress * 100;
             var backupid = element.backupid;
-            var elementbar = $('#' + backupid + '_bar');
             var type = element.operation;
+            var elementbar = document.querySelectorAll("[data-" + type + "id=" + CSS.escape(backupid) + "]")[0];
 
             if (element.status == STATUS_EXECUTING) {
                 // Process is in element.
 
                 // Add in element class color to bar
-                elementbar.addClass('bg-success');
+                elementbar.classList.add('bg-success');
 
-                updateElement(backupid, percentage);
+                updateElement(backupid, type, percentage);
 
             } else if (element.status == STATUS_FINISHED_ERR) {
                 // Process completed with error.
 
                 // Add in fail class color to bar
-                elementbar.addClass('bg-danger');
-                elementbar.addClass('complete');
+                elementbar.classList.add('bg-danger');
+                elementbar.classList.add('complete');
 
                 // Remove in element class color to bar
-                $('#' + backupid + '_bar').removeClass('bg-success');
+                elementbar.classList.remove('bg-success');
 
-                updateElement(backupid, 100);
+                updateElement(backupid, type, 100);
 
             } else if (element.status == STATUS_FINISHED_OK) {
                 // Process completed successfully.
 
                 // Add in element class color to bar
-                elementbar.addClass('bg-success');
-                elementbar.addClass('complete');
+                elementbar.classList.add('bg-success');
+                elementbar.classList.add('complete');
 
-                updateElement(backupid, 100);
+                updateElement(backupid, type, 100);
 
                 // We have a successful backup. Update the UI with download and file details.
                 if (type == 'backup') {
@@ -348,6 +401,65 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
                     updateRestoreTableRow(backupid);
                 }
 
+            }
+
+        });
+    }
+
+    /**
+     * Update the Moodle user interface with the progress of
+     * all the pending processes for copy operations.
+     *
+     * @param {object} progress The progress and status of the process.
+     */
+    function updateProgressCopy(progress) {
+        progress.forEach(function(element) {
+            var percentage = element.progress * 100;
+            var backupid = element.backupid;
+            var type = element.operation;
+            var elementbar = document.querySelectorAll("[data-" + type + "id=" + CSS.escape(backupid) + "]")[0];
+
+            if (type == 'restore') {
+                 let restorecell = elementbar.closest('tr').children[3];
+                 Str.get_string('restore').then(function(content) {
+                     restorecell.innerHTML = content;
+                     return;
+                 }).catch(function() {
+                     notification.exception(new Error('Failed to load string: restore'));
+                 });
+            }
+
+            if (element.status == STATUS_EXECUTING) {
+                // Process is in element.
+
+                // Add in element class color to bar
+                elementbar.classList.add('bg-success');
+
+                updateElement(backupid, type, percentage);
+
+            } else if (element.status == STATUS_FINISHED_ERR) {
+                // Process completed with error.
+
+                // Add in fail class color to bar
+                elementbar.classList.add('bg-danger');
+                elementbar.classList.add('complete');
+
+                // Remove in element class color to bar
+                elementbar.classList.remove('bg-success');
+
+                updateElement(backupid, type, 100);
+
+            } else if ((element.status == STATUS_FINISHED_OK) && (type == 'restore')) {
+                // Process completed successfully.
+
+                // Add in element class color to bar
+                elementbar.classList.add('bg-success');
+                elementbar.classList.add('complete');
+
+                updateElement(backupid, type, 100);
+
+                // We have a successful copy. Update the UI link to copied course.
+                updateCopyTableRow(backupid);
             }
 
         });
@@ -408,6 +520,42 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
     }
 
     /**
+     * Get the progress of all copy processes via ajax.
+     */
+    function getAllCopyProgress() {
+        var copyids = [];
+        var progressbars = $('.progress').find('.progress-bar').not('.complete');
+
+        progressbars.each(function() {
+            let progressvars = {
+                    'backupid': this.dataset.backupid,
+                    'restoreid': this.dataset.restoreid,
+                    'operation': this.dataset.operation,
+            };
+            copyids.push(progressvars);
+        });
+
+        if (copyids.length > 0) {
+            ajax.call([{
+                // Get the copy progress via webservice.
+                methodname: 'core_backup_get_copy_progress',
+                args: {
+                    'copies': copyids
+                },
+            }], true, true, false, timeout)[0].done(function(response) {
+                updateProgressCopy(response);
+                checkdelay = checkdelayoriginal;
+                allcopyintervalid = updateInterval(allcopyintervalid, getAllCopyProgress, checkdelayoriginal);
+            }).fail(function() {
+                checkdelay = checkdelay * checkdelaymultipler;
+                allcopyintervalid = updateInterval(allcopyintervalid, getAllCopyProgress, checkdelay);
+            });
+        } else {
+            clearInterval(allcopyintervalid); // No more progress bars to update, stop checking.
+        }
+    }
+
+    /**
      * Get status updates for all backups.
      *
      * @public
@@ -416,6 +564,15 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
     Asyncbackup.asyncBackupAllStatus = function(context) {
         contextid = context;
         allbackupintervalid = setInterval(getAllBackupProgress, checkdelay);
+    };
+
+    /**
+     * Get status updates for all course copies.
+     *
+     * @public
+     */
+    Asyncbackup.asyncCopyAllStatus = function() {
+        allcopyintervalid = setInterval(getAllCopyProgress, checkdelay);
     };
 
     /**

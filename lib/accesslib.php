@@ -862,6 +862,34 @@ function require_capability($capability, context $context, $userid = null, $doan
 }
 
 /**
+ * A convenience function that tests has_capability for a list of capabilities, and displays an error if
+ * the user does not have that capability.
+ *
+ * This is just a utility method that calls has_capability in a loop. Try to put
+ * the capabilities that fewest users are likely to have first in the list for best
+ * performance.
+ *
+ * @category access
+ * @see has_capability()
+ *
+ * @param array $capabilities an array of capability names.
+ * @param context $context the context to check the capability in. You normally get this with context_xxxx::instance().
+ * @param int $userid A user id. By default (null) checks the permissions of the current user.
+ * @param bool $doanything If false, ignore effect of admin role assignment
+ * @param string $errormessage The error string to to user. Defaults to 'nopermissions'.
+ * @param string $stringfile The language file to load the error string from. Defaults to 'error'.
+ * @return void terminates with an error if the user does not have the given capability.
+ */
+function require_all_capabilities(array $capabilities, context $context, $userid = null, $doanything = true,
+                                  $errormessage = 'nopermissions', $stringfile = ''): void {
+    foreach ($capabilities as $capability) {
+        if (!has_capability($capability, $context, $userid, $doanything)) {
+            throw new required_capability_exception($context, $capability, $errormessage, $stringfile);
+        }
+    }
+}
+
+/**
  * Return a nested array showing all role assignments for the user.
  * [ra] => [contextpath][roleid] = roleid
  *

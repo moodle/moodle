@@ -35,11 +35,22 @@
     Example context (json):
     {
         "backupid": "f04abf8cba0319e486a3dfa7e9cb4476",
+        "restoreid": "f04abf8cba0319e486a3dfa7e9cb4477",
+        "operation": "backup",
         "width": "500"
     }
 }}
 <div class="progress active" style="height: 25px; width: {{#width}}{{width}}{{/width}}{{^width}}500{{/width}}px;">
-    <div id="{{backupid}}_bar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div id="{{backupid}}_bar"
+         class="progress-bar progress-bar-striped progress-bar-animated"
+         style="width: 100%"
+         role="progressbar"
+         aria-valuemin="0"
+         aria-valuemax="100"
+         aria-valuenow="0"
+         {{#operation}}data-operation="{{operation}}"{{/operation}}
+         {{#backupid}}data-backupid="{{backupid}}"{{/backupid}}
+         {{#restoreid}}data-restoreid="{{restoreid}}"{{/restoreid}}>
         {{# str }} asyncprocesspending, backup {{/ str }}
     </div>
 </div>

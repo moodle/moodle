@@ -375,6 +375,14 @@ class helper {
                 'attributes' => array('class' => 'action-edit')
             );
         }
+        // Copy.
+        if (self::can_copy_course($course->id)) {
+            $actions[] = array(
+                'url' => new \moodle_url('/backup/copy.php', array('id' => $course->id, 'returnto' => 'catmanage')),
+                'icon' => new \pix_icon('t/copy', \get_string('copycourse')),
+                'attributes' => array('class' => 'action-copy')
+            );
+        }
         // Delete.
         if ($course->can_delete()) {
             $actions[] = array(
@@ -995,5 +1003,25 @@ class helper {
         } else {
             return array($parent);
         }
+    }
+
+    /**
+     * Get an array of the capabilities required to copy a course.
+     *
+     * @return array
+     */
+    public static function get_course_copy_capabilities(): array {
+        return array('moodle/backup:backupcourse', 'moodle/restore:restorecourse', 'moodle/course:view', 'moodle/course:create');
+    }
+
+    /**
+     * Returns true if the current user can copy this course.
+     *
+     * @param int $courseid
+     * @return bool
+     */
+    public static function can_copy_course(int $courseid): bool {
+        $coursecontext = \context_course::instance($courseid);
+        return has_all_capabilities(self::get_course_copy_capabilities(), $coursecontext);
     }
 }

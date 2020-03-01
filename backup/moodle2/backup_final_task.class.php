@@ -69,14 +69,14 @@ class backup_final_task extends backup_task {
         // This step also ensures that the contexts for all the users exist, so next
         // step can be safely executed (join between users and contexts)
         // Not executed if backup is without users of anonymized
-        if ($this->get_setting_value('users') && !$this->get_setting_value('anonymize')) {
+        if (($this->get_setting_value('users') || !empty($this->get_kept_roles())) && !$this->get_setting_value('anonymize')) {
             $this->add_step(new backup_annotate_all_user_files('user_files'));
         }
 
         // Generate the users file (conditionally) with the final annotated users
         // including custom profile fields, preferences, tags, role assignments and
         // overrides
-        if ($this->get_setting_value('users')) {
+        if ($this->get_setting_value('users') || !empty($this->get_kept_roles())) {
             $this->add_step(new backup_users_structure_step('users', 'users.xml'));
         }
 
