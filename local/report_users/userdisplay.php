@@ -39,6 +39,7 @@ iomad::require_capability('local/report_users:view', $context);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
+$company = new company($companyid);
 
 $linktext = get_string('user_detail_title', 'local_report_users');
 
@@ -155,7 +156,7 @@ if (!$table->is_downloading()) {
 // Set up the initial SQL for the form.
 $selectsql = "lit.id,lit.userid,lit.courseid,lit.coursename,lit.licenseid,lit.licensename,lit.licenseallocated,lit.timeenrolled,lit.timestarted,lit.timecompleted,lit.finalscore,lit.id as certsource, cc.timecompleted AS action";
 $fromsql = "{local_iomad_track} lit LEFT JOIN {course_completions} cc ON (lit.courseid = cc.course AND lit.userid = cc.userid AND lit.timecompleted = cc.timecompleted AND lit.timecompleted IS NOT NULL)";
-$wheresql = " lit.userid = :userid AND lit.companyid = :companyid";
+$wheresql = " lit.userid = :userid AND lit.companyid = :companyid AND lit.courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) .")";
 $sqlparams = array('userid' => $userid, 'companyid' => $companyid);
 
 // Set up the headers for the form.

@@ -291,9 +291,9 @@ if ($parentslist = $company->get_parent_companies_recursive()) {
 
 // All courses or just the one?
 if ($courseid != 1) {
-    $coursesql = " AND lit.courseid = :courseid ";
+    $coursesql = " AND lit.courseid = :courseid AND lit.courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) . ") ";
 } else {
-    $coursesql = "";
+    $coursesql = " AND lit.courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) . ") ";
 }
 
 // Deal with completion times.
