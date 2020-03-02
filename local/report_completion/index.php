@@ -283,10 +283,10 @@ if (empty($courseid)) {
     // Deal with any course searches.
     $searchparams = array();
     if (!empty($coursesearch)) {
-        $coursesearchsql = " AND " . $DB->sql_like('coursename', ':coursename', false, false);
+        $coursesearchsql = " AND courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) . ") AND " . $DB->sql_like('coursename', ':coursename', false, false);
         $searchparams['coursename'] = "%" . $coursesearch . "%";
     } else {
-        $coursesearchsql = "";
+        $coursesearchsql = " AND courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) . ") ";
     }
     // Set up the SQL for the table.
     $selectsql = "courseid as id, coursename, $departmentid AS departmentid, $showsuspended AS showsuspended, companyid";
