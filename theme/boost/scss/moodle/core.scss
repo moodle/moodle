@@ -1509,7 +1509,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
  */
 .modchooser .modal-body {
     padding: 0;
-    height: 590px;
+    height: 640px;
     overflow-y: auto;
 
     .loading-icon {
@@ -1576,7 +1576,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     overflow-x: hidden;
     .option {
         // Six items per line.
-        flex-basis: 16%;
+        flex-basis: 16.66%;
         .optionactions {
             .optionaction {
                 cursor: pointer;
@@ -1614,8 +1614,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     background-color: $white;
     overflow-x: hidden;
     overflow-y: auto;
-    line-height: 2em;
-    height: 590px;
+    height: 640px;
 
     .content {
         overflow-y: auto;
