@@ -861,7 +861,7 @@ class behat_navigation extends behat_base {
         $linkname = behat_context_helper::escape($lastnode);
         $xpath .= '//a[contains(normalize-space(.), ' . $linkname . ')]';
         if (!$node = $this->getSession()->getPage()->find('xpath', $xpath)) {
-            throw new ElementNotFoundException($this->getSession(), 'Link "' . join(' > ', $nodelist) . '"" not found on the page');
+            throw new ElementNotFoundException($this->getSession(), 'Link "' . join(' > ', $nodelist) . '"');
         }
         $node->click();
         $this->wait_for_pending_js();
@@ -876,7 +876,7 @@ class behat_navigation extends behat_base {
     protected function find_header_administration_menu($mustexist = false) {
         $menuxpath = '//header[@id=\'page-header\']//div[contains(@class,\'moodle-actionmenu\')]';
         if ($mustexist) {
-            $exception = new ElementNotFoundException($this->getSession(), 'Page header administration menu is not found');
+            $exception = new ElementNotFoundException($this->getSession(), 'Page header administration menu');
             $this->find('xpath', $menuxpath, $exception);
         } else if (!$this->getSession()->getPage()->find('xpath', $menuxpath)) {
             return null;
@@ -893,7 +893,7 @@ class behat_navigation extends behat_base {
     protected function find_page_administration_menu($mustexist = false) {
         $menuxpath = '//div[@id=\'region-main-settings-menu\']';
         if ($mustexist) {
-            $exception = new ElementNotFoundException($this->getSession(), 'Page administration menu is not found');
+            $exception = new ElementNotFoundException($this->getSession(), 'Page administration menu');
             $this->find('xpath', $menuxpath, $exception);
         } else if (!$this->getSession()->getPage()->find('xpath', $menuxpath)) {
             return null;
@@ -960,6 +960,6 @@ class behat_navigation extends behat_base {
         }
 
         throw new ElementNotFoundException($this->getSession(),
-                'Link "' . join(' > ', $nodelist) . '" not found in the current page edit menu"');
+                'Link "' . join(' > ', $nodelist) . '" in the current page edit menu"');
     }
 }

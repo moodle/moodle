@@ -217,7 +217,7 @@ class behat_theme_classic_behat_navigation extends behat_navigation {
         $menuxpath = "//section[contains(@class,'block_settings')]//div[@id='settingsnav']/ul[1]/li[1]";
 
         if ($mustexist) {
-            $exception = new ElementNotFoundException($this->getSession(), 'Page administration menu is not found');
+            $exception = new ElementNotFoundException($this->getSession(), 'Page administration menu');
             $this->find('xpath', $menuxpath, $exception);
 
         } else if (!$this->getSession()->getPage()->find('xpath', $menuxpath)) {
