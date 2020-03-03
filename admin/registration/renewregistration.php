@@ -39,7 +39,7 @@ $token = optional_param('token', '', PARAM_TEXT);
 
 admin_externalpage_setup('registrationmoodleorg');
 
-if ($url !== HUB_MOODLEORGHUBURL) {
+if (parse_url($url, PHP_URL_HOST) !== parse_url(HUB_MOODLEORGHUBURL, PHP_URL_HOST)) {
     // Allow other plugins to renew registration on custom hubs. Plugins implementing this
     // callback need to redirect or exit. See https://docs.moodle.org/en/Hub_registration .
     $callbacks = get_plugins_with_function('hub_registration');
