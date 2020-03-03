@@ -2106,9 +2106,6 @@ function xmldb_main_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2019120500.01) {
-        // Delete any tool_cohortroles mappings for roles which no longer exist.
-        $DB->delete_records_select('tool_cohortroles', "roleid NOT IN (SELECT id FROM {role})");
-
         // Delete any role assignments for roles which no longer exist.
         $DB->delete_records_select('role_assignments', "roleid NOT IN (SELECT id FROM {role})");
 
