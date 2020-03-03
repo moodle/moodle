@@ -132,7 +132,6 @@ Feature: View course participants
     When I log in as "teacher1x"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I follow "Surname"
     And I click on "Select all" "checkbox"
     Then I should not see "Student 9x"
     And the field "Select 'Teacher 1x'" matches value "1"
