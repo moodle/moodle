@@ -130,7 +130,6 @@ Feature: View course participants
     When I log in as "teacher1x"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I follow "Surname"
     And I press "Select all users on this page"
     Then I should not see "Student 9x"
     And the field with xpath "//tbody//tr[1]//input[@class='usercheckbox']" matches value "1"
