@@ -43,19 +43,6 @@ $context = context_course::instance($course->id);
 require_capability('gradereport/history:view', $context);
 require_capability('moodle/grade:viewall', $context);
 
-$groupmode = groups_get_course_groupmode($course);
-$groups = [];
-// We're only interested in separate groups mode because it's the only group mode that requires the user to be a member of
-// specific group(s), except when they have the 'moodle/site:accessallgroups' capability.
-if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
-    // Fetch the groups that the user can see.
-    $groups = groups_get_all_groups($courseid, $USER->id, 0, 'g.id');
-    if (empty($groups)) {
-        // The user's not in any group and they don't have the capability to access all groups. So throw an error.
-        throw new \moodle_exception('notingroup');
-    }
-}
-
 // Last selected report session tracking.
 if (!isset($USER->grade_last_report)) {
     $USER->grade_last_report = array();
@@ -91,7 +78,6 @@ if ($data = $mform->get_data()) {
         'revisedonly' => optional_param('revisedonly', 0, PARAM_INT),
     );
 }
-$filters['groups'] = $groups;
 
 $table = new \gradereport_history\output\tablelog('gradereport_history', $context, $url, $filters, $download, $page);
 
