@@ -259,7 +259,7 @@ class helper_testcase extends \advanced_testcase {
     /**
      * Test the behaviour of can_update_library().
      */
-    public function can_update_library(): void {
+    public function test_can_update_library(): void {
         $this->resetAfterTest();
         $factory = new \core_h5p\factory();
 
