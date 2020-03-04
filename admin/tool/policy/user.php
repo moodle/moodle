@@ -39,15 +39,29 @@ if ($userid != $USER->id) {
     if (!has_capability('tool/policy:acceptbehalf', $context)) {
         require_capability('tool/policy:viewacceptances', $context);
     }
+
+    $user = core_user::get_user($userid);
+    $PAGE->navigation->extend_for_user($user);
 }
+
+$title = get_string('policiesagreements', 'tool_policy');
 
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_url(new moodle_url('/admin/tool/policy/user.php', ['userid' => $userid]));
+$PAGE->set_title($title);
+
+if ($userid == $USER->id &&
+        ($profilenode = $PAGE->settingsnav->find('myprofile', null))) {
+
+    $profilenode->make_active();
+}
+
+$PAGE->navbar->add($title);
 
 $output = $PAGE->get_renderer('tool_policy');
 echo $output->header();
-echo $output->heading(get_string('policiesagreements', 'tool_policy'));
+echo $output->heading($title);
 $acceptances = new \tool_policy\output\acceptances($userid, $returnurl);
 echo $output->render($acceptances);
 $PAGE->requires->js_call_amd('tool_policy/acceptmodal', 'getInstance', [context_system::instance()->id]);
