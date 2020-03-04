@@ -221,20 +221,23 @@ class behat_field_manager {
         }
 
         // If the type is explictly set on the element pointed to by the label - use it.
-        if ($type = $fieldnode->getParent()->getAttribute('data-fieldtype')) {
-            if ($type == 'tags') {
+        $fieldtype = $fieldnode->getAttribute('data-fieldtype');
+        if ($fieldtype) {
+            if ($fieldtype == 'tags') {
                 return 'autocomplete';
             }
-            return $type;
+            return $fieldtype;
         }
 
         if (!empty($fieldnode->find('xpath', '/ancestor::*[@data-passwordunmaskid]'))) {
             return 'passwordunmask';
         }
 
-        // We look for a parent node with 'felement' class.
-        if ($class = $fieldnode->getParent()->getAttribute('class')) {
+        // Fetch the parentnode only once.
+        $parentnode = $fieldnode->getParent();
 
+        // We look for a parent node with 'felement' class.
+        if ($class = $parentnode->getAttribute('class')) {
             if (strstr($class, 'felement') != false) {
                 // Remove 'felement f' from class value.
                 return substr($class, 10);
@@ -246,7 +249,7 @@ class behat_field_manager {
             }
         }
 
-        return self::get_field_node_type($fieldnode->getParent(), $session);
+        return self::get_field_node_type($parentnode, $session);
     }
 
     /**

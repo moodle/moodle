@@ -325,17 +325,26 @@ YUI.add('moodle-core_filepicker', function(Y) {
          */
         var formatCheckbox = function(o) {
             var el = Y.Node.create('<div/>');
-            var checkbox = Y.Node.create('<input/>');
-            checkbox.setAttribute('type', 'checkbox')
-                .setAttribute('class', 'mark-for-selection')
+
+            var checkbox = Y.Node.create('<input/>')
+                .setAttribute('type', 'checkbox')
+                .setAttribute('data-fieldtype', 'checkbox')
                 .setAttribute('data-fullname', o.data.fullname)
                 .setAttribute('data-action', 'toggle')
                 .setAttribute('data-toggle', 'slave')
                 .setAttribute('data-togglegroup', 'file-selections')
-                .setAttribute('data-toggle-selectall', 'Select all')
-                .setAttribute('data-toggle-deselectall', 'Deselectall');
+                .setAttribute('data-toggle-selectall', M.util.get_string('selectall', 'moodle'))
+                .setAttribute('data-toggle-deselectall', M.util.get_string('deselectall', 'moodle'));
+
+            var checkboxLabel = Y.Node.create('<label>')
+                .setHTML("Select file '" + o.data.fullname + "'")
+                .addClass('sr-only')
+                .setAttrs({
+                    for: checkbox.generateID(),
+                });
 
             el.appendChild(checkbox);
+            el.appendChild(checkboxLabel);
             return el.getContent();
         };
         /** sorting function for table view */
@@ -363,20 +372,32 @@ YUI.add('moodle-core_filepicker', function(Y) {
             ];
 
             // Generate a checkbox based on toggleall's specification
-            var checkbox = Y.Node.create('<input/>');
             var div = Y.Node.create('<div/>');
-            checkbox.setAttribute('type', 'checkbox')
-                .setAttribute('class', 'mark-for-selection')
+            var checkbox = Y.Node.create('<input/>')
+                .setAttribute('type', 'checkbox')
+                // .setAttribute('title', M.util.get_string('selectallornone', 'form'))
                 .setAttribute('data-action', 'toggle')
                 .setAttribute('data-toggle', 'master')
                 .setAttribute('data-togglegroup', 'file-selections');
+
+            var checkboxLabel = Y.Node.create('<label>')
+                .setHTML(M.util.get_string('selectallornone', 'form'))
+                .addClass('sr-only')
+                .setAttrs({
+                    for: checkbox.generateID(),
+                });
+
+            div.appendChild(checkboxLabel);
             div.appendChild(checkbox);
+
 
             // Enable the selectable checkboxes
             if (options.disablecheckboxes != undefined && !options.disablecheckboxes) {
                 cols.unshift({
-                    key: "", label: div.getContent(),
-                    allowHTML: true, formatter: formatCheckbox,
+                    key: "",
+                    label: div.getContent(),
+                    allowHTML: true,
+                    formatter: formatCheckbox,
                     sortable: false
                 });
             }
