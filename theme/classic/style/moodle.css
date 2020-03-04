@@ -14148,6 +14148,7 @@ a.ygtvspacer:hover {
 .filemanager.fm-maxfiles .fp-btn-add,
 .filemanager.fm-maxfiles .dndupload-message,
 .filemanager.fm-noitems .fp-btn-download,
+.filemanager.fm-noitems .fp-btn-delete,
 .filemanager .fm-empty-container,
 .filemanager.fm-noitems .filemanager-container .fp-content {
   display: none; }

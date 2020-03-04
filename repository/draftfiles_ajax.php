@@ -41,7 +41,7 @@ $action  = required_param('action', PARAM_ALPHA);
 $draftid = required_param('itemid', PARAM_INT);
 $filepath = optional_param('filepath', '/', PARAM_PATH);
 
-$user_context = context_user::instance($USER->id);
+$usercontext = context_user::instance($USER->id);
 
 echo $OUTPUT->header(); // send headers
 
@@ -73,7 +73,7 @@ switch ($action) {
         $newdirname = required_param('newdirname', PARAM_FILE);
 
         $fs = get_file_storage();
-        $fs->create_directory($user_context->id, 'user', 'draft', $draftid, file_correct_filepath(file_correct_filepath($filepath).$newdirname));
+        $fs->create_directory($usercontext->id, 'user', 'draft', $draftid, file_correct_filepath(file_correct_filepath($filepath).$newdirname));
         $return = new stdClass();
         $return->filepath = $filepath;
         echo json_encode($return);
@@ -82,31 +82,28 @@ switch ($action) {
     case 'delete':
         $filename   = required_param('filename', PARAM_FILE);
         $filepath   = required_param('filepath', PARAM_PATH);
+        $selectedfile = (object)[
+            'filename' => $filename,
+            'filepath' => $filepath
+        ];
+        $return = repository_delete_selected_files($usercontext, 'user', 'draft', $draftid, [$selectedfile]);
 
-        $fs = get_file_storage();
-        $filepath = file_correct_filepath($filepath);
-        $return = new stdClass();
-        if ($stored_file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename)) {
-            $parent_path = $stored_file->get_parent_directory()->get_filepath();
-            if ($stored_file->is_directory()) {
-                $files = $fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $filepath, true);
-                foreach ($files as $file) {
-                    $file->delete();
-                }
-                $stored_file->delete();
-                $return->filepath = $parent_path;
-                echo json_encode($return);
-            } else {
-                if($result = $stored_file->delete()) {
-                    $return->filepath = $parent_path;
-                    echo json_encode($return);
-                } else {
-                    echo json_encode(false);
-                }
-            }
-        } else {
-            echo json_encode(false);
+        if ($return) {
+            $response = new stdClass();
+            $response->filepath = array_keys($return)[0];
+            echo json_encode($response);
+            die;
         }
+
+        echo json_encode(false);
+        die;
+
+    case 'deleteselected':
+        $selected   = required_param('selected', PARAM_RAW);
+        $return = [];
+        $selectedfiles = json_decode($selected);
+        $return = repository_delete_selected_files($usercontext, 'user', 'draft', $draftid, $selectedfiles);
+        echo (json_encode($return ? array_keys($return) : false));
         die;
 
     case 'setmainfile':
@@ -115,9 +112,9 @@ switch ($action) {
 
         $filepath = file_correct_filepath($filepath);
         // reset sort order
-        file_reset_sortorder($user_context->id, 'user', 'draft', $draftid);
+        file_reset_sortorder($usercontext->id, 'user', 'draft', $draftid);
         // set main file
-        $return = file_set_sortorder($user_context->id, 'user', 'draft', $draftid, $filepath, $filename, 1);
+        $return = file_set_sortorder($usercontext->id, 'user', 'draft', $draftid, $filepath, $filename, 1);
         echo json_encode($return);
         die;
 
@@ -159,7 +156,7 @@ switch ($action) {
         $zipper = get_file_packer('application/zip');
         $fs = get_file_storage();
 
-        $file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, '.');
+        $file = $fs->get_file($usercontext->id, 'user', 'draft', $draftid, $filepath, '.');
 
         $parent_path = $file->get_parent_directory()->get_filepath();
 
@@ -167,7 +164,7 @@ switch ($action) {
         $filepath = array_pop($filepath);
         $zipfile = repository::get_unused_filename($draftid, $parent_path, $filepath . '.zip');
 
-        if ($newfile = $zipper->archive_to_storage(array($filepath => $file), $user_context->id, 'user', 'draft', $draftid, $parent_path, $zipfile, $USER->id)) {
+        if ($newfile = $zipper->archive_to_storage([$filepath => $file], $usercontext->id, 'user', 'draft', $draftid, $parent_path, $zipfile, $USER->id)) {
             $return = new stdClass();
             $return->filepath = $parent_path;
             echo json_encode($return);
@@ -175,36 +172,22 @@ switch ($action) {
             echo json_encode(false);
         }
         die;
+    case 'downloadselected':
+        $selected   = required_param('selected', PARAM_RAW);
+        $selectedfiles = json_decode($selected);
+        $return = repository_download_selected_files($usercontext, 'user', 'draft', $draftid, $selectedfiles);
+        echo (json_encode($return));
+        die;
 
     case 'downloaddir':
         $filepath = required_param('filepath', PARAM_PATH);
 
-        $zipper = get_file_packer('application/zip');
-        $fs = get_file_storage();
-        $area = file_get_draft_area_info($draftid, $filepath);
-        if ($area['filecount'] == 0 && $area['foldercount'] == 0) {
-            echo json_encode(false);
-            die;
-        }
-
-        $stored_file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, '.');
-        if ($filepath === '/') {
-            $filename = get_string('files').'.zip';
-        } else {
-            $filename = explode('/', trim($filepath, '/'));
-            $filename = array_pop($filename) . '.zip';
-        }
-
-        // archive compressed file to an unused draft area
-        $newdraftitemid = file_get_unused_draft_itemid();
-        if ($newfile = $zipper->archive_to_storage(array('/' => $stored_file), $user_context->id, 'user', 'draft', $newdraftitemid, '/', $filename, $USER->id)) {
-            $return = new stdClass();
-            $return->fileurl  = moodle_url::make_draftfile_url($newdraftitemid, '/', $filename)->out();
-            $return->filepath = $filepath;
-            echo json_encode($return);
-        } else {
-            echo json_encode(false);
-        }
+        $selectedfile = (object)[
+            'filename' => '',
+            'filepath' => $filepath
+        ];
+        $return = repository_download_selected_files($usercontext, 'user', 'draft', $draftid, [$selectedfile]);
+        echo json_encode($return);
         die;
 
     case 'unzip':
@@ -215,15 +198,15 @@ switch ($action) {
 
         $fs = get_file_storage();
 
-        $file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename);
+        $file = $fs->get_file($usercontext->id, 'user', 'draft', $draftid, $filepath, $filename);
 
         // Find unused name for directory to extract the archive.
-        $temppath = $fs->get_unused_dirname($user_context->id, 'user', 'draft', $draftid, $filepath. pathinfo($filename, PATHINFO_FILENAME). '/');
+        $temppath = $fs->get_unused_dirname($usercontext->id, 'user', 'draft', $draftid, $filepath. pathinfo($filename, PATHINFO_FILENAME). '/');
         $donotremovedirs = array();
         $doremovedirs = array($temppath);
         // Extract archive and move all files from $temppath to $filepath
-        if ($file->extract_to_storage($zipper, $user_context->id, 'user', 'draft', $draftid, $temppath, $USER->id) !== false) {
-            $extractedfiles = $fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $temppath, true);
+        if ($file->extract_to_storage($zipper, $usercontext->id, 'user', 'draft', $draftid, $temppath, $USER->id) !== false) {
+            $extractedfiles = $fs->get_directory_files($usercontext->id, 'user', 'draft', $draftid, $temppath, true);
             $xtemppath = preg_quote($temppath, '|');
             foreach ($extractedfiles as $file) {
                 $realpath = preg_replace('|^'.$xtemppath.'|', $filepath, $file->get_filepath());
@@ -231,7 +214,7 @@ switch ($action) {
                     // Set the source to the extracted file to indicate that it came from archive.
                     $file->set_source(serialize((object)array('source' => $filepath)));
                 }
-                if (!$fs->file_exists($user_context->id, 'user', 'draft', $draftid, $realpath, $file->get_filename())) {
+                if (!$fs->file_exists($usercontext->id, 'user', 'draft', $draftid, $realpath, $file->get_filename())) {
                     // File or directory did not exist, just move it.
                     $file->rename($realpath, $file->get_filename());
                 } else if (!$file->is_directory()) {
@@ -250,7 +233,7 @@ switch ($action) {
         }
         // Remove remaining temporary directories.
         foreach (array_diff($doremovedirs, $donotremovedirs) as $filepath) {
-            if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, '.')) {
+            if ($file = $fs->get_file($usercontext->id, 'user', 'draft', $draftid, $filepath, '.')) {
                 $file->delete();
             }
         }
@@ -261,7 +244,7 @@ switch ($action) {
         $filepath    = required_param('filepath', PARAM_PATH);
 
         $fs = get_file_storage();
-        $file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename);
+        $file = $fs->get_file($usercontext->id, 'user', 'draft', $draftid, $filepath, $filename);
         if (!$file) {
             echo json_encode(false);
         } else {
@@ -275,7 +258,7 @@ switch ($action) {
         $filepath    = required_param('filepath', PARAM_PATH);
 
         $fs = get_file_storage();
-        $file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename);
+        $file = $fs->get_file($usercontext->id, 'user', 'draft', $draftid, $filepath, $filename);
         if (!$file) {
             echo json_encode(false);
         } else {
