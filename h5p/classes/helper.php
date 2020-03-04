@@ -24,6 +24,9 @@
 
 namespace core_h5p;
 
+use context_system;
+use core_h5p\local\library\autoloader;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -182,7 +185,7 @@ class helper {
     public static function create_fake_stored_file_from_path(string $filepath, int $userid = 0,
             \context $context = null): \stored_file {
         if (is_null($context)) {
-            $context = \context_system::instance();
+            $context = context_system::instance();
         }
         $filerecord = [
             'contextid' => $context->id,
@@ -216,7 +219,7 @@ class helper {
 
         // Check the Display H5P filter status.
         $link = \core\plugininfo\filter::get_manage_url();
-        $status = filter_get_active_state('displayh5p', \context_system::instance()->id);
+        $status = filter_get_active_state('displayh5p', context_system::instance()->id);
         $tools[] = self::convert_info_into_array('filter_displayh5p', $link, $status);
 
         // Check H5P scheduled task.
@@ -276,5 +279,191 @@ class helper {
             'status_class' => $statusclasses[$status],
             'status_action' => $statusaction,
         ];
+    }
+
+    /**
+     * Get a query string with the theme revision number to include at the end
+     * of URLs. This is used to force the browser to reload the asset when the
+     * theme caches are cleared.
+     *
+     * @return string
+     */
+    public static function get_cache_buster(): string {
+        global $CFG;
+        return '?ver=' . $CFG->themerev;
+    }
+
+    /**
+     * Get the settings needed by the H5P library.
+     *
+     * @return array The settings.
+     */
+    public static function get_core_settings(): array {
+        global $CFG;
+
+        $basepath = $CFG->wwwroot . '/';
+        $systemcontext = context_system::instance();
+
+        // Generate AJAX paths.
+        $ajaxpaths = [];
+        $ajaxpaths['xAPIResult'] = '';
+        $ajaxpaths['contentUserData'] = '';
+
+        $factory = new factory();
+        $core = $factory->get_core();
+
+        $settings = array(
+            'baseUrl' => $basepath,
+            'url' => "{$basepath}pluginfile.php/{$systemcontext->instanceid}/core_h5p",
+            'urlLibraries' => "{$basepath}pluginfile.php/{$systemcontext->id}/core_h5p/libraries",
+            'postUserStatistics' => false,
+            'ajax' => $ajaxpaths,
+            'saveFreq' => false,
+            'siteUrl' => $CFG->wwwroot,
+            'l10n' => array('H5P' => $core->getLocalization()),
+            'user' => [],
+            'hubIsEnabled' => true,
+            'reportingIsEnabled' => false,
+            'crossorigin' => null,
+            'libraryConfig' => $core->h5pF->getLibraryConfig(),
+            'pluginCacheBuster' => self::get_cache_buster(),
+            'libraryUrl' => autoloader::get_h5p_core_library_url('core/js')
+        );
+
+        return $settings;
+    }
+
+    /**
+     * Get the core H5P assets, including all core H5P JavaScript and CSS.
+     *
+     * @return Array core H5P assets.
+     */
+    public static function get_core_assets(): array {
+        global $CFG, $PAGE;
+
+        // Get core settings.
+        $settings = self::get_core_settings();
+        $settings['core'] = [
+            'styles' => [],
+            'scripts' => []
+        ];
+        $settings['loadedJs'] = [];
+        $settings['loadedCss'] = [];
+
+        // Make sure files are reloaded for each plugin update.
+        $cachebuster = self::get_cache_buster();
+
+        // Use relative URL to support both http and https.
+        $liburl = autoloader::get_h5p_core_library_url()->out();
+        $relpath = '/' . preg_replace('/^[^:]+:\/\/[^\/]+\//', '', $liburl);
+
+        // Add core stylesheets.
+        foreach (core::$styles as $style) {
+            $settings['core']['styles'][] = $relpath . $style . $cachebuster;
+            $PAGE->requires->css(new \moodle_url($liburl . $style . $cachebuster));
+        }
+        // Add core JavaScript.
+        foreach (core::get_scripts() as $script) {
+            $settings['core']['scripts'][] = $script->out(false);
+            $PAGE->requires->js($script, true);
+        }
+
+        return $settings;
+    }
+
+    /**
+     * Add required assets for displaying the editor.
+     *
+     * @param int $id Id of the content being edited. null for creating new content.
+     * @param string $mformid Id of Moodle form
+     *
+     * @return void
+     */
+    public static function add_editor_assets_to_page(?int $id = null, string $mformid = null): void {
+        global $PAGE, $CFG;
+
+        $libeditorpath = 'lib/h5peditor';
+
+        // Require classes from H5P third party library.
+        autoloader::register();
+
+        $context = context_system::instance();
+
+        $settings = self::get_core_assets();
+
+        // Use jQuery and styles from core.
+        $assets = array(
+            'css' => $settings['core']['styles'],
+            'js' => $settings['core']['scripts']
+        );
+
+        // Use relative URL to support both http and https.
+        $url = $CFG->wwwroot . '/'. $libeditorpath . '/';
+        $url = '/' . preg_replace('/^[^:]+:\/\/[^\/]+\//', '', $url);
+
+        // Make sure files are reloaded for each plugin update.
+        $cachebuster = self::get_cache_buster();
+
+        // Add editor styles.
+        foreach (H5peditor::$styles as $style) {
+            $assets['css'][] = $url . $style . $cachebuster;
+        }
+
+        // Add editor JavaScript.
+        foreach (H5peditor::$scripts as $script) {
+            // We do not want the creator of the iframe inside the iframe.
+            if ($script !== 'scripts/h5peditor-editor.js') {
+                $assets['js'][] = $url . $script . $cachebuster;
+            }
+        }
+
+        // Add JavaScript with library framework integration (editor part).
+        $PAGE->requires->js(new moodle_url('/'. $libeditorpath .'/scripts/h5peditor-editor.js' . $cachebuster), true);
+        $PAGE->requires->js(new moodle_url('/'. $libeditorpath .'/scripts/h5peditor-init.js' . $cachebuster), true);
+        $PAGE->requires->js(new moodle_url('/h5p/editor.js' . $cachebuster), true);
+
+        // Add translations.
+        $language = framework::get_language();
+        $languagescript = "language/{$language}.js";
+
+        if (!file_exists("{$CFG->dirroot}/" . $libeditorpath . "/{$languagescript}")) {
+            $languagescript = 'language/en.js';
+        }
+        $PAGE->requires->js(new moodle_url('/' . $libeditorpath .'/' . $languagescript . $cachebuster), true);
+
+        // Add JavaScript settings.
+        $root = $CFG->wwwroot;
+        $filespathbase = "{$root}/pluginfile.php/{$context->id}/core_h5p/";
+
+        $factory = new factory();
+        $contentvalidator = $factory->get_content_validator();
+
+        $editorajaxtoken = H5PCore::createToken(editor_ajax::EDITOR_AJAX_TOKEN);
+        $settings['editor'] = array(
+            'filesPath' => $filespathbase . 'editor',
+            'fileIcon' => array(
+                'path' => $url . 'images/binary-file.png',
+                'width' => 50,
+                'height' => 50,
+            ),
+            'ajaxPath' => $CFG->wwwroot . '/h5p/' . "ajax.php?contextId={$context->id}&token={$editorajaxtoken}&action=",
+            'libraryUrl' => $url,
+            'copyrightSemantics' => $contentvalidator->getCopyrightSemantics(),
+            'metadataSemantics' => $contentvalidator->getMetadataSemantics(),
+            'assets' => $assets,
+            'apiVersion' => H5PCore::$coreApi,
+            'language' => $language,
+            'formId' => $mformid,
+        );
+
+        if ($id !== null) {
+            $settings['editor']['nodeVersionId'] = $id;
+
+            // Override content URL.
+            $contenturl = "{$root}/pluginfile.php/{$context->id}/core_h5p/content/{$id}";
+            $settings['contents']['cid-' . $id]['contentUrl'] = $contenturl;
+        }
+
+        $PAGE->requires->data_for_js('H5PIntegration', $settings, true);
     }
 }
