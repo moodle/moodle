@@ -27,12 +27,10 @@ require_once('../../../config.php');
 $requestid = required_param('requestid', PARAM_INT);
 $confirm = optional_param('confirm', null, PARAM_INT);
 
-$PAGE->set_url(new moodle_url('/admin/tool/dataprivacy/resubmitrequest.php', ['requestid' => $requestid]));
+$url = new moodle_url('/admin/tool/dataprivacy/resubmitrequest.php', ['requestid' => $requestid]);
+$title = get_string('resubmitrequestasnew', 'tool_dataprivacy');
 
-require_login();
-
-$PAGE->set_context(\context_system::instance());
-require_capability('tool/dataprivacy:managedatarequests', $PAGE->context);
+\tool_dataprivacy\page_helper::setup($url, $title, 'datarequests', 'tool/dataprivacy:managedatarequests');
 
 $manageurl = new moodle_url('/admin/tool/dataprivacy/datarequests.php');
 
@@ -52,10 +50,6 @@ if (null !== $confirm && confirm_sesskey()) {
     $originalrequest->resubmit_request();
     redirect($manageurl, get_string('resubmittedrequest', 'tool_dataprivacy', $stringparams));
 }
-
-$heading = get_string('resubmitrequest', 'tool_dataprivacy', $stringparams);
-$PAGE->set_title($heading);
-$PAGE->set_heading($heading);
 
 echo $OUTPUT->header();
 
