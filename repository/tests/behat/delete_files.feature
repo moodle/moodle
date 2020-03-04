@@ -93,4 +93,4 @@ Feature: Delete files and folders from the file manager
     When I press "Save changes"
     Then I should not see "Delete me" in the "Private files" "block"
     And I should not see "empty.txt" in the "Private files" "block"
-    But I should not see "Delete me too" in the "Private files" "block"
+    And I should not see "Delete me too" in the "Private files" "block"
