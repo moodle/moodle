@@ -93,6 +93,7 @@ class tool_capability_renderer extends plugin_renderer_base {
         }
         $table->data = array();
 
+        $childcontextsids = [];
         foreach ($capabilities as $capability) {
             if (empty($capabilitycontexts[$capability])) {
                 $capabilitycontexts[$capability] = tool_capability_calculate_role_data($capability, $roles);
@@ -116,6 +117,10 @@ class tool_capability_renderer extends plugin_renderer_base {
             }
 
             $table->data[] = $row;
+            if (!empty($contexts[$contextid]->children)) {
+                $childcontextsids = array_merge($childcontextsids, $contexts[$contextid]->children);
+                $childcontextsids = array_unique($childcontextsids);
+            }
         }
 
         // Start the list item, and print the context name as a link to the place to make changes.
@@ -132,9 +137,9 @@ class tool_capability_renderer extends plugin_renderer_base {
         $html = $this->output->heading(html_writer::link($url, $title), 3);
         $html .= html_writer::table($table);
         // If there are any child contexts, print them recursively.
-        if (!empty($contexts[$contextid]->children)) {
-            foreach ($contexts[$contextid]->children as $childcontextid) {
-                $html .= $this->capability_comparison_table($capabilities, $childcontextid, $roles, true);
+        if (!empty($childcontextsids)) {
+            foreach ($childcontextsids as $childcontextid) {
+                $html .= $this->capability_comparison_table($capabilities, $childcontextid, $roles);
             }
         }
         return $html;
