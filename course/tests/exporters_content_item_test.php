@@ -65,7 +65,7 @@ class exporters_course_content_item_testcase extends \advanced_testcase {
         $this->assertObjectHasAttribute('icon', $exporteditem);
         $this->assertEquals($exporteditem->icon, $contentitem->get_icon());
         $this->assertObjectHasAttribute('help', $exporteditem);
-        $this->assertEquals($exporteditem->help, $contentitem->get_help());
+        $this->assertEquals($exporteditem->help, format_text($contentitem->get_help(), FORMAT_MARKDOWN));
         $this->assertObjectHasAttribute('archetype', $exporteditem);
         $this->assertEquals($exporteditem->archetype, $contentitem->get_archetype());
         $this->assertObjectHasAttribute('componentname', $exporteditem);
@@ -89,7 +89,8 @@ class exporters_course_content_item_testcase extends \advanced_testcase {
             new \core_course\local\entity\string_title('test_title'),
             new \moodle_url(''),
             '',
-            '',
+            '* First point
+            * Another point',
             MOD_ARCHETYPE_OTHER,
             'core_test'
         );
@@ -109,7 +110,7 @@ class exporters_course_content_item_testcase extends \advanced_testcase {
         $this->assertObjectHasAttribute('icon', $exporteditem);
         $this->assertEquals($exporteditem->icon, $contentitem->get_icon());
         $this->assertObjectHasAttribute('help', $exporteditem);
-        $this->assertEquals($exporteditem->help, $contentitem->get_help());
+        $this->assertEquals($exporteditem->help, format_text($contentitem->get_help(), FORMAT_MARKDOWN));
         $this->assertObjectHasAttribute('archetype', $exporteditem);
         $this->assertEquals($exporteditem->archetype, $contentitem->get_archetype());
         $this->assertObjectHasAttribute('componentname', $exporteditem);
