@@ -1552,7 +1552,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         }
 
         .clear {
-
             i {
                 height: 23px;
                 width: 23px;
@@ -1561,7 +1560,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
             }
         }
         .search-icon {
-
             i {
                 height: 20px;
                 width: 20px;
@@ -1580,7 +1578,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         .optionactions {
             .optionaction {
                 cursor: pointer;
-                margin: 0.2rem;
                 color: $gray-600;
                 i {
                     margin: 0;
@@ -1592,9 +1589,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
                 color: $gray-700;
                 &:hover {
                     text-decoration: none;
-                }
-                .optionname {
-                    margin-top: 0.5em;
                 }
                 .optionicon {
                     .icon {

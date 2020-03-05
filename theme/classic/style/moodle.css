@@ -10909,7 +10909,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     .modchoosercontainer .optionscontainer .option .optionactions .optionaction,
     .modchoosercontainer .searchresultitemscontainer .option .optionactions .optionaction {
       cursor: pointer;
-      margin: 0.2rem;
       color: #868e96; }
       .modchoosercontainer .optionscontainer .option .optionactions .optionaction i,
       .modchoosercontainer .searchresultitemscontainer .option .optionactions .optionaction i {
@@ -10920,9 +10919,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
       .modchoosercontainer .optionscontainer .option .optioninfo a:hover,
       .modchoosercontainer .searchresultitemscontainer .option .optioninfo a:hover {
         text-decoration: none; }
-      .modchoosercontainer .optionscontainer .option .optioninfo a .optionname,
-      .modchoosercontainer .searchresultitemscontainer .option .optioninfo a .optionname {
-        margin-top: 0.5em; }
       .modchoosercontainer .optionscontainer .option .optioninfo a .optionicon .icon,
       .modchoosercontainer .searchresultitemscontainer .option .optioninfo a .optionicon .icon {
         margin: 0;
