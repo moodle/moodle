@@ -95,3 +95,56 @@ Feature: Display and choose from the available activities in course
     And I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
     And I click on "Star Assignment module" "button" in the "Add an activity or resource" "dialogue"
     Then I should not see "Starred" in the "Add an activity or resource" "dialogue"
+
+  Scenario: The teacher can search for an activity by it's name
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    When I set the field "search" to "Lesson"
+    Then I should see "1 results found" in the "Add an activity or resource" "dialogue"
+    And I should see "Lesson" in the "Add an activity or resource" "dialogue"
+
+  Scenario: The teacher can search for an activity by it's description
+    Given I open the activity chooser
+    When I set the field "search" to "The lesson activity module enables a teacher to deliver content"
+    Then I should see "1 results found" in the "Add an activity or resource" "dialogue"
+    And I should see "Lesson" in the "Add an activity or resource" "dialogue"
+
+  Scenario: Search results are not returned if the search query does not match any activity name or description
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    When I set the field "search" to "Random search query"
+    Then I should see "0 results found" in the "Add an activity or resource" "dialogue"
+    And ".option" "css_element" should not exist in the ".searchresultitemscontainer" "css_element"
+
+  Scenario: Teacher can return to the default activity chooser state by manually removing the search query
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    And I set the field "search" to "Lesson"
+    And I should see "1 results found" in the "Add an activity or resource" "dialogue"
+    And I should see "Lesson" in the "Add an activity or resource" "dialogue"
+    When I set the field "search" to ""
+    And I should not see "1 results found" in the "Add an activity or resource" "dialogue"
+    Then ".searchresultscontainer" "css_element" should not exist
+    And ".optionscontainer" "css_element" should exist
+
+  Scenario: Teacher can not see a "clear" button if a search query is not entered in the activity chooser search bar
+    When I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    Then "Clear search input" "button" should not exist
+
+  Scenario: Teacher can see a "clear" button after entering a search query in the activity chooser search bar
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    When I set the field "search" to "Search query"
+    Then "Clear search input" "button" should not exist
+
+  Scenario: Teacher can not see a "clear" button if the search query is removed in the activity chooser search bar
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    And I set the field "search" to "Search query"
+    And "Clear search input" "button" should exist
+    When I set the field "search" to ""
+    Then "Clear search input" "button" should not exist
+
+  Scenario: Teacher can instantly remove the search query from the activity search bar by clicking on the "clear" button
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    And I set the field "search" to "Search query"
+    And I should see "results found" in the "Add an activity or resource" "dialogue"
+    When I click on "Clear search input" "button"
+    Then I should not see "Search query"
+    And ".searchresultscontainer" "css_element" should not exist
+    And ".optionscontainer" "css_element" should exist

@@ -247,6 +247,7 @@ $string['changesmadereallygoaway'] = 'You have made changes. Are you sure you wa
 $string['city'] = 'City/town';
 $string['cleaningtempdata'] = 'Cleaning temp data';
 $string['clear'] = 'Clear';
+$string['clearsearch'] = 'Clear search input';
 $string['clickhelpiconformoreinfo'] = '... continues ... Click on the help icon to read the full article';
 $string['clickhere'] = 'Click here ...';
 $string['clicktohideshow'] = 'Click to expand or collapse';
@@ -1724,6 +1725,7 @@ $string['resourcedisplayopen'] = 'Open';
 $string['resourcedisplaypopup'] = 'In pop-up';
 $string['resources'] = 'Resources';
 $string['resources_help'] = 'Resource types enable almost any kind of web content to be inserted into the course.';
+$string['resultsfound'] = '{$a} results found';
 $string['restore'] = 'Restore';
 $string['restorecancelled'] = 'Restore cancelled';
 $string['restorecannotassignroles'] = 'Restore needs to assign roles and you do not have permission to do so';
@@ -1789,6 +1791,7 @@ $string['search_help'] = 'For basic searching of one or more words anywhere in t
 
 For advanced searching, press the search button without typing anything in the search box to access the advanced search form.';
 $string['searchagain'] = 'Search again';
+$string['searchactivities'] = 'Search for activities by name or description';
 $string['searchbyemail'] = 'Search by email address';
 $string['searchbyusername'] = 'Search by username';
 $string['searchcourses'] = 'Search courses';

@@ -1528,7 +1528,51 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     overflow-y: hidden;
 }
 
-.modchoosercontainer .optionscontainer {
+.modchooser .searchcontainer .searchbar {
+
+    .searchinput {
+        font-size: inherit;
+        border: 1px solid #dee2e6;
+        border-top-left-radius: .3rem;
+        border-bottom-left-radius: .3rem;
+        border-right: none;
+    }
+
+    .searchbar-append {
+        align-items: center;
+        border: 1px solid #dee2e6;
+        border-left: none;
+        border-top-right-radius: .3rem;
+        border-bottom-right-radius: .3rem;
+
+        i {
+            color: #868e96;
+            margin: 0;
+            vertical-align: middle;
+        }
+
+        .clear {
+
+            i {
+                height: 23px;
+                width: 23px;
+                font-size: 23px;
+                pointer-events: none;
+            }
+        }
+        .search-icon {
+
+            i {
+                height: 20px;
+                width: 20px;
+                font-size: 20px;
+            }
+        }
+    }
+}
+
+.modchoosercontainer .optionscontainer,
+.modchoosercontainer .searchresultitemscontainer {
     overflow-x: hidden;
     .option {
         // Six items per line.
@@ -1592,7 +1636,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 @include media-breakpoint-down(lg) {
-    .modchoosercontainer .optionscontainer .option {
+    .modchoosercontainer .optionscontainer .option,
+    .modchoosercontainer .searchresultitemscontainer .option {
         // Five items per line.
         flex-basis: 20%;
     }
@@ -1607,13 +1652,15 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     .modchooser .modal-body .carousel-item,
     .modchooser .modal-body .optionsummary,
     .modchoosercontainer,
-    .optionscontainer {
+    .optionscontainer,
+    .searchresultitemscontainer {
         height: 100%;
     }
     .path-course-view .modal-dialog.modal-lg {
         margin: 0;
     }
-    .modchoosercontainer .optionscontainer .option {
+    .modchoosercontainer .optionscontainer .option,
+    .modchoosercontainer .searchresultitemscontainer .option {
         // Four items per line.
         flex-basis: 25%;
     }
