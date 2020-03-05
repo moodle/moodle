@@ -182,7 +182,7 @@ class external_api {
 
         require_once($CFG->libdir . "/pagelib.php");
 
-        $externalfunctioninfo = self::external_function_info($function);
+        $externalfunctioninfo = static::external_function_info($function);
 
         $currentpage = $PAGE;
         $currentcourse = $COURSE;
