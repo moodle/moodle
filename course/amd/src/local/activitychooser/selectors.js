@@ -45,7 +45,7 @@ export default {
         chooserSummary: {
             container: getDataSelector('region', 'chooser-option-summary-container'),
             content: getDataSelector('region', 'chooser-option-summary-content-container'),
-            description: getDataSelector('region', 'summary-description'),
+            header: getDataSelector('region', 'summary-header'),
             actions: getDataSelector('region', 'chooser-option-summary-actions-container'),
         },
         carousel: getDataSelector('region', 'carousel'),

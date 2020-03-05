@@ -59,7 +59,7 @@ const showModuleHelp = (carousel, moduleData) => {
     Promise.all([contentPromise, spinnerPromise, transitionPromise])
         .then(([{html, js}]) => Templates.replaceNodeContents(help, html, js))
         .then(() => {
-            help.querySelector(selectors.regions.chooserSummary.description).focus();
+            help.querySelector(selectors.regions.chooserSummary.header).focus();
             return help;
         })
         .catch(Notification.exception);
