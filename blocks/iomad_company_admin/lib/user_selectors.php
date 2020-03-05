@@ -298,7 +298,7 @@ class current_company_course_user_selector extends company_user_selector_base {
             $departmentsql = " AND cu.departmentid in (".implode(',', array_keys($departmentlist)).")";
         }
 
-        $fields      = 'SELECT ue.id as userenrolmentid, ' . $this->required_fields_sql('u') . ', c.id AS courseid, c.fullname';
+        $fields      = 'SELECT ue.id as userenrolmentid, ' . $this->required_fields_sql('u') . ', u.email, c.id AS courseid, c.fullname';
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u
@@ -326,6 +326,11 @@ class current_company_course_user_selector extends company_user_selector_base {
             return array();
         }
 
+        // We want the enrolment id here not the user id.
+        foreach ($availableusers as $id => $user) {
+            $availableusers[$id]->id = $id;
+
+        }
         // are we doing any post processing?
         if (!$single) {
             foreach ($availableusers as $id => $user) {
