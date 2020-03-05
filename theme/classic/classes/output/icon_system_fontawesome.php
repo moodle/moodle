@@ -35,15 +35,9 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class icon_system_fontawesome extends \core\output\icon_system_fontawesome {
-
     /**
-     * @var array $map Cached map of moodle icon names to font awesome icon names.
-     */
-    private $map = [];
-
-
-    /**
-     * Change the core icon map
+     * Change the core icon map.
+     *
      * @return Array replaced icons.
      */
     public function get_core_icon_map() {
