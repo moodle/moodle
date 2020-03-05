@@ -55,6 +55,11 @@ if ($hassiteconfig) {
                                                 get_string('iomad_autoenrol_managers', 'local_iomad_settings'),
                                                 1));
 
+    $settings->add(new admin_setting_configcheckbox('iomad_autoreallocate_licenses',
+                                                get_string('iomad_autoreallocate_licenses', 'local_iomad_settings'),
+                                                get_string('iomad_autoreallocate_licenses', 'local_iomad_settings'),
+                                                0));
+
     $dateformats = array('Y-m-d' => 'YYYY-MM-DD',
                          'Y/m/d' => 'YYYY/MM/DD',
                          'Y.m.d' => 'YYYY.MM.DD',
