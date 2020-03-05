@@ -79,7 +79,7 @@ Feature: Delete files and folders from the file manager
     And I press "Save changes"
     And I follow "Manage private files"
     And I click on "Display folder with file details" "link"
-    When I set the field "Select all/none" to "1"
+    When I click on "Select all/none" "checkbox"
     Then the following fields match these values:
       | Select file 'empty.txt' | 1 |
       | Select file 'Delete me' | 1 |
