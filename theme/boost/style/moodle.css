@@ -10666,23 +10666,58 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .modchoosercontainer.noscroll {
   overflow-y: hidden; }
 
-.modchoosercontainer .optionscontainer {
+.modchooser .searchcontainer .searchbar .searchinput {
+  font-size: inherit;
+  border: 1px solid #dee2e6;
+  border-top-left-radius: .3rem;
+  border-bottom-left-radius: .3rem;
+  border-right: none; }
+
+.modchooser .searchcontainer .searchbar .searchbar-append {
+  align-items: center;
+  border: 1px solid #dee2e6;
+  border-left: none;
+  border-top-right-radius: .3rem;
+  border-bottom-right-radius: .3rem; }
+  .modchooser .searchcontainer .searchbar .searchbar-append i {
+    color: #868e96;
+    margin: 0;
+    vertical-align: middle; }
+  .modchooser .searchcontainer .searchbar .searchbar-append .clear i {
+    height: 23px;
+    width: 23px;
+    font-size: 23px;
+    pointer-events: none; }
+  .modchooser .searchcontainer .searchbar .searchbar-append .search-icon i {
+    height: 20px;
+    width: 20px;
+    font-size: 20px; }
+
+.modchoosercontainer .optionscontainer,
+.modchoosercontainer .searchresultitemscontainer {
   overflow-x: hidden; }
-  .modchoosercontainer .optionscontainer .option {
+  .modchoosercontainer .optionscontainer .option,
+  .modchoosercontainer .searchresultitemscontainer .option {
     flex-basis: 16%; }
-    .modchoosercontainer .optionscontainer .option .optionactions .optionaction {
+    .modchoosercontainer .optionscontainer .option .optionactions .optionaction,
+    .modchoosercontainer .searchresultitemscontainer .option .optionactions .optionaction {
       cursor: pointer;
       margin: 0.2rem;
       color: #868e96; }
-      .modchoosercontainer .optionscontainer .option .optionactions .optionaction i {
+      .modchoosercontainer .optionscontainer .option .optionactions .optionaction i,
+      .modchoosercontainer .searchresultitemscontainer .option .optionactions .optionaction i {
         margin: 0; }
-    .modchoosercontainer .optionscontainer .option .optioninfo a {
+    .modchoosercontainer .optionscontainer .option .optioninfo a,
+    .modchoosercontainer .searchresultitemscontainer .option .optioninfo a {
       color: #495057; }
-      .modchoosercontainer .optionscontainer .option .optioninfo a:hover {
+      .modchoosercontainer .optionscontainer .option .optioninfo a:hover,
+      .modchoosercontainer .searchresultitemscontainer .option .optioninfo a:hover {
         text-decoration: none; }
-      .modchoosercontainer .optionscontainer .option .optioninfo a .optionname {
+      .modchoosercontainer .optionscontainer .option .optioninfo a .optionname,
+      .modchoosercontainer .searchresultitemscontainer .option .optioninfo a .optionname {
         margin-top: 0.5em; }
-      .modchoosercontainer .optionscontainer .option .optioninfo a .optionicon .icon {
+      .modchoosercontainer .optionscontainer .option .optioninfo a .optionicon .icon,
+      .modchoosercontainer .searchresultitemscontainer .option .optioninfo a .optionicon .icon {
         margin: 0;
         padding: 0;
         width: 32px;
@@ -10707,7 +10742,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     background: #fff; }
 
 @media (max-width: 1199.98px) {
-  .modchoosercontainer .optionscontainer .option {
+  .modchoosercontainer .optionscontainer .option,
+  .modchoosercontainer .searchresultitemscontainer .option {
     flex-basis: 20%; } }
 
 @media (max-width: 575.98px) {
@@ -10719,11 +10755,13 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   .modchooser .modal-body .carousel-item,
   .modchooser .modal-body .optionsummary,
   .modchoosercontainer,
-  .optionscontainer {
+  .optionscontainer,
+  .searchresultitemscontainer {
     height: 100%; }
   .path-course-view .modal-dialog.modal-lg {
     margin: 0; }
-  .modchoosercontainer .optionscontainer .option {
+  .modchoosercontainer .optionscontainer .option,
+  .modchoosercontainer .searchresultitemscontainer .option {
     flex-basis: 25%; } }
 
 /* Form element: listing */
