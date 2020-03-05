@@ -63,6 +63,12 @@ if ($ADMIN->fulltree) {
                                                 PARAM_TEXT));
     }
 
+    $settings->add(new admin_setting_configtext('commerce_externalshop_link_timeout',
+                                            get_string('commerce_externalshop_link_timeout', 'block_iomad_commerce'),
+                                            get_string('commerce_externalshop_link_timeout', 'block_iomad_commerce'),
+                                            30,
+                                            PARAM_INT));
+
     $settings->add(new admin_setting_configtext('commerce_admin_firstname',
                                             get_string('commerce_admin_firstname', 'block_iomad_commerce'),
                                             get_string('commerce_admin_firstname_help', 'block_iomad_commerce'),
