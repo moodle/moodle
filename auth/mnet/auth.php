@@ -278,13 +278,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         if (isset($remoteuser->lang)) {
             $remoteuser->lang = clean_param(str_replace('_utf8', '', $remoteuser->lang), PARAM_LANG);
         }
-        if (empty($remoteuser->lang)) {
-            if (!empty($CFG->lang)) {
-                $remoteuser->lang = $CFG->lang;
-            } else {
-                $remoteuser->lang = 'en';
-            }
-        }
+
         $firsttime = false;
 
         // get the local record for the remote user

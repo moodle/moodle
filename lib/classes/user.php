@@ -658,7 +658,7 @@ class core_user {
      * @return void
      */
     protected static function fill_properties_cache() {
-        global $CFG;
+        global $CFG, $SESSION;
         if (self::$propertiescache !== null) {
             return;
         }
@@ -694,7 +694,8 @@ class core_user {
         $fields['city'] = array('type' => PARAM_TEXT, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->defaultcity);
         $fields['country'] = array('type' => PARAM_ALPHA, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->country,
                 'choices' => array_merge(array('' => ''), get_string_manager()->get_list_of_countries(true, true)));
-        $fields['lang'] = array('type' => PARAM_LANG, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->lang,
+        $fields['lang'] = array('type' => PARAM_LANG, 'null' => NULL_NOT_ALLOWED,
+                'default' => (!empty($CFG->autolangusercreation) && !empty($SESSION->lang)) ? $SESSION->lang : $CFG->lang,
                 'choices' => array_merge(array('' => ''), get_string_manager()->get_list_of_translations(false)));
         $fields['calendartype'] = array('type' => PARAM_PLUGIN, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->calendartype,
                 'choices' => array_merge(array('' => ''), \core_calendar\type_factory::get_list_of_calendar_types()));
