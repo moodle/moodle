@@ -50,3 +50,7 @@ $string['tcpsockethostdesc'] = 'Domain name of the ClamAV server';
 $string['tcpsocketport'] = 'TCP socket port';
 $string['tcpsocketportdesc'] = 'The port to use when connecting to ClamAV';
 $string['unknownerror'] = 'There was an unknown error with ClamAV.';
+$string['tries'] = 'Scanning attempts';
+$string['tries_desc'] = 'Number of attempts clamav will try when there is an error during scanning process';
+$string['tries_notice'] = 'Clamav scanning has tried {$a->tries} time(s).
+{$a->notice}';

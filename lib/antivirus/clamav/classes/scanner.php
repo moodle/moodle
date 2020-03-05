@@ -72,20 +72,28 @@ class scanner extends \core\antivirus\scanner {
 
         // We can do direct stream scanning if unixsocket or tcpsocket running methods are in use,
         // if not, use default process.
-        $runningmethod = $this->get_config('runningmethod');
-        switch ($runningmethod) {
-            case 'unixsocket':
-            case 'tcpsocket':
-                $return = $this->scan_file_execute_socket($file, $runningmethod);
-                break;
-            case 'commandline':
-                $return = $this->scan_file_execute_commandline($file);
-                break;
-            default:
-                // This should not happen.
-                debugging('Unknown running method.');
-                return self::SCAN_RESULT_ERROR;
-        }
+        $maxtries = get_config('antivirus_clamav', 'tries');
+        $tries = 0;
+        do {
+            $runningmethod = $this->get_config('runningmethod');
+            $tries++;
+            switch ($runningmethod) {
+                case 'unixsocket':
+                case 'tcpsocket':
+                    $return = $this->scan_file_execute_socket($file, $runningmethod);
+                    break;
+                case 'commandline':
+                    $return = $this->scan_file_execute_commandline($file);
+                    break;
+                default:
+                    // This should not happen.
+                    throw new \coding_exception('Unknown running method.');
+            }
+        } while ($return == self::SCAN_RESULT_ERROR && $tries < $maxtries);
+
+        $notice = get_string('tries_notice', 'antivirus_clamav',
+            ['tries' => $tries, 'notice' => $this->get_scanning_notice()]);
+        $this->set_scanning_notice($notice);
 
         if ($return === self::SCAN_RESULT_ERROR) {
             $this->message_admins($this->get_scanning_notice());
