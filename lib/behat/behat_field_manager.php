@@ -223,10 +223,7 @@ class behat_field_manager {
         // If the type is explictly set on the element pointed to by the label - use it.
         $fieldtype = $fieldnode->getAttribute('data-fieldtype');
         if ($fieldtype) {
-            if ($fieldtype == 'tags') {
-                return 'autocomplete';
-            }
-            return $fieldtype;
+            return self::normalise_fieldtype($fieldtype);
         }
 
         if (!empty($fieldnode->find('xpath', '/ancestor::*[@data-passwordunmaskid]'))) {
@@ -235,6 +232,12 @@ class behat_field_manager {
 
         // Fetch the parentnode only once.
         $parentnode = $fieldnode->getParent();
+
+        // Check the parent fieldtype before we check classes.
+        $fieldtype = $parentnode->getAttribute('data-fieldtype');
+        if ($fieldtype) {
+            return self::normalise_fieldtype($fieldtype);
+        }
 
         // We look for a parent node with 'felement' class.
         if ($class = $parentnode->getAttribute('class')) {
@@ -250,6 +253,20 @@ class behat_field_manager {
         }
 
         return self::get_field_node_type($parentnode, $session);
+    }
+
+    /**
+     * Normalise the field type.
+     *
+     * @param string $fieldtype
+     * @return string
+     */
+    protected static function normalise_fieldtype(string $fieldtype): string {
+        if ($fieldtype === 'tags') {
+            return 'autocomplete';
+        }
+
+        return $fieldtype;
     }
 
     /**
