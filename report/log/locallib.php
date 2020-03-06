@@ -376,7 +376,8 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
         $section = 0;
         $thissection = array();
         foreach ($modinfo->cms as $cm) {
-            if (!$cm->uservisible || !$cm->has_view()) {
+            // Exclude activities that aren't visible or have no view link (e.g. label). Account for folder being displayed inline.
+            if (!$cm->uservisible || (!$cm->has_view() && strcmp($cm->modname, 'folder') !== 0)) {
                 continue;
             }
             if ($cm->sectionnum > 0 and $section <> $cm->sectionnum) {
