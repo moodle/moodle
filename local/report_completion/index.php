@@ -394,7 +394,7 @@ if (empty($courseid)) {
     if ($courseid != 1) {
         $coursesql = " AND lit.courseid = :courseid AND lit.courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) . ") ";
     } else {
-        $coursesql = " AND lit.courseid IN (" . join(',', $company->get_menu_courses(true)) . ") ";
+        $coursesql = " AND lit.courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) . ") ";
     }
 
     // Set up the initial SQL for the form.
