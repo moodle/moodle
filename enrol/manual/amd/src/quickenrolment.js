@@ -28,8 +28,9 @@ define(['core/templates',
          'core/modal_factory',
          'core/modal_events',
          'core/fragment',
+         'core/pending',
        ],
-       function(Template, $, Str, Config, Notification, ModalFactory, ModalEvents, Fragment) {
+       function(Template, $, Str, Config, Notification, ModalFactory, ModalEvents, Fragment, Pending) {
 
     /** @type {Object} The list of selectors for the quick enrolment modal. */
     var SELECTORS = {
@@ -91,6 +92,7 @@ define(['core/templates',
             });
 
             modal.getRoot().on(ModalEvents.shown, function() {
+                var pendingPromise = new Pending('enrol_manual/quickenrolment:initModal:shown');
                 var bodyPromise = this.getBody();
                 bodyPromise.then(function(html) {
                     var stringIndex = $(html).find(SELECTORS.COHORTSELECT).length ? 0 : 1;
@@ -98,7 +100,8 @@ define(['core/templates',
 
                     return;
                 })
-                .fail(Notification.exception);
+                .then(pendingPromise.resolve)
+                .catch(Notification.exception);
 
                 modal.setBody(bodyPromise);
             }.bind(this));
