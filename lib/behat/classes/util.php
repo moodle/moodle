@@ -34,6 +34,7 @@ require_once(__DIR__ . '/../../filelib.php');
 require_once(__DIR__ . '/../../clilib.php');
 
 use Behat\Mink\Session;
+use Behat\Mink\Exception\ExpectationException;
 
 /**
  * Init/reset utilities for Behat database and dataroot
