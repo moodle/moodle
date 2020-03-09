@@ -107,6 +107,8 @@ function(
     var isResetting = true;
     // If the UI is currently sending a message.
     var isSendingMessage = false;
+    // If the UI is currently deleting a conversation.
+    var isDeletingConversationContent = false;
     // A buffer of messages to send.
     var sendMessageBuffer = [];
     // These functions which will be generated when this module is
@@ -558,7 +560,7 @@ function(
             var mostRecentMessage = messages.length ? messages[messages.length - 1] : null;
             var lastTimeCreated = mostRecentMessage ? mostRecentMessage.timeCreated : null;
 
-            if (lastTimeCreated && !isResetting && !isSendingMessage) {
+            if (lastTimeCreated && !isResetting && !isSendingMessage && !isDeletingConversationContent) {
                 // There may be multiple messages with the same time created value since
                 // the accuracy is only down to the second. The server will include these
                 // messages in the result (since it does a >= comparison on time from) so
@@ -893,6 +895,14 @@ function(
             }
         }
 
+        // Mark that we are deleting content from the  conversation to prevent updates of it.
+        isDeletingConversationContent = true;
+
+        // Stop polling for new messages to the open conversation.
+        if (newMessagesPollTimer) {
+            newMessagesPollTimer.stop();
+        }
+
         return deleteMessagesPromise.then(function() {
                 var newState = StateManager.removeMessagesById(viewState, messageIds);
                 newState = StateManager.removePendingDeleteMessagesById(newState, messageIds);
@@ -910,6 +920,7 @@ function(
                     PubSub.publish(MessageDrawerEvents.CONVERSATION_DELETED, newState.id);
                 }
 
+                isDeletingConversationContent = false;
                 return render(newState);
             })
             .catch(Notification.exception);
@@ -937,6 +948,14 @@ function(
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
         render(newState);
 
+        // Mark that we are deleting the conversation to prevent updates of it.
+        isDeletingConversationContent = true;
+
+        // Stop polling for new messages to the open conversation.
+        if (newMessagesPollTimer) {
+            newMessagesPollTimer.stop();
+        }
+
         return Repository.deleteConversation(viewState.loggedInUserId, viewState.id)
             .then(function() {
                 var newState = StateManager.removeMessages(viewState, viewState.messages);
@@ -944,6 +963,8 @@ function(
                 newState = StateManager.setPendingDeleteConversation(newState, false);
                 newState = StateManager.setLoadingConfirmAction(newState, false);
                 PubSub.publish(MessageDrawerEvents.CONVERSATION_DELETED, newState.id);
+
+                isDeletingConversationContent = false;
 
                 return render(newState);
             });
@@ -1132,10 +1153,11 @@ function(
                 return;
             })
             .catch(function(e) {
+                var errorMessage;
                 if (e.message) {
-                    var errorMessage =  $.Deferred().resolve(e.message).promise();
+                    errorMessage = $.Deferred().resolve(e.message).promise();
                 } else {
-                    var errorMessage =  Str.get_string('unknownerror', 'core');
+                    errorMessage = Str.get_string('unknownerror', 'core');
                 }
 
                 var handleFailedMessages = function(errorMessage) {
@@ -1211,8 +1233,6 @@ function(
 
     /**
      * Cancel edit mode (selecting the messages).
-     *
-     * @return {Promise} Renderer promise.
      */
     var cancelEditMode = function() {
         cancelRequest(getOtherUserId());
@@ -1249,6 +1269,8 @@ function(
                 renderable.deferred.resolve(true);
                 // Keep processing the buffer until it's empty.
                 processRenderBuffer(header, body, footer);
+
+                return;
             })
             .catch(function(error) {
                 isRendering = false;
@@ -1760,6 +1782,7 @@ function(
         renderBuffer = [];
         isResetting = true;
         isSendingMessage = false;
+        isDeletingConversationContent = false;
         sendMessageBuffer = [];
 
         var loggedInUserId = loggedInUserProfile.id;
