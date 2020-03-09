@@ -103,6 +103,8 @@ function(
     var isResetting = true;
     // If the UI is currently sending a message.
     var isSendingMessage = false;
+    // If the UI is currently deleting a conversation.
+    var isDeletingConversationContent = false;
     // These functions which will be generated when this module is
     // first called. See generateRenderFunction for details.
     var render = null;
@@ -550,7 +552,7 @@ function(
             var messages = viewState.messages;
             var mostRecentMessage = messages.length ? messages[messages.length - 1] : null;
 
-            if (mostRecentMessage && !isResetting && !isSendingMessage) {
+            if (mostRecentMessage && !isResetting && !isSendingMessage && !isDeletingConversationContent) {
                 // There may be multiple messages with the same time created value since
                 // the accuracy is only down to the second. The server will include these
                 // messages in the result (since it does a >= comparison on time from) so
@@ -873,6 +875,14 @@ function(
             deleteMessagesPromise = Repository.deleteMessages(viewState.loggedInUserId, messageIds);
         }
 
+        // Mark that we are deleting content from the  conversation to prevent updates of it.
+        isDeletingConversationContent = true;
+
+        // Stop polling for new messages to the open conversation.
+        if (newMessagesPollTimer) {
+            newMessagesPollTimer.stop();
+        }
+
         return deleteMessagesPromise.then(function() {
                 var newState = StateManager.removeMessagesById(viewState, messageIds);
                 newState = StateManager.removePendingDeleteMessagesById(newState, messageIds);
@@ -890,6 +900,7 @@ function(
                     PubSub.publish(MessageDrawerEvents.CONVERSATION_DELETED, newState.id);
                 }
 
+                isDeletingConversationContent = false;
                 return render(newState);
             });
     };
@@ -916,6 +927,14 @@ function(
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
         render(newState);
 
+        // Mark that we are deleting the conversation to prevent updates of it.
+        isDeletingConversationContent = true;
+
+        // Stop polling for new messages to the open conversation.
+        if (newMessagesPollTimer) {
+            newMessagesPollTimer.stop();
+        }
+
         return Repository.deleteConversation(viewState.loggedInUserId, viewState.id)
             .then(function() {
                 var newState = StateManager.removeMessages(viewState, viewState.messages);
@@ -923,6 +942,8 @@ function(
                 newState = StateManager.setPendingDeleteConversation(newState, false);
                 newState = StateManager.setLoadingConfirmAction(newState, false);
                 PubSub.publish(MessageDrawerEvents.CONVERSATION_DELETED, newState.id);
+
+                isDeletingConversationContent = false;
 
                 return render(newState);
             });
@@ -1012,7 +1033,6 @@ function(
      *
      * @param  {Number} conversationId The conversation to send to.
      * @param  {String} text Text to send.
-     * @return {Promise} Renderer promise.
      */
     var sendMessage = function(conversationId, text) {
         isSendingMessage = true;
@@ -1084,8 +1104,6 @@ function(
 
     /**
      * Cancel edit mode (selecting the messages).
-     *
-     * @return {Promise} Renderer promise.
      */
     var cancelEditMode = function() {
         cancelRequest(getOtherUserId());
@@ -1122,6 +1140,8 @@ function(
                 renderable.deferred.resolve(true);
                 // Keep processing the buffer until it's empty.
                 processRenderBuffer(header, body, footer);
+
+                return;
             })
             .catch(function(error) {
                 isRendering = false;
@@ -1520,6 +1540,7 @@ function(
         isRendering = false;
         renderBuffer = [];
         isSendingMessage = false;
+        isDeletingConversationContent = false;
 
         var loggedInUserId = loggedInUserProfile.id;
         var midnight = parseInt(body.attr('data-midnight'), 10);
