@@ -617,17 +617,20 @@ class gradebookservices extends service_base {
      * Updates the tag and resourceid values for a grade item coupled to an lti link instance.
      *
      * @param object $ltiinstance The lti instance to which the grade item is coupled to
-     * @param string|null $resourceid The resourceid to apply to the lineitem. Might be an empty string.
-     * @param string|null $tag The tag to apply to the lineitem. Might be an empty string.
+     * @param string|null $resourceid The resourceid to apply to the lineitem. If empty string which will be stored as null.
+     * @param string|null $tag The tag to apply to the lineitem. If empty string which will be stored as null.
      *
      */
     public static function update_coupled_gradebookservices(object $ltiinstance,
                                                             ?string $resourceid,
                                                             ?string $tag) : void {
         global $DB;
+
         if ($ltiinstance && $ltiinstance->typeid) {
             $gradeitem = $DB->get_record('grade_items', array('itemmodule' => 'lti', 'iteminstance' => $ltiinstance->id));
             if ($gradeitem) {
+                $resourceid = (isset($resourceid) && empty(trim($resourceid))) ? null : $resourceid;
+                $tag = (isset($tag) && empty(trim($tag))) ? null : $tag;
                 $gbs = self::find_ltiservice_gradebookservice_for_lineitem($gradeitem->id);
                 if ($gbs) {
                     $gbs->resourceid = $resourceid;
@@ -655,7 +658,7 @@ class gradebookservices extends service_base {
      * @param object $lti LTI Instance.
      */
     public function instance_added(object $lti): void {
-        self::update_coupled_gradebookservices($lti, $lti->lineitemresourceid ?? '', $lti->lineitemtag ?? '');
+        self::update_coupled_gradebookservices($lti, $lti->lineitemresourceid ?? null, $lti->lineitemtag ?? null);
     }
 
     /**
@@ -664,7 +667,7 @@ class gradebookservices extends service_base {
      * @param object $lti LTI Instance.
      */
     public function instance_updated(object $lti): void {
-        self::update_coupled_gradebookservices($lti, $lti->lineitemresourceid ?? '', $lti->lineitemtag ?? '');
+        self::update_coupled_gradebookservices($lti, $lti->lineitemresourceid ?? null, $lti->lineitemtag ?? null);
     }
 
     /**

@@ -59,7 +59,7 @@ function xmldb_ltiservice_gradebookservices_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2020020601) {
+    if ($oldversion < 2020042401) {
         // Define field typeid to be added to lti_tool_settings.
         $table = new xmldb_table('ltiservice_gradebookservices');
         $field = new xmldb_field('resourceid', XMLDB_TYPE_CHAR, "512", null, null, null, null);
@@ -70,16 +70,17 @@ function xmldb_ltiservice_gradebookservices_upgrade($oldversion) {
         }
 
         // Lti savepoint reached.
-        upgrade_plugin_savepoint(true, 2020020601, 'ltiservice', 'gradebookservices');
+        upgrade_plugin_savepoint(true, 2020042401, 'ltiservice', 'gradebookservices');
     }
 
-    if ($oldversion < 2020020602) {
+    if ($oldversion < 2020042402) {
         // Now that we have added the new column let's migrate it'
         // Prior implementation was storing the resourceid under the grade item idnumber, so moving it to lti_gradebookservices.
         // We only care for mod/lti grade items as manual columns would already have a matching gradebookservices record.
 
-        $DB->execute("INSERT INTO {ltiservice_gradebookservices} (gradeitemid, courseid, typeid, resourceid, baseurl)
-         SELECT gi.id, courseid, lti.typeid, gi.idnumber, t.baseurl
+        $DB->execute("INSERT INTO {ltiservice_gradebookservices}
+                (gradeitemid, courseid, typeid, ltilinkid, resourceid, baseurl, toolproxyid)
+         SELECT gi.id, courseid, lti.typeid, lti.id, gi.idnumber, t.baseurl, t.toolproxyid
            FROM {grade_items} gi
            JOIN {lti} lti ON lti.id=gi.iteminstance AND gi.itemtype='mod' AND gi.itemmodule='lti'
            JOIN {lti_types} t ON t.id = lti.typeid
@@ -89,10 +90,10 @@ function xmldb_ltiservice_gradebookservices_upgrade($oldversion) {
              AND gi.idnumber <> ''");
 
         // Lti savepoint reached.
-        upgrade_plugin_savepoint(true, 2020020602, 'ltiservice', 'gradebookservices');
+        upgrade_plugin_savepoint(true, 2020042402, 'ltiservice', 'gradebookservices');
     }
 
-    if ($oldversion < 2020020603) {
+    if ($oldversion < 2020042403) {
         // Here updating the resourceid of pre-existing lti_gradebookservices.
         $DB->execute("UPDATE {ltiservice_gradebookservices}
                          SET resourceid = (SELECT idnumber FROM {grade_items} WHERE id=gradeitemid)
@@ -103,7 +104,7 @@ function xmldb_ltiservice_gradebookservices_upgrade($oldversion) {
                          AND (resourceid is null OR resourceid = '')");
 
         // Lti savepoint reached.
-        upgrade_plugin_savepoint(true, 2020020603, 'ltiservice', 'gradebookservices');
+        upgrade_plugin_savepoint(true, 2020042403, 'ltiservice', 'gradebookservices');
     }
 
     return true;

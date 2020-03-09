@@ -498,6 +498,23 @@ function lti_get_jwt_claim_mapping() {
 }
 
 /**
+ * Return the type of the instance, using domain matching if no explicit type is set.
+ *
+ * @param  object $instance the external tool activity settings
+ * @return object|null
+ * @since  Moodle 3.9
+ */
+function lti_get_instance_type(object $instance) : ?object {
+    if (empty($instance->typeid)) {
+        if (!$tool = lti_get_tool_by_url_match($instance->toolurl, $instance->course)) {
+            $tool = lti_get_tool_by_url_match($instance->securetoolurl,  $instance->course);
+        }
+        return $tool;
+    }
+    return lti_get_type($instance->typeid);
+}
+
+/**
  * Return the launch data required for opening the external tool.
  *
  * @param  stdClass $instance the external tool activity settings
@@ -508,25 +525,13 @@ function lti_get_jwt_claim_mapping() {
 function lti_get_launch_data($instance, $nonce = '') {
     global $PAGE, $CFG, $USER;
 
-    if (empty($instance->typeid)) {
-        $tool = lti_get_tool_by_url_match($instance->toolurl, $instance->course);
-        if ($tool) {
-            $typeid = $tool->id;
-            $ltiversion = $tool->ltiversion;
-        } else {
-            $tool = lti_get_tool_by_url_match($instance->securetoolurl,  $instance->course);
-            if ($tool) {
-                $typeid = $tool->id;
-                $ltiversion = $tool->ltiversion;
-            } else {
-                $typeid = null;
-                $ltiversion = LTI_VERSION_1;
-            }
-        }
-    } else {
-        $typeid = $instance->typeid;
-        $tool = lti_get_type($typeid);
+    $tool = lti_get_instance_type($instance);
+    if ($tool) {
+        $typeid = $tool->id;
         $ltiversion = $tool->ltiversion;
+    } else {
+        $typeid = null;
+        $ltiversion = LTI_VERSION_1;
     }
 
     if ($typeid) {

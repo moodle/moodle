@@ -206,7 +206,34 @@ class restore_ltiservice_gradebookservices_subplugin extends restore_subplugin {
             $newgradeitemid = $this->get_mappingid('grade_item', $oldgradeitemid, 0);
             if ($newgradeitemid > 0) {
                 $gbs->gradeitemid = $newgradeitemid;
+                if (!isset($gbs->resourceid)) {
+                    // Before 3.9 resourceid was stored in grade_item->idnumber.
+                    $gbs->resourceid = $DB->get_field_select('grade_items', 'idnumber', "id=:id", ['id' => $newgradeitemid]);
+                }
                 $DB->update_record('ltiservice_gradebookservices', $gbs);
+            }
+        }
+        // Pre 3.9 backups did not include a gradebookservices record. We create one here if idnumber is set.
+        $gradeitems = $DB->get_records('grade_items', array('itemtype' => 'mod', 'itemmodule' => 'lti', 'courseid' => $courseid));
+        foreach ($gradeitems as $gi) {
+            if (isset($gi->idnumber) && !empty(trim($gi->idnumber))) {
+                $gbs = $DB->get_records('ltiservice_gradebookservices', ['gradeitemid' => $gi->id]);
+                if (empty($gbs)  && !empty($gi->iteminstance)) {
+                    // We did not find an entry for an LTI grade item with an idnumber, so let's create a gbs entry.
+                    if ($instance = $DB->get_record('lti', array('id' => $gi->iteminstance))) {
+                        if ($tool = lti_get_instance_type($instance)) {
+                            $DB->insert_record('ltiservice_gradebookservices', (object) array(
+                                'gradeitemid' => $gi->id,
+                                'courseid' => $courseid,
+                                'toolproxyid' => $tool->toolproxyid,
+                                'ltilinkid' => $gi->iteminstance,
+                                'typeid' => $tool->id,
+                                'baseurl' => $tool->baseurl,
+                                'resourceid' => $gi->idnumber
+                            ));
+                        }
+                    }
+                }
             }
         }
     }
