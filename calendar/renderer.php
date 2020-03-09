@@ -292,12 +292,16 @@ class core_calendar_renderer extends plugin_renderer_base {
         $courseurl = new moodle_url($returnurl);
         $courseurl->remove_params('course');
 
-        if ($label === null) {
+        if (empty($label)) {
             $label = get_string('listofcourses');
+            $labelclass = 'sr-only';
+        } else {
+            $labelclass = 'mr-1';
         }
 
-        $select = html_writer::label($label, 'course', false, ['class' => 'mr-1']);
-        $select .= html_writer::select($courseoptions, 'course', $selected, false, ['class' => 'cal_courses_flt']);
+        $select = html_writer::label($label, 'course', false, ['class' => $labelclass]);
+        $select .= html_writer::select($courseoptions, 'course', $selected, false,
+                ['class' => 'cal_courses_flt', 'id' => 'course']);
 
         return $select;
     }
