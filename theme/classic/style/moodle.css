@@ -10875,32 +10875,12 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .modchoosercontainer.noscroll {
   overflow-y: hidden; }
 
-.modchooser .searchcontainer .searchbar .searchinput {
-  font-size: inherit;
-  border: 1px solid #dee2e6;
-  border-top-left-radius: .3rem;
-  border-bottom-left-radius: .3rem;
-  border-right: none; }
-
-.modchooser .searchcontainer .searchbar .searchbar-append {
-  align-items: center;
-  border: 1px solid #dee2e6;
-  border-left: none;
-  border-top-right-radius: .3rem;
-  border-bottom-right-radius: .3rem; }
-  .modchooser .searchcontainer .searchbar .searchbar-append i {
+.modchooser .searchcontainer .searchbar .input-group-append {
+  align-items: center; }
+  .modchooser .searchcontainer .searchbar .input-group-append i {
     color: #868e96;
     margin: 0;
     vertical-align: middle; }
-  .modchooser .searchcontainer .searchbar .searchbar-append .clear i {
-    height: 23px;
-    width: 23px;
-    font-size: 23px;
-    pointer-events: none; }
-  .modchooser .searchcontainer .searchbar .searchbar-append .search-icon i {
-    height: 20px;
-    width: 20px;
-    font-size: 20px; }
 
 .modchoosercontainer .optionscontainer,
 .modchoosercontainer .searchresultitemscontainer {

@@ -1530,44 +1530,13 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     overflow-y: hidden;
 }
 
-.modchooser .searchcontainer .searchbar {
+.modchooser .searchcontainer .searchbar .input-group-append {
+    align-items: center;
 
-    .searchinput {
-        font-size: inherit;
-        border: 1px solid #dee2e6;
-        border-top-left-radius: .3rem;
-        border-bottom-left-radius: .3rem;
-        border-right: none;
-    }
-
-    .searchbar-append {
-        align-items: center;
-        border: 1px solid #dee2e6;
-        border-left: none;
-        border-top-right-radius: .3rem;
-        border-bottom-right-radius: .3rem;
-
-        i {
-            color: #868e96;
-            margin: 0;
-            vertical-align: middle;
-        }
-
-        .clear {
-            i {
-                height: 23px;
-                width: 23px;
-                font-size: 23px;
-                pointer-events: none;
-            }
-        }
-        .search-icon {
-            i {
-                height: 20px;
-                width: 20px;
-                font-size: 20px;
-            }
-        }
+    i {
+        color: #868e96;
+        margin: 0;
+        vertical-align: middle;
     }
 }
 

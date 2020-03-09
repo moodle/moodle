@@ -83,7 +83,7 @@ export default {
         tab: 'a[data-toggle="tab"]',
         activetab: 'a[data-toggle="tab"][aria-selected="true"]',
         visibletabs: 'a[data-toggle="tab"]:not(.d-none)',
-        searchicon: '.searchbar-append .search-icon',
-        clearsearch: '.searchbar-append .clear'
+        searchicon: '.input-group-append .search-icon',
+        clearsearch: '.input-group-append .clear'
     },
 };
