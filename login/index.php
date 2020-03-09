@@ -93,6 +93,9 @@ if ($company = $DB->get_record('company', array('hostname' => $_SERVER["SERVER_N
     $SESSION->currenteditingcompany = $company->id;
     // Set the page theme.
     $SESSION->theme = $company->theme;
+    $SESSION->company = $company;
+    $wantedcompanyid = $company->id;
+    $wantedcompanyshort = $company->shortname;
 } else {
     $hascompanybyurl = false;
 }

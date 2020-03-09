@@ -813,7 +813,7 @@ function initialise_cfg() {
  * setup.php.
  */
 function initialise_fullme() {
-    global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT;
+    global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT, $DB;
 
     // Detect common config error.
     if (substr($CFG->wwwroot, -1) == '/') {
@@ -824,6 +824,15 @@ function initialise_fullme() {
         initialise_fullme_cli();
         return;
     }
+
+    // IOMAD - Set the theme if the server hostname matches one of ours.
+    if(!CLI_SCRIPT){
+        if ($company = $DB->get_record('company', array('hostname' => $_SERVER['SERVER_NAME']))) {
+            $CFG->wwwroot   = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER["SERVER_NAME"];
+
+        }
+    }
+
     if (!empty($CFG->overridetossl)) {
         if (strpos($CFG->wwwroot, 'http://') === 0) {
             $CFG->wwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
