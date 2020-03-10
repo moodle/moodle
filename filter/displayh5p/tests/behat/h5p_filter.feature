@@ -35,13 +35,25 @@ Feature: Render H5P content using filters
     Then I should see "Lorum ipsum"
 
   @javascript
-  Scenario: Add an external H5P content URL in a link. Shouldn't be rendered.
+  Scenario: Add an external H5P content URL in a link with the URL. Should be rendered.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "PageName1"
     And I navigate to "Edit settings" in current page administration
 #   This content won't be displayed, so this scenario shouldn't be labeled as external.
-    And I set the field "Page content" to "<a href='https://moodle.h5p.com/content/1290772960722742119/embed'>Go to https://moodle.h5p.com/content/1290772960722742119/embed</a>"
+    And I set the field "Page content" to "<a href='https://moodle.h5p.com/content/1290772960722742119/embed'>https://moodle.h5p.com/content/1290772960722742119/embed</a>"
+    When I click on "Save and display" "button"
+    And I wait until the page is ready
+    And I switch to "h5p-iframe" class iframe
+    Then I should see "Lorum ipsum"
+
+  Scenario: Add an external H5P content URL in a link with text. Shouldn't be rendered.
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "PageName1"
+    And I navigate to "Edit settings" in current page administration
+#   This content won't be displayed, so this scenario shouldn't be labeled as external.
+    And I set the field "Page content" to "<a href='https://moodle.h5p.com/content/1290772960722742119/embed'>Here you are the content</a>"
     When I click on "Save and display" "button"
     And I wait until the page is ready
     Then ".h5p-iframe" "css_element" should not exist
