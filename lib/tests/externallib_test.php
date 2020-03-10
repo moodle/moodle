@@ -511,7 +511,7 @@ class core_externallib_testcase extends advanced_testcase {
 
 
     public function test_call_external_function() {
-        global $PAGE, $COURSE;
+        global $PAGE, $COURSE, $CFG;
 
         $this->resetAfterTest(true);
 
@@ -546,6 +546,16 @@ class core_externallib_testcase extends advanced_testcase {
 
         $this->assertSame($beforepage, $PAGE);
         $this->assertSame($beforecourse, $COURSE);
+
+        // Test a function that triggers a PHP exception.
+        require_once($CFG->dirroot . '/lib/tests/fixtures/test_external_function_throwable.php');
+
+        // Call our test function.
+        $result = test_external_function_throwable::call_external_function('core_throw_exception', array(), false);
+
+        $this->assertTrue($result['error']);
+        $this->assertArrayHasKey('exception', $result);
+        $this->assertEquals($result['exception']->message, 'Exception - Modulo by zero');
     }
 
     /**
