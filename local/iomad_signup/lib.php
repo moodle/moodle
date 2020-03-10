@@ -87,8 +87,10 @@ function local_iomad_signup_user_created($user) {
         }
 	$DB->update_record('user', $user);
         profile_save_data($user);
-    } else if (!empty($CFG->local_iomad_signup_company)) {
     }
+
+    // Force the company theme in case it's not already been done.
+    $DB->set_field('user', 'theme', $company->get_theme(), array('id' => $user->id));
 
     // Do we have a role to assign?
     if (!empty($CFG->local_iomad_signup_role)) {
