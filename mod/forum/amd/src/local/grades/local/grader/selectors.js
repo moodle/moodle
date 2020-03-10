@@ -36,6 +36,7 @@ export default {
     buttons: {
         toggleFullscreen: getDataSelector('action', 'togglefullscreen'),
         closeGrader: getDataSelector('action', 'closegrader'),
+        collapseGradingDrawer: getDataSelector('action', 'collapse-grading-drawer'),
         saveGrade: getDataSelector('action', 'savegrade'),
         selectUser: getDataSelector('action', 'select-user'),
         toggleSearch: getDataSelector('action', 'toggle-search')
@@ -45,6 +46,7 @@ export default {
         moduleContainer: getDataSelector('region', 'module_content_container'),
         moduleReplace: getDataSelector('region', 'module_content'),
         pickerRegion: getDataSelector('region', 'user_picker'),
+        gradingInfoContainer: getDataSelector('region', 'grading-info-container'),
         gradingPanel: getDataSelector('region', 'grade'),
         gradingPanelContainer: getDataSelector('region', 'grading-panel-container'),
         gradingPanelErrors: getDataSelector('region', 'grade-errors'),
