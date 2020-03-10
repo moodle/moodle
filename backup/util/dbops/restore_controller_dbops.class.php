@@ -282,7 +282,14 @@ abstract class restore_controller_dbops extends restore_dbops {
             if ($plan->setting_exists($settingname)) {
                 $setting = $plan->get_setting($settingname);
                 $value = self::get_setting_default($config, $setting);
-                $locked = (get_config('restore', $config . '_locked') == true);
+                $locked = (get_config('restore',$config . '_locked') == true);
+
+                // Use the original value when this is an import and the setting is unlocked.
+                if ($controller->get_mode() == backup::MODE_IMPORT && $controller->get_interactive()) {
+                    if (!$uselocks || !$locked) {
+                        $value = $setting->get_value();
+                    }
+                }
 
                 // We can only update the setting if it isn't already locked by config or permission.
                 if ($setting->get_status() != base_setting::LOCKED_BY_CONFIG

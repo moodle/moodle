@@ -956,6 +956,52 @@ class core_backup_moodle2_testcase extends advanced_testcase {
     }
 
     /**
+     * Test restoring courses based on the backup plan. Primarily used with
+     * the import functionality
+     */
+    public function test_restore_course_using_plan_defaults() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $CFG->enableglobalsearch = true;
+
+        // Set admin config setting so that activities are not restored by default.
+        set_config('restore_general_activities', 0, 'restore');
+
+        // Create a course.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $course2 = $generator->create_course();
+        $course3 = $generator->create_course();
+
+        // Add a forum.
+        $forum = $generator->create_module('forum', ['course' => $course->id]);
+
+        // Backup course...
+        $CFG->backup_file_logger_level = backup::LOG_NONE;
+        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id,
+            backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_IMPORT,
+            $USER->id);
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        // Restore it on top of course2 (should duplicate the forum).
+        $rc = new restore_controller($backupid, $course2->id,
+            backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id,
+            backup::TARGET_EXISTING_ADDING, null);
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Get the forums now on the old course.
+        $modinfo = get_fast_modinfo($course2->id);
+        $forums = $modinfo->get_instances_of('forum');
+        $this->assertCount(0, $forums);
+    }
+
+    /**
      * The Question category hierarchical structure was changed in Moodle 3.5.
      * From 3.5, all question categories in each context are a child of a single top level question category for that context.
      * This test ensures that both Moodle 3.4 and 3.5 backups can still be correctly restored.
