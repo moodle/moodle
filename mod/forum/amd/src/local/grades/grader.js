@@ -35,6 +35,8 @@ import {debounce} from 'core/utils';
 import {fillInitialValues} from 'core_grades/grades/grader/gradingpanel/comparison';
 import * as Modal from 'core/modal_factory';
 import * as ModalEvents from 'core/modal_events';
+import {subscribe} from 'core/pubsub';
+import DrawerEvents from 'core/drawer_events';
 
 const templateNames = {
     grader: {
@@ -277,6 +279,35 @@ const registerEventListeners = (graderLayout, userPicker, saveGradeFunction, use
         const users = searchForUsers(userList, searchInput.value);
         renderSearchResults(searchResultsContainer, users);
     }, 300));
+
+    // Remove the right margin of the content container when the grading panel is hidden so that it expands to full-width.
+    subscribe(DrawerEvents.DRAWER_HIDDEN, (drawerRoot) => {
+        const gradingPanel = drawerRoot[0];
+        if (gradingPanel.querySelector(Selectors.regions.gradingPanel)) {
+            setContentContainerMargin(graderContainer, 0);
+        }
+    });
+
+    // Bring back the right margin of the content container when the grading panel is shown to give space for the grading panel.
+    subscribe(DrawerEvents.DRAWER_SHOWN, (drawerRoot) => {
+        const gradingPanel = drawerRoot[0];
+        if (gradingPanel.querySelector(Selectors.regions.gradingPanel)) {
+            setContentContainerMargin(graderContainer, gradingPanel.offsetWidth);
+        }
+    });
+};
+
+/**
+ * Adjusts the right margin of the content container.
+ *
+ * @param {HTMLElement} graderContainer The container for the grader app.
+ * @param {Number} rightMargin The right margin value.
+ */
+const setContentContainerMargin = (graderContainer, rightMargin) => {
+    const contentContainer = graderContainer.querySelector(Selectors.regions.moduleContainer);
+    if (contentContainer) {
+        contentContainer.style.marginRight = `${rightMargin}px`;
+    }
 };
 
 /**
