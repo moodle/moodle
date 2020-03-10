@@ -158,6 +158,16 @@ const showUserSearchInput = (toggleSearchButton, searchContainer, searchInput) =
     toggleSearchButton.setAttribute('aria-expanded', 'true');
     toggleSearchButton.classList.add('expand');
     toggleSearchButton.classList.remove('collapse');
+
+    // Hide the grading info container from screen reader.
+    const gradingInfoContainer = searchContainer.parentElement.querySelector(Selectors.regions.gradingInfoContainer);
+    gradingInfoContainer.setAttribute('aria-hidden', 'true');
+
+    // Hide the collapse grading drawer button from screen reader.
+    const collapseGradingDrawer = searchContainer.parentElement.querySelector(Selectors.buttons.collapseGradingDrawer);
+    collapseGradingDrawer.setAttribute('aria-hidden', 'true');
+    collapseGradingDrawer.setAttribute('tabindex', '-1');
+
     searchInput.focus();
 };
 
@@ -174,6 +184,16 @@ const hideUserSearchInput = (toggleSearchButton, searchContainer, searchInput) =
     toggleSearchButton.classList.add('collapse');
     toggleSearchButton.classList.remove('expand');
     toggleSearchButton.focus();
+
+    // Show the grading info container to screen reader.
+    const gradingInfoContainer = searchContainer.parentElement.querySelector(Selectors.regions.gradingInfoContainer);
+    gradingInfoContainer.removeAttribute('aria-hidden');
+
+    // Show the collapse grading drawer button from screen reader.
+    const collapseGradingDrawer = searchContainer.parentElement.querySelector(Selectors.buttons.collapseGradingDrawer);
+    collapseGradingDrawer.removeAttribute('aria-hidden');
+    collapseGradingDrawer.setAttribute('tabindex', '0');
+
     searchInput.value = '';
 };
 
