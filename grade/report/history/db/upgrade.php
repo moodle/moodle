@@ -15,16 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details for the grade history
+ * Grade overview report upgrade steps.
  *
  * @package    gradereport_history
- * @copyright  2013 NetSpot Pty Ltd (https://www.netspot.com.au)
- * @author     Adam Olley <adam.olley@netspot.com.au>
+ * @copyright  2020 Michael Hawkins <michaelh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019111801;
-$plugin->requires  = 2019111200;
-$plugin->component = 'gradereport_history';
+/**
+ * Function to upgrade grade history report.
+ *
+ * @param int $oldversion the version we are upgrading from
+ * @return bool result
+ */
+function xmldb_gradereport_history_upgrade($oldversion) {
+
+    if ($oldversion < 2019111801) {
+        $perpageconfig = get_config('moodle', 'grade_report_historyperpage');
+
+        // For existing installations with a non-integer 'per page' config, update the value to the default.
+        if (!empty($perpageconfig) && filter_var($perpageconfig, FILTER_VALIDATE_INT) === false) {
+            set_config('grade_report_historyperpage', 50);
+        }
+
+        upgrade_plugin_savepoint(true, 2019111801, 'gradereport', 'history');
+    }
+
+    return true;
+}
