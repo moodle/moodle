@@ -362,6 +362,8 @@ echo '</div>';  // Userlist.
 
 $enrolrenderer = $PAGE->get_renderer('core_enrol');
 echo '<div class="float-right">';
+// Need to re-generate the buttons to avoid having elements with duplicate ids on the page.
+$enrolbuttons = $manager->get_manual_enrol_buttons();
 foreach ($enrolbuttons as $enrolbutton) {
     echo $enrolrenderer->render($enrolbutton);
 }
