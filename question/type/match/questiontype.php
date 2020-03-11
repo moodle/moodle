@@ -124,8 +124,7 @@ class qtype_match extends question_type {
         $question->right = array();
 
         foreach ($questiondata->options->subquestions as $matchsub) {
-            $ans = $matchsub->answertext;
-            $key = array_search($matchsub->answertext, $question->choices);
+            $key = array_search($matchsub->answertext, $question->choices, true);
             if ($key === false) {
                 $key = $matchsub->id;
                 $question->choices[$key] = $matchsub->answertext;

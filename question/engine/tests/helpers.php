@@ -409,7 +409,7 @@ class test_question_maker {
      * Add some standard overall feedback to a question. You need to use these
      * specific feedback strings for the corresponding contains_..._feedback
      * methods in {@link qbehaviour_walkthrough_test_base} to works.
-     * @param question_definition $q the question to add the feedback to.
+     * @param question_definition|stdClass $q the question to add the feedback to.
      */
     public static function set_standard_combined_feedback_fields($q) {
         $q->correctfeedback = self::STANDARD_OVERALL_CORRECT_FEEDBACK;
