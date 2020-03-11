@@ -141,10 +141,17 @@ class content_item_service {
 
         $ufservice = \core_favourites\service_factory::get_service_for_user_context($usercontext);
         $favourites = [];
-        foreach ($itemtypes as $itemtype) {
-            $favs = $ufservice->find_favourites_by_type(self::COMPONENT, $itemtype);
-            $favobj = (object) ['itemtype' => $itemtype, 'ids' => array_column($favs, 'itemid')];
-            $favourites[] = $favobj;
+        $favs = $ufservice->find_all_favourites(self::COMPONENT, $itemtypes);
+        $favsreduced = array_reduce($favs, function($carry, $item) {
+            $carry[$item->itemtype][$item->itemid] = 0;
+            return $carry;
+        }, []);
+
+        foreach ($itemtypes as $type) {
+            $favourites[] = (object) [
+                'itemtype' => $type,
+                'ids' => isset($favsreduced[$type]) ? array_keys($favsreduced[$type]) : []
+            ];
         }
         return $favourites;
     }

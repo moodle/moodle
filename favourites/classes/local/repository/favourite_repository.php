@@ -184,7 +184,7 @@ class favourite_repository implements favourite_repository_interface {
     /**
      * Return all items matching the supplied criteria (a [key => value,..] list).
      *
-     * @param array $criteria the list of key/value criteria pairs.
+     * @param array $criteria the list of key/value(s) criteria pairs.
      * @param int $limitfrom optional pagination control for returning a subset of records, starting at this point.
      * @param int $limitnum optional pagination control for returning a subset comprising this many records.
      * @return array the list of favourites matching the criteria.
@@ -192,7 +192,22 @@ class favourite_repository implements favourite_repository_interface {
      */
     public function find_by(array $criteria, int $limitfrom = 0, int $limitnum = 0) : array {
         global $DB;
-        $records = $DB->get_records($this->favouritetable, $criteria, '', '*', $limitfrom, $limitnum);
+        $conditions = [];
+        $params = [];
+        foreach ($criteria as $field => $value) {
+            if (is_array($value) && count($value)) {
+                list($insql, $inparams) = $DB->get_in_or_equal($value, SQL_PARAMS_NAMED);
+                $conditions[] = "$field $insql";
+                $params = array_merge($params, $inparams);
+            } else {
+                $conditions[] = "$field = :$field";
+                $params = array_merge($params, [$field => $value]);
+            }
+        }
+
+        $records = $DB->get_records_select($this->favouritetable, implode(' AND ', $conditions), $params,
+            '', '*', $limitfrom, $limitnum);
+
         return $this->get_list_of_favourites_from_records($records);
     }
 
