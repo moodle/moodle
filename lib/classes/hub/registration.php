@@ -58,6 +58,8 @@ class registration {
         ],
         // Analytics stats added in Moodle 3.7.
         2019022200 => ['analyticsenabledmodels', 'analyticspredictions', 'analyticsactions', 'analyticsactionsnotuseful'],
+        // Active users stats added in Moodle 3.9.
+        2020022600 => ['activeusers', 'activeparticipantnumberaverage'],
     ];
 
     /** @var Site privacy: not displayed */
@@ -168,6 +170,7 @@ class registration {
         // Statistical data.
         $siteinfo['courses'] = $DB->count_records('course') - 1;
         $siteinfo['users'] = $DB->count_records('user', array('deleted' => 0));
+        $siteinfo['activeusers'] = $DB->count_records_select('user', 'deleted = ? AND lastlogin > ?', [0, time() - DAYSECS * 30]);
         $siteinfo['enrolments'] = $DB->count_records('role_assignments');
         $siteinfo['posts'] = $DB->count_records('forum_posts');
         $siteinfo['questions'] = $DB->count_records('question');
@@ -175,6 +178,7 @@ class registration {
         $siteinfo['badges'] = $DB->count_records_select('badge', 'status <> ' . BADGE_STATUS_ARCHIVED);
         $siteinfo['issuedbadges'] = $DB->count_records('badge_issued');
         $siteinfo['participantnumberaverage'] = average_number_of_participants();
+        $siteinfo['activeparticipantnumberaverage'] = average_number_of_participants(true, time() - DAYSECS * 30);
         $siteinfo['modulenumberaverage'] = average_number_of_courses_modules();
 
         // Version and url.
@@ -229,6 +233,7 @@ class registration {
             'moodlerelease' => get_string('sitereleasenum', 'hub', $moodlerelease),
             'courses' => get_string('coursesnumber', 'hub', $siteinfo['courses']),
             'users' => get_string('usersnumber', 'hub', $siteinfo['users']),
+            'activeusers' => get_string('activeusersnumber', 'hub', $siteinfo['activeusers']),
             'enrolments' => get_string('roleassignmentsnumber', 'hub', $siteinfo['enrolments']),
             'posts' => get_string('postsnumber', 'hub', $siteinfo['posts']),
             'questions' => get_string('questionsnumber', 'hub', $siteinfo['questions']),
@@ -237,6 +242,8 @@ class registration {
             'issuedbadges' => get_string('issuedbadgesnumber', 'hub', $siteinfo['issuedbadges']),
             'participantnumberaverage' => get_string('participantnumberaverage', 'hub',
                 format_float($siteinfo['participantnumberaverage'], 2)),
+            'activeparticipantnumberaverage' => get_string('activeparticipantnumberaverage', 'hub',
+                format_float($siteinfo['activeparticipantnumberaverage'], 2)),
             'modulenumberaverage' => get_string('modulenumberaverage', 'hub',
                 format_float($siteinfo['modulenumberaverage'], 2)),
             'mobileservicesenabled' => get_string('mobileservicesenabled', 'hub', $mobileservicesenabled),
