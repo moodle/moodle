@@ -40,7 +40,6 @@ class qtype_match_test_helper extends question_test_helper {
         return array('foursubq');
     }
 
-
     /**
      * Makes a match question about completing two blanks in some text.
      * @return object the question definition data, as it might be returned from
@@ -126,6 +125,38 @@ class qtype_match_test_helper extends question_test_helper {
         $q->noanswers = 4;
 
         return $q;
+    }
+
+    /**
+     * Makes a matching question to classify 'Dog', 'Frog', 'Toad' and 'Cat' as
+     * 'Mammal', 'Amphibian' or 'Insect'.
+     * defaultmark 1. Stems are shuffled by default.
+     * @return qtype_match_question
+     */
+    public static function make_match_question_foursubq() {
+        question_bank::load_question_definition_classes('match');
+        $match = new qtype_match_question();
+        test_question_maker::initialise_a_question($match);
+        $match->name = 'Matching question';
+        $match->questiontext = 'Classify the animals.';
+        $match->generalfeedback = 'Frogs and toads are amphibians, the others are mammals.';
+        $match->qtype = question_bank::get_qtype('match');
+
+        $match->shufflestems = 1;
+
+        test_question_maker::set_standard_combined_feedback_fields($match);
+
+        // Using unset to get 1-based arrays.
+        $match->stems = array('', 'Dog', 'Frog', 'Toad', 'Cat');
+        $match->stemformat = array('', FORMAT_HTML, FORMAT_HTML, FORMAT_HTML, FORMAT_HTML);
+        $match->choices = array('', 'Mammal', 'Amphibian', 'Insect');
+        $match->right = array('', 1, 2, 2, 1);
+        unset($match->stems[0]);
+        unset($match->stemformat[0]);
+        unset($match->choices[0]);
+        unset($match->right[0]);
+
+        return $match;
     }
 
 }
