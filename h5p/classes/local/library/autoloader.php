@@ -62,7 +62,8 @@ class autoloader {
         $handlers = self::get_all_handlers();
         if (!empty($handlers)) {
             // The default handler will be the first in the list.
-            $default = array_shift($handlers);
+            $keys = array_keys($handlers);
+            $default = array_shift($keys);
         }
 
         return $default;
