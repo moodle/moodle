@@ -25,7 +25,7 @@
 
 namespace core_h5p;
 
-use core_h5p\autoloader;
+use core_h5p\local\library\autoloader;
 
 defined('MOODLE_INTERNAL') || die();
 

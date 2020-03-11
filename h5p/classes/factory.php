@@ -27,11 +27,12 @@ namespace core_h5p;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_h5p\framework as framework;
-use \core_h5p\core as core;
-use \H5PStorage as storage;
-use \H5PValidator as validator;
-use \H5PContentValidator as content_validator;
+use core_h5p\local\library\autoloader;
+use core_h5p\framework;
+use core_h5p\core;
+use H5PStorage as storage;
+use H5PValidator as validator;
+use H5PContentValidator as content_validator;
 
 /**
  * H5P factory class.
@@ -42,6 +43,9 @@ use \H5PContentValidator as content_validator;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class factory {
+
+    /** @var \core_h5p\local\library\autoloader The autoloader */
+    protected $autoloader;
 
     /** @var \core_h5p\core The Moodle H5PCore implementation */
     protected $core;
@@ -63,7 +67,17 @@ class factory {
      */
     public function __construct() {
         // Loading classes we need from H5P third party library.
+        $this->autoloader = new autoloader();
         autoloader::register();
+    }
+
+    /**
+     * Returns an instance of the \core_h5p\local\library\autoloader class.
+     *
+     * @return \core_h5p\local\library\autoloader
+     */
+    public function get_autoloader(): autoloader {
+        return $this->autoloader;
     }
 
     /**

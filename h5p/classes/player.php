@@ -26,6 +26,8 @@ namespace core_h5p;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_h5p\local\library\autoloader;
+
 /**
  * H5P player class, for displaying any local H5P content.
  *
@@ -598,13 +600,15 @@ class player {
         $cachebuster = $this->get_cache_buster();
 
         // Use relative URL to support both http and https.
-        $liburl = $CFG->wwwroot . '/lib/h5p/';
+        $liburl = autoloader::get_h5p_core_library_url()->out();
         $relpath = '/' . preg_replace('/^[^:]+:\/\/[^\/]+\//', '', $liburl);
 
         // Add core stylesheets.
         foreach (core::$styles as $style) {
             $settings['core']['styles'][] = $relpath . $style . $cachebuster;
-            $this->cssrequires[] = new \moodle_url($liburl . $style . $cachebuster);
+            $this->cssrequires[] = autoloader::get_h5p_core_library_url($style, [
+                'ver' => $cachebuster,
+            ]);
         }
         // Add core JavaScript.
         foreach (core::get_scripts() as $script) {
@@ -687,7 +691,7 @@ class player {
             'crossorigin' => null,
             'libraryConfig' => $this->core->h5pF->getLibraryConfig(),
             'pluginCacheBuster' => $this->get_cache_buster(),
-            'libraryUrl' => $basepath . 'lib/h5p/js',
+            'libraryUrl' => autoloader::get_h5p_core_library_url('js'),
             'moodleLibraryPaths' => $this->core->get_dependency_roots($this->h5pid),
         );
 
@@ -715,7 +719,7 @@ class player {
         global $OUTPUT;
 
         $template = new \stdClass();
-        $template->resizeurl = new \moodle_url('/lib/h5p/js/h5p-resizer.js');
+        $template->resizeurl = autoloader::get_h5p_core_library_url('js/h5p-resizer.js');
 
         return $OUTPUT->render_from_template('core_h5p/h5presize', $template);
     }

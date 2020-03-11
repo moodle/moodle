@@ -23,6 +23,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use core_h5p\local\library\autoloader;
+
 /**
  * Display H5P filter
  *
@@ -177,7 +179,7 @@ class filter_displayh5p extends moodle_text_filter {
 
         // We want to request the resizing script only once.
         if (self::$loadresizerjs) {
-            $resizerurl = new moodle_url('/lib/h5p/js/h5p-resizer.js');
+            $resizerurl = autoloader::get_h5p_core_library_url('js/h5p-resizer.js');
             $tagend .= '<script src="' . $resizerurl->out() . '"></script>';
             self::$loadresizerjs = false;
         }

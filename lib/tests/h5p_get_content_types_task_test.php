@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_h5p\autoloader;
+use core_h5p\local\library\autoloader;
 use core_h5p\h5p_test_factory;
 
 defined('MOODLE_INTERNAL') || die();

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>joubel/core</location>
+    <name>h5p-php-library</name>
+    <license>GPL-3.0</license>
+    <version>1.24</version>
+  </library>
+</libraries>
