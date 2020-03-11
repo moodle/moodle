@@ -41,7 +41,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_deferred_feedback_unanswered() {
 
         // Create a matching question.
-        $m = test_question_maker::make_a_matching_question();
+        $m = test_question_maker::make_question('match');
         $m->shufflestems = false;
         $this->start_attempt_at_question($m, 'deferredfeedback', 4);
 
@@ -98,7 +98,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_deferred_feedback_partial_answer() {
 
         // Create a matching question.
-        $m = test_question_maker::make_a_matching_question();
+        $m = test_question_maker::make_question('match');
         $m->shufflestems = false;
         $this->start_attempt_at_question($m, 'deferredfeedback', 4);
 
@@ -155,7 +155,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_correct_no_submit() {
 
         // Create a matching question.
-        $m = test_question_maker::make_a_matching_question();
+        $m = test_question_maker::make_question('match');
         $m->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -209,7 +209,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_partial_no_submit() {
 
         // Create a matching question.
-        $m = test_question_maker::make_a_matching_question();
+        $m = test_question_maker::make_question('match');
         $m->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -263,7 +263,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_with_invalid() {
 
         // Create a matching question.
-        $m = test_question_maker::make_a_matching_question();
+        $m = test_question_maker::make_question('match');
         $m->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -333,7 +333,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_match_with_tricky_html_choices() {
 
         // Create a matching question.
-        $m = test_question_maker::make_a_matching_question();
+        $m = test_question_maker::make_question('match');
         $m->stems = array(
             1 => '(1, 2]',
             2 => '[1, 2]',
@@ -387,7 +387,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_match_clear_wrong() {
 
         // Create a matching question.
-        $m = test_question_maker::make_a_matching_question();
+        $m = test_question_maker::make_question('match');
         $m->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, true),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
