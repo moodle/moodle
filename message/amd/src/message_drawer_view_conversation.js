@@ -59,6 +59,7 @@ define(
     'core/backoff_timer',
     'core/custom_interaction_events',
     'core/notification',
+    'core/pending',
     'core/pubsub',
     'core/str',
     'core_message/message_repository',
@@ -76,6 +77,7 @@ function(
     BackOffTimer,
     CustomEvents,
     Notification,
+    Pending,
     PubSub,
     Str,
     Repository,
@@ -607,12 +609,18 @@ function(
      */
     var markConversationAsRead = function(conversationId) {
         var loggedInUserId = viewState.loggedInUserId;
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:markConversationAsRead');
 
         return Repository.markAllConversationMessagesAsRead(loggedInUserId, conversationId)
             .then(function() {
                 var newState = StateManager.markMessagesAsRead(viewState, viewState.messages);
                 PubSub.publish(MessageDrawerEvents.CONVERSATION_READ, conversationId);
                 return render(newState);
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -637,6 +645,8 @@ function(
      */
     var blockUser = function(userId) {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:blockUser');
+
         render(newState);
 
         return Repository.blockUser(viewState.loggedInUserId, userId)
@@ -646,6 +656,11 @@ function(
                 newState = StateManager.setLoadingConfirmAction(newState, false);
                 PubSub.publish(MessageDrawerEvents.CONTACT_BLOCKED, userId);
                 return render(newState);
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -670,6 +685,7 @@ function(
      */
     var unblockUser = function(userId) {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:unblockUser');
         render(newState);
 
         return Repository.unblockUser(viewState.loggedInUserId, userId)
@@ -679,6 +695,11 @@ function(
                 newState = StateManager.setLoadingConfirmAction(newState, false);
                 PubSub.publish(MessageDrawerEvents.CONTACT_UNBLOCKED, userId);
                 return render(newState);
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -703,6 +724,7 @@ function(
      */
     var removeContact = function(userId) {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:removeContact');
         render(newState);
 
         return Repository.deleteContacts(viewState.loggedInUserId, [userId])
@@ -712,6 +734,11 @@ function(
                 newState = StateManager.setLoadingConfirmAction(newState, false);
                 PubSub.publish(MessageDrawerEvents.CONTACT_REMOVED, userId);
                 return render(newState);
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -736,6 +763,7 @@ function(
      */
     var addContact = function(userId) {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:addContactRequests');
         render(newState);
 
         return Repository.createContactRequest(viewState.loggedInUserId, userId)
@@ -751,6 +779,11 @@ function(
                 newState = StateManager.addContactRequests(newState, [request]);
                 newState = StateManager.setLoadingConfirmAction(newState, false);
                 return render(newState);
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -762,6 +795,7 @@ function(
     var setFavourite = function() {
         var userId = viewState.loggedInUserId;
         var conversationId = viewState.id;
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:setFavourite');
 
         return Repository.setFavouriteConversations(userId, [conversationId])
             .then(function() {
@@ -773,6 +807,11 @@ function(
                     MessageDrawerEvents.CONVERSATION_SET_FAVOURITE,
                     formatConversationForEvent(viewState)
                 );
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -784,6 +823,7 @@ function(
     var unsetFavourite = function() {
         var userId = viewState.loggedInUserId;
         var conversationId = viewState.id;
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:unsetFavourite');
 
         return Repository.unsetFavouriteConversations(userId, [conversationId])
             .then(function() {
@@ -795,6 +835,11 @@ function(
                     MessageDrawerEvents.CONVERSATION_UNSET_FAVOURITE,
                     formatConversationForEvent(viewState)
                 );
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -806,6 +851,7 @@ function(
     var setMuted = function() {
         var userId = viewState.loggedInUserId;
         var conversationId = viewState.id;
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:markConversationAsRead');
 
         return Repository.setMutedConversations(userId, [conversationId])
             .then(function() {
@@ -817,6 +863,11 @@ function(
                     MessageDrawerEvents.CONVERSATION_SET_MUTED,
                     formatConversationForEvent(viewState)
                 );
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -862,6 +913,7 @@ function(
      * @return {Promise} Renderer promise.
      */
     var deleteSelectedMessages = function() {
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:deleteSelectedMessages');
         var messageIds = viewState.pendingDeleteMessageIds;
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
 
@@ -902,7 +954,13 @@ function(
 
                 isDeletingConversationContent = false;
                 return render(newState);
-            });
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
+            })
+            .catch(Notification.exception);
     };
 
     /**
@@ -924,6 +982,7 @@ function(
      * @return {Promise} Renderer promise.
      */
     var deleteConversation = function() {
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:markConversationAsRead');
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
         render(newState);
 
@@ -946,6 +1005,11 @@ function(
                 isDeletingConversationContent = false;
 
                 return render(newState);
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -973,6 +1037,8 @@ function(
      * @return {Promise} Renderer promise.
      */
     var acceptContactRequest = function(userId) {
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:acceptContactRequest');
+
         // Search the list of the logged in user's contact requests to find the
         // one from this user.
         var loggedInUserId = viewState.loggedInUserId;
@@ -994,6 +1060,11 @@ function(
                 PubSub.publish(MessageDrawerEvents.CONTACT_ADDED, viewState.members[userId]);
                 PubSub.publish(MessageDrawerEvents.CONTACT_REQUEST_ACCEPTED, request);
                 return;
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -1004,6 +1075,8 @@ function(
      * @return {Promise} Renderer promise.
      */
     var declineContactRequest = function(userId) {
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:declineContactRequest');
+
         // Search the list of the logged in user's contact requests to find the
         // one from this user.
         var loggedInUserId = viewState.loggedInUserId;
@@ -1024,6 +1097,11 @@ function(
             .then(function() {
                 PubSub.publish(MessageDrawerEvents.CONTACT_REQUEST_DECLINED, request);
                 return;
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -1035,6 +1113,9 @@ function(
      * @param  {String} text Text to send.
      */
     var sendMessage = function(conversationId, text) {
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:sendMessage');
+
+        // Flag that we're processing the queue.
         isSendingMessage = true;
         var newState = StateManager.setSendingMessage(viewState, true);
         var newConversationId = null;
@@ -1076,6 +1157,11 @@ function(
                 isSendingMessage = false;
                 PubSub.publish(MessageDrawerEvents.CONVERSATION_NEW_LAST_MESSAGE, conversation);
                 return;
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             })
             .catch(function(error) {
                 isSendingMessage = false;
