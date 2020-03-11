@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 class qtype_match_question_test extends advanced_testcase {
 
     public function test_get_expected_data() {
-        $question = test_question_maker::make_a_matching_question();
+        $question = test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(array('sub0' => PARAM_INT, 'sub1' => PARAM_INT,
@@ -46,7 +46,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_is_complete_response() {
-        $question = test_question_maker::make_a_matching_question();
+        $question = test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertFalse($question->is_complete_response(array()));
@@ -58,7 +58,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_is_gradable_response() {
-        $question = test_question_maker::make_a_matching_question();
+        $question = test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertFalse($question->is_gradable_response(array()));
@@ -72,7 +72,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_is_same_response() {
-        $question = test_question_maker::make_a_matching_question();
+        $question = test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertTrue($question->is_same_response(
@@ -97,7 +97,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_grading() {
-        $question = test_question_maker::make_a_matching_question();
+        $question = test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $correctresponse = $question->prepare_simulated_post_data(
@@ -126,7 +126,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_get_correct_response() {
-        $question = test_question_maker::make_a_matching_question();
+        $question = test_question_maker::make_question('match');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $correct = $question->prepare_simulated_post_data(array('Dog' => 'Mammal',
@@ -137,7 +137,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_get_question_summary() {
-        $match = test_question_maker::make_a_matching_question();
+        $match = test_question_maker::make_question('match');
         $match->start_attempt(new question_attempt_step(), 1);
         $qsummary = $match->get_question_summary();
         $this->assertRegExp('/' . preg_quote($match->questiontext, '/') . '/', $qsummary);
@@ -150,7 +150,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_summarise_response() {
-        $match = test_question_maker::make_a_matching_question();
+        $match = test_question_maker::make_question('match');
         $match->start_attempt(new question_attempt_step(), 1);
 
         $summary = $match->summarise_response($match->prepare_simulated_post_data(array('Dog' => 'Amphibian', 'Frog' => 'Mammal')));
@@ -160,7 +160,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_classify_response() {
-        $match = test_question_maker::make_a_matching_question();
+        $match = test_question_maker::make_question('match');
         $match->start_attempt(new question_attempt_step(), 1);
 
         $response = $match->prepare_simulated_post_data(array('Dog' => 'Amphibian', 'Frog' => 'Insect', 'Toad' => '', 'Cat' => ''));
@@ -182,14 +182,14 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_classify_response_choice_deleted_after_attempt() {
-        $match = test_question_maker::make_a_matching_question();
+        $match = test_question_maker::make_question('match');
         $firststep = new question_attempt_step();
 
         $match->start_attempt($firststep, 1);
         $response = $match->prepare_simulated_post_data(array(
                 'Dog' => 'Amphibian', 'Frog' => 'Insect', 'Toad' => '', 'Cat' => 'Mammal'));
 
-        $match = test_question_maker::make_a_matching_question();
+        $match = test_question_maker::make_question('match');
         unset($match->stems[4]);
         unset($match->stemsformat[4]);
         unset($match->right[4]);
@@ -203,14 +203,14 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_classify_response_choice_added_after_attempt() {
-        $match = test_question_maker::make_a_matching_question();
+        $match = test_question_maker::make_question('match');
         $firststep = new question_attempt_step();
 
         $match->start_attempt($firststep, 1);
         $response = $match->prepare_simulated_post_data(array(
                 'Dog' => 'Amphibian', 'Frog' => 'Insect', 'Toad' => '', 'Cat' => 'Mammal'));
 
-        $match = test_question_maker::make_a_matching_question();
+        $match = test_question_maker::make_question('match');
         $match->stems[5] = "Snake";
         $match->stemsformat[5] = FORMAT_HTML;
         $match->choices[5] = "Reptile";
@@ -226,7 +226,7 @@ class qtype_match_question_test extends advanced_testcase {
     }
 
     public function test_prepare_simulated_post_data() {
-        $m = test_question_maker::make_a_matching_question();
+        $m = test_question_maker::make_question('match');
         $m->start_attempt(new question_attempt_step(), 1);
         $postdata = $m->prepare_simulated_post_data(array('Dog' => 'Mammal', 'Frog' => 'Amphibian',
                                                           'Toad' => 'Amphibian', 'Cat' => 'Mammal'));
