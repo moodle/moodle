@@ -211,6 +211,9 @@ class participants_table extends \table_sql implements dynamic_table {
         $this->define_columns($columns);
         $this->define_headers($headers);
 
+        // The name column is a header.
+        $this->define_header_column('fullname');
+
         // Make this table sorted by last name by default.
         $this->sortable(true, 'lastname');
 
