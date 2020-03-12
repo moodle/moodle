@@ -29,13 +29,13 @@
         "icon": "<img class='icon' src='http://urltooptionicon'>"
     }
 }}
-<div role="menuitem" tabindex="-1" aria-label="{{title}}" class="option d-block text-center py-3 px-2" data-region="chooser-option-container" data-internal="{{name}}" data-modname="{{componentname}}_{{link}}">
+<div role="menuitem" tabindex="-1" aria-label="{{title}}" class="option d-block text-center py-1 mb-1" data-region="chooser-option-container" data-internal="{{name}}" data-modname="{{componentname}}_{{link}}">
     <div class="optioninfo w-100" data-region="chooser-option-info-container">
         <a class="d-block" href="{{link}}" title="{{#str}} addnew, moodle, {{title}} {{/str}}" tabindex="-1" data-action="add-chooser-option">
             <span class="optionicon d-block">
                 {{{icon}}}
             </span>
-            <span class="optionname d-block">{{title}}</span>
+            <p class="optionname d-block mt-2 mb-0"> {{#shortentext}}20, {{title}}{{/shortentext}}</p>
         </a>
         <div class="optionactions btn-group" role="group" data-region="chooser-option-actions-container">
             {{^legacyitem}}

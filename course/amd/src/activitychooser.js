@@ -109,10 +109,10 @@ const sectionIdMapper = (webServiceData, id) => {
 };
 
 /**
- * Build a modal for each section ID and store it into a map for quick access
+ * Build a modal on demand to save page load times
  *
  * @method modalBuilder
- * @param {Map} data our map of section ID's & modules to generate modals for
+ * @param {Array} data our array of modules with section ID's applied in the URL field
  * @return {Object} Our modal that we are going to show the user
  */
 const modalBuilder = data => buildModal(templateDataBuilder(data));
@@ -149,7 +149,7 @@ const templateDataBuilder = (data) => {
 };
 
 /**
- * Given an object we want to prebuild a modal ready to store into a map
+ * Given an object we want to build a modal ready to show
  *
  * @method buildModal
  * @param {Object} data The template data which contains arrays of modules
@@ -159,7 +159,7 @@ const buildModal = data => {
     return ModalFactory.create({
         type: ModalFactory.types.DEFAULT,
         title: getString('addresourceoractivity'),
-        body: Templates.render('core_course/chooser', data),
+        body: Templates.render('core_course/activitychooser', data),
         large: true,
         templateContext: {
             classes: 'modchooser'
@@ -230,7 +230,8 @@ const partiallyAppliedFavouriteManager = (moduleData, sectionId) => {
 
                 const builtFaves = sectionIdMapper(newFaves, sectionId);
 
-                const {html, js} = await Templates.renderForPromise('core_course/chooser_favourites', {favourites: builtFaves});
+                const {html, js} = await Templates.renderForPromise('core_course/local/activitychooser/favourites',
+                    {favourites: builtFaves});
 
                 await Templates.replaceNodeContents(favouriteArea, html, js);
 

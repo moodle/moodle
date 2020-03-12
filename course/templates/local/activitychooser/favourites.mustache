@@ -15,14 +15,13 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_course/chooser_search_results
+    @template core_course/chooser_favourites
 
-    Chooser search results template.
+    Chooser favourite template partial.
 
     Example context (json):
     {
-        "searchresultsnumber": "10",
-        "searchresults": {
+        "favourites": {
             "label": "Option name",
             "description": "Option description",
             "urls": {
@@ -32,9 +31,6 @@
         }
     }
 }}
-<p class="mt-4 px-3">{{#str}} resultsfound, core, {{searchresultsnumber}} {{/str}}</p>
-<div class="searchresultitemscontainer d-flex flex-wrap mw-100 position-relative mt-4" role="menubar" data-region="search-result-items-container">
-    {{#searchresults}}
-        {{>core_course/chooser_item}}
-    {{/searchresults}}
-</div>
+{{#favourites}}
+    {{>core_course/local/activitychooser/item}}
+{{/favourites}}

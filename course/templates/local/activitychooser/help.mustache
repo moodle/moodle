@@ -35,12 +35,12 @@
 <div class="optionsummary" tabindex="-1" data-region="chooser-option-summary-container" aria-labelledby="optionsummary_label" aria-describedby="optionsumary_desc">
     <div class="content text-left mb-5 px-5 py-4" data-region="chooser-option-summary-content-container">
         <div class="heading mb-4">
-            <h5 id="optionsummary_label">
+            <h5 id="optionsummary_label-{{uniqid}}" data-region="summary-header" tabindex="0">
                 {{{icon}}}
                 {{title}}
             </h5>
         </div>
-        <div id="optionsumary_desc" class="description" data-region="summary-description" tabindex="0">
+        <div id="optionsumary_desc-{{uniqid}}" class="description" tabindex="0">
             {{{help}}}
         </div>
     </div>
