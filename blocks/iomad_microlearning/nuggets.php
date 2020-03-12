@@ -108,7 +108,7 @@ $headers = array(get_string('nuggetname', 'block_iomad_microlearning'),
                  get_string('nuggetorder', 'block_iomad_microlearning'),
                  get_string('timecreated', 'block_iomad_microlearning'),
                  get_string('updown', 'block_iomad_microlearning'),
-                 get_string('actions', 'block_iomad_microlearning'));
+                 get_string('actions'));
 
 $nuggettable->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
 $nuggettable->define_baseurl($linkurl);

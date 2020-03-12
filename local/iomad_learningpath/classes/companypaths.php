@@ -381,7 +381,7 @@ class companypaths {
         }
 
         // loop over categories and get full(er) information.
-        $cat0 = (object)['id' => 0, 'name' => get_string('all', 'local_iomad_learningpath')];
+        $cat0 = (object)['id' => 0, 'name' => get_string('all')];
         $cats = [0 => $cat0];
         foreach ($this->categories as $categoryid) {
             $cat = new \stdClass;

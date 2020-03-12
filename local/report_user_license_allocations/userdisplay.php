@@ -101,7 +101,7 @@ if (empty($dodownload)) {
 // Table for results.
 $compusertable = new html_table();
 $compusertable->head = array(get_string('course', 'local_report_completion'),
-                             get_string('status', 'local_report_completion'),
+                             get_string('status'),
                              get_string('dateenrolled', 'local_report_completion'),
                              get_string('datestarted', 'local_report_completion'),
                              get_string('datecompleted', 'local_report_completion'),
@@ -109,7 +109,7 @@ $compusertable->head = array(get_string('course', 'local_report_completion'),
 $compusertable->align = array('left', 'center', 'center', 'center', 'center', 'center');
 $compusertable->width = '95%';
 
-$compusertable->head[] = get_string('actions', 'local_report_user_license_allocations');
+$compusertable->head[] = get_string('actions');
 $compusertable->align[] = 'center';
 
 // Set that there is nothing found here first.

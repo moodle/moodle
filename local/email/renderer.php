@@ -74,7 +74,7 @@ class local_email_renderer extends plugin_renderer_base {
             $strsend = null;
         }
         $stroverride = get_string('custom', 'local_email');
-        $strdefault = get_string('default', 'local_email');
+        $strdefault = get_string('default');
 
         $table = new html_table();
         $table->id = 'ReportTable';

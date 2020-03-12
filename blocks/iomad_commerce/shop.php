@@ -143,7 +143,7 @@ if (count($sqlparams)) {
 
 echo "</ul>";
 
-echo get_string('search', 'block_iomad_commerce');
+echo get_string('search');
 echo "<form method='get'><input type='text' name='q' value='$searchkey' /></form>";
 
 // ...***********create course list sql (includes filtering on tags)*****************.

@@ -75,7 +75,7 @@ abstract class template_selector_base {
                 'strings' => array(
                     array('previouslyselectedtemplates', 'local_template_selector', '%%SEARCHTERM%%'),
                     array('nomatchingtemplates', 'local_template_selector', '%%SEARCHTERM%%'),
-                    array('none', 'local_template_selector')
+                    array('none')
                 ));
 
     // Public API.
@@ -537,7 +537,7 @@ abstract class template_selector_base {
                 $groupedtemplates = array(get_string('nomatchingtemplates', 'local_template_selector',
                 $search) => array());
             } else {
-                $groupedtemplates = array(get_string('none', 'local_template_selector') => array());
+                $groupedtemplates = array(get_string('none') => array());
             }
         } else if ($this->autoselectunique && count($groupedtemplates) == 1 &&
                 count(reset($groupedtemplates)) == 1) {
@@ -616,7 +616,7 @@ abstract class template_selector_base {
      * @return string the caption for the search button.
      */
     protected function search_button_caption() {
-        return get_string('search', 'local_template_selector');
+        return get_string('search');
     }
 
     // Initialise one of the option checkboxes, either from

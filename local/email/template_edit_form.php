@@ -64,7 +64,7 @@ class template_edit_form extends moodleform {
         $buttonarr[] = &$mform->createElement('html', '<span data-fieldtype="button">
             <button class="btn btn-secondary emailclicktoedit" name="edit" id="id_edit" type="button">' .
                 get_string('edit') . '</button></span>');
-        $buttonarr[] = &$mform->createElement('submit', 'save', get_string('save', 'local_email'));
+        $buttonarr[] = &$mform->createElement('submit', 'save', get_string('save'));
         $buttonarr[] = &$mform->createElement('cancel', 'cancel', get_string('cancel'));
         $mform->addGroup($buttonarr, 'buttonar', '', array(' '), false);
 

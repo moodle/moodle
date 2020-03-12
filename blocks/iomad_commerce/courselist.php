@@ -126,7 +126,7 @@ if ($courses = $DB->get_recordset_sql('SELECT css.*, c.fullname
         $strshow = get_string('show', 'block_iomad_commerce');
 
         $table = new html_table();
-        $table->head = array (get_string('name', 'block_iomad_commerce'), "", "", "");
+        $table->head = array (get_string('name'), "", "", "");
         $table->align = array ("left", "center", "center", "center");
         $table->width = "600px";
 

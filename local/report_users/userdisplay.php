@@ -160,7 +160,7 @@ $sqlparams = array('userid' => $userid);
 
 // Set up the headers for the form.
 $headers = array(get_string('course', 'local_report_completion'),
-                 get_string('status', 'local_report_completion'),
+                 get_string('status'),
                  get_string('licensedateallocated', 'block_iomad_company_admin'),
                  get_string('datestarted', 'local_report_completion'),
                  get_string('datecompleted', 'local_report_completion'));
@@ -196,7 +196,7 @@ if ($DB->get_records_sql("SELECT lit.id FROM {iomad_courses} ic
 if (!$table->is_downloading()){
     $headers[] = get_string('certificate', 'local_report_completion');
     $columns[] = 'certificate';
-    $headers[] = get_string('actions', 'local_report_users');
+    $headers[] = get_string('actions');
     $columns[] = 'actions';
 }
 

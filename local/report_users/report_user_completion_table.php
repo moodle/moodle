@@ -178,7 +178,7 @@ class local_report_user_completion_table extends table_sql {
                                                'courseid' => $row->courseid))) {
                     $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
                 } else {
-                    $delaction .= '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete', 'local_report_users') . '</a>';
+                    $delaction .= '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete') . '</a>';
                     if (!empty($row->timeenrolled)) {
                         $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
                     }

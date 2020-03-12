@@ -443,7 +443,7 @@ if (empty($courseid)) {
     }
 
     // Status column.
-    $headers[] =  get_string('status', 'local_report_completion');
+    $headers[] =  get_string('status');
     $columns[] = 'status';
 
     // Is this licensed?

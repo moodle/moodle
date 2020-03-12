@@ -59,7 +59,7 @@ class order_edit_form extends moodleform {
         foreach (array(INVOICESTATUS_UNPAID, INVOICESTATUS_PAID) as $status) {
             $choices[$status] = get_string('status_' . $status, 'block_iomad_commerce');
         }
-        $mform->addElement('select', 'status', get_string('status', 'block_iomad_commerce'), $choices);
+        $mform->addElement('select', 'status', get_string('status'), $choices);
         $mform->addRule('status', $strrequired, 'required', null, 'client');
 
         $mform->addElement('header', 'header', get_string('purchaser_details', 'block_iomad_commerce'));

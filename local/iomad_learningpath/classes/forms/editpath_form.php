@@ -51,7 +51,7 @@ class editpath_form extends moodleform {
         $mform->addRule('name', get_string('required'), 'required');
 
         // Description
-        $mform->addElement('editor', 'description', get_string('description', 'local_iomad_learningpath'));
+        $mform->addElement('editor', 'description', get_string('description'));
         $mform->setType('description', PARAM_RAW);
         $mform->addHelpButton('description', 'description', 'local_iomad_learningpath');
         $mform->addRule('description', get_string('required'), 'required');

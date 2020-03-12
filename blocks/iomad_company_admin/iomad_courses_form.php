@@ -394,7 +394,7 @@ if ($canedit) {
         get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
         get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'),
         get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin'),
-        get_string('actions', 'block_iomad_company_admin'));
+        get_string('actions'));
     $tablecolumns = array('company',
                           'coursename',
                           'licensed',
@@ -419,7 +419,7 @@ $tableheaders = array(
     get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
     get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'),
     get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin'),
-        get_string('actions', 'block_iomad_company_admin'));
+        get_string('actions'));
 $tablecolumns = array('coursename',
                       'licensed',
                       'validlength',

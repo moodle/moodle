@@ -136,7 +136,7 @@ $headers = array(get_string('threadname', 'block_iomad_microlearning'),
                  get_string('active', 'block_iomad_microlearning'),
                  get_string('startdate', 'block_iomad_microlearning'),
                  get_string('timecreated', 'block_iomad_microlearning'),
-                 get_string('actions', 'block_iomad_microlearning'));
+                 get_string('actions'));
 $columns = array('name',
                  'active',
                  'startdate',
