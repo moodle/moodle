@@ -456,6 +456,13 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 3.9.
+        '/course/classes/output/modchooser_item.php',
+        '/course/yui/build/moodle-course-modchooser/moodle-course-modchooser-min.js',
+        '/course/yui/src/modchooser/js/modchooser.js',
+        '/h5p/classes/autoloader.php',
+        '/lib/adodb/readme.txt',
+        '/lib/maxmind/GeoIp2/Compat/JsonSerializable.php',
         // Removed in 3.8.
         '/lib/amd/src/modal_confirm.js',
         '/lib/fonts/font-awesome-4.7.0/css/font-awesome.css',
