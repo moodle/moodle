@@ -123,6 +123,13 @@ class block_iomad_company_admin extends block_base {
     public function get_content() {
         global $OUTPUT, $CFG, $SESSION, $USER;
 
+        // Deal with Access approval notifications.
+        require_once($CFG->dirroot . '/blocks/iomad_approve_access/lib.php');
+        if (approve_enrol_has_users() && empty($SESSION->approveaccesswarningshown)) {
+           \core\notification::add(get_string('userstoapprove', 'block_iomad_approve_access'), 'info');
+           $SESSION->approveaccesswarningshown = true;
+        }
+
         // TODO: Really need a cap check to prevent it being displayed at all.
 
         if ($this->content !== null) {
