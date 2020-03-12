@@ -59,6 +59,7 @@ define(
     'core/backoff_timer',
     'core/custom_interaction_events',
     'core/notification',
+    'core/pending',
     'core/pubsub',
     'core/str',
     'core_message/message_repository',
@@ -76,6 +77,7 @@ function(
     BackOffTimer,
     CustomEvents,
     Notification,
+    Pending,
     PubSub,
     Str,
     Repository,
@@ -103,6 +105,8 @@ function(
     var isResetting = true;
     // If the UI is currently sending a message.
     var isSendingMessage = false;
+    // If the UI is currently deleting a conversation.
+    var isDeletingConversationContent = false;
     // These functions which will be generated when this module is
     // first called. See generateRenderFunction for details.
     var render = null;
@@ -550,7 +554,7 @@ function(
             var messages = viewState.messages;
             var mostRecentMessage = messages.length ? messages[messages.length - 1] : null;
 
-            if (mostRecentMessage && !isResetting && !isSendingMessage) {
+            if (mostRecentMessage && !isResetting && !isSendingMessage && !isDeletingConversationContent) {
                 // There may be multiple messages with the same time created value since
                 // the accuracy is only down to the second. The server will include these
                 // messages in the result (since it does a >= comparison on time from) so
@@ -605,12 +609,18 @@ function(
      */
     var markConversationAsRead = function(conversationId) {
         var loggedInUserId = viewState.loggedInUserId;
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:markConversationAsRead');
 
         return Repository.markAllConversationMessagesAsRead(loggedInUserId, conversationId)
             .then(function() {
                 var newState = StateManager.markMessagesAsRead(viewState, viewState.messages);
                 PubSub.publish(MessageDrawerEvents.CONVERSATION_READ, conversationId);
                 return render(newState);
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -635,6 +645,8 @@ function(
      */
     var blockUser = function(userId) {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:blockUser');
+
         render(newState);
 
         return Repository.blockUser(viewState.loggedInUserId, userId)
@@ -644,6 +656,11 @@ function(
                 newState = StateManager.setLoadingConfirmAction(newState, false);
                 PubSub.publish(MessageDrawerEvents.CONTACT_BLOCKED, userId);
                 return render(newState);
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -668,6 +685,7 @@ function(
      */
     var unblockUser = function(userId) {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:unblockUser');
         render(newState);
 
         return Repository.unblockUser(viewState.loggedInUserId, userId)
@@ -677,6 +695,11 @@ function(
                 newState = StateManager.setLoadingConfirmAction(newState, false);
                 PubSub.publish(MessageDrawerEvents.CONTACT_UNBLOCKED, userId);
                 return render(newState);
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -701,6 +724,7 @@ function(
      */
     var removeContact = function(userId) {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:removeContact');
         render(newState);
 
         return Repository.deleteContacts(viewState.loggedInUserId, [userId])
@@ -710,6 +734,11 @@ function(
                 newState = StateManager.setLoadingConfirmAction(newState, false);
                 PubSub.publish(MessageDrawerEvents.CONTACT_REMOVED, userId);
                 return render(newState);
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -734,6 +763,7 @@ function(
      */
     var addContact = function(userId) {
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:addContactRequests');
         render(newState);
 
         return Repository.createContactRequest(viewState.loggedInUserId, userId)
@@ -749,6 +779,11 @@ function(
                 newState = StateManager.addContactRequests(newState, [request]);
                 newState = StateManager.setLoadingConfirmAction(newState, false);
                 return render(newState);
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -760,6 +795,7 @@ function(
     var setFavourite = function() {
         var userId = viewState.loggedInUserId;
         var conversationId = viewState.id;
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:setFavourite');
 
         return Repository.setFavouriteConversations(userId, [conversationId])
             .then(function() {
@@ -771,6 +807,11 @@ function(
                     MessageDrawerEvents.CONVERSATION_SET_FAVOURITE,
                     formatConversationForEvent(viewState)
                 );
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -782,6 +823,7 @@ function(
     var unsetFavourite = function() {
         var userId = viewState.loggedInUserId;
         var conversationId = viewState.id;
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:unsetFavourite');
 
         return Repository.unsetFavouriteConversations(userId, [conversationId])
             .then(function() {
@@ -793,6 +835,11 @@ function(
                     MessageDrawerEvents.CONVERSATION_UNSET_FAVOURITE,
                     formatConversationForEvent(viewState)
                 );
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -804,6 +851,7 @@ function(
     var setMuted = function() {
         var userId = viewState.loggedInUserId;
         var conversationId = viewState.id;
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:markConversationAsRead');
 
         return Repository.setMutedConversations(userId, [conversationId])
             .then(function() {
@@ -815,6 +863,11 @@ function(
                     MessageDrawerEvents.CONVERSATION_SET_MUTED,
                     formatConversationForEvent(viewState)
                 );
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -860,6 +913,7 @@ function(
      * @return {Promise} Renderer promise.
      */
     var deleteSelectedMessages = function() {
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:deleteSelectedMessages');
         var messageIds = viewState.pendingDeleteMessageIds;
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
 
@@ -871,6 +925,14 @@ function(
             deleteMessagesPromise = Repository.deleteMessagesForAllUsers(viewState.loggedInUserId, messageIds);
         } else {
             deleteMessagesPromise = Repository.deleteMessages(viewState.loggedInUserId, messageIds);
+        }
+
+        // Mark that we are deleting content from the  conversation to prevent updates of it.
+        isDeletingConversationContent = true;
+
+        // Stop polling for new messages to the open conversation.
+        if (newMessagesPollTimer) {
+            newMessagesPollTimer.stop();
         }
 
         return deleteMessagesPromise.then(function() {
@@ -890,8 +952,15 @@ function(
                     PubSub.publish(MessageDrawerEvents.CONVERSATION_DELETED, newState.id);
                 }
 
+                isDeletingConversationContent = false;
                 return render(newState);
-            });
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
+            })
+            .catch(Notification.exception);
     };
 
     /**
@@ -913,8 +982,17 @@ function(
      * @return {Promise} Renderer promise.
      */
     var deleteConversation = function() {
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:markConversationAsRead');
         var newState = StateManager.setLoadingConfirmAction(viewState, true);
         render(newState);
+
+        // Mark that we are deleting the conversation to prevent updates of it.
+        isDeletingConversationContent = true;
+
+        // Stop polling for new messages to the open conversation.
+        if (newMessagesPollTimer) {
+            newMessagesPollTimer.stop();
+        }
 
         return Repository.deleteConversation(viewState.loggedInUserId, viewState.id)
             .then(function() {
@@ -924,7 +1002,14 @@ function(
                 newState = StateManager.setLoadingConfirmAction(newState, false);
                 PubSub.publish(MessageDrawerEvents.CONVERSATION_DELETED, newState.id);
 
+                isDeletingConversationContent = false;
+
                 return render(newState);
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -952,6 +1037,8 @@ function(
      * @return {Promise} Renderer promise.
      */
     var acceptContactRequest = function(userId) {
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:acceptContactRequest');
+
         // Search the list of the logged in user's contact requests to find the
         // one from this user.
         var loggedInUserId = viewState.loggedInUserId;
@@ -973,6 +1060,11 @@ function(
                 PubSub.publish(MessageDrawerEvents.CONTACT_ADDED, viewState.members[userId]);
                 PubSub.publish(MessageDrawerEvents.CONTACT_REQUEST_ACCEPTED, request);
                 return;
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -983,6 +1075,8 @@ function(
      * @return {Promise} Renderer promise.
      */
     var declineContactRequest = function(userId) {
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:declineContactRequest');
+
         // Search the list of the logged in user's contact requests to find the
         // one from this user.
         var loggedInUserId = viewState.loggedInUserId;
@@ -1003,6 +1097,11 @@ function(
             .then(function() {
                 PubSub.publish(MessageDrawerEvents.CONTACT_REQUEST_DECLINED, request);
                 return;
+            })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
             });
     };
 
@@ -1012,9 +1111,11 @@ function(
      *
      * @param  {Number} conversationId The conversation to send to.
      * @param  {String} text Text to send.
-     * @return {Promise} Renderer promise.
      */
     var sendMessage = function(conversationId, text) {
+        var pendingPromise = new Pending('core_message/message_drawer_view_conversation:sendMessage');
+
+        // Flag that we're processing the queue.
         isSendingMessage = true;
         var newState = StateManager.setSendingMessage(viewState, true);
         var newConversationId = null;
@@ -1057,6 +1158,11 @@ function(
                 PubSub.publish(MessageDrawerEvents.CONVERSATION_NEW_LAST_MESSAGE, conversation);
                 return;
             })
+            .then(function(result) {
+                pendingPromise.resolve();
+
+                return result;
+            })
             .catch(function(error) {
                 isSendingMessage = false;
                 var newState = StateManager.setSendingMessage(viewState, false);
@@ -1084,8 +1190,6 @@ function(
 
     /**
      * Cancel edit mode (selecting the messages).
-     *
-     * @return {Promise} Renderer promise.
      */
     var cancelEditMode = function() {
         cancelRequest(getOtherUserId());
@@ -1122,6 +1226,8 @@ function(
                 renderable.deferred.resolve(true);
                 // Keep processing the buffer until it's empty.
                 processRenderBuffer(header, body, footer);
+
+                return;
             })
             .catch(function(error) {
                 isRendering = false;
@@ -1520,6 +1626,7 @@ function(
         isRendering = false;
         renderBuffer = [];
         isSendingMessage = false;
+        isDeletingConversationContent = false;
 
         var loggedInUserId = loggedInUserProfile.id;
         var midnight = parseInt(body.attr('data-midnight'), 10);
