@@ -38,7 +38,7 @@
         <div class="carousel-item px-4 py-3 active" data-region="modules">
             <div class="modchoosercontainer" aria-label="{{#str}} activitymodules, core {{/str}}">
                 <div class="searchcontainer mb-3">
-                    {{>core_course/chooser_search}}
+                    {{>core_course/local/activitychooser/search}}
                 </div>
                 <div data-region="chooser-container">
                     <ul class="nav nav-tabs mb-3" id="activities-{{uniqid}}" role="tablist">
@@ -90,20 +90,20 @@
                     <div class="tab-content" id="tabbed-activities-{{uniqid}}">
                         <div class="tab-pane {{#favouritesFirst}}active{{/favouritesFirst}}" id="starred-{{uniqid}}" data-region="favourites" role="tabpanel" aria-labelledby="starred-tab-{{uniqid}}">
                             <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container" data-render="favourites-area">
-                                {{>core_course/chooser_favourites}}
+                                {{>core_course/local/activitychooser/favourites}}
                             </div>
                         </div>
                         <div class="tab-pane {{#recommendedFirst}}active{{/recommendedFirst}}" id="recommended-{{uniqid}}" data-region="recommended" role="tabpanel" aria-labelledby="recommended-tab-{{uniqid}}">
                             <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container">
                                 {{#recommended}}
-                                    {{>core_course/chooser_item}}
+                                    {{>core_course/local/activitychooser/item}}
                                 {{/recommended}}
                             </div>
                         </div>
                         <div class="tab-pane {{#fallback}}active{{/fallback}}" id="all-{{uniqid}}" data-region="default" role="tabpanel" aria-labelledby="all-tab-{{uniqid}}">
                             <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container">
                                 {{#default}}
-                                    {{>core_course/chooser_item}}
+                                    {{>core_course/local/activitychooser/item}}
                                 {{/default}}
                             </div>
                         </div>

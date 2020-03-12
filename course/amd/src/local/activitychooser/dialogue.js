@@ -53,7 +53,7 @@ const showModuleHelp = (carousel, moduleData) => {
     });
 
     // Build up the html & js ready to place into the help section.
-    const contentPromise = Templates.renderForPromise('core_course/chooser_help', moduleData);
+    const contentPromise = Templates.renderForPromise('core_course/local/activitychooser/help', moduleData);
 
     // Wait for the content to be ready, and for the transition to be complet.
     Promise.all([contentPromise, spinnerPromise, transitionPromise])
@@ -402,7 +402,7 @@ const renderSearchResults = async(searchResultsContainer, searchResultsData) => 
         'searchresults': searchResultsData
     };
     // Build up the html & js ready to place into the help section.
-    const {html, js} = await Templates.renderForPromise('core_course/chooser_search_results', templateData);
+    const {html, js} = await Templates.renderForPromise('core_course/local/activitychooser/search_results', templateData);
     await Templates.replaceNodeContents(searchResultsContainer, html, js);
 };
 

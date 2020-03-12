@@ -159,7 +159,7 @@ const buildModal = data => {
     return ModalFactory.create({
         type: ModalFactory.types.DEFAULT,
         title: getString('addresourceoractivity'),
-        body: Templates.render('core_course/chooser', data),
+        body: Templates.render('core_course/activitychooser', data),
         large: true,
         templateContext: {
             classes: 'modchooser'
@@ -230,7 +230,8 @@ const partiallyAppliedFavouriteManager = (moduleData, sectionId) => {
 
                 const builtFaves = sectionIdMapper(newFaves, sectionId);
 
-                const {html, js} = await Templates.renderForPromise('core_course/chooser_favourites', {favourites: builtFaves});
+                const {html, js} = await Templates.renderForPromise('core_course/local/activitychooser/favourites',
+                    {favourites: builtFaves});
 
                 await Templates.replaceNodeContents(favouriteArea, html, js);
 
