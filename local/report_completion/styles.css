@@ -16,7 +16,7 @@
     padding-right: 5px;
 }
 
-#page-local-report_completion-index #mform1 {
+#page-local-report_completion-index #mform1, #page-local-report_completion-index #mform2 {
     display: flex;
     padding-top: 5px;
 }
@@ -64,3 +64,4 @@
 .progress-bar {
     background-color: green;
 }
+

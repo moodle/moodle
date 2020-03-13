@@ -44,17 +44,21 @@ $perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT)
 $acl          = optional_param('acl', '0', PARAM_INT);           // Id of user to tweak mnet ACL (requires $access).
 $coursesearch = optional_param('coursesearch', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
-$compfromraw = optional_param_array('compfromraw', null, PARAM_INT);
-$comptoraw = optional_param_array('comptoraw', null, PARAM_INT);
 $completiontype = optional_param('completiontype', 0, PARAM_INT);
 $charttype = optional_param('charttype', '', PARAM_CLEAN);
 $showchart = optional_param('showchart', false, PARAM_BOOL);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
+$fromraw = optional_param_array('compfromraw', null, PARAM_INT);
+$toraw = optional_param_array('comptoraw', null, PARAM_INT);
+$yearfrom = optional_param_array('fromarray', null, PARAM_INT);
+$yearto = optional_param_array('toarray', null, PARAM_INT);
+$showpercentage = optional_param('showpercentage', 1, PARAM_INT);
 
 require_login($SITE);
 $context = context_system::instance();
 iomad::require_capability('local/report_completion:view', $context);
 
+$params['courseid'] = $courseid;
 if ($firstname) {
     $params['firstname'] = $firstname;
 }
@@ -94,39 +98,41 @@ if ($showsuspended) {
 if ($completiontype) {
     $params['completiontype'] = $completiontype;
 }
-if ($compfromraw) {
-    if (is_array($compfromraw)) {
-        $compfrom = mktime(0, 0, 0, $compfromraw['month'], $compfromraw['day'], $compfromraw['year']);
+if ($fromraw) {
+    if (is_array($fromraw)) {
+        $from = mktime(0, 0, 0, $fromraw['month'], $fromraw['day'], $fromraw['year']);
     } else {
-        $compfrom = $compfromraw;
+        $from = $fromraw;
     }
-    $params['compfrom'] = $compfrom;
-    $params['compfromraw[day]'] = $compfromraw['day'];
-    $params['compfromraw[month]'] = $compfromraw['month'];
-    $params['compfromraw[year]'] = $compfromraw['year'];
-    $params['compfromraw[enabled]'] = $compfromraw['enabled'];
+    $params['from'] = $from;
+    $params['fromraw[day]'] = $fromraw['day'];
+    $params['fromraw[month]'] = $fromraw['month'];
+    $params['fromraw[year]'] = $fromraw['year'];
+    $params['fromraw[enabled]'] = $fromraw['enabled'];
 } else {
-    $compfrom = 0;
+    $from = null;
 }
-if ($comptoraw) {
-    if (is_array($comptoraw)) {
-        $compto = mktime(0, 0, 0, $comptoraw['month'], $comptoraw['day'], $comptoraw['year']);
+
+if ($toraw) {
+    if (is_array($toraw)) {
+        $to = mktime(0, 0, 0, $toraw['month'], $toraw['day'], $toraw['year']);
     } else {
-        $compto = $comptoraw;
+        $to = $toraw;
     }
-    $params['compto'] = $compto;
-    $params['comptoraw[day]'] = $comptoraw['day'];
-    $params['comptoraw[month]'] = $comptoraw['month'];
-    $params['comptoraw[year]'] = $comptoraw['year'];
-    $params['comptoraw[enabled]'] = $comptoraw['enabled'];
+    $params['to'] = $to;
+    $params['toraw[day]'] = $toraw['day'];
+    $params['toraw[month]'] = $toraw['month'];
+    $params['toraw[year]'] = $toraw['year'];
+    $params['toraw[enabled]'] = $toraw['enabled'];
 } else {
-    if (!empty($compfrom)) {
-        $compto = time();
-        $params['compto'] = $compto;
+    if (!empty($from)) {
+        $to = time();
+        $params['to'] = $to;
     } else {
-        $compto = 0;
+        $to = null;
     }
 }
+$params['showpercentage'] = $showpercentage;
 
 // Url stuff.
 $url = new moodle_url('/local/report_completion/index.php');
@@ -227,7 +233,19 @@ if (empty($courseid)) {
 
         // What heading are we displaying?
         if (empty($courseid)) {
-            echo "<h3>".get_string('coursesummary', 'local_report_completion')."</h3>";
+            if (empty($to) && empty($from)) {
+                echo "<h3>".get_string('coursesummary', 'local_report_completion')."</h3>";
+            } else {
+                $fromstring = get_string('beginningoftime', 'local_report_completion');
+                $tostring = get_string('now');
+                if (!empty($from)) {
+                    $fromstring = date($CFG->iomad_date_format,$from);
+                }
+                if (!empty($to)) {
+                    $tostring= date($CFG->iomad_date_format,$to);
+                }
+                echo "<h3>".get_string('coursesummarywithdate', 'local_report_completion', array('from' => $fromstring, 'to' => $tostring))."</h3>";
+            }
         } else if ($courseid == 1) {
             echo "<h3>".get_string('reportallusers', 'local_report_completion')."</h3>";
         } else {
@@ -247,6 +265,15 @@ if (empty($courseid)) {
         $mform = new iomad_course_search_form($url, $params);
         $mform->set_data($params);
 
+        // Set up the date filter form.
+        $datemform = new iomad_date_filter_form($url, $params);
+        $datemform->set_data(array('departmentid' => $departmentid));
+        $options = $params;
+        $options['compfromraw'] = $from;
+        $options['comptoraw'] = $to;
+        $datemform->set_data($options);
+        $datemform->get_data();
+
         // Display the control buttons.
         $alluserslink = new moodle_url($url, array(
             'courseid' => 1,
@@ -255,30 +282,43 @@ if (empty($courseid)) {
         echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
         echo $output->single_button($alluserslink, get_string("allusers", 'local_report_completion'));
         echo html_writer::end_tag('div');
+
         // Also for suspended user controls.
+        $showsuspendedparams = $params;
         if (!$showsuspended) {
-            $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
-                                                             'showchart' => 0,
-                                                             'charttype' => '',
-                                                             'showhistoric' => $showhistoric,
-                                                             'showsuspended' => 1
-                                                            ));
+            $showsuspendedparams['showsuspended'] = 1;
+            $suspendeduserslink = new moodle_url($url, $showsuspendedparams);
             echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
             echo $output->single_button($suspendeduserslink, get_string("showsuspendedusers", 'local_report_completion'));
             echo html_writer::end_tag('div');
         } else {
-            $suspendeduserslink = new moodle_url($url, array('departmentid' => $departmentid,
-                                                             'showchart' => 0,
-                                                             'charttype' => '',
-                                                             'showhistoric' => $showhistoric,
-                                                             'showsuspended' => 0
-                                                            ));
+            $showsuspendedparams['showsuspended'] = 0;
+            $suspendeduserslink = new moodle_url($url, $showsuspendedparams);
             echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
             echo $output->single_button($suspendeduserslink, get_string("hidesuspendedusers", 'local_report_completion'));
             echo html_writer::end_tag('div');
         }
+
+        // Also for suspended user controls.
+        $showpercentageparams = $params;
+        if (!$showpercentage) {
+            $showpercentageparams['showpercentage'] = 1;
+            $percentageuserslink = new moodle_url($url, $showpercentageparams);
+            echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+            echo $output->single_button($percentageuserslink, get_string("showpercentageusers", 'local_report_completion'));
+            echo html_writer::end_tag('div');
+        } else {
+            $showpercentageparams['showpercentage'] = 0;
+            $percentageuserslink = new moodle_url($url, $showpercentageparams);
+            echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+            echo $output->single_button($percentageuserslink, get_string("hidepercentageusers", 'local_report_completion'));
+            echo html_writer::end_tag('div');
+        }
         echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
         $mform->display();
+        echo html_writer::end_tag('div');
+        echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+        $datemform->display();
         echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
     }
@@ -291,6 +331,7 @@ if (empty($courseid)) {
     } else {
         $coursesearchsql = " AND courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) . ") ";
     }
+
     // Set up the SQL for the table.
     $selectsql = "courseid as id, coursename, $departmentid AS departmentid, $showsuspended AS showsuspended, companyid";
     $fromsql = "{local_iomad_track}";
@@ -365,8 +406,8 @@ if (empty($courseid)) {
                 $options['addfrom'] = 'compfromraw';
                 $options['addto'] = 'comptoraw';
                 $options['adddodownload'] = false;
-                $options['compfromraw'] = $compfrom;
-                $options['comptoraw'] = $compto;
+                $options['compfromraw'] = $from;
+                $options['comptoraw'] = $to;
                 $mform = new iomad_user_filter_form(null, $options);
                 $mform->set_data(array('departmentid' => $departmentid));
                 $mform->set_data($options);
@@ -378,6 +419,7 @@ if (empty($courseid)) {
         }
     }
 
+    $sqlparams = array('companyid' => $companyid, 'courseid' => $courseid);
     // Deal with where we are on the department tree.
     $currentdepartment = company::get_departmentbyid($departmentid);
     $showdepartments = company::get_subdepartments_list($currentdepartment);
@@ -400,11 +442,24 @@ if (empty($courseid)) {
         $coursesql = " AND lit.courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) . ") ";
     }
 
+    // Deal with any search dates.
+    $datesql = "";
+    if (!empty($params['from'])) {
+        $datesql = " AND (lit.timeenrolled > :enrolledfrom OR lit.timecompleted > :completedfrom ) ";
+        $sqlparams['enrolledfrom'] = $params['from'];
+        $sqlparams['completedfrom'] = $params['from'];
+    }
+    if (!empty($params['to'])) {
+        $datesql .= " AND (lit.timeenrolled < :enrolledto OR lit.timecompleted < :completedto) ";
+        $sqlparams['enrolledto'] = $params['to'];
+        $sqlparams['completedto'] = $params['to'];
+    }
+
     // Set up the initial SQL for the form.
     $selectsql = "lit.id,u.id as userid,u.firstname,u.lastname,d.name AS department,u.email,lit.id as certsource, lit.courseid,lit.coursename,lit.timecompleted,lit.timeenrolled,lit.timestarted,lit.finalscore,lit.licenseid,lit.licensename, lit.licenseallocated, lit.timecompleted AS timeexpires";
     $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.userid = cu.userid AND lit.companyid = cu.companyid) JOIN {department} d ON (cu.departmentid = d.id)";
-    $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $coursesql";
-    $sqlparams = array('companyid' => $companyid, 'courseid' => $courseid) + $searchinfo->searchparams;
+    $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $datesql $coursesql";
+    $sqlparams = $sqlparams + $searchinfo->searchparams;
 
     // Set up the headers for the form.
     $headers = array(get_string('firstname'),
