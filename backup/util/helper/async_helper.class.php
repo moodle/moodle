@@ -305,10 +305,17 @@ class async_helper  {
         $tabledata = array();
 
         // Get relevant backup ids based on context instance id.
-        $select = 'itemid = ? AND execution = ? AND status < ? AND status > ?';
-        $params = array($instanceid, backup::EXECUTION_DELAYED, backup::STATUS_FINISHED_ERR, backup::STATUS_NEED_PRECHECK);
-        $backups = $DB->get_records_select('backup_controllers', $select, $params, 'timecreated DESC', 'id, backupid, timecreated');
+        $select = 'itemid = :itemid AND execution = :execution AND status < :status1 AND status > :status2 ' .
+            'AND operation = :operation';
+        $params = [
+            'itemid' => $instanceid,
+            'execution' => backup::EXECUTION_DELAYED,
+            'status1' => backup::STATUS_FINISHED_ERR,
+            'status2' => backup::STATUS_NEED_PRECHECK,
+            'operation' => 'backup',
+        ];
 
+        $backups = $DB->get_records_select('backup_controllers', $select, $params, 'timecreated DESC', 'id, backupid, timecreated');
         foreach ($backups as $backup) {
             $bc = \backup_controller::load_controller($backup->backupid);  // Get the backup controller.
             $filename = $bc->get_plan()->get_setting('filename')->get_value();
