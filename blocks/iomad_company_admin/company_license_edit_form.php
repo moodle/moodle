@@ -67,6 +67,9 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('edit_licenses_title', 'block_iomad_company_admin'));
+if (empty($CFG->defaulthomepage)) {
+    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
+}
 $PAGE->navbar->add($listtext, $listurl);
 $PAGE->navbar->add($linktext);
 

@@ -399,6 +399,9 @@ $PAGE->requires->js('/local/email/module.js');
 
 // Set the page heading.
 $PAGE->set_heading($linktext);
+if (empty($CFG->defaulthomepage)) {
+    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
+}
 $PAGE->navbar->add(get_string('template_list_title', 'local_email'), new moodle_url('/local/email/template_list.php'));
 $PAGE->navbar->add($linktext);
 

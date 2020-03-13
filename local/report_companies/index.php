@@ -40,6 +40,9 @@ $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcom
 // Renderer
 $output = $PAGE->get_renderer('local_report_companies');
 
+if (empty($CFG->defaulthomepage)) {
+    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
+}
 $PAGE->navbar->add(get_string('pluginname', 'local_report_companies'), $url);
 
 // Navigation and header.

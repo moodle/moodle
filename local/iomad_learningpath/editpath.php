@@ -46,6 +46,9 @@ $output = $PAGE->get_renderer('local_iomad_learningpath');
 $companyid = iomad::get_my_companyid($context);
 $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 $paths = $companypaths->get_paths();
+if (empty($CFG->defaulthomepage)) {
+    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
+}
 $PAGE->navbar->add(get_string('learningpathedit', 'local_iomad_learningpath'), $url);
 
 // Attempt to locate path

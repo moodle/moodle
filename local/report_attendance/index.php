@@ -61,6 +61,9 @@ if ($departmentid == 0 ) {
     $departmentid = $userhierarchylevel;
 }
 
+if (empty($CFG->defaulthomepage)) {
+    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
+}
 $PAGE->navbar->add($strcompletion, $url);
 
 // Create data for form.

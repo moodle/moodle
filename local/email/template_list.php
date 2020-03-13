@@ -126,6 +126,9 @@ $PAGE->requires->jquery();
 
 // Set the page heading.
 $PAGE->set_heading($linktext);
+if (empty($CFG->defaulthomepage)) {
+    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
+}
 $PAGE->navbar->add($linktext, $linkurl);
 
 // get output renderer

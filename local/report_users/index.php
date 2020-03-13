@@ -95,6 +95,9 @@ $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'ini
 
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
+if (empty($CFG->defaulthomepage)) {
+    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
+}
 $PAGE->navbar->add($linktext, $linkurl);
 
 // Get the renderer.

@@ -51,6 +51,9 @@ $PAGE->set_title($linktext);
 
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
+if (empty($CFG->defaulthomepage)) {
+    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
+}
 
 $PAGE->requires->jquery();
 $PAGE->navbar->add($linktext, $linkurl);

@@ -435,6 +435,9 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('company_users_course_title', 'block_iomad_company_admin'));
+if (empty($CFG->defaulthomepage)) {
+    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
+}
 $PAGE->navbar->add($linktext, $returnurl);
 
 $coursesform = new company_users_course_form($PAGE->url, $context, $companyid, $departmentid, $userid, $licenseid);
