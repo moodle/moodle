@@ -24,6 +24,7 @@
  */
 
 $string['activityoverview'] = 'There are new forum posts';
+$string['actionsforgraderinterface'] = 'Actions for the grader interface';
 $string['actionsforpost'] = 'Actions for post';
 $string['addanewdiscussion'] = 'Add a new discussion topic';
 $string['addanewquestion'] = 'Add a new question';
@@ -102,6 +103,7 @@ $string['clicktosubscribe'] = 'You are not subscribed to this discussion. Click 
 $string['clicktounfavourite'] = 'You have starred this discussion. Click to unstar.';
 $string['clicktofavourite'] = 'You have not starred this discussion. Click to star.';
 $string['close'] = 'Close';
+$string['closegrader'] = 'Close grader';
 $string['completiondiscussions'] = 'Student must create discussions:';
 $string['completiondiscussionsdesc'] = 'Student must create at least {$a} discussion(s)';
 $string['completiondiscussionsgroup'] = 'Require discussions';
