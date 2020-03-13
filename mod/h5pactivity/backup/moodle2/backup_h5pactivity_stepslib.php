@@ -44,10 +44,38 @@ class backup_h5pactivity_activity_structure_step extends backup_activity_structu
                 'introformat', 'grade', 'displayoptions'];
         $root = new backup_nested_element('h5pactivity', $attributes, $finalelements);
 
+        $attempts = new backup_nested_element('attempts');
+
+        $attempt = new backup_nested_element('attempt', ['id'],
+            ['h5pactivityid', 'userid', 'timecreated', 'timemodified', 'attempt', 'rawscore', 'maxscore']
+        );
+
+        $results = new backup_nested_element('results');
+
+        $result = new backup_nested_element('result', ['id'],
+            [
+                'attemptid', 'subcontent', 'timecreated', 'interactiontype', 'description',
+                'correctpattern', 'response', 'additionals', 'rawscore', 'maxscore'
+            ]
+        );
+
+        // Build the tree.
+        $root->add_child($attempts);
+        $attempts->add_child($attempt);
+        $attempt->add_child($results);
+        $results->add_child($result);
+
         // Define the source tables for the elements.
         $root->set_source_table('h5pactivity', ['id' => backup::VAR_ACTIVITYID]);
 
+        // All the rest of elements only happen if we are including user info.
+        if ($userinfo) {
+            $attempt->set_source_table('h5pactivity_attempts', ['h5pactivityid' => backup::VAR_PARENTID], 'id ASC');
+            $result->set_source_table('h5pactivity_attempts_results', ['attemptid' => backup::VAR_PARENTID], 'id ASC');
+        }
+
         // Define id annotations.
+        $attempt->annotate_ids('user', 'userid');
 
         // Define file annotations.
         $root->annotate_files('mod_h5pactivity', 'intro', null); // This file area hasn't itemid.
