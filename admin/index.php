@@ -533,7 +533,10 @@ if (!$cache and $branch <> $CFG->branch) {  // Update the branch
 
 if (!$cache and moodle_needs_upgrading()) {
 
-    $PAGE->set_url(new moodle_url($PAGE->url, array('confirmplugincheck' => $confirmplugins)));
+    $PAGE->set_url(new moodle_url($PAGE->url, array(
+        'confirmrelease' => $confirmrelease,
+        'confirmplugincheck' => $confirmplugins,
+    )));
 
     check_upgrade_key($upgradekeyhash);
 
@@ -543,7 +546,21 @@ if (!$cache and moodle_needs_upgrading()) {
         $pluginman = core_plugin_manager::instance();
         $output = $PAGE->get_renderer('core', 'admin');
 
-        if (!$confirmplugins) {
+        if (empty($confirmrelease)) {
+            require_once($CFG->libdir . '/environmentlib.php');
+
+            list($envstatus, $environmentresults) = check_moodle_environment($release, ENV_SELECT_RELEASE);
+            $strcurrentrelease = get_string('currentrelease');
+
+            $PAGE->navbar->add($strcurrentrelease);
+            $PAGE->set_title($strcurrentrelease);
+            $PAGE->set_heading($strcurrentrelease);
+            $PAGE->set_cacheable(false);
+
+            echo $output->upgrade_environment_page($release, $envstatus, $environmentresults);
+            die();
+
+        } else if (!$confirmplugins) {
             $strplugincheck = get_string('plugincheck');
 
             $PAGE->navbar->add($strplugincheck);
