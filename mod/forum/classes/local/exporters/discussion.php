@@ -178,13 +178,13 @@ class discussion extends exporter {
                     'urls' => [],
                 ];
 
-                if (!$group->hidepicture) {
-                    $url = get_group_picture_url($group, $forum->get_course_id(), true);
-                    if (empty($url)) {
-                        // Get a generic group image URL.
-                        $url = $output->image_url('g/g1')->out(false);
-                    }
+                // If not hiding the group picture, and the group has a picture then use it. Fallback to generic group image.
+                if (!$group->hidepicture &&
+                        ($url = get_group_picture_url($group, $forum->get_course_id(), true))) {
+
                     $groupdata['urls']['picture'] = $url;
+                } else {
+                    $groupdata['urls']['picture'] = $output->image_url('g/g1')->out(false);
                 }
 
                 if ($capabilitymanager->can_view_participants($user, $discussion)) {
