@@ -105,7 +105,7 @@ function mycourses_get_my_completion($datefrom = 0) {
                                                         $inprogresssql",
                                                         array('enrol' => 'self'));
         foreach ($companyselfenrolcourses as $companyselfenrolcourse) {
-            $companyselfenrolecourse->coursefullname = format_string($companyselfenrolcourse->coursefullname);
+            $companyselfenrolcourse->coursefullname = format_string($companyselfenrolcourse->coursefullname);
             $myavailablecourses[$companyselfenrolcourse->coursefullname] = $companyselfenrolcourse;
         }
         foreach ($sharedselfenrolcourses as $sharedselfenrolcourse) {
