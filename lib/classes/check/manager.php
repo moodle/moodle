@@ -40,7 +40,7 @@ class manager {
     /**
      * The list of valid check types
      */
-    public const TYPES = ['security'];
+    public const TYPES = ['status', 'security'];
 
     /**
      * Return all status checks
@@ -54,6 +54,32 @@ class manager {
         }
         $method = 'get_' . $type . '_checks';
         $checks = self::$method();
+        return $checks;
+    }
+
+    /**
+     * Return all status checks
+     *
+     * @return array of check objects
+     */
+    public static function get_status_checks(): array {
+        $checks = [
+            new environment\environment(),
+            new environment\upgradecheck(),
+        ];
+
+        // Any plugin can add status checks to this report by implementing a callback
+        // <component>_status_checks() which returns a check object.
+        $morechecks = get_plugins_with_function('status_checks', 'lib.php');
+        foreach ($morechecks as $plugintype => $plugins) {
+            foreach ($plugins as $plugin => $pluginfunction) {
+                $result = $pluginfunction();
+                foreach ($result as $check) {
+                    $check->set_component($plugintype . '_' . $plugin);
+                    $checks[] = $check;
+                }
+            }
+        }
         return $checks;
     }
 

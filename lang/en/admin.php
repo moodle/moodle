@@ -117,6 +117,7 @@ $string['cannotuninstall'] = '{$a} can not be uninstalled.';
 $string['categoryemail'] = 'Email';
 $string['cfgwwwrootslashwarning'] = '$CFG->wwwroot is defined incorrectly in the config.php file. It includes a \'/\' character at the end which must be removed.';
 $string['cfgwwwrootwarning'] = '$CFG->wwwroot is defined incorrectly in the config.php file. It should match the URL you are using to access this page.';
+$string['checkupgradepending'] = 'Upgrade';
 $string['cleanup'] = 'Cleanup';
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';

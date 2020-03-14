@@ -1000,6 +1000,7 @@ $string['changepassword'] = 'Change password';
 $string['changessaved'] = 'Changes saved';
 $string['check'] = 'Check';
 $string['checks'] = 'Checks';
+$string['checksok'] = 'All \'{$a}\' checks ok';
 $string['checkall'] = 'Check all';
 $string['checkingbackup'] = 'Checking backup';
 $string['checkingcourse'] = 'Checking course';
