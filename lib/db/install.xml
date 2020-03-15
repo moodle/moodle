@@ -4275,5 +4275,15 @@
         <INDEX NAME="instance" UNIQUE="false" FIELDS="contextid, contenttype, instanceid"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="infected_files" COMMENT="Store virus infected file details">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="filename" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Original file name"/>
+        <FIELD NAME="quarantinedfile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Quarantine zip file"/>
+        <FIELD NAME="author" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="User who uploaded the infected files"/>
+        <FIELD NAME="reason" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Failure reason"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+    </TABLE>
   </TABLES>
 </XMLDB>

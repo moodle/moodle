@@ -133,27 +133,77 @@ abstract class scanner {
      * Email admins about antivirus scan outcomes.
      *
      * @param string $notice The body of the email to be sent.
+     * @param string $format The body format.
+     * @param string $eventname event name
      * @return void
+     * @throws \coding_exception
+     * @throws \moodle_exception
      */
-    public function message_admins($notice) {
-
+    public function message_admins($notice, $format = FORMAT_PLAIN, $eventname = 'errors') {
+        $noticehtml = $format !== FORMAT_PLAIN ? format_text($notice, $format) : '';
         $site = get_site();
 
         $subject = get_string('emailsubject', 'antivirus', format_string($site->fullname));
+        $notifyemail = get_config('antivirus', 'notifyemail');
+        if (!empty($notifyemail)) {
+            $user = new \stdClass();
+            $user->id = -1;
+            $user->email = $notifyemail;
+            email_to_user($user, get_admin(), $subject, $noticehtml);
+            return;
+        }
+
         $admins = get_admins();
         foreach ($admins as $admin) {
             $eventdata = new \core\message\message();
             $eventdata->courseid          = SITEID;
             $eventdata->component         = 'moodle';
-            $eventdata->name              = 'errors';
+            $eventdata->name              = $eventname;
             $eventdata->userfrom          = get_admin();
             $eventdata->userto            = $admin;
             $eventdata->subject           = $subject;
             $eventdata->fullmessage       = $notice;
-            $eventdata->fullmessageformat = FORMAT_PLAIN;
-            $eventdata->fullmessagehtml   = '';
+            $eventdata->fullmessageformat = $format;
+            $eventdata->fullmessagehtml   = $noticehtml;
             $eventdata->smallmessage      = '';
             message_send($eventdata);
         }
+    }
+
+    /**
+     * Return incidence details
+     *
+     * @param string $file full path to the file
+     * @param string $filename original name of the file
+     * @param string $notice notice from antivirus
+     * @return string the incidence details
+     * @throws \coding_exception
+     */
+    public function get_incidence_details($file = '', $filename = '', $notice = '') {
+        global $USER;
+        if (empty($notice)) {
+            $notice = $this->get_scanning_notice();
+        }
+        $content = new \stdClass();
+        $unknown = get_string('unknown', 'antivirus');;
+        $content->filename = !empty($filename) ? $filename : $unknown;
+        if (!empty($file)) {
+            $content->filesize = filesize($file);
+            $content->contenthash = \file_storage::hash_from_string(file_get_contents($file));
+            $content->contenttype = mime_content_type($file);
+        } else {
+            $content->filesize = $unknown;
+            $content->contenthash = $unknown;
+            $content->contenttype = $unknown;
+        }
+
+        $content->author = \core_user::is_real_user($USER->id) ? fullname($USER) . " ($USER->username)" : $unknown;
+        $content->ipaddress = getremoteaddr();
+        $content->date = userdate(time(), get_string('strftimedatetimeshort'));
+        $content->referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $unknown;
+        $content->notice = $notice;
+        $report = new \moodle_url('/report/infectedfiles/index.php');
+        $content->report = $report->out();
+        return get_string('incidencedetails', 'antivirus', $content);
     }
 }
