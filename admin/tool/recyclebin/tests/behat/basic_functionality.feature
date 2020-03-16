@@ -127,3 +127,36 @@ Feature: Basic recycle bin functionality
     And I press "Yes"
     And I should see "Recycle bin has been emptied"
     And I should see "There are no items in the recycle bin."
+
+  @javascript
+  Scenario: Show recycle bin on category action menu
+    Given I log in as "admin"
+    And I navigate to "Courses >  Manage courses and categories" in site administration
+    And I click on "Actions menu" "link"
+    And I click on "Recycle bin" "link"
+    Then I should see "There are no items in the recycle bin."
+
+  @javascript
+  Scenario: Not show recycle bin empty on category action menu whit autohide enable
+    Given I log in as "admin"
+    And the following config values are set as admin:
+      | categorybinenable | 0 | tool_recyclebin |
+    And I navigate to "Courses >  Manage courses and categories" in site administration
+    And I click on "Actions menu" "link"
+    Then I should not see "Recycle bin"
+
+  @javascript
+  Scenario: Show recycle bin not empty on category action menu whit autohide enable
+    Given I log in as "admin"
+    And the following config values are set as admin:
+      | autohide | 1 | tool_recyclebin |
+    And I navigate to "Courses >  Manage courses and categories" in site administration
+    And I click on "Actions menu" "link"
+    Then I should not see "Recycle bin"
+    And I click on "delete" action for "Course 2" in management course listing
+    And I press "Delete"
+    And I should see "Deleting C2"
+    And I should see "C2 has been completely deleted"
+    And I press "Continue"
+    When I click on "Actions menu" "link"
+    Then I should see "Recycle bin"
