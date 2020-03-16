@@ -52,7 +52,7 @@ $fromraw = optional_param_array('compfromraw', null, PARAM_INT);
 $toraw = optional_param_array('comptoraw', null, PARAM_INT);
 $yearfrom = optional_param_array('fromarray', null, PARAM_INT);
 $yearto = optional_param_array('toarray', null, PARAM_INT);
-$showpercentage = optional_param('showpercentage', 1, PARAM_INT);
+$showpercentage = optional_param('showpercentage', 0, PARAM_INT);
 
 require_login($SITE);
 $context = context_system::instance();

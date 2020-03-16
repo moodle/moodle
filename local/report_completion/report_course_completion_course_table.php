@@ -105,9 +105,9 @@ class local_report_course_completion_course_table extends table_sql {
 
         // Deal with suspended or not.
         if (empty($row->showsuspended)) {
-            $suspendedsql = " AND u.suspended = 0 ";
+            $suspendedsql = " AND u.suspended = 0 AND u.deleted = 0 ";
         } else {
-            $suspendedsql = "";
+            $suspendedsql = "AND u.deleted = 0 ";
         }
 
         // Are we showing as a % of all users?
@@ -174,7 +174,9 @@ class local_report_course_completion_course_table extends table_sql {
                     $licensechart->set_labels(array(get_string('used', 'local_report_completion') . " (" . $licensesallocated . ")",
                                                     get_string('unused', 'local_report_completion') . " (" . $licensesunused . ")"));
                 } else {
-                    $series = new \core\chart_series('', array($licensesallocated / $totalusers * 100, $licensesunused / $totalusers * 100));
+                    $licenseallocated = round($licenseallocated / $totalusers * 100, 2);
+                    $licenseunused = round($licenseunused / $totalusers * 100, 2);
+                    $series = new \core\chart_series('', array($licensesallocated, $licensesunused));
                     $licensechart->add_series($series);
                     $licensechart->set_labels(array(get_string('used', 'local_report_completion') . " (" . $licensesallocated . "%)",
                                                     get_string('unused', 'local_report_completion') . " (" . $licensesunused . "%)"));
@@ -199,7 +201,7 @@ class local_report_course_completion_course_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_usersummary($row) {
-        global $output, $CFG, $DB, $params;
+        global $output, $CFG, $USER, $DB, $params;
 
         // Get the company details.
         $company = new company($row->companyid);
@@ -220,9 +222,9 @@ class local_report_course_completion_course_table extends table_sql {
 
         // Deal with suspended or not.
         if (empty($row->showsuspended)) {
-            $suspendedsql = " AND u.suspended = 0 ";
+            $suspendedsql = " AND u.suspended = 0 AND u.deleted = 0";
         } else {
-            $suspendedsql = "";
+            $suspendedsql = " AND u.deleted = 0";
         }
 
         // Are we showing as a % of all users?
@@ -300,7 +302,10 @@ class local_report_course_completion_course_table extends table_sql {
                                              get_string('inprogressusers', 'local_report_completion') . " (" . $started . ")",
                                              get_string('notstartedusers', 'local_report_completion') . " (" . $notstarted . ")"));
             } else {
-                $enrolledseries = new \core\chart_series('', array($completed / $totalusers * 100, $started / $totalusers * 100, $notstarted / $totalusers * 100));
+                $completed = round($completed / $totalusers * 100, 2);
+                $started = round($started / $totalusers * 100, 2);
+                $notstarted = round($notstarted / $totalusers * 100, 2);
+                $enrolledseries = new \core\chart_series('', array($completed, $started, $notstarted));
                 $enrolledchart->add_series($enrolledseries);
                 $enrolledchart->set_labels(array(get_string('completedusers', 'local_report_completion') . " (" .$completed . "%)",
                                              get_string('inprogressusers', 'local_report_completion') . " (" . $started . "%)",
