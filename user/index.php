@@ -278,7 +278,7 @@ if ($bulkoperations) {
     if ($participanttable->get_page_size() < $participanttable->totalrows) {
         // Select all users, refresh page showing all users and mark them all selected.
         $label = get_string('selectalluserswithcount', 'moodle', $participanttable->totalrows);
-        echo html_writer::tag('input', "", array('type' => 'button', 'id' => 'checkall', 'class' => 'btn btn-secondary',
+        echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checkall', 'class' => 'btn btn-secondary',
                 'value' => $label, 'data-showallink' => $showalllink));
     }
     echo html_writer::end_tag('div');
