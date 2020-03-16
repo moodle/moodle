@@ -87,8 +87,9 @@
 </div>
 
 {{#js}}
-require(['jquery', 'core_message/message_send_bulk'], function($, BulkSender) {
-    $('#{{id}}').on('change', function(e) {
+require(['jquery', 'core_message/message_send_bulk', 'core/custom_interaction_events'], function($, BulkSender, CustomEvents) {
+    CustomEvents.define('#{{id}}', [CustomEvents.events.accessibleChange]);
+    $('#{{id}}').on(CustomEvents.events.accessibleChange, function(e) {
         var action = $(e.target).val();
         if (action.indexOf('#') !== -1) {
             e.preventDefault();
