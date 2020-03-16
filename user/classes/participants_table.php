@@ -24,9 +24,12 @@
 
 namespace core_user;
 
-use context;
-use core_user\output\status_field;
 use DateTime;
+use context;
+use core_table\dynamic as dynamic_table;
+use core_table\local\filter\filterset;
+use core_user\output\status_field;
+use moodle_url;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -42,7 +45,7 @@ require_once($CFG->dirroot . '/user/lib.php');
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class participants_table extends \table_sql {
+class participants_table extends \table_sql implements dynamic_table {
 
     /**
      * @var int $courseid The course id
@@ -131,124 +134,6 @@ class participants_table extends \table_sql {
 
     /** @var \stdClass[] $viewableroles */
     private $viewableroles;
-
-    /**
-     * Sets up the table.
-     *
-     * @param int $courseid
-     * @param int|false $currentgroup False if groups not used, int if groups used, 0 all groups, USERSWITHOUTGROUP for no group
-     * @param int $accesssince The time the user last accessed the site
-     * @param int $roleid The role we are including, 0 means all enrolled users
-     * @param int $enrolid The applied filter for the user enrolment ID.
-     * @param int $status The applied filter for the user's enrolment status.
-     * @param string|array $search The search string(s)
-     * @param bool $bulkoperations Is the user allowed to perform bulk operations?
-     * @param bool $selectall Has the user selected all users on the page?
-     */
-    public function __construct($courseid, $currentgroup, $accesssince, $roleid, $enrolid, $status, $search,
-            $bulkoperations, $selectall) {
-        global $CFG, $OUTPUT;
-
-        parent::__construct('user-index-participants-' . $courseid);
-
-        $this->selectall = $selectall;
-
-        // Get the context.
-        $this->course = get_course($courseid);
-        $context = \context_course::instance($courseid, MUST_EXIST);
-        $this->context = $context;
-
-        // Define the headers and columns.
-        $headers = [];
-        $columns = [];
-
-        if ($bulkoperations) {
-            $mastercheckbox = new \core\output\checkbox_toggleall('participants-table', true, [
-                'id' => 'select-all-participants',
-                'name' => 'select-all-participants',
-                'label' => $this->selectall ? get_string('deselectall') : get_string('selectall'),
-                'labelclasses' => 'sr-only',
-                'classes' => 'm-1',
-                'checked' => $this->selectall
-            ]);
-            $headers[] = $OUTPUT->render($mastercheckbox);
-            $columns[] = 'select';
-        }
-
-        $headers[] = get_string('fullname');
-        $columns[] = 'fullname';
-
-        $extrafields = get_extra_user_fields($context);
-        foreach ($extrafields as $field) {
-            $headers[] = get_user_field_name($field);
-            $columns[] = $field;
-        }
-
-        $headers[] = get_string('roles');
-        $columns[] = 'roles';
-
-        // Get the list of fields we have to hide.
-        $hiddenfields = array();
-        if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
-            $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
-        }
-
-        // Add column for groups if the user can view them.
-        $canseegroups = !isset($hiddenfields['groups']);
-        if ($canseegroups) {
-            $headers[] = get_string('groups');
-            $columns[] = 'groups';
-        }
-
-        // Do not show the columns if it exists in the hiddenfields array.
-        if (!isset($hiddenfields['lastaccess'])) {
-            if ($courseid == SITEID) {
-                $headers[] = get_string('lastsiteaccess');
-            } else {
-                $headers[] = get_string('lastcourseaccess');
-            }
-            $columns[] = 'lastaccess';
-        }
-
-        $canreviewenrol = has_capability('moodle/course:enrolreview', $context);
-        if ($canreviewenrol && $courseid != SITEID) {
-            $columns[] = 'status';
-            $headers[] = get_string('participationstatus', 'enrol');
-            $this->no_sorting('status');
-        };
-
-        $this->define_columns($columns);
-        $this->define_headers($headers);
-
-        // Make this table sorted by last name by default.
-        $this->sortable(true, 'lastname');
-
-        $this->no_sorting('select');
-        $this->no_sorting('roles');
-        if ($canseegroups) {
-            $this->no_sorting('groups');
-        }
-
-        $this->set_attribute('id', 'participants');
-
-        // Set the variables we need to use later.
-        $this->currentgroup = $currentgroup;
-        $this->accesssince = $accesssince;
-        $this->roleid = $roleid;
-        $this->search = $search;
-        $this->enrolid = $enrolid;
-        $this->status = $status;
-        $this->countries = get_string_manager()->get_list_of_countries(true);
-        $this->extrafields = $extrafields;
-        $this->context = $context;
-        if ($canseegroups) {
-            $this->groups = groups_get_all_groups($courseid, 0, 0, 'g.*', true);
-        }
-        $this->allroles = role_fix_names(get_all_roles($this->context), $this->context);
-        $this->assignableroles = get_assignable_roles($this->context, ROLENAME_ALIAS, false);
-        $this->profileroles = get_profile_roles($this->context);
-        $this->viewableroles = get_viewable_roles($this->context);
-    }
 
     /**
      * Render the participants table.
@@ -498,5 +383,176 @@ class participants_table extends \table_sql {
         }
         return '';
     }
-}
 
+    /**
+     * Set the value for selectall.
+     *
+     * Note: This will be removed later in the 3.9 development cycle.
+     *
+     * @param bool $selectall
+     */
+    public function set_selectall(bool $selectall): void {
+        $this->selectall = $selectall;
+    }
+
+    /**
+     * Set filters and build table structure.
+     *
+     * @param filterset $filterset The filterset object to get the filters from.
+     */
+    public function set_filterset(filterset $filterset): void {
+        global $CFG, $OUTPUT;
+
+        $courseid = $filterset->get_filter('courseid')->current();
+
+        // Process the filterset.
+        $currentgroup = null;
+        if ($filterset->has_filter('groups')) {
+            $currentgroup = $filterset->get_filter('groups')->current();
+        }
+
+        $contextid = null;
+        if ($filterset->has_filter('contextid')) {
+            $contextid = $filterset->get_filter('contextid')->current();
+        }
+
+        $roleid = null;
+        if ($filterset->has_filter('roles')) {
+            $roleid = $filterset->get_filter('roles')->current();
+        }
+
+        $enrolid = null;
+        if ($filterset->has_filter('enrolments')) {
+            $enrolid = $filterset->get_filter('enrolments')->current();
+        }
+
+        $status = -1;
+        if ($filterset->has_filter('status')) {
+            $status = $filterset->get_filter('status')->current();
+        }
+
+        $accesssince = null;
+        if ($filterset->has_filter('accesssince')) {
+            $accesssince = $filterset->get_filter('accesssince')->current();
+        }
+
+        $keywords = null;
+        if ($filterset->has_filter('keywords')) {
+            $this->search = $filterset->get_filter('keywords')->get_filter_values();
+        }
+
+        // Get the context.
+        $this->course = get_course($courseid);
+        $context = \context_course::instance($courseid, MUST_EXIST);
+        $this->context = $context;
+
+        // Define the headers and columns.
+        $headers = [];
+        $columns = [];
+
+        $bulkoperations = has_capability('moodle/course:bulkmessaging', $context);
+        if ($bulkoperations) {
+            $mastercheckbox = new \core\output\checkbox_toggleall('participants-table', true, [
+                'id' => 'select-all-participants',
+                'name' => 'select-all-participants',
+                'label' => $this->selectall ? get_string('deselectall') : get_string('selectall'),
+                'labelclasses' => 'sr-only',
+                'classes' => 'm-1',
+                'checked' => $this->selectall
+            ]);
+            $headers[] = $OUTPUT->render($mastercheckbox);
+            $columns[] = 'select';
+        }
+
+        $headers[] = get_string('fullname');
+        $columns[] = 'fullname';
+
+        $extrafields = get_extra_user_fields($context);
+        foreach ($extrafields as $field) {
+            $headers[] = get_user_field_name($field);
+            $columns[] = $field;
+        }
+
+        $headers[] = get_string('roles');
+        $columns[] = 'roles';
+
+        // Get the list of fields we have to hide.
+        $hiddenfields = array();
+        if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
+            $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+        }
+
+        // Add column for groups if the user can view them.
+        $canseegroups = !isset($hiddenfields['groups']);
+        if ($canseegroups) {
+            $headers[] = get_string('groups');
+            $columns[] = 'groups';
+        }
+
+        // Do not show the columns if it exists in the hiddenfields array.
+        if (!isset($hiddenfields['lastaccess'])) {
+            if ($courseid == SITEID) {
+                $headers[] = get_string('lastsiteaccess');
+            } else {
+                $headers[] = get_string('lastcourseaccess');
+            }
+            $columns[] = 'lastaccess';
+        }
+
+        $canreviewenrol = has_capability('moodle/course:enrolreview', $context);
+        if ($canreviewenrol && $courseid != SITEID) {
+            $columns[] = 'status';
+            $headers[] = get_string('participationstatus', 'enrol');
+            $this->no_sorting('status');
+        };
+
+        $this->define_columns($columns);
+        $this->define_headers($headers);
+
+        // Make this table sorted by last name by default.
+        $this->sortable(true, 'lastname');
+
+        $this->no_sorting('select');
+        $this->no_sorting('roles');
+        if ($canseegroups) {
+            $this->no_sorting('groups');
+        }
+
+        $this->set_attribute('id', 'participants');
+
+        // Set the variables we need to use later.
+        $this->currentgroup = $currentgroup;
+        $this->accesssince = $accesssince;
+        $this->roleid = $roleid;
+        $this->enrolid = $enrolid;
+        $this->status = $status;
+        $this->countries = get_string_manager()->get_list_of_countries(true);
+        $this->extrafields = $extrafields;
+        $this->context = $context;
+        if ($canseegroups) {
+            $this->groups = groups_get_all_groups($courseid, 0, 0, 'g.*', true);
+        }
+        $this->allroles = role_fix_names(get_all_roles($this->context), $this->context);
+        $this->assignableroles = get_assignable_roles($this->context, ROLENAME_ALIAS, false);
+        $this->profileroles = get_profile_roles($this->context);
+        $this->viewableroles = get_viewable_roles($this->context);
+    }
+
+    /**
+     * Get an unique id for the participants table.
+     * @param string $argument An argument for the unique id, can be course id.
+     * @return string
+     */
+    public static function get_unique_id_from_argument(string $argument): string {
+        return "user-index-participants-{$argument}";
+    }
+
+    /**
+     * Get the base url for the participants table.
+     *
+     * @return moodle_url
+     */
+    public static function get_base_url(): moodle_url {
+        return new moodle_url('');
+    }
+}

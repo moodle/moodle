@@ -23,4 +23,5 @@
  */
 
 $string['downloadas'] = 'Download table data as';
-
+$string['missingrequiredfields'] = 'One or more required filters were missing ({$a})';
+$string['privacy:metadata'] = 'The Table API does not currently store any user data';

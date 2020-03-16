@@ -30,6 +30,11 @@ require_once($CFG->libdir.'/tablelib.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->dirroot.'/enrol/locallib.php');
 
+use core_table\local\filter\filter;
+use core_table\local\filter\integer_filter;
+use core_table\local\filter\string_filter;
+use core_user\participants_table;
+
 define('DEFAULT_PAGE_SIZE', 20);
 define('SHOW_ALL_PAGE_SIZE', 5000);
 
@@ -139,7 +144,16 @@ $hasgroupfilter = false;
 $lastaccess = 0;
 $searchkeywords = [];
 $enrolid = 0;
-$status = -1;
+
+$filterset = new \core_user\table\participants_filterset();
+$filterset->add_filter(new integer_filter('courseid', filter::JOINTYPE_DEFAULT, [(int)$course->id]));
+$enrolfilter = new integer_filter('enrolments');
+$groupfilter = new integer_filter('groups');
+$keywordfilter = new string_filter('keywords');
+$lastaccessfilter = new integer_filter('accesssince');
+$rolefilter = new integer_filter('roles');
+$statusfilter = new integer_filter('status');
+
 foreach ($filtersapplied as $filter) {
     $filtervalue = explode(':', $filter, 2);
     $value = null;
@@ -155,26 +169,32 @@ foreach ($filtersapplied as $filter) {
     switch ($key) {
         case USER_FILTER_ENROLMENT:
             $enrolid = $value;
+            $enrolfilter->add_filter_value($value);
             break;
         case USER_FILTER_GROUP:
             $groupid = $value;
+            $groupfilter->add_filter_value($value);
             $hasgroupfilter = true;
             break;
         case USER_FILTER_LAST_ACCESS:
             $lastaccess = $value;
+            $lastaccessfilter->add_filter_value($value);
             break;
         case USER_FILTER_ROLE:
             $roleid = $value;
+            $rolefilter->add_filter_value($value);
             break;
         case USER_FILTER_STATUS:
             // We only accept active/suspended statuses.
             if ($value == ENROL_USER_ACTIVE || $value == ENROL_USER_SUSPENDED) {
                 $status = $value;
+                $statusfilter->add_filter_value($value);
             }
             break;
         default:
             // Search string.
             $searchkeywords[] = $value;
+            $keywordfilter->add_filter_value($value);
             break;
     }
 }
@@ -228,8 +248,34 @@ echo '<div class="userlist">';
 foreach (array_unique($filtersapplied) as $filterix => $filter) {
     $baseurl->param('unified-filters[' . $filterix . ']', $filter);
 }
-$participanttable = new \core_user\participants_table($course->id, $groupid, $lastaccess, $roleid, $enrolid, $status,
-    $searchkeywords, $bulkoperations, $selectall);
+
+if (count($groupfilter)) {
+    $filterset->add_filter($groupfilter);
+}
+
+if (count($lastaccessfilter)) {
+    $filterset->add_filter($lastaccessfilter);
+}
+
+if (count($rolefilter)) {
+    $filterset->add_filter($rolefilter);
+}
+
+if (count($enrolfilter)) {
+    $filterset->add_filter($enrolfilter);
+}
+
+if (count($statusfilter)) {
+    $filterset->add_filter($statusfilter);
+}
+
+if (count($keywordfilter)) {
+    $filterset->add_filter($keywordfilter);
+}
+
+$participanttable = new participants_table(participants_table::get_unique_id_from_argument($course->id));
+$participanttable->set_selectall($selectall);
+$participanttable->set_filterset($filterset);
 $participanttable->define_baseurl($baseurl);
 
 // Do this so we can get the total number of rows.
