@@ -531,7 +531,7 @@ function email_reports_cron() {
                                                 'courseid' => $compuser->courseid,
                                                 'templatename' => 'expiry_warn_user',
                                                 'userid2' => $compuser->userid,
-                                                'courseid.' => $compuser->courseid,
+                                                'courseid2' => $compuser->courseid,
                                                 'templatename.' => 'expiry_warn_user'))) {
                     continue;
                 }
