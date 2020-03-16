@@ -27,82 +27,20 @@ define('NO_OUTPUT_BUFFERING', true);
 require('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-use core\check\check;
-use core\check\result;
-
-// Print the header.
 admin_externalpage_setup('reportstatus', '', null, '', ['pagelayout' => 'report']);
 
-// We may need a bit more memory and this may take a long time to process.
-raise_memory_limit(MEMORY_EXTRA);
-core_php_time_limit::raise();
-
-$checks = \core\check\manager::get_checks('status');
-
 $detail = optional_param('detail', '', PARAM_TEXT); // Show detailed info about one check only.
-if ($detail) {
-    $checks = array_filter($checks, function($check) use ($detail) {
-        return $detail == $check->get_ref();
-    });
-    $checks = array_values($checks);
-    if (!empty($checks)) {
-        $PAGE->set_docs_path('report/status/index.php?detail=' . $detail);
-        $PAGE->navbar->add($checks[0]->get_name());
-    }
+
+$url = '/report/status/index.php';
+$table = new core\check\table('status', $url, $detail);
+
+if (!empty($table->detail)) {
+    $PAGE->set_docs_path($url . '?detail=' . $detail);
+    $PAGE->navbar->add($table->detail->get_name());
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'report_status'));
-
-$url = "$CFG->wwwroot/report/status/index.php";
-
-$table = new html_table();
-$table->data = [];
-$table->head  = [
-    get_string('status'),
-    get_string('check'),
-    get_string('summary'),
-    get_string('action'),
-];
-$table->colclasses = [
-    'rightalign status',
-    'leftalign check',
-    'leftalign summary',
-    'leftalign action',
-];
-$table->id = 'statusreporttable';
-$table->attributes = ['class' => 'admintable statusreport generaltable'];
-
-$manager = core_plugin_manager::instance();
-
-foreach ($checks as $check) {
-    $ref = $check->get_ref();
-    $result = $check->get_result();
-    $component = $check->get_component();
-    $actionlink = $check->get_action_link();
-
-    $link = new \moodle_url('/report/status/index.php', ['detail' => $ref]);
-
-    $row = [];
-    $row[] = $OUTPUT->result($result);
-    $row[] = $OUTPUT->action_link($link, $check->get_name());
-
-    $row[] = $result->get_summary();
-    if ($actionlink) {
-        $row[] = $OUTPUT->render($actionlink);
-    } else {
-        $row[] = '';
-    }
-
-    $table->data[] = $row;
-}
-echo html_writer::table($table);
-
-if ($detail && $result) {
-    echo $OUTPUT->heading(get_string('description'), 3);
-    echo $OUTPUT->box($result->get_details(), 'generalbox boxwidthnormal boxaligncenter');
-    echo $OUTPUT->continue_button($url);
-}
-
+echo $table->render($OUTPUT);
 echo $OUTPUT->footer();
 

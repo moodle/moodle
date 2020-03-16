@@ -509,6 +509,7 @@ $string['description'] = 'Description';
 $string['descriptiona'] = 'Description: {$a}';
 $string['deselectall'] = 'Deselect all';
 $string['deselectnos'] = 'Deselect all \'No\'';
+$string['details'] = 'Details';
 $string['detailedless'] = 'Less detailed';
 $string['detailedmore'] = 'More detailed';
 $string['digitalminor'] = 'Digital minor';
