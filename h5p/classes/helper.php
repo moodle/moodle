@@ -108,6 +108,26 @@ class helper {
     }
 
     /**
+     * Convert the int representation of display options into stdClass
+     *
+     * @param core $core The \core_h5p\core object
+     * @param int $displayint integer value representing display options
+     *
+     * @return int The representation of display options as int
+     */
+    public static function decode_display_options(core $core, int $displayint = null): \stdClass {
+        $config = new \stdClass();
+        if ($displayint === null) {
+            $displayint = self::get_display_options($core, $config);
+        }
+        $displayarray = $core->getDisplayOptionsForEdit($displayint);
+        $config->export = $displayarray[core::DISPLAY_OPTION_DOWNLOAD] ?? 0;
+        $config->embed = $displayarray[core::DISPLAY_OPTION_EMBED] ?? 0;
+        $config->copyright = $displayarray[core::DISPLAY_OPTION_COPYRIGHT] ?? 0;
+        return $config;
+    }
+
+    /**
      * Checks if the author of the .h5p file is "trustable". If the file hasn't been uploaded by a user with the
      * required capability, the content won't be deployed.
      *

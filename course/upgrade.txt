@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 3.9 ===
 
 * The function get_module_metadata is now deprecated. Please use \core_course\local\service\content_item_service instead.
+* Activity module names are now PARAM_ALPHANUM instead of PARAM_ALPHA so integers can be used in activity module names
 
 === 3.8 ===
 

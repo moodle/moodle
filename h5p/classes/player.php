@@ -124,6 +124,38 @@ class player {
     }
 
     /**
+     * Get the encoded URL for embeding this H5P content.
+     *
+     * @param string $url Local URL of the H5P file to display.
+     * @param stdClass $config Configuration for H5P buttons.
+     * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
+     *
+     * @return string The embedable code to display a H5P file.
+     */
+    public static function display(string $url, \stdClass $config, bool $preventredirect = true): string {
+        global $OUTPUT;
+        $params = [
+                'url' => $url,
+                'preventredirect' => $preventredirect,
+            ];
+
+        $optparams = ['frame', 'export', 'embed', 'copyright'];
+        foreach ($optparams as $optparam) {
+            if (!empty($config->$optparam)) {
+                $params[$optparam] = $config->$optparam;
+            }
+        }
+        $fileurl = new \moodle_url('/h5p/embed.php', $params);
+
+        $template = new \stdClass();
+        $template->embedurl = $fileurl->out(false);
+
+        $result = $OUTPUT->render_from_template('core_h5p/h5pembed', $template);
+        $result .= self::get_resize_code();
+        return $result;
+    }
+
+    /**
      * Get the error messages stored in our H5P framework.
      *
      * @return stdClass with framework error messages.
@@ -167,7 +199,7 @@ class player {
             'exportUrl'       => ($exporturl instanceof \moodle_url) ? $exporturl->out(false) : '',
             'embedCode'       => $this->get_embed_code($this->url->out(),
                 $displayoptions[ core::DISPLAY_OPTION_EMBED ]),
-            'resizeCode'      => $this->get_resize_code(),
+            'resizeCode'      => self::get_resize_code(),
             'title'           => $this->content['slug'],
             'displayOptions'  => $displayoptions,
             'url'             => self::get_embed_url($this->url->out())->out(),
@@ -715,7 +747,7 @@ class player {
      *
      * @return string The HTML code with the resize script.
      */
-    private function get_resize_code(): string {
+    private static function get_resize_code(): string {
         global $OUTPUT;
 
         $template = new \stdClass();
