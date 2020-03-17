@@ -39,21 +39,23 @@ function(
 
     /**
      * Toggle the message drawer visibility.
+     *
+     * @param {String} button The button id for the popover.
      */
-    var toggleMessageDrawerVisibility = function() {
-        PubSub.publish(MessageDrawerEvents.TOGGLE_VISIBILITY);
+    var toggleMessageDrawerVisibility = function(buttonid) {
+        PubSub.publish(MessageDrawerEvents.TOGGLE_VISIBILITY, buttonid);
     };
 
     /**
      * Decrement the unread conversation count in the nav bar if a conversation
      * is read. When there are no unread conversations then hide the counter.
      *
-     * @param {Object} root The root element for the popover.
+     * @param {Object} button The button element for the popover.
      * @return {Function}
      */
-    var handleDecrementConversationCount = function(root) {
+    var handleDecrementConversationCount = function(button) {
         return function() {
-            var countContainer = root.find(SELECTORS.COUNT_CONTAINER);
+            var countContainer = button.find(SELECTORS.COUNT_CONTAINER);
             var count = parseInt(countContainer.text(), 10);
 
             if (isNaN(count)) {
@@ -71,29 +73,30 @@ function(
      * Add events listeners for when the popover icon is clicked and when conversations
      * are read.
      *
-     * @param {Object} root The root element for the popover.
+     * @param {Object} button The button element for the popover.
      */
-    var registerEventListeners = function(root) {
-        CustomEvents.define(root, [CustomEvents.events.activate]);
+    var registerEventListeners = function(button) {
+        CustomEvents.define(button, [CustomEvents.events.activate]);
 
-        root.on(CustomEvents.events.activate, function(e, data) {
-            toggleMessageDrawerVisibility();
+        button.on(CustomEvents.events.activate, function(e, data) {
+            toggleMessageDrawerVisibility(button.attr('id'));
+            button.focus();
             data.originalEvent.preventDefault();
         });
 
-        PubSub.subscribe(MessageDrawerEvents.CONVERSATION_READ, handleDecrementConversationCount(root));
-        PubSub.subscribe(MessageDrawerEvents.CONTACT_REQUEST_ACCEPTED, handleDecrementConversationCount(root));
-        PubSub.subscribe(MessageDrawerEvents.CONTACT_REQUEST_DECLINED, handleDecrementConversationCount(root));
+        PubSub.subscribe(MessageDrawerEvents.CONVERSATION_READ, handleDecrementConversationCount(button));
+        PubSub.subscribe(MessageDrawerEvents.CONTACT_REQUEST_ACCEPTED, handleDecrementConversationCount(button));
+        PubSub.subscribe(MessageDrawerEvents.CONTACT_REQUEST_DECLINED, handleDecrementConversationCount(button));
     };
 
     /**
      * Initialise the message popover.
      *
-     * @param {Object} root The root element for the popover.
+     * @param {Object} button The button element for the popover.
      */
-    var init = function(root) {
-        root = $(root);
-        registerEventListeners(root);
+    var init = function(button) {
+        button = $(button);
+        registerEventListeners(button);
     };
 
     return {

@@ -36,8 +36,15 @@ function(
      *
      * @param {Number} userId The user id to start a conversation.
      */
-    var createConversationWithUser = function(userId) {
-        PubSub.publish(MessageDrawerEvents.CREATE_CONVERSATION_WITH_USER, userId);
+    var createConversationWithUser = function(args) {
+        PubSub.publish(MessageDrawerEvents.CREATE_CONVERSATION_WITH_USER, args);
+    };
+
+    /**
+     * Trigger an event to hide the message drawer.
+     */
+    var hide = function() {
+        PubSub.publish(MessageDrawerEvents.HIDE);
     };
 
     /**
@@ -52,8 +59,8 @@ function(
      *
      * @param {int} conversationId Id for the conversation to show.
      */
-    var showConversation = function(conversationId) {
-        PubSub.publish(MessageDrawerEvents.SHOW_CONVERSATION, conversationId);
+    var showConversation = function(args) {
+        PubSub.publish(MessageDrawerEvents.SHOW_CONVERSATION, args);
     };
 
     /**
@@ -65,6 +72,7 @@ function(
 
     return {
         createConversationWithUser: createConversationWithUser,
+        hide: hide,
         show: show,
         showConversation: showConversation,
         showSettings: showSettings
