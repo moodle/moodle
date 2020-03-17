@@ -569,7 +569,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                 str.get_string('numberweeks').done(function(strNumberSections) {
                     var trigger = $(SELECTOR.ADDSECTIONS),
                         modalTitle = trigger.attr('data-add-sections'),
-                        newSections = trigger.attr('new-sections');
+                        newSections = trigger.attr('data-new-sections');
                     var modalBody = $('<div><label for="add_section_numsections"></label> ' +
                         '<input id="add_section_numsections" type="number" min="1" max="' + newSections + '" value="1"></div>');
                     modalBody.find('label').html(strNumberSections);
