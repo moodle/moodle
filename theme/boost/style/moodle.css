@@ -10673,7 +10673,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   .modchooser .searchcontainer .searchbar .input-group-append i {
     color: #868e96;
     margin: 0;
-    vertical-align: middle; }
+    vertical-align: middle;
+    font-size: 20px;
+    height: 20px;
+    width: 20px; }
 
 .modchoosercontainer .optionscontainer,
 .modchoosercontainer .searchresultitemscontainer {
