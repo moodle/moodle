@@ -45,5 +45,17 @@ function xmldb_filter_displayh5p_upgrade($oldversion) {
     // Automatically generated Moodle v3.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2020031700) {
+        // References to h5p.org has to be removed as default value for the allowedsources in the filter because H5P is going
+        // to close it down completely so that only the author can see the test content.
+        $h5porgurl = 'https://h5p.org/h5p/embed/[id]';
+        $config = get_config('filter_displayh5p', 'allowedsources');
+        if (strpos($config, $h5porgurl) !== false) {
+            set_config('allowedsources', str_replace($h5porgurl, '', $config), 'filter_displayh5p');
+        }
+
+        upgrade_plugin_savepoint(true, 2020031700, 'filter', 'displayh5p');
+    }
+
     return true;
 }
