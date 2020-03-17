@@ -1138,6 +1138,8 @@ class framework implements \H5PFrameworkInterface {
         $fs = new \core_h5p\file_storage();
         // Delete the library from the file system.
         $fs->delete_library(array('libraryId' => $library->id));
+        // Delete also the cache assets to rebuild them next time.
+        $this->deleteCachedAssets($library->id);
 
         // Remove library data from database.
         $DB->delete_records('h5p_library_dependencies', array('libraryid' => $library->id));
@@ -1461,6 +1463,10 @@ class framework implements \H5PFrameworkInterface {
             list($sql, $params) = $DB->get_in_or_equal($hashes, SQL_PARAMS_NAMED);
             // Remove all invalid keys.
             $DB->delete_records_select('h5p_libraries_cachedassets', 'hash ' . $sql, $params);
+
+            // Remove also the cachedassets files.
+            $fs = new file_storage();
+            $fs->deleteCachedAssets($hashes);
         }
 
         return $hashes;
