@@ -170,7 +170,7 @@ class behat_completion extends behat_base {
         }
         $iconxpath = "//li[contains(concat(' ', @class, ' '), ' modtype_" . strtolower($activitytype) . " ')]";
         $iconxpath .= "[descendant::*[contains(text(), '" . $activityname . "')]]";
-        $iconxpath .= "/descendant::span[@class='actions']/descendant::img[contains(@src, 'i/completion-')]";
+        $iconxpath .= "/descendant::div[@class='actions']/descendant::img[contains(@src, 'i/completion-')]";
 
         $this->execute("behat_general::the_attribute_of_should_contain",
             array("src", $iconxpath, "xpath_element", $imgname)
@@ -193,7 +193,7 @@ class behat_completion extends behat_base {
         }
         $iconxpath = "//li[contains(concat(' ', @class, ' '), ' modtype_" . strtolower($activitytype) . " ')]";
         $iconxpath .= "[descendant::*[contains(text(), '" . $activityname . "')]]";
-        $iconxpath .= "/descendant::span[@class='actions']/descendant::img[contains(@src, 'i/completion-')]";
+        $iconxpath .= "/descendant::div[@class='actions']/descendant::img[contains(@src, 'i/completion-')]";
 
         $this->execute("behat_general::the_attribute_of_should_contain",
             array("src", $iconxpath, "xpath_element", $imgname)

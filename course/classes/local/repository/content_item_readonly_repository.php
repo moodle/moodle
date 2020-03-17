@@ -53,7 +53,9 @@ class content_item_readonly_repository implements content_item_readonly_reposito
             if ($sm->string_exists('modulename_link', $modname)) { // Link to further info in Moodle docs.
                 $link = get_string('modulename_link', $modname);
                 $linktext = get_string('morehelp');
-                $help .= \html_writer::tag('div', $OUTPUT->doc_link($link, $linktext, true), ['class' => 'helpdoclink']);
+                $arialabel = get_string('morehelpaboutmodule', '', get_string('modulename', $modname));
+                $doclink = $OUTPUT->doc_link($link, $linktext, true, ['aria-label' => $arialabel]);
+                $help .= \html_writer::tag('div', $doclink, ['class' => 'helpdoclink']);
             }
         }
         return $help;

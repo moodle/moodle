@@ -2135,16 +2135,15 @@ class core_renderer extends renderer_base {
      * @param string $path The page link after doc root and language, no leading slash.
      * @param string $text The text to be displayed for the link
      * @param boolean $forcepopup Whether to force a popup regardless of the value of $CFG->doctonewwindow
+     * @param array $attributes htm attributes
      * @return string
      */
-    public function doc_link($path, $text = '', $forcepopup = false) {
+    public function doc_link($path, $text = '', $forcepopup = false, array $attributes = []) {
         global $CFG;
 
         $icon = $this->pix_icon('docs', '', 'moodle', array('class'=>'iconhelp icon-pre', 'role'=>'presentation'));
 
-        $url = new moodle_url(get_docs_url($path));
-
-        $attributes = array('href'=>$url);
+        $attributes['href'] = new moodle_url(get_docs_url($path));
         if (!empty($CFG->doctonewwindow) || $forcepopup) {
             $attributes['class'] = 'helplinkpopup';
         }
@@ -2161,7 +2160,7 @@ class core_renderer extends renderer_base {
      * @param string $pix short pix name
      * @param string $alt mandatory alt attribute
      * @param string $component standard compoennt name like 'moodle', 'mod_forum', etc.
-     * @param array $attributes htm lattributes
+     * @param array $attributes htm attributes
      * @return string HTML fragment
      */
     public function image_icon($pix, $alt, $component='moodle', array $attributes = null) {
@@ -3217,7 +3216,7 @@ EOD;
             'size' => 13, 'tabindex' => -1, 'id' => 'id_q_' . $id, 'class' => 'form-control');
 
         $contents = html_writer::tag('label', get_string('enteryoursearchquery', 'search'),
-            array('for' => 'id_q_' . $id, 'class' => 'accesshide')) . html_writer::tag('input', '', $inputattrs);
+            array('for' => 'id_q_' . $id, 'class' => 'accesshide')) . html_writer::empty_tag('input', $inputattrs);
         if ($this->page->context && $this->page->context->contextlevel !== CONTEXT_SYSTEM) {
             $contents .= html_writer::empty_tag('input', ['type' => 'hidden',
                     'name' => 'context', 'value' => $this->page->context->id]);

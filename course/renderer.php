@@ -927,7 +927,7 @@ class core_course_renderer extends plugin_renderer_base {
         $modicons .= $this->course_section_cm_completion($course, $completioninfo, $mod, $displayoptions);
 
         if (!empty($modicons)) {
-            $output .= html_writer::span($modicons, 'actions');
+            $output .= html_writer::div($modicons, 'actions');
         }
 
         // Show availability info (if module is not available).

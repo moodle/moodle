@@ -978,7 +978,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             $icon = $this->output->pix_icon('t/add', '');
             $newsections = $maxsections - $lastsection;
             echo html_writer::link($url, $icon . $straddsections,
-                array('class' => 'add-sections', 'data-add-sections' => $straddsections, 'new-sections' => $newsections));
+                array('class' => 'add-sections', 'data-add-sections' => $straddsections, 'data-new-sections' => $newsections));
             echo html_writer::end_tag('div');
         }
     }
