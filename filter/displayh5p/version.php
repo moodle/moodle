@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version  = 2019111800;
+$plugin->version  = 2020031700;
 $plugin->requires = 2019111200;
 $plugin->component = 'filter_displayh5p';
