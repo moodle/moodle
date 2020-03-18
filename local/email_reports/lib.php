@@ -718,14 +718,15 @@ function email_reports_cron() {
 
         //  Cycle through any found users.
         foreach ($userlist as $founduser) {
-            mtrace("expiring user $founduser->userid from course $founduser->courseid");
-            // Expire the user from the course.
-            $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($founduser->courseid),
-                                                                                        'courseid' => $founduser->courseid,
-                                                                                        'objectid' => $founduser->courseid,
-                                                                                        'userid' => $founduser->userid));
-            $event->trigger();
-
+            if (!$DB->get_record('local_iomad_track', array('userid' => $founduser->userid, 'courseid' => $founduser->courseid, 'timecompleted' => null))) {
+                mtrace("expiring user $founduser->userid from course $founduser->courseid");
+                // Expire the user from the course.
+                $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($founduser->courseid),
+                                                                                            'courseid' => $founduser->courseid,
+                                                                                            'objectid' => $founduser->courseid,
+                                                                                            'userid' => $founduser->userid));
+                $event->trigger();
+            }
         }
     }
 
