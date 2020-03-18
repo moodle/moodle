@@ -67,16 +67,13 @@ function atto_h5p_strings_for_js() {
         'copyrightbutton',
         'downloadbutton',
         'instructions',
-        'either',
         'embedbutton',
-        'enterurl',
         'h5pfile',
         'h5poptions',
-        'h5pproperties',
         'h5purl',
+        'h5pfileorurl',
         'invalidh5purl',
         'noh5pcontent',
-        'or',
         'pluginname'
     );
 
