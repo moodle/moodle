@@ -232,6 +232,9 @@ function theme_build_css_for_themes($themeconfigs = [], $directions = ['rtl', 'l
         }
     }
 
+    // Iomad - This can break our themes.
+    purge_caches();
+
     return $themescss;
 }
 
