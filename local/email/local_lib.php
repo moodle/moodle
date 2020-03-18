@@ -92,6 +92,7 @@ class local_email {
                             'completion_course_user',
                             'completion_course_supervisor',
                             'completion_digest_manager',
+                            'completion_expiry_warn_supervisor',
                             'completion_warn_manager',
                             'completion_warn_supervisor',
                             'completion_warn_user',
