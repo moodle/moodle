@@ -282,35 +282,25 @@ class qtype_multichoice_single_renderer extends qtype_multichoice_renderer_base 
             }
         }
 
-        $clearchoiceid = $this->get_input_id($qa, -1);
-        $clearchoicefieldname = $qa->get_qt_field_name('clearchoice');
-        $clearchoiceradioattrs = [
-            'type' => $this->get_input_type(),
-            'name' => $qa->get_qt_field_name('answer'),
-            'id' => $clearchoiceid,
-            'value' => -1,
-            'class' => 'sr-only'
-        ];
+        $questiondivid = $qa->get_outer_question_div_unique_id();
 
-        $cssclass = 'qtype_multichoice_clearchoice';
         // When no choice selected during rendering, then hide the clear choice option.
+        $cssclass = '';
         if (!$hascheckedchoice && $response == -1) {
-            $cssclass .= ' sr-only';
-            $clearchoiceradioattrs['checked'] = 'checked';
+            $cssclass = 'd-none';
         }
-        // Adds an hidden radio that will be checked to give the impression the choice has been cleared.
-        $clearchoiceradio = html_writer::empty_tag('input', $clearchoiceradioattrs);
-        $clearchoiceradio .= html_writer::link('', get_string('clearchoice', 'qtype_multichoice'),
-            ['for' => $clearchoiceid, 'role' => 'button']);
 
-        // Now wrap the radio and label inside a div.
-        $result = html_writer::tag('div', $clearchoiceradio, ['id' => $clearchoicefieldname, 'class' => $cssclass]);
+        $clearchoicebutton = html_writer::tag('button', get_string('clearchoice', 'qtype_multichoice'), [
+            'class' => 'btn btn-link ml-3 ' . $cssclass,
+            'data-action' => 'clearresults',
+            'data-target' => '#' . $questiondivid
+        ]);
 
         // Load required clearchoice AMD module.
         $this->page->requires->js_call_amd('qtype_multichoice/clearchoice', 'init',
-            [$qa->get_outer_question_div_unique_id(), $clearchoicefieldname]);
+            [$questiondivid]);
 
-        return $result;
+        return $clearchoicebutton;
     }
 
 }
