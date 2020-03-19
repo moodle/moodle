@@ -855,6 +855,9 @@ class manager {
         }
         $existingtourrecords->close();
 
+        // Ensure we correct the sortorder in any existing tours, prior to adding latest shipped tours.
+        helper::reset_tour_sortorder();
+
         foreach (array_reverse($shippedtours) as $filename => $version) {
             $filepath = $CFG->dirroot . "/{$CFG->admin}/tool/usertours/tours/" . $filename;
             $tourjson = file_get_contents($filepath);
