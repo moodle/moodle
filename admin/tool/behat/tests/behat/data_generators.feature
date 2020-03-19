@@ -143,15 +143,15 @@ Feature: Set up contextual data for tests
     And I log out
     And I log in as "user2"
     And I am on "Course 1" course homepage
-    And "Turn editing on" "link" should exist in current page administration
+    And "Turn editing on" "button" should exist
     And I log out
     And I log in as "user3"
     And I am on "Course 1" course homepage
-    And "Turn editing on" "link" should exist in current page administration
+    And "Turn editing on" "button" should exist
     And I log out
     And I log in as "user4"
     And I am on "Course 1" course homepage
-    And "Turn editing on" "link" should exist in current page administration
+    And "Turn editing on" "button" should exist
     And I log out
     And I log in as "user5"
     And I should see "You are logged in as"
