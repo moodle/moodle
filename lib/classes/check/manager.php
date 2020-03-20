@@ -40,7 +40,7 @@ class manager {
     /**
      * The list of valid check types
      */
-    public const TYPES = ['status', 'security'];
+    public const TYPES = ['status', 'security', 'performance'];
 
     /**
      * Return all status checks
@@ -54,6 +54,35 @@ class manager {
         }
         $method = 'get_' . $type . '_checks';
         $checks = self::$method();
+        return $checks;
+    }
+
+    /**
+     * Return all performance checks
+     *
+     * @return array of check objects
+     */
+    static public function get_performance_checks() : array {
+        $checks = [
+            new performance\designermode(),
+            new performance\cachejs(),
+            new performance\debugging(),
+            new performance\backups(),
+            new performance\stats(),
+        ];
+
+        // Any plugin can add status checks to this report by implementing a callback
+        // <component>_status_checks() which returns a check object.
+        $morechecks = get_plugins_with_function('performance_checks', 'lib.php');
+        foreach ($morechecks as $plugintype => $plugins) {
+            foreach ($plugins as $plugin => $pluginfunction) {
+                $result = $pluginfunction();
+                foreach ($result as $check) {
+                    $check->component = $plugintype .  '_' . $plugin;
+                    $checks[] = $check;
+                }
+            }
+        }
         return $checks;
     }
 
