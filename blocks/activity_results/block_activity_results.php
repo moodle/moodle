@@ -342,13 +342,13 @@ class block_activity_results extends block_base {
 
                 $rank = 0;
                 if (!empty($best)) {
-                    $this->content->text .= '<table class="grades"><caption>';
+                    $this->content->text .= '<table class="grades"><caption class="pb-0"><h6>';
                     if ($numbest == 1) {
                         $this->content->text .= get_string('bestgroupgrade', 'block_activity_results');
                     } else {
                         $this->content->text .= get_string('bestgroupgrades', 'block_activity_results', $numbest);
                     }
-                    $this->content->text .= '</caption><colgroup class="number" />';
+                    $this->content->text .= '</h6></caption><colgroup class="number" />';
                     $this->content->text .= '<colgroup class="name" /><colgroup class="grade" /><tbody>';
                     foreach ($best as $groupid => $averagegrade) {
                         switch ($nameformat) {
@@ -398,13 +398,13 @@ class block_activity_results extends block_base {
                 $rank = 0;
                 if (!empty($worst)) {
                     $worst = array_reverse($worst, true);
-                    $this->content->text .= '<table class="grades"><caption>';
+                    $this->content->text .= '<table class="grades"><caption class="pb-0"><h6>';
                     if ($numworst == 1) {
                         $this->content->text .= get_string('worstgroupgrade', 'block_activity_results');
                     } else {
                         $this->content->text .= get_string('worstgroupgrades', 'block_activity_results', $numworst);
                     }
-                    $this->content->text .= '</caption><colgroup class="number" />';
+                    $this->content->text .= '</h6></caption><colgroup class="number" />';
                     $this->content->text .= '<colgroup class="name" /><colgroup class="grade" /><tbody>';
                     foreach ($worst as $groupid => $averagegrade) {
                         switch ($nameformat) {
@@ -529,13 +529,13 @@ class block_activity_results extends block_base {
 
                 $rank = 0;
                 if (!empty($best)) {
-                    $this->content->text .= '<table class="grades"><caption>';
+                    $this->content->text .= '<table class="grades"><caption class="pb-0"><h6>';
                     if ($numbest == 1) {
                         $this->content->text .= get_string('bestgrade', 'block_activity_results');
                     } else {
                         $this->content->text .= get_string('bestgrades', 'block_activity_results', $numbest);
                     }
-                    $this->content->text .= '</caption><colgroup class="number" />';
+                    $this->content->text .= '</h6></caption><colgroup class="number" />';
                     $this->content->text .= '<colgroup class="name" /><colgroup class="grade" /><tbody>';
                     foreach ($best as $userid => $gradeid) {
                         switch ($nameformat) {
@@ -592,13 +592,13 @@ class block_activity_results extends block_base {
                 $rank = 0;
                 if (!empty($worst)) {
                     $worst = array_reverse($worst, true);
-                    $this->content->text .= '<table class="grades"><caption>';
+                    $this->content->text .= '<table class="grades"><caption class="pb-0"><h6>';
                     if ($numbest == 1) {
                         $this->content->text .= get_string('worstgrade', 'block_activity_results');
                     } else {
                         $this->content->text .= get_string('worstgrades', 'block_activity_results', $numworst);
                     }
-                    $this->content->text .= '</caption><colgroup class="number" />';
+                    $this->content->text .= '</h6></caption><colgroup class="number" />';
                     $this->content->text .= '<colgroup class="name" /><colgroup class="grade" /><tbody>';
                     foreach ($worst as $userid => $gradeid) {
                         switch ($nameformat) {
@@ -678,17 +678,17 @@ class block_activity_results extends block_base {
     }
 
     /**
-     * Generates the Link to the activity module when displaed outside of the module
+     * Generates the Link to the activity module when displayed outside of the module.
      * @param stdclass $activity
      * @param stdclass $cm
      * @return string
      */
     private function activity_link($activity, $cm) {
 
-        $o = html_writer::start_tag('h3');
+        $o = html_writer::start_tag('h5');
         $o .= html_writer::link(new moodle_url('/mod/'.$activity->itemmodule.'/view.php',
         array('id' => $cm->id)), format_string(($activity->itemname), true, ['context' => context_module::instance($cm->id)]));
-        $o .= html_writer::end_tag('h3');
+        $o .= html_writer::end_tag('h5');
         return $o;
     }
 
