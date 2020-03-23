@@ -175,6 +175,20 @@ abstract class restore_qtype_plugin extends restore_plugin {
                 }
             }
 
+            $rules = restore_course_task::define_decode_rules();
+            $rulesactivity = restore_quiz_activity_task::define_decode_rules();
+            $rules = array_merge($rules, $rulesactivity);
+
+            $decoder = $this->task->get_decoder();
+            foreach ($rules as $rule) {
+                $decoder->add_rule($rule);
+            }
+
+            $contentdecoded = $decoder->decode_content($data->answertext);
+            if ($contentdecoded) {
+                $data->answertext = $contentdecoded;
+            }
+
             if (!isset($this->questionanswercache[$data->answertext])) {
                 // If we haven't found the matching answer, something has gone really wrong, the question in the DB
                 // is missing answers, throw an exception.
