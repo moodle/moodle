@@ -96,8 +96,6 @@ define('BADGE_MESSAGE_MONTHLY', 4);
 /*
  * URL of backpack. Custom ones can be added.
  */
-define('BADGE_BACKPACKAPIURL', 'https://backpack.openbadges.org');
-define('BADGE_BACKPACKWEBURL', 'https://backpack.openbadges.org');
 define('BADGRIO_BACKPACKAPIURL', 'https://api.badgr.io/v2');
 define('BADGRIO_BACKPACKWEBURL', 'https://badgr.io');
 
@@ -105,6 +103,12 @@ define('BADGRIO_BACKPACKWEBURL', 'https://badgr.io');
  * @deprecated since 3.7. Use the urls in the badge_external_backpack table instead.
  */
 define('BADGE_BACKPACKURL', 'https://backpack.openbadges.org');
+
+/*
+ * @deprecated since 3.9 (MDL-66357).
+ */
+define('BADGE_BACKPACKAPIURL', 'https://backpack.openbadges.org');
+define('BADGE_BACKPACKWEBURL', 'https://backpack.openbadges.org');
 
 /*
  * Open Badges specifications.
