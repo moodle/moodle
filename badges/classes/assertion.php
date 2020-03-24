@@ -49,7 +49,7 @@ class core_badges_assertion {
     private $_url;
 
     /** @var int $obversion to control version JSON-LD. */
-    private $_obversion = OPEN_BADGES_V1;
+    private $_obversion = OPEN_BADGES_V2;
 
     /**
      * Constructs with issued badge unique hash.
@@ -57,7 +57,7 @@ class core_badges_assertion {
      * @param string $hash Badge unique hash from badge_issued table.
      * @param int $obversion to control version JSON-LD.
      */
-    public function __construct($hash, $obversion = OPEN_BADGES_V1) {
+    public function __construct($hash, $obversion = OPEN_BADGES_V2) {
         global $DB;
 
         $this->_data = $DB->get_record_sql('
