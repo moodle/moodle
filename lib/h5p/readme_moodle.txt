@@ -16,8 +16,7 @@ Added:
 
 Downloaded version: 1.24 release
 
-
-=== 3.8 ===
+Changes:
 1. In order to allow the dependency path to be overridden by child H5PCore classes, a couple of minor changes have been added to the
 h5p.classes.php file:
     - Into the getDependenciesFiles method, the line 2435:
@@ -44,6 +43,12 @@ and 1 ocurrence in h5p-metadata.class.php.
 
 3. Another PR has been sent to H5P library (https://github.com/h5p/h5p-php-library/pull/69) to fix some php74 minor problems. The same fix is being applied locally by MDL-67077. Once we import a new version, if it includes de fix, this won't be needed to reapply and can be removed.
 
+4. Replace the $_SESSION references to $SESSION. That implies that the information is saved to backends, so only the Moodle one should be used by core (core should be free from $_SESSION and always use $SESSION).
+h5p.classes.php file:
+  - Into hashToken method:
+    Declare the global $SESSION.
+    Change all the $_SESSION by $SESSION.
+A script for testing this part can be found in MDL-68068
 
 The point 2 from above won't be needed once the mbstring extension becomes mandatory in Moodle. A request has been
 sent to MDL-65809.
