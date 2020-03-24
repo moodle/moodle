@@ -866,8 +866,8 @@ class core_renderer extends renderer_base {
                     html_writer::link($purgeurl, get_string('purgecaches', 'admin')) . '</div>';
         }
         if (!empty($CFG->debugvalidators)) {
-            // NOTE: this is not a nice hack, $this->page->url is not always accurate and $FULLME neither,
-            // it is not a bug if it fails. --skodak
+            // NOTE: this is not a nice hack, $this->page->url is not always accurate and
+            // $FULLME neither, it is not a bug if it fails. --skodak.
             $output .= '<div class="validators"><ul class="list-unstyled ml-1">
               <li><a href="http://validator.w3.org/check?verbose=1&amp;ss=1&amp;uri=' . urlencode(qualified_me()) . '">Validate HTML</a></li>
               <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&amp;url1=' . urlencode(qualified_me()) . '">Section 508 Check</a></li>
@@ -2628,7 +2628,7 @@ class core_renderer extends renderer_base {
         $strloading  = get_string('loading', 'repository');
         $strdndenabled = get_string('dndenabled_inbox', 'moodle');
         $strdroptoupload = get_string('droptoupload', 'moodle');
-        $icon_progress = $this->pix_icon('i/loading_small', $strloading).'';
+        $iconprogress = $this->pix_icon('i/loading_small', $strloading).'';
 
         $currentfile = $options->currentfile;
         if (empty($currentfile)) {
@@ -2653,7 +2653,7 @@ class core_renderer extends renderer_base {
         }
         $html = <<<EOD
 <div class="filemanager-loading mdl-align" id='filepicker-loading-{$client_id}'>
-$icon_progress
+$iconprogress
 </div>
 <div id="filepicker-wrapper-{$client_id}" class="mdl-left w-100" style="display:none">
     <div>

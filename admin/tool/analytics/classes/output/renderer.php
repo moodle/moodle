@@ -127,7 +127,8 @@ class renderer extends plugin_renderer_base {
         }
 
         if (!CLI_SCRIPT) {
-            $output .= $this->output->single_button(new \moodle_url('/admin/tool/analytics/index.php'), get_string('continue'), 'get');
+            $output .= $this->output->single_button(new \moodle_url('/admin/tool/analytics/index.php'),
+                    get_string('continue'), 'get');
         }
 
         return $output;
@@ -152,14 +153,17 @@ class renderer extends plugin_renderer_base {
 
         if ($trainresults) {
             if ($trainresults->status == 0) {
-                $output .= $this->output->notification(get_string('trainingprocessfinished', 'tool_analytics'),
+                $output .= $this->output->notification(
+                        get_string('trainingprocessfinished', 'tool_analytics'),
                     \core\output\notification::NOTIFY_SUCCESS);
             } else if ($trainresults->status === \core_analytics\model::NO_DATASET ||
                     $trainresults->status === \core_analytics\model::NOT_ENOUGH_DATA) {
-                $output .= $this->output->notification(get_string('nodatatotrain', 'tool_analytics'),
+                $output .= $this->output->notification(
+                        get_string('nodatatotrain', 'tool_analytics'),
                     \core\output\notification::NOTIFY_WARNING);
             } else {
-                $output .= $this->output->notification(get_string('generalerror', 'tool_analytics', $trainresults->status),
+                $output .= $this->output->notification(
+                        get_string('generalerror', 'tool_analytics', $trainresults->status),
                     \core\output\notification::NOTIFY_ERROR);
             }
         }
@@ -172,19 +176,23 @@ class renderer extends plugin_renderer_base {
         }
 
         if ($predictresults || (!empty($predictlogs) && debugging())) {
-            $output .= $this->output->heading(get_string('predictionresults', 'tool_analytics'), 3, 'main mt-3');
+            $output .= $this->output->heading(
+                    get_string('predictionresults', 'tool_analytics'), 3, 'main mt-3');
         }
 
         if ($predictresults) {
             if ($predictresults->status == 0) {
-                $output .= $this->output->notification(get_string('predictionprocessfinished', 'tool_analytics'),
+                $output .= $this->output->notification(
+                        get_string('predictionprocessfinished', 'tool_analytics'),
                     \core\output\notification::NOTIFY_SUCCESS);
             } else if ($predictresults->status === \core_analytics\model::NO_DATASET ||
                     $predictresults->status === \core_analytics\model::NOT_ENOUGH_DATA) {
-                $output .= $this->output->notification(get_string('nodatatopredict', 'tool_analytics'),
+                $output .= $this->output->notification(
+                        get_string('nodatatopredict', 'tool_analytics'),
                     \core\output\notification::NOTIFY_WARNING);
             } else {
-                $output .= $this->output->notification(get_string('generalerror', 'tool_analytics', $predictresults->status),
+                $output .= $this->output->notification(
+                        get_string('generalerror', 'tool_analytics', $predictresults->status),
                     \core\output\notification::NOTIFY_ERROR);
             }
         }
@@ -197,7 +205,8 @@ class renderer extends plugin_renderer_base {
         }
 
         if (!CLI_SCRIPT) {
-            $output .= $this->output->single_button(new \moodle_url('/admin/tool/analytics/index.php'), get_string('continue'), 'get');
+            $output .= $this->output->single_button(new \moodle_url('/admin/tool/analytics/index.php'),
+                    get_string('continue'), 'get');
         }
 
         return $output;
@@ -238,7 +247,8 @@ class renderer extends plugin_renderer_base {
         $this->page->set_heading(get_string('pluginname', 'tool_analytics'));
 
         $output = $this->output->header();
-        $output .= $this->output->notification(get_string('analyticsdisabled', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output .= $this->output->notification(get_string('analyticsdisabled', 'analytics'),
+                \core\output\notification::NOTIFY_INFO);
         $output .= \html_writer::tag('a', get_string('continue'), ['class' => 'btn btn-primary',
             'href' => (new \moodle_url('/'))->out()]);
         $output .= $this->output->footer();

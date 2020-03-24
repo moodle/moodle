@@ -299,7 +299,8 @@ class mod_choice_renderer extends plugin_renderer_base {
             ], true);
             $actiondata .= $this->output->render($selectallcheckbox);
 
-            $actionurl = new moodle_url($this->page->url, array('sesskey'=>sesskey(), 'action'=>'delete_confirmation()'));
+            $actionurl = new moodle_url($this->page->url,
+                    ['sesskey' => sesskey(), 'action' => 'delete_confirmation()']);
             $actionoptions = array('delete' => get_string('delete'));
             foreach ($choices->options as $optionid => $option) {
                 if ($optionid > 0) {

@@ -75,7 +75,8 @@ class renderer extends plugin_renderer_base {
         $this->page->set_heading($insightinfo->contextname);
 
         $output = $this->output->header();
-        $output .= $this->output->notification(get_string('disabledmodel', 'report_insights'), \core\output\notification::NOTIFY_INFO);
+        $output .= $this->output->notification(get_string('disabledmodel', 'report_insights'),
+                \core\output\notification::NOTIFY_INFO);
         $output .= $this->output->footer();
 
         return $output;
@@ -94,7 +95,8 @@ class renderer extends plugin_renderer_base {
         $this->page->set_heading($context->get_context_name());
 
         $output = $this->output->header();
-        $output .= $this->output->notification(get_string('noinsights', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output .= $this->output->notification(get_string('noinsights', 'analytics'),
+                \core\output\notification::NOTIFY_INFO);
         $output .= $this->output->footer();
 
         return $output;
@@ -113,7 +115,8 @@ class renderer extends plugin_renderer_base {
         $this->page->set_heading($context->get_context_name());
 
         $output = $this->output->header();
-        $output .= $this->output->notification(get_string('noinsightsmodel', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output .= $this->output->notification(get_string('noinsightsmodel', 'analytics'),
+                \core\output\notification::NOTIFY_INFO);
         $output .= $this->output->footer();
 
         return $output;
@@ -132,7 +135,8 @@ class renderer extends plugin_renderer_base {
         $this->page->set_heading(get_string('pluginname', 'report_insights'));
 
         $output = $this->output->header();
-        $output .= $this->output->notification(get_string('analyticsdisabled', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output .= $this->output->notification(get_string('analyticsdisabled', 'analytics'),
+                \core\output\notification::NOTIFY_INFO);
         $output .= \html_writer::tag('a', get_string('continue'), ['class' => 'btn btn-primary',
             'href' => (new \moodle_url('/'))->out()]);
         $output .= $this->output->footer();
