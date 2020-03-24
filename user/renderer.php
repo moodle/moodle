@@ -43,7 +43,6 @@ class core_user_renderer extends plugin_renderer_base {
      * @return string html output
      */
     public function user_search($url, $firstinitial, $lastinitial, $usercount, $totalcount, $heading = null) {
-        global $OUTPUT;
 
         if ($firstinitial !== 'all') {
             set_user_preference('ifirst', $firstinitial);
@@ -60,13 +59,13 @@ class core_user_renderer extends plugin_renderer_base {
         $content .= html_writer::start_tag('div');
 
         // Search utility heading.
-        $content .= $OUTPUT->heading($heading.get_string('labelsep', 'langconfig').$usercount.'/'.$totalcount, 3);
+        $content .= $this->output->heading($heading.get_string('labelsep', 'langconfig').$usercount.'/'.$totalcount, 3);
 
         // Initials bar.
         $prefixfirst = 'sifirst';
         $prefixlast = 'silast';
-        $content .= $OUTPUT->initials_bar($firstinitial, 'firstinitial', get_string('firstname'), $prefixfirst, $url);
-        $content .= $OUTPUT->initials_bar($lastinitial, 'lastinitial', get_string('lastname'), $prefixlast, $url);
+        $content .= $this->output->initials_bar($firstinitial, 'firstinitial', get_string('firstname'), $prefixfirst, $url);
+        $content .= $this->output->initials_bar($lastinitial, 'lastinitial', get_string('lastname'), $prefixlast, $url);
 
         $content .= html_writer::end_tag('div');
         $content .= html_writer::tag('div', '&nbsp;');

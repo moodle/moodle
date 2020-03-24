@@ -374,9 +374,7 @@ class core_course_management_renderer extends plugin_renderer_base {
     }
 
     public function render_action_menu($menu) {
-        global $OUTPUT;
-
-        return $OUTPUT->render($menu);
+        return $this->output->render($menu);
     }
 
     /**

@@ -599,7 +599,7 @@ class core_badges_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function render_badge_user_collection(\core_badges\output\badge_user_collection $badges) {
-        global $CFG, $USER, $SITE, $OUTPUT;
+        global $CFG, $USER, $SITE;
         $backpack = $badges->backpack;
         $mybackpack = new moodle_url('/badges/mybackpack.php');
 
@@ -645,7 +645,7 @@ class core_badges_renderer extends plugin_renderer_base {
             $externalhtml .= $this->output->heading_with_help(get_string('externalbadges', 'badges'), 'externalbadges', 'badges');
             if (!is_null($backpack)) {
                 if ($backpack->backpackid != $CFG->badges_site_backpack) {
-                    $externalhtml .= $OUTPUT->notification(get_string('backpackneedsupdate', 'badges'), 'warning');
+                    $externalhtml .= $this->output->notification(get_string('backpackneedsupdate', 'badges'), 'warning');
 
                 }
                 if ($backpack->totalcollections == 0) {
