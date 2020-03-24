@@ -30,6 +30,8 @@ require_once($CFG->libdir . '/badgeslib.php');
 
 
 $id = optional_param('id', null, PARAM_INT);
+// OB specification version. If it's not defined, the site will be used as default.
+$obversion = optional_param('obversion', badges_open_badges_backpack_api(), PARAM_INT);
 
 if (empty($id)) {
     // Get the default issuer for this site.
@@ -38,7 +40,7 @@ if (empty($id)) {
     // Get the issuer for this badge.
     $badge = new badge($id);
     if ($badge->status != BADGE_STATUS_INACTIVE) {
-        $json = $badge->get_badge_issuer();
+        $json = $badge->get_badge_issuer($obversion);
     } else {
         // The badge doen't exist or not accessible for the users.
         header("HTTP/1.0 410 Gone");
