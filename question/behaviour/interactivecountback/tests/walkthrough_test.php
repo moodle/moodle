@@ -42,7 +42,7 @@ class qbehaviour_interactivecountback_walkthrough_test extends qbehaviour_walkth
     public function test_interactive_feedback_match_reset() {
 
         // Create a matching question.
-        $m = test_question_maker::make_a_matching_question();
+        $m = test_question_maker::make_question('match');
         $m->shufflestems = false;
         $m->hints = array(
             new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, true, true),

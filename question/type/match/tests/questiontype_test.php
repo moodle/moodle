@@ -112,6 +112,26 @@ class qtype_match_test extends advanced_testcase {
         $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
+    public function test_make_question_instance() {
+        $questiondata = test_question_maker::get_question_data('match', 'trickynums');
+        $question = question_bank::make_question($questiondata);
+        $this->assertEquals($questiondata->name, $question->name);
+        $this->assertEquals($questiondata->questiontext, $question->questiontext);
+        $this->assertEquals($questiondata->questiontextformat, $question->questiontextformat);
+        $this->assertEquals($questiondata->generalfeedback, $question->generalfeedback);
+        $this->assertEquals($questiondata->generalfeedbackformat, $question->generalfeedbackformat);
+        $this->assertInstanceOf('qtype_match', $question->qtype);
+        $this->assertEquals($questiondata->options->shuffleanswers, $question->shufflestems);
+
+        $this->assertEquals(
+                [14 => 'System.out.println(0);', 15 => 'System.out.println(0.0);'],
+                $question->stems);
+
+        $this->assertEquals([14 => '0', 15 => '0.0', 16 => 'NULL'], $question->choices);
+
+        $this->assertEquals([14 => 14, 15 => 15], $question->right);
+    }
+
     public function test_get_random_guess_score() {
         $q = $this->get_test_question_data();
         $this->assertEquals(0.3333333, $this->qtype->get_random_guess_score($q), '', 0.0000001);
