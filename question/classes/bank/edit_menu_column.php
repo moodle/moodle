@@ -86,7 +86,7 @@ class edit_menu_column extends column_base {
             }
         }
 
-        $qtypeactions = \question_bank::get_qtype($question->qtype)
+        $qtypeactions = \question_bank::get_qtype($question->qtype, false)
                 ->get_extra_question_bank_actions($question);
         foreach ($qtypeactions as $action) {
             $menu->add($action);
