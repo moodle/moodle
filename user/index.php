@@ -143,6 +143,8 @@ $lastaccess = 0;
 $searchkeywords = [];
 $enrolid = 0;
 
+$participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
+
 $filterset = new \core_user\table\participants_filterset();
 $filterset->add_filter(new integer_filter('courseid', filter::JOINTYPE_DEFAULT, [(int)$course->id]));
 $enrolfilter = new integer_filter('enrolments');
@@ -248,6 +250,10 @@ echo html_writer::div($enrolbuttonsout, 'float-right', [
 // Render the unified filter.
 $renderer = $PAGE->get_renderer('core_user');
 echo $renderer->unified_filter($course, $context, $filtersapplied, $baseurl);
+
+// Render the user filters.
+$userrenderer = $PAGE->get_renderer('core_user');
+echo $userrenderer->participants_filter($context, $participanttable->uniqueid);
 
 echo '<div class="userlist">';
 

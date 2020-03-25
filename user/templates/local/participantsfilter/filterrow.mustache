@@ -1,0 +1,56 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_user/local/participantsfilter/filterrow
+
+    Template for use by each filter condition.
+
+    Context variables required for this template:
+      * filtertypes - Array of filter types available.
+
+    Example context (json):
+    {
+        "filtertypes": [
+            {
+                "name": "status",
+                "title": "Status"
+            }
+        ]
+    }
+}}
+<div data-filterregion="filter" class="rounded mb-3 p-2 bg-white border border-secondary d-flex align-items-center">
+    <label for="core_user-local-participantsfilter-filterrow-jointype-{{uniqid}}" class="pt-2">{{#str}}match, core_user{{/str}}</label>
+    <select class="custom-select" data-filterfield="join" id="core_user-local-participantsfilter-filterrow-jointype-{{uniqid}}">
+        <option value="0">{{#str}}none{{/str}}</option>
+        <option selected=selected value="1">{{#str}}any{{/str}}</option>
+        <option value="2">{{#str}}all{{/str}}</option>
+    </select>
+
+    <label class="sr-only pt-2" for="core_user-local-participantsfilter-filterrow-filtertype-{{uniqid}}">filtertype</label>
+    <select class="custom-select" data-filterfield="type" id="core_user-local-participantsfilter-filterrow-filtertype-{{uniqid}}">
+        <option value="">{{#str}}selectfiltertype, core_user{{/str}}</option>
+        {{#filtertypes}}
+        <option value="{{name}}">{{title}}</option>
+        {{/filtertypes}}
+    </select>
+
+    <div data-filterregion="value"></div>
+
+    <button data-filteraction="remove" class="ml-auto btn btn-link text-reset" aria-label="{{#str}}clearfilterrow, core_user{{/str}}">
+        <i class="icon fa fa-times-circle pt-2"></i>
+    </button>
+</div>
