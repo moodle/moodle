@@ -2383,3 +2383,38 @@ function question_module_uses_questions($modname) {
 
     return false;
 }
+
+/**
+ * If $oldidnumber ends in some digits then return the next available idnumber of the same form.
+ *
+ * So idnum -> null (no digits at the end) idnum0099 -> idnum0100 (if that is unused,
+ * else whichever of idnum0101, idnume0102, ... is unused. idnum9 -> idnum10.
+ *
+ * @param string $oldidnumber a question idnumber.
+ * @param int $categoryid a question category id.
+ * @return string|null suggested new idnumber for a question in that category, or null if one cannot be found.
+ */
+function core_question_find_next_unused_idnumber(string $oldidnumber, int $categoryid):? string {
+    global $DB;
+
+    // The the old idnumber is not of the right form, bail now.
+    if (!preg_match('~\d+$~', $oldidnumber, $matches)) {
+        return null;
+    }
+
+    // Find all used idnumbers in one DB query.
+    $usedidnumbers = $DB->get_records_select_menu('question', 'category = ? AND idnumber IS NOT NULL',
+            [$categoryid], '', 'idnumber, 1');
+
+    // Find the next unused idnumber.
+    $newidnumber = $oldidnumber;
+    do {
+        // If we have got to something9999, insert an extra digit before incrementing.
+        if (preg_match('~^(.*[^0-9])(9+)$~', $newidnumber, $matches)) {
+            $newidnumber = $matches[1] . '0' . $matches[2];
+        }
+        $newidnumber++;
+    } while (isset($usedidnumbers[$newidnumber]));
+
+    return (string) $newidnumber;
+}
