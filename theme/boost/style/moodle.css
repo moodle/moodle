@@ -17895,7 +17895,7 @@ body.reset-style #page-content {
     padding-right: 1.25rem;
     vertical-align: top; }
     body.reset-style #page-content #region-main-box #region-main div[role="main"] {
-      flex: 1; }
+      flex: 1 0 auto; }
     body.reset-style #page-content #region-main-box #region-main .activity-navigation {
       overflow: hidden; }
     body.reset-style #page-content #region-main-box #region-main.has-blocks {
