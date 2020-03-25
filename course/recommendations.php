@@ -24,6 +24,8 @@
 
 require_once("../config.php");
 
+$search = optional_param('search', '', PARAM_TEXT);
+
 $context = context_system::instance();
 $url = new moodle_url('/course/recommendations.php');
 
@@ -45,9 +47,13 @@ echo $renderer->header();
 echo $renderer->heading(get_string('activitychooserrecommendations', 'course'));
 
 $manager = \core_course\local\factory\content_item_service_factory::get_content_item_service();
-$modules = $manager->get_all_content_items($USER);
+if (!empty($search)) {
+    $modules = $manager->get_content_items_by_name_pattern($USER, $search);
+} else {
+    $modules = $manager->get_all_content_items($USER);
+}
 
-$activitylist = new \core_course\output\recommendations\activity_list($modules);
+$activitylist = new \core_course\output\recommendations\activity_list($modules, $search);
 
 echo $renderer->render_activity_list($activitylist);
 
