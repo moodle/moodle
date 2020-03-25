@@ -53,3 +53,15 @@ Feature: A teacher can edit questions in the question bank
     And I set the field "ID number" to ""
     And I press "id_submitbutton"
     Then I should not see "frog" in the "Question with idnumber" "table_row"
+
+  Scenario: If the question type is no longer installed, then most edit actions are not present
+    Given the following "questions" exist:
+      | questioncategory | qtype       | name            | questiontext    |
+      | Test questions   | missingtype | Broken question | Write something |
+    When I reload the page
+    Then "Edit question" "link" should not exist in the "Broken question" "table_row"
+    And "Duplicate" "link" should not exist in the "Broken question" "table_row"
+    And "Manage tags" "link" should exist in the "Broken question" "table_row"
+    And "Preview" "link" should not exist in the "Broken question" "table_row"
+    And "Delete" "link" should exist in the "Broken question" "table_row"
+    And "Export as Moodle XML" "link" should not exist in the "Broken question" "table_row"
