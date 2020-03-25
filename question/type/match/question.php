@@ -46,6 +46,8 @@ class qtype_match_question extends question_graded_automatically_with_countback 
 
     /** @var array of question stems. */
     public $stems;
+    /** @var int[] FORMAT_... type for each stem. */
+    public $stemformat;
     /** @var array of choices that can be matched to each stem. */
     public $choices;
     /** @var array index of the right choice for each stem. */
