@@ -233,6 +233,7 @@ class core_external extends external_api {
                         [
                             'timestamp' => new external_value(PARAM_INT, 'unix timestamp'),
                             'format' => new external_value(PARAM_TEXT, 'format string'),
+                            'type' => new external_value(PARAM_PLUGIN, 'The calendar type', VALUE_OPTIONAL),
                         ]
                     )
                 )
@@ -264,7 +265,10 @@ class core_external extends external_api {
         self::validate_context($context);
 
         $formatteddates = array_map(function($timestamp) {
-            return userdate($timestamp['timestamp'], $timestamp['format']);
+
+            $calendartype = empty($timestamp['type']) ? null : $timestamp['type'];
+            $calendar  = \core_calendar\type_factory::get_calendar_instance($calendartype);
+            return $calendar->timestamp_to_date_string($timestamp['timestamp'], $timestamp['format'], 99, true, true);
         }, $params['timestamps']);
 
         return ['dates' => $formatteddates];
