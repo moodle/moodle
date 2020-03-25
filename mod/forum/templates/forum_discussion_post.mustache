@@ -79,9 +79,11 @@
                         <div class="mb-3" tabindex="-1">
                             {{#html.authorsubheading}}{{{.}}}{{/html.authorsubheading}}
                             {{^html.authorsubheading}}
-                                <time>
-                                    {{#userdate}} {{timecreated}}, {{#str}} strftimedaydatetime, core_langconfig {{/str}} {{/userdate}}
-                                </time>
+                                {{< core/time_element }}
+                                    {{$elementid}}created-{{id}}-{{uniqid}}{{/elementid}}
+                                    {{$timestampval}}{{timecreated}}{{/timestampval}}
+                                    {{$userdateformatval}}{{#str}} strftimedaydatetime, core_langconfig {{/str}}{{/userdateformatval}}
+                                {{/core/time_element}}
                             {{/html.authorsubheading}}
                         </div>
                     {{/isdeleted}}
