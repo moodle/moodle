@@ -123,6 +123,83 @@ class tool_usertours_manager_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider for test_move_tour
+     *
+     * @return array
+     */
+    public function move_tour_provider() {
+        $alltours = [
+            ['name' => 'Tour 1'],
+            ['name' => 'Tour 2'],
+            ['name' => 'Tour 3'],
+        ];
+
+        return [
+            'Move up' => [
+                $alltours,
+                'Tour 2',
+                \tool_usertours\helper::MOVE_UP,
+                0,
+            ],
+            'Move down' => [
+                $alltours,
+                'Tour 2',
+                \tool_usertours\helper::MOVE_DOWN,
+                2,
+            ],
+            'Move up (first)' => [
+                $alltours,
+                'Tour 1',
+                \tool_usertours\helper::MOVE_UP,
+                0,
+            ],
+            'Move down (last)' => [
+                $alltours,
+                'Tour 3',
+                \tool_usertours\helper::MOVE_DOWN,
+                2,
+            ],
+        ];
+    }
+
+    /**
+     * Test moving tours (changing sortorder)
+     *
+     * @dataProvider move_tour_provider
+     *
+     * @param array $alltours
+     * @param string $movetourname
+     * @param int $direction
+     * @param int $expectedsortorder
+     * @return void
+     */
+    public function test_move_tour($alltours, $movetourname, $direction, $expectedsortorder) {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Clear out existing tours so ours are the only ones, otherwise we can't predict the sortorder.
+        $DB->delete_records('tool_usertours_tours');
+
+        foreach ($alltours as $tourconfig) {
+            $this->helper_create_tour((object) $tourconfig);
+        }
+
+        // Load our tour to move.
+        $record = $DB->get_record('tool_usertours_tours', ['name' => $movetourname]);
+        $tour = \tool_usertours\tour::load_from_record($record);
+
+        // Call protected method via reflection.
+        $class = new ReflectionClass(\tool_usertours\manager::class);
+        $method = $class->getMethod('_move_tour');
+        $method->setAccessible(true);
+        $method->invokeArgs(null, [$tour, $direction]);
+
+        // Assert expected sortorder.
+        $this->assertEquals($expectedsortorder, $tour->get_sortorder());
+    }
+
+    /**
      * Data Provider for get_matching_tours tests.
      *
      * @return array

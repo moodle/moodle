@@ -64,5 +64,12 @@ function xmldb_tool_usertours_upgrade($oldversion) {
     // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2019052001) {
+        // Updating shipped tours will fix broken sortorder records in existing tours.
+        manager::update_shipped_tours();
+
+        upgrade_plugin_savepoint(true, 2019052001, 'tool', 'usertours');
+    }
+
     return true;
 }
