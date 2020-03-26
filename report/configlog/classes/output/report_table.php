@@ -90,7 +90,7 @@ class report_table extends \table_sql implements \renderable {
         $fields = 'cl.id, cl.timemodified, cl.plugin, cl.name, cl.value, cl.oldvalue, cl.userid, ' . $userfields;
 
         $from = '{config_log} cl
-            JOIN {user} u ON u.id = cl.userid';
+            LEFT JOIN {user} u ON u.id = cl.userid';
 
         // Report search.
         $where = '1=1';
@@ -141,6 +141,24 @@ class report_table extends \table_sql implements \renderable {
      */
     public function col_timemodified(\stdClass $row) {
         return userdate($row->timemodified);
+    }
+
+    /**
+     * Format fullname field
+     *
+     * @param stdClass $row
+     * @return string
+     */
+    public function col_fullname($row) {
+
+        $userid = $row->{$this->useridfield};
+        if (empty($userid)) {
+            // If the user id is empty it must have been set via the
+            // admin/cli/cfg.php script or during the initial install.
+            return get_string('usernone', 'report_configlog');
+        } else {
+            return parent::col_fullname($row);
+        }
     }
 
     /**
