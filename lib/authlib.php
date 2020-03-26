@@ -1027,14 +1027,25 @@ function signup_validate_data($data, $files) {
         $errors['email'] = get_string('invalidemail');
 
     } else if (empty($CFG->allowaccountssameemail)) {
-        // Make a case-insensitive query for the given email address.
-        $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid';
+        // Emails in Moodle as case-insensitive and accents-sensitive. Such a combination can lead to very slow queries
+        // on some DBs such as MySQL. So we first get the list of candidate users in a subselect via more effective
+        // accent-insensitive query that can make use of the index and only then we search within that limited subset.
+        $sql = "SELECT 'x'
+                  FROM {user}
+                 WHERE " . $DB->sql_equal('email', ':email1', false, true) . "
+                   AND id IN (SELECT id
+                                FROM {user}
+                               WHERE " . $DB->sql_equal('email', ':email2', false, false) . "
+                                 AND mnethostid = :mnethostid)";
+
         $params = array(
-            'email' => $data['email'],
+            'email1' => $data['email'],
+            'email2' => $data['email'],
             'mnethostid' => $CFG->mnet_localhost_id,
         );
+
         // If there are other user(s) that already have the same email, show an error.
-        if ($DB->record_exists_select('user', $select, $params)) {
+        if ($DB->record_exists_sql($sql, $params)) {
             $forgotpasswordurl = new moodle_url('/login/forgot_password.php');
             $forgotpasswordlink = html_writer::link($forgotpasswordurl, get_string('emailexistshintlink'));
             $errors['email'] = get_string('emailexists') . ' ' . get_string('emailexistssignuphint', 'moodle', $forgotpasswordlink);
