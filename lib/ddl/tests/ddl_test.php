@@ -2441,4 +2441,52 @@ class core_ddl_testcase extends database_driver_testcase {
         }
     */
 
+    /**
+     * Tests check_database_schema().
+     */
+    public function test_check_database_schema() {
+        global $CFG, $DB;
+
+        $dbmanager = $DB->get_manager();
+
+        // Create a table in the database we will be using to compare with a schema.
+        $table = new xmldb_table('test_check_db_schema');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('extracolumn', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test table, you can drop it safely.");
+        $dbmanager->create_table($table);
+
+        // Remove the column so it is not added to the schema and gets reported as an extra column.
+        $table->deleteField('extracolumn');
+
+        // Change the 'courseid' field to a float in the schema so it gets reported as different.
+        $table->deleteField('courseid');
+        $table->add_field('courseid', XMLDB_TYPE_NUMBER, '10, 2', null, XMLDB_NOTNULL, null, null);
+
+        // Add another column to the schema that won't be present in the database and gets reported as missing.
+        $table->add_field('missingcolumn', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Add another key to the schema that won't be present in the database and gets reported as missing.
+        $table->add_key('missingkey', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+
+        $schema = new xmldb_structure('testschema');
+        $schema->addTable($table);
+
+        // Things we want to check for -
+        // 1. Changed columns.
+        // 2. Missing columns.
+        // 3. Missing indexes.
+        // 4. Extra columns.
+        $errors = $dbmanager->check_database_schema($schema)['test_check_db_schema'];
+        $strmissing = "Missing index 'missingkey' (not unique (courseid)). " . PHP_EOL .
+            "CREATE INDEX {$CFG->prefix}testchecdbsche_cou_ix ON {$CFG->prefix}test_check_db_schema (courseid);";
+        $this->assertCount(4, $errors);
+
+        $this->assertContains("column 'courseid' has incorrect type 'I', expected 'N'", $errors);
+        $this->assertContains("column 'missingcolumn' is missing", $errors);
+        $this->assertContains($strmissing, $errors);
+        $this->assertContains("column 'extracolumn' is not expected (I)", $errors);
+    }
 }
