@@ -24,6 +24,9 @@
  * @copyright  Peter Bulmer
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
 define('PWRESET_STATUS_NOEMAILSENT', 1);
 define('PWRESET_STATUS_TOKENSENT', 2);
 define('PWRESET_STATUS_OTHEREMAILSENT', 3);
@@ -93,14 +96,31 @@ function core_login_process_password_reset($username, $email) {
         $user = $DB->get_record('user', $userparams);
     } else {
         // Try to load the user record based on email address.
-        // this is tricky because
+        // This is tricky because:
         // 1/ the email is not guaranteed to be unique - TODO: send email with all usernames to select the account for pw reset
         // 2/ mailbox may be case sensitive, the email domain is case insensitive - let's pretend it is all case-insensitive.
+        //
+        // The case-insensitive + accent-sensitive search may be expensive as some DBs such as MySQL cannot use the
+        // index in that case. For that reason, we first perform accent-insensitive search in a subselect for potential
+        // candidates (which can use the index) and only then perform the additional accent-sensitive search on this
+        // limited set of records in the outer select.
+        $sql = "SELECT *
+                  FROM {user}
+                 WHERE " . $DB->sql_equal('email', ':email1', false, true) . "
+                   AND id IN (SELECT id
+                                FROM {user}
+                               WHERE mnethostid = :mnethostid
+                                 AND deleted = 0
+                                 AND suspended = 0
+                                 AND " . $DB->sql_equal('email', ':email2', false, false) . ")";
 
-        $select = $DB->sql_like('email', ':email', false, true, false, '|') .
-                " AND mnethostid = :mnethostid AND deleted=0 AND suspended=0";
-        $params = array('email' => $DB->sql_like_escape($email, '|'), 'mnethostid' => $CFG->mnet_localhost_id);
-        $user = $DB->get_record_select('user', $select, $params, '*', IGNORE_MULTIPLE);
+        $params = array(
+            'email1' => $email,
+            'email2' => $email,
+            'mnethostid' => $CFG->mnet_localhost_id,
+        );
+
+        $user = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE);
     }
 
     // Target user details have now been identified, or we know that there is no such account.
