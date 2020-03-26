@@ -93,7 +93,14 @@ export default class {
             null,
 
             // Close the suggestions if this is not a multi-select.
-            !dataSource.multiple
+            !dataSource.multiple,
+
+            // Template overrides.
+            {
+                items: 'core_user/local/participantsfilter/autocomplete_selection_items',
+                layout: 'core_user/local/participantsfilter/autocomplete_layout',
+                selection: 'core_user/local/participantsfilter/autocomplete_selection',
+            }
         );
     }
 
