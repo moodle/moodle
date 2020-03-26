@@ -3848,5 +3848,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019111801.05);
     }
 
+    if ($oldversion < 2019111802.05) {
+        // Clean up completion criteria records referring to courses that no longer exist.
+        $select = 'criteriatype = :type AND courseinstance NOT IN (SELECT id FROM {course})';
+        $params = ['type' => 8]; // COMPLETION_CRITERIA_TYPE_COURSE.
+
+        $DB->delete_records_select('course_completion_criteria', $select, $params);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019111802.05);
+    }
+
     return true;
 }
