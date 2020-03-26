@@ -37,6 +37,7 @@ $string['edittaskschedule'] = 'Edit task schedule: {$a}';
 $string['enablerunnow'] = 'Allow \'Run now\' for scheduled tasks';
 $string['enablerunnow_desc'] = 'Allows administrators to run a single scheduled task immediately, rather than waiting for it to run as scheduled. The feature requires \'Path to PHP CLI\' (pathtophp) to be set in System paths. The task runs on the web server, so you may wish to disable this feature to avoid potential performance issues.';
 $string['faildelay'] = 'Fail delay';
+$string['fromcomponent'] = 'From component: {$a}';
 $string['lastruntime'] = 'Last run';
 $string['nextruntime'] = 'Next run';
 $string['plugindisabled'] = 'Plugin disabled';

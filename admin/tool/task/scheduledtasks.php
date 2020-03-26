@@ -51,6 +51,8 @@ if ($task) {
     $nexturl = new moodle_url($PAGE->url, ['lastchanged' => $taskname]);
 }
 
+$renderer = $PAGE->get_renderer('tool_task');
+
 if ($mform && ($mform->is_cancelled() || !empty($CFG->preventscheduledtaskchanges))) {
     redirect($nexturl);
 } else if ($action == 'edit' && empty($CFG->preventscheduledtaskchanges)) {
@@ -84,12 +86,14 @@ if ($mform && ($mform->is_cancelled() || !empty($CFG->preventscheduledtaskchange
     } else {
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('edittaskschedule', 'tool_task', $task->get_name()));
+        echo html_writer::div('\\' . get_class($task), 'task-class text-ltr');
+        echo html_writer::div(get_string('fromcomponent', 'tool_task',
+                $renderer->component_name($task->get_component())));
         $mform->display();
         echo $OUTPUT->footer();
     }
 
 } else {
-    $renderer = $PAGE->get_renderer('tool_task');
     echo $OUTPUT->header();
     $tasks = core\task\manager::get_all_scheduled_tasks();
     echo $renderer->scheduled_tasks_table($tasks, $lastchanged);
