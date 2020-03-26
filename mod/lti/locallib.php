@@ -3278,7 +3278,44 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
  */
 function lti_initiate_login($courseid, $id, $instance, $config, $messagetype = 'basic-lti-launch-request', $title = '',
         $text = '') {
-    global $SESSION, $USER, $CFG;
+    global $SESSION;
+
+    $params = lti_build_login_request($courseid, $id, $instance, $config, $messagetype);
+    $SESSION->lti_message_hint = "{$courseid},{$config->typeid},{$id}," . base64_encode($title) . ',' .
+        base64_encode($text);
+
+    $r = "<form action=\"" . $config->lti_initiatelogin .
+        "\" name=\"ltiInitiateLoginForm\" id=\"ltiInitiateLoginForm\" method=\"post\" " .
+        "encType=\"application/x-www-form-urlencoded\">\n";
+
+    foreach ($params as $key => $value) {
+        $key = htmlspecialchars($key);
+        $value = htmlspecialchars($value);
+        $r .= "  <input type=\"hidden\" name=\"{$key}\" value=\"{$value}\"/>\n";
+    }
+    $r .= "</form>\n";
+
+    $r .= "<script type=\"text/javascript\">\n" .
+        "//<![CDATA[\n" .
+        "document.ltiInitiateLoginForm.submit();\n" .
+        "//]]>\n" .
+        "</script>\n";
+
+    return $r;
+}
+
+/**
+ * Prepares an LTI 1.3 login request
+ *
+ * @param int            $courseid  Course ID
+ * @param int            $id        LTI instance ID
+ * @param stdClass|null  $instance  LTI instance
+ * @param stdClass       $config    Tool type configuration
+ * @param string         $messagetype   LTI message type
+ * @return array Login request parameters
+ */
+function lti_build_login_request($courseid, $id, $instance, $config, $messagetype) {
+    global $USER, $CFG;
 
     if (!empty($instance)) {
         $endpoint = !empty($instance->toolurl) ? $instance->toolurl : $config->lti_toolurl;
@@ -3302,27 +3339,9 @@ function lti_initiate_login($courseid, $id, $instance, $config, $messagetype = '
     $params['target_link_uri'] = $endpoint;
     $params['login_hint'] = $USER->id;
     $params['lti_message_hint'] = $id;
-    $SESSION->lti_message_hint = "{$courseid},{$config->typeid},{$id}," . base64_encode($title) . ',' .
-        base64_encode($text);
-
-    $r = "<form action=\"" . $config->lti_initiatelogin .
-        "\" name=\"ltiInitiateLoginForm\" id=\"ltiInitiateLoginForm\" method=\"post\" " .
-        "encType=\"application/x-www-form-urlencoded\">\n";
-
-    foreach ($params as $key => $value) {
-        $key = htmlspecialchars($key);
-        $value = htmlspecialchars($value);
-        $r .= "  <input type=\"hidden\" name=\"{$key}\" value=\"{$value}\"/>\n";
-    }
-    $r .= "</form>\n";
-
-    $r .= "<script type=\"text/javascript\">\n" .
-        "//<![CDATA[\n" .
-        "document.ltiInitiateLoginForm.submit();\n" .
-        "//]]>\n" .
-        "</script>\n";
-
-    return $r;
+    $params['client_id'] = $config->lti_clientid;
+    $params['lti_deployment_id'] = $config->typeid;
+    return $params;
 }
 
 function lti_get_type($typeid) {

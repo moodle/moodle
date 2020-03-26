@@ -1383,4 +1383,36 @@ MwIDAQAB
         $this->assertEquals($token->timecreated + LTI_ACCESS_TOKEN_LIFE, $token->validuntil);
         $this->assertNull($token->lastaccess);
     }
+
+    /**
+     * Test lti_build_login_request().
+     */
+    public function test_lti_build_login_request() {
+        global $USER, $CFG;
+
+        $this->resetAfterTest();
+
+        $USER->id = 123456789;
+
+        $course   = $this->getDataGenerator()->create_course();
+        $instance = $this->getDataGenerator()->create_module('lti',
+            [
+                'course' => $course->id,
+            ]
+        );
+
+        $config = new stdClass();
+        $config->lti_clientid = 'some-client-id';
+        $config->typeid = 'some-type-id';
+        $config->lti_toolurl = 'some-lti-tool-url';
+
+        $request = lti_build_login_request($course->id, $instance->id, $instance, $config, 'basic-lti-launch-request');
+
+        $this->assertEquals($CFG->wwwroot, $request['iss']);
+        $this->assertEquals('http://some-lti-tool-url', $request['target_link_uri']);
+        $this->assertEquals(123456789, $request['login_hint']);
+        $this->assertEquals($instance->id, $request['lti_message_hint']);
+        $this->assertEquals('some-client-id', $request['client_id']);
+        $this->assertEquals('some-type-id', $request['lti_deployment_id']);
+    }
 }
