@@ -849,10 +849,8 @@ span.editinstructions {
     .listitem {
 
         &[data-selected='1'] {
-            background-color: $table-bg-accent;
-            &:hover {
-                background-color: $table-bg-hover;
-            }
+            border-left: calc(#{$list-group-border-width} + 5px) solid map-get($theme-colors, 'info');
+            padding-left: calc(#{$list-group-item-padding-x} - 5px);
         }
     }
 
@@ -899,7 +897,6 @@ span.editinstructions {
             }
 
             .idnumber {
-                color: #a1a1a8;
                 margin-right: 2em;
             }
         }
@@ -964,25 +961,6 @@ span.editinstructions {
         }
 
         .listitem {
-            > div {
-                > .ba-checkbox {
-                    width: 2.2em;
-                    text-align: center;
-                    margin: -1px 0.5em 0 0;
-                    padding-top: 2px;
-                }
-            }
-
-            &.highlight > div > .ba-checkbox {
-                background-color: $table-bg-hover;
-            }
-
-            &[data-selected='1'] > div > .ba-checkbox {
-                margin: 0 0.5em 0 0;
-                padding: 0;
-                background-color: inherit;
-            }
-
             &:first-child > div .item-actions .action-moveup,
             &:last-child > div .item-actions .action-movedown {
                 display: none;
