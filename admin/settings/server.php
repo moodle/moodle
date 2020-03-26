@@ -73,6 +73,22 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configduration('sessiontimeout', new lang_string('sessiontimeout', 'admin'),
         new lang_string('configsessiontimeout', 'admin'), 8 * 60 * 60));
 
+    $sessiontimeoutwarning = new admin_setting_configduration('sessiontimeoutwarning',
+        new lang_string('sessiontimeoutwarning', 'admin'),
+        new lang_string('configsessiontimeoutwarning', 'admin'), 20 * 60);
+
+    $sessiontimeoutwarning->set_validate_function(function(int $value): string {
+        global $CFG;
+        // Check sessiontimeoutwarning is less than sessiontimeout.
+        if ($CFG->sessiontimeout <= $value) {
+            return get_string('configsessiontimeoutwarningcheck', 'admin');
+        } else {
+            return '';
+        }
+    });
+
+    $temp->add($sessiontimeoutwarning);
+
     $temp->add(new admin_setting_configtext('sessioncookie', new lang_string('sessioncookie', 'admin'),
         new lang_string('configsessioncookie', 'admin'), '', PARAM_ALPHANUM));
     $temp->add(new admin_setting_configtext('sessioncookiepath', new lang_string('sessioncookiepath', 'admin'),

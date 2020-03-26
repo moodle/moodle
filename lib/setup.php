@@ -801,6 +801,10 @@ if (CLI_SCRIPT) {
 if (empty($CFG->sessiontimeout)) {
     $CFG->sessiontimeout = 8 * 60 * 60;
 }
+// Set sessiontimeoutwarning 20 minutes.
+if (empty($CFG->sessiontimeoutwarning)) {
+    $CFG->sessiontimeoutwarning = 20 * 60;
+}
 \core\session\manager::start();
 
 // Set default content type and encoding, developers are still required to use
