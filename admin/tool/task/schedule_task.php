@@ -71,9 +71,10 @@ echo $OUTPUT->heading($task->get_name());
 if (!optional_param('confirm', 0, PARAM_INT)) {
     echo $OUTPUT->confirm(get_string('runnow_confirm', 'tool_task', $task->get_name()),
             new single_button(new moodle_url('/admin/tool/task/schedule_task.php',
-            array('task' => $taskname, 'confirm' => 1, 'sesskey' => sesskey())),
+                    ['task' => $taskname, 'confirm' => 1, 'sesskey' => sesskey()]),
             get_string('runnow', 'tool_task')),
-            new single_button(new moodle_url('/admin/tool/task/scheduledtasks.php'),
+            new single_button(new moodle_url('/admin/tool/task/scheduledtasks.php',
+                    ['lastchanged' => get_class($task)]),
             get_string('cancel'), false));
     echo $OUTPUT->footer();
     exit;
@@ -97,6 +98,6 @@ $output = $PAGE->get_renderer('tool_task');
 echo $OUTPUT->single_button(new moodle_url('/admin/tool/task/schedule_task.php',
         array('task' => $taskname, 'confirm' => 1, 'sesskey' => sesskey())),
         get_string('runagain', 'tool_task'));
-echo $output->link_back();
+echo $output->link_back(get_class($task));
 
 echo $OUTPUT->footer();

@@ -62,6 +62,8 @@ if (null !== $logid) {
 $renderer = $PAGE->get_renderer('tool_task');
 
 echo $OUTPUT->header();
+
+// Output the search form.
 echo $OUTPUT->render_from_template('core_admin/tasklogs', (object) [
     'action' => $pageurl->out(),
     'filter' => $filter,
@@ -84,6 +86,7 @@ echo $OUTPUT->render_from_template('core_admin/tasklogs', (object) [
     ],
 ]);
 
+// Output any matching logs.
 $table = new \core_admin\task_log_table($filter, $result);
 $table->baseurl = $pageurl;
 $table->out(100, false);
