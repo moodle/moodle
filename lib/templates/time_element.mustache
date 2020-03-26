@@ -37,7 +37,7 @@
         "datetimeformat": "%Y-%m-%dT%H:%M%z"
     }
 }}
-<time id="time-{{$elementid}}{{uniqid}}{{/elementid}}" datetime="{{$datetimeval}}{{datetime}}{{/datetimeval}}"
+<time id="time-{{$elementid}}{{uniqid}}{{/elementid}}" class="{{$elementclass}}{{timeclass}}{{/elementclass}}" datetime="{{$datetimeval}}{{datetime}}{{/datetimeval}}"
       data-timestamp="{{$timestampval}}{{timestamp}}{{/timestampval}}"
       data-datetimeformat="{{$datetimeformatval}}{{#datetimeformat}}{{.}}{{/datetimeformat}}{{^datetimeformat}}%Y-%m-%dT%H:%M%z{{/datetimeformat}}{{/datetimeformatval}}">
     {{$datedisplay}}

@@ -105,9 +105,12 @@
                                     {{/parentauthorname}}
                                 </h4>
                             {{/author}}
-                            <time class="text-muted">
-                                {{#userdate}} {{timecreated}}, {{#str}} strftimerecentfull, core_langconfig {{/str}} {{/userdate}}
-                            </time>
+                            {{< core/time_element }}
+                                {{$elementid}}created-{{id}}-{{uniqid}}{{/elementid}}
+                                {{$elementclass}}text-muted{{/elementclass}}
+                                {{$timestampval}}{{timecreated}}{{/timestampval}}
+                                {{$userdateformatval}}{{#str}} strftimerecentfull, core_langconfig {{/str}}{{/userdateformatval}}
+                            {{/core/time_element}}
                         </div>
 
                         <div class="d-flex align-items-center ml-auto">
