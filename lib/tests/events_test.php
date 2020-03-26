@@ -371,4 +371,27 @@ class core_events_testcase extends advanced_testcase {
         $this->assertEquals($event->userid, $user->id);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the database text field content replaced event.
+     */
+    public function test_database_text_field_content_replaced() {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/lib/adminlib.php');
+
+        // Trigger and capture the event for finding and replacing strings in the database.
+        $sink = $this->redirectEvents();
+        ob_start();
+        db_replace('searchstring', 'replacestring');
+        ob_end_clean();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\database_text_field_content_replaced', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $this->assertEquals('searchstring', $event->other['search']);
+        $this->assertEquals('replacestring', $event->other['replace']);
+    }
 }
