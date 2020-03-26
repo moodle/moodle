@@ -4877,11 +4877,15 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
     // Build the WHERE clause for an SQL query.
     $params = array('fieldval' => $value);
 
-    // Do a case-insensitive query, if necessary.
+    // Do a case-insensitive query, if necessary. These are generally very expensive. The performance can be improved on some DBs
+    // such as MySQL by pre-filtering users with accent-insensitive subselect.
     if (in_array($field, $caseinsensitivefields)) {
         $fieldselect = $DB->sql_equal($field, ':fieldval', false);
+        $idsubselect = $DB->sql_equal($field, ':fieldval2', false, false);
+        $params['fieldval2'] = $value;
     } else {
         $fieldselect = "$field = :fieldval";
+        $idsubselect = '';
     }
     $constraints = "$fieldselect AND deleted <> 1";
 
@@ -4896,6 +4900,10 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
     if (!empty($mnethostid)) {
         $params['mnethostid'] = $mnethostid;
         $constraints .= " AND mnethostid = :mnethostid";
+    }
+
+    if ($idsubselect) {
+        $constraints .= " AND id IN (SELECT id FROM {user} WHERE {$idsubselect})";
     }
 
     // Get all the basic user data.

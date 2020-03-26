@@ -355,4 +355,75 @@ class core_login_lib_testcase extends advanced_testcase {
             $this->assertArrayNotHasKey('email', $validationerrors);
         }
     }
+
+    /**
+     * Test searching for the user record by matching the provided email address when resetting password.
+     *
+     * Email addresses should be handled as case-insensitive but accent sensitive.
+     */
+    public function test_core_login_process_password_reset_email_sensitivity() {
+        global $CFG;
+        require_once($CFG->libdir.'/phpmailer/moodle_phpmailer.php');
+
+        $this->resetAfterTest();
+        $sink = $this->redirectEmails();
+        $CFG->protectusernames = 0;
+
+        // In this test, we need to mock sending emails on non-ASCII email addresses. However, such email addresses do
+        // not pass the default `validate_email()` and Moodle does not yet provide a CFG switch to allow such emails.
+        // So we inject our own validation method here and revert it back once we are done. This custom validator method
+        // is identical to the default 'php' validator with the only difference: it has the FILTER_FLAG_EMAIL_UNICODE
+        // set so that it allows to use non-ASCII characters in email addresses.
+        $defaultvalidator = moodle_phpmailer::$validator;
+        moodle_phpmailer::$validator = function($address) {
+            return (bool) filter_var($address, FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE);
+        };
+
+        // Emails are treated as case-insensitive when searching for the matching user account.
+        $u1 = $this->getDataGenerator()->create_user(['email' => 'priliszlutouckykunupeldabelskeody@example.com']);
+
+        list($status, $notice, $url) = core_login_process_password_reset(null, 'PrIlIsZlUtOuCkYKuNupELdAbElSkEoDy@eXaMpLe.CoM');
+
+        $this->assertSame('emailresetconfirmsent', $status);
+        $emails = $sink->get_messages();
+        $this->assertCount(1, $emails);
+        $email = reset($emails);
+        $this->assertSame($u1->email, $email->to);
+        $sink->clear();
+
+        // There may exist two users with same emails.
+        $u2 = $this->getDataGenerator()->create_user(['email' => 'PRILISZLUTOUCKYKUNUPELDABELSKEODY@example.com']);
+
+        list($status, $notice, $url) = core_login_process_password_reset(null, 'PrIlIsZlUtOuCkYKuNupELdAbElSkEoDy@eXaMpLe.CoM');
+
+        $this->assertSame('emailresetconfirmsent', $status);
+        $emails = $sink->get_messages();
+        $this->assertCount(1, $emails);
+        $email = reset($emails);
+        $this->assertSame(core_text::strtolower($u2->email), core_text::strtolower($email->to));
+        $sink->clear();
+
+        // However, emails are accent sensitive - note this is the u1's email with a single character a -> á changed.
+        list($status, $notice, $url) = core_login_process_password_reset(null, 'priliszlutouckykunupeldábelskeody@example.com');
+
+        $this->assertSame('emailpasswordconfirmnotsent', $status);
+        $emails = $sink->get_messages();
+        $this->assertCount(0, $emails);
+        $sink->clear();
+
+        $u3 = $this->getDataGenerator()->create_user(['email' => 'PřílišŽluťoučkýKůňÚpělĎálebskéÓdy@example.com']);
+
+        list($status, $notice, $url) = core_login_process_password_reset(null, 'pŘÍLIŠžLuŤOuČkÝkŮŇúPĚLďÁLEBSKÉóDY@eXaMpLe.CoM');
+
+        $this->assertSame('emailresetconfirmsent', $status);
+        $emails = $sink->get_messages();
+        $this->assertCount(1, $emails);
+        $email = reset($emails);
+        $this->assertSame($u3->email, $email->to);
+        $sink->clear();
+
+        // Restore the original email address validator.
+        moodle_phpmailer::$validator = $defaultvalidator;
+    }
+
 }

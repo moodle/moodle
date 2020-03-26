@@ -345,4 +345,62 @@ class core_authlib_testcase extends advanced_testcase {
             $this->assertInstanceOf('coding_exception', $e);
         }
     }
+
+    /**
+     * Test the {@link signup_validate_data()} duplicate email validation.
+     */
+    public function test_signup_validate_data_same_email() {
+        global $CFG;
+        require_once($CFG->libdir . '/authlib.php');
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+
+        $this->resetAfterTest();
+
+        $CFG->registerauth = 'email';
+        $CFG->passwordpolicy = false;
+
+        // In this test, we want to check accent-sensitive email search. However, accented email addresses do not pass
+        // the default `validate_email()` and Moodle does not yet provide a CFG switch to allow such emails.  So we
+        // inject our own validation method here and revert it back once we are done. This custom validator method is
+        // identical to the default 'php' validator with the only difference: it has the FILTER_FLAG_EMAIL_UNICODE set
+        // so that it allows to use non-ASCII characters in email addresses.
+        $defaultvalidator = moodle_phpmailer::$validator; moodle_phpmailer::$validator = function($address) {
+            return (bool) filter_var($address, FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE);
+        };
+
+        // Check that two users cannot share the same email address if the site is configured so.
+        // Emails in Moodle are supposed to be case-insensitive (and accent-sensitive but accents are not yet supported).
+        $CFG->allowaccountssameemail = false;
+
+        $u1 = $this->getDataGenerator()->create_user([
+            'username' => 'abcdef',
+            'email' => 'abcdef@example.com',
+        ]);
+
+        $formdata = [
+            'username' => 'newuser',
+            'firstname' => 'First',
+            'lastname' => 'Last',
+            'password' => 'weak',
+            'email' => 'ABCDEF@example.com',
+        ];
+
+        $errors = signup_validate_data($formdata, []);
+        $this->assertContains('This email address is already registered.', $errors['email']);
+
+        // Emails are accent-sensitive though so if we change a -> á in the u1's email, it should pass.
+        // Please note that Moodle does not normally support such emails yet. We test the DB search sensitivity here.
+        $formdata['email'] = 'ábcdef@example.com';
+        $errors = signup_validate_data($formdata, []);
+        $this->assertArrayNotHasKey('email', $errors);
+
+        // Check that users can share the same email if the site is configured so.
+        $CFG->allowaccountssameemail = true;
+        $formdata['email'] = 'abcdef@example.com';
+        $errors = signup_validate_data($formdata, []);
+        $this->assertArrayNotHasKey('email', $errors);
+
+        // Restore the original email address validator.
+        moodle_phpmailer::$validator = $defaultvalidator;
+    }
 }
