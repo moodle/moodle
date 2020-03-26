@@ -82,7 +82,6 @@ class helper {
         return false;
     }
 
-
     /**
      * Get the error messages stored in our H5P framework.
      *
@@ -409,5 +408,25 @@ class helper {
     public static function get_cache_librarykey(string $library): string {
         // Remove whitespaces and replace '.' to '_'.
         return str_replace('.', '_', str_replace(' ', '', $library));
+    }
+
+    /**
+     * Parse a JS array to a PHP array.
+     *
+     * @param  string $jscontent The JS array to parse to PHP array.
+     * @return array The JS array converted to PHP array.
+     */
+    public static function parse_js_array(string $jscontent): array {
+        $jsarray = preg_split('/,\n\s+/', substr($jscontent, 0, -1));
+        $jsarray = preg_replace('~{?\\n~', '', $jsarray);
+
+        $strings = [];
+        foreach ($jsarray as $key => $value) {
+            $splitted = explode(":", $value, 2);
+            $value = preg_replace("/^['|\"](.*)['|\"]$/", "$1", trim($splitted[1], ' ,'));
+            $strings[ trim($splitted[0]) ] = str_replace("\'", "'", $value);
+        }
+
+        return $strings;
     }
 }

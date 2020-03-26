@@ -378,15 +378,10 @@ class editor {
         $PAGE->requires->js(autoloader::get_h5p_editor_library_url('scripts/h5peditor-editor.js' . $cachebuster), true);
         $PAGE->requires->js(autoloader::get_h5p_editor_library_url('scripts/h5peditor-init.js' . $cachebuster), true);
 
-        // Add translations.
+        // Load editor translations.
         $language = framework::get_language();
-        $languagescript = "language/{$language}.js";
-
-        if (!file_exists("{$CFG->dirroot}" . autoloader::get_h5p_editor_library_base($languagescript))) {
-            $languagescript = 'language/en.js';
-        }
-        $PAGE->requires->js(autoloader::get_h5p_editor_library_url($languagescript . $cachebuster),
-            true);
+        $editorstrings = $this->get_editor_translations($language);
+        $PAGE->requires->data_for_js('H5PEditor.language.core', $editorstrings, false);
 
         // Add JavaScript settings.
         $root = $CFG->wwwroot;
@@ -421,6 +416,47 @@ class editor {
         }
 
         $PAGE->requires->data_for_js('H5PIntegration', $settings, true);
+    }
+
+    /**
+     * Get editor translations for the defined language.
+     * Check if the editor strings have been translated in Moodle.
+     * If the strings exist, they will override the existing ones in the JS file.
+     *
+     * @param string $language The language for the translations to be returned.
+     * @return array The editor string translations.
+     */
+    private function get_editor_translations(string $language): array {
+        global $CFG;
+
+        // Add translations.
+        $languagescript = "language/{$language}.js";
+
+        if (!file_exists("{$CFG->dirroot}" . autoloader::get_h5p_editor_library_base($languagescript))) {
+            $languagescript = 'language/en.js';
+        }
+
+        // Check if the editor strings have been translated in Moodle.
+        // If the strings exist, they will override the existing ones in the JS file.
+
+        // Get existing strings from current JS language file.
+        $langcontent = file_get_contents("{$CFG->dirroot}" . autoloader::get_h5p_editor_library_base($languagescript));
+
+        // Get only the content between { } (for instance, ; at the end of the file has to be removed).
+        $langcontent = substr($langcontent, 0, strpos($langcontent, '}', -0) + 1);
+        $langcontent = substr($langcontent, strpos($langcontent, '{'));
+
+        // Parse the JS language content and get a PHP array.
+        $editorstrings = helper::parse_js_array($langcontent);
+        foreach ($editorstrings as $key => $value) {
+            $stringkey = 'editor:'.strtolower(trim($key));
+            $value = autoloader::get_h5p_string($stringkey, $language);
+            if (!empty($value)) {
+                $editorstrings[$key] = $value;
+            }
+        }
+
+        return $editorstrings;
     }
 
     /**
