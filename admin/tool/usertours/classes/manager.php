@@ -762,6 +762,13 @@ class manager {
      * @param   int     $direction
      */
     protected static function _move_tour(tour $tour, $direction) {
+        // We can't move the first tour higher, nor the last tour any lower.
+        if (($tour->is_first_tour() && $direction == helper::MOVE_UP) ||
+                ($tour->is_last_tour() && $direction == helper::MOVE_DOWN)) {
+
+            return;
+        }
+
         $currentsortorder   = $tour->get_sortorder();
         $targetsortorder    = $currentsortorder + $direction;
 
@@ -889,6 +896,9 @@ class manager {
             }
         }
         $existingtourrecords->close();
+
+        // Ensure we correct the sortorder in any existing tours, prior to adding latest shipped tours.
+        helper::reset_tour_sortorder();
 
         foreach (array_reverse($shippedtours) as $filename => $version) {
             $filepath = $CFG->dirroot . "/{$CFG->admin}/tool/usertours/tours/" . $filename;
