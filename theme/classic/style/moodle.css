@@ -13410,9 +13410,8 @@ span.editinstructions {
     #course-category-listings ul.ml ul.ml {
       margin: 0; }
   #course-category-listings .listitem[data-selected='1'] {
-    background-color: rgba(0, 0, 0, 0.05); }
-    #course-category-listings .listitem[data-selected='1']:hover {
-      background-color: rgba(0, 0, 0, 0.075); }
+    border-left: calc(1px + 5px) solid #5bc0de;
+    padding-left: calc(1.25rem - 5px); }
   #course-category-listings .item-actions {
     margin-right: 1em;
     display: inline-block; }
@@ -13433,7 +13432,6 @@ span.editinstructions {
   #course-category-listings .listitem > div .without-actions {
     color: #333; }
   #course-category-listings .listitem > div .idnumber {
-    color: #a1a1a8;
     margin-right: 2em; }
   #course-category-listings .listitem[data-visible="0"] {
     color: #6c757d; }
@@ -13462,17 +13460,6 @@ span.editinstructions {
     margin: -2px 6px 0 0; }
   #course-category-listings #category-listing .listitem.collapsed > ul.ml {
     display: none; }
-  #course-category-listings #category-listing .listitem > div > .ba-checkbox {
-    width: 2.2em;
-    text-align: center;
-    margin: -1px 0.5em 0 0;
-    padding-top: 2px; }
-  #course-category-listings #category-listing .listitem.highlight > div > .ba-checkbox {
-    background-color: rgba(0, 0, 0, 0.075); }
-  #course-category-listings #category-listing .listitem[data-selected='1'] > div > .ba-checkbox {
-    margin: 0 0.5em 0 0;
-    padding: 0;
-    background-color: inherit; }
   #course-category-listings #category-listing .listitem:first-child > div .item-actions .action-moveup,
   #course-category-listings #category-listing .listitem:last-child > div .item-actions .action-movedown {
     display: none; }
