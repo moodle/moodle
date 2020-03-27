@@ -26,10 +26,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['areapackage'] = 'Package file';
+$string['attempt'] = 'Attempt';
+$string['deleteallattempts'] = 'Delete all H5P attempts';
 $string['displayexport'] = 'Allow download';
 $string['displayembed'] = 'Embed button';
 $string['displaycopyright'] = 'Copyright button';
 $string['h5pactivity:addinstance'] = 'Add a new H5P';
+$string['h5pactivity:submit'] = 'Submit H5P attempts';
 $string['h5pactivity:view'] = 'View H5P';
 $string['h5pactivityfieldset'] = 'H5P Settings';
 $string['h5pactivityname'] = 'H5P';
@@ -39,9 +42,13 @@ $string['modulename'] = 'H5P activity';
 $string['modulename_help'] = 'Use this module to use a H5P compatible content as a course activity.';
 $string['modulename_link'] = 'mod/h5pactivity/view';
 $string['modulenameplural'] = 'H5P activities';
+$string['myattempts'] = 'My attempts';
 $string['package'] = 'Package file';
 $string['package_help'] = 'The package file is a h5pfile containing H5P dynamic content.';
 $string['page-mod-h5pactivity-x'] = 'Any H5P module page';
 $string['pluginadministration'] = 'H5P administration';
 $string['pluginname'] = 'H5P activity';
+$string['previewmode'] = 'This content is displayed in preview mode. No attempt tracking will be stored.';
 $string['privacy:metadata'] = 'The H5P activity plugin does not store any personal data.';
+$string['statement_received'] = 'xAPI statement received';
+$string['view'] = 'View';

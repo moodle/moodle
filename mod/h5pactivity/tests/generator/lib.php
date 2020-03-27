@@ -45,7 +45,7 @@ class mod_h5pactivity_generator extends testing_module_generator {
      * @return stdClass record from module-defined table with additional field
      *     cmid (corresponding id in course_modules table)
      */
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, array $options = null): stdClass {
         global $CFG, $USER;
         // Ensure the record can be modified without affecting calling code.
         $record = (object)(array)$record;
@@ -67,7 +67,7 @@ class mod_h5pactivity_generator extends testing_module_generator {
         // The 'packagefile' value corresponds to the draft file area ID. If not specified, create from packagefilepath.
         if (empty($record->packagefile)) {
             if (!isloggedin() || isguestuser()) {
-                throw new coding_exception('Scorm generator requires a current user');
+                throw new coding_exception('H5P activity generator requires a current user');
             }
             if (!file_exists($record->packagefilepath)) {
                 throw new coding_exception("File {$record->packagefilepath} does not exist");
@@ -87,5 +87,77 @@ class mod_h5pactivity_generator extends testing_module_generator {
 
         // Do work to actually add the instance.
         return parent::create_instance($record, (array)$options);
+    }
+
+    /**
+     * Creata a fake attempt
+     * @param stdClass $instance object returned from create_instance() call
+     * @param stdClass|array $record
+     * @return stdClass generated object
+     * @throws coding_exception if function is not implemented by module
+     */
+    public function create_content($instance, $record = []) {
+        global $DB, $USER;
+
+        $currenttime = time();
+        $cmid = $record['cmid'];
+        $userid = $record['userid'] ?? $USER->id;
+        $conditions = ['h5pactivityid' => $instance->id, 'userid' => $userid];
+        $attemptnum = $DB->count_records('h5pactivity_attempts', $conditions) + 1;
+        $attempt = (object)[
+                'h5pactivityid' => $instance->id,
+                'userid' => $userid,
+                'timecreated' => $currenttime,
+                'timemodified' => $currenttime,
+                'attempt' => $attemptnum,
+                'rawscore' => 3,
+                'maxscore' => 5,
+            ];
+        $attempt->id = $DB->insert_record('h5pactivity_attempts', $attempt);
+
+        // Create 3 diferent tracking results.
+        $result = (object)[
+                'attemptid' => $attempt->id,
+                'subcontent' => '',
+                'timecreated' => $currenttime,
+                'interactiontype' => 'compound',
+                'description' => 'description for '.$userid,
+                'correctpattern' => '',
+                'response' => '',
+                'additionals' => '{"extensions":{"http:\/\/h5p.org\/x-api\/h5p-local-content-id":'.
+                        $cmid.'},"contextExtensions":{}}',
+                'rawscore' => 3,
+                'maxscore' => 5,
+            ];
+        $DB->insert_record('h5pactivity_attempts_results', $result);
+
+        $result->subcontent = 'bd03477a-90a1-486d-890b-0657d6e80ffd';
+        $result->interactiontype = 'compound';
+        $result->response = '0[,]5[,]2[,]3';
+        $result->additionals = '{"choices":[{"id":"0","description":{"en-US":"Blueberry\n"}},'.
+                '{"id":"1","description":{"en-US":"Raspberry\n"}},{"id":"5","description":'.
+                '{"en-US":"Strawberry\n"}},{"id":"2","description":{"en-US":"Cloudberry\n"}},'.
+                '{"id":"3","description":{"en-US":"Halle Berry\n"}},'.
+                '{"id":"4","description":{"en-US":"Cocktail cherry\n"}}],'.
+                '"extensions":{"http:\/\/h5p.org\/x-api\/h5p-local-content-id":'.$cmid.
+                ',"http:\/\/h5p.org\/x-api\/h5p-subContentId":"'.$result->interactiontype.
+                '"},"contextExtensions":{}}';
+        $result->rawscore = 1;
+        $DB->insert_record('h5pactivity_attempts_results', $result);
+
+        $result->subcontent = '14fcc986-728b-47f3-915b-'.$userid;
+        $result->interactiontype = 'matching';
+        $result->response = '1[.]0[,]0[.]1[,]2[.]2';
+        $result->additionals = '{"source":[{"id":"0","description":{"en-US":"A berry"}}'.
+                ',{"id":"1","description":{"en-US":"An orange berry"}},'.
+                '{"id":"2","description":{"en-US":"A red berry"}}],'.
+                '"target":[{"id":"0","description":{"en-US":"Cloudberry"}},'.
+                '{"id":"1","description":{"en-US":"Blueberry"}},'.
+                '{"id":"2","description":{"en-US":"Redcurrant\n"}}],'.
+                '"contextExtensions":{}}';
+        $result->rawscore = 2;
+        $DB->insert_record('h5pactivity_attempts_results', $result);
+
+        return $attempt;
     }
 }

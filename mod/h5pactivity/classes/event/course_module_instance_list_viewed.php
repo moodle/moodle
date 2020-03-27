@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin event classes are defined here.
+ * H5P Activity list viewed event.
  *
  * @package     mod_h5pactivity
  * @copyright   2020 Ferran Recio <ferran@moodle.com>
