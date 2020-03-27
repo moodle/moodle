@@ -4424,10 +4424,15 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
     if (!\core\session\manager::validate_login_token($logintoken)) {
         $failurereason = AUTH_LOGIN_FAILED;
 
-        // Trigger login failed event.
-        $event = \core\event\user_login_failed::create(array('userid' => $user->id,
-                'other' => array('username' => $username, 'reason' => $failurereason)));
-        $event->trigger();
+        // Trigger login failed event (specifying the ID of the found user, if available).
+        \core\event\user_login_failed::create([
+            'userid' => ($user->id ?? 0),
+            'other' => [
+                'username' => $username,
+                'reason' => $failurereason,
+            ],
+        ])->trigger();
+
         error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Invalid Login Token:  $username  ".$_SERVER['HTTP_USER_AGENT']);
         return false;
     }
