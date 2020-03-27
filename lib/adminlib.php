@@ -8791,6 +8791,40 @@ function any_new_admin_settings($node) {
 }
 
 /**
+ * Given a table and optionally a column name should replaces be done?
+ *
+ * @param string $table name
+ * @param string $column name
+ * @return bool success or fail
+ */
+function db_should_replace($table, $column = ''): bool {
+
+    // TODO: this is horrible hack, we should do whitelisting and each plugin should be responsible for proper replacing...
+    $skiptables = ['config', 'config_plugins', 'filter_config', 'sessions',
+        'events_queue', 'repository_instance_config', 'block_instances', 'files'];
+
+    // Don't process these.
+    if (in_array($table, $skiptables)) {
+        return false;
+    }
+
+    // To be safe never replace inside a table that looks related to logging.
+    if (preg_match('/(^|_)logs?($|_)/', $table)) {
+        return false;
+    }
+
+    // Do column based exclusions.
+    if (!empty($column)) {
+        // Don't touch anything that looks like a hash.
+        if (preg_match('/hash$/', $column)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
  * Moved from admin/replace.php so that we can use this in cron
  *
  * @param string $search string to look for
@@ -8800,11 +8834,6 @@ function any_new_admin_settings($node) {
 function db_replace($search, $replace) {
     global $DB, $CFG, $OUTPUT;
 
-    // TODO: this is horrible hack, we should do whitelisting and each plugin should be responsible for proper replacing...
-    $skiptables = array('config', 'config_plugins', 'config_log', 'upgrade_log', 'log',
-                        'filter_config', 'sessions', 'events_queue', 'repository_instance_config',
-                        'block_instances', '');
-
     // Turn off time limits, sometimes upgrades can be slow.
     core_php_time_limit::raise();
 
@@ -8813,13 +8842,16 @@ function db_replace($search, $replace) {
     }
     foreach ($tables as $table) {
 
-        if (in_array($table, $skiptables)) {      // Don't process these
+        if (!db_should_replace($table)) {
             continue;
         }
 
         if ($columns = $DB->get_columns($table)) {
             $DB->set_debug(true);
             foreach ($columns as $column) {
+                if (!db_should_replace($table, $column->name)) {
+                    continue;
+                }
                 $DB->replace_all_text($table, $column, $search, $replace);
             }
             $DB->set_debug(false);
