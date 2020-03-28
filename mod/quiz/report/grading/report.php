@@ -84,9 +84,13 @@ class quiz_grading_report extends quiz_default_report {
         if (!in_array($grade, array('all', 'needsgrading', 'autograded', 'manuallygraded'))) {
             $grade = null;
         }
-        $pagesize = optional_param('pagesize', self::DEFAULT_PAGE_SIZE, PARAM_INT);
+        $pagesize = optional_param('pagesize',
+                get_user_preferences('quiz_grading_pagesize', self::DEFAULT_PAGE_SIZE),
+                PARAM_INT);
         $page = optional_param('page', 0, PARAM_INT);
-        $order = optional_param('order', self::DEFAULT_ORDER, PARAM_ALPHA);
+        $order = optional_param('order',
+                get_user_preferences('quiz_grading_order', self::DEFAULT_ORDER),
+                PARAM_ALPHA);
 
         // Assemble the options required to reload this page.
         $optparams = array('includeauto', 'page');
@@ -143,6 +147,12 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         $hasquestions = quiz_has_questions($this->quiz->id);
+        if (!$hasquestions) {
+            $this->print_header_and_tabs($cm, $course, $quiz, 'grading');
+            echo $this->renderer->render_quiz_no_question_notification($quiz, $cm, $this->context);
+            return true;
+        }
+
         $counts = null;
         if ($slot && $hasquestions) {
             // Make sure there is something to do.
@@ -159,15 +169,9 @@ class quiz_grading_report extends quiz_default_report {
             }
         }
 
-        // Start output.
-        $this->print_header_and_tabs($cm, $course, $quiz, 'grading');
-
         // What sort of page to display?
-        if (!$hasquestions) {
-            echo $this->renderer->render_quiz_no_question_notification($quiz, $cm, $this->context);
-
-        } else if (!$slot) {
-            echo $this->display_index($includeauto);
+        if (!$slot) {
+            $this->display_index($includeauto);
 
         } else {
             echo $this->display_grading_interface($slot, $questionid, $grade,
@@ -305,9 +309,15 @@ class quiz_grading_report extends quiz_default_report {
         return $result;
     }
 
+    /**
+     * Display the report front page which summarises the number of attempts to grade.
+     *
+     * @param bool $includeauto whether to show automatically-graded questions.
+     */
     protected function display_index($includeauto) {
         global $PAGE;
-        $output = '';
+
+        $this->print_header_and_tabs($this->cm, $this->course, $this->quiz, 'grading');
 
         if ($groupmode = groups_get_activity_groupmode($this->cm)) {
             // Groups is being used.
@@ -319,7 +329,7 @@ class quiz_grading_report extends quiz_default_report {
         } else {
             $linktext = get_string('alsoshowautomaticallygraded', 'quiz_grading');
         }
-        $output .= $this->renderer->render_display_index_heading($linktext, $this->list_questions_url(!$includeauto));
+        echo $this->renderer->render_display_index_heading($linktext, $this->list_questions_url(!$includeauto));
         $data = [];
         $header = [];
 
@@ -361,23 +371,30 @@ class quiz_grading_report extends quiz_default_report {
 
             $data[] = $row;
         }
-        $output .= $this->renderer->render_questions_table($includeauto, $data, $header);
-        return $output;
+        echo $this->renderer->render_questions_table($includeauto, $data, $header);
     }
 
+    /**
+     * Display the UI for grading attempts at one question.
+     *
+     * @param int $slot identifies which question to grade.
+     * @param int $questionid identifies which question to grade.
+     * @param string $grade type of attempts to grade.
+     * @param int $pagesize number of questions to show per page.
+     * @param int $page current page number.
+     * @param bool $shownames whether student names should be shown.
+     * @param bool $showidnumbers wither student idnumbers should be shown.
+     * @param string $order preferred order of attempts.
+     * @param stdClass $counts object that stores the number of each type of attempt.
+     */
     protected function display_grading_interface($slot, $questionid, $grade,
             $pagesize, $page, $shownames, $showidnumbers, $order, $counts) {
-        $output = '';
 
         if ($pagesize * $page >= $counts->$grade) {
             $page = 0;
         }
 
-        list($qubaids, $count) = $this->get_usage_ids_where_question_in_state(
-                $grade, $slot, $questionid, $order, $page, $pagesize);
-        $attempts = $this->load_attempts_by_usage_ids($qubaids);
-
-        // Prepare the form.
+        // Prepare the options form.
         $hidden = [
             'id' => $this->cm->id,
             'mode' => 'grading',
@@ -397,6 +414,18 @@ class quiz_grading_report extends quiz_default_report {
         $settings->order = $order;
         $mform->set_data($settings);
 
+        // If the form was submitted, save the user preferences, and
+        // redirect to a cleaned-up GET URL.
+        if ($mform->get_data()) {
+            set_user_preference('quiz_grading_pagesize', $pagesize);
+            set_user_preference('quiz_grading_order', $order);
+            redirect($this->grade_question_url($slot, $questionid, $grade, $page));
+        }
+
+        list($qubaids, $count) = $this->get_usage_ids_where_question_in_state(
+                $grade, $slot, $questionid, $order, $page, $pagesize);
+        $attempts = $this->load_attempts_by_usage_ids($qubaids);
+
         // Question info.
         $questioninfo = new stdClass();
         $questioninfo->number = $this->questions[$slot]->number;
@@ -408,6 +437,8 @@ class quiz_grading_report extends quiz_default_report {
         $paginginfo->to = min(($page + 1) * $pagesize, $count);
         $paginginfo->of = $count;
         $qubaidlist = implode(',', $qubaids);
+
+        $this->print_header_and_tabs($this->cm, $this->course, $this->quiz, 'grading');
 
         $gradequestioncontent = '';
         foreach ($qubaids as $qubaid) {
@@ -442,7 +473,7 @@ class quiz_grading_report extends quiz_default_report {
                 'sesskey' => sesskey()
         ];
 
-        $output .= $this->renderer->render_grading_interface(
+        echo $this->renderer->render_grading_interface(
                 $questioninfo,
                 $this->list_questions_url(),
                 $mform,
@@ -452,8 +483,6 @@ class quiz_grading_report extends quiz_default_report {
                 $hiddeninputs,
                 $gradequestioncontent
         );
-
-        return $output;
     }
 
     /**
