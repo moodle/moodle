@@ -33,10 +33,16 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_gapselect_test_helper extends question_test_helper {
+
     public function get_test_questions() {
-        return array('fox', 'maths', 'currency', 'multilang');
+        return array('fox', 'maths', 'currency', 'multilang', 'missingchoiceno');
     }
 
+    /**
+     * Get data you would get by loading a typical select missing words question.
+     *
+     * @return stdClass as returned by question_bank::load_question_data for this qtype.
+     */
     public static function get_gapselect_question_data_fox() {
         global $USER;
 
@@ -79,6 +85,31 @@ class qtype_gapselect_test_helper extends question_test_helper {
         );
 
         return $gapselect;
+    }
+
+    /**
+     * Get data required to save a select missing words question where
+     * the author missed out one of the group numbers.
+     *
+     * @return stdClass data to create a gapselect question.
+     */
+    public function get_gapselect_question_form_data_missingchoiceno() {
+        $fromform = new stdClass();
+
+        $fromform->name = 'Select missing words question';
+        $fromform->questiontext = ['text' => 'The [[1]] sat on the [[3]].', 'format' => FORMAT_HTML];
+        $fromform->defaultmark = 1.0;
+        $fromform->generalfeedback = ['text' => 'The right answer is: "The cat sat on the mat."', 'format' => FORMAT_HTML];
+        $fromform->choices = [
+                ['answer' => 'cat', 'choicegroup' => '1'],
+                ['answer' => '',    'choicegroup' => '1'],
+                ['answer' => 'mat', 'choicegroup' => '1'],
+        ];
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+        $fromform->shownumcorrect = 0;
+        $fromform->penalty = 0.3333333;
+
+        return $fromform;
     }
 
     /**
