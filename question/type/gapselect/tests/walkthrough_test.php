@@ -40,7 +40,7 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
     public function test_interactive_behaviour() {
 
         // Create a gapselect question.
-        $q = qtype_gapselect_test_helper::make_a_gapselect_question();
+        $q = test_question_maker::make_question('gapselect');
         $q->hints = array(
             new question_hint_with_parts(1, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(2, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -160,7 +160,7 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
         $filtermanager->reset_caches();
 
         // Create a multilang gapselect question.
-        $q = qtype_gapselect_test_helper::make_a_multilang_gapselect_question();
+        $q = test_question_maker::make_question('gapselect', 'multilang');
         $q->shufflechoices = false;
         $this->start_attempt_at_question($q, 'interactive', 3);
 
@@ -177,7 +177,7 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
     public function test_choices_containing_dollars() {
 
         // Choices with a currency like entry (e.g. $3) should display.
-        $q = qtype_gapselect_test_helper::make_a_currency_gapselect_question();
+        $q = test_question_maker::make_question('gapselect', 'currency');
         $q->shufflechoices = false;
         $this->start_attempt_at_question($q, 'interactive', 1);
 
