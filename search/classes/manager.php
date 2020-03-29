@@ -1057,6 +1057,68 @@ class manager {
     }
 
     /**
+     * Search for top ranked result.
+     * @param \stdClass $formdata search query data
+     * @return array|document[]
+     */
+    public function search_top(\stdClass $formdata): array {
+        global $USER;
+
+        // Return if the config value is set to 0.
+        $maxtopresult = get_config('core', 'searchmaxtopresults');
+        if (empty($maxtopresult)) {
+            return [];
+        }
+
+        // Only process if 'searchenablecategories' is set.
+        if (self::is_search_area_categories_enabled() && !empty($formdata->cat)) {
+            $cat = self::get_search_area_category_by_name($formdata->cat);
+            $formdata->areaids = array_keys($cat->get_areas());
+        } else {
+            return [];
+        }
+        $docs = $this->search($formdata);
+
+        // Look for course, teacher and course content.
+        $coursedocs = [];
+        $courseteacherdocs = [];
+        $coursecontentdocs = [];
+        $otherdocs = [];
+        foreach ($docs as $doc) {
+            if ($doc->get('areaid') === 'core_course-course' && stripos($doc->get('title'), $formdata->q) !== false) {
+                $coursedocs[] = $doc;
+            } else if (strpos($doc->get('areaid'), 'course_teacher') !== false
+                && stripos($doc->get('content'), $formdata->q) !== false) {
+                $courseteacherdocs[] = $doc;
+            } else if (strpos($doc->get('areaid'), 'mod_') !== false) {
+                $coursecontentdocs[] = $doc;
+            } else {
+                $otherdocs[] = $doc;
+            }
+        }
+
+        // Swap current courses to top.
+        $enroledcourses = $this->get_my_courses(false);
+        // Move current courses of the user to top.
+        foreach ($enroledcourses as $course) {
+            $completion = new \completion_info($course);
+            if (!$completion->is_course_complete($USER->id)) {
+                foreach ($coursedocs as $index => $doc) {
+                    $areaid = $doc->get('areaid');
+                    if ($areaid == 'core_course-course' && $course->id == $doc->get('courseid')) {
+                        unset($coursedocs[$index]);
+                        array_unshift($coursedocs, $doc);
+                    }
+                }
+            }
+        }
+
+        $maxtopresult = get_config('core', 'searchmaxtopresults');
+        $result = array_merge($coursedocs, $courseteacherdocs, $coursecontentdocs, $otherdocs);
+        return array_slice($result, 0, $maxtopresult);
+    }
+
+    /**
      * Build a list of course ids to limit the search based on submitted form data.
      *
      * @param \stdClass $formdata Submitted search form data.
