@@ -185,7 +185,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
      * @return array the array of content items.
      */
     public function find_all(): array {
-        global $OUTPUT, $DB;
+        global $OUTPUT, $DB, $CFG;
 
         // Get all modules so we know which plugins are enabled and able to add content.
         // Only module plugins may add content items.
@@ -194,6 +194,10 @@ class content_item_readonly_repository implements content_item_readonly_reposito
 
         // Now, generate the content_items.
         foreach ($modules as $modid => $mod) {
+            // Exclude modules if the code doesn't exist.
+            if (!file_exists("$CFG->dirroot/mod/$mod->name/lib.php")) {
+                continue;
+            }
             // Create the content item for the module itself.
             // If the module chooses to implement the hook, this may be thrown away.
             $help = $this->get_core_module_help_string($mod->name);
@@ -241,7 +245,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
      * @return array the array of content_item objects
      */
     public function find_all_for_course(\stdClass $course, \stdClass $user): array {
-        global $OUTPUT, $DB;
+        global $OUTPUT, $DB, $CFG;
 
         // Get all modules so we know which plugins are enabled and able to add content.
         // Only module plugins may add content items.
@@ -253,7 +257,10 @@ class content_item_readonly_repository implements content_item_readonly_reposito
 
         // Now, generate the content_items.
         foreach ($modules as $modid => $mod) {
-
+            // Exclude modules if the code doesn't exist.
+            if (!file_exists("$CFG->dirroot/mod/$mod->name/lib.php")) {
+                continue;
+            }
             // Create the content item for the module itself.
             // If the module chooses to implement the hook, this may be thrown away.
             $help = $this->get_core_module_help_string($mod->name);
