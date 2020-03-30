@@ -110,7 +110,15 @@ class provider implements
         $collection->add_subsystem_link('core_files', [], 'privacy:metadata:subsystem:corefiles');
         $collection->add_subsystem_link('core_plagiarism', [], 'privacy:metadata:subsystem:coreplagiarism');
 
-        $collection->add_user_preference('workshop_perpage', 'privacy:metadata:preference:perpage');
+        $userprefs = self::get_user_prefs();
+        foreach ($userprefs as $userpref) {
+            if ($userpref === 'workshop_perpage') {
+                $collection->add_user_preference('workshop_perpage', 'privacy:metadata:preference:perpage');
+            } else {
+                $summary = str_replace('workshop-', '', $userpref);
+                $collection->add_user_preference($userpref, "privacy:metadata:preference:$summary");
+            }
+        }
 
         return $collection;
     }
@@ -259,12 +267,22 @@ class provider implements
      * @param int $userid ID of the user we are exporting data for
      */
     public static function export_user_preferences(int $userid) {
-
-        $perpage = get_user_preferences('workshop_perpage', null, $userid);
-
-        if ($perpage !== null) {
-            writer::export_user_preference('mod_workshop', 'workshop_perpage', $perpage,
-                get_string('privacy:metadata:preference:perpage', 'mod_workshop'));
+        $userprefs = self::get_user_prefs();
+        $expandstr = get_string('expand');
+        $collapsestr = get_string('collapse');
+        foreach ($userprefs as $userpref) {
+            $userprefval = get_user_preferences($userpref, null, $userid);
+            if ($userprefval !== null) {
+                $langid = str_replace('workshop-', '', $userpref);
+                $description = get_string("privacy:metadata:preference:$langid", 'mod_workshop');
+                if ($userpref === 'workshop_perpage') {
+                    writer::export_user_preference('mod_workshop', $userpref, $userprefval,
+                            get_string('privacy:metadata:preference:perpage', 'mod_workshop'));
+                } else {
+                    writer::export_user_preference('mod_workshop', $userpref,
+                        $userprefval == 1 ? $collapsestr : $expandstr, $description);
+                }
+            }
         }
     }
 
@@ -836,5 +854,32 @@ class provider implements
         foreach ($userids as $userid) {
             \core_plagiarism\privacy\provider::delete_plagiarism_for_user($userid, $context);
         }
+    }
+
+    /**
+     * Get the user preferences.
+     *
+     * @return array List of user preferences
+     */
+    protected static function get_user_prefs(): array {
+        return [
+            'workshop_perpage',
+            'workshop-viewlet-allexamples-collapsed',
+            'workshop-viewlet-allsubmissions-collapsed',
+            'workshop-viewlet-assessmentform-collapsed',
+            'workshop-viewlet-assignedassessments-collapsed',
+            'workshop-viewlet-cleargrades-collapsed',
+            'workshop-viewlet-conclusion-collapsed',
+            'workshop-viewlet-examples-collapsed',
+            'workshop-viewlet-examplesfail-collapsed',
+            'workshop-viewlet-gradereport-collapsed',
+            'workshop-viewlet-instructauthors-collapsed',
+            'workshop-viewlet-instructreviewers-collapsed',
+            'workshop-viewlet-intro-collapsed',
+            'workshop-viewlet-overallfeedback-collapsed',
+            'workshop-viewlet-ownsubmission-collapsed',
+            'workshop-viewlet-publicsubmissions-collapsed',
+            'workshop-viewlet-yourgrades-collapsed'
+        ];
     }
 }
