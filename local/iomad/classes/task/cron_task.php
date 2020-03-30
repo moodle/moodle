@@ -85,7 +85,7 @@ mtrace("setting user id " . $user->id . " department to " .  $departments[$user-
                                                         AND validto < :runtime",
                                                         array('runtime' => $runtime))) {
             foreach ($suspendcompanies as $suspendcompany) {
-                $target = new company($suspendcompany->id);
+                $target = new \company($suspendcompany->id);
                 $target->terminate();
             }
         }
