@@ -219,10 +219,6 @@ class core extends \H5PCore {
     public function fetch_content_type(array $library): ?int {
         $factory = new factory();
 
-        // Get a temp path to download the content type.
-        $temppath = make_request_directory();
-        $tempfile = "{$temppath}/" . $library['machineName'] . ".h5p";
-
         // Download the latest content type from the H5P official repository.
         $fs = get_file_storage();
         $file = $fs->create_file_from_url(
