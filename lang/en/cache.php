@@ -57,6 +57,7 @@ $string['cachedef_externalbadges'] = 'External badges for particular user';
 $string['cachedef_fontawesomeiconmapping'] = 'Mapping of icons for font awesome';
 $string['cachedef_suspended_userids'] = 'List of suspended users per course';
 $string['cachedef_groupdata'] = 'Course group information';
+$string['cachedef_h5p_content_type_translations'] = 'H5P content-type libraries translations';
 $string['cachedef_htmlpurifier'] = 'HTML Purifier - cleaned content';
 $string['cachedef_langmenu'] = 'List of available languages';
 $string['cachedef_message_time_last_message_between_users'] = 'Time created for most recent message in a conversation';

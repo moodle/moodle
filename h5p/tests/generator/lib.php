@@ -76,15 +76,19 @@ class core_h5p_generator extends \component_generator_base {
      * @param  string $machinename     Name for this library.
      * @param  int    $majorversion    Major version (any number will do).
      * @param  int    $minorversion    Minor version (any number will do).
+     * @param  array  $langs           Languages to be included into the library.
      * @return array A list of library data and files that the core API will understand.
      */
     public function create_library(string $uploaddirectory, int $libraryid, string $machinename, int $majorversion,
-            int $minorversion): array {
-        /** @var array $files an array used in the cache tests. */
-        $files = ['scripts' => [], 'styles' => []];
+            int $minorversion, ?array $langs = []): array {
+        // Array $files used in the cache tests.
+        $files = ['scripts' => [], 'styles' => [], 'language' => []];
 
         check_dir_exists($uploaddirectory . '/' . 'scripts');
         check_dir_exists($uploaddirectory . '/' . 'styles');
+        if (!empty($langs)) {
+            check_dir_exists($uploaddirectory . '/' . 'language');
+        }
 
         $jsonfile = $uploaddirectory . '/' . 'library.json';
         $jsfile = $uploaddirectory . '/' . 'scripts/testlib.min.js';
@@ -92,6 +96,10 @@ class core_h5p_generator extends \component_generator_base {
         $this->create_file($jsonfile);
         $this->create_file($jsfile);
         $this->create_file($cssfile);
+        foreach ($langs as $lang => $value) {
+            $jsonfile = $uploaddirectory . '/' . 'language/' . $lang . '.json';
+            $this->create_file($jsonfile, $value);
+        }
 
         $lib = [
             'title' => 'Test lib',
@@ -120,6 +128,10 @@ class core_h5p_generator extends \component_generator_base {
         $this->add_libfile_to_array('scripts', $path, $version, $files);
         $path = '/' . 'libraries' . '/' . $libraryid .'/' . $libname . '/' . 'styles' . '/' . 'testlib.min.css';
         $this->add_libfile_to_array('styles', $path, $version, $files);
+        foreach ($langs as $lang => $notused) {
+            $path = '/' . 'libraries' . '/' . $libraryid . '/' . $libname . '/' . 'language' . '/' . $lang . '.json';
+            $this->add_libfile_to_array('language', $path, $version, $files);
+        }
 
         return [$lib, $files];
     }
