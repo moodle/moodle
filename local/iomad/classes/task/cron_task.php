@@ -20,7 +20,7 @@ class cron_task extends \core\task\scheduled_task {
         global $DB, $CFG;
 
         // We need company stuff.
-        require once($CFG->dirroot . '/local/iomad/lib/company.php');
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
 
         $runtime = time();
         // Are we copying Company to institution?
