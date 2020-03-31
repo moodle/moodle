@@ -203,14 +203,17 @@ if (!empty($groupid)) {
     if ($canaccessallgroups) {
         // User can access all groups, let them filter by whatever was selected.
         $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
+        $groupfilter->add_filter_value((int)$groupid);
     } else if (!$filterwassubmitted && $course->groupmode == VISIBLEGROUPS) {
         // If we are in a course with visible groups and the user has not submitted anything and does not have
         // access to all groups, then set a default group.
         $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
+        $groupfilter->add_filter_value((int)$groupid);
     } else if (!$hasgroupfilter && $course->groupmode != VISIBLEGROUPS) {
         // The user can't access all groups and has not set a group filter in a course where the groups are not visible
         // then apply a default group filter.
         $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
+        $groupfilter->add_filter_value((int)$groupid);
     } else if (!$hasgroupfilter) { // No need for the group id to be set.
         $groupid = false;
     }
