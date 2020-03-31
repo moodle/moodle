@@ -544,7 +544,11 @@ class navigation_node implements renderable {
         if (in_array($class, $this->classes)) {
             $key = array_search($class,$this->classes);
             if ($key!==false) {
+                // Remove the class' array element.
                 unset($this->classes[$key]);
+                // Reindex the array to avoid failures when the classes array is iterated later in mustache templates.
+                $this->classes = array_values($this->classes);
+
                 return true;
             }
         }
