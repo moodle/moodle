@@ -2275,3 +2275,9 @@ $switch-transition: .2s all !default;
 .z-index-1 {
     z-index: 1 !important; /* stylelint-disable-line declaration-no-important */
 }
+
+@each $color, $value in $theme-colors {
+    .alert-#{$color} a {
+        color: darken(theme-color-level($color, $alert-color-level), 10%);
+    }
+}
