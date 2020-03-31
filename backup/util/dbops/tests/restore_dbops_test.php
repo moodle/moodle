@@ -127,7 +127,7 @@ class restore_dbops_testcase extends advanced_testcase {
 
         $emailmultiplier = [
             'shortmail' => 'normalusername@example.com',
-            //'longmail' => str_repeat('a', 100)  // It's not validated, hence any string is ok.
+            'longmail' => str_repeat('a', 100)  // It's not validated, hence any string is ok.
         ];
 
         $providercases = [];
@@ -146,6 +146,8 @@ class restore_dbops_testcase extends advanced_testcase {
 
     /**
      * Get all the cases implemented in {@link restore_dbops::precheck_users()}
+     *
+     * @param string $email
      */
     private function precheck_user_cases($email) {
         global $CFG;
@@ -154,7 +156,7 @@ class restore_dbops_testcase extends advanced_testcase {
             'username' => 'normalusername',
             'email'    => $email,
             'mnethostid' => $CFG->mnet_localhost_id,
-            'firstaccess'=> 123456789,
+            'firstaccess' => 123456789,
             'deleted'    => 0,
             'forceemailcleanup' => false, // Hack to force the DB record to have empty mail.
             'forceduplicateadminallowed' => false]; // Hack to enable import_general_duplicate_admin_allowed.
@@ -207,7 +209,7 @@ class restore_dbops_testcase extends advanced_testcase {
             ],
             'samesite create user (1F)' => [
                 'dbuser' => $baseuserarr,
-                'backupuser' => array_merge($baseuserarr,[
+                'backupuser' => array_merge($baseuserarr, [
                     'username' => 'newusername']),
                 'samesite' => false,
                 'outcome' => true
@@ -216,14 +218,14 @@ class restore_dbops_testcase extends advanced_testcase {
             // Cases with samesite = false.
             'no samesite match existing, by db email (2A1)' => [
                 'dbuser' => $baseuserarr,
-                'backupuser' => array_merge($baseuserarr,[
+                'backupuser' => array_merge($baseuserarr, [
                     'firstaccess' => 0]),
                 'samesite' => false,
                 'outcome' => 'match'
             ],
             'no samesite match existing, by db firstaccess (2A1)' => [
                 'dbuser' => $baseuserarr,
-                'backupuser' => array_merge($baseuserarr,[
+                'backupuser' => array_merge($baseuserarr, [
                     'email' => 'this_wont_match@example.con']),
                 'samesite' => false,
                 'outcome' => 'match'
@@ -279,14 +281,14 @@ class restore_dbops_testcase extends advanced_testcase {
             ],
             'no samesite conflict (2D)' => [
                 'dbuser' => $baseuserarr,
-                'backupuser' => array_merge($baseuserarr,[
+                'backupuser' => array_merge($baseuserarr, [
                     'email' => 'anotheruser@example.com', 'firstaccess' => 0]),
                 'samesite' => false,
                 'outcome' => false
             ],
             'no samesite create user (2E)' => [
                 'dbuser' => $baseuserarr,
-                'backupuser' => array_merge($baseuserarr,[
+                'backupuser' => array_merge($baseuserarr, [
                     'username' => 'newusername']),
                 'samesite' => false,
                 'outcome' => true
@@ -296,9 +298,16 @@ class restore_dbops_testcase extends advanced_testcase {
     }
 
     /**
+     * Test restore precheck_user method
+     *
      * @dataProvider precheck_user_provider
      * @covers restore_dbops::precheck_user()
-     * */
+     *
+     * @param array $dbuser
+     * @param array $backupuser
+     * @param bool $samesite
+     * @param mixed $outcome
+     **/
     public function test_precheck_user($dbuser, $backupuser, $samesite, $outcome) {
         global $DB;
 
@@ -331,7 +340,7 @@ class restore_dbops_testcase extends advanced_testcase {
         // If the DB user must be deleted, do it and fetch it back.
         if ($dbuser->deleted) {
             delete_user($dbuser);
-            // We may want to clean the mail field (old behavior, not containing the current md5(username)
+            // We may want to clean the mail field (old behavior, not containing the current md5(username).
             if ($dbuser->forceemailcleanup) {
                 $DB->set_field('user', 'email', '', ['id' => $dbuser->id]);
             }
