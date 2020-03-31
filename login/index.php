@@ -59,7 +59,7 @@ if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
 }
 
 // Redirect if they are currently logged in and there is a wantsurl.
-if (isloggedin() && !empty($SESSION->wantsurl)) {
+if (isloggedin() && !isguestuser() && !empty($SESSION->wantsurl)) {
     redirect($SESSION->wantsurl);
 }
 
