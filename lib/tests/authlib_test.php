@@ -352,6 +352,7 @@ class core_authlib_testcase extends advanced_testcase {
     public function test_signup_validate_data_same_email() {
         global $CFG;
         require_once($CFG->libdir . '/authlib.php');
+        require_once($CFG->libdir . '/phpmailer/moodle_phpmailer.php');
         require_once($CFG->dirroot . '/user/profile/lib.php');
 
         $this->resetAfterTest();
@@ -364,7 +365,8 @@ class core_authlib_testcase extends advanced_testcase {
         // inject our own validation method here and revert it back once we are done. This custom validator method is
         // identical to the default 'php' validator with the only difference: it has the FILTER_FLAG_EMAIL_UNICODE set
         // so that it allows to use non-ASCII characters in email addresses.
-        $defaultvalidator = moodle_phpmailer::$validator; moodle_phpmailer::$validator = function($address) {
+        $defaultvalidator = moodle_phpmailer::$validator;
+        moodle_phpmailer::$validator = function($address) {
             return (bool) filter_var($address, FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE);
         };
 
