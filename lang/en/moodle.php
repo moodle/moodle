@@ -786,6 +786,7 @@ $string['eventcourseviewed'] = 'Course viewed';
 $string['eventdashboardreset'] = 'Dashboard reset';
 $string['eventdashboardsreset'] = 'Dashboards reset';
 $string['eventdashboardviewed'] = 'Dashboard viewed';
+$string['eventdatabasetextfieldcontentreplaced'] = 'Database global search and replace';
 $string['eventemailfailed'] = 'Email failed to send';
 $string['eventname'] = 'Event name';
 $string['eventrecentactivityviewed'] = 'Recent activity viewed';

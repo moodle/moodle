@@ -8851,6 +8851,17 @@ function db_replace($search, $replace) {
         echo $OUTPUT->notification("...finished", 'notifysuccess');
     }
 
+    // Trigger an event.
+    $eventargs = [
+        'context' => context_system::instance(),
+        'other' => [
+            'search' => $search,
+            'replace' => $replace
+        ]
+    ];
+    $event = \core\event\database_text_field_content_replaced::create($eventargs);
+    $event->trigger();
+
     purge_all_caches();
 
     return true;
