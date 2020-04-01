@@ -3520,11 +3520,12 @@ function ismoving($courseid) {
  * Returns a persons full name
  *
  * Given an object containing all of the users name values, this function returns a string with the full name of the person.
- * The result may depend on system settings or language.  'override' will force both names to be used even if system settings
- * specify one.
+ * The result may depend on system settings or language. 'override' will force the alternativefullnameformat to be used. In
+ * English, fullname as well as alternativefullnameformat is set to 'firstname lastname' by default. But you could have
+ * fullname set to 'firstname lastname' and alternativefullnameformat set to 'firstname middlename alternatename lastname'.
  *
  * @param stdClass $user A {@link $USER} object to get full name of.
- * @param bool $override If true then the name will be firstname followed by lastname rather than adhering to fullnamedisplay.
+ * @param bool $override If true then the alternativefullnameformat format rather than fullnamedisplay format will be used.
  * @return string
  */
 function fullname($user, $override=false) {
