@@ -1002,12 +1002,18 @@ class flexible_table {
     function print_nothing_to_display() {
         global $OUTPUT;
 
+        // Render the dynamic table header.
+        echo $this->get_dynamic_table_html_start();
+
         // Render button to allow user to reset table preferences.
         echo $this->render_reset_button();
 
         $this->print_initials_bar();
 
         echo $OUTPUT->heading(get_string('nothingtodisplay'));
+
+        // Render the dynamic table footer.
+        echo $this->get_dynamic_table_html_end();
     }
 
     /**
@@ -1172,12 +1178,8 @@ class flexible_table {
                 echo $OUTPUT->render($pagingbar);
             }
 
-            // Dynamic Table content.
-            if (is_a($this, \core_table\dynamic::class)) {
-                echo html_writer::end_tag('div');
-
-                $PAGE->requires->js_call_amd('core_table/dynamic', 'init');
-            }
+            // Render the dynamic table footer.
+            echo $this->get_dynamic_table_html_end();
         }
     }
 
@@ -1446,14 +1448,15 @@ class flexible_table {
     }
 
     /**
-     * This function is not part of the public api.
+     * Get the dynamic table start wrapper.
+     * If this is not a dynamic table, then an empty string is returned making this safe to blindly call.
+     *
+     * @return string
      */
-    function start_html() {
-        global $OUTPUT;
-
+    protected function get_dynamic_table_html_start(): string {
         if (is_a($this, \core_table\dynamic::class)) {
             $sortdata = $this->get_sort_order();
-            echo html_writer::start_tag('div', [
+            return html_writer::start_tag('div', [
                 'data-region' => 'core_table/dynamic',
                 'data-table-handler' => get_class($this),
                 'data-table-uniqueid' => $this->uniqueid,
@@ -1462,6 +1465,35 @@ class flexible_table {
                 'data-table-sort-order' => $sortdata['sortorder'],
             ]);
         }
+
+        return '';
+    }
+
+    /**
+     * Get the dynamic table end wrapper.
+     * If this is not a dynamic table, then an empty string is returned making this safe to blindly call.
+     *
+     * @return string
+     */
+    protected function get_dynamic_table_html_end(): string {
+        global $PAGE;
+
+        if (is_a($this, \core_table\dynamic::class)) {
+            $PAGE->requires->js_call_amd('core_table/dynamic', 'init');
+            return html_writer::end_tag('div');
+        }
+
+        return '';
+    }
+
+    /**
+     * This function is not part of the public api.
+     */
+    function start_html() {
+        global $OUTPUT;
+
+        // Render the dynamic table header.
+        echo $this->get_dynamic_table_html_start();
 
         // Render button to allow user to reset table preferences.
         echo $this->render_reset_button();
