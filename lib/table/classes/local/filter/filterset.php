@@ -28,6 +28,7 @@ declare(strict_types=1);
 namespace core_table\local\filter;
 
 use InvalidArgumentException;
+use JsonSerializable;
 use UnexpectedValueException;
 use moodle_exception;
 
@@ -38,7 +39,7 @@ use moodle_exception;
  * @copyright  2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class filterset {
+abstract class filterset implements JsonSerializable {
     /** @var in The default filter type (ANY) */
     const JOINTYPE_DEFAULT = 1;
 
@@ -284,5 +285,17 @@ abstract class filterset {
         }
 
         return $this->filtertypes;
+    }
+
+    /**
+     * Serialize filterset.
+     *
+     * @return mixed|object
+     */
+    public function jsonSerialize() {
+        return (object) [
+            'jointype' => $this->get_join_type(),
+            'filters' => $this->get_filters(),
+        ];
     }
 }

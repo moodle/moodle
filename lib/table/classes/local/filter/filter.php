@@ -28,6 +28,7 @@ declare(strict_types=1);
 namespace core_table\local\filter;
 
 use Countable;
+use JsonSerializable;
 use InvalidArgumentException;
 use Iterator;
 
@@ -38,7 +39,7 @@ use Iterator;
  * @copyright  2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filter implements Countable, Iterator {
+class filter implements Countable, Iterator, JsonSerializable {
 
     /** @var in The default filter type (ANY) */
     const JOINTYPE_DEFAULT = 1;
@@ -250,5 +251,18 @@ class filter implements Countable, Iterator {
     public function get_filter_values(): array {
         $this->sort_filter_values();
         return $this->filtervalues;
+    }
+
+    /**
+     * Serialize filter.
+     *
+     * @return mixed|object
+     */
+    public function jsonSerialize() {
+        return (object) [
+            'name' => $this->get_name(),
+            'jointype' => $this->get_join_type(),
+            'values' => $this->get_filter_values(),
+        ];
     }
 }
