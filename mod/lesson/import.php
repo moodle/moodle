@@ -66,9 +66,7 @@ if ($data = $mform->get_data()) {
     require_sesskey();
 
     $realfilename = $mform->get_new_filename('questionfile');
-    //TODO: Leave all imported questions in Questionimport for now.
-    $importfile = "{$CFG->tempdir}/questionimport/{$realfilename}";
-    make_temp_directory('questionimport');
+    $importfile = make_request_directory() . "/{$realfilename}";
     if (!$result = $mform->save_file('questionfile', $importfile, true)) {
         throw new moodle_exception('uploadproblem');
     }
