@@ -154,9 +154,9 @@ class format_singleactivity extends format_base {
 
         if ($fetchtypes) {
             $availabletypes = $this->get_supported_activities();
-            if ($this->course) {
+            if ($this->courseid) {
                 // The course exists. Test against the course.
-                $testcontext = context_course::instance($this->course->id);
+                $testcontext = context_course::instance($this->courseid);
             } else if ($this->categoryid) {
                 // The course does not exist yet, but we have a category ID that we can test against.
                 $testcontext = context_coursecat::instance($this->categoryid);
