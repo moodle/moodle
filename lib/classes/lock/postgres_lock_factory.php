@@ -119,9 +119,13 @@ class postgres_lock_factory implements lock_factory {
 
     /**
      * Multiple locks for the same resource can be held by a single process.
+     *
+     * @deprecated since Moodle 4.0.
      * @return boolean - Defer to the DB driver.
      */
     public function supports_recursion() {
+        debugging('The function supports_recursion() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
         return true;
     }
 

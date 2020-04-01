@@ -91,9 +91,13 @@ class db_record_lock_factory implements lock_factory {
 
     /**
      * Multiple locks for the same resource can be held by a single process.
+     *
+     * @deprecated since Moodle 4.0.
      * @return boolean - False - not process specific.
      */
     public function supports_recursion() {
+        debugging('The function supports_recursion() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
         return false;
     }
 

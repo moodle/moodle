@@ -1,6 +1,9 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
+=== 4.0 ===
+* The function supports_recursion() from the lock_factory interface has been deprecated including the related implementations.
+
 === 3.9 ===
 * The record_cache_hit/miss/set methods now take a cache_store instead of a cache_definition object
 

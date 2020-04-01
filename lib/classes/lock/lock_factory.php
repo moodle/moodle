@@ -63,6 +63,7 @@ interface lock_factory {
     /**
      * Supports recursion.
      *
+     * @deprecated since Moodle 4.0.
      * @return boolean - True if attempting to get 2 locks on the same resource will "stack"
      */
     public function supports_recursion();
