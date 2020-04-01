@@ -399,6 +399,7 @@ $string['contextlockappliestoadmin'] = 'Context freezing applies to administrato
 $string['contextlockappliestoadmin_desc'] = 'If disabled, administrators remain with write access to any frozen contexts.';
 $string['cookiehttponly'] = 'Only http cookies';
 $string['cookiesecure'] = 'Secure cookies only';
+$string['contenttypeuninstalling'] = 'There are {$a->count} contents supported by {$a->type}. They will be deleted. Are you sure you want to proceed?';
 $string['country'] = 'Default country';
 $string['course_customfield'] = 'Course custom fields';
 $string['coursecolor'] = 'Colour {$a}';

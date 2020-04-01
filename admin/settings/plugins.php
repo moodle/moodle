@@ -657,6 +657,19 @@ if ($hassiteconfig) {
     }
 }
 
+// Content bank content types.
+if ($hassiteconfig) {
+    $ADMIN->add('modules', new admin_category('contenbanksettings', new lang_string('contentbank')));
+    $temp = new admin_settingpage('managecontentbanktypes', new lang_string('managecontentbanktypes'));
+    $temp->add(new admin_setting_managecontentbankcontenttypes());
+    $ADMIN->add('contenbanksettings', $temp);
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('contenttype');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\contentbank $plugin */
+        $plugin->load_settings($ADMIN, 'contenbanksettings', $hassiteconfig);
+    }
+}
+
 /// Add all local plugins - must be always last!
 if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('localplugins', new lang_string('localplugins')));

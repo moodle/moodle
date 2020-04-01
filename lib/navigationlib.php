@@ -2914,6 +2914,31 @@ class global_navigation extends navigation_node {
             }
         }
 
+        if (isloggedin()) {
+            $context = $this->page->context;
+            switch ($context->contextlevel) {
+                case CONTEXT_COURSECAT:
+                    $type = self::TYPE_CATEGORY;
+                    break;
+                case CONTEXT_COURSE:
+                    $type = self::TYPE_COURSE;
+                    if ($COURSE->id != $SITE->id) {
+                        break;
+                    }
+                default:
+                    $type = self::TYPE_CUSTOM;
+                    $context = $sitecontext;
+            }
+
+            $params = ['contextid' => $context->id];
+            if (has_capability('moodle/contentbank:access', $context)) {
+                $url = new moodle_url('/contentbank/index.php', $params);
+                $node = $coursenode->add(get_string('contentbank'), $url,
+                    $type, null, 'contentbank', new pix_icon('i/contentbank', ''));
+                $node->showinflatnavigation = true;
+            }
+        }
+
         return true;
     }
 
