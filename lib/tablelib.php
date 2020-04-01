@@ -95,6 +95,12 @@ class flexible_table {
      */
     protected $sortorder;
 
+    /** @var string The manually set first name initial preference */
+    protected $ifirst;
+
+    /** @var string The manually set last name initial preference */
+    protected $ilast;
+
     var $use_pages      = false;
     var $use_initials   = false;
 
@@ -525,16 +531,7 @@ class flexible_table {
         }
 
         $this->set_sorting_preferences();
-
-        $ilast = optional_param($this->request[TABLE_VAR_ILAST], null, PARAM_RAW);
-        if (!is_null($ilast) && ($ilast ==='' || strpos(get_string('alphabet', 'langconfig'), $ilast) !== false)) {
-            $this->prefs['i_last'] = $ilast;
-        }
-
-        $ifirst = optional_param($this->request[TABLE_VAR_IFIRST], null, PARAM_RAW);
-        if (!is_null($ifirst) && ($ifirst === '' || strpos(get_string('alphabet', 'langconfig'), $ifirst) !== false)) {
-            $this->prefs['i_first'] = $ifirst;
-        }
+        $this->set_initials_preferences();
 
         // Save user preferences if they have changed.
         if ($this->prefs != $oldprefs) {
@@ -1356,6 +1353,31 @@ class flexible_table {
     }
 
     /**
+     * Fill in the preferences for the initials bar.
+     */
+    protected function set_initials_preferences(): void {
+        $ifirst = $this->ifirst;
+        $ilast = $this->ilast;
+
+        if ($ifirst === null) {
+            $ifirst = optional_param($this->request[TABLE_VAR_IFIRST], null, PARAM_RAW);
+        }
+
+        if ($ilast === null) {
+            $ilast = optional_param($this->request[TABLE_VAR_ILAST], null, PARAM_RAW);
+        }
+
+        if (!is_null($ifirst) && ($ifirst === '' || strpos(get_string('alphabet', 'langconfig'), $ifirst) !== false)) {
+            $this->prefs['i_first'] = $ifirst;
+        }
+
+        if (!is_null($ilast) && ($ilast === '' || strpos(get_string('alphabet', 'langconfig'), $ilast) !== false)) {
+            $this->prefs['i_last'] = $ilast;
+        }
+
+    }
+
+    /**
      * Set the preferred table sorting attributes.
      *
      * @param string $sortby The field to sort by.
@@ -1364,6 +1386,24 @@ class flexible_table {
     public function set_sorting(string $sortby, int $sortorder): void {
         $this->sortby = $sortby;
         $this->sortorder = $sortorder;
+    }
+
+    /**
+     * Set the preferred first name initial in an initials bar.
+     *
+     * @param string $initial The character to set
+     */
+    public function set_first_initial(string $initial): void {
+        $this->ifirst = $initial;
+    }
+
+    /**
+     * Set the preferred last name initial in an initials bar.
+     *
+     * @param string $initial The character to set
+     */
+    public function set_last_initial(string $initial): void {
+        $this->ilast = $initial;
     }
 
     /**
@@ -1463,6 +1503,8 @@ class flexible_table {
                 'data-table-filters' => json_encode($this->get_filterset()),
                 'data-table-sort-by' => $sortdata['sortby'],
                 'data-table-sort-order' => $sortdata['sortorder'],
+                'data-table-first-initial' => $this->prefs['i_first'],
+                'data-table-last-initial' => $this->prefs['i_last'],
             ]);
         }
 

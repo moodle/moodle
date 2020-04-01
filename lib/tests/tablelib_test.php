@@ -701,4 +701,91 @@ class core_tablelib_testcase extends advanced_testcase {
         $this->assertEquals("Col1,Col2,Col3\na,b,c\n", substr($output, 3));
     }
 
+    /**
+     * Test the initials functionality.
+     *
+     * @dataProvider initials_provider
+     * @param string|null $getvalue
+     * @param string|null $setvalue
+     * @param string|null $finalvalue
+     */
+    public function test_initials_first_set(?string $getvalue, ?string $setvalue, ?string $finalvalue): void {
+        global $_GET;
+
+        $this->resetAfterTest(true);
+
+        $table = new flexible_table('tablelib_test');
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $table->define_columns(['fullname']);
+        $table->define_headers(['Fullname']);
+        $table->define_baseurl('/invalid.php');
+        $table->initialbars(true);
+
+        if ($getvalue !== null) {
+            $_GET['tifirst'] = $getvalue;
+        }
+
+        if ($setvalue !== null) {
+            $table->set_first_initial($setvalue);
+        }
+
+        $table->setup();
+
+        $this->assertEquals($finalvalue, $table->get_initial_first());
+    }
+
+    /**
+     * Test the initials functionality.
+     *
+     * @dataProvider initials_provider
+     * @param string|null $getvalue
+     * @param string|null $setvalue
+     * @param string|null $finalvalue
+     */
+    public function test_initials_last_set(?string $getvalue, ?string $setvalue, ?string $finalvalue): void {
+        global $_GET;
+
+        $this->resetAfterTest(true);
+
+        $table = new flexible_table('tablelib_test');
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $table->define_columns(['fullname']);
+        $table->define_headers(['Fullname']);
+        $table->define_baseurl('/invalid.php');
+        $table->initialbars(true);
+
+        if ($getvalue !== null) {
+            $_GET['tilast'] = $getvalue;
+        }
+
+        if ($setvalue !== null) {
+            $table->set_last_initial($setvalue);
+        }
+
+        $table->setup();
+
+        $this->assertEquals($finalvalue, $table->get_initial_last());
+    }
+
+    /**
+     * Data for testing initials providers.
+     *
+     * @return array
+     */
+    public function initials_provider(): array {
+        return [
+            [null, null, null],
+            ['A', null, 'A'],
+            ['Z', null, 'Z'],
+            [null, 'A', 'A'],
+            [null, 'Z', 'Z'],
+            ['A', 'Z', 'Z'],
+            ['Z', 'A', 'A'],
+        ];
+    }
+
 }
