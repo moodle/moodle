@@ -192,11 +192,15 @@ class file_lock_factory implements lock_factory {
 
     /**
      * Extend a lock that was previously obtained with @lock.
+     *
+     * @deprecated since Moodle 4.0.
      * @param lock $lock - not used
      * @param int $maxlifetime - not used
      * @return boolean - true if the lock was extended.
      */
     public function extend_lock(lock $lock, $maxlifetime = 86400) {
+        debugging('The function extend_lock() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
         // Not supported by this factory.
         return false;
     }

@@ -99,6 +99,7 @@ interface lock_factory {
     /**
      * Extend the timeout on a held lock.
      *
+     * @deprecated since Moodle 4.0.
      * @param lock $lock - lock obtained from this factory
      * @param int $maxlifetime - new max time to hold the lock
      * @return boolean - True if the lock was extended.
