@@ -330,4 +330,16 @@
     <version>5.0.0</version>
     <licenseversion>3-Clause</licenseversion>
   </library>
+  <library>
+    <location>mdn-polyfills</location>
+    <name>mdn-polyfill</name>
+    <license>MIT</license>
+    <version>5.19.0</version>
+  </library>
+  <library>
+    <location>mdn-polyfills</location>
+    <name>url-polyfill</name>
+    <license>MIT</license>
+    <version>1.1.8</version>
+  </library>
 </libraries>

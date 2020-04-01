@@ -66,6 +66,7 @@ lib/validateurlsyntax.php
 lib/amd/src/popper.js
 lib/geopattern-php/
 lib/php-jwt/
+lib/mdn-polyfills/
 media/player/videojs/amd/src/video-lazy.js
 media/player/videojs/amd/src/Youtube-lazy.js
 media/player/videojs/videojs/
