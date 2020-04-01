@@ -79,4 +79,3 @@ Feature: Users' names are displayed across the site according to the user policy
     And I set the field "Select users" to "three@example.com"
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
     Then I should see "Sarah, Sev, Siobhan, Desforges"
-
