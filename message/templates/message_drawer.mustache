@@ -36,6 +36,11 @@
 {{< core/drawer}}
     {{$drawercontent}}
         <div id="message-drawer-{{uniqid}}" class="message-app" data-region="message-drawer" role="region">
+            <div class="closewidget bg-light border-bottom text-right">
+                <a class="text-dark" data-action="closedrawer" href="#">
+                     {{#pix}} i/window_close, core, {{#str}} closebuttontitle {{/str}} {{/pix}}
+                </a>
+            </div>
             <div class="header-container position-relative" data-region="header-container">
                 {{> core_message/message_drawer_view_contacts_header }}
                 {{> core_message/message_drawer_view_conversation_header }}
