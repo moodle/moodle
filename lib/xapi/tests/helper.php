@@ -69,7 +69,7 @@ class test_helper {
 
         $select = "component = :component";
         $params = ['component' => 'core_xapi'];
-        $records = $this->store->get_events_select($select, $params, 'id DESC', 0, 1);
+        $records = $this->store->get_events_select($select, $params, 'timecreated DESC', 0, 1);
 
         if (empty($records)) {
             return null;
