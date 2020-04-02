@@ -1,6 +1,6 @@
 /**
  * @license
- * Video.js 7.6.5 <http://videojs.com/>
+ * Video.js 7.7.6 <http://videojs.com/>
  * Copyright Brightcove, Inc. <https://www.brightcove.com/>
  * Available under Apache License Version 2.0
  * <https://github.com/videojs/video.js/blob/master/LICENSE>
@@ -14,11 +14,12 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('global/window'), require('global/document')) :
   typeof define === 'function' && define.amd ? define(['./window', './document'], factory) :
   (global = global || self, global.videojs = factory(global.window, global.document));
-}(this, function (window$1, document) {
-  window$1 = window$1 && window$1.hasOwnProperty('default') ? window$1['default'] : window$1;
+}(this, function (window$3, document) { 'use strict';
+
+  window$3 = window$3 && window$3.hasOwnProperty('default') ? window$3['default'] : window$3;
   document = document && document.hasOwnProperty('default') ? document['default'] : document;
 
-  var version = "7.6.5";
+  var version = "7.7.6";
 
   /**
    * @file create-logger.js
@@ -51,24 +52,27 @@
       args.unshift(name + ':'); // Add a clone of the args at this point to history.
 
       if (history) {
-        history.push([].concat(args));
+        history.push([].concat(args)); // only store 1000 history entries
+
+        var splice = history.length - 1000;
+        history.splice(0, splice > 0 ? splice : 0);
       } // If there's no console then don't try to output messages, but they will
       // still be stored in history.
 
 
-      if (!window$1.console) {
+      if (!window$3.console) {
         return;
       } // Was setting these once outside of this function, but containing them
       // in the function makes it easier to test cases where console doesn't exist
       // when the module is executed.
 
 
-      var fn = window$1.console[type];
+      var fn = window$3.console[type];
 
       if (!fn && type === 'debug') {
         // Certain browsers don't have support for console.debug. For those, we
         // should default to the closest comparable log.
-        fn = window$1.console.info || window$1.console.log;
+        fn = window$3.console.info || window$3.console.log;
       } // Bail out if there's no console or if this type is not allowed by the
       // current logging level.
 
@@ -77,7 +81,7 @@
         return;
       }
 
-      fn[Array.isArray(args) ? 'apply' : 'call'](window$1.console, args);
+      fn[Array.isArray(args) ? 'apply' : 'call'](window$3.console, args);
     };
   };
 
@@ -309,6 +313,32 @@
   var log = createLogger('VIDEOJS');
   var createLogger$1 = log.createLogger;
 
+  function createCommonjsModule(fn, module) {
+  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+  }
+
+  var _extends_1 = createCommonjsModule(function (module) {
+    function _extends() {
+      module.exports = _extends = Object.assign || function (target) {
+        for (var i = 1; i < arguments.length; i++) {
+          var source = arguments[i];
+
+          for (var key in source) {
+            if (Object.prototype.hasOwnProperty.call(source, key)) {
+              target[key] = source[key];
+            }
+          }
+        }
+
+        return target;
+      };
+
+      return _extends.apply(this, arguments);
+    }
+
+    module.exports = _extends;
+  });
+
   /**
    * @file obj.js
    * @module obj
@@ -413,7 +443,7 @@
     }
 
     if (Object.assign) {
-      return Object.assign.apply(Object, [target].concat(sources));
+      return _extends_1.apply(void 0, [target].concat(sources));
     }
 
     sources.forEach(function (source) {
@@ -479,8 +509,8 @@
       return '';
     }
 
-    if (typeof window$1.getComputedStyle === 'function') {
-      var computedStyleValue = window$1.getComputedStyle(el);
+    if (typeof window$3.getComputedStyle === 'function') {
+      var computedStyleValue = window$3.getComputedStyle(el);
       return computedStyleValue ? computedStyleValue.getPropertyValue(prop) || computedStyleValue[prop] : '';
     }
 
@@ -504,7 +534,12 @@
    */
 
   function isNonBlankString(str) {
-    return typeof str === 'string' && /\S/.test(str);
+    // we use str.trim as it will trim any whitespace characters
+    // from the front or back of non-whitespace characters. aka
+    // Any string that contains non-whitespace characters will
+    // still contain them after `trim` but whitespace only strings
+    // will have a length of 0, failing this check.
+    return typeof str === 'string' && Boolean(str.trim());
   }
   /**
    * Throws an error if the passed string has whitespace. This is used by
@@ -520,7 +555,8 @@
 
 
   function throwIfWhitespace(str) {
-    if (/\s/.test(str)) {
+    // str.indexOf instead of regex because str.indexOf is faster performance wise.
+    if (str.indexOf(' ') >= 0) {
       throw new Error('class has illegal whitespace characters');
     }
   }
@@ -550,7 +586,7 @@
 
   function isReal() {
     // Both document and window will never be undefined thanks to `global`.
-    return document === window$1.document;
+    return document === window$3.document;
   }
   /**
    * Determines, via duck typing, whether or not a value is a DOM element.
@@ -577,7 +613,7 @@
     // We need a try/catch here because Safari will throw errors when attempting
     // to get either `parent` or `self`
     try {
-      return window$1.parent !== window$1.self;
+      return window$3.parent !== window$3.self;
     } catch (x) {
       return true;
     }
@@ -652,7 +688,7 @@
         // method for it.
       } else if (propName === 'textContent') {
         textContent(el, val);
-      } else {
+      } else if (el[propName] !== val) {
         el[propName] = val;
       }
     });
@@ -1051,10 +1087,10 @@
     var docEl = document.documentElement;
     var body = document.body;
     var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-    var scrollLeft = window$1.pageXOffset || body.scrollLeft;
+    var scrollLeft = window$3.pageXOffset || body.scrollLeft;
     var left = box.left + scrollLeft - clientLeft;
     var clientTop = docEl.clientTop || body.clientTop || 0;
-    var scrollTop = window$1.pageYOffset || body.scrollTop;
+    var scrollTop = window$3.pageYOffset || body.scrollTop;
     var top = box.top + scrollTop - clientTop; // Android sometimes returns slightly off decimal values, so need to round
 
     return {
@@ -1421,7 +1457,7 @@
       videojs = vjs;
     }
 
-    window$1.setTimeout(autoSetup, wait);
+    window$3.setTimeout(autoSetup, wait);
   }
   /**
    * Used to set the internal tracking of window loaded state to true.
@@ -1432,7 +1468,7 @@
 
   function setWindowLoaded() {
     _windowLoaded = true;
-    window$1.removeEventListener('load', setWindowLoaded);
+    window$3.removeEventListener('load', setWindowLoaded);
   }
 
   if (isReal()) {
@@ -1447,7 +1483,7 @@
        *
        * @listens load
        */
-      window$1.addEventListener('load', setWindowLoaded);
+      window$3.addEventListener('load', setWindowLoaded);
     }
   }
 
@@ -1489,23 +1525,6 @@
   };
 
   /**
-   * @file dom-data.js
-   * @module dom-data
-   */
-
-  /**
-   * Element Data Store.
-   *
-   * Allows for binding data to an element without putting it directly on the
-   * element. Ex. Event listeners are stored here.
-   * (also from jsninja.com, slightly modified and updated for closure compiler)
-   *
-   * @type {Object}
-   * @private
-   */
-  var DomData = new WeakMap();
-
-  /**
    * @file guid.js
    * @module guid
    */
@@ -1533,6 +1552,76 @@
   function newGUID() {
     return _guid++;
   }
+
+  /**
+   * @file dom-data.js
+   * @module dom-data
+   */
+  var FakeWeakMap;
+
+  if (!window$3.WeakMap) {
+    FakeWeakMap = /*#__PURE__*/function () {
+      function FakeWeakMap() {
+        this.vdata = 'vdata' + Math.floor(window$3.performance && window$3.performance.now() || Date.now());
+        this.data = {};
+      }
+
+      var _proto = FakeWeakMap.prototype;
+
+      _proto.set = function set(key, value) {
+        var access = key[this.vdata] || newGUID();
+
+        if (!key[this.vdata]) {
+          key[this.vdata] = access;
+        }
+
+        this.data[access] = value;
+        return this;
+      };
+
+      _proto.get = function get(key) {
+        var access = key[this.vdata]; // we have data, return it
+
+        if (access) {
+          return this.data[access];
+        } // we don't have data, return nothing.
+        // return undefined explicitly as that's the contract for this method
+
+
+        log('We have no data for this element', key);
+        return undefined;
+      };
+
+      _proto.has = function has(key) {
+        var access = key[this.vdata];
+        return access in this.data;
+      };
+
+      _proto["delete"] = function _delete(key) {
+        var access = key[this.vdata];
+
+        if (access) {
+          delete this.data[access];
+          delete key[this.vdata];
+        }
+      };
+
+      return FakeWeakMap;
+    }();
+  }
+  /**
+   * Element Data Store.
+   *
+   * Allows for binding data to an element without putting it directly on the
+   * element. Ex. Event listeners are stored here.
+   * (also from jsninja.com, slightly modified and updated for closure compiler)
+   *
+   * @type {Object}
+   * @private
+   */
+
+
+  var DomData = window$3.WeakMap ? new WeakMap() : new FakeWeakMap();
 
   /**
    * @file events.js. An Event System (John Resig - Secrets of a JS Ninja http://jsninja.com/)
@@ -1619,6 +1708,10 @@
 
 
   function fixEvent(event) {
+    if (event.fixed_) {
+      return event;
+    }
+
     function returnTrue() {
       return true;
     }
@@ -1633,7 +1726,7 @@
 
 
     if (!event || !event.isPropagationStopped) {
-      var old = event || window$1.event;
+      var old = event || window$3.event;
       event = {}; // Clone the old object so that we can modify the values event = {};
       // IE8 Doesn't like when you mess with native event properties
       // Firefox returns false for event.hasOwnProperty('type') and other props
@@ -1718,8 +1811,9 @@
         event.button = event.button & 1 ? 0 : event.button & 4 ? 1 : event.button & 2 ? 2 : 0;
         /* eslint-enable */
       }
-    } // Returns fixed-up instance
+    }
 
+    event.fixed_ = true; // Returns fixed-up instance
 
     return event;
   }
@@ -1727,20 +1821,26 @@
    * Whether passive event listeners are supported
    */
 
-  var _supportsPassive = false;
+  var _supportsPassive;
 
-  (function () {
-    try {
-      var opts = Object.defineProperty({}, 'passive', {
-        get: function get() {
-          _supportsPassive = true;
-        }
-      });
-      window$1.addEventListener('test', null, opts);
-      window$1.removeEventListener('test', null, opts);
-    } catch (e) {// disregard
+  var supportsPassive = function supportsPassive() {
+    if (typeof _supportsPassive !== 'boolean') {
+      _supportsPassive = false;
+
+      try {
+        var opts = Object.defineProperty({}, 'passive', {
+          get: function get() {
+            _supportsPassive = true;
+          }
+        });
+        window$3.addEventListener('test', null, opts);
+        window$3.removeEventListener('test', null, opts);
+      } catch (e) {// disregard
+      }
     }
-  })();
+
+    return _supportsPassive;
+  };
   /**
    * Touch events Chrome expects to be passive
    */
@@ -1822,7 +1922,7 @@
       if (elem.addEventListener) {
         var options = false;
 
-        if (_supportsPassive && passiveEvents.indexOf(type) > -1) {
+        if (supportsPassive() && passiveEvents.indexOf(type) > -1) {
           options = {
             passive: true
           };
@@ -2094,10 +2194,10 @@
    */
 
   var throttle = function throttle(fn, wait) {
-    var last = window$1.performance.now();
+    var last = window$3.performance.now();
 
     var throttled = function throttled() {
-      var now = window$1.performance.now();
+      var now = window$3.performance.now();
 
       if (now - last >= wait) {
         fn.apply(void 0, arguments);
@@ -2136,7 +2236,7 @@
 
   var debounce = function debounce(func, wait, immediate, context) {
     if (context === void 0) {
-      context = window$1;
+      context = window$3;
     }
 
     var timeout;
@@ -2378,8 +2478,8 @@
 
     var oldTimeout = map.get(type);
     map["delete"](type);
-    window$1.clearTimeout(oldTimeout);
-    var timeout = window$1.setTimeout(function () {
+    window$3.clearTimeout(oldTimeout);
+    var timeout = window$3.setTimeout(function () {
       // if we cleared out all timeouts for the current target, delete its map
       if (map.size === 0) {
         map = null;
@@ -2881,7 +2981,7 @@
 
     target.on('dispose', function () {
       target.off();
-      window$1.setTimeout(function () {
+      window$3.setTimeout(function () {
         target.eventBusEl_ = null;
       }, 0);
     });
@@ -3122,9 +3222,7 @@
    * Components can also use methods from {@link EventTarget}
    */
 
-  var Component =
-  /*#__PURE__*/
-  function () {
+  var Component = /*#__PURE__*/function () {
     /**
      * A callback that is called when a component is ready. Does not have any
      * paramters and any callback value will be ignored.
@@ -3156,8 +3254,9 @@
         this.player_ = player = this; // eslint-disable-line
       } else {
         this.player_ = player;
-      } // Hold the reference to the parent component via `addChild` method
+      }
 
+      this.isDisposed_ = false; // Hold the reference to the parent component via `addChild` method
 
       this.parentComponent_ = null; // Make a copy of prototype.options_ to protect against overriding defaults
 
@@ -3193,9 +3292,44 @@
       this.children_ = [];
       this.childIndex_ = {};
       this.childNameIndex_ = {};
-      this.setTimeoutIds_ = new Set();
-      this.setIntervalIds_ = new Set();
-      this.rafIds_ = new Set();
+      var SetSham;
+
+      if (!window$3.Set) {
+        SetSham = /*#__PURE__*/function () {
+          function SetSham() {
+            this.set_ = {};
+          }
+
+          var _proto2 = SetSham.prototype;
+
+          _proto2.has = function has(key) {
+            return key in this.set_;
+          };
+
+          _proto2["delete"] = function _delete(key) {
+            var has = this.has(key);
+            delete this.set_[key];
+            return has;
+          };
+
+          _proto2.add = function add(key) {
+            this.set_[key] = 1;
+            return this;
+          };
+
+          _proto2.forEach = function forEach(callback, thisArg) {
+            for (var key in this.set_) {
+              callback.call(thisArg, key, key, this);
+            }
+          };
+
+          return SetSham;
+        }();
+      }
+
+      this.setTimeoutIds_ = window$3.Set ? new Set() : new SetSham();
+      this.setIntervalIds_ = window$3.Set ? new Set() : new SetSham();
+      this.rafIds_ = window$3.Set ? new Set() : new SetSham();
       this.clearingTimersOnDispose_ = false; // Add any child components in options
 
       if (options.initChildren !== false) {
@@ -3219,6 +3353,10 @@
     var _proto = Component.prototype;
 
     _proto.dispose = function dispose() {
+      // Bail out if the component has already been disposed.
+      if (this.isDisposed_) {
+        return;
+      }
       /**
        * Triggered when a `Component` is disposed.
        *
@@ -3226,13 +3364,16 @@
        * @type {EventTarget~Event}
        *
        * @property {boolean} [bubbles=false]
-       *           set to false so that the close event does not
+       *           set to false so that the dispose event does not
        *           bubble up
        */
+
+
       this.trigger({
         type: 'dispose',
         bubbles: false
-      }); // Dispose all children.
+      });
+      this.isDisposed_ = true; // Dispose all children.
 
       if (this.children_) {
         for (var i = this.children_.length - 1; i >= 0; i--) {
@@ -3263,6 +3404,17 @@
 
 
       this.player_ = null;
+    }
+    /**
+     * Determine whether or not this component has been disposed.
+     *
+     * @return {boolean}
+     *         If the component has been disposed, will be `true`. Otherwise, `false`.
+     */
+    ;
+
+    _proto.isDisposed = function isDisposed() {
+      return Boolean(this.isDisposed_);
     }
     /**
      * Return the {@link Player} that the `Component` has attached to.
@@ -3559,8 +3711,13 @@
 
 
       if (typeof component.el === 'function' && component.el()) {
-        var childNodes = this.contentEl().children;
-        var refNode = childNodes[index] || null;
+        // If inserting before a component, insert before that component's element
+        var refNode = null;
+
+        if (this.children_[index + 1] && this.children_[index + 1].el_) {
+          refNode = this.children_[index + 1].el_;
+        }
+
         this.contentEl().insertBefore(component.el(), refNode);
       } // Return so it can stored on parent object if desired.
 
@@ -4278,7 +4435,7 @@
             pageY: event.touches[0].pageY
           }; // Record start time so we can detect a tap vs. "touch and hold"
 
-          touchStart = window$1.performance.now(); // Reset couldBeTap tracking
+          touchStart = window$3.performance.now(); // Reset couldBeTap tracking
 
           couldBeTap = true;
         }
@@ -4314,7 +4471,7 @@
 
         if (couldBeTap === true) {
           // Measure how long the touch lasted
-          var touchTime = window$1.performance.now() - touchStart; // Make sure the touch was less than the threshold to be considered a tap
+          var touchTime = window$3.performance.now() - touchStart; // Make sure the touch was less than the threshold to be considered a tap
 
           if (touchTime < touchTimeThreshold) {
             // Don't let browser turn this into a click
@@ -4430,7 +4587,7 @@
       var timeoutId;
       fn = bind(this, fn);
       this.clearTimersOnDispose_();
-      timeoutId = window$1.setTimeout(function () {
+      timeoutId = window$3.setTimeout(function () {
         if (_this2.setTimeoutIds_.has(timeoutId)) {
           _this2.setTimeoutIds_["delete"](timeoutId);
         }
@@ -4460,7 +4617,7 @@
     _proto.clearTimeout = function clearTimeout(timeoutId) {
       if (this.setTimeoutIds_.has(timeoutId)) {
         this.setTimeoutIds_["delete"](timeoutId);
-        window$1.clearTimeout(timeoutId);
+        window$3.clearTimeout(timeoutId);
       }
 
       return timeoutId;
@@ -4490,7 +4647,7 @@
     _proto.setInterval = function setInterval(fn, interval) {
       fn = bind(this, fn);
       this.clearTimersOnDispose_();
-      var intervalId = window$1.setInterval(fn, interval);
+      var intervalId = window$3.setInterval(fn, interval);
       this.setIntervalIds_.add(intervalId);
       return intervalId;
     }
@@ -4514,7 +4671,7 @@
     _proto.clearInterval = function clearInterval(intervalId) {
       if (this.setIntervalIds_.has(intervalId)) {
         this.setIntervalIds_["delete"](intervalId);
-        window$1.clearInterval(intervalId);
+        window$3.clearInterval(intervalId);
       }
 
       return intervalId;
@@ -4559,7 +4716,7 @@
 
       var id;
       fn = bind(this, fn);
-      id = window$1.requestAnimationFrame(function () {
+      id = window$3.requestAnimationFrame(function () {
         if (_this3.rafIds_.has(id)) {
           _this3.rafIds_["delete"](id);
         }
@@ -4595,7 +4752,7 @@
 
       if (this.rafIds_.has(id)) {
         this.rafIds_["delete"](id);
-        window$1.cancelAnimationFrame(id);
+        window$3.cancelAnimationFrame(id);
       }
 
       return id;
@@ -4735,53 +4892,8 @@
    */
 
 
-  Component.prototype.supportsRaf_ = typeof window$1.requestAnimationFrame === 'function' && typeof window$1.cancelAnimationFrame === 'function';
+  Component.prototype.supportsRaf_ = typeof window$3.requestAnimationFrame === 'function' && typeof window$3.cancelAnimationFrame === 'function';
   Component.registerComponent('Component', Component);
-
-  function _inheritsLoose(subClass, superClass) {
-    subClass.prototype = Object.create(superClass.prototype);
-    subClass.prototype.constructor = subClass;
-    subClass.__proto__ = superClass;
-  }
-
-  function _setPrototypeOf(o, p) {
-    _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-      o.__proto__ = p;
-      return o;
-    };
-
-    return _setPrototypeOf(o, p);
-  }
-
-  function isNativeReflectConstruct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
-
-    try {
-      Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function _construct(Parent, args, Class) {
-    if (isNativeReflectConstruct()) {
-      _construct = Reflect.construct;
-    } else {
-      _construct = function _construct(Parent, args, Class) {
-        var a = [null];
-        a.push.apply(a, args);
-        var Constructor = Function.bind.apply(Parent, a);
-        var instance = new Constructor();
-        if (Class) _setPrototypeOf(instance, Class.prototype);
-        return instance;
-      };
-    }
-
-    return _construct.apply(null, arguments);
-  }
 
   function _assertThisInitialized(self) {
     if (self === void 0) {
@@ -4791,34 +4903,54 @@
     return self;
   }
 
+  var assertThisInitialized = _assertThisInitialized;
+
+  var _typeof_1 = createCommonjsModule(function (module) {
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+
+      if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+        module.exports = _typeof = function _typeof(obj) {
+          return typeof obj;
+        };
+      } else {
+        module.exports = _typeof = function _typeof(obj) {
+          return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+        };
+      }
+
+      return _typeof(obj);
+    }
+
+    module.exports = _typeof;
+  });
+
+  var getPrototypeOf = createCommonjsModule(function (module) {
+    function _getPrototypeOf(o) {
+      module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+        return o.__proto__ || Object.getPrototypeOf(o);
+      };
+      return _getPrototypeOf(o);
+    }
+
+    module.exports = _getPrototypeOf;
+  });
+
+  function _inheritsLoose(subClass, superClass) {
+    subClass.prototype = Object.create(superClass.prototype);
+    subClass.prototype.constructor = subClass;
+    subClass.__proto__ = superClass;
+  }
+
+  var inheritsLoose = _inheritsLoose;
+
   /**
    * @file browser.js
    * @module browser
    */
-  var USER_AGENT = window$1.navigator && window$1.navigator.userAgent || '';
+  var USER_AGENT = window$3.navigator && window$3.navigator.userAgent || '';
   var webkitVersionMap = /AppleWebKit\/([\d.]+)/i.exec(USER_AGENT);
   var appleWebkitVersion = webkitVersionMap ? parseFloat(webkitVersionMap.pop()) : null;
-  /**
-   * Whether or not this device is an iPad.
-   *
-   * @static
-   * @const
-   * @type {Boolean}
-   */
-
-  var IS_IPAD = /iPad/i.test(USER_AGENT);
-  /**
-   * Whether or not this device is an iPhone.
-   *
-   * @static
-   * @const
-   * @type {Boolean}
-   */
-  // The Facebook app's UIWebView identifies as both an iPhone and iPad, so
-  // to identify iPhones, we need to exclude iPads.
-  // http://artsy.github.io/blog/2012/10/18/the-perils-of-ios-user-agent-sniffing/
-
-  var IS_IPHONE = /iPhone/i.test(USER_AGENT) && !IS_IPAD;
   /**
    * Whether or not this device is an iPod.
    *
@@ -4828,15 +4960,6 @@
    */
 
   var IS_IPOD = /iPod/i.test(USER_AGENT);
-  /**
-   * Whether or not this is an iOS device.
-   *
-   * @static
-   * @const
-   * @type {Boolean}
-   */
-
-  var IS_IOS = IS_IPHONE || IS_IPAD || IS_IPOD;
   /**
    * The detected iOS version - or `null`.
    *
@@ -4917,7 +5040,7 @@
    * @type {Boolean}
    */
 
-  var IS_EDGE = /Edge/i.test(USER_AGENT);
+  var IS_EDGE = /Edg/i.test(USER_AGENT);
   /**
    * Whether or not this is Google Chrome.
    *
@@ -4976,15 +5099,6 @@
 
   var IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE;
   /**
-   * Whether or not this is any flavor of Safari - including iOS.
-   *
-   * @static
-   * @const
-   * @type {Boolean}
-   */
-
-  var IS_ANY_SAFARI = (IS_SAFARI || IS_IOS) && !IS_CHROME;
-  /**
    * Whether or not this is a Windows machine.
    *
    * @static
@@ -5001,13 +5115,49 @@
    * @type {Boolean}
    */
 
-  var TOUCH_ENABLED = isReal() && ('ontouchstart' in window$1 || window$1.navigator.maxTouchPoints || window$1.DocumentTouch && window$1.document instanceof window$1.DocumentTouch);
+  var TOUCH_ENABLED = isReal() && ('ontouchstart' in window$3 || window$3.navigator.maxTouchPoints || window$3.DocumentTouch && window$3.document instanceof window$3.DocumentTouch);
+  /**
+   * Whether or not this device is an iPad.
+   *
+   * @static
+   * @const
+   * @type {Boolean}
+   */
+
+  var IS_IPAD = /iPad/i.test(USER_AGENT) || IS_SAFARI && TOUCH_ENABLED && !/iPhone/i.test(USER_AGENT);
+  /**
+   * Whether or not this device is an iPhone.
+   *
+   * @static
+   * @const
+   * @type {Boolean}
+   */
+  // The Facebook app's UIWebView identifies as both an iPhone and iPad, so
+  // to identify iPhones, we need to exclude iPads.
+  // http://artsy.github.io/blog/2012/10/18/the-perils-of-ios-user-agent-sniffing/
+
+  var IS_IPHONE = /iPhone/i.test(USER_AGENT) && !IS_IPAD;
+  /**
+   * Whether or not this is an iOS device.
+   *
+   * @static
+   * @const
+   * @type {Boolean}
+   */
+
+  var IS_IOS = IS_IPHONE || IS_IPAD || IS_IPOD;
+  /**
+   * Whether or not this is any flavor of Safari - including iOS.
+   *
+   * @static
+   * @const
+   * @type {Boolean}
+   */
+
+  var IS_ANY_SAFARI = (IS_SAFARI || IS_IOS) && !IS_CHROME;
 
   var browser = /*#__PURE__*/Object.freeze({
-    IS_IPAD: IS_IPAD,
-    IS_IPHONE: IS_IPHONE,
     IS_IPOD: IS_IPOD,
-    IS_IOS: IS_IOS,
     IOS_VERSION: IOS_VERSION,
     IS_ANDROID: IS_ANDROID,
     ANDROID_VERSION: ANDROID_VERSION,
@@ -5018,9 +5168,12 @@
     CHROME_VERSION: CHROME_VERSION,
     IE_VERSION: IE_VERSION,
     IS_SAFARI: IS_SAFARI,
-    IS_ANY_SAFARI: IS_ANY_SAFARI,
     IS_WINDOWS: IS_WINDOWS,
-    TOUCH_ENABLED: TOUCH_ENABLED
+    TOUCH_ENABLED: TOUCH_ENABLED,
+    IS_IPAD: IS_IPAD,
+    IS_IPHONE: IS_IPHONE,
+    IS_IOS: IS_IOS,
+    IS_ANY_SAFARI: IS_ANY_SAFARI
   });
 
   /**
@@ -5503,10 +5656,6 @@
     trackToJson_: trackToJson_
   };
 
-  function createCommonjsModule(fn, module) {
-  	return module = { exports: {} }, fn(module, module.exports), module.exports;
-  }
-
   var keycode = createCommonjsModule(function (module, exports) {
     // Source: http://jsfiddle.net/vWx8V/
     // http://stackoverflow.com/questions/5603195/full-list-of-javascript-keycodes
@@ -5629,9 +5778,9 @@
       '[': 219,
       '\\': 220,
       ']': 221,
-      "'": 222 // Helper aliases
+      "'": 222
+    }; // Helper aliases
 
-    };
     var aliases = exports.aliases = {
       'windows': 91,
       '⇧': 16,
@@ -5653,12 +5802,11 @@
       'ins': 45,
       'del': 46,
       'cmd': 91
-      /*!
-       * Programatically add the following
-       */
-      // lower case chars
-
     };
+    /*!
+     * Programatically add the following
+     */
+    // lower case chars
 
     for (i = 97; i < 123; i++) {
       codes[String.fromCharCode(i)] = i - 32;
@@ -5714,10 +5862,8 @@
    * @extends Component
    */
 
-  var ModalDialog =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(ModalDialog, _Component);
+  var ModalDialog = /*#__PURE__*/function (_Component) {
+    inheritsLoose(ModalDialog, _Component);
 
     /**
      * Create an instance of this class.
@@ -6209,7 +6355,7 @@
     _proto.focusableEls_ = function focusableEls_() {
       var allChildren = this.el_.querySelectorAll('*');
       return Array.prototype.filter.call(allChildren, function (child) {
-        return (child instanceof window$1.HTMLAnchorElement || child instanceof window$1.HTMLAreaElement) && child.hasAttribute('href') || (child instanceof window$1.HTMLInputElement || child instanceof window$1.HTMLSelectElement || child instanceof window$1.HTMLTextAreaElement || child instanceof window$1.HTMLButtonElement) && !child.hasAttribute('disabled') || child instanceof window$1.HTMLIFrameElement || child instanceof window$1.HTMLObjectElement || child instanceof window$1.HTMLEmbedElement || child.hasAttribute('tabindex') && child.getAttribute('tabindex') !== -1 || child.hasAttribute('contenteditable');
+        return (child instanceof window$3.HTMLAnchorElement || child instanceof window$3.HTMLAreaElement) && child.hasAttribute('href') || (child instanceof window$3.HTMLInputElement || child instanceof window$3.HTMLSelectElement || child instanceof window$3.HTMLTextAreaElement || child instanceof window$3.HTMLButtonElement) && !child.hasAttribute('disabled') || child instanceof window$3.HTMLIFrameElement || child instanceof window$3.HTMLObjectElement || child instanceof window$3.HTMLEmbedElement || child.hasAttribute('tabindex') && child.getAttribute('tabindex') !== -1 || child.hasAttribute('contenteditable');
       });
     };
 
@@ -6236,10 +6382,8 @@
    * @extends EventTarget
    */
 
-  var TrackList =
-  /*#__PURE__*/
-  function (_EventTarget) {
-    _inheritsLoose(TrackList, _EventTarget);
+  var TrackList = /*#__PURE__*/function (_EventTarget) {
+    inheritsLoose(TrackList, _EventTarget);
 
     /**
      * Create an instance of this class
@@ -6265,7 +6409,7 @@
        * @instance
        */
 
-      Object.defineProperty(_assertThisInitialized(_this), 'length', {
+      Object.defineProperty(assertThisInitialized(_this), 'length', {
         get: function get() {
           return this.tracks_.length;
         }
@@ -6447,10 +6591,8 @@
    */
 
 
-  var AudioTrackList =
-  /*#__PURE__*/
-  function (_TrackList) {
-    _inheritsLoose(AudioTrackList, _TrackList);
+  var AudioTrackList = /*#__PURE__*/function (_TrackList) {
+    inheritsLoose(AudioTrackList, _TrackList);
 
     /**
      * Create an instance of this class.
@@ -6569,10 +6711,8 @@
    */
 
 
-  var VideoTrackList =
-  /*#__PURE__*/
-  function (_TrackList) {
-    _inheritsLoose(VideoTrackList, _TrackList);
+  var VideoTrackList = /*#__PURE__*/function (_TrackList) {
+    inheritsLoose(VideoTrackList, _TrackList);
 
     /**
      * Create an instance of this class.
@@ -6603,7 +6743,7 @@
        *         The current index of the selected {@link VideoTrack`}.
        */
 
-      Object.defineProperty(_assertThisInitialized(_this), 'selectedIndex', {
+      Object.defineProperty(assertThisInitialized(_this), 'selectedIndex', {
         get: function get() {
           for (var _i = 0; _i < this.length; _i++) {
             if (this[_i].selected) {
@@ -6682,10 +6822,8 @@
    * @extends TrackList
    */
 
-  var TextTrackList =
-  /*#__PURE__*/
-  function (_TrackList) {
-    _inheritsLoose(TextTrackList, _TrackList);
+  var TextTrackList = /*#__PURE__*/function (_TrackList) {
+    inheritsLoose(TextTrackList, _TrackList);
 
     function TextTrackList() {
       return _TrackList.apply(this, arguments) || this;
@@ -6756,9 +6894,7 @@
   /**
    * The current list of {@link HtmlTrackElement}s.
    */
-  var HtmlTrackElementList =
-  /*#__PURE__*/
-  function () {
+  var HtmlTrackElementList = /*#__PURE__*/function () {
     /**
      * Create an instance of this class.
      *
@@ -6899,9 +7035,7 @@
    *
    * @see [Spec]{@link https://html.spec.whatwg.org/multipage/embedded-content.html#texttrackcuelist}
    */
-  var TextTrackCueList =
-  /*#__PURE__*/
-  function () {
+  var TextTrackCueList = /*#__PURE__*/function () {
     /**
      * Create an instance of this class..
      *
@@ -7065,10 +7199,8 @@
    * @abstract
    */
 
-  var Track =
-  /*#__PURE__*/
-  function (_EventTarget) {
-    _inheritsLoose(Track, _EventTarget);
+  var Track = /*#__PURE__*/function (_EventTarget) {
+    inheritsLoose(Track, _EventTarget);
 
     /**
      * Create an instance of this class.
@@ -7142,7 +7274,7 @@
        */
 
       var _loop = function _loop(key) {
-        Object.defineProperty(_assertThisInitialized(_this), key, {
+        Object.defineProperty(assertThisInitialized(_this), key, {
           get: function get() {
             return trackProps[key];
           },
@@ -7240,7 +7372,7 @@
     }
 
     if (!details.protocol) {
-      details.protocol = window$1.location.protocol;
+      details.protocol = window$3.location.protocol;
     }
 
     if (addToBody) {
@@ -7305,12 +7437,24 @@
    * @param    {string} url
    *           The url to check.
    *
+   * @param    {Object} [winLoc]
+   *           the domain to check the url against, defaults to window.location
+   *
+   * @param    {string} [winLoc.protocol]
+   *           The window location protocol defaults to window.location.protocol
+   *
+   * @param    {string} [winLoc.host]
+   *           The window location host defaults to window.location.host
+   *
    * @return   {boolean}
    *           Whether it is a cross domain request or not.
    */
 
-  var isCrossOrigin = function isCrossOrigin(url) {
-    var winLoc = window$1.location;
+  var isCrossOrigin = function isCrossOrigin(url, winLoc) {
+    if (winLoc === void 0) {
+      winLoc = window$3.location;
+    }
+
     var urlInfo = parseUrl(url); // IE8 protocol relative urls will return ':' for protocol
 
     var srcProtocol = urlInfo.protocol === ':' ? winLoc.protocol : urlInfo.protocol; // Check if url is for another domain/origin
@@ -7336,1019 +7480,30 @@
     fn === window.setTimeout || fn === window.alert || fn === window.confirm || fn === window.prompt);
   }
 
-  /* eslint no-invalid-this: 1 */
+  /**
+   * @license
+   * slighly modified parse-headers 2.0.2 <https://github.com/kesla/parse-headers/>
+   * Copyright (c) 2014 David Björklund
+   * Available under the MIT license
+   * <https://github.com/kesla/parse-headers/blob/master/LICENCE>
+   */
 
-  var ERROR_MESSAGE = 'Function.prototype.bind called on incompatible ';
-  var slice = Array.prototype.slice;
-  var toStr = Object.prototype.toString;
-  var funcType = '[object Function]';
-
-  var implementation = function bind(that) {
-    var target = this;
-
-    if (typeof target !== 'function' || toStr.call(target) !== funcType) {
-      throw new TypeError(ERROR_MESSAGE + target);
-    }
-
-    var args = slice.call(arguments, 1);
-    var bound;
-
-    var binder = function binder() {
-      if (this instanceof bound) {
-        var result = target.apply(this, args.concat(slice.call(arguments)));
-
-        if (Object(result) === result) {
-          return result;
-        }
-
-        return this;
-      } else {
-        return target.apply(that, args.concat(slice.call(arguments)));
-      }
-    };
-
-    var boundLength = Math.max(0, target.length - args.length);
-    var boundArgs = [];
-
-    for (var i = 0; i < boundLength; i++) {
-      boundArgs.push('$' + i);
-    }
-
-    bound = Function('binder', 'return function (' + boundArgs.join(',') + '){ return binder.apply(this,arguments); }')(binder);
-
-    if (target.prototype) {
-      var Empty = function Empty() {};
-
-      Empty.prototype = target.prototype;
-      bound.prototype = new Empty();
-      Empty.prototype = null;
-    }
-
-    return bound;
-  };
-
-  var functionBind = Function.prototype.bind || implementation;
-
-  var toStr$1 = Object.prototype.toString;
-
-  var isArguments = function isArguments(value) {
-    var str = toStr$1.call(value);
-    var isArgs = str === '[object Arguments]';
-
-    if (!isArgs) {
-      isArgs = str !== '[object Array]' && value !== null && typeof value === 'object' && typeof value.length === 'number' && value.length >= 0 && toStr$1.call(value.callee) === '[object Function]';
-    }
-
-    return isArgs;
-  };
-
-  var keysShim;
-
-  if (!Object.keys) {
-    // modified from https://github.com/es-shims/es5-shim
-    var has = Object.prototype.hasOwnProperty;
-    var toStr$2 = Object.prototype.toString;
-    var isArgs = isArguments; // eslint-disable-line global-require
-
-    var isEnumerable = Object.prototype.propertyIsEnumerable;
-    var hasDontEnumBug = !isEnumerable.call({
-      toString: null
-    }, 'toString');
-    var hasProtoEnumBug = isEnumerable.call(function () {}, 'prototype');
-    var dontEnums = ['toString', 'toLocaleString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor'];
-
-    var equalsConstructorPrototype = function equalsConstructorPrototype(o) {
-      var ctor = o.constructor;
-      return ctor && ctor.prototype === o;
-    };
-
-    var excludedKeys = {
-      $applicationCache: true,
-      $console: true,
-      $external: true,
-      $frame: true,
-      $frameElement: true,
-      $frames: true,
-      $innerHeight: true,
-      $innerWidth: true,
-      $onmozfullscreenchange: true,
-      $onmozfullscreenerror: true,
-      $outerHeight: true,
-      $outerWidth: true,
-      $pageXOffset: true,
-      $pageYOffset: true,
-      $parent: true,
-      $scrollLeft: true,
-      $scrollTop: true,
-      $scrollX: true,
-      $scrollY: true,
-      $self: true,
-      $webkitIndexedDB: true,
-      $webkitStorageInfo: true,
-      $window: true
-    };
-
-    var hasAutomationEqualityBug = function () {
-      /* global window */
-      if (typeof window === 'undefined') {
-        return false;
-      }
-
-      for (var k in window) {
-        try {
-          if (!excludedKeys['$' + k] && has.call(window, k) && window[k] !== null && typeof window[k] === 'object') {
-            try {
-              equalsConstructorPrototype(window[k]);
-            } catch (e) {
-              return true;
-            }
-          }
-        } catch (e) {
-          return true;
-        }
-      }
-
-      return false;
-    }();
-
-    var equalsConstructorPrototypeIfNotBuggy = function equalsConstructorPrototypeIfNotBuggy(o) {
-      /* global window */
-      if (typeof window === 'undefined' || !hasAutomationEqualityBug) {
-        return equalsConstructorPrototype(o);
-      }
-
-      try {
-        return equalsConstructorPrototype(o);
-      } catch (e) {
-        return false;
-      }
-    };
-
-    keysShim = function keys(object) {
-      var isObject = object !== null && typeof object === 'object';
-      var isFunction = toStr$2.call(object) === '[object Function]';
-      var isArguments = isArgs(object);
-      var isString = isObject && toStr$2.call(object) === '[object String]';
-      var theKeys = [];
-
-      if (!isObject && !isFunction && !isArguments) {
-        throw new TypeError('Object.keys called on a non-object');
-      }
-
-      var skipProto = hasProtoEnumBug && isFunction;
-
-      if (isString && object.length > 0 && !has.call(object, 0)) {
-        for (var i = 0; i < object.length; ++i) {
-          theKeys.push(String(i));
-        }
-      }
-
-      if (isArguments && object.length > 0) {
-        for (var j = 0; j < object.length; ++j) {
-          theKeys.push(String(j));
-        }
-      } else {
-        for (var name in object) {
-          if (!(skipProto && name === 'prototype') && has.call(object, name)) {
-            theKeys.push(String(name));
-          }
-        }
-      }
-
-      if (hasDontEnumBug) {
-        var skipConstructor = equalsConstructorPrototypeIfNotBuggy(object);
-
-        for (var k = 0; k < dontEnums.length; ++k) {
-          if (!(skipConstructor && dontEnums[k] === 'constructor') && has.call(object, dontEnums[k])) {
-            theKeys.push(dontEnums[k]);
-          }
-        }
-      }
-
-      return theKeys;
-    };
-  }
-
-  var implementation$1 = keysShim;
-
-  var slice$1 = Array.prototype.slice;
-  var origKeys = Object.keys;
-  var keysShim$1 = origKeys ? function keys(o) {
-    return origKeys(o);
-  } : implementation$1;
-  var originalKeys = Object.keys;
-
-  keysShim$1.shim = function shimObjectKeys() {
-    if (Object.keys) {
-      var keysWorksWithArguments = function () {
-        // Safari 5.0 bug
-        var args = Object.keys(arguments);
-        return args && args.length === arguments.length;
-      }(1, 2);
-
-      if (!keysWorksWithArguments) {
-        Object.keys = function keys(object) {
-          // eslint-disable-line func-name-matching
-          if (isArguments(object)) {
-            return originalKeys(slice$1.call(object));
-          }
-
-          return originalKeys(object);
-        };
-      }
-    } else {
-      Object.keys = keysShim$1;
-    }
-
-    return Object.keys || keysShim$1;
-  };
-
-  var objectKeys = keysShim$1;
-
-  var hasSymbols = typeof Symbol === 'function' && typeof Symbol('foo') === 'symbol';
-  var toStr$3 = Object.prototype.toString;
-  var concat = Array.prototype.concat;
-  var origDefineProperty = Object.defineProperty;
-
-  var isFunction$1 = function isFunction(fn) {
-    return typeof fn === 'function' && toStr$3.call(fn) === '[object Function]';
-  };
-
-  var arePropertyDescriptorsSupported = function arePropertyDescriptorsSupported() {
-    var obj = {};
-
-    try {
-      origDefineProperty(obj, 'x', {
-        enumerable: false,
-        value: obj
-      }); // eslint-disable-next-line no-unused-vars, no-restricted-syntax
-
-      for (var _ in obj) {
-        // jscs:ignore disallowUnusedVariables
-        return false;
-      }
-
-      return obj.x === obj;
-    } catch (e) {
-      /* this is IE 8. */
-      return false;
-    }
-  };
-
-  var supportsDescriptors = origDefineProperty && arePropertyDescriptorsSupported();
-
-  var defineProperty = function defineProperty(object, name, value, predicate) {
-    if (name in object && (!isFunction$1(predicate) || !predicate())) {
-      return;
-    }
-
-    if (supportsDescriptors) {
-      origDefineProperty(object, name, {
-        configurable: true,
-        enumerable: false,
-        value: value,
-        writable: true
-      });
-    } else {
-      object[name] = value;
-    }
-  };
-
-  var defineProperties = function defineProperties(object, map) {
-    var predicates = arguments.length > 2 ? arguments[2] : {};
-    var props = objectKeys(map);
-
-    if (hasSymbols) {
-      props = concat.call(props, Object.getOwnPropertySymbols(map));
-    }
-
-    for (var i = 0; i < props.length; i += 1) {
-      defineProperty(object, props[i], map[props[i]], predicates[props[i]]);
-    }
-  };
-
-  defineProperties.supportsDescriptors = !!supportsDescriptors;
-  var defineProperties_1 = defineProperties;
-
-  /* globals
-  	Set,
-  	Map,
-  	WeakSet,
-  	WeakMap,
-
-  	Promise,
-
-  	Symbol,
-  	Proxy,
-
-  	Atomics,
-  	SharedArrayBuffer,
-
-  	ArrayBuffer,
-  	DataView,
-  	Uint8Array,
-  	Float32Array,
-  	Float64Array,
-  	Int8Array,
-  	Int16Array,
-  	Int32Array,
-  	Uint8ClampedArray,
-  	Uint16Array,
-  	Uint32Array,
-  */
-
-  var undefined$1; // eslint-disable-line no-shadow-restricted-names
-
-  var ThrowTypeError = Object.getOwnPropertyDescriptor ? function () {
-    return Object.getOwnPropertyDescriptor(arguments, 'callee').get;
-  }() : function () {
-    throw new TypeError();
-  };
-  var hasSymbols$1 = typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol';
-
-  var getProto = Object.getPrototypeOf || function (x) {
-    return x.__proto__;
-  }; // eslint-disable-line no-proto
-
-  var generatorFunction =  undefined$1;
-
-  var asyncFunction =  undefined$1;
-
-  var asyncGenFunction =  undefined$1;
-  var TypedArray = typeof Uint8Array === 'undefined' ? undefined$1 : getProto(Uint8Array);
-  var INTRINSICS = {
-    '$ %Array%': Array,
-    '$ %ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined$1 : ArrayBuffer,
-    '$ %ArrayBufferPrototype%': typeof ArrayBuffer === 'undefined' ? undefined$1 : ArrayBuffer.prototype,
-    '$ %ArrayIteratorPrototype%': hasSymbols$1 ? getProto([][Symbol.iterator]()) : undefined$1,
-    '$ %ArrayPrototype%': Array.prototype,
-    '$ %ArrayProto_entries%': Array.prototype.entries,
-    '$ %ArrayProto_forEach%': Array.prototype.forEach,
-    '$ %ArrayProto_keys%': Array.prototype.keys,
-    '$ %ArrayProto_values%': Array.prototype.values,
-    '$ %AsyncFromSyncIteratorPrototype%': undefined$1,
-    '$ %AsyncFunction%': asyncFunction,
-    '$ %AsyncFunctionPrototype%':  undefined$1,
-    '$ %AsyncGenerator%':  undefined$1,
-    '$ %AsyncGeneratorFunction%': asyncGenFunction,
-    '$ %AsyncGeneratorPrototype%':  undefined$1,
-    '$ %AsyncIteratorPrototype%':  undefined$1,
-    '$ %Atomics%': typeof Atomics === 'undefined' ? undefined$1 : Atomics,
-    '$ %Boolean%': Boolean,
-    '$ %BooleanPrototype%': Boolean.prototype,
-    '$ %DataView%': typeof DataView === 'undefined' ? undefined$1 : DataView,
-    '$ %DataViewPrototype%': typeof DataView === 'undefined' ? undefined$1 : DataView.prototype,
-    '$ %Date%': Date,
-    '$ %DatePrototype%': Date.prototype,
-    '$ %decodeURI%': decodeURI,
-    '$ %decodeURIComponent%': decodeURIComponent,
-    '$ %encodeURI%': encodeURI,
-    '$ %encodeURIComponent%': encodeURIComponent,
-    '$ %Error%': Error,
-    '$ %ErrorPrototype%': Error.prototype,
-    '$ %eval%': eval,
-    // eslint-disable-line no-eval
-    '$ %EvalError%': EvalError,
-    '$ %EvalErrorPrototype%': EvalError.prototype,
-    '$ %Float32Array%': typeof Float32Array === 'undefined' ? undefined$1 : Float32Array,
-    '$ %Float32ArrayPrototype%': typeof Float32Array === 'undefined' ? undefined$1 : Float32Array.prototype,
-    '$ %Float64Array%': typeof Float64Array === 'undefined' ? undefined$1 : Float64Array,
-    '$ %Float64ArrayPrototype%': typeof Float64Array === 'undefined' ? undefined$1 : Float64Array.prototype,
-    '$ %Function%': Function,
-    '$ %FunctionPrototype%': Function.prototype,
-    '$ %Generator%':  undefined$1,
-    '$ %GeneratorFunction%': generatorFunction,
-    '$ %GeneratorPrototype%':  undefined$1,
-    '$ %Int8Array%': typeof Int8Array === 'undefined' ? undefined$1 : Int8Array,
-    '$ %Int8ArrayPrototype%': typeof Int8Array === 'undefined' ? undefined$1 : Int8Array.prototype,
-    '$ %Int16Array%': typeof Int16Array === 'undefined' ? undefined$1 : Int16Array,
-    '$ %Int16ArrayPrototype%': typeof Int16Array === 'undefined' ? undefined$1 : Int8Array.prototype,
-    '$ %Int32Array%': typeof Int32Array === 'undefined' ? undefined$1 : Int32Array,
-    '$ %Int32ArrayPrototype%': typeof Int32Array === 'undefined' ? undefined$1 : Int32Array.prototype,
-    '$ %isFinite%': isFinite,
-    '$ %isNaN%': isNaN,
-    '$ %IteratorPrototype%': hasSymbols$1 ? getProto(getProto([][Symbol.iterator]())) : undefined$1,
-    '$ %JSON%': JSON,
-    '$ %JSONParse%': JSON.parse,
-    '$ %Map%': typeof Map === 'undefined' ? undefined$1 : Map,
-    '$ %MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols$1 ? undefined$1 : getProto(new Map()[Symbol.iterator]()),
-    '$ %MapPrototype%': typeof Map === 'undefined' ? undefined$1 : Map.prototype,
-    '$ %Math%': Math,
-    '$ %Number%': Number,
-    '$ %NumberPrototype%': Number.prototype,
-    '$ %Object%': Object,
-    '$ %ObjectPrototype%': Object.prototype,
-    '$ %ObjProto_toString%': Object.prototype.toString,
-    '$ %ObjProto_valueOf%': Object.prototype.valueOf,
-    '$ %parseFloat%': parseFloat,
-    '$ %parseInt%': parseInt,
-    '$ %Promise%': typeof Promise === 'undefined' ? undefined$1 : Promise,
-    '$ %PromisePrototype%': typeof Promise === 'undefined' ? undefined$1 : Promise.prototype,
-    '$ %PromiseProto_then%': typeof Promise === 'undefined' ? undefined$1 : Promise.prototype.then,
-    '$ %Promise_all%': typeof Promise === 'undefined' ? undefined$1 : Promise.all,
-    '$ %Promise_reject%': typeof Promise === 'undefined' ? undefined$1 : Promise.reject,
-    '$ %Promise_resolve%': typeof Promise === 'undefined' ? undefined$1 : Promise.resolve,
-    '$ %Proxy%': typeof Proxy === 'undefined' ? undefined$1 : Proxy,
-    '$ %RangeError%': RangeError,
-    '$ %RangeErrorPrototype%': RangeError.prototype,
-    '$ %ReferenceError%': ReferenceError,
-    '$ %ReferenceErrorPrototype%': ReferenceError.prototype,
-    '$ %Reflect%': typeof Reflect === 'undefined' ? undefined$1 : Reflect,
-    '$ %RegExp%': RegExp,
-    '$ %RegExpPrototype%': RegExp.prototype,
-    '$ %Set%': typeof Set === 'undefined' ? undefined$1 : Set,
-    '$ %SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols$1 ? undefined$1 : getProto(new Set()[Symbol.iterator]()),
-    '$ %SetPrototype%': typeof Set === 'undefined' ? undefined$1 : Set.prototype,
-    '$ %SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined$1 : SharedArrayBuffer,
-    '$ %SharedArrayBufferPrototype%': typeof SharedArrayBuffer === 'undefined' ? undefined$1 : SharedArrayBuffer.prototype,
-    '$ %String%': String,
-    '$ %StringIteratorPrototype%': hasSymbols$1 ? getProto(''[Symbol.iterator]()) : undefined$1,
-    '$ %StringPrototype%': String.prototype,
-    '$ %Symbol%': hasSymbols$1 ? Symbol : undefined$1,
-    '$ %SymbolPrototype%': hasSymbols$1 ? Symbol.prototype : undefined$1,
-    '$ %SyntaxError%': SyntaxError,
-    '$ %SyntaxErrorPrototype%': SyntaxError.prototype,
-    '$ %ThrowTypeError%': ThrowTypeError,
-    '$ %TypedArray%': TypedArray,
-    '$ %TypedArrayPrototype%': TypedArray ? TypedArray.prototype : undefined$1,
-    '$ %TypeError%': TypeError,
-    '$ %TypeErrorPrototype%': TypeError.prototype,
-    '$ %Uint8Array%': typeof Uint8Array === 'undefined' ? undefined$1 : Uint8Array,
-    '$ %Uint8ArrayPrototype%': typeof Uint8Array === 'undefined' ? undefined$1 : Uint8Array.prototype,
-    '$ %Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined$1 : Uint8ClampedArray,
-    '$ %Uint8ClampedArrayPrototype%': typeof Uint8ClampedArray === 'undefined' ? undefined$1 : Uint8ClampedArray.prototype,
-    '$ %Uint16Array%': typeof Uint16Array === 'undefined' ? undefined$1 : Uint16Array,
-    '$ %Uint16ArrayPrototype%': typeof Uint16Array === 'undefined' ? undefined$1 : Uint16Array.prototype,
-    '$ %Uint32Array%': typeof Uint32Array === 'undefined' ? undefined$1 : Uint32Array,
-    '$ %Uint32ArrayPrototype%': typeof Uint32Array === 'undefined' ? undefined$1 : Uint32Array.prototype,
-    '$ %URIError%': URIError,
-    '$ %URIErrorPrototype%': URIError.prototype,
-    '$ %WeakMap%': typeof WeakMap === 'undefined' ? undefined$1 : WeakMap,
-    '$ %WeakMapPrototype%': typeof WeakMap === 'undefined' ? undefined$1 : WeakMap.prototype,
-    '$ %WeakSet%': typeof WeakSet === 'undefined' ? undefined$1 : WeakSet,
-    '$ %WeakSetPrototype%': typeof WeakSet === 'undefined' ? undefined$1 : WeakSet.prototype
-  };
-
-  var GetIntrinsic = function GetIntrinsic(name, allowMissing) {
-    if (arguments.length > 1 && typeof allowMissing !== 'boolean') {
-      throw new TypeError('"allowMissing" argument must be a boolean');
-    }
-
-    var key = '$ ' + name;
-
-    if (!(key in INTRINSICS)) {
-      throw new SyntaxError('intrinsic ' + name + ' does not exist!');
-    } // istanbul ignore if // hopefully this is impossible to test :-)
-
-
-    if (typeof INTRINSICS[key] === 'undefined' && !allowMissing) {
-      throw new TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
-    }
-
-    return INTRINSICS[key];
-  };
-
-  var src = functionBind.call(Function.call, Object.prototype.hasOwnProperty);
-
-  var $TypeError = GetIntrinsic('%TypeError%');
-  var $SyntaxError = GetIntrinsic('%SyntaxError%');
-  var predicates = {
-    // https://ecma-international.org/ecma-262/6.0/#sec-property-descriptor-specification-type
-    'Property Descriptor': function isPropertyDescriptor(ES, Desc) {
-      if (ES.Type(Desc) !== 'Object') {
-        return false;
-      }
-
-      var allowed = {
-        '[[Configurable]]': true,
-        '[[Enumerable]]': true,
-        '[[Get]]': true,
-        '[[Set]]': true,
-        '[[Value]]': true,
-        '[[Writable]]': true
-      };
-
-      for (var key in Desc) {
-        // eslint-disable-line
-        if (src(Desc, key) && !allowed[key]) {
-          return false;
-        }
-      }
-
-      var isData = src(Desc, '[[Value]]');
-      var IsAccessor = src(Desc, '[[Get]]') || src(Desc, '[[Set]]');
-
-      if (isData && IsAccessor) {
-        throw new $TypeError('Property Descriptors may not be both accessor and data descriptors');
-      }
-
-      return true;
-    }
-  };
-
-  var assertRecord = function assertRecord(ES, recordType, argumentName, value) {
-    var predicate = predicates[recordType];
-
-    if (typeof predicate !== 'function') {
-      throw new $SyntaxError('unknown record type: ' + recordType);
-    }
-
-    if (!predicate(ES, value)) {
-      throw new $TypeError(argumentName + ' must be a ' + recordType);
-    }
-
-    console.log(predicate(ES, value), value);
-  };
-
-  var _isNaN = Number.isNaN || function isNaN(a) {
-    return a !== a;
-  };
-
-  var $isNaN = Number.isNaN || function (a) {
-    return a !== a;
-  };
-
-  var _isFinite = Number.isFinite || function (x) {
-    return typeof x === 'number' && !$isNaN(x) && x !== Infinity && x !== -Infinity;
-  };
-
-  var sign = function sign(number) {
-    return number >= 0 ? 1 : -1;
-  };
-
-  var mod = function mod(number, modulo) {
-    var remain = number % modulo;
-    return Math.floor(remain >= 0 ? remain : remain + modulo);
-  };
-
-  var fnToStr = Function.prototype.toString;
-  var constructorRegex = /^\s*class\b/;
-
-  var isES6ClassFn = function isES6ClassFunction(value) {
-    try {
-      var fnStr = fnToStr.call(value);
-      return constructorRegex.test(fnStr);
-    } catch (e) {
-      return false; // not a function
-    }
-  };
-
-  var tryFunctionObject = function tryFunctionToStr(value) {
-    try {
-      if (isES6ClassFn(value)) {
-        return false;
-      }
-
-      fnToStr.call(value);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  var toStr$4 = Object.prototype.toString;
-  var fnClass = '[object Function]';
-  var genClass = '[object GeneratorFunction]';
-  var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
-
-  var isCallable = function isCallable(value) {
-    if (!value) {
-      return false;
-    }
-
-    if (typeof value !== 'function' && typeof value !== 'object') {
-      return false;
-    }
-
-    if (typeof value === 'function' && !value.prototype) {
-      return true;
-    }
-
-    if (hasToStringTag) {
-      return tryFunctionObject(value);
-    }
-
-    if (isES6ClassFn(value)) {
-      return false;
-    }
-
-    var strClass = toStr$4.call(value);
-    return strClass === fnClass || strClass === genClass;
-  };
-
-  var isPrimitive = function isPrimitive(value) {
-    return value === null || typeof value !== 'function' && typeof value !== 'object';
-  };
-
-  var toStr$5 = Object.prototype.toString; // http://ecma-international.org/ecma-262/5.1/#sec-8.12.8
-
-  var ES5internalSlots = {
-    '[[DefaultValue]]': function DefaultValue(O) {
-      var actualHint;
-
-      if (arguments.length > 1) {
-        actualHint = arguments[1];
-      } else {
-        actualHint = toStr$5.call(O) === '[object Date]' ? String : Number;
-      }
-
-      if (actualHint === String || actualHint === Number) {
-        var methods = actualHint === String ? ['toString', 'valueOf'] : ['valueOf', 'toString'];
-        var value, i;
-
-        for (i = 0; i < methods.length; ++i) {
-          if (isCallable(O[methods[i]])) {
-            value = O[methods[i]]();
-
-            if (isPrimitive(value)) {
-              return value;
-            }
-          }
-        }
-
-        throw new TypeError('No default value');
-      }
-
-      throw new TypeError('invalid [[DefaultValue]] hint supplied');
-    }
-  }; // http://ecma-international.org/ecma-262/5.1/#sec-9.1
-
-  var es5 = function ToPrimitive(input) {
-    if (isPrimitive(input)) {
-      return input;
-    }
-
-    if (arguments.length > 1) {
-      return ES5internalSlots['[[DefaultValue]]'](input, arguments[1]);
-    }
-
-    return ES5internalSlots['[[DefaultValue]]'](input);
-  };
-
-  var $Object = GetIntrinsic('%Object%');
-  var $TypeError$1 = GetIntrinsic('%TypeError%');
-  var $String = GetIntrinsic('%String%'); // https://es5.github.io/#x9
-
-  var ES5 = {
-    ToPrimitive: es5,
-    ToBoolean: function ToBoolean(value) {
-      return !!value;
-    },
-    ToNumber: function ToNumber(value) {
-      return +value; // eslint-disable-line no-implicit-coercion
-    },
-    ToInteger: function ToInteger(value) {
-      var number = this.ToNumber(value);
-
-      if (_isNaN(number)) {
-        return 0;
-      }
-
-      if (number === 0 || !_isFinite(number)) {
-        return number;
-      }
-
-      return sign(number) * Math.floor(Math.abs(number));
-    },
-    ToInt32: function ToInt32(x) {
-      return this.ToNumber(x) >> 0;
-    },
-    ToUint32: function ToUint32(x) {
-      return this.ToNumber(x) >>> 0;
-    },
-    ToUint16: function ToUint16(value) {
-      var number = this.ToNumber(value);
-
-      if (_isNaN(number) || number === 0 || !_isFinite(number)) {
-        return 0;
-      }
-
-      var posInt = sign(number) * Math.floor(Math.abs(number));
-      return mod(posInt, 0x10000);
-    },
-    ToString: function ToString(value) {
-      return $String(value);
-    },
-    ToObject: function ToObject(value) {
-      this.CheckObjectCoercible(value);
-      return $Object(value);
-    },
-    CheckObjectCoercible: function CheckObjectCoercible(value, optMessage) {
-      /* jshint eqnull:true */
-      if (value == null) {
-        throw new $TypeError$1(optMessage || 'Cannot call method on ' + value);
-      }
-
-      return value;
-    },
-    IsCallable: isCallable,
-    SameValue: function SameValue(x, y) {
-      if (x === y) {
-        // 0 === -0, but they are not identical.
-        if (x === 0) {
-          return 1 / x === 1 / y;
-        }
-
-        return true;
-      }
-
-      return _isNaN(x) && _isNaN(y);
-    },
-    // https://www.ecma-international.org/ecma-262/5.1/#sec-8
-    Type: function Type(x) {
-      if (x === null) {
-        return 'Null';
-      }
-
-      if (typeof x === 'undefined') {
-        return 'Undefined';
-      }
-
-      if (typeof x === 'function' || typeof x === 'object') {
-        return 'Object';
-      }
-
-      if (typeof x === 'number') {
-        return 'Number';
-      }
-
-      if (typeof x === 'boolean') {
-        return 'Boolean';
-      }
-
-      if (typeof x === 'string') {
-        return 'String';
-      }
-    },
-    // https://ecma-international.org/ecma-262/6.0/#sec-property-descriptor-specification-type
-    IsPropertyDescriptor: function IsPropertyDescriptor(Desc) {
-      if (this.Type(Desc) !== 'Object') {
-        return false;
-      }
-
-      var allowed = {
-        '[[Configurable]]': true,
-        '[[Enumerable]]': true,
-        '[[Get]]': true,
-        '[[Set]]': true,
-        '[[Value]]': true,
-        '[[Writable]]': true
-      };
-
-      for (var key in Desc) {
-        // eslint-disable-line
-        if (src(Desc, key) && !allowed[key]) {
-          return false;
-        }
-      }
-
-      var isData = src(Desc, '[[Value]]');
-      var IsAccessor = src(Desc, '[[Get]]') || src(Desc, '[[Set]]');
-
-      if (isData && IsAccessor) {
-        throw new $TypeError$1('Property Descriptors may not be both accessor and data descriptors');
-      }
-
-      return true;
-    },
-    // https://ecma-international.org/ecma-262/5.1/#sec-8.10.1
-    IsAccessorDescriptor: function IsAccessorDescriptor(Desc) {
-      if (typeof Desc === 'undefined') {
-        return false;
-      }
-
-      assertRecord(this, 'Property Descriptor', 'Desc', Desc);
-
-      if (!src(Desc, '[[Get]]') && !src(Desc, '[[Set]]')) {
-        return false;
-      }
-
-      return true;
-    },
-    // https://ecma-international.org/ecma-262/5.1/#sec-8.10.2
-    IsDataDescriptor: function IsDataDescriptor(Desc) {
-      if (typeof Desc === 'undefined') {
-        return false;
-      }
-
-      assertRecord(this, 'Property Descriptor', 'Desc', Desc);
-
-      if (!src(Desc, '[[Value]]') && !src(Desc, '[[Writable]]')) {
-        return false;
-      }
-
-      return true;
-    },
-    // https://ecma-international.org/ecma-262/5.1/#sec-8.10.3
-    IsGenericDescriptor: function IsGenericDescriptor(Desc) {
-      if (typeof Desc === 'undefined') {
-        return false;
-      }
-
-      assertRecord(this, 'Property Descriptor', 'Desc', Desc);
-
-      if (!this.IsAccessorDescriptor(Desc) && !this.IsDataDescriptor(Desc)) {
-        return true;
-      }
-
-      return false;
-    },
-    // https://ecma-international.org/ecma-262/5.1/#sec-8.10.4
-    FromPropertyDescriptor: function FromPropertyDescriptor(Desc) {
-      if (typeof Desc === 'undefined') {
-        return Desc;
-      }
-
-      assertRecord(this, 'Property Descriptor', 'Desc', Desc);
-
-      if (this.IsDataDescriptor(Desc)) {
-        return {
-          value: Desc['[[Value]]'],
-          writable: !!Desc['[[Writable]]'],
-          enumerable: !!Desc['[[Enumerable]]'],
-          configurable: !!Desc['[[Configurable]]']
-        };
-      } else if (this.IsAccessorDescriptor(Desc)) {
-        return {
-          get: Desc['[[Get]]'],
-          set: Desc['[[Set]]'],
-          enumerable: !!Desc['[[Enumerable]]'],
-          configurable: !!Desc['[[Configurable]]']
-        };
-      } else {
-        throw new $TypeError$1('FromPropertyDescriptor must be called with a fully populated Property Descriptor');
-      }
-    },
-    // https://ecma-international.org/ecma-262/5.1/#sec-8.10.5
-    ToPropertyDescriptor: function ToPropertyDescriptor(Obj) {
-      if (this.Type(Obj) !== 'Object') {
-        throw new $TypeError$1('ToPropertyDescriptor requires an object');
-      }
-
-      var desc = {};
-
-      if (src(Obj, 'enumerable')) {
-        desc['[[Enumerable]]'] = this.ToBoolean(Obj.enumerable);
-      }
-
-      if (src(Obj, 'configurable')) {
-        desc['[[Configurable]]'] = this.ToBoolean(Obj.configurable);
-      }
-
-      if (src(Obj, 'value')) {
-        desc['[[Value]]'] = Obj.value;
-      }
-
-      if (src(Obj, 'writable')) {
-        desc['[[Writable]]'] = this.ToBoolean(Obj.writable);
-      }
-
-      if (src(Obj, 'get')) {
-        var getter = Obj.get;
-
-        if (typeof getter !== 'undefined' && !this.IsCallable(getter)) {
-          throw new TypeError('getter must be a function');
-        }
-
-        desc['[[Get]]'] = getter;
-      }
-
-      if (src(Obj, 'set')) {
-        var setter = Obj.set;
-
-        if (typeof setter !== 'undefined' && !this.IsCallable(setter)) {
-          throw new $TypeError$1('setter must be a function');
-        }
-
-        desc['[[Set]]'] = setter;
-      }
-
-      if ((src(desc, '[[Get]]') || src(desc, '[[Set]]')) && (src(desc, '[[Value]]') || src(desc, '[[Writable]]'))) {
-        throw new $TypeError$1('Invalid property descriptor. Cannot both specify accessors and a value or writable attribute');
-      }
-
-      return desc;
-    }
-  };
-  var es5$1 = ES5;
-
-  var replace = functionBind.call(Function.call, String.prototype.replace);
-  /* eslint-disable no-control-regex */
-
-  var leftWhitespace = /^[\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF]+/;
-  var rightWhitespace = /[\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF]+$/;
-  /* eslint-enable no-control-regex */
-
-  var implementation$2 = function trim() {
-    var S = es5$1.ToString(es5$1.CheckObjectCoercible(this));
-    return replace(replace(S, leftWhitespace, ''), rightWhitespace, '');
-  };
-
-  var zeroWidthSpace = "\u200B";
-
-  var polyfill = function getPolyfill() {
-    if (String.prototype.trim && zeroWidthSpace.trim() === zeroWidthSpace) {
-      return String.prototype.trim;
-    }
-
-    return implementation$2;
-  };
-
-  var shim = function shimStringTrim() {
-    var polyfill$1 = polyfill();
-    defineProperties_1(String.prototype, {
-      trim: polyfill$1
-    }, {
-      trim: function testTrim() {
-        return String.prototype.trim !== polyfill$1;
-      }
-    });
-    return polyfill$1;
-  };
-
-  var boundTrim = functionBind.call(Function.call, polyfill());
-  defineProperties_1(boundTrim, {
-    getPolyfill: polyfill,
-    implementation: implementation$2,
-    shim: shim
-  });
-  var string_prototype_trim = boundTrim;
-
-  var toStr$6 = Object.prototype.toString;
-  var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-  var forEachArray = function forEachArray(array, iterator, receiver) {
-    for (var i = 0, len = array.length; i < len; i++) {
-      if (hasOwnProperty.call(array, i)) {
-        if (receiver == null) {
-          iterator(array[i], i, array);
-        } else {
-          iterator.call(receiver, array[i], i, array);
-        }
-      }
-    }
-  };
-
-  var forEachString = function forEachString(string, iterator, receiver) {
-    for (var i = 0, len = string.length; i < len; i++) {
-      // no such thing as a sparse string.
-      if (receiver == null) {
-        iterator(string.charAt(i), i, string);
-      } else {
-        iterator.call(receiver, string.charAt(i), i, string);
-      }
-    }
-  };
-
-  var forEachObject = function forEachObject(object, iterator, receiver) {
-    for (var k in object) {
-      if (hasOwnProperty.call(object, k)) {
-        if (receiver == null) {
-          iterator(object[k], k, object);
-        } else {
-          iterator.call(receiver, object[k], k, object);
-        }
-      }
-    }
-  };
-
-  var forEach = function forEach(list, iterator, thisArg) {
-    if (!isCallable(iterator)) {
-      throw new TypeError('iterator must be a function');
-    }
-
-    var receiver;
-
-    if (arguments.length >= 3) {
-      receiver = thisArg;
-    }
-
-    if (toStr$6.call(list) === '[object Array]') {
-      forEachArray(list, iterator, receiver);
-    } else if (typeof list === 'string') {
-      forEachString(list, iterator, receiver);
-    } else {
-      forEachObject(list, iterator, receiver);
-    }
-  };
-
-  var forEach_1 = forEach;
-
-  var isArray = function isArray(arg) {
-    return Object.prototype.toString.call(arg) === '[object Array]';
-  };
 
   var parseHeaders = function parseHeaders(headers) {
-    if (!headers) return {};
     var result = {};
-    forEach_1(string_prototype_trim(headers).split('\n'), function (row) {
-      var index = row.indexOf(':'),
-          key = string_prototype_trim(row.slice(0, index)).toLowerCase(),
-          value = string_prototype_trim(row.slice(index + 1));
+
+    if (!headers) {
+      return result;
+    }
+
+    headers.trim().split('\n').forEach(function (row) {
+      var index = row.indexOf(':');
+      var key = row.slice(0, index).trim().toLowerCase();
+      var value = row.slice(index + 1).trim();
 
       if (typeof result[key] === 'undefined') {
         result[key] = value;
-      } else if (isArray(result[key])) {
+      } else if (Array.isArray(result[key])) {
         result[key].push(value);
       } else {
         result[key] = [result[key], value];
@@ -8357,29 +7512,12 @@
     return result;
   };
 
-  var immutable = extend;
-  var hasOwnProperty$1 = Object.prototype.hasOwnProperty;
+  var xhr = createXHR; // Allow use of default import syntax in TypeScript
 
-  function extend() {
-    var target = {};
-
-    for (var i = 0; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (hasOwnProperty$1.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  }
-
-  var xhr = createXHR;
-  createXHR.XMLHttpRequest = window$1.XMLHttpRequest || noop;
-  createXHR.XDomainRequest = "withCredentials" in new createXHR.XMLHttpRequest() ? createXHR.XMLHttpRequest : window$1.XDomainRequest;
-  forEachArray$1(["get", "put", "post", "patch", "head", "delete"], function (method) {
+  var default_1 = createXHR;
+  createXHR.XMLHttpRequest = window$3.XMLHttpRequest || noop;
+  createXHR.XDomainRequest = "withCredentials" in new createXHR.XMLHttpRequest() ? createXHR.XMLHttpRequest : window$3.XDomainRequest;
+  forEachArray(["get", "put", "post", "patch", "head", "delete"], function (method) {
     createXHR[method === "delete" ? "del" : method] = function (uri, options, callback) {
       options = initParams(uri, options, callback);
       options.method = method.toUpperCase();
@@ -8387,7 +7525,7 @@
     };
   });
 
-  function forEachArray$1(array, iterator) {
+  function forEachArray(array, iterator) {
     for (var i = 0; i < array.length; i++) {
       iterator(array[i]);
     }
@@ -8413,7 +7551,7 @@
         };
       }
     } else {
-      params = immutable(options, {
+      params = _extends_1({}, options, {
         uri: uri
       });
     }
@@ -8612,20 +7750,25 @@
   }
 
   function getXml(xhr) {
-    if (xhr.responseType === "document") {
-      return xhr.responseXML;
-    }
+    // xhr.responseXML will throw Exception "InvalidStateError" or "DOMException"
+    // See https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseXML.
+    try {
+      if (xhr.responseType === "document") {
+        return xhr.responseXML;
+      }
 
-    var firefoxBugTakenEffect = xhr.responseXML && xhr.responseXML.documentElement.nodeName === "parsererror";
+      var firefoxBugTakenEffect = xhr.responseXML && xhr.responseXML.documentElement.nodeName === "parsererror";
 
-    if (xhr.responseType === "" && !firefoxBugTakenEffect) {
-      return xhr.responseXML;
-    }
+      if (xhr.responseType === "" && !firefoxBugTakenEffect) {
+        return xhr.responseXML;
+      }
+    } catch (e) {}
 
     return null;
   }
 
   function noop() {}
+  xhr["default"] = default_1;
 
   /**
    * Takes a webvtt file contents and parses it into cues
@@ -8640,7 +7783,7 @@
    */
 
   var parseCues = function parseCues(srcContent, track) {
-    var parser = new window$1.WebVTT.Parser(window$1, window$1.vttjs, window$1.WebVTT.StringDecoder());
+    var parser = new window$3.WebVTT.Parser(window$3, window$3.vttjs, window$3.WebVTT.StringDecoder());
     var errors = [];
 
     parser.oncue = function (cue) {
@@ -8661,16 +7804,16 @@
     parser.parse(srcContent);
 
     if (errors.length > 0) {
-      if (window$1.console && window$1.console.groupCollapsed) {
-        window$1.console.groupCollapsed("Text Track parsing errors for " + track.src);
+      if (window$3.console && window$3.console.groupCollapsed) {
+        window$3.console.groupCollapsed("Text Track parsing errors for " + track.src);
       }
 
       errors.forEach(function (error) {
         return log.error(error);
       });
 
-      if (window$1.console && window$1.console.groupEnd) {
-        window$1.console.groupEnd();
+      if (window$3.console && window$3.console.groupEnd) {
+        window$3.console.groupEnd();
       }
     }
 
@@ -8707,7 +7850,7 @@
       track.loaded_ = true; // Make sure that vttjs has loaded, otherwise, wait till it finished loading
       // NOTE: this is only used for the alt/video.novtt.js build
 
-      if (typeof window$1.WebVTT !== 'function') {
+      if (typeof window$3.WebVTT !== 'function') {
         if (track.tech_) {
           // to prevent use before define eslint error, we define loadHandler
           // as a let here
@@ -8733,10 +7876,8 @@
    */
 
 
-  var TextTrack =
-  /*#__PURE__*/
-  function (_Track) {
-    _inheritsLoose(TextTrack, _Track);
+  var TextTrack = /*#__PURE__*/function (_Track) {
+    inheritsLoose(TextTrack, _Track);
 
     /**
      * Create an instance of this class.
@@ -8798,10 +7939,11 @@
       _this.tech_ = settings.tech;
       _this.cues_ = [];
       _this.activeCues_ = [];
+      _this.preload_ = _this.tech_.preloadTextTracks !== false;
       var cues = new TextTrackCueList(_this.cues_);
       var activeCues = new TextTrackCueList(_this.activeCues_);
       var changed = false;
-      var timeupdateHandler = bind(_assertThisInitialized(_this), function () {
+      var timeupdateHandler = bind(assertThisInitialized(_this), function () {
         // Accessing this.activeCues for the side-effects of updating itself
         // due to its nature as a getter function. Do not remove or cues will
         // stop updating!
@@ -8820,7 +7962,7 @@
         }, true);
       }
 
-      Object.defineProperties(_assertThisInitialized(_this), {
+      Object.defineProperties(assertThisInitialized(_this), {
         /**
          * @memberof TextTrack
          * @member {boolean} default
@@ -8858,6 +8000,11 @@
             }
 
             mode = newMode;
+
+            if (!this.preload_ && mode !== 'disabled' && this.cues.length === 0) {
+              // On-demand load.
+              loadTrack(this.src, this);
+            }
 
             if (mode !== 'disabled') {
               this.tech_.ready(function () {
@@ -8951,7 +8098,16 @@
 
       if (settings.src) {
         _this.src = settings.src;
-        loadTrack(settings.src, _assertThisInitialized(_this));
+
+        if (!_this.preload_) {
+          // Tracks will load on-demand.
+          // Act like we're loaded for other purposes.
+          _this.loaded_ = true;
+        }
+
+        if (_this.preload_ || default_ || settings.kind !== 'subtitles' && settings.kind !== 'captions') {
+          loadTrack(_this.src, assertThisInitialized(_this));
+        }
       } else {
         _this.loaded_ = true;
       }
@@ -8971,8 +8127,8 @@
     _proto.addCue = function addCue(originalCue) {
       var cue = originalCue;
 
-      if (window$1.vttjs && !(originalCue instanceof window$1.vttjs.VTTCue)) {
-        cue = new window$1.vttjs.VTTCue(originalCue.startTime, originalCue.endTime, originalCue.text);
+      if (window$3.vttjs && !(originalCue instanceof window$3.vttjs.VTTCue)) {
+        cue = new window$3.vttjs.VTTCue(originalCue.startTime, originalCue.endTime, originalCue.text);
 
         for (var prop in originalCue) {
           if (!(prop in cue)) {
@@ -9037,10 +8193,8 @@
    * @extends Track
    */
 
-  var AudioTrack =
-  /*#__PURE__*/
-  function (_Track) {
-    _inheritsLoose(AudioTrack, _Track);
+  var AudioTrack = /*#__PURE__*/function (_Track) {
+    inheritsLoose(AudioTrack, _Track);
 
     /**
      * Create an instance of this class.
@@ -9086,7 +8240,7 @@
        * @fires VideoTrack#selectedchange
        */
 
-      Object.defineProperty(_assertThisInitialized(_this), 'enabled', {
+      Object.defineProperty(assertThisInitialized(_this), 'enabled', {
         get: function get() {
           return enabled;
         },
@@ -9132,10 +8286,8 @@
    * @extends Track
    */
 
-  var VideoTrack =
-  /*#__PURE__*/
-  function (_Track) {
-    _inheritsLoose(VideoTrack, _Track);
+  var VideoTrack = /*#__PURE__*/function (_Track) {
+    inheritsLoose(VideoTrack, _Track);
 
     /**
      * Create an instance of this class.
@@ -9180,7 +8332,7 @@
        * @fires VideoTrack#selectedchange
        */
 
-      Object.defineProperty(_assertThisInitialized(_this), 'selected', {
+      Object.defineProperty(assertThisInitialized(_this), 'selected', {
         get: function get() {
           return selected;
         },
@@ -9235,10 +8387,8 @@
    * @extends EventTarget
    */
 
-  var HTMLTrackElement =
-  /*#__PURE__*/
-  function (_EventTarget) {
-    _inheritsLoose(HTMLTrackElement, _EventTarget);
+  var HTMLTrackElement = /*#__PURE__*/function (_EventTarget) {
+    inheritsLoose(HTMLTrackElement, _EventTarget);
 
     /**
      * Create an instance of this class.
@@ -9289,7 +8439,7 @@
       _this.srclang = track.language;
       _this.label = track.label;
       _this["default"] = track["default"];
-      Object.defineProperties(_assertThisInitialized(_this), {
+      Object.defineProperties(assertThisInitialized(_this), {
         /**
          * @memberof HTMLTrackElement
          * @member {HTMLTrackElement~ReadyState} readyState
@@ -9326,7 +8476,7 @@
 
         _this.trigger({
           type: 'load',
-          target: _assertThisInitialized(_this)
+          target: assertThisInitialized(_this)
         });
       });
       return _this;
@@ -9385,7 +8535,9 @@
       privateName: 'remoteTextTrackEls_'
     }
   };
-  var ALL = mergeOptions(NORMAL, REMOTE);
+
+  var ALL = _extends_1({}, NORMAL, REMOTE);
+
   REMOTE.names = Object.keys(REMOTE);
   NORMAL.names = Object.keys(NORMAL);
   ALL.names = [].concat(REMOTE.names).concat(NORMAL.names);
@@ -9409,6 +8561,7 @@
   /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
   /* vim: set shiftwidth=2 tabstop=2 autoindent cindent expandtab: */
+
   var _objCreate = Object.create || function () {
     function F() {}
 
@@ -9451,7 +8604,7 @@
       return (h | 0) * 3600 + (m | 0) * 60 + (s | 0) + (f | 0) / 1000;
     }
 
-    var m = input.match(/^(\d+):(\d{2})(:\d{2})?\.(\d{3})/);
+    var m = input.match(/^(\d+):(\d{1,2})(:\d{1,2})?\.(\d{3})/);
 
     if (!m) {
       return null;
@@ -9597,7 +8750,7 @@
             settings.alt(k, vals0, ["auto"]);
 
             if (vals.length === 2) {
-              settings.alt("lineAlign", vals[1], ["start", "middle", "end"]);
+              settings.alt("lineAlign", vals[1], ["start", "center", "end"]);
             }
 
             break;
@@ -9607,7 +8760,7 @@
             settings.percent(k, vals[0]);
 
             if (vals.length === 2) {
-              settings.alt("positionAlign", vals[1], ["start", "middle", "end"]);
+              settings.alt("positionAlign", vals[1], ["start", "center", "end"]);
             }
 
             break;
@@ -9617,29 +8770,46 @@
             break;
 
           case "align":
-            settings.alt(k, v, ["start", "middle", "end", "left", "right"]);
+            settings.alt(k, v, ["start", "center", "end", "left", "right"]);
             break;
         }
       }, /:/, /\s/); // Apply default values for any missing fields.
 
       cue.region = settings.get("region", null);
       cue.vertical = settings.get("vertical", "");
-      cue.line = settings.get("line", "auto");
+
+      try {
+        cue.line = settings.get("line", "auto");
+      } catch (e) {}
+
       cue.lineAlign = settings.get("lineAlign", "start");
       cue.snapToLines = settings.get("snapToLines", true);
-      cue.size = settings.get("size", 100);
-      cue.align = settings.get("align", "middle");
-      cue.position = settings.get("position", {
-        start: 0,
-        left: 0,
-        middle: 50,
-        end: 100,
-        right: 100
-      }, cue.align);
+      cue.size = settings.get("size", 100); // Safari still uses the old middle value and won't accept center
+
+      try {
+        cue.align = settings.get("align", "center");
+      } catch (e) {
+        cue.align = settings.get("align", "middle");
+      }
+
+      try {
+        cue.position = settings.get("position", "auto");
+      } catch (e) {
+        cue.position = settings.get("position", {
+          start: 0,
+          left: 0,
+          center: 50,
+          middle: 50,
+          end: 100,
+          right: 100
+        }, cue.align);
+      }
+
       cue.positionAlign = settings.get("positionAlign", {
         start: "start",
         left: "start",
-        middle: "middle",
+        center: "center",
+        middle: "center",
         end: "end",
         right: "end"
       }, cue.align);
@@ -9669,14 +8839,7 @@
     consumeCueSettings(input, cue);
   }
 
-  var ESCAPE = {
-    "&amp;": "&",
-    "&lt;": "<",
-    "&gt;": ">",
-    "&lrm;": "\u200E",
-    "&rlm;": "\u200F",
-    "&nbsp;": "\xA0"
-  };
+  var TEXTAREA_ELEMENT = document.createElement("textarea");
   var TAG_NAME = {
     c: "span",
     i: "i",
@@ -9686,6 +8849,18 @@
     rt: "rt",
     v: "span",
     lang: "span"
+  }; // 5.1 default text color
+  // 5.2 default text background color is equivalent to text color with bg_ prefix
+
+  var DEFAULT_COLOR_CLASS = {
+    white: 'rgba(255,255,255,1)',
+    lime: 'rgba(0,255,0,1)',
+    cyan: 'rgba(0,255,255,1)',
+    red: 'rgba(255,0,0,1)',
+    yellow: 'rgba(255,255,0,1)',
+    magenta: 'rgba(255,0,255,1)',
+    blue: 'rgba(0,0,255,1)',
+    black: 'rgba(0,0,0,1)'
   };
   var TAG_ANNOTATION = {
     v: "title",
@@ -9712,18 +8887,12 @@
       // the tag.
 
       return consume(m[1] ? m[1] : m[2]);
-    } // Unescape a string 's'.
-
-
-    function unescape1(e) {
-      return ESCAPE[e];
     }
 
     function unescape(s) {
-      while (m = s.match(/&(amp|lt|gt|lrm|rlm|nbsp);/)) {
-        s = s.replace(m[0], unescape1);
-      }
-
+      TEXTAREA_ELEMENT.innerHTML = s;
+      s = TEXTAREA_ELEMENT.textContent;
+      TEXTAREA_ELEMENT.textContent = "";
       return s;
     }
 
@@ -9740,7 +8909,6 @@
       }
 
       var element = window.document.createElement(tagName);
-      element.localName = tagName;
       var name = TAG_ANNOTATION[type];
 
       if (name && annotation) {
@@ -9799,7 +8967,19 @@
 
 
         if (m[2]) {
-          node.className = m[2].substr(1).replace('.', ' ');
+          var classes = m[2].split('.');
+          classes.forEach(function (cl) {
+            var bgColor = /^bg_/.test(cl); // slice out `bg_` if it's a background color
+
+            var colorName = bgColor ? cl.slice(3) : cl;
+
+            if (DEFAULT_COLOR_CLASS.hasOwnProperty(colorName)) {
+              var propName = bgColor ? 'background-color' : 'color';
+              var propValue = DEFAULT_COLOR_CLASS[colorName];
+              node.style[propName] = propValue;
+            }
+          });
+          node.className = classes.join(' ');
         } // Append the node to the current node, and enter the scope of the new
         // node.
 
@@ -9959,7 +9139,7 @@
     };
     this.applyStyles(styles, this.cueDiv); // Create an absolutely positioned div that will be used to position the cue
     // div. Note, all WebVTT cue-setting alignments are equivalent to the CSS
-    // mirrors of them except "middle" which is "center" in CSS.
+    // mirrors of them except middle instead of center on Safari.
 
     this.div = window.document.createElement("div");
     styles = {
@@ -9983,7 +9163,7 @@
         textPos = cue.position;
         break;
 
-      case "middle":
+      case "center":
         textPos = cue.position - cue.size / 2;
         break;
 
@@ -10261,7 +9441,7 @@
       var calculatedPercentage = boxPosition.lineHeight / containerBox.height * 100;
 
       switch (cue.lineAlign) {
-        case "middle":
+        case "center":
           linePos -= calculatedPercentage / 2;
           break;
 
@@ -10639,7 +9819,14 @@
                 continue;
               }
 
-              self.cue = new (self.vttjs.VTTCue || self.window.VTTCue)(0, 0, "");
+              self.cue = new (self.vttjs.VTTCue || self.window.VTTCue)(0, 0, ""); // Safari still uses the old middle value and won't accept center
+
+              try {
+                self.cue.align = "center";
+              } catch (e) {
+                self.cue.align = "middle";
+              }
+
               self.state = "CUE"; // 30-39 - Check if self line contains an optional identifier or timing data.
 
               if (line.indexOf("-->") === -1) {
@@ -10684,7 +9871,7 @@
                 self.cue.text += "\n";
               }
 
-              self.cue.text += line;
+              self.cue.text += line.replace(/\u2028/g, '\n').replace(/u2029/g, '\n');
               continue;
 
             case "BADCUE":
@@ -10763,10 +9950,13 @@
   };
   var alignSetting = {
     "start": 1,
-    "middle": 1,
+    "center": 1,
     "end": 1,
     "left": 1,
-    "right": 1
+    "right": 1,
+    "auto": 1,
+    "line-left": 1,
+    "line-right": 1
   };
 
   function findDirectionSetting(value) {
@@ -10811,10 +10001,10 @@
     var _snapToLines = true;
     var _line = "auto";
     var _lineAlign = "start";
-    var _position = 50;
-    var _positionAlign = "middle";
-    var _size = 50;
-    var _align = "middle";
+    var _position = "auto";
+    var _positionAlign = "auto";
+    var _size = 100;
+    var _align = "center";
     Object.defineProperties(this, {
       "id": {
         enumerable: true,
@@ -10891,7 +10081,7 @@
           var setting = findDirectionSetting(value); // Have to check for false because the setting an be an empty string.
 
           if (setting === false) {
-            throw new SyntaxError("An invalid or illegal string was specified.");
+            throw new SyntaxError("Vertical: an invalid or illegal direction string was specified.");
           }
 
           _vertical = setting;
@@ -10915,7 +10105,7 @@
         },
         set: function set(value) {
           if (typeof value !== "number" && value !== autoKeyword) {
-            throw new SyntaxError("An invalid number or illegal string was specified.");
+            throw new SyntaxError("Line: an invalid number or illegal string was specified.");
           }
 
           _line = value;
@@ -10931,11 +10121,11 @@
           var setting = findAlignSetting(value);
 
           if (!setting) {
-            throw new SyntaxError("An invalid or illegal string was specified.");
+            console.warn("lineAlign: an invalid or illegal string was specified.");
+          } else {
+            _lineAlign = setting;
+            this.hasBeenReset = true;
           }
-
-          _lineAlign = setting;
-          this.hasBeenReset = true;
         }
       },
       "position": {
@@ -10961,11 +10151,11 @@
           var setting = findAlignSetting(value);
 
           if (!setting) {
-            throw new SyntaxError("An invalid or illegal string was specified.");
+            console.warn("positionAlign: an invalid or illegal string was specified.");
+          } else {
+            _positionAlign = setting;
+            this.hasBeenReset = true;
           }
-
-          _positionAlign = setting;
-          this.hasBeenReset = true;
         }
       },
       "size": {
@@ -10991,7 +10181,7 @@
           var setting = findAlignSetting(value);
 
           if (!setting) {
-            throw new SyntaxError("An invalid or illegal string was specified.");
+            throw new SyntaxError("align: an invalid or illegal alignment string was specified.");
           }
 
           _align = setting;
@@ -11148,10 +10338,10 @@
           var setting = findScrollSetting(value); // Have to check for false as an empty string is a legal value.
 
           if (setting === false) {
-            throw new SyntaxError("An invalid or illegal string was specified.");
+            console.warn("Scroll: an invalid or illegal string was specified.");
+          } else {
+            _scroll = setting;
           }
-
-          _scroll = setting;
         }
       }
     });
@@ -11184,24 +10374,24 @@
       VTTCue: vttcue,
       VTTRegion: vttregion
     };
-    window$1.vttjs = vttjs;
-    window$1.WebVTT = vttjs.WebVTT;
+    window$3.vttjs = vttjs;
+    window$3.WebVTT = vttjs.WebVTT;
     var cueShim = vttjs.VTTCue;
     var regionShim = vttjs.VTTRegion;
-    var nativeVTTCue = window$1.VTTCue;
-    var nativeVTTRegion = window$1.VTTRegion;
+    var nativeVTTCue = window$3.VTTCue;
+    var nativeVTTRegion = window$3.VTTRegion;
 
     vttjs.shim = function () {
-      window$1.VTTCue = cueShim;
-      window$1.VTTRegion = regionShim;
+      window$3.VTTCue = cueShim;
+      window$3.VTTRegion = regionShim;
     };
 
     vttjs.restore = function () {
-      window$1.VTTCue = nativeVTTCue;
-      window$1.VTTRegion = nativeVTTRegion;
+      window$3.VTTCue = nativeVTTCue;
+      window$3.VTTRegion = nativeVTTRegion;
     };
 
-    if (!window$1.VTTCue) {
+    if (!window$3.VTTCue) {
       vttjs.shim();
     }
   });
@@ -11277,10 +10467,8 @@
    */
 
 
-  var Tech =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(Tech, _Component);
+  var Tech = /*#__PURE__*/function (_Component) {
+    inheritsLoose(Tech, _Component);
 
     /**
     * Create an instance of this Tech.
@@ -11351,6 +10539,7 @@
         _this.emulateTextTracks();
       }
 
+      _this.preloadTextTracks = options.preloadTextTracks !== false;
       _this.autoRemoteTextTracks_ = new ALL.text.ListClass();
 
       _this.initTrackListeners(); // Turn on component tap events only if not using native controls
@@ -11791,7 +10980,7 @@
     _proto.addWebVttScript_ = function addWebVttScript_() {
       var _this5 = this;
 
-      if (window$1.WebVTT) {
+      if (window$3.WebVTT) {
         return;
       } // Initially, Tech.el_ is a child of a dummy-div wait until the Component system
       // signals that the Tech is ready at which point Tech.el_ is part of the DOM
@@ -11838,7 +11027,7 @@
         }); // but have not loaded yet and we set it to true before the inject so that
         // we don't overwrite the injected window.WebVTT if it loads right away
 
-        window$1.WebVTT = true;
+        window$3.WebVTT = true;
         this.el().parentNode.appendChild(script);
       } else {
         this.ready(this.addWebVttScript_);
@@ -12053,7 +11242,7 @@
     ;
 
     _proto.requestPictureInPicture = function requestPictureInPicture() {
-      var PromiseClass = this.options_.Promise || window$1.Promise;
+      var PromiseClass = this.options_.Promise || window$3.Promise;
 
       if (PromiseClass) {
         return PromiseClass.reject();
@@ -12233,9 +11422,9 @@
 
       name = toTitleCase(name);
 
-      if (window$1 && window$1.videojs && window$1.videojs[name]) {
+      if (window$3 && window$3.videojs && window$3.videojs[name]) {
         log.warn("The " + name + " tech was added to the videojs object when it should be registered using videojs.registerTech(name, tech)");
-        return window$1.videojs[name];
+        return window$3.videojs[name];
       }
     };
 
@@ -12784,9 +11973,10 @@
     buffered: 1,
     currentTime: 1,
     duration: 1,
-    seekable: 1,
+    muted: 1,
     played: 1,
     paused: 1,
+    seekable: 1,
     volume: 1
   };
   /**
@@ -12797,6 +11987,7 @@
 
   var allowedSetters = {
     setCurrentTime: 1,
+    setMuted: 1,
     setVolume: 1
   };
   /**
@@ -13107,10 +12298,8 @@
    * @extends Component
    */
 
-  var MediaLoader =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(MediaLoader, _Component);
+  var MediaLoader = /*#__PURE__*/function (_Component) {
+    inheritsLoose(MediaLoader, _Component);
 
     /**
      * Create an instance of this class.
@@ -13173,10 +12362,8 @@
    * @extends Component
    */
 
-  var ClickableComponent =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(ClickableComponent, _Component);
+  var ClickableComponent = /*#__PURE__*/function (_Component) {
+    inheritsLoose(ClickableComponent, _Component);
 
     /**
      * Creates an instance of this class.
@@ -13186,6 +12373,9 @@
      *
      * @param  {Object} [options]
      *         The key/value store of player options.
+     *
+     * @param  {function} [options.clickHandler]
+     *         The function to call when the button is clicked / activated
      */
     function ClickableComponent(player, options) {
       var _this;
@@ -13378,7 +12568,11 @@
      */
     ;
 
-    _proto.handleClick = function handleClick(event) {}
+    _proto.handleClick = function handleClick(event) {
+      if (this.options_.clickHandler) {
+        this.options_.clickHandler.call(this, arguments);
+      }
+    }
     /**
      * Event handler that is called when a `ClickableComponent` receives a
      * `keydown` event.
@@ -13417,10 +12611,8 @@
    * @extends ClickableComponent
    */
 
-  var PosterImage =
-  /*#__PURE__*/
-  function (_ClickableComponent) {
-    _inheritsLoose(PosterImage, _ClickableComponent);
+  var PosterImage = /*#__PURE__*/function (_ClickableComponent) {
+    inheritsLoose(PosterImage, _ClickableComponent);
 
     /**
      * Create an instance of this class.
@@ -13438,7 +12630,7 @@
 
       _this.update();
 
-      player.on('posterchange', bind(_assertThisInitialized(_this), _this.update));
+      player.on('posterchange', bind(assertThisInitialized(_this), _this.update));
       return _this;
     }
     /**
@@ -13527,7 +12719,12 @@
         return;
       }
 
-      if (this.player_.tech(true)) {
+      var sourceIsEncrypted = this.player_.usingPlugin('eme') && this.player_.eme.sessions && this.player_.eme.sessions.length > 0;
+
+      if (this.player_.tech(true) && // We've observed a bug in IE and Edge when playing back DRM content where
+      // calling .focus() on the video element causes the video to go black,
+      // so we avoid it in that specific case
+      !((IE_VERSION || IS_EDGE) && sourceIsEncrypted)) {
         this.player_.tech(true).focus();
       }
 
@@ -13616,10 +12813,8 @@
    */
 
 
-  var TextTrackDisplay =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(TextTrackDisplay, _Component);
+  var TextTrackDisplay = /*#__PURE__*/function (_Component) {
+    inheritsLoose(TextTrackDisplay, _Component);
 
     /**
      * Creates an instance of this class.
@@ -13637,15 +12832,15 @@
       var _this;
 
       _this = _Component.call(this, player, options, ready) || this;
-      var updateDisplayHandler = bind(_assertThisInitialized(_this), _this.updateDisplay);
-      player.on('loadstart', bind(_assertThisInitialized(_this), _this.toggleDisplay));
+      var updateDisplayHandler = bind(assertThisInitialized(_this), _this.updateDisplay);
+      player.on('loadstart', bind(assertThisInitialized(_this), _this.toggleDisplay));
       player.on('texttrackchange', updateDisplayHandler);
-      player.on('loadedmetadata', bind(_assertThisInitialized(_this), _this.preselectTrack)); // This used to be called during player init, but was causing an error
+      player.on('loadedmetadata', bind(assertThisInitialized(_this), _this.preselectTrack)); // This used to be called during player init, but was causing an error
       // if a track should show by default and the display hadn't loaded yet.
       // Should probably be moved to an external track loader when we support
       // tracks that don't need a display.
 
-      player.ready(bind(_assertThisInitialized(_this), function () {
+      player.ready(bind(assertThisInitialized(_this), function () {
         if (player.tech_ && player.tech_.featuresNativeTextTracks) {
           this.hide();
           return;
@@ -13653,9 +12848,9 @@
 
         player.on('fullscreenchange', updateDisplayHandler);
         player.on('playerresize', updateDisplayHandler);
-        window$1.addEventListener('orientationchange', updateDisplayHandler);
+        window$3.addEventListener('orientationchange', updateDisplayHandler);
         player.on('dispose', function () {
-          return window$1.removeEventListener('orientationchange', updateDisplayHandler);
+          return window$3.removeEventListener('orientationchange', updateDisplayHandler);
         });
         var tracks = this.options_.playerOptions.tracks || [];
 
@@ -13766,8 +12961,8 @@
     ;
 
     _proto.clearDisplay = function clearDisplay() {
-      if (typeof window$1.WebVTT === 'function') {
-        window$1.WebVTT.processCues(window$1, [], this.el_);
+      if (typeof window$3.WebVTT === 'function') {
+        window$3.WebVTT.processCues(window$3, [], this.el_);
       }
     }
     /**
@@ -13893,7 +13088,7 @@
         }
 
         if (overrides.fontPercent && overrides.fontPercent !== 1) {
-          var fontSize = window$1.parseFloat(cueDiv.style.fontSize);
+          var fontSize = window$3.parseFloat(cueDiv.style.fontSize);
           cueDiv.style.fontSize = fontSize * overrides.fontPercent + 'px';
           cueDiv.style.height = 'auto';
           cueDiv.style.top = 'auto';
@@ -13922,7 +13117,7 @@
         tracks = [tracks];
       }
 
-      if (typeof window$1.WebVTT !== 'function' || tracks.every(function (track) {
+      if (typeof window$3.WebVTT !== 'function' || tracks.every(function (track) {
         return !track.activeCues;
       })) {
         return;
@@ -13939,7 +13134,7 @@
       } // removes all cues before it processes new ones
 
 
-      window$1.WebVTT.processCues(window$1, cues, this.el_); // add unique class to each language text track & add settings styling if necessary
+      window$3.WebVTT.processCues(window$3, cues, this.el_); // add unique class to each language text track & add settings styling if necessary
 
       for (var _i2 = 0; _i2 < tracks.length; ++_i2) {
         var _track2 = tracks[_i2];
@@ -13967,10 +13162,8 @@
    * @extends Component
    */
 
-  var LoadingSpinner =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(LoadingSpinner, _Component);
+  var LoadingSpinner = /*#__PURE__*/function (_Component) {
+    inheritsLoose(LoadingSpinner, _Component);
 
     function LoadingSpinner() {
       return _Component.apply(this, arguments) || this;
@@ -14012,10 +13205,8 @@
    * @extends ClickableComponent
    */
 
-  var Button =
-  /*#__PURE__*/
-  function (_ClickableComponent) {
-    _inheritsLoose(Button, _ClickableComponent);
+  var Button = /*#__PURE__*/function (_ClickableComponent) {
+    inheritsLoose(Button, _ClickableComponent);
 
     function Button() {
       return _ClickableComponent.apply(this, arguments) || this;
@@ -14150,10 +13341,8 @@
    * @extends Button
    */
 
-  var BigPlayButton =
-  /*#__PURE__*/
-  function (_Button) {
-    _inheritsLoose(BigPlayButton, _Button);
+  var BigPlayButton = /*#__PURE__*/function (_Button) {
+    inheritsLoose(BigPlayButton, _Button);
 
     function BigPlayButton(player, options) {
       var _this;
@@ -14195,9 +13384,13 @@
       var playPromise = this.player_.play(); // exit early if clicked via the mouse
 
       if (this.mouseused_ && event.clientX && event.clientY) {
+        var sourceIsEncrypted = this.player_.usingPlugin('eme') && this.player_.eme.sessions && this.player_.eme.sessions.length > 0;
         silencePromise(playPromise);
 
-        if (this.player_.tech(true)) {
+        if (this.player_.tech(true) && // We've observed a bug in IE and Edge when playing back DRM content where
+        // calling .focus() on the video element causes the video to go black,
+        // so we avoid it in that specific case
+        !((IE_VERSION || IS_EDGE) && sourceIsEncrypted)) {
           this.player_.tech(true).focus();
         }
 
@@ -14253,10 +13446,8 @@
    * @extends Button
    */
 
-  var CloseButton =
-  /*#__PURE__*/
-  function (_Button) {
-    _inheritsLoose(CloseButton, _Button);
+  var CloseButton = /*#__PURE__*/function (_Button) {
+    inheritsLoose(CloseButton, _Button);
 
     /**
     * Creates an instance of the this class.
@@ -14356,10 +13547,8 @@
    * @extends Button
    */
 
-  var PlayToggle =
-  /*#__PURE__*/
-  function (_Button) {
-    _inheritsLoose(PlayToggle, _Button);
+  var PlayToggle = /*#__PURE__*/function (_Button) {
+    inheritsLoose(PlayToggle, _Button);
 
     /**
      * Creates an instance of this class.
@@ -14554,7 +13743,7 @@
   }; // Internal pointer to the current implementation.
 
 
-  var implementation$3 = defaultImplementation;
+  var implementation = defaultImplementation;
   /**
    * Replaces the default formatTime implementation with a custom implementation.
    *
@@ -14565,14 +13754,14 @@
    */
 
   function setFormatTime(customImplementation) {
-    implementation$3 = customImplementation;
+    implementation = customImplementation;
   }
   /**
    * Resets formatTime to the default implementation.
    */
 
   function resetFormatTime() {
-    implementation$3 = defaultImplementation;
+    implementation = defaultImplementation;
   }
   /**
    * Delegates to either the default time formatting function or a custom
@@ -14599,7 +13788,7 @@
       guide = seconds;
     }
 
-    return implementation$3(seconds, guide);
+    return implementation(seconds, guide);
   }
 
   /**
@@ -14608,10 +13797,8 @@
    * @extends Component
    */
 
-  var TimeDisplay =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(TimeDisplay, _Component);
+  var TimeDisplay = /*#__PURE__*/function (_Component) {
+    inheritsLoose(TimeDisplay, _Component);
 
     /**
      * Creates an instance of this class.
@@ -14626,9 +13813,10 @@
       var _this;
 
       _this = _Component.call(this, player, options) || this;
-      _this.throttledUpdateContent = throttle(bind(_assertThisInitialized(_this), _this.updateContent), UPDATE_REFRESH_INTERVAL);
 
-      _this.on(player, 'timeupdate', _this.throttledUpdateContent);
+      _this.on(player, ['timeupdate', 'ended'], _this.updateContent);
+
+      _this.updateTextNode_();
 
       return _this;
     }
@@ -14661,7 +13849,6 @@
         // role='presentation' causes VoiceOver to NOT treat this span as a break.
         'role': 'presentation'
       });
-      this.updateTextNode_();
       el.appendChild(this.contentEl_);
       return el;
     };
@@ -14673,61 +13860,46 @@
       _Component.prototype.dispose.call(this);
     }
     /**
-     * Updates the "remaining time" text node with new content using the
-     * contents of the `formattedTime_` property.
+     * Updates the time display text node with a new time
+     *
+     * @param {number} [time=0] the time to update to
      *
      * @private
      */
     ;
 
-    _proto.updateTextNode_ = function updateTextNode_() {
-      if (!this.contentEl_) {
+    _proto.updateTextNode_ = function updateTextNode_(time) {
+      var _this2 = this;
+
+      if (time === void 0) {
+        time = 0;
+      }
+
+      time = formatTime(time);
+
+      if (this.formattedTime_ === time) {
         return;
       }
 
-      while (this.contentEl_.firstChild) {
-        this.contentEl_.removeChild(this.contentEl_.firstChild);
-      }
+      this.formattedTime_ = time;
+      this.requestAnimationFrame(function () {
+        if (!_this2.contentEl_) {
+          return;
+        }
 
-      this.textNode_ = document.createTextNode(this.formattedTime_ || this.formatTime_(0));
-      this.contentEl_.appendChild(this.textNode_);
-    }
-    /**
-     * Generates a formatted time for this component to use in display.
-     *
-     * @param  {number} time
-     *         A numeric time, in seconds.
-     *
-     * @return {string}
-     *         A formatted time
-     *
-     * @private
-     */
-    ;
+        var oldNode = _this2.textNode_;
+        _this2.textNode_ = document.createTextNode(_this2.formattedTime_);
 
-    _proto.formatTime_ = function formatTime_(time) {
-      return formatTime(time);
-    }
-    /**
-     * Updates the time display text node if it has what was passed in changed
-     * the formatted time.
-     *
-     * @param {number} time
-     *        The time to update to
-     *
-     * @private
-     */
-    ;
+        if (!_this2.textNode_) {
+          return;
+        }
 
-    _proto.updateFormattedTime_ = function updateFormattedTime_(time) {
-      var formattedTime = this.formatTime_(time);
-
-      if (formattedTime === this.formattedTime_) {
-        return;
-      }
-
-      this.formattedTime_ = formattedTime;
-      this.requestAnimationFrame(this.updateTextNode_);
+        if (oldNode) {
+          _this2.contentEl_.replaceChild(_this2.textNode_, oldNode);
+        } else {
+          _this2.contentEl_.appendChild(_this2.textNode_);
+        }
+      });
     }
     /**
      * To be filled out in the child class, should update the displayed time
@@ -14771,39 +13943,21 @@
    * @extends Component
    */
 
-  var CurrentTimeDisplay =
-  /*#__PURE__*/
-  function (_TimeDisplay) {
-    _inheritsLoose(CurrentTimeDisplay, _TimeDisplay);
+  var CurrentTimeDisplay = /*#__PURE__*/function (_TimeDisplay) {
+    inheritsLoose(CurrentTimeDisplay, _TimeDisplay);
 
-    /**
-     * Creates an instance of this class.
-     *
-     * @param {Player} player
-     *        The `Player` that this class should be attached to.
-     *
-     * @param {Object} [options]
-     *        The key/value store of player options.
-     */
-    function CurrentTimeDisplay(player, options) {
-      var _this;
-
-      _this = _TimeDisplay.call(this, player, options) || this;
-
-      _this.on(player, 'ended', _this.handleEnded);
-
-      return _this;
+    function CurrentTimeDisplay() {
+      return _TimeDisplay.apply(this, arguments) || this;
     }
+
+    var _proto = CurrentTimeDisplay.prototype;
+
     /**
      * Builds the default DOM `className`.
      *
      * @return {string}
      *         The DOM `className` for this object.
      */
-
-
-    var _proto = CurrentTimeDisplay.prototype;
-
     _proto.buildCSSClass = function buildCSSClass() {
       return 'vjs-current-time';
     }
@@ -14819,27 +13973,15 @@
 
     _proto.updateContent = function updateContent(event) {
       // Allows for smooth scrubbing, when player can't keep up.
-      var time = this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
-      this.updateFormattedTime_(time);
-    }
-    /**
-     * When the player fires ended there should be no time left. Sadly
-     * this is not always the case, lets make it seem like that is the case
-     * for users.
-     *
-     * @param {EventTarget~Event} [event]
-     *        The `ended` event that caused this to run.
-     *
-     * @listens Player#ended
-     */
-    ;
+      var time;
 
-    _proto.handleEnded = function handleEnded(event) {
-      if (!this.player_.duration()) {
-        return;
+      if (this.player_.ended()) {
+        time = this.player_.duration();
+      } else {
+        time = this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
       }
 
-      this.updateFormattedTime_(this.player_.duration());
+      this.updateTextNode_(time);
     };
 
     return CurrentTimeDisplay;
@@ -14871,10 +14013,8 @@
    * @extends Component
    */
 
-  var DurationDisplay =
-  /*#__PURE__*/
-  function (_TimeDisplay) {
-    _inheritsLoose(DurationDisplay, _TimeDisplay);
+  var DurationDisplay = /*#__PURE__*/function (_TimeDisplay) {
+    inheritsLoose(DurationDisplay, _TimeDisplay);
 
     /**
      * Creates an instance of this class.
@@ -14902,7 +14042,7 @@
       // can likely be removed for 7.0.
 
 
-      _this.on(player, 'loadedmetadata', _this.throttledUpdateContent);
+      _this.on(player, 'loadedmetadata', _this.updateContent);
 
       return _this;
     }
@@ -14934,11 +14074,7 @@
 
     _proto.updateContent = function updateContent(event) {
       var duration = this.player_.duration();
-
-      if (this.duration_ !== duration) {
-        this.duration_ = duration;
-        this.updateFormattedTime_(duration);
-      }
+      this.updateTextNode_(duration);
     };
 
     return DurationDisplay;
@@ -14971,10 +14107,8 @@
    * @extends Component
    */
 
-  var TimeDivider =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(TimeDivider, _Component);
+  var TimeDivider = /*#__PURE__*/function (_Component) {
+    inheritsLoose(TimeDivider, _Component);
 
     function TimeDivider() {
       return _Component.apply(this, arguments) || this;
@@ -15011,10 +14145,8 @@
    * @extends Component
    */
 
-  var RemainingTimeDisplay =
-  /*#__PURE__*/
-  function (_TimeDisplay) {
-    _inheritsLoose(RemainingTimeDisplay, _TimeDisplay);
+  var RemainingTimeDisplay = /*#__PURE__*/function (_TimeDisplay) {
+    inheritsLoose(RemainingTimeDisplay, _TimeDisplay);
 
     /**
      * Creates an instance of this class.
@@ -15030,9 +14162,7 @@
 
       _this = _TimeDisplay.call(this, player, options) || this;
 
-      _this.on(player, 'durationchange', _this.throttledUpdateContent);
-
-      _this.on(player, 'ended', _this.handleEnded);
+      _this.on(player, 'durationchange', _this.updateContent);
 
       return _this;
     }
@@ -15079,34 +14209,20 @@
     _proto.updateContent = function updateContent(event) {
       if (typeof this.player_.duration() !== 'number') {
         return;
-      } // @deprecated We should only use remainingTimeDisplay
+      }
+
+      var time; // @deprecated We should only use remainingTimeDisplay
       // as of video.js 7
 
-
-      if (this.player_.remainingTimeDisplay) {
-        this.updateFormattedTime_(this.player_.remainingTimeDisplay());
+      if (this.player_.ended()) {
+        time = 0;
+      } else if (this.player_.remainingTimeDisplay) {
+        time = this.player_.remainingTimeDisplay();
       } else {
-        this.updateFormattedTime_(this.player_.remainingTime());
-      }
-    }
-    /**
-     * When the player fires ended there should be no time left. Sadly
-     * this is not always the case, lets make it seem like that is the case
-     * for users.
-     *
-     * @param {EventTarget~Event} [event]
-     *        The `ended` event that caused this to run.
-     *
-     * @listens Player#ended
-     */
-    ;
-
-    _proto.handleEnded = function handleEnded(event) {
-      if (!this.player_.duration()) {
-        return;
+        time = this.player_.remainingTime();
       }
 
-      this.updateFormattedTime_(0);
+      this.updateTextNode_(time);
     };
 
     return RemainingTimeDisplay;
@@ -15138,10 +14254,8 @@
    * @extends Component
    */
 
-  var LiveDisplay =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(LiveDisplay, _Component);
+  var LiveDisplay = /*#__PURE__*/function (_Component) {
+    inheritsLoose(LiveDisplay, _Component);
 
     /**
      * Creates an instance of this class.
@@ -15223,10 +14337,8 @@
    * @extends Component
    */
 
-  var SeekToLive =
-  /*#__PURE__*/
-  function (_Button) {
-    _inheritsLoose(SeekToLive, _Button);
+  var SeekToLive = /*#__PURE__*/function (_Button) {
+    inheritsLoose(SeekToLive, _Button);
 
     /**
      * Creates an instance of this class.
@@ -15324,16 +14436,33 @@
   Component.registerComponent('SeekToLive', SeekToLive);
 
   /**
+   * Keep a number between a min and a max value
+   *
+   * @param {number} number
+   *        The number to clamp
+   *
+   * @param {number} min
+   *        The minimum value
+   * @param {number} max
+   *        The maximum value
+   *
+   * @return {number}
+   *         the clamped number
+   */
+  var clamp = function clamp(number, min, max) {
+    number = Number(number);
+    return Math.min(max, Math.max(min, isNaN(number) ? min : number));
+  };
+
+  /**
    * The base functionality for a slider. Can be vertical or horizontal.
    * For instance the volume bar or the seek bar on a video is a slider.
    *
    * @extends Component
    */
 
-  var Slider =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(Slider, _Component);
+  var Slider = /*#__PURE__*/function (_Component) {
+    inheritsLoose(Slider, _Component);
 
     /**
     * Create an instance of this class
@@ -15563,40 +14692,44 @@
     ;
 
     _proto.update = function update() {
+      var _this2 = this;
+
       // In VolumeBar init we have a setTimeout for update that pops and update
       // to the end of the execution stack. The player is destroyed before then
       // update will cause an error
-      if (!this.el_) {
+      // If there's no bar...
+      if (!this.el_ || !this.bar) {
         return;
-      } // If scrubbing, we could use a cached value to make the handle keep up
-      // with the user's mouse. On HTML5 browsers scrubbing is really smooth, but
-      // some flash players are slow, so we might want to utilize this later.
-      // var progress =  (this.player_.scrubbing()) ? this.player_.getCache().currentTime / this.player_.duration() : this.player_.currentTime() / this.player_.duration();
+      } // clamp progress between 0 and 1
+      // and only round to four decimal places, as we round to two below
 
 
-      var progress = this.getPercent();
-      var bar = this.bar; // If there's no bar...
+      var progress = this.getProgress();
 
-      if (!bar) {
-        return;
-      } // Protect against no duration and other division issues
-
-
-      if (typeof progress !== 'number' || progress !== progress || progress < 0 || progress === Infinity) {
-        progress = 0;
-      } // Convert to a percentage for setting
-
-
-      var percentage = (progress * 100).toFixed(2) + '%';
-      var style = bar.el().style; // Set the new bar width or height
-
-      var sizeKey = this.vertical() ? 'height' : 'width';
-
-      if (style[sizeKey] !== percentage) {
-        style[sizeKey] = percentage;
+      if (progress === this.progress_) {
+        return progress;
       }
 
+      this.progress_ = progress;
+      this.requestAnimationFrame(function () {
+        // Set the new bar width or height
+        var sizeKey = _this2.vertical() ? 'height' : 'width'; // Convert to a percentage for css value
+
+        _this2.bar.el().style[sizeKey] = (progress * 100).toFixed(2) + '%';
+      });
       return progress;
+    }
+    /**
+     * Get the percentage of the bar that should be filled
+     * but clamped and rounded.
+     *
+     * @return {number}
+     *         percentage filled that the slider is
+     */
+    ;
+
+    _proto.getProgress = function getProgress() {
+      return Number(clamp(this.getPercent(), 0, 1).toFixed(4));
     }
     /**
      * Calculate distance for slider
@@ -15692,16 +14825,18 @@
 
   Component.registerComponent('Slider', Slider);
 
+  var percentify = function percentify(time, end) {
+    return clamp(time / end * 100, 0, 100).toFixed(2) + '%';
+  };
   /**
    * Shows loading progress
    *
    * @extends Component
    */
 
-  var LoadProgressBar =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(LoadProgressBar, _Component);
+
+  var LoadProgressBar = /*#__PURE__*/function (_Component) {
+    inheritsLoose(LoadProgressBar, _Component);
 
     /**
      * Creates an instance of this class.
@@ -15732,15 +14867,32 @@
 
     var _proto = LoadProgressBar.prototype;
 
-    _proto.createEl = function createEl() {
-      return _Component.prototype.createEl.call(this, 'div', {
-        className: 'vjs-load-progress',
-        innerHTML: "<span class=\"vjs-control-text\"><span>" + this.localize('Loaded') + "</span>: <span class=\"vjs-control-text-loaded-percentage\">0%</span></span>"
+    _proto.createEl = function createEl$1() {
+      var el = _Component.prototype.createEl.call(this, 'div', {
+        className: 'vjs-load-progress'
       });
+
+      var wrapper = createEl('span', {
+        className: 'vjs-control-text'
+      });
+      var loadedText = createEl('span', {
+        textContent: this.localize('Loaded')
+      });
+      var separator = document.createTextNode(': ');
+      this.percentageEl_ = createEl('span', {
+        className: 'vjs-control-text-loaded-percentage',
+        textContent: '0%'
+      });
+      el.appendChild(wrapper);
+      wrapper.appendChild(loadedText);
+      wrapper.appendChild(separator);
+      wrapper.appendChild(this.percentageEl_);
+      return el;
     };
 
     _proto.dispose = function dispose() {
       this.partEls_ = null;
+      this.percentageEl_ = null;
 
       _Component.prototype.dispose.call(this);
     }
@@ -15755,51 +14907,58 @@
     ;
 
     _proto.update = function update(event) {
-      var liveTracker = this.player_.liveTracker;
-      var buffered = this.player_.buffered();
-      var duration = liveTracker && liveTracker.isLive() ? liveTracker.seekableEnd() : this.player_.duration();
-      var bufferedEnd = this.player_.bufferedEnd();
-      var children = this.partEls_;
-      var controlTextPercentage = this.$('.vjs-control-text-loaded-percentage'); // get the percent width of a time compared to the total end
+      var _this2 = this;
 
-      var percentify = function percentify(time, end, rounded) {
-        // no NaN
-        var percent = time / end || 0;
-        percent = (percent >= 1 ? 1 : percent) * 100;
+      this.requestAnimationFrame(function () {
+        var liveTracker = _this2.player_.liveTracker;
 
-        if (rounded) {
-          percent = percent.toFixed(2);
+        var buffered = _this2.player_.buffered();
+
+        var duration = liveTracker && liveTracker.isLive() ? liveTracker.seekableEnd() : _this2.player_.duration();
+
+        var bufferedEnd = _this2.player_.bufferedEnd();
+
+        var children = _this2.partEls_;
+        var percent = percentify(bufferedEnd, duration);
+
+        if (_this2.percent_ !== percent) {
+          // update the width of the progress bar
+          _this2.el_.style.width = percent; // update the control-text
+
+          textContent(_this2.percentageEl_, percent);
+          _this2.percent_ = percent;
+        } // add child elements to represent the individual buffered time ranges
+
+
+        for (var i = 0; i < buffered.length; i++) {
+          var start = buffered.start(i);
+          var end = buffered.end(i);
+          var part = children[i];
+
+          if (!part) {
+            part = _this2.el_.appendChild(createEl());
+            children[i] = part;
+          } //  only update if changed
+
+
+          if (part.dataset.start === start && part.dataset.end === end) {
+            continue;
+          }
+
+          part.dataset.start = start;
+          part.dataset.end = end; // set the percent based on the width of the progress bar (bufferedEnd)
+
+          part.style.left = percentify(start, bufferedEnd);
+          part.style.width = percentify(end - start, bufferedEnd);
+        } // remove unused buffered range elements
+
+
+        for (var _i = children.length; _i > buffered.length; _i--) {
+          _this2.el_.removeChild(children[_i - 1]);
         }
 
-        return percent + '%';
-      }; // update the width of the progress bar
-
-
-      this.el_.style.width = percentify(bufferedEnd, duration); // update the control-text
-
-      textContent(controlTextPercentage, percentify(bufferedEnd, duration, true)); // add child elements to represent the individual buffered time ranges
-
-      for (var i = 0; i < buffered.length; i++) {
-        var start = buffered.start(i);
-        var end = buffered.end(i);
-        var part = children[i];
-
-        if (!part) {
-          part = this.el_.appendChild(createEl());
-          children[i] = part;
-        } // set the percent based on the width of the progress bar (bufferedEnd)
-
-
-        part.style.left = percentify(start, bufferedEnd);
-        part.style.width = percentify(end - start, bufferedEnd);
-      } // remove unused buffered range elements
-
-
-      for (var _i = children.length; _i > buffered.length; _i--) {
-        this.el_.removeChild(children[_i - 1]);
-      }
-
-      children.length = buffered.length;
+        children.length = buffered.length;
+      });
     };
 
     return LoadProgressBar;
@@ -15813,10 +14972,8 @@
    * @extends Component
    */
 
-  var TimeTooltip =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(TimeTooltip, _Component);
+  var TimeTooltip = /*#__PURE__*/function (_Component) {
+    inheritsLoose(TimeTooltip, _Component);
 
     /**
      * Creates an instance of this class.
@@ -15831,7 +14988,7 @@
       var _this;
 
       _this = _Component.call(this, player, options) || this;
-      _this.update = throttle(bind(_assertThisInitialized(_this), _this.update), UPDATE_REFRESH_INTERVAL);
+      _this.update = throttle(bind(assertThisInitialized(_this), _this.update), UPDATE_REFRESH_INTERVAL);
       return _this;
     }
     /**
@@ -15978,10 +15135,8 @@
    * @extends Component
    */
 
-  var PlayProgressBar =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(PlayProgressBar, _Component);
+  var PlayProgressBar = /*#__PURE__*/function (_Component) {
+    inheritsLoose(PlayProgressBar, _Component);
 
     /**
      * Creates an instance of this class.
@@ -15996,7 +15151,7 @@
       var _this;
 
       _this = _Component.call(this, player, options) || this;
-      _this.update = throttle(bind(_assertThisInitialized(_this), _this.update), UPDATE_REFRESH_INTERVAL);
+      _this.update = throttle(bind(assertThisInitialized(_this), _this.update), UPDATE_REFRESH_INTERVAL);
       return _this;
     }
     /**
@@ -16069,10 +15224,8 @@
    * @extends Component
    */
 
-  var MouseTimeDisplay =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(MouseTimeDisplay, _Component);
+  var MouseTimeDisplay = /*#__PURE__*/function (_Component) {
+    inheritsLoose(MouseTimeDisplay, _Component);
 
     /**
      * Creates an instance of this class.
@@ -16087,7 +15240,7 @@
       var _this;
 
       _this = _Component.call(this, player, options) || this;
-      _this.update = throttle(bind(_assertThisInitialized(_this), _this.update), UPDATE_REFRESH_INTERVAL);
+      _this.update = throttle(bind(assertThisInitialized(_this), _this.update), UPDATE_REFRESH_INTERVAL);
       return _this;
     }
     /**
@@ -16144,9 +15297,7 @@
 
   var STEP_SECONDS = 5; // The multiplier of STEP_SECONDS that PgUp/PgDown move the timeline.
 
-  var PAGE_KEY_MULTIPLIER = 12; // The interval at which the bar should update as it progresses.
-
-  var UPDATE_REFRESH_INTERVAL$1 = 30;
+  var PAGE_KEY_MULTIPLIER = 12;
   /**
    * Seek bar and container for the progress bars. Uses {@link PlayProgressBar}
    * as its `bar`.
@@ -16154,10 +15305,8 @@
    * @extends Slider
    */
 
-  var SeekBar =
-  /*#__PURE__*/
-  function (_Slider) {
-    _inheritsLoose(SeekBar, _Slider);
+  var SeekBar = /*#__PURE__*/function (_Slider) {
+    inheritsLoose(SeekBar, _Slider);
 
     /**
      * Creates an instance of this class.
@@ -16187,10 +15336,9 @@
     var _proto = SeekBar.prototype;
 
     _proto.setEventHandlers_ = function setEventHandlers_() {
-      this.update = throttle(bind(this, this.update), UPDATE_REFRESH_INTERVAL$1);
-      this.on(this.player_, 'timeupdate', this.update);
-      this.on(this.player_, 'ended', this.handleEnded);
-      this.on(this.player_, 'durationchange', this.update);
+      this.update_ = bind(this, this.update);
+      this.update = throttle(this.update_, UPDATE_REFRESH_INTERVAL);
+      this.on(this.player_, ['ended', 'durationchange', 'timeupdate'], this.update);
 
       if (this.player_.liveTracker) {
         this.on(this.player_.liveTracker, 'liveedgechange', this.update);
@@ -16214,17 +15362,16 @@
       } else {
         this.enableInterval_(); // we just switched back to the page and someone may be looking, so, update ASAP
 
-        this.requestAnimationFrame(this.update);
+        this.update();
       }
     };
 
     _proto.enableInterval_ = function enableInterval_() {
-      var _this2 = this;
+      if (this.updateInterval) {
+        return;
+      }
 
-      this.clearInterval(this.updateInterval);
-      this.updateInterval = this.setInterval(function () {
-        _this2.requestAnimationFrame(_this2.update);
-      }, UPDATE_REFRESH_INTERVAL$1);
+      this.updateInterval = this.setInterval(this.update, UPDATE_REFRESH_INTERVAL);
     };
 
     _proto.disableInterval_ = function disableInterval_(e) {
@@ -16232,7 +15379,12 @@
         return;
       }
 
+      if (!this.updateInterval) {
+        return;
+      }
+
       this.clearInterval(this.updateInterval);
+      this.updateInterval = null;
     }
     /**
      * Create the `Component`'s DOM element
@@ -16253,36 +15405,6 @@
      * This function updates the play progress bar and accessibility
      * attributes to whatever is passed in.
      *
-     * @param {number} currentTime
-     *        The currentTime value that should be used for accessibility
-     *
-     * @param {number} percent
-     *        The percentage as a decimal that the bar should be filled from 0-1.
-     *
-     * @private
-     */
-    ;
-
-    _proto.update_ = function update_(currentTime, percent) {
-      var liveTracker = this.player_.liveTracker;
-      var duration = this.player_.duration();
-
-      if (liveTracker && liveTracker.isLive()) {
-        duration = this.player_.liveTracker.liveCurrentTime();
-      } // machine readable value of progress bar (percentage complete)
-
-
-      this.el_.setAttribute('aria-valuenow', (percent * 100).toFixed(2)); // human readable value of progress bar (time complete)
-
-      this.el_.setAttribute('aria-valuetext', this.localize('progress bar timing: currentTime={1} duration={2}', [formatTime(currentTime, duration), formatTime(duration, duration)], '{1} of {2}')); // Update the `PlayProgressBar`.
-
-      if (this.bar) {
-        this.bar.update(getBoundingClientRect(this.el_), percent);
-      }
-    }
-    /**
-     * Update the seek bar's UI.
-     *
      * @param {EventTarget~Event} [event]
      *        The `timeupdate` or `ended` event that caused this to run.
      *
@@ -16294,15 +15416,40 @@
     ;
 
     _proto.update = function update(event) {
-      // if the offsetParent is null, then this element is hidden, in which case
-      // we don't need to update it.
-      if (this.el().offsetParent === null) {
-        return;
-      }
+      var _this2 = this;
 
       var percent = _Slider.prototype.update.call(this);
 
-      this.update_(this.getCurrentTime_(), percent);
+      this.requestAnimationFrame(function () {
+        var currentTime = _this2.player_.ended() ? _this2.player_.duration() : _this2.getCurrentTime_();
+        var liveTracker = _this2.player_.liveTracker;
+
+        var duration = _this2.player_.duration();
+
+        if (liveTracker && liveTracker.isLive()) {
+          duration = _this2.player_.liveTracker.liveCurrentTime();
+        }
+
+        if (_this2.percent_ !== percent) {
+          // machine readable value of progress bar (percentage complete)
+          _this2.el_.setAttribute('aria-valuenow', (percent * 100).toFixed(2));
+
+          _this2.percent_ = percent;
+        }
+
+        if (_this2.currentTime_ !== currentTime || _this2.duration_ !== duration) {
+          // human readable value of progress bar (time complete)
+          _this2.el_.setAttribute('aria-valuetext', _this2.localize('progress bar timing: currentTime={1} duration={2}', [formatTime(currentTime, duration), formatTime(duration, duration)], '{1} of {2}'));
+
+          _this2.currentTime_ = currentTime;
+          _this2.duration_ = duration;
+        } // update the progress bar time tooltip with the current time
+
+
+        if (_this2.bar) {
+          _this2.bar.update(getBoundingClientRect(_this2.el()), _this2.getProgress());
+        }
+      });
       return percent;
     }
     /**
@@ -16318,20 +15465,6 @@
 
     _proto.getCurrentTime_ = function getCurrentTime_() {
       return this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
-    }
-    /**
-     * We want the seek bar to be full on ended
-     * no matter what the actual internal values are. so we force it.
-     *
-     * @param {EventTarget~Event} [event]
-     *        The `timeupdate` or `ended` event that caused this to run.
-     *
-     * @listens Player#ended
-     */
-    ;
-
-    _proto.handleEnded = function handleEnded(event) {
-      this.update_(this.player_.duration(), 1);
     }
     /**
      * Get the percentage of media played so far.
@@ -16356,7 +15489,7 @@
         percent = currentTime / this.player_.duration();
       }
 
-      return percent >= 1 ? 1 : percent || 0;
+      return percent;
     }
     /**
      * Handle mouse down on seek bar
@@ -16491,6 +15624,10 @@
 
       if (this.videoWasPlaying) {
         silencePromise(this.player_.play());
+      } else {
+        // We're done seeking and the time has changed.
+        // If the player is paused, make sure we display the correct time on the seek bar.
+        this.update_();
       }
     }
     /**
@@ -16604,10 +15741,8 @@
    * @extends Component
    */
 
-  var ProgressControl =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(ProgressControl, _Component);
+  var ProgressControl = /*#__PURE__*/function (_Component) {
+    inheritsLoose(ProgressControl, _Component);
 
     /**
      * Creates an instance of this class.
@@ -16622,8 +15757,8 @@
       var _this;
 
       _this = _Component.call(this, player, options) || this;
-      _this.handleMouseMove = throttle(bind(_assertThisInitialized(_this), _this.handleMouseMove), UPDATE_REFRESH_INTERVAL);
-      _this.throttledHandleMouseSeek = throttle(bind(_assertThisInitialized(_this), _this.handleMouseSeek), UPDATE_REFRESH_INTERVAL);
+      _this.handleMouseMove = throttle(bind(assertThisInitialized(_this), _this.handleMouseMove), UPDATE_REFRESH_INTERVAL);
+      _this.throttledHandleMouseSeek = throttle(bind(assertThisInitialized(_this), _this.handleMouseSeek), UPDATE_REFRESH_INTERVAL);
 
       _this.enable();
 
@@ -16658,23 +15793,31 @@
     _proto.handleMouseMove = function handleMouseMove(event) {
       var seekBar = this.getChild('seekBar');
 
-      if (seekBar) {
-        var mouseTimeDisplay = seekBar.getChild('mouseTimeDisplay');
-        var seekBarEl = seekBar.el();
-        var seekBarRect = getBoundingClientRect(seekBarEl);
-        var seekBarPoint = getPointerPosition(seekBarEl, event).x; // The default skin has a gap on either side of the `SeekBar`. This means
-        // that it's possible to trigger this behavior outside the boundaries of
-        // the `SeekBar`. This ensures we stay within it at all times.
+      if (!seekBar) {
+        return;
+      }
 
-        if (seekBarPoint > 1) {
-          seekBarPoint = 1;
-        } else if (seekBarPoint < 0) {
-          seekBarPoint = 0;
-        }
+      var playProgressBar = seekBar.getChild('playProgressBar');
+      var mouseTimeDisplay = seekBar.getChild('mouseTimeDisplay');
 
-        if (mouseTimeDisplay) {
-          mouseTimeDisplay.update(seekBarRect, seekBarPoint);
-        }
+      if (!playProgressBar && !mouseTimeDisplay) {
+        return;
+      }
+
+      var seekBarEl = seekBar.el();
+      var seekBarRect = getBoundingClientRect(seekBarEl);
+      var seekBarPoint = getPointerPosition(seekBarEl, event).x; // The default skin has a gap on either side of the `SeekBar`. This means
+      // that it's possible to trigger this behavior outside the boundaries of
+      // the `SeekBar`. This ensures we stay within it at all times.
+
+      seekBarPoint = clamp(0, 1, seekBarPoint);
+
+      if (mouseTimeDisplay) {
+        mouseTimeDisplay.update(seekBarRect, seekBarPoint);
+      }
+
+      if (playProgressBar) {
+        playProgressBar.update(seekBarRect, seekBar.getProgress());
       }
     }
     /**
@@ -16826,10 +15969,8 @@
    * @extends Button
    */
 
-  var PictureInPictureToggle =
-  /*#__PURE__*/
-  function (_Button) {
-    _inheritsLoose(PictureInPictureToggle, _Button);
+  var PictureInPictureToggle = /*#__PURE__*/function (_Button) {
+    inheritsLoose(PictureInPictureToggle, _Button);
 
     /**
      * Creates an instance of this class.
@@ -16931,10 +16072,8 @@
    * @extends Button
    */
 
-  var FullscreenToggle =
-  /*#__PURE__*/
-  function (_Button) {
-    _inheritsLoose(FullscreenToggle, _Button);
+  var FullscreenToggle = /*#__PURE__*/function (_Button) {
+    inheritsLoose(FullscreenToggle, _Button);
 
     /**
      * Creates an instance of this class.
@@ -17056,10 +16195,8 @@
    * @extends Component
    */
 
-  var VolumeLevel =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(VolumeLevel, _Component);
+  var VolumeLevel = /*#__PURE__*/function (_Component) {
+    inheritsLoose(VolumeLevel, _Component);
 
     function VolumeLevel() {
       return _Component.apply(this, arguments) || this;
@@ -17091,10 +16228,8 @@
    * @extends Slider
    */
 
-  var VolumeBar =
-  /*#__PURE__*/
-  function (_Slider) {
-    _inheritsLoose(VolumeBar, _Slider);
+  var VolumeBar = /*#__PURE__*/function (_Slider) {
+    inheritsLoose(VolumeBar, _Slider);
 
     /**
      * Creates an instance of this class.
@@ -17290,10 +16425,8 @@
    * @extends Component
    */
 
-  var VolumeControl =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(VolumeControl, _Component);
+  var VolumeControl = /*#__PURE__*/function (_Component) {
+    inheritsLoose(VolumeControl, _Component);
 
     /**
      * Creates an instance of this class.
@@ -17321,8 +16454,8 @@
 
       _this = _Component.call(this, player, options) || this; // hide this control if volume support is missing
 
-      checkVolumeSupport(_assertThisInitialized(_this), player);
-      _this.throttledHandleMouseMove = throttle(bind(_assertThisInitialized(_this), _this.handleMouseMove), UPDATE_REFRESH_INTERVAL);
+      checkVolumeSupport(assertThisInitialized(_this), player);
+      _this.throttledHandleMouseMove = throttle(bind(assertThisInitialized(_this), _this.handleMouseMove), UPDATE_REFRESH_INTERVAL);
 
       _this.on('mousedown', _this.handleMouseDown);
 
@@ -17468,10 +16601,8 @@
    * @extends Button
    */
 
-  var MuteToggle =
-  /*#__PURE__*/
-  function (_Button) {
-    _inheritsLoose(MuteToggle, _Button);
+  var MuteToggle = /*#__PURE__*/function (_Button) {
+    inheritsLoose(MuteToggle, _Button);
 
     /**
      * Creates an instance of this class.
@@ -17487,7 +16618,7 @@
 
       _this = _Button.call(this, player, options) || this; // hide this control if volume support is missing
 
-      checkMuteSupport(_assertThisInitialized(_this), player);
+      checkMuteSupport(assertThisInitialized(_this), player);
 
       _this.on(player, ['loadstart', 'volumechange'], _this.update);
 
@@ -17624,10 +16755,8 @@
    * @extends Component
    */
 
-  var VolumePanel =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(VolumePanel, _Component);
+  var VolumePanel = /*#__PURE__*/function (_Component) {
+    inheritsLoose(VolumePanel, _Component);
 
     /**
      * Creates an instance of this class.
@@ -17842,10 +16971,8 @@
    * @extends Component
    */
 
-  var Menu =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(Menu, _Component);
+  var Menu = /*#__PURE__*/function (_Component) {
+    inheritsLoose(Menu, _Component);
 
     /**
      * Create an instance of this class.
@@ -17871,8 +16998,8 @@
       _this.on('keydown', _this.handleKeyDown); // All the menu item instances share the same blur handler provided by the menu container.
 
 
-      _this.boundHandleBlur_ = bind(_assertThisInitialized(_this), _this.handleBlur);
-      _this.boundHandleTapClick_ = bind(_assertThisInitialized(_this), _this.handleTapClick);
+      _this.boundHandleBlur_ = bind(assertThisInitialized(_this), _this.handleBlur);
+      _this.boundHandleTapClick_ = bind(assertThisInitialized(_this), _this.handleTapClick);
       return _this;
     }
     /**
@@ -18135,10 +17262,8 @@
    * @extends Component
    */
 
-  var MenuButton =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(MenuButton, _Component);
+  var MenuButton = /*#__PURE__*/function (_Component) {
+    inheritsLoose(MenuButton, _Component);
 
     /**
      * Creates an instance of this class.
@@ -18186,7 +17311,7 @@
 
         _this.menu.show();
 
-        on(document, 'keyup', bind(_assertThisInitialized(_this), _this.handleMenuKeyUp));
+        on(document, 'keyup', bind(assertThisInitialized(_this), _this.handleMenuKeyUp));
       });
 
       _this.on('mouseleave', _this.handleMouseLeave);
@@ -18574,10 +17699,8 @@
    * @extends MenuButton
    */
 
-  var TrackButton =
-  /*#__PURE__*/
-  function (_MenuButton) {
-    _inheritsLoose(TrackButton, _MenuButton);
+  var TrackButton = /*#__PURE__*/function (_MenuButton) {
+    inheritsLoose(TrackButton, _MenuButton);
 
     /**
      * Creates an instance of this class.
@@ -18599,10 +17722,10 @@
       }
 
       if (!tracks) {
-        return _assertThisInitialized(_this);
+        return assertThisInitialized(_this);
       }
 
-      var updateHandler = bind(_assertThisInitialized(_this), _this.update);
+      var updateHandler = bind(assertThisInitialized(_this), _this.update);
       tracks.addEventListener('removetrack', updateHandler);
       tracks.addEventListener('addtrack', updateHandler);
 
@@ -18640,10 +17763,8 @@
    * @extends ClickableComponent
    */
 
-  var MenuItem =
-  /*#__PURE__*/
-  function (_ClickableComponent) {
-    _inheritsLoose(MenuItem, _ClickableComponent);
+  var MenuItem = /*#__PURE__*/function (_ClickableComponent) {
+    inheritsLoose(MenuItem, _ClickableComponent);
 
     /**
      * Creates an instance of the this class.
@@ -18778,10 +17899,8 @@
    * @extends MenuItem
    */
 
-  var TextTrackMenuItem =
-  /*#__PURE__*/
-  function (_MenuItem) {
-    _inheritsLoose(TextTrackMenuItem, _MenuItem);
+  var TextTrackMenuItem = /*#__PURE__*/function (_MenuItem) {
+    inheritsLoose(TextTrackMenuItem, _MenuItem);
 
     /**
      * Creates an instance of this class.
@@ -18811,7 +17930,7 @@
           args[_key] = arguments[_key];
         }
 
-        _this.handleTracksChange.apply(_assertThisInitialized(_this), args);
+        _this.handleTracksChange.apply(assertThisInitialized(_this), args);
       };
 
       var selectedLanguageChangeHandler = function selectedLanguageChangeHandler() {
@@ -18819,7 +17938,7 @@
           args[_key2] = arguments[_key2];
         }
 
-        _this.handleSelectedLanguageChange.apply(_assertThisInitialized(_this), args);
+        _this.handleSelectedLanguageChange.apply(assertThisInitialized(_this), args);
       };
 
       player.on(['loadstart', 'texttrackchange'], changeHandler);
@@ -18842,10 +17961,10 @@
         var event;
 
         _this.on(['tap', 'click'], function () {
-          if (typeof window$1.Event !== 'object') {
+          if (typeof window$3.Event !== 'object') {
             // Android 2.3 throws an Illegal Constructor error for window.Event
             try {
-              event = new window$1.Event('change');
+              event = new window$3.Event('change');
             } catch (err) {// continue regardless of error
             }
           }
@@ -18963,10 +18082,8 @@
    * @extends TextTrackMenuItem
    */
 
-  var OffTextTrackMenuItem =
-  /*#__PURE__*/
-  function (_TextTrackMenuItem) {
-    _inheritsLoose(OffTextTrackMenuItem, _TextTrackMenuItem);
+  var OffTextTrackMenuItem = /*#__PURE__*/function (_TextTrackMenuItem) {
+    inheritsLoose(OffTextTrackMenuItem, _TextTrackMenuItem);
 
     /**
      * Creates an instance of this class.
@@ -19068,10 +18185,8 @@
    * @extends MenuButton
    */
 
-  var TextTrackButton =
-  /*#__PURE__*/
-  function (_TrackButton) {
-    _inheritsLoose(TextTrackButton, _TrackButton);
+  var TextTrackButton = /*#__PURE__*/function (_TrackButton) {
+    inheritsLoose(TextTrackButton, _TrackButton);
 
     /**
      * Creates an instance of this class.
@@ -19165,10 +18280,8 @@
    * @extends MenuItem
    */
 
-  var ChaptersTrackMenuItem =
-  /*#__PURE__*/
-  function (_MenuItem) {
-    _inheritsLoose(ChaptersTrackMenuItem, _MenuItem);
+  var ChaptersTrackMenuItem = /*#__PURE__*/function (_MenuItem) {
+    inheritsLoose(ChaptersTrackMenuItem, _MenuItem);
 
     /**
      * Creates an instance of this class.
@@ -19193,7 +18306,7 @@
       _this = _MenuItem.call(this, player, options) || this;
       _this.track = track;
       _this.cue = cue;
-      track.addEventListener('cuechange', bind(_assertThisInitialized(_this), _this.update));
+      track.addEventListener('cuechange', bind(assertThisInitialized(_this), _this.update));
       return _this;
     }
     /**
@@ -19247,10 +18360,8 @@
    * @extends TextTrackButton
    */
 
-  var ChaptersButton =
-  /*#__PURE__*/
-  function (_TextTrackButton) {
-    _inheritsLoose(ChaptersButton, _TextTrackButton);
+  var ChaptersButton = /*#__PURE__*/function (_TextTrackButton) {
+    inheritsLoose(ChaptersButton, _TextTrackButton);
 
     /**
      * Creates an instance of this class.
@@ -19452,10 +18563,8 @@
    * @extends TextTrackButton
    */
 
-  var DescriptionsButton =
-  /*#__PURE__*/
-  function (_TextTrackButton) {
-    _inheritsLoose(DescriptionsButton, _TextTrackButton);
+  var DescriptionsButton = /*#__PURE__*/function (_TextTrackButton) {
+    inheritsLoose(DescriptionsButton, _TextTrackButton);
 
     /**
      * Creates an instance of this class.
@@ -19474,7 +18583,7 @@
 
       _this = _TextTrackButton.call(this, player, options, ready) || this;
       var tracks = player.textTracks();
-      var changeHandler = bind(_assertThisInitialized(_this), _this.handleTracksChange);
+      var changeHandler = bind(assertThisInitialized(_this), _this.handleTracksChange);
       tracks.addEventListener('change', changeHandler);
 
       _this.on('dispose', function () {
@@ -19558,10 +18667,8 @@
    * @extends TextTrackButton
    */
 
-  var SubtitlesButton =
-  /*#__PURE__*/
-  function (_TextTrackButton) {
-    _inheritsLoose(SubtitlesButton, _TextTrackButton);
+  var SubtitlesButton = /*#__PURE__*/function (_TextTrackButton) {
+    inheritsLoose(SubtitlesButton, _TextTrackButton);
 
     /**
      * Creates an instance of this class.
@@ -19623,10 +18730,8 @@
    * @extends TextTrackMenuItem
    */
 
-  var CaptionSettingsMenuItem =
-  /*#__PURE__*/
-  function (_TextTrackMenuItem) {
-    _inheritsLoose(CaptionSettingsMenuItem, _TextTrackMenuItem);
+  var CaptionSettingsMenuItem = /*#__PURE__*/function (_TextTrackMenuItem) {
+    inheritsLoose(CaptionSettingsMenuItem, _TextTrackMenuItem);
 
     /**
      * Creates an instance of this class.
@@ -19689,10 +18794,8 @@
    * @extends TextTrackButton
    */
 
-  var CaptionsButton =
-  /*#__PURE__*/
-  function (_TextTrackButton) {
-    _inheritsLoose(CaptionsButton, _TextTrackButton);
+  var CaptionsButton = /*#__PURE__*/function (_TextTrackButton) {
+    inheritsLoose(CaptionsButton, _TextTrackButton);
 
     /**
      * Creates an instance of this class.
@@ -19775,10 +18878,8 @@
    * @extends TextTrackMenuItem
    */
 
-  var SubsCapsMenuItem =
-  /*#__PURE__*/
-  function (_TextTrackMenuItem) {
-    _inheritsLoose(SubsCapsMenuItem, _TextTrackMenuItem);
+  var SubsCapsMenuItem = /*#__PURE__*/function (_TextTrackMenuItem) {
+    inheritsLoose(SubsCapsMenuItem, _TextTrackMenuItem);
 
     function SubsCapsMenuItem() {
       return _TextTrackMenuItem.apply(this, arguments) || this;
@@ -19813,10 +18914,8 @@
    * @extends TextTrackButton
    */
 
-  var SubsCapsButton =
-  /*#__PURE__*/
-  function (_TextTrackButton) {
-    _inheritsLoose(SubsCapsButton, _TextTrackButton);
+  var SubsCapsButton = /*#__PURE__*/function (_TextTrackButton) {
+    inheritsLoose(SubsCapsButton, _TextTrackButton);
 
     function SubsCapsButton(player, options) {
       var _this;
@@ -19905,10 +19004,8 @@
    * @extends MenuItem
    */
 
-  var AudioTrackMenuItem =
-  /*#__PURE__*/
-  function (_MenuItem) {
-    _inheritsLoose(AudioTrackMenuItem, _MenuItem);
+  var AudioTrackMenuItem = /*#__PURE__*/function (_MenuItem) {
+    inheritsLoose(AudioTrackMenuItem, _MenuItem);
 
     /**
      * Creates an instance of this class.
@@ -19937,7 +19034,7 @@
           args[_key] = arguments[_key];
         }
 
-        _this.handleTracksChange.apply(_assertThisInitialized(_this), args);
+        _this.handleTracksChange.apply(assertThisInitialized(_this), args);
       };
 
       tracks.addEventListener('change', changeHandler);
@@ -20014,10 +19111,8 @@
    * @extends TrackButton
    */
 
-  var AudioTrackButton =
-  /*#__PURE__*/
-  function (_TrackButton) {
-    _inheritsLoose(AudioTrackButton, _TrackButton);
+  var AudioTrackButton = /*#__PURE__*/function (_TrackButton) {
+    inheritsLoose(AudioTrackButton, _TrackButton);
 
     /**
      * Creates an instance of this class.
@@ -20106,10 +19201,8 @@
    * @extends MenuItem
    */
 
-  var PlaybackRateMenuItem =
-  /*#__PURE__*/
-  function (_MenuItem) {
-    _inheritsLoose(PlaybackRateMenuItem, _MenuItem);
+  var PlaybackRateMenuItem = /*#__PURE__*/function (_MenuItem) {
+    inheritsLoose(PlaybackRateMenuItem, _MenuItem);
 
     /**
      * Creates an instance of this class.
@@ -20191,10 +19284,8 @@
    * @extends MenuButton
    */
 
-  var PlaybackRateMenuButton =
-  /*#__PURE__*/
-  function (_MenuButton) {
-    _inheritsLoose(PlaybackRateMenuButton, _MenuButton);
+  var PlaybackRateMenuButton = /*#__PURE__*/function (_MenuButton) {
+    inheritsLoose(PlaybackRateMenuButton, _MenuButton);
 
     /**
      * Creates an instance of this class.
@@ -20397,10 +19488,8 @@
    * @extends Component
    */
 
-  var Spacer =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(Spacer, _Component);
+  var Spacer = /*#__PURE__*/function (_Component) {
+    inheritsLoose(Spacer, _Component);
 
     function Spacer() {
       return _Component.apply(this, arguments) || this;
@@ -20442,10 +19531,8 @@
    * @extends Spacer
    */
 
-  var CustomControlSpacer =
-  /*#__PURE__*/
-  function (_Spacer) {
-    _inheritsLoose(CustomControlSpacer, _Spacer);
+  var CustomControlSpacer = /*#__PURE__*/function (_Spacer) {
+    inheritsLoose(CustomControlSpacer, _Spacer);
 
     function CustomControlSpacer() {
       return _Spacer.apply(this, arguments) || this;
@@ -20492,10 +19579,8 @@
    * @extends Component
    */
 
-  var ControlBar =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(ControlBar, _Component);
+  var ControlBar = /*#__PURE__*/function (_Component) {
+    inheritsLoose(ControlBar, _Component);
 
     function ControlBar() {
       return _Component.apply(this, arguments) || this;
@@ -20543,10 +19628,8 @@
    * @extends ModalDialog
    */
 
-  var ErrorDisplay =
-  /*#__PURE__*/
-  function (_ModalDialog) {
-    _inheritsLoose(ErrorDisplay, _ModalDialog);
+  var ErrorDisplay = /*#__PURE__*/function (_ModalDialog) {
+    inheritsLoose(ErrorDisplay, _ModalDialog);
 
     /**
      * Creates an instance of this class.
@@ -20603,7 +19686,7 @@
    */
 
 
-  ErrorDisplay.prototype.options_ = mergeOptions(ModalDialog.prototype.options_, {
+  ErrorDisplay.prototype.options_ = _extends_1({}, ModalDialog.prototype.options_, {
     pauseOnOpen: false,
     fillAlways: true,
     temporary: false,
@@ -20780,10 +19863,8 @@
    */
 
 
-  var TextTrackSettings =
-  /*#__PURE__*/
-  function (_ModalDialog) {
-    _inheritsLoose(TextTrackSettings, _ModalDialog);
+  var TextTrackSettings = /*#__PURE__*/function (_ModalDialog) {
+    inheritsLoose(TextTrackSettings, _ModalDialog);
 
     /**
      * Creates an instance of this class.
@@ -20799,7 +19880,7 @@
 
       options.temporary = false;
       _this = _ModalDialog.call(this, player, options) || this;
-      _this.updateDisplay = bind(_assertThisInitialized(_this), _this.updateDisplay); // fill the modal and pretend we have opened it
+      _this.updateDisplay = bind(assertThisInitialized(_this), _this.updateDisplay); // fill the modal and pretend we have opened it
 
       _this.fill();
 
@@ -21045,7 +20126,7 @@
       var values;
 
       try {
-        values = JSON.parse(window$1.localStorage.getItem(LOCAL_STORAGE_KEY));
+        values = JSON.parse(window$3.localStorage.getItem(LOCAL_STORAGE_KEY));
       } catch (err) {
         log.warn(err);
       }
@@ -21068,9 +20149,9 @@
 
       try {
         if (Object.keys(values).length) {
-          window$1.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(values));
+          window$3.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(values));
         } else {
-          window$1.localStorage.removeItem(LOCAL_STORAGE_KEY);
+          window$3.localStorage.removeItem(LOCAL_STORAGE_KEY);
         }
       } catch (err) {
         log.warn(err);
@@ -21130,10 +20211,8 @@
    * @extends Component
    */
 
-  var ResizeManager =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(ResizeManager, _Component);
+  var ResizeManager = /*#__PURE__*/function (_Component) {
+    inheritsLoose(ResizeManager, _Component);
 
     /**
      * Create the ResizeManager.
@@ -21151,7 +20230,7 @@
     function ResizeManager(player, options) {
       var _this;
 
-      var RESIZE_OBSERVER_AVAILABLE = options.ResizeObserver || window$1.ResizeObserver; // if `null` was passed, we want to disable the ResizeObserver
+      var RESIZE_OBSERVER_AVAILABLE = options.ResizeObserver || window$3.ResizeObserver; // if `null` was passed, we want to disable the ResizeObserver
 
       if (options.ResizeObserver === null) {
         RESIZE_OBSERVER_AVAILABLE = false;
@@ -21163,12 +20242,12 @@
         reportTouchActivity: false
       }, options);
       _this = _Component.call(this, player, options_) || this;
-      _this.ResizeObserver = options.ResizeObserver || window$1.ResizeObserver;
+      _this.ResizeObserver = options.ResizeObserver || window$3.ResizeObserver;
       _this.loadListener_ = null;
       _this.resizeObserver_ = null;
       _this.debouncedHandler_ = debounce(function () {
         _this.resizeHandler();
-      }, 100, false, _assertThisInitialized(_this));
+      }, 100, false, assertThisInitialized(_this));
 
       if (RESIZE_OBSERVER_AVAILABLE) {
         _this.resizeObserver_ = new _this.ResizeObserver(_this.debouncedHandler_);
@@ -21284,20 +20363,23 @@
     return arr.length % 2 !== 0 ? sortedList[mid] : (sortedList[mid - 1] + sortedList[mid]) / 2;
   };
 
+  var defaults = {
+    // Number of seconds of live window (seekableEnd - seekableStart) that
+    // a video needs to have before the liveui will be shown.
+    trackingThreshold: 30
+  };
   /* track when we are at the live edge, and other helpers for live playback */
 
-  var LiveTracker =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(LiveTracker, _Component);
+  var LiveTracker = /*#__PURE__*/function (_Component) {
+    inheritsLoose(LiveTracker, _Component);
 
     function LiveTracker(player, options) {
       var _this;
 
       // LiveTracker does not need an element
-      var options_ = mergeOptions({
+      var options_ = mergeOptions(defaults, options, {
         createEl: false
-      }, options);
+      });
       _this = _Component.call(this, player, options_) || this;
 
       _this.reset_();
@@ -21375,9 +20457,15 @@
         this.pastSeekEnd_ = 0;
         this.lastSeekEnd_ = newSeekEnd;
         this.trigger('seekableendchange');
-      }
+      } // we should reset pastSeekEnd when the value
+      // is much higher than seeking increment.
 
-      this.pastSeekEnd_ = this.pastSeekEnd() + 0.03;
+
+      if (this.pastSeekEnd() > this.seekableIncrement_ * 1.5) {
+        this.pastSeekEnd_ = 0;
+      } else {
+        this.pastSeekEnd_ = this.pastSeekEnd() + 0.03;
+      }
 
       if (this.isBehind_() !== this.behindLiveEdge()) {
         this.behindLiveEdge_ = this.isBehind_();
@@ -21391,9 +20479,14 @@
     ;
 
     _proto.handleDurationchange = function handleDurationchange() {
-      if (this.player_.duration() === Infinity) {
+      if (this.player_.duration() === Infinity && this.liveWindow() >= this.options_.trackingThreshold) {
+        if (this.player_.options_.liveui) {
+          this.player_.addClass('vjs-liveui');
+        }
+
         this.startTracking();
       } else {
+        this.player_.removeClass('vjs-liveui');
         this.stopTracking();
       }
     }
@@ -21416,7 +20509,7 @@
         this.timeupdateSeen_ = this.player_.hasStarted();
       }
 
-      this.trackingInterval_ = this.setInterval(this.trackLive_, 30);
+      this.trackingInterval_ = this.setInterval(this.trackLive_, UPDATE_REFRESH_INTERVAL);
       this.trackLive_();
       this.on(this.player_, 'play', this.trackLive_);
       this.on(this.player_, 'pause', this.trackLive_); // this is to prevent showing that we are not live
@@ -21694,7 +20787,7 @@
       this.innerText = ''; // now we add all of that html in one by appending the
       // document fragment. This is how innerHTML does it.
 
-      window$1.Element.prototype.appendChild.call(this, docFrag); // then return the result that innerHTML's setter would
+      window$3.Element.prototype.appendChild.call(this, docFrag); // then return the result that innerHTML's setter would
 
       return this.innerHTML;
     }
@@ -21721,7 +20814,7 @@
   };
 
   var getInnerHTMLDescriptor = function getInnerHTMLDescriptor(tech) {
-    return getDescriptor([tech.el(), window$1.HTMLMediaElement.prototype, window$1.Element.prototype, innerHTMLDescriptorPolyfill], 'innerHTML');
+    return getDescriptor([tech.el(), window$3.HTMLMediaElement.prototype, window$3.Element.prototype, innerHTMLDescriptorPolyfill], 'innerHTML');
   };
   /**
    * Patches browser internal functions so that we can tell synchronously
@@ -21800,19 +20893,19 @@
   var srcDescriptorPolyfill = Object.defineProperty({}, 'src', {
     get: function get() {
       if (this.hasAttribute('src')) {
-        return getAbsoluteURL(window$1.Element.prototype.getAttribute.call(this, 'src'));
+        return getAbsoluteURL(window$3.Element.prototype.getAttribute.call(this, 'src'));
       }
 
       return '';
     },
     set: function set(v) {
-      window$1.Element.prototype.setAttribute.call(this, 'src', v);
+      window$3.Element.prototype.setAttribute.call(this, 'src', v);
       return v;
     }
   });
 
   var getSrcDescriptor = function getSrcDescriptor(tech) {
-    return getDescriptor([tech.el(), window$1.HTMLMediaElement.prototype, srcDescriptorPolyfill], 'src');
+    return getDescriptor([tech.el(), window$3.HTMLMediaElement.prototype, srcDescriptorPolyfill], 'src');
   };
   /**
    * setup `sourceset` handling on the `Html5` tech. This function
@@ -21897,16 +20990,53 @@
   };
 
   /**
+   * Object.defineProperty but "lazy", which means that the value is only set after
+   * it retrieved the first time, rather than being set right away.
+   *
+   * @param {Object} obj the object to set the property on
+   * @param {string} key the key for the property to set
+   * @param {Function} getValue the function used to get the value when it is needed.
+   * @param {boolean} setter wether a setter shoould be allowed or not
+   */
+  var defineLazyProperty = function defineLazyProperty(obj, key, getValue, setter) {
+    if (setter === void 0) {
+      setter = true;
+    }
+
+    var set = function set(value) {
+      return Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        writable: true
+      });
+    };
+
+    var options = {
+      configurable: true,
+      enumerable: true,
+      get: function get() {
+        var value = getValue();
+        set(value);
+        return value;
+      }
+    };
+
+    if (setter) {
+      options.set = set;
+    }
+
+    return Object.defineProperty(obj, key, options);
+  };
+
+  /**
    * HTML5 Media Controller - Wrapper for HTML5 Media API
    *
    * @mixes Tech~SourceHandlerAdditions
    * @extends Tech
    */
 
-  var Html5 =
-  /*#__PURE__*/
-  function (_Tech) {
-    _inheritsLoose(Html5, _Tech);
+  var Html5 = /*#__PURE__*/function (_Tech) {
+    inheritsLoose(Html5, _Tech);
 
     /**
     * Create an instance of this Tech.
@@ -22169,12 +21299,23 @@
 
       var listeners = {
         change: function change(e) {
-          techTracks.trigger({
+          var event = {
             type: 'change',
             target: techTracks,
             currentTarget: techTracks,
             srcElement: techTracks
-          });
+          };
+          techTracks.trigger(event); // if we are a text track change event, we should also notify the
+          // remote text track list. This can potentially cause a false positive
+          // if we were to get a change event on a non-remote track and
+          // we triggered the event on the remote text track list which doesn't
+          // contain that track. However, best practices mean looping through the
+          // list of tracks and searching for the appropriate mode value, so,
+          // this shouldn't pose an issue
+
+          if (name === 'text') {
+            _this3[REMOTE.remoteText.getterName]().trigger(event);
+          }
         },
         addtrack: function addtrack(e) {
           techTracks.addTrack(e.track);
@@ -22522,7 +21663,7 @@
 
     _proto.supportsFullScreen = function supportsFullScreen() {
       if (typeof this.el_.webkitEnterFullScreen === 'function') {
-        var userAgent = window$1.navigator && window$1.navigator.userAgent || ''; // Seems to be broken in Chromium/Chrome && Safari in Leopard
+        var userAgent = window$3.navigator && window$3.navigator.userAgent || ''; // Seems to be broken in Chromium/Chrome && Safari in Leopard
 
         if (/Android/.test(userAgent) || !/Chrome|Mac OS X 10.5/.test(userAgent)) {
           return true;
@@ -22791,10 +21932,10 @@
         videoPlaybackQuality.totalVideoFrames = this.el().webkitDecodedFrameCount;
       }
 
-      if (window$1.performance && typeof window$1.performance.now === 'function') {
-        videoPlaybackQuality.creationTime = window$1.performance.now();
-      } else if (window$1.performance && window$1.performance.timing && typeof window$1.performance.timing.navigationStart === 'number') {
-        videoPlaybackQuality.creationTime = window$1.Date.now() - window$1.performance.timing.navigationStart;
+      if (window$3.performance && typeof window$3.performance.now === 'function') {
+        videoPlaybackQuality.creationTime = window$3.performance.now();
+      } else if (window$3.performance && window$3.performance.timing && typeof window$3.performance.timing.navigationStart === 'number') {
+        videoPlaybackQuality.creationTime = window$3.Date.now() - window$3.performance.timing.navigationStart;
       }
 
       return videoPlaybackQuality;
@@ -22804,22 +21945,28 @@
   }(Tech);
   /* HTML5 Support Testing ---------------------------------------------------- */
 
+  /**
+   * Element for testing browser HTML5 media capabilities
+   *
+   * @type {Element}
+   * @constant
+   * @private
+   */
 
-  if (isReal()) {
-    /**
-     * Element for testing browser HTML5 media capabilities
-     *
-     * @type {Element}
-     * @constant
-     * @private
-     */
-    Html5.TEST_VID = document.createElement('video');
+
+  defineLazyProperty(Html5, 'TEST_VID', function () {
+    if (!isReal()) {
+      return;
+    }
+
+    var video = document.createElement('video');
     var track = document.createElement('track');
     track.kind = 'captions';
     track.srclang = 'en';
     track.label = 'English';
-    Html5.TEST_VID.appendChild(track);
-  }
+    video.appendChild(track);
+    return video;
+  });
   /**
    * Check if HTML5 media is supported by this browser/device.
    *
@@ -22827,7 +21974,6 @@
    *         - True if HTML5 media is supported.
    *         - False if HTML5 media is not supported.
    */
-
 
   Html5.isSupported = function () {
     // IE with no Media Player is a LIAR! (#984)
@@ -23030,7 +22176,6 @@
    * @default {@link Html5.canControlVolume}
    */
 
-  Html5.prototype.featuresVolumeControl = Html5.canControlVolume();
   /**
    * Boolean indicating whether the `Tech` supports muting volume.
    *
@@ -23038,7 +22183,6 @@
    * @default {@link Html5.canMuteVolume}
    */
 
-  Html5.prototype.featuresMuteControl = Html5.canMuteVolume();
   /**
    * Boolean indicating whether the `Tech` supports changing the speed at which the media
    * plays. Examples:
@@ -23049,7 +22193,6 @@
    * @default {@link Html5.canControlPlaybackRate}
    */
 
-  Html5.prototype.featuresPlaybackRate = Html5.canControlPlaybackRate();
   /**
    * Boolean indicating whether the `Tech` supports the `sourceset` event.
    *
@@ -23057,7 +22200,34 @@
    * @default
    */
 
-  Html5.prototype.featuresSourceset = Html5.canOverrideAttributes();
+  /**
+   * Boolean indicating whether the `HTML5` tech currently supports native `TextTrack`s.
+   *
+   * @type {boolean}
+   * @default {@link Html5.supportsNativeTextTracks}
+   */
+
+  /**
+   * Boolean indicating whether the `HTML5` tech currently supports native `VideoTrack`s.
+   *
+   * @type {boolean}
+   * @default {@link Html5.supportsNativeVideoTracks}
+   */
+
+  /**
+   * Boolean indicating whether the `HTML5` tech currently supports native `AudioTrack`s.
+   *
+   * @type {boolean}
+   * @default {@link Html5.supportsNativeAudioTracks}
+   */
+
+  [['featuresVolumeControl', 'canControlVolume'], ['featuresMuteControl', 'canMuteVolume'], ['featuresPlaybackRate', 'canControlPlaybackRate'], ['featuresSourceset', 'canOverrideAttributes'], ['featuresNativeTextTracks', 'supportsNativeTextTracks'], ['featuresNativeVideoTracks', 'supportsNativeVideoTracks'], ['featuresNativeAudioTracks', 'supportsNativeAudioTracks']].forEach(function (_ref) {
+    var key = _ref[0],
+        fn = _ref[1];
+    defineLazyProperty(Html5.prototype, key, function () {
+      return Html5[fn]();
+    }, true);
+  });
   /**
    * Boolean indicating whether the `HTML5` tech currently supports the media element
    * moving in the DOM. iOS breaks if you move the media element, so this is set this to
@@ -23095,40 +22265,19 @@
    * @default
    */
 
-  Html5.prototype.featuresTimeupdateEvents = true;
-  /**
-   * Boolean indicating whether the `HTML5` tech currently supports native `TextTrack`s.
-   *
-   * @type {boolean}
-   * @default {@link Html5.supportsNativeTextTracks}
-   */
+  Html5.prototype.featuresTimeupdateEvents = true; // HTML5 Feature detection and Device Fixes --------------------------------- //
 
-  Html5.prototype.featuresNativeTextTracks = Html5.supportsNativeTextTracks();
-  /**
-   * Boolean indicating whether the `HTML5` tech currently supports native `VideoTrack`s.
-   *
-   * @type {boolean}
-   * @default {@link Html5.supportsNativeVideoTracks}
-   */
-
-  Html5.prototype.featuresNativeVideoTracks = Html5.supportsNativeVideoTracks();
-  /**
-   * Boolean indicating whether the `HTML5` tech currently supports native `AudioTrack`s.
-   *
-   * @type {boolean}
-   * @default {@link Html5.supportsNativeAudioTracks}
-   */
-
-  Html5.prototype.featuresNativeAudioTracks = Html5.supportsNativeAudioTracks(); // HTML5 Feature detection and Device Fixes --------------------------------- //
-
-  var canPlayType = Html5.TEST_VID && Html5.TEST_VID.constructor.prototype.canPlayType;
-  var mpegurlRE = /^application\/(?:x-|vnd\.apple\.)mpegurl/i;
+  var canPlayType;
 
   Html5.patchCanPlayType = function () {
     // Android 4.0 and above can play HLS to some extent but it reports being unable to do so
     // Firefox and Chrome report correctly
     if (ANDROID_VERSION >= 4.0 && !IS_FIREFOX && !IS_CHROME) {
+      canPlayType = Html5.TEST_VID && Html5.TEST_VID.constructor.prototype.canPlayType;
+
       Html5.TEST_VID.constructor.prototype.canPlayType = function (type) {
+        var mpegurlRE = /^application\/(?:x-|vnd\.apple\.)mpegurl/i;
+
         if (type && mpegurlRE.test(type)) {
           return 'maybe';
         }
@@ -23140,7 +22289,11 @@
 
   Html5.unpatchCanPlayType = function () {
     var r = Html5.TEST_VID.constructor.prototype.canPlayType;
-    Html5.TEST_VID.constructor.prototype.canPlayType = canPlayType;
+
+    if (canPlayType) {
+      Html5.TEST_VID.constructor.prototype.canPlayType = canPlayType;
+    }
+
     return r;
   }; // by default, patch the media element
 
@@ -24044,10 +23197,8 @@
    * @extends Component
    */
 
-  var Player =
-  /*#__PURE__*/
-  function (_Component) {
-    _inheritsLoose(Player, _Component);
+  var Player = /*#__PURE__*/function (_Component) {
+    inheritsLoose(Player, _Component);
 
     /**
      * Create an instance of this class.
@@ -24107,8 +23258,10 @@
 
       _this = _Component.call(this, null, options, ready) || this; // Create bound methods for document listeners.
 
-      _this.boundDocumentFullscreenChange_ = bind(_assertThisInitialized(_this), _this.documentFullscreenChange_);
-      _this.boundFullWindowOnEscKey_ = bind(_assertThisInitialized(_this), _this.fullWindowOnEscKey); // create logger
+      _this.boundDocumentFullscreenChange_ = bind(assertThisInitialized(_this), _this.documentFullscreenChange_);
+      _this.boundFullWindowOnEscKey_ = bind(assertThisInitialized(_this), _this.fullWindowOnEscKey); // default isFullscreen_ to false
+
+      _this.isFullscreen_ = false; // create logger
 
       _this.log = createLogger$1(_this.id_); // Hold our own reference to fullscreen api so it can be mocked in tests
 
@@ -24191,9 +23344,18 @@
       _this.scrubbing_ = false;
       _this.el_ = _this.createEl(); // Make this an evented object and use `el_` as its event bus.
 
-      evented(_assertThisInitialized(_this), {
+      evented(assertThisInitialized(_this), {
         eventBusKey: 'el_'
-      });
+      }); // listen to document and player fullscreenchange handlers so we receive those events
+      // before a user can receive them so we can update isFullscreen appropriately.
+      // make sure that we listen to fullscreenchange events before everything else to make sure that
+      // our isFullscreen method is updated properly for internal components as well as external.
+
+      if (_this.fsApi_.requestFullscreen) {
+        on(document, _this.fsApi_.fullscreenchange, _this.boundDocumentFullscreenChange_);
+
+        _this.on(_this.fsApi_.fullscreenchange, _this.boundDocumentFullscreenChange_);
+      }
 
       if (_this.fluid_) {
         _this.on('playerreset', _this.updateStyleEl_);
@@ -24258,7 +23420,7 @@
       } // Make player easily findable by ID
 
 
-      Player.players[_this.id_] = _assertThisInitialized(_this); // Add a major version class to aid css in plugins
+      Player.players[_this.id_] = assertThisInitialized(_this); // Add a major version class to aid css in plugins
 
       var majorVersion = version.split('.')[0];
 
@@ -24401,7 +23563,10 @@
         // was initialized.
 
         Object.keys(el).forEach(function (k) {
-          tag[k] = el[k];
+          try {
+            tag[k] = el[k];
+          } catch (e) {// we got a a property like outerHTML which we can't actually copy, ignore it
+          }
         });
       } // set tabindex to -1 to remove the video element from the focus order
 
@@ -24455,7 +23620,7 @@
       // of the player in a way that's still overrideable by CSS, just like the
       // video element
 
-      if (window$1.VIDEOJS_NO_DYNAMIC_STYLE !== true) {
+      if (window$3.VIDEOJS_NO_DYNAMIC_STYLE !== true) {
         this.styleEl_ = createStyleElement('vjs-styles-dimensions');
         var defaultsStyleEl = $('.vjs-styles-defaults');
         var head = $('head');
@@ -24554,7 +23719,7 @@
         return this[privDimension] || 0;
       }
 
-      if (value === '') {
+      if (value === '' || value === 'auto') {
         // If an empty string is given, reset the dimension to be automatic
         this[privDimension] = undefined;
         this.updateStyleEl_();
@@ -24687,7 +23852,7 @@
     ;
 
     _proto.updateStyleEl_ = function updateStyleEl_() {
-      if (window$1.VIDEOJS_NO_DYNAMIC_STYLE === true) {
+      if (window$3.VIDEOJS_NO_DYNAMIC_STYLE === true) {
         var _width = typeof this.width_ === 'number' ? this.width_ : this.options_.width;
 
         var _height = typeof this.height_ === 'number' ? this.height_ : this.options_.height;
@@ -25759,6 +24924,13 @@
     ;
 
     _proto.documentFullscreenChange_ = function documentFullscreenChange_(e) {
+      var targetPlayer = e.target.player; // if another player was fullscreen
+      // do a null check for targetPlayer because older firefox's would put document as e.target
+
+      if (targetPlayer && targetPlayer !== this) {
+        return;
+      }
+
       var el = this.el();
       var isFs = document[this.fsApi_.fullscreenElement] === el;
 
@@ -25768,19 +24940,7 @@
         isFs = el.msMatchesSelector(':' + this.fsApi_.fullscreen);
       }
 
-      this.isFullscreen(isFs); // If cancelling fullscreen, remove event listener.
-
-      if (this.isFullscreen() === false) {
-        off(document, this.fsApi_.fullscreenchange, this.boundDocumentFullscreenChange_);
-      }
-
-      if (this.fsApi_.prefixed) {
-        /**
-         * @event Player#fullscreenchange
-         * @type {EventTarget~Event}
-         */
-        this.trigger('fullscreenchange');
-      }
+      this.isFullscreen(isFs);
     }
     /**
      * Handle Tech Fullscreen Change
@@ -25801,15 +24961,6 @@
       if (data) {
         this.isFullscreen(data.isFullscreen);
       }
-      /**
-       * Fired when going in and out of fullscreen.
-       *
-       * @event Player#fullscreenchange
-       * @type {EventTarget~Event}
-       */
-
-
-      this.trigger('fullscreenchange');
     }
     /**
      * @private
@@ -26022,7 +25173,7 @@
     _proto.play = function play() {
       var _this8 = this;
 
-      var PromiseClass = this.options_.Promise || window$1.Promise;
+      var PromiseClass = this.options_.Promise || window$3.Promise;
 
       if (PromiseClass) {
         return new PromiseClass(function (resolve) {
@@ -26247,13 +25398,8 @@
 
         if (seconds === Infinity) {
           this.addClass('vjs-live');
-
-          if (this.options_.liveui && this.player_.liveTracker) {
-            this.addClass('vjs-liveui');
-          }
         } else {
           this.removeClass('vjs-live');
-          this.removeClass('vjs-liveui');
         }
 
         if (!isNaN(seconds)) {
@@ -26493,12 +25639,24 @@
 
     _proto.isFullscreen = function isFullscreen(isFS) {
       if (isFS !== undefined) {
-        this.isFullscreen_ = !!isFS;
+        var oldValue = this.isFullscreen_;
+        this.isFullscreen_ = Boolean(isFS); // if we changed fullscreen state and we're in prefixed mode, trigger fullscreenchange
+        // this is the only place where we trigger fullscreenchange events for older browsers
+        // fullWindow mode is treated as a prefixed event and will get a fullscreenchange event as well
+
+        if (this.isFullscreen_ !== oldValue && this.fsApi_.prefixed) {
+          /**
+             * @event Player#fullscreenchange
+             * @type {EventTarget~Event}
+             */
+          this.trigger('fullscreenchange');
+        }
+
         this.toggleFullscreenClass_();
         return;
       }
 
-      return !!this.isFullscreen_;
+      return this.isFullscreen_;
     }
     /**
      * Increase the size of the video to full screen
@@ -26517,28 +25675,38 @@
     ;
 
     _proto.requestFullscreen = function requestFullscreen(fullscreenOptions) {
-      var fsOptions;
-      this.isFullscreen(true);
+      var _this10 = this;
+
+      var fsOptions; // Only pass fullscreen options to requestFullscreen in spec-compliant browsers.
+      // Use defaults or player configured option unless passed directly to this method.
+
+      if (!this.fsApi_.prefixed) {
+        fsOptions = this.options_.fullscreen && this.options_.fullscreen.options || {};
+
+        if (fullscreenOptions !== undefined) {
+          fsOptions = fullscreenOptions;
+        }
+      } // This method works as follows:
+      // 1. if a fullscreen api is available, use it
+      //   1. call requestFullscreen with potential options
+      //   2. if we got a promise from above, use it to update isFullscreen()
+      // 2. otherwise, if the tech supports fullscreen, call `enterFullScreen` on it.
+      //   This is particularly used for iPhone, older iPads, and non-safari browser on iOS.
+      // 3. otherwise, use "fullWindow" mode
+
 
       if (this.fsApi_.requestFullscreen) {
-        // the browser supports going fullscreen at the element level so we can
-        // take the controls fullscreen as well as the video
-        // Trigger fullscreenchange event after change
-        // We have to specifically add this each time, and remove
-        // when canceling fullscreen. Otherwise if there's multiple
-        // players on a page, they would all be reacting to the same fullscreen
-        // events
-        on(document, this.fsApi_.fullscreenchange, this.boundDocumentFullscreenChange_); // only pass FullscreenOptions to requestFullscreen if it isn't prefixed
+        var promise = this.el_[this.fsApi_.requestFullscreen](fsOptions);
 
-        if (!this.fsApi_.prefixed) {
-          fsOptions = this.options_.fullscreen && this.options_.fullscreen.options || {};
-
-          if (fullscreenOptions !== undefined) {
-            fsOptions = fullscreenOptions;
-          }
+        if (promise) {
+          promise.then(function () {
+            return _this10.isFullscreen(true);
+          }, function () {
+            return _this10.isFullscreen(false);
+          });
         }
 
-        silencePromise(this.el_[this.fsApi_.requestFullscreen](fsOptions));
+        return promise;
       } else if (this.tech_.supportsFullScreen()) {
         // we can't take the video.js controls fullscreen but we can go fullscreen
         // with native controls
@@ -26547,12 +25715,6 @@
         // fullscreen isn't supported so we'll just stretch the video element to
         // fill the viewport
         this.enterFullWindow();
-        /**
-         * @event Player#fullscreenchange
-         * @type {EventTarget~Event}
-         */
-
-        this.trigger('fullscreenchange');
       }
     }
     /**
@@ -26563,20 +25725,22 @@
     ;
 
     _proto.exitFullscreen = function exitFullscreen() {
-      this.isFullscreen(false); // Check for browser element fullscreen support
+      var _this11 = this;
 
       if (this.fsApi_.requestFullscreen) {
-        silencePromise(document[this.fsApi_.exitFullscreen]());
+        var promise = document[this.fsApi_.exitFullscreen]();
+
+        if (promise) {
+          promise.then(function () {
+            return _this11.isFullscreen(false);
+          });
+        }
+
+        return promise;
       } else if (this.tech_.supportsFullScreen()) {
         this.techCall_('exitFullScreen');
       } else {
         this.exitFullWindow();
-        /**
-         * @event Player#fullscreenchange
-         * @type {EventTarget~Event}
-         */
-
-        this.trigger('fullscreenchange');
       }
     }
     /**
@@ -26588,6 +25752,7 @@
     ;
 
     _proto.enterFullWindow = function enterFullWindow() {
+      this.isFullscreen(true);
       this.isFullWindow = true; // Storing original doc overflow value to return to when fullscreen is off
 
       this.docOrigOverflow = document.documentElement.style.overflow; // Add listener for esc key to exit fullscreen
@@ -26630,6 +25795,7 @@
     ;
 
     _proto.exitFullWindow = function exitFullWindow() {
+      this.isFullscreen(false);
       this.isFullWindow = false;
       off(document, 'keydown', this.boundFullWindowOnEscKey_); // Unhide scroll bars.
 
@@ -26874,7 +26040,7 @@
     ;
 
     _proto.selectSource = function selectSource(sources) {
-      var _this10 = this;
+      var _this12 = this;
 
       // Get only the techs specified in `techOrder` that exist and are supported by the
       // current platform
@@ -26922,7 +26088,7 @@
         var techName = _ref2[0],
             tech = _ref2[1];
 
-        if (tech.canPlaySource(source, _this10.options_[techName.toLowerCase()])) {
+        if (tech.canPlaySource(source, _this12.options_[techName.toLowerCase()])) {
           return {
             source: source,
             tech: techName
@@ -26960,7 +26126,7 @@
     ;
 
     _proto.src = function src(source) {
-      var _this11 = this;
+      var _this13 = this;
 
       // getter usage
       if (typeof source === 'undefined') {
@@ -26989,23 +26155,23 @@
       this.updateSourceCaches_(sources[0]); // middlewareSource is the source after it has been changed by middleware
 
       setSource(this, sources[0], function (middlewareSource, mws) {
-        _this11.middleware_ = mws; // since sourceSet is async we have to update the cache again after we select a source since
+        _this13.middleware_ = mws; // since sourceSet is async we have to update the cache again after we select a source since
         // the source that is selected could be out of order from the cache update above this callback.
 
-        _this11.cache_.sources = sources;
+        _this13.cache_.sources = sources;
 
-        _this11.updateSourceCaches_(middlewareSource);
+        _this13.updateSourceCaches_(middlewareSource);
 
-        var err = _this11.src_(middlewareSource);
+        var err = _this13.src_(middlewareSource);
 
         if (err) {
           if (sources.length > 1) {
-            return _this11.src(sources.slice(1));
+            return _this13.src(sources.slice(1));
           }
 
-          _this11.changingSrc_ = false; // We need to wrap this in a timeout to give folks a chance to add error event handlers
+          _this13.changingSrc_ = false; // We need to wrap this in a timeout to give folks a chance to add error event handlers
 
-          _this11.setTimeout(function () {
+          _this13.setTimeout(function () {
             this.error({
               code: 4,
               message: this.localize(this.options_.notSupportedMessage)
@@ -27014,12 +26180,12 @@
           // this needs a better comment about why this is needed
 
 
-          _this11.triggerReady();
+          _this13.triggerReady();
 
           return;
         }
 
-        setTech(mws, _this11.tech_);
+        setTech(mws, _this13.tech_);
       });
     }
     /**
@@ -27038,7 +26204,7 @@
     ;
 
     _proto.src_ = function src_(source) {
-      var _this12 = this;
+      var _this14 = this;
 
       var sourceTech = this.selectSource([source]);
 
@@ -27051,7 +26217,7 @@
 
         this.loadTech_(sourceTech.tech, sourceTech.source);
         this.tech_.ready(function () {
-          _this12.changingSrc_ = false;
+          _this14.changingSrc_ = false;
         });
         return false;
       } // wait until the tech is ready to set the source
@@ -27089,16 +26255,16 @@
     ;
 
     _proto.reset = function reset() {
-      var _this13 = this;
+      var _this15 = this;
 
-      var PromiseClass = this.options_.Promise || window$1.Promise;
+      var PromiseClass = this.options_.Promise || window$3.Promise;
 
       if (this.paused() || !PromiseClass) {
         this.doReset_();
       } else {
         var playPromise = this.play();
         silencePromise(playPromise.then(function () {
-          return _this13.doReset_();
+          return _this15.doReset_();
         }));
       }
     };
@@ -27538,7 +26704,7 @@
       // user interaction
 
 
-      if (this.options_.suppressNotSupportedError && err && err.message && err.message === this.localize(this.options_.notSupportedMessage)) {
+      if (this.options_.suppressNotSupportedError && err && err.code === 4) {
         var triggerSuppressedError = function triggerSuppressedError() {
           this.error(err);
         };
@@ -27689,7 +26855,7 @@
         mouseInProgress = this.setInterval(handleActivity, 250);
       };
 
-      var handleMouseUp = function handleMouseUp(event) {
+      var handleMouseUpAndMouseLeave = function handleMouseUpAndMouseLeave(event) {
         handleActivity(); // Stop the interval that maintains activity if the mouse/touch is down
 
         this.clearInterval(mouseInProgress);
@@ -27698,7 +26864,8 @@
 
       this.on('mousedown', handleMouseDown);
       this.on('mousemove', handleMouseMove);
-      this.on('mouseup', handleMouseUp);
+      this.on('mouseup', handleMouseUpAndMouseLeave);
+      this.on('mouseleave', handleMouseUpAndMouseLeave);
       var controlBar = this.getChild('controlBar'); // Fixes bug on Android & iOS where when tapping progressBar (when control bar is displayed)
       // controlBar would no longer be hidden by default timeout.
 
@@ -27858,15 +27025,16 @@
       }
     }
     /**
-     * Create a remote {@link TextTrack} and an {@link HTMLTrackElement}. It will
-     * automatically removed from the video element whenever the source changes, unless
-     * manualCleanup is set to false.
+     * Create a remote {@link TextTrack} and an {@link HTMLTrackElement}.
+     * When manualCleanup is set to false, the track will be automatically removed
+     * on source changes.
      *
      * @param {Object} options
      *        Options to pass to {@link HTMLTrackElement} during creation. See
      *        {@link HTMLTrackElement} for object properties that you should use.
      *
      * @param {boolean} [manualCleanup=true] if set to false, the TextTrack will be
+     *                                       removed on a source change
      *
      * @return {HtmlTrackElement}
      *         the HTMLTrackElement that was created and added
@@ -28027,14 +27195,14 @@
     ;
 
     _proto.createModal = function createModal(content, options) {
-      var _this14 = this;
+      var _this16 = this;
 
       options = options || {};
       options.content = content || '';
       var modal = new ModalDialog(this, options);
       this.addChild(modal);
       modal.on('dispose', function () {
-        _this14.removeChild(modal);
+        _this16.removeChild(modal);
       });
       modal.open();
       return modal;
@@ -28265,7 +27433,7 @@
     ;
 
     _proto.loadMedia = function loadMedia(media, ready) {
-      var _this15 = this;
+      var _this17 = this;
 
       if (!media || typeof media !== 'object') {
         return;
@@ -28297,7 +27465,7 @@
 
       if (Array.isArray(textTracks)) {
         textTracks.forEach(function (tt) {
-          return _this15.addRemoteTextTrack(tt, false);
+          return _this17.addRemoteTextTrack(tt, false);
         });
       }
 
@@ -28499,7 +27667,7 @@
    */
 
   Player.players = {};
-  var navigator = window$1.navigator;
+  var navigator = window$3.navigator;
   /*
    * Player instance options, surfaced using options
    * options = Player.prototype.options_
@@ -28673,6 +27841,55 @@
 
   Component.registerComponent('Player', Player);
 
+  var setPrototypeOf = createCommonjsModule(function (module) {
+    function _setPrototypeOf(o, p) {
+      module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+        o.__proto__ = p;
+        return o;
+      };
+
+      return _setPrototypeOf(o, p);
+    }
+
+    module.exports = _setPrototypeOf;
+  });
+
+  function _isNativeReflectConstruct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
+
+    try {
+      Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  var isNativeReflectConstruct = _isNativeReflectConstruct;
+
+  var construct = createCommonjsModule(function (module) {
+    function _construct(Parent, args, Class) {
+      if (isNativeReflectConstruct()) {
+        module.exports = _construct = Reflect.construct;
+      } else {
+        module.exports = _construct = function _construct(Parent, args, Class) {
+          var a = [null];
+          a.push.apply(a, args);
+          var Constructor = Function.bind.apply(Parent, a);
+          var instance = new Constructor();
+          if (Class) setPrototypeOf(instance, Class.prototype);
+          return instance;
+        };
+      }
+
+      return _construct.apply(null, arguments);
+    }
+
+    module.exports = _construct;
+  });
+
   /**
    * The base plugin name.
    *
@@ -28844,7 +28061,7 @@
         args[_key] = arguments[_key];
       }
 
-      var instance = _construct(PluginSubClass, [this].concat(args)); // The plugin is replaced by a function that returns the current instance.
+      var instance = construct(PluginSubClass, [this].concat(args)); // The plugin is replaced by a function that returns the current instance.
 
 
       this[name] = function () {
@@ -28871,9 +28088,7 @@
    */
 
 
-  var Plugin =
-  /*#__PURE__*/
-  function () {
+  var Plugin = /*#__PURE__*/function () {
     /**
      * Creates an instance of this class.
      *
@@ -29221,43 +28436,27 @@
    *           plugin class/constructor.
    */
 
-  /**
-   * @file extend.js
-   * @module extend
-   */
-
-  /**
-   * A combination of node inherits and babel's inherits (after transpile).
-   * Both work the same but node adds `super_` to the subClass
-   * and Bable adds the superClass as __proto__. Both seem useful.
-   *
-   * @param {Object} subClass
-   *        The class to inherit to
-   *
-   * @param {Object} superClass
-   *        The class to inherit from
-   *
-   * @private
-   */
-  var _inherits = function _inherits(subClass, superClass) {
-    if (typeof superClass !== 'function' && superClass !== null) {
-      throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+      throw new TypeError("Super expression must either be null or a function");
     }
 
     subClass.prototype = Object.create(superClass && superClass.prototype, {
       constructor: {
         value: subClass,
-        enumerable: false,
         writable: true,
         configurable: true
       }
     });
+    if (superClass) setPrototypeOf(subClass, superClass);
+  }
 
-    if (superClass) {
-      // node
-      subClass.super_ = superClass;
-    }
-  };
+  var inherits = _inherits;
+
+  /**
+   * @file extend.js
+   * @module extend
+   */
   /**
    * Used to subclass an existing class by emulating ES subclassing using the
    * `extends` keyword.
@@ -29280,8 +28479,7 @@
    *           The new class with subClassMethods that inherited superClass.
    */
 
-
-  var extend$1 = function extend(superClass, subClassMethods) {
+  var extend = function extend(superClass, subClassMethods) {
     if (subClassMethods === void 0) {
       subClassMethods = {};
     }
@@ -29302,7 +28500,12 @@
       subClass = subClassMethods;
     }
 
-    _inherits(subClass, superClass); // Extend subObj's prototype with functions and other properties from props
+    inherits(subClass, superClass); // this is needed for backward-compatibility and node compatibility.
+
+
+    if (superClass) {
+      subClass.super_ = superClass;
+    } // Extend subObj's prototype with functions and other properties from props
 
 
     for (var name in methods) {
@@ -29557,7 +28760,7 @@
   }; // Add default styles
 
 
-  if (window$1.VIDEOJS_NO_DYNAMIC_STYLE !== true && isReal()) {
+  if (window$3.VIDEOJS_NO_DYNAMIC_STYLE !== true && isReal()) {
     var style = $('.vjs-styles-defaults');
 
     if (!style) {
@@ -29731,7 +28934,7 @@
    */
 
   videojs$1.TOUCH_ENABLED = TOUCH_ENABLED;
-  videojs$1.extend = extend$1;
+  videojs$1.extend = extend;
   videojs$1.mergeOptions = mergeOptions;
   videojs$1.bind = bind;
   videojs$1.registerPlugin = Plugin.registerPlugin;
@@ -29838,6 +29041,7 @@
    */
 
   videojs$1.url = Url;
+  videojs$1.defineLazyProperty = defineLazyProperty;
 
   var urlToolkit = createCommonjsModule(function (module, exports) {
     // see https://tools.ietf.org/html/rfc1808
@@ -30062,9 +29266,7 @@
    */
 
 
-  var Stream =
-  /*#__PURE__*/
-  function () {
+  var Stream = /*#__PURE__*/function () {
     function Stream() {
       this.listeners = {};
     }
@@ -30177,9 +29379,7 @@
    */
 
 
-  var LineStream =
-  /*#__PURE__*/
-  function (_Stream) {
+  var LineStream = /*#__PURE__*/function (_Stream) {
     _inheritsLoose$1(LineStream, _Stream);
 
     function LineStream() {
@@ -30283,9 +29483,7 @@
    */
 
 
-  var ParseStream =
-  /*#__PURE__*/
-  function (_Stream) {
+  var ParseStream = /*#__PURE__*/function (_Stream) {
     _inheritsLoose$1(ParseStream, _Stream);
 
     function ParseStream() {
@@ -30845,7 +30043,7 @@
   }(Stream);
 
   function decodeB64ToUint8Array(b64Text) {
-    var decodedString = window$1.atob(b64Text || '');
+    var decodedString = window$3.atob(b64Text || '');
     var array = new Uint8Array(decodedString.length);
 
     for (var i = 0; i < decodedString.length; i++) {
@@ -30877,9 +30075,7 @@
    */
 
 
-  var Parser =
-  /*#__PURE__*/
-  function (_Stream) {
+  var Parser = /*#__PURE__*/function (_Stream) {
     _inheritsLoose$1(Parser, _Stream);
 
     function Parser() {
@@ -31341,7 +30537,2540 @@
     return Parser;
   }(Stream);
 
-  /*! @name mpd-parser @version 0.8.1 @license Apache-2.0 */
+  function _interopDefault(ex) {
+    return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
+  }
+
+  var URLToolkit = _interopDefault(urlToolkit);
+
+  var window$1 = _interopDefault(window$3);
+
+  var resolveUrl = function resolveUrl(baseUrl, relativeUrl) {
+    // return early if we don't need to resolve
+    if (/^[a-z]+:/i.test(relativeUrl)) {
+      return relativeUrl;
+    } // if the base URL is relative then combine with the current location
+
+
+    if (!/\/\//i.test(baseUrl)) {
+      baseUrl = URLToolkit.buildAbsoluteURL(window$1.location && window$1.location.href || '', baseUrl);
+    }
+
+    return URLToolkit.buildAbsoluteURL(baseUrl, relativeUrl);
+  };
+
+  var resolveUrl_1 = resolveUrl;
+
+  function _interopDefault$1(ex) {
+    return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
+  }
+
+  var window$2 = _interopDefault$1(window$3);
+
+  var atob = function atob(s) {
+    return window$2.atob ? window$2.atob(s) : Buffer.from(s, 'base64').toString('binary');
+  };
+
+  function decodeB64ToUint8Array$1(b64Text) {
+    var decodedString = atob(b64Text);
+    var array = new Uint8Array(decodedString.length);
+
+    for (var i = 0; i < decodedString.length; i++) {
+      array[i] = decodedString.charCodeAt(i);
+    }
+
+    return array;
+  }
+
+  var decodeB64ToUint8Array_1 = decodeB64ToUint8Array$1;
+
+  //[4]   	NameStartChar	   ::=   	":" | [A-Z] | "_" | [a-z] | [#xC0-#xD6] | [#xD8-#xF6] | [#xF8-#x2FF] | [#x370-#x37D] | [#x37F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
+  //[4a]   	NameChar	   ::=   	NameStartChar | "-" | "." | [0-9] | #xB7 | [#x0300-#x036F] | [#x203F-#x2040]
+  //[5]   	Name	   ::=   	NameStartChar (NameChar)*
+  var nameStartChar = /[A-Z_a-z\xC0-\xD6\xD8-\xF6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/; //\u10000-\uEFFFF
+
+  var nameChar = new RegExp("[\\-\\.0-9" + nameStartChar.source.slice(1, -1) + "\\u00B7\\u0300-\\u036F\\u203F-\\u2040]");
+  var tagNamePattern = new RegExp('^' + nameStartChar.source + nameChar.source + '*(?:\:' + nameStartChar.source + nameChar.source + '*)?$'); //var tagNamePattern = /^[a-zA-Z_][\w\-\.]*(?:\:[a-zA-Z_][\w\-\.]*)?$/
+  //var handlers = 'resolveEntity,getExternalSubset,characters,endDocument,endElement,endPrefixMapping,ignorableWhitespace,processingInstruction,setDocumentLocator,skippedEntity,startDocument,startElement,startPrefixMapping,notationDecl,unparsedEntityDecl,error,fatalError,warning,attributeDecl,elementDecl,externalEntityDecl,internalEntityDecl,comment,endCDATA,endDTD,endEntity,startCDATA,startDTD,startEntity'.split(',')
+  //S_TAG,	S_ATTR,	S_EQ,	S_ATTR_NOQUOT_VALUE
+  //S_ATTR_SPACE,	S_ATTR_END,	S_TAG_SPACE, S_TAG_CLOSE
+
+  var S_TAG = 0; //tag name offerring
+
+  var S_ATTR = 1; //attr name offerring
+
+  var S_ATTR_SPACE = 2; //attr name end and space offer
+
+  var S_EQ = 3; //=space?
+
+  var S_ATTR_NOQUOT_VALUE = 4; //attr value(no quot value only)
+
+  var S_ATTR_END = 5; //attr value end and no space(quot end)
+
+  var S_TAG_SPACE = 6; //(attr value end || tag end ) && (space offer)
+
+  var S_TAG_CLOSE = 7; //closed el<el />
+
+  function XMLReader() {}
+
+  XMLReader.prototype = {
+    parse: function parse(source, defaultNSMap, entityMap) {
+      var domBuilder = this.domBuilder;
+      domBuilder.startDocument();
+
+      _copy(defaultNSMap, defaultNSMap = {});
+
+      _parse(source, defaultNSMap, entityMap, domBuilder, this.errorHandler);
+
+      domBuilder.endDocument();
+    }
+  };
+
+  function _parse(source, defaultNSMapCopy, entityMap, domBuilder, errorHandler) {
+    function fixedFromCharCode(code) {
+      // String.prototype.fromCharCode does not supports
+      // > 2 bytes unicode chars directly
+      if (code > 0xffff) {
+        code -= 0x10000;
+        var surrogate1 = 0xd800 + (code >> 10),
+            surrogate2 = 0xdc00 + (code & 0x3ff);
+        return String.fromCharCode(surrogate1, surrogate2);
+      } else {
+        return String.fromCharCode(code);
+      }
+    }
+
+    function entityReplacer(a) {
+      var k = a.slice(1, -1);
+
+      if (k in entityMap) {
+        return entityMap[k];
+      } else if (k.charAt(0) === '#') {
+        return fixedFromCharCode(parseInt(k.substr(1).replace('x', '0x')));
+      } else {
+        errorHandler.error('entity not found:' + a);
+        return a;
+      }
+    }
+
+    function appendText(end) {
+      //has some bugs
+      if (end > start) {
+        var xt = source.substring(start, end).replace(/&#?\w+;/g, entityReplacer);
+        locator && position(start);
+        domBuilder.characters(xt, 0, end - start);
+        start = end;
+      }
+    }
+
+    function position(p, m) {
+      while (p >= lineEnd && (m = linePattern.exec(source))) {
+        lineStart = m.index;
+        lineEnd = lineStart + m[0].length;
+        locator.lineNumber++; //console.log('line++:',locator,startPos,endPos)
+      }
+
+      locator.columnNumber = p - lineStart + 1;
+    }
+
+    var lineStart = 0;
+    var lineEnd = 0;
+    var linePattern = /.*(?:\r\n?|\n)|.*$/g;
+    var locator = domBuilder.locator;
+    var parseStack = [{
+      currentNSMap: defaultNSMapCopy
+    }];
+    var closeMap = {};
+    var start = 0;
+
+    while (true) {
+      try {
+        var tagStart = source.indexOf('<', start);
+
+        if (tagStart < 0) {
+          if (!source.substr(start).match(/^\s*$/)) {
+            var doc = domBuilder.doc;
+            var text = doc.createTextNode(source.substr(start));
+            doc.appendChild(text);
+            domBuilder.currentElement = text;
+          }
+
+          return;
+        }
+
+        if (tagStart > start) {
+          appendText(tagStart);
+        }
+
+        switch (source.charAt(tagStart + 1)) {
+          case '/':
+            var end = source.indexOf('>', tagStart + 3);
+            var tagName = source.substring(tagStart + 2, end);
+            var config = parseStack.pop();
+
+            if (end < 0) {
+              tagName = source.substring(tagStart + 2).replace(/[\s<].*/, ''); //console.error('#@@@@@@'+tagName)
+
+              errorHandler.error("end tag name: " + tagName + ' is not complete:' + config.tagName);
+              end = tagStart + 1 + tagName.length;
+            } else if (tagName.match(/\s</)) {
+              tagName = tagName.replace(/[\s<].*/, '');
+              errorHandler.error("end tag name: " + tagName + ' maybe not complete');
+              end = tagStart + 1 + tagName.length;
+            } //console.error(parseStack.length,parseStack)
+            //console.error(config);
+
+
+            var localNSMap = config.localNSMap;
+            var endMatch = config.tagName == tagName;
+            var endIgnoreCaseMach = endMatch || config.tagName && config.tagName.toLowerCase() == tagName.toLowerCase();
+
+            if (endIgnoreCaseMach) {
+              domBuilder.endElement(config.uri, config.localName, tagName);
+
+              if (localNSMap) {
+                for (var prefix in localNSMap) {
+                  domBuilder.endPrefixMapping(prefix);
+                }
+              }
+
+              if (!endMatch) {
+                errorHandler.fatalError("end tag name: " + tagName + ' is not match the current start tagName:' + config.tagName);
+              }
+            } else {
+              parseStack.push(config);
+            }
+
+            end++;
+            break;
+          // end elment
+
+          case '?':
+            // <?...?>
+            locator && position(tagStart);
+            end = parseInstruction(source, tagStart, domBuilder);
+            break;
+
+          case '!':
+            // <!doctype,<![CDATA,<!--
+            locator && position(tagStart);
+            end = parseDCC(source, tagStart, domBuilder, errorHandler);
+            break;
+
+          default:
+            locator && position(tagStart);
+            var el = new ElementAttributes();
+            var currentNSMap = parseStack[parseStack.length - 1].currentNSMap; //elStartEnd
+
+            var end = parseElementStartPart(source, tagStart, el, currentNSMap, entityReplacer, errorHandler);
+            var len = el.length;
+
+            if (!el.closed && fixSelfClosed(source, end, el.tagName, closeMap)) {
+              el.closed = true;
+
+              if (!entityMap.nbsp) {
+                errorHandler.warning('unclosed xml attribute');
+              }
+            }
+
+            if (locator && len) {
+              var locator2 = copyLocator(locator, {}); //try{//attribute position fixed
+
+              for (var i = 0; i < len; i++) {
+                var a = el[i];
+                position(a.offset);
+                a.locator = copyLocator(locator, {});
+              } //}catch(e){console.error('@@@@@'+e)}
+
+
+              domBuilder.locator = locator2;
+
+              if (appendElement(el, domBuilder, currentNSMap)) {
+                parseStack.push(el);
+              }
+
+              domBuilder.locator = locator;
+            } else {
+              if (appendElement(el, domBuilder, currentNSMap)) {
+                parseStack.push(el);
+              }
+            }
+
+            if (el.uri === 'http://www.w3.org/1999/xhtml' && !el.closed) {
+              end = parseHtmlSpecialContent(source, end, el.tagName, entityReplacer, domBuilder);
+            } else {
+              end++;
+            }
+
+        }
+      } catch (e) {
+        errorHandler.error('element parse error: ' + e); //errorHandler.error('element parse error: '+e);
+
+        end = -1; //throw e;
+      }
+
+      if (end > start) {
+        start = end;
+      } else {
+        //TODO: 这里有可能sax回退，有位置错误风险
+        appendText(Math.max(tagStart, start) + 1);
+      }
+    }
+  }
+
+  function copyLocator(f, t) {
+    t.lineNumber = f.lineNumber;
+    t.columnNumber = f.columnNumber;
+    return t;
+  }
+  /**
+   * @see #appendElement(source,elStartEnd,el,selfClosed,entityReplacer,domBuilder,parseStack);
+   * @return end of the elementStartPart(end of elementEndPart for selfClosed el)
+   */
+
+
+  function parseElementStartPart(source, start, el, currentNSMap, entityReplacer, errorHandler) {
+    var attrName;
+    var value;
+    var p = ++start;
+    var s = S_TAG; //status
+
+    while (true) {
+      var c = source.charAt(p);
+
+      switch (c) {
+        case '=':
+          if (s === S_ATTR) {
+            //attrName
+            attrName = source.slice(start, p);
+            s = S_EQ;
+          } else if (s === S_ATTR_SPACE) {
+            s = S_EQ;
+          } else {
+            //fatalError: equal must after attrName or space after attrName
+            throw new Error('attribute equal must after attrName');
+          }
+
+          break;
+
+        case '\'':
+        case '"':
+          if (s === S_EQ || s === S_ATTR //|| s == S_ATTR_SPACE
+          ) {
+              //equal
+              if (s === S_ATTR) {
+                errorHandler.warning('attribute value must after "="');
+                attrName = source.slice(start, p);
+              }
+
+              start = p + 1;
+              p = source.indexOf(c, start);
+
+              if (p > 0) {
+                value = source.slice(start, p).replace(/&#?\w+;/g, entityReplacer);
+                el.add(attrName, value, start - 1);
+                s = S_ATTR_END;
+              } else {
+                //fatalError: no end quot match
+                throw new Error('attribute value no end \'' + c + '\' match');
+              }
+            } else if (s == S_ATTR_NOQUOT_VALUE) {
+            value = source.slice(start, p).replace(/&#?\w+;/g, entityReplacer); //console.log(attrName,value,start,p)
+
+            el.add(attrName, value, start); //console.dir(el)
+
+            errorHandler.warning('attribute "' + attrName + '" missed start quot(' + c + ')!!');
+            start = p + 1;
+            s = S_ATTR_END;
+          } else {
+            //fatalError: no equal before
+            throw new Error('attribute value must after "="');
+          }
+
+          break;
+
+        case '/':
+          switch (s) {
+            case S_TAG:
+              el.setTagName(source.slice(start, p));
+
+            case S_ATTR_END:
+            case S_TAG_SPACE:
+            case S_TAG_CLOSE:
+              s = S_TAG_CLOSE;
+              el.closed = true;
+
+            case S_ATTR_NOQUOT_VALUE:
+            case S_ATTR:
+            case S_ATTR_SPACE:
+              break;
+            //case S_EQ:
+
+            default:
+              throw new Error("attribute invalid close char('/')");
+          }
+
+          break;
+
+        case '':
+          //end document
+          //throw new Error('unexpected end of input')
+          errorHandler.error('unexpected end of input');
+
+          if (s == S_TAG) {
+            el.setTagName(source.slice(start, p));
+          }
+
+          return p;
+
+        case '>':
+          switch (s) {
+            case S_TAG:
+              el.setTagName(source.slice(start, p));
+
+            case S_ATTR_END:
+            case S_TAG_SPACE:
+            case S_TAG_CLOSE:
+              break;
+            //normal
+
+            case S_ATTR_NOQUOT_VALUE: //Compatible state
+
+            case S_ATTR:
+              value = source.slice(start, p);
+
+              if (value.slice(-1) === '/') {
+                el.closed = true;
+                value = value.slice(0, -1);
+              }
+
+            case S_ATTR_SPACE:
+              if (s === S_ATTR_SPACE) {
+                value = attrName;
+              }
+
+              if (s == S_ATTR_NOQUOT_VALUE) {
+                errorHandler.warning('attribute "' + value + '" missed quot(")!!');
+                el.add(attrName, value.replace(/&#?\w+;/g, entityReplacer), start);
+              } else {
+                if (currentNSMap[''] !== 'http://www.w3.org/1999/xhtml' || !value.match(/^(?:disabled|checked|selected)$/i)) {
+                  errorHandler.warning('attribute "' + value + '" missed value!! "' + value + '" instead!!');
+                }
+
+                el.add(value, value, start);
+              }
+
+              break;
+
+            case S_EQ:
+              throw new Error('attribute value missed!!');
+          } //			console.log(tagName,tagNamePattern,tagNamePattern.test(tagName))
+
+
+          return p;
+
+        /*xml space '\x20' | #x9 | #xD | #xA; */
+
+        case "\x80":
+          c = ' ';
+
+        default:
+          if (c <= ' ') {
+            //space
+            switch (s) {
+              case S_TAG:
+                el.setTagName(source.slice(start, p)); //tagName
+
+                s = S_TAG_SPACE;
+                break;
+
+              case S_ATTR:
+                attrName = source.slice(start, p);
+                s = S_ATTR_SPACE;
+                break;
+
+              case S_ATTR_NOQUOT_VALUE:
+                var value = source.slice(start, p).replace(/&#?\w+;/g, entityReplacer);
+                errorHandler.warning('attribute "' + value + '" missed quot(")!!');
+                el.add(attrName, value, start);
+
+              case S_ATTR_END:
+                s = S_TAG_SPACE;
+                break;
+              //case S_TAG_SPACE:
+              //case S_EQ:
+              //case S_ATTR_SPACE:
+              //	void();break;
+              //case S_TAG_CLOSE:
+              //ignore warning
+            }
+          } else {
+            //not space
+            //S_TAG,	S_ATTR,	S_EQ,	S_ATTR_NOQUOT_VALUE
+            //S_ATTR_SPACE,	S_ATTR_END,	S_TAG_SPACE, S_TAG_CLOSE
+            switch (s) {
+              //case S_TAG:void();break;
+              //case S_ATTR:void();break;
+              //case S_ATTR_NOQUOT_VALUE:void();break;
+              case S_ATTR_SPACE:
+                var tagName = el.tagName;
+
+                if (currentNSMap[''] !== 'http://www.w3.org/1999/xhtml' || !attrName.match(/^(?:disabled|checked|selected)$/i)) {
+                  errorHandler.warning('attribute "' + attrName + '" missed value!! "' + attrName + '" instead2!!');
+                }
+
+                el.add(attrName, attrName, start);
+                start = p;
+                s = S_ATTR;
+                break;
+
+              case S_ATTR_END:
+                errorHandler.warning('attribute space is required"' + attrName + '"!!');
+
+              case S_TAG_SPACE:
+                s = S_ATTR;
+                start = p;
+                break;
+
+              case S_EQ:
+                s = S_ATTR_NOQUOT_VALUE;
+                start = p;
+                break;
+
+              case S_TAG_CLOSE:
+                throw new Error("elements closed character '/' and '>' must be connected to");
+            }
+          }
+
+      } //end outer switch
+      //console.log('p++',p)
+
+
+      p++;
+    }
+  }
+  /**
+   * @return true if has new namespace define
+   */
+
+
+  function appendElement(el, domBuilder, currentNSMap) {
+    var tagName = el.tagName;
+    var localNSMap = null; //var currentNSMap = parseStack[parseStack.length-1].currentNSMap;
+
+    var i = el.length;
+
+    while (i--) {
+      var a = el[i];
+      var qName = a.qName;
+      var value = a.value;
+      var nsp = qName.indexOf(':');
+
+      if (nsp > 0) {
+        var prefix = a.prefix = qName.slice(0, nsp);
+        var localName = qName.slice(nsp + 1);
+        var nsPrefix = prefix === 'xmlns' && localName;
+      } else {
+        localName = qName;
+        prefix = null;
+        nsPrefix = qName === 'xmlns' && '';
+      } //can not set prefix,because prefix !== ''
+
+
+      a.localName = localName; //prefix == null for no ns prefix attribute
+
+      if (nsPrefix !== false) {
+        //hack!!
+        if (localNSMap == null) {
+          localNSMap = {}; //console.log(currentNSMap,0)
+
+          _copy(currentNSMap, currentNSMap = {}); //console.log(currentNSMap,1)
+
+        }
+
+        currentNSMap[nsPrefix] = localNSMap[nsPrefix] = value;
+        a.uri = 'http://www.w3.org/2000/xmlns/';
+        domBuilder.startPrefixMapping(nsPrefix, value);
+      }
+    }
+
+    var i = el.length;
+
+    while (i--) {
+      a = el[i];
+      var prefix = a.prefix;
+
+      if (prefix) {
+        //no prefix attribute has no namespace
+        if (prefix === 'xml') {
+          a.uri = 'http://www.w3.org/XML/1998/namespace';
+        }
+
+        if (prefix !== 'xmlns') {
+          a.uri = currentNSMap[prefix || '']; //{console.log('###'+a.qName,domBuilder.locator.systemId+'',currentNSMap,a.uri)}
+        }
+      }
+    }
+
+    var nsp = tagName.indexOf(':');
+
+    if (nsp > 0) {
+      prefix = el.prefix = tagName.slice(0, nsp);
+      localName = el.localName = tagName.slice(nsp + 1);
+    } else {
+      prefix = null; //important!!
+
+      localName = el.localName = tagName;
+    } //no prefix element has default namespace
+
+
+    var ns = el.uri = currentNSMap[prefix || ''];
+    domBuilder.startElement(ns, localName, tagName, el); //endPrefixMapping and startPrefixMapping have not any help for dom builder
+    //localNSMap = null
+
+    if (el.closed) {
+      domBuilder.endElement(ns, localName, tagName);
+
+      if (localNSMap) {
+        for (prefix in localNSMap) {
+          domBuilder.endPrefixMapping(prefix);
+        }
+      }
+    } else {
+      el.currentNSMap = currentNSMap;
+      el.localNSMap = localNSMap; //parseStack.push(el);
+
+      return true;
+    }
+  }
+
+  function parseHtmlSpecialContent(source, elStartEnd, tagName, entityReplacer, domBuilder) {
+    if (/^(?:script|textarea)$/i.test(tagName)) {
+      var elEndStart = source.indexOf('</' + tagName + '>', elStartEnd);
+      var text = source.substring(elStartEnd + 1, elEndStart);
+
+      if (/[&<]/.test(text)) {
+        if (/^script$/i.test(tagName)) {
+          //if(!/\]\]>/.test(text)){
+          //lexHandler.startCDATA();
+          domBuilder.characters(text, 0, text.length); //lexHandler.endCDATA();
+
+          return elEndStart; //}
+        } //}else{//text area
+
+
+        text = text.replace(/&#?\w+;/g, entityReplacer);
+        domBuilder.characters(text, 0, text.length);
+        return elEndStart; //}
+      }
+    }
+
+    return elStartEnd + 1;
+  }
+
+  function fixSelfClosed(source, elStartEnd, tagName, closeMap) {
+    //if(tagName in closeMap){
+    var pos = closeMap[tagName];
+
+    if (pos == null) {
+      //console.log(tagName)
+      pos = source.lastIndexOf('</' + tagName + '>');
+
+      if (pos < elStartEnd) {
+        //忘记闭合
+        pos = source.lastIndexOf('</' + tagName);
+      }
+
+      closeMap[tagName] = pos;
+    }
+
+    return pos < elStartEnd; //}
+  }
+
+  function _copy(source, target) {
+    for (var n in source) {
+      target[n] = source[n];
+    }
+  }
+
+  function parseDCC(source, start, domBuilder, errorHandler) {
+    //sure start with '<!'
+    var next = source.charAt(start + 2);
+
+    switch (next) {
+      case '-':
+        if (source.charAt(start + 3) === '-') {
+          var end = source.indexOf('-->', start + 4); //append comment source.substring(4,end)//<!--
+
+          if (end > start) {
+            domBuilder.comment(source, start + 4, end - start - 4);
+            return end + 3;
+          } else {
+            errorHandler.error("Unclosed comment");
+            return -1;
+          }
+        } else {
+          //error
+          return -1;
+        }
+
+      default:
+        if (source.substr(start + 3, 6) == 'CDATA[') {
+          var end = source.indexOf(']]>', start + 9);
+          domBuilder.startCDATA();
+          domBuilder.characters(source, start + 9, end - start - 9);
+          domBuilder.endCDATA();
+          return end + 3;
+        } //<!DOCTYPE
+        //startDTD(java.lang.String name, java.lang.String publicId, java.lang.String systemId)
+
+
+        var matchs = split(source, start);
+        var len = matchs.length;
+
+        if (len > 1 && /!doctype/i.test(matchs[0][0])) {
+          var name = matchs[1][0];
+          var pubid = len > 3 && /^public$/i.test(matchs[2][0]) && matchs[3][0];
+          var sysid = len > 4 && matchs[4][0];
+          var lastMatch = matchs[len - 1];
+          domBuilder.startDTD(name, pubid && pubid.replace(/^(['"])(.*?)\1$/, '$2'), sysid && sysid.replace(/^(['"])(.*?)\1$/, '$2'));
+          domBuilder.endDTD();
+          return lastMatch.index + lastMatch[0].length;
+        }
+
+    }
+
+    return -1;
+  }
+
+  function parseInstruction(source, start, domBuilder) {
+    var end = source.indexOf('?>', start);
+
+    if (end) {
+      var match = source.substring(start, end).match(/^<\?(\S*)\s*([\s\S]*?)\s*$/);
+
+      if (match) {
+        var len = match[0].length;
+        domBuilder.processingInstruction(match[1], match[2]);
+        return end + 2;
+      } else {
+        //error
+        return -1;
+      }
+    }
+
+    return -1;
+  }
+  /**
+   * @param source
+   */
+
+
+  function ElementAttributes(source) {}
+
+  ElementAttributes.prototype = {
+    setTagName: function setTagName(tagName) {
+      if (!tagNamePattern.test(tagName)) {
+        throw new Error('invalid tagName:' + tagName);
+      }
+
+      this.tagName = tagName;
+    },
+    add: function add(qName, value, offset) {
+      if (!tagNamePattern.test(qName)) {
+        throw new Error('invalid attribute:' + qName);
+      }
+
+      this[this.length++] = {
+        qName: qName,
+        value: value,
+        offset: offset
+      };
+    },
+    length: 0,
+    getLocalName: function getLocalName(i) {
+      return this[i].localName;
+    },
+    getLocator: function getLocator(i) {
+      return this[i].locator;
+    },
+    getQName: function getQName(i) {
+      return this[i].qName;
+    },
+    getURI: function getURI(i) {
+      return this[i].uri;
+    },
+    getValue: function getValue(i) {
+      return this[i].value;
+    } //	,getIndex:function(uri, localName)){
+    //		if(localName){
+    //
+    //		}else{
+    //			var qName = uri
+    //		}
+    //	},
+    //	getValue:function(){return this.getValue(this.getIndex.apply(this,arguments))},
+    //	getType:function(uri,localName){}
+    //	getType:function(i){},
+
+  };
+
+  function _set_proto_(thiz, parent) {
+    thiz.__proto__ = parent;
+    return thiz;
+  }
+
+  if (!(_set_proto_({}, _set_proto_.prototype) instanceof _set_proto_)) {
+    _set_proto_ = function _set_proto_(thiz, parent) {
+      function p() {}
+      p.prototype = parent;
+      p = new p();
+
+      for (parent in thiz) {
+        p[parent] = thiz[parent];
+      }
+
+      return p;
+    };
+  }
+
+  function split(source, start) {
+    var match;
+    var buf = [];
+    var reg = /'[^']+'|"[^"]+"|[^\s<>\/=]+=?|(\/?\s*>|<)/g;
+    reg.lastIndex = start;
+    reg.exec(source); //skip <
+
+    while (match = reg.exec(source)) {
+      buf.push(match);
+      if (match[1]) return buf;
+    }
+  }
+
+  var XMLReader_1 = XMLReader;
+  var sax = {
+    XMLReader: XMLReader_1
+  };
+
+  /*
+   * DOM Level 2
+   * Object DOMException
+   * @see http://www.w3.org/TR/REC-DOM-Level-1/ecma-script-language-binding.html
+   * @see http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/ecma-script-binding.html
+   */
+  function copy(src, dest) {
+    for (var p in src) {
+      dest[p] = src[p];
+    }
+  }
+  /**
+  ^\w+\.prototype\.([_\w]+)\s*=\s*((?:.*\{\s*?[\r\n][\s\S]*?^})|\S.*?(?=[;\r\n]));?
+  ^\w+\.prototype\.([_\w]+)\s*=\s*(\S.*?(?=[;\r\n]));?
+   */
+
+
+  function _extends$1(Class, Super) {
+    var pt = Class.prototype;
+
+    if (Object.create) {
+      var ppt = Object.create(Super.prototype);
+      pt.__proto__ = ppt;
+    }
+
+    if (!(pt instanceof Super)) {
+      var t = function t() {};
+      t.prototype = Super.prototype;
+      t = new t();
+      copy(pt, t);
+      Class.prototype = pt = t;
+    }
+
+    if (pt.constructor != Class) {
+      if (typeof Class != 'function') {
+        console.error("unknow Class:" + Class);
+      }
+
+      pt.constructor = Class;
+    }
+  }
+
+  var htmlns = 'http://www.w3.org/1999/xhtml'; // Node Types
+
+  var NodeType = {};
+  var ELEMENT_NODE = NodeType.ELEMENT_NODE = 1;
+  var ATTRIBUTE_NODE = NodeType.ATTRIBUTE_NODE = 2;
+  var TEXT_NODE = NodeType.TEXT_NODE = 3;
+  var CDATA_SECTION_NODE = NodeType.CDATA_SECTION_NODE = 4;
+  var ENTITY_REFERENCE_NODE = NodeType.ENTITY_REFERENCE_NODE = 5;
+  var ENTITY_NODE = NodeType.ENTITY_NODE = 6;
+  var PROCESSING_INSTRUCTION_NODE = NodeType.PROCESSING_INSTRUCTION_NODE = 7;
+  var COMMENT_NODE = NodeType.COMMENT_NODE = 8;
+  var DOCUMENT_NODE = NodeType.DOCUMENT_NODE = 9;
+  var DOCUMENT_TYPE_NODE = NodeType.DOCUMENT_TYPE_NODE = 10;
+  var DOCUMENT_FRAGMENT_NODE = NodeType.DOCUMENT_FRAGMENT_NODE = 11;
+  var NOTATION_NODE = NodeType.NOTATION_NODE = 12; // ExceptionCode
+
+  var ExceptionCode = {};
+  var ExceptionMessage = {};
+  var INDEX_SIZE_ERR = ExceptionCode.INDEX_SIZE_ERR = (ExceptionMessage[1] = "Index size error", 1);
+  var DOMSTRING_SIZE_ERR = ExceptionCode.DOMSTRING_SIZE_ERR = (ExceptionMessage[2] = "DOMString size error", 2);
+  var HIERARCHY_REQUEST_ERR = ExceptionCode.HIERARCHY_REQUEST_ERR = (ExceptionMessage[3] = "Hierarchy request error", 3);
+  var WRONG_DOCUMENT_ERR = ExceptionCode.WRONG_DOCUMENT_ERR = (ExceptionMessage[4] = "Wrong document", 4);
+  var INVALID_CHARACTER_ERR = ExceptionCode.INVALID_CHARACTER_ERR = (ExceptionMessage[5] = "Invalid character", 5);
+  var NO_DATA_ALLOWED_ERR = ExceptionCode.NO_DATA_ALLOWED_ERR = (ExceptionMessage[6] = "No data allowed", 6);
+  var NO_MODIFICATION_ALLOWED_ERR = ExceptionCode.NO_MODIFICATION_ALLOWED_ERR = (ExceptionMessage[7] = "No modification allowed", 7);
+  var NOT_FOUND_ERR = ExceptionCode.NOT_FOUND_ERR = (ExceptionMessage[8] = "Not found", 8);
+  var NOT_SUPPORTED_ERR = ExceptionCode.NOT_SUPPORTED_ERR = (ExceptionMessage[9] = "Not supported", 9);
+  var INUSE_ATTRIBUTE_ERR = ExceptionCode.INUSE_ATTRIBUTE_ERR = (ExceptionMessage[10] = "Attribute in use", 10); //level2
+
+  var INVALID_STATE_ERR = ExceptionCode.INVALID_STATE_ERR = (ExceptionMessage[11] = "Invalid state", 11);
+  var SYNTAX_ERR = ExceptionCode.SYNTAX_ERR = (ExceptionMessage[12] = "Syntax error", 12);
+  var INVALID_MODIFICATION_ERR = ExceptionCode.INVALID_MODIFICATION_ERR = (ExceptionMessage[13] = "Invalid modification", 13);
+  var NAMESPACE_ERR = ExceptionCode.NAMESPACE_ERR = (ExceptionMessage[14] = "Invalid namespace", 14);
+  var INVALID_ACCESS_ERR = ExceptionCode.INVALID_ACCESS_ERR = (ExceptionMessage[15] = "Invalid access", 15);
+
+  function DOMException(code, message) {
+    if (message instanceof Error) {
+      var error = message;
+    } else {
+      error = this;
+      Error.call(this, ExceptionMessage[code]);
+      this.message = ExceptionMessage[code];
+      if (Error.captureStackTrace) Error.captureStackTrace(this, DOMException);
+    }
+
+    error.code = code;
+    if (message) this.message = this.message + ": " + message;
+    return error;
+  }
+  DOMException.prototype = Error.prototype;
+  copy(ExceptionCode, DOMException);
+  /**
+   * @see http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-536297177
+   * The NodeList interface provides the abstraction of an ordered collection of nodes, without defining or constraining how this collection is implemented. NodeList objects in the DOM are live.
+   * The items in the NodeList are accessible via an integral index, starting from 0.
+   */
+
+  function NodeList() {}
+  NodeList.prototype = {
+    /**
+     * The number of nodes in the list. The range of valid child node indices is 0 to length-1 inclusive.
+     * @standard level1
+     */
+    length: 0,
+
+    /**
+     * Returns the indexth item in the collection. If index is greater than or equal to the number of nodes in the list, this returns null.
+     * @standard level1
+     * @param index  unsigned long
+     *   Index into the collection.
+     * @return Node
+     * 	The node at the indexth position in the NodeList, or null if that is not a valid index.
+     */
+    item: function item(index) {
+      return this[index] || null;
+    },
+    toString: function toString(isHTML, nodeFilter) {
+      for (var buf = [], i = 0; i < this.length; i++) {
+        serializeToString(this[i], buf, isHTML, nodeFilter);
+      }
+
+      return buf.join('');
+    }
+  };
+
+  function LiveNodeList(node, refresh) {
+    this._node = node;
+    this._refresh = refresh;
+
+    _updateLiveList(this);
+  }
+
+  function _updateLiveList(list) {
+    var inc = list._node._inc || list._node.ownerDocument._inc;
+
+    if (list._inc != inc) {
+      var ls = list._refresh(list._node); //console.log(ls.length)
+
+
+      __set__(list, 'length', ls.length);
+
+      copy(ls, list);
+      list._inc = inc;
+    }
+  }
+
+  LiveNodeList.prototype.item = function (i) {
+    _updateLiveList(this);
+
+    return this[i];
+  };
+
+  _extends$1(LiveNodeList, NodeList);
+  /**
+   *
+   * Objects implementing the NamedNodeMap interface are used to represent collections of nodes that can be accessed by name. Note that NamedNodeMap does not inherit from NodeList; NamedNodeMaps are not maintained in any particular order. Objects contained in an object implementing NamedNodeMap may also be accessed by an ordinal index, but this is simply to allow convenient enumeration of the contents of a NamedNodeMap, and does not imply that the DOM specifies an order to these Nodes.
+   * NamedNodeMap objects in the DOM are live.
+   * used for attributes or DocumentType entities
+   */
+
+
+  function NamedNodeMap() {}
+
+  function _findNodeIndex(list, node) {
+    var i = list.length;
+
+    while (i--) {
+      if (list[i] === node) {
+        return i;
+      }
+    }
+  }
+
+  function _addNamedNode(el, list, newAttr, oldAttr) {
+    if (oldAttr) {
+      list[_findNodeIndex(list, oldAttr)] = newAttr;
+    } else {
+      list[list.length++] = newAttr;
+    }
+
+    if (el) {
+      newAttr.ownerElement = el;
+      var doc = el.ownerDocument;
+
+      if (doc) {
+        oldAttr && _onRemoveAttribute(doc, el, oldAttr);
+
+        _onAddAttribute(doc, el, newAttr);
+      }
+    }
+  }
+
+  function _removeNamedNode(el, list, attr) {
+    //console.log('remove attr:'+attr)
+    var i = _findNodeIndex(list, attr);
+
+    if (i >= 0) {
+      var lastIndex = list.length - 1;
+
+      while (i < lastIndex) {
+        list[i] = list[++i];
+      }
+
+      list.length = lastIndex;
+
+      if (el) {
+        var doc = el.ownerDocument;
+
+        if (doc) {
+          _onRemoveAttribute(doc, el, attr);
+
+          attr.ownerElement = null;
+        }
+      }
+    } else {
+      throw DOMException(NOT_FOUND_ERR, new Error(el.tagName + '@' + attr));
+    }
+  }
+
+  NamedNodeMap.prototype = {
+    length: 0,
+    item: NodeList.prototype.item,
+    getNamedItem: function getNamedItem(key) {
+      //		if(key.indexOf(':')>0 || key == 'xmlns'){
+      //			return null;
+      //		}
+      //console.log()
+      var i = this.length;
+
+      while (i--) {
+        var attr = this[i]; //console.log(attr.nodeName,key)
+
+        if (attr.nodeName == key) {
+          return attr;
+        }
+      }
+    },
+    setNamedItem: function setNamedItem(attr) {
+      var el = attr.ownerElement;
+
+      if (el && el != this._ownerElement) {
+        throw new DOMException(INUSE_ATTRIBUTE_ERR);
+      }
+
+      var oldAttr = this.getNamedItem(attr.nodeName);
+
+      _addNamedNode(this._ownerElement, this, attr, oldAttr);
+
+      return oldAttr;
+    },
+
+    /* returns Node */
+    setNamedItemNS: function setNamedItemNS(attr) {
+      // raises: WRONG_DOCUMENT_ERR,NO_MODIFICATION_ALLOWED_ERR,INUSE_ATTRIBUTE_ERR
+      var el = attr.ownerElement,
+          oldAttr;
+
+      if (el && el != this._ownerElement) {
+        throw new DOMException(INUSE_ATTRIBUTE_ERR);
+      }
+
+      oldAttr = this.getNamedItemNS(attr.namespaceURI, attr.localName);
+
+      _addNamedNode(this._ownerElement, this, attr, oldAttr);
+
+      return oldAttr;
+    },
+
+    /* returns Node */
+    removeNamedItem: function removeNamedItem(key) {
+      var attr = this.getNamedItem(key);
+
+      _removeNamedNode(this._ownerElement, this, attr);
+
+      return attr;
+    },
+    // raises: NOT_FOUND_ERR,NO_MODIFICATION_ALLOWED_ERR
+    //for level2
+    removeNamedItemNS: function removeNamedItemNS(namespaceURI, localName) {
+      var attr = this.getNamedItemNS(namespaceURI, localName);
+
+      _removeNamedNode(this._ownerElement, this, attr);
+
+      return attr;
+    },
+    getNamedItemNS: function getNamedItemNS(namespaceURI, localName) {
+      var i = this.length;
+
+      while (i--) {
+        var node = this[i];
+
+        if (node.localName == localName && node.namespaceURI == namespaceURI) {
+          return node;
+        }
+      }
+
+      return null;
+    }
+  };
+  /**
+   * @see http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-102161490
+   */
+
+  function DOMImplementation(
+  /* Object */
+  features) {
+    this._features = {};
+
+    if (features) {
+      for (var feature in features) {
+        this._features = features[feature];
+      }
+    }
+  }
+  DOMImplementation.prototype = {
+    hasFeature: function hasFeature(
+    /* string */
+    feature,
+    /* string */
+    version) {
+      var versions = this._features[feature.toLowerCase()];
+
+      if (versions && (!version || version in versions)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    // Introduced in DOM Level 2:
+    createDocument: function createDocument(namespaceURI, qualifiedName, doctype) {
+      // raises:INVALID_CHARACTER_ERR,NAMESPACE_ERR,WRONG_DOCUMENT_ERR
+      var doc = new Document();
+      doc.implementation = this;
+      doc.childNodes = new NodeList();
+      doc.doctype = doctype;
+
+      if (doctype) {
+        doc.appendChild(doctype);
+      }
+
+      if (qualifiedName) {
+        var root = doc.createElementNS(namespaceURI, qualifiedName);
+        doc.appendChild(root);
+      }
+
+      return doc;
+    },
+    // Introduced in DOM Level 2:
+    createDocumentType: function createDocumentType(qualifiedName, publicId, systemId) {
+      // raises:INVALID_CHARACTER_ERR,NAMESPACE_ERR
+      var node = new DocumentType();
+      node.name = qualifiedName;
+      node.nodeName = qualifiedName;
+      node.publicId = publicId;
+      node.systemId = systemId; // Introduced in DOM Level 2:
+      //readonly attribute DOMString        internalSubset;
+      //TODO:..
+      //  readonly attribute NamedNodeMap     entities;
+      //  readonly attribute NamedNodeMap     notations;
+
+      return node;
+    }
+  };
+  /**
+   * @see http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-1950641247
+   */
+
+  function Node() {}
+  Node.prototype = {
+    firstChild: null,
+    lastChild: null,
+    previousSibling: null,
+    nextSibling: null,
+    attributes: null,
+    parentNode: null,
+    childNodes: null,
+    ownerDocument: null,
+    nodeValue: null,
+    namespaceURI: null,
+    prefix: null,
+    localName: null,
+    // Modified in DOM Level 2:
+    insertBefore: function insertBefore(newChild, refChild) {
+      //raises
+      return _insertBefore(this, newChild, refChild);
+    },
+    replaceChild: function replaceChild(newChild, oldChild) {
+      //raises
+      this.insertBefore(newChild, oldChild);
+
+      if (oldChild) {
+        this.removeChild(oldChild);
+      }
+    },
+    removeChild: function removeChild(oldChild) {
+      return _removeChild(this, oldChild);
+    },
+    appendChild: function appendChild(newChild) {
+      return this.insertBefore(newChild, null);
+    },
+    hasChildNodes: function hasChildNodes() {
+      return this.firstChild != null;
+    },
+    cloneNode: function cloneNode(deep) {
+      return _cloneNode(this.ownerDocument || this, this, deep);
+    },
+    // Modified in DOM Level 2:
+    normalize: function normalize() {
+      var child = this.firstChild;
+
+      while (child) {
+        var next = child.nextSibling;
+
+        if (next && next.nodeType == TEXT_NODE && child.nodeType == TEXT_NODE) {
+          this.removeChild(next);
+          child.appendData(next.data);
+        } else {
+          child.normalize();
+          child = next;
+        }
+      }
+    },
+    // Introduced in DOM Level 2:
+    isSupported: function isSupported(feature, version) {
+      return this.ownerDocument.implementation.hasFeature(feature, version);
+    },
+    // Introduced in DOM Level 2:
+    hasAttributes: function hasAttributes() {
+      return this.attributes.length > 0;
+    },
+    lookupPrefix: function lookupPrefix(namespaceURI) {
+      var el = this;
+
+      while (el) {
+        var map = el._nsMap; //console.dir(map)
+
+        if (map) {
+          for (var n in map) {
+            if (map[n] == namespaceURI) {
+              return n;
+            }
+          }
+        }
+
+        el = el.nodeType == ATTRIBUTE_NODE ? el.ownerDocument : el.parentNode;
+      }
+
+      return null;
+    },
+    // Introduced in DOM Level 3:
+    lookupNamespaceURI: function lookupNamespaceURI(prefix) {
+      var el = this;
+
+      while (el) {
+        var map = el._nsMap; //console.dir(map)
+
+        if (map) {
+          if (prefix in map) {
+            return map[prefix];
+          }
+        }
+
+        el = el.nodeType == ATTRIBUTE_NODE ? el.ownerDocument : el.parentNode;
+      }
+
+      return null;
+    },
+    // Introduced in DOM Level 3:
+    isDefaultNamespace: function isDefaultNamespace(namespaceURI) {
+      var prefix = this.lookupPrefix(namespaceURI);
+      return prefix == null;
+    }
+  };
+
+  function _xmlEncoder(c) {
+    return c == '<' && '&lt;' || c == '>' && '&gt;' || c == '&' && '&amp;' || c == '"' && '&quot;' || '&#' + c.charCodeAt() + ';';
+  }
+
+  copy(NodeType, Node);
+  copy(NodeType, Node.prototype);
+  /**
+   * @param callback return true for continue,false for break
+   * @return boolean true: break visit;
+   */
+
+  function _visitNode(node, callback) {
+    if (callback(node)) {
+      return true;
+    }
+
+    if (node = node.firstChild) {
+      do {
+        if (_visitNode(node, callback)) {
+          return true;
+        }
+      } while (node = node.nextSibling);
+    }
+  }
+
+  function Document() {}
+
+  function _onAddAttribute(doc, el, newAttr) {
+    doc && doc._inc++;
+    var ns = newAttr.namespaceURI;
+
+    if (ns == 'http://www.w3.org/2000/xmlns/') {
+      //update namespace
+      el._nsMap[newAttr.prefix ? newAttr.localName : ''] = newAttr.value;
+    }
+  }
+
+  function _onRemoveAttribute(doc, el, newAttr, remove) {
+    doc && doc._inc++;
+    var ns = newAttr.namespaceURI;
+
+    if (ns == 'http://www.w3.org/2000/xmlns/') {
+      //update namespace
+      delete el._nsMap[newAttr.prefix ? newAttr.localName : ''];
+    }
+  }
+
+  function _onUpdateChild(doc, el, newChild) {
+    if (doc && doc._inc) {
+      doc._inc++; //update childNodes
+
+      var cs = el.childNodes;
+
+      if (newChild) {
+        cs[cs.length++] = newChild;
+      } else {
+        //console.log(1)
+        var child = el.firstChild;
+        var i = 0;
+
+        while (child) {
+          cs[i++] = child;
+          child = child.nextSibling;
+        }
+
+        cs.length = i;
+      }
+    }
+  }
+  /**
+   * attributes;
+   * children;
+   *
+   * writeable properties:
+   * nodeValue,Attr:value,CharacterData:data
+   * prefix
+   */
+
+
+  function _removeChild(parentNode, child) {
+    var previous = child.previousSibling;
+    var next = child.nextSibling;
+
+    if (previous) {
+      previous.nextSibling = next;
+    } else {
+      parentNode.firstChild = next;
+    }
+
+    if (next) {
+      next.previousSibling = previous;
+    } else {
+      parentNode.lastChild = previous;
+    }
+
+    _onUpdateChild(parentNode.ownerDocument, parentNode);
+
+    return child;
+  }
+  /**
+   * preformance key(refChild == null)
+   */
+
+
+  function _insertBefore(parentNode, newChild, nextChild) {
+    var cp = newChild.parentNode;
+
+    if (cp) {
+      cp.removeChild(newChild); //remove and update
+    }
+
+    if (newChild.nodeType === DOCUMENT_FRAGMENT_NODE) {
+      var newFirst = newChild.firstChild;
+
+      if (newFirst == null) {
+        return newChild;
+      }
+
+      var newLast = newChild.lastChild;
+    } else {
+      newFirst = newLast = newChild;
+    }
+
+    var pre = nextChild ? nextChild.previousSibling : parentNode.lastChild;
+    newFirst.previousSibling = pre;
+    newLast.nextSibling = nextChild;
+
+    if (pre) {
+      pre.nextSibling = newFirst;
+    } else {
+      parentNode.firstChild = newFirst;
+    }
+
+    if (nextChild == null) {
+      parentNode.lastChild = newLast;
+    } else {
+      nextChild.previousSibling = newLast;
+    }
+
+    do {
+      newFirst.parentNode = parentNode;
+    } while (newFirst !== newLast && (newFirst = newFirst.nextSibling));
+
+    _onUpdateChild(parentNode.ownerDocument || parentNode, parentNode); //console.log(parentNode.lastChild.nextSibling == null)
+
+
+    if (newChild.nodeType == DOCUMENT_FRAGMENT_NODE) {
+      newChild.firstChild = newChild.lastChild = null;
+    }
+
+    return newChild;
+  }
+
+  function _appendSingleChild(parentNode, newChild) {
+    var cp = newChild.parentNode;
+
+    if (cp) {
+      var pre = parentNode.lastChild;
+      cp.removeChild(newChild); //remove and update
+
+      var pre = parentNode.lastChild;
+    }
+
+    var pre = parentNode.lastChild;
+    newChild.parentNode = parentNode;
+    newChild.previousSibling = pre;
+    newChild.nextSibling = null;
+
+    if (pre) {
+      pre.nextSibling = newChild;
+    } else {
+      parentNode.firstChild = newChild;
+    }
+
+    parentNode.lastChild = newChild;
+
+    _onUpdateChild(parentNode.ownerDocument, parentNode, newChild);
+
+    return newChild; //console.log("__aa",parentNode.lastChild.nextSibling == null)
+  }
+
+  Document.prototype = {
+    //implementation : null,
+    nodeName: '#document',
+    nodeType: DOCUMENT_NODE,
+    doctype: null,
+    documentElement: null,
+    _inc: 1,
+    insertBefore: function insertBefore(newChild, refChild) {
+      //raises
+      if (newChild.nodeType == DOCUMENT_FRAGMENT_NODE) {
+        var child = newChild.firstChild;
+
+        while (child) {
+          var next = child.nextSibling;
+          this.insertBefore(child, refChild);
+          child = next;
+        }
+
+        return newChild;
+      }
+
+      if (this.documentElement == null && newChild.nodeType == ELEMENT_NODE) {
+        this.documentElement = newChild;
+      }
+
+      return _insertBefore(this, newChild, refChild), newChild.ownerDocument = this, newChild;
+    },
+    removeChild: function removeChild(oldChild) {
+      if (this.documentElement == oldChild) {
+        this.documentElement = null;
+      }
+
+      return _removeChild(this, oldChild);
+    },
+    // Introduced in DOM Level 2:
+    importNode: function importNode(importedNode, deep) {
+      return _importNode(this, importedNode, deep);
+    },
+    // Introduced in DOM Level 2:
+    getElementById: function getElementById(id) {
+      var rtv = null;
+
+      _visitNode(this.documentElement, function (node) {
+        if (node.nodeType == ELEMENT_NODE) {
+          if (node.getAttribute('id') == id) {
+            rtv = node;
+            return true;
+          }
+        }
+      });
+
+      return rtv;
+    },
+    //document factory method:
+    createElement: function createElement(tagName) {
+      var node = new Element();
+      node.ownerDocument = this;
+      node.nodeName = tagName;
+      node.tagName = tagName;
+      node.childNodes = new NodeList();
+      var attrs = node.attributes = new NamedNodeMap();
+      attrs._ownerElement = node;
+      return node;
+    },
+    createDocumentFragment: function createDocumentFragment() {
+      var node = new DocumentFragment();
+      node.ownerDocument = this;
+      node.childNodes = new NodeList();
+      return node;
+    },
+    createTextNode: function createTextNode(data) {
+      var node = new Text();
+      node.ownerDocument = this;
+      node.appendData(data);
+      return node;
+    },
+    createComment: function createComment(data) {
+      var node = new Comment();
+      node.ownerDocument = this;
+      node.appendData(data);
+      return node;
+    },
+    createCDATASection: function createCDATASection(data) {
+      var node = new CDATASection();
+      node.ownerDocument = this;
+      node.appendData(data);
+      return node;
+    },
+    createProcessingInstruction: function createProcessingInstruction(target, data) {
+      var node = new ProcessingInstruction();
+      node.ownerDocument = this;
+      node.tagName = node.target = target;
+      node.nodeValue = node.data = data;
+      return node;
+    },
+    createAttribute: function createAttribute(name) {
+      var node = new Attr();
+      node.ownerDocument = this;
+      node.name = name;
+      node.nodeName = name;
+      node.localName = name;
+      node.specified = true;
+      return node;
+    },
+    createEntityReference: function createEntityReference(name) {
+      var node = new EntityReference();
+      node.ownerDocument = this;
+      node.nodeName = name;
+      return node;
+    },
+    // Introduced in DOM Level 2:
+    createElementNS: function createElementNS(namespaceURI, qualifiedName) {
+      var node = new Element();
+      var pl = qualifiedName.split(':');
+      var attrs = node.attributes = new NamedNodeMap();
+      node.childNodes = new NodeList();
+      node.ownerDocument = this;
+      node.nodeName = qualifiedName;
+      node.tagName = qualifiedName;
+      node.namespaceURI = namespaceURI;
+
+      if (pl.length == 2) {
+        node.prefix = pl[0];
+        node.localName = pl[1];
+      } else {
+        //el.prefix = null;
+        node.localName = qualifiedName;
+      }
+
+      attrs._ownerElement = node;
+      return node;
+    },
+    // Introduced in DOM Level 2:
+    createAttributeNS: function createAttributeNS(namespaceURI, qualifiedName) {
+      var node = new Attr();
+      var pl = qualifiedName.split(':');
+      node.ownerDocument = this;
+      node.nodeName = qualifiedName;
+      node.name = qualifiedName;
+      node.namespaceURI = namespaceURI;
+      node.specified = true;
+
+      if (pl.length == 2) {
+        node.prefix = pl[0];
+        node.localName = pl[1];
+      } else {
+        //el.prefix = null;
+        node.localName = qualifiedName;
+      }
+
+      return node;
+    }
+  };
+
+  _extends$1(Document, Node);
+
+  function Element() {
+    this._nsMap = {};
+  }
+  Element.prototype = {
+    nodeType: ELEMENT_NODE,
+    hasAttribute: function hasAttribute(name) {
+      return this.getAttributeNode(name) != null;
+    },
+    getAttribute: function getAttribute(name) {
+      var attr = this.getAttributeNode(name);
+      return attr && attr.value || '';
+    },
+    getAttributeNode: function getAttributeNode(name) {
+      return this.attributes.getNamedItem(name);
+    },
+    setAttribute: function setAttribute(name, value) {
+      var attr = this.ownerDocument.createAttribute(name);
+      attr.value = attr.nodeValue = "" + value;
+      this.setAttributeNode(attr);
+    },
+    removeAttribute: function removeAttribute(name) {
+      var attr = this.getAttributeNode(name);
+      attr && this.removeAttributeNode(attr);
+    },
+    //four real opeartion method
+    appendChild: function appendChild(newChild) {
+      if (newChild.nodeType === DOCUMENT_FRAGMENT_NODE) {
+        return this.insertBefore(newChild, null);
+      } else {
+        return _appendSingleChild(this, newChild);
+      }
+    },
+    setAttributeNode: function setAttributeNode(newAttr) {
+      return this.attributes.setNamedItem(newAttr);
+    },
+    setAttributeNodeNS: function setAttributeNodeNS(newAttr) {
+      return this.attributes.setNamedItemNS(newAttr);
+    },
+    removeAttributeNode: function removeAttributeNode(oldAttr) {
+      //console.log(this == oldAttr.ownerElement)
+      return this.attributes.removeNamedItem(oldAttr.nodeName);
+    },
+    //get real attribute name,and remove it by removeAttributeNode
+    removeAttributeNS: function removeAttributeNS(namespaceURI, localName) {
+      var old = this.getAttributeNodeNS(namespaceURI, localName);
+      old && this.removeAttributeNode(old);
+    },
+    hasAttributeNS: function hasAttributeNS(namespaceURI, localName) {
+      return this.getAttributeNodeNS(namespaceURI, localName) != null;
+    },
+    getAttributeNS: function getAttributeNS(namespaceURI, localName) {
+      var attr = this.getAttributeNodeNS(namespaceURI, localName);
+      return attr && attr.value || '';
+    },
+    setAttributeNS: function setAttributeNS(namespaceURI, qualifiedName, value) {
+      var attr = this.ownerDocument.createAttributeNS(namespaceURI, qualifiedName);
+      attr.value = attr.nodeValue = "" + value;
+      this.setAttributeNode(attr);
+    },
+    getAttributeNodeNS: function getAttributeNodeNS(namespaceURI, localName) {
+      return this.attributes.getNamedItemNS(namespaceURI, localName);
+    },
+    getElementsByTagName: function getElementsByTagName(tagName) {
+      return new LiveNodeList(this, function (base) {
+        var ls = [];
+
+        _visitNode(base, function (node) {
+          if (node !== base && node.nodeType == ELEMENT_NODE && (tagName === '*' || node.tagName == tagName)) {
+            ls.push(node);
+          }
+        });
+
+        return ls;
+      });
+    },
+    getElementsByTagNameNS: function getElementsByTagNameNS(namespaceURI, localName) {
+      return new LiveNodeList(this, function (base) {
+        var ls = [];
+
+        _visitNode(base, function (node) {
+          if (node !== base && node.nodeType === ELEMENT_NODE && (namespaceURI === '*' || node.namespaceURI === namespaceURI) && (localName === '*' || node.localName == localName)) {
+            ls.push(node);
+          }
+        });
+
+        return ls;
+      });
+    }
+  };
+  Document.prototype.getElementsByTagName = Element.prototype.getElementsByTagName;
+  Document.prototype.getElementsByTagNameNS = Element.prototype.getElementsByTagNameNS;
+
+  _extends$1(Element, Node);
+
+  function Attr() {}
+  Attr.prototype.nodeType = ATTRIBUTE_NODE;
+
+  _extends$1(Attr, Node);
+
+  function CharacterData() {}
+  CharacterData.prototype = {
+    data: '',
+    substringData: function substringData(offset, count) {
+      return this.data.substring(offset, offset + count);
+    },
+    appendData: function appendData(text) {
+      text = this.data + text;
+      this.nodeValue = this.data = text;
+      this.length = text.length;
+    },
+    insertData: function insertData(offset, text) {
+      this.replaceData(offset, 0, text);
+    },
+    appendChild: function appendChild(newChild) {
+      throw new Error(ExceptionMessage[HIERARCHY_REQUEST_ERR]);
+    },
+    deleteData: function deleteData(offset, count) {
+      this.replaceData(offset, count, "");
+    },
+    replaceData: function replaceData(offset, count, text) {
+      var start = this.data.substring(0, offset);
+      var end = this.data.substring(offset + count);
+      text = start + text + end;
+      this.nodeValue = this.data = text;
+      this.length = text.length;
+    }
+  };
+
+  _extends$1(CharacterData, Node);
+
+  function Text() {}
+  Text.prototype = {
+    nodeName: "#text",
+    nodeType: TEXT_NODE,
+    splitText: function splitText(offset) {
+      var text = this.data;
+      var newText = text.substring(offset);
+      text = text.substring(0, offset);
+      this.data = this.nodeValue = text;
+      this.length = text.length;
+      var newNode = this.ownerDocument.createTextNode(newText);
+
+      if (this.parentNode) {
+        this.parentNode.insertBefore(newNode, this.nextSibling);
+      }
+
+      return newNode;
+    }
+  };
+
+  _extends$1(Text, CharacterData);
+
+  function Comment() {}
+  Comment.prototype = {
+    nodeName: "#comment",
+    nodeType: COMMENT_NODE
+  };
+
+  _extends$1(Comment, CharacterData);
+
+  function CDATASection() {}
+  CDATASection.prototype = {
+    nodeName: "#cdata-section",
+    nodeType: CDATA_SECTION_NODE
+  };
+
+  _extends$1(CDATASection, CharacterData);
+
+  function DocumentType() {}
+  DocumentType.prototype.nodeType = DOCUMENT_TYPE_NODE;
+
+  _extends$1(DocumentType, Node);
+
+  function Notation() {}
+  Notation.prototype.nodeType = NOTATION_NODE;
+
+  _extends$1(Notation, Node);
+
+  function Entity() {}
+  Entity.prototype.nodeType = ENTITY_NODE;
+
+  _extends$1(Entity, Node);
+
+  function EntityReference() {}
+  EntityReference.prototype.nodeType = ENTITY_REFERENCE_NODE;
+
+  _extends$1(EntityReference, Node);
+
+  function DocumentFragment() {}
+  DocumentFragment.prototype.nodeName = "#document-fragment";
+  DocumentFragment.prototype.nodeType = DOCUMENT_FRAGMENT_NODE;
+
+  _extends$1(DocumentFragment, Node);
+
+  function ProcessingInstruction() {}
+
+  ProcessingInstruction.prototype.nodeType = PROCESSING_INSTRUCTION_NODE;
+
+  _extends$1(ProcessingInstruction, Node);
+
+  function XMLSerializer() {}
+
+  XMLSerializer.prototype.serializeToString = function (node, isHtml, nodeFilter) {
+    return nodeSerializeToString.call(node, isHtml, nodeFilter);
+  };
+
+  Node.prototype.toString = nodeSerializeToString;
+
+  function nodeSerializeToString(isHtml, nodeFilter) {
+    var buf = [];
+    var refNode = this.nodeType == 9 ? this.documentElement : this;
+    var prefix = refNode.prefix;
+    var uri = refNode.namespaceURI;
+
+    if (uri && prefix == null) {
+      //console.log(prefix)
+      var prefix = refNode.lookupPrefix(uri);
+
+      if (prefix == null) {
+        //isHTML = true;
+        var visibleNamespaces = [{
+          namespace: uri,
+          prefix: null
+        } //{namespace:uri,prefix:''}
+        ];
+      }
+    }
+
+    serializeToString(this, buf, isHtml, nodeFilter, visibleNamespaces); //console.log('###',this.nodeType,uri,prefix,buf.join(''))
+
+    return buf.join('');
+  }
+
+  function needNamespaceDefine(node, isHTML, visibleNamespaces) {
+    var prefix = node.prefix || '';
+    var uri = node.namespaceURI;
+
+    if (!prefix && !uri) {
+      return false;
+    }
+
+    if (prefix === "xml" && uri === "http://www.w3.org/XML/1998/namespace" || uri == 'http://www.w3.org/2000/xmlns/') {
+      return false;
+    }
+
+    var i = visibleNamespaces.length; //console.log('@@@@',node.tagName,prefix,uri,visibleNamespaces)
+
+    while (i--) {
+      var ns = visibleNamespaces[i]; // get namespace prefix
+      //console.log(node.nodeType,node.tagName,ns.prefix,prefix)
+
+      if (ns.prefix == prefix) {
+        return ns.namespace != uri;
+      }
+    } //console.log(isHTML,uri,prefix=='')
+    //if(isHTML && prefix ==null && uri == 'http://www.w3.org/1999/xhtml'){
+    //	return false;
+    //}
+    //node.flag = '11111'
+    //console.error(3,true,node.flag,node.prefix,node.namespaceURI)
+
+
+    return true;
+  }
+
+  function serializeToString(node, buf, isHTML, nodeFilter, visibleNamespaces) {
+    if (nodeFilter) {
+      node = nodeFilter(node);
+
+      if (node) {
+        if (typeof node == 'string') {
+          buf.push(node);
+          return;
+        }
+      } else {
+        return;
+      } //buf.sort.apply(attrs, attributeSorter);
+
+    }
+
+    switch (node.nodeType) {
+      case ELEMENT_NODE:
+        if (!visibleNamespaces) visibleNamespaces = [];
+        var startVisibleNamespaces = visibleNamespaces.length;
+        var attrs = node.attributes;
+        var len = attrs.length;
+        var child = node.firstChild;
+        var nodeName = node.tagName;
+        isHTML = htmlns === node.namespaceURI || isHTML;
+        buf.push('<', nodeName);
+
+        for (var i = 0; i < len; i++) {
+          // add namespaces for attributes
+          var attr = attrs.item(i);
+
+          if (attr.prefix == 'xmlns') {
+            visibleNamespaces.push({
+              prefix: attr.localName,
+              namespace: attr.value
+            });
+          } else if (attr.nodeName == 'xmlns') {
+            visibleNamespaces.push({
+              prefix: '',
+              namespace: attr.value
+            });
+          }
+        }
+
+        for (var i = 0; i < len; i++) {
+          var attr = attrs.item(i);
+
+          if (needNamespaceDefine(attr, isHTML, visibleNamespaces)) {
+            var prefix = attr.prefix || '';
+            var uri = attr.namespaceURI;
+            var ns = prefix ? ' xmlns:' + prefix : " xmlns";
+            buf.push(ns, '="', uri, '"');
+            visibleNamespaces.push({
+              prefix: prefix,
+              namespace: uri
+            });
+          }
+
+          serializeToString(attr, buf, isHTML, nodeFilter, visibleNamespaces);
+        } // add namespace for current node
+
+
+        if (needNamespaceDefine(node, isHTML, visibleNamespaces)) {
+          var prefix = node.prefix || '';
+          var uri = node.namespaceURI;
+          var ns = prefix ? ' xmlns:' + prefix : " xmlns";
+          buf.push(ns, '="', uri, '"');
+          visibleNamespaces.push({
+            prefix: prefix,
+            namespace: uri
+          });
+        }
+
+        if (child || isHTML && !/^(?:meta|link|img|br|hr|input)$/i.test(nodeName)) {
+          buf.push('>'); //if is cdata child node
+
+          if (isHTML && /^script$/i.test(nodeName)) {
+            while (child) {
+              if (child.data) {
+                buf.push(child.data);
+              } else {
+                serializeToString(child, buf, isHTML, nodeFilter, visibleNamespaces);
+              }
+
+              child = child.nextSibling;
+            }
+          } else {
+            while (child) {
+              serializeToString(child, buf, isHTML, nodeFilter, visibleNamespaces);
+              child = child.nextSibling;
+            }
+          }
+
+          buf.push('</', nodeName, '>');
+        } else {
+          buf.push('/>');
+        } // remove added visible namespaces
+        //visibleNamespaces.length = startVisibleNamespaces;
+
+
+        return;
+
+      case DOCUMENT_NODE:
+      case DOCUMENT_FRAGMENT_NODE:
+        var child = node.firstChild;
+
+        while (child) {
+          serializeToString(child, buf, isHTML, nodeFilter, visibleNamespaces);
+          child = child.nextSibling;
+        }
+
+        return;
+
+      case ATTRIBUTE_NODE:
+        return buf.push(' ', node.name, '="', node.value.replace(/[<&"]/g, _xmlEncoder), '"');
+
+      case TEXT_NODE:
+        return buf.push(node.data.replace(/[<&]/g, _xmlEncoder));
+
+      case CDATA_SECTION_NODE:
+        return buf.push('<![CDATA[', node.data, ']]>');
+
+      case COMMENT_NODE:
+        return buf.push("<!--", node.data, "-->");
+
+      case DOCUMENT_TYPE_NODE:
+        var pubid = node.publicId;
+        var sysid = node.systemId;
+        buf.push('<!DOCTYPE ', node.name);
+
+        if (pubid) {
+          buf.push(' PUBLIC "', pubid);
+
+          if (sysid && sysid != '.') {
+            buf.push('" "', sysid);
+          }
+
+          buf.push('">');
+        } else if (sysid && sysid != '.') {
+          buf.push(' SYSTEM "', sysid, '">');
+        } else {
+          var sub = node.internalSubset;
+
+          if (sub) {
+            buf.push(" [", sub, "]");
+          }
+
+          buf.push(">");
+        }
+
+        return;
+
+      case PROCESSING_INSTRUCTION_NODE:
+        return buf.push("<?", node.target, " ", node.data, "?>");
+
+      case ENTITY_REFERENCE_NODE:
+        return buf.push('&', node.nodeName, ';');
+      //case ENTITY_NODE:
+      //case NOTATION_NODE:
+
+      default:
+        buf.push('??', node.nodeName);
+    }
+  }
+
+  function _importNode(doc, node, deep) {
+    var node2;
+
+    switch (node.nodeType) {
+      case ELEMENT_NODE:
+        node2 = node.cloneNode(false);
+        node2.ownerDocument = doc;
+      //var attrs = node2.attributes;
+      //var len = attrs.length;
+      //for(var i=0;i<len;i++){
+      //node2.setAttributeNodeNS(importNode(doc,attrs.item(i),deep));
+      //}
+
+      case DOCUMENT_FRAGMENT_NODE:
+        break;
+
+      case ATTRIBUTE_NODE:
+        deep = true;
+        break;
+      //case ENTITY_REFERENCE_NODE:
+      //case PROCESSING_INSTRUCTION_NODE:
+      ////case TEXT_NODE:
+      //case CDATA_SECTION_NODE:
+      //case COMMENT_NODE:
+      //	deep = false;
+      //	break;
+      //case DOCUMENT_NODE:
+      //case DOCUMENT_TYPE_NODE:
+      //cannot be imported.
+      //case ENTITY_NODE:
+      //case NOTATION_NODE：
+      //can not hit in level3
+      //default:throw e;
+    }
+
+    if (!node2) {
+      node2 = node.cloneNode(false); //false
+    }
+
+    node2.ownerDocument = doc;
+    node2.parentNode = null;
+
+    if (deep) {
+      var child = node.firstChild;
+
+      while (child) {
+        node2.appendChild(_importNode(doc, child, deep));
+        child = child.nextSibling;
+      }
+    }
+
+    return node2;
+  } //
+  //var _relationMap = {firstChild:1,lastChild:1,previousSibling:1,nextSibling:1,
+  //					attributes:1,childNodes:1,parentNode:1,documentElement:1,doctype,};
+
+
+  function _cloneNode(doc, node, deep) {
+    var node2 = new node.constructor();
+
+    for (var n in node) {
+      var v = node[n];
+
+      if (typeof v != 'object') {
+        if (v != node2[n]) {
+          node2[n] = v;
+        }
+      }
+    }
+
+    if (node.childNodes) {
+      node2.childNodes = new NodeList();
+    }
+
+    node2.ownerDocument = doc;
+
+    switch (node2.nodeType) {
+      case ELEMENT_NODE:
+        var attrs = node.attributes;
+        var attrs2 = node2.attributes = new NamedNodeMap();
+        var len = attrs.length;
+        attrs2._ownerElement = node2;
+
+        for (var i = 0; i < len; i++) {
+          node2.setAttributeNode(_cloneNode(doc, attrs.item(i), true));
+        }
+
+        break;
+
+
+      case ATTRIBUTE_NODE:
+        deep = true;
+    }
+
+    if (deep) {
+      var child = node.firstChild;
+
+      while (child) {
+        node2.appendChild(_cloneNode(doc, child, deep));
+        child = child.nextSibling;
+      }
+    }
+
+    return node2;
+  }
+
+  function __set__(object, key, value) {
+    object[key] = value;
+  } //do dynamic
+
+
+  try {
+    if (Object.defineProperty) {
+      var getTextContent = function getTextContent(node) {
+        switch (node.nodeType) {
+          case ELEMENT_NODE:
+          case DOCUMENT_FRAGMENT_NODE:
+            var buf = [];
+            node = node.firstChild;
+
+            while (node) {
+              if (node.nodeType !== 7 && node.nodeType !== 8) {
+                buf.push(getTextContent(node));
+              }
+
+              node = node.nextSibling;
+            }
+
+            return buf.join('');
+
+          default:
+            return node.nodeValue;
+        }
+      };
+
+      Object.defineProperty(LiveNodeList.prototype, 'length', {
+        get: function get() {
+          _updateLiveList(this);
+
+          return this.$$length;
+        }
+      });
+      Object.defineProperty(Node.prototype, 'textContent', {
+        get: function get() {
+          return getTextContent(this);
+        },
+        set: function set(data) {
+          switch (this.nodeType) {
+            case ELEMENT_NODE:
+            case DOCUMENT_FRAGMENT_NODE:
+              while (this.firstChild) {
+                this.removeChild(this.firstChild);
+              }
+
+              if (data || String(data)) {
+                this.appendChild(this.ownerDocument.createTextNode(data));
+              }
+
+              break;
+
+            default:
+              //TODO:
+              this.data = data;
+              this.value = data;
+              this.nodeValue = data;
+          }
+        }
+      });
+
+      __set__ = function __set__(object, key, value) {
+        //console.log(value)
+        object['$$' + key] = value;
+      };
+    }
+  } catch (e) {} //ie8
+  //if(typeof require == 'function'){
+
+
+  var DOMImplementation_1 = DOMImplementation;
+  var XMLSerializer_1 = XMLSerializer; //}
+
+  var dom = {
+    DOMImplementation: DOMImplementation_1,
+    XMLSerializer: XMLSerializer_1
+  };
+
+  var domParser = createCommonjsModule(function (module, exports) {
+    function DOMParser(options) {
+      this.options = options || {
+        locator: {}
+      };
+    }
+
+    DOMParser.prototype.parseFromString = function (source, mimeType) {
+      var options = this.options;
+      var sax = new XMLReader();
+      var domBuilder = options.domBuilder || new DOMHandler(); //contentHandler and LexicalHandler
+
+      var errorHandler = options.errorHandler;
+      var locator = options.locator;
+      var defaultNSMap = options.xmlns || {};
+      var entityMap = {
+        'lt': '<',
+        'gt': '>',
+        'amp': '&',
+        'quot': '"',
+        'apos': "'"
+      };
+
+      if (locator) {
+        domBuilder.setDocumentLocator(locator);
+      }
+
+      sax.errorHandler = buildErrorHandler(errorHandler, domBuilder, locator);
+      sax.domBuilder = options.domBuilder || domBuilder;
+
+      if (/\/x?html?$/.test(mimeType)) {
+        entityMap.nbsp = '\xa0';
+        entityMap.copy = '\xa9';
+        defaultNSMap[''] = 'http://www.w3.org/1999/xhtml';
+      }
+
+      defaultNSMap.xml = defaultNSMap.xml || 'http://www.w3.org/XML/1998/namespace';
+
+      if (source) {
+        sax.parse(source, defaultNSMap, entityMap);
+      } else {
+        sax.errorHandler.error("invalid doc source");
+      }
+
+      return domBuilder.doc;
+    };
+
+    function buildErrorHandler(errorImpl, domBuilder, locator) {
+      if (!errorImpl) {
+        if (domBuilder instanceof DOMHandler) {
+          return domBuilder;
+        }
+
+        errorImpl = domBuilder;
+      }
+
+      var errorHandler = {};
+      var isCallback = errorImpl instanceof Function;
+      locator = locator || {};
+
+      function build(key) {
+        var fn = errorImpl[key];
+
+        if (!fn && isCallback) {
+          fn = errorImpl.length == 2 ? function (msg) {
+            errorImpl(key, msg);
+          } : errorImpl;
+        }
+
+        errorHandler[key] = fn && function (msg) {
+          fn('[xmldom ' + key + ']\t' + msg + _locator(locator));
+        } || function () {};
+      }
+
+      build('warning');
+      build('error');
+      build('fatalError');
+      return errorHandler;
+    } //console.log('#\n\n\n\n\n\n\n####')
+
+    /**
+     * +ContentHandler+ErrorHandler
+     * +LexicalHandler+EntityResolver2
+     * -DeclHandler-DTDHandler
+     *
+     * DefaultHandler:EntityResolver, DTDHandler, ContentHandler, ErrorHandler
+     * DefaultHandler2:DefaultHandler,LexicalHandler, DeclHandler, EntityResolver2
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/helpers/DefaultHandler.html
+     */
+
+
+    function DOMHandler() {
+      this.cdata = false;
+    }
+
+    function position(locator, node) {
+      node.lineNumber = locator.lineNumber;
+      node.columnNumber = locator.columnNumber;
+    }
+    /**
+     * @see org.xml.sax.ContentHandler#startDocument
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/ContentHandler.html
+     */
+
+
+    DOMHandler.prototype = {
+      startDocument: function startDocument() {
+        this.doc = new DOMImplementation().createDocument(null, null, null);
+
+        if (this.locator) {
+          this.doc.documentURI = this.locator.systemId;
+        }
+      },
+      startElement: function startElement(namespaceURI, localName, qName, attrs) {
+        var doc = this.doc;
+        var el = doc.createElementNS(namespaceURI, qName || localName);
+        var len = attrs.length;
+        appendElement(this, el);
+        this.currentElement = el;
+        this.locator && position(this.locator, el);
+
+        for (var i = 0; i < len; i++) {
+          var namespaceURI = attrs.getURI(i);
+          var value = attrs.getValue(i);
+          var qName = attrs.getQName(i);
+          var attr = doc.createAttributeNS(namespaceURI, qName);
+          this.locator && position(attrs.getLocator(i), attr);
+          attr.value = attr.nodeValue = value;
+          el.setAttributeNode(attr);
+        }
+      },
+      endElement: function endElement(namespaceURI, localName, qName) {
+        var current = this.currentElement;
+        var tagName = current.tagName;
+        this.currentElement = current.parentNode;
+      },
+      startPrefixMapping: function startPrefixMapping(prefix, uri) {},
+      endPrefixMapping: function endPrefixMapping(prefix) {},
+      processingInstruction: function processingInstruction(target, data) {
+        var ins = this.doc.createProcessingInstruction(target, data);
+        this.locator && position(this.locator, ins);
+        appendElement(this, ins);
+      },
+      ignorableWhitespace: function ignorableWhitespace(ch, start, length) {},
+      characters: function characters(chars, start, length) {
+        chars = _toString.apply(this, arguments); //console.log(chars)
+
+        if (chars) {
+          if (this.cdata) {
+            var charNode = this.doc.createCDATASection(chars);
+          } else {
+            var charNode = this.doc.createTextNode(chars);
+          }
+
+          if (this.currentElement) {
+            this.currentElement.appendChild(charNode);
+          } else if (/^\s*$/.test(chars)) {
+            this.doc.appendChild(charNode); //process xml
+          }
+
+          this.locator && position(this.locator, charNode);
+        }
+      },
+      skippedEntity: function skippedEntity(name) {},
+      endDocument: function endDocument() {
+        this.doc.normalize();
+      },
+      setDocumentLocator: function setDocumentLocator(locator) {
+        if (this.locator = locator) {
+          // && !('lineNumber' in locator)){
+          locator.lineNumber = 0;
+        }
+      },
+      //LexicalHandler
+      comment: function comment(chars, start, length) {
+        chars = _toString.apply(this, arguments);
+        var comm = this.doc.createComment(chars);
+        this.locator && position(this.locator, comm);
+        appendElement(this, comm);
+      },
+      startCDATA: function startCDATA() {
+        //used in characters() methods
+        this.cdata = true;
+      },
+      endCDATA: function endCDATA() {
+        this.cdata = false;
+      },
+      startDTD: function startDTD(name, publicId, systemId) {
+        var impl = this.doc.implementation;
+
+        if (impl && impl.createDocumentType) {
+          var dt = impl.createDocumentType(name, publicId, systemId);
+          this.locator && position(this.locator, dt);
+          appendElement(this, dt);
+        }
+      },
+
+      /**
+       * @see org.xml.sax.ErrorHandler
+       * @link http://www.saxproject.org/apidoc/org/xml/sax/ErrorHandler.html
+       */
+      warning: function warning(error) {
+        console.warn('[xmldom warning]\t' + error, _locator(this.locator));
+      },
+      error: function error(_error) {
+        console.error('[xmldom error]\t' + _error, _locator(this.locator));
+      },
+      fatalError: function fatalError(error) {
+        console.error('[xmldom fatalError]\t' + error, _locator(this.locator));
+        throw error;
+      }
+    };
+
+    function _locator(l) {
+      if (l) {
+        return '\n@' + (l.systemId || '') + '#[line:' + l.lineNumber + ',col:' + l.columnNumber + ']';
+      }
+    }
+
+    function _toString(chars, start, length) {
+      if (typeof chars == 'string') {
+        return chars.substr(start, length);
+      } else {
+        //java sax connect width xmldom on rhino(what about: "? && !(chars instanceof String)")
+        if (chars.length >= start + length || start) {
+          return new java.lang.String(chars, start, length) + '';
+        }
+
+        return chars;
+      }
+    }
+    /*
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/ext/LexicalHandler.html
+     * used method of org.xml.sax.ext.LexicalHandler:
+     *  #comment(chars, start, length)
+     *  #startCDATA()
+     *  #endCDATA()
+     *  #startDTD(name, publicId, systemId)
+     *
+     *
+     * IGNORED method of org.xml.sax.ext.LexicalHandler:
+     *  #endDTD()
+     *  #startEntity(name)
+     *  #endEntity(name)
+     *
+     *
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/ext/DeclHandler.html
+     * IGNORED method of org.xml.sax.ext.DeclHandler
+     * 	#attributeDecl(eName, aName, type, mode, value)
+     *  #elementDecl(name, model)
+     *  #externalEntityDecl(name, publicId, systemId)
+     *  #internalEntityDecl(name, value)
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/ext/EntityResolver2.html
+     * IGNORED method of org.xml.sax.EntityResolver2
+     *  #resolveEntity(String name,String publicId,String baseURI,String systemId)
+     *  #resolveEntity(publicId, systemId)
+     *  #getExternalSubset(name, baseURI)
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/DTDHandler.html
+     * IGNORED method of org.xml.sax.DTDHandler
+     *  #notationDecl(name, publicId, systemId) {};
+     *  #unparsedEntityDecl(name, publicId, systemId, notationName) {};
+     */
+
+
+    "endDTD,startEntity,endEntity,attributeDecl,elementDecl,externalEntityDecl,internalEntityDecl,resolveEntity,getExternalSubset,notationDecl,unparsedEntityDecl".replace(/\w+/g, function (key) {
+      DOMHandler.prototype[key] = function () {
+        return null;
+      };
+    });
+    /* Private static helpers treated below as private instance methods, so don't need to add these to the public API; we might use a Relator to also get rid of non-standard public properties */
+
+    function appendElement(hander, node) {
+      if (!hander.currentElement) {
+        hander.doc.appendChild(node);
+      } else {
+        hander.currentElement.appendChild(node);
+      }
+    } //appendChild and setAttributeNS are preformance key
+    //if(typeof require == 'function'){
+
+
+    var XMLReader = sax.XMLReader;
+    var DOMImplementation = exports.DOMImplementation = dom.DOMImplementation;
+    exports.XMLSerializer = dom.XMLSerializer;
+    exports.DOMParser = DOMParser; //}
+  });
+  var domParser_1 = domParser.DOMImplementation;
+  var domParser_2 = domParser.XMLSerializer;
+  var domParser_3 = domParser.DOMParser;
+
+  /*! @name mpd-parser @version 0.10.0 @license Apache-2.0 */
 
   var isObject$1 = function isObject(obj) {
     return !!obj && typeof obj === 'object';
@@ -31421,205 +33150,6 @@
     SEGMENT_TIME_UNSPECIFIED: 'SEGMENT_TIME_UNSPECIFIED',
     UNSUPPORTED_UTC_TIMING_SCHEME: 'UNSUPPORTED_UTC_TIMING_SCHEME'
   };
-
-  function createCommonjsModule$1(fn, module) {
-    return module = {
-      exports: {}
-    }, fn(module, module.exports), module.exports;
-  }
-
-  var urlToolkit$1 = createCommonjsModule$1(function (module, exports) {
-    // see https://tools.ietf.org/html/rfc1808
-
-    /* jshint ignore:start */
-    (function (root) {
-      /* jshint ignore:end */
-      var URL_REGEX = /^((?:[a-zA-Z0-9+\-.]+:)?)(\/\/[^\/?#]*)?((?:[^\/\?#]*\/)*.*?)??(;.*?)?(\?.*?)?(#.*?)?$/;
-      var FIRST_SEGMENT_REGEX = /^([^\/?#]*)(.*)$/;
-      var SLASH_DOT_REGEX = /(?:\/|^)\.(?=\/)/g;
-      var SLASH_DOT_DOT_REGEX = /(?:\/|^)\.\.\/(?!\.\.\/).*?(?=\/)/g;
-      var URLToolkit = {
-        // jshint ignore:line
-        // If opts.alwaysNormalize is true then the path will always be normalized even when it starts with / or //
-        // E.g
-        // With opts.alwaysNormalize = false (default, spec compliant)
-        // http://a.com/b/cd + /e/f/../g => http://a.com/e/f/../g
-        // With opts.alwaysNormalize = true (not spec compliant)
-        // http://a.com/b/cd + /e/f/../g => http://a.com/e/g
-        buildAbsoluteURL: function buildAbsoluteURL(baseURL, relativeURL, opts) {
-          opts = opts || {}; // remove any remaining space and CRLF
-
-          baseURL = baseURL.trim();
-          relativeURL = relativeURL.trim();
-
-          if (!relativeURL) {
-            // 2a) If the embedded URL is entirely empty, it inherits the
-            // entire base URL (i.e., is set equal to the base URL)
-            // and we are done.
-            if (!opts.alwaysNormalize) {
-              return baseURL;
-            }
-
-            var basePartsForNormalise = URLToolkit.parseURL(baseURL);
-
-            if (!basePartsForNormalise) {
-              throw new Error('Error trying to parse base URL.');
-            }
-
-            basePartsForNormalise.path = URLToolkit.normalizePath(basePartsForNormalise.path);
-            return URLToolkit.buildURLFromParts(basePartsForNormalise);
-          }
-
-          var relativeParts = URLToolkit.parseURL(relativeURL);
-
-          if (!relativeParts) {
-            throw new Error('Error trying to parse relative URL.');
-          }
-
-          if (relativeParts.scheme) {
-            // 2b) If the embedded URL starts with a scheme name, it is
-            // interpreted as an absolute URL and we are done.
-            if (!opts.alwaysNormalize) {
-              return relativeURL;
-            }
-
-            relativeParts.path = URLToolkit.normalizePath(relativeParts.path);
-            return URLToolkit.buildURLFromParts(relativeParts);
-          }
-
-          var baseParts = URLToolkit.parseURL(baseURL);
-
-          if (!baseParts) {
-            throw new Error('Error trying to parse base URL.');
-          }
-
-          if (!baseParts.netLoc && baseParts.path && baseParts.path[0] !== '/') {
-            // If netLoc missing and path doesn't start with '/', assume everthing before the first '/' is the netLoc
-            // This causes 'example.com/a' to be handled as '//example.com/a' instead of '/example.com/a'
-            var pathParts = FIRST_SEGMENT_REGEX.exec(baseParts.path);
-            baseParts.netLoc = pathParts[1];
-            baseParts.path = pathParts[2];
-          }
-
-          if (baseParts.netLoc && !baseParts.path) {
-            baseParts.path = '/';
-          }
-
-          var builtParts = {
-            // 2c) Otherwise, the embedded URL inherits the scheme of
-            // the base URL.
-            scheme: baseParts.scheme,
-            netLoc: relativeParts.netLoc,
-            path: null,
-            params: relativeParts.params,
-            query: relativeParts.query,
-            fragment: relativeParts.fragment
-          };
-
-          if (!relativeParts.netLoc) {
-            // 3) If the embedded URL's <net_loc> is non-empty, we skip to
-            // Step 7.  Otherwise, the embedded URL inherits the <net_loc>
-            // (if any) of the base URL.
-            builtParts.netLoc = baseParts.netLoc; // 4) If the embedded URL path is preceded by a slash "/", the
-            // path is not relative and we skip to Step 7.
-
-            if (relativeParts.path[0] !== '/') {
-              if (!relativeParts.path) {
-                // 5) If the embedded URL path is empty (and not preceded by a
-                // slash), then the embedded URL inherits the base URL path
-                builtParts.path = baseParts.path; // 5a) if the embedded URL's <params> is non-empty, we skip to
-                // step 7; otherwise, it inherits the <params> of the base
-                // URL (if any) and
-
-                if (!relativeParts.params) {
-                  builtParts.params = baseParts.params; // 5b) if the embedded URL's <query> is non-empty, we skip to
-                  // step 7; otherwise, it inherits the <query> of the base
-                  // URL (if any) and we skip to step 7.
-
-                  if (!relativeParts.query) {
-                    builtParts.query = baseParts.query;
-                  }
-                }
-              } else {
-                // 6) The last segment of the base URL's path (anything
-                // following the rightmost slash "/", or the entire path if no
-                // slash is present) is removed and the embedded URL's path is
-                // appended in its place.
-                var baseURLPath = baseParts.path;
-                var newPath = baseURLPath.substring(0, baseURLPath.lastIndexOf('/') + 1) + relativeParts.path;
-                builtParts.path = URLToolkit.normalizePath(newPath);
-              }
-            }
-          }
-
-          if (builtParts.path === null) {
-            builtParts.path = opts.alwaysNormalize ? URLToolkit.normalizePath(relativeParts.path) : relativeParts.path;
-          }
-
-          return URLToolkit.buildURLFromParts(builtParts);
-        },
-        parseURL: function parseURL(url) {
-          var parts = URL_REGEX.exec(url);
-
-          if (!parts) {
-            return null;
-          }
-
-          return {
-            scheme: parts[1] || '',
-            netLoc: parts[2] || '',
-            path: parts[3] || '',
-            params: parts[4] || '',
-            query: parts[5] || '',
-            fragment: parts[6] || ''
-          };
-        },
-        normalizePath: function normalizePath(path) {
-          // The following operations are
-          // then applied, in order, to the new path:
-          // 6a) All occurrences of "./", where "." is a complete path
-          // segment, are removed.
-          // 6b) If the path ends with "." as a complete path segment,
-          // that "." is removed.
-          path = path.split('').reverse().join('').replace(SLASH_DOT_REGEX, ''); // 6c) All occurrences of "<segment>/../", where <segment> is a
-          // complete path segment not equal to "..", are removed.
-          // Removal of these path segments is performed iteratively,
-          // removing the leftmost matching pattern on each iteration,
-          // until no matching pattern remains.
-          // 6d) If the path ends with "<segment>/..", where <segment> is a
-          // complete path segment not equal to "..", that
-          // "<segment>/.." is removed.
-
-          while (path.length !== (path = path.replace(SLASH_DOT_DOT_REGEX, '')).length) {} // jshint ignore:line
-
-
-          return path.split('').reverse().join('');
-        },
-        buildURLFromParts: function buildURLFromParts(parts) {
-          return parts.scheme + parts.netLoc + parts.path + parts.params + parts.query + parts.fragment;
-        }
-      };
-      /* jshint ignore:start */
-
-      module.exports = URLToolkit;
-    })();
-    /* jshint ignore:end */
-
-  });
-
-  var resolveUrl = function resolveUrl(baseUrl, relativeUrl) {
-    // return early if we don't need to resolve
-    if (/^[a-z]+:/i.test(relativeUrl)) {
-      return relativeUrl;
-    } // if the base URL is relative then combine with the current location
-
-
-    if (!/\/\//i.test(baseUrl)) {
-      baseUrl = urlToolkit$1.buildAbsoluteURL(window$1.location.href, baseUrl);
-    }
-
-    return urlToolkit$1.buildAbsoluteURL(baseUrl, relativeUrl);
-  };
   /**
    * @typedef {Object} SingleUri
    * @property {string} uri - relative location of segment
@@ -31646,7 +33176,6 @@
    *   to m3u8-parser
    */
 
-
   var urlTypeToSegment = function urlTypeToSegment(_ref) {
     var _ref$baseUrl = _ref.baseUrl,
         baseUrl = _ref$baseUrl === void 0 ? '' : _ref$baseUrl,
@@ -31658,7 +33187,7 @@
         indexRange = _ref$indexRange === void 0 ? '' : _ref$indexRange;
     var segment = {
       uri: source,
-      resolvedUri: resolveUrl(baseUrl || '', source)
+      resolvedUri: resolveUrl_1(baseUrl || '', source)
     };
 
     if (range || indexRange) {
@@ -32187,8 +33716,11 @@
 
     var _dashPlaylists$0$attr = dashPlaylists[0].attributes,
         duration = _dashPlaylists$0$attr.sourceDuration,
-        _dashPlaylists$0$attr2 = _dashPlaylists$0$attr.minimumUpdatePeriod,
-        minimumUpdatePeriod = _dashPlaylists$0$attr2 === void 0 ? 0 : _dashPlaylists$0$attr2;
+        _dashPlaylists$0$attr2 = _dashPlaylists$0$attr.type,
+        type = _dashPlaylists$0$attr2 === void 0 ? 'static' : _dashPlaylists$0$attr2,
+        suggestedPresentationDelay = _dashPlaylists$0$attr.suggestedPresentationDelay,
+        _dashPlaylists$0$attr3 = _dashPlaylists$0$attr.minimumUpdatePeriod,
+        minimumUpdatePeriod = _dashPlaylists$0$attr3 === void 0 ? 0 : _dashPlaylists$0$attr3;
 
     var videoOnly = function videoOnly(_ref4) {
       var attributes = _ref4.attributes;
@@ -32222,6 +33754,10 @@
       playlists: addSegmentInfoFromSidx(videoPlaylists, sidxMapping),
       minimumUpdatePeriod: minimumUpdatePeriod * 1000
     };
+
+    if (type === 'dynamic') {
+      master.suggestedPresentationDelay = suggestedPresentationDelay;
+    }
 
     if (audioPlaylists.length) {
       master.mediaGroups.AUDIO.audio = organizeAudioPlaylists(audioPlaylists, sidxMapping);
@@ -32533,7 +34069,7 @@
         uri: uri,
         timeline: segment.timeline,
         duration: segment.duration,
-        resolvedUri: resolveUrl(attributes.baseUrl || '', uri),
+        resolvedUri: resolveUrl_1(attributes.baseUrl || '', uri),
         map: mapSegment,
         number: segment.number
       };
@@ -32775,6 +34311,32 @@
     },
 
     /**
+     * Specifies the suggested presentation delay. Format is a
+     * duration string as specified in ISO 8601
+     *
+     * @param {string} value
+     *        value of attribute as a string
+     * @return {number}
+     *         The duration in seconds
+     */
+    suggestedPresentationDelay: function suggestedPresentationDelay(value) {
+      return parseDuration(value);
+    },
+
+    /**
+     * specifices the type of mpd. Can be either "static" or "dynamic"
+     *
+     * @param {string} value
+     *        value of attribute as a string
+     *
+     * @return {string}
+     *         The type as a string
+     */
+    type: function type(value) {
+      return value;
+    },
+
+    /**
      * Specifies the duration of the smallest time shifting buffer for any Representation
      * in the MPD. Format is a duration string as specified in ISO 8601
      *
@@ -32955,17 +34517,6 @@
     }, {});
   };
 
-  function decodeB64ToUint8Array$1(b64Text) {
-    var decodedString = window$1.atob(b64Text);
-    var array = new Uint8Array(decodedString.length);
-
-    for (var i = 0; i < decodedString.length; i++) {
-      array[i] = decodedString.charCodeAt(i);
-    }
-
-    return array;
-  }
-
   var keySystemsMap = {
     'urn:uuid:1077efec-c0b2-4d02-ace3-3c1e52e2fb4b': 'org.w3.clearkey',
     'urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed': 'com.widevine.alpha',
@@ -32990,7 +34541,7 @@
 
     return flatten(referenceUrls.map(function (reference) {
       return baseUrlElements.map(function (baseUrlElement) {
-        return resolveUrl(reference, getContent(baseUrlElement));
+        return resolveUrl_1(reference, getContent(baseUrlElement));
       });
     }));
   };
@@ -33146,7 +34697,7 @@
 
         if (psshNode) {
           var pssh = getContent(psshNode);
-          var psshBuffer = pssh && decodeB64ToUint8Array$1(pssh);
+          var psshBuffer = pssh && decodeB64ToUint8Array_1(pssh);
           acc[keySystem].pssh = psshBuffer;
         }
       }
@@ -33236,7 +34787,7 @@
       var periodAtt = parseAttributes$1(period);
       var parsedPeriodId = parseInt(periodAtt.id, 10); // fallback to mapping index if Period@id is not a number
 
-      var periodIndex = window$1.isNaN(parsedPeriodId) ? index : parsedPeriodId;
+      var periodIndex = window$3.isNaN(parsedPeriodId) ? index : parsedPeriodId;
       var periodAttributes = merge(mpdAttributes, {
         periodIndex: periodIndex
       });
@@ -33295,7 +34846,7 @@
       throw new Error(errors.DASH_EMPTY_MANIFEST);
     }
 
-    var parser = new window$1.DOMParser();
+    var parser = new domParser_3();
     var xml = parser.parseFromString(manifestString, 'application/xml');
     var mpd = xml && xml.documentElement.tagName === 'MPD' ? xml.documentElement : null;
 
@@ -33393,13 +34944,39 @@
     toHexString: toHexString
   };
 
-  var toUnsigned$1 = bin.toUnsigned;
-  var toHexString$1 = bin.toHexString;
+  var inspectMp4,
+      _textifyMp,
+      toUnsigned$1 = bin.toUnsigned,
+      parseMp4Date = function parseMp4Date(seconds) {
+    return new Date(seconds * 1000 - 2082844800000);
+  },
+      parseSampleFlags = function parseSampleFlags(flags) {
+    return {
+      isLeading: (flags[0] & 0x0c) >>> 2,
+      dependsOn: flags[0] & 0x03,
+      isDependedOn: (flags[1] & 0xc0) >>> 6,
+      hasRedundancy: (flags[1] & 0x30) >>> 4,
+      paddingValue: (flags[1] & 0x0e) >>> 1,
+      isNonSyncSample: flags[1] & 0x01,
+      degradationPriority: flags[2] << 8 | flags[3]
+    };
+  },
 
-  var _findBox, parseType, timescale, startTime, getVideoTrackIds, getTracks; // Find the data for a box specified by its path
-
-
-  _findBox = function findBox(data, path) {
+  /**
+   * Returns the string representation of an ASCII encoded four byte buffer.
+   * @param buffer {Uint8Array} a four-byte buffer to translate
+   * @return {string} the corresponding string
+   */
+  parseType = function parseType(buffer) {
+    var result = '';
+    result += String.fromCharCode(buffer[0]);
+    result += String.fromCharCode(buffer[1]);
+    result += String.fromCharCode(buffer[2]);
+    result += String.fromCharCode(buffer[3]);
+    return result;
+  },
+      // Find the data for a box specified by its path
+  findBox = function findBox(data, path) {
     var results = [],
         i,
         size,
@@ -33424,7 +35001,7 @@
           results.push(data.subarray(i + 8, end));
         } else {
           // recursively search for the next box along the path
-          subresults = _findBox(data.subarray(i + 8, end), path.slice(1));
+          subresults = findBox(data.subarray(i + 8, end), path.slice(1));
 
           if (subresults.length) {
             results = results.concat(subresults);
@@ -33437,288 +35014,6 @@
 
 
     return results;
-  };
-  /**
-   * Returns the string representation of an ASCII encoded four byte buffer.
-   * @param buffer {Uint8Array} a four-byte buffer to translate
-   * @return {string} the corresponding string
-   */
-
-
-  parseType = function parseType(buffer) {
-    var result = '';
-    result += String.fromCharCode(buffer[0]);
-    result += String.fromCharCode(buffer[1]);
-    result += String.fromCharCode(buffer[2]);
-    result += String.fromCharCode(buffer[3]);
-    return result;
-  };
-  /**
-   * Parses an MP4 initialization segment and extracts the timescale
-   * values for any declared tracks. Timescale values indicate the
-   * number of clock ticks per second to assume for time-based values
-   * elsewhere in the MP4.
-   *
-   * To determine the start time of an MP4, you need two pieces of
-   * information: the timescale unit and the earliest base media decode
-   * time. Multiple timescales can be specified within an MP4 but the
-   * base media decode time is always expressed in the timescale from
-   * the media header box for the track:
-   * ```
-   * moov > trak > mdia > mdhd.timescale
-   * ```
-   * @param init {Uint8Array} the bytes of the init segment
-   * @return {object} a hash of track ids to timescale values or null if
-   * the init segment is malformed.
-   */
-
-
-  timescale = function timescale(init) {
-    var result = {},
-        traks = _findBox(init, ['moov', 'trak']); // mdhd timescale
-
-
-    return traks.reduce(function (result, trak) {
-      var tkhd, version, index, id, mdhd;
-      tkhd = _findBox(trak, ['tkhd'])[0];
-
-      if (!tkhd) {
-        return null;
-      }
-
-      version = tkhd[0];
-      index = version === 0 ? 12 : 20;
-      id = toUnsigned$1(tkhd[index] << 24 | tkhd[index + 1] << 16 | tkhd[index + 2] << 8 | tkhd[index + 3]);
-      mdhd = _findBox(trak, ['mdia', 'mdhd'])[0];
-
-      if (!mdhd) {
-        return null;
-      }
-
-      version = mdhd[0];
-      index = version === 0 ? 12 : 20;
-      result[id] = toUnsigned$1(mdhd[index] << 24 | mdhd[index + 1] << 16 | mdhd[index + 2] << 8 | mdhd[index + 3]);
-      return result;
-    }, result);
-  };
-  /**
-   * Determine the base media decode start time, in seconds, for an MP4
-   * fragment. If multiple fragments are specified, the earliest time is
-   * returned.
-   *
-   * The base media decode time can be parsed from track fragment
-   * metadata:
-   * ```
-   * moof > traf > tfdt.baseMediaDecodeTime
-   * ```
-   * It requires the timescale value from the mdhd to interpret.
-   *
-   * @param timescale {object} a hash of track ids to timescale values.
-   * @return {number} the earliest base media decode start time for the
-   * fragment, in seconds
-   */
-
-
-  startTime = function startTime(timescale, fragment) {
-    var trafs, baseTimes, result; // we need info from two childrend of each track fragment box
-
-    trafs = _findBox(fragment, ['moof', 'traf']); // determine the start times for each track
-
-    baseTimes = [].concat.apply([], trafs.map(function (traf) {
-      return _findBox(traf, ['tfhd']).map(function (tfhd) {
-        var id, scale, baseTime; // get the track id from the tfhd
-
-        id = toUnsigned$1(tfhd[4] << 24 | tfhd[5] << 16 | tfhd[6] << 8 | tfhd[7]); // assume a 90kHz clock if no timescale was specified
-
-        scale = timescale[id] || 90e3; // get the base media decode time from the tfdt
-
-        baseTime = _findBox(traf, ['tfdt']).map(function (tfdt) {
-          var version, result;
-          version = tfdt[0];
-          result = toUnsigned$1(tfdt[4] << 24 | tfdt[5] << 16 | tfdt[6] << 8 | tfdt[7]);
-
-          if (version === 1) {
-            result *= Math.pow(2, 32);
-            result += toUnsigned$1(tfdt[8] << 24 | tfdt[9] << 16 | tfdt[10] << 8 | tfdt[11]);
-          }
-
-          return result;
-        })[0];
-        baseTime = baseTime || Infinity; // convert base time to seconds
-
-        return baseTime / scale;
-      });
-    })); // return the minimum
-
-    result = Math.min.apply(null, baseTimes);
-    return isFinite(result) ? result : 0;
-  };
-  /**
-    * Find the trackIds of the video tracks in this source.
-    * Found by parsing the Handler Reference and Track Header Boxes:
-    *   moov > trak > mdia > hdlr
-    *   moov > trak > tkhd
-    *
-    * @param {Uint8Array} init - The bytes of the init segment for this source
-    * @return {Number[]} A list of trackIds
-    *
-    * @see ISO-BMFF-12/2015, Section 8.4.3
-   **/
-
-
-  getVideoTrackIds = function getVideoTrackIds(init) {
-    var traks = _findBox(init, ['moov', 'trak']);
-
-    var videoTrackIds = [];
-    traks.forEach(function (trak) {
-      var hdlrs = _findBox(trak, ['mdia', 'hdlr']);
-
-      var tkhds = _findBox(trak, ['tkhd']);
-
-      hdlrs.forEach(function (hdlr, index) {
-        var handlerType = parseType(hdlr.subarray(8, 12));
-        var tkhd = tkhds[index];
-        var view;
-        var version;
-        var trackId;
-
-        if (handlerType === 'vide') {
-          view = new DataView(tkhd.buffer, tkhd.byteOffset, tkhd.byteLength);
-          version = view.getUint8(0);
-          trackId = version === 0 ? view.getUint32(12) : view.getUint32(20);
-          videoTrackIds.push(trackId);
-        }
-      });
-    });
-    return videoTrackIds;
-  };
-  /**
-   * Get all the video, audio, and hint tracks from a non fragmented
-   * mp4 segment
-   */
-
-
-  getTracks = function getTracks(init) {
-    var traks = _findBox(init, ['moov', 'trak']);
-
-    var tracks = [];
-    traks.forEach(function (trak) {
-      var track = {};
-
-      var tkhd = _findBox(trak, ['tkhd'])[0];
-
-      var view, version; // id
-
-      if (tkhd) {
-        view = new DataView(tkhd.buffer, tkhd.byteOffset, tkhd.byteLength);
-        version = view.getUint8(0);
-        track.id = version === 0 ? view.getUint32(12) : view.getUint32(20);
-      }
-
-      var hdlr = _findBox(trak, ['mdia', 'hdlr'])[0]; // type
-
-
-      if (hdlr) {
-        var type = parseType(hdlr.subarray(8, 12));
-
-        if (type === 'vide') {
-          track.type = 'video';
-        } else if (type === 'soun') {
-          track.type = 'audio';
-        } else {
-          track.type = type;
-        }
-      } // codec
-
-
-      var stsd = _findBox(trak, ['mdia', 'minf', 'stbl', 'stsd'])[0];
-
-      if (stsd) {
-        var sampleDescriptions = stsd.subarray(8); // gives the codec type string
-
-        track.codec = parseType(sampleDescriptions.subarray(4, 8));
-
-        var codecBox = _findBox(sampleDescriptions, [track.codec])[0];
-
-        var codecConfig, codecConfigType;
-
-        if (codecBox) {
-          // https://tools.ietf.org/html/rfc6381#section-3.3
-          if (/^[a-z]vc[1-9]$/i.test(track.codec)) {
-            // we don't need anything but the "config" parameter of the
-            // avc1 codecBox
-            codecConfig = codecBox.subarray(78);
-            codecConfigType = parseType(codecConfig.subarray(4, 8));
-
-            if (codecConfigType === 'avcC' && codecConfig.length > 11) {
-              track.codec += '.'; // left padded with zeroes for single digit hex
-              // profile idc
-
-              track.codec += toHexString$1(codecConfig[9]); // the byte containing the constraint_set flags
-
-              track.codec += toHexString$1(codecConfig[10]); // level idc
-
-              track.codec += toHexString$1(codecConfig[11]);
-            } else {
-              // TODO: show a warning that we couldn't parse the codec
-              // and are using the default
-              track.codec = 'avc1.4d400d';
-            }
-          } else if (/^mp4[a,v]$/i.test(track.codec)) {
-            // we do not need anything but the streamDescriptor of the mp4a codecBox
-            codecConfig = codecBox.subarray(28);
-            codecConfigType = parseType(codecConfig.subarray(4, 8));
-
-            if (codecConfigType === 'esds' && codecConfig.length > 20 && codecConfig[19] !== 0) {
-              track.codec += '.' + toHexString$1(codecConfig[19]); // this value is only a single digit
-
-              track.codec += '.' + toHexString$1(codecConfig[20] >>> 2 & 0x3f).replace(/^0/, '');
-            } else {
-              // TODO: show a warning that we couldn't parse the codec
-              // and are using the default
-              track.codec = 'mp4a.40.2';
-            }
-          }
-        }
-      }
-
-      var mdhd = _findBox(trak, ['mdia', 'mdhd'])[0];
-
-      if (mdhd && tkhd) {
-        var index = version === 0 ? 12 : 20;
-        track.timescale = toUnsigned$1(mdhd[index] << 24 | mdhd[index + 1] << 16 | mdhd[index + 2] << 8 | mdhd[index + 3]);
-      }
-
-      tracks.push(track);
-    });
-    return tracks;
-  };
-
-  var probe = {
-    findBox: _findBox,
-    parseType: parseType,
-    timescale: timescale,
-    startTime: startTime,
-    videoTrackIds: getVideoTrackIds,
-    tracks: getTracks
-  };
-
-  var inspectMp4,
-      _textifyMp,
-      parseType$1 = probe.parseType,
-      parseMp4Date = function parseMp4Date(seconds) {
-    return new Date(seconds * 1000 - 2082844800000);
-  },
-      parseSampleFlags = function parseSampleFlags(flags) {
-    return {
-      isLeading: (flags[0] & 0x0c) >>> 2,
-      dependsOn: flags[0] & 0x03,
-      isDependedOn: (flags[1] & 0xc0) >>> 6,
-      hasRedundancy: (flags[1] & 0x30) >>> 4,
-      paddingValue: (flags[1] & 0x0e) >>> 1,
-      isNonSyncSample: flags[1] & 0x01,
-      degradationPriority: flags[2] << 8 | flags[3]
-    };
   },
       nalParse = function nalParse(avcStream) {
     var avcView = new DataView(avcStream.buffer, avcStream.byteOffset, avcStream.byteLength),
@@ -33858,14 +35153,14 @@
     ftyp: function ftyp(data) {
       var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
           result = {
-        majorBrand: parseType$1(data.subarray(0, 4)),
+        majorBrand: parseType(data.subarray(0, 4)),
         minorVersion: view.getUint32(4),
         compatibleBrands: []
       },
           i = 8;
 
       while (i < data.byteLength) {
-        result.compatibleBrands.push(parseType$1(data.subarray(i, i + 4)));
+        result.compatibleBrands.push(parseType(data.subarray(i, i + 4)));
         i += 4;
       }
 
@@ -33888,7 +35183,7 @@
           result = {
         version: view.getUint8(0),
         flags: new Uint8Array(data.subarray(1, 4)),
-        handlerType: parseType$1(data.subarray(8, 12)),
+        handlerType: parseType(data.subarray(8, 12)),
         name: ''
       },
           i = 8; // parse out the name field
@@ -34203,12 +35498,12 @@
       var result = {
         version: data[0],
         flags: new Uint8Array(data.subarray(1, 4)),
-        baseMediaDecodeTime: data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7]
+        baseMediaDecodeTime: toUnsigned$1(data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7])
       };
 
       if (result.version === 1) {
         result.baseMediaDecodeTime *= Math.pow(2, 32);
-        result.baseMediaDecodeTime += data[8] << 24 | data[9] << 16 | data[10] << 8 | data[11];
+        result.baseMediaDecodeTime += toUnsigned$1(data[8] << 24 | data[9] << 16 | data[10] << 8 | data[11]);
       }
 
       return result;
@@ -34474,7 +35769,7 @@
     while (i < data.byteLength) {
       // parse box data
       size = view.getUint32(i);
-      type = parseType$1(data.subarray(i + 4, i + 8));
+      type = parseType(data.subarray(i + 4, i + 8));
       end = size > 1 ? i + size : data.byteLength; // parse type-specific data
 
       box = (parse$1[type] || function (data) {
@@ -34552,11 +35847,308 @@
   var mp4Inspector = {
     inspect: inspectMp4,
     textify: _textifyMp,
+    parseType: parseType,
+    findBox: findBox,
+    parseTraf: parse$1.traf,
     parseTfdt: parse$1.tfdt,
     parseHdlr: parse$1.hdlr,
     parseTfhd: parse$1.tfhd,
     parseTrun: parse$1.trun,
     parseSidx: parse$1.sidx
+  };
+
+  var toUnsigned$2 = bin.toUnsigned;
+  var toHexString$1 = bin.toHexString;
+  var timescale, startTime, compositionStartTime, getVideoTrackIds, getTracks;
+  /**
+   * Parses an MP4 initialization segment and extracts the timescale
+   * values for any declared tracks. Timescale values indicate the
+   * number of clock ticks per second to assume for time-based values
+   * elsewhere in the MP4.
+   *
+   * To determine the start time of an MP4, you need two pieces of
+   * information: the timescale unit and the earliest base media decode
+   * time. Multiple timescales can be specified within an MP4 but the
+   * base media decode time is always expressed in the timescale from
+   * the media header box for the track:
+   * ```
+   * moov > trak > mdia > mdhd.timescale
+   * ```
+   * @param init {Uint8Array} the bytes of the init segment
+   * @return {object} a hash of track ids to timescale values or null if
+   * the init segment is malformed.
+   */
+
+  timescale = function timescale(init) {
+    var result = {},
+        traks = mp4Inspector.findBox(init, ['moov', 'trak']); // mdhd timescale
+
+    return traks.reduce(function (result, trak) {
+      var tkhd, version, index, id, mdhd;
+      tkhd = mp4Inspector.findBox(trak, ['tkhd'])[0];
+
+      if (!tkhd) {
+        return null;
+      }
+
+      version = tkhd[0];
+      index = version === 0 ? 12 : 20;
+      id = toUnsigned$2(tkhd[index] << 24 | tkhd[index + 1] << 16 | tkhd[index + 2] << 8 | tkhd[index + 3]);
+      mdhd = mp4Inspector.findBox(trak, ['mdia', 'mdhd'])[0];
+
+      if (!mdhd) {
+        return null;
+      }
+
+      version = mdhd[0];
+      index = version === 0 ? 12 : 20;
+      result[id] = toUnsigned$2(mdhd[index] << 24 | mdhd[index + 1] << 16 | mdhd[index + 2] << 8 | mdhd[index + 3]);
+      return result;
+    }, result);
+  };
+  /**
+   * Determine the base media decode start time, in seconds, for an MP4
+   * fragment. If multiple fragments are specified, the earliest time is
+   * returned.
+   *
+   * The base media decode time can be parsed from track fragment
+   * metadata:
+   * ```
+   * moof > traf > tfdt.baseMediaDecodeTime
+   * ```
+   * It requires the timescale value from the mdhd to interpret.
+   *
+   * @param timescale {object} a hash of track ids to timescale values.
+   * @return {number} the earliest base media decode start time for the
+   * fragment, in seconds
+   */
+
+
+  startTime = function startTime(timescale, fragment) {
+    var trafs, baseTimes, result; // we need info from two childrend of each track fragment box
+
+    trafs = mp4Inspector.findBox(fragment, ['moof', 'traf']); // determine the start times for each track
+
+    baseTimes = [].concat.apply([], trafs.map(function (traf) {
+      return mp4Inspector.findBox(traf, ['tfhd']).map(function (tfhd) {
+        var id, scale, baseTime; // get the track id from the tfhd
+
+        id = toUnsigned$2(tfhd[4] << 24 | tfhd[5] << 16 | tfhd[6] << 8 | tfhd[7]); // assume a 90kHz clock if no timescale was specified
+
+        scale = timescale[id] || 90e3; // get the base media decode time from the tfdt
+
+        baseTime = mp4Inspector.findBox(traf, ['tfdt']).map(function (tfdt) {
+          var version, result;
+          version = tfdt[0];
+          result = toUnsigned$2(tfdt[4] << 24 | tfdt[5] << 16 | tfdt[6] << 8 | tfdt[7]);
+
+          if (version === 1) {
+            result *= Math.pow(2, 32);
+            result += toUnsigned$2(tfdt[8] << 24 | tfdt[9] << 16 | tfdt[10] << 8 | tfdt[11]);
+          }
+
+          return result;
+        })[0];
+        baseTime = baseTime || Infinity; // convert base time to seconds
+
+        return baseTime / scale;
+      });
+    })); // return the minimum
+
+    result = Math.min.apply(null, baseTimes);
+    return isFinite(result) ? result : 0;
+  };
+  /**
+   * Determine the composition start, in seconds, for an MP4
+   * fragment.
+   *
+   * The composition start time of a fragment can be calculated using the base
+   * media decode time, composition time offset, and timescale, as follows:
+   *
+   * compositionStartTime = (baseMediaDecodeTime + compositionTimeOffset) / timescale
+   *
+   * All of the aforementioned information is contained within a media fragment's
+   * `traf` box, except for timescale info, which comes from the initialization
+   * segment, so a track id (also contained within a `traf`) is also necessary to
+   * associate it with a timescale
+   *
+   *
+   * @param timescales {object} - a hash of track ids to timescale values.
+   * @param fragment {Unit8Array} - the bytes of a media segment
+   * @return {number} the composition start time for the fragment, in seconds
+   **/
+
+
+  compositionStartTime = function compositionStartTime(timescales, fragment) {
+    var trafBoxes = mp4Inspector.findBox(fragment, ['moof', 'traf']);
+    var baseMediaDecodeTime = 0;
+    var compositionTimeOffset = 0;
+    var trackId;
+
+    if (trafBoxes && trafBoxes.length) {
+      // The spec states that track run samples contained within a `traf` box are contiguous, but
+      // it does not explicitly state whether the `traf` boxes themselves are contiguous.
+      // We will assume that they are, so we only need the first to calculate start time.
+      var parsedTraf = mp4Inspector.parseTraf(trafBoxes[0]);
+
+      for (var i = 0; i < parsedTraf.boxes.length; i++) {
+        if (parsedTraf.boxes[i].type === 'tfhd') {
+          trackId = parsedTraf.boxes[i].trackId;
+        } else if (parsedTraf.boxes[i].type === 'tfdt') {
+          baseMediaDecodeTime = parsedTraf.boxes[i].baseMediaDecodeTime;
+        } else if (parsedTraf.boxes[i].type === 'trun' && parsedTraf.boxes[i].samples.length) {
+          compositionTimeOffset = parsedTraf.boxes[i].samples[0].compositionTimeOffset || 0;
+        }
+      }
+    } // Get timescale for this specific track. Assume a 90kHz clock if no timescale was
+    // specified.
+
+
+    var timescale = timescales[trackId] || 90e3; // return the composition start time, in seconds
+
+    return (baseMediaDecodeTime + compositionTimeOffset) / timescale;
+  };
+  /**
+    * Find the trackIds of the video tracks in this source.
+    * Found by parsing the Handler Reference and Track Header Boxes:
+    *   moov > trak > mdia > hdlr
+    *   moov > trak > tkhd
+    *
+    * @param {Uint8Array} init - The bytes of the init segment for this source
+    * @return {Number[]} A list of trackIds
+    *
+    * @see ISO-BMFF-12/2015, Section 8.4.3
+   **/
+
+
+  getVideoTrackIds = function getVideoTrackIds(init) {
+    var traks = mp4Inspector.findBox(init, ['moov', 'trak']);
+    var videoTrackIds = [];
+    traks.forEach(function (trak) {
+      var hdlrs = mp4Inspector.findBox(trak, ['mdia', 'hdlr']);
+      var tkhds = mp4Inspector.findBox(trak, ['tkhd']);
+      hdlrs.forEach(function (hdlr, index) {
+        var handlerType = mp4Inspector.parseType(hdlr.subarray(8, 12));
+        var tkhd = tkhds[index];
+        var view;
+        var version;
+        var trackId;
+
+        if (handlerType === 'vide') {
+          view = new DataView(tkhd.buffer, tkhd.byteOffset, tkhd.byteLength);
+          version = view.getUint8(0);
+          trackId = version === 0 ? view.getUint32(12) : view.getUint32(20);
+          videoTrackIds.push(trackId);
+        }
+      });
+    });
+    return videoTrackIds;
+  };
+  /**
+   * Get all the video, audio, and hint tracks from a non fragmented
+   * mp4 segment
+   */
+
+
+  getTracks = function getTracks(init) {
+    var traks = mp4Inspector.findBox(init, ['moov', 'trak']);
+    var tracks = [];
+    traks.forEach(function (trak) {
+      var track = {};
+      var tkhd = mp4Inspector.findBox(trak, ['tkhd'])[0];
+      var view, version; // id
+
+      if (tkhd) {
+        view = new DataView(tkhd.buffer, tkhd.byteOffset, tkhd.byteLength);
+        version = view.getUint8(0);
+        track.id = version === 0 ? view.getUint32(12) : view.getUint32(20);
+      }
+
+      var hdlr = mp4Inspector.findBox(trak, ['mdia', 'hdlr'])[0]; // type
+
+      if (hdlr) {
+        var type = mp4Inspector.parseType(hdlr.subarray(8, 12));
+
+        if (type === 'vide') {
+          track.type = 'video';
+        } else if (type === 'soun') {
+          track.type = 'audio';
+        } else {
+          track.type = type;
+        }
+      } // codec
+
+
+      var stsd = mp4Inspector.findBox(trak, ['mdia', 'minf', 'stbl', 'stsd'])[0];
+
+      if (stsd) {
+        var sampleDescriptions = stsd.subarray(8); // gives the codec type string
+
+        track.codec = mp4Inspector.parseType(sampleDescriptions.subarray(4, 8));
+        var codecBox = mp4Inspector.findBox(sampleDescriptions, [track.codec])[0];
+        var codecConfig, codecConfigType;
+
+        if (codecBox) {
+          // https://tools.ietf.org/html/rfc6381#section-3.3
+          if (/^[a-z]vc[1-9]$/i.test(track.codec)) {
+            // we don't need anything but the "config" parameter of the
+            // avc1 codecBox
+            codecConfig = codecBox.subarray(78);
+            codecConfigType = mp4Inspector.parseType(codecConfig.subarray(4, 8));
+
+            if (codecConfigType === 'avcC' && codecConfig.length > 11) {
+              track.codec += '.'; // left padded with zeroes for single digit hex
+              // profile idc
+
+              track.codec += toHexString$1(codecConfig[9]); // the byte containing the constraint_set flags
+
+              track.codec += toHexString$1(codecConfig[10]); // level idc
+
+              track.codec += toHexString$1(codecConfig[11]);
+            } else {
+              // TODO: show a warning that we couldn't parse the codec
+              // and are using the default
+              track.codec = 'avc1.4d400d';
+            }
+          } else if (/^mp4[a,v]$/i.test(track.codec)) {
+            // we do not need anything but the streamDescriptor of the mp4a codecBox
+            codecConfig = codecBox.subarray(28);
+            codecConfigType = mp4Inspector.parseType(codecConfig.subarray(4, 8));
+
+            if (codecConfigType === 'esds' && codecConfig.length > 20 && codecConfig[19] !== 0) {
+              track.codec += '.' + toHexString$1(codecConfig[19]); // this value is only a single digit
+
+              track.codec += '.' + toHexString$1(codecConfig[20] >>> 2 & 0x3f).replace(/^0/, '');
+            } else {
+              // TODO: show a warning that we couldn't parse the codec
+              // and are using the default
+              track.codec = 'mp4a.40.2';
+            }
+          }
+        }
+      }
+
+      var mdhd = mp4Inspector.findBox(trak, ['mdia', 'mdhd'])[0];
+
+      if (mdhd && tkhd) {
+        var index = version === 0 ? 12 : 20;
+        track.timescale = toUnsigned$2(mdhd[index] << 24 | mdhd[index + 1] << 16 | mdhd[index + 2] << 8 | mdhd[index + 3]);
+      }
+
+      tracks.push(track);
+    });
+    return tracks;
+  };
+
+  var probe = {
+    // export mp4 inspector's findBox and parseType for backwards compatibility
+    findBox: mp4Inspector.findBox,
+    parseType: mp4Inspector.parseType,
+    timescale: timescale,
+    startTime: startTime,
+    compositionStartTime: compositionStartTime,
+    videoTrackIds: getVideoTrackIds,
+    tracks: getTracks
   };
 
   /**
@@ -36347,7 +37939,7 @@
     return offset;
   };
 
-  var parseType$2 = function parseType(packet, pmtPid) {
+  var parseType$1 = function parseType(packet, pmtPid) {
     var pid = parsePid(packet);
 
     if (pid === 0) {
@@ -36601,7 +38193,7 @@
   };
 
   var probe$1 = {
-    parseType: parseType$2,
+    parseType: parseType$1,
     parsePat: parsePat,
     parsePmt: parsePmt,
     parsePayloadUnitStartIndicator: parsePayloadUnitStartIndicator,
@@ -36671,7 +38263,7 @@
     return highTwo | middle | lowThree;
   };
 
-  var parseType$3 = function parseType(header, byteIndex) {
+  var parseType$2 = function parseType(header, byteIndex) {
     if (header[byteIndex] === 'I'.charCodeAt(0) && header[byteIndex + 1] === 'D'.charCodeAt(0) && header[byteIndex + 2] === '3'.charCodeAt(0)) {
       return 'timed-metadata';
     } else if (header[byteIndex] & 0xff === 0xff && (header[byteIndex + 1] & 0xf0) === 0xf0) {
@@ -36754,7 +38346,7 @@
     isLikelyAacData: isLikelyAacData,
     parseId3TagSize: parseId3TagSize,
     parseAdtsSize: parseAdtsSize,
-    parseType: parseType$3,
+    parseType: parseType$2,
     parseSampleRate: parseSampleRate,
     parseAacTimestamp: parseAacTimestamp
   };
@@ -37409,7 +39001,7 @@
     };
   }();
 
-  var inherits = function inherits(subClass, superClass) {
+  var inherits$1 = function inherits(subClass, superClass) {
     if (typeof superClass !== "function" && superClass !== null) {
       throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
     }
@@ -37789,7 +39381,7 @@
 
 
   var AsyncStream = function (_Stream) {
-    inherits(AsyncStream, _Stream);
+    inherits$1(AsyncStream, _Stream);
 
     function AsyncStream() {
       classCallCheck(this, AsyncStream);
@@ -37981,8 +39573,8 @@
 
   /**
    * @videojs/http-streaming
-   * @version 1.10.6
-   * @copyright 2019 Brightcove, Inc
+   * @version 1.12.3
+   * @copyright 2020 Brightcove, Inc
    * @license Apache-2.0
    */
   /**
@@ -37997,7 +39589,7 @@
 
 
     if (!/\/\//i.test(baseURL)) {
-      baseURL = urlToolkit.buildAbsoluteURL(window$1.location.href, baseURL);
+      baseURL = urlToolkit.buildAbsoluteURL(window$3.location.href, baseURL);
     }
 
     return urlToolkit.buildAbsoluteURL(baseURL, relativeURL);
@@ -38075,7 +39667,7 @@
     }
   };
 
-  var inherits$1 = function inherits(subClass, superClass) {
+  var inherits$2 = function inherits(subClass, superClass) {
     if (typeof superClass !== "function" && superClass !== null) {
       throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
     }
@@ -38226,7 +39818,7 @@
 
   var updateMaster = function updateMaster(master, media) {
     var result = mergeOptions$1(master, {});
-    var playlist = result.playlists[media.uri];
+    var playlist = result.playlists[media.id];
 
     if (!playlist) {
       return null;
@@ -38252,13 +39844,19 @@
     // necessary.
 
     for (var i = 0; i < result.playlists.length; i++) {
-      if (result.playlists[i].uri === media.uri) {
+      if (result.playlists[i].id === media.id) {
         result.playlists[i] = mergedPlaylist;
       }
     }
 
+    result.playlists[media.id] = mergedPlaylist; // URI reference added for backwards compatibility
+
     result.playlists[media.uri] = mergedPlaylist;
     return result;
+  };
+
+  var createPlaylistID = function createPlaylistID(index, uri) {
+    return index + '-' + uri;
   };
 
   var setupMediaPlaylists = function setupMediaPlaylists(master) {
@@ -38267,9 +39865,11 @@
 
     while (i--) {
       var playlist = master.playlists[i];
-      master.playlists[playlist.uri] = playlist;
       playlist.resolvedUri = resolveUrl$1(master.uri, playlist.uri);
-      playlist.id = i;
+      playlist.id = createPlaylistID(i, playlist.uri);
+      master.playlists[playlist.id] = playlist; // URI reference added for backwards compatibility
+
+      master.playlists[playlist.uri] = playlist;
 
       if (!playlist.attributes) {
         // Although the spec states an #EXT-X-STREAM-INF tag MUST have a
@@ -38328,7 +39928,7 @@
 
 
   var PlaylistLoader = function (_EventTarget) {
-    inherits$1(PlaylistLoader, _EventTarget);
+    inherits$2(PlaylistLoader, _EventTarget);
 
     function PlaylistLoader(srcUrl, hls) {
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
@@ -38372,10 +39972,10 @@
           }
 
           if (error) {
-            return _this.playlistRequestError(_this.request, _this.media().uri, 'HAVE_METADATA');
+            return _this.playlistRequestError(_this.request, _this.media(), 'HAVE_METADATA');
           }
 
-          _this.haveMetadata(_this.request, _this.media().uri);
+          _this.haveMetadata(_this.request, _this.media().uri, _this.media().id);
         });
       });
 
@@ -38384,8 +39984,10 @@
 
     createClass$1(PlaylistLoader, [{
       key: 'playlistRequestError',
-      value: function playlistRequestError(xhr, url, startingState) {
-        // any in-flight request is now finished
+      value: function playlistRequestError(xhr, playlist, startingState) {
+        var uri = playlist.uri,
+            id = playlist.id; // any in-flight request is now finished
+
         this.request = null;
 
         if (startingState) {
@@ -38393,9 +39995,9 @@
         }
 
         this.error = {
-          playlist: this.master.playlists[url],
+          playlist: this.master.playlists[id],
           status: xhr.status,
-          message: 'HLS playlist request error at URL: ' + url + '.',
+          message: 'HLS playlist request error at URL: ' + uri + '.',
           responseText: xhr.responseText,
           code: xhr.status >= 500 ? 4 : 2
         };
@@ -38405,7 +40007,7 @@
 
     }, {
       key: 'haveMetadata',
-      value: function haveMetadata(xhr, url) {
+      value: function haveMetadata(xhr, url, id) {
         var _this2 = this; // any in-flight request is now finished
 
 
@@ -38422,7 +40024,8 @@
         });
         parser.push(xhr.responseText);
         parser.end();
-        parser.manifest.uri = url; // m3u8-parser does not attach an attributes property to media playlists so make
+        parser.manifest.uri = url;
+        parser.manifest.id = id; // m3u8-parser does not attach an attributes property to media playlists so make
         // sure that the property is attached to avoid undefined reference errors
 
         parser.manifest.attributes = parser.manifest.attributes || {}; // merge this playlist into the master
@@ -38432,15 +40035,15 @@
 
         if (update) {
           this.master = update;
-          this.media_ = this.master.playlists[parser.manifest.uri];
+          this.media_ = this.master.playlists[id];
         } else {
           this.trigger('playlistunchanged');
         } // refresh live playlists after a target duration passes
 
 
         if (!this.media().endList) {
-          window$1.clearTimeout(this.mediaUpdateTimeout);
-          this.mediaUpdateTimeout = window$1.setTimeout(function () {
+          window$3.clearTimeout(this.mediaUpdateTimeout);
+          this.mediaUpdateTimeout = window$3.setTimeout(function () {
             _this2.trigger('mediaupdatetimeout');
           }, refreshDelay(this.media(), !!update));
         }
@@ -38454,9 +40057,11 @@
     }, {
       key: 'dispose',
       value: function dispose() {
+        this.trigger('dispose');
         this.stopRequest();
-        window$1.clearTimeout(this.mediaUpdateTimeout);
-        window$1.clearTimeout(this.finalRenditionTimeout);
+        window$3.clearTimeout(this.mediaUpdateTimeout);
+        window$3.clearTimeout(this.finalRenditionTimeout);
+        this.off();
       }
     }, {
       key: 'stopRequest',
@@ -38508,18 +40113,18 @@
           playlist = this.master.playlists[playlist];
         }
 
-        window$1.clearTimeout(this.finalRenditionTimeout);
+        window$3.clearTimeout(this.finalRenditionTimeout);
 
         if (isFinalRendition) {
           var delay = playlist.targetDuration / 2 * 1000 || 5 * 1000;
-          this.finalRenditionTimeout = window$1.setTimeout(this.media.bind(this, playlist, false), delay);
+          this.finalRenditionTimeout = window$3.setTimeout(this.media.bind(this, playlist, false), delay);
           return;
         }
 
         var startingState = this.state;
-        var mediaChange = !this.media_ || playlist.uri !== this.media_.uri; // switch to fully loaded playlists immediately
+        var mediaChange = !this.media_ || playlist.id !== this.media_.id; // switch to fully loaded playlists immediately
 
-        if (this.master.playlists[playlist.uri].endList) {
+        if (this.master.playlists[playlist.id].endList) {
           // abort outstanding playlist requests
           if (this.request) {
             this.request.onreadystatechange = null;
@@ -38574,10 +40179,10 @@
           playlist.resolvedUri = resolveManifestRedirect(_this3.handleManifestRedirects, playlist.resolvedUri, req);
 
           if (error) {
-            return _this3.playlistRequestError(_this3.request, playlist.uri, startingState);
+            return _this3.playlistRequestError(_this3.request, playlist, startingState);
           }
 
-          _this3.haveMetadata(req, playlist.uri); // fire loadedmetadata the first time a media playlist is loaded
+          _this3.haveMetadata(req, playlist.uri, playlist.id); // fire loadedmetadata the first time a media playlist is loaded
 
 
           if (startingState === 'HAVE_MASTER') {
@@ -38595,7 +40200,7 @@
       key: 'pause',
       value: function pause() {
         this.stopRequest();
-        window$1.clearTimeout(this.mediaUpdateTimeout);
+        window$3.clearTimeout(this.mediaUpdateTimeout);
 
         if (this.state === 'HAVE_NOTHING') {
           // If we pause the loader before any data has been retrieved, its as if we never
@@ -38626,12 +40231,12 @@
       value: function load(isFinalRendition) {
         var _this4 = this;
 
-        window$1.clearTimeout(this.mediaUpdateTimeout);
+        window$3.clearTimeout(this.mediaUpdateTimeout);
         var media = this.media();
 
         if (isFinalRendition) {
           var delay = media ? media.targetDuration / 2 * 1000 : 5 * 1000;
-          this.mediaUpdateTimeout = window$1.setTimeout(function () {
+          this.mediaUpdateTimeout = window$3.setTimeout(function () {
             return _this4.load();
           }, delay);
           return;
@@ -38718,9 +40323,10 @@
             }
 
             return;
-          } // loaded a media playlist
-          // infer a master playlist if none was previously requested
+          }
 
+          var id = createPlaylistID(0, _this5.srcUrl); // loaded a media playlist
+          // infer a master playlist if none was previously requested
 
           _this5.master = {
             mediaGroups: {
@@ -38729,19 +40335,21 @@
               'CLOSED-CAPTIONS': {},
               'SUBTITLES': {}
             },
-            uri: window$1.location.href,
+            uri: window$3.location.href,
             playlists: [{
               uri: _this5.srcUrl,
-              id: 0,
+              id: id,
               resolvedUri: _this5.srcUrl,
               // m3u8-parser does not attach an attributes property to media playlists so make
               // sure that the property is attached to avoid undefined reference errors
               attributes: {}
             }]
           };
+          _this5.master.playlists[id] = _this5.master.playlists[0]; // URI reference added for backwards compatibility
+
           _this5.master.playlists[_this5.srcUrl] = _this5.master.playlists[0];
 
-          _this5.haveMetadata(req, _this5.srcUrl);
+          _this5.haveMetadata(req, _this5.srcUrl, id);
 
           return _this5.trigger('loadedmetadata');
         });
@@ -38941,7 +40549,7 @@
 
 
       if (!playlist.endList) {
-        return window$1.Infinity;
+        return window$3.Infinity;
       }
     } // calculate the total duration based on the segment durations
 
@@ -38989,8 +40597,15 @@
    * window which is the duration of the last segment plus 2 target durations from the end
    * of the playlist.
    *
+   * A liveEdgePadding can be provided which will be used instead of calculating the safe live edge.
+   * This corresponds to suggestedPresentationDelay in DASH manifests.
+   *
    * @param {Object} playlist
    *        a media playlist object
+   * @param {Number} [liveEdgePadding]
+   *        A number in seconds indicating how far from the end we want to be.
+   *        If provided, this value is used instead of calculating the safe live index from the target durations.
+   *        Corresponds to suggestedPresentationDelay in DASH manifests.
    * @return {Number}
    *         The media index of the segment at the safe live point. 0 if there is no "safe"
    *         point.
@@ -38998,14 +40613,20 @@
    */
 
 
-  var safeLiveIndex = function safeLiveIndex(playlist) {
+  var safeLiveIndex = function safeLiveIndex(playlist, liveEdgePadding) {
     if (!playlist.segments.length) {
       return 0;
     }
 
-    var i = playlist.segments.length - 1;
-    var distanceFromEnd = playlist.segments[i].duration || playlist.targetDuration;
-    var safeDistance = distanceFromEnd + playlist.targetDuration * 2;
+    var i = playlist.segments.length;
+    var lastSegmentDuration = playlist.segments[i - 1].duration || playlist.targetDuration;
+    var safeDistance = typeof liveEdgePadding === 'number' ? liveEdgePadding : lastSegmentDuration + playlist.targetDuration * 2;
+
+    if (safeDistance === 0) {
+      return i;
+    }
+
+    var distanceFromEnd = 0;
 
     while (i--) {
       distanceFromEnd += playlist.segments[i].duration;
@@ -39027,12 +40648,18 @@
    *                        playlist end calculation should consider the safe live end
    *                        (truncate the playlist end by three segments). This is normally
    *                        used for calculating the end of the playlist's seekable range.
+   *                        This takes into account the value of liveEdgePadding.
+   *                        Setting liveEdgePadding to 0 is equivalent to setting this to false.
+   * @param {Number} liveEdgePadding a number indicating how far from the end of the playlist we should be in seconds.
+   *                 If this is provided, it is used in the safe live end calculation.
+   *                 Setting useSafeLiveEnd=false or liveEdgePadding=0 are equivalent.
+   *                 Corresponds to suggestedPresentationDelay in DASH manifests.
    * @returns {Number} the end time of playlist
    * @function playlistEnd
    */
 
 
-  var playlistEnd = function playlistEnd(playlist, expired, useSafeLiveEnd) {
+  var playlistEnd = function playlistEnd(playlist, expired, useSafeLiveEnd, liveEdgePadding) {
     if (!playlist || !playlist.segments) {
       return null;
     }
@@ -39046,7 +40673,7 @@
     }
 
     expired = expired || 0;
-    var endSequence = useSafeLiveEnd ? safeLiveIndex(playlist) : playlist.segments.length;
+    var endSequence = useSafeLiveEnd ? safeLiveIndex(playlist, liveEdgePadding) : playlist.segments.length;
     return intervalDuration(playlist, playlist.mediaSequence + endSequence, expired);
   };
   /**
@@ -39061,15 +40688,17 @@
     * dropped off the front of the playlist in a live scenario
     * @param {Number=} expired the amount of time that has
     * dropped off the front of the playlist in a live scenario
+    * @param {Number} liveEdgePadding how far from the end of the playlist we should be in seconds.
+    *        Corresponds to suggestedPresentationDelay in DASH manifests.
     * @return {TimeRanges} the periods of time that are valid targets
     * for seeking
     */
 
 
-  var seekable = function seekable(playlist, expired) {
+  var seekable = function seekable(playlist, expired, liveEdgePadding) {
     var useSafeLiveEnd = true;
     var seekableStart = expired || 0;
-    var seekableEnd = playlistEnd(playlist, expired, useSafeLiveEnd);
+    var seekableEnd = playlistEnd(playlist, expired, useSafeLiveEnd, liveEdgePadding);
 
     if (seekableEnd === null) {
       return createTimeRange();
@@ -39577,9 +41206,7 @@
     return result;
   };
 
-  var utils$1 =
-  /*#__PURE__*/
-  Object.freeze({
+  var utils$1 = /*#__PURE__*/Object.freeze({
     createTransferableMessage: createTransferableMessage,
     initSegmentId: initSegmentId,
     segmentKeyId: segmentKeyId,
@@ -40256,7 +41883,7 @@
 
 
   var addTextTrackData = function addTextTrackData(sourceHandler, captionArray, metadataArray) {
-    var Cue = window$1.WebKitDataCue || window$1.VTTCue;
+    var Cue = window$3.WebKitDataCue || window$3.VTTCue;
 
     if (captionArray) {
       captionArray.forEach(function (caption) {
@@ -40273,7 +41900,7 @@
         // This likely occurs when you have an non-timed ID3 tag like TIT2,
         // which is the "Title/Songname/Content description" frame
 
-        if (typeof time !== 'number' || window$1.isNaN(time) || time < 0 || !(time < Infinity)) {
+        if (typeof time !== 'number' || window$3.isNaN(time) || time < 0 || !(time < Infinity)) {
           return;
         }
 
@@ -44947,8 +46574,8 @@
 
           if (frames.length) {
             this.trigger('timingInfo', {
-              start: frames[0].dts,
-              end: frames[0].dts + frames.length * frameDuration
+              start: frames[0].pts,
+              end: frames[0].pts + frames.length * frameDuration
             });
           }
 
@@ -45148,8 +46775,8 @@
           lastGop = gops[gops.length - 1];
           this.trigger('segmentTimingInfo', generateVideoSegmentTimingInfo(track.baseMediaDecodeTime, firstGop.dts, firstGop.pts, lastGop.dts + lastGop.duration, lastGop.pts + lastGop.duration, prependedContentDuration));
           this.trigger('timingInfo', {
-            start: gops[0].dts,
-            end: gops[gops.length - 1].dts + gops[gops.length - 1].duration
+            start: gops[0].pts,
+            end: gops[gops.length - 1].pts + gops[gops.length - 1].duration
           }); // save all the nals in the last GOP into the gop cache
 
           this.gopCache_.unshift({
@@ -46654,7 +48281,7 @@
 
 
   var VirtualSourceBuffer = function (_videojs$EventTarget) {
-    inherits$1(VirtualSourceBuffer, _videojs$EventTarget);
+    inherits$2(VirtualSourceBuffer, _videojs$EventTarget);
 
     function VirtualSourceBuffer(mediaSource, codecs) {
       classCallCheck$1(this, VirtualSourceBuffer);
@@ -47205,6 +48832,12 @@
         this.pendingBuffers_.length = 0;
         this.bufferUpdating_ = false;
       }
+    }, {
+      key: 'dispose',
+      value: function dispose() {
+        this.trigger('dispose');
+        this.off();
+      }
     }]);
     return VirtualSourceBuffer;
   }(videojs$1.EventTarget);
@@ -47223,7 +48856,7 @@
 
 
   var HtmlMediaSource = function (_videojs$EventTarget) {
-    inherits$1(HtmlMediaSource, _videojs$EventTarget);
+    inherits$2(HtmlMediaSource, _videojs$EventTarget);
 
     function HtmlMediaSource() {
       classCallCheck$1(this, HtmlMediaSource);
@@ -47231,7 +48864,7 @@
       var _this = possibleConstructorReturn$1(this, (HtmlMediaSource.__proto__ || Object.getPrototypeOf(HtmlMediaSource)).call(this));
 
       var property = void 0;
-      _this.nativeMediaSource_ = new window$1.MediaSource(); // delegate to the native MediaSource's methods by default
+      _this.nativeMediaSource_ = new window$3.MediaSource(); // delegate to the native MediaSource's methods by default
 
       for (property in _this.nativeMediaSource_) {
         if (!(property in HtmlMediaSource.prototype) && typeof _this.nativeMediaSource_[property] === 'function') {
@@ -47548,6 +49181,18 @@
         this.sourceBuffers.push(buffer);
         return buffer;
       }
+    }, {
+      key: 'dispose',
+      value: function dispose() {
+        this.trigger('dispose');
+        this.off();
+        this.sourceBuffers.forEach(function (buffer) {
+          if (buffer.dispose) {
+            buffer.dispose();
+          }
+        });
+        this.sourceBuffers.length = 0;
+      }
     }]);
     return HtmlMediaSource;
   }(videojs$1.EventTarget);
@@ -47593,7 +49238,7 @@
 
 
   var supportsNativeMediaSources = function supportsNativeMediaSources() {
-    return !!window$1.MediaSource && !!window$1.MediaSource.isTypeSupported && window$1.MediaSource.isTypeSupported('video/mp4;codecs="avc1.4d400d,mp4a.40.2"');
+    return !!window$3.MediaSource && !!window$3.MediaSource.isTypeSupported && window$3.MediaSource.isTypeSupported('video/mp4;codecs="avc1.4d400d,mp4a.40.2"');
   };
   /**
    * An emulation of the MediaSource API so that we can support
@@ -47640,7 +49285,7 @@
       var url = void 0; // use the native MediaSource to generate an object URL
 
       if (object instanceof HtmlMediaSource) {
-        url = window$1.URL.createObjectURL(object.nativeMediaSource_);
+        url = window$3.URL.createObjectURL(object.nativeMediaSource_);
         object.url_ = url;
         return url;
       } // if the object isn't an emulated MediaSource, delegate to the
@@ -47648,7 +49293,7 @@
 
 
       if (!(object instanceof HtmlMediaSource)) {
-        url = window$1.URL.createObjectURL(object);
+        url = window$3.URL.createObjectURL(object);
         object.url_ = url;
         return url;
       } // build a URL that can be used to map back to the emulated
@@ -47700,14 +49345,14 @@
 
     forEachMediaGroup(newMaster, function (properties, type, group, label) {
       if (properties.playlists && properties.playlists.length) {
-        var uri = properties.playlists[0].uri;
+        var id = properties.playlists[0].id;
 
         var _playlistUpdate = updateMaster(update, properties.playlists[0]);
 
         if (_playlistUpdate) {
           update = _playlistUpdate; // update the playlist reference within media groups
 
-          update.mediaGroups[type][group][label].playlists[0] = update.playlists[uri];
+          update.mediaGroups[type][group][label].playlists[0] = update.playlists[id];
           noChanges = false;
         }
       }
@@ -47740,8 +49385,8 @@
   var compareSidxEntry = function compareSidxEntry(playlists, oldSidxMapping) {
     var newSidxMapping = {};
 
-    for (var uri in playlists) {
-      var playlist = playlists[uri];
+    for (var id in playlists) {
+      var playlist = playlists[id];
       var currentSidxInfo = playlist.sidx;
 
       if (currentSidxInfo) {
@@ -47808,7 +49453,7 @@
   };
 
   var DashPlaylistLoader = function (_EventTarget) {
-    inherits$1(DashPlaylistLoader, _EventTarget); // DashPlaylistLoader must accept either a src url or a playlist because subsequent
+    inherits$2(DashPlaylistLoader, _EventTarget); // DashPlaylistLoader must accept either a src url or a playlist because subsequent
     // playlist loader setups from media groups will expect to be able to pass a playlist
     // (since there aren't external URLs to media playlists with DASH)
 
@@ -47838,7 +49483,7 @@
 
 
       _this.on('mediaupdatetimeout', function () {
-        _this.refreshMedia_(_this.media().uri);
+        _this.refreshMedia_(_this.media().id);
       });
 
       _this.state = 'HAVE_NOTHING';
@@ -47867,11 +49512,13 @@
     }, {
       key: 'dispose',
       value: function dispose() {
+        this.trigger('dispose');
         this.stopRequest();
         this.loadedPlaylists_ = {};
-        window$1.clearTimeout(this.minimumUpdatePeriodTimeout_);
-        window$1.clearTimeout(this.mediaRequest_);
-        window$1.clearTimeout(this.mediaUpdateTimeout);
+        window$3.clearTimeout(this.minimumUpdatePeriodTimeout_);
+        window$3.clearTimeout(this.mediaRequest_);
+        window$3.clearTimeout(this.mediaUpdateTimeout);
+        this.off();
       }
     }, {
       key: 'hasPendingRequest',
@@ -47950,9 +49597,9 @@
           playlist = this.master.playlists[playlist];
         }
 
-        var mediaChange = !this.media_ || playlist.uri !== this.media_.uri; // switch to previously loaded playlists immediately
+        var mediaChange = !this.media_ || playlist.id !== this.media_.id; // switch to previously loaded playlists immediately
 
-        if (mediaChange && this.loadedPlaylists_[playlist.uri] && this.loadedPlaylists_[playlist.uri].endList) {
+        if (mediaChange && this.loadedPlaylists_[playlist.id] && this.loadedPlaylists_[playlist.id].endList) {
           this.state = 'HAVE_METADATA';
           this.media_ = playlist; // trigger media change if the active media has been updated
 
@@ -47977,7 +49624,7 @@
         if (!playlist.sidx) {
           // Continue asynchronously if there is no sidx
           // wait one tick to allow haveMaster to run first on a child loader
-          this.mediaRequest_ = window$1.setTimeout(this.haveMetadata.bind(this, {
+          this.mediaRequest_ = window$3.setTimeout(this.haveMetadata.bind(this, {
             startingState: startingState,
             playlist: playlist
           }), 0); // exit early and don't do sidx work
@@ -48014,7 +49661,7 @@
 
           _this3.haveMetadata({
             startingState: startingState,
-            playlist: newMaster.playlists[playlist.uri]
+            playlist: newMaster.playlists[playlist.id]
           });
         }));
       }
@@ -48024,10 +49671,10 @@
         var startingState = _ref.startingState,
             playlist = _ref.playlist;
         this.state = 'HAVE_METADATA';
-        this.loadedPlaylists_[playlist.uri] = playlist;
+        this.loadedPlaylists_[playlist.id] = playlist;
         this.mediaRequest_ = null; // This will trigger loadedplaylist
 
-        this.refreshMedia_(playlist.uri); // fire loadedmetadata the first time a media playlist is loaded
+        this.refreshMedia_(playlist.id); // fire loadedmetadata the first time a media playlist is loaded
         // to resolve setup of media groups
 
         if (startingState === 'HAVE_MASTER') {
@@ -48041,8 +49688,8 @@
       key: 'pause',
       value: function pause() {
         this.stopRequest();
-        window$1.clearTimeout(this.mediaUpdateTimeout);
-        window$1.clearTimeout(this.minimumUpdatePeriodTimeout_);
+        window$3.clearTimeout(this.mediaUpdateTimeout);
+        window$3.clearTimeout(this.minimumUpdatePeriodTimeout_);
 
         if (this.state === 'HAVE_NOTHING') {
           // If we pause the loader before any data has been retrieved, its as if we never
@@ -48055,13 +49702,13 @@
       value: function load(isFinalRendition) {
         var _this4 = this;
 
-        window$1.clearTimeout(this.mediaUpdateTimeout);
-        window$1.clearTimeout(this.minimumUpdatePeriodTimeout_);
+        window$3.clearTimeout(this.mediaUpdateTimeout);
+        window$3.clearTimeout(this.minimumUpdatePeriodTimeout_);
         var media = this.media();
 
         if (isFinalRendition) {
           var delay = media ? media.targetDuration / 2 * 1000 : 5 * 1000;
-          this.mediaUpdateTimeout = window$1.setTimeout(function () {
+          this.mediaUpdateTimeout = window$3.setTimeout(function () {
             return _this4.load();
           }, delay);
           return;
@@ -48074,7 +49721,11 @@
           return;
         }
 
-        this.trigger('loadedplaylist');
+        if (media && !media.endList) {
+          this.trigger('mediaupdatetimeout');
+        } else {
+          this.trigger('loadedplaylist');
+        }
       }
       /**
        * Parses the master xml string and updates playlist uri references
@@ -48097,9 +49748,7 @@
 
         for (var i = 0; i < master.playlists.length; i++) {
           var phonyUri = 'placeholder-uri-' + i;
-          master.playlists[i].uri = phonyUri; // set up by URI references
-
-          master.playlists[phonyUri] = master.playlists[i];
+          master.playlists[i].uri = phonyUri;
         } // set up phony URIs for the media group playlists since we won't have external
         // URIs for DASH but reference playlists by their URI throughout the project
 
@@ -48108,8 +49757,11 @@
           if (properties.playlists && properties.playlists.length) {
             var _phonyUri = 'placeholder-uri-' + mediaType + '-' + groupKey + '-' + labelKey;
 
-            properties.playlists[0].uri = _phonyUri; // setup URI references
+            var id = createPlaylistID(0, _phonyUri);
+            properties.playlists[0].uri = _phonyUri;
+            properties.playlists[0].id = id; // setup ID and URI references (URI for backwards compatibility)
 
+            master.playlists[id] = properties.playlists[0];
             master.playlists[_phonyUri] = properties.playlists[0];
           }
         });
@@ -48126,7 +49778,7 @@
         // Call this asynchronously to match the xhr request behavior below
 
         if (this.masterPlaylistLoader_) {
-          this.mediaRequest_ = window$1.setTimeout(this.haveMaster_.bind(this), 0);
+          this.mediaRequest_ = window$3.setTimeout(this.haveMaster_.bind(this), 0);
           return;
         } // request the specified URL
 
@@ -48275,7 +49927,7 @@
 
 
         if (this.master && this.master.minimumUpdatePeriod) {
-          this.minimumUpdatePeriodTimeout_ = window$1.setTimeout(function () {
+          this.minimumUpdatePeriodTimeout_ = window$3.setTimeout(function () {
             _this7.trigger('minimumUpdatePeriod');
           }, this.master.minimumUpdatePeriod);
         }
@@ -48346,11 +49998,11 @@
 
 
                   _this8.sidxMapping_[sidxKey].sidx = sidx;
-                  _this8.minimumUpdatePeriodTimeout_ = window$1.setTimeout(function () {
+                  _this8.minimumUpdatePeriodTimeout_ = window$3.setTimeout(function () {
                     _this8.trigger('minimumUpdatePeriod');
                   }, _this8.master.minimumUpdatePeriod); // TODO: do we need to reload the current playlist?
 
-                  _this8.refreshMedia_(_this8.media().uri);
+                  _this8.refreshMedia_(_this8.media().id);
 
                   return;
                 }));
@@ -48360,7 +50012,7 @@
             }
           }
 
-          _this8.minimumUpdatePeriodTimeout_ = window$1.setTimeout(function () {
+          _this8.minimumUpdatePeriodTimeout_ = window$3.setTimeout(function () {
             _this8.trigger('minimumUpdatePeriod');
           }, _this8.master.minimumUpdatePeriod);
         });
@@ -48373,11 +50025,11 @@
 
     }, {
       key: 'refreshMedia_',
-      value: function refreshMedia_(mediaUri) {
+      value: function refreshMedia_(mediaID) {
         var _this9 = this;
 
-        if (!mediaUri) {
-          throw new Error('refreshMedia_ must take a media uri');
+        if (!mediaID) {
+          throw new Error('refreshMedia_ must take a media id');
         }
 
         var oldMaster = void 0;
@@ -48400,14 +50052,14 @@
             this.master = updatedMaster;
           }
 
-          this.media_ = updatedMaster.playlists[mediaUri];
+          this.media_ = updatedMaster.playlists[mediaID];
         } else {
-          this.media_ = newMaster.playlists[mediaUri];
+          this.media_ = newMaster.playlists[mediaID];
           this.trigger('playlistunchanged');
         }
 
         if (!this.media().endList) {
-          this.mediaUpdateTimeout = window$1.setTimeout(function () {
+          this.mediaUpdateTimeout = window$3.setTimeout(function () {
             _this9.trigger('mediaupdatetimeout');
           }, refreshDelay(this.media(), !!updatedMaster));
         }
@@ -49156,7 +50808,7 @@
       return '';
     }
 
-    result = window$1.getComputedStyle(el);
+    result = window$3.getComputedStyle(el);
 
     if (!result) {
       return '';
@@ -49205,13 +50857,13 @@
       leftBandwidth = left.attributes.BANDWIDTH;
     }
 
-    leftBandwidth = leftBandwidth || window$1.Number.MAX_VALUE;
+    leftBandwidth = leftBandwidth || window$3.Number.MAX_VALUE;
 
     if (right.attributes.BANDWIDTH) {
       rightBandwidth = right.attributes.BANDWIDTH;
     }
 
-    rightBandwidth = rightBandwidth || window$1.Number.MAX_VALUE;
+    rightBandwidth = rightBandwidth || window$3.Number.MAX_VALUE;
     return leftBandwidth - rightBandwidth;
   };
   /**
@@ -49233,13 +50885,13 @@
       leftWidth = left.attributes.RESOLUTION.width;
     }
 
-    leftWidth = leftWidth || window$1.Number.MAX_VALUE;
+    leftWidth = leftWidth || window$3.Number.MAX_VALUE;
 
     if (right.attributes.RESOLUTION && right.attributes.RESOLUTION.width) {
       rightWidth = right.attributes.RESOLUTION.width;
     }
 
-    rightWidth = rightWidth || window$1.Number.MAX_VALUE; // NOTE - Fallback to bandwidth sort as appropriate in cases where multiple renditions
+    rightWidth = rightWidth || window$3.Number.MAX_VALUE; // NOTE - Fallback to bandwidth sort as appropriate in cases where multiple renditions
     // have the same media dimensions/ resolution
 
     if (leftWidth === rightWidth && left.attributes.BANDWIDTH && right.attributes.BANDWIDTH) {
@@ -49276,7 +50928,7 @@
       width = playlist.attributes.RESOLUTION && playlist.attributes.RESOLUTION.width;
       height = playlist.attributes.RESOLUTION && playlist.attributes.RESOLUTION.height;
       bandwidth = playlist.attributes.BANDWIDTH;
-      bandwidth = bandwidth || window$1.Number.MAX_VALUE;
+      bandwidth = bandwidth || window$3.Number.MAX_VALUE;
       return {
         bandwidth: bandwidth,
         width: width,
@@ -49636,20 +51288,23 @@
 
 
   var safeBackBufferTrimTime = function safeBackBufferTrimTime(seekable$$1, currentTime, targetDuration) {
-    var removeToTime = void 0;
+    // 30 seconds before the playhead provides a safe default for trimming.
+    //
+    // Choosing a reasonable default is particularly important for high bitrate content and
+    // VOD videos/live streams with large windows, as the buffer may end up overfilled and
+    // throw an APPEND_BUFFER_ERR.
+    var trimTime = currentTime - 30;
 
-    if (seekable$$1.length && seekable$$1.start(0) > 0 && seekable$$1.start(0) < currentTime) {
-      // If we have a seekable range use that as the limit for what can be removed safely
-      removeToTime = seekable$$1.start(0);
-    } else {
-      // otherwise remove anything older than 30 seconds before the current play head
-      removeToTime = currentTime - 30;
-    } // Don't allow removing from the buffer within target duration of current time
-    // to avoid the possibility of removing the GOP currently being played which could
-    // cause playback stalls.
+    if (seekable$$1.length) {
+      // Some live playlists may have a shorter window of content than the full allowed back
+      // buffer. For these playlists, don't save content that's no longer within the window.
+      trimTime = Math.max(trimTime, seekable$$1.start(0));
+    } // Don't remove within target duration of the current time to avoid the possibility of
+    // removing the GOP currently being played, as removing it can cause playback stalls.
 
 
-    return Math.min(removeToTime, currentTime - targetDuration);
+    var maxTrimTime = currentTime - targetDuration;
+    return Math.min(maxTrimTime, trimTime);
   };
 
   var segmentInfoString = function segmentInfoString(segmentInfo) {
@@ -49675,7 +51330,7 @@
 
 
   var SegmentLoader = function (_videojs$EventTarget) {
-    inherits$1(SegmentLoader, _videojs$EventTarget);
+    inherits$2(SegmentLoader, _videojs$EventTarget);
 
     function SegmentLoader(settings) {
       classCallCheck$1(this, SegmentLoader); // check pre-conditions
@@ -49751,9 +51406,11 @@
         time: 0
       };
 
-      _this.syncController_.on('syncinfoupdate', function () {
+      _this.triggerSyncInfoUpdate_ = function () {
         return _this.trigger('syncinfoupdate');
-      });
+      };
+
+      _this.syncController_.on('syncinfoupdate', _this.triggerSyncInfoUpdate_);
 
       _this.mediaSource_.addEventListener('sourceopen', function () {
         return _this.ended_ = false;
@@ -49800,6 +51457,7 @@
     }, {
       key: 'dispose',
       value: function dispose() {
+        this.trigger('dispose');
         this.state = 'DISPOSED';
         this.pause();
         this.abort_();
@@ -49813,6 +51471,16 @@
         if (this.captionParser_) {
           this.captionParser_.reset();
         }
+
+        if (this.checkBufferTimeout_) {
+          window$3.clearTimeout(this.checkBufferTimeout_);
+        }
+
+        if (this.syncController_ && this.triggerSyncInfoUpdate_) {
+          this.syncController_.off('syncinfoupdate', this.triggerSyncInfoUpdate_);
+        }
+
+        this.off();
       }
       /**
        * abort anything that is currently doing on with the SegmentLoader
@@ -50056,8 +51724,12 @@
         this.xhrOptions_ = options; // when we haven't started playing yet, the start of a live playlist
         // is always our zero-time so force a sync update each time the playlist
         // is refreshed from the server
+        //
+        // Use the INIT state to determine if playback has started, as the playlist sync info
+        // should be fixed once requests begin (as sync points are generated based on sync
+        // info), but not before then.
 
-        if (!this.hasPlayed_()) {
+        if (this.state === 'INIT') {
           newPlaylist.syncInfo = {
             mediaSequence: newPlaylist.mediaSequence,
             time: 0
@@ -50132,7 +51804,7 @@
       key: 'pause',
       value: function pause() {
         if (this.checkBufferTimeout_) {
-          window$1.clearTimeout(this.checkBufferTimeout_);
+          window$3.clearTimeout(this.checkBufferTimeout_);
           this.checkBufferTimeout_ = null;
         }
       }
@@ -50181,8 +51853,11 @@
       key: 'resetEverything',
       value: function resetEverything(done) {
         this.ended_ = false;
-        this.resetLoader();
-        this.remove(0, this.duration_(), done); // clears fmp4 captions
+        this.resetLoader(); // remove from 0, the earliest point, to Infinity, to signify removal of everything.
+        // VTT Segment Loader doesn't need to do anything but in the regular SegmentLoader,
+        // we then clamp the value to duration if necessary.
+
+        this.remove(0, Infinity, done); // clears fmp4 captions
 
         if (this.captionParser_) {
           this.captionParser_.clearAllCaptions();
@@ -50226,6 +51901,13 @@
     }, {
       key: 'remove',
       value: function remove(start, end, done) {
+        // clamp end to duration if we need to remove everything.
+        // This is due to a browser bug that causes issues if we remove to Infinity.
+        // videojs/videojs-contrib-hls#1225
+        if (end === Infinity) {
+          end = this.duration_();
+        }
+
         if (this.sourceUpdater_) {
           this.sourceUpdater_.remove(start, end, done);
         }
@@ -50248,10 +51930,10 @@
       key: 'monitorBuffer_',
       value: function monitorBuffer_() {
         if (this.checkBufferTimeout_) {
-          window$1.clearTimeout(this.checkBufferTimeout_);
+          window$3.clearTimeout(this.checkBufferTimeout_);
         }
 
-        this.checkBufferTimeout_ = window$1.setTimeout(this.monitorBufferTick_.bind(this), 1);
+        this.checkBufferTimeout_ = window$3.setTimeout(this.monitorBufferTick_.bind(this), 1);
       }
       /**
        * As long as the SegmentLoader is in the READY state, periodically
@@ -50268,10 +51950,10 @@
         }
 
         if (this.checkBufferTimeout_) {
-          window$1.clearTimeout(this.checkBufferTimeout_);
+          window$3.clearTimeout(this.checkBufferTimeout_);
         }
 
-        this.checkBufferTimeout_ = window$1.setTimeout(this.monitorBufferTick_.bind(this), CHECK_BUFFER_DELAY);
+        this.checkBufferTimeout_ = window$3.setTimeout(this.monitorBufferTick_.bind(this), CHECK_BUFFER_DELAY);
       }
       /**
        * fill the buffer with segements unless the sourceBuffers are
@@ -51011,7 +52693,7 @@
         }
 
         removeCuesFromTrack(start, end, this.segmentMetadataTrack_);
-        var Cue = window$1.WebKitDataCue || window$1.VTTCue;
+        var Cue = window$3.WebKitDataCue || window$3.VTTCue;
         var value = {
           custom: segment.custom,
           dateTimeObject: segment.dateTimeObject,
@@ -51022,7 +52704,7 @@
           byteLength: segmentInfo.byteLength,
           uri: segmentInfo.uri,
           timeline: segmentInfo.timeline,
-          playlist: segmentInfo.playlist.uri,
+          playlist: segmentInfo.playlist.id,
           start: start,
           end: end
         };
@@ -51057,7 +52739,7 @@
    */
 
   var VTTSegmentLoader = function (_SegmentLoader) {
-    inherits$1(VTTSegmentLoader, _SegmentLoader);
+    inherits$2(VTTSegmentLoader, _SegmentLoader);
 
     function VTTSegmentLoader(settings) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -51068,6 +52750,7 @@
 
       _this.mediaSource_ = null;
       _this.subtitlesTrack_ = null;
+      _this.featuresNativeTextTracks_ = settings.featuresNativeTextTracks;
       return _this;
     }
     /**
@@ -51280,7 +52963,7 @@
         var segmentInfo = this.pendingSegment_;
         var segment = segmentInfo.segment; // Make sure that vttjs has loaded, otherwise, wait till it finished loading
 
-        if (typeof window$1.WebVTT !== 'function' && this.subtitlesTrack_ && this.subtitlesTrack_.tech_) {
+        if (typeof window$3.WebVTT !== 'function' && this.subtitlesTrack_ && this.subtitlesTrack_.tech_) {
           var loadHandler = void 0;
 
           var errorHandler = function errorHandler() {
@@ -51340,7 +53023,7 @@
         }
 
         segmentInfo.cues.forEach(function (cue) {
-          _this3.subtitlesTrack_.addCue(cue);
+          _this3.subtitlesTrack_.addCue(_this3.featuresNativeTextTracks_ ? new window$3.VTTCue(cue.startTime, cue.endTime, cue.text) : cue);
         });
         this.handleUpdateEnd_();
       }
@@ -51358,14 +53041,14 @@
         var decoder = void 0;
         var decodeBytesToString = false;
 
-        if (typeof window$1.TextDecoder === 'function') {
-          decoder = new window$1.TextDecoder('utf8');
+        if (typeof window$3.TextDecoder === 'function') {
+          decoder = new window$3.TextDecoder('utf8');
         } else {
-          decoder = window$1.WebVTT.StringDecoder();
+          decoder = window$3.WebVTT.StringDecoder();
           decodeBytesToString = true;
         }
 
-        var parser = new window$1.WebVTT.Parser(window$1, window$1.vttjs, decoder);
+        var parser = new window$3.WebVTT.Parser(window$3, window$3.vttjs, decoder);
         segmentInfo.cues = [];
         segmentInfo.timestampmap = {
           MPEGTS: 0,
@@ -51518,7 +53201,7 @@
         cue.endTime += segment.duration;
       } else {
         if ('cueOut' in segment) {
-          cue = new window$1.VTTCue(mediaTime, mediaTime + segment.duration, segment.cueOut);
+          cue = new window$3.VTTCue(mediaTime, mediaTime + segment.duration, segment.cueOut);
           cue.adStartTime = mediaTime; // Assumes tag format to be
           // #EXT-X-CUE-OUT:30
 
@@ -51538,7 +53221,7 @@
 
           adOffset = _segment$cueOutCont$s2[0];
           adTotal = _segment$cueOutCont$s2[1];
-          cue = new window$1.VTTCue(mediaTime, mediaTime + segment.duration, '');
+          cue = new window$3.VTTCue(mediaTime, mediaTime + segment.duration, '');
           cue.adStartTime = mediaTime - adOffset;
           cue.adEndTime = cue.adStartTime + adTotal;
           track.addCue(cue);
@@ -51693,7 +53376,7 @@
   }];
 
   var SyncController = function (_videojs$EventTarget) {
-    inherits$1(SyncController, _videojs$EventTarget);
+    inherits$2(SyncController, _videojs$EventTarget);
 
     function SyncController() {
       classCallCheck$1(this, SyncController); // Segment Loader state variables...
@@ -51947,28 +53630,32 @@
         return timingInfo;
       }
       /**
-       * Probe an fmp4 or an mpeg2-ts segment to determine the start of the segment
-       * in it's internal "media time".
+       * Probe an fmp4 segment to determine the start of the segment
+       * in it's internal "composition time", which is equal to the base
+       * media decode time plus the composition time offset value
        *
        * @private
        * @param {SegmentInfo} segmentInfo - The current active request information
-       * @return {object} The start and end time of the current segment in "media time"
+       * @return {object} The start and end time of the current segment in "composition time"
        */
 
     }, {
       key: 'probeMp4Segment_',
       value: function probeMp4Segment_(segmentInfo) {
-        var segment = segmentInfo.segment;
-        var timescales = probe.timescale(segment.map.bytes);
-        var startTime = probe.startTime(timescales, segmentInfo.bytes);
+        var segment = segmentInfo.segment; // get timescales from init segment
+
+        var timescales = probe.timescale(segment.map.bytes); // calculate composition start time using the timescales and information
+        // contained within the media segment
+
+        var compositionStartTime = probe.compositionStartTime(timescales, segmentInfo.bytes);
 
         if (segmentInfo.timestampOffset !== null) {
-          segmentInfo.timestampOffset -= startTime;
+          segmentInfo.timestampOffset -= compositionStartTime;
         }
 
         return {
-          start: startTime,
-          end: startTime + segment.duration
+          start: compositionStartTime,
+          end: compositionStartTime + segment.duration
         };
       }
       /**
@@ -52116,6 +53803,12 @@
             }
           }
         }
+      }
+    }, {
+      key: 'dispose',
+      value: function dispose() {
+        this.trigger('dispose');
+        this.off();
       }
     }]);
     return SyncController;
@@ -53404,7 +55097,7 @@
         var tracks = settings.mediaTypes[type].tracks;
 
         for (var id in tracks) {
-          if (tracks[id].mode === 'showing') {
+          if (tracks[id].mode === 'showing' || tracks[id].mode === 'hidden') {
             return tracks[id];
           }
         }
@@ -53543,7 +55236,7 @@
 
 
   var MasterPlaylistController = function (_videojs$EventTarget) {
-    inherits$1(MasterPlaylistController, _videojs$EventTarget);
+    inherits$2(MasterPlaylistController, _videojs$EventTarget);
 
     function MasterPlaylistController(options) {
       classCallCheck$1(this, MasterPlaylistController);
@@ -53593,11 +55286,7 @@
       _this.mediaSource.addEventListener('sourceopen', _this.handleSourceOpen_.bind(_this));
 
       _this.seekable_ = videojs$1.createTimeRanges();
-
-      _this.hasPlayed_ = function () {
-        return false;
-      };
-
+      _this.hasPlayed_ = false;
       _this.syncController_ = new SyncController(options);
       _this.segmentMetadataTrack_ = tech.addRemoteTextTrack({
         kind: 'metadata',
@@ -53619,7 +55308,7 @@
           return _this.mediaSource.duration;
         },
         hasPlayed: function hasPlayed() {
-          return _this.hasPlayed_();
+          return _this.hasPlayed_;
         },
         goalBufferLength: function goalBufferLength() {
           return _this.goalBufferLength();
@@ -53646,7 +55335,8 @@
         loaderType: 'audio'
       }), options);
       _this.subtitleSegmentLoader_ = new VTTSegmentLoader(videojs$1.mergeOptions(segmentLoaderSettings, {
-        loaderType: 'vtt'
+        loaderType: 'vtt',
+        featuresNativeTextTracks: _this.tech_.featuresNativeTextTracks
       }), options);
 
       _this.setupSegmentLoaderListeners_(); // Create SegmentLoader stat-getters
@@ -54106,7 +55796,7 @@
           this.seekTo_(0);
         }
 
-        if (this.hasPlayed_()) {
+        if (this.hasPlayed_) {
           this.load();
         }
 
@@ -54135,7 +55825,7 @@
         //     3) the first play has already been setup
         // then exit early
 
-        if (!media || this.tech_.paused() || this.hasPlayed_()) {
+        if (!media || this.tech_.paused() || this.hasPlayed_) {
           return false;
         } // when the video is a live stream
 
@@ -54157,9 +55847,7 @@
 
               _this5.seekTo_(seekable$$1.end(0));
 
-              _this5.hasPlayed_ = function () {
-                return true;
-              };
+              _this5.hasPlayed_ = true;
             });
             return false;
           } // trigger firstplay to inform the source handler to ignore the next seek event
@@ -54170,10 +55858,7 @@
           this.seekTo_(seekable$$1.end(0));
         }
 
-        this.hasPlayed_ = function () {
-          return true;
-        }; // we can begin loading now that everything is ready
-
+        this.hasPlayed_ = true; // we can begin loading now that everything is ready
 
         this.load();
         return true;
@@ -54463,7 +56148,6 @@
     }, {
       key: 'onSyncInfoUpdate_',
       value: function onSyncInfoUpdate_() {
-        var mainSeekable = void 0;
         var audioSeekable = void 0;
 
         if (!this.masterPlaylistLoader_) {
@@ -54483,7 +56167,8 @@
           return;
         }
 
-        mainSeekable = Hls.Playlist.seekable(media, expired);
+        var suggestedPresentationDelay = this.masterPlaylistLoader_.master.suggestedPresentationDelay;
+        var mainSeekable = Hls.Playlist.seekable(media, expired, suggestedPresentationDelay);
 
         if (mainSeekable.length === 0) {
           return;
@@ -54497,7 +56182,7 @@
             return;
           }
 
-          audioSeekable = Hls.Playlist.seekable(media, expired);
+          audioSeekable = Hls.Playlist.seekable(media, expired, suggestedPresentationDelay);
 
           if (audioSeekable.length === 0) {
             return;
@@ -54587,6 +56272,7 @@
       value: function dispose() {
         var _this7 = this;
 
+        this.trigger('dispose');
         this.decrypter_.terminate();
         this.masterPlaylistLoader_.dispose();
         this.mainSegmentLoader_.dispose();
@@ -54603,6 +56289,11 @@
         });
         this.audioSegmentLoader_.dispose();
         this.subtitleSegmentLoader_.dispose();
+        this.off();
+
+        if (this.mediaSource.dispose) {
+          this.mediaSource.dispose();
+        }
       }
       /**
        * return the master playlist object if we have one
@@ -54685,7 +56376,7 @@
       key: 'excludeUnsupportedVariants_',
       value: function excludeUnsupportedVariants_() {
         this.master().playlists.forEach(function (variant) {
-          if (variant.attributes.CODECS && window$1.MediaSource && window$1.MediaSource.isTypeSupported && !window$1.MediaSource.isTypeSupported('video/mp4; codecs="' + mapLegacyAvcCodecs(variant.attributes.CODECS) + '"')) {
+          if (variant.attributes.CODECS && window$3.MediaSource && window$3.MediaSource.isTypeSupported && !window$3.MediaSource.isTypeSupported('video/mp4; codecs="' + mapLegacyAvcCodecs(variant.attributes.CODECS) + '"')) {
             variant.excludeUntil = Infinity;
           }
         });
@@ -54790,7 +56481,8 @@
    * Returns a function that acts as the Enable/disable playlist function.
    *
    * @param {PlaylistLoader} loader - The master playlist loader
-   * @param {String} playlistUri - uri of the playlist
+
+   * @param {string} playlistID - id of the playlist
    * @param {Function} changePlaylistFn - A function to be called after a
    * playlist's enabled-state has been changed. Will NOT be called if a
    * playlist's enabled-state is unchanged
@@ -54800,9 +56492,9 @@
    */
 
 
-  var enableFunction = function enableFunction(loader, playlistUri, changePlaylistFn) {
+  var enableFunction = function enableFunction(loader, playlistID, changePlaylistFn) {
     return function (enable) {
-      var playlist = loader.master.playlists[playlistUri];
+      var playlist = loader.master.playlists[playlistID];
       var incompatible = isIncompatible(playlist);
       var currentlyEnabled = isEnabled(playlist);
 
@@ -54859,7 +56551,7 @@
     this.id = id; // Partially-apply the enableFunction to create a playlist-
     // specific variant
 
-    this.enabled = enableFunction(hlsHandler.playlists, playlist.uri, qualityChangeFunction);
+    this.enabled = enableFunction(hlsHandler.playlists, playlist.id, qualityChangeFunction);
   };
   /**
    * A mixin function that adds the `representations` api to an instance
@@ -54873,10 +56565,14 @@
     var playlists = hlsHandler.playlists; // Add a single API-specific function to the HlsHandler instance
 
     hlsHandler.representations = function () {
+      if (!playlists || !playlists.master || !playlists.master.playlists) {
+        return [];
+      }
+
       return playlists.master.playlists.filter(function (media) {
         return !isIncompatible(media);
       }).map(function (e, i) {
-        return new Representation(hlsHandler, e, e.uri);
+        return new Representation(hlsHandler, e, e.id);
       });
     };
   };
@@ -54952,7 +56648,7 @@
         _this.tech_.off('canplay', canPlayHandler);
 
         if (_this.checkCurrentTimeTimeout_) {
-          window$1.clearTimeout(_this.checkCurrentTimeTimeout_);
+          window$3.clearTimeout(_this.checkCurrentTimeTimeout_);
         }
 
         _this.cancelTimer_();
@@ -54971,11 +56667,11 @@
         this.checkCurrentTime_();
 
         if (this.checkCurrentTimeTimeout_) {
-          window$1.clearTimeout(this.checkCurrentTimeTimeout_);
+          window$3.clearTimeout(this.checkCurrentTimeTimeout_);
         } // 42 = 24 fps // 250 is what Webkit uses // FF uses 15
 
 
-        this.checkCurrentTimeTimeout_ = window$1.setTimeout(this.monitorCurrentTime_.bind(this), 250);
+        this.checkCurrentTimeTimeout_ = window$3.setTimeout(this.monitorCurrentTime_.bind(this), 250);
       }
       /**
        * The purpose of this function is to emulate the "waiting" event on
@@ -55438,7 +57134,7 @@
     initPlugin(this, options);
   };
 
-  var version$1 = "1.10.6"; // since VHS handles HLS and DASH (and in the future, more types), use * to capture all
+  var version$1 = "1.12.3"; // since VHS handles HLS and DASH (and in the future, more types), use * to capture all
 
   videojs$1.use('*', function (player) {
     return {
@@ -55538,7 +57234,7 @@
     var selectedIndex = -1;
 
     for (var i = 0; i < qualityLevels.length; i++) {
-      if (qualityLevels[i].id === newPlaylist.uri) {
+      if (qualityLevels[i].id === newPlaylist.id) {
         selectedIndex = i;
         break;
       }
@@ -55572,18 +57268,48 @@
     return videojs$1.log.warn('HLS is no longer a tech. Please remove it from ' + 'your player\'s techOrder.');
   };
 
-  var emeKeySystems = function emeKeySystems(keySystemOptions, videoPlaylist, audioPlaylist) {
+  var emeKeySystems = function emeKeySystems(keySystemOptions, mainSegmentLoader, audioSegmentLoader) {
     if (!keySystemOptions) {
       return keySystemOptions;
+    }
+
+    var videoMimeType = void 0;
+    var audioMimeType = void 0; // if there is a mimeType associated with the audioSegmentLoader, then the audio
+    // and video mimeType and codec strings are already in the format we need to
+    // pass with the other key systems
+
+    if (audioSegmentLoader.mimeType_) {
+      videoMimeType = mainSegmentLoader.mimeType_;
+      audioMimeType = audioSegmentLoader.mimeType_; // if there is no audioSegmentLoader mimeType, then we have to create the
+      // the audio and video mimeType/codec strings from information extrapolated
+      // from the mainSegmentLoader mimeType (ex. 'video/mp4; codecs="mp4, avc1"' -->
+      // 'video/mp4; codecs="avc1"' and 'audio/mp4; codecs="mp4"')
+    } else {
+      var parsedMimeType = parseContentType(mainSegmentLoader.mimeType_);
+      var codecs = parsedMimeType.parameters.codecs.split(',');
+      var audioCodec = void 0;
+      var videoCodec = void 0;
+      codecs.forEach(function (codec) {
+        codec = codec.trim();
+
+        if (isAudioCodec(codec)) {
+          audioCodec = codec;
+        } else if (isVideoCodec(codec)) {
+          videoCodec = codec;
+        }
+      });
+      videoMimeType = parsedMimeType.type + '; codecs="' + videoCodec + '"';
+      audioMimeType = parsedMimeType.type.replace('video', 'audio') + '; codecs="' + audioCodec + '"';
     } // upsert the content types based on the selected playlist
 
 
     var keySystemContentTypes = {};
+    var videoPlaylist = mainSegmentLoader.playlist_;
 
     for (var keySystem in keySystemOptions) {
       keySystemContentTypes[keySystem] = {
-        audioContentType: 'audio/mp4; codecs="' + audioPlaylist.attributes.CODECS + '"',
-        videoContentType: 'video/mp4; codecs="' + videoPlaylist.attributes.CODECS + '"'
+        audioContentType: audioMimeType,
+        videoContentType: videoMimeType
       };
 
       if (videoPlaylist.contentProtection && videoPlaylist.contentProtection[keySystem] && videoPlaylist.contentProtection[keySystem].pssh) {
@@ -55601,19 +57327,18 @@
   };
 
   var setupEmeOptions = function setupEmeOptions(hlsHandler) {
-    if (hlsHandler.options_.sourceType !== 'dash') {
-      return;
-    }
-
+    var mainSegmentLoader = hlsHandler.masterPlaylistController_.mainSegmentLoader_;
+    var audioSegmentLoader = hlsHandler.masterPlaylistController_.audioSegmentLoader_;
     var player = videojs$1.players[hlsHandler.tech_.options_.playerId];
 
     if (player.eme) {
-      var sourceOptions = emeKeySystems(hlsHandler.source_.keySystems, hlsHandler.playlists.media(), hlsHandler.masterPlaylistController_.mediaTypes_.AUDIO.activePlaylistLoader.media());
+      var sourceOptions = emeKeySystems(hlsHandler.source_.keySystems, mainSegmentLoader, audioSegmentLoader);
 
       if (sourceOptions) {
-        player.currentSource().keySystems = sourceOptions; // works around https://bugs.chromium.org/p/chromium/issues/detail?id=895449
+        player.currentSource().keySystems = sourceOptions; // Works around https://bugs.chromium.org/p/chromium/issues/detail?id=895449
+        // in non-IE11 browsers. In IE11 this is too early to initialize media keys
 
-        if (player.eme.initializeMediaKeys) {
+        if (!(videojs$1.browser.IE_VERSION === 11) && player.eme.initializeMediaKeys) {
           player.eme.initializeMediaKeys();
         }
       }
@@ -55725,7 +57450,7 @@
    */
 
   var HlsHandler = function (_Component) {
-    inherits$1(HlsHandler, _Component);
+    inherits$2(HlsHandler, _Component);
 
     function HlsHandler(source, tech, options) {
       classCallCheck$1(this, HlsHandler); // tech.player() is deprecated but setup a reference to HLS for
@@ -56118,9 +57843,7 @@
         this.on(this.masterPlaylistController_, 'progress', function () {
           this.tech_.trigger('progress');
         });
-        this.tech_.ready(function () {
-          return _this3.setupQualityLevels_();
-        }); // do nothing if the tech has been disposed already
+        this.setupQualityLevels_(); // do nothing if the tech has been disposed already
         // this can occur if someone sets the src in player.ready(), for instance
 
         if (!this.tech_.el()) {
@@ -56141,17 +57864,20 @@
       value: function setupQualityLevels_() {
         var _this4 = this;
 
-        var player = videojs$1.players[this.tech_.options_.playerId];
+        var player = videojs$1.players[this.tech_.options_.playerId]; // if there isn't a player or there isn't a qualityLevels plugin
+        // or qualityLevels_ listeners have already been setup, do nothing.
 
-        if (player && player.qualityLevels) {
-          this.qualityLevels_ = player.qualityLevels();
-          this.masterPlaylistController_.on('selectedinitialmedia', function () {
-            handleHlsLoadedMetadata(_this4.qualityLevels_, _this4);
-          });
-          this.playlists.on('mediachange', function () {
-            handleHlsMediaChange(_this4.qualityLevels_, _this4.playlists);
-          });
+        if (!player || !player.qualityLevels || this.qualityLevels_) {
+          return;
         }
+
+        this.qualityLevels_ = player.qualityLevels();
+        this.masterPlaylistController_.on('selectedinitialmedia', function () {
+          handleHlsLoadedMetadata(_this4.qualityLevels_, _this4);
+        });
+        this.playlists.on('mediachange', function () {
+          handleHlsMediaChange(_this4.qualityLevels_, _this4.playlists);
+        });
       }
       /**
        * Begin playing the video.

@@ -1,7 +1,7 @@
 /**
  * videojs-flash
- * @version 2.2.0
- * @copyright 2019 Brightcove, Inc.
+ * @version 2.2.1
+ * @copyright 2020 Brightcove, Inc.
  * @license Apache-2.0
  */
 (function (global, factory) {
@@ -14,7 +14,7 @@ videojs = videojs && videojs.hasOwnProperty('default') ? videojs['default'] : vi
 
 var version = "5.4.2";
 
-var version$1 = "2.2.0";
+var version$1 = "2.2.1";
 
 /**
  * @file flash-rtmp.js
@@ -220,7 +220,7 @@ function FlashRtmpDecorator(Flash) {
   return Flash;
 }
 
-var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 var win;
 
@@ -694,7 +694,7 @@ function _createSetter(attr) {
 }
 
 /**
- * Create petters for the swf on the element
+ * Create getters for the swf on the element
  *
  * @param {string} attr
  *        The name of the parameter
@@ -1106,7 +1106,7 @@ for (var _i = 0; _i < _readOnly.length; _i++) {
  */
 Flash.isSupported = function () {
   // for Chrome Desktop and Safari Desktop
-  if (videojs.browser.IS_CHROME && !videojs.browser.IS_ANDROID || videojs.browser.IS_SAFARI && !videojs.browser.IS_IOS || videojs.browser.IS_EDGE) {
+  if (videojs.browser.IS_CHROME && (!videojs.browser.IS_ANDROID || !videojs.browser.IS_IOS) || videojs.browser.IS_SAFARI && !videojs.browser.IS_IOS || videojs.browser.IS_EDGE) {
     return true;
   }
   // for other browsers
