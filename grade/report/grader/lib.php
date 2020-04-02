@@ -1265,7 +1265,8 @@ class grade_report_grader extends grade_report {
         $fulltable = new html_table();
         $fulltable->attributes['class'] = 'gradereport-grader-table';
         $fulltable->id = 'user-grades';
-        $fulltable->summary = get_string('summarygrader', 'gradereport_grader');
+        $fulltable->caption = get_string('summarygrader', 'gradereport_grader');
+        $fulltable->captionhide = true;
 
         // Extract rows from each side (left and right) and collate them into one row each
         foreach ($leftrows as $key => $row) {

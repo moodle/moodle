@@ -2765,6 +2765,10 @@ class html_table {
 
     /**
      * @var string Description of the contents for screen readers.
+     *
+     * The "summary" attribute on the "table" element is not supported in HTML5.
+     * Consider describing the structure of the table in a "caption" element or in a "figure" element containing the table;
+     * or, simplify the structure of the table so that no description is needed.
      */
     public $summary;
 
