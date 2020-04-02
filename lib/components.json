@@ -108,6 +108,7 @@
         "timezones": null,
         "user": "user",
         "userkey": "lib\/userkey",
-        "webservice": "webservice"
+        "webservice": "webservice",
+        "xapi": "lib\/xapi"
     }
 }
