@@ -38,7 +38,7 @@ information provided here is intended especially for developers.
 * H5P libraries have been moved from /lib/h5p to h5p/h5plib as an h5plib plugintype.
 * mdn-polyfills has been renamed to polyfills. The reason there is no polyfill from the MDN is
   because there is no example polyfills on the MDN for this functionality.
-* database_manager::check_database_schema() now checks for missing indexes.
+* database_manager::check_database_schema() now checks for missing and extra indexes.
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop

@@ -2455,6 +2455,7 @@ class core_ddl_testcase extends database_driver_testcase {
         $table->add_field('extracolumn', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('extraindex', XMLDB_KEY_UNIQUE, array('extracolumn'));
         $table->setComment("This is a test table, you can drop it safely.");
         $dbmanager->create_table($table);
 
@@ -2471,6 +2472,9 @@ class core_ddl_testcase extends database_driver_testcase {
         // Add another key to the schema that won't be present in the database and gets reported as missing.
         $table->add_key('missingkey', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
 
+        // Remove the key from the schema which will still be present in the database and reported as extra.
+        $table->deleteKey('extraindex');
+
         $schema = new xmldb_structure('testschema');
         $schema->addTable($table);
 
@@ -2478,15 +2482,17 @@ class core_ddl_testcase extends database_driver_testcase {
         // 1. Changed columns.
         // 2. Missing columns.
         // 3. Missing indexes.
-        // 4. Extra columns.
+        // 4. Unexpected index.
+        // 5. Extra columns.
         $errors = $dbmanager->check_database_schema($schema)['test_check_db_schema'];
         $strmissing = "Missing index 'missingkey' (not unique (courseid)). " . PHP_EOL .
             "CREATE INDEX {$CFG->prefix}testchecdbsche_cou_ix ON {$CFG->prefix}test_check_db_schema (courseid);";
-        $this->assertCount(4, $errors);
 
+        $this->assertCount(5, $errors);
         $this->assertContains("column 'courseid' has incorrect type 'I', expected 'N'", $errors);
         $this->assertContains("column 'missingcolumn' is missing", $errors);
         $this->assertContains($strmissing, $errors);
+        $this->assertContains("Unexpected index '{$CFG->prefix}testchecdbsche_ext_uix'.", $errors);
         $this->assertContains("column 'extracolumn' is not expected (I)", $errors);
     }
 }
