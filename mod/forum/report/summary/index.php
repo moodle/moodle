@@ -68,11 +68,11 @@ if ($forumid) {
 
     $filters['forums'] = [$forumid];
     $title = $forumsvisibletouser[$forumid]->name;
-    $forumcm = $forumsvisibletouser[$forumid]->get_course_module_record();
+    $forumcm = $forumsvisibletouser[$forumid];
     $cms[] = $forumcm;
 
     require_login($courseid, false, $forumcm);
-    $context = \context_module::instance($forumcm->id);
+    $context = $forumcm->context;
     $canexport = !$download && has_capability('mod/forum:exportforum', $context);
     $redirecturl = new moodle_url('/mod/forum/view.php', ['id' => $forumid]);
     $numforums = 1;
@@ -86,7 +86,7 @@ if ($forumid) {
 
     // Fetch the forum CMs for the course.
     foreach ($forumsvisibletouser as $visibleforum) {
-        $cms[] = $visibleforum->get_course_module_record();
+        $cms[] = $visibleforum;
     }
 
     $context = \context_course::instance($courseid);
@@ -117,7 +117,7 @@ $viewallcount = 0;
 $canview = false;
 
 foreach ($cms as $cm) {
-    $forumcontext = \context_module::instance($cm->id);
+    $forumcontext = $cm->context;
 
     // This capability is required in at least one of the given contexts to view any version of the report.
     if (has_capability('forumreport/summary:view', $forumcontext)) {
@@ -175,7 +175,7 @@ if ($download) {
 
     // Allow switching to course report (or other forum user has access to).
     $reporturl = new moodle_url('/mod/forum/report/summary/index.php', ['courseid' => $courseid]);
-    $forumselect = new single_select($reporturl, 'forumid', $forumselectoptions, $forumid);
+    $forumselect = new single_select($reporturl, 'forumid', $forumselectoptions, $forumid, '');
     $forumselect->set_label(get_string('forumselectlabel', 'forumreport_summary'));
     echo $OUTPUT->render($forumselect);
 
@@ -183,7 +183,7 @@ if ($download) {
     $renderer = $PAGE->get_renderer('forumreport_summary');
 
     unset($filters['forums']);
-    echo $renderer->render_filters_form($cms, $pageurl, $filters);
+    echo $renderer->render_filters_form($course, $cms, $pageurl, $filters);
     $table->show_download_buttons_at(array(TABLE_P_BOTTOM));
     echo $renderer->render_summary_table($table);
     echo $OUTPUT->footer();

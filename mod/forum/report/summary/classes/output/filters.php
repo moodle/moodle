@@ -106,14 +106,15 @@ class filters implements renderable, templatable {
     /**
      * Builds renderable filter data.
      *
+     * @param stdClass $course The course object.
      * @param array $cms Array of course module objects.
      * @param moodle_url $actionurl The form action URL.
      * @param array $filterdata (optional) Associative array of data that has been set on available filters, if any,
      *                                     in the format filtertype => [values]
      */
-    public function __construct(array $cms, moodle_url $actionurl, array $filterdata = []) {
+    public function __construct(stdClass $course, array $cms, moodle_url $actionurl, array $filterdata = []) {
         $this->cms = $cms;
-        $this->courseid = $cms[0]->course;
+        $this->courseid = $course->id;
         $this->actionurl = $actionurl;
 
         // Prepare groups filter data.

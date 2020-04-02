@@ -37,13 +37,14 @@ class forumreport_summary_renderer extends plugin_renderer_base {
     /**
      * Render the filters available for the forum summary report.
      *
+     * @param stdClass $course The course object.
      * @param array $cms Array of course module objects.
      * @param moodle_url $actionurl The form action URL.
      * @param array $filters Optional array of currently applied filter values.
      * @return string The filter form HTML.
      */
-    public function render_filters_form(array $cms, moodle_url $actionurl, array $filters = []): string {
-        $renderable = new \forumreport_summary\output\filters($cms, $actionurl, $filters);
+    public function render_filters_form(stdClass $course, array $cms, moodle_url $actionurl, array $filters = []): string {
+        $renderable = new \forumreport_summary\output\filters($course, $cms, $actionurl, $filters);
         $templatecontext = $renderable->export_for_template($this);
 
         return $this->render_from_template('forumreport_summary/filters', $templatecontext);
