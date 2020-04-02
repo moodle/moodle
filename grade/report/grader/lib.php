@@ -1648,10 +1648,15 @@ class grade_report_grader extends grade_report {
         }
 
         $name = $element['object']->get_name();
-        $courseheaderid = 'courseheader_' . clean_param($name, PARAM_ALPHANUMEXT);
-        $courseheader = html_writer::tag('span', $name, array('id' => $courseheaderid,
-                'title' => $name, 'class' => 'gradeitemheader'));
-        $courseheader .= html_writer::label($showing, $courseheaderid, false, array('class' => 'accesshide'));
+        $describedbyid = uniqid();
+        $courseheader = html_writer::tag('span', $name, [
+            'title' => $name,
+            'class' => 'gradeitemheader',
+            'aria-describedby' => $describedbyid
+        ]);
+        $courseheader .= html_writer::div($showing, 'sr-only', [
+            'id' => $describedbyid
+        ]);
         $courseheader .= $icon;
 
         return $courseheader;
