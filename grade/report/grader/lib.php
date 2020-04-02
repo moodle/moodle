@@ -721,13 +721,15 @@ class grade_report_grader extends grade_report {
             $usercell->scope = 'row';
 
             if ($showuserimage) {
-                $usercell->text = $OUTPUT->user_picture($user, array('visibletoscreenreaders' => false));
+                $usercell->text = $OUTPUT->user_picture($user, ['link' => false, 'visibletoscreenreaders' => false]);
             }
 
             $fullname = fullname($user, $viewfullnames);
-            $usercell->text .= html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $this->course->id)), $fullname, array(
-                'class' => 'username',
-            ));
+            $usercell->text = html_writer::link(
+                    new moodle_url('/user/view.php', ['id' => $user->id, 'course' => $this->course->id]),
+                    $usercell->text . $fullname,
+                    ['class' => 'username']
+            );
 
             if (!empty($user->suspendedenrolment)) {
                 $usercell->attributes['class'] .= ' usersuspended';
