@@ -15,17 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings and links
+ * Anybody can login with any password.
  *
- * @package    report_security
- * @copyright  2008 petr Skoda
+ * @package    auth_none
+ * @category   check
+ * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$ADMIN->add('reports', new admin_externalpage('reportsecurity', get_string('pluginname', 'report_security'),
-    "$CFG->wwwroot/report/security/index.php", 'report/security:view'));
+/**
+ * Add security check to make sure this isn't on in production.
+ *
+ * @return array check
+ */
+function auth_none_security_checks() {
+    return [new auth_none\check\noauth()];
+}
 
-// No report settings.
-$settings = null;
