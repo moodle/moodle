@@ -2442,7 +2442,7 @@ class block_iomad_company_admin_external extends external_api {
                 'used' => new external_value(PARAM_INT, 'Used'),
                 'companyid' => new external_value(PARAM_INT, 'Company ID'),
                 'parentid' => new external_value(PARAM_INT, 'Parent ID'),
-                'type' => new external_value(PARAM_BOOL, 'Type'),
+                'type' => new external_value(PARAM_INT, 'License type - 0 = standard, 1 = reusable, 2 = standard educator, 3 = reusable educator'),
                 'program' => new external_value(PARAM_BOOL, 'Program'),
                 'reference' => new external_value(PARAM_TEXT, 'Reference'),
                 'instant' => new external_value(PARAM_BOOL, 'Instant'),
