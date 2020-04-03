@@ -285,7 +285,7 @@ if ($ajaxtemplate) {
                                   WHERE templateset = :templateset
                                   AND name = :templatename
                                   AND lang = :installedlang",
-                                  array('companyid' => $id,
+                                  array('templateset' => $id,
                                         'templatename' => $templatename,
                                         'installedlang' => $installedlang));
                 }
@@ -295,7 +295,7 @@ if ($ajaxtemplate) {
                                   WHERE templateset = :templateset
                                   AND name = :templatename
                                   AND lang = :installedlang",
-                                  array('companyid' => $id,
+                                  array('templateset' => $id,
                                         'templatename' => $templatename,
                                         'installedlang' => $installedlang));
                 }
@@ -305,7 +305,7 @@ if ($ajaxtemplate) {
                                   WHERE templateset = :templateset
                                   AND name = :templatename
                                   AND lang = :installedlang",
-                                  array('companyid' => $id,
+                                  array('templateset' => $id,
                                         'templatename' => $templatename,
                                         'installedlang' => $installedlang));
                 }
@@ -316,7 +316,7 @@ if ($ajaxtemplate) {
                                   WHERE templateset = :templateset
                                   AND name = :templatename
                                   AND lang = :installedlang",
-                                  array('companyid' => $id,
+                                  array('templateset' => $id,
                                         'templatename' => $templatename,
                                         'installedlang' => $installedlang));
                 }
@@ -326,7 +326,7 @@ if ($ajaxtemplate) {
                                   WHERE templateset = :templateset
                                   AND name = :templatename
                                   AND lang = :installedlang",
-                                  array('companyid' => $id,
+                                  array('templateset' => $id,
                                         'templatename' => $templatename,
                                         'installedlang' => $installedlang));
                 }
@@ -336,7 +336,7 @@ if ($ajaxtemplate) {
                                   WHERE templateset = :templateset
                                   AND name = :templatename
                                   AND lang = :installedlang",
-                                  array('companyid' => $id,
+                                  array('templateset' => $id,
                                         'templatename' => $templatename,
                                         'installedlang' => $installedlang));
                 }
