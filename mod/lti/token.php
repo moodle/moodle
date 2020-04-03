@@ -25,11 +25,10 @@
 define('NO_DEBUG_DISPLAY', true);
 define('NO_MOODLE_COOKIES', true);
 
-use Firebase\JWT\JWT as JWT;
+use Firebase\JWT\JWT;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
-
 
 $response = new \mod_lti\local\ltiservice\response();
 
@@ -66,19 +65,17 @@ if ($ok) {
 }
 
 if ($ok) {
-    $error = 'invalid_client';
     $tool = $DB->get_record('lti_types', array('clientid' => $claims['sub']));
     if ($tool) {
-        $typeconfig = lti_get_type_config($tool->id);
-        if (!empty($typeconfig['publickey'])) {
-            try {
-                $jwt = JWT::decode($clientassertion, $typeconfig['publickey'], array('RS256'));
-                $ok = true;
-            } catch (Exception $e) {
-                $ok = false;
-            }
+        try {
+            lti_verify_jwt_signature($tool->id, $claims['sub'], $clientassertion);
+            $ok = true;
+        } catch (Exception $e) {
+            $error = $e->getMessage();
+            $ok = false;
         }
     } else {
+        $error = 'invalid_client';
         $ok = false;
     }
 }
@@ -86,6 +83,7 @@ if ($ok) {
 if ($ok) {
     $scopes = array();
     $requestedscopes = explode(' ', $scope);
+    $typeconfig = lti_get_type_config($tool->id);
     $permittedscopes = lti_get_permitted_service_scopes($tool, $typeconfig);
     $scopes = array_intersect($requestedscopes, $permittedscopes);
     $ok = !empty($scopes);
