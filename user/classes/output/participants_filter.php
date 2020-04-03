@@ -75,6 +75,10 @@ class participants_filter implements renderable, templatable {
             $filtertypes[] = $filtertype;
         }
 
+        if ($filtertype = $this->get_enrolments_filter()) {
+            $filtertypes[] = $filtertype;
+        }
+
         if ($filtertype = $this->get_groups_filter()) {
             $filtertypes[] = $filtertype;
         }
@@ -137,6 +141,43 @@ class participants_filter implements renderable, templatable {
                     'title' => $title,
                 ];
             }, array_keys($roles), array_values($roles))
+        );
+    }
+
+    /**
+     * Get data for the roles filter.
+     *
+     * @return stdClass|null
+     */
+    protected function get_enrolments_filter(): ?stdClass {
+        if (!has_capability('moodle/course:enrolreview', $this->context)) {
+            return null;
+        }
+
+        if ($this->course->id == SITEID) {
+            // No enrolment methods for the site.
+            return null;
+        }
+
+        $instances = enrol_get_instances($this->course->id, true);
+        $plugins = enrol_get_plugins(false);
+
+        return $this->get_filter_object(
+            'enrolments',
+            get_string('enrolmentinstances', 'core_enrol'),
+            false,
+            true,
+            null,
+            array_filter(array_map(function($instance) use ($plugins): ?stdClass {
+                if (!array_key_exists($instance->enrol, $plugins)) {
+                    return null;
+                }
+
+                return (object) [
+                    'value' => $instance->id,
+                    'title' => $plugins[$instance->enrol]->get_instance_name($instance),
+                ];
+            }, array_values($instances)))
         );
     }
 
