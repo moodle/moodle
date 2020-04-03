@@ -60,6 +60,24 @@ export default class {
     }
 
     /**
+     * Get the placeholder to use when showing the value selector.
+     *
+     * @return {Promise} Resolving to a String
+     */
+    get placeholder() {
+        return getString('placeholdertypeorselect', 'core_user');
+    }
+
+    /**
+     * Whether to show suggestions in the autocomplete.
+     *
+     * @return {Boolean}
+     */
+    get showSuggestions() {
+        return true;
+    }
+
+    /**
      * Add the value selector to the filter row.
      */
     async addValueSelector() {
@@ -81,13 +99,13 @@ export default class {
             null,
 
             // The string to use as a placeholder.
-            await getString('typeorselect', 'core_user'),
+            await this.placeholder,
 
             // Disable case sensitivity on searches.
             false,
 
             // Show suggestions.
-            true,
+            this.showSuggestions,
 
             // Do not override the 'no suggestions' string.
             null,

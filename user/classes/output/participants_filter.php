@@ -67,6 +67,8 @@ class participants_filter implements renderable, templatable {
     protected function get_filtertypes(): array {
         $filtertypes = [];
 
+        $filtertypes[] = $this->get_keyword_filter();
+
         if ($filtertype = $this->get_enrolmentstatus_filter()) {
             $filtertypes[] = $filtertype;
         }
@@ -320,6 +322,23 @@ class participants_filter implements renderable, templatable {
     }
 
     /**
+     * Get data for the keywords filter.
+     *
+     * @return stdClass|null
+     */
+    protected function get_keyword_filter(): ?stdClass {
+        return $this->get_filter_object(
+            'keywords',
+            get_string('filterbykeyword', 'core_user'),
+            true,
+            true,
+            'core_user/local/participantsfilter/filtertypes/keyword',
+            [],
+            true
+        );
+    }
+
+    /**
      * Export the renderer data in a mustache template friendly format.
      *
      * @param renderer_base $output Unused.
@@ -344,6 +363,7 @@ class participants_filter implements renderable, templatable {
      * @param bool $multiple
      * @param string|null $filterclass
      * @param array $values
+     * @param bool $allowempty
      * @return stdClass|null
      */
     protected function get_filter_object(
@@ -352,9 +372,11 @@ class participants_filter implements renderable, templatable {
         bool $custom,
         bool $multiple,
         ?string $filterclass,
-        array $values
+        array $values,
+        bool $allowempty = false
     ): ?stdClass {
-        if (empty($values)) {
+
+        if (!$allowempty && empty($values)) {
             // Do not show empty filters.
             return null;
         }
