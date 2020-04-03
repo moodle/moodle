@@ -80,10 +80,15 @@ class lock {
 
     /**
      * Extend the lifetime of this lock. Not supported by all factories.
+     *
+     * @deprecated since Moodle 4.0.
      * @param int $maxlifetime - the new lifetime for the lock (in seconds).
      * @return bool
      */
     public function extend($maxlifetime = 86400) {
+        debugging('The function extend() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
+
         if ($this->factory) {
             return $this->factory->extend_lock($this, $maxlifetime);
         }
