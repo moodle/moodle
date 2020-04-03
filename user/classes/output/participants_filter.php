@@ -43,6 +43,9 @@ class participants_filter implements renderable, templatable {
     /** @var string $tableregionid The table to be updated by this filter */
     protected $tableregionid;
 
+    /** @var stdClass $course The course shown */
+    protected $course;
+
     /**
      * Participants filter constructor.
      *
@@ -52,6 +55,8 @@ class participants_filter implements renderable, templatable {
     public function __construct(context_course $context, string $tableregionid) {
         $this->context = $context;
         $this->tableregionid = $tableregionid;
+
+        $this->course = get_course($context->instanceid);
     }
 
     /**
@@ -67,6 +72,10 @@ class participants_filter implements renderable, templatable {
         }
 
         if ($filtertype = $this->get_roles_filter()) {
+            $filtertypes[] = $filtertype;
+        }
+
+        if ($filtertype = $this->get_groups_filter()) {
             $filtertypes[] = $filtertype;
         }
 
@@ -128,6 +137,48 @@ class participants_filter implements renderable, templatable {
                     'title' => $title,
                 ];
             }, array_keys($roles), array_values($roles))
+        );
+    }
+
+    /**
+     * Get data for the groups filter.
+     *
+     * @return stdClass|null
+     */
+    protected function get_groups_filter(): ?stdClass {
+        global $USER;
+
+        // Filter options for groups, if available.
+        $seeallgroups = has_capability('moodle/site:accessallgroups', $this->context);
+        $seeallgroups = $seeallgroups || ($this->course->groupmode != SEPARATEGROUPS);
+        if ($seeallgroups) {
+            $groups = [];
+            $groups += [USERSWITHOUTGROUP => (object) [
+                    'id' => USERSWITHOUTGROUP,
+                    'name' => get_string('nogroup', 'group'),
+                ]];
+            $groups += groups_get_all_groups($this->course->id);
+        } else {
+            // Otherwise, just list the groups the user belongs to.
+            $groups = groups_get_all_groups($this->course->id, $USER->id);
+        }
+
+        if (empty($groups)) {
+            return null;
+        }
+
+        return $this->get_filter_object(
+            'groups',
+            get_string('groups', 'core_group'),
+            false,
+            true,
+            null,
+            array_map(function($group) {
+                return (object) [
+                    'value' => $group->id,
+                    'title' => $group->name,
+                ];
+            }, array_values($groups))
         );
     }
 
