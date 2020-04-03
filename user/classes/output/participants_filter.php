@@ -83,6 +83,10 @@ class participants_filter implements renderable, templatable {
             $filtertypes[] = $filtertype;
         }
 
+        if ($filtertype = $this->get_accesssince_filter()) {
+            $filtertypes[] = $filtertype;
+        }
+
         return $filtertypes;
     }
 
@@ -220,6 +224,98 @@ class participants_filter implements renderable, templatable {
                     'title' => $group->name,
                 ];
             }, array_values($groups))
+        );
+    }
+
+    /**
+     * Get data for the accesssince filter.
+     *
+     * @return stdClass|null
+     */
+    protected function get_accesssince_filter(): ?stdClass {
+        global $CFG, $DB;
+
+        $hiddenfields = [];
+        if (!has_capability('moodle/course:viewhiddenuserfields', $this->context)) {
+            $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+        }
+
+        if (array_key_exists('lastaccess', $hiddenfields)) {
+            return null;
+        }
+
+        // Get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
+        // We need to make it diferently for normal courses and site course.
+        if (!$this->course->id == SITEID) {
+            // Regular course.
+            $params = [
+                'courseid' => $this->course->id,
+                'timeaccess' => 0,
+            ];
+            $select = 'courseid = :courseid AND timeaccess != :timeaccess';
+            $minlastaccess = $DB->get_field_select('user_lastaccess', 'MIN(timeaccess)', $select, $params);
+            $lastaccess0exists = $DB->record_exists('user_lastaccess', $params);
+        } else {
+            // Front page.
+            $params = ['lastaccess' => 0];
+            $select = 'lastaccess != :lastaccess';
+            $minlastaccess = $DB->get_field_select('user', 'MIN(lastaccess)', $select, $params);
+            $lastaccess0exists = $DB->record_exists('user', $params);
+        }
+
+        $now = usergetmidnight(time());
+        $timeoptions = [];
+        $criteria = get_string('usersnoaccesssince');
+
+        $getoptions = function(int $count, string $singletype, string $type) use ($now, $minlastaccess): array {
+            $values = [];
+            for ($i = 1; $i <= $count; $i++) {
+                $timestamp = strtotime("-{$i} {$type}", $now);
+                if ($timestamp < $minlastaccess) {
+                    break;
+                }
+
+                if ($i === 1) {
+                    $title = get_string("num{$singletype}", 'moodle', $i);
+                } else {
+                    $title = get_string("num{$type}", 'moodle', $i);
+                }
+
+                $values[] = [
+                    'value' => $timestamp,
+                    'title' => $title,
+                ];
+            }
+
+            return $values;
+        };
+
+        $values = array_merge(
+            $getoptions(6, 'day', 'days'),
+            $getoptions(10, 'week', 'weeks'),
+            $getoptions(11, 'month', 'months'),
+            $getoptions(1, 'year', 'years')
+        );
+
+        if ($lastaccess0exists) {
+            $values[] = [
+                'value' => time(),
+                'title' => get_string('never', 'moodle'),
+            ];
+        }
+
+        if (count($values) <= 1) {
+            // Nothing to show.
+            return null;
+        }
+
+        return $this->get_filter_object(
+            'accesssince',
+            get_string('usersnoaccesssince'),
+            false,
+            false,
+            null,
+            $values
         );
     }
 
