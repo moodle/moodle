@@ -1,8 +1,9 @@
-@core_form @javascript
+@core_form
 Feature: Newly created repeat elements have the correct default values
 
   Scenario: Clicking button to add repeat elements creates repeat elements with the correct default values
-    Given I am on the repeat defaults form page
+    Given I log in as "admin"
+    And I am on fixture page "/lib/form/tests/behat/fixtures/repeat_defaults_form.php"
     When I press "Add repeats"
     Then the following fields match these values:
       | testcheckbox[1]           | 1           |

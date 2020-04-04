@@ -18,6 +18,7 @@
  * Test form repeat elements + defaults
  *
  * @copyright 2020 Davo Smith, Synergy Learning
+ * @package   core_form
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,10 +28,18 @@ defined('BEHAT_SITE_RUNNING') || die();
 
 global $CFG, $PAGE, $OUTPUT;
 require_once($CFG->libdir.'/formslib.php');
-$PAGE->set_url('/lib/form/tests/behat/fixtures/formtest.php');
+$PAGE->set_url('/lib/form/tests/behat/fixtures/repeat_defaults_form.php');
+require_login();
 $PAGE->set_context(context_system::instance());
 
+/**
+ * Class repeat_defaults_form
+ * @package core_form
+ */
 class repeat_defaults_form extends moodleform {
+    /**
+     * Form definition
+     */
     public function definition() {
         $mform = $this->_form;
         $repeatcount = $this->_customdata['repeatcount'];
