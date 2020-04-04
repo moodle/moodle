@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/random/questiontype.php');
 
 
@@ -57,6 +58,49 @@ class qtype_random_test extends advanced_testcase {
 
     public function test_get_random_guess_score() {
         $this->assertNull($this->qtype->get_random_guess_score(null));
+    }
+
+    public function test_load_question() {
+        $this->resetAfterTest();
+
+        $syscontext = context_system::instance();
+        /** @var core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category(['contextid' => $syscontext->id]);
+
+        $fromform = test_question_maker::get_question_form_data('random');
+        $fromform->category = $category->id . ',' . $syscontext->id;
+
+        $question = new stdClass();
+        $question->category = $category->id;
+        $question->qtype = 'random';
+        $question->createdby = 0;
+
+        $this->qtype->save_question($question, $fromform);
+        $questiondata = question_bank::load_question_data($question->id);
+
+        $this->assertEquals(['id', 'category', 'parent', 'name', 'questiontext', 'questiontextformat',
+                'generalfeedback', 'generalfeedbackformat', 'defaultmark', 'penalty', 'qtype',
+                'length', 'stamp', 'version', 'hidden', 'timecreated', 'timemodified',
+                'createdby', 'modifiedby', 'idnumber', 'contextid', 'categoryobject'],
+                array_keys(get_object_vars($questiondata)));
+        $this->assertEquals($category->id, $questiondata->category);
+        // TODO: All this is nosense (in my brain, requires review.
+        $this->assertEquals($questiondata->id, $questiondata->parent); // parent points to self?
+        // $this->assertEquals($fromform->name, $questiondata->name); // fromform has empty name.
+        $this->assertEquals($fromform->questiontext, $questiondata->questiontext); // questiontext has 0 ?
+        $this->assertEquals($fromform->questiontextformat, $questiondata->questiontextformat);
+        $this->assertEquals('', $questiondata->generalfeedback);
+        $this->assertEquals(0, $questiondata->generalfeedbackformat);
+        $this->assertEquals(1, $questiondata->defaultmark); // Nothing @ fromform?
+        $this->assertEquals(0, $questiondata->penalty);
+        $this->assertEquals('random', $questiondata->qtype);
+        $this->assertEquals(1, $questiondata->length);
+        $this->assertEquals(0, $questiondata->hidden);
+        $this->assertEquals($question->createdby, $questiondata->createdby);
+        $this->assertEquals($question->createdby, $questiondata->modifiedby);
+        $this->assertEquals('', $questiondata->idnumber);
+        $this->assertEquals($syscontext->id, $questiondata->contextid);
     }
 
     public function test_get_possible_responses() {

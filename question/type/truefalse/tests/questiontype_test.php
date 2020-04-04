@@ -101,6 +101,7 @@ class qtype_truefalse_test extends advanced_testcase {
         $this->assertEquals($question->createdby, $questiondata->modifiedby);
         $this->assertEquals('', $questiondata->idnumber);
         $this->assertEquals($syscontext->id, $questiondata->contextid);
+        $this->assertEquals($questiondata->id, $questiondata->options->question);
         $this->assertEquals('True', $questiondata->options->answers[$questiondata->options->trueanswer]->answer);
         $this->assertEquals('False', $questiondata->options->answers[$questiondata->options->falseanswer]->answer);
         $this->assertEquals(1.0, $questiondata->options->answers[$questiondata->options->trueanswer]->fraction);
