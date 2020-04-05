@@ -754,7 +754,6 @@ class qformat_gift_test extends question_testcase {
             'options' => (object) array(
                 'id' => 123,
                 'question' => 666,
-                'showunits' => 0,
                 'unitsleft' => 0,
                 'showunits' => 2,
                 'unitgradingtype' => 0,
@@ -1293,5 +1292,103 @@ FALSE#42 is the Ultimate Answer.#You gave the right answer.}";
         );
 
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
+    }
+
+    public function test_import_question_with_tags() {
+        $gift = '
+// This question is to test importing tags: [tag:tag] [tag:other-tag].
+// And an idnumber: [id:myid].
+::Question name:: How are you? {}';
+        $lines = preg_split('/[\\n\\r]/', str_replace("\r\n", "\n", $gift));
+
+        $importer = new qformat_gift();
+        $q = $importer->readquestion($lines);
+
+        $expectedq = (object) array(
+            'name' => 'Question name',
+            'questiontext' => 'How are you?',
+            'questiontextformat' => FORMAT_MOODLE,
+            'generalfeedback' => '',
+            'generalfeedbackformat' => FORMAT_MOODLE,
+            'qtype' => 'essay',
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
+            'length' => 1,
+            'responseformat' => 'editor',
+            'responsefieldlines' => 15,
+            'attachments' => 0,
+            'graderinfo' => array(
+                'text' => '',
+                'format' => FORMAT_HTML,
+                'files' => array()),
+            'tags' => ['tag', 'other-tag'],
+            'idnumber' => 'myid',
+        );
+
+        $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
+    }
+
+    /**
+     * Data provider for test_extract_idnumber_and_tags_from_comment.
+     *
+     * @return array the test cases.
+     */
+    public function extract_idnumber_and_tags_from_comment_testcases() {
+        return [
+            'blank comment' => ['', [], ''],
+            'nothing in comment' => ['', [], '// A basic comment.'],
+            'idnumber only' => ['frog', [], '// A comment with [id:frog] <-- an idnumber.'],
+            'tags only' => ['', ['frog', 'toad'], '// Look tags: [tag:frog] [tag:toad].'],
+            'everything' => ['four', ['add', 'basic'], '// [tag:add] [tag:basic] [id:four]'],
+            'everything mixed up' => ['four', ['basic', 'add'],
+                    "// [tag:  basic] Here is  \n// a [id:   four   ] que[tag:add   ]stion."],
+            'split over line' => ['', [], "// Ceci n\'est pas une [tag:\n\\ frog]."],
+            'escape ] idnumber' => ['i]d', [], '// [id:i\]d].'],
+            'escape ] tag' => ['', ['t]ag'], '// [tag:t\]ag].'],
+        ];
+    }
+
+    /**
+     * Test extract_idnumber_and_tags_from_comment.
+     *
+     * @dataProvider extract_idnumber_and_tags_from_comment_testcases
+     * @param string $expectedidnumber the expected idnumber.
+     * @param array $expectedtags the expected tags.
+     * @param string $comment the comment to parse.
+     */
+    public function test_extract_idnumber_and_tags_from_comment(
+            string $expectedidnumber, array $expectedtags, string $comment) {
+        $importer = new qformat_gift();
+
+        list($idnumber, $tags) = $importer->extract_idnumber_and_tags_from_comment($comment);
+        $this->assertSame($expectedidnumber, $idnumber);
+        $this->assertSame($expectedtags, $tags);
+    }
+
+    public function test_export_question_with_tags_and_idnumber() {
+        $this->resetAfterTest();
+
+        // Create a question with tags.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category();
+        $question = $generator->create_question('truefalse', null,
+                ['category' => $category->id, 'idnumber' => 'myid']);
+        core_tag_tag::set_item_tags('core_question', 'question', $question->id,
+                context::instance_by_id($category->contextid), ['tag1', 'tag2'], 0);
+
+        // Export it.
+        $questiondata = question_bank::load_question_data($question->id);
+        $exporter = new qformat_gift();
+        $exporter->course = get_course(SITEID);
+        $gift = $exporter->writequestion($questiondata);
+
+        // Verify.
+        $expectedgift = "// question: {$question->id}  name: True/false question
+// [id:myid] [tag:tag1] [tag:tag2]
+::True/false question::[html]The answer is true.{TRUE#This is the wrong answer.#This is the right answer.####You should have selected true.}
+
+";
+
+        $this->assert_same_gift($expectedgift, $gift);
     }
 }
