@@ -1690,6 +1690,26 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Renders a Check API result
+     *
+     * @param result $result
+     * @return string HTML fragment
+     */
+    protected function render_result(core\check\result $result) {
+        return $this->render_from_template($result->get_template_name(), $result->export_for_template($this));
+    }
+
+    /**
+     * Renders a Check API result
+     *
+     * @param result $result
+     * @return string HTML fragment
+     */
+    public function result(core\check\result $result) {
+        return $this->render_result($result);
+    }
+
+    /**
      * Renders an action_menu_link item.
      *
      * @param action_menu_link $action

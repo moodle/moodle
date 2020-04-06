@@ -17,8 +17,7 @@
 /**
  * Security overview report
  *
- * @package    report
- * @subpackage security
+ * @package    report_security
  * @copyright  2008 petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,101 +25,89 @@
 define('NO_OUTPUT_BUFFERING', true);
 
 require('../../config.php');
-require_once($CFG->dirroot.'/report/security/locallib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
+use core\check\check;
+use core\check\result;
 
-$issue = optional_param('issue', '', PARAM_ALPHANUMEXT); // show detailed info about one issue only
+// Print the header.
+admin_externalpage_setup('reportsecurity', '', null, '', ['pagelayout' => 'report']);
 
-$issues = report_security_get_issue_list();
-
-// test if issue valid string
-if (array_search($issue, $issues, true) === false) {
-    $issue = '';
-}
-
-// we may need a bit more memory and this may take a long time to process
+// We may need a bit more memory and this may take a long time to process.
 raise_memory_limit(MEMORY_EXTRA);
 core_php_time_limit::raise();
 
-// Print the header.
-admin_externalpage_setup('reportsecurity', '', null, '', array('pagelayout'=>'report'));
-echo $OUTPUT->header();
+$checks = \core\check\manager::get_security_checks();
 
+$detail = optional_param('detail', '', PARAM_TEXT); // Show detailed info about one check only.
+if ($detail) {
+    $checks = array_filter($checks, function($check) use ($detail) {
+        return $detail == $check->get_ref();
+    });
+    $checks = array_values($checks);
+    if (!empty($checks)) {
+        $PAGE->set_docs_path('report/security/index.php?detail=' . $detail);
+        $PAGE->navbar->add($checks[0]->get_name());
+    }
+}
+
+echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'report_security'));
 
-echo '<div id="timewarning">'.get_string('timewarning', 'report_security').'</div>';
-
-$strok       = '<span class="badge badge-success">'.get_string('statusok', 'report_security').'</span>';
-$strinfo     = '<span class="badge badge-info">'.get_string('statusinfo', 'report_security').'</span>';
-$strwarning  = '<span class="badge badge-warning">'.get_string('statuswarning', 'report_security').'</span>';
-$strserious  = '<span class="badge badge-danger">'.get_string('statusserious', 'report_security').'</span>';
-$strcritical = '<span class="badge badge-danger">'.get_string('statuscritical', 'report_security').'</span>';
-
-$strissue    = get_string('issue', 'report_security');
-$strstatus   = get_string('status', 'report_security');
-$strdesc     = get_string('description', 'report_security');
-$strconfig   = get_string('configuration', 'report_security');
-
-$statusarr = array(REPORT_SECURITY_OK       => $strok,
-                   REPORT_SECURITY_INFO     => $strinfo,
-                   REPORT_SECURITY_WARNING  => $strwarning,
-                   REPORT_SECURITY_SERIOUS  => $strserious,
-                   REPORT_SECURITY_CRITICAL => $strcritical);
+echo '<div id="timewarning">' . get_string('timewarning', 'report_security') . '</div>';
 
 $url = "$CFG->wwwroot/report/security/index.php";
 
-if ($issue and ($result = $issue(true))) {
-    report_security_hide_timearning();
+$PAGE->requires->js_init_code("Y.one('#timewarning').addClass('timewarninghidden')");
+$table = new html_table();
+$table->data = [];
+$table->head  = [
+    get_string('status'),
+    get_string('check'),
+    get_string('summary'),
+    get_string('action'),
+];
+$table->colclasses = [
+    'rightalign status',
+    'leftalign check',
+    'leftalign summary',
+    'leftalign action',
+];
+$table->id = 'securityreporttable';
+$table->attributes = ['class' => 'admintable securityreport generaltable'];
 
-    $table = new html_table();
-    $table->head  = array($strissue, $strstatus, $strdesc, $strconfig);
-    $table->rowclasses = array('leftalign issue', 'leftalign status', 'leftalign desc', 'leftalign config');
-    $table->attributes = array('class'=>'admintable securityreport generaltable');
-    $table->id = 'securityissuereporttable';
-    $table->data  = array();
+$manager = core_plugin_manager::instance();
 
-    // print detail of one issue only
-    $row = array();
-    $row[0] = report_security_doc_link($issue, $result->name);
-    $row[1] = $statusarr[$result->status];
-    $row[2] = $result->info;
-    $row[3] = is_null($result->link) ? '&nbsp;' : $result->link;
+foreach ($checks as $check) {
+    $ref = $check->get_ref();
+    $result = $check->get_result();
+    $component = $check->get_component();
+    $actionlink = $check->get_action_link();
 
-    $PAGE->set_docs_path('report/security/' . $issue);
+    $link = new \moodle_url('/report/security/index.php', ['detail' => $ref]);
+
+    $row = [];
+    $row[] = $OUTPUT->result($result);
+    $row[] = $OUTPUT->action_link($link, $check->get_name());
+
+    $row[] = $result->get_summary();
+    if ($actionlink) {
+        $row[] = $OUTPUT->render($actionlink);
+    } else {
+        $row[] = '';
+    }
 
     $table->data[] = $row;
+}
+echo html_writer::table($table);
 
-    echo html_writer::table($table);
-
-    echo $OUTPUT->box($result->details, 'generalbox boxwidthnormal boxaligncenter'); // TODO: add proper css
-
+if ($detail && $result) {
+    echo $OUTPUT->heading(get_string('description'), 3);
+    echo $OUTPUT->box($result->get_details(), 'generalbox boxwidthnormal boxaligncenter');
     echo $OUTPUT->continue_button($url);
-
-} else {
-    report_security_hide_timearning();
-
-    $table = new html_table();
-    $table->head  = array($strissue, $strstatus, $strdesc);
-    $table->colclasses = array('leftalign issue', 'leftalign status', 'leftalign desc');
-    $table->attributes = array('class'=>'admintable securityreport generaltable');
-    $table->id = 'securityreporttable';
-    $table->data  = array();
-
-    foreach ($issues as $issue) {
-        $result = $issue(false);
-        if (!$result) {
-            // ignore this test
-            continue;
-        }
-        $row = array();
-        $row[0] = "<a href='$url?issue=$result->issue'>$result->name</a>";
-        $row[1] = $statusarr[$result->status];
-        $row[2] = $result->info;
-
-        $table->data[] = $row;
-    }
-    echo html_writer::table($table);
 }
 
 echo $OUTPUT->footer();
+$event = \report_security\event\report_viewed::create(['context' => context_system::instance()]);
+$event->trigger();
+
