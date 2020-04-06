@@ -47,7 +47,7 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create and enrol a student.
-        $student = $this->getDataGenerator()->create_user(array('username' => 'Student Sam'));
+        $student = $this->getDataGenerator()->create_user(array('username' => 'student_sam'));
         $role = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
         $this->getDataGenerator()->enrol_user($student->id, $course->id, $role->id);
 

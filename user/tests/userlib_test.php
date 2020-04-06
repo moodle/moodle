@@ -833,23 +833,23 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser(); // We need capabilities to view the data.
         $user = self::getDataGenerator()->create_user([
-                                                          'auth'       => 'auth_something',
+                                                          'auth'       => 'email',
                                                           'confirmed'  => '0',
                                                           'idnumber'   => 'someidnumber',
                                                           'lang'       => 'en',
                                                           'theme'      => $CFG->theme,
-                                                          'timezone'   => '50',
+                                                          'timezone'   => '5',
                                                           'mailformat' => '0',
                                                       ]);
 
         // Fields that should get by default.
         $got = user_get_user_details($user);
-        self::assertSame('auth_something', $got['auth']);
+        self::assertSame('email', $got['auth']);
         self::assertSame('0', $got['confirmed']);
         self::assertSame('someidnumber', $got['idnumber']);
         self::assertSame('en', $got['lang']);
         self::assertSame($CFG->theme, $got['theme']);
-        self::assertSame('50', $got['timezone']);
+        self::assertSame('5', $got['timezone']);
         self::assertSame('0', $got['mailformat']);
     }
 

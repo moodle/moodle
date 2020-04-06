@@ -171,7 +171,7 @@ Feature: Teacher can search and enrol users one by one into the course
     When I log in as "admin"
     Then the following "users" exist:
       | username    | firstname | lastname | email                   | phone1     | phone2     | department | institution | city    | country  |
-      | student100  | Student   | 100      | student100@example.com  | 1234567892 | 1234567893 | ABC1       | ABC2        | CITY1   | UK       |
+      | student100  | Student   | 100      | student100@example.com  | 1234567892 | 1234567893 | ABC1       | ABC2        | CITY1   | GB       |
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,city,country,phone1,phone2,department,institution |
     When I am on "Course 001" course homepage
@@ -179,7 +179,7 @@ Feature: Teacher can search and enrol users one by one into the course
     And I press "Enrol users"
     When I set the field "Select users" to "student100@example.com"
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
-    Then I should see "student100@example.com, CITY1, UK, 1234567892, 1234567893, ABC1, ABC2"
+    Then I should see "student100@example.com, CITY1, GB, 1234567892, 1234567893, ABC1, ABC2"
     # Remove identity field in setting User policies
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,phone1,phone2,department,institution |

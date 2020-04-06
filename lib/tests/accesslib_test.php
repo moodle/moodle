@@ -2749,8 +2749,6 @@ class core_accesslib_testcase extends advanced_testcase {
             $bi = $generator->create_block('online_users', array('parentcontextid'=>$usercontext->id));
             $testblocks[] = $bi->id;
         }
-        // Deleted user - should be ignored everywhere, can not have context.
-        $generator->create_user(array('deleted'=>1));
 
         // Add block to frontpage.
         $bi = $generator->create_block('online_users', array('parentcontextid'=>$frontpagecontext->id));
