@@ -48,6 +48,8 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         this.groups = [CSS.SECTIONDRAGGABLE];
         this.samenodeclass = M.course.format.get_sectionwrapperclass();
         this.parentnodeclass = M.course.format.get_containerclass();
+        // Detect the direction of travel.
+        this.detectkeyboarddirection = true;
 
         // Check if we are in single section mode
         if (Y.Node.one('.' + CSS.JUMPMENU)) {
@@ -147,6 +149,14 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
     drag_start: function(e) {
         // Get our drag object
         var drag = e.target;
+        // This is the node that the user started to drag.
+        var node = drag.get('node');
+        // This is the container node that will follow the mouse around,
+        // or during a keyboard drag and drop the original node.
+        var dragnode = drag.get('dragNode');
+        if (node === dragnode) {
+            return;
+        }
         // Creat a dummy structure of the outer elemnents for clean styles application
         var containernode = Y.Node.create('<' + M.course.format.get_containernode() +
                 '></' + M.course.format.get_containernode() + '>');
@@ -155,10 +165,10 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                 '></' + M.course.format.get_sectionwrappernode() + '>');
         sectionnode.addClass(M.course.format.get_sectionwrapperclass());
         sectionnode.setStyle('margin', 0);
-        sectionnode.setContent(drag.get('node').get('innerHTML'));
+        sectionnode.setContent(node.get('innerHTML'));
         containernode.appendChild(sectionnode);
-        drag.get('dragNode').setContent(containernode);
-        drag.get('dragNode').addClass(CSS.COURSECONTENT);
+        dragnode.setContent(containernode);
+        dragnode.addClass(CSS.COURSECONTENT);
     },
 
     drag_dropmiss: function(e) {
@@ -427,6 +437,11 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
     drag_start: function(e) {
         // Get our drag object
         var drag = e.target;
+        if (drag.get('dragNode') === drag.get('node')) {
+            // We do not want to modify the contents of the real node.
+            // They will be the same during a keyboard drag and drop.
+            return;
+        }
         drag.get('dragNode').setContent(drag.get('node').get('innerHTML'));
         drag.get('dragNode').all('img.iconsmall').setStyle('vertical-align', 'baseline');
     },
