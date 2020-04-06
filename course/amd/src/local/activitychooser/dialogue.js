@@ -108,7 +108,7 @@ const manageFavouriteState = async(modalBody, caller, partialFavourite) => {
  * @param {Function} partialFavourite Partially applied function we need to manage favourite status
  */
 const registerListenerEvents = (modal, mappedModules, partialFavourite) => {
-    const bodyClickListener = e => {
+    const bodyClickListener = async(e) => {
         if (e.target.closest(selectors.actions.optionActions.showSummary)) {
             const carousel = $(modal.getBody()[0].querySelector(selectors.regions.carousel));
 
@@ -120,7 +120,14 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite) => {
 
         if (e.target.closest(selectors.actions.optionActions.manageFavourite)) {
             const caller = e.target.closest(selectors.actions.optionActions.manageFavourite);
-            manageFavouriteState(modal.getBody()[0], caller, partialFavourite);
+            await manageFavouriteState(modal.getBody()[0], caller, partialFavourite);
+            const activeSectionId = modal.getBody()[0].querySelector(selectors.elements.activetab).getAttribute("href");
+            const sectionChooserOptions = modal.getBody()[0]
+                .querySelector(selectors.regions.getSectionChooserOptions(activeSectionId));
+            const firstChooserOption = sectionChooserOptions
+                .querySelector(selectors.regions.chooserOption.container);
+            toggleFocusableChooserOption(firstChooserOption, true);
+            initChooserOptionsKeyboardNavigation(modal.getBody()[0], mappedModules, sectionChooserOptions);
         }
 
         // From the help screen go back to the module overview.
@@ -208,49 +215,51 @@ const initTabsKeyboardNavigation = (body) => {
     const defaultTabNav = body.querySelector(selectors.regions.defaultTabNav);
     const tabNavArray = [favTabNav, recommendedTabNav, defaultTabNav];
     tabNavArray.forEach((element) => {
-        return element.addEventListener('keyup', (e) => {
-            const firstLink = e.target.parentElement.parentElement.firstElementChild.firstElementChild;
-            const lastLink = e.target.parentElement.parentElement.lastElementChild.firstElementChild;
+        return element.addEventListener('keydown', (e) => {
+            // The first visible navigation tab link.
+            const firstLink = e.target.parentElement.querySelector(selectors.elements.visibletabs);
+            // The last navigation tab link. It would always be the default activities tab link.
+            const lastLink = e.target.parentElement.lastElementChild;
 
             if (e.keyCode === arrowRight) {
-                const nextLink = e.target.parentElement.nextElementSibling;
+                const nextLink = e.target.nextElementSibling;
                 if (nextLink === null) {
-                    e.srcElement.tabIndex = -1;
+                    e.target.tabIndex = -1;
                     firstLink.tabIndex = 0;
                     firstLink.focus();
-                } else if (nextLink.firstElementChild.classList.contains('d-none')) {
-                    e.srcElement.tabIndex = -1;
+                } else if (nextLink.classList.contains('d-none')) {
+                    e.target.tabIndex = -1;
                     lastLink.tabIndex = 0;
                     lastLink.focus();
                 } else {
-                    e.srcElement.tabIndex = -1;
-                    nextLink.firstElementChild.tabIndex = 0;
-                    nextLink.firstElementChild.focus();
+                    e.target.tabIndex = -1;
+                    nextLink.tabIndex = 0;
+                    nextLink.focus();
                 }
             }
             if (e.keyCode === arrowLeft) {
-                const previousLink = e.target.parentElement.previousElementSibling;
+                const previousLink = e.target.previousElementSibling;
                 if (previousLink === null) {
-                    e.srcElement.tabIndex = -1;
+                    e.target.tabIndex = -1;
                     lastLink.tabIndex = 0;
                     lastLink.focus();
-                } else if (previousLink.firstElementChild.classList.contains('d-none')) {
-                    e.srcElement.tabIndex = -1;
+                } else if (previousLink.classList.contains('d-none')) {
+                    e.target.tabIndex = -1;
                     firstLink.tabIndex = 0;
                     firstLink.focus();
                 } else {
-                    e.srcElement.tabIndex = -1;
-                    previousLink.firstElementChild.tabIndex = 0;
-                    previousLink.firstElementChild.focus();
+                    e.target.tabIndex = -1;
+                    previousLink.tabIndex = 0;
+                    previousLink.focus();
                 }
             }
             if (e.keyCode === home) {
-                e.srcElement.tabIndex = -1;
+                e.target.tabIndex = -1;
                 firstLink.tabIndex = 0;
                 firstLink.focus();
             }
             if (e.keyCode === end) {
-                e.srcElement.tabIndex = -1;
+                e.target.tabIndex = -1;
                 lastLink.tabIndex = 0;
                 lastLink.focus();
             }
@@ -274,7 +283,7 @@ const initChooserOptionsKeyboardNavigation = (body, mappedModules, chooserOption
     const chooserOptions = chooserOptionsContainer.querySelectorAll(selectors.regions.chooserOption.container);
 
     Array.from(chooserOptions).forEach((element) => {
-        return element.addEventListener('keyup', (e) => {
+        return element.addEventListener('keydown', (e) => {
 
             // Check for enter/ space triggers for showing the help.
             if (e.keyCode === enter || e.keyCode === space) {

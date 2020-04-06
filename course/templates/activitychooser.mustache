@@ -41,52 +41,47 @@
                     {{>core_course/local/activitychooser/search}}
                 </div>
                 <div data-region="chooser-container">
-                    <ul class="nav nav-tabs mb-3" id="activities-{{uniqid}}" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link {{#favouritesFirst}}active{{/favouritesFirst}} {{^favourites}}d-none{{/favourites}}"
-                               id="starred-tab-{{uniqid}}"
-                               data-toggle="tab"
-                               data-region="favourite-tab-nav"
-                               href="#starred-{{uniqid}}"
-                               role="tab"
-                               aria-label="{{#str}} aria:favouritestab, core_course {{/str}}"
-                               aria-controls="starred-{{uniqid}}"
-                               aria-selected="{{#favouritesFirst}}true{{/favouritesFirst}}{{^favouritesFirst}}false{{/favouritesFirst}}"
-                               tabindex="{{#favouritesFirst}}0{{/favouritesFirst}}{{^favouritesFirst}}-1{{/favouritesFirst}}"
-                            >
-                                {{#str}} favourites, core {{/str}}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{#recommendedFirst}}active{{/recommendedFirst}} {{^recommended}}d-none{{/recommended}}"
-                               id="recommended-tab-{{uniqid}}"
-                               data-region="recommended-tab-nav"
-                               data-toggle="tab"
-                               href="#recommended-{{uniqid}}"
-                               role="tab"
-                               aria-label="{{#str}} aria:recommendedtab, core_course {{/str}}"
-                               aria-controls="recommended-{{uniqid}}"
-                               aria-selected="{{#recommendedFirst}}true{{/recommendedFirst}}{{^recommendedFirst}}false{{/recommendedFirst}}"
-                               tabindex="{{#recommendedFirst}}0{{/recommendedFirst}}{{^recommendedFirst}}-1{{/recommendedFirst}}">
-                                {{#str}} recommended, core {{/str}}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{#fallback}}active{{/fallback}}"
-                               id="all-tab-{{uniqid}}"
-                               data-toggle="tab"
-                               data-region="default-tab-nav"
-                               href="#all-{{uniqid}}"
-                               role="tab"
-                               aria-label="{{#str}} aria:defaulttab, core_course {{/str}}"
-                               aria-controls="all-{{uniqid}}"
-                               aria-selected="{{#fallback}}true{{/fallback}}{{^fallback}}false{{/fallback}}"
-                               tabindex="{{#fallback}}0{{/fallback}}{{^fallback}}-1{{/fallback}}"
-                            >
-                                {{#str}} activities, core {{/str}}
-                            </a>
-                        </li>
-                    </ul>
+                    <div class="nav nav-tabs mb-3" id="activities-{{uniqid}}" role="tablist">
+                        <a class="nav-item nav-link {{#favouritesFirst}}active{{/favouritesFirst}} {{^favourites}}d-none{{/favourites}}"
+                           id="starred-tab-{{uniqid}}"
+                           data-toggle="tab"
+                           data-region="favourite-tab-nav"
+                           href="#starred-{{uniqid}}"
+                           role="tab"
+                           aria-label="{{#str}} aria:favouritestab, core_course {{/str}}"
+                           aria-controls="starred-{{uniqid}}"
+                           aria-selected="{{#favouritesFirst}}true{{/favouritesFirst}}{{^favouritesFirst}}false{{/favouritesFirst}}"
+                           tabindex="{{#favouritesFirst}}0{{/favouritesFirst}}{{^favouritesFirst}}-1{{/favouritesFirst}}"
+                        >
+                            {{#str}} favourites, core {{/str}}
+                        </a>
+                        <a class="nav-item nav-link {{#recommendedFirst}}active{{/recommendedFirst}} {{^recommended}}d-none{{/recommended}}"
+                           id="recommended-tab-{{uniqid}}"
+                           data-region="recommended-tab-nav"
+                           data-toggle="tab"
+                           href="#recommended-{{uniqid}}"
+                           role="tab"
+                           aria-label="{{#str}} aria:recommendedtab, core_course {{/str}}"
+                           aria-controls="recommended-{{uniqid}}"
+                           aria-selected="{{#recommendedFirst}}true{{/recommendedFirst}}{{^recommendedFirst}}false{{/recommendedFirst}}"
+                           tabindex="{{#recommendedFirst}}0{{/recommendedFirst}}{{^recommendedFirst}}-1{{/recommendedFirst}}"
+                        >
+                            {{#str}} recommended, core {{/str}}
+                        </a>
+                        <a class="nav-item nav-link {{#fallback}}active{{/fallback}}"
+                           id="all-tab-{{uniqid}}"
+                           data-toggle="tab"
+                           data-region="default-tab-nav"
+                           href="#all-{{uniqid}}"
+                           role="tab"
+                           aria-label="{{#str}} aria:defaulttab, core_course {{/str}}"
+                           aria-controls="all-{{uniqid}}"
+                           aria-selected="{{#fallback}}true{{/fallback}}{{^fallback}}false{{/fallback}}"
+                           tabindex="{{#fallback}}0{{/fallback}}{{^fallback}}-1{{/fallback}}"
+                        >
+                            {{#str}} activities, core {{/str}}
+                        </a>
+                    </div>
                     <div class="tab-content" id="tabbed-activities-{{uniqid}}">
                         <div class="tab-pane {{#favouritesFirst}}active{{/favouritesFirst}}" id="starred-{{uniqid}}" data-region="favourites" role="tabpanel" aria-labelledby="starred-tab-{{uniqid}}">
                             <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container" data-render="favourites-area">
