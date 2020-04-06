@@ -829,7 +829,7 @@ class cache_helper {
         global $CFG;
         if ($stores === null) {
             require_once($CFG->dirroot.'/cache/locallib.php');
-            $stores = cache_administration_helper::get_store_instance_summaries();
+            $stores = core_cache\administration_helper::get_store_instance_summaries();
         }
         $warnings = array();
         foreach ($stores as $store) {

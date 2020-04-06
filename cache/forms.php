@@ -97,7 +97,7 @@ class cachestore_addinstance_form extends moodleform {
             if (!preg_match('#^[a-zA-Z0-9\-_ ]+$#', $data['name'])) {
                 $errors['name'] = get_string('storenameinvalid', 'cache');
             } else if (empty($this->_customdata['store'])) {
-                $stores = cache_administration_helper::get_store_instance_summaries();
+                $stores = core_cache\administration_helper::get_store_instance_summaries();
                 if (array_key_exists($data['name'], $stores)) {
                     $errors['name'] = get_string('storenamealreadyused', 'cache');
                 }
@@ -139,9 +139,9 @@ class cache_definition_mappings_form extends moodleform {
 
         list($component, $area) = explode('/', $definition, 2);
         list($currentstores, $storeoptions, $defaults) =
-                cache_administration_helper::get_definition_store_options($component, $area);
+                core_cache\administration_helper::get_definition_store_options($component, $area);
 
-        $storedata = cache_administration_helper::get_definition_summaries();
+        $storedata = core_cache\administration_helper::get_definition_summaries();
         if ($storedata[$definition]['mode'] != cache_store::MODE_REQUEST) {
             if (isset($storedata[$definition]['canuselocalstore']) && $storedata[$definition]['canuselocalstore']) {
                 $form->addElement('html', $OUTPUT->notification(get_string('localstorenotification', 'cache'), 'notifymessage'));
@@ -247,7 +247,7 @@ class cache_definition_sharing_form extends moodleform {
     public function set_data($data) {
         if (!isset($data['sharing'])) {
             // Set the default value here. mforms doesn't handle defaults very nicely.
-            $data['sharing'] = cache_administration_helper::get_definition_sharing_options(cache_definition::SHARING_DEFAULT);
+            $data['sharing'] = core_cache\administration_helper::get_definition_sharing_options(cache_definition::SHARING_DEFAULT);
         }
         parent::set_data($data);
     }
