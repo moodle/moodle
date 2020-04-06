@@ -39,12 +39,12 @@ use core\check\result;
 class noauth extends \core\check\check {
 
     /**
-     * Constructor
+     * A link to a place to action this
+     *
+     * @return action_link
      */
-    public function __construct() {
-        $this->id = 'noauth';
-        $this->name = get_string('check_noauth_name', 'auth_none');
-        $this->actionlink = new \action_link(
+    public function get_action_link(): ?\action_link {
+        return new \action_link(
             new \moodle_url('/admin/settings.php?section=manageauths'),
             get_string('authsettings', 'admin'));
     }
@@ -54,15 +54,14 @@ class noauth extends \core\check\check {
      * @return result
      */
     public function get_result(): result {
-
         if (is_enabled_auth('none')) {
             $status = result::ERROR;
-            $summary = get_string('check_noauth_error', 'auth_none');
+            $summary = get_string('checknoautherror', 'auth_none');
         } else {
             $status = result::OK;
-            $summary = get_string('check_noauth_ok', 'auth_none');
+            $summary = get_string('checknoauthok', 'auth_none');
         }
-        $details = get_string('check_noauth_details', 'auth_none');
+        $details = get_string('checknoauthdetails', 'auth_none');
 
         return new result($status, $summary, $details);
     }
