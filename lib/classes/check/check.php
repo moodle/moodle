@@ -42,21 +42,6 @@ abstract class check {
     protected $component = 'core';
 
     /**
-     * @var string $id - Should be unique identifier within a component.
-     */
-    protected $id = '';
-
-    /**
-     * @var string $name - Name for the check, should be the same regardless of state.
-     */
-    protected $name = '';
-
-    /**
-     * @var action_link - an optional link to a place to address the check.
-     */
-    protected $actionlink = null;
-
-    /**
      * Get the frankenstyle component name
      *
      * @return string
@@ -77,10 +62,16 @@ abstract class check {
     /**
      * Get the check's id
      *
-     * @return string must be unique for it's component
+     * This defaults to the base name of the class which is ok in the most
+     * cases but if you have a check which can have multiple instances then
+     * you should override this to be unique.
+     *
+     * @return string must be unique within a component
      */
     public function get_id(): string {
-        return $this->id;
+        $class = get_class($this);
+        $id = explode("\\", $class);
+        return end($id);
     }
 
     /**
@@ -103,7 +94,8 @@ abstract class check {
      * @return string
      */
     public function get_name(): string {
-        return $this->name;
+        $id = $this->get_id();
+        return get_string("check{$id}", $this->get_component());
     }
 
     /**
@@ -112,7 +104,7 @@ abstract class check {
      * @return action_link|null
      */
     public function get_action_link(): ?\action_link {
-        return $this->actionlink;
+        return null;
     }
 
     /**
