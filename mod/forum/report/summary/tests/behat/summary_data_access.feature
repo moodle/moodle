@@ -36,7 +36,7 @@ Feature: Report relevant content availability
     Given I log in as "teacher1"
     When I am on "Course 1" course homepage
     And I follow "forum1"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     Then the following should exist in the "forumreport_summary_table" table:
       | -2-       | -3- | -4- | -5- | -6- | -7- | -8- |
       | Student 1 | 1   | 1   | 5   | 0   | 3   | 14  |
@@ -60,7 +60,7 @@ Feature: Report relevant content availability
     Given I log in as "student1"
     When I am on "Course 1" course homepage
     And I follow "forum1"
-    Then "Summary report" "link" should not exist in current page administration
+    Then "Forum summary report" "link" should not exist in current page administration
 
   @javascript
   Scenario: Students given the view capability can only view their own report data
@@ -70,7 +70,7 @@ Feature: Report relevant content availability
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "forum1"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     Then the following should exist in the "forumreport_summary_table" table:
       | -1-       | -2- | -3- | -4- | -5- | -6- | -7- |
       | Student 1 | 1   | 1   | 5   | 1   | 3   | 14  |

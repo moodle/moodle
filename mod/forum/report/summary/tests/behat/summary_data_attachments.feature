@@ -44,7 +44,7 @@ Feature: Attachments count column data available
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "forum1"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     Then "Teacher 1" row "Number of attachments" column of "forumreport_summary_table" table should contain "6"
     And "Student 1" row "Number of attachments" column of "forumreport_summary_table" table should contain "5"
     And "Student 2" row "Number of attachments" column of "forumreport_summary_table" table should contain "0"

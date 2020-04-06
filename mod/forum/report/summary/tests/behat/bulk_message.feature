@@ -43,7 +43,7 @@ Feature: Message users in the summary report
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "forum1"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     And I click on "Select 'Student 1'" "checkbox"
     And I click on "Select 'Student 3'" "checkbox"
     And I set the field "With selected users..." to "Send a message"
@@ -65,7 +65,7 @@ Feature: Message users in the summary report
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "forum1"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     And I click on "Select all" "checkbox"
     And I set the field "With selected users..." to "Send a message"
     Then I should see "Send message to 3 people"
@@ -79,6 +79,6 @@ Feature: Message users in the summary report
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "forum1"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     Then I should not see "With selected users..."
     And I should not see "Select all"

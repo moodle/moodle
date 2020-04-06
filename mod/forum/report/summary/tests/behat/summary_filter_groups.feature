@@ -65,7 +65,7 @@ Feature: Groups report filter is available if groups exist
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "forum1"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     Then "Groups" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
@@ -115,7 +115,7 @@ Feature: Groups report filter is available if groups exist
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "forum1"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     Then "Groups" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
@@ -151,7 +151,7 @@ Feature: Groups report filter is available if groups exist
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "forum2"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     Then "Groups" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
@@ -177,7 +177,7 @@ Feature: Groups report filter is available if groups exist
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "forum2"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     Then the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
       | First name / Surname | -3-         | -4-     |
@@ -202,7 +202,7 @@ Feature: Groups report filter is available if groups exist
     When I log in as "admin"
     And I am on "Course 1" course homepage
     And I follow "forum1"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     Then "Groups" "button" should exist
     And the following should exist in the "forumreport_summary_table" table:
     # |                      | Discussions | Replies |
@@ -221,3 +221,32 @@ Feature: Groups report filter is available if groups exist
     And I should not see "Student 2"
     And I should not see "With selected users..."
     And I should not see "Download table data as"
+
+  @javascript
+  Scenario: Course forum summary report can be filtered by group
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "forum2"
+    And I navigate to "Forum summary report" in current page administration
+    And I select "All forums in course" from the "Forum selected" singleselect
+    And I click on "Groups" "button"
+    And I click on "Clear" "button" in the "filter-groups-popover" "region"
+    And I click on "Group A" "checkbox" in the "filter-groups-popover" "region"
+    And I click on "Group C" "checkbox" in the "filter-groups-popover" "region"
+    And I click on "Save" "button"
+    And "Groups (2)" "button" should exist
+    Then the following should exist in the "forumreport_summary_table" table:
+    # |                      | Discussions | Replies |
+      | First name / Surname | -3-         | -4-     |
+      | Student 1            | 1           | 1       |
+      | Teacher 1            | 2           | 3       |
+    And I should not see "Student 2"
+    # Ensure re-ordering retains filter.
+    And I click on "Number of discussions posted" "link"
+    And "Groups (2)" "button" should exist
+    And the following should exist in the "forumreport_summary_table" table:
+    # |                      | Discussions | Replies |
+      | First name / Surname | -3-         | -4-     |
+      | Student 1            | 1           | 1       |
+      | Teacher 1            | 2           | 3       |
+    And I should not see "Student 2"

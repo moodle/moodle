@@ -29,68 +29,134 @@ if (isguestuser()) {
 }
 
 $courseid = required_param('courseid', PARAM_INT);
-$forumid = required_param('forumid', PARAM_INT);
+$forumid = optional_param('forumid', 0, PARAM_INT);
 $perpage = optional_param('perpage', \forumreport_summary\summary_table::DEFAULT_PER_PAGE, PARAM_INT);
+$download = optional_param('download', '', PARAM_ALPHA);
 $filters = [];
+$pageurlparams = [
+    'courseid' => $courseid,
+    'perpage' => $perpage,
+];
 
 // Establish filter values.
-$filters['forums'] = [$forumid];
 $filters['groups'] = optional_param_array('filtergroups', [], PARAM_INT);
 $filters['datefrom'] = optional_param_array('datefrom', ['enabled' => 0], PARAM_INT);
 $filters['dateto'] = optional_param_array('dateto', ['enabled' => 0], PARAM_INT);
 
-$download = optional_param('download', '', PARAM_ALPHA);
-
-$cm = null;
 $modinfo = get_fast_modinfo($courseid);
+$course = $modinfo->get_course();
+$courseforums = $modinfo->instances['forum'];
+$cms = [];
 
-if (!isset($modinfo->instances['forum'][$forumid])) {
-    throw new \moodle_exception("A valid forum ID is required to generate a summary report.");
+// Determine which forums the user has access to in the course.
+$accessallforums = false;
+$allforumidsincourse = array_keys($courseforums);
+$forumsvisibletouser = [];
+$forumselectoptions = [0 => get_string('forumselectcourseoption', 'forumreport_summary')];
+
+foreach ($courseforums as $courseforumid => $courseforum) {
+    if ($courseforum->uservisible) {
+        $forumsvisibletouser[$courseforumid] = $courseforum;
+        $forumselectoptions[$courseforumid] = $courseforum->name;
+    }
 }
 
-$foruminfo = $modinfo->instances['forum'][$forumid];
-$forumname = $foruminfo->name;
-$cm = $foruminfo->get_course_module_record();
+if ($forumid) {
+    if (!isset($forumsvisibletouser[$forumid])) {
+        throw new \moodle_exception('A valid forum ID is required to generate a summary report.');
+    }
 
-require_login($courseid, false, $cm);
-$context = \context_module::instance($cm->id);
+    $filters['forums'] = [$forumid];
+    $title = $forumsvisibletouser[$forumid]->name;
+    $forumcm = $forumsvisibletouser[$forumid];
+    $cms[] = $forumcm;
 
-// This capability is required to view any version of the report.
-if (!has_capability("forumreport/summary:view", $context)) {
-    $redirecturl = new moodle_url("/mod/forum/view.php");
-    $redirecturl->param('id', $forumid);
+    require_login($courseid, false, $forumcm);
+    $context = $forumcm->context;
+    $canexport = !$download && has_capability('mod/forum:exportforum', $context);
+    $redirecturl = new moodle_url('/mod/forum/view.php', ['id' => $forumid]);
+    $numforums = 1;
+    $pageurlparams['forumid'] = $forumid;
+    $iscoursereport = false;
+} else {
+    // Course level report.
+    require_login($courseid, false);
+
+    $filters['forums'] = array_keys($forumsvisibletouser);
+
+    // Fetch the forum CMs for the course.
+    foreach ($forumsvisibletouser as $visibleforum) {
+        $cms[] = $visibleforum;
+    }
+
+    $context = \context_course::instance($courseid);
+    $title = $course->fullname;
+    // Export currently only supports single forum exports.
+    $canexport = false;
+    $redirecturl = new moodle_url('/course/view.php', ['id' => $courseid]);
+    $numforums = count($forumsvisibletouser);
+    $iscoursereport = true;
+
+    // Specify whether user has access to all forums in the course.
+    $accessallforums = empty(array_diff($allforumidsincourse, $filters['forums']));
+}
+
+$pageurl = new moodle_url('/mod/forum/report/summary/index.php', $pageurlparams);
+
+$PAGE->set_url($pageurl);
+$PAGE->set_pagelayout('report');
+$PAGE->set_title($title);
+$PAGE->set_heading($course->fullname);
+$PAGE->navbar->add(get_string('nodetitle', 'forumreport_summary'));
+
+$allowbulkoperations = !$download && !empty($CFG->messaging) && has_capability('moodle/course:bulkmessaging', $context);
+$canseeprivatereplies = false;
+$hasviewall = false;
+$privatereplycapcount = 0;
+$viewallcount = 0;
+$canview = false;
+
+foreach ($cms as $cm) {
+    $forumcontext = $cm->context;
+
+    // This capability is required in at least one of the given contexts to view any version of the report.
+    if (has_capability('forumreport/summary:view', $forumcontext)) {
+        $canview = true;
+    }
+
+    if (has_capability('mod/forum:readprivatereplies', $forumcontext)) {
+        $privatereplycapcount++;
+    }
+
+    if (has_capability('forumreport/summary:viewall', $forumcontext)) {
+        $viewallcount++;
+    }
+}
+
+if (!$canview) {
     redirect($redirecturl);
 }
 
-$course = $modinfo->get_course();
+// Only use private replies if user has that cap in all forums in the report.
+if ($numforums === $privatereplycapcount) {
+    $canseeprivatereplies = true;
+}
 
-$urlparams = [
-    'courseid' => $courseid,
-    'forumid' => $forumid,
-    'perpage' => $perpage,
-];
-$url = new moodle_url("/mod/forum/report/summary/index.php", $urlparams);
-
-$PAGE->set_url($url);
-$PAGE->set_pagelayout('report');
-$PAGE->set_title($forumname);
-$PAGE->set_heading($course->fullname);
-$PAGE->navbar->add(get_string('nodetitle', "forumreport_summary"));
+// Will only show all users if user has the cap for all forums in the report.
+if ($numforums === $viewallcount) {
+    $hasviewall = true;
+}
 
 // Prepare and display the report.
-$allowbulkoperations = !$download && !empty($CFG->messaging) && has_capability('moodle/course:bulkmessaging', $context);
-$canseeprivatereplies = has_capability('mod/forum:readprivatereplies', $context);
-$canexport = !$download && has_capability('mod/forum:exportforum', $context);
-
 $table = new \forumreport_summary\summary_table($courseid, $filters, $allowbulkoperations,
-        $canseeprivatereplies, $perpage, $canexport);
-$table->baseurl = $url;
+        $canseeprivatereplies, $perpage, $canexport, $iscoursereport, $accessallforums);
+$table->baseurl = $pageurl;
 
 $eventparams = [
     'context' => $context,
     'other' => [
         'forumid' => $forumid,
-        'hasviewall' => has_capability('forumreport/summary:viewall', $context),
+        'hasviewall' => $hasviewall,
     ],
 ];
 
@@ -101,16 +167,23 @@ if ($download) {
     \forumreport_summary\event\report_viewed::create($eventparams)->trigger();
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('summarytitle', 'forumreport_summary', $forumname), 2, 'p-b-2');
+    echo $OUTPUT->heading(get_string('summarytitle', 'forumreport_summary', $title), 2, 'p-b-2');
 
     if (!empty($filters['groups'])) {
         \core\notification::info(get_string('viewsdisclaimer', 'forumreport_summary'));
     }
 
+    // Allow switching to course report (or other forum user has access to).
+    $reporturl = new moodle_url('/mod/forum/report/summary/index.php', ['courseid' => $courseid]);
+    $forumselect = new single_select($reporturl, 'forumid', $forumselectoptions, $forumid, '');
+    $forumselect->set_label(get_string('forumselectlabel', 'forumreport_summary'));
+    echo $OUTPUT->render($forumselect);
+
     // Render the report filters form.
     $renderer = $PAGE->get_renderer('forumreport_summary');
 
-    echo $renderer->render_filters_form($cm, $url, $filters);
+    unset($filters['forums']);
+    echo $renderer->render_filters_form($course, $cms, $pageurl, $filters);
     $table->show_download_buttons_at(array(TABLE_P_BOTTOM));
     echo $renderer->render_summary_table($table);
     echo $OUTPUT->footer();

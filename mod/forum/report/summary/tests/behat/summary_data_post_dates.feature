@@ -46,7 +46,7 @@ Feature: Post date columns data available
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "forum1"
-    And I navigate to "Summary report" in current page administration
+    And I navigate to "Forum summary report" in current page administration
     Then "Teacher 1" row "Earliest post" column of "forumreport_summary_table" table should contain "Tuesday, 2 January 2018, 9:00 AM"
     Then "Teacher 1" row "Most recent post" column of "forumreport_summary_table" table should contain "Sunday, 1 September 2019, 7:00 AM"
     Then "Student 1" row "Earliest post" column of "forumreport_summary_table" table should contain "Wednesday, 27 March 2019, 4:00 AM"
