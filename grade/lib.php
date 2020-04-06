@@ -1791,8 +1791,9 @@ class grade_structure {
             return '';
         }
 
-        return $OUTPUT->action_icon($url, new pix_icon('t/preview',
-            get_string('gradeanalysis', 'core_grades')));
+        $title = get_string('gradeanalysis', 'core_grades');
+        return $OUTPUT->action_icon($url, new pix_icon('t/preview', ''), null,
+                ['title' => $title, 'aria-label' => $title]);
     }
 
     /**

@@ -210,7 +210,8 @@ class grade extends tablelike implements selectable_items, filterable_items {
         $grade->label = $fullname;
 
         $line = array(
-            $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', $iconstring)),
+            $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', ''), null,
+                    ['title' => $iconstring, 'aria-label' => $iconstring]),
             $OUTPUT->user_picture($item, array('visibletoscreenreaders' => false)) .
             html_writer::link($url, $fullname),
             $this->item_range()
