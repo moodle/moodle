@@ -39,7 +39,6 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/rendererbase.php');
 class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
-        global $PAGE, $OUTPUT;
 
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
@@ -69,7 +68,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
                 $classes[] = 'dragno'.$drag->noofdrags;
             }
             $targeticonhtml =
-                $OUTPUT->image_icon('crosshairs', '', $componentname, array('class' => 'target'));
+                    $this->output->image_icon('crosshairs', '', $componentname, array('class' => 'target'));
 
             $markertextattrs = array('class' => 'markertext');
             $markertext = html_writer::tag('span', $drag->text, $markertextattrs);
@@ -96,7 +95,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             $visibledropzones = array();
         }
 
-        $PAGE->requires->js_call_amd('qtype_ddmarker/question', 'init',
+        $this->page->requires->js_call_amd('qtype_ddmarker/question', 'init',
                 [$qa->get_outer_question_div_unique_id(), $bgimage, $options->readonly, $visibledropzones]);
 
         if ($qa->get_state() == question_state::$invalid) {

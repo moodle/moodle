@@ -277,7 +277,7 @@ class core_backup_renderer extends plugin_renderer_base {
      */
     public function course_selector(moodle_url $nextstageurl, $wholecourse = true, restore_category_search $categories = null,
                                     restore_course_search $courses = null, $currentcourse = null) {
-        global $CFG, $PAGE;
+        global $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
 
         // These variables are used to check if the form using this function was submitted.

@@ -51,8 +51,8 @@ class gradereport_user_renderer extends plugin_renderer_base {
      * @return string
      */
     public function view_user_selector($userid, $userview) {
-        global $PAGE, $USER;
-        $url = $PAGE->url;
+        global $USER;
+        $url = $this->page->url;
         if ($userid != $USER->id) {
             $url->param('userid', $userid);
         }

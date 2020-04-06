@@ -46,7 +46,7 @@ class block_comments extends block_base {
     }
 
     function get_content() {
-        global $CFG, $PAGE;
+        global $CFG;
         if ($this->content !== NULL) {
             return $this->content;
         }
@@ -64,10 +64,10 @@ class block_comments extends block_base {
         if (empty($this->instance)) {
             return $this->content;
         }
-        list($context, $course, $cm) = get_context_info_array($PAGE->context->id);
+        list($context, $course, $cm) = get_context_info_array($this->page->context->id);
 
         $args = new stdClass;
-        $args->context   = $PAGE->context;
+        $args->context   = $this->page->context;
         $args->course    = $course;
         $args->area      = 'page_comments';
         $args->itemid    = 0;

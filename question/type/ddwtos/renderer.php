@@ -38,11 +38,10 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
 
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
-        global $PAGE;
 
         $result = parent::formulation_and_controls($qa, $options);
 
-        $PAGE->requires->js_call_amd('qtype_ddwtos/ddwtos', 'init',
+        $this->page->requires->js_call_amd('qtype_ddwtos/ddwtos', 'init',
                 [$qa->get_outer_question_div_unique_id(), $options->readonly]);
         return $result;
     }

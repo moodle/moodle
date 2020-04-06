@@ -52,7 +52,6 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
 
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
-        global $PAGE;
 
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
@@ -113,8 +112,8 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
         $output .= html_writer::tag('div',
                 $droparea . $draghomes. $dragitems . $hiddens, array('class' => 'ddarea'));
 
-        $PAGE->requires->string_for_js('blank', 'qtype_ddimageortext');
-        $PAGE->requires->js_call_amd('qtype_ddimageortext/question', 'init',
+        $this->page->requires->string_for_js('blank', 'qtype_ddimageortext');
+        $this->page->requires->js_call_amd('qtype_ddimageortext/question', 'init',
                 [$qa->get_outer_question_div_unique_id(), $options->readonly, $question->places]);
 
         if ($qa->get_state() == question_state::$invalid) {

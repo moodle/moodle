@@ -69,15 +69,15 @@ class renderer extends plugin_renderer_base {
      * @return string HTML
      */
     public function render_model_disabled($insightinfo) {
-        global $OUTPUT, $PAGE;
 
         // We don't want to disclose the name of the model if it has not been enabled.
-        $PAGE->set_title($insightinfo->contextname);
-        $PAGE->set_heading($insightinfo->contextname);
+        $this->page->set_title($insightinfo->contextname);
+        $this->page->set_heading($insightinfo->contextname);
 
-        $output = $OUTPUT->header();
-        $output .= $OUTPUT->notification(get_string('disabledmodel', 'report_insights'), \core\output\notification::NOTIFY_INFO);
-        $output .= $OUTPUT->footer();
+        $output = $this->output->header();
+        $output .= $this->output->notification(get_string('disabledmodel', 'report_insights'),
+                \core\output\notification::NOTIFY_INFO);
+        $output .= $this->output->footer();
 
         return $output;
     }
@@ -89,15 +89,15 @@ class renderer extends plugin_renderer_base {
      * @return string HTML
      */
     public function render_no_insights(\context $context) {
-        global $OUTPUT, $PAGE;
 
         // We don't want to disclose the name of the model if it has not been enabled.
-        $PAGE->set_title($context->get_context_name());
-        $PAGE->set_heading($context->get_context_name());
+        $this->page->set_title($context->get_context_name());
+        $this->page->set_heading($context->get_context_name());
 
-        $output = $OUTPUT->header();
-        $output .= $OUTPUT->notification(get_string('noinsights', 'analytics'), \core\output\notification::NOTIFY_INFO);
-        $output .= $OUTPUT->footer();
+        $output = $this->output->header();
+        $output .= $this->output->notification(get_string('noinsights', 'analytics'),
+                \core\output\notification::NOTIFY_INFO);
+        $output .= $this->output->footer();
 
         return $output;
     }
@@ -109,15 +109,15 @@ class renderer extends plugin_renderer_base {
      * @return string HTML
      */
     public function render_no_insights_model(\context $context) {
-        global $OUTPUT, $PAGE;
 
         // We don't want to disclose the name of the model if it has not been enabled.
-        $PAGE->set_title($context->get_context_name());
-        $PAGE->set_heading($context->get_context_name());
+        $this->page->set_title($context->get_context_name());
+        $this->page->set_heading($context->get_context_name());
 
-        $output = $OUTPUT->header();
-        $output .= $OUTPUT->notification(get_string('noinsightsmodel', 'analytics'), \core\output\notification::NOTIFY_INFO);
-        $output .= $OUTPUT->footer();
+        $output = $this->output->header();
+        $output .= $this->output->notification(get_string('noinsightsmodel', 'analytics'),
+                \core\output\notification::NOTIFY_INFO);
+        $output .= $this->output->footer();
 
         return $output;
     }
@@ -128,17 +128,18 @@ class renderer extends plugin_renderer_base {
      * @return string HTML
      */
     public function render_analytics_disabled() {
-        global $OUTPUT, $PAGE, $FULLME;
+        global $FULLME;
 
-        $PAGE->set_url($FULLME);
-        $PAGE->set_title(get_string('pluginname', 'report_insights'));
-        $PAGE->set_heading(get_string('pluginname', 'report_insights'));
+        $this->page->set_url($FULLME);
+        $this->page->set_title(get_string('pluginname', 'report_insights'));
+        $this->page->set_heading(get_string('pluginname', 'report_insights'));
 
-        $output = $OUTPUT->header();
-        $output .= $OUTPUT->notification(get_string('analyticsdisabled', 'analytics'), \core\output\notification::NOTIFY_INFO);
+        $output = $this->output->header();
+        $output .= $this->output->notification(get_string('analyticsdisabled', 'analytics'),
+                \core\output\notification::NOTIFY_INFO);
         $output .= \html_writer::tag('a', get_string('continue'), ['class' => 'btn btn-primary',
             'href' => (new \moodle_url('/'))->out()]);
-        $output .= $OUTPUT->footer();
+        $output .= $this->output->footer();
 
         return $output;
     }
