@@ -243,6 +243,11 @@ Y.extend(LTIPANELMEDIAASSIGNMENT, Y.Base, {
         iframenode.setAttribute('height', Y.one('input[id=height]').getAttribute('value'));
         iframenode.setStyle('display', 'inline');
         Y.one('#id_add_video').set('value', M.util.get_string('replacevideo', 'kalvidassign'));
+        // Update button classes.
+        Y.one('#id_add_video').addClass('btn-secondary');
+        Y.one('#submit_video').addClass('btn-primary');
+        Y.one('#id_add_video').removeClass('btn-primary');
+        Y.one('#submit_video').removeClass('btn-secondary');
         document.body.bsePopup.close();
     },
 
