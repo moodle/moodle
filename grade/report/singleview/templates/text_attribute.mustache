@@ -28,6 +28,6 @@
         "disabled": "true"
     }
 }}
-<label for="{{name}}" class="accesshide">{{label}}</label>
+{{#label}}<label for="{{name}}" class="accesshide">{{label}}</label>{{/label}}
 <input id="{{name}}" name="{{name}}" type="text" value="{{value}}" class="form-control" {{#tabindex}}tabindex="{{.}}"{{/tabindex}} {{#disabled}}disabled{{/disabled}}>
 <input type="hidden" name="old{{name}}" value="{{value}}">
