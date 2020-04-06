@@ -26,19 +26,12 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
-$PAGE->set_url('/admin/tool/task/scheduledtasks.php');
-$PAGE->set_context(context_system::instance());
-$PAGE->set_pagelayout('admin');
-$strheading = get_string('scheduledtasks', 'tool_task');
-$PAGE->set_title($strheading);
-$PAGE->set_heading($strheading);
-
-require_admin();
-
-$renderer = $PAGE->get_renderer('tool_task');
+admin_externalpage_setup('scheduledtasks');
 
 $action = optional_param('action', '', PARAM_ALPHAEXT);
 $taskname = optional_param('task', '', PARAM_RAW);
+$lastchanged = optional_param('lastchanged', '', PARAM_RAW);
+
 $task = null;
 $mform = null;
 
@@ -55,15 +48,14 @@ if ($action == 'edit') {
 
 if ($task) {
     $mform = new tool_task_edit_scheduled_task_form(null, $task);
+    $nexturl = new moodle_url($PAGE->url, ['lastchanged' => $taskname]);
 }
 
 if ($mform && ($mform->is_cancelled() || !empty($CFG->preventscheduledtaskchanges))) {
-    redirect(new moodle_url('/admin/tool/task/scheduledtasks.php'));
+    redirect($nexturl);
 } else if ($action == 'edit' && empty($CFG->preventscheduledtaskchanges)) {
 
     if ($data = $mform->get_data()) {
-
-
         if ($data->resettodefaults) {
             $defaulttask = \core\task\manager::get_default_scheduled_task($taskname);
             $task->set_minute($defaulttask->get_minute());
@@ -85,9 +77,9 @@ if ($mform && ($mform->is_cancelled() || !empty($CFG->preventscheduledtaskchange
 
         try {
             \core\task\manager::configure_scheduled_task($task);
-            redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+            redirect($nexturl, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
         } catch (Exception $e) {
-            redirect($PAGE->url, $e->getMessage(), null, \core\output\notification::NOTIFY_ERROR);
+            redirect($nexturl, $e->getMessage(), null, \core\output\notification::NOTIFY_ERROR);
         }
     } else {
         echo $OUTPUT->header();
@@ -97,8 +89,9 @@ if ($mform && ($mform->is_cancelled() || !empty($CFG->preventscheduledtaskchange
     }
 
 } else {
+    $renderer = $PAGE->get_renderer('tool_task');
     echo $OUTPUT->header();
     $tasks = core\task\manager::get_all_scheduled_tasks();
-    echo $renderer->scheduled_tasks_table($tasks);
+    echo $renderer->scheduled_tasks_table($tasks, $lastchanged);
     echo $OUTPUT->footer();
 }

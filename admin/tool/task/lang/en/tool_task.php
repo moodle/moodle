@@ -30,6 +30,7 @@ $string['clearfaildelay_confirm'] = 'Are you sure you want to clear the fail del
 $string['component'] = 'Component';
 $string['corecomponent'] = 'Core';
 $string['default'] = 'Default';
+$string['defaultx'] = 'Default: {$a}';
 $string['disabled'] = 'Disabled';
 $string['disabled_help'] = 'Disabled scheduled tasks are not executed from cron, however they can still be executed manually via the CLI tool.';
 $string['edittaskschedule'] = 'Edit task schedule: {$a}';
