@@ -47,12 +47,12 @@ use core\check\check;
 class displayerrors extends check {
 
     /**
-     * Constructor
+     * Get the short check name
+     *
+     * @return string
      */
-    public function __construct() {
-
-        $this->id = 'displayerrors';
-        $this->name = get_string('check_displayerrors_name', 'report_security');
+    public function get_name(): string {
+        return get_string('check_displayerrors_name', 'report_security');
     }
 
     /**

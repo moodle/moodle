@@ -41,12 +41,12 @@ use core\check\result;
 class nodemodules extends check {
 
     /**
-     * Constructor
+     * Get the short check name
+     *
+     * @return string
      */
-    public function __construct() {
-        global $CFG;
-        $this->id = 'nodemodules';
-        $this->name = get_string('check_nodemodules_name', 'report_security');
+    public function get_name(): string {
+        return get_string('check_nodemodules_name', 'report_security');
     }
 
     /**

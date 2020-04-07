@@ -1687,7 +1687,7 @@ class core_renderer extends renderer_base {
      * @param result $result
      * @return string HTML fragment
      */
-    protected function render_result(core\check\result $result) {
+    protected function render_check_result(core\check\result $result) {
         return $this->render_from_template($result->get_template_name(), $result->export_for_template($this));
     }
 
@@ -1697,8 +1697,8 @@ class core_renderer extends renderer_base {
      * @param result $result
      * @return string HTML fragment
      */
-    public function result(core\check\result $result) {
-        return $this->render_result($result);
+    public function check_result(core\check\result $result) {
+        return $this->render_check_result($result);
     }
 
     /**

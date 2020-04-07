@@ -41,14 +41,23 @@ use core\check\result;
 class webcron extends check {
 
     /**
-     * Constructor
+     * Get the short check name
+     *
+     * @return string
      */
-    public function __construct() {
-        $this->id = 'webcron';
-        $this->name = get_string('check_webcron_name', 'report_security');
-        $this->actionlink = new \action_link(
-            new \moodle_url('/admin/settings.php?section=sitepolicies#admin-cronclionly'),
-            get_string('sitepolicies', 'admin'));
+    public function get_name(): string {
+        return get_string('check_webcron_name', 'report_security');
+    }
+
+    /**
+     * A link to a place to action this
+     *
+     * @return action_link|null
+     */
+    public function get_action_link(): ?\action_link {
+        return new \action_link(
+           new \moodle_url('/admin/settings.php?section=sitepolicies#admin-cronclionly'),
+           get_string('sitepolicies', 'admin'));
     }
 
     /**

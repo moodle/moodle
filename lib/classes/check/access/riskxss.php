@@ -46,13 +46,21 @@ use core\check\result;
 class riskxss extends \core\check\check {
 
     /**
-     * Constructor
+     * Get the short check name
+     *
+     * @return string
      */
-    public function __construct() {
+    public function get_name(): string {
+        return get_string('check_riskxss_name', 'report_security');
+    }
 
-        $this->id = 'riskxss';
-        $this->name = get_string('check_riskxss_name', 'report_security');
-        $this->actionlink = new \action_link(
+    /**
+     * A link to a place to action this
+     *
+     * @return action_link|null
+     */
+    public function get_action_link(): ?\action_link {
+        return new \action_link(
             new \moodle_url('/admin/roles/manage.php'),
             get_string('manageroles', 'role'));
     }

@@ -41,12 +41,21 @@ use core\check\result;
 class frontpagerole extends check {
 
     /**
-     * Constructor
+     * Get the short check name
+     *
+     * @return string
      */
-    public function __construct() {
-        $this->id = 'frontpagerole';
-        $this->name = get_string('check_frontpagerole_name', 'report_security');
-        $this->actionlink = new \action_link(
+    public function get_name(): string {
+        return get_string('check_frontpagerole_name', 'report_security');
+    }
+
+    /**
+     * A link to a place to action this
+     *
+     * @return action_link|null
+     */
+    public function get_action_link(): ?\action_link {
+        return new \action_link(
             new \moodle_url('/admin/settings.php?section=frontpagesettings#admin-defaultfrontpageroleid'),
             get_string('frontpagesettings', 'admin'));
     }
