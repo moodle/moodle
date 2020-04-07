@@ -146,7 +146,6 @@ class core extends \H5PCore {
     public static function get_scripts(): array {
         global $PAGE;
 
-        $factory = new factory();
         $jsrev = $PAGE->requires->get_jsrev();
         $urls = [];
         foreach (self::$scripts as $script) {
@@ -224,10 +223,6 @@ class core extends \H5PCore {
     public function fetch_content_type(array $library): ?int {
         $factory = new factory();
 
-        // Get a temp path to download the content type.
-        $temppath = make_request_directory();
-        $tempfile = "{$temppath}/" . $library['machineName'] . ".h5p";
-
         // Download the latest content type from the H5P official repository.
         $fs = get_file_storage();
         $file = $fs->create_file_from_url(
@@ -287,6 +282,8 @@ class core extends \H5PCore {
      *     - array contentTypes: an object for each H5P content type with its information
      */
     public function get_latest_content_types(): \stdClass {
+        global $CFG;
+
         $siteuuid = $this->get_site_uuid() ?? md5($CFG->wwwroot);
         $postdata = ['uuid' => $siteuuid];
 
