@@ -25,6 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\task\scheduled_task;
+
+
 /**
  * Implements the plugin renderer
  *
@@ -72,11 +75,7 @@ class tool_task_renderer extends plugin_renderer_base {
         $data = [];
         $yes = get_string('yes');
         $no = get_string('no');
-        $never = get_string('never');
-        $asap = get_string('asap', 'tool_task');
-        $disabledstr = get_string('taskdisabled', 'tool_task');
-        $plugindisabledstr = get_string('plugindisabled', 'tool_task');
-        $runnabletasks = tool_task\run_from_cli::is_runnable();
+        $canruntasks = tool_task\run_from_cli::is_runnable();
         foreach ($tasks as $task) {
             $classname = get_class($task);
             $defaulttask = \core\task\manager::get_default_scheduled_task($classname, false);
@@ -104,42 +103,13 @@ class tool_task_renderer extends plugin_renderer_base {
                     html_writer::span('\\' . $classname, 'task-class text-ltr'));
             $namecell->header = true;
 
-            $component = $task->get_component();
-            $plugininfo = null;
-            list($type) = core_component::normalize_component($component);
-            if ($type === 'core') {
-                $componentcell = new html_table_cell(get_string('corecomponent', 'tool_task'));
-            } else {
-                if ($plugininfo = core_plugin_manager::instance()->get_plugin_info($component)) {
-                    $plugininfo->init_display_name();
-                    $componentcell = new html_table_cell($plugininfo->displayname);
-                    if (!$plugininfo->is_enabled()) {
-                        $componentcell->text .= ' ' . html_writer::span(
-                                get_string('disabled', 'tool_task'), 'badge badge-secondary');
-                    }
-                    $componentcell->text .= "\n" . html_writer::span($plugininfo->component, 'task-class text-ltr');
-                } else {
-                    $componentcell = new html_table_cell($component);
-                }
-            }
-
-            $lastrun = $task->get_last_run_time() ? userdate($task->get_last_run_time()) : $never;
-            $nextrun = $task->get_next_run_time();
-            $disabled = false;
-            if ($plugininfo && $plugininfo->is_enabled() === false && !$task->get_run_if_component_disabled()) {
-                $disabled = true;
-                $nextrun = $plugindisabledstr;
-            } else if ($task->get_disabled()) {
-                $disabled = true;
-                $nextrun = $disabledstr;
-            } else if ($nextrun > time()) {
-                $nextrun = userdate($nextrun);
-            } else {
-                $nextrun = $asap;
-            }
+            $plugininfo = core_plugin_manager::instance()->get_plugin_info($task->get_component());
+            $plugindisabled = $plugininfo && $plugininfo->is_enabled() === false &&
+                    !$task->get_run_if_component_disabled();
+            $disabled = $plugindisabled || $task->get_disabled();
 
             $runnow = '';
-            if (!$disabled && get_config('tool_task', 'enablerunnow') && $runnabletasks ) {
+            if (!$disabled && get_config('tool_task', 'enablerunnow') && $canruntasks ) {
                 $runnow = html_writer::div(html_writer::link(
                         new moodle_url('/admin/tool/task/schedule_task.php',
                             ['task' => $classname]),
@@ -157,11 +127,11 @@ class tool_task_renderer extends plugin_renderer_base {
 
             $row = new html_table_row([
                         $namecell,
-                        $componentcell,
+                        new html_table_cell($this->component_name($task->get_component())),
                         new html_table_cell($editlink),
                         new html_table_cell($loglink),
-                        new html_table_cell($lastrun . $runnow),
-                        new html_table_cell($nextrun),
+                        new html_table_cell($this->last_run_time($task) . $runnow),
+                        new html_table_cell($this->next_run_time($task)),
                         $this->time_cell($task->get_minute(), $defaulttask->get_minute()),
                         $this->time_cell($task->get_hour(), $defaulttask->get_hour()),
                         $this->time_cell($task->get_day(), $defaulttask->get_day()),
@@ -188,6 +158,72 @@ class tool_task_renderer extends plugin_renderer_base {
                     'try{document.querySelector("tr.table-primary").scrollIntoView({block: "center"});}catch(e){}');
         }
         return html_writer::table($table);
+    }
+
+    /**
+     * Nicely display the name of a component, with its disabled status and internal name.
+     *
+     * @param string $component component name, e.g. 'core' or 'mod_forum'.
+     * @return string HTML.
+     */
+    public function component_name(string $component): string {
+        list($type) = core_component::normalize_component($component);
+        if ($type === 'core') {
+            return get_string('corecomponent', 'tool_task');
+        }
+
+        $plugininfo = core_plugin_manager::instance()->get_plugin_info($component);
+        if (!$plugininfo) {
+            return $component;
+        }
+
+        $plugininfo->init_display_name();
+
+        $componentname = $plugininfo->displayname;
+        if (!$plugininfo->is_enabled()) {
+            $componentname .= ' ' . html_writer::span(
+                            get_string('disabled', 'tool_task'), 'badge badge-secondary');
+        }
+        $componentname .= "\n" . html_writer::span($plugininfo->component, 'task-class text-ltr');
+
+        return $componentname;
+    }
+
+    /**
+     * Standard display of a tasks last run time.
+     *
+     * @param scheduled_task $task
+     * @return string HTML.
+     */
+    public function last_run_time(scheduled_task $task): string {
+        if ($task->get_last_run_time()) {
+            return userdate($task->get_last_run_time());
+        } else {
+            return get_string('never');
+        }
+    }
+
+    /**
+     * Standard display of a tasks next run time.
+     *
+     * @param scheduled_task $task
+     * @return string HTML.
+     */
+    public function next_run_time(scheduled_task $task): string {
+        $plugininfo = core_plugin_manager::instance()->get_plugin_info($task->get_component());
+
+        $nextrun = $task->get_next_run_time();
+        if ($plugininfo && $plugininfo->is_enabled() === false && !$task->get_run_if_component_disabled()) {
+            $nextrun = get_string('plugindisabled', 'tool_task');
+        } else if ($task->get_disabled()) {
+            $nextrun = get_string('taskdisabled', 'tool_task');
+        } else if ($nextrun > time()) {
+            $nextrun = userdate($nextrun);
+        } else {
+            $nextrun = get_string('asap', 'tool_task');
+        }
+
+        return $nextrun;
     }
 
     /**
