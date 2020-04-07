@@ -86,6 +86,18 @@ class fetch extends external_api {
                 VALUE_OPTIONAL
             ),
             'jointype' => new external_value(PARAM_INT, 'Type of join to join all filters together', VALUE_REQUIRED),
+            'firstinitial' => new external_value(
+                PARAM_ALPHANUMEXT,
+                'The first initial to sort filter on',
+                VALUE_REQUIRED,
+                null
+            ),
+            'lastinitial' => new external_value(
+                PARAM_ALPHANUMEXT,
+                'The last initial to sort filter on',
+                VALUE_REQUIRED,
+                null
+            ),
         ]);
     }
 
@@ -98,11 +110,21 @@ class fetch extends external_api {
      * @param string $sortorder The sort order.
      * @param array $filters The filters that will be applied in the request.
      * @param string $jointype The join type.
+     * @param string $firstinitial The first name initial to filter on
+     * @param string $lastinitial The last name initial to filter on
      *
      * @return array
      */
-    public static function execute(string $handler, string $uniqueid, string $sortby, string $sortorder,
-            array $filters = [], string $jointype = null) {
+    public static function execute(
+        string $handler,
+        string $uniqueid,
+        string $sortby,
+        string $sortorder,
+        ?array $filters = null,
+        ?string $jointype = null,
+        ?string $firstinitial = null,
+        ?string $lastinitial = null
+    ) {
 
         global $PAGE;
 
@@ -117,6 +139,8 @@ class fetch extends external_api {
             'sortorder' => $sortorder,
             'filters' => $filters,
             'jointype' => $jointype,
+            'firstinitial' => $firstinitial,
+            'lastinitial' => $lastinitial,
         ] = self::validate_parameters(self::execute_parameters(), [
             'handler' => $handler,
             'uniqueid' => $uniqueid,
@@ -124,6 +148,8 @@ class fetch extends external_api {
             'sortorder' => $sortorder,
             'filters' => $filters,
             'jointype' => $jointype,
+            'firstinitial' => $firstinitial,
+            'lastinitial' => $lastinitial,
         ]);
 
         $filterset = new \core_user\table\participants_filterset();
@@ -138,6 +164,14 @@ class fetch extends external_api {
         $instance = new $handler($uniqueid);
         $instance->set_filterset($filterset);
         $instance->set_sorting($sortby, $sortorder);
+
+        if ($firstinitial !== null) {
+            $instance->set_first_initial($firstinitial);
+        }
+
+        if ($lastinitial !== null) {
+            $instance->set_last_initial($lastinitial);
+        }
 
         $context = $instance->get_context();
 
