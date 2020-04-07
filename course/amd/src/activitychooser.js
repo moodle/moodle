@@ -176,20 +176,28 @@ const buildModal = data => {
  * @param {HTMLElement} modalBody Our current modals' body
  */
 const nullFavouriteDomManager = (favouriteTabNav, modalBody) => {
+    favouriteTabNav.tabIndex = -1;
     favouriteTabNav.classList.add('d-none');
     // Need to set active to an available tab.
     if (favouriteTabNav.classList.contains('active')) {
         favouriteTabNav.classList.remove('active');
+        favouriteTabNav.setAttribute('aria-selected', 'false');
         const favouriteTab = modalBody.querySelector(selectors.regions.favouriteTab);
         favouriteTab.classList.remove('active');
         const recommendedTabNav = modalBody.querySelector(selectors.regions.recommendedTabNav);
         const defaultTabNav = modalBody.querySelector(selectors.regions.defaultTabNav);
         if (recommendedTabNav.classList.contains('d-none') === false) {
             recommendedTabNav.classList.add('active');
+            recommendedTabNav.setAttribute('aria-selected', 'true');
+            recommendedTabNav.tabIndex = 0;
+            recommendedTabNav.focus();
             const recommendedTab = modalBody.querySelector(selectors.regions.recommendedTab);
             recommendedTab.classList.add('active');
         } else {
             defaultTabNav.classList.add('active');
+            defaultTabNav.setAttribute('aria-selected', 'true');
+            defaultTabNav.tabIndex = 0;
+            defaultTabNav.focus();
             const defaultTab = modalBody.querySelector(selectors.regions.defaultTab);
             defaultTab.classList.add('active');
         }
