@@ -182,8 +182,10 @@ class tool_task_renderer extends plugin_renderer_base {
         }
         $table->data = $data;
         if ($lastchanged) {
+            // IE does not support this, and the ancient version of Firefox we use for Behat
+            // has the method, but then errors on 'centre'. So, just try to scroll, and if it fails, don't care.
             $this->page->requires->js_init_code(
-                    'document.querySelector("tr.table-primary").scrollIntoView({block: "center"});');
+                    'try{document.querySelector("tr.table-primary").scrollIntoView({block: "center"});}catch(e){}');
         }
         return html_writer::table($table);
     }
