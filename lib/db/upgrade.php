@@ -2291,5 +2291,20 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2020041500.00);
     }
+
+    if ($oldversion < 2020041700.01) {
+        // Upgrade h5p MIME type for existing h5p files.
+        $select = $DB->sql_like('filename', '?', false);
+        $DB->set_field_select(
+            'files',
+            'mimetype',
+            'application/zip.h5p',
+            $select,
+            array('%.h5p')
+        );
+
+        upgrade_main_savepoint(true, 2020041700.01);
+    }
+
     return true;
 }
