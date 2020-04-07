@@ -144,6 +144,10 @@ abstract class cache_store implements cache_store_interface {
      * Request caches. Static caches really.
      */
     const MODE_REQUEST = 4;
+    /**
+     * Static caches.
+     */
+    const STATIC_ACCEL = '** static accel. **';
 
     /**
      * Constructs an instance of the cache store.
