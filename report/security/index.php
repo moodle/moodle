@@ -87,7 +87,7 @@ foreach ($checks as $check) {
     $link = new \moodle_url('/report/security/index.php', ['detail' => $ref]);
 
     $row = [];
-    $row[] = $OUTPUT->result($result);
+    $row[] = $OUTPUT->check_result($result);
     $row[] = $OUTPUT->action_link($link, $check->get_name());
 
     $row[] = $result->get_summary();
