@@ -2190,7 +2190,7 @@ class block_iomad_company_admin_external extends external_api {
 
         if (!$userrec = $DB->get_record('user', array('username' => $token['username']))) {
             $result = array();
-            $result['status'] = 0;
+            $result['status'] = false;
             $result['warnings'] = array(array('item' => 'username',
                                               'username' => $token['username'],
                                               'warningcode' => 'userdoesntexist',
@@ -2200,7 +2200,7 @@ class block_iomad_company_admin_external extends external_api {
 
         if (!$DB->get_record_select('company_transient_tokens', 'userid = :userid AND expires > :time', array('userid' => $userrec->id, 'time' => time()))) {
             $result = array();
-            $result['status'] = 0;
+            $result['status'] = false;
             $result['warnings'] = array(array('item' => 'token',
                                               'token' => $token['token'],
                                               'warningcode' => 'tokennotvalid',
@@ -2209,7 +2209,7 @@ class block_iomad_company_admin_external extends external_api {
         }
 
         $result = array();
-        $result['status'] = 1;
+        $result['status'] = true;
         $result['warnings'] = array();
         return $result;
     }
@@ -2221,6 +2221,67 @@ class block_iomad_company_admin_external extends external_api {
      * @since Moodle 2.2
      */
     public static function check_token_returns() {
+        return  new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'Status: true only if token is valid'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.2
+     */
+    public static function sync_users_parameters() {
+        return new external_function_parameters(
+                array('options' => new external_single_structure(
+                            array('ids' => new external_multiple_structure(
+                                        new external_value(PARAM_INT, 'Course id')
+                                        , 'List of course id. If empty return all courses
+                                            except front page course.',
+                                        VALUE_OPTIONAL)
+                            ), 'options - operator OR is used', VALUE_DEFAULT, array())
+                )
+        );
+    }
+
+    /**
+     * Users sync call.
+     *
+     * Function throw an exception at the first error encountered.
+     * @param array $enrolments  An array of user enrolment
+     * @since Moodle 2.2
+     */
+    public static function sync_users($token) {
+        global $DB, $CFG;
+
+        require_capability('moodle/user:update', context_system::instance());
+
+        // Get all of the company users.
+        $users = $DB->get_records_sql("SELECT distinct userid from {company_users}
+                                       WHERE userid NOT IN (
+                                         SELECT id FROM {user} where deleted = 1
+                                       )");
+        foreach ($users as $user) {
+            \core\event\user_updated::create_from_userid($user->userid)->trigger();
+        }
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = array();
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return null
+     * @since Moodle 2.2
+     */
+    public static function sync_users_returns() {
         return  new external_single_structure(
             array(
                 'status' => new external_value(PARAM_BOOL, 'Status: true only if token is valid'),

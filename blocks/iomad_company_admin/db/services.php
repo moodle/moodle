@@ -29,6 +29,7 @@ $services = array(
             'block_iomad_company_admin_assign_users',
             'block_iomad_company_admin_capability_delete_template',
             'block_iomad_company_admin_check_token',
+            'block_iomad_company_admin_sync_users',
             'block_iomad_company_admin_create_companies',
             'block_iomad_company_admin_create_licenses',
             'block_iomad_company_admin_delete_licenses',
@@ -90,6 +91,13 @@ $functions = array(
         'methodname' => 'check_token',
         'classpath' => 'blocks/iomad_company_admin/externallib.php',
         'description' => 'Check SSO token',
+        'type' => 'read',
+    ),
+    'block_iomad_company_admin_sync_users' => array(
+        'classname' => 'block_iomad_company_admin_external',
+        'methodname' => 'sync_users',
+        'classpath' => 'blocks/iomad_company_admin/externallib.php',
+        'description' => 'Call update users to sync to external system',
         'type' => 'read',
     ),
     'block_iomad_company_admin_create_companies' => array(
