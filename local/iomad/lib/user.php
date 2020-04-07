@@ -879,18 +879,14 @@ class company_user {
                     $licenserecord = $DB->get_record('companylicense', array('id' => $license->licenseid));
                     $licenserecord->used = $DB->count_records('companylicense_users', array('licenseid' => $license->licenseid));
                     $DB->update_record('companylicense', $licenserecord);
-                } else if ($action == 'clear') {
-                    $newlicense = $license;
-                    $license->timecompleted = time();
-                    $DB->update_record('companylicense_users', $license);
-                    $newlicense->isusing = 0;
-                    $newlicense->issuedate = time();
-                    $newlicense->timecompleted = null;
                     if (!empty($CFG->iomad_autoreallocate_licenses)) {
-                        $licenserecord = $DB->get_record('companylicense', array('id' => $license->licenseid));
+                        $newlicense = $license;
+                        $newlicense->isusing = 0;
+                        $newlicense->issuedate = time();
+                        $newlicense->timecompleted = null;
                         if ($licenserecord->used < $licenserecord->allocation && $licenserecord->expirydate > time()) {
                             $newlicenseid = $DB->insert_record('companylicense_users', (array) $newlicense);
-    
+
                             // Create an event.
                             $eventother = array('licenseid' => $licenserecord->id,
                                                 'issuedate' => time(),
@@ -931,6 +927,9 @@ class company_user {
                             }
                         }
                     }
+                } else if ($action == 'clear') {
+                    $license->isusing = 0;
+                    $DB->update_record('companylicense_users', $license);
                 }
             }
             // All OK commit the transaction.
