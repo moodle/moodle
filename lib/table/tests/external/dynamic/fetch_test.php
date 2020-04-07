@@ -55,10 +55,11 @@ class fetch_test extends advanced_testcase {
         $this->resetAfterTest();
 
         $this->expectException('UnexpectedValueException');
-        $this->expectExceptionMessage("Unknown table handler, or table handler does not support dynamic updating.");
+        $handler = "\\core_user\\table\\users_participants_table";
+        $this->expectExceptionMessage("Table handler class {$handler} not found. Please make sure that your table handler class is under the \\core_user\\table namespace.");
 
         // Tests that invalid users_participants_table class gets an exception.
-        fetch::execute("core_user\users_participants_table", "", "email", "4", [], "1");
+        fetch::execute("core_user", "users_participants_table", "", "email", "4", [], "1");
     }
 
     /**
@@ -81,9 +82,8 @@ class fetch_test extends advanced_testcase {
         $this->expectExceptionMessage("Invalid parameter value detected (filters => Invalid parameter value detected " .
         "(Missing required key in single structure: name): Missing required key in single structure: name");
 
-        fetch::execute("\\core_user\\table\\participants",
-            "user-index-participants-{$course->id}", "firstname", "4", $filter, (string)filter::JOINTYPE_ANY);
-
+        fetch::execute("core_user", "participants", "user-index-participants-{$course->id}",
+        "firstname", "4", $filter, (string)filter::JOINTYPE_ANY);
     }
 
     /**
@@ -108,7 +108,7 @@ class fetch_test extends advanced_testcase {
             ]
         ];
 
-        $participantstable = fetch::execute("\\core_user\\table\\participants",
+        $participantstable = fetch::execute("core_user", "participants",
             "user-index-participants-{$course->id}", "firstname", "4", $filter, (string)filter::JOINTYPE_ANY);
         $html = $participantstable['html'];
 
