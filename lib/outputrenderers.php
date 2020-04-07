@@ -357,7 +357,7 @@ class renderer_base {
      * @param int $maxheight The maximum height, or null when the maximum height does not matter.
      * @return moodle_url|false
      */
-    public function get_compact_logo_url($maxwidth = 100, $maxheight = 100) {
+    public function get_compact_logo_url($maxwidth = 300, $maxheight = 300) {
         global $CFG;
         $logo = get_config('core_admin', 'logocompact');
         if (empty($logo)) {
