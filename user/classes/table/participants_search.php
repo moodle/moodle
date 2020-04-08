@@ -205,7 +205,20 @@ class participants_search {
         // Prepare final values.
         $from = implode("\n", $joins);
         if ($wheres) {
-            $where = 'WHERE ' . implode(' AND ', $wheres);
+            switch ($this->filterset->get_join_type()) {
+                case $this->filterset::JOINTYPE_ALL:
+                    $wheresjoin = ' AND ';
+                    break;
+                case $this->filterset::JOINTYPE_NONE:
+                    $wheresjoin = ' AND NOT ';
+                    break;
+                default:
+                    // Default to 'Any' jointype.
+                    $wheresjoin = ' OR ';
+                    break;
+            }
+
+            $where = 'WHERE ' . implode($wheresjoin, $wheres);
         } else {
             $where = '';
         }
@@ -442,38 +455,93 @@ class participants_search {
 
         // Limit list to users with some role only.
         if ($this->filterset->has_filter('roles')) {
-            $roleids = $this->filterset->get_filter('roles')->get_filter_values();
+            $rolesfilter = $this->filterset->get_filter('roles');
+
+            $roleids = $rolesfilter->get_filter_values();
+            $jointype = $rolesfilter->get_join_type();
+
+            // Determine how to match values in the query.
+            $matchinsql = 'IN';
+            switch ($jointype) {
+                case $rolesfilter::JOINTYPE_ALL:
+                    $wherejoin = ' AND ';
+                    break;
+                case $rolesfilter::JOINTYPE_NONE:
+                    $wherejoin = ' AND NOT ';
+                    $matchinsql = 'NOT IN';
+                    break;
+                default:
+                    // Default to 'Any' jointype.
+                    $wherejoin = ' OR ';
+                    break;
+            }
 
             // We want to query both the current context and parent contexts.
             $rolecontextids = $this->context->get_parent_context_ids(true);
 
             // Get users without any role, if needed.
             if (($withoutkey = array_search(-1, $roleids)) !== false) {
-                list($relatedctxsql1, $relatedctxparams1) = $DB->get_in_or_equal($rolecontextids, SQL_PARAMS_NAMED, 'relatedctx1');
+                list($relatedctxsql1, $norolectxparams) = $DB->get_in_or_equal($rolecontextids, SQL_PARAMS_NAMED, 'relatedctx');
 
-                $where .= "(u.id NOT IN (SELECT userid FROM {role_assignments} WHERE contextid {$relatedctxsql1}))";
-                $params = array_merge($params, $relatedctxparams1);
-                unset($roleids[$withoutkey]);
+                if ($jointype === $rolesfilter::JOINTYPE_NONE) {
+                    $where .= "(u.id IN (SELECT userid FROM {role_assignments} WHERE contextid {$relatedctxsql1}))";
+                } else {
+                    $where .= "(u.id NOT IN (SELECT userid FROM {role_assignments} WHERE contextid {$relatedctxsql1}))";
+                }
 
+                $params = array_merge($params, $norolectxparams);
+
+                if ($withoutkey !== false) {
+                    unset($roleids[$withoutkey]);
+                }
+
+                // Join if any roles will be included.
                 if (!empty($roleids)) {
-                    // Currently only handle 'Any' (logical OR) case within filters.
-                    // This will need to be extended to support 'All'/'None'.
-                    $where .= ' OR ';
+                    // The NOT case is replaced with AND to prevent a double negative.
+                    $where .= $jointype === $rolesfilter::JOINTYPE_NONE ? ' AND ' : $wherejoin;
                 }
             }
 
             // Get users with specified roles, if needed.
             if (!empty($roleids)) {
-                list($relatedctxsql2, $relatedctxparams2) = $DB->get_in_or_equal($rolecontextids, SQL_PARAMS_NAMED, 'relatedctx2');
-                list($roleidssql, $roleidsparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED);
+                // All case - need one WHERE per filtered role.
+                if ($rolesfilter::JOINTYPE_ALL === $jointype) {
+                    $numroles = count($roleids);
+                    $rolecount = 1;
 
-                $where .= "(u.id IN (
-                                  SELECT userid
-                                    FROM {role_assignments}
-                                   WHERE roleid {$roleidssql}
-                                     AND contextid {$relatedctxsql2})
-                                )";
-                $params = array_merge($params, $roleidsparams, $relatedctxparams2);
+                    foreach ($roleids as $roleid) {
+                        list($relatedctxsql, $relctxparams) = $DB->get_in_or_equal($rolecontextids, SQL_PARAMS_NAMED, 'relatedctx');
+                        list($roleidssql, $roleidparams) = $DB->get_in_or_equal($roleid, SQL_PARAMS_NAMED, 'roleids');
+
+                        $where .= "(u.id IN (
+                                     SELECT userid
+                                       FROM {role_assignments}
+                                      WHERE roleid {$roleidssql}
+                                        AND contextid {$relatedctxsql})
+                                   )";
+
+                        if ($rolecount < $numroles) {
+                            $where .= $wherejoin;
+                            $rolecount++;
+                        }
+
+                        $params = array_merge($params, $roleidparams, $relctxparams);
+                    }
+
+                } else {
+                    // Any / None cases - need one WHERE to cover all filtered roles.
+                    list($relatedctxsql, $relctxparams) = $DB->get_in_or_equal($rolecontextids, SQL_PARAMS_NAMED, 'relatedctx');
+                    list($roleidssql, $roleidsparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'roleids');
+
+                    $where .= "(u.id {$matchinsql} (
+                                 SELECT userid
+                                   FROM {role_assignments}
+                                  WHERE roleid {$roleidssql}
+                                    AND contextid {$relatedctxsql})
+                               )";
+
+                    $params = array_merge($params, $roleidsparams, $relctxparams);
+                }
             }
         }
 
