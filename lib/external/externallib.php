@@ -233,7 +233,9 @@ class core_external extends external_api {
                         [
                             'timestamp' => new external_value(PARAM_INT, 'unix timestamp'),
                             'format' => new external_value(PARAM_TEXT, 'format string'),
-                            'type' => new external_value(PARAM_PLUGIN, 'The calendar type', VALUE_OPTIONAL),
+                            'type' => new external_value(PARAM_PLUGIN, 'The calendar type', VALUE_DEFAULT),
+                            'fixday' => new external_value(PARAM_INT, 'Remove leading zero for day', VALUE_DEFAULT, 1),
+                            'fixhour' => new external_value(PARAM_INT, 'Remove leading zero for hour', VALUE_DEFAULT, 1),
                         ]
                     )
                 )
@@ -266,9 +268,11 @@ class core_external extends external_api {
 
         $formatteddates = array_map(function($timestamp) {
 
-            $calendartype = empty($timestamp['type']) ? null : $timestamp['type'];
+            $calendartype = $timestamp['type'];
+            $fixday = !empty($timestamp['fixday']);
+            $fixhour = !empty($timestamp['fixhour']);
             $calendar  = \core_calendar\type_factory::get_calendar_instance($calendartype);
-            return $calendar->timestamp_to_date_string($timestamp['timestamp'], $timestamp['format'], 99, true, true);
+            return $calendar->timestamp_to_date_string($timestamp['timestamp'], $timestamp['format'], 99, $fixday, $fixhour);
         }, $params['timestamps']);
 
         return ['dates' => $formatteddates];
