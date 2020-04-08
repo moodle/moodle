@@ -31,6 +31,7 @@ use \core_xapi\local\statement\item_agent;
 use \core_xapi\local\statement\item_activity;
 use \core_xapi\local\statement\item_definition;
 use \core_xapi\local\statement\item_verb;
+use \core_xapi\local\statement\item_result;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -335,7 +336,7 @@ class attempt_testcase extends \advanced_testcase {
         }
         $statement->set_object(item_activity::create_from_id('something', $definition));
         if ($hasresult) {
-            $statement->set_result(item::create_from_data((object)[
+            $statement->set_result(item_result::create_from_data((object)[
                 'completion' => true,
                 'success' => true,
                 'score' => (object) ['min' => 0, 'max' => 2, 'raw' => 2, 'scaled' => 1],
