@@ -30,11 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['availablelangs'] = 'Giellapáhkat mat leat gávdnamis';
-$string['chooselanguagehead'] = 'Vállje giela';
-$string['chooselanguagesub'] = 'Vállje giela (dušše installašuvdnjii). Don sáhtát válljet neahttabáikki ja geavaheaddji giela šearbmagovas maŋŋelaš.';
-$string['clialreadyconfigured'] = 'Fiila config.php gávdno jo. Geavat admin/cli/install_database.php jus áiggut installeret dán portála.';
-$string['clialreadyinstalled'] = 'Fiila config.php gávdno jo. Geavat admin/cli/install_database.php jus háliidat ođasmahttit Moodle dán portálas.';
-$string['databasename'] = 'Diehtovuođđonamma';
-$string['langdownloaderror'] = 'Dađibahábut ii installerejuvvon giellapáhkka "{$a}". Installašuvdnaproseassa joatká eaŋgalsgillii.';
-$string['phpextension'] = '{$a} PHP gilkor';
+$string['cannotsavemd5file'] = 'Ii sáhte vurket md5-fiilla.';
+$string['cannotsavezipfile'] = 'Ii sáhte vurket ZIP-fiilla.';
+$string['wrongzipfilename'] = 'Boasttu ZIP-fiilanamma.';
