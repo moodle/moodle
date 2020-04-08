@@ -338,14 +338,12 @@ if ($bulkoperations) {
         'data-toggle' => 'action',
         'disabled' => empty($selectall)
     );
-    echo html_writer::tag('div', html_writer::tag('label', get_string("withselectedusers"),
-        array('for' => 'formactionid', 'class' => 'col-form-label d-inline')) .
-        html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), $selectactionparams));
+    $label = html_writer::tag('label', get_string("withselectedusers"),
+            ['for' => 'formactionid', 'class' => 'col-form-label d-inline']);
+    $select = html_writer::select($displaylist, 'formaction', '', ['' => 'choosedots'], $selectactionparams);
+    echo html_writer::tag('div', $label . $select);
 
-    echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-    echo '<noscript style="display:inline">';
-    echo '<div><input type="submit" value="'.get_string('ok').'" /></div>';
-    echo '</noscript>';
+    echo '<input type="hidden" name="id" value="' . $course->id . '" />';
     echo '</div></div></div>';
     echo '</form>';
 
