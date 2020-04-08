@@ -22,8 +22,9 @@
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/templates', 'core/notification', 'core/ajax'],
-        function($, Str, ModalFactory, ModalEvents, Templates, Notification, Ajax) {
+define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/templates', 'core/notification', 'core/ajax',
+        'core/custom_interaction_events'],
+        function($, Str, ModalFactory, ModalEvents, Templates, Notification, Ajax, CustomEvents) {
 
     var SELECTORS = {
         BULKACTIONSELECT: "#formactionid",
@@ -82,7 +83,8 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/t
      * @private
      */
     Participants.prototype.attachEventListeners = function() {
-        $(SELECTORS.BULKACTIONSELECT).on('change', function(e) {
+        CustomEvents.define(SELECTORS.BULKACTIONSELECT, [CustomEvents.events.accessibleChange]);
+        $(SELECTORS.BULKACTIONSELECT).on(CustomEvents.events.accessibleChange, function(e) {
             var action = $(e.target).val();
             if (action.indexOf('#') !== -1) {
                 e.preventDefault();
