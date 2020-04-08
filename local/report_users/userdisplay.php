@@ -95,7 +95,11 @@ if (!empty($action)) {
         $cancel = new moodle_url('/local/report_users/userdisplay.php',
                                  array('userid' => $userid));
         if ($action == 'delete') {
-            echo $OUTPUT->confirm(get_string('deleteconfirm', 'local_report_users'), $confirmurl, $cancel);
+            if (empty($CFG->iomad_autoreallocate_licenses)) {
+                echo $OUTPUT->confirm(get_string('deleteconfirm', 'local_report_users'), $confirmurl, $cancel);
+            } else {
+                echo $OUTPUT->confirm(get_string('deleterealocateconfirm', 'local_report_users'), $confirmurl, $cancel);
+            }
         } else if ($action == 'clear') {
             echo $OUTPUT->confirm(get_string('clearconfirm', 'local_report_users'), $confirmurl, $cancel);
         }

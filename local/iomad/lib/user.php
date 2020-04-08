@@ -870,11 +870,11 @@ class company_user {
             // Fix company licenses
             if ($licenses = $DB->get_records('companylicense_users', $params)) {
                 $license = array_pop($licenses);
-                if ($action == 'autodelete') {
+                if ($action != 'delete') {
                     $license->timecompleted = time();
                     $DB->update_record('companylicense_users', $license);
-                } else if ($action == 'delete') {
-                    $DB->delete_records('companylicense_users', array('id' => $license->id));
+                }
+                if ($action == 'clear') {
                     // Fix the usagecount.
                     $licenserecord = $DB->get_record('companylicense', array('id' => $license->licenseid));
                     $licenserecord->used = $DB->count_records('companylicense_users', array('licenseid' => $license->licenseid));
@@ -927,9 +927,9 @@ class company_user {
                             }
                         }
                     }
-                } else if ($action == 'clear') {
+                } else if ($action == 'delete') {
                     $license->isusing = 0;
-                    $DB->update_record('companylicense_users', $license);
+                    $DB->delete_records('companylicense_users', array('id' => $license->id));
                 }
             }
             // All OK commit the transaction.
