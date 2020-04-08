@@ -278,7 +278,7 @@ if ($bulkoperations) {
     if ($participanttable->get_page_size() < $participanttable->totalrows) {
         // Select all users, refresh page showing all users and mark them all selected.
         $label = get_string('selectalluserswithcount', 'moodle', $participanttable->totalrows);
-        echo html_writer::tag('input', "", array('type' => 'button', 'id' => 'checkall', 'class' => 'btn btn-secondary',
+        echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checkall', 'class' => 'btn btn-secondary',
                 'value' => $label, 'data-showallink' => $showalllink));
     }
     echo html_writer::end_tag('div');
@@ -338,14 +338,12 @@ if ($bulkoperations) {
         'data-toggle' => 'action',
         'disabled' => empty($selectall)
     );
-    echo html_writer::tag('div', html_writer::tag('label', get_string("withselectedusers"),
-        array('for' => 'formactionid', 'class' => 'col-form-label d-inline')) .
-        html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), $selectactionparams));
+    $label = html_writer::tag('label', get_string("withselectedusers"),
+            ['for' => 'formactionid', 'class' => 'col-form-label d-inline']);
+    $select = html_writer::select($displaylist, 'formaction', '', ['' => 'choosedots'], $selectactionparams);
+    echo html_writer::tag('div', $label . $select);
 
-    echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-    echo '<noscript style="display:inline">';
-    echo '<div><input type="submit" value="'.get_string('ok').'" /></div>';
-    echo '</noscript>';
+    echo '<input type="hidden" name="id" value="' . $course->id . '" />';
     echo '</div></div></div>';
     echo '</form>';
 
@@ -360,6 +358,8 @@ echo '</div>';  // Userlist.
 
 $enrolrenderer = $PAGE->get_renderer('core_enrol');
 echo '<div class="float-right">';
+// Need to re-generate the buttons to avoid having elements with duplicate ids on the page.
+$enrolbuttons = $manager->get_manual_enrol_buttons();
 foreach ($enrolbuttons as $enrolbutton) {
     echo $enrolrenderer->render($enrolbutton);
 }
