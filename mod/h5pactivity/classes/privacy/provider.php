@@ -177,6 +177,7 @@ class provider implements
                        har.additionals,
                        har.rawscore,
                        har.maxscore,
+                       har.duration,
                        har.timecreated,
                        ctx.id as contextid
                   FROM {h5pactivity_attempts_results} har
@@ -200,6 +201,7 @@ class provider implements
                     'additionals' => $track->additionals,
                     'rawscore' => $track->rawscore,
                     'maxscore' => $track->maxscore,
+                    'duration' => $track->duration,
                     'timecreated' => transform::datetime($track->timecreated),
                 ];
         }

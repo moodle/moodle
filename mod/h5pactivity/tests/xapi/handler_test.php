@@ -286,6 +286,66 @@ class handler_testcase extends \advanced_testcase {
     }
 
     /**
+     * Test xapi_handler stored statements.
+     */
+    public function test_stored_statements() {
+        global $DB;
+
+        $data = $this->generate_testing_scenario();
+        $xapihandler = $data->xapihandler;
+        $context = $data->context;
+        $student = $data->student;
+        $otheruser = $data->otheruser;
+        $activity = $data->activity;
+
+        // Check we have 0 entries in the attempts tables.
+        $count = $DB->count_records('h5pactivity_attempts');
+        $this->assertEquals(0, $count);
+        $count = $DB->count_records('h5pactivity_attempts_results');
+        $this->assertEquals(0, $count);
+
+        $statements = $this->generate_statements($context, $student);
+
+        // Insert statements.
+        $stored = $xapihandler->process_statements($statements);
+        $this->assertCount(2, $stored);
+        $this->assertEquals(true, $stored[0]);
+        $this->assertEquals(true, $stored[1]);
+        $count = $DB->count_records('h5pactivity_attempts');
+        $this->assertEquals(1, $count);
+        $count = $DB->count_records('h5pactivity_attempts_results');
+        $this->assertEquals(2, $count);
+
+        // Validate stored data.
+        $attempts = $DB->get_records('h5pactivity_attempts');
+        $attempt = array_shift($attempts);
+        $statement = $statements[0];
+        $data = $statement->get_result()->get_data();
+        $this->assertEquals(1, $attempt->attempt);
+        $this->assertEquals($student->id, $attempt->userid);
+        $this->assertEquals($activity->id, $attempt->h5pactivityid);
+        $this->assertEquals($data->score->raw, $attempt->rawscore);
+        $this->assertEquals($data->score->max, $attempt->maxscore);
+        $this->assertEquals($statement->get_result()->get_duration(), $attempt->duration);
+        $this->assertEquals($data->completion, $attempt->completion);
+        $this->assertEquals($data->success, $attempt->success);
+
+        $results = $DB->get_records('h5pactivity_attempts_results');
+        foreach ($results as $result) {
+            $statement = (empty($result->subcontent)) ? $statements[0] : $statements[1];
+            $xapiresult = $statement->get_result()->get_data();
+            $xapiobject = $statement->get_object()->get_data();
+            $this->assertEquals($attempt->id, $result->attemptid);
+            $this->assertEquals($xapiobject->definition->interactionType, $result->interactiontype);
+            $this->assertEquals($xapiresult->score->raw, $result->rawscore);
+            $this->assertEquals($xapiresult->score->max, $result->maxscore);
+            $this->assertEquals($statement->get_result()->get_duration(), $result->duration);
+            $this->assertEquals($xapiresult->completion, $result->completion);
+            $this->assertEquals($xapiresult->success, $result->success);
+        }
+    }
+
+    /**
      * Returns a basic xAPI statements simulating a H5P content.
      *
      * @param context_module $context activity context
@@ -307,6 +367,7 @@ class handler_testcase extends \advanced_testcase {
             'completion' => true,
             'success' => true,
             'score' => (object) ['min' => 0, 'max' => 2, 'raw' => 2, 'scaled' => 1],
+            'duration' => 'PT25S',
         ]));
         $statements[] = $statement;
 
@@ -322,6 +383,7 @@ class handler_testcase extends \advanced_testcase {
             'completion' => true,
             'success' => true,
             'score' => (object) ['min' => 0, 'max' => 1, 'raw' => 0, 'scaled' => 0],
+            'duration' => 'PT20S',
         ]));
         $statements[] = $statement;
 

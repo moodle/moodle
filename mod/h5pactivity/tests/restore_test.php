@@ -121,6 +121,9 @@ class mod_h5pactivity_restore_testcase extends advanced_testcase {
             $this->assertEquals($attempt->attempt, $attempt2->attempt);
             $this->assertEquals($attempt->rawscore, $attempt2->rawscore);
             $this->assertEquals($attempt->maxscore, $attempt2->maxscore);
+            $this->assertEquals($attempt->duration, $attempt2->duration);
+            $this->assertEquals($attempt->completion, $attempt2->completion);
+            $this->assertEquals($attempt->success, $attempt2->success);
 
             // Compare results.
             $results = $DB->get_records('h5pactivity_attempts_results', ['attemptid' => $attempt->id]);
@@ -137,6 +140,9 @@ class mod_h5pactivity_restore_testcase extends advanced_testcase {
                 $this->assertEquals($result->additionals, $result2->additionals);
                 $this->assertEquals($result->rawscore, $result2->rawscore);
                 $this->assertEquals($result->maxscore, $result2->maxscore);
+                $this->assertEquals($result->duration, $result2->duration);
+                $this->assertEquals($result->completion, $result2->completion);
+                $this->assertEquals($result->success, $result2->success);
             }
         }
 

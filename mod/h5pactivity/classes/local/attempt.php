@@ -68,6 +68,9 @@ class attempt {
         $record->timemodified = $record->timecreated;
         $record->rawscore = 0;
         $record->maxscore = 0;
+        $record->duration = 0;
+        $record->completion = null;
+        $record->success = null;
 
         // Get last attempt number.
         $conditions = ['h5pactivityid' => $cm->instance, 'userid' => $user->id];
@@ -166,6 +169,7 @@ class attempt {
         }
         $definition = $xapidefinition->get_data();
         $result = $xapiresult->get_data();
+        $duration = $xapiresult->get_duration();
 
         // Insert attempt_results record.
         $record = new stdClass();
@@ -183,6 +187,13 @@ class attempt {
             $record->rawscore = $result->score->raw ?? 0;
             $record->maxscore = $result->score->max ?? 0;
         }
+        $record->duration = $duration;
+        if (isset($result->completion)) {
+            $record->completion = ($result->completion) ? 1 : 0;
+        }
+        if (isset($result->success)) {
+            $record->success = ($result->success) ? 1 : 0;
+        }
         if (!$DB->insert_record('h5pactivity_attempts_results', $record)) {
             return false;
         }
@@ -191,6 +202,9 @@ class attempt {
         if (empty($subcontent) && $record->rawscore) {
             $this->record->rawscore = $record->rawscore;
             $this->record->maxscore = $record->maxscore;
+            $this->record->duration = $record->duration;
+            $this->record->completion = $record->completion ?? null;
+            $this->record->success = $record->success ?? null;
         }
         // Refresh current attempt.
         return $this->save();
@@ -363,5 +377,32 @@ class attempt {
      */
     public function get_rawscore(): int {
         return $this->record->maxscore;
+    }
+
+    /**
+     * Return the attempt duration.
+     *
+     * @return int the duration value
+     */
+    public function get_duration(): int {
+        return $this->record->duration;
+    }
+
+    /**
+     * Return the attempt completion.
+     *
+     * @return int|null the completion value
+     */
+    public function get_completion(): ?int {
+        return $this->record->completion;
+    }
+
+    /**
+     * Return the attempt success.
+     *
+     * @return int|null the success value
+     */
+    public function get_success(): ?int {
+        return $this->record->success;
     }
 }

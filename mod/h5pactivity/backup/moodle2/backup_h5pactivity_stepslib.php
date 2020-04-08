@@ -47,7 +47,8 @@ class backup_h5pactivity_activity_structure_step extends backup_activity_structu
         $attempts = new backup_nested_element('attempts');
 
         $attempt = new backup_nested_element('attempt', ['id'],
-            ['h5pactivityid', 'userid', 'timecreated', 'timemodified', 'attempt', 'rawscore', 'maxscore']
+            ['h5pactivityid', 'userid', 'timecreated', 'timemodified', 'attempt', 'rawscore', 'maxscore',
+            'duration', 'completion', 'success']
         );
 
         $results = new backup_nested_element('results');
@@ -55,7 +56,8 @@ class backup_h5pactivity_activity_structure_step extends backup_activity_structu
         $result = new backup_nested_element('result', ['id'],
             [
                 'attemptid', 'subcontent', 'timecreated', 'interactiontype', 'description',
-                'correctpattern', 'response', 'additionals', 'rawscore', 'maxscore'
+                'correctpattern', 'response', 'additionals', 'rawscore', 'maxscore',
+                'duration', 'completion', 'success'
             ]
         );
 

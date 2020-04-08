@@ -134,5 +134,61 @@ function xmldb_h5pactivity_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2020032300, 'h5pactivity');
     }
 
+    if ($oldversion < 2020041400) {
+
+        // Define field duration to be added to h5pactivity_attempts.
+        $table = new xmldb_table('h5pactivity_attempts');
+        $field = new xmldb_field('duration', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'maxscore');
+
+        // Conditionally launch add field duration.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field completion to be added to h5pactivity_attempts.
+        $field = new xmldb_field('completion', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'duration');
+
+        // Conditionally launch add field completion.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field success to be added to h5pactivity_attempts.
+        $field = new xmldb_field('success', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'completion');
+
+        // Conditionally launch add field success.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field duration to be added to h5pactivity_attempts_results.
+        $table = new xmldb_table('h5pactivity_attempts_results');
+        $field = new xmldb_field('duration', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'maxscore');
+
+        // Conditionally launch add field duration.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field completion to be added to h5pactivity_attempts_results.
+        $field = new xmldb_field('completion', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'duration');
+
+        // Conditionally launch add field completion.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field success to be added to h5pactivity_attempts_results.
+        $field = new xmldb_field('success', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'completion');
+
+        // Conditionally launch add field success.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // H5pactivity savepoint reached.
+        upgrade_mod_savepoint(true, 2020041400, 'h5pactivity');
+    }
+
     return true;
 }
