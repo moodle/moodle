@@ -31,6 +31,10 @@ use core_xapi\local\statement\item_activity;
 use core_xapi\local\statement\item_verb;
 use core_xapi\local\statement\item_agent;
 use core_xapi\local\statement\item_group;
+use core_xapi\local\statement\item_result;
+use core_xapi\local\statement\item_attachment;
+use core_xapi\local\statement\item_context;
+use core_xapi\iri;
 use core_xapi\xapi_exception;
 use advanced_testcase;
 use stdClass;
@@ -48,13 +52,62 @@ defined('MOODLE_INTERNAL') || die();
 class statement_testcase extends advanced_testcase {
 
     /**
+     * Returns a valid item for a specific attribute.
+     *
+     * @param string $itemname statement item name
+     * @return item the resulting item
+     */
+    private function get_valid_item(string $itemname): item {
+        global $USER, $CFG;
+        switch ($itemname) {
+            case 'attachments':
+            case 'attachment':
+                $data = (object) [
+                    'usageType' => iri::generate('example', 'attachment'),
+                    'display' => (object) [
+                        'en-US' => 'Example',
+                    ],
+                    'description' => (object) [
+                        'en-US' => 'Description example',
+                    ],
+                    "contentType" => "image/jpg",
+                    "length" => 1234,
+                    "sha2" => "b94c0f1cffb77475c6f1899111a0181efe1d6177"
+                ];
+                return item_attachment::create_from_data($data);
+            case 'authority':
+                $data = (object) [
+                    'objectType' => 'Agent',
+                    'account' => (object) [
+                        'homePage' => $CFG->wwwroot,
+                        'name' => $USER->id,
+                    ],
+                ];
+                return item_agent::create_from_data($data);
+        }
+        // For now, the rest of the optional properties have no validation
+        // so we create a standard stdClass for all of them.
+        $data = (object)[
+            'some' => 'data',
+        ];
+        $classname = 'core_xapi\local\statement\item_'.$itemname;
+        if (class_exists($classname)) {
+            $item = $classname::create_from_data($data);
+        } else {
+            $item = item::create_from_data($data);
+        }
+        return $item;
+    }
+
+    /**
      * Test statement creation.
      *
      * @dataProvider create_provider
      * @param bool $useagent if use agent as actor (or group if false)
-     * @param array $extras
+     * @param array $extras extra item elements
+     * @param array $extravalues extra string values
      */
-    public function test_create(bool $useagent, array $extras) {
+    public function test_create(bool $useagent, array $extras, array $extravalues) {
 
         $this->resetAfterTest();
 
@@ -64,6 +117,8 @@ class statement_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
         $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
         $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $user->id));
+
+        $this->setUser($user);
 
         // Our statement.
         $statement = new statement();
@@ -76,14 +131,17 @@ class statement_testcase extends advanced_testcase {
         }
         $statement->set_verb(item_verb::create_from_id('cook'));
         $statement->set_object(item_activity::create_from_id('paella'));
-        // For now, the rest of the optional properties have no validation
-        // so we create a standard stdClass for all of them.
-        $data = (object)[
-            'some' => 'data',
-        ];
+
         foreach ($extras as $extra) {
             $method = 'set_'.$extra;
-            $statement->$method(item::create_from_data($data));
+            $item = $this->get_valid_item($extra);
+            $statement->$method($item);
+        }
+
+        // For now extra values have no validation.
+        foreach ($extravalues as $extra) {
+            $method = 'set_'.$extra;
+            $statement->$method('Example');
         }
 
         // Check resulting statement.
@@ -110,10 +168,11 @@ class statement_testcase extends advanced_testcase {
         $this->assertNotEmpty($data->verb);
         $this->assertNotEmpty($data->object);
         $allextras = ['context', 'result', 'timestamp', 'stored', 'authority', 'version', 'attachments'];
+        $alldefined = array_merge($extras, $extravalues);
         foreach ($allextras as $extra) {
-            if (in_array($extra, $extras)) {
+            if (in_array($extra, $alldefined)) {
                 $this->assertObjectHasAttribute($extra, $data);
-                $this->assertNotEmpty($data->object);
+                $this->assertNotEmpty($data->$extra);
             } else {
                 $this->assertObjectNotHasAttribute($extra, $data);
             }
@@ -128,52 +187,46 @@ class statement_testcase extends advanced_testcase {
     public function create_provider() : array {
         return [
             'Agent statement with no extras' => [
-                true, []
+                true, [], []
             ],
             'Agent statement with context' => [
-                true, ['context']
+                true, ['context'], []
             ],
             'Agent statement with result' => [
-                true, ['result']
+                true, ['result'], []
             ],
             'Agent statement with timestamp' => [
-                true, ['timestamp']
+                true, [], ['timestamp']
             ],
             'Agent statement with stored' => [
-                true, ['stored']
+                true, [], ['stored']
             ],
             'Agent statement with authority' => [
-                true, ['authority']
+                true, ['authority'], []
             ],
             'Agent statement with version' => [
-                true, ['version']
-            ],
-            'Agent statement with attachments' => [
-                true, ['attachments']
+                true, [], ['version']
             ],
             'Group statement with no extras' => [
-                false, []
+                false, [], []
             ],
             'Group statement with context' => [
-                false, ['context']
+                false, ['context'], []
             ],
             'Group statement with result' => [
-                false, ['result']
+                false, ['result'], []
             ],
             'Group statement with timestamp' => [
-                false, ['timestamp']
+                false, [], ['timestamp']
             ],
             'Group statement with stored' => [
-                false, ['stored']
+                false, [], ['stored']
             ],
             'Group statement with authority' => [
-                false, ['authority']
+                false, ['authority'], []
             ],
             'Group statement with version' => [
-                false, ['version']
-            ],
-            'Group statement with attachments' => [
-                false, ['attachments']
+                false, [], ['version']
             ],
         ];
     }
@@ -183,9 +236,10 @@ class statement_testcase extends advanced_testcase {
      *
      * @dataProvider create_provider
      * @param bool $useagent if use agent as actor (or group if false)
-     * @param array $extras
+     * @param array $extras extra item elements
+     * @param array $extravalues extra string values
      */
-    public function test_create_from_data(bool $useagent, array $extras) {
+    public function test_create_from_data(bool $useagent, array $extras, array $extravalues) {
         $this->resetAfterTest();
 
         // Create one course with a group.
@@ -194,6 +248,8 @@ class statement_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
         $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
         $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $user->id));
+
+        $this->setUser($user);
 
         // Populate data.
         if ($useagent) {
@@ -209,13 +265,15 @@ class statement_testcase extends advanced_testcase {
             'verb' => $verb->get_data(),
             'object' => $object->get_data(),
         ];
-        // For now, the rest of the optional properties have no validation
-        // so we create a standard stdClass for all of them.
-        $info = (object)[
-            'some' => 'data',
-        ];
+
         foreach ($extras as $extra) {
-            $data->$extra = $info;
+            $item = $this->get_valid_item($extra);
+            $data->$extra = $item->get_data();
+        }
+
+        // For now extra values have no validation.
+        foreach ($extravalues as $extra) {
+            $data->$extra = 'Example';
         }
 
         $statement = statement::create_from_data($data);
@@ -244,14 +302,94 @@ class statement_testcase extends advanced_testcase {
         $this->assertNotEmpty($data->verb);
         $this->assertNotEmpty($data->object);
         $allextras = ['context', 'result', 'timestamp', 'stored', 'authority', 'version', 'attachments'];
+        $alldefined = array_merge($extras, $extravalues);
         foreach ($allextras as $extra) {
-            if (in_array($extra, $extras)) {
+            if (in_array($extra, $alldefined)) {
                 $this->assertObjectHasAttribute($extra, $data);
                 $this->assertNotEmpty($data->object);
             } else {
                 $this->assertObjectNotHasAttribute($extra, $data);
             }
         }
+    }
+
+    /**
+     * Test adding attachments to statement.
+     *
+     */
+    public function test_add_attachment() {
+
+        // Our statement.
+        $statement = new statement();
+
+        $attachments = $statement->get_attachments();
+        $this->assertNull($attachments);
+
+        $item = $this->get_valid_item('attachment');
+        $itemdata = $item->get_data();
+        $statement->add_attachment($item);
+
+        $attachments = $statement->get_attachments();
+        $this->assertNotNull($attachments);
+        $this->assertCount(1, $attachments);
+
+        $attachment = current($attachments);
+        $attachmentdata = $attachment->get_data();
+        $this->assertEquals($itemdata->usageType, $attachmentdata->usageType);
+        $this->assertEquals($itemdata->length, $attachmentdata->length);
+
+        // Check resulting json.
+        $statementdata = json_decode(json_encode($statement));
+        $this->assertObjectHasAttribute('attachments', $statementdata);
+        $this->assertNotEmpty($statementdata->attachments);
+        $this->assertCount(1, $statementdata->attachments);
+    }
+
+    /**
+     * Test adding attachments to statement.
+     *
+     */
+    public function test_add_attachment_from_data() {
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $actor = item_agent::create_from_user($user);
+        $verb = item_verb::create_from_id('cook');
+        $object = item_activity::create_from_id('paella');
+
+        $data = (object) [
+            'actor' => $actor->get_data(),
+            'verb' => $verb->get_data(),
+            'object' => $object->get_data(),
+        ];
+
+        $item = $this->get_valid_item('attachment');
+        $itemdata = $item->get_data();
+        $data->attachments = [$itemdata];
+
+        $statement = statement::create_from_data($data);
+
+        $attachments = $statement->get_attachments();
+        $this->assertNotNull($attachments);
+        $this->assertCount(1, $attachments);
+
+        $attachment = current($attachments);
+        $attachmentdata = $attachment->get_data();
+        $this->assertEquals($itemdata->usageType, $attachmentdata->usageType);
+        $this->assertEquals($itemdata->length, $attachmentdata->length);
+
+        $statementdata = json_decode(json_encode($statement));
+        $this->assertObjectHasAttribute('attachments', $statementdata);
+        $this->assertNotEmpty($statementdata->attachments);
+        $this->assertCount(1, $statementdata->attachments);
+
+        // Now try to send an invalid attachments.
+        $this->expectException(xapi_exception::class);
+        $data->attachments = 'Invalid data';
+        $statement = statement::create_from_data($data);
     }
 
     /**
@@ -415,6 +553,8 @@ class statement_testcase extends advanced_testcase {
 
         $user = $this->getDataGenerator()->create_user();
 
+        $this->setUser($user);
+
         // Our statement.
         $statement = new statement();
 
@@ -422,16 +562,13 @@ class statement_testcase extends advanced_testcase {
         $statement->set_actor(item_agent::create_from_user($user));
         $statement->set_verb(item_verb::create_from_id('cook'));
         $statement->set_object(item_activity::create_from_id('paella'));
-        // For now, the rest of the optional properties have no validation
-        // so we create a standard stdClass for all of them.
-        $data = (object)[
-            'some' => 'data',
-        ];
-        $extras = ['context', 'result', 'timestamp', 'stored', 'authority', 'version', 'attachments'];
-        foreach ($extras as $extra) {
-            $method = 'set_'.$extra;
-            $statement->$method(item::create_from_data($data));
-        }
+        $statement->set_result($this->get_valid_item('result'));
+        $statement->set_context($this->get_valid_item('context'));
+        $statement->set_authority($this->get_valid_item('authority'));
+        $statement->add_attachment($this->get_valid_item('attachment'));
+        $statement->set_version('Example');
+        $statement->set_timestamp('Example');
+        $statement->set_stored('Example');
 
         $min = $statement->minify();
 
