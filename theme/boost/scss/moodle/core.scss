@@ -138,6 +138,66 @@ a.dimmed_text:visited,
     color: $text-muted;
 }
 
+// Accessible focus styling for links, add .aalink to links with custom css classes to get
+// accessible focus styles.
+.aalink,
+#page-footer a:not([class]),
+.arrow_link,
+a:not([class]),
+.activityinstance > a {
+    &.focus,
+    &:focus {
+        outline: $btn-focus-width solid transparent;
+        color: $gray-900;
+        background-color: lighten($primary, 50%);
+        box-shadow: 0 -#{$btn-focus-width} lighten($primary, 50%), 0 $btn-focus-width $gray-800;
+    }
+    &:focus:hover {
+        text-decoration: none;
+    }
+}
+
+// Accessible focus styling for buttons like elements that do not use the .btn class. Add
+// .aabtn to you element if you need the same focus styles.
+.aabtn,
+.btn-link,
+.nav-link,
+.atto_link_button,
+[role="button"],
+.list-group-item-action,
+input[type="checkbox"],
+input[type="radio"],
+input[type="file"],
+input[type="image"],
+.sr-only-focusable,
+a.dropdown-item,
+a.dropdown-toggle,
+.modal-dialog[tabindex="0"],
+.moodle-dialogue-base .closebutton,
+button.close {
+    &.focus,
+    &:focus {
+        outline: 0;
+        box-shadow: $input-btn-focus-box-shadow;
+    }
+    &:focus:hover {
+        text-decoration: none;
+    }
+}
+
+.usermenu,
+div.dropdown-item {
+    a,
+    a[role="button"] {
+        outline: 0;
+        box-shadow: none;
+    }
+    &:focus-within {
+        outline: 0;
+        box-shadow: $input-btn-focus-box-shadow;
+    }
+}
+
 .unlist,
 .unlist li,
 .inline-list,
@@ -1956,6 +2016,7 @@ nav.navbar .logo img {
 
     // Do not remove these rules.
     overflow: hidden;
+    padding: 0.25rem;
 
     .page-header-image,
     .page-header-headings {
@@ -1967,6 +2028,9 @@ nav.navbar .logo img {
     .page-header-image {
         margin-right: 1em;
         margin-bottom: 1em;
+        & > a {
+            display: inline-block;
+        }
     }
 
     .page-header-headings,
@@ -1979,13 +2043,6 @@ nav.navbar .logo img {
     .header-button-group {
         display: block;
         float: left;
-
-        a {
-            position: relative;
-
-            // Don't touch it unless you know exactly what you are doing.
-            top: -0.4em;
-        }
     }
 }
 
@@ -2217,6 +2274,9 @@ $footer-link-color: $bg-inverse-link-color !default;
     text-decoration: underline;
     .icon {
         color: $footer-link-color;
+    }
+    &:focus .icon {
+        color: $body-color;
     }
 }
 

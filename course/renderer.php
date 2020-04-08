@@ -709,7 +709,7 @@ class core_course_renderer extends plugin_renderer_base {
                 'class' => 'iconlarge activityicon', 'alt' => '', 'role' => 'presentation', 'aria-hidden' => 'true')) .
                 html_writer::tag('span', $instancename . $altname, array('class' => 'instancename'));
         if ($mod->uservisible) {
-            $output .= html_writer::link($url, $activitylink, array('class' => $linkclasses, 'onclick' => $onclick));
+            $output .= html_writer::link($url, $activitylink, array('class' => 'aalink' . $linkclasses, 'onclick' => $onclick));
         } else {
             // We may be displaying this just in order to show information
             // about visibility, without the actual link ($mod->is_visible_on_course_page()).
@@ -1142,7 +1142,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
         $coursename = $chelper->get_course_formatted_name($course);
         $coursenamelink = html_writer::link(new moodle_url('/course/view.php', ['id' => $course->id]),
-            $coursename, ['class' => $course->visible ? '' : 'dimmed']);
+            $coursename, ['class' => $course->visible ? 'aalink' : 'aalink dimmed']);
         $content .= html_writer::tag($nametag, $coursenamelink, ['class' => 'coursename']);
         // If we display course in collapsed form but the course has summary or course contacts, display the link to the info page.
         $content .= html_writer::start_tag('div', ['class' => 'moreinfo']);
@@ -1648,7 +1648,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
         $content .= html_writer::start_tag('div', array('class' => 'info'));
 
-        $content .= html_writer::tag(($depth > 1) ? 'h4' : 'h3', $categoryname, array('class' => 'categoryname'));
+        $content .= html_writer::tag(($depth > 1) ? 'h4' : 'h3', $categoryname, array('class' => 'categoryname aabtn'));
         $content .= html_writer::end_tag('div'); // .info
 
         // add category content to the output
@@ -1682,7 +1682,7 @@ class core_course_renderer extends plugin_renderer_base {
 
         if ($coursecat->get_children_count()) {
             $classes = array(
-                'collapseexpand',
+                'collapseexpand', 'aabtn'
             );
 
             // Check if the category content contains subcategories with children's content loaded.
@@ -2391,7 +2391,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
         $output = html_writer::link('#' . $skipdivid,
             get_string('skipa', 'access', core_text::strtolower(strip_tags($header))),
-            array('class' => 'skip-block skip'));
+            array('class' => 'skip-block skip aabtn'));
 
         // Wrap frontpage part in div container.
         $output .= html_writer::start_tag('div', array('id' => $contentsdivid));

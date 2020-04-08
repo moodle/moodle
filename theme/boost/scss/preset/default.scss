@@ -68,6 +68,8 @@ $card-group-margin: .25rem;
 // Custom control size
 $custom-control-indicator-size: 1.25rem;
 
+$input-btn-focus-color: rgba($primary, .75) !default;
+
 // stylelint-disable
 $theme-colors: () !default;
 $theme-colors: map-merge((

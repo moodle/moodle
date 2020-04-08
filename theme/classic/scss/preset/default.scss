@@ -62,6 +62,8 @@ $alert-border-width:                0 !default;
 
 $card-group-margin: .25rem;
 
+$input-btn-focus-color: rgba($primary, .75) !default;
+
 // stylelint-disable
 $theme-colors: () !default;
 $theme-colors: map-merge((

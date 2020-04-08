@@ -272,7 +272,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::end_div();
         $html .= $icon;
         if ($hasactions) {
-            $textattributes = array('class' => 'float-left categoryname');
+            $textattributes = array('class' => 'float-left categoryname aalink');
         } else {
             $textattributes = array('class' => 'float-left categoryname without-actions');
         }
@@ -647,7 +647,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             'for' => 'courselistitem' . $course->id));
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
-        $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename'));
+        $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename aalink'));
         $html .= html_writer::start_div('float-right');
         if ($course->idnumber) {
             $html .= html_writer::tag('span', s($course->idnumber), array('class' => 'text-muted idnumber'));
@@ -1222,7 +1222,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             $html .= html_writer::end_div();
         }
         $html .= html_writer::end_div();
-        $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename'));
+        $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename aalink'));
         $html .= html_writer::tag('span', $categoryname, array('class' => 'float-left ml-3 text-muted'));
         $html .= html_writer::start_div('float-right');
         $html .= $this->search_listitem_actions($course);

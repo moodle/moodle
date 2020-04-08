@@ -166,7 +166,7 @@ class core_files_renderer extends plugin_renderer_base {
     protected function fm_js_template_iconfilename() {
         $rv = '
 <div class="fp-file">
-    <a href="#">
+    <a href="#" class="d-block aabtn">
     <div style="position:relative;">
         <div class="fp-thumbnail"></div>
         <div class="fp-reficons1"></div>
@@ -176,7 +176,8 @@ class core_files_renderer extends plugin_renderer_base {
         <div class="fp-filename text-truncate"></div>
     </div>
     </a>
-    <a class="fp-contextmenu" href="#">'.$this->pix_icon('i/menu', '▶').'</a>
+    <a class="fp-contextmenu btn btn-icon btn-light border icon-no-margin icon-size-3" href="#">
+        <span>'.$this->pix_icon('i/menu', '▶').'</span></a>
 </div>';
         return $rv;
     }
@@ -226,7 +227,7 @@ class core_files_renderer extends plugin_renderer_base {
 <div class="filemanager fp-mkdir-dlg" role="dialog" aria-live="assertive" aria-labelledby="fp-mkdir-dlg-title">
     <div class="fp-mkdir-dlg-text">
         <label id="fp-mkdir-dlg-title">' . get_string('newfoldername', 'repository') . '</label><br/>
-        <input type="text" />
+        <input type="text" class="form-control"/>
     </div>
     <button class="fp-dlg-butcreate btn-primary btn">'.get_string('makeafolder').'</button>
     <button class="fp-dlg-butcancel btn-cancel btn">'.get_string('cancel').'</button>

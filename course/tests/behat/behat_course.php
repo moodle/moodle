@@ -1883,7 +1883,8 @@ class behat_course extends behat_base {
 
         $exception = new ExpectationException('"' . $categoryname . '" category can not be found', $this->getSession());
         $categoryliteral = behat_context_helper::escape($categoryname);
-        $xpath = "//div[@class='info']/descendant::*[" . implode(' or ', $headingtags) . "][@class='categoryname'][./descendant::a[.=$categoryliteral]]";
+        $xpath = "//div[@class='info']/descendant::*[" . implode(' or ', $headingtags) .
+            "][contains(@class,'categoryname')][./descendant::a[.=$categoryliteral]]";
         $node = $this->find('xpath', $xpath, $exception);
         $node->click();
 
