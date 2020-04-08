@@ -298,7 +298,7 @@ class current_company_course_user_selector extends company_user_selector_base {
             $departmentsql = " AND cu.departmentid in (".implode(',', array_keys($departmentlist)).")";
         }
 
-        $fields      = 'SELECT ue.id as userenrolmentid, ' . $this->required_fields_sql('u') . ', u.email, c.id AS courseid, c.fullname';
+        $fields      = 'SELECT ue.id as userenrolmentid, u.id as userid,' . $this->required_fields_sql('u') . ', u.email, c.id AS courseid, c.fullname';
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u

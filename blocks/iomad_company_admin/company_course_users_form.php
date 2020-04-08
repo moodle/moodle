@@ -358,8 +358,11 @@ class company_course_users_form extends moodleform {
             if (!empty($userstounassign)) {
 
                 foreach ($userstounassign as $removeuser) {
+                    if ($removeuser->id != $removeuser->userid) {
+                        $removeuser->id = $removeuser->userid;
+                    }
                     // Check the userid is valid.
-                    if (!company::check_valid_user($this->selectedcompany, $removeuser->id, $this->departmentid)) {
+                    if (!company::check_valid_user($this->selectedcompany, $removeuser->userid, $this->departmentid)) {
                         print_error('invaliduserdepartment', 'block_iomad_company_management');
                     }
 
