@@ -81,7 +81,7 @@ class fetch_test extends advanced_testcase {
         $this->expectExceptionMessage("Invalid parameter value detected (filters => Invalid parameter value detected " .
         "(Missing required key in single structure: name): Missing required key in single structure: name");
 
-        fetch::execute("core_user\participants_table",
+        fetch::execute("\\core_user\\table\\participants",
             "user-index-participants-{$course->id}", "firstname", "4", $filter, (string)filter::JOINTYPE_ANY);
 
     }
@@ -108,7 +108,7 @@ class fetch_test extends advanced_testcase {
             ]
         ];
 
-        $participantstable = fetch::execute("core_user\participants_table",
+        $participantstable = fetch::execute("\\core_user\\table\\participants",
             "user-index-participants-{$course->id}", "firstname", "4", $filter, (string)filter::JOINTYPE_ANY);
         $html = $participantstable['html'];
 

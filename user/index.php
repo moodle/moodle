@@ -33,7 +33,6 @@ require_once($CFG->dirroot.'/enrol/locallib.php');
 use core_table\local\filter\filter;
 use core_table\local\filter\integer_filter;
 use core_table\local\filter\string_filter;
-use core_user\participants_table;
 
 define('DEFAULT_PAGE_SIZE', 20);
 define('SHOW_ALL_PAGE_SIZE', 5000);
@@ -276,7 +275,7 @@ if (count($keywordfilter)) {
     $filterset->add_filter($keywordfilter);
 }
 
-$participanttable = new participants_table(participants_table::get_unique_id_from_argument($course->id));
+$participanttable = new \core_user\table\participants(\core_user\table\participants::get_unique_id_from_argument($course->id));
 $participanttable->set_selectall($selectall);
 $participanttable->set_filterset($filterset);
 $participanttable->define_baseurl($baseurl);
