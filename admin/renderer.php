@@ -601,19 +601,9 @@ class core_admin_renderer extends plugin_renderer_base {
             return '';
         }
 
-        if (empty($CFG->cronclionly)) {
-            $url = new moodle_url('/admin/cron.php');
-            if (!empty($CFG->cronremotepassword)) {
-                $url = new moodle_url('/admin/cron.php', array('password' => $CFG->cronremotepassword));
-            }
-
-            return $this->warning(get_string('cronwarning', 'admin', $url->out()) . '&nbsp;' .
-                    $this->help_icon('cron', 'admin'));
-        }
-
-        // $CFG->cronclionly is not empty: cron can run only from CLI.
-        return $this->warning(get_string('cronwarningcli', 'admin') . '&nbsp;' .
-                $this->help_icon('cron', 'admin'));
+        $check = new \tool_task\check\cronrunning();
+        $result = $check->get_result();
+        return $this->warning($result->get_summary() . '&nbsp;' . $this->help_icon('cron', 'admin'));
     }
 
     /**
@@ -629,9 +619,9 @@ class core_admin_renderer extends plugin_renderer_base {
             return '';
         }
 
-        $expectedfrequency = $CFG->expectedcronfrequency ?? 200;
-        return $this->warning(get_string('croninfrequent', 'admin', $expectedfrequency) . '&nbsp;' .
-                $this->help_icon('cron', 'admin'));
+        $check = new \tool_task\check\cronrunning();
+        $result = $check->get_result();
+        return $this->warning($result->get_summary() . '&nbsp;' . $this->help_icon('cron', 'admin'));
     }
 
     /**

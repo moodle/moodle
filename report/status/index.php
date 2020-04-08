@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Security overview report
+ * System Status report
  *
- * @package    report_security
- * @copyright  2008 petr Skoda
+ * @package    report_status
+ * @copyright  2020 Brendan Heywood (brendan@catalyst-au.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,12 +27,12 @@ define('NO_OUTPUT_BUFFERING', true);
 require('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('reportsecurity', '', null, '', ['pagelayout' => 'report']);
+admin_externalpage_setup('reportstatus', '', null, '', ['pagelayout' => 'report']);
 
 $detail = optional_param('detail', '', PARAM_TEXT); // Show detailed info about one check only.
 
-$url = '/report/security/index.php';
-$table = new core\check\table('security', $url, $detail);
+$url = '/report/status/index.php';
+$table = new core\check\table('status', $url, $detail);
 
 if (!empty($table->detail)) {
     $PAGE->set_docs_path($url . '?detail=' . $detail);
@@ -40,10 +40,7 @@ if (!empty($table->detail)) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'report_security'));
+echo $OUTPUT->heading(get_string('pluginname', 'report_status'));
 echo $table->render($OUTPUT);
 echo $OUTPUT->footer();
-
-$event = \report_security\event\report_viewed::create(['context' => context_system::instance()]);
-$event->trigger();
 

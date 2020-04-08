@@ -4776,6 +4776,41 @@ class core_renderer_cli extends core_renderer {
     }
 
     /**
+     * Renders a Check API result
+     *
+     * To aid in CLI consistency this status is NOT translated and the visual
+     * width is always exactly 10 chars.
+     *
+     * @param result $result
+     * @return string HTML fragment
+     */
+    protected function render_check_result(core\check\result $result) {
+        $status = $result->get_status();
+
+        $labels = [
+            core\check\result::NA        => '      ' . cli_ansi_format('<colour:gray>' ) . ' NA ',
+            core\check\result::OK        => '      ' . cli_ansi_format('<colour:green>') . ' OK ',
+            core\check\result::INFO      => '    '   . cli_ansi_format('<colour:blue>' ) . ' INFO ',
+            core\check\result::UNKNOWN   => ' '      . cli_ansi_format('<colour:grey>' ) . ' UNKNOWN ',
+            core\check\result::WARNING   => ' '      . cli_ansi_format('<colour:black><bgcolour:yellow>') . ' WARNING ',
+            core\check\result::ERROR     => '   '    . cli_ansi_format('<bgcolour:red>') . ' ERROR ',
+            core\check\result::CRITICAL  => ''       . cli_ansi_format('<bgcolour:red>') . ' CRITICAL ',
+        ];
+        $string = $labels[$status] . cli_ansi_format('<colour:normal>');
+        return $string;
+    }
+
+    /**
+     * Renders a Check API result
+     *
+     * @param result $result
+     * @return string fragment
+     */
+    public function check_result(core\check\result $result) {
+        return $this->render_check_result($result);
+    }
+
+    /**
      * Returns a template fragment representing a Heading.
      *
      * @param string $text The text of the heading
