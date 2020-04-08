@@ -34,32 +34,22 @@ function badges_install_default_backpacks() {
     global $DB;
 
     $record = new stdClass();
-    $record->backpackweburl = 'https://backpack.openbadges.org';
-    $record->backpackapiurl = 'https://backpack.openbadges.org';
-    $record->apiversion = 1;
-    $record->sortorder = 0;
-    $record->password = '';
-
-    if (!($bp = $DB->get_record('badge_external_backpack', array('backpackapiurl' => $record->backpackapiurl)))) {
-        $bpid = $DB->insert_record('badge_external_backpack', $record);
-    } else {
-        $bpid = $bp->id;
-    }
-    set_config('badges_site_backpack', $bpid);
-
-    // All existing backpacks default to V1.
-    $DB->set_field('badge_backpack', 'externalbackpackid', $bpid);
-
-    $record = new stdClass();
     $record->backpackapiurl = 'https://api.badgr.io/v2';
     $record->backpackweburl = 'https://badgr.io';
     $record->apiversion = 2;
     $record->sortorder = 1;
     $record->password = '';
 
-    if (!$DB->record_exists('badge_external_backpack', array('backpackapiurl' => $record->backpackapiurl))) {
-        $DB->insert_record('badge_external_backpack', $record);
+    $bp = $DB->get_record('badge_external_backpack', ['backpackapiurl' => $record->backpackapiurl]);
+    if ($bp) {
+        $bpid = $bp->id;
+    } else {
+        $bpid = $DB->insert_record('badge_external_backpack', $record);
     }
 
+    set_config('badges_site_backpack', $bpid);
+
+    // Set external backpack to v2.
+    $DB->set_field('badge_backpack', 'externalbackpackid', $bpid);
 }
 
