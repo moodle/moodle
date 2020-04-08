@@ -889,7 +889,7 @@ class core_userliblib_testcase extends advanced_testcase {
         groups_add_member($group->id, $student1->id);
         groups_add_member($group->id, $student2->id);
 
-        // Set it so the teacher and two of the students have accessed the courses within the last day,
+        // Set it so the teacher and two of the students have not accessed the courses within the last day,
         // but only one of the students is in the group.
         $accesssince = time() - DAYSECS;
         $lastaccess = new stdClass();
@@ -904,12 +904,12 @@ class core_userliblib_testcase extends advanced_testcase {
         $lastaccess->userid = $student3->id;
         $DB->insert_record('user_lastaccess', $lastaccess);
 
-        // Now, when we perform the following search we should only return 1 user. A student who belongs to
-        // the group and has the name 'searchforthis' and has also accessed the course in the last day.
+        // Now, when we perform the following search we should only return 2 users. Student who belong to
+        // the group and have the name 'searchforthis' and have not accessed the course in the last day.
         $count = user_get_total_participants($course->id, $group->id, $accesssince + 1, $roleids['student'], 0, -1,
             'searchforthis');
 
-        $this->assertEquals(1, $count);
+        $this->assertEquals(2, $count);
     }
 
     /**
@@ -918,14 +918,14 @@ class core_userliblib_testcase extends advanced_testcase {
     public function test_user_get_total_participants_on_front_page() {
         $this->resetAfterTest();
 
-        // Set it so that only 3 users have accessed the site within the last day.
+        // Set it so that only 3 users have not accessed the site within the last day (including one which has never accessed it).
         $accesssince = time() - DAYSECS;
 
         // Create a bunch of users.
         $user1 = self::getDataGenerator()->create_user(['firstname' => 'searchforthis', 'lastaccess' => $accesssince]);
         $user2 = self::getDataGenerator()->create_user(['firstname' => 'searchforthis', 'lastaccess' => $accesssince]);
-        $user3 = self::getDataGenerator()->create_user(['firstname' => 'searchforthis']);
-        $user4 = self::getDataGenerator()->create_user(['firstname' => 'searchforthis', 'lastaccess' => $accesssince]);
+        $user3 = self::getDataGenerator()->create_user(['firstname' => 'searchforthis', 'lastaccess' => time()]);
+        $user4 = self::getDataGenerator()->create_user(['firstname' => 'searchforthis']);
 
         // Create a group.
         $group = self::getDataGenerator()->create_group(array('courseid' => SITEID));
@@ -936,7 +936,7 @@ class core_userliblib_testcase extends advanced_testcase {
         groups_add_member($group->id, $user3->id);
 
         // Now, when we perform the following search we should only return 2 users. Users who belong to
-        // the group and have the name 'searchforthis' and have also accessed the site in the last day.
+        // the group and have the name 'searchforthis' and have not accessed the site in the last day.
         $count = user_get_total_participants(SITEID, $group->id, $accesssince + 1, 0, 0, -1, 'searchforthis');
 
         $this->assertEquals(2, $count);
@@ -978,8 +978,8 @@ class core_userliblib_testcase extends advanced_testcase {
         groups_add_member($group->id, $student1->id);
         groups_add_member($group->id, $student2->id);
 
-        // Set it so the teacher and two of the students have accessed the course within the last day, but only one of
-        // the students is in the group.
+        // Set it so the teacher and two of the students have not accessed the course within the last day, but only one of
+        // the students is in the group (student 3 has never accessed the course).
         $accesssince = time() - DAYSECS;
         $lastaccess = new stdClass();
         $lastaccess->userid = $teacher->id;
@@ -990,11 +990,12 @@ class core_userliblib_testcase extends advanced_testcase {
         $lastaccess->userid = $student1->id;
         $DB->insert_record('user_lastaccess', $lastaccess);
 
-        $lastaccess->userid = $student3->id;
+        $lastaccess->userid = $student2->id;
+        $lastaccess->timeaccess = time();
         $DB->insert_record('user_lastaccess', $lastaccess);
 
         // Now, when we perform the following search we should only return 1 user. A student who belongs to
-        // the group and has the name 'searchforthis' and has also accessed the course in the last day.
+        // the group and has the name 'searchforthis' and has not accessed the course in the last day.
         $userset = user_get_participants($course->id, $group->id, $accesssince + 1, $roleids['student'], 0, -1, 'searchforthis');
 
         $this->assertEquals($student1->id, $userset->current()->id);
@@ -1013,14 +1014,14 @@ class core_userliblib_testcase extends advanced_testcase {
     public function test_user_get_participants_on_front_page() {
         $this->resetAfterTest();
 
-        // Set it so that only 3 users have accessed the site within the last day.
+        // Set it so that only 3 users have not accessed the site within the last day (user 4 has never accessed the site).
         $accesssince = time() - DAYSECS;
 
         // Create a bunch of users.
         $user1 = self::getDataGenerator()->create_user(['firstname' => 'searchforthis', 'lastaccess' => $accesssince]);
         $user2 = self::getDataGenerator()->create_user(['firstname' => 'searchforthis', 'lastaccess' => $accesssince]);
-        $user3 = self::getDataGenerator()->create_user(['firstname' => 'searchforthis']);
-        $user4 = self::getDataGenerator()->create_user(['firstname' => 'searchforthis', 'lastaccess' => $accesssince]);
+        $user3 = self::getDataGenerator()->create_user(['firstname' => 'searchforthis', 'lastaccess' => time()]);
+        $user4 = self::getDataGenerator()->create_user(['firstname' => 'searchforthis']);
 
         // Create a group.
         $group = self::getDataGenerator()->create_group(array('courseid' => SITEID));
@@ -1031,7 +1032,7 @@ class core_userliblib_testcase extends advanced_testcase {
         groups_add_member($group->id, $user3->id);
 
         // Now, when we perform the following search we should only return 2 users. Users who belong to
-        // the group and have the name 'searchforthis' and have also accessed the site in the last day.
+        // the group and have the name 'searchforthis' and have not accessed the site in the last day.
         $userset = user_get_participants(SITEID, $group->id, $accesssince + 1, 0, 0, -1, 'searchforthis', '', array(),
             'ORDER BY id ASC');
 

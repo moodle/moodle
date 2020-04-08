@@ -1131,4 +1131,299 @@ class participants_search_test extends advanced_testcase {
 
         return $finaltests;
     }
+
+    /**
+     * Ensure that the last access filter works as expected with the provided test cases.
+     *
+     * @param array $usersdata The list of users to create
+     * @param array $accesssince The last access data to filter by
+     * @param int $jointype The join type to use when combining filter values
+     * @param int $count The expected count
+     * @param array $expectedusers
+     * @dataProvider accesssince_provider
+     */
+    public function test_accesssince_filter(array $usersdata, array $accesssince, int $jointype, int $count,
+            array $expectedusers): void {
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $users = [];
+
+        foreach ($usersdata as $username => $userdata) {
+            $usertimestamp = empty($userdata['lastlogin']) ? 0 : strtotime($userdata['lastlogin']);
+
+            $user = $this->getDataGenerator()->create_user(['username' => $username]);
+            $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+            // Create the record of the user's last access to the course.
+            if ($usertimestamp > 0) {
+                $this->getDataGenerator()->create_user_course_lastaccess($user, $course, $usertimestamp);
+            }
+
+            $users[$username] = $user;
+        }
+
+        // Create a secondary course with users. We should not see these users.
+        $this->create_course_with_users(1, 1, 1, 1);
+
+        // Create the basic filter.
+        $filterset = new participants_filterset();
+        $filterset->add_filter(new integer_filter('courseid', null, [(int) $course->id]));
+
+        // Create the last access filter.
+        $lastaccessfilter = new integer_filter('accesssince');
+        $filterset->add_filter($lastaccessfilter);
+
+        // Configure the filter.
+        foreach ($accesssince as $accessstring) {
+            $lastaccessfilter->add_filter_value(strtotime($accessstring));
+        }
+        $lastaccessfilter->set_join_type($jointype);
+
+        // Run the search.
+        $search = new participants_search($course, $coursecontext, $filterset);
+        $rs = $search->get_participants();
+        $this->assertInstanceOf(moodle_recordset::class, $rs);
+        $records = $this->convert_recordset_to_array($rs);
+
+        $this->assertCount($count, $records);
+        $this->assertEquals($count, $search->get_total_participants_count());
+
+        foreach ($expectedusers as $expecteduser) {
+            $this->assertArrayHasKey($users[$expecteduser]->id, $records);
+        }
+    }
+
+    /**
+     * Data provider for last access filter tests.
+     *
+     * @return array
+     */
+    public function accesssince_provider(): array {
+        $tests = [
+            // Users with different last access times.
+            'Users in different groups' => (object) [
+                'users' => [
+                    'a' => [
+                        'lastlogin' => '-3 days',
+                    ],
+                    'b' => [
+                        'lastlogin' => '-2 weeks',
+                    ],
+                    'c' => [
+                        'lastlogin' => '-5 months',
+                    ],
+                    'd' => [
+                        'lastlogin' => '-11 months',
+                    ],
+                    'e' => [
+                        // Never logged in.
+                        'lastlogin' => '',
+                    ],
+                ],
+                'expect' => [
+                    // Tests for jointype: ANY.
+                    'ANY: No filter' => (object) [
+                        'accesssince' => [],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 5,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                            'e',
+                        ],
+                    ],
+                    'ANY: Filter on last login more than 1 year ago' => (object) [
+                        'accesssince' => ['-1 year'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'e',
+                        ],
+                    ],
+                    'ANY: Filter on last login more than 6 months ago' => (object) [
+                        'accesssince' => ['-6 months'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'd',
+                            'e',
+                        ],
+                    ],
+                    'ANY: Filter on last login more than 3 weeks ago' => (object) [
+                        'accesssince' => ['-3 weeks'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'c',
+                            'd',
+                            'e',
+                        ],
+                    ],
+                    'ANY: Filter on last login more than 5 days ago' => (object) [
+                        'accesssince' => ['-5 days'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'b',
+                            'c',
+                            'd',
+                            'e',
+                        ],
+                    ],
+                    'ANY: Filter on last login more than 2 days ago' => (object) [
+                        'accesssince' => ['-2 days'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 5,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                            'e',
+                        ],
+                    ],
+
+                    // Tests for jointype: ALL.
+                    'ALL: No filter' => (object) [
+                        'accesssince' => [],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 5,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                            'e',
+                        ],
+                    ],
+                    'ALL: Filter on last login more than 1 year ago' => (object) [
+                        'accesssince' => ['-1 year'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'e',
+                        ],
+                    ],
+                    'ALL: Filter on last login more than 6 months ago' => (object) [
+                        'accesssince' => ['-6 months'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'd',
+                            'e',
+                        ],
+                    ],
+                    'ALL: Filter on last login more than 3 weeks ago' => (object) [
+                        'accesssince' => ['-3 weeks'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'c',
+                            'd',
+                            'e',
+                        ],
+                    ],
+                    'ALL: Filter on last login more than 5 days ago' => (object) [
+                        'accesssince' => ['-5 days'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'b',
+                            'c',
+                            'd',
+                            'e',
+                        ],
+                    ],
+                    'ALL: Filter on last login more than 2 days ago' => (object) [
+                        'accesssince' => ['-2 days'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 5,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                            'e',
+                        ],
+                    ],
+
+                    // Tests for jointype: NONE.
+                    'NONE: No filter' => (object) [
+                        'accesssince' => [],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 5,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                            'e',
+                        ],
+                    ],
+                    'NONE: Filter on last login more than 1 year ago' => (object) [
+                        'accesssince' => ['-1 year'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                        ],
+                    ],
+                    'NONE: Filter on last login more than 6 months ago' => (object) [
+                        'accesssince' => ['-6 months'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                        ],
+                    ],
+                    'NONE: Filter on last login more than 3 weeks ago' => (object) [
+                        'accesssince' => ['-3 weeks'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                        ],
+                    ],
+                    'NONE: Filter on last login more than 5 days ago' => (object) [
+                        'accesssince' => ['-5 days'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'a',
+                        ],
+                    ],
+                    'NONE: Filter on last login more than 2 days ago' => (object) [
+                        'accesssince' => ['-2 days'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                ],
+            ],
+        ];
+
+        $finaltests = [];
+        foreach ($tests as $testname => $testdata) {
+            foreach ($testdata->expect as $expectname => $expectdata) {
+                $finaltests["{$testname} => {$expectname}"] = [
+                    'users' => $testdata->users,
+                    'accesssince' => $expectdata->accesssince,
+                    'jointype' => $expectdata->jointype,
+                    'count' => $expectdata->count,
+                    'expectedusers' => $expectdata->expectedusers,
+                ];
+            }
+        }
+
+        return $finaltests;
+    }
 }
