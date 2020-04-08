@@ -339,15 +339,12 @@ if ($bulkoperations) {
         }
     }
 
-    echo html_writer::tag('div', html_writer::tag('label', get_string("withselectedusers"),
-        array('for' => 'formactionid', 'class' => 'col-form-label d-inline')) .
-        html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), array('id' => 'formactionid')),
-        array('class' => 'ml-2'));
+    $label = html_writer::tag('label', get_string("withselectedusers"),
+            ['for' => 'formactionid', 'class' => 'col-form-label d-inline']);
+    $select = html_writer::select($displaylist, 'formaction', '', ['' => 'choosedots'], ['id' => 'formactionid']);
+    echo html_writer::tag('div', $label . $select, ['class' => 'ml-2']);
 
-    echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-    echo '<noscript style="display:inline">';
-    echo '<div><input type="submit" value="'.get_string('ok').'" /></div>';
-    echo '</noscript>';
+    echo '<input type="hidden" name="id" value="' . $course->id . '" />';
     echo '</div></div></div>';
     echo '</form>';
 
