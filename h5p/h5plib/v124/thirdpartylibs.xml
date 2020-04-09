@@ -6,4 +6,10 @@
     <license>GPL-3.0</license>
     <version>1.24</version>
   </library>
+  <library>
+    <location>joubel/editor</location>
+    <name>h5p-editor-php-library</name>
+    <license>GPL-3.0</license>
+    <version>moodle-1.20.2</version>
+  </library>
 </libraries>

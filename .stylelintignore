@@ -11,6 +11,7 @@ enrol/lti/ims-blti/
 filter/algebra/AlgParser.pm
 filter/tex/mimetex.*
 h5p/h5plib/v124/joubel/core/
+h5p/h5plib/v124/joubel/editor/
 lib/editor/atto/plugins/html/yui/src/codemirror/
 lib/editor/atto/plugins/html/yui/src/beautify/
 lib/editor/atto/yui/src/rangy/js/*.*

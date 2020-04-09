@@ -1,0 +1,425 @@
+@import 'variables';
+@import 'mixins';
+
+%title-bar-base {
+  visibility: inherit;
+  cursor: pointer;
+}
+%title-bar-importance-high {
+  background: $form-item-importance-high-background;
+  border: 1px solid $form-item-importance-high-border-color;
+  height: $form-item-height-large;
+}
+%title-bar-text-importance-high {
+  font-size: $font-size-normal;
+  font-weight: 600;
+  line-height: $form-item-height-large;
+  // Fix white text on dark background blockiness
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+%title-bar-importance-medium {
+  background: $form-item-importance-medium-background;
+  border: 1px solid $form-item-importance-medium-border-color;
+  height: $form-item-height-normal;
+}
+%title-bar-text-importance-medium {
+  font-size: $font-size-normal;
+  font-weight: 600;
+  color: $white;
+  line-height: $form-item-height-normal;
+  // Fix white text on dark background blockiness
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+%title-bar-importance-low {
+  background: $form-item-importance-low-background;
+  height: $form-item-height-normal;
+  border: 1px solid $form-border-color;
+}
+%title-bar-text-importance-low {
+  font-size: $font-size-normal;
+  font-weight: 400;
+  color: $text-color;
+  line-height: $form-item-height-normal;
+}
+
+.group {
+  border: none;
+
+  & > .title {
+    @extend %title-bar-base;
+    @extend %title-bar-importance-medium;
+    @extend %title-bar-text-importance-medium;
+    padding: 0 $min-padding;
+    outline: none;
+  }
+
+  & > .content {
+    position: relative;
+    display: none;
+    margin: 0;
+    padding: $padding;
+    border: 1px solid $form-border-color;
+    border-top: none;
+    background: $form-content-background;
+  }
+
+  &.importance-high > .title {
+    @extend %title-bar-importance-high;
+    @extend %title-bar-text-importance-high;
+    color: $white;
+  }
+
+  &.importance-low > .title {
+    @extend %title-bar-importance-low;
+    @extend %title-bar-text-importance-low;
+    color: $text-color;
+
+    &:focus:before {
+      outline: 1px dashed;
+    }
+  }
+}
+
+// Zebra pattern for lists and groups
+.common, .content {
+  .content {
+    background-color: $form-background;
+
+    .content {
+      background-color: $white;
+
+     .content {
+       background-color: $form-background;
+
+       .content {
+         background-color: $white;
+
+         .content {
+           background-color: $form-background;
+
+           .content {
+             background-color: $white;
+           }
+         }
+       }
+     }
+   }
+  }
+}
+
+.h5p-li > .list-item-title-bar {
+  @extend %title-bar-base;
+  @extend %title-bar-importance-medium;
+  color: $white;
+
+  & > .h5peditor-label {
+    @extend %title-bar-text-importance-medium;
+
+    overflow: hidden;
+    margin: 0 $form-item-buttons-width-normal 0 0;
+    padding: 0 $min-padding;
+    white-space: nowrap;
+    line-height: $form-item-height-normal;
+    outline: none;
+    text-overflow: ellipsis;
+  }
+
+  &.importance-high > .h5peditor-label {
+    @extend %title-bar-text-importance-high;
+  }
+
+  &.importance-medium > .h5peditor-label {
+    @extend %title-bar-text-importance-medium;
+  }
+
+  &.importance-low > .h5peditor-label {
+    @extend %title-bar-text-importance-low;
+  }
+
+  & > .list-actions {
+    height: 100%;
+    float: right;
+    position: relative;
+  }
+
+  .remove {
+    cursor: pointer;
+    width: 1.25em;
+    height: $form-item-height-normal;
+    font-size: 1.75em;
+    display: inline-block;
+
+    &:hover {
+      opacity: 1;
+      text-decoration: none;
+    }
+  }
+
+  .remove:after {
+    font-family: $icon-font-family;
+    content: "\e890";
+    opacity: 0.7;
+    display: inline-block;
+    line-height: $form-item-height-normal;
+  }
+
+  .remove:hover:after {
+    opacity: 1;
+  }
+
+  .order-group {
+    text-align: center;
+    float: right;
+    background: $form-item-importance-medium-border-color;
+    font-size: $font-size-normal;
+    cursor: pointer;
+  }
+
+  .order-up, .order-down {
+    width: $form-item-height-normal / 2;
+    height: $form-item-height-normal / 2;
+    line-height: $form-item-height-normal / 2;
+
+    &:hover {
+      background: $form-item-importance-medium-background-hover;
+    }
+
+    &:after {
+      font-family: $icon-font-family;
+      content: "\e58e";
+      display: inline-block;
+    }
+  }
+
+  .order-down:after {
+    content: "\e58f";
+  }
+
+  &.importance-high {
+    @extend %title-bar-importance-high;
+
+    & > .title {
+      @extend %title-bar-text-importance-high;
+      border: none;
+      margin: 0 $form-item-buttons-width-large 0 0;
+    }
+
+    .remove {
+      height: $form-item-height-large;
+      line-height: $form-item-height-large;
+      font-size: 40px;
+
+      &:after {
+        line-height: $form-item-height-large;
+        opacity: 0.7;
+      }
+      &:hover:after {
+        opacity: 1;
+      }
+    }
+
+    .order-group {
+      background: $form-item-importance-high-border-color;
+      font-size: $font-size-large;
+    }
+
+    .order-up, .order-down {
+      width: $form-item-height-large / 2;
+      height: $form-item-height-large / 2;
+      line-height: $form-item-height-large / 2;
+
+      &:hover {
+        background: $form-item-importance-high-background-hover;
+      }
+    }
+  }
+
+  &.importance-low {
+    @extend %title-bar-importance-low;
+
+    & > .title {
+      @extend %title-bar-text-importance-low;
+      border: none;
+      margin: 0 $form-item-buttons-width-normal 0 0;
+
+      &:before {
+        color: $text-color;
+      }
+      &:focus:before {
+        outline: 1px dashed $text-color;
+      }
+    }
+
+    .remove {
+      height: $form-item-height-normal;
+      line-height: $form-item-height-normal;
+      font-size: 30px;
+
+      &:after {
+        line-height: $form-item-height-normal;
+      }
+    }
+    .remove:after {
+      color: $text-color;
+      opacity: 0.7;
+    }
+    .remove:hover:after {
+      opacity: 1;
+    }
+
+    .order-up, .order-down {
+      width: $form-item-height-normal / 2;
+      height: $form-item-height-normal / 2;
+      background: $form-item-importance-low-border-color;
+      font-size: $font-size-normal;
+      line-height: $form-item-height-normal / 2;
+
+      &:hover {
+        background: $form-item-importance-low-background-hover;
+      }
+
+      &:after {
+        color: $text-color;
+      }
+    }
+  }
+}
+.group.expanded,
+.listgroup.expanded {
+  & > .content {
+    display: block;
+  }
+}
+
+.listgroup > .list-item-title-bar > .h5peditor-label {
+  cursor: pointer;
+}
+.list-item-title-bar > .title,
+.group > .title  {
+  &:before {
+    content: "\e566";
+    font-family: $icon-font-family;
+    margin-right: $min-padding/2;
+  }
+
+  &:focus:before {
+    outline: 1px dashed $white;
+  }
+}
+.listgroup.expanded > .list-item-title-bar > .h5peditor-label:before,
+.expanded > .title:before {
+  content: "\e565";
+}
+.listgroup > .group.field {
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+@-moz-document url-prefix() {
+  .listgroup > .group.field {
+    display: table-column;
+  }
+}
+.content {
+  display: block;
+  margin: 0;
+  padding: $padding;
+  border: 1px solid $form-border-color;
+  border-top: none;
+  background: $form-content-background;
+}
+
+.common {
+  margin-top: $padding;
+
+  & > .h5peditor-label {
+    @extend %title-bar-base;
+    @extend %title-bar-importance-low;
+    @extend %title-bar-text-importance-low;
+    margin: 0;
+    padding: 0 $min-padding;
+    cursor: pointer;
+    font-size: 1em;
+
+    & > .icon:before {
+      content: "\e565";
+      font-family: $icon-font-family;
+      margin-right: 5px;
+    }
+    &:hover > .icon {
+      opacity: 1;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus > .icon:before {
+      outline: 1px dashed;
+    }
+  }
+  & > .fields {
+    min-height: 2em;
+    padding: $padding;
+    border: 1px solid $form-border-color;
+    border-top: none;
+    background: $form-content-background;
+    position: relative;
+
+    & > .desc {
+      margin: 0;
+      font-size: 0.875em;
+      color: #666;
+      float: left;
+    }
+
+    p:first-child {
+      margin-bottom: $padding;
+    }
+  }
+
+  &.collapsed {
+    & > .h5peditor-label > .icon:before {
+      content: "\e566";
+    }
+    & > .fields {
+      display: none;
+    }
+  }
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.h5peditor-button[aria-label] {
+
+  &:before {
+    content: attr(aria-label);
+    visibility: hidden;
+
+    position: absolute;
+    top: 115%;
+    right: -10%;
+    z-index: 2;
+
+    padding: 0.25em 0.75em;
+    background: $text-color;
+    color: $white;
+    white-space: nowrap;
+    font-size: $font-size-small;
+    line-height: 1.5;
+    box-shadow: 0 0 0.5em $form-input-placeholder-color;
+  }
+
+  &:hover:before {
+    visibility: visible;
+  }
+
+  &[aria-disabled="true"]:before {
+    display: none;
+  }
+}
