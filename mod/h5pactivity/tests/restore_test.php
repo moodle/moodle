@@ -111,6 +111,8 @@ class mod_h5pactivity_restore_testcase extends advanced_testcase {
         $this->assertEquals($activity->introformat, $activity2->introformat);
         $this->assertEquals($activity->grade, $activity2->grade);
         $this->assertEquals($activity->displayoptions, $activity2->displayoptions);
+        $this->assertEquals($activity->enabletracking, $activity2->enabletracking);
+        $this->assertEquals($activity->grademethod, $activity2->grademethod);
 
         // Compare attempts.
         if ($content && $userdata) {

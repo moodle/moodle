@@ -190,5 +190,48 @@ function xmldb_h5pactivity_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2020041400, 'h5pactivity');
     }
 
+    if ($oldversion < 2020041401) {
+
+        // Define field enabletracking to be added to h5pactivity.
+        $table = new xmldb_table('h5pactivity');
+        $field = new xmldb_field('enabletracking', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'displayoptions');
+
+        // Conditionally launch add field enabletracking.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field grademethod to be added to h5pactivity.
+        $field = new xmldb_field('grademethod', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1', 'enabletracking');
+
+        // Conditionally launch add field grademethod.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field scaled to be added to h5pactivity_attempts.
+        $table = new xmldb_table('h5pactivity_attempts');
+        $field = new xmldb_field('scaled', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'maxscore');
+
+        // Conditionally launch add field scaled.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Calculate all scaled values from current attempts.
+        $rs = $DB->get_recordset('h5pactivity_attempts');
+        foreach ($rs as $record) {
+            if (empty($record->maxscore)) {
+                continue;
+            }
+            $record->scaled = $record->rawscore / $record->maxscore;
+            $DB->update_record('h5pactivity_attempts', $record);
+        }
+        $rs->close();
+
+        // H5pactivity savepoint reached.
+        upgrade_mod_savepoint(true, 2020041401, 'h5pactivity');
+    }
+
     return true;
 }

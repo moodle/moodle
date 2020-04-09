@@ -22,6 +22,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_h5pactivity\local\manager;
+use mod_h5pactivity\local\grader;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -113,10 +116,15 @@ function h5pactivity_update_instance(stdClass $data, mod_h5pactivity_mod_form $m
 
     h5pactivity_set_mainfile($data);
 
-    // Extra fields required in grade related functions.
+    // Update gradings if grading method or tracking are modified.
     $data->cmid = $data->coursemodule;
-    h5pactivity_grade_item_update($data);
-    h5pactivity_update_grades($data);
+    $moduleinstance = $DB->get_record('h5pactivity', ['id' => $data->id]);
+    if (($moduleinstance->grademethod != $data->grademethod)
+            || $data->enabletracking != $moduleinstance->enabletracking) {
+        h5pactivity_update_grades($data);
+    } else {
+        h5pactivity_grade_item_update($data);
+    }
 
     return $DB->update_record('h5pactivity', $data);
 }
@@ -169,33 +177,10 @@ function h5pactivity_scale_used_anywhere(int $scaleid): bool {
  * @param mixed $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int int 0 if ok, error code otherwise
  */
-function h5pactivity_grade_item_update(stdClass $moduleinstance, $grades=null): int {
-    global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
-
-    $item = [];
-    $item['itemname'] = clean_param($moduleinstance->name, PARAM_NOTAGS);
-    $item['gradetype'] = GRADE_TYPE_VALUE;
-    if (isset($moduleinstance->cmidnumber)) {
-        $item['idnumber'] = $moduleinstance->cmidnumber;
-    }
-
-    if ($moduleinstance->grade > 0) {
-        $item['gradetype'] = GRADE_TYPE_VALUE;
-        $item['grademax']  = $moduleinstance->grade;
-        $item['grademin']  = 0;
-    } else if ($moduleinstance->grade < 0) {
-        $item['gradetype'] = GRADE_TYPE_SCALE;
-        $item['scaleid']   = -$moduleinstance->grade;
-    } else {
-        $item['gradetype'] = GRADE_TYPE_NONE;
-    }
-    if ($grades === 'reset') {
-        $params['reset'] = true;
-        $grades = null;
-    }
-    return grade_update('mod/h5pactivity', $moduleinstance->course, 'mod',
-            'h5pactivity', $moduleinstance->id, 0, null, $item);
+function h5pactivity_grade_item_update(stdClass $moduleinstance, $grades = null): int {
+    $idnumber = $moduleinstance->idnumber ?? '';
+    $grader = new grader($moduleinstance, $idnumber);
+    return $grader->grade_item_update($grades);
 }
 
 /**
@@ -205,11 +190,9 @@ function h5pactivity_grade_item_update(stdClass $moduleinstance, $grades=null): 
  * @return int Returns GRADE_UPDATE_OK, GRADE_UPDATE_FAILED, GRADE_UPDATE_MULTIPLE or GRADE_UPDATE_ITEM_LOCKED
  */
 function h5pactivity_grade_item_delete(stdClass $moduleinstance): ?int {
-    global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
-
-    return grade_update('mod/h5pactivity', $moduleinstance->course, 'mod', 'h5pactivity',
-            $moduleinstance->id, 0, null, ['deleted' => 1]);
+    $idnumber = $moduleinstance->idnumber ?? '';
+    $grader = new grader($moduleinstance, $idnumber);
+    return $grader->grade_item_delete();
 }
 
 /**
@@ -221,13 +204,29 @@ function h5pactivity_grade_item_delete(stdClass $moduleinstance): ?int {
  * @param int $userid Update grade of specific user only, 0 means all participants.
  */
 function h5pactivity_update_grades(stdClass $moduleinstance, int $userid = 0): void {
-    global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
+    $idnumber = $moduleinstance->idnumber ?? '';
+    $grader = new grader($moduleinstance, $idnumber);
+    $grader->update_grades($userid);
+}
 
-    // Populate array of grade objects indexed by userid.
-    $grades = [];
-    grade_update('mod/h5pactivity', $moduleinstance->course, 'mod',
-            'h5pactivity', $moduleinstance->id, 0, $grades);
+/**
+ * Rescale all grades for this activity and push the new grades to the gradebook.
+ *
+ * @param stdClass $course Course db record
+ * @param stdClass $cm Course module db record
+ * @param float $oldmin
+ * @param float $oldmax
+ * @param float $newmin
+ * @param float $newmax
+ * @return bool true if reescale is successful
+ */
+function h5pactivity_rescale_activity_grades(stdClass $course, stdClass $cm, float $oldmin,
+        float $oldmax, float $newmin, float $newmax): bool {
+
+    $manager = manager::create_from_coursemodule($cm);
+    $grader = $manager->get_grader();
+    $grader->update_grades();
+    return true;
 }
 
 /**
@@ -306,7 +305,7 @@ function h5pactivity_reset_gradebook(int $courseid, string $type=''): void {
 
     if ($activities = $DB->get_records_sql($sql, [$courseid])) {
         foreach ($activities as $activity) {
-            h5pactivity_grade_item_update($activity, true);
+            h5pactivity_grade_item_update($activity, 'reset');
         }
     }
 }

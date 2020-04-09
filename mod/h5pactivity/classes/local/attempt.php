@@ -36,18 +36,22 @@ defined('MOODLE_INTERNAL') || die();
  * @package    mod_h5pactivity
  * @since      Moodle 3.9
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class attempt {
 
     /** @var stdClass the h5pactivity_attempts record. */
     private $record;
 
+    /** @var boolean if the DB statement has been updated. */
+    private $scoreupdated = false;
+
     /**
      * Create a new attempt object.
      *
      * @param stdClass $record the h5pactivity_attempts record
      */
-    protected function __construct(stdClass $record) {
+    public function __construct(stdClass $record) {
         $this->record = $record;
         $this->results = null;
     }
@@ -199,12 +203,15 @@ class attempt {
         }
 
         // If no subcontent provided, results are propagated to the attempt itself.
-        if (empty($subcontent) && $record->rawscore) {
-            $this->record->rawscore = $record->rawscore;
-            $this->record->maxscore = $record->maxscore;
-            $this->record->duration = $record->duration;
-            $this->record->completion = $record->completion ?? null;
-            $this->record->success = $record->success ?? null;
+        if (empty($subcontent)) {
+            $this->set_duration($record->duration);
+            $this->set_completion($record->completion ?? null);
+            $this->set_success($record->success ?? null);
+            // If Maxscore is not empty means that the rawscore is valid (even if it's 0)
+            // and scaled score can be calculated.
+            if ($record->maxscore) {
+                $this->set_score($record->rawscore, $record->maxscore);
+            }
         }
         // Refresh current attempt.
         return $this->save();
@@ -218,7 +225,54 @@ class attempt {
     public function save(): bool {
         global $DB;
         $this->record->timemodified = time();
+        // Calculate scaled score.
+        if ($this->scoreupdated) {
+            if (empty($this->record->maxscore)) {
+                $this->record->scaled = 0;
+            } else {
+                $this->record->scaled = $this->record->rawscore / $this->record->maxscore;
+            }
+        }
         return $DB->update_record('h5pactivity_attempts', $this->record);
+    }
+
+    /**
+     * Set the attempt score.
+     *
+     * @param int|null $rawscore the attempt rawscore
+     * @param int|null $maxscore the attempt maxscore
+     */
+    public function set_score(?int $rawscore, ?int $maxscore): void {
+        $this->record->rawscore = $rawscore;
+        $this->record->maxscore = $maxscore;
+        $this->scoreupdated = true;
+    }
+
+    /**
+     * Set the attempt duration.
+     *
+     * @param int|null $duration the attempt duration
+     */
+    public function set_duration(?int $duration): void {
+        $this->record->duration = $duration;
+    }
+
+    /**
+     * Set the attempt completion.
+     *
+     * @param int|null $completion the attempt completion
+     */
+    public function set_completion(?int $completion): void {
+        $this->record->completion = $completion;
+    }
+
+    /**
+     * Set the attempt success.
+     *
+     * @param int|null $success the attempt success
+     */
+    public function set_success(?int $success): void {
+        $this->record->success = $success;
     }
 
     /**
@@ -376,15 +430,15 @@ class attempt {
      * @return int the rawscore value
      */
     public function get_rawscore(): int {
-        return $this->record->maxscore;
+        return $this->record->rawscore;
     }
 
     /**
      * Return the attempt duration.
      *
-     * @return int the duration value
+     * @return int|null the duration value
      */
-    public function get_duration(): int {
+    public function get_duration(): ?int {
         return $this->record->duration;
     }
 
@@ -404,5 +458,17 @@ class attempt {
      */
     public function get_success(): ?int {
         return $this->record->success;
+    }
+
+    /**
+     * Return if the attempt has been modified.
+     *
+     * Note: adding a result only add track information unless the statement does
+     * not specify subcontent. In this case this will update also the statement.
+     *
+     * @return bool if the attempt score have been modified
+     */
+    public function get_scoreupdated(): bool {
+        return $this->scoreupdated;
     }
 }

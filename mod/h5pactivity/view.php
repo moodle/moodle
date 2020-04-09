@@ -22,6 +22,12 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_h5pactivity\local\manager;
+use mod_h5pactivity\event\course_module_viewed;
+use core_h5p\factory;
+use core_h5p\player;
+use core_h5p\helper;
+
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
 require_once($CFG->libdir.'/completionlib.php');
@@ -32,11 +38,13 @@ list ($course, $cm) = get_course_and_cm_from_cmid($id, 'h5pactivity');
 
 require_login($course, true, $cm);
 
-$moduleinstance = $DB->get_record('h5pactivity', ['id' => $cm->instance], '*', MUST_EXIST);
+$manager = manager::create_from_coursemodule($cm);
 
-$context = context_module::instance($cm->id);
+$moduleinstance = $manager->get_instance();
 
-$event = \mod_h5pactivity\event\course_module_viewed::create([
+$context = $manager->get_context();
+
+$event = course_module_viewed::create([
     'objectid' => $moduleinstance->id,
     'context' => $context
 ]);
@@ -49,9 +57,9 @@ $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
 // Convert display options to a valid object.
-$factory = new \core_h5p\factory();
+$factory = new factory();
 $core = $factory->get_core();
-$config = \core_h5p\helper::decode_display_options($core, $moduleinstance->displayoptions);
+$config = core_h5p\helper::decode_display_options($core, $moduleinstance->displayoptions);
 
 // Instantiate player.
 $fs = get_file_storage();
@@ -73,7 +81,7 @@ $PAGE->set_context($context);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($moduleinstance->name));
 
-if (has_capability('mod/h5pactivity:submit', $context, null, false)) {
+if ($manager->is_tracking_enabled()) {
     $trackcomponent = 'mod_h5pactivity';
 } else {
     $trackcomponent = '';
@@ -81,6 +89,6 @@ if (has_capability('mod/h5pactivity:submit', $context, null, false)) {
     echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING);
 }
 
-echo \core_h5p\player::display($fileurl, $config, true, $trackcomponent);
+echo player::display($fileurl, $config, true, $trackcomponent);
 
 echo $OUTPUT->footer();

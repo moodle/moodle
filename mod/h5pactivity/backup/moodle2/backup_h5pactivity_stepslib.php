@@ -41,7 +41,7 @@ class backup_h5pactivity_activity_structure_step extends backup_activity_structu
         // Replace with the attributes and final elements that the element will handle.
         $attributes = ['id'];
         $finalelements = ['name', 'timecreated', 'timemodified', 'intro',
-                'introformat', 'grade', 'displayoptions'];
+                'introformat', 'grade', 'displayoptions', 'enabletracking', 'grademethod'];
         $root = new backup_nested_element('h5pactivity', $attributes, $finalelements);
 
         $attempts = new backup_nested_element('attempts');
