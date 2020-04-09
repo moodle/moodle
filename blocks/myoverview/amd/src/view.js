@@ -33,6 +33,7 @@ define(
     'core_course/events',
     'block_myoverview/selectors',
     'core/paged_content_events',
+    'core/aria',
 ],
 function(
     $,
@@ -44,7 +45,8 @@ function(
     Templates,
     CourseEvents,
     Selectors,
-    PagedContentEvents
+    PagedContentEvents,
+    Aria
 ) {
 
     var SELECTORS = {
@@ -174,12 +176,14 @@ function(
      */
     var hideFavouriteIcon = function(root, courseId) {
         var iconContainer = getFavouriteIconContainer(root, courseId);
+
         var isFavouriteIcon = iconContainer.find(SELECTORS.ICON_IS_FAVOURITE);
         isFavouriteIcon.addClass('hidden');
-        isFavouriteIcon.attr('aria-hidden', true);
+        Aria.hide(isFavouriteIcon);
+
         var notFavourteIcon = iconContainer.find(SELECTORS.ICON_NOT_FAVOURITE);
         notFavourteIcon.removeClass('hidden');
-        notFavourteIcon.attr('aria-hidden', false);
+        Aria.unhide(notFavourteIcon);
     };
 
     /**
@@ -190,12 +194,14 @@ function(
      */
     var showFavouriteIcon = function(root, courseId) {
         var iconContainer = getFavouriteIconContainer(root, courseId);
+
         var isFavouriteIcon = iconContainer.find(SELECTORS.ICON_IS_FAVOURITE);
         isFavouriteIcon.removeClass('hidden');
-        isFavouriteIcon.attr('aria-hidden', false);
+        Aria.unhide(isFavouriteIcon);
+
         var notFavourteIcon = iconContainer.find(SELECTORS.ICON_NOT_FAVOURITE);
         notFavourteIcon.addClass('hidden');
-        notFavourteIcon.attr('aria-hidden', true);
+        Aria.hide(notFavourteIcon);
     };
 
     /**
