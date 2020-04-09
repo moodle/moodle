@@ -178,9 +178,10 @@ class local_report_user_completion_table extends table_sql {
                                                'courseid' => $row->courseid))) {
                     $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
                 } else {
-                    $delaction .= '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete') . '</a>';
-                    if (!empty($row->timeenrolled)) {
+                    if (!empty($row->timecompleted)) {
                         $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                    } else if ($DB->get_record('companylicense_users', array('userid' => $row->userid, 'licensecourseid' => $row->courseid, 'licenseid' => $row->licenseid, 'issuedate' => $row->licenseallocated, 'isusing' => 1))) {
+                        $delaction .= '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete') . '</a>';
                     }
                 }
             }

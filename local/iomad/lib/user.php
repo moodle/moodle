@@ -789,12 +789,7 @@ class company_user {
 
             // Remove completions
             $DB->delete_records('course_completions', array('userid' => $userid, 'course' => $courseid));
-            if ($compitems = $DB->get_records('course_completion_criteria', array('course' => $courseid))) {
-                foreach ($compitems as $compitem) {
-                    $DB->delete_records('course_completion_crit_compl', array('userid' => $userid,
-                                                                              'criteriaid' => $compitem->id));
-                }
-            }
+            $DB->delete_records('course_completion_crit_compl', array('userid' => $userid, 'course' => $courseid));
             if ($modules = $DB->get_records_sql("SELECT id FROM {course_modules} WHERE course = :course AND completion != 0", array('course' => $courseid))) {
                 foreach ($modules as $module) {
                     $DB->delete_records('course_modules_completion', array('userid' => $userid, 'coursemoduleid' => $module->id));
@@ -915,7 +910,7 @@ class company_user {
                                 $newlicenseid = $DB->insert_record('companylicense_users', (array) $newlicense);
 
                                 // Create an event.
-                                $eventother = array('licenseid' => $licenserecord->id,
+                                $eventother = array('licenseid' => $latestlicense->id,
                                                     'issuedate' => time(),
                                                     'duedate' => 0);
                                 $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
@@ -927,9 +922,15 @@ class company_user {
                             }
                         }
                     }
-                } else if ($action == 'delete') {
-                    $license->isusing = 0;
-                    $DB->delete_records('companylicense_users', array('id' => $license->id));
+                }
+                if ($action == 'delete') {
+                    if ($license->isusing == 0) {
+                        $DB->delete_records('companylicense_users', array('id' => $license->id));
+                        company::update_license_usage($license->id);
+                    } else {
+                        $license->timecompleted = time();
+                        $DB->update_record('companylicense_users', $license);
+                    }
                 }
             }
             // All OK commit the transaction.
