@@ -35,6 +35,7 @@ define([
     'core_calendar/events',
     'core_calendar/modal_delete',
     'core_calendar/selectors',
+    'core/pending',
 ],
 function(
     $,
@@ -49,7 +50,8 @@ function(
     CalendarRepository,
     CalendarEvents,
     ModalDelete,
-    CalendarSelectors
+    CalendarSelectors,
+    Pending
 ) {
 
     /**
@@ -101,13 +103,6 @@ function(
             );
         }
 
-        deletePromise.then(function(deleteModal) {
-            deleteModal.show();
-
-            return;
-        })
-        .fail(Notification.exception);
-
         var stringsPromise = Str.get_strings(deleteStrings);
 
         var finalPromise = $.when(stringsPromise, deletePromise)
@@ -118,27 +113,33 @@ function(
                 deleteModal.setSaveButtonText(strings[0]);
             }
 
+            deleteModal.show();
+
             deleteModal.getRoot().on(ModalEvents.save, function() {
+                var pendingPromise = new Pending('calendar/crud:initModal:deletedevent');
                 CalendarRepository.deleteEvent(eventId, false)
                     .then(function() {
                         $('body').trigger(CalendarEvents.deleted, [eventId, false]);
                         return;
                     })
+                    .then(pendingPromise.resolve)
                     .catch(Notification.exception);
             });
 
             deleteModal.getRoot().on(CalendarEvents.deleteAll, function() {
+                var pendingPromise = new Pending('calendar/crud:initModal:deletedallevent');
                 CalendarRepository.deleteEvent(eventId, true)
                     .then(function() {
                         $('body').trigger(CalendarEvents.deleted, [eventId, true]);
                         return;
                     })
+                    .then(pendingPromise.resolve)
                     .catch(Notification.exception);
             });
 
             return deleteModal;
         })
-        .fail(Notification.exception);
+        .catch(Notification.exception);
 
         return finalPromise;
     }
