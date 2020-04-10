@@ -21,31 +21,56 @@
 
     No example given as the js will fire and create records from the template library page.
 }}
+{{#search}}
+    <form class="row">
+        <div class="input-group pt-4 pb-1 col-md-6">
+            <label for="search">
+                <span class="sr-only">{{#str}} searchactivitiesbyname, course {{/str}}</span>
+            </label>
+            <input type="text" name="search" id="search" class="form-control rounded-left" autocomplete="off"
+                   placeholder="{{#str}}search, core {{/str}}" {{#query}} value="{{query}}" autofocus {{/query}}
+            >
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-outline-secondary rounded-right" type="button">
+                    <i class="icon fa fa-search fa-fw m-0" aria-hidden="true"></i>
+                    <span class="sr-only">{{#str}}submitsearch, course {{/str}}</span>
+                </button>
+          </div>
+        </div>
+    </form>
+    {{#query}}
+        <div class="pt-1 pb-1">
+            <span role="alert">{{#str}} searchresults, course, {{searchresultsnumber}} {{/str}}</span>
+        </div>
+    {{/query}}
+{{/search}}
 {{#categories}}
-<h3>{{categoryname}}</h3>
-<table class="table table-striped table-hover">
-    <thead>
-        <tr class="d-flex">
-            <th scope="col" class="col-7 c0">{{#str}}module, course{{/str}}</th>
-            <th scope="col" class="col-5 c1">{{#str}}recommend, course{{/str}}</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#categorydata}}
-        <tr class="d-flex">
-            <td class="col-7 c0"><span>{{{icon}}}</span>{{name}}</td>
-            {{#id}}
-            <td class="col-5 c1 colselect">
-            <input class="activity-recommend-checkbox" type="checkbox" aria-label="{{#str}}recommendcheckbox, course, {{name}}{{/str}}" data-area="{{componentname}}" data-id="{{id}}" {{#recommended}}checked="checked"{{/recommended}}  />
-            </td>
-            {{/id}}
-            {{^id}}
-            <td class="col-5"></td>
-            {{/id}}
-        </tr>
-        {{/categorydata}}
-    </tbody>
-</table>
+    {{#hascategorydata}}
+        <h3 class="pt-4">{{categoryname}}</h3>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr class="d-flex">
+                    <th scope="col" class="col-7 c0">{{#str}}module, course{{/str}}</th>
+                    <th scope="col" class="col-5 c1">{{#str}}recommend, course{{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#categorydata}}
+                <tr class="d-flex">
+                    <td class="col-7 c0"><span>{{{icon}}}</span>{{name}}</td>
+                    {{#id}}
+                    <td class="col-5 c1 colselect">
+                    <input class="activity-recommend-checkbox" type="checkbox" aria-label="{{#str}}recommendcheckbox, course, {{name}}{{/str}}" data-area="{{componentname}}" data-id="{{id}}" {{#recommended}}checked="checked"{{/recommended}}  />
+                    </td>
+                    {{/id}}
+                    {{^id}}
+                    <td class="col-5"></td>
+                    {{/id}}
+                </tr>
+                {{/categorydata}}
+            </tbody>
+        </table>
+    {{/hascategorydata}}
 {{/categories}}
 {{#js}}
 require([
