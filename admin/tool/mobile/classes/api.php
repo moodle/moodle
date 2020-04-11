@@ -49,6 +49,8 @@ class api {
     const LOGIN_VIA_EMBEDDED_BROWSER = 3;
     /** @var int seconds an auto-login key will expire. */
     const LOGIN_KEY_TTL = 60;
+    /** @var string URL of the Moodle Apps Portal */
+    const MOODLE_APPS_PORTAL_URL = 'https://apps.moodle.com';
 
     /**
      * Returns a list of Moodle plugins supporting the mobile app.
