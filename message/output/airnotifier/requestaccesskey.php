@@ -24,8 +24,6 @@
 
 require('../../../config.php');
 
-define('AIRNOTIFIER_PUBLICURL', 'https://messages.moodle.net');
-
 $PAGE->set_url(new moodle_url('/message/output/airnotifier/requestaccesskey.php'));
 $PAGE->set_context(context_system::instance());
 
@@ -48,7 +46,7 @@ $msg = "";
 
 // If we are requesting a key to the official message system, verify first that this site is registered.
 // This check is also done in Airnotifier.
-if (strpos($CFG->airnotifierurl, AIRNOTIFIER_PUBLICURL) !== false ) {
+if (strpos($CFG->airnotifierurl, message_airnotifier_manager::AIRNOTIFIER_PUBLICURL) !== false ) {
     $adminrenderer = $PAGE->get_renderer('core', 'admin');
     $msg = $adminrenderer->warn_if_not_registered();
     if ($msg) {
