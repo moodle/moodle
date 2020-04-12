@@ -795,6 +795,8 @@ class framework implements \H5PFrameworkInterface {
             $content['library']['libraryId'] = $mainlibrary->id;
         }
 
+        $content['disable'] = $content['disable'] ?? null;
+
         $data = [
             'jsoncontent' => $content['params'],
             'displayoptions' => $content['disable'],
@@ -1162,7 +1164,7 @@ class framework implements \H5PFrameworkInterface {
 
         $sql = "SELECT hc.id, hc.jsoncontent, hc.displayoptions, hl.id AS libraryid,
                        hl.machinename, hl.title, hl.majorversion, hl.minorversion, hl.fullscreen,
-                       hl.embedtypes, hl.semantics, hc.filtered
+                       hl.embedtypes, hl.semantics, hc.filtered, hc.pathnamehash
                   FROM {h5p} hc
                   JOIN {h5p_libraries} hl ON hl.id = hc.mainlibraryid
                  WHERE hc.id = :h5pid";
@@ -1196,8 +1198,16 @@ class framework implements \H5PFrameworkInterface {
             'libraryMinorVersion' => $data->minorversion,
             'libraryEmbedTypes' => $data->embedtypes,
             'libraryFullscreen' => $data->fullscreen,
-            'metadata' => ''
+            'metadata' => '',
+            'pathnamehash' => $data->pathnamehash
         );
+
+        $params = json_decode($data->jsoncontent);
+        if (empty($params->metadata)) {
+            $params->metadata = new \stdClass();
+        }
+        $content['metadata'] = $params->metadata;
+        $content['params'] = json_encode($params->params ?? $params);
 
         return $content;
     }

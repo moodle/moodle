@@ -105,4 +105,75 @@ class api {
 
         return $DB->get_record('h5p_libraries', ['id' => $libraryid], '*', MUST_EXIST);
     }
+
+    /**
+     * Returns a library as an object with properties that correspond to the fetched row's field names.
+     *
+     * @param array $params An associative array with the values of the machinename, majorversion and minorversion fields.
+     * @param bool $configurable A library that has semantics so it can be configured in the editor.
+     * @param string $fields Library attributes to retrieve.
+     *
+     * @return \stdClass|null An object with one attribute for each field name in $fields param.
+     */
+    public static function get_library_details(array $params, bool $configurable, string $fields = ''): ?\stdClass {
+        global $DB;
+
+        $select = "machinename = :machinename
+                   AND majorversion = :majorversion
+                   AND minorversion = :minorversion";
+
+        if ($configurable) {
+            $select .= " AND semantics IS NOT NULL";
+        }
+
+        $fields = $fields ?: '*';
+
+        $record = $DB->get_record_select('h5p_libraries', $select, $params, $fields);
+
+        return $record ?: null;
+    }
+
+    /**
+     * Get all the H5P content type libraries versions.
+     *
+     * @param string|null $fields Library fields to return.
+     *
+     * @return array An array with an object for each content type library installed.
+     */
+    public static function get_contenttype_libraries(?string $fields = ''): array {
+        global $DB;
+
+        $libraries = [];
+        $fields = $fields ?: '*';
+        $select = "runnable = :runnable
+                   AND semantics IS NOT NULL";
+        $params = ['runnable' => 1];
+        $sort = 'title, majorversion DESC, minorversion DESC';
+
+        $records = $DB->get_records_select('h5p_libraries', $select, $params, $sort, $fields);
+
+        $added = [];
+        foreach ($records as $library) {
+            // Remove unique index.
+            unset($library->id);
+
+            // Convert snakes to camels.
+            $library->majorVersion = (int) $library->majorversion;
+            unset($library->major_version);
+            $library->minorVersion = (int) $library->minorversion;
+            unset($library->minorversion);
+
+            // If we already add this library means that it is an old version,as the previous query was sorted by version.
+            if (isset($added[$library->name])) {
+                $library->isOld = true;
+            } else {
+                $added[$library->name] = true;
+            }
+
+            // Add new library.
+            $libraries[] = $library;
+        }
+
+        return $libraries;
+    }
 }

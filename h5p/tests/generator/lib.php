@@ -381,4 +381,39 @@ class core_h5p_generator extends \component_generator_base {
 
         return [$installedtypes, count($typestonotinstall)];
     }
+
+    /**
+     * Add a record on files table for a file that belongs to
+     *
+     * @param string $file File name and path inside the filearea.
+     * @param string $filearea The filearea in which the file is ("editor" or "content").
+     * @param int $contentid Id of the H5P content to which the file belongs. null if the file is in the editor.
+     *
+     * @return stored_file;
+     * @throws coding_exception
+     */
+    public function create_content_file(string $file, string $filearea, int $contentid = 0): stored_file {
+        $filepath = '/'.dirname($file).'/';
+        $filename = basename($file);
+
+        if (($filearea === 'content') && ($contentid == 0)) {
+            throw new coding_exception('Files belonging to an H5P content must specify the H5P content id');
+        }
+
+        $content = 'fake content';
+
+        $systemcontext = context_system::instance();
+
+        $filerecord = array(
+            'contextid' => $systemcontext->id,
+            'component' => \core_h5p\file_storage::COMPONENT,
+            'filearea'  => $filearea,
+            'itemid'    => ($filearea === 'editor') ? 0 : $contentid,
+            'filepath'  => $filepath,
+            'filename'  => $filename,
+        );
+
+        $fs = new file_storage();
+        return $fs->create_file_from_string($filerecord, $content);
+    }
 }

@@ -24,8 +24,6 @@
 
 namespace core_h5p\local\library;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * H5P autoloader management class.
  *
@@ -41,13 +39,11 @@ class autoloader {
      */
     public static function get_all_handlers(): array {
         $handlers = [];
-        foreach (\core_component::get_plugin_types() as $ptype => $unused) {
-            $plugins = \core_component::get_plugin_list_with_class($ptype, 'local\library\handler') +
-                \core_component::get_plugin_list_with_class($ptype, 'local_library_handler');
-            // Allow plugins to have the class either with namespace or without (useful for unittest).
-            foreach ($plugins as $pname => $class) {
-                $handlers[$pname] = $class;
-            }
+        $plugins = \core_component::get_plugin_list_with_class('h5plib', 'local\library\handler') +
+            \core_component::get_plugin_list_with_class('h5plib', 'local_library_handler');
+        // Allow plugins to have the class either with namespace or without (useful for unittest).
+        foreach ($plugins as $pname => $class) {
+            $handlers[$pname] = $class;
         }
 
         return $handlers;
@@ -113,6 +109,27 @@ class autoloader {
      */
     public static function get_h5p_core_library_url(?string $filepath = null, ?array $params = null): ?\moodle_url {
         return component_class_callback(self::get_handler_classname(), 'get_h5p_core_library_url', [$filepath, $params]);
+    }
+
+    /**
+     * Get a URL for the current H5P Editor Library.
+     *
+     * @param string $filepath The path within the h5p root.
+     * @param array $params These params override current params or add new.
+     * @return null|\moodle_url The moodle_url instance to a file in the H5P Editor library.
+     */
+    public static function get_h5p_editor_library_url(?string $filepath = null, ?array $params = null): ?\moodle_url {
+        return component_class_callback(self::get_handler_classname(), 'get_h5p_editor_library_url', [$filepath, $params]);
+    }
+
+    /**
+     * Get the base path for the current H5P Editor Library.
+     *
+     * @param string $filepath The path within the h5p root.
+     * @return string  Path to a file in the H5P Editor library.
+     */
+    public static function get_h5p_editor_library_base(?string $filepath = null): string {
+        return component_class_callback(self::get_handler_classname(), 'get_h5p_editor_library_base', [$filepath]);
     }
 
     /**
