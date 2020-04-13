@@ -58,6 +58,9 @@ if ($hassiteconfig) {
 
         // Type of login.
         $temp = new admin_settingpage('mobileauthentication', new lang_string('mobileauthentication', 'tool_mobile'));
+
+        $temp->add(new admin_setting_heading('tool_mobile/moodleappsportalfeaturesauth', '', $featuresnotice));
+
         $options = array(
             tool_mobile\api::LOGIN_VIA_APP => new lang_string('loginintheapp', 'tool_mobile'),
             tool_mobile\api::LOGIN_VIA_BROWSER => new lang_string('logininthebrowser', 'tool_mobile'),
@@ -66,6 +69,10 @@ if ($hassiteconfig) {
         $temp->add(new admin_setting_configselect('tool_mobile/typeoflogin',
                     new lang_string('typeoflogin', 'tool_mobile'),
                     new lang_string('typeoflogin_desc', 'tool_mobile'), 1, $options));
+
+        $temp->add(new admin_setting_configcheckbox('tool_mobile/enableqrlogin',
+                    new lang_string('enableqrlogin', 'tool_mobile'),
+                    new lang_string('enableqrlogin_desc', 'tool_mobile'), 1));
 
         $temp->add(new admin_setting_configtext('tool_mobile/forcedurlscheme',
                     new lang_string('forcedurlscheme_key', 'tool_mobile'),
