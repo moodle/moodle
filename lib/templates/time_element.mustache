@@ -52,10 +52,27 @@
         if (!root.getAttribute('datetime')) {
             var dateTimeFormat = root.getAttribute('data-datetimeformat');
             var timestamp = root.getAttribute('data-timestamp');
-            if (dateTimeFormat === '%Y-%m-%dT%H:%M%z') {
-                // If the date time format is in ISO-8601 standards format, convert directly by JS.
+
+            if (!dateTimeFormat.match(/%(?![YmdHMSzZ])./g)) {
+                var zeroPad = function(nNum, nPad) {
+                    return ((Math.pow(10, nPad) + nNum) + '').slice(1);
+                };
+
                 var date = new Date(timestamp * 1000);
-                root.setAttribute('datetime', date.toISOString());
+
+                var datetime = dateTimeFormat.replace(/%./g, function(sMatch) {
+                    return (({
+                        '%Y': date.getFullYear(),
+                        '%m': zeroPad(date.getMonth() + 1, 2),
+                        '%d': zeroPad(date.getDate(), 2),
+                        '%H': zeroPad(date.getHours(), 2),
+                        '%M': zeroPad(date.getMinutes(), 2),
+                        '%S': zeroPad(date.getSeconds(), 2),
+                        '%z': date.toTimeString().replace(/.+GMT([+-]\d+).+/, '$1'),
+                        '%Z': date.toTimeString().replace(/.+\((.+?)\)$/, '$1')
+                    }[sMatch] || '') + '') || sMatch;
+                });
+                root.setAttribute('datetime', datetime);
             }  else {
                 // Otherwise, use core/user_date.
                 var timestamps = [{
