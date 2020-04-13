@@ -120,7 +120,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_string() result value
      *
-     * @return string
+     * @return external_description
      * @since Moodle 2.4
      */
     public static function get_string_returns() {
@@ -189,7 +189,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_string() result value
      *
-     * @return array
+     * @return external_description
      * @since Moodle 2.4
      */
     public static function get_strings_returns() {
@@ -281,7 +281,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_user_dates() result value
      *
-     * @return array
+     * @return external_description
      */
     public static function get_user_dates_returns() {
         return new external_single_structure(
@@ -341,7 +341,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_component_strings() result value
      *
-     * @return array
+     * @return external_description
      * @since Moodle 2.4
      */
     public static function get_component_strings_returns() {
@@ -429,7 +429,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_fragment() result value
      *
-     * @return array
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_fragment_returns() {
