@@ -20,7 +20,6 @@ Feature: Add H5P activity
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
 
-
   @javascript
   Scenario: Add a h5pactivity activity to a course
     When I add a "H5P activity" to section "1"
