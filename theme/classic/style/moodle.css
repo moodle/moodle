@@ -11516,6 +11516,15 @@ body.h5p-embed .h5pmessages {
   float: right !important;
   /* stylelint-disable-line declaration-no-important */ }
 
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden; }
+
+.word-break-all {
+  word-break: break-all; }
+
 .emoji-picker {
   width: 350px;
   height: 400px; }
@@ -12750,59 +12759,17 @@ table.calendartable caption {
 .cal_courses_flt {
   color: #868e96; }
 
-/* Use a variable for the drawer background colors. */
+@media (max-width: 767.98px) {
+  .content-bank-container .cb-file {
+    flex-basis: 50%; } }
+
+@media (min-width: 576px) {
+  .content-bank-container .cb-file {
+    max-width: 120px;
+    min-width: 120px; } }
+
 .content-bank-container {
-  min-height: 140px;
-  padding-bottom: 15px;
-  overflow: hidden; }
-
-.cb-navbar {
-  border-bottom: 1px solid #e5e5e5;
-  background-color: #f2f2f2;
-  min-height: 40px;
-  padding: 10px; }
-
-.cb-iconview .cb-file {
-  float: left;
-  margin: 10px 10px 35px; }
-
-.cb-iconview .cb-thumbnail {
-  min-width: 110px;
-  min-height: 110px;
-  line-height: 110px;
-  border: 1px solid #fff; }
-  .cb-iconview .cb-thumbnail .icon {
-    margin: 0; }
-  .cb-iconview .cb-thumbnail img {
-    padding: 3px;
-    vertical-align: middle; }
-
-.cb-iconview .cb-thumbnail:hover {
-  background: #fff;
-  border: 1px solid #ddd; }
-
-.cb-iconview .cb-contentname-field {
-  height: 33px;
-  word-wrap: break-word;
-  overflow: hidden; }
-  .cb-iconview .cb-contentname-field .cb-contentname {
-    background: #fff;
-    padding: 5px 10px 12px;
-    min-width: 112px; }
-
-.cb-iconview .cb-file:focus .cb-contentname-field,
-.cb-iconview .cb-file:hover .cb-contentname-field {
-  overflow: visible;
-  z-index: 1000; }
-
-.cb-iconview .cb-file:focus .cb-contentname,
-.cb-iconview .cb-file:hover .cb-contentname {
-  overflow: inherit;
-  white-space: normal;
-  text-overflow: inherit; }
-
-.content-bank-toolbar .cb-tool .icon {
-  margin: 0.5em; }
+  min-height: 140px; }
 
 /* course.less */
 /* COURSE CONTENT */
