@@ -375,12 +375,8 @@ module.exports = function(grunt) {
         formatter.printResults(results);
 
         // Report on the results.
-        // We exit 1 if there is at least one error, otherwise we exit cleanly.
-        if (results.some(result => result.errors.length > 0)) {
-            done(1);
-        } else {
-            done(0);
-        }
+        // The done function takes a bool whereby a falsey statement causes the task to fail.
+        done(results.every(result => result.errors.length === 0));
     };
 
     tasks.startup = function() {
