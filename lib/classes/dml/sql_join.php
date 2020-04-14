@@ -31,6 +31,14 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * An object that contains sql join fragments.
  *
+ * An example of how to use this class in a simple query, where you have got
+ * a join that is a join to the user table:
+ *
+ * $users = $DB->get_records_sql("SELECT u.*
+ *         FROM {user} u
+ *         {$sqljoin->joins}
+ *         WHERE {$sqljoin->wheres}", $sqljoin->params);
+ *
  * @since      Moodle 3.1
  * @package    core
  * @category   dml
@@ -55,15 +63,30 @@ class sql_join {
     public $params;
 
     /**
+     * @var bool if true this join is guaranteed to never match any rows.
+     *      In this case, the calling code may be able to completely
+     *      skip doing the database query.
+     * @since Moodle 3.9/3.8.3/3.7.6.
+     */
+    public $cannotmatchanyrows;
+
+    /**
      * Create an object that contains sql join fragments.
+     *
+     * Note, even if you set $cannotmatchanyrows to true, it is
+     * important to also set the other fields because the calling
+     * code is not required to check it. For example
+     * new \core\dml\sql_join('', '1 = 2', [], true);
      *
      * @param string $joins The join sql fragment.
      * @param string $wheres The where sql fragment.
      * @param array $params Any parameter values.
+     * @param bool $cannotmatchanyrows If true, this join is guaranteed to match no rows. See comment on the field above.
      */
-    public function __construct($joins = '', $wheres = '', $params = array()) {
+    public function __construct($joins = '', $wheres = '', $params = array(), $cannotmatchanyrows = false) {
         $this->joins = $joins;
         $this->wheres = $wheres;
         $this->params = $params;
+        $this->cannotmatchanyrows = $cannotmatchanyrows;
     }
 }
