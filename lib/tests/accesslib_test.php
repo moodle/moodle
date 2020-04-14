@@ -3850,10 +3850,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse(array_key_exists($guest->id, $users));
     }
 
-    /**
-     * Test updating of role capabilities during upgrade
-     * @return void
-     */
     public function test_get_with_capability_sql() {
         global $DB;
 
@@ -3903,6 +3899,73 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse(array_key_exists($admin->id, $users));
         $this->assertTrue(array_key_exists($student->id, $users));
         $this->assertFalse(array_key_exists($guest->id, $users));
+    }
+
+
+    /**
+     * Get the test cases for {@link test_get_with_capability_join_when_overrides_present()}.
+     *
+     * The particular capabilties used here do not really matter. What is important is
+     * that they are capabilities which the Student roles has by default, but the
+     * authenticated suser role does not.
+     *
+     * @return array
+     */
+    public function get_get_with_capability_join_override_cases() {
+        return [
+                'no overrides' => [true, []],
+                'one override' => [true, ['moodle/course:viewscales']],
+                'both overrides' => [false, ['moodle/course:viewscales', 'moodle/question:flag']],
+        ];
+    }
+
+    /**
+     * Test get_with_capability_join.
+     *
+     * @dataProvider get_get_with_capability_join_override_cases
+     *
+     * @param bool $studentshouldbereturned whether, with this combination of capabilities, the student should be in the results.
+     * @param array $capabilitiestoprevent capabilities to override to prevent in the course context.
+     */
+    public function test_get_with_capability_join_when_overrides_present(
+            bool $studentshouldbereturned, array $capabilitiestoprevent) {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Create a course.
+        $category = $generator->create_category();
+        $course = $generator->create_course(['category' => $category->id]);
+
+        // Create a user.
+        $student = $generator->create_user();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
+        $generator->enrol_user($student->id, $course->id, $studentrole->id);
+
+        // This test assumes that by default the student roles has the two
+        // capabilities. Check this now in case the role definitions are every changed.
+        $coursecontext = context_course::instance($course->id);
+        $this->assertTrue(has_capability('moodle/course:viewscales', $coursecontext, $student));
+        $this->assertTrue(has_capability('moodle/question:flag', $coursecontext, $student));
+
+        // We test cases where there are a varying number of prevent overrides.
+        foreach ($capabilitiestoprevent as $capability) {
+            role_change_permission($studentrole->id, $coursecontext, $capability, CAP_PREVENT);
+        }
+
+        // So now, assemble our query using the method under test, and verify that it returns the student.
+        $sqljoin = get_with_capability_join($coursecontext,
+                ['moodle/course:viewscales', 'moodle/question:flag'], 'u.id');
+
+        $users = $DB->get_records_sql("SELECT u.*
+                  FROM {user} u
+                       {$sqljoin->joins}
+                 WHERE {$sqljoin->wheres}", $sqljoin->params);
+        if ($studentshouldbereturned) {
+            $this->assertEquals([$student->id], array_keys($users));
+        } else {
+            $this->assertEmpty($users);
+        }
     }
 
     /**

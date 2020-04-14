@@ -3427,35 +3427,24 @@ function set_role_contextlevels($roleid, array $contextlevels) {
 }
 
 /**
- * Who has this capability in this context?
+ * Gets sql joins for finding users with capability in the given context.
  *
- * This can be a very expensive call - use sparingly and keep
- * the results if you are going to need them again soon.
- *
- * Note if $fields is empty this function attempts to get u.*
- * which can get rather large - and has a serious perf impact
- * on some DBs.
- *
- * @param context $context
- * @param string|array $capability - capability name(s)
- * @param string $fields - fields to be pulled. The user table is aliased to 'u'. u.id MUST be included.
- * @param string $sort - the sort order. Default is lastaccess time.
- * @param mixed $limitfrom - number of records to skip (offset)
- * @param mixed $limitnum - number of records to fetch
- * @param string|array $groups - single group or array of groups - only return
- *               users who are in one of these group(s).
- * @param string|array $exceptions - list of users to exclude, comma separated or array
- * @param bool $doanything_ignored not used any more, admin accounts are never returned
- * @param bool $view_ignored - use get_enrolled_sql() instead
- * @param bool $useviewallgroups if $groups is set the return users who
- *               have capability both $capability and moodle/site:accessallgroups
- *               in this context, as well as users who have $capability and who are
- *               in $groups.
- * @return array of user records
+ * @param context $context Context for the join.
+ * @param string|array $capability Capability name or array of names.
+ *      If an array is provided then this is the equivalent of a logical 'OR',
+ *      i.e. the user needs to have one of these capabilities.
+ * @param string $useridcolumn e.g. 'u.id'.
+ * @return \core\dml\sql_join Contains joins, wheres, params.
+ *      This function will set ->cannotmatchanyrows if applicable.
+ *      This may let you skip doing a DB query.
  */
-function get_users_by_capability(context $context, $capability, $fields = '', $sort = '', $limitfrom = '', $limitnum = '',
-                                 $groups = '', $exceptions = '', $doanything_ignored = null, $view_ignored = null, $useviewallgroups = false) {
+function get_with_capability_join(context $context, $capability, $useridcolumn) {
     global $CFG, $DB;
+
+    // Add a unique prefix to param names to ensure they are unique.
+    static $i = 0;
+    $i++;
+    $paramprefix = 'eu' . $i . '_';
 
     $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
     $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : 0;
@@ -3464,16 +3453,8 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
     $ctxids = str_replace('/', ',', $ctxids);
 
     // Context is the frontpage
-    $iscoursepage = false; // coursepage other than fp
-    $isfrontpage = false;
-    if ($context->contextlevel == CONTEXT_COURSE) {
-        if ($context->instanceid == SITEID) {
-            $isfrontpage = true;
-        } else {
-            $iscoursepage = true;
-        }
-    }
-    $isfrontpage = ($isfrontpage || is_inside_frontpage($context));
+    $isfrontpage = $context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID;
+    $isfrontpage = $isfrontpage || is_inside_frontpage($context);
 
     $caps = (array)$capability;
 
@@ -3482,8 +3463,8 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
 
     // we need to find out all roles that have these capabilities either in definition or in overrides
     $defs = array();
-    list($incontexts, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'con');
-    list($incaps, $params2) = $DB->get_in_or_equal($caps, SQL_PARAMS_NAMED, 'cap');
+    list($incontexts, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, $paramprefix . 'con');
+    list($incaps, $params2) = $DB->get_in_or_equal($caps, SQL_PARAMS_NAMED, $paramprefix . 'cap');
 
     // Check whether context locking is enabled.
     // Filter out any write capability if this is the case.
@@ -3558,7 +3539,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
 
     if (empty($needed)) {
         // there can not be anybody if no roles match this request
-        return array();
+        return new \core\dml\sql_join('', '1 = 2', [], true);
     }
 
     if (empty($prohibited)) {
@@ -3573,76 +3554,15 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         unset($n);
     }
 
-    // ***** Set up default fields ******
-    if (empty($fields)) {
-        if ($iscoursepage) {
-            $fields = 'u.*, ul.timeaccess AS lastaccess';
-        } else {
-            $fields = 'u.*';
-        }
-    } else {
-        if ($CFG->debugdeveloper && strpos($fields, 'u.*') === false && strpos($fields, 'u.id') === false) {
-            debugging('u.id must be included in the list of fields passed to get_users_by_capability().', DEBUG_DEVELOPER);
-        }
-    }
-
-    // Set up default sort
-    if (empty($sort)) { // default to course lastaccess or just lastaccess
-        if ($iscoursepage) {
-            $sort = 'ul.timeaccess';
-        } else {
-            $sort = 'u.lastaccess';
-        }
-    }
-
     // Prepare query clauses
     $wherecond = array();
     $params    = array();
     $joins     = array();
 
-    // User lastaccess JOIN
-    if ((strpos($sort, 'ul.timeaccess') === false) and (strpos($fields, 'ul.timeaccess') === false)) {
-         // user_lastaccess is not required MDL-13810
-    } else {
-        if ($iscoursepage) {
-            $joins[] = "LEFT OUTER JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = {$context->instanceid})";
-        } else {
-            throw new coding_exception('Invalid sort in get_users_by_capability(), ul.timeaccess allowed only for course contexts.');
-        }
-    }
-
     // We never return deleted users or guest account.
-    $wherecond[] = "u.deleted = 0 AND u.id <> :guestid";
-    $params['guestid'] = $CFG->siteguest;
-
-    // Groups
-    if ($groups) {
-        $groups = (array)$groups;
-        list($grouptest, $grpparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED, 'grp');
-        $joins[] = "LEFT OUTER JOIN (SELECT DISTINCT userid
-                                       FROM {groups_members}
-                                      WHERE groupid $grouptest
-                                    ) gm ON gm.userid = u.id";
-
-        $params = array_merge($params, $grpparams);
-
-        $grouptest = 'gm.userid IS NOT NULL';
-        if ($useviewallgroups) {
-            $viewallgroupsusers = get_users_by_capability($context, 'moodle/site:accessallgroups', 'u.id, u.id', '', '', '', '', $exceptions);
-            if (!empty($viewallgroupsusers)) {
-                $grouptest .= ' OR u.id IN (' . implode(',', array_keys($viewallgroupsusers)) . ')';
-            }
-        }
-        $wherecond[] = "($grouptest)";
-    }
-
-    // User exceptions
-    if (!empty($exceptions)) {
-        $exceptions = (array)$exceptions;
-        list($exsql, $exparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'exc', false);
-        $params = array_merge($params, $exparams);
-        $wherecond[] = "u.id $exsql";
-    }
+    $deletedusercolumn = substr($useridcolumn, 0, -2) . 'deleted'; // Hack to get the deleted user column without an API change.
+    $wherecond[] = "$deletedusercolumn = 0 AND $useridcolumn <> :{$paramprefix}guestid";
+    $params[$paramprefix . 'guestid'] = $CFG->siteguest;
 
     // now add the needed and prohibited roles conditions as joins
     if (!empty($needed['any'])) {
@@ -3654,7 +3574,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
                                 FROM {role_assignments}
                                WHERE contextid IN ($ctxids)
                                      AND roleid IN (".implode(',', array_keys($needed['any'])) .")
-                             ) ra ON ra.userid = u.id";
+                             ) ra ON ra.userid = $useridcolumn";
         }
     } else {
         $unions = array();
@@ -3699,12 +3619,122 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         }
         if (!$everybody) {
             if ($unions) {
-                $joins[] = "JOIN (SELECT DISTINCT userid FROM ( ".implode(' UNION ', $unions)." ) us) ra ON ra.userid = u.id";
+                $joins[] = "JOIN (SELECT DISTINCT userid FROM ( ".implode(' UNION ', $unions)." ) us) ra ON ra.userid = $useridcolumn";
             } else {
                 // only prohibits found - nobody can be matched
                 $wherecond[] = "1 = 2";
             }
         }
+    }
+
+    return new \core\dml\sql_join(implode("\n", $joins), implode(" AND ", $wherecond), $params);
+}
+
+/**
+ * Who has this capability in this context?
+ *
+ * This can be a very expensive call - use sparingly and keep
+ * the results if you are going to need them again soon.
+ *
+ * Note if $fields is empty this function attempts to get u.*
+ * which can get rather large - and has a serious perf impact
+ * on some DBs.
+ *
+ * @param context $context
+ * @param string|array $capability - capability name(s)
+ * @param string $fields - fields to be pulled. The user table is aliased to 'u'. u.id MUST be included.
+ * @param string $sort - the sort order. Default is lastaccess time.
+ * @param mixed $limitfrom - number of records to skip (offset)
+ * @param mixed $limitnum - number of records to fetch
+ * @param string|array $groups - single group or array of groups - only return
+ *               users who are in one of these group(s).
+ * @param string|array $exceptions - list of users to exclude, comma separated or array
+ * @param bool $doanything_ignored not used any more, admin accounts are never returned
+ * @param bool $view_ignored - use get_enrolled_sql() instead
+ * @param bool $useviewallgroups if $groups is set the return users who
+ *               have capability both $capability and moodle/site:accessallgroups
+ *               in this context, as well as users who have $capability and who are
+ *               in $groups.
+ * @return array of user records
+ */
+function get_users_by_capability(context $context, $capability, $fields = '', $sort = '', $limitfrom = '', $limitnum = '',
+                                 $groups = '', $exceptions = '', $doanything_ignored = null, $view_ignored = null, $useviewallgroups = false) {
+    global $CFG, $DB;
+
+    // Context is a course page other than the frontpage
+    $iscoursepage = $context->contextlevel == CONTEXT_COURSE && $context->instanceid != SITEID;
+
+    // Get the bits of SQL relating to capabilities.
+    $sqljoin = get_with_capability_join($context, $capability, 'u.id');
+    if ($sqljoin->cannotmatchanyrows) {
+        return [];
+    }
+
+    // ***** Set up default fields ******
+    if (empty($fields)) {
+        if ($iscoursepage) {
+            $fields = 'u.*, ul.timeaccess AS lastaccess';
+        } else {
+            $fields = 'u.*';
+        }
+    } else {
+        if ($CFG->debugdeveloper && strpos($fields, 'u.*') === false && strpos($fields, 'u.id') === false) {
+            debugging('u.id must be included in the list of fields passed to get_users_by_capability().', DEBUG_DEVELOPER);
+        }
+    }
+
+    // Set up default sort
+    if (empty($sort)) { // default to course lastaccess or just lastaccess
+        if ($iscoursepage) {
+            $sort = 'ul.timeaccess';
+        } else {
+            $sort = 'u.lastaccess';
+        }
+    }
+
+    // Prepare query clauses
+    $wherecond = [$sqljoin->wheres];
+    $params    = $sqljoin->params;
+    $joins     = [$sqljoin->joins];
+
+    // User lastaccess JOIN
+    if ((strpos($sort, 'ul.timeaccess') === false) and (strpos($fields, 'ul.timeaccess') === false)) {
+         // user_lastaccess is not required MDL-13810
+    } else {
+        if ($iscoursepage) {
+            $joins[] = "LEFT OUTER JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = {$context->instanceid})";
+        } else {
+            throw new coding_exception('Invalid sort in get_users_by_capability(), ul.timeaccess allowed only for course contexts.');
+        }
+    }
+
+    // Groups
+    if ($groups) {
+        $groups = (array)$groups;
+        list($grouptest, $grpparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED, 'grp');
+        $joins[] = "LEFT OUTER JOIN (SELECT DISTINCT userid
+                                       FROM {groups_members}
+                                      WHERE groupid $grouptest
+                                    ) gm ON gm.userid = u.id";
+
+        $params = array_merge($params, $grpparams);
+
+        $grouptest = 'gm.userid IS NOT NULL';
+        if ($useviewallgroups) {
+            $viewallgroupsusers = get_users_by_capability($context, 'moodle/site:accessallgroups', 'u.id, u.id', '', '', '', '', $exceptions);
+            if (!empty($viewallgroupsusers)) {
+                $grouptest .= ' OR u.id IN (' . implode(',', array_keys($viewallgroupsusers)) . ')';
+            }
+        }
+        $wherecond[] = "($grouptest)";
+    }
+
+    // User exceptions
+    if (!empty($exceptions)) {
+        $exceptions = (array)$exceptions;
+        list($exsql, $exparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'exc', false);
+        $params = array_merge($params, $exparams);
+        $wherecond[] = "u.id $exsql";
     }
 
     // Collect WHERE conditions and needed joins
@@ -7585,161 +7615,4 @@ function get_with_capability_sql(context $context, $capability) {
              WHERE {$prefix}u.deleted = 0 AND $capjoin->wheres";
 
     return array($sql, $capjoin->params);
-}
-
-/**
- * Gets sql joins for finding users with capability in the given context
- *
- * @param context $context Context for the join
- * @param string|array $capability Capability name or array of names.
- *      If an array is provided then this is the equivalent of a logical 'OR',
- *      i.e. the user needs to have one of these capabilities.
- * @param string $useridcolumn e.g. 'u.id'
- * @return \core\dml\sql_join Contains joins, wheres, params
- */
-function get_with_capability_join(context $context, $capability, $useridcolumn) {
-    global $DB, $CFG;
-
-    // Use unique prefix just in case somebody makes some SQL magic with the result.
-    static $i = 0;
-    $i++;
-    $prefix = 'eu' . $i . '_';
-
-    // First find the course context.
-    $coursecontext = $context->get_course_context();
-
-    $isfrontpage = ($coursecontext->instanceid == SITEID);
-
-    $joins = array();
-    $wheres = array();
-    $params = array();
-
-    list($contextids, $contextpaths) = get_context_info_list($context);
-
-    list($incontexts, $cparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'ctx');
-
-    list($incaps, $capsparams) = $DB->get_in_or_equal($capability, SQL_PARAMS_NAMED, 'cap');
-
-    // Check whether context locking is enabled.
-    // Filter out any write capability if this is the case.
-    $excludelockedcaps = '';
-    $excludelockedcapsparams = [];
-    if (!empty($CFG->contextlocking) && $context->locked) {
-        $excludelockedcaps = 'AND (cap.captype = :capread OR cap.name = :managelockscap)';
-        $excludelockedcapsparams['capread'] = 'read';
-        $excludelockedcapsparams['managelockscap'] = 'moodle/site:managecontextlocks';
-    }
-
-    $defs = array();
-    $sql = "SELECT rc.id, rc.roleid, rc.permission, ctx.path
-              FROM {role_capabilities} rc
-              JOIN {capabilities} cap ON rc.capability = cap.name
-              JOIN {context} ctx on rc.contextid = ctx.id
-             WHERE rc.contextid $incontexts AND rc.capability $incaps $excludelockedcaps";
-    $rcs = $DB->get_records_sql($sql, array_merge($cparams, $capsparams, $excludelockedcapsparams));
-    foreach ($rcs as $rc) {
-        $defs[$rc->path][$rc->roleid] = $rc->permission;
-    }
-
-    $access = array();
-    if (!empty($defs)) {
-        foreach ($contextpaths as $path) {
-            if (empty($defs[$path])) {
-                continue;
-            }
-            foreach ($defs[$path] as $roleid => $perm) {
-                if ($perm == CAP_PROHIBIT) {
-                    $access[$roleid] = CAP_PROHIBIT;
-                    continue;
-                }
-                if (!isset($access[$roleid])) {
-                    $access[$roleid] = (int) $perm;
-                }
-            }
-        }
-    }
-
-    unset($defs);
-
-    // Make lists of roles that are needed and prohibited.
-    $needed = array(); // One of these is enough.
-    $prohibited = array(); // Must not have any of these.
-    foreach ($access as $roleid => $perm) {
-        if ($perm == CAP_PROHIBIT) {
-            unset($needed[$roleid]);
-            $prohibited[$roleid] = true;
-        } else {
-            if ($perm == CAP_ALLOW and empty($prohibited[$roleid])) {
-                $needed[$roleid] = true;
-            }
-        }
-    }
-
-    $defaultuserroleid = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
-    $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : 0;
-
-    $nobody = false;
-
-    if ($isfrontpage) {
-        if (!empty($prohibited[$defaultuserroleid]) or !empty($prohibited[$defaultfrontpageroleid])) {
-            $nobody = true;
-        } else {
-            if (!empty($needed[$defaultuserroleid]) or !empty($needed[$defaultfrontpageroleid])) {
-                // Everybody not having prohibit has the capability.
-                $needed = array();
-            } else {
-                if (empty($needed)) {
-                    $nobody = true;
-                }
-            }
-        }
-    } else {
-        if (!empty($prohibited[$defaultuserroleid])) {
-            $nobody = true;
-        } else {
-            if (!empty($needed[$defaultuserroleid])) {
-                // Everybody not having prohibit has the capability.
-                $needed = array();
-            } else {
-                if (empty($needed)) {
-                    $nobody = true;
-                }
-            }
-        }
-    }
-
-    if ($nobody) {
-        // Nobody can match so return some SQL that does not return any results.
-        $wheres[] = "1 = 2";
-
-    } else {
-
-        if ($needed) {
-            $ctxids = implode(',', $contextids);
-            $roleids = implode(',', array_keys($needed));
-            $joins[] = "JOIN {role_assignments} {$prefix}ra3
-                    ON ({$prefix}ra3.userid = $useridcolumn
-                    AND {$prefix}ra3.roleid IN ($roleids)
-                    AND {$prefix}ra3.contextid IN ($ctxids))";
-        }
-
-        if ($prohibited) {
-            $ctxids = implode(',', $contextids);
-            $roleids = implode(',', array_keys($prohibited));
-            $joins[] = "LEFT JOIN {role_assignments} {$prefix}ra4
-                    ON ({$prefix}ra4.userid = $useridcolumn
-                    AND {$prefix}ra4.roleid IN ($roleids)
-                    AND {$prefix}ra4.contextid IN ($ctxids))";
-            $wheres[] = "{$prefix}ra4.id IS NULL";
-        }
-
-    }
-
-    $wheres[] = "$useridcolumn <> :{$prefix}guestid";
-    $params["{$prefix}guestid"] = $CFG->siteguest;
-
-    $joins = implode("\n", $joins);
-    $wheres = "(" . implode(" AND ", $wheres) . ")";
-
-    return new \core\dml\sql_join($joins, $wheres, $params);
 }
