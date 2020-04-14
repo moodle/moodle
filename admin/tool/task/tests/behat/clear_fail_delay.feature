@@ -23,7 +23,6 @@ Feature: Clear scheduled task fail delay
     And I should not see "Clear" in the "Send new user passwords" "table_row"
     And I should see "Send new user passwords" in the "tr.table-primary" "css_element"
 
-
   Scenario: Cancel clearing the fail delay
     When I click on "Clear" "text" in the "Send new user passwords" "table_row"
     And I press "Cancel"
