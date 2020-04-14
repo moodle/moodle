@@ -244,6 +244,7 @@ $string['trackweight'] = 'Weight';
 $string['trackweight_help'] = 'Weight assigned to the question when calculating score.';
 $string['invalidactivity'] = 'SCORM activity is incorrect';
 $string['invalidmanifestname'] = 'Only imsmanifest.xml or .zip files may be selected';
+$string['invalidstatus'] = 'Invalid status';
 $string['invalidurl'] = 'Invalid URL specified';
 $string['invalidurlhttpcheck'] = 'Invalid URL specified. Debug message:<pre>{$a->cmsg}</pre>';
 $string['invalidhacpsession'] = 'Invalid HACP session';
