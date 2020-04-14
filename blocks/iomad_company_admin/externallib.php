@@ -2255,7 +2255,7 @@ class block_iomad_company_admin_external extends external_api {
      * @param array $enrolments  An array of user enrolment
      * @since Moodle 2.2
      */
-    public static function sync_users($token) {
+    public static function sync_users() {
         global $DB, $CFG;
 
         require_capability('moodle/user:update', context_system::instance());
