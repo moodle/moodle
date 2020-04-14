@@ -3456,13 +3456,13 @@ function get_with_capability_join(context $context, $capability, $useridcolumn) 
     $isfrontpage = $context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID;
     $isfrontpage = $isfrontpage || is_inside_frontpage($context);
 
-    $caps = (array)$capability;
+    $caps = (array) $capability;
 
-    // construct list of context paths bottom-->top
+    // Construct list of context paths bottom --> top.
     list($contextids, $paths) = get_context_info_list($context);
 
-    // we need to find out all roles that have these capabilities either in definition or in overrides
-    $defs = array();
+    // We need to find out all roles that have these capabilities either in definition or in overrides.
+    $defs = [];
     list($incontexts, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, $paramprefix . 'con');
     list($incaps, $params2) = $DB->get_in_or_equal($caps, SQL_PARAMS_NAMED, $paramprefix . 'cap');
 
@@ -3488,9 +3488,9 @@ function get_with_capability_join(context $context, $capability, $useridcolumn) 
         $defs[$rc->capability][$rc->path][$rc->roleid] = $rc->permission;
     }
 
-    // go through the permissions bottom-->top direction to evaluate the current permission,
-    // first one wins (prohibit is an exception that always wins)
-    $access = array();
+    // Go through the permissions bottom-->top direction to evaluate the current permission,
+    // first one wins (prohibit is an exception that always wins).
+    $access = [];
     foreach ($caps as $cap) {
         foreach ($paths as $path) {
             if (empty($defs[$cap][$path])) {
@@ -3508,9 +3508,9 @@ function get_with_capability_join(context $context, $capability, $useridcolumn) 
         }
     }
 
-    // make lists of roles that are needed and prohibited in this context
-    $needed = array(); // one of these is enough
-    $prohibited = array(); // must not have any of these
+    // Make lists of roles that are needed and prohibited in this context.
+    $needed = []; // One of these is enough.
+    $prohibited = []; // Must not have any of these.
     foreach ($caps as $cap) {
         if (empty($access[$cap])) {
             continue;
@@ -3524,11 +3524,11 @@ function get_with_capability_join(context $context, $capability, $useridcolumn) 
             }
         }
         if (empty($needed[$cap]) or !empty($prohibited[$cap][$defaultuserroleid])) {
-            // easy, nobody has the permission
+            // Easy, nobody has the permission.
             unset($needed[$cap]);
             unset($prohibited[$cap]);
         } else if ($isfrontpage and !empty($prohibited[$cap][$defaultfrontpageroleid])) {
-            // everybody is disqualified on the frontpage
+            // Everybody is disqualified on the frontpage.
             unset($needed[$cap]);
             unset($prohibited[$cap]);
         }
@@ -3538,50 +3538,54 @@ function get_with_capability_join(context $context, $capability, $useridcolumn) 
     }
 
     if (empty($needed)) {
-        // there can not be anybody if no roles match this request
+        // There can not be anybody if no roles match this request.
         return new \core\dml\sql_join('', '1 = 2', [], true);
     }
 
     if (empty($prohibited)) {
-        // we can compact the needed roles
-        $n = array();
+        // We can compact the needed roles.
+        $n = [];
         foreach ($needed as $cap) {
-            foreach ($cap as $roleid=>$unused) {
+            foreach ($cap as $roleid => $unused) {
                 $n[$roleid] = true;
             }
         }
-        $needed = array('any'=>$n);
+        $needed = ['any' => $n];
         unset($n);
     }
 
-    // Prepare query clauses
-    $wherecond = array();
-    $params    = array();
-    $joins     = array();
+    // Prepare query clauses.
+    $wherecond = [];
+    $params    = [];
+    $joins     = [];
+    $cannotmatchanyrows = false;
 
     // We never return deleted users or guest account.
-    $deletedusercolumn = substr($useridcolumn, 0, -2) . 'deleted'; // Hack to get the deleted user column without an API change.
+    // Use a hack to get the deleted user column without an API change.
+    $deletedusercolumn = substr($useridcolumn, 0, -2) . 'deleted';
     $wherecond[] = "$deletedusercolumn = 0 AND $useridcolumn <> :{$paramprefix}guestid";
     $params[$paramprefix . 'guestid'] = $CFG->siteguest;
 
-    // now add the needed and prohibited roles conditions as joins
+    // Now add the needed and prohibited roles conditions as joins.
     if (!empty($needed['any'])) {
-        // simple case - there are no prohibits involved
-        if (!empty($needed['any'][$defaultuserroleid]) or ($isfrontpage and !empty($needed['any'][$defaultfrontpageroleid]))) {
-            // everybody
+        // Simple case - there are no prohibits involved.
+        if (!empty($needed['any'][$defaultuserroleid]) ||
+                ($isfrontpage && !empty($needed['any'][$defaultfrontpageroleid]))) {
+            // Everybody.
         } else {
             $joins[] = "JOIN (SELECT DISTINCT userid
                                 FROM {role_assignments}
                                WHERE contextid IN ($ctxids)
-                                     AND roleid IN (".implode(',', array_keys($needed['any'])) .")
+                                     AND roleid IN (" . implode(',', array_keys($needed['any'])) . ")
                              ) ra ON ra.userid = $useridcolumn";
         }
     } else {
-        $unions = array();
+        $unions = [];
         $everybody = false;
-        foreach ($needed as $cap=>$unused) {
+        foreach ($needed as $cap => $unused) {
             if (empty($prohibited[$cap])) {
-                if (!empty($needed[$cap][$defaultuserroleid]) or ($isfrontpage and !empty($needed[$cap][$defaultfrontpageroleid]))) {
+                if (!empty($needed[$cap][$defaultuserroleid]) ||
+                        ($isfrontpage && !empty($needed[$cap][$defaultfrontpageroleid]))) {
                     $everybody = true;
                     break;
                 } else {
@@ -3591,43 +3595,51 @@ function get_with_capability_join(context $context, $capability, $useridcolumn) 
                                         AND roleid IN (".implode(',', array_keys($needed[$cap])) .")";
                 }
             } else {
-                if (!empty($prohibited[$cap][$defaultuserroleid]) or ($isfrontpage and !empty($prohibited[$cap][$defaultfrontpageroleid]))) {
-                    // nobody can have this cap because it is prevented in default roles
+                if (!empty($prohibited[$cap][$defaultuserroleid]) ||
+                        ($isfrontpage && !empty($prohibited[$cap][$defaultfrontpageroleid]))) {
+                    // Nobody can have this cap because it is prohibited in default roles.
                     continue;
 
-                } else if (!empty($needed[$cap][$defaultuserroleid]) or ($isfrontpage and !empty($needed[$cap][$defaultfrontpageroleid]))) {
-                    // everybody except the prohibitted - hiding does not matter
+                } else if (!empty($needed[$cap][$defaultuserroleid]) ||
+                        ($isfrontpage && !empty($needed[$cap][$defaultfrontpageroleid]))) {
+                    // Everybody except the prohibited - hiding does not matter.
                     $unions[] = "SELECT id AS userid
                                    FROM {user}
                                   WHERE id NOT IN (SELECT userid
                                                      FROM {role_assignments}
                                                     WHERE contextid IN ($ctxids)
-                                                          AND roleid IN (".implode(',', array_keys($prohibited[$cap])) ."))";
+                                                          AND roleid IN (" . implode(',', array_keys($prohibited[$cap])) . "))";
 
                 } else {
                     $unions[] = "SELECT userid
                                    FROM {role_assignments}
-                                  WHERE contextid IN ($ctxids) AND roleid IN (".implode(',', array_keys($needed[$cap])) .")
+                                  WHERE contextid IN ($ctxids) AND roleid IN (" . implode(',', array_keys($needed[$cap])) . ")
                                         AND userid NOT IN (
                                             SELECT userid
                                               FROM {role_assignments}
                                              WHERE contextid IN ($ctxids)
-                                                    AND roleid IN (" . implode(',', array_keys($prohibited[$cap])) . ")
-                                                        )";
+                                                   AND roleid IN (" . implode(',', array_keys($prohibited[$cap])) . "))";
                 }
             }
         }
+
         if (!$everybody) {
             if ($unions) {
-                $joins[] = "JOIN (SELECT DISTINCT userid FROM ( ".implode(' UNION ', $unions)." ) us) ra ON ra.userid = $useridcolumn";
+                $joins[] = "JOIN (
+                                  SELECT DISTINCT userid
+                                    FROM (
+                                            " . implode("\n UNION \n", $unions) . "
+                                         ) us
+                                 ) ra ON ra.userid = $useridcolumn";
             } else {
-                // only prohibits found - nobody can be matched
+                // Only prohibits found - nobody can be matched.
                 $wherecond[] = "1 = 2";
+                $cannotmatchanyrows = true;
             }
         }
     }
 
-    return new \core\dml\sql_join(implode("\n", $joins), implode(" AND ", $wherecond), $params);
+    return new \core\dml\sql_join(implode("\n", $joins), implode(" AND ", $wherecond), $params, $cannotmatchanyrows);
 }
 
 /**
@@ -3649,8 +3661,8 @@ function get_with_capability_join(context $context, $capability, $useridcolumn) 
  * @param string|array $groups - single group or array of groups - only return
  *               users who are in one of these group(s).
  * @param string|array $exceptions - list of users to exclude, comma separated or array
- * @param bool $doanything_ignored not used any more, admin accounts are never returned
- * @param bool $view_ignored - use get_enrolled_sql() instead
+ * @param bool $notuseddoanything not used any more, admin accounts are never returned
+ * @param bool $notusedview - use get_enrolled_sql() instead
  * @param bool $useviewallgroups if $groups is set the return users who
  *               have capability both $capability and moodle/site:accessallgroups
  *               in this context, as well as users who have $capability and who are
@@ -3658,19 +3670,13 @@ function get_with_capability_join(context $context, $capability, $useridcolumn) 
  * @return array of user records
  */
 function get_users_by_capability(context $context, $capability, $fields = '', $sort = '', $limitfrom = '', $limitnum = '',
-                                 $groups = '', $exceptions = '', $doanything_ignored = null, $view_ignored = null, $useviewallgroups = false) {
+        $groups = '', $exceptions = '', $notuseddoanything = null, $notusedview = null, $useviewallgroups = false) {
     global $CFG, $DB;
 
-    // Context is a course page other than the frontpage
+    // Context is a course page other than the frontpage.
     $iscoursepage = $context->contextlevel == CONTEXT_COURSE && $context->instanceid != SITEID;
 
-    // Get the bits of SQL relating to capabilities.
-    $sqljoin = get_with_capability_join($context, $capability, 'u.id');
-    if ($sqljoin->cannotmatchanyrows) {
-        return [];
-    }
-
-    // ***** Set up default fields ******
+    // Set up default fields list if necessary.
     if (empty($fields)) {
         if ($iscoursepage) {
             $fields = 'u.*, ul.timeaccess AS lastaccess';
@@ -3683,7 +3689,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         }
     }
 
-    // Set up default sort
+    // Set up default sort if necessary.
     if (empty($sort)) { // default to course lastaccess or just lastaccess
         if ($iscoursepage) {
             $sort = 'ul.timeaccess';
@@ -3692,14 +3698,20 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         }
     }
 
-    // Prepare query clauses
+    // Get the bits of SQL relating to capabilities.
+    $sqljoin = get_with_capability_join($context, $capability, 'u.id');
+    if ($sqljoin->cannotmatchanyrows) {
+        return [];
+    }
+
+    // Prepare query clauses.
     $wherecond = [$sqljoin->wheres];
     $params    = $sqljoin->params;
     $joins     = [$sqljoin->joins];
 
-    // User lastaccess JOIN
+    // Add user lastaccess JOIN, if required.
     if ((strpos($sort, 'ul.timeaccess') === false) and (strpos($fields, 'ul.timeaccess') === false)) {
-         // user_lastaccess is not required MDL-13810
+         // Here user_lastaccess is not required MDL-13810.
     } else {
         if ($iscoursepage) {
             $joins[] = "LEFT OUTER JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = {$context->instanceid})";
@@ -3708,7 +3720,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         }
     }
 
-    // Groups
+    // Groups.
     if ($groups) {
         $groups = (array)$groups;
         list($grouptest, $grpparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED, 'grp');
@@ -3729,7 +3741,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         $wherecond[] = "($grouptest)";
     }
 
-    // User exceptions
+    // User exceptions.
     if (!empty($exceptions)) {
         $exceptions = (array)$exceptions;
         list($exsql, $exparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'exc', false);
@@ -3737,14 +3749,14 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         $wherecond[] = "u.id $exsql";
     }
 
-    // Collect WHERE conditions and needed joins
+    // Collect WHERE conditions and needed joins.
     $where = implode(' AND ', $wherecond);
     if ($where !== '') {
         $where = 'WHERE ' . $where;
     }
     $joins = implode("\n", $joins);
 
-    // Ok, let's get the users!
+    // Finally! we have all the bits, run the query.
     $sql = "SELECT $fields
               FROM {user} u
             $joins
