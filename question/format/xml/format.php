@@ -439,6 +439,8 @@ class qformat_xml extends qformat_default {
         $qo->answernumbering = $this->getpath($question,
                 array('#', 'answernumbering', 0, '#'), 'abc');
         $qo->shuffleanswers = $this->trans_single($shuffleanswers);
+        $qo->showstandardinstruction = $this->getpath($question,
+            array('#', 'showstandardinstruction', 0, '#'), '1');
 
         // There was a time on the 1.8 branch when it could output an empty
         // answernumbering tag, so fix up any found.
@@ -1255,7 +1257,9 @@ class qformat_xml extends qformat_default {
                         $this->get_single($question->options->shuffleanswers) .
                         "</shuffleanswers>\n";
                 $expout .= "    <answernumbering>" . $question->options->answernumbering .
-                        "</answernumbering>\n";
+                    "</answernumbering>\n";
+                $expout .= "    <showstandardinstruction>" . $question->options->showstandardinstruction .
+                    "</showstandardinstruction>\n";
                 $expout .= $this->write_combined_feedback($question->options, $question->id, $question->contextid);
                 $expout .= $this->write_answers($question->options->answers);
                 break;
