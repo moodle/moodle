@@ -289,7 +289,13 @@ module.exports = function(grunt) {
         eslint: {
             // Even though warnings dont stop the build we don't display warnings by default because
             // at this moment we've got too many core warnings.
-            options: {quiet: !grunt.option('show-lint-warnings')},
+            // To display warnings call: grunt eslint --show-lint-warnings
+            // To fail on warnings call: grunt eslint --max-lint-warnings=0
+            // Also --max-lint-warnings=-1 can be used to display warnings but not fail.
+            options: {
+                quiet: (!grunt.option('show-lint-warnings')) && (typeof grunt.option('max-lint-warnings') === 'undefined'),
+                maxWarnings: ((typeof grunt.option('max-lint-warnings') !== 'undefined') ? grunt.option('max-lint-warnings') : -1)
+            },
             amd: {src: files ? files : amdSrc},
             // Check YUI module source files.
             yui: {src: files ? files : yuiSrc},
