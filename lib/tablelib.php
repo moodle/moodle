@@ -549,7 +549,10 @@ class flexible_table {
             $this->baseurl = $PAGE->url;
         }
 
-        $this->currpage = optional_param($this->request[TABLE_VAR_PAGE], 0, PARAM_INT);
+        if ($this->currpage == null) {
+            $this->currpage = optional_param($this->request[TABLE_VAR_PAGE], 0, PARAM_INT);
+        }
+
         $this->setup = true;
 
         // Always introduce the "flexible" class for the table if not specified
@@ -1407,6 +1410,15 @@ class flexible_table {
     }
 
     /**
+     * Set the page number.
+     *
+     * @param int $pagenumber The page number.
+     */
+    public function set_page_number(int $pagenumber): void {
+        $this->currpage = $pagenumber - 1;
+    }
+
+    /**
      * Generate the HTML for the sort icon. This is a helper method used by {@link sort_link()}.
      * @param bool $isprimary whether an icon is needed (it is only needed for the primary sort column.)
      * @param int $order SORT_ASC or SORT_DESC
@@ -1505,6 +1517,8 @@ class flexible_table {
                 'data-table-sort-order' => $sortdata['sortorder'],
                 'data-table-first-initial' => $this->prefs['i_first'],
                 'data-table-last-initial' => $this->prefs['i_last'],
+                'data-table-page-number' => $this->currpage + 1,
+                'data-table-page-size' => $this->pagesize,
             ]);
         }
 
@@ -1810,6 +1824,7 @@ class table_sql extends flexible_table {
             $this->define_columns(array_keys((array)$onerow));
             $this->define_headers(array_keys((array)$onerow));
         }
+        $this->pagesize = $pagesize;
         $this->setup();
         $this->query_db($pagesize, $useinitialsbar);
         $this->build_table();

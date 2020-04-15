@@ -3085,6 +3085,7 @@ class paging_bar implements renderable, templatable {
         $data->label = get_string('page');
         $data->pages = [];
         $data->haspages = $this->totalcount > $this->perpage;
+        $data->pagesize = $this->perpage;
 
         if (!$data->haspages) {
             return $data;

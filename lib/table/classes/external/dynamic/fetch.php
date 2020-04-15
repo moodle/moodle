@@ -98,6 +98,18 @@ class fetch extends external_api {
                 VALUE_REQUIRED,
                 null
             ),
+            'pagenumber' => new external_value(
+                PARAM_INT,
+                'The page number',
+                VALUE_REQUIRED,
+                null
+            ),
+            'pagesize' => new external_value(
+                PARAM_INT,
+                'The number of records per page',
+                VALUE_REQUIRED,
+                null
+            ),
         ]);
     }
 
@@ -112,6 +124,9 @@ class fetch extends external_api {
      * @param string $jointype The join type.
      * @param string $firstinitial The first name initial to filter on
      * @param string $lastinitial The last name initial to filter on
+     * @param int $pagenumber The page number.
+     * @param int $pagesize The number of records.
+     * @param string $jointype The join type.
      *
      * @return array
      */
@@ -123,7 +138,9 @@ class fetch extends external_api {
         ?array $filters = null,
         ?string $jointype = null,
         ?string $firstinitial = null,
-        ?string $lastinitial = null
+        ?string $lastinitial = null,
+        ?int $pagenumber = null,
+        ?int $pagesize = null
     ) {
 
         global $PAGE;
@@ -141,6 +158,8 @@ class fetch extends external_api {
             'jointype' => $jointype,
             'firstinitial' => $firstinitial,
             'lastinitial' => $lastinitial,
+            'pagenumber' => $pagenumber,
+            'pagesize' => $pagesize,
         ] = self::validate_parameters(self::execute_parameters(), [
             'handler' => $handler,
             'uniqueid' => $uniqueid,
@@ -150,6 +169,8 @@ class fetch extends external_api {
             'jointype' => $jointype,
             'firstinitial' => $firstinitial,
             'lastinitial' => $lastinitial,
+            'pagenumber' => $pagenumber,
+            'pagesize' => $pagesize,
         ]);
 
         $filterset = new \core_user\table\participants_filterset();
@@ -173,13 +194,20 @@ class fetch extends external_api {
             $instance->set_last_initial($lastinitial);
         }
 
-        $context = $instance->get_context();
+        if ($pagenumber !== null) {
+            $instance->set_page_number($pagenumber);
+        }
 
+        if ($pagesize === null) {
+            $pagesize = 20;
+        }
+
+        $context = $instance->get_context();
         self::validate_context($context);
         $PAGE->set_url($instance->get_base_url());
 
         ob_start();
-        $instance->out(20, true);
+        $instance->out($pagesize, true);
         $participanttablehtml = ob_get_contents();
         ob_end_clean();
 
