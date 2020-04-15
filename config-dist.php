@@ -735,6 +735,9 @@ $CFG->admin = 'admin';
 // Force developer level debug and add debug info to the output of cron
 // $CFG->showcrondebugging = true;
 //
+// Force result of checks used to determine whether a site is considered "public" or not (such as for site registration).
+// $CFG->site_is_public = false;
+//
 //=========================================================================
 // 8. FORCED SETTINGS
 //=========================================================================
