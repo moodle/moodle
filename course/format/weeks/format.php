@@ -50,3 +50,4 @@ if (!empty($displaysection)) {
 }
 
 $PAGE->requires->js('/course/format/weeks/format.js');
+$PAGE->requires->js_call_amd('core_course/sectionlistener');
