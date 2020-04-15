@@ -36,35 +36,36 @@
 }}
 
 <div class="d-flex align-items-center user-picker-container mb-2 py-2">
+    <div aria-live="polite" data-region="user_picker/current_user"  class="sr-only"></div>
     <div class="d-flex align-items-center" data-region="user_picker/user"></div>
     <div class="ml-auto flex-shrink-0">
         <nav aria-label="{{#str}} usernavigation, mod_forum {{/str}}">
             <ul class="pagination mb-0">
                 <li class="page-item">
-                    <a
+                    <button
                         class="page-link icon-no-margin p-0 text-reset icon-size-3"
                         href="#"
-                        aria-label="{{#str}} previous {{/str}}"
+                        aria-label="{{#str}} previoususer, mod_forum {{/str}}"
                         data-action="change-user"
                         data-direction="-1"
                         title="{{#str}} previoususer, mod_forum {{/str}}"
                     >
                         <span class="dir-ltr-hide">{{#pix}} i/next, core {{/pix}}</span>
                         <span class="dir-rtl-hide">{{#pix}} i/previous, core {{/pix}}</span>
-                    </a>
+                    </button>
                 </li>
                 <li class="page-item">
-                    <a
+                    <button
                         class="page-link icon-no-margin p-0 text-reset icon-size-3 ml-2"
                         href="#"
-                        aria-label="{{#str}} next {{/str}}"
+                        aria-label="{{#str}} nextuser, mod_forum {{/str}}"
                         data-action="change-user"
                         data-direction="1"
                         title="{{#str}} nextuser, mod_forum {{/str}}"
                     >
                         <span class="dir-ltr-hide">{{#pix}} i/previous, core {{/pix}}</span>
                         <span class="dir-rtl-hide">{{#pix}} i/next, core {{/pix}}</span>
-                    </a>
+                    </button>
                 </li>
             </ul>
         </nav>

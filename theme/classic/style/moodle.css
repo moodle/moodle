@@ -17055,9 +17055,6 @@ select {
     .path-mod-forum .unified-grader .grader-module-content {
       transition: none; } }
 
-.path-mod-forum .unified-grader .grader-grading-panel.hidden + .grader-module-content {
-  margin-right: 0; }
-
 .path-mod-forum .unified-grader .drawer-button {
   position: relative; }
   .path-mod-forum .unified-grader .drawer-button.active::after {
