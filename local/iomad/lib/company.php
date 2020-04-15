@@ -2984,9 +2984,9 @@ class company {
             $DB->set_field('company', 'companyterminated', true, array('id' => $this->id));
 
             // Deal with local_iomad_track lines too.
-            $DB-set_field('local_iomad_track', 'timeenrolled', $runtime, array('companyid' => $this->id, 'timeenrolled' => null));
-            $DB-set_field('local_iomad_track', 'timestarted', $runtime, array('companyid' => $this->id, 'timestarted' => null));
-            $DB-set_field('local_iomad_track', 'timecompleted', $runtime, array('companyid' => $this->id, 'timecompleted' => null));
+            $DB->set_field('local_iomad_track', 'timeenrolled', $runtime, array('companyid' => $this->id, 'timeenrolled' => null));
+            $DB->set_field('local_iomad_track', 'timestarted', $runtime, array('companyid' => $this->id, 'timestarted' => null));
+            $DB->set_field('local_iomad_track', 'timecompleted', $runtime, array('companyid' => $this->id, 'timecompleted' => null));
 
             // Deal with child companies.
             $childcompanies = $this->get_child_companies_recursive();
