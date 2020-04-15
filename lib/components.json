@@ -36,7 +36,8 @@
         "cachelock": "cache\/locks",
         "fileconverter": "files\/converter",
         "theme": "theme",
-        "local": "local"
+        "local": "local",
+        "h5plib": "h5p\/h5plib"
     },
     "subsystems": {
         "access": null,
@@ -102,11 +103,12 @@
         "rss": "rss",
         "role": "admin\/roles",
         "search": "search",
-        "table": null,
+        "table": "lib\/table",
         "tag": "tag",
         "timezones": null,
         "user": "user",
         "userkey": "lib\/userkey",
-        "webservice": "webservice"
+        "webservice": "webservice",
+        "xapi": "lib\/xapi"
     }
 }

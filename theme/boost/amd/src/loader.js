@@ -30,6 +30,7 @@ define(['jquery', './tether', 'core/event', 'core/custom_interaction_events'], f
     M.util.js_pending('theme_boost/loader:children');
 
     require(['theme_boost/aria',
+            'theme_boost/scroll',
             'theme_boost/pending',
             'theme_boost/util',
             'theme_boost/alert',
@@ -42,7 +43,7 @@ define(['jquery', './tether', 'core/event', 'core/custom_interaction_events'], f
             'theme_boost/tab',
             'theme_boost/tooltip',
             'theme_boost/popover'],
-            function(Aria) {
+            function(Aria, MoodleScroll) {
 
         // We do twice because: https://github.com/twbs/bootstrap/issues/10547
         jQuery('body').popover({
@@ -102,6 +103,8 @@ define(['jquery', './tether', 'core/event', 'core/custom_interaction_events'], f
         });
 
         Aria.init();
+        this.scroll = new MoodleScroll();
+        this.scroll.init();
         M.util.js_complete('theme_boost/loader:children');
     });
 

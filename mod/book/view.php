@@ -222,7 +222,7 @@ $navclasses = book_get_nav_classes();
 
 if ($book->navstyle) {
     // Upper navigation.
-    echo '<div class="navtop clearfix ' . $navclasses[$book->navstyle] . '">' . $chnavigation . '</div>';
+    echo '<div class="navtop border-top py-3 clearfix ' . $navclasses[$book->navstyle] . '">' . $chnavigation . '</div>';
 }
 
 // The chapter itself.
@@ -251,7 +251,7 @@ if (core_tag_tag::is_enabled('mod_book', 'book_chapters')) {
 
 if ($book->navstyle) {
     // Lower navigation.
-    echo '<div class="navbottom clearfix ' . $navclasses[$book->navstyle] . '">' . $chnavigation . '</div>';
+    echo '<div class="navbottom py-3 border-bottom clearfix ' . $navclasses[$book->navstyle] . '">' . $chnavigation . '</div>';
 }
 
 echo $OUTPUT->footer();

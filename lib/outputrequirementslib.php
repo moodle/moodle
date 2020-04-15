@@ -400,7 +400,7 @@ class page_requirements_manager {
      *
      * @return int the jsrev to use.
      */
-    protected function get_jsrev() {
+    public function get_jsrev() {
         global $CFG;
 
         if (empty($CFG->cachejs)) {
@@ -1467,14 +1467,14 @@ class page_requirements_manager {
         );
 
         if ($this->yui3loader->combine) {
-            return '<script type="text/javascript" src="' .
+            return '<script src="' .
                     $this->yui3loader->local_comboBase .
                     implode('&amp;', $baserollups) .
                     '"></script>';
         } else {
             $code = '';
             foreach ($baserollups as $rollup) {
-                $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase.$rollup.'"></script>';
+                $code .= '<script src="'.$this->yui3loader->local_comboBase.$rollup.'"></script>';
             }
             return $code;
         }
@@ -1608,8 +1608,8 @@ class page_requirements_manager {
             $output .= html_writer::script('', $this->js_fix_url('/lib/babel-polyfill/polyfill.min.js'));
         }
 
-        // Include the MDN Polyfill.
-        $output .= html_writer::script('', $this->js_fix_url('/lib/mdn-polyfills/polyfill.js'));
+        // Include the Polyfills.
+        $output .= html_writer::script('', $this->js_fix_url('/lib/polyfills/polyfill.js'));
 
         // YUI3 JS needs to be loaded early in the body. It should be cached well by the browser.
         $output .= $this->get_yui3lib_headcode();

@@ -546,7 +546,11 @@ class navigation_node implements renderable {
         if (in_array($class, $this->classes)) {
             $key = array_search($class,$this->classes);
             if ($key!==false) {
+                // Remove the class' array element.
                 unset($this->classes[$key]);
+                // Reindex the array to avoid failures when the classes array is iterated later in mustache templates.
+                $this->classes = array_values($this->classes);
+
                 return true;
             }
         }
@@ -4512,29 +4516,6 @@ class settings_navigation extends navigation_node {
             // Add the course settings link
             $url = new moodle_url('/course/edit.php', array('id'=>$course->id));
             $coursenode->add(get_string('editsettings'), $url, self::TYPE_SETTING, null, 'editsettings', new pix_icon('i/settings', ''));
-        }
-
-        if ($this->page->user_allowed_editing()) {
-            // Add the turn on/off settings
-
-            if ($this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
-                // We are on the course page, retain the current page params e.g. section.
-                $baseurl = clone($this->page->url);
-                $baseurl->param('sesskey', sesskey());
-            } else {
-                // Edit on the main course page.
-                $baseurl = new moodle_url('/course/view.php', array('id'=>$course->id, 'return'=>$this->page->url->out_as_local_url(false), 'sesskey'=>sesskey()));
-            }
-
-            $editurl = clone($baseurl);
-            if ($this->page->user_is_editing()) {
-                $editurl->param('edit', 'off');
-                $editstring = get_string('turneditingoff');
-            } else {
-                $editurl->param('edit', 'on');
-                $editstring = get_string('turneditingon');
-            }
-            $coursenode->add($editstring, $editurl, self::TYPE_SETTING, null, 'turneditingonoff', new pix_icon('i/edit', ''));
         }
 
         if ($adminoptions->editcompletion) {

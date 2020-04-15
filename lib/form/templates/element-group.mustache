@@ -1,8 +1,28 @@
 {{< core_form/element-template }}
+    {{$label}}
+        {{^element.hiddenlabel}}
+            <p id="{{element.id}}_label" class="col-form-label d-inline" aria-hidden="true">
+                {{{label}}}
+            </p>
+        {{/element.hiddenlabel}}
+    {{/label}}
     {{$element}}
-        {{#element.elements}}
-            {{{separator}}}
-            {{{html}}}
-        {{/element.elements}}
+        <fieldset class="w-100 m-0 p-0 border-0">
+            <legend class="sr-only">{{label}}</legend>
+            <div class="d-flex flex-wrap">
+            {{#element.elements}}
+                {{{separator}}}
+                {{{html}}}
+            {{/element.elements}}
+            </div>
+        </fieldset>
     {{/element}}
 {{/ core_form/element-template }}
+{{#js}}
+require(['jquery'], function($) {
+    $('#{{element.id}}_label').css('cursor', 'default');
+    $('#{{element.id}}_label').click(function() {
+        $('#{{element.id}}').find('button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])').filter(':enabled').first().focus();
+    });
+});
+{{/js}}

@@ -100,10 +100,11 @@ if (($hassiteconfig || has_any_capability(array(
             new lang_string('allowexternalbackpack', 'badges'),
             new lang_string('allowexternalbackpack_desc', 'badges'), 1));
 
+    $bp = $DB->get_record('badge_external_backpack', ['backpackweburl' => BADGRIO_BACKPACKWEBURL]);
     $backpacksettings->add(new admin_setting_configselect('badges_site_backpack',
             new lang_string('sitebackpack', 'badges'),
             new lang_string('sitebackpack_help', 'badges'),
-            1, $choices));
+            $bp->id, $choices));
 
     $warning = badges_verify_site_backpack();
     if (!empty($warning)) {

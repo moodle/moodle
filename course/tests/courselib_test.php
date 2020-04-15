@@ -6923,4 +6923,100 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->setAdminUser();
         $this->assertTrue($request2->can_approve());
     }
+
+    /**
+     * Test the course allowed module method.
+     */
+    public function test_course_allowed_module() {
+        $this->resetAfterTest();
+        global $DB;
+
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $manager = $this->getDataGenerator()->create_and_enrol($course, 'manager');
+
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        assign_capability('mod/assign:addinstance', CAP_PROHIBIT, $teacherrole->id, \context_course::instance($course->id));
+
+        // Global user (teacher) has no permissions in this course.
+        $this->setUser($teacher);
+        $this->assertFalse(course_allowed_module($course, 'assign'));
+
+        // Manager has permissions.
+        $this->assertTrue(course_allowed_module($course, 'assign', $manager));
+    }
+
+    /**
+     * Test the {@link average_number_of_participants()} function.
+     */
+    public function test_average_number_of_participants() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $now = time();
+
+        // If there are no courses, expect zero number of participants per course.
+        $this->assertEquals(0, average_number_of_participants());
+
+        $c1 = $generator->create_course();
+        $c2 = $generator->create_course();
+
+        // If there are no users, expect zero number of participants per course.
+        $this->assertEquals(0, average_number_of_participants());
+
+        $t1 = $generator->create_user(['lastlogin' => $now]);
+        $s1 = $generator->create_user(['lastlogin' => $now]);
+        $s2 = $generator->create_user(['lastlogin' => $now - WEEKSECS]);
+        $s3 = $generator->create_user(['lastlogin' => $now - WEEKSECS]);
+        $s4 = $generator->create_user(['lastlogin' => $now - YEARSECS]);
+
+        // We have courses, we have users, but no enrolments yet.
+        $this->assertEquals(0, average_number_of_participants());
+
+        // Front page enrolments are ignored.
+        $generator->enrol_user($t1->id, SITEID, 'teacher');
+        $this->assertEquals(0, average_number_of_participants());
+
+        // The teacher enrolled into one of the two courses.
+        $generator->enrol_user($t1->id, $c1->id, 'editingteacher');
+        $this->assertEquals(0.5, average_number_of_participants());
+
+        // The teacher enrolled into both courses.
+        $generator->enrol_user($t1->id, $c2->id, 'editingteacher');
+        $this->assertEquals(1, average_number_of_participants());
+
+        // Student 1 enrolled in the Course 1 only.
+        $generator->enrol_user($s1->id, $c1->id, 'student');
+        $this->assertEquals(1.5, average_number_of_participants());
+
+        // Student 2 enrolled in both courses, but the enrolment in the Course 2 not active yet (enrolment starts in the future).
+        $generator->enrol_user($s2->id, $c1->id, 'student');
+        $generator->enrol_user($s2->id, $c2->id, 'student', 'manual', $now + WEEKSECS);
+        $this->assertEquals(2.5, average_number_of_participants());
+        $this->assertEquals(2, average_number_of_participants(true));
+
+        // Student 3 enrolled in the Course 1, but the enrolment already expired.
+        $generator->enrol_user($s3->id, $c1->id, 'student', 'manual', 0, $now - YEARSECS);
+        $this->assertEquals(3, average_number_of_participants());
+        $this->assertEquals(2, average_number_of_participants(true));
+
+        // Student 4 enrolled in both courses, but the enrolment has been suspended.
+        $generator->enrol_user($s4->id, $c1->id, 'student', 'manual', 0, 0, ENROL_USER_SUSPENDED);
+        $generator->enrol_user($s4->id, $c2->id, 'student', 'manual', $now - DAYSECS, $now + YEARSECS, ENROL_USER_SUSPENDED);
+        $this->assertEquals(4, average_number_of_participants());
+        $this->assertEquals(2, average_number_of_participants(true));
+
+        // Consider only t1 and s1 who logged in recently.
+        $this->assertEquals(1.5, average_number_of_participants(false, $now - DAYSECS));
+
+        // Consider only t1, s1, s2 and s3 who logged in in recent weeks.
+        $this->assertEquals(3, average_number_of_participants(false, $now - 4 * WEEKSECS));
+
+        // Hidden courses are excluded from stats.
+        $DB->set_field('course', 'visible', 0, ['id' => $c1->id]);
+        $this->assertEquals(3, average_number_of_participants());
+        $this->assertEquals(1, average_number_of_participants(true));
+    }
+
 }

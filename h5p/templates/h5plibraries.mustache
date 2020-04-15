@@ -25,7 +25,8 @@
                 "major_version": 1,
                 "minor_version:": 0,
                 "patch_version:": 0,
-                "runnable": 1
+                "runnable": 1,
+                "icon": "icon.svg"
             },
             {
                 "title": "Collage",
@@ -39,7 +40,8 @@
                 "major_version": 4,
                 "minor_version:": 5,
                 "patch_version:": 0,
-                "runnable": 0
+                "runnable": 1,
+                "icon": "icon.svg"
             }
         ]
     }
@@ -67,6 +69,7 @@
                     <tr>
                         <th>{{#str}}description, core{{/str}}</th>
                         <th>{{#str}}version, core{{/str}}</th>
+                        <th aria-label="{{#str}}actions, core_h5p{{/str}}"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,9 +77,22 @@
                         {{#runnable}}
                         <tr class="">
                             <td>
+                                {{#icon}}
+                                    <img alt=""
+                                         class="icon iconsize-big"
+                                         src="{{{ icon }}}">
+                                {{/icon}}
+                                {{^icon}}
+                                    {{#pix}} b/h5p_library, core {{/pix}}
+                                {{/icon}}
                                 {{{ title }}}
                             </td>
                             <td>{{{ major_version }}}.{{{ minor_version }}}.{{{ patch_version }}}</td>
+                            <td>
+                                {{#actionmenu}}
+                                    {{>core/action_menu}}
+                                {{/actionmenu}}
+                            </td>
                         </tr>
                         {{/runnable}}
                     {{/contenttypes}}
@@ -91,6 +107,7 @@
                     <tr>
                         <th>{{#str}}description, core{{/str}}</th>
                         <th>{{#str}}version, core{{/str}}</th>
+                        <th aria-label="{{#str}}actions, core_h5p{{/str}}"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -101,6 +118,11 @@
                                 {{{ title }}}
                             </td>
                             <td>{{{ major_version }}}.{{{ minor_version }}}.{{{ patch_version }}}</td>
+                            <td>
+                                {{#actionmenu}}
+                                    {{>core/action_menu}}
+                                {{/actionmenu}}
+                            </td>
                         </tr>
                         {{/runnable}}
                     {{/contenttypes}}

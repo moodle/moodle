@@ -1,5 +1,10 @@
 This files describes API changes in /badges/*,
 information provided here is intended especially for developers.
+
+=== 3.9 ===
+* BADGE_BACKPACKAPIURL and BADGE_BACKPACKWEBURL are deprecated and should not be used.
+* OBv2 has been set to the default value when the obversion is not defined.
+
 === 3.7 ===
 * BADGE_BACKPACKURL is deprecated and should not be used.
 * Incorrect term "badge competencies" has been refactored to "alignments" everywhere.

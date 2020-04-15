@@ -111,6 +111,38 @@ class user_favourite_service {
     }
 
     /**
+     * Find a list of favourites, by multiple types within a component.
+     *
+     * E.g. "Find all favourites in the activity chooser" might result in:
+     * $favcourses = find_all_favourites('core_course', ['contentitem_mod_assign','contentitem_mod_assignment');
+     *
+     * @param string $component the frankenstyle component name.
+     * @param array $itemtypes optional the type of the favourited item.
+     * @param int $limitfrom optional pagination control for returning a subset of records, starting at this point.
+     * @param int $limitnum optional pagination control for returning a subset comprising this many records.
+     * @return array the list of favourites found.
+     * @throws \moodle_exception if the component name is invalid, or if the repository encounters any errors.
+     */
+    public function find_all_favourites(string $component, array $itemtypes = [], int $limitfrom = 0, int $limitnum = 0) : array {
+        if (!in_array($component, \core_component::get_component_names())) {
+            throw new \moodle_exception("Invalid component name '$component'");
+        }
+        $params = [
+            'userid' => $this->userid,
+            'component' => $component,
+        ];
+        if ($itemtypes) {
+            $params['itemtype'] = $itemtypes;
+        }
+
+        return $this->repo->find_by(
+            $params,
+            $limitfrom,
+            $limitnum
+        );
+    }
+
+    /**
      * Returns the SQL required to include favourite information for a given component/itemtype combination.
      *
      * Generally, find_favourites_by_type() is the recommended way to fetch favourites.

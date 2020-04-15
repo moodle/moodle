@@ -167,24 +167,39 @@ module.exports = function(grunt) {
     // * fullRunDir             The full path to the runDir
     const gruntFilePath = fs.realpathSync(process.cwd());
     const cwd = getCwd(grunt);
-    const relativeCwd = cwd.replace(new RegExp(`${gruntFilePath}/?`), '');
+    const relativeCwd = path.relative(gruntFilePath, cwd);
     const componentDirectory = ComponentList.getOwningComponentDirectory(relativeCwd);
     const inComponent = !!componentDirectory;
     const runDir = inComponent ? componentDirectory : relativeCwd;
     const fullRunDir = fs.realpathSync(gruntFilePath + path.sep + runDir);
-    grunt.log.debug(`The cwd was detected as ${cwd} with a fullRunDir of ${fullRunDir}`);
+    grunt.log.debug('============================================================================');
+    grunt.log.debug(`= Node version:        ${process.versions.node}`);
+    grunt.log.debug(`= grunt version:       ${grunt.package.version}`);
+    grunt.log.debug(`= process.cwd:         '` + process.cwd() + `'`);
+    grunt.log.debug(`= process.env.PWD:     '${process.env.PWD}'`);
+    grunt.log.debug(`= path.sep             '${path.sep}'`);
+    grunt.log.debug('============================================================================');
+    grunt.log.debug(`= gruntFilePath:       '${gruntFilePath}'`);
+    grunt.log.debug(`= relativeCwd:         '${relativeCwd}'`);
+    grunt.log.debug(`= componentDirectory:  '${componentDirectory}'`);
+    grunt.log.debug(`= inComponent:         '${inComponent}'`);
+    grunt.log.debug(`= runDir:              '${runDir}'`);
+    grunt.log.debug(`= fullRunDir:          '${fullRunDir}'`);
+    grunt.log.debug('============================================================================');
 
     if (inComponent) {
         grunt.log.ok(`Running tasks for component directory ${componentDirectory}`);
     }
 
-    var files = null;
+    let files = null;
     if (grunt.option('files')) {
         // Accept a comma separated list of files to process.
         files = grunt.option('files').split(',');
     }
 
-    const inAMD = path.basename(cwd) == 'amd';
+    // If the cwd is the amd directory in the current component then it will be empty.
+    // If the cwd is a child of the component's AMD directory, the relative directory will not start with ..
+    const inAMD = !path.relative(`${componentDirectory}/amd`, cwd).startsWith('..');
 
     // Globbing pattern for matching all AMD JS source files.
     let amdSrc = [];
@@ -235,7 +250,7 @@ module.exports = function(grunt) {
             const nodes = xpath.select("/libraries/library/location/text()", doc);
 
             nodes.forEach(function(node) {
-                let lib = path.join(dirname, node.toString());
+                let lib = path.posix.join(dirname, node.toString());
                 if (grunt.file.isDir(lib)) {
                     // Ensure trailing slash on dirs.
                     lib = lib.replace(/\/?$/, '/');
@@ -249,6 +264,24 @@ module.exports = function(grunt) {
         });
 
         return libs;
+    };
+
+    /**
+     * Get the list of feature files to pass to the gherkin linter.
+     *
+     * @returns {Array}
+     */
+    const getGherkinLintTargets = () => {
+        if (files) {
+            // Specific files were requested. Only check these.
+            return files;
+        }
+
+        if (inComponent) {
+            return [`${runDir}/tests/behat/*.feature`];
+        }
+
+        return ['**/tests/behat/*.feature'];
     };
 
     // Project configuration.
@@ -366,7 +399,7 @@ module.exports = function(grunt) {
         },
         gherkinlint: {
             options: {
-                files: files ? files : ['**/tests/behat/*.feature'],
+                files: getGherkinLintTargets(),
             }
         },
     });
@@ -484,19 +517,31 @@ module.exports = function(grunt) {
     };
 
     tasks.gherkinlint = function() {
-        var done = this.async(),
-            options = grunt.config('gherkinlint.options');
+        const done = this.async();
+        const options = grunt.config('gherkinlint.options');
 
-        var args = grunt.file.expand(options.files);
-        args.unshift(path.normalize(__dirname + '/node_modules/.bin/gherkin-lint'));
-        grunt.util.spawn({
-            cmd: 'node',
-            args: args,
-            opts: {stdio: 'inherit', env: process.env}
-        }, function(error, result, code) {
-            // Propagate the exit code.
-            done(code === 0);
-        });
+        // Grab the gherkin-lint linter and required scaffolding.
+        const linter = require('gherkin-lint/src/linter.js');
+        const featureFinder = require('gherkin-lint/src/feature-finder.js');
+        const configParser = require('gherkin-lint/src/config-parser.js');
+        const formatter = require('gherkin-lint/src/formatters/stylish.js');
+
+        // Run the linter.
+        const results = linter.lint(
+            featureFinder.getFeatureFiles(grunt.file.expand(options.files)),
+            configParser.getConfiguration(configParser.defaultConfigFileName)
+        );
+
+        // Print the results out uncondtionally.
+        formatter.printResults(results);
+
+        // Report on the results.
+        // We exit 1 if there is at least one error, otherwise we exit cleanly.
+        if (results.some(result => result.errors.length > 0)) {
+            done(1);
+        } else {
+            done(0);
+        }
     };
 
     tasks.startup = function() {

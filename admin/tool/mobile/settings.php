@@ -63,7 +63,7 @@ if ($hassiteconfig) {
 
         $temp->add(new admin_setting_configtext('tool_mobile/forcedurlscheme',
                     new lang_string('forcedurlscheme_key', 'tool_mobile'),
-                    new lang_string('forcedurlscheme', 'tool_mobile'), 'moodlemobile', PARAM_ALPHANUM));
+                    new lang_string('forcedurlscheme', 'tool_mobile'), 'moodlemobile', PARAM_NOTAGS));
 
         $temp->add(new admin_setting_configtext('tool_mobile/minimumversion',
                     new lang_string('minimumversion_key', 'tool_mobile'),

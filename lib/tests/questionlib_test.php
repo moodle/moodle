@@ -274,6 +274,55 @@ class core_questionlib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that deleting a question from the question bank works in the normal case.
+     */
+    public function test_question_delete_question() {
+        global $DB;
+
+        // Setup.
+        $context = context_system::instance();
+        $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $qcat = $qgen->create_question_category(array('contextid' => $context->id));
+        $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
+        $q2 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
+
+        // Do.
+        question_delete_question($q1->id);
+
+        // Verify.
+        $this->assertFalse($DB->record_exists('question', ['id' => $q1->id]));
+        // Check that we did not delete too much.
+        $this->assertTrue($DB->record_exists('question', ['id' => $q2->id]));
+    }
+
+    /**
+     * Test that deleting a broken question from the question bank does not cause fatal errors.
+     */
+    public function test_question_delete_question_broken_data() {
+        global $DB;
+
+        // Setup.
+        $context = context_system::instance();
+        $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $qcat = $qgen->create_question_category(array('contextid' => $context->id));
+        $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
+
+        // Now delete the category, to simulate what happens in old sites where
+        // referential integrity has failed.
+        $DB->delete_records('question_categories', ['id' => $qcat->id]);
+
+        // Do.
+        question_delete_question($q1->id);
+
+        // Verify.
+        $this->assertDebuggingCalled('Deleting question ' . $q1->id .
+                ' which is no longer linked to a context. Assuming system context ' .
+                'to avoid errors, but this may mean that some data like ' .
+                'files, tags, are not cleaned up.');
+        $this->assertFalse($DB->record_exists('question', ['id' => $q1->id]));
+    }
+
+    /**
      * This function tests the question_category_delete_safe function.
      */
     public function test_question_category_delete_safe() {
@@ -475,6 +524,37 @@ class core_questionlib_testcase extends advanced_testcase {
                 $context->get_parent_context()->id, $context->get_context_name());
 
         // Verify that the newcat itself is not a tep level category.
+        $this->assertNotEquals(0, $newcat->parent);
+
+        // Verify there is just a single top-level category.
+        $this->assertEquals(1, $DB->count_records('question_categories', ['contextid' => $qcat->contextid, 'parent' => 0]));
+    }
+
+    /**
+     * This function tests the question_save_from_deletion function when it is supposed to make a new category and
+     * move question categories to that new category when quiz name is very long but less than 256 characters.
+     */
+    public function test_question_save_from_deletion_quiz_with_long_name() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions();
+
+        // Moodle doesn't allow you to enter a name longer than 255 characters.
+        $quiz->name = shorten_text(str_repeat('123456789 ', 26), 255);
+
+        $DB->update_record('quiz', $quiz);
+
+        $context = context::instance_by_id($qcat->contextid);
+
+        $newcat = question_save_from_deletion(array_column($questions, 'id'),
+                $context->get_parent_context()->id, $context->get_context_name());
+
+        // Verifying that the inserted record's name is expected or not.
+        $this->assertEquals($DB->get_record('question_categories', ['id' => $newcat->id])->name, $newcat->name);
+
+        // Verify that the newcat itself is not a top level category.
         $this->assertNotEquals(0, $newcat->parent);
 
         // Verify there is just a single top-level category.
@@ -2060,5 +2140,48 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->assertEquals(new moodle_url('/question/exportone.php',
                 ['id' => $systemq->id, 'courseid' => SITEID, 'sesskey' => sesskey()]),
                 question_get_export_single_question_url(question_bank::load_question($systemq->id)));
+    }
+
+    /**
+     * Get test cases for test_core_question_find_next_unused_idnumber.
+     *
+     * @return array test cases.
+     */
+    public function find_next_unused_idnumber_cases(): array {
+        return [
+            ['id', null],
+            ['id1a', null],
+            ['id001', 'id002'],
+            ['id9', 'id10'],
+            ['id009', 'id010'],
+            ['id999', 'id1000'],
+        ];
+    }
+
+    /**
+     * Test core_question_find_next_unused_idnumber in the case when there are no other questions.
+     *
+     * @dataProvider find_next_unused_idnumber_cases
+     * @param string $oldidnumber value to pass to core_question_find_next_unused_idnumber.
+     * @param string|null $expectednewidnumber expected result.
+     */
+    public function test_core_question_find_next_unused_idnumber(string $oldidnumber, ?string $expectednewidnumber) {
+        $this->assertSame($expectednewidnumber, core_question_find_next_unused_idnumber($oldidnumber, 0));
+    }
+
+    public function test_core_question_find_next_unused_idnumber_skips_used() {
+        $this->resetAfterTest();
+
+        /** @var core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category();
+        $othercategory = $generator->create_question_category();
+        $generator->create_question('truefalse', null, ['category' => $category->id, 'idnumber' => 'id9']);
+        $generator->create_question('truefalse', null, ['category' => $category->id, 'idnumber' => 'id10']);
+        // Next one to make sure only idnumbers from the right category are ruled out.
+        $generator->create_question('truefalse', null, ['category' => $othercategory->id, 'idnumber' => 'id11']);
+
+        $this->assertSame('id11', core_question_find_next_unused_idnumber('id9', $category->id));
+        $this->assertSame('id11', core_question_find_next_unused_idnumber('id8', $category->id));
     }
 }

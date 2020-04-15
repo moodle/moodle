@@ -40,7 +40,6 @@ Feature: Award badges based on activity completion
     And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |
-      | issuername | Tester of course badge |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I set the field "type" to "Activity completion"

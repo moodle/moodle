@@ -96,8 +96,6 @@ define('BADGE_MESSAGE_MONTHLY', 4);
 /*
  * URL of backpack. Custom ones can be added.
  */
-define('BADGE_BACKPACKAPIURL', 'https://backpack.openbadges.org');
-define('BADGE_BACKPACKWEBURL', 'https://backpack.openbadges.org');
 define('BADGRIO_BACKPACKAPIURL', 'https://api.badgr.io/v2');
 define('BADGRIO_BACKPACKWEBURL', 'https://badgr.io');
 
@@ -105,6 +103,12 @@ define('BADGRIO_BACKPACKWEBURL', 'https://badgr.io');
  * @deprecated since 3.7. Use the urls in the badge_external_backpack table instead.
  */
 define('BADGE_BACKPACKURL', 'https://backpack.openbadges.org');
+
+/*
+ * @deprecated since 3.9 (MDL-66357).
+ */
+define('BADGE_BACKPACKAPIURL', 'https://backpack.openbadges.org');
+define('BADGE_BACKPACKWEBURL', 'https://backpack.openbadges.org');
 
 /*
  * Open Badges specifications.
@@ -503,10 +507,13 @@ function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
             $contents = $file->get_content();
 
             $filehandler = new PNG_MetaDataHandler($contents);
-            $assertion = new moodle_url('/badges/assertion.php', array('b' => $hash));
-            if ($filehandler->check_chunks("tEXt", "openbadges")) {
-                // Add assertion URL tExt chunk.
-                $newcontents = $filehandler->add_chunks("tEXt", "openbadges", $assertion->out(false));
+            // For now, the site backpack OB version will be used as default.
+            $obversion = badges_open_badges_backpack_api();
+            $assertion = new core_badges_assertion($hash, $obversion);
+            $assertionjson = json_encode($assertion->get_badge_assertion());
+            if ($filehandler->check_chunks("iTXt", "openbadges")) {
+                // Add assertion URL iTXt chunk.
+                $newcontents = $filehandler->add_chunks("iTXt", "openbadges", $assertionjson);
                 $fileinfo = array(
                         'contextid' => $user_context->id,
                         'component' => 'badges',
@@ -868,7 +875,7 @@ function badges_get_default_issuer() {
     global $CFG, $SITE;
 
     $issuer = array();
-    $issuerurl = new moodle_url('/badges/issuer.php');
+    $issuerurl = new moodle_url('/');
     $issuer['name'] = $CFG->badges_defaultissuername;
     if (empty($issuer['name'])) {
         $issuer['name'] = $SITE->fullname ? $SITE->fullname : $SITE->shortname;
@@ -876,7 +883,8 @@ function badges_get_default_issuer() {
     $issuer['url'] = $issuerurl->out(false);
     $issuer['email'] = $CFG->badges_defaultissuercontact;
     $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
-    $issuer['id'] = $issuerurl->out(false);
+    $issuerid = new moodle_url('/badges/issuer_json.php');
+    $issuer['id'] = $issuerid->out(false);
     $issuer['type'] = OPEN_BADGES_V2_TYPE_ISSUER;
     return $issuer;
 }

@@ -59,7 +59,6 @@
      * @return block_rss_client\output\footer|null The renderable footer or null if none should be displayed.
      */
     protected function get_footer($feedrecords) {
-        global $PAGE;
         $footer = null;
 
         if ($this->config->block_rss_client_show_channel_link) {
@@ -80,7 +79,8 @@
                 if ($footer === null) {
                     $footer = new block_rss_client\output\footer();
                 }
-                $manageurl = new moodle_url('/blocks/rss_client/managefeeds.php', ['courseid' => $PAGE->course->id]);
+                $manageurl = new moodle_url('/blocks/rss_client/managefeeds.php',
+                        ['courseid' => $this->page->course->id]);
                 $footer->set_failed($manageurl);
             }
         }

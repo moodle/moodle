@@ -154,9 +154,9 @@ class format_singleactivity extends format_base {
 
         if ($fetchtypes) {
             $availabletypes = $this->get_supported_activities();
-            if ($this->course) {
+            if ($this->courseid) {
                 // The course exists. Test against the course.
-                $testcontext = context_course::instance($this->course->id);
+                $testcontext = context_course::instance($this->courseid);
             } else if ($this->categoryid) {
                 // The course does not exist yet, but we have a category ID that we can test against.
                 $testcontext = context_coursecat::instance($this->categoryid);
@@ -383,12 +383,30 @@ class format_singleactivity extends format_base {
      * @return bool|null (null if the check is not possible)
      */
     public function activity_has_subtypes() {
+        global $USER;
         if (!($modname = $this->get_activitytype())) {
             return null;
         }
-        $metadata = get_module_metadata($this->get_course(), self::get_supported_activities());
+        $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
+        $metadata = $contentitemservice->get_content_items_for_user_in_course($USER, $this->get_course());
+
+        // If there are multiple items originating from this mod_xxx component, then it's deemed to have subtypes.
+        // If there is only 1 item, but it's not a reference to the core content item for the module, then it's also deemed to
+        // have subtypes.
+        $count = 0;
         foreach ($metadata as $key => $moduledata) {
-            if (preg_match('/^'.$modname.':/', $key)) {
+            if ('mod_'.$modname === $moduledata->componentname) {
+                $count ++;
+            }
+        }
+        if ($count > 1) {
+            return true;
+        } else {
+            // Get the single item.
+            $itemmetadata = $metadata[array_search('mod_' . $modname, array_column($metadata, 'componentname'))];
+            $urlbase = new \moodle_url('/course/mod.php', ['id' => $this->get_course()->id]);
+            $referenceurl = new \moodle_url($urlbase, ['add' => $modname]);
+            if ($referenceurl->out(false) != $itemmetadata->link) {
                 return true;
             }
         }

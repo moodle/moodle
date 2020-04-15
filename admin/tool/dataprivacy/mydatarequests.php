@@ -42,6 +42,13 @@ if (isguestuser()) {
 $usercontext = context_user::instance($USER->id);
 $PAGE->set_context($usercontext);
 
+if ($profilenode = $PAGE->settingsnav->find('myprofile', null)) {
+    $profilenode->make_active();
+}
+
+$title = get_string('datarequests', 'tool_dataprivacy');
+$PAGE->navbar->add($title);
+
 // Return URL.
 $params = ['id' => $USER->id];
 if ($courseid) {
@@ -49,7 +56,6 @@ if ($courseid) {
 }
 $returnurl = new moodle_url('/user/profile.php', $params);
 
-$title = get_string('datarequests', 'tool_dataprivacy');
 $PAGE->set_heading($title);
 $PAGE->set_title($title);
 echo $OUTPUT->header();

@@ -108,6 +108,26 @@ class helper {
     }
 
     /**
+     * Convert the int representation of display options into stdClass
+     *
+     * @param core $core The \core_h5p\core object
+     * @param int $displayint integer value representing display options
+     *
+     * @return int The representation of display options as int
+     */
+    public static function decode_display_options(core $core, int $displayint = null): \stdClass {
+        $config = new \stdClass();
+        if ($displayint === null) {
+            $displayint = self::get_display_options($core, $config);
+        }
+        $displayarray = $core->getDisplayOptionsForEdit($displayint);
+        $config->export = $displayarray[core::DISPLAY_OPTION_DOWNLOAD] ?? 0;
+        $config->embed = $displayarray[core::DISPLAY_OPTION_EMBED] ?? 0;
+        $config->copyright = $displayarray[core::DISPLAY_OPTION_COPYRIGHT] ?? 0;
+        return $config;
+    }
+
+    /**
      * Checks if the author of the .h5p file is "trustable". If the file hasn't been uploaded by a user with the
      * required capability, the content won't be deployed.
      *
@@ -180,4 +200,81 @@ class helper {
         return $fs->create_file_from_pathname($filerecord, $filepath);
     }
 
+    /**
+     * Get information about different H5P tools and their status.
+     *
+     * @return array Data to render by the template
+     */
+    public static function get_h5p_tools_info(): array {
+        $tools = array();
+
+        // Getting information from available H5P tools one by one because their enabled/disabled options are totally different.
+        // Check the atto button status.
+        $link = \editor_atto\plugininfo\atto::get_manage_url();
+        $status = strpos(get_config('editor_atto', 'toolbar'), 'h5p') > -1;
+        $tools[] = self::convert_info_into_array('atto_h5p', $link, $status);
+
+        // Check the Display H5P filter status.
+        $link = \core\plugininfo\filter::get_manage_url();
+        $status = filter_get_active_state('displayh5p', \context_system::instance()->id);
+        $tools[] = self::convert_info_into_array('filter_displayh5p', $link, $status);
+
+        // Check H5P scheduled task.
+        $link = '';
+        $status = 0;
+        $statusaction = '';
+        if ($task = \core\task\manager::get_scheduled_task('\core\task\h5p_get_content_types_task')) {
+            $status = !$task->get_disabled();
+            $link = new \moodle_url(
+                '/admin/tool/task/scheduledtasks.php',
+                array('action' => 'edit', 'task' => get_class($task))
+            );
+            if ($status && \tool_task\run_from_cli::is_runnable() && get_config('tool_task', 'enablerunnow')) {
+                $statusaction = \html_writer::link(
+                    new \moodle_url('/admin/tool/task/schedule_task.php',
+                        array('task' => get_class($task))),
+                    get_string('runnow', 'tool_task'));
+            }
+        }
+        $tools[] = self::convert_info_into_array('task_h5p', $link, $status, $statusaction);
+
+        return $tools;
+    }
+
+    /**
+     * Convert information into needed mustache template data array
+     * @param string $tool The name of the tool
+     * @param \moodle_url $link The URL to management page
+     * @param int $status The current status of the tool
+     * @param string $statusaction A link to 'Run now' option for the task
+     * @return array
+     */
+    static private function convert_info_into_array(string $tool,
+        \moodle_url $link,
+        int $status,
+        string $statusaction = ''): array {
+
+        $statusclasses = array(
+            TEXTFILTER_DISABLED => 'badge badge-danger',
+            TEXTFILTER_OFF => 'badge badge-warning',
+            0 => 'badge badge-danger',
+            TEXTFILTER_ON => 'badge badge-success',
+        );
+
+        $statuschoices = array(
+            TEXTFILTER_DISABLED => get_string('disabled', 'admin'),
+            TEXTFILTER_OFF => get_string('offbutavailable', 'core_filters'),
+            0 => get_string('disabled', 'admin'),
+            1 => get_string('enabled', 'admin'),
+        );
+
+        return [
+            'tool' => get_string($tool, 'h5p'),
+            'tool_description' => get_string($tool . '_description', 'h5p'),
+            'link' => $link,
+            'status' => $statuschoices[$status],
+            'status_class' => $statusclasses[$status],
+            'status_action' => $statusaction,
+        ];
+    }
 }

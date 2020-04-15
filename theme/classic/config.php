@@ -156,3 +156,4 @@ $THEME->scss = function($theme) {
     return theme_classic_get_main_scss_content($theme);
 };
 $THEME->usefallback = true;
+$THEME->iconsystem = '\\theme_classic\\output\\icon_system_fontawesome';

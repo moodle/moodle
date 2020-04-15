@@ -716,7 +716,7 @@ class enrol_self_plugin extends enrol_plugin {
      * @return bool
      */
     public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
-        global $CFG;
+        global $CFG, $DB;
 
         // Merge these two settings to one value for the single selection element.
         if ($instance->notifyall and $instance->expirynotify) {

@@ -49,7 +49,7 @@ class core_badges_assertion {
     private $_url;
 
     /** @var int $obversion to control version JSON-LD. */
-    private $_obversion = OPEN_BADGES_V1;
+    private $_obversion = OPEN_BADGES_V2;
 
     /**
      * Constructs with issued badge unique hash.
@@ -57,7 +57,7 @@ class core_badges_assertion {
      * @param string $hash Badge unique hash from badge_issued table.
      * @param int $obversion to control version JSON-LD.
      */
-    public function __construct($hash, $obversion = OPEN_BADGES_V1) {
+    public function __construct($hash, $obversion = OPEN_BADGES_V2) {
         global $DB;
 
         $this->_data = $DB->get_record_sql('
@@ -198,11 +198,8 @@ class core_badges_assertion {
             $class['image'] = 'data:image/png;base64,' . $imagedata;
             $class['criteria'] = $this->_url->out(false); // Currently issued badge URL.
             if ($issued) {
-                if ($this->_obversion == OPEN_BADGES_V2) {
-                    $issuerurl = new moodle_url('/badges/badge_json.php', array('id' => $this->get_badge_id(), 'action' => 0));
-                } else {
-                    $issuerurl = new moodle_url('/badges/assertion.php', array('b' => $this->_data->uniquehash, 'action' => 0));
-                }
+                $params = ['id' => $this->get_badge_id(), 'obversion' => $this->_obversion];
+                $issuerurl = new moodle_url('/badges/issuer_json.php', $params);
                 $class['issuer'] = $issuerurl->out(false);
             }
             $this->embed_data_badge_version2($class, OPEN_BADGES_V2_TYPE_BADGE);
@@ -223,7 +220,7 @@ class core_badges_assertion {
         $issuer = array();
         if ($this->_data) {
             // Required.
-            if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
+            if ($this->_obversion == OPEN_BADGES_V1) {
                 $issuer['name'] = $this->_data->issuername;
                 $issuer['url'] = $this->_data->issuerurl;
                 // Optional.
@@ -233,7 +230,8 @@ class core_badges_assertion {
                     $issuer['email'] = $CFG->badges_defaultissuercontact;
                 }
             } else {
-                $issuer = badges_get_default_issuer();
+                $badge = new badge($this->get_badge_id());
+                $issuer = $badge->get_badge_issuer();
             }
         }
         $this->embed_data_badge_version2($issuer, OPEN_BADGES_V2_TYPE_ISSUER);
@@ -341,8 +339,7 @@ class core_badges_assertion {
                 '/badges/badge_json.php',
                 array('id' => $this->get_badge_id())
             );
-            $issuerurl = new moodle_url('/badges/badge_json.php', array('id' => $this->get_badge_id(), 'action' => 0,
-                'obversion' => $this->_obversion));
+            $issuerurl = new moodle_url('/badges/issuer_json.php', ['id' => $this->get_badge_id()]);
             // For assertion.
             if ($type == OPEN_BADGES_V2_TYPE_ASSERTION) {
                 $json['@context'] = OPEN_BADGES_V2_CONTEXT;

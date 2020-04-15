@@ -27,6 +27,10 @@ defined('MOODLE_INTERNAL') || die;
 $string['allowedsourceslist'] = 'Allowed sources';
 $string['allowedsourceslistdesc'] = 'A list of URLs from which users can embed H5P content. If none are specified, all URLs will remain as links and not be displayed as embedded H5P content.
 
-\'[id]\' is a placeholder for the H5P content ID in the external source.';
+\'[id]\' is a placeholder for the H5P content ID in the external source.
+For example:
+
+- H5P.com: https://[xxxxxx].h5p.com/content/[id]
+- Wordpress: http://myserver/wp-admin/admin-ajax.php?action=h5p_embed&id=[id]';
 $string['filtername'] = 'Display H5P';
 $string['privacy:metadata'] = 'The display H5P filter does not store any personal data.';

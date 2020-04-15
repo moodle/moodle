@@ -46,7 +46,7 @@
         <thead>
             <tr>
                 {{# daynames }}
-                <th class="header text-xs-center">
+                <th class="header text-xs-center" aria-label="{{fullname}}">
                     {{shortname}}
                 </th>
                 {{/ daynames }}
@@ -72,7 +72,7 @@
                         data-new-event-timestamp="{{neweventtimestamp}}">
                         <div class="d-none d-md-block hidden-phone text-xs-center">
                             {{#hasevents}}
-                                <a data-action="view-day-link" href="#" class="day" title="{{viewdaylinktitle}}"
+                                <a data-action="view-day-link" href="#" class="day" aria-label="{{viewdaylinktitle}}"
                                     data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"
                                     data-courseid="{{courseid}}" data-categoryid="{{categoryid}}"
                                     data-timestamp="{{timestamp}}">{{mday}}</a>
@@ -123,15 +123,13 @@
                         </div>
                         <div class="d-md-none hidden-desktop hidden-tablet">
                             {{#hasevents}}
-                                <a data-action="view-day-link" href="#" class="day" title="{{viewdaylinktitle}}"
+                                <a data-action="view-day-link" href="#" class="day" aria-label="{{viewdaylinktitle}}"
                                     data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"
                                     data-courseid="{{courseid}}" data-categoryid="{{categoryid}}"
                                     data-timestamp="{{timestamp}}">{{mday}}</a>
                             {{/hasevents}}
                             {{^hasevents}}
-                                <div data-region="day-content">
                                     {{mday}}
-                                </div>
                             {{/hasevents}}
                         </div>
                     </td>

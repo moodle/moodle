@@ -622,102 +622,6 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
 }
 
 /**
- * Retrieve all metadata for the requested modules
- *
- * @param object $course The Course
- * @param array $modnames An array containing the list of modules and their
- * names
- * @param int $sectionreturn The section to return to
- * @return array A list of stdClass objects containing metadata about each
- * module
- */
-function get_module_metadata($course, $modnames, $sectionreturn = null) {
-    global $OUTPUT;
-
-    // get_module_metadata will be called once per section on the page and courses may show
-    // different modules to one another
-    static $modlist = array();
-    if (!isset($modlist[$course->id])) {
-        $modlist[$course->id] = array();
-    }
-
-    $return = array();
-    $urlbase = new moodle_url('/course/mod.php', array('id' => $course->id, 'sesskey' => sesskey()));
-    if ($sectionreturn !== null) {
-        $urlbase->param('sr', $sectionreturn);
-    }
-    foreach($modnames as $modname => $modnamestr) {
-        if (!course_allowed_module($course, $modname)) {
-            continue;
-        }
-        if (isset($modlist[$course->id][$modname])) {
-            // This module is already cached
-            $return += $modlist[$course->id][$modname];
-            continue;
-        }
-        $modlist[$course->id][$modname] = array();
-
-        // Create an object for a default representation of this module type in the activity chooser. It will be used
-        // if module does not implement callback get_shortcuts() and it will also be passed to the callback if it exists.
-        $defaultmodule = new stdClass();
-        $defaultmodule->title = $modnamestr;
-        $defaultmodule->name = $modname;
-        $defaultmodule->link = new moodle_url($urlbase, array('add' => $modname));
-        $defaultmodule->icon = $OUTPUT->pix_icon('icon', '', $defaultmodule->name, array('class' => 'icon'));
-        $sm = get_string_manager();
-        if ($sm->string_exists('modulename_help', $modname)) {
-            $defaultmodule->help = get_string('modulename_help', $modname);
-            if ($sm->string_exists('modulename_link', $modname)) {  // Link to further info in Moodle docs.
-                $link = get_string('modulename_link', $modname);
-                $linktext = get_string('morehelp');
-                $defaultmodule->help .= html_writer::tag('div',
-                    $OUTPUT->doc_link($link, $linktext, true), array('class' => 'helpdoclink'));
-            }
-        }
-        $defaultmodule->archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
-
-        // Each module can implement callback modulename_get_shortcuts() in its lib.php and return the list
-        // of elements to be added to activity chooser.
-        $items = component_callback($modname, 'get_shortcuts', array($defaultmodule), null);
-        if ($items !== null) {
-            foreach ($items as $item) {
-                // Add all items to the return array. All items must have different links, use them as a key in the return array.
-                if (!isset($item->archetype)) {
-                    $item->archetype = $defaultmodule->archetype;
-                }
-                if (!isset($item->icon)) {
-                    $item->icon = $defaultmodule->icon;
-                }
-                // If plugin returned the only one item with the same link as default item - cache it as $modname,
-                // otherwise append the link url to the module name.
-                $item->name = (count($items) == 1 &&
-                    $item->link->out() === $defaultmodule->link->out()) ? $modname : $modname . ':' . $item->link;
-
-                // If the module provides the helptext property, append it to the help text to match the look and feel
-                // of the default course modules.
-                if (isset($item->help) && isset($item->helplink)) {
-                    $linktext = get_string('morehelp');
-                    $item->help .= html_writer::tag('div',
-                        $OUTPUT->doc_link($item->helplink, $linktext, true), array('class' => 'helpdoclink'));
-                }
-                $modlist[$course->id][$modname][$item->name] = $item;
-            }
-            $return += $modlist[$course->id][$modname];
-            // If get_shortcuts() callback is defined, the default module action is not added.
-            // It is a responsibility of the callback to add it to the return value unless it is not needed.
-            continue;
-        }
-
-        // The callback get_shortcuts() was not found, use the default item for the activity chooser.
-        $modlist[$course->id][$modname][$modname] = $defaultmodule;
-        $return[$modname] = $defaultmodule;
-    }
-
-    core_collator::asort_objects_by_property($return, 'title');
-    return $return;
-}
-
-/**
  * Return the course category context for the category with id $categoryid, except
  * that if $categoryid is 0, return the system context.
  *
@@ -2155,9 +2059,12 @@ function course_format_name ($course,$max=100) {
  * Is the user allowed to add this type of module to this course?
  * @param object $course the course settings. Only $course->id is used.
  * @param string $modname the module name. E.g. 'forum' or 'quiz'.
+ * @param \stdClass $user the user to check, defaults to the global user if not provided.
  * @return bool whether the current user is allowed to add this type of module to this course.
  */
-function course_allowed_module($course, $modname) {
+function course_allowed_module($course, $modname, \stdClass $user = null) {
+    global $USER;
+    $user = $user ?? $USER;
     if (is_numeric($modname)) {
         throw new coding_exception('Function course_allowed_module no longer
                 supports numeric module ids. Please update your code to pass the module name.');
@@ -2179,7 +2086,7 @@ function course_allowed_module($course, $modname) {
     }
 
     $coursecontext = context_course::instance($course->id);
-    return has_capability($capability, $coursecontext);
+    return has_capability($capability, $coursecontext, $user);
 }
 
 /**
@@ -2705,31 +2612,68 @@ function update_course($data, $editoroptions = NULL) {
 }
 
 /**
- * Average number of participants
- * @return integer
+ * Calculate the average number of enrolled participants per course.
+ *
+ * This is intended for statistics purposes during the site registration. Only visible courses are taken into account.
+ * Front page enrolments are excluded.
+ *
+ * @param bool $onlyactive Consider only active enrolments in enabled plugins and obey the enrolment time restrictions.
+ * @param int $lastloginsince If specified, count only users who logged in after this timestamp.
+ * @return float
  */
-function average_number_of_participants() {
-    global $DB, $SITE;
+function average_number_of_participants(bool $onlyactive = false, int $lastloginsince = null): float {
+    global $DB;
 
-    //count total of enrolments for visible course (except front page)
-    $sql = 'SELECT COUNT(*) FROM (
-        SELECT DISTINCT ue.userid, e.courseid
-        FROM {user_enrolments} ue, {enrol} e, {course} c
-        WHERE ue.enrolid = e.id
-            AND e.courseid <> :siteid
-            AND c.id = e.courseid
-            AND c.visible = 1) total';
-    $params = array('siteid' => $SITE->id);
+    $params = [
+        'siteid' => SITEID,
+    ];
+
+    $sql = "SELECT DISTINCT ue.userid, e.courseid
+              FROM {user_enrolments} ue
+              JOIN {enrol} e ON e.id = ue.enrolid
+              JOIN {course} c ON c.id = e.courseid ";
+
+    if ($onlyactive || $lastloginsince) {
+        $sql .= "JOIN {user} u ON u.id = ue.userid ";
+    }
+
+    $sql .= "WHERE e.courseid <> :siteid
+               AND c.visible = 1 ";
+
+    if ($onlyactive) {
+        $sql .= "AND ue.status = :active
+                 AND e.status = :enabled
+                 AND ue.timestart < :now1
+                 AND (ue.timeend = 0 OR ue.timeend > :now2) ";
+
+        // Same as in the enrollib - the rounding should help caching in the database.
+        $now = round(time(), -2);
+
+        $params += [
+            'active' => ENROL_USER_ACTIVE,
+            'enabled' => ENROL_INSTANCE_ENABLED,
+            'now1' => $now,
+            'now2' => $now,
+        ];
+    }
+
+    if ($lastloginsince) {
+        $sql .= "AND u.lastlogin > :lastlogin ";
+        $params['lastlogin'] = $lastloginsince;
+    }
+
+    $sql = "SELECT COUNT(*)
+              FROM ($sql) total";
+
     $enrolmenttotal = $DB->count_records_sql($sql, $params);
 
+    // Get the number of visible courses (exclude the front page).
+    $coursetotal = $DB->count_records('course', ['visible' => 1]);
+    $coursetotal = $coursetotal - 1;
 
-    //count total of visible courses (minus front page)
-    $coursetotal = $DB->count_records('course', array('visible' => 1));
-    $coursetotal = $coursetotal - 1 ;
-
-    //average of enrolment
     if (empty($coursetotal)) {
         $participantaverage = 0;
+
     } else {
         $participantaverage = $enrolmenttotal / $coursetotal;
     }

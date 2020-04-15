@@ -41,14 +41,14 @@ class helper_testcase extends \advanced_testcase {
     /**
      * Test the behaviour of get_display_options().
      *
-     * @dataProvider get_display_options_provider
+     * @dataProvider display_options_provider
      * @param  bool   $frame     Whether the frame should be displayed or not
      * @param  bool   $export    Whether the export action button should be displayed or not
      * @param  bool   $embed     Whether the embed action button should be displayed or not
      * @param  bool   $copyright Whether the copyright action button should be displayed or not
      * @param  int    $expected The expectation with the displayoptions value
      */
-    public function test_get_display_options(bool $frame, bool $export, bool $embed, bool $copyright, int $expected): void {
+    public function test_display_options(bool $frame, bool $export, bool $embed, bool $copyright, int $expected): void {
         $this->setRunTestInSeparateProcess(true);
         $this->resetAfterTest();
 
@@ -60,9 +60,16 @@ class helper_testcase extends \advanced_testcase {
             'embed' => $embed,
             'copyright' => $copyright,
         ];
-        $displayoptions = helper::get_display_options($core, $config);
 
+        // Test getting display options.
+        $displayoptions = helper::get_display_options($core, $config);
         $this->assertEquals($expected, $displayoptions);
+
+        // Test decoding display options.
+        $decoded = helper::decode_display_options($core, $expected);
+        $this->assertEquals($decoded->export, $config->export);
+        $this->assertEquals($decoded->embed, $config->embed);
+        $this->assertEquals($decoded->copyright, $config->copyright);
     }
 
     /**
@@ -70,7 +77,7 @@ class helper_testcase extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_display_options_provider(): array {
+    public function display_options_provider(): array {
         return [
             'All display options disabled' => [
                 false,
@@ -259,7 +266,7 @@ class helper_testcase extends \advanced_testcase {
     /**
      * Test the behaviour of can_update_library().
      */
-    public function can_update_library(): void {
+    public function test_can_update_library(): void {
         $this->resetAfterTest();
         $factory = new \core_h5p\factory();
 

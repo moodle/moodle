@@ -248,5 +248,5 @@ Feature: Data delete from the privacy API
     And I follow "Profile" in the user menu
     And I follow "Delete my account"
     When I press "Save changes"
-    Then I should see "Your request has been submitted and will be processed soon"
+    Then I should see "Your request has been submitted and will be processed soon."
     And I should see "Approved" in the "Delete all of my personal data" "table_row"

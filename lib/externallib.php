@@ -182,7 +182,7 @@ class external_api {
 
         require_once($CFG->libdir . "/pagelib.php");
 
-        $externalfunctioninfo = self::external_function_info($function);
+        $externalfunctioninfo = static::external_function_info($function);
 
         $currentpage = $PAGE;
         $currentcourse = $COURSE;
@@ -252,7 +252,7 @@ class external_api {
 
             $response['error'] = false;
             $response['data'] = $result;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $exception = get_exception_info($e);
             unset($exception->a);
             $exception->backtrace = format_backtrace($exception->backtrace, true);
@@ -773,7 +773,8 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
     if (!empty($iprestriction)) {
         $newtoken->iprestriction = $iprestriction;
     }
-    $newtoken->privatetoken = null;
+    // Generate the private token, it must be transmitted only via https.
+    $newtoken->privatetoken = random_string(64);
     $DB->insert_record('external_tokens', $newtoken);
     return $newtoken->token;
 }

@@ -385,16 +385,18 @@ class behat_hooks extends behat_base {
         // Reset the scenariorunning variable to ensure that Step 0 occurs.
         $this->scenariorunning = false;
 
-        // Run all test with medium (1024x768) screen size, to avoid responsive problems.
-        $this->resize_window('medium');
-
         // Set up the tags for current scenario.
         self::fetch_tags_for_scenario($scope);
 
         // If scenario requires the Moodle app to be running, set this up.
         if ($this->has_tag('app')) {
             $this->execute('behat_app::start_scenario');
+
+            return;
         }
+
+        // Run all test with medium (1024x768) screen size, to avoid responsive problems.
+        $this->resize_window('medium');
     }
 
     /**
@@ -721,20 +723,12 @@ class behat_hooks extends behat_base {
      * @param string $component
      */
     public function register_component_selectors_for_component(string $component): void {
-        $componentclassname = "behat_{$component}";
+        $context = behat_context_helper::get_component_context($component);
 
-        if (!behat_context_helper::has_context($componentclassname)) {
-            if ("core_" === substr($component, 0, 5)) {
-                $componentclassname = "behat_" . substr($component, 5);
-                if (!behat_context_helper::has_context($componentclassname)) {
-                    return;
-                }
-            } else {
-                return;
-            }
+        if ($context === null) {
+            return;
         }
 
-        $context = behat_context_helper::get($componentclassname);
         $namedpartial = $this->getSession()->getSelectorsHandler()->getSelector('named_partial');
         $namedexact = $this->getSession()->getSelectorsHandler()->getSelector('named_exact');
 

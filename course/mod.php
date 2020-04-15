@@ -27,7 +27,7 @@ require("../config.php");
 require_once("lib.php");
 
 $sectionreturn = optional_param('sr', null, PARAM_INT);
-$add           = optional_param('add', '', PARAM_ALPHA);
+$add           = optional_param('add', '', PARAM_ALPHANUM);
 $type          = optional_param('type', '', PARAM_ALPHA);
 $indent        = optional_param('indent', 0, PARAM_INT);
 $update        = optional_param('update', 0, PARAM_INT);

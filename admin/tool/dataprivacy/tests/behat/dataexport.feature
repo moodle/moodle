@@ -159,5 +159,5 @@ Feature: Data export from the privacy API
     And I follow "Profile" in the user menu
     And I follow "Export all of my personal data"
     When I press "Save changes"
-    Then I should see "Your request has been submitted and will be processed soon"
+    Then I should see "Your request has been submitted and will be processed soon."
     And I should see "Approved" in the "Export all of my personal data" "table_row"

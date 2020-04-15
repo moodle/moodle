@@ -26,6 +26,8 @@ namespace core_h5p;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_h5p\local\library\autoloader;
+
 /**
  * H5P player class, for displaying any local H5P content.
  *
@@ -122,6 +124,38 @@ class player {
     }
 
     /**
+     * Get the encoded URL for embeding this H5P content.
+     *
+     * @param string $url Local URL of the H5P file to display.
+     * @param stdClass $config Configuration for H5P buttons.
+     * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
+     *
+     * @return string The embedable code to display a H5P file.
+     */
+    public static function display(string $url, \stdClass $config, bool $preventredirect = true): string {
+        global $OUTPUT;
+        $params = [
+                'url' => $url,
+                'preventredirect' => $preventredirect,
+            ];
+
+        $optparams = ['frame', 'export', 'embed', 'copyright'];
+        foreach ($optparams as $optparam) {
+            if (!empty($config->$optparam)) {
+                $params[$optparam] = $config->$optparam;
+            }
+        }
+        $fileurl = new \moodle_url('/h5p/embed.php', $params);
+
+        $template = new \stdClass();
+        $template->embedurl = $fileurl->out(false);
+
+        $result = $OUTPUT->render_from_template('core_h5p/h5pembed', $template);
+        $result .= self::get_resize_code();
+        return $result;
+    }
+
+    /**
      * Get the error messages stored in our H5P framework.
      *
      * @return stdClass with framework error messages.
@@ -165,7 +199,7 @@ class player {
             'exportUrl'       => ($exporturl instanceof \moodle_url) ? $exporturl->out(false) : '',
             'embedCode'       => $this->get_embed_code($this->url->out(),
                 $displayoptions[ core::DISPLAY_OPTION_EMBED ]),
-            'resizeCode'      => $this->get_resize_code(),
+            'resizeCode'      => self::get_resize_code(),
             'title'           => $this->content['slug'],
             'displayOptions'  => $displayoptions,
             'url'             => self::get_embed_url($this->url->out())->out(),
@@ -348,12 +382,15 @@ class player {
         $url->remove_params(array_keys($url->params()));
         $path = $url->out_as_local_url();
 
+        // We only need the slasharguments.
+        $path = substr($path, strpos($path, '.php/') + 5);
         $parts = explode('/', $path);
         $filename = array_pop($parts);
-        // First is an empty row and then the pluginfile.php part. Both can be ignored.
-        array_shift($parts);
-        array_shift($parts);
 
+        // If the request is made by tokenpluginfile.php we need to avoid userprivateaccesskey.
+        if (strpos($this->url, '/tokenpluginfile.php')) {
+            array_shift($parts);
+        }
         // Get the contextid, component and filearea.
         $contextid = array_shift($parts);
         $component = array_shift($parts);
@@ -515,20 +552,40 @@ class player {
      */
     private function get_export_settings(bool $downloadenabled): ?\moodle_url {
 
-        if ( ! $downloadenabled) {
+        if (!$downloadenabled) {
             return null;
         }
 
         $systemcontext = \context_system::instance();
         $slug = $this->content['slug'] ? $this->content['slug'] . '-' : '';
-        $url  = \moodle_url::make_pluginfile_url(
-            $systemcontext->id,
-            \core_h5p\file_storage::COMPONENT,
-            \core_h5p\file_storage::EXPORT_FILEAREA,
-            '',
-            '',
-            "{$slug}{$this->content['id']}.h5p"
-        );
+        // We have to build the right URL.
+        // Depending the request was made through webservice/pluginfile.php or pluginfile.php.
+        if (strpos($this->url, '/webservice/pluginfile.php')) {
+            $url  = \moodle_url::make_webservice_pluginfile_url(
+                $systemcontext->id,
+                \core_h5p\file_storage::COMPONENT,
+                \core_h5p\file_storage::EXPORT_FILEAREA,
+                '',
+                '',
+                "{$slug}{$this->content['id']}.h5p"
+            );
+        } else {
+            // If the request is made by tokenpluginfile.php we need to indicates to generate a token for current user.
+            $includetoken = false;
+            if (strpos($this->url, '/tokenpluginfile.php')) {
+                $includetoken = true;
+            }
+            $url  = \moodle_url::make_pluginfile_url(
+                $systemcontext->id,
+                \core_h5p\file_storage::COMPONENT,
+                \core_h5p\file_storage::EXPORT_FILEAREA,
+                '',
+                '',
+                "{$slug}{$this->content['id']}.h5p",
+                false,
+                $includetoken
+            );
+        }
 
         return $url;
     }
@@ -575,13 +632,15 @@ class player {
         $cachebuster = $this->get_cache_buster();
 
         // Use relative URL to support both http and https.
-        $liburl = $CFG->wwwroot . '/lib/h5p/';
+        $liburl = autoloader::get_h5p_core_library_url()->out();
         $relpath = '/' . preg_replace('/^[^:]+:\/\/[^\/]+\//', '', $liburl);
 
         // Add core stylesheets.
         foreach (core::$styles as $style) {
             $settings['core']['styles'][] = $relpath . $style . $cachebuster;
-            $this->cssrequires[] = new \moodle_url($liburl . $style . $cachebuster);
+            $this->cssrequires[] = autoloader::get_h5p_core_library_url($style, [
+                'ver' => $cachebuster,
+            ]);
         }
         // Add core JavaScript.
         foreach (core::get_scripts() as $script) {
@@ -664,7 +723,7 @@ class player {
             'crossorigin' => null,
             'libraryConfig' => $this->core->h5pF->getLibraryConfig(),
             'pluginCacheBuster' => $this->get_cache_buster(),
-            'libraryUrl' => $basepath . 'lib/h5p/js',
+            'libraryUrl' => autoloader::get_h5p_core_library_url('js'),
             'moodleLibraryPaths' => $this->core->get_dependency_roots($this->h5pid),
         );
 
@@ -688,11 +747,11 @@ class player {
      *
      * @return string The HTML code with the resize script.
      */
-    private function get_resize_code(): string {
+    private static function get_resize_code(): string {
         global $OUTPUT;
 
         $template = new \stdClass();
-        $template->resizeurl = new \moodle_url('/lib/h5p/js/h5p-resizer.js');
+        $template->resizeurl = autoloader::get_h5p_core_library_url('js/h5p-resizer.js');
 
         return $OUTPUT->render_from_template('core_h5p/h5presize', $template);
     }

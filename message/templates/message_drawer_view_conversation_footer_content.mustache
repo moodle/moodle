@@ -53,7 +53,6 @@
         data-auto-rows
         data-min-rows="3"
         data-max-rows="5"
-        role="textbox"
         aria-label="{{#str}} writeamessage, core_message {{/str}}"
         placeholder="{{#str}} writeamessage, core_message {{/str}}"
         style="resize: none"
@@ -70,6 +69,7 @@
             </div>
             <button
                 class="btn btn-link btn-icon icon-size-3 ml-1"
+                aria-label="{{#str}} toggleemojipicker, core {{/str}}"
                 data-action="toggle-emoji-picker"
             >
                 {{#pix}} e/emoticons, core{{/pix}}

@@ -317,6 +317,36 @@ YUI.add('moodle-core_filepicker', function(Y) {
             // TODO add tooltip with o.data['title'] (o.value) or o.data['thumbnail_title']
             return el.getContent();
         }
+
+        /**
+         * Generate slave checkboxes based on toggleall's specification
+         * @param {object} o An object reprsenting the record for the current row.
+         * @return {html} The checkbox html
+         */
+        var formatCheckbox = function(o) {
+            var el = Y.Node.create('<div/>');
+
+            var checkbox = Y.Node.create('<input/>')
+                .setAttribute('type', 'checkbox')
+                .setAttribute('data-fieldtype', 'checkbox')
+                .setAttribute('data-fullname', o.data.fullname)
+                .setAttribute('data-action', 'toggle')
+                .setAttribute('data-toggle', 'slave')
+                .setAttribute('data-togglegroup', 'file-selections')
+                .setAttribute('data-toggle-selectall', M.util.get_string('selectall', 'moodle'))
+                .setAttribute('data-toggle-deselectall', M.util.get_string('deselectall', 'moodle'));
+
+            var checkboxLabel = Y.Node.create('<label>')
+                .setHTML("Select file '" + o.data.fullname + "'")
+                .addClass('sr-only')
+                .setAttrs({
+                    for: checkbox.generateID(),
+                });
+
+            el.appendChild(checkbox);
+            el.appendChild(checkboxLabel);
+            return el.getContent();
+        };
         /** sorting function for table view */
         var sortFoldersFirst = function(a, b, desc) {
             if (a.get('isfolder') && !b.get('isfolder')) {
@@ -340,6 +370,37 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 {key: "mimetype", label: M.util.get_string('type', 'repository'), allowHTML: true,
                     sortable: true, sortFn: sortFoldersFirst}
             ];
+
+            // Generate a checkbox based on toggleall's specification
+            var div = Y.Node.create('<div/>');
+            var checkbox = Y.Node.create('<input/>')
+                .setAttribute('type', 'checkbox')
+                // .setAttribute('title', M.util.get_string('selectallornone', 'form'))
+                .setAttribute('data-action', 'toggle')
+                .setAttribute('data-toggle', 'master')
+                .setAttribute('data-togglegroup', 'file-selections');
+
+            var checkboxLabel = Y.Node.create('<label>')
+                .setHTML(M.util.get_string('selectallornone', 'form'))
+                .addClass('sr-only')
+                .setAttrs({
+                    for: checkbox.generateID(),
+                });
+
+            div.appendChild(checkboxLabel);
+            div.appendChild(checkbox);
+
+
+            // Enable the selectable checkboxes
+            if (options.disablecheckboxes != undefined && !options.disablecheckboxes) {
+                cols.unshift({
+                    key: "",
+                    label: div.getContent(),
+                    allowHTML: true,
+                    formatter: formatCheckbox,
+                    sortable: false
+                });
+            }
             scope.tableview = new Y.DataTable({columns: cols, data: fileslist});
             scope.tableview.delegate('click', function (e, tableview) {
                 var record = tableview.getRecord(e.currentTarget.get('id'));
@@ -350,7 +411,8 @@ YUI.add('moodle-core_filepicker', function(Y) {
                     }
                     Y.bind(callback, this)(e, record.getAttrs());
                 }
-            }, 'tr', options.callbackcontext, scope.tableview);
+            }, 'tr td:not(:first-child)', options.callbackcontext, scope.tableview);
+
             if (options.rightclickcallback) {
                 scope.tableview.delegate('contextmenu', function (e, tableview) {
                     var record = tableview.getRecord(e.currentTarget.get('id'));

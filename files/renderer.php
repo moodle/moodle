@@ -113,13 +113,18 @@ class core_files_renderer extends plugin_renderer_base {
                 array('invalidjson', 'repository'), array('popupblockeddownload', 'repository'),
                 array('unknownoriginal', 'repository'), array('confirmdeletefolder', 'repository'),
                 array('confirmdeletefilewithhref', 'repository'), array('confirmrenamefolder', 'repository'),
-                array('confirmrenamefile', 'repository'), array('newfolder', 'repository'), array('edit', 'moodle')
+                array('confirmrenamefile', 'repository'), array('newfolder', 'repository'), array('edit', 'moodle'),
+                array('originalextensionchange', 'repository'), array('originalextensionremove', 'repository'),
+                array('aliaseschange', 'repository'), ['nofilesselected', 'repository'],
+                ['confirmdeleteselectedfile', 'repository'], ['selectall', 'moodle'], ['deselectall', 'moodle'],
+                ['selectallornone', 'form'],
             )
         );
         if ($this->page->requires->should_create_one_time_item_now('core_file_managertemplate')) {
             $this->page->requires->js_init_call('M.form_filemanager.set_templates',
                     array($this->filemanager_js_templates()), true, $module);
         }
+        $this->page->requires->js_call_amd('core/checkbox-toggleall', 'init');
         $this->page->requires->js_init_call('M.form_filemanager.init', array($fm->options), true, $module);
 
         // non javascript file manager

@@ -1,0 +1,111 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/chooser
+
+    Chooser dialog template.
+
+    Example context (json):
+    {
+        "title": "Chooser title",
+        "options": {
+            "label": "Option name",
+            "description": "Option description",
+            "urls": {
+                "addoption": "http://addoptionurl.com"
+            },
+            "icon": "<img class='icon' src='http://urltooptionicon'>"
+        }
+    }
+}}
+
+<div data-region="carousel" class="carousel slide">
+    <div class="carousel-inner" aria-live="polite">
+        <div class="carousel-item px-4 py-3 active" data-region="modules">
+            <div class="modchoosercontainer" aria-label="{{#str}} activitymodules, core {{/str}}">
+                <div class="searchcontainer mb-3">
+                    {{>core_course/local/activitychooser/search}}
+                </div>
+                <div data-region="chooser-container">
+                    <div class="nav nav-tabs mb-3" id="activities-{{uniqid}}" role="tablist">
+                        <a class="nav-item nav-link {{#favouritesFirst}}active{{/favouritesFirst}} {{^favourites}}d-none{{/favourites}}"
+                           id="starred-tab-{{uniqid}}"
+                           data-toggle="tab"
+                           data-region="favourite-tab-nav"
+                           href="#starred-{{uniqid}}"
+                           role="tab"
+                           aria-label="{{#str}} aria:favouritestab, core_course {{/str}}"
+                           aria-controls="starred-{{uniqid}}"
+                           aria-selected="{{#favouritesFirst}}true{{/favouritesFirst}}{{^favouritesFirst}}false{{/favouritesFirst}}"
+                           tabindex="{{#favouritesFirst}}0{{/favouritesFirst}}{{^favouritesFirst}}-1{{/favouritesFirst}}"
+                        >
+                            {{#str}} favourites, core {{/str}}
+                        </a>
+                        <a class="nav-item nav-link {{#recommendedFirst}}active{{/recommendedFirst}} {{^recommended}}d-none{{/recommended}}"
+                           id="recommended-tab-{{uniqid}}"
+                           data-region="recommended-tab-nav"
+                           data-toggle="tab"
+                           href="#recommended-{{uniqid}}"
+                           role="tab"
+                           aria-label="{{#str}} aria:recommendedtab, core_course {{/str}}"
+                           aria-controls="recommended-{{uniqid}}"
+                           aria-selected="{{#recommendedFirst}}true{{/recommendedFirst}}{{^recommendedFirst}}false{{/recommendedFirst}}"
+                           tabindex="{{#recommendedFirst}}0{{/recommendedFirst}}{{^recommendedFirst}}-1{{/recommendedFirst}}"
+                        >
+                            {{#str}} recommended, core {{/str}}
+                        </a>
+                        <a class="nav-item nav-link {{#fallback}}active{{/fallback}}"
+                           id="all-tab-{{uniqid}}"
+                           data-toggle="tab"
+                           data-region="default-tab-nav"
+                           href="#all-{{uniqid}}"
+                           role="tab"
+                           aria-label="{{#str}} aria:defaulttab, core_course {{/str}}"
+                           aria-controls="all-{{uniqid}}"
+                           aria-selected="{{#fallback}}true{{/fallback}}{{^fallback}}false{{/fallback}}"
+                           tabindex="{{#fallback}}0{{/fallback}}{{^fallback}}-1{{/fallback}}"
+                        >
+                            {{#str}} activities, core {{/str}}
+                        </a>
+                    </div>
+                    <div class="tab-content" id="tabbed-activities-{{uniqid}}">
+                        <div class="tab-pane {{#favouritesFirst}}active{{/favouritesFirst}}" id="starred-{{uniqid}}" data-region="favourites" role="tabpanel" aria-labelledby="starred-tab-{{uniqid}}">
+                            <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container" data-render="favourites-area">
+                                {{>core_course/local/activitychooser/favourites}}
+                            </div>
+                        </div>
+                        <div class="tab-pane {{#recommendedFirst}}active{{/recommendedFirst}}" id="recommended-{{uniqid}}" data-region="recommended" role="tabpanel" aria-labelledby="recommended-tab-{{uniqid}}">
+                            <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container">
+                                {{#recommended}}
+                                    {{>core_course/local/activitychooser/item}}
+                                {{/recommended}}
+                            </div>
+                        </div>
+                        <div class="tab-pane {{#fallback}}active{{/fallback}}" id="all-{{uniqid}}" data-region="default" role="tabpanel" aria-labelledby="all-tab-{{uniqid}}">
+                            <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container">
+                                {{#default}}
+                                    {{>core_course/local/activitychooser/item}}
+                                {{/default}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item" data-region="help"></div>
+    </div>
+</div>

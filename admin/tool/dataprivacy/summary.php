@@ -34,6 +34,13 @@ $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading($SITE->fullname);
 
+// If user is logged in, then use profile navigation in breadcrumbs.
+if ($profilenode = $PAGE->settingsnav->find('myprofile', null)) {
+    $profilenode->make_active();
+}
+
+$PAGE->navbar->add($title);
+
 $output = $PAGE->get_renderer('tool_dataprivacy');
 echo $output->header();
 $summarypage = new \tool_dataprivacy\output\summary_page();

@@ -26,7 +26,8 @@
 namespace core_h5p\local\tests;
 
 use core_h5p\file_storage;
-use core_h5p\autoloader;
+use core_h5p\local\library\autoloader;
+use core_h5p\helper;
 use file_archive;
 use zip_archive;
 
@@ -552,5 +553,68 @@ class h5p_file_storage_testcase extends \advanced_testcase {
         $files =  $this->h5p_fs_fs->get_area_files($this->h5p_fs_context->id, file_storage::COMPONENT,
                 file_storage::LIBRARY_FILEAREA);
         $this->assertCount(7, $files);
+    }
+
+    /**
+     * Test get_icon_url() function behaviour.
+     *
+     * @dataProvider get_icon_url_provider
+     * @param  string  $filename  The name of the H5P file to load.
+     * @param  bool    $expected  Whether the icon should exist or not.
+     */
+    public function test_get_icon_url(string $filename, bool $expected): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $factory = new \core_h5p\factory();
+
+        $admin = get_admin();
+
+        // Prepare a valid .H5P file.
+        $path = __DIR__ . '/fixtures/'.$filename;
+
+        // Libraries can be updated when the file has been created by admin, even when the current user is not the admin.
+        $this->setUser($admin);
+        $file = helper::create_fake_stored_file_from_path($path, (int)$admin->id);
+        $factory->get_framework()->set_file($file);
+        $config = (object)[
+            'frame' => 1,
+            'export' => 1,
+            'embed' => 0,
+            'copyright' => 0,
+        ];
+
+        $h5pid = helper::save_h5p($factory, $file, $config);
+        $h5p = $DB->get_record('h5p', ['id' => $h5pid]);
+        $h5plib = $DB->get_record('h5p_libraries', ['id' => $h5p->mainlibraryid]);
+        $iconurl = $this->h5p_file_storage->get_icon_url(
+            $h5plib->id,
+            $h5plib->machinename,
+            $h5plib->majorversion,
+            $h5plib->minorversion
+        );
+        if ($expected) {
+            $this->assertContains(file_storage::ICON_FILENAME, $iconurl);
+        } else {
+            $this->assertFalse($iconurl);
+        }
+    }
+
+    /**
+     * Data provider for test_get_icon_url().
+     *
+     * @return array
+     */
+    public function get_icon_url_provider(): array {
+        return [
+            'Icon included' => [
+                'filltheblanks.h5p',
+                true,
+            ],
+            'Icon not included' => [
+                'greeting-card-887.h5p',
+                false,
+            ],
+        ];
     }
 }

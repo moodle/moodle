@@ -40,9 +40,11 @@ class manager {
      * Given a component name, will load the list of tasks in the db/tasks.php file for that component.
      *
      * @param string $componentname - The name of the component to fetch the tasks for.
+     * @param bool $expandr - if true (default) an 'R' value in a time is expanded to an appropriate int.
+     *      If false, they are left as 'R'
      * @return \core\task\scheduled_task[] - List of scheduled tasks for this component.
      */
-    public static function load_default_scheduled_tasks_for_component($componentname) {
+    public static function load_default_scheduled_tasks_for_component($componentname, $expandr = true) {
         $dir = \core_component::get_component_directory($componentname);
 
         if (!$dir) {
@@ -65,7 +67,7 @@ class manager {
 
         foreach ($tasks as $task) {
             $record = (object) $task;
-            $scheduledtask = self::scheduled_task_from_record($record);
+            $scheduledtask = self::scheduled_task_from_record($record, $expandr);
             // Safety check in case the task in the DB does not match a real class (maybe something was uninstalled).
             if ($scheduledtask) {
                 $scheduledtask->set_component($componentname);
@@ -318,9 +320,11 @@ class manager {
      * Utility method to create a task from a DB record.
      *
      * @param \stdClass $record
-     * @return \core\task\scheduled_task
+     * @param bool $expandr - if true (default) an 'R' value in a time is expanded to an appropriate int.
+     *      If false, they are left as 'R'
+     * @return \core\task\scheduled_task|false
      */
-    public static function scheduled_task_from_record($record) {
+    public static function scheduled_task_from_record($record, $expandr = true) {
         $classname = self::get_canonical_class_name($record->classname);
         if (!class_exists($classname)) {
             debugging("Failed to load task: " . $classname, DEBUG_DEVELOPER);
@@ -342,10 +346,10 @@ class manager {
         }
         $task->set_blocking(!empty($record->blocking));
         if (isset($record->minute)) {
-            $task->set_minute($record->minute);
+            $task->set_minute($record->minute, $expandr);
         }
         if (isset($record->hour)) {
-            $task->set_hour($record->hour);
+            $task->set_hour($record->hour, $expandr);
         }
         if (isset($record->day)) {
             $task->set_day($record->day);
@@ -354,7 +358,7 @@ class manager {
             $task->set_month($record->month);
         }
         if (isset($record->dayofweek)) {
-            $task->set_day_of_week($record->dayofweek);
+            $task->set_day_of_week($record->dayofweek, $expandr);
         }
         if (isset($record->faildelay)) {
             $task->set_fail_delay($record->faildelay);
@@ -429,15 +433,18 @@ class manager {
      * This function load the default scheduled task details for a given classname.
      *
      * @param string $classname
-     * @return \core\task\scheduled_task or false
+     * @param bool $expandr - if true (default) an 'R' value in a time is expanded to an appropriate int.
+     *      If false, they are left as 'R'
+     * @return \core\task\scheduled_task|false
      */
-    public static function get_default_scheduled_task($classname) {
+    public static function get_default_scheduled_task($classname, $expandr = true) {
         $task = self::get_scheduled_task($classname);
         $componenttasks = array();
 
         // Safety check in case no task was found for the given classname.
         if ($task) {
-            $componenttasks = self::load_default_scheduled_tasks_for_component($task->get_component());
+            $componenttasks = self::load_default_scheduled_tasks_for_component(
+                    $task->get_component(), $expandr);
         }
 
         foreach ($componenttasks as $componenttask) {
@@ -561,7 +568,7 @@ class manager {
 
         $where = '(nextruntime IS NULL OR nextruntime < :timestart1)';
         $params = array('timestart1' => $timestart);
-        $records = $DB->get_records_select('task_adhoc', $where, $params);
+        $records = $DB->get_records_select('task_adhoc', $where, $params, 'nextruntime ASC, id ASC');
 
         $records = self::ensure_adhoc_task_qos($records);
 

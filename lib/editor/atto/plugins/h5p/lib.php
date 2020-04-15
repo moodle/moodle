@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_h5p\local\library\autoloader;
+
 /**
  * Set params for this button.
  *
@@ -67,21 +69,18 @@ function atto_h5p_strings_for_js() {
         'copyrightbutton',
         'downloadbutton',
         'instructions',
-        'either',
         'embedbutton',
-        'enterurl',
         'h5pfile',
         'h5poptions',
-        'h5pproperties',
         'h5purl',
+        'h5pfileorurl',
         'invalidh5purl',
         'noh5pcontent',
-        'or',
         'pluginname'
     );
 
     $PAGE->requires->strings_for_js($strings, 'atto_h5p');
-    $PAGE->requires->js(new moodle_url('/lib/h5p/js/h5p-resizer.js'));
+    $PAGE->requires->js(autoloader::get_h5p_core_library_url('js/h5p-resizer.js'));
 }
 
 

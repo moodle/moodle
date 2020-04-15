@@ -1094,11 +1094,48 @@ abstract class moodle_database {
 
     /**
      * Returns detailed information about columns in table. This information is cached internally.
+     *
      * @param string $table The table's name.
      * @param bool $usecache Flag to use internal cacheing. The default is true.
      * @return database_column_info[] of database_column_info objects indexed with column names
      */
-    public abstract function get_columns($table, $usecache=true);
+    public function get_columns($table, $usecache = true): array {
+        if (!$table) { // Table not specified, return empty array directly.
+            return [];
+        }
+
+        if ($usecache) {
+            if ($this->temptables->is_temptable($table)) {
+                if ($data = $this->get_temp_tables_cache()->get($table)) {
+                    return $data;
+                }
+            } else {
+                if ($data = $this->get_metacache()->get($table)) {
+                    return $data;
+                }
+            }
+        }
+
+        $structure = $this->fetch_columns($table);
+
+        if ($usecache) {
+            if ($this->temptables->is_temptable($table)) {
+                $this->get_temp_tables_cache()->set($table, $structure);
+            } else {
+                $this->get_metacache()->set($table, $structure);
+            }
+        }
+
+        return $structure;
+    }
+
+    /**
+     * Returns detailed information about columns in table. This information is cached internally.
+     *
+     * @param string $table The table's name.
+     * @return database_column_info[] of database_column_info objects indexed with column names
+     */
+    protected abstract function fetch_columns(string $table): array;
 
     /**
      * Normalise values based on varying RDBMS's dependencies (booleans, LOBs...)

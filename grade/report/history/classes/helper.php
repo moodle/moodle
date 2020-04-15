@@ -128,6 +128,7 @@ class helper {
      * @return array sql and params list
      */
     protected static function get_users_sql_and_params($context, $search = '', $count = false) {
+        global $DB, $USER;
 
         // Fields we need from the user table.
         $extrafields = get_extra_user_fields($context);
@@ -147,13 +148,33 @@ class helper {
             $select = "SELECT DISTINCT $ufields ";
             $orderby = " ORDER BY u.lastname ASC, u.firstname ASC";
         }
+
+        $groupjoinsql = '';
+        $groupwheresql = '';
+        $courseid = $context->instanceid;
+        $groupmode = groups_get_course_groupmode(get_course($courseid));
+
+        // We're only interested in separate groups mode because it's the only group mode that requires the user to be a member of
+        // specific group(s), except when they have the 'moodle/site:accessallgroups' capability.
+        if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
+            // Fetch the groups that the user can see.
+            $groups = groups_get_all_groups($courseid, $USER->id, 0, 'g.id');
+
+            // Add join condition to include users that only belong to the same group as the user.
+            list($insql, $inparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED, 'gid', true, 0);
+            $groupjoinsql = " JOIN {groups_members} gm ON gm.userid = u.id ";
+            $groupwheresql = " AND gm.groupid $insql ";
+            $params = array_merge($params, $inparams);
+        }
+
         $sql = "$select
                  FROM {user} u
                  JOIN {grade_grades_history} ggh ON u.id = ggh.userid
                  JOIN {grade_items} gi ON gi.id = ggh.itemid
-                WHERE $filtersql gi.courseid = :courseid";
+                 $groupjoinsql
+                WHERE $filtersql gi.courseid = :courseid $groupwheresql";
         $sql .= $orderby;
-        $params['courseid'] = $context->instanceid;
+        $params['courseid'] = $courseid;
 
         return array($sql, $params);
     }
@@ -166,18 +187,31 @@ class helper {
      * @return array list of graders.
      */
     public static function get_graders($courseid) {
-        global $DB;
+        global $DB, $USER;
+
+        $groupjoinsql = $groupwheresql = '';
+        $inparams = [];
+        $groupmode = groups_get_course_groupmode(get_course($courseid));
+        if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', \context_course::instance($courseid))) {
+            // Fetch the groups that the user can see.
+            $groups = groups_get_all_groups($courseid, $USER->id, 0, 'g.id');
+            // Add join condition to include users that only belong to the same group as the user.
+            list($insql, $inparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED, 'gid', true, 0);
+            $groupjoinsql = " JOIN {groups_members} gm ON gm.userid = u.id ";
+            $groupwheresql = " AND gm.groupid $insql ";
+        }
 
         $ufields = get_all_user_name_fields(true, 'u');
         $sql = "SELECT u.id, $ufields
                   FROM {user} u
                   JOIN {grade_grades_history} ggh ON ggh.usermodified = u.id
                   JOIN {grade_items} gi ON gi.id = ggh.itemid
-                 WHERE gi.courseid = :courseid
+                 $groupjoinsql
+                 WHERE gi.courseid = :courseid $groupwheresql
               GROUP BY u.id, $ufields
               ORDER BY u.lastname ASC, u.firstname ASC";
 
-        $graders = $DB->get_records_sql($sql, array('courseid' => $courseid));
+        $graders = $DB->get_records_sql($sql, array('courseid' => $courseid) + $inparams);
         $return = array(0 => get_string('allgraders', 'gradereport_history'));
         foreach ($graders as $grader) {
             $return[$grader->id] = fullname($grader);

@@ -179,6 +179,7 @@ $string['course:markcomplete'] = 'Mark users as complete in course completion';
 $string['course:movesections'] = 'Move sections';
 $string['course:overridecompletion'] = 'Override activity completion status';
 $string['course:renameroles'] = 'Rename roles';
+$string['course:recommendactivity'] = 'Recommend activities to the activity chooser';
 $string['course:request'] = 'Request new courses';
 $string['course:reset'] = 'Reset course';
 $string['course:reviewotherusers'] = 'Review other users';

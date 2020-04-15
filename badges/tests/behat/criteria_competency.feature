@@ -44,7 +44,6 @@ Feature: Award badges based on competency completion
     And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |
-      | issuername | Tester of course badge |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     # Set the competency as a criteria for the badge
@@ -89,7 +88,6 @@ Feature: Award badges based on competency completion
     And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |
-      | issuername | Tester of site badge |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     # Set the competency as a criteria for the badge
@@ -142,7 +140,6 @@ Feature: Award badges based on competency completion
     And I set the following fields to these values:
       | Name | Site Badge |
       | Description | Site badge description |
-      | issuername | Tester of site badge |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     # Set the competency as a criteria for the badge

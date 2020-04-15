@@ -31,7 +31,7 @@ require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/plagiarismlib.php');
 require_once($CFG->dirroot . '/course/modlib.php');
 
-$add    = optional_param('add', '', PARAM_ALPHA);     // module name
+$add    = optional_param('add', '', PARAM_ALPHANUM);     // Module name.
 $update = optional_param('update', 0, PARAM_INT);
 $return = optional_param('return', 0, PARAM_BOOL);    //return to course/view.php if false or mod/modname/view.php if true
 $type   = optional_param('type', '', PARAM_ALPHANUM); //TODO: hopefully will be removed in 2.0

@@ -91,6 +91,9 @@ define('LTI_VERSION_1', 'LTI-1p0');
 define('LTI_VERSION_2', 'LTI-2p0');
 define('LTI_VERSION_1P3', '1.3.0');
 
+define('LTI_DEFAULT_ORGID_SITEID', 'SITEID');
+define('LTI_DEFAULT_ORGID_SITEHOST', 'SITEHOST');
+
 define('LTI_ACCESS_TOKEN_LIFE', 3600);
 
 // Standard prefix for JWT claims.
@@ -537,13 +540,6 @@ function lti_get_launch_data($instance, $nonce = '') {
         $typeconfig['forcessl'] = '0';
     }
 
-    // Default the organizationid if not specified.
-    if (empty($typeconfig['organizationid'])) {
-        $urlparts = parse_url($CFG->wwwroot);
-
-        $typeconfig['organizationid'] = $urlparts['host'];
-    }
-
     if (isset($tool->toolproxyid)) {
         $toolproxy = lti_get_tool_proxy($tool->toolproxyid);
         $key = $toolproxy->guid;
@@ -589,7 +585,7 @@ function lti_get_launch_data($instance, $nonce = '') {
         }
     }
 
-    $orgid = $typeconfig['organizationid'];
+    $orgid = lti_get_organizationid($typeconfig);
 
     $course = $PAGE->course;
     $islti2 = isset($tool->toolproxyid);
@@ -758,6 +754,25 @@ function lti_build_registration_request($toolproxy) {
     $requestparams['launch_presentation_return_url'] = $returnurl;
 
     return $requestparams;
+}
+
+
+/** get Organization ID using default if no value provided
+ * @param object $typeconfig
+ * @return string
+ */
+function lti_get_organizationid($typeconfig) {
+    global $CFG;
+    // Default the organizationid if not specified.
+    if (empty($typeconfig['organizationid'])) {
+        if (($typeconfig['organizationid_default'] ?? LTI_DEFAULT_ORGID_SITEHOST) == LTI_DEFAULT_ORGID_SITEHOST) {
+            $urlparts = parse_url($CFG->wwwroot);
+            return $urlparts['host'];
+        } else {
+            return md5(get_site_identifier());
+        }
+    }
+    return $typeconfig['organizationid'];
 }
 
 /**
@@ -1145,7 +1160,7 @@ function lti_build_content_item_selection_request($id, $course, moodle_url $retu
     }
 
     // Get standard request parameters and merge to the request parameters.
-    $orgid = !empty($typeconfig['organizationid']) ? $typeconfig['organizationid'] : '';
+    $orgid = lti_get_organizationid($typeconfig);
     $standardparams = lti_build_standard_message(null, $orgid, $tool->ltiversion, 'ContentItemSelectionRequest');
     $requestparams = array_merge($requestparams, $standardparams);
 
@@ -2185,6 +2200,7 @@ function lti_get_configured_types($courseid, $sectionreturn = 0) {
 
     foreach ($admintypes as $ltitype) {
         $type           = new stdClass();
+        $type->id       = $ltitype->id;
         $type->modclass = MOD_CLASS_ACTIVITY;
         $type->name     = 'lti_type_' . $ltitype->id;
         // Clean the name. We don't want tags here.
@@ -2198,7 +2214,7 @@ function lti_get_configured_types($courseid, $sectionreturn = 0) {
         if (empty($ltitype->icon)) {
             $type->icon = $OUTPUT->pix_icon('icon', '', 'lti', array('class' => 'icon'));
         } else {
-            $type->icon = html_writer::empty_tag('img', array('src' => $ltitype->icon, 'alt' => $ltitype->name, 'class' => 'icon'));
+            $type->icon = html_writer::empty_tag('img', array('src' => $ltitype->icon, 'alt' => '', 'class' => 'icon'));
         }
         $type->link = new moodle_url('/course/modedit.php', array('add' => 'lti', 'return' => 0, 'course' => $courseid,
             'sr' => $sectionreturn, 'typeid' => $ltitype->id));
@@ -2500,6 +2516,12 @@ function lti_get_type_type_config($id) {
         $type->lti_forcessl = $config['forcessl'];
     }
 
+    if (isset($config['organizationid_default'])) {
+        $type->lti_organizationid_default = $config['organizationid_default'];
+    } else {
+        // Tool was configured before this option was available and the default then was host.
+        $type->lti_organizationid_default = LTI_DEFAULT_ORGID_SITEHOST;
+    }
     if (isset($config['organizationid'])) {
         $type->lti_organizationid = $config['organizationid'];
     }
@@ -3277,7 +3299,44 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
  */
 function lti_initiate_login($courseid, $id, $instance, $config, $messagetype = 'basic-lti-launch-request', $title = '',
         $text = '') {
-    global $SESSION, $USER, $CFG;
+    global $SESSION;
+
+    $params = lti_build_login_request($courseid, $id, $instance, $config, $messagetype);
+    $SESSION->lti_message_hint = "{$courseid},{$config->typeid},{$id}," . base64_encode($title) . ',' .
+        base64_encode($text);
+
+    $r = "<form action=\"" . $config->lti_initiatelogin .
+        "\" name=\"ltiInitiateLoginForm\" id=\"ltiInitiateLoginForm\" method=\"post\" " .
+        "encType=\"application/x-www-form-urlencoded\">\n";
+
+    foreach ($params as $key => $value) {
+        $key = htmlspecialchars($key);
+        $value = htmlspecialchars($value);
+        $r .= "  <input type=\"hidden\" name=\"{$key}\" value=\"{$value}\"/>\n";
+    }
+    $r .= "</form>\n";
+
+    $r .= "<script type=\"text/javascript\">\n" .
+        "//<![CDATA[\n" .
+        "document.ltiInitiateLoginForm.submit();\n" .
+        "//]]>\n" .
+        "</script>\n";
+
+    return $r;
+}
+
+/**
+ * Prepares an LTI 1.3 login request
+ *
+ * @param int            $courseid  Course ID
+ * @param int            $id        LTI instance ID
+ * @param stdClass|null  $instance  LTI instance
+ * @param stdClass       $config    Tool type configuration
+ * @param string         $messagetype   LTI message type
+ * @return array Login request parameters
+ */
+function lti_build_login_request($courseid, $id, $instance, $config, $messagetype) {
+    global $USER, $CFG;
 
     if (!empty($instance)) {
         $endpoint = !empty($instance->toolurl) ? $instance->toolurl : $config->lti_toolurl;
@@ -3301,27 +3360,9 @@ function lti_initiate_login($courseid, $id, $instance, $config, $messagetype = '
     $params['target_link_uri'] = $endpoint;
     $params['login_hint'] = $USER->id;
     $params['lti_message_hint'] = $id;
-    $SESSION->lti_message_hint = "{$courseid},{$config->typeid},{$id}," . base64_encode($title) . ',' .
-        base64_encode($text);
-
-    $r = "<form action=\"" . $config->lti_initiatelogin .
-        "\" name=\"ltiInitiateLoginForm\" id=\"ltiInitiateLoginForm\" method=\"post\" " .
-        "encType=\"application/x-www-form-urlencoded\">\n";
-
-    foreach ($params as $key => $value) {
-        $key = htmlspecialchars($key);
-        $value = htmlspecialchars($value);
-        $r .= "  <input type=\"hidden\" name=\"{$key}\" value=\"{$value}\"/>\n";
-    }
-    $r .= "</form>\n";
-
-    $r .= "<script type=\"text/javascript\">\n" .
-        "//<![CDATA[\n" .
-        "document.ltiInitiateLoginForm.submit();\n" .
-        "//]]>\n" .
-        "</script>\n";
-
-    return $r;
+    $params['client_id'] = $config->lti_clientid;
+    $params['lti_deployment_id'] = $config->typeid;
+    return $params;
 }
 
 function lti_get_type($typeid) {

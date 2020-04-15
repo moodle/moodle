@@ -61,6 +61,12 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
             array('moodle/restore:restorecourse')
         )
     );
+    $ADMIN->add('courses',
+        new admin_externalpage('activitychooser', new lang_string('activitychooserrecommendations', 'course'),
+            new moodle_url('/course/recommendations.php'),
+            array('moodle/course:recommendactivity')
+        )
+    );
 
     // Course Default Settings Page.
     // NOTE: these settings must be applied after all other settings because they depend on them.

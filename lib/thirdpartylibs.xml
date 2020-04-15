@@ -24,9 +24,9 @@
   <library>
     <location>phpspreadsheet</location>
     <name>PhpSpreadsheet</name>
-    <license>LGPL</license>
-    <version>1.7.0</version>
-    <licenseversion>2.1+</licenseversion>
+    <license>MIT</license>
+    <version>1.10.1</version>
+    <licenseversion></licenseversion>
   </library>
   <library>
     <location>google</location>
@@ -309,7 +309,7 @@
     <version>7.7.0</version>
   </library>
   <library>
-    <location>mdn-polyfills</location>
+    <location>polyfills</location>
     <name>mdn-polyfill</name>
     <license>MIT</license>
     <version>5.19.0</version>
@@ -321,9 +321,9 @@
     <version>4.1.0</version>
   </library>
   <library>
-    <location>h5p</location>
-    <name>h5p-php-library</name>
-    <license>GPL-3.0</license>
-    <version>1.24</version>
+    <location>polyfills</location>
+    <name>url-polyfill</name>
+    <license>MIT</license>
+    <version>1.1.8</version>
   </library>
 </libraries>

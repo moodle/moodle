@@ -75,7 +75,7 @@ class core_tag_renderer extends plugin_renderer_base {
      * @return string
      */
     public function tag_index_page($tag, $entities, $tagareaid, $exclusivemode, $fromctx, $ctx, $rec, $page) {
-        global $CFG, $OUTPUT;
+        global $CFG;
         $this->page->requires->js_call_amd('core/tag', 'initTagindexPage');
 
         $tagname = $tag->get_display_name();
@@ -98,7 +98,8 @@ class core_tag_renderer extends plugin_renderer_base {
         $relatedtags = $tag->get_related_tags();
         $taglist = new \core_tag\output\taglist($relatedtags, get_string('relatedtags', 'tag'),
                 'tag-relatedtags', $relatedtagslimit);
-        $rv .= $OUTPUT->render_from_template('core_tag/taglist', $taglist->export_for_template($OUTPUT));
+        $rv .= $this->output->render_from_template('core_tag/taglist',
+                $taglist->export_for_template($this->output));
 
         // Display quick menu of the item types (if more than one item type found).
         $entitylinks = array();

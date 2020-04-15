@@ -1,5 +1,14 @@
 This files describes API changes for code that uses the question API.
 
+=== 3.9 ==
+
+For years, the ..._questions_in_use callback has been the right way for plugins to
+tell the core question system if questions are required. Previously this callback
+only worked in mods. Now it works in all plugins.
+
+At the same time, if you are still relying on the legacy ..._question_list_instances
+callback for this, you will now get a debugging warning telling you to upgrade.
+
 === 3.8 ===
 
 If you have customised the display of the question bank (using $CFG->questionbankcolumns)

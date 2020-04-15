@@ -85,11 +85,29 @@ class user_favourite_service_testcase extends advanced_testcase {
         $mockrepo->expects($this->any())
             ->method('find_by')
             ->will($this->returnCallback(function(array $criteria, int $limitfrom = 0, int $limitnum = 0) use (&$mockstore) {
+                // Check for single value key pair vs multiple.
+                $multipleconditions = [];
+                foreach ($criteria as $key => $value) {
+                    if (is_array($value)) {
+                        $multipleconditions[$key] = $value;
+                        unset($criteria[$key]);
+                    }
+                }
+
                 // Check the mockstore for all objects with properties matching the key => val pairs in $criteria.
                 foreach ($mockstore as $index => $mockrow) {
                     $mockrowarr = (array)$mockrow;
                     if (array_diff_assoc($criteria, $mockrowarr) == []) {
-                        $returns[$index] = $mockrow;
+                        $found = true;
+                        foreach ($multipleconditions as $key => $value) {
+                            if (!in_array($mockrowarr[$key], $value)) {
+                                $found = false;
+                                break;
+                            }
+                        }
+                        if ($found) {
+                            $returns[$index] = $mockrow;
+                        }
                     }
                 }
                 // Return a subset of the records, according to the paging options, if set.
@@ -233,6 +251,42 @@ class user_favourite_service_testcase extends advanced_testcase {
         $this->assertIsArray($favourites);
         $this->assertCount(1, $favourites); // We only get favourites for the 'core_course/course' area.
         $this->assertEquals($fav2->id, $favourites[$fav2->id]->id);
+    }
+
+    /**
+     * Test fetching favourites for single user, by area.
+     */
+    public function test_find_all_favourites() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        // Get a user_favourite_service for the user.
+        $repo = $this->get_mock_repository([]); // Mock repository, using the array as a mock DB.
+        $service = new \core_favourites\local\service\user_favourite_service($user1context, $repo);
+
+        // Favourite 2 courses, in separate areas.
+        $fav1 = $service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);
+        $fav2 = $service->create_favourite('core_course', 'anothertype', $course2context->instanceid, $course2context);
+        $fav3 = $service->create_favourite('core_course', 'yetanothertype', $course2context->instanceid, $course2context);
+
+        // Verify we can get favourites by area.
+        $favourites = $service->find_all_favourites('core_course', ['course']);
+        $this->assertIsArray($favourites);
+        $this->assertCount(1, $favourites); // We only get favourites for the 'core_course/course' area.
+        $this->assertEquals($fav1->id, $favourites[$fav1->id]->id);
+
+        $favourites = $service->find_all_favourites('core_course', ['course', 'anothertype']);
+        $this->assertIsArray($favourites);
+        // We only get favourites for the 'core_course/course' and 'core_course/anothertype area.
+        $this->assertCount(2, $favourites);
+        $this->assertEquals($fav1->id, $favourites[$fav1->id]->id);
+        $this->assertEquals($fav2->id, $favourites[$fav2->id]->id);
+
+        $favourites = $service->find_all_favourites('core_course');
+        $this->assertIsArray($favourites);
+        $this->assertCount(3, $favourites); // We only get favourites for the 'core_cours' area.
+        $this->assertEquals($fav2->id, $favourites[$fav2->id]->id);
+        $this->assertEquals($fav1->id, $favourites[$fav1->id]->id);
+        $this->assertEquals($fav3->id, $favourites[$fav3->id]->id);
     }
 
     /**

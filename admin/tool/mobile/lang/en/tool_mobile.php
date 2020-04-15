@@ -45,12 +45,16 @@ $string['custommenuitems_desc'] = 'Additional items can be added to the app\'s m
 
 Link-opening methods are: app (for linking to an activity supported by the app), inappbrowser (for opening a link in a browser without leaving the app), browser (for opening the link in the device default browser outside the app) and embedded (for displaying the link in an iframe in a new page in the app).
 
+When items are missing a translation for a given language, they will use other languages as fallback unless "_only" is appended to the language code.
+
 For example:
 <pre>
 App help|https://someurl.xyz/help|inappbrowser
 My grades|https://someurl.xyz/local/mygrades/index.php|embedded|en
 Mis calificaciones|https://someurl.xyz/local/mygrades/index.php|embedded|es
+You will only see this in English|https://someurl.xyz/english|browser|en_only
 </pre>';
+$string['darkmode'] = 'Dark mode';
 $string['disabledfeatures'] = 'Disabled features';
 $string['disabledfeatures_desc'] = 'Select here the features you want to disable in the Mobile app for your site. Please note that some features listed here could be already disabled via other site settings. You will have to log out and log in again in the app to see the changes.';
 $string['displayerrorswarning'] = 'Display debug messages (debugdisplay) is enabled. It should be disabled.';
@@ -62,6 +66,7 @@ $string['forcedurlscheme'] = 'If you want to allow only your custom branded app 
 $string['forcedurlscheme_key'] = 'URL scheme';
 $string['forcelogout'] = 'Force log out';
 $string['forcelogout_desc'] = 'If enabled, the app option \'Change site\' is replaced by \'Log out\'. This results in the user being completely logged out. They must then re-enter their password the next time they wish to access the site.';
+$string['h5poffline'] = 'View H5P content offline';
 $string['httpsrequired'] = 'HTTPS required';
 $string['insecurealgorithmwarning'] = 'It seems that the HTTPS certificate uses an insecure algorithm for signing (SHA-1). Please try updating the certificate.';
 $string['invalidcertificatechainwarning'] = 'It seems that the certificate chain is invalid.';
@@ -86,6 +91,7 @@ $string['mobilecssurl'] = 'CSS';
 $string['mobilefeatures'] = 'Mobile features';
 $string['mobilenotificationsdisabledwarning'] = 'Mobile notifications are not enabled. They should be enabled in Notification settings.';
 $string['mobilesettings'] = 'Mobile settings';
+$string['oauth2identityproviders'] = 'OAuth 2 identity providers';
 $string['offlineuse'] = 'Offline use';
 $string['pluginname'] = 'Moodle app tools';
 $string['pluginnotenabledorconfigured'] = 'Plugin not enabled or configured.';

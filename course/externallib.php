@@ -4140,4 +4140,200 @@ class core_course_external extends external_api {
         );
         return new external_single_structure($userfields);
     }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function add_content_item_to_user_favourites_parameters() {
+        return new external_function_parameters([
+            'componentname' => new external_value(PARAM_TEXT,
+                'frankenstyle name of the component to which the content item belongs', VALUE_REQUIRED),
+            'contentitemid' => new external_value(PARAM_INT, 'id of the content item', VALUE_REQUIRED, '', NULL_NOT_ALLOWED)
+        ]);
+    }
+
+    /**
+     * Add a content item to a user's favourites.
+     *
+     * @param string $componentname the name of the component from which this content item originates.
+     * @param int $contentitemid the id of the content item.
+     * @return stdClass the exporter content item.
+     */
+    public static function add_content_item_to_user_favourites(string $componentname, int $contentitemid) {
+        global $USER;
+
+        [
+            'componentname' => $componentname,
+            'contentitemid' => $contentitemid,
+        ] = self::validate_parameters(self::add_content_item_to_user_favourites_parameters(),
+            [
+                'componentname' => $componentname,
+                'contentitemid' => $contentitemid,
+            ]
+        );
+
+        self::validate_context(context_user::instance($USER->id));
+
+        $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
+
+        return $contentitemservice->add_to_user_favourites($USER, $componentname, $contentitemid);
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function add_content_item_to_user_favourites_returns() {
+        return \core_course\local\exporters\course_content_item_exporter::get_read_structure();
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function remove_content_item_from_user_favourites_parameters() {
+        return new external_function_parameters([
+            'componentname' => new external_value(PARAM_TEXT,
+                'frankenstyle name of the component to which the content item belongs', VALUE_REQUIRED),
+            'contentitemid' => new external_value(PARAM_INT, 'id of the content item', VALUE_REQUIRED, '', NULL_NOT_ALLOWED),
+        ]);
+    }
+
+    /**
+     * Remove a content item from a user's favourites.
+     *
+     * @param string $componentname the name of the component from which this content item originates.
+     * @param int $contentitemid the id of the content item.
+     * @return stdClass the exported content item.
+     */
+    public static function remove_content_item_from_user_favourites(string $componentname, int $contentitemid) {
+        global $USER;
+
+        [
+            'componentname' => $componentname,
+            'contentitemid' => $contentitemid,
+        ] = self::validate_parameters(self::remove_content_item_from_user_favourites_parameters(),
+            [
+                'componentname' => $componentname,
+                'contentitemid' => $contentitemid,
+            ]
+        );
+
+        self::validate_context(context_user::instance($USER->id));
+
+        $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
+
+        return $contentitemservice->remove_from_user_favourites($USER, $componentname, $contentitemid);
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     */
+    public static function remove_content_item_from_user_favourites_returns() {
+        return \core_course\local\exporters\course_content_item_exporter::get_read_structure();
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     */
+    public static function get_course_content_items_returns() {
+        return new external_single_structure([
+            'content_items' => new external_multiple_structure(
+                \core_course\local\exporters\course_content_item_exporter::get_read_structure()
+            ),
+        ]);
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function get_course_content_items_parameters() {
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'ID of the course', VALUE_REQUIRED),
+        ]);
+    }
+
+    /**
+     * Given a course ID fetch all accessible modules for that course
+     *
+     * @param int $courseid The course we want to fetch the modules for
+     * @return array Contains array of modules and their metadata
+     */
+    public static function get_course_content_items(int $courseid) {
+        global $USER;
+
+        [
+            'courseid' => $courseid,
+        ] = self::validate_parameters(self::get_course_content_items_parameters(), [
+            'courseid' => $courseid,
+        ]);
+
+        $coursecontext = context_course::instance($courseid);
+        self::validate_context($coursecontext);
+        $course = get_course($courseid);
+
+        $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
+
+        $contentitems = $contentitemservice->get_content_items_for_user_in_course($USER, $course);
+        return ['content_items' => $contentitems];
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function toggle_activity_recommendation_parameters() {
+        return new external_function_parameters([
+            'area' => new external_value(PARAM_TEXT, 'The favourite area (itemtype)', VALUE_REQUIRED),
+            'id' => new external_value(PARAM_INT, 'id of the activity or whatever', VALUE_REQUIRED),
+        ]);
+    }
+
+    /**
+     * Update the recommendation for an activity item.
+     *
+     * @param  string $area identifier for this activity.
+     * @param  int $id Associated id. This is needed in conjunction with the area to find the recommendation.
+     * @return array some warnings or something.
+     */
+    public static function toggle_activity_recommendation(string $area, int $id): array {
+        ['area' => $area, 'id' => $id] = self::validate_parameters(self::toggle_activity_recommendation_parameters(),
+                ['area' => $area, 'id' => $id]);
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        require_capability('moodle/course:recommendactivity', $context);
+
+        $manager = \core_course\local\factory\content_item_service_factory::get_content_item_service();
+
+        $status = $manager->toggle_recommendation($area, $id);
+        return ['id' => $id, 'area' => $area, 'status' => $status];
+    }
+
+    /**
+     * Returns warnings.
+     *
+     * @return external_description
+     */
+    public static function toggle_activity_recommendation_returns() {
+        return new external_single_structure(
+            [
+                'id' => new external_value(PARAM_INT, 'id of the activity or whatever'),
+                'area' => new external_value(PARAM_TEXT, 'The favourite area (itemtype)'),
+                'status' => new external_value(PARAM_BOOL, 'If created or deleted'),
+            ]
+        );
+    }
 }

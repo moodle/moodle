@@ -119,34 +119,35 @@ function question_save_qtype_order($neworder, $config = null) {
  * @return boolean whether any of these questions are being used by any part of Moodle.
  */
 function questions_in_use($questionids) {
-    global $CFG;
 
+    // Are they used by the core question system?
     if (question_engine::questions_in_use($questionids)) {
         return true;
     }
 
-    foreach (core_component::get_plugin_list('mod') as $module => $path) {
-        $lib = $path . '/lib.php';
-        if (is_readable($lib)) {
-            include_once($lib);
+    // Check if any plugins are using these questions.
+    $callbacksbytype = get_plugins_with_function('questions_in_use');
+    foreach ($callbacksbytype as $callbacks) {
+        foreach ($callbacks as $function) {
+            if ($function($questionids)) {
+                return true;
+            }
+        }
+    }
 
-            $fn = $module . '_questions_in_use';
-            if (function_exists($fn)) {
-                if ($fn($questionids)) {
-                    return true;
-                }
-            } else {
+    // Finally check legacy callback.
+    $legacycallbacks = get_plugin_list_with_function('mod', 'question_list_instances');
+    foreach ($legacycallbacks as $plugin => $function) {
+        debugging($plugin . ' implements deprecated method ' . $function .
+                '. ' . $plugin . '_questions_in_use should be implemented instead.', DEBUG_DEVELOPER);
 
-                // Fallback for legacy modules.
-                $fn = $module . '_question_list_instances';
-                if (function_exists($fn)) {
-                    foreach ($questionids as $questionid) {
-                        $instances = $fn($questionid);
-                        if (!empty($instances)) {
-                            return true;
-                        }
-                    }
-                }
+        if (isset($callbacksbytype['mod'][substr($plugin, 4)])) {
+            continue; // Already done.
+        }
+
+        foreach ($questionids as $questionid) {
+            if (!empty($function($questionid))) {
+                return true;
             }
         }
     }
@@ -334,16 +335,18 @@ function question_category_in_use($categoryid, $recursive = false) {
 /**
  * Deletes question and all associated data from the database
  *
- * It will not delete a question if it is used by an activity module
+ * It will not delete a question if it is used somewhere.
+ *
  * @param object $question  The question being deleted
  */
 function question_delete_question($questionid) {
     global $DB;
 
     $question = $DB->get_record_sql('
-            SELECT q.*, qc.contextid
+            SELECT q.*, ctx.id AS contextid
             FROM {question} q
-            JOIN {question_categories} qc ON qc.id = q.category
+            LEFT JOIN {question_categories} qc ON qc.id = q.category
+            LEFT JOIN {context} ctx ON ctx.id = qc.contextid
             WHERE q.id = ?', array($questionid));
     if (!$question) {
         // In some situations, for example if this was a child of a
@@ -357,6 +360,15 @@ function question_delete_question($questionid) {
         return;
     }
 
+    // This sometimes happens in old sites with bad data.
+    if (!$question->contextid) {
+        debugging('Deleting question ' . $question->id . ' which is no longer linked to a context. ' .
+                'Assuming system context to avoid errors, but this may mean that some data like files, ' .
+                'tags, are not cleaned up.');
+        $question->contextid = context_system::instance()->id;
+    }
+
+    // Delete previews of the question.
     $dm = new question_engine_data_mapper();
     $dm->delete_previews($questionid);
 
@@ -511,7 +523,8 @@ function question_save_from_deletion($questionids, $newcontextid, $oldplace,
         $newcategory = new stdClass();
         $newcategory->parent = question_get_top_category($newcontextid, true)->id;
         $newcategory->contextid = $newcontextid;
-        $newcategory->name = get_string('questionsrescuedfrom', 'question', $oldplace);
+        // Max length of column name in question_categories is 255.
+        $newcategory->name = shorten_text(get_string('questionsrescuedfrom', 'question', $oldplace), 255);
         $newcategory->info = get_string('questionsrescuedfrominfo', 'question', $oldplace);
         $newcategory->sortorder = 999;
         $newcategory->stamp = make_unique_id_code();
@@ -1356,7 +1369,8 @@ function question_make_default_categories($contexts) {
             // Otherwise, we need to make one
             $category = new stdClass();
             $contextname = $context->get_context_name(false, true);
-            $category->name = get_string('defaultfor', 'question', $contextname);
+            // Max length of name field is 255.
+            $category->name = shorten_text(get_string('defaultfor', 'question', $contextname), 255);
             $category->info = get_string('defaultinfofor', 'question', $contextname);
             $category->contextid = $context->id;
             $category->parent = $topcategory->id;
@@ -1680,7 +1694,8 @@ class context_to_string_translator{
 /**
  * Check capability on category
  *
- * @param int|stdClass $questionorid object or id. If an object is passed, it should include ->contextid and ->createdby.
+ * @param int|stdClass|question_definition $questionorid object or id.
+ *      If an object is passed, it should include ->contextid and ->createdby.
  * @param string $cap 'add', 'edit', 'view', 'use', 'move' or 'tag'.
  * @param int $notused no longer used.
  * @return bool this user has the capability $cap for this question $question?
@@ -2367,4 +2382,39 @@ function question_module_uses_questions($modname) {
     }
 
     return false;
+}
+
+/**
+ * If $oldidnumber ends in some digits then return the next available idnumber of the same form.
+ *
+ * So idnum -> null (no digits at the end) idnum0099 -> idnum0100 (if that is unused,
+ * else whichever of idnum0101, idnume0102, ... is unused. idnum9 -> idnum10.
+ *
+ * @param string|null $oldidnumber a question idnumber, or can be null.
+ * @param int $categoryid a question category id.
+ * @return string|null suggested new idnumber for a question in that category, or null if one cannot be found.
+ */
+function core_question_find_next_unused_idnumber(?string $oldidnumber, int $categoryid): ?string {
+    global $DB;
+
+    // The the old idnumber is not of the right form, bail now.
+    if (!preg_match('~\d+$~', $oldidnumber, $matches)) {
+        return null;
+    }
+
+    // Find all used idnumbers in one DB query.
+    $usedidnumbers = $DB->get_records_select_menu('question', 'category = ? AND idnumber IS NOT NULL',
+            [$categoryid], '', 'idnumber, 1');
+
+    // Find the next unused idnumber.
+    $newidnumber = $oldidnumber;
+    do {
+        // If we have got to something9999, insert an extra digit before incrementing.
+        if (preg_match('~^(.*[^0-9])(9+)$~', $newidnumber, $matches)) {
+            $newidnumber = $matches[1] . '0' . $matches[2];
+        }
+        $newidnumber++;
+    } while (isset($usedidnumbers[$newidnumber]));
+
+    return (string) $newidnumber;
 }

@@ -84,6 +84,23 @@ class flexible_table {
     private $persistent = false;
     var $is_collapsible = false;
     var $is_sortable    = false;
+
+    /**
+     * @var string The field name to sort by.
+     */
+    protected $sortby;
+
+    /**
+     * @var string $sortorder The direction for sorting.
+     */
+    protected $sortorder;
+
+    /** @var string The manually set first name initial preference */
+    protected $ifirst;
+
+    /** @var string The manually set last name initial preference */
+    protected $ilast;
+
     var $use_pages      = false;
     var $use_initials   = false;
 
@@ -513,45 +530,8 @@ class flexible_table {
             }
         }
 
-        if (($sortcol = optional_param($this->request[TABLE_VAR_SORT], '', PARAM_ALPHANUMEXT)) &&
-                $this->is_sortable($sortcol) && empty($this->prefs['collapse'][$sortcol]) &&
-                (isset($this->columns[$sortcol]) || in_array($sortcol, get_all_user_name_fields())
-                && isset($this->columns['fullname']))) {
-
-            $sortdir = optional_param($this->request[TABLE_VAR_DIR], $this->sort_default_order, PARAM_INT);
-
-            if (array_key_exists($sortcol, $this->prefs['sortby'])) {
-                // This key already exists somewhere. Change its sortorder and bring it to the top.
-                $sortorder = $this->prefs['sortby'][$sortcol] = $sortdir;
-                unset($this->prefs['sortby'][$sortcol]);
-                $this->prefs['sortby'] = array_merge(array($sortcol => $sortorder), $this->prefs['sortby']);
-            } else {
-                // Key doesn't exist, so just add it to the beginning of the array, ascending order
-                $this->prefs['sortby'] = array_merge(array($sortcol => $sortdir), $this->prefs['sortby']);
-            }
-
-            // Finally, make sure that no more than $this->maxsortkeys are present into the array
-            $this->prefs['sortby'] = array_slice($this->prefs['sortby'], 0, $this->maxsortkeys);
-        }
-
-        // MDL-35375 - If a default order is defined and it is not in the current list of order by columns, add it at the end.
-        // This prevents results from being returned in a random order if the only order by column contains equal values.
-        if (!empty($this->sort_default_column))  {
-            if (!array_key_exists($this->sort_default_column, $this->prefs['sortby'])) {
-                $defaultsort = array($this->sort_default_column => $this->sort_default_order);
-                $this->prefs['sortby'] = array_merge($this->prefs['sortby'], $defaultsort);
-            }
-        }
-
-        $ilast = optional_param($this->request[TABLE_VAR_ILAST], null, PARAM_RAW);
-        if (!is_null($ilast) && ($ilast ==='' || strpos(get_string('alphabet', 'langconfig'), $ilast) !== false)) {
-            $this->prefs['i_last'] = $ilast;
-        }
-
-        $ifirst = optional_param($this->request[TABLE_VAR_IFIRST], null, PARAM_RAW);
-        if (!is_null($ifirst) && ($ifirst === '' || strpos(get_string('alphabet', 'langconfig'), $ifirst) !== false)) {
-            $this->prefs['i_first'] = $ifirst;
-        }
+        $this->set_sorting_preferences();
+        $this->set_initials_preferences();
 
         // Save user preferences if they have changed.
         if ($this->prefs != $oldprefs) {
@@ -1019,12 +999,18 @@ class flexible_table {
     function print_nothing_to_display() {
         global $OUTPUT;
 
+        // Render the dynamic table header.
+        echo $this->get_dynamic_table_html_start();
+
         // Render button to allow user to reset table preferences.
         echo $this->render_reset_button();
 
         $this->print_initials_bar();
 
         echo $OUTPUT->heading(get_string('nothingtodisplay'));
+
+        // Render the dynamic table footer.
+        echo $this->get_dynamic_table_html_end();
     }
 
     /**
@@ -1158,7 +1144,8 @@ class flexible_table {
      * This function is not part of the public api.
      */
     function finish_html() {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
+
         if (!$this->started_output) {
             //no data has been added to the table.
             $this->print_nothing_to_display();
@@ -1187,6 +1174,9 @@ class flexible_table {
                 $pagingbar->pagevar = $this->request[TABLE_VAR_PAGE];
                 echo $OUTPUT->render($pagingbar);
             }
+
+            // Render the dynamic table footer.
+            echo $this->get_dynamic_table_html_end();
         }
     }
 
@@ -1323,6 +1313,100 @@ class flexible_table {
     }
 
     /**
+     * Calculate the preferences for sort order based on user-supplied values and get params.
+     */
+    protected function set_sorting_preferences(): void {
+        $sortorder = $this->sortorder;
+        $sortby = $this->sortby;
+
+        if ($sortorder === null || $sortby === null) {
+            $sortorder = optional_param($this->request[TABLE_VAR_DIR], $this->sort_default_order, PARAM_INT);
+            $sortby = optional_param($this->request[TABLE_VAR_SORT], '', PARAM_ALPHANUMEXT);
+        }
+
+        $isvalidsort = $sortby && $this->is_sortable($sortby);
+        $isvalidsort = $isvalidsort && empty($this->prefs['collapse'][$sortby]);
+        $isrealcolumn = isset($this->columns[$sortby]);
+        $isfullnamefield = isset($this->columns['fullname']) && in_array($sortby, get_all_user_name_fields());
+
+        if ($isvalidsort && ($isrealcolumn || $isfullnamefield)) {
+            if (array_key_exists($sortby, $this->prefs['sortby'])) {
+                // This key already exists somewhere. Change its sortorder and bring it to the top.
+                $sortorder = $this->prefs['sortby'][$sortby] = $sortorder;
+                unset($this->prefs['sortby'][$sortby]);
+                $this->prefs['sortby'] = array_merge(array($sortby => $sortorder), $this->prefs['sortby']);
+            } else {
+                // Key doesn't exist, so just add it to the beginning of the array, ascending order.
+                $this->prefs['sortby'] = array_merge(array($sortby => $sortorder), $this->prefs['sortby']);
+            }
+
+            // Finally, make sure that no more than $this->maxsortkeys are present into the array.
+            $this->prefs['sortby'] = array_slice($this->prefs['sortby'], 0, $this->maxsortkeys);
+        }
+
+        // If a default order is defined and it is not in the current list of order by columns, add it at the end.
+        // This prevents results from being returned in a random order if the only order by column contains equal values.
+        if (!empty($this->sort_default_column) && !array_key_exists($this->sort_default_column, $this->prefs['sortby'])) {
+            $defaultsort = array($this->sort_default_column => $this->sort_default_order);
+            $this->prefs['sortby'] = array_merge($this->prefs['sortby'], $defaultsort);
+        }
+    }
+
+    /**
+     * Fill in the preferences for the initials bar.
+     */
+    protected function set_initials_preferences(): void {
+        $ifirst = $this->ifirst;
+        $ilast = $this->ilast;
+
+        if ($ifirst === null) {
+            $ifirst = optional_param($this->request[TABLE_VAR_IFIRST], null, PARAM_RAW);
+        }
+
+        if ($ilast === null) {
+            $ilast = optional_param($this->request[TABLE_VAR_ILAST], null, PARAM_RAW);
+        }
+
+        if (!is_null($ifirst) && ($ifirst === '' || strpos(get_string('alphabet', 'langconfig'), $ifirst) !== false)) {
+            $this->prefs['i_first'] = $ifirst;
+        }
+
+        if (!is_null($ilast) && ($ilast === '' || strpos(get_string('alphabet', 'langconfig'), $ilast) !== false)) {
+            $this->prefs['i_last'] = $ilast;
+        }
+
+    }
+
+    /**
+     * Set the preferred table sorting attributes.
+     *
+     * @param string $sortby The field to sort by.
+     * @param int $sortorder The sort order.
+     */
+    public function set_sorting(string $sortby, int $sortorder): void {
+        $this->sortby = $sortby;
+        $this->sortorder = $sortorder;
+    }
+
+    /**
+     * Set the preferred first name initial in an initials bar.
+     *
+     * @param string $initial The character to set
+     */
+    public function set_first_initial(string $initial): void {
+        $this->ifirst = $initial;
+    }
+
+    /**
+     * Set the preferred last name initial in an initials bar.
+     *
+     * @param string $initial The character to set
+     */
+    public function set_last_initial(string $initial): void {
+        $this->ilast = $initial;
+    }
+
+    /**
      * Generate the HTML for the sort icon. This is a helper method used by {@link sort_link()}.
      * @param bool $isprimary whether an icon is needed (it is only needed for the primary sort column.)
      * @param int $order SORT_ASC or SORT_DESC
@@ -1380,8 +1464,68 @@ class flexible_table {
 
         return html_writer::link($this->baseurl->out(false, $params),
                 $text . get_accesshide(get_string('sortby') . ' ' .
-                $text . ' ' . $this->sort_order_name($isprimary, $order))) . ' ' .
-                $this->sort_icon($isprimary, $order);
+                $text . ' ' . $this->sort_order_name($isprimary, $order)),
+                [
+                    'data-sortable' => $this->is_sortable($column),
+                    'data-sortby' => $column,
+                    'data-sortorder' => $sortorder,
+                ]) . ' ' . $this->sort_icon($isprimary, $order);
+    }
+
+    /**
+     * Return sorting attributes values.
+     *
+     * @return array
+     */
+    protected function get_sort_order(): array {
+        $sortbys = $this->prefs['sortby'];
+        $sortby = key($sortbys);
+
+        return [
+            'sortby' => $sortby,
+            'sortorder' => $sortbys[$sortby],
+        ];
+    }
+
+    /**
+     * Get the dynamic table start wrapper.
+     * If this is not a dynamic table, then an empty string is returned making this safe to blindly call.
+     *
+     * @return string
+     */
+    protected function get_dynamic_table_html_start(): string {
+        if (is_a($this, \core_table\dynamic::class)) {
+            $sortdata = $this->get_sort_order();
+            return html_writer::start_tag('div', [
+                'data-region' => 'core_table/dynamic',
+                'data-table-handler' => get_class($this),
+                'data-table-uniqueid' => $this->uniqueid,
+                'data-table-filters' => json_encode($this->get_filterset()),
+                'data-table-sort-by' => $sortdata['sortby'],
+                'data-table-sort-order' => $sortdata['sortorder'],
+                'data-table-first-initial' => $this->prefs['i_first'],
+                'data-table-last-initial' => $this->prefs['i_last'],
+            ]);
+        }
+
+        return '';
+    }
+
+    /**
+     * Get the dynamic table end wrapper.
+     * If this is not a dynamic table, then an empty string is returned making this safe to blindly call.
+     *
+     * @return string
+     */
+    protected function get_dynamic_table_html_end(): string {
+        global $PAGE;
+
+        if (is_a($this, \core_table\dynamic::class)) {
+            $PAGE->requires->js_call_amd('core_table/dynamic', 'init');
+            return html_writer::end_tag('div');
+        }
+
+        return '';
     }
 
     /**
@@ -1389,6 +1533,9 @@ class flexible_table {
      */
     function start_html() {
         global $OUTPUT;
+
+        // Render the dynamic table header.
+        echo $this->get_dynamic_table_html_start();
 
         // Render button to allow user to reset table preferences.
         echo $this->render_reset_button();
@@ -1460,10 +1607,8 @@ class flexible_table {
      * @return bool
      */
     protected function can_be_reset() {
-
         // Loop through preferences and make sure they are empty or set to the default value.
         foreach ($this->prefs as $prefname => $prefval) {
-
             if ($prefname === 'sortby' and !empty($this->sort_default_column)) {
                 // Check if the actual sorting differs from the default one.
                 if (empty($prefval) or $prefval !== array($this->sort_default_column => $this->sort_default_order)) {
@@ -1523,7 +1668,6 @@ class table_sql extends flexible_table {
     function __construct($uniqueid) {
         parent::__construct($uniqueid);
         // some sensible defaults
-        $this->set_attribute('cellspacing', '0');
         $this->set_attribute('class', 'generaltable generalbox');
     }
 

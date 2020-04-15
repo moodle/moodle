@@ -62,12 +62,49 @@ if (strpos($CFG->airnotifierurl, AIRNOTIFIER_PUBLICURL) !== false ) {
 }
 
 $manager = new message_airnotifier_manager();
+$warnings = [];
 
 if ($key = $manager->request_accesskey()) {
     set_config('airnotifieraccesskey', $key);
-    $msg = get_string('keyretrievedsuccessfully', 'message_airnotifier');
+    $msg = $OUTPUT->box(get_string('keyretrievedsuccessfully', 'message_airnotifier'), 'generalbox alert alert-success');
+
+    // Check mobile notifications.
+    $processors = get_message_processors();
+    $enabled = false;
+    foreach ($processors as $processor => $status) {
+        if ($processor == 'airnotifier' && $status->enabled) {
+            $enabled = true;
+        }
+    }
+
+    if (!$enabled) {
+        // Airnotifier processor isn't enabled. Warn the user.
+        $warnings[] = [
+            'msg' => get_string('mobilenotificationsdisabledwarning', 'tool_mobile'),
+            'linkmsg' => get_string('enableprocessor', 'message_airnotifier'),
+            'linkurl' => new moodle_url('/admin/message.php'),
+        ];
+    }
+
+    if (empty($CFG->enablemobilewebservice)) {
+        // Mobile web services not enabled. Warn the user.
+        $warnings[] = [
+            'msg' => get_string('mobilenotconfiguredwarning', 'admin'),
+            'linkmsg' => get_string('enablemobilewebservice', 'admin'),
+            'linkurl' => new moodle_url('/admin/settings.php', ['section' => 'mobilesettings']),
+        ];
+    }
 } else {
-    $msg = get_string('errorretrievingkey', 'message_airnotifier');
+    $msg = $OUTPUT->box(get_string('errorretrievingkey', 'message_airnotifier'), 'generalbox alert alert-danger');
+}
+
+// Display the warnings.
+foreach ($warnings as $warning) {
+    if (!empty($warning['linkurl'])) {
+        $warning['msg'] = $warning['msg'] . '&nbsp;' . html_writer::tag('a', $warning['linkmsg'], ['href' => $warning['linkurl']]);
+    }
+
+    $msg .= $OUTPUT->box($warning['msg'], 'generalbox alert alert-warning');
 }
 
 $msg .= $OUTPUT->continue_button($returl);

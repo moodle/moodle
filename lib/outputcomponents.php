@@ -2089,12 +2089,10 @@ class html_writer {
      */
     public static function script($jscode, $url=null) {
         if ($jscode) {
-            $attributes = array('type'=>'text/javascript');
-            return self::tag('script', "\n//<![CDATA[\n$jscode\n//]]>\n", $attributes) . "\n";
+            return self::tag('script', "\n//<![CDATA[\n$jscode\n//]]>\n") . "\n";
 
         } else if ($url) {
-            $attributes = array('type'=>'text/javascript', 'src'=>$url);
-            return self::tag('script', '', $attributes) . "\n";
+            return self::tag('script', '', ['src' => $url]) . "\n";
 
         } else {
             return '';

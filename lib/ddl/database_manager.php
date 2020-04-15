@@ -330,6 +330,8 @@ class database_manager {
             throw new ddl_exception('ddlunknownerror', null, 'table drop sql not generated');
         }
         $this->execute_sql_arr($sqlarr, array($xmldb_table->getName()));
+
+        $this->generator->cleanup_after_drop($xmldb_table);
     }
 
     /**

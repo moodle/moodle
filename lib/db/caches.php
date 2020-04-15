@@ -415,4 +415,21 @@ $definitions = array(
         'simplekeys' => false,
         'simpledata' => false,
     ],
+
+    // The list of content items (activities, resources and their subtypes) that can be added to a course for a user.
+    'user_course_content_items' => [
+        'mode' => cache_store::MODE_REQUEST,
+        'simplekeys' => true,
+    ],
+
+    // The list of favourited content items (activities, resources and their subtypes) for a user.
+    'user_favourite_course_content_items' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+    ],
+
+    \core_course\local\service\content_item_service::RECOMMENDATION_CACHE => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+    ],
 );

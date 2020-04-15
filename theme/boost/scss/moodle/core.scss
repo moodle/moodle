@@ -26,6 +26,35 @@ $bg-inverse-link-color: #fff !default;
     margin-top: 4px;
 }
 
+$gototop-bottom-position: 50px !default;
+
+#goto-top-link {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .7s ease 0s, visibility .1s ease .8s;
+    display: block;
+    position: fixed; /* IE compatibility hack */
+    @supports (position: sticky) {
+        position: sticky;
+    }
+    @supports (-ms-ime-align:auto) {
+        position: fixed; /* Edge compatibility hack */
+    }
+    bottom: $gototop-bottom-position;
+    right: 0;
+    a {
+        position: absolute;
+        right: 0;
+        transform: translateY(-100%);
+    }
+}
+
+body.scrolled #goto-top-link {
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0s ease 0s, opacity .7s ease .1s;
+}
+
 .context-header-settings-menu .dropdown-toggle > .icon,
 #region-main-settings-menu .dropdown-toggle > .icon {
     height: 24px;
@@ -1390,6 +1419,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     text-transform: uppercase;
     padding-top: 1.2em;
     padding-bottom: 0.4em;
+    margin-bottom: 0.5rem;
+    font-size: 100%;
 }
 
 .choosercontainer #chooseform .option .typename,
@@ -1460,11 +1491,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     padding-top: 1px;
 }
 
-.chooserdialogue-course-modchooser .modicon .icon {
-    width: 24px;
-    height: 24px;
-    font-size: 24px;
-}
 
 @include media-breakpoint-down(xs) {
     .jsenabled .choosercontainer #chooseform .alloptions {
@@ -1474,6 +1500,164 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     .jsenabled .choosercontainer #chooseform .instruction,
     .jsenabled .choosercontainer #chooseform .typesummary {
         position: static;
+    }
+}
+
+/**
+ * Module chooser dialogue (moodle-core-chooserdialogue)
+ *
+ * This CSS belong to the chooser dialogue which should work both with, and
+ * without javascript enabled
+ */
+.modchooser .modal-body {
+    padding: 0;
+    height: 640px;
+    overflow-y: auto;
+
+    .loading-icon {
+        opacity: 1;
+        .icon {
+            display: block;
+            font-size: 3em;
+            height: 1em;
+            width: 1em;
+            margin: 5em auto;
+        }
+    }
+}
+
+.modchoosercontainer.noscroll {
+    overflow-y: hidden;
+}
+
+.modchooser .searchcontainer .searchbar {
+
+    .searchinput {
+        font-size: inherit;
+        border: 1px solid #dee2e6;
+        border-top-left-radius: .3rem;
+        border-bottom-left-radius: .3rem;
+        border-right: none;
+    }
+
+    .searchbar-append {
+        align-items: center;
+        border: 1px solid #dee2e6;
+        border-left: none;
+        border-top-right-radius: .3rem;
+        border-bottom-right-radius: .3rem;
+
+        i {
+            color: #868e96;
+            margin: 0;
+            vertical-align: middle;
+        }
+
+        .clear {
+            i {
+                height: 23px;
+                width: 23px;
+                font-size: 23px;
+                pointer-events: none;
+            }
+        }
+        .search-icon {
+            i {
+                height: 20px;
+                width: 20px;
+                font-size: 20px;
+            }
+        }
+    }
+}
+
+.modchoosercontainer .optionscontainer,
+.modchoosercontainer .searchresultitemscontainer {
+    overflow-x: hidden;
+    .option {
+        // Six items per line.
+        flex-basis: 16.66%;
+        .optionactions {
+            .optionaction {
+                cursor: pointer;
+                color: $gray-600;
+                i {
+                    margin: 0;
+                }
+            }
+        }
+        .optioninfo {
+            a {
+                color: $gray-700;
+                &:hover {
+                    text-decoration: none;
+                }
+                .optionicon {
+                    .icon {
+                        margin: 0;
+                        padding: 0;
+                        width: 32px;
+                        height: 32px;
+                        font-size: 32px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.modchooser .modal-body .optionsummary {
+    background-color: $white;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 640px;
+
+    .content {
+        overflow-y: auto;
+        .heading {
+            .icon {
+                height: 32px;
+                width: 32px;
+                font-size: 32px;
+                padding: 0;
+            }
+        }
+    }
+
+    .actions {
+        border-top: 1px solid $gray-300;
+        background: $white;
+    }
+}
+
+@include media-breakpoint-down(lg) {
+    .modchoosercontainer .optionscontainer .option,
+    .modchoosercontainer .searchresultitemscontainer .option {
+        // Five items per line.
+        flex-basis: 20%;
+    }
+}
+
+@include media-breakpoint-down(xs) {
+    .path-course-view .modal-dialog.modal-lg,
+    .path-course-view .modal-content,
+    .modchooser .modal-body,
+    .modchooser .modal-body .carousel,
+    .modchooser .modal-body .carousel-inner,
+    .modchooser .modal-body .carousel-item,
+    .modchooser .modal-body .optionsummary,
+    .modchoosercontainer,
+    .optionscontainer,
+    .searchresultitemscontainer {
+        height: 100%;
+    }
+    .path-course-view .modal-dialog.modal-lg {
+        margin: 0;
+    }
+    .modchoosercontainer .optionscontainer .option,
+    .modchoosercontainer .searchresultitemscontainer .option {
+        // Four items per line.
+        flex-basis: 25%;
     }
 }
 
@@ -2281,4 +2465,14 @@ $picker-emojis-per-row: 7 !default;
     max-height: 0;
     // Place these above any modals and other elements.
     z-index: 1051;
+
+    > :first-child {
+        margin-top: $spacer;
+    }
+}
+
+@each $color, $value in $theme-colors {
+    .alert-#{$color} a {
+        color: darken(theme-color-level($color, $alert-color-level), 10%);
+    }
 }

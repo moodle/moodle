@@ -221,12 +221,7 @@
 
 body.path-question-type {
     /* Hacks to display the labels within a form group. */
-    .fitem_fgroup .accesshide {
-        font: inherit;
-        position: static;
-        padding-right: .3em;
-    }
-    .form-group .sr-only {
+    .form-group .sr-only:not(legend) {
         position: static;
         width: auto;
         height: auto;
@@ -309,14 +304,6 @@ body.path-question-type {
 .que.multichoice .answer div.r0 .icon.fa-remove,
 .que.multichoice .answer div.r1 .icon.fa-remove {
     text-indent: 0;
-}
-.qtype_multichoice_clearchoice {
-    padding-top: 10px;
-    a {
-        cursor: pointer;
-        text-decoration: underline;
-        padding-left: 30px;
-    }
 }
 
 .formulation input[type="text"],

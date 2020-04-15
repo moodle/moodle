@@ -34,4 +34,4 @@ $string['language'] = 'Γλώσσα';
 $string['moodlelogo'] = 'Λογότυπο Moodle';
 $string['next'] = 'Επόμενο';
 $string['previous'] = 'Προηγούμενο';
-$string['reload'] = 'Eπαναφόρτωση';
+$string['reload'] = 'Επαναφόρτωση';

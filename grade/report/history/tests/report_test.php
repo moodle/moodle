@@ -53,6 +53,12 @@ class gradereport_history_report_testcase extends advanced_testcase {
         $u5 = $this->getDataGenerator()->create_user();
         $grader1 = $this->getDataGenerator()->create_user();
         $grader2 = $this->getDataGenerator()->create_user();
+        self::getDataGenerator()->enrol_user($grader1->id, $c1->id, 'teacher');
+        self::getDataGenerator()->enrol_user($grader2->id, $c1->id, 'teacher');
+        self::getDataGenerator()->enrol_user($u2->id, $c1->id, 'student');
+        self::getDataGenerator()->enrol_user($u3->id, $c1->id, 'student');
+        self::getDataGenerator()->enrol_user($u4->id, $c1->id, 'student');
+        self::getDataGenerator()->enrol_user($u5->id, $c1->id, 'student');
 
         // Modules.
         $c1m1 = $this->getDataGenerator()->create_module('assign', array('course' => $c1));
@@ -64,6 +70,8 @@ class gradereport_history_report_testcase extends advanced_testcase {
         // Creating fake history data.
         $giparams = array('itemtype' => 'mod', 'itemmodule' => 'assign');
         $grades = array();
+
+        $this->setUser($grader1);
 
         $gi = grade_item::fetch($giparams + array('iteminstance' => $c1m1->id));
         $grades['c1m1u1'] = $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id,
@@ -163,6 +171,20 @@ class gradereport_history_report_testcase extends advanced_testcase {
         $this->assertEquals(null, $results[$grades['c2m2u1a']->id]->prevgrade);
         $this->assertEquals($grades['c2m2u1a']->finalgrade, $results[$grades['c2m2u1c']->id]->prevgrade);
         $this->assertEquals($grades['c2m2u1c']->finalgrade, $results[$grades['c2m2u1e']->id]->prevgrade);
+
+        // Put course in separate groups mode, add grader1 and two students to the same group.
+        $c1->groupmode = SEPARATEGROUPS;
+        update_course($c1);
+        $this->assertFalse(has_capability('moodle/site:accessallgroups', \context_course::instance($c1->id)));
+        $g1 = self::getDataGenerator()->create_group(['courseid' => $c1->id, 'name' => 'g1']);
+        self::getDataGenerator()->create_group_member(['groupid' => $g1->id, 'userid' => $grader1->id]);
+        self::getDataGenerator()->create_group_member(['groupid' => $g1->id, 'userid' => $u1->id]);
+        self::getDataGenerator()->create_group_member(['groupid' => $g1->id, 'userid' => $u2->id]);
+        $this->assertEquals(2, $this->get_tablelog_results($c1ctx, array(), true));
+
+        // Grader2 is not in any groups.
+        $this->setUser($grader2);
+        $this->assertEquals(0, $this->get_tablelog_results($c1ctx, array(), true));
     }
 
     /**
@@ -220,6 +242,118 @@ class gradereport_history_report_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider method for \gradereport_history_report_testcase::test_get_users_with_groups()
+     */
+    public function get_users_provider() {
+        return [
+            'Visible groups, non-editing teacher, not in any group' => [
+                VISIBLEGROUPS, 'teacher', ['g1', 'g2'], ['s1', 's2', 's3', 's4', 's5']
+            ],
+            'Visible groups, non-editing teacher' => [
+                VISIBLEGROUPS, 'teacher', [], ['s1', 's2', 's3', 's4', 's5']
+            ],
+            'Visible groups, editing teacher' => [
+                VISIBLEGROUPS, 'editingteacher', ['g1', 'g2'], ['s1', 's2', 's3', 's4', 's5']
+            ],
+            'Separate groups, non-editing teacher' => [
+                SEPARATEGROUPS, 'teacher', ['g1', 'g2'], ['s1', 's2']
+            ],
+            'Separate groups, non-editing teacher, not in any group' => [
+                SEPARATEGROUPS, 'teacher', [], []
+            ],
+            'Separate groups, non-editing teacher and student share two groups' => [
+                SEPARATEGROUPS, 'teacher', ['g4', 'g5'], ['s5']
+            ],
+            'Separate groups, editing teacher' => [
+                SEPARATEGROUPS, 'editingteacher', ['g1', 'g2'], ['s1', 's2', 's3', 's4', 's5']
+            ],
+        ];
+    }
+
+    /**
+     * Test for helper::get_users() with course group mode set.
+     *
+     * @dataProvider get_users_provider
+     * @param $groupmode
+     * @param $teacherrole
+     * @param $teachergroups
+     * @param $expectedusers
+     */
+    public function test_get_users_with_groups($groupmode, $teacherrole, $teachergroups, $expectedusers) {
+        global $DB;
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+
+        // Create a test course.
+        $course = $generator->create_course(['groupmode' => $groupmode]);
+
+        // Create an assignment module.
+        $assign = $generator->create_module('assign', ['course' => $course]);
+
+        // Fetch roles.
+        $role = $DB->get_record('role', ['shortname' => $teacherrole], '*', MUST_EXIST);
+        $studentrole =  $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
+
+        // Create users.
+        $t1 = $generator->create_user(['username' => 't1', 'email' => 't1@example.com']);
+        $s1 = $generator->create_user(['username' => 's1', 'email' => 's1@example.com']);
+        $s2 = $generator->create_user(['username' => 's2', 'email' => 's2@example.com']);
+        $s3 = $generator->create_user(['username' => 's3', 'email' => 's3@example.com']);
+        $s4 = $generator->create_user(['username' => 's4', 'email' => 's4@example.com']);
+        $s5 = $generator->create_user(['username' => 's5', 'email' => 's5@example.com']);
+
+        // Enrol users.
+        $generator->enrol_user($t1->id, $course->id, $role->id);
+        $generator->enrol_user($s1->id, $course->id, $studentrole->id);
+        $generator->enrol_user($s2->id, $course->id, $studentrole->id);
+        $generator->enrol_user($s3->id, $course->id, $studentrole->id);
+        $generator->enrol_user($s4->id, $course->id, $studentrole->id);
+        $generator->enrol_user($s5->id, $course->id, $studentrole->id);
+
+        // Create groups.
+        $groups = [];
+        $groups['g1'] = $generator->create_group(['courseid' => $course->id, 'name' => 'g1']);
+        $groups['g2'] = $generator->create_group(['courseid' => $course->id, 'name' => 'g2']);
+        $groups['g3'] = $generator->create_group(['courseid' => $course->id, 'name' => 'g3']);
+        $groups['g4'] = $generator->create_group(['courseid' => $course->id, 'name' => 'g4']);
+        $groups['g5'] = $generator->create_group(['courseid' => $course->id, 'name' => 'g5']);
+
+        // Add teacher to the assigned groups.
+        foreach ($teachergroups as $groupname) {
+            $group = $groups[$groupname];
+            $generator->create_group_member(['groupid' => $group->id, 'userid' => $t1->id]);
+        }
+
+        // Add students to groups.
+        $generator->create_group_member(['groupid' => $groups['g1']->id, 'userid' => $s1->id]);
+        $generator->create_group_member(['groupid' => $groups['g2']->id, 'userid' => $s2->id]);
+        $generator->create_group_member(['groupid' => $groups['g3']->id, 'userid' => $s3->id]);
+        $generator->create_group_member(['groupid' => $groups['g4']->id, 'userid' => $s5->id]);
+        $generator->create_group_member(['groupid' => $groups['g5']->id, 'userid' => $s5->id]);
+
+        // Creating grade history for the students.
+        $gi = grade_item::fetch(['iteminstance' => $assign->id, 'itemtype' => 'mod', 'itemmodule' => 'assign']);
+        $this->create_grade_history(['itemid' => $gi->id, 'userid' => $s1->id]);
+        $this->create_grade_history(['itemid' => $gi->id, 'userid' => $s2->id]);
+        $this->create_grade_history(['itemid' => $gi->id, 'userid' => $s3->id]);
+        $this->create_grade_history(['itemid' => $gi->id, 'userid' => $s4->id]);
+        $this->create_grade_history(['itemid' => $gi->id, 'userid' => $s5->id]);
+
+        // Log in as the teacher.
+        $this->setUser($t1);
+
+        // Fetch the users.
+        $users = \gradereport_history\helper::get_users(context_course::instance($course->id));
+        // Confirm that the number of users fetched is the same as the count of expected users.
+        $this->assertCount(count($expectedusers), $users);
+        foreach ($users as $user) {
+            // Confirm that each user returned is in the list of expected users.
+            $this->assertTrue(in_array($user->username, $expectedusers));
+        }
+    }
+
+    /**
      * Test the get graders helper method.
      */
     public function test_graders() {
@@ -228,15 +362,23 @@ class gradereport_history_report_testcase extends advanced_testcase {
         // Making the setup.
         $c1 = $this->getDataGenerator()->create_course();
         $c2 = $this->getDataGenerator()->create_course();
+        $c3 = $this->getDataGenerator()->create_course(['groupmode' => SEPARATEGROUPS]);
 
         $c1m1 = $this->getDataGenerator()->create_module('assign', array('course' => $c1));
         $c2m1 = $this->getDataGenerator()->create_module('assign', array('course' => $c2));
+        $c3m1 = $this->getDataGenerator()->create_module('assign', array('course' => $c3));
 
         // Users.
         $u1 = $this->getDataGenerator()->create_user(array('firstname' => 'Eric', 'lastname' => 'Cartman'));
         $u2 = $this->getDataGenerator()->create_user(array('firstname' => 'Stan', 'lastname' => 'Marsh'));
         $u3 = $this->getDataGenerator()->create_user(array('firstname' => 'Kyle', 'lastname' => 'Broflovski'));
         $u4 = $this->getDataGenerator()->create_user(array('firstname' => 'Kenny', 'lastname' => 'McCormick'));
+
+        foreach ([$c1, $c2, $c3] as $course) {
+            foreach ([$u1, $u2, $u3, $u4] as $user) {
+                self::getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+            }
+        }
 
         // Creating grade history for some users.
         $gi = grade_item::fetch(array('iteminstance' => $c1m1->id, 'itemtype' => 'mod', 'itemmodule' => 'assign'));
@@ -247,6 +389,10 @@ class gradereport_history_report_testcase extends advanced_testcase {
         $gi = grade_item::fetch(array('iteminstance' => $c2m1->id, 'itemtype' => 'mod', 'itemmodule' => 'assign'));
         $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id, 'usermodified' => $u4->id));
 
+        $gi = grade_item::fetch(array('iteminstance' => $c3m1->id, 'itemtype' => 'mod', 'itemmodule' => 'assign'));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u1->id, 'usermodified' => $u1->id));
+        $this->create_grade_history(array('itemid' => $gi->id, 'userid' => $u2->id, 'usermodified' => $u2->id));
+
         // Checking fetching some users.
         $graders = \gradereport_history\helper::get_graders($c1->id);
         $this->assertCount(4, $graders); // Including "all graders" .
@@ -256,6 +402,17 @@ class gradereport_history_report_testcase extends advanced_testcase {
         $graders = \gradereport_history\helper::get_graders($c2->id);
         $this->assertCount(2, $graders); // Including "all graders" .
         $this->assertArrayHasKey($u4->id, $graders);
+
+        // Third course is in separate groups mode. Only graders from the same group will be returned.
+        $g = self::getDataGenerator()->create_group(['courseid' => $course->id, 'name' => 'g1']);
+        self::getDataGenerator()->create_group_member(['groupid' => $g->id, 'userid' => $u1->id]);
+        self::getDataGenerator()->create_group_member(['groupid' => $g->id, 'userid' => $u2->id]);
+        $this->setUser($u1);
+        $graders = \gradereport_history\helper::get_graders($c3->id);
+        $this->assertCount(3, $graders); // Including "all graders" .
+        $this->setUser($u3);
+        $graders = \gradereport_history\helper::get_graders($c3->id);
+        $this->assertCount(1, $graders); // Including "all graders" .
     }
 
     /**

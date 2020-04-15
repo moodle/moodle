@@ -2106,9 +2106,6 @@ function xmldb_main_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2019120500.01) {
-        // Delete any tool_cohortroles mappings for roles which no longer exist.
-        $DB->delete_records_select('tool_cohortroles', "roleid NOT IN (SELECT id FROM {role})");
-
         // Delete any role assignments for roles which no longer exist.
         $DB->delete_records_select('role_assignments', "roleid NOT IN (SELECT id FROM {role})");
 
@@ -2170,6 +2167,95 @@ function xmldb_main_upgrade($oldversion) {
         $DB->delete_records_select('event', $select);
 
         upgrade_main_savepoint(true, 2020011700.02);
+    }
+
+    if ($oldversion < 2020013000.01) {
+        global $DB;
+        // Delete any associated files.
+        $fs = get_file_storage();
+        $sql = "SELECT cuc.id, cuc.userid
+                  FROM {competency_usercomp} cuc
+             LEFT JOIN {user} u ON cuc.userid = u.id
+                 WHERE u.deleted = 1";
+        $usercompetencies = $DB->get_records_sql($sql);
+        foreach ($usercompetencies as $usercomp) {
+            $DB->delete_records('competency_evidence', ['usercompetencyid' => $usercomp->id]);
+            $DB->delete_records('competency_usercompcourse', ['userid' => $usercomp->userid]);
+            $DB->delete_records('competency_usercompplan', ['userid' => $usercomp->userid]);
+            $DB->delete_records('competency_usercomp', ['userid' => $usercomp->userid]);
+        }
+
+        $sql = "SELECT cue.id, cue.userid
+                  FROM {competency_userevidence} cue
+             LEFT JOIN {user} u ON cue.userid = u.id
+                 WHERE u.deleted = 1";
+        $userevidences = $DB->get_records_sql($sql);
+        foreach ($userevidences as $userevidence) {
+            $DB->delete_records('competency_userevidencecomp', ['userevidenceid' => $userevidence->id]);
+            $DB->delete_records('competency_userevidence', ['id' => $userevidence->id]);
+
+            $context = context_user::instance($userevidence->userid);
+            $fs->delete_area_files($context->id, 'core_competency', 'userevidence', $userevidence->id);
+        }
+
+        $sql = "SELECT cp.id
+                  FROM {competency_plan} cp
+             LEFT JOIN {user} u ON cp.userid = u.id
+                 WHERE u.deleted = 1";
+        $userplans = $DB->get_records_sql($sql);
+        foreach ($userplans as $userplan) {
+            $DB->delete_records('competency_plancomp', ['planid' => $userplan->id]);
+            $DB->delete_records('competency_plan', ['id' => $userplan->id]);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020013000.01);
+    }
+
+    if ($oldversion < 2020040200.01) {
+        // Clean up completion criteria records referring to courses that no longer exist.
+        $select = 'criteriatype = :type AND courseinstance NOT IN (SELECT id FROM {course})';
+        $params = ['type' => 8]; // COMPLETION_CRITERIA_TYPE_COURSE.
+
+        $DB->delete_records_select('course_completion_criteria', $select, $params);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020040200.01);
+    }
+
+    if ($oldversion < 2020040700.00) {
+        // Remove deprecated Mozilla OpenBadges backpack.
+        $url = 'https://backpack.openbadges.org';
+        $bp = $DB->get_record('badge_external_backpack', ['backpackapiurl' => $url]);
+        if ($bp) {
+            // Remove connections for users to this backpack.
+            $sql = "SELECT DISTINCT bb.id
+                      FROM {badge_backpack} bb
+                 LEFT JOIN {badge_external} be ON be. backpackid = bb.externalbackpackid
+                     WHERE bb.externalbackpackid = :backpackid";
+            $params = ['backpackid' => $bp->id];
+            $externalbackpacks = $DB->get_fieldset_sql($sql, $params);
+            if ($externalbackpacks) {
+                list($sql, $params) = $DB->get_in_or_equal($externalbackpacks);
+
+                // Delete user external collections references to this backpack.
+                $DB->execute("DELETE FROM {badge_external} WHERE backpackid " . $sql, $params);
+            }
+            $DB->delete_records('badge_backpack', ['externalbackpackid' => $bp->id]);
+
+            // Delete deprecated backpack entry.
+            $DB->delete_records('badge_external_backpack', ['backpackapiurl' => $url]);
+        }
+
+        // Set active external backpack to Badgr.io.
+        $url = 'https://api.badgr.io/v2';
+        if ($bp = $DB->get_record('badge_external_backpack', ['backpackapiurl' => $url])) {
+            set_config('badges_site_backpack', $bp->id);
+        } else {
+            unset_config('badges_site_backpack');
+        }
+
+        upgrade_main_savepoint(true, 2020040700.00);
     }
 
     return true;

@@ -925,17 +925,28 @@ class badge {
     /**
      * Define issuer information by format Open Badges specification version 2.
      *
+     * @param int $obversion OB version to use.
      * @return array Issuer informations of the badge.
      */
-    public function get_badge_issuer() {
-        $issuer = array();
-        $issuerurl = new moodle_url('/badges/badge_json.php', array('id' => $this->id, 'action' => 0));
-        $issuer['name'] = $this->issuername;
-        $issuer['url'] = $this->issuerurl;
-        $issuer['email'] = $this->issuercontact;
-        $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
-        $issuer['id'] = $this->issuerurl;
-        $issuer['type'] = OPEN_BADGES_V2_TYPE_ISSUER;
+    public function get_badge_issuer(?int $obversion = null) {
+        global $DB;
+
+        $issuer = [];
+        if ($obversion == OPEN_BADGES_V1) {
+            $data = $DB->get_record('badge', ['id' => $this->id]);
+            $issuer['name'] = $data->issuername;
+            $issuer['url'] = $data->issuerurl;
+            $issuer['email'] = $data->issuercontact;
+        } else {
+            $issuer['name'] = $this->issuername;
+            $issuer['url'] = $this->issuerurl;
+            $issuer['email'] = $this->issuercontact;
+            $issuer['@context'] = OPEN_BADGES_V2_CONTEXT;
+            $issueridurl = new moodle_url('/badges/issuer_json.php', array('id' => $this->id));
+            $issuer['id'] = $issueridurl->out(false);
+            $issuer['type'] = OPEN_BADGES_V2_TYPE_ISSUER;
+        }
+
         return $issuer;
     }
 }

@@ -30,6 +30,11 @@ require_once($CFG->libdir.'/tablelib.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->dirroot.'/enrol/locallib.php');
 
+use core_table\local\filter\filter;
+use core_table\local\filter\integer_filter;
+use core_table\local\filter\string_filter;
+use core_user\participants_table;
+
 define('DEFAULT_PAGE_SIZE', 20);
 define('SHOW_ALL_PAGE_SIZE', 5000);
 
@@ -139,7 +144,16 @@ $hasgroupfilter = false;
 $lastaccess = 0;
 $searchkeywords = [];
 $enrolid = 0;
-$status = -1;
+
+$filterset = new \core_user\table\participants_filterset();
+$filterset->add_filter(new integer_filter('courseid', filter::JOINTYPE_DEFAULT, [(int)$course->id]));
+$enrolfilter = new integer_filter('enrolments');
+$groupfilter = new integer_filter('groups');
+$keywordfilter = new string_filter('keywords');
+$lastaccessfilter = new integer_filter('accesssince');
+$rolefilter = new integer_filter('roles');
+$statusfilter = new integer_filter('status');
+
 foreach ($filtersapplied as $filter) {
     $filtervalue = explode(':', $filter, 2);
     $value = null;
@@ -155,26 +169,32 @@ foreach ($filtersapplied as $filter) {
     switch ($key) {
         case USER_FILTER_ENROLMENT:
             $enrolid = $value;
+            $enrolfilter->add_filter_value($value);
             break;
         case USER_FILTER_GROUP:
             $groupid = $value;
+            $groupfilter->add_filter_value($value);
             $hasgroupfilter = true;
             break;
         case USER_FILTER_LAST_ACCESS:
             $lastaccess = $value;
+            $lastaccessfilter->add_filter_value($value);
             break;
         case USER_FILTER_ROLE:
             $roleid = $value;
+            $rolefilter->add_filter_value($value);
             break;
         case USER_FILTER_STATUS:
             // We only accept active/suspended statuses.
             if ($value == ENROL_USER_ACTIVE || $value == ENROL_USER_SUSPENDED) {
                 $status = $value;
+                $statusfilter->add_filter_value($value);
             }
             break;
         default:
             // Search string.
             $searchkeywords[] = $value;
+            $keywordfilter->add_filter_value($value);
             break;
     }
 }
@@ -183,14 +203,17 @@ if (!empty($groupid)) {
     if ($canaccessallgroups) {
         // User can access all groups, let them filter by whatever was selected.
         $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
+        $groupfilter->add_filter_value((int)$groupid);
     } else if (!$filterwassubmitted && $course->groupmode == VISIBLEGROUPS) {
         // If we are in a course with visible groups and the user has not submitted anything and does not have
         // access to all groups, then set a default group.
         $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
+        $groupfilter->add_filter_value((int)$groupid);
     } else if (!$hasgroupfilter && $course->groupmode != VISIBLEGROUPS) {
         // The user can't access all groups and has not set a group filter in a course where the groups are not visible
         // then apply a default group filter.
         $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
+        $groupfilter->add_filter_value((int)$groupid);
     } else if (!$hasgroupfilter) { // No need for the group id to be set.
         $groupid = false;
     }
@@ -228,8 +251,34 @@ echo '<div class="userlist">';
 foreach (array_unique($filtersapplied) as $filterix => $filter) {
     $baseurl->param('unified-filters[' . $filterix . ']', $filter);
 }
-$participanttable = new \core_user\participants_table($course->id, $groupid, $lastaccess, $roleid, $enrolid, $status,
-    $searchkeywords, $bulkoperations, $selectall);
+
+if (count($groupfilter)) {
+    $filterset->add_filter($groupfilter);
+}
+
+if (count($lastaccessfilter)) {
+    $filterset->add_filter($lastaccessfilter);
+}
+
+if (count($rolefilter)) {
+    $filterset->add_filter($rolefilter);
+}
+
+if (count($enrolfilter)) {
+    $filterset->add_filter($enrolfilter);
+}
+
+if (count($statusfilter)) {
+    $filterset->add_filter($statusfilter);
+}
+
+if (count($keywordfilter)) {
+    $filterset->add_filter($keywordfilter);
+}
+
+$participanttable = new participants_table(participants_table::get_unique_id_from_argument($course->id));
+$participanttable->set_selectall($selectall);
+$participanttable->set_filterset($filterset);
 $participanttable->define_baseurl($baseurl);
 
 // Do this so we can get the total number of rows.
@@ -278,7 +327,7 @@ if ($bulkoperations) {
     if ($participanttable->get_page_size() < $participanttable->totalrows) {
         // Select all users, refresh page showing all users and mark them all selected.
         $label = get_string('selectalluserswithcount', 'moodle', $participanttable->totalrows);
-        echo html_writer::tag('input', "", array('type' => 'button', 'id' => 'checkall', 'class' => 'btn btn-secondary',
+        echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checkall', 'class' => 'btn btn-secondary',
                 'value' => $label, 'data-showallink' => $showalllink));
     }
     echo html_writer::end_tag('div');
@@ -338,14 +387,12 @@ if ($bulkoperations) {
         'data-toggle' => 'action',
         'disabled' => empty($selectall)
     );
-    echo html_writer::tag('div', html_writer::tag('label', get_string("withselectedusers"),
-        array('for' => 'formactionid', 'class' => 'col-form-label d-inline')) .
-        html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), $selectactionparams));
+    $label = html_writer::tag('label', get_string("withselectedusers"),
+            ['for' => 'formactionid', 'class' => 'col-form-label d-inline']);
+    $select = html_writer::select($displaylist, 'formaction', '', ['' => 'choosedots'], $selectactionparams);
+    echo html_writer::tag('div', $label . $select);
 
-    echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-    echo '<noscript style="display:inline">';
-    echo '<div><input type="submit" value="'.get_string('ok').'" /></div>';
-    echo '</noscript>';
+    echo '<input type="hidden" name="id" value="' . $course->id . '" />';
     echo '</div></div></div>';
     echo '</form>';
 
@@ -360,6 +407,8 @@ echo '</div>';  // Userlist.
 
 $enrolrenderer = $PAGE->get_renderer('core_enrol');
 echo '<div class="float-right">';
+// Need to re-generate the buttons to avoid having elements with duplicate ids on the page.
+$enrolbuttons = $manager->get_manual_enrol_buttons();
 foreach ($enrolbuttons as $enrolbutton) {
     echo $enrolrenderer->render($enrolbutton);
 }

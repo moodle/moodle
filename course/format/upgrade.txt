@@ -11,6 +11,9 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
     - format_weeks_upgrade_remove_numsections()
     - format_weeks_upgrade_hide_extra_sections()
     - format_weeks_upgrade_add_empty_sections()
+* The non-ajax controls to add resources and activities are now rendered only when needed, such as when the user
+  preference is set, or when the theme sets $THEME->enablecourseajaxtheme to false. Formats which directly access
+  the '.section_add_menus' element or its children should be updated accordingly.
 
 === 3.8 ===
 

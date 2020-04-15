@@ -91,7 +91,7 @@ class lock_testcase extends advanced_testcase {
                     $lock2 = $lockfactory->get_lock('abc', 2);
                     $duration += microtime(true);
                     $this->assertFalse($lock2, 'Cannot get a stacked lock');
-                    $this->assertTrue($duration > 1, 'Lock should timeout after more than 1 second');
+                    $this->assertTrue($duration < 2.5, 'Lock should timeout after no more than 2 seconds');
 
                     // This should timeout almost instantly.
                     $duration = -microtime(true);

@@ -1,10 +1,13 @@
-{{< core_form/element-template }}
+{{< core_form/element-group }}
     {{$element}}
-        <div class="fdate_time_selector d-flex flex-wrap align-items-center">
-        {{#element.elements}}
-            {{{separator}}}
-            {{{html}}}
-        {{/element.elements}}
-        </div>
+        <fieldset class="m-0 p-0 border-0" id="{{element.id}}">
+            <legend class="sr-only">{{label}}</legend>
+            <div class="fdate_time_selector d-flex flex-wrap align-items-center">
+            {{#element.elements}}
+                {{{separator}}}
+                {{{html}}}
+            {{/element.elements}}
+            </div>
+        </fieldset>
     {{/element}}
-{{/ core_form/element-template }}
+{{/ core_form/element-group }}

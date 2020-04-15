@@ -154,6 +154,60 @@ class core_repositorylib_testcase extends advanced_testcase {
         }
     }
 
+    public function test_delete_selected_files() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        $fs = get_file_storage();
+
+        $draftitemid = file_get_unused_draft_itemid();
+        $context = context_user::instance($USER->id);
+
+        $dummy = [
+            'contextid' => $context->id,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => $draftitemid,
+            'filepath' => '/',
+            'filename' => ''
+        ];
+
+        // Create some files.
+        $existingfiles = [
+            'The Matrix.movie',
+            'Astalavista.txt',
+            'foobar',
+        ];
+
+        $selectedfiles = [
+            'The Matrix.movie' => [],
+            'Astalavista.txt' => []
+        ];
+        foreach ($existingfiles as $filename) {
+            $dummy['filename'] = $filename;
+            $file = $fs->create_file_from_string($dummy, 'Content of ' . $filename);
+            if (array_key_exists($filename, $selectedfiles)) {
+                $selectedfiles[$filename] = (object)[
+                    'filename' => $filename,
+                    'filepath' => $file->get_filepath()
+                ];
+            }
+        }
+
+        // Get area files with default options.
+        $areafiles = $fs->get_area_files($context->id, 'user', 'draft', $draftitemid);
+        // Should be the 3 files we added plus the folder.
+        $this->assertEquals(4, count($areafiles));
+
+        repository_delete_selected_files($context, 'user', 'draft', $draftitemid, $selectedfiles);
+
+        $areafiles = $fs->get_area_files($context->id, 'user', 'draft', $draftitemid);
+        // Should be the 1 file left plus the folder.
+        $this->assertEquals(2, count($areafiles));
+    }
+
     public function test_can_be_edited_by_user() {
         $this->resetAfterTest(true);
 
