@@ -6270,7 +6270,16 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
 
             // If the attachment is a full path to a file in the tempdir, use it as is,
             // otherwise assume it is a relative path from the dataroot (for backwards compatibility reasons).
-            if (strpos($attachpath, $temppath) !== 0) {
+            $patharr = array();
+            array_push($patharr, $CFG->tempdir, $CFG->cachedir, $CFG->dataroot, $CFG->dirroot, $CFG->localcachedir);
+            $patharr = array_filter($patharr);
+            $addpath = 1;
+            foreach ($patharr as $tmpvar) {
+                if (strpos($attachpath, $tmpvar) === 0) {
+                    $addpath = 0;
+                }
+            }
+            if ($addpath) {
                 $attachmentpath = $CFG->dataroot . '/' . $attachmentpath;
             }
 
