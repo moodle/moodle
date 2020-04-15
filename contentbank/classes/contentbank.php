@@ -155,4 +155,54 @@ class contentbank {
         }
         return null;
     }
+
+    /**
+     * Find the contents with %$search% in the contextid defined.
+     * If contextid and search are empty, all contents are returned.
+     * In all the cases, only the contents for the enabled contentbank-type plugins are returned.
+     *
+     * @param  string|null $search Optional string to search (for now it will search only into the name).
+     * @param  int $contextid Optional contextid to search.
+     * @return array The contents for the enabled contentbank-type plugins having $search as name and placed in $contextid.
+     */
+    public function search_contents(?string $search = null, ?int $contextid = 0): array {
+        global $DB;
+
+        $contents = [];
+
+        // Get only contents for enabled content-type plugins.
+        $contenttypes = array_map(function($contenttypename) {
+            return "contenttype_$contenttypename";
+        }, $this->get_enabled_content_types());
+        if (empty($contenttypes)) {
+            // Early return if there are no content-type plugins enabled.
+            return $contents;
+        }
+
+        list($sqlcontenttypes, $params) = $DB->get_in_or_equal($contenttypes, SQL_PARAMS_NAMED);
+        $sql = " contenttype $sqlcontenttypes ";
+
+        // Filter contents on this context (if defined).
+        if (!empty($contextid)) {
+            $params['contextid'] = $contextid;
+            $sql .= ' AND contextid = :contextid ';
+        }
+
+        // Search for contents having this string (if defined).
+        if (!empty($search)) {
+            $sql .= ' AND ' . $DB->sql_like('name', ':name', false, false);
+            $params['name'] = '%' . $DB->sql_like_escape($search) . '%';
+        }
+
+        $records = $DB->get_records_select('contentbank_content', $sql, $params);
+        foreach ($records as $record) {
+            $contentclass = "\\$record->contenttype\\content";
+            $content = new $contentclass($record);
+            if ($content->is_view_allowed()) {
+                $contents[] = $content;
+            }
+        }
+
+        return $contents;
+    }
 }

@@ -211,7 +211,7 @@ abstract class content {
      *
      * @return bool     True if content could be accessed. False otherwise.
      */
-    public function can_view(): bool {
+    public function is_view_allowed(): bool {
         // There's no capability at content level to check,
         // but plugins can overwrite this method in case they want to check something related to content properties.
         return true;
