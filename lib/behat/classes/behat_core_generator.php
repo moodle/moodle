@@ -222,6 +222,15 @@ class behat_core_generator extends behat_generator_base {
                 'required' => array('contenttype', 'user', 'contentname'),
                 'switchids' => array('course' => 'courseid', 'user' => 'userid')
             ],
+            'badge external backpack' => [
+                'datagenerator' => 'badge_external_backpack',
+                'required' => ['backpackapiurl', 'backpackweburl', 'apiversion']
+            ],
+            'setup backpack connected' => [
+                'datagenerator' => 'setup_backpack_connected',
+                'required' => ['user', 'externalbackpack'],
+                'switchids' => ['user' => 'userid', 'externalbackpack' => 'externalbackpackid']
+            ]
         ];
     }
 
@@ -845,5 +854,57 @@ class behat_core_generator extends behat_generator_base {
             $record->name = $data['contentname'];
             $content = $contenttype->create_content($record);
         }
+    }
+
+    /**
+     * Create a exetrnal backpack.
+     *
+     * @param array $data
+     */
+    protected function process_badge_external_backpack(array $data) {
+        global $DB;
+        $DB->insert_record('badge_external_backpack', $data, true);
+    }
+
+    /**
+     * Setup a backpack connected for user.
+     *
+     * @param array $data
+     * @throws dml_exception
+     */
+    protected function process_setup_backpack_connected(array $data) {
+        global $DB;
+
+        if (empty($data['userid'])) {
+            throw new Exception('\'setup backpack connected\' requires the field \'user\' to be specified');
+        }
+        if (empty($data['externalbackpackid'])) {
+            throw new Exception('\'setup backpack connected\' requires the field \'externalbackpack\' to be specified');
+        }
+        // Dummy badge_backpack_oauth2 data.
+        $timenow = time();
+        $backpackoauth2 = new stdClass();
+        $backpackoauth2->usermodified = $data['userid'];
+        $backpackoauth2->timecreated = $timenow;
+        $backpackoauth2->timemodified = $timenow;
+        $backpackoauth2->userid = $data['userid'];
+        $backpackoauth2->issuerid = 1;
+        $backpackoauth2->externalbackpackid = $data['externalbackpackid'];
+        $backpackoauth2->token = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $backpackoauth2->refreshtoken = '0123456789abcdefghijk';
+        $backpackoauth2->expires = $timenow + 3600;
+        $backpackoauth2->scope = 'https://purl.imsglobal.org/spec/ob/v2p1/scope/assertion.create';
+        $backpackoauth2->scope .= ' https://purl.imsglobal.org/spec/ob/v2p1/scope/assertion.readonly offline_access';
+        $DB->insert_record('badge_backpack_oauth2', $backpackoauth2);
+
+        // Dummy badge_backpack data.
+        $backpack = new stdClass();
+        $backpack->userid = $data['userid'];
+        $backpack->email = 'student@behat.moodle';
+        $backpack->backpackuid = 0;
+        $backpack->autosync = 0;
+        $backpack->password = '';
+        $backpack->externalbackpackid = $data['externalbackpackid'];
+        $DB->insert_record('badge_backpack', $backpack);
     }
 }

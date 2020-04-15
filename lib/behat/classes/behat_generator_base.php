@@ -524,4 +524,18 @@ abstract class behat_generator_base {
         }
         return $id;
     }
+
+    /**
+     * Gets the external backpack id from it's backpackweburl.
+     * @param string $backpackweburl
+     * @return mixed
+     * @throws dml_exception
+     */
+    protected function get_externalbackpack_id($backpackweburl) {
+        global $DB;
+        if (!$id = $DB->get_field('badge_external_backpack', 'id', ['backpackweburl' => $backpackweburl])) {
+            throw new Exception('The specified external backpack with backpackweburl "' . $username . '" does not exist');
+        }
+        return $id;
+    }
 }
