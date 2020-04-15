@@ -321,7 +321,7 @@ EOF;
         $itemurl = $item->get_url();
         $this->assertTrue($itemurl instanceof moodle_url);
         $this->assertEquals('http://moodle.org', $itemurl->out());
-        $this->assertEquals($item->get_text(), $item->get_title()); // Implicit title.
+        $this->assertNull($item->get_title()); // Implicit title.
 
         /** @var custom_menu_item $item */
         $item = array_shift($firstlevel);
