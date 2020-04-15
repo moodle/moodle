@@ -62,13 +62,25 @@ $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_co
                     $file->get_filename(), false);
 
 $PAGE->set_url('/mod/h5pactivity/view.php', ['id' => $cm->id]);
-$PAGE->set_title(format_string($moduleinstance->name));
+
+$shortname = format_string($course->shortname, true, ['context' => $context]);
+$pagetitle = strip_tags($shortname.': '.format_string($moduleinstance->name));
+$PAGE->set_title(format_string($pagetitle));
+
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($moduleinstance->name));
 
-// TODO: add component to enable xAPI traking.
-echo \core_h5p\player::display($fileurl, $config, true);
+if (has_capability('mod/h5pactivity:submit', $context, null, false)) {
+    $trackcomponent = 'mod_h5pactivity';
+} else {
+    $trackcomponent = '';
+    $message = get_string('previewmode', 'mod_h5pactivity');
+    echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING);
+}
+
+echo \core_h5p\player::display($fileurl, $config, true, $trackcomponent);
 
 echo $OUTPUT->footer();

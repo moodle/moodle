@@ -80,6 +80,7 @@ function h5pactivity_add_instance(stdClass $data, mod_h5pactivity_mod_form $mfor
     global $DB;
 
     $data->timecreated = time();
+    $data->timemodified = $data->timecreated;
     $cmid = $data->coursemodule;
 
     $data->id = $DB->insert_record('h5pactivity', $data);
@@ -230,17 +231,64 @@ function h5pactivity_update_grades(stdClass $moduleinstance, int $userid = 0): v
 }
 
 /**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the H5P activity.
+ *
+ * @param object $mform form passed by reference
+ */
+function h5pactivity_reset_course_form_definition(&$mform): void {
+    $mform->addElement('header', 'h5pactivityheader', get_string('modulenameplural', 'mod_h5pactivity'));
+    $mform->addElement('advcheckbox', 'reset_h5pactivity', get_string('deleteallattempts', 'mod_h5pactivity'));
+}
+
+/**
+ * Course reset form defaults.
+ *
+ * @param stdClass $course the course object
+ * @return array
+ */
+function h5pactivity_reset_course_form_defaults(stdClass $course): array {
+    return ['reset_h5pactivity' => 1];
+}
+
+
+/**
  * This function is used by the reset_course_userdata function in moodlelib.
- * This function will remove all assignment submissions and feedbacks in the database
+ *
+ * This function will remove all H5P attempts in the database
  * and clean up any related data.
  *
  * @param stdClass $data the data submitted from the reset course.
- * @return array
+ * @return array of reseting status
  */
-function h5pactivity_reset_userdata($data) {
+function h5pactivity_reset_userdata(stdClass $data): array {
     global $CFG, $DB;
-    // TODO: When attempts are created this function will remove them.
-    return [];
+    $componentstr = get_string('modulenameplural', 'mod_h5pactivity');
+    $status = [];
+    if (!empty($data->reset_h5pactivity)) {
+        $params = ['courseid' => $data->courseid];
+        $sql = "SELECT a.id FROM {h5pactivity} a WHERE a.course=:courseid";
+        if ($activities = $DB->get_records_sql($sql, $params)) {
+            foreach ($activities as $activity) {
+                $cm = get_coursemodule_from_instance('h5pactivity',
+                                                     $activity->id,
+                                                     $data->courseid,
+                                                     false,
+                                                     MUST_EXIST);
+                mod_h5pactivity\local\attempt::delete_all_attempts ($cm);
+            }
+        }
+        // Remove all grades from gradebook.
+        if (empty($data->reset_gradebook_grades)) {
+            h5pactivity_reset_gradebook($data->courseid, 'reset');
+        }
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('deleteallattempts', 'mod_h5pactivity'),
+            'error' => false,
+        ];
+    }
+    return $status;
 }
 
 /**
@@ -254,7 +302,7 @@ function h5pactivity_reset_gradebook(int $courseid, string $type=''): void {
 
     $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
               FROM {h5pactivity} a, {course_modules} cm, {modules} m
-             WHERE m.name='h5pactivity' AND m.id=cm.module AND cm.instance=s.id AND s.course=?";
+             WHERE m.name='h5pactivity' AND m.id=cm.module AND cm.instance=a.id AND a.course=?";
 
     if ($activities = $DB->get_records_sql($sql, [$courseid])) {
         foreach ($activities as $activity) {

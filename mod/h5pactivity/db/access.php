@@ -48,4 +48,12 @@ $capabilities = [
         ],
         'clonepermissionsfrom' => 'moodle/course:manageactivities',
     ],
+
+    'mod/h5pactivity:submit' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'student' => CAP_ALLOW
+        ],
+    ],
 ];

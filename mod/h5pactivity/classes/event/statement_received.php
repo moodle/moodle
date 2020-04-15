@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * H5P activity viewed.
+ * H5P activity send an xAPI tracking statement.
  *
  * @package     mod_h5pactivity
  * @copyright   2020 Ferran Recio <ferran@moodle.com>
@@ -27,13 +27,13 @@ namespace mod_h5pactivity\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The course_module_viewed event class.
+ * The statement_received event class.
  *
  * @package    mod_h5pactivity
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_viewed extends \core\event\course_module_viewed {
+class statement_received extends \core\event\base {
 
     /**
      * Init method.
@@ -42,8 +42,47 @@ class course_module_viewed extends \core\event\course_module_viewed {
      */
     protected function init(): void {
         $this->data['objecttable'] = 'h5pactivity';
-        $this->data['crud'] = 'r';
+        $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+    }
+
+    /**
+     * Returns localised general event name.
+     *
+     * @return string
+     */
+    public static function get_name() {
+        return get_string('statement_received', 'mod_h5pactivity');
+    }
+
+    /**
+     * Replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        return [$this->courseid, 'h5pactivity', 'statement received', 'grade.php?user=' . $this->userid,
+            0, $this->contextinstanceid];
+    }
+
+    /**
+     * Returns non-localised description of what happened.
+     *
+     * @return string
+     */
+    public function get_description() {
+        return "The user with the id '$this->userid' send a tracking statement " .
+                "for a H5P activity with the course module id '$this->contextinstanceid'.";
+    }
+
+    /**
+     * Get URL related to the action
+     *
+     * @return \moodle_url
+     */
+    public function get_url() {
+        return new \moodle_url('/mod/h5pactivity/grade.php',
+                ['id' => $this->contextinstanceid, 'user' => $this->userid]);
     }
 
     /**
@@ -55,5 +94,4 @@ class course_module_viewed extends \core\event\course_module_viewed {
     public static function get_objectid_mapping() {
         return ['db' => 'h5pactivity', 'restore' => 'h5pactivity'];
     }
-
 }
