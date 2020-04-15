@@ -200,10 +200,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
             'class' => 'section main clearfix'.$sectionstyle, 'role'=>'region',
-            'aria-label'=> get_section_name($course, $section)));
-
-        // Create a span that contains the section title to be used to create the keyboard section move menu.
-        $o .= html_writer::tag('span', get_section_name($course, $section), array('class' => 'hidden sectionname'));
+            'aria-labelledby' => "sectionid-{$section->id}-title"));
 
         $leftcontent = $this->section_left_content($section, $course, $onsectionpage);
         $o.= html_writer::tag('div', $leftcontent, array('class' => 'left side'));
@@ -223,7 +220,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             $classes = '';
         }
         $sectionname = html_writer::tag('span', $this->section_title($section, $course));
-        $o.= $this->output->heading($sectionname, 3, 'sectionname' . $classes);
+        $o .= $this->output->heading($sectionname, 3, 'sectionname' . $classes, "sectionid-{$section->id}-title");
 
         $o .= $this->section_availability($section);
 
