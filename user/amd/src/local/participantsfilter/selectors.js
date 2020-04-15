@@ -49,13 +49,18 @@ export default {
             resetFilters: getFilterAction('reset'),
         },
         regions: {
+            filtermatch: getFilterRegion('filtermatch'),
             filterlist: getFilterRegion('filters'),
             datasource: getFilterRegion('filtertypedata'),
+        },
+        fields: {
+            join: `${getFilterRegion('filtermatch')} ${getFilterField('join')}`,
         },
     },
     data: {
         fields: {
             byName: name => `[data-field-name="${name}"]`,
+            all: `${getFilterRegion('filtertypedata')} [data-field-name]`,
         },
         typeList: getFilterRegion('filtertypelist'),
     },

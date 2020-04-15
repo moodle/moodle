@@ -268,6 +268,23 @@ export const init = participantsRegionId => {
                 }
             });
         });
+
+        // Configure the state of the "Add row" button.
+        // This button is disabled when there is a filter row available for each condition.
+        const addRowButton = filterSet.querySelector(Selectors.filterset.actions.addRow);
+        const filterDataNode = filterSet.querySelectorAll(Selectors.data.fields.all);
+        if (filterDataNode.length <= filters.length) {
+            addRowButton.setAttribute('disabled', 'disabled');
+        } else {
+            addRowButton.removeAttribute('disabled');
+        }
+
+        if (filters.length === 1) {
+            filterSet.querySelector(Selectors.filterset.regions.filtermatch).classList.add('hidden');
+            filterSet.querySelector(Selectors.filterset.fields.join).value = 1;
+        } else {
+            filterSet.querySelector(Selectors.filterset.regions.filtermatch).classList.remove('hidden');
+        }
     };
 
     /**
@@ -276,14 +293,11 @@ export const init = participantsRegionId => {
      * @return {Promise}
      */
     const updateTableFromFilter = () => {
-        // TODO The main join type does not exist yet.
-        const joinType = 1;
-
         return DynamicTable.setFilters(
             DynamicTable.getTableFromId(filterSet.dataset.tableRegion),
             {
                 filters: Object.values(activeFilters).map(filter => filter.filterValue),
-                jointype: joinType,
+                jointype: filterSet.querySelector(Selectors.filterset.fields.join).value,
             }
         );
     };
@@ -326,5 +340,9 @@ export const init = participantsRegionId => {
 
             addFilter(filter, typeField.value);
         }
+    });
+
+    filterSet.querySelector(Selectors.filterset.fields.join).addEventListener('change', e => {
+        filterSet.dataset.filterverb = e.target.value;
     });
 };

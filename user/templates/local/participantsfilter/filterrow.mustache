@@ -32,25 +32,32 @@
         ]
     }
 }}
-<div data-filterregion="filter" class="rounded mb-3 p-2 bg-white border border-secondary d-flex align-items-center">
-    <label for="core_user-local-participantsfilter-filterrow-jointype-{{uniqid}}" class="pt-2">{{#str}}match, core_user{{/str}}</label>
-    <select class="custom-select" data-filterfield="join" id="core_user-local-participantsfilter-filterrow-jointype-{{uniqid}}">
-        <option value="0">{{#str}}none{{/str}}</option>
-        <option selected=selected value="1">{{#str}}any{{/str}}</option>
-        <option value="2">{{#str}}all{{/str}}</option>
-    </select>
+<div data-filterregion="filter">
+    <div class="rounded mb-3 p-2 bg-white border border-secondary d-flex align-items-center">
+        <label for="core_user-local-participantsfilter-filterrow-jointype-{{uniqid}}" class="pt-2">{{#str}}match, core_user{{/str}}</label>
+        <select class="custom-select" data-filterfield="join" id="core_user-local-participantsfilter-filterrow-jointype-{{uniqid}}">
+            <option value="0">{{#str}}none{{/str}}</option>
+            <option selected=selected value="1">{{#str}}any{{/str}}</option>
+            <option value="2">{{#str}}all{{/str}}</option>
+        </select>
 
-    <label class="sr-only pt-2" for="core_user-local-participantsfilter-filterrow-filtertype-{{uniqid}}">filtertype</label>
-    <select class="custom-select" data-filterfield="type" id="core_user-local-participantsfilter-filterrow-filtertype-{{uniqid}}">
-        <option value="">{{#str}}selectfiltertype, core_user{{/str}}</option>
-        {{#filtertypes}}
-        <option value="{{name}}">{{title}}</option>
-        {{/filtertypes}}
-    </select>
+        <label class="sr-only pt-2" for="core_user-local-participantsfilter-filterrow-filtertype-{{uniqid}}">filtertype</label>
+        <select class="custom-select" data-filterfield="type" id="core_user-local-participantsfilter-filterrow-filtertype-{{uniqid}}">
+            <option value="">{{#str}}selectfiltertype, core_user{{/str}}</option>
+            {{#filtertypes}}
+            <option value="{{name}}">{{title}}</option>
+            {{/filtertypes}}
+        </select>
 
-    <div data-filterregion="value"></div>
+        <div data-filterregion="value"></div>
 
-    <button data-filteraction="remove" class="ml-auto btn btn-link text-reset" aria-label="{{#str}}clearfilterrow, core_user{{/str}}">
-        <i class="icon fa fa-times-circle pt-2"></i>
-    </button>
+        <button data-filteraction="remove" class="ml-auto btn btn-link text-reset" aria-label="{{#str}}clearfilterrow, core_user{{/str}}">
+            <i class="icon fa fa-times-circle pt-2"></i>
+        </button>
+    </div>
+    <div data-filterregion="joinadverb">
+        <div data-filterverbfor="0">{{#str}}adverbfor_andnot, core_user{{/str}}</div>
+        <div data-filterverbfor="1">{{#str}}adverbfor_or, core_user{{/str}}</div>
+        <div data-filterverbfor="2">{{#str}}adverbfor_and, core_user{{/str}}</div>
+    </div>
 </div>
