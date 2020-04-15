@@ -1,0 +1,64 @@
+/* Use a variable for the drawer background colors. */
+$navbar-bg: darken($body-bg, 5%) !default;
+
+// Content bank
+.content-bank-container {
+    min-height: 140px;
+    padding-bottom: 15px;
+    overflow: hidden;
+}
+.cb-navbar {
+    border-bottom: 1px solid #e5e5e5;
+    background-color: $navbar-bg;
+    min-height: 40px;
+    padding: 10px;
+}
+// Icon view (Content bank)
+.cb-iconview .cb-file {
+    float: left;
+    margin: 10px 10px 35px;
+}
+.cb-iconview .cb-thumbnail {
+    min-width: 110px;
+    min-height: 110px;
+    line-height: 110px;
+    border: 1px solid #fff;
+    .icon {
+        margin: 0;
+    }
+    img {
+        padding: 3px;
+        vertical-align: middle;
+    }
+}
+.cb-iconview .cb-thumbnail:hover {
+    background: #fff;
+    border: 1px solid #ddd;
+    @include box-shadow(inset 0 0 10px0 #ccc);
+}
+.cb-iconview .cb-contentname-field {
+    height: 33px;
+    word-wrap: break-word;
+    overflow: hidden;
+    .cb-contentname {
+        background: #fff;
+        padding: 5px 10px 12px;
+        min-width: 112px;
+    }
+}
+.cb-iconview .cb-file:focus,
+.cb-iconview .cb-file:hover {
+    // Undo truncating of text on hover.
+    .cb-contentname-field {
+        overflow: visible;
+        z-index: 1000;
+    }
+    .cb-contentname {
+        overflow: inherit;
+        white-space: normal;
+        text-overflow: inherit;
+    }
+}
+.content-bank-toolbar .cb-tool .icon {
+    margin: 0.5em;
+}

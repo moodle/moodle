@@ -1,0 +1,73 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_contentbank/list
+
+    Example context (json):
+    {
+        "contents": [
+            {
+                "name": "accordion.h5p",
+                "link": "http://something/contentbank/contenttype/h5p/view.php?url=http://something/pluginfile.php/1/contentbank/public/accordion.h5p",
+                "icon" : "<img class='icon iconsize-big' alt='accordion.h5p' aria-hidden='true' src='http://something/theme/image.php/boost/core/1581597850/f/h5p-64'>"
+            },
+            {
+                "name": "resume.pdf",
+                "icon": "<img class='icon iconsize-big' alt='resume.pdf' aria-hidden='true' src='http://something/theme/image.php/boost/core/1584597850/f/pdf-64'>"
+            }
+        ],
+        "tools": [
+            {
+                "name": "Upload",
+                "link": "http://something/contentbank/contenttype/h5p/view.php?url=http://something/pluginfile.php/1/contentbank/public/accordion.h5p",
+                "icon" : "i/upload"
+            },
+            {
+                "icon": "i/export"
+            }
+        ]
+    }
+
+}}
+{{>core_contentbank/toolbar}}
+<div class="content-bank-container card">
+    <div class="content-bank">
+        <div class="cb-navbar">
+            {{#pix}} i/folder {{/pix}}
+        </div>
+        <div class="cb-content-wrapper">
+        {{#contents}}
+            <div class="cb-content">
+                <div class="cb-iconview">
+                    <div class="cb-file text-center position-relative">
+                        {{#link}}<a href="{{{ link }}}">{{/link}}
+                            <div style="position:relative;">
+                                <div class="cb-thumbnail text-center d-block" style="width: 110px; height: 110px;">
+                                    {{{ icon }}}
+                                </div>
+                            </div>
+                            <div class="cb-contentname-field position-absolute overflow-visible">
+                                <div class="cb-contentname text-truncate" style="width: 112px;">{{{ name }}}</div>
+                            </div>
+                        {{#link}}</a>{{/link}}
+                    </div>
+                </div>
+            </div>
+        {{/contents}}
+        </div>
+    </div>
+</div>

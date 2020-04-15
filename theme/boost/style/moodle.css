@@ -6747,7 +6747,8 @@ button.bg-dark:focus {
   background-color: transparent !important; }
 
 .border, .filemanager-container,
-.filepicker-filelist {
+.filepicker-filelist,
+.content-bank-container {
   border: 1px solid #dee2e6 !important; }
 
 .border-top {
@@ -12537,6 +12538,60 @@ table.calendartable caption {
 
 .cal_courses_flt {
   color: #868e96; }
+
+/* Use a variable for the drawer background colors. */
+.content-bank-container {
+  min-height: 140px;
+  padding-bottom: 15px;
+  overflow: hidden; }
+
+.cb-navbar {
+  border-bottom: 1px solid #e5e5e5;
+  background-color: #f2f2f2;
+  min-height: 40px;
+  padding: 10px; }
+
+.cb-iconview .cb-file {
+  float: left;
+  margin: 10px 10px 35px; }
+
+.cb-iconview .cb-thumbnail {
+  min-width: 110px;
+  min-height: 110px;
+  line-height: 110px;
+  border: 1px solid #fff; }
+  .cb-iconview .cb-thumbnail .icon {
+    margin: 0; }
+  .cb-iconview .cb-thumbnail img {
+    padding: 3px;
+    vertical-align: middle; }
+
+.cb-iconview .cb-thumbnail:hover {
+  background: #fff;
+  border: 1px solid #ddd; }
+
+.cb-iconview .cb-contentname-field {
+  height: 33px;
+  word-wrap: break-word;
+  overflow: hidden; }
+  .cb-iconview .cb-contentname-field .cb-contentname {
+    background: #fff;
+    padding: 5px 10px 12px;
+    min-width: 112px; }
+
+.cb-iconview .cb-file:focus .cb-contentname-field,
+.cb-iconview .cb-file:hover .cb-contentname-field {
+  overflow: visible;
+  z-index: 1000; }
+
+.cb-iconview .cb-file:focus .cb-contentname,
+.cb-iconview .cb-file:hover .cb-contentname {
+  overflow: inherit;
+  white-space: normal;
+  text-overflow: inherit; }
+
+.content-bank-toolbar .cb-tool .icon {
+  margin: 0.5em; }
 
 /* course.less */
 /* COURSE CONTENT */
