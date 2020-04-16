@@ -393,53 +393,55 @@ class api {
             throw new \moodle_exception('h5pprivatefile', 'core_h5p');
         }
 
-        // For CONTEXT_COURSECAT No login necessary - unless login forced everywhere.
-        if ($context->contextlevel == CONTEXT_COURSECAT) {
-            if ($CFG->forcelogin) {
-                require_login(null, true, null, false, true);
+        if (!is_siteadmin($USER)) {
+            // For CONTEXT_COURSECAT No login necessary - unless login forced everywhere.
+            if ($context->contextlevel == CONTEXT_COURSECAT) {
+                if ($CFG->forcelogin) {
+                    require_login(null, true, null, false, true);
+                }
             }
-        }
 
-        // For CONTEXT_BLOCK.
-        if ($context->contextlevel == CONTEXT_BLOCK) {
-            if ($context->get_course_context(false)) {
-                // If block is in course context, then check if user has capability to access course.
-                require_course_login($course, true, null, false, true);
-            } else if ($CFG->forcelogin) {
-                // No login necessary - unless login forced everywhere.
-                require_login(null, true, null, false, true);
-            } else {
-                // Get parent context and see if user have proper permission.
-                $parentcontext = $context->get_parent_context();
-                if ($parentcontext->contextlevel === CONTEXT_COURSECAT) {
-                    // Check if category is visible and user can view this category.
-                    if (!core_course_category::get($parentcontext->instanceid, IGNORE_MISSING)) {
+            // For CONTEXT_BLOCK.
+            if ($context->contextlevel == CONTEXT_BLOCK) {
+                if ($context->get_course_context(false)) {
+                    // If block is in course context, then check if user has capability to access course.
+                    require_course_login($course, true, null, false, true);
+                } else if ($CFG->forcelogin) {
+                    // No login necessary - unless login forced everywhere.
+                    require_login(null, true, null, false, true);
+                } else {
+                    // Get parent context and see if user have proper permission.
+                    $parentcontext = $context->get_parent_context();
+                    if ($parentcontext->contextlevel === CONTEXT_COURSECAT) {
+                        // Check if category is visible and user can view this category.
+                        if (!core_course_category::get($parentcontext->instanceid, IGNORE_MISSING)) {
+                            send_file_not_found();
+                        }
+                    } else if ($parentcontext->contextlevel === CONTEXT_USER && $parentcontext->instanceid != $USER->id) {
+                        // The block is in the context of a user, it is only visible to the user who it belongs to.
                         send_file_not_found();
                     }
-                } else if ($parentcontext->contextlevel === CONTEXT_USER && $parentcontext->instanceid != $USER->id) {
-                    // The block is in the context of a user, it is only visible to the user who it belongs to.
-                    send_file_not_found();
-                }
-                if ($filearea !== 'content') {
-                    send_file_not_found();
+                    if ($filearea !== 'content') {
+                        send_file_not_found();
+                    }
                 }
             }
-        }
 
-        // For CONTEXT_MODULE and CONTEXT_COURSE check if the user is enrolled in the course.
-        // And for CONTEXT_MODULE has permissions view this .h5p file.
-        if ($context->contextlevel == CONTEXT_MODULE ||
-                $context->contextlevel == CONTEXT_COURSE) {
-            // Require login to the course first (without login to the module).
-            require_course_login($course, true, null, !$preventredirect, $preventredirect);
+            // For CONTEXT_MODULE and CONTEXT_COURSE check if the user is enrolled in the course.
+            // And for CONTEXT_MODULE has permissions view this .h5p file.
+            if ($context->contextlevel == CONTEXT_MODULE ||
+                    $context->contextlevel == CONTEXT_COURSE) {
+                // Require login to the course first (without login to the module).
+                require_course_login($course, true, null, !$preventredirect, $preventredirect);
 
-            // Now check if module is available OR it is restricted but the intro is shown on the course page.
-            if ($context->contextlevel == CONTEXT_MODULE) {
-                $cminfo = \cm_info::create($cm);
-                if (!$cminfo->uservisible) {
-                    if (!$cm->showdescription || !$cminfo->is_visible_on_course_page()) {
-                        // Module intro is not visible on the course page and module is not available, show access error.
-                        require_course_login($course, true, $cminfo, !$preventredirect, $preventredirect);
+                // Now check if module is available OR it is restricted but the intro is shown on the course page.
+                if ($context->contextlevel == CONTEXT_MODULE) {
+                    $cminfo = \cm_info::create($cm);
+                    if (!$cminfo->uservisible) {
+                        if (!$cm->showdescription || !$cminfo->is_visible_on_course_page()) {
+                            // Module intro is not visible on the course page and module is not available, show access error.
+                            require_course_login($course, true, $cminfo, !$preventredirect, $preventredirect);
+                        }
                     }
                 }
             }
