@@ -23,6 +23,7 @@
  */
 
 import $ from 'jquery';
+/* global H5PEditor */
 
 /**
  * Display the H5P authoring tool.

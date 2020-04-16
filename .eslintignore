@@ -9,7 +9,6 @@ cache/stores/mongodb/MongoDB/
 enrol/lti/ims-blti/
 filter/algebra/AlgParser.pm
 filter/tex/mimetex.*
-h5p/amd/src/editor_display.js
 h5p/h5plib/v124/joubel/core/
 h5p/h5plib/v124/joubel/editor/
 lib/editor/atto/plugins/html/yui/src/codemirror/
