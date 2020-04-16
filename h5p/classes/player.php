@@ -614,6 +614,8 @@ class player {
         $settings = helper::get_core_assets();
         // Added here because in the helper we don't have the h5p content id.
         $settings['moodleLibraryPaths'] = $this->core->get_dependency_roots($this->h5pid);
+        // Add also the Moodle component where the results will be tracked.
+        $settings['moodleComponent'] = $this->component;
 
         $cid = $this->get_cid();
         // The filterParameters function should be called before getting the dependencyfiles because it rebuild content

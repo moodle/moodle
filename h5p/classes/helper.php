@@ -299,7 +299,7 @@ class helper {
      * @return array The settings.
      */
     public static function get_core_settings(): array {
-        global $CFG;
+        global $CFG, $USER;
 
         $basepath = $CFG->wwwroot . '/';
         $systemcontext = context_system::instance();
@@ -321,7 +321,7 @@ class helper {
             'saveFreq' => false,
             'siteUrl' => $CFG->wwwroot,
             'l10n' => array('H5P' => $core->getLocalization()),
-            'user' => [],
+            'user' => ['name' => $USER->username, 'mail' => $USER->email],
             'hubIsEnabled' => true,
             'reportingIsEnabled' => false,
             'crossorigin' => null,
