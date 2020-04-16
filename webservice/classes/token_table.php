@@ -142,12 +142,14 @@ class token_table extends \table_sql {
         $usermissingcaps = $webservicemanager->get_missing_capabilities_by_users([['id' => $data->userid]], $data->serviceid);
 
         if (!is_siteadmin($data->userid) && array_key_exists($data->userid, $usermissingcaps)) {
-            $missingcapabilities = implode(', ', $usermissingcaps[$data->userid]);
-            if (!empty($missingcapabilities)) {
-                $capabilitiesstring = get_string('usermissingcaps', 'webservice', $missingcapabilities) . '&nbsp;' .
-                        $OUTPUT->help_icon('missingcaps', 'webservice');
-                $content .= \html_writer::div($capabilitiesstring, 'missingcaps');
-            }
+            $count = \html_writer::span(count($usermissingcaps[$data->userid]), 'badge badge-danger');
+            $links = array_map(function($capname) {
+                return get_capability_docs_link((object)['name' => $capname]) . \html_writer::div($capname, 'text-muted');
+            }, $usermissingcaps[$data->userid]);
+            $list = \html_writer::alist($links);
+            $help = $OUTPUT->help_icon('missingcaps', 'webservice');
+            $content .= print_collapsible_region(\html_writer::div($list . $help, 'missingcaps'), 'small',
+                \html_writer::random_id('usermissingcaps'), get_string('usermissingcaps', 'webservice', $count), '', true, true);
         }
 
         return $content;
