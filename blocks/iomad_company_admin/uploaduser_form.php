@@ -255,7 +255,7 @@ class admin_uploaduser_form2 extends company_moodleform {
                                                    array('timestamp' => time(),
                                                          'companyid' => $this->selectedcompany));
             $licenses = array('0' => get_string('nolicense', 'block_iomad_company_admin')) + $foundlicenses;
-            list($mylicenseid, $mylicensecourse) = each($licenses);
+            list($mylicenseid, $mylicensecourse) = current($licenses);
             $mform->addElement('html', "<div class='fitem'><div class='fitemtitle'>" .
                                         get_string('selectlicensecourse', 'block_iomad_company_admin') .
                                         "</div><div class='felement'>");

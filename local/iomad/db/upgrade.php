@@ -1034,7 +1034,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
                         }
                     }
                 } else {
-                    list($enrolcourseid, $enroluserid) = each($enrolrecords);
+                    list($enrolcourseid, $enroluserid) = current($enrolrecords);
                     $licenseuser->licensecourseid = $enrolcourseid;
                     $DB->update_record('companylicense_users', $licenseuser);
                 }
