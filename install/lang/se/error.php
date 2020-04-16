@@ -30,8 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Hizkuntza';
-$string['moodlelogo'] = 'Moodleren logoa';
-$string['next'] = 'Hurrengoa';
-$string['previous'] = 'Aurrekoa';
-$string['reload'] = 'Berriz kargatu';
+$string['cannotsavemd5file'] = 'Ii sáhte vurket md5-fiilla.';
+$string['cannotsavezipfile'] = 'Ii sáhte vurket ZIP-fiilla.';
+$string['wrongzipfilename'] = 'Boasttu ZIP-fiilanamma.';
