@@ -37,6 +37,21 @@ use html_writer;
 class contenttype extends \core_contentbank\contenttype {
 
     /**
+     * Delete this content from the content_bank and remove all the H5P related information.
+     *
+     * @param  content $content The content to delete.
+     * @return boolean true if the content has been deleted; false otherwise.
+     */
+    public function delete_content(\core_contentbank\content $content): bool {
+        // Delete the H5P content.
+        $factory = new \core_h5p\factory();
+        \core_h5p\api::delete_content_from_pluginfile_url($content->get_file_url(), $factory);
+
+        // Delete the content from the content_bank.
+        return parent::delete_content($content);
+    }
+
+    /**
      * Returns the HTML content to add to view.php visualizer.
      *
      * @param stdClass $record  Th content to be displayed.

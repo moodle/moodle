@@ -46,6 +46,24 @@ use contenttype_testable\contenttype as contenttype;
  */
 class core_contenttype_contenttype_testcase extends \advanced_testcase {
 
+    /** @var int Identifier for the manager role. */
+    protected $managerroleid;
+
+    /** @var stdClass Manager user. */
+    protected $manager1;
+
+    /** @var stdClass Manager user. */
+    protected $manager2;
+
+    /** @var stdClass User. */
+    protected $user;
+
+    /** @var array List of contents created (every user has a key with contents created by her). */
+    protected $contents = [];
+
+    /** @var contenttype The contenttype instance. */
+    protected $contenttype;
+
     /**
      * Tests get_contenttype_name result.
      *
@@ -156,5 +174,84 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
 
         $this->assertEquals('contenttype_testable', $content->get_content_type());
         $this->assertInstanceOf('\\contenttype_testable\\content', $content);
+    }
+
+
+    /**
+     * Test the behaviour of can_delete().
+     */
+    public function test_can_delete() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->contenttype_setup_scenario_data();
+
+        $managercontent = array_shift($this->contents[$this->manager1->id]);
+        $usercontent = array_shift($this->contents[$this->user->id]);
+
+        // Check the content has been created as expected.
+        $records = $DB->count_records('contentbank_content');
+        $this->assertEquals(4, $records);
+
+        // Check user can only delete records created by her.
+        $this->setUser($this->user);
+        $this->assertFalse($this->contenttype->can_delete($managercontent));
+        $this->assertTrue($this->contenttype->can_delete($usercontent));
+
+        // Check manager can delete records all the records created.
+        $this->setUser($this->manager1);
+        $this->assertTrue($this->contenttype->can_delete($managercontent));
+        $this->assertTrue($this->contenttype->can_delete($usercontent));
+
+        // Unassign capability to manager role and check not can only delete their own records.
+        unassign_capability('moodle/contentbank:deleteanycontent', $this->managerroleid);
+        $this->assertTrue($this->contenttype->can_delete($managercontent));
+        $this->assertFalse($this->contenttype->can_delete($usercontent));
+        $this->setUser($this->manager2);
+        $this->assertFalse($this->contenttype->can_delete($managercontent));
+        $this->assertFalse($this->contenttype->can_delete($usercontent));
+    }
+
+    /**
+     * Test the behaviour of delete_content().
+     */
+    public function test_delete_content() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->contenttype_setup_scenario_data();
+
+        // Check the content has been created as expected.
+        $this->assertEquals(4, $DB->count_records('contentbank_content'));
+
+        // Check the content is deleted as expected.
+        $this->setUser($this->manager1);
+        $content = array_shift($this->contents[$this->manager1->id]);
+        $deleted = $this->contenttype->delete_content($content);
+        $this->assertTrue($deleted);
+        $this->assertEquals(3, $DB->count_records('contentbank_content'));
+    }
+
+    /**
+     * Helper function to setup 3 users (manager1, manager2 and user) and 4 contents (3 created by manager1 and 1 by user).
+     */
+    protected function contenttype_setup_scenario_data(): void {
+        global $DB;
+        $systemcontext = context_system::instance();
+
+        // Create users.
+        $this->manager1 = $this->getDataGenerator()->create_user();
+        $this->manager2 = $this->getDataGenerator()->create_user();
+        $this->managerroleid = $DB->get_field('role', 'id', array('shortname' => 'manager'));
+        $this->getDataGenerator()->role_assign($this->managerroleid, $this->manager1->id);
+        $this->getDataGenerator()->role_assign($this->managerroleid, $this->manager2->id);
+        $this->user = $this->getDataGenerator()->create_user();
+
+        // Add some content to the content bank.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $this->contents[$this->manager1->id] = $generator->generate_contentbank_data(null, 3, $this->manager1->id);
+        $this->contents[$this->user->id] = $generator->generate_contentbank_data(null, 1, $this->user->id);
+
+        $this->contenttype = new \contenttype_testable\contenttype($systemcontext);
     }
 }
