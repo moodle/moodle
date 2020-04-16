@@ -63,12 +63,6 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
         }
         $result .= html_writer::tag('div', $dragboxs, array('class' => implode(' ', $classes)));
 
-        $classes = array('drags');
-        if ($options->readonly) {
-            $classes[] = 'readonly';
-        }
-        $result .= html_writer::tag('div', '', array('class' => implode(' ', $classes)));
-
         // We abuse the clear_wrong method to output the hidden form fields we
         // want irrespective of whether we are actually clearing the wrong
         // bits of the response.
@@ -88,7 +82,7 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
         $value = $qa->get_last_qt_var($question->field($place));
 
         $attributes = array(
-            'class' => 'place' . $place . ' drop group' . $group
+            'class' => 'place' . $place . ' drop active group' . $group
         );
 
         if ($options->readonly) {
