@@ -418,7 +418,6 @@ class content_writer implements \core_privacy\local\request\content_writer {
             $filepath[] = $file->get_filename();
             $filepath = array_filter($filepath);
             $filepath = implode('/', $filepath);
-
             $current = $this->fetch_root($this->files, $subcontext);
             $current->data[$filepath] = $file;
         }
