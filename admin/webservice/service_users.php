@@ -108,7 +108,7 @@ $usersmissingcaps = $webservicemanager->get_missing_capabilities_by_users($allow
 //add the missing capabilities to the allowed users object to be displayed by renderer
 foreach ($allowedusers as &$alloweduser) {
     if (!is_siteadmin($alloweduser->id) and array_key_exists($alloweduser->id, $usersmissingcaps)) {
-        $alloweduser->missingcapabilities = implode(', ', $usersmissingcaps[$alloweduser->id]);
+        $alloweduser->missingcapabilities = $usersmissingcaps[$alloweduser->id];
     }
 }
 

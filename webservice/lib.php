@@ -285,9 +285,16 @@ class webservice {
      */
     public function get_ws_authorised_users($serviceid) {
         global $DB, $CFG;
+
         $params = array($CFG->siteguest, $serviceid);
-        $sql = " SELECT u.id as id, esu.id as serviceuserid, u.email as email, u.firstname as firstname,
-                        u.lastname as lastname,
+
+        $namefields = get_all_user_name_fields(true, 'u');
+
+        foreach (get_extra_user_fields(context_system::instance()) as $extrafield) {
+            $namefields .= ',u.' . $extrafield;
+        }
+
+        $sql = " SELECT u.id as id, esu.id as serviceuserid, {$namefields},
                         esu.iprestriction as iprestriction, esu.validuntil as validuntil,
                         esu.timecreated as timecreated
                    FROM {user} u, {external_services_users} esu
@@ -296,6 +303,7 @@ class webservice {
                         AND esu.externalserviceid = ?";
 
         $users = $DB->get_records_sql($sql, $params);
+
         return $users;
     }
 
