@@ -283,7 +283,7 @@ if ($bulkoperations) {
     }
     echo html_writer::end_tag('div');
     $displaylist = array();
-    if (!empty($CFG->messaging)) {
+    if (!empty($CFG->messaging) && has_all_capabilities(['moodle/site:sendmessage', 'moodle/course:bulkmessaging'], $context)) {
         $displaylist['#messageselect'] = get_string('messageselectadd');
     }
     if (!empty($CFG->enablenotes) && has_capability('moodle/notes:manage', $context) && $context->id != $frontpagectx->id) {
