@@ -949,9 +949,9 @@ class company {
 
         if (!$user=$DB->get_record('company_users', $assign)) {
             if (($managertype == 1 || $managertype == 2) && $CFG->iomad_autoenrol_managers) {
-                $assign->educator = 1;
+                $assign['educator'] = 1;
             } else {
-                $assign->educator = $educator;
+                $assign['educator'] = $educator;
             }
 
             $success = $DB->insert_record('company_users',
