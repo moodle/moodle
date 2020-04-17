@@ -4044,7 +4044,6 @@ class company {
 
                     // Add the user to the appropriate course group.
                     if (!empty($course->groupmode)) {
-                        $userlicense = $DB->get_record('companylicense_users', array('id' => $userlicid));
                         self::add_user_to_shared_course($instance->courseid, $user->id, $licenserecord->companyid, $userlicense->groupid);
                     }
 

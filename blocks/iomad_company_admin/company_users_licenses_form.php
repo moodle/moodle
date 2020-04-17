@@ -343,14 +343,14 @@ class company_users_course_form extends moodleform {
                                 // Check we are not adding multiple times.
                                 if (!$DB->get_record('companylicense_users', $assignrecord)) {
                                     $assignrecord['issuedate'] = time();
-                                    $DB->insert_record('companylicense_users', $assignrecord);
+                                    $userlicid = $DB->insert_record('companylicense_users', $assignrecord);
 
                                     // Create an event.
                                     $eventother = array('licenseid' => $licenserecord['id'],
                                                         'issuedate' => $assignrecord['issuedate'],
                                                         'duedate' => $duedate);
                                     $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($addcourse->id),
-                                                                                                                  'objectid' => $licenserecord['id'],
+                                                                                                                  'objectid' => $userlicid,
                                                                                                                   'courseid' => $addcourse->id,
                                                                                                                   'userid' => $this->userid,
                                                                                                                   'other' => $eventother));
@@ -369,11 +369,9 @@ class company_users_course_form extends moodleform {
             if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
                 $coursestounassign = $this->currentcourses->get_selected_courses();
                 if (!empty($coursestounassign)) {
-
                     foreach ($coursestounassign as $removecourse) {
                         if ($userlicenserecord = $DB->get_record('companylicense_users',
-                                                                 array('userid' => $this->userid,
-                                                                       'licensecourseid' => $removecourse->id))) {
+                                                                 array('id' => $removecourse->id))) {
                             $licenserecord = (array) $DB->get_record('companylicense', array('id' => $userlicenserecord->licenseid));
                             if ($userlicenserecord->isusing == 0 || $licenserecord['type'] != 0) {
                                 $DB->delete_records('companylicense_users', array('id' => $userlicenserecord->id));
@@ -381,9 +379,9 @@ class company_users_course_form extends moodleform {
                                 // Create an event.
                                 $eventother = array('licenseid' => $licenserecord['id'],
                                                     'duedate' => 0);
-                                $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($removecourse->id),
+                                $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($userlicenserecord->licensecourseid),
                                                                                                                 'objectid' => $licenserecord['id'],
-                                                                                                                'courseid' => $removecourse->id,
+                                                                                                                'courseid' => $userlicenserecord->licensecourseid,
                                                                                                                 'userid' => $this->userid,
                                                                                                                 'other' => $eventother));
                                 $event->trigger();
