@@ -154,6 +154,9 @@ class flexible_table {
     /** @var $filename */
     protected $filename;
 
+    /** @var array $hiddencolumns List of hidden columns. */
+    protected $hiddencolumns;
+
     /**
      * Constructor
      * @param string $uniqueid all tables have to have a unique id, this is used
@@ -511,25 +514,7 @@ class flexible_table {
             $oldprefs = $this->prefs;
         }
 
-        if (($showcol = optional_param($this->request[TABLE_VAR_SHOW], '', PARAM_ALPHANUMEXT)) &&
-                isset($this->columns[$showcol])) {
-            $this->prefs['collapse'][$showcol] = false;
-
-        } else if (($hidecol = optional_param($this->request[TABLE_VAR_HIDE], '', PARAM_ALPHANUMEXT)) &&
-                isset($this->columns[$hidecol])) {
-            $this->prefs['collapse'][$hidecol] = true;
-            if (array_key_exists($hidecol, $this->prefs['sortby'])) {
-                unset($this->prefs['sortby'][$hidecol]);
-            }
-        }
-
-        // Now, update the column attributes for collapsed columns
-        foreach (array_keys($this->columns) as $column) {
-            if (!empty($this->prefs['collapse'][$column])) {
-                $this->column_style[$column]['width'] = '10px';
-            }
-        }
-
+        $this->set_hide_show_preferences();
         $this->set_sorting_preferences();
         $this->set_initials_preferences();
 
@@ -1205,14 +1190,18 @@ class flexible_table {
         if (!empty($this->prefs['collapse'][$column])) {
             $linkattributes = array('title' => get_string('show') . ' ' . strip_tags($this->headers[$index]),
                                     'aria-expanded' => 'false',
-                                    'aria-controls' => $ariacontrols);
+                                    'aria-controls' => $ariacontrols,
+                                    'data-action' => 'show',
+                                    'data-column' => $column);
             return html_writer::link($this->baseurl->out(false, array($this->request[TABLE_VAR_SHOW] => $column)),
                     $OUTPUT->pix_icon('t/switch_plus', get_string('show')), $linkattributes);
 
         } else if ($this->headers[$index] !== NULL) {
             $linkattributes = array('title' => get_string('hide') . ' ' . strip_tags($this->headers[$index]),
                                     'aria-expanded' => 'true',
-                                    'aria-controls' => $ariacontrols);
+                                    'aria-controls' => $ariacontrols,
+                                    'data-action' => 'hide',
+                                    'data-column' => $column);
             return html_writer::link($this->baseurl->out(false, array($this->request[TABLE_VAR_HIDE] => $column)),
                     $OUTPUT->pix_icon('t/switch_minus', get_string('hide')), $linkattributes);
         }
@@ -1381,6 +1370,43 @@ class flexible_table {
     }
 
     /**
+     * Set hide and show preferences.
+     */
+    protected function set_hide_show_preferences(): void {
+
+        if ($this->hiddencolumns !== null) {
+            $this->prefs['collapse'] = array_fill_keys(array_filter($this->hiddencolumns, function($column) {
+                return array_key_exists($column, $this->columns);
+            }), true);
+        } else {
+            if ($column = optional_param($this->request[TABLE_VAR_HIDE], '', PARAM_ALPHANUMEXT)) {
+                if (isset($this->columns[$column])) {
+                    $this->prefs['collapse'][$column] = true;
+                }
+            }
+        }
+
+        if ($column = optional_param($this->request[TABLE_VAR_SHOW], '', PARAM_ALPHANUMEXT)) {
+            unset($this->prefs['collapse'][$column]);
+        }
+
+        foreach (array_keys($this->prefs['collapse']) as $column) {
+            if (array_key_exists($column, $this->prefs['sortby'])) {
+                unset($this->prefs['sortby'][$column]);
+            }
+        }
+    }
+
+    /**
+     * Set the list of hidden columns.
+     *
+     * @param array $columns The list of hidden columns.
+     */
+    public function set_hidden_columns(array $columns): void {
+        $this->hiddencolumns = $columns;
+    }
+
+    /**
      * Set the preferred table sorting attributes.
      *
      * @param string $sortby The field to sort by.
@@ -1540,6 +1566,7 @@ class flexible_table {
                 'data-table-last-initial' => $this->prefs['i_last'],
                 'data-table-page-number' => $this->currpage + 1,
                 'data-table-page-size' => $this->pagesize,
+                'data-table-hidden-columns' => json_encode(array_keys($this->prefs['collapse'])),
             ]);
         }
 
