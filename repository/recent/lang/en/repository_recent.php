@@ -31,3 +31,5 @@ $string['recent:view'] = 'View recent files repository plugin';
 $string['pluginname_help'] = 'Files recently used by current user';
 $string['pluginname'] = 'Recent files';
 $string['privacy:metadata'] = 'The Recent files repository plugin does not store or transmit any personal data.';
+$string['timelimit'] = 'Time limit';
+$string['timelimit_help'] = 'Only retrieve recent files within the time limit';

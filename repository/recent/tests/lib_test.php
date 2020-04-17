@@ -50,15 +50,11 @@ class repository_recent_lib_testcase extends advanced_testcase {
      * SetUp to create an repository instance.
      */
     protected function setUp() {
-        global $USER, $itemid;
-
-        $this->resetAfterTest(true);
+        global $USER;
         $this->setAdminUser();
         $this->usercontext = context_user::instance($USER->id);
         $repoid = $this->getDataGenerator()->create_repository('recent')->id;
         $this->repo = repository::get_repository_by_id($repoid, $this->usercontext);
-        // Set global itemid for draft file (file manager mockup).
-        $itemid = file_get_unused_draft_itemid();
     }
 
     /**
@@ -66,23 +62,27 @@ class repository_recent_lib_testcase extends advanced_testcase {
      */
     public function test_get_listing_with_duplicate_file() {
         global $itemid;
+        $this->resetAfterTest(true);
+
+        // Set global itemid for draft file (file manager mockup).
+        $itemid = file_get_unused_draft_itemid();
 
         // No recent file.
         $filelist = $this->repo->get_listing()['list'];
         $this->assertCount(0, $filelist);
 
         // Create test file 1.
-        self::create_test_file('TestFile1', 'draft', $itemid);
+        $this->create_test_file('TestFile1', 'draft', $itemid);
         $filelist = $this->repo->get_listing()['list'];
         $this->assertCount(1, $filelist);
 
         // Due to create_test_file function, same filename means same content as the content is the filename hash.
-        self::create_test_file('TestFile1', 'private');
+        $this->create_test_file('TestFile1', 'private');
         $filelist = $this->repo->get_listing()['list'];
         $this->assertCount(1, $filelist);
 
         // Create test file 2, different area.
-        self::create_test_file('TestFile2', 'private');
+        $this->create_test_file('TestFile2', 'private');
         $filelist = $this->repo->get_listing()['list'];
         $this->assertCount(2, $filelist);
     }
@@ -91,13 +91,14 @@ class repository_recent_lib_testcase extends advanced_testcase {
      * Test get listing reference file
      */
     public function test_get_listing_with_reference_file() {
+        $this->resetAfterTest(true);
         // Create test file 1.
-        $file1 = self::create_test_file('TestFile1', 'private');
+        $file1 = $this->create_test_file('TestFile1', 'private');
         $filelist = $this->repo->get_listing()['list'];
         $this->assertCount(1, $filelist);
 
         // Create reference file.
-        $file2 = self::create_reference_file($file1, 'TestFile2', 'private');
+        $file2 = $this->create_reference_file($file1, 'TestFile2', 'private');
         $filelist = $this->repo->get_listing()['list'];
         $this->assertCount(1, $filelist);
 
@@ -111,7 +112,8 @@ class repository_recent_lib_testcase extends advanced_testcase {
      * Test number limit
      */
     public function test_get_listing_number_limit() {
-        self::create_multiple_test_files('private', 75);
+        $this->resetAfterTest(true);
+        $this->create_multiple_test_files('private', 75);
         $filelist = $this->repo->get_listing()['list'];
         $this->assertCount(50, $filelist);
 
@@ -124,6 +126,29 @@ class repository_recent_lib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test time limit
+     */
+    public function test_get_listing_time_limit() {
+        $this->resetAfterTest(true);
+        $this->create_multiple_test_files('private', 25);
+        $file1 = $this->create_test_file('TestFileTimeLimit', 'private');
+        // Set time modified back to a year ago.
+        $file1->set_timemodified(time() - YEARSECS);
+
+        // There is no time limit by default.
+        $filelist = $this->repo->get_listing()['list'];
+        $this->assertCount(26, $filelist);
+
+        // The time limit is set as property of the repo, so we need to create new repo instance.
+        set_config('recentfilestimelimit', 3600, 'recent');
+        $repoid = $this->getDataGenerator()->create_repository('recent')->id;
+        $repo = repository::get_repository_by_id($repoid, $this->usercontext);
+        $filelist = $repo->get_listing()['list'];
+        // Only get the recent files in the last hour.
+        $this->assertCount(25, $filelist);
+    }
+
+    /**
      * Create multiple test file
      *
      * @param string $filearea file area
@@ -132,7 +157,7 @@ class repository_recent_lib_testcase extends advanced_testcase {
     private function create_multiple_test_files($filearea, $numberoffiles) {
         for ($i = 0; $i < $numberoffiles; ++$i) {
             $filename = "TestFile$i" . time();
-            self::create_test_file($filename, $filearea);
+            $this->create_test_file($filename, $filearea);
         }
     }
 
