@@ -2360,10 +2360,21 @@ class company {
      * Returns array()
      *
      **/
-    public static function get_courses_by_license($licenseid) {
+    public static function get_courses_by_license($licenseid, $visible = true) {
         global $DB;
-        if ($courseids = $DB->get_records('companylicense_courses', array('licenseid' => $licenseid),
-                                                                           null, 'courseid')) {
+
+        if ($visible) {
+            $visiblesql = " AND c.visible = 1 ";
+        } else {
+            $visiblesql = "";
+        }
+        if ($courseids = $DB->get_records_sql("SELECT c.id
+                                              FROM {course} c
+                                              JOIN {companylicense_courses} clc ON (c.id = clc.courseid)
+                                              WHERE clc.licenseid = :licenseid
+                                              $visiblesql
+                                              ORDER BY c.fullname",
+                                              array('licenseid' => $licenseid))) {
             $sql = "SELECT id, fullname FROM {course} WHERE id IN (".
                       implode(',', array_keys($courseids)).
                    ") ";

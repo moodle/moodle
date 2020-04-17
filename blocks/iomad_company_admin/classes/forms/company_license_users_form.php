@@ -67,7 +67,7 @@ class company_license_users_form extends \moodleform {
         natsort($courseselect);
 
         // If we only have one course in the license or this is a program license, select it by default.
-        if (count($courseselect) == 1 || $this->license->program == 1) {
+        if (count($courseselect) == 1 || !empty($this->license->program)) {
             $this->selectedcourses = array_keys($courseselect);
         }
 
