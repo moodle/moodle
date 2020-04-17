@@ -51,14 +51,14 @@ class contenttype_h5p_content_plugin_testcase extends advanced_testcase {
 
         // Create a dummy file.
         $filename = 'content.h5p';
-        $dummy = array(
+        $dummy = [
             'contextid' => \context_system::instance()->id,
             'component' => 'contentbank',
             'filearea' => 'public',
             'itemid' => $content->get_id(),
             'filepath' => '/',
             'filename' => $filename
-        );
+        ];
         $fs = get_file_storage();
         $fs->create_file_from_string($dummy, 'dummy content');
 
