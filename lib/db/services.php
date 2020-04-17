@@ -2773,6 +2773,15 @@ $functions = array(
         'ajax'          => 'true',
         'capabilities'  => 'moodle/contentbank:deleteanycontent',
     ],
+    'core_contentbank_rename_content' => [
+        'classname'     => 'core_contentbank\external\rename_content',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Rename a content in the content bank.',
+        'type'          => 'write',
+        'ajax'          => 'true',
+        'capabilities'  => 'moodle/contentbank:manageowncontent',
+    ],
 );
 
 $services = array(

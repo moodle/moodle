@@ -39,6 +39,7 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
      */
     var ACTIONS = {
         DELETE_CONTENT: '[data-action="deletecontent"]',
+        RENAME_CONTENT: '[data-action="renamecontent"]',
     };
 
     /**
@@ -108,6 +109,54 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                 return;
             }).catch(Notification.exception);
         });
+
+        $(ACTIONS.RENAME_CONTENT).click(function(e) {
+            e.preventDefault();
+
+            var contentname = $(this).data('contentname');
+            var contentid = $(this).data('contentid');
+
+            var strings = [
+                {
+                    key: 'renamecontent',
+                    component: 'core_contentbank'
+                },
+                {
+                    key: 'rename',
+                    component: 'core_contentbank'
+                },
+            ];
+
+            var saveButtonText = '';
+            Str.get_strings(strings).then(function(langStrings) {
+                var modalTitle = langStrings[0];
+                saveButtonText = langStrings[1];
+
+                return ModalFactory.create({
+                    title: modalTitle,
+                    body: Templates.render('core_contentbank/renamecontent', {'contentid': contentid, 'name': contentname}),
+                    type: ModalFactory.types.SAVE_CANCEL
+                });
+            }).then(function(modal) {
+                modal.setSaveButtonText(saveButtonText);
+                modal.getRoot().on(ModalEvents.save, function() {
+                    // The action is now confirmed, sending an action for it.
+                    var newname = $("#newname").val();
+                    return renameContent(contentid, newname);
+                });
+
+                // Handle hidden event.
+                modal.getRoot().on(ModalEvents.hidden, function() {
+                    // Destroy when hidden.
+                    modal.destroy();
+                });
+
+                // Show the modal.
+                modal.show();
+
+                return;
+            }).catch(Notification.exception);
+        });
     };
 
     /**
@@ -144,6 +193,49 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
             // Redirect to the main content bank page and display the message as a notification.
             window.location.href = Url.relativeUrl('contentbank/index.php', params, false);
         }).fail(Notification.exception);
+    }
+
+    /**
+     * Rename content in the content bank.
+     *
+     * @param {int} contentid The content to rename.
+     * @param {string} name The new name for the content.
+     */
+    function renameContent(contentid, name) {
+        var request = {
+            methodname: 'core_contentbank_rename_content',
+            args: {
+                contentid: contentid,
+                name: name
+            }
+        };
+        var requestType = 'success';
+        Ajax.call([request])[0].then(function(data) {
+            if (data) {
+                return Str.get_string('contentrenamed', 'core_contentbank');
+            }
+            requestType = 'error';
+            return Str.get_string('contentnotrenamed', 'core_contentbank');
+
+        }).then(function(message) {
+            var params = null;
+            if (requestType == 'success') {
+                params = {
+                    id: contentid,
+                    statusmsg: message
+                };
+                // Redirect to the content view page and display the message as a notification.
+                window.location.href = Url.relativeUrl('contentbank/view.php', params, false);
+            } else {
+                // Fetch error notifications.
+                Notification.addNotification({
+                    message: message,
+                    type: 'error'
+                });
+                Notification.fetchNotifications();
+            }
+            return;
+        }).catch(Notification.exception);
     }
 
     return /** @alias module:core_contentbank/actions */ {

@@ -24,7 +24,6 @@
 
 namespace core_contentbank;
 
-use coding_exception;
 use moodle_url;
 
 /**
@@ -39,7 +38,7 @@ abstract class contenttype {
     /** Plugin implements uploading feature */
     const CAN_UPLOAD = 'upload';
 
-    /** @var context This content's context. **/
+    /** @var context This contenttype's context. **/
     protected $context = null;
 
     /**
@@ -97,6 +96,18 @@ abstract class contenttype {
 
         // Delete the contentbank DB entry.
         return $DB->delete_records('contentbank_content', ['id' => $content->get_id()]);
+    }
+
+    /**
+     * Rename this content from the content_bank.
+     * This method can be overwritten by the plugins if they need to change some other specific information.
+     *
+     * @param  content $content The content to rename.
+     * @param string $name  The name of the content.
+     * @return boolean true if the content has been renamed; false otherwise.
+     */
+    public function rename_content(content $content, string $name): bool {
+        return $content->set_name($name);
     }
 
     /**
@@ -236,6 +247,41 @@ abstract class contenttype {
      * @return bool True if content allows uploading. False otherwise.
      */
     protected function is_delete_allowed(content $content): bool {
+        // Plugins can overwrite this function to add any check they need.
+        return true;
+    }
+
+    /**
+     * Check if the user can managed this content.
+     *
+     * @param  content $content The content to be managed.
+     * @return bool     True if content could be managed. False otherwise.
+     */
+    public final function can_manage(content $content): bool {
+        global $USER;
+
+        if ($this->context->id != $content->get_content()->contextid) {
+            // The content has to have exactly the same context as this contenttype.
+            return false;
+        }
+
+        // Check main contentbank management permission.
+        $hascapability = has_capability('moodle/contentbank:manageanycontent', $this->context);
+        if ($content->get_content()->usercreated == $USER->id) {
+            // This content has been created by the current user; check if they can manage their content.
+            $hascapability = $hascapability || has_capability('moodle/contentbank:manageowncontent', $this->context);
+        }
+
+        return $hascapability && $this->is_manage_allowed($content);
+    }
+
+    /**
+     * Returns if content allows managing.
+     *
+     * @param  content $content The content to be managed.
+     * @return bool True if content allows uploading. False otherwise.
+     */
+    protected function is_manage_allowed(content $content): bool {
         // Plugins can overwrite this function to add any check they need.
         return true;
     }

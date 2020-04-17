@@ -2522,4 +2522,26 @@ $capabilities = array(
             'user' => CAP_ALLOW,
         ]
     ],
+
+    // Manage (rename, move, publish, share, etc.) any content from the content bank.
+    'moodle/contentbank:manageanycontent' => [
+        'riskbitmask' => RISK_DATALOSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+        )
+    ],
+
+    // Manage (rename, move, publish, share, etc.) content created by yourself.
+    'moodle/contentbank:manageowncontent' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        )
+    ],
 );
