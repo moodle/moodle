@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace webservice;
+namespace core_webservice;
 
 defined('MOODLE_INTERNAL') || die;
 
