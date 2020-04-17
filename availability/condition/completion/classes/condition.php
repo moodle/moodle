@@ -56,13 +56,13 @@ class condition extends \core_availability\condition {
     protected $expectedcompletion;
 
     /** @var array Array of previous cmids used to calculate relative completions */
-    protected $modfastprevious = array();
+    protected $modfastprevious = [];
 
     /** @var array Array of cmids previous to each course section */
-    protected $sectionfastprevious = array();
+    protected $sectionfastprevious = [];
 
     /** @var array Array of modules used in these conditions for course */
-    protected static $modsusedincondition = array();
+    protected static $modsusedincondition = [];
 
     /**
      * Constructor.
@@ -79,8 +79,8 @@ class condition extends \core_availability\condition {
         }
         // Get expected completion.
         if (isset($structure->e) && in_array($structure->e,
-                array(COMPLETION_COMPLETE, COMPLETION_INCOMPLETE,
-                        COMPLETION_COMPLETE_PASS, COMPLETION_COMPLETE_FAIL))) {
+                [COMPLETION_COMPLETE, COMPLETION_INCOMPLETE,
+                COMPLETION_COMPLETE_PASS, COMPLETION_COMPLETE_FAIL])) {
             $this->expectedcompletion = $structure->e;
         } else {
             throw new \coding_exception('Missing or invalid ->e for completion condition');
@@ -93,8 +93,11 @@ class condition extends \core_availability\condition {
      * @return stdClass Structure object (ready to be made into JSON format)
      */
     public function save(): stdClass {
-        return (object)array('type' => 'completion',
-                'cm' => $this->cmid, 'e' => $this->expectedcompletion);
+        return (object) [
+            'type' => 'completion',
+            'cm' => $this->cmid,
+            'e' => $this->expectedcompletion,
+        ];
     }
 
     /**
@@ -108,8 +111,11 @@ class condition extends \core_availability\condition {
      * @return stdClass Object representing condition
      */
     public static function get_json(int $cmid, int $expectedcompletion): stdClass {
-        return (object)array('type' => 'completion', 'cm' => (int)$cmid,
-                'e' => (int)$expectedcompletion);
+        return (object) [
+            'type' => 'completion',
+            'cm' => (int)$cmid,
+            'e' => (int)$expectedcompletion,
+        ];
     }
 
     /**
@@ -138,7 +144,7 @@ class condition extends \core_availability\condition {
             $allow = false;
         } else {
             // The completion system caches its own data so no caching needed here.
-            $completiondata = $completion->get_data((object)array('id' => $cmid),
+            $completiondata = $completion->get_data((object)['id' => $cmid],
                     $grabthelot, $userid, $modinfo);
 
             $allow = true;
@@ -180,19 +186,19 @@ class condition extends \core_availability\condition {
         if ($info instanceof info_module) {
             $cminfo = $info->get_course_module();
             if (!empty($cminfo->id)) {
-                $this->selfids = array($cminfo->id, null);
+                $this->selfids = [$cminfo->id, null];
                 return $this->selfids;
             }
         }
         if ($info instanceof info_section) {
             $section = $info->get_section();
             if (!empty($section->id)) {
-                $this->selfids = array(null, $section->id);
+                $this->selfids = [null, $section->id];
                 return $this->selfids;
             }
 
         }
-        return array(null, null);
+        return [null, null];
     }
 
     /**
@@ -258,8 +264,8 @@ class condition extends \core_availability\condition {
         }
 
         if (empty($this->modfastprevious)) {
-            $this->modfastprevious = array();
-            $sectionprevious = array();
+            $this->modfastprevious = [];
+            $sectionprevious = [];
 
             $modinfo = get_fast_modinfo($course);
             $lastcmid = 0;
@@ -427,7 +433,7 @@ class condition extends \core_availability\condition {
             // If we are on the same course (e.g. duplicate) then we can just
             // use the existing one.
             if ($DB->record_exists('course_modules',
-                    array('id' => $this->cmid, 'course' => $courseid))) {
+                    ['id' => $this->cmid, 'course' => $courseid])) {
                 return $res;
             }
             // Otherwise it's a warning.
@@ -455,7 +461,7 @@ class condition extends \core_availability\condition {
         if (!array_key_exists($course->id, self::$modsusedincondition)) {
             // We don't have data for this course, build it.
             $modinfo = get_fast_modinfo($course);
-            self::$modsusedincondition[$course->id] = array();
+            self::$modsusedincondition[$course->id] = [];
 
             // Activities.
             foreach ($modinfo->cms as $othercm) {
@@ -494,7 +500,7 @@ class condition extends \core_availability\condition {
      * Wipes the static cache of modules used in a condition (for unit testing).
      */
     public static function wipe_static_cache() {
-        self::$modsusedincondition = array();
+        self::$modsusedincondition = [];
     }
 
     public function update_dependency_id($table, $oldid, $newid) {
