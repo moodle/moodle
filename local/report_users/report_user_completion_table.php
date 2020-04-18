@@ -61,7 +61,7 @@ class local_report_user_completion_table extends table_sql {
         global $CFG;
 
         if (!empty($row->licenseallocated)) {
-            return date($CFG->iomad_date_format, $row->licenseallocated);
+            return format_string(date($CFG->iomad_date_format, $row->licenseallocated) . " (" . $row->licensename . ")");
         } else {
             return;
         }
@@ -156,32 +156,43 @@ class local_report_user_completion_table extends table_sql {
                     'userid' => $row->userid,
                     'delete' => $row->userid,
                     'courseid' => $row->courseid,
+                    'rowid' => $row->id,
                     'action' => 'delete'
                 ));
             $clearlink = new moodle_url('/local/report_users/userdisplay.php', array(
                     'userid' => $row->userid,
                     'delete' => $row->userid,
+                    'rowid' => $row->id,
                     'courseid' => $row->courseid,
                     'action' => 'clear'
+                ));
+            $trackonlylink = new moodle_url('/local/report_users/userdisplay.php', array(
+                    'userid' => $row->userid,
+                    'delete' => $row->userid,
+                    'rowid' => $row->id,
+                    'courseid' => $row->courseid,
+                    'action' => 'trackonly'
                 ));
             $delaction = '';
 
             if (has_capability('local/report_users:deleteentries', context_system::instance())) {
                 // Its from the course_completions table.  Check the license type.
-                if ($DB->get_record_sql("SELECT cl.* FROM {companylicense} cl
-                                         JOIN {companylicense_users} clu
-                                         ON (cl.id = clu.licenseid)
-                                         WHERE cl.program = 1
-                                         AND clu.userid = :userid
-                                         AND clu.licensecourseid = :courseid",
-                                         array('userid' => $row->userid,
-                                               'courseid' => $row->courseid))) {
-                    $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                if (!empty($row->licenseid) &&
+                    $DB->get_record('companylicense',
+                                     array('id' => $row->licenseid,
+                                           'program' => 1))) {
+                    if (has_capability('local/report_users:clearentries', context_system::instance())) {
+                        $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                    }
                 } else {
                     if (!empty($row->timecompleted)) {
-                        $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                        if (has_capability('local/report_users:clearentries ', context_system::instance())) {
+                            $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                        }
                     } else if ($DB->get_record('companylicense_users', array('userid' => $row->userid, 'licensecourseid' => $row->courseid, 'licenseid' => $row->licenseid, 'issuedate' => $row->licenseallocated, 'isusing' => 1))) {
                         $delaction .= '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete') . '</a>';
+                    } else if (has_capability('local/report_users:deleteentriesfull', context_system::instance())) {
+                        $delaction .= '<a class="btn btn-danger" href="'.$trackonlylink.'">' . get_string('delete', 'local_report_users') . '</a>';
                     }
                 }
             }
@@ -239,8 +250,33 @@ class local_report_user_completion_table extends table_sql {
             }
         }
         if ($progress == -1) {
-            return get_string('notstarted', 'local_report_users');
+            if (empty($row->timestarted)) {
+                return get_string('notstarted', 'local_report_users');
+            } else {
+                if (!empty($row->licenseid)) {
+                    if ($DB->get_record('companylicense_users',
+                                        array('licenseid' => $row->licenseid,
+                                              'userid' => $row->userid,
+                                              'licensecourseid' => $row->courseid,
+                                              'issuedate' => $row->licenseallocated))) {
+                        return get_string('inprogress', 'local_report_users');
+                    } else {
+                        return get_string('suspended');
+                    }
+                } else {
+                    return get_string('inprogress', 'local_report_users');
+                }
+            }
         } else {
+            if (!empty($row->licenseid) &&
+                !$DB->get_record('companylicense_users',
+                                array('licenseid' => $row->licenseid,
+                                      'userid' => $row->userid,
+                                      'licensecourseid' => $row->courseid,
+                                      'issuedate' => $row->licenseallocated))) {
+                return get_string('suspended');
+            }
+
             if (!$this->is_downloading()) {
                 return '<div class="progress" style="height:20px">
                         <div class="progress-bar" style="width:' . $progress . '%;height:20px">' . $progress . '%</div>

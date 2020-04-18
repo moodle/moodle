@@ -205,7 +205,23 @@ class local_report_course_completion_user_table extends table_sql {
             }
         }
         if ($progress == -1) {
-            return get_string('notstarted', 'local_report_users');
+            if (empty($row->timestarted)) {
+                return get_string('notstarted', 'local_report_users');
+            } else {
+                if (!empty($row->licenseid)) {
+                    if ($DB->get_record('companylicense_users',
+                                        array('licenseid' => $row->licenseid,
+                                              'userid' => $row->userid,
+                                              'licensecourseid' => $row->courseid,
+                                              'issuedate' => $row->licenseallocated))) {
+                        return get_string('inprogress', 'local_report_users');
+                    } else {
+                        return get_string('suspended');
+                    }
+                } else {
+                    return get_string('inprogress', 'local_report_users');
+                }
+            }
         } else {
             if (!$this->is_downloading()) {
                 return '<div class="progress" style="height:20px">

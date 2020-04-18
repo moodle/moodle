@@ -17,6 +17,7 @@
 require_once(dirname(__FILE__).'/../../config.php');
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
+require_once($CFG->dirroot.'/local/iomad_track/lib.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/report_user_completion_table.php');
 
@@ -26,6 +27,7 @@ $userid = required_param('userid', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 $download = optional_param('download', 0, PARAM_CLEAN);
 $delete = optional_param('delete', 0, PARAM_INT);
+$rowid = optional_param('rowid', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_CLEAN);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 
@@ -77,12 +79,16 @@ if (!company::check_valid_user($companyid, $userid)) {
 // Check for user/course delete?
 if (!empty($action)) {
     if (!empty($confirm) && confirm_sesskey()) {
-       company_user::delete_user_course($userid, $courseid, $action);
-       redirect(new moodle_url('/local/report_users/userdisplay.php', array('userid' => $userid)),
-                get_string($action . "_successful", 'local_report_users'),
-                null,
-                \core\output\notification::NOTIFY_SUCCESS);
-        die;
+        if ($action != 'trackonly') {
+            company_user::delete_user_course($userid, $courseid, $action);
+            redirect(new moodle_url('/local/report_users/userdisplay.php', array('userid' => $userid)),
+                     get_string($action . "_successful", 'local_report_users'),
+                     null,
+                     \core\output\notification::NOTIFY_SUCCESS);
+            die;
+        } else {
+            local_iomad_track_delete_entry($rowid, true);
+        }
     } else {
         echo $OUTPUT->header();
         $confirmurl = new moodle_url('/local/report_users/userdisplay.php',
@@ -103,6 +109,9 @@ if (!empty($action)) {
             } else {
                 echo $OUTPUT->confirm(get_string('clearreallocateconfirm', 'local_report_users'), $confirmurl, $cancel);
             }
+        } else if ($action == 'trackonly') {
+            // We are only removing the saved record for this.
+            echo $OUTPUT->confirm(get_string('trackclearconfirm', 'local_report_users'), $confirmurl, $cancel);
         }
         echo $OUTPUT->footer();
         die;

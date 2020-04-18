@@ -32,6 +32,8 @@ defined('MOODLE_INTERNAL') || die;
 function do_redocerts($user = 0, $course = 0, $company = 0, $idnumber = 0, $fromdate = null, $todate = null, $userid = 0, $courseid = 0, $companyid = 0) {
     global $DB, $CFG;
 
+    require_once($CFG->dirroot.'/local/iomad_track/lib.php');
+
     // Build the SQL.
     $usersql = array();
     if (!empty($user)) {
@@ -73,16 +75,7 @@ function do_redocerts($user = 0, $course = 0, $company = 0, $idnumber = 0, $from
     $count = 1;
     foreach ($oldrecords as $track) {
         echo "<br>clearing id $track->id - $count out of $total </br>";
-        if ($cert = $DB->get_record('local_iomad_track_certs', array('trackid' => $track->id))) {
-            $DB->delete_records('local_iomad_track_certs', array('id' => $cert->id));
-        }
-        if ($file = $DB->get_record_sql("SELECT * FROM {files} WHERE component= :component and itemid = :itemid and filename != '.'", array('component' => 'local_iomad_track', 'itemid' => $track->id))) {
-            $filedir1 = substr($file->contenthash,0,2);
-            $filedir2 = substr($file->contenthash,2,2);
-            $filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $file->contenthash;
-            unlink($filepath);
-        }
-        $DB->delete_records('files', array('itemid' => $track->id, 'component' => 'local_iomad_track'));
+        local_iomad_track_delete_entry($track->id);
         echo "</br>Recreating Certificate</br>";
         xmldb_local_iomad_track_record_certificates($track->courseid, $track->userid, $track->id);
     

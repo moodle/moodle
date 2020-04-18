@@ -68,3 +68,35 @@ function local_iomad_track_pluginfile($course, $birecord_or_cm, $context, $filea
     \core\session\manager::write_close();
     send_stored_file($file, null, 0, $forcedownload, $options);
 }
+
+/*
+ * Function to remove entries from the local_iomad_track table.
+ *
+ * @param boolean $full remove just the saved certificate or everything.
+ */
+function local_iomad_track_delete_entry($trackid, $full=false) {
+    global $DB,$CFG;
+
+    // Do we have a recorded certificate?
+    if ($cert = $DB->get_record('local_iomad_track_certs', array('trackid' => $trackid))) {
+        $DB->delete_records('local_iomad_track_certs', array('id' => $cert->id));
+    }
+
+    // Remove the actual underlying file.
+    if ($file = $DB->get_record_sql("SELECT * FROM {files}
+                                     WHERE component= :component
+                                     AND itemid = :itemid
+                                     AND filename != '.'",
+                                     array('component' => 'local_iomad_track', 'itemid' => $trackid))) {
+        $filedir1 = substr($file->contenthash,0,2);
+        $filedir2 = substr($file->contenthash,2,2);
+        $filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $file->contenthash;
+        unlink($filepath);
+    }
+    $DB->delete_records('files', array('itemid' => $trackid, 'component' => 'local_iomad_track'));
+
+    // Are we getting rid of the full record?
+    if ($full) {
+        $DB->delete_records('local_iomad_track', array('id' => $trackid));
+    }
+}

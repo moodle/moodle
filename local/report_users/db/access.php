@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 $capabilities = array(
 
     'local/report_users:view' => array(
@@ -30,6 +32,24 @@ $capabilities = array(
     ),
 
     'local/report_users:deleteentries' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW,
+        ),
+    ),
+
+    'local/report_users:deleteentriesfull' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW,
+        ),
+    ),
+
+    'local/report_users:clearentries' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
