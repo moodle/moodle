@@ -34,3 +34,4 @@ $string['privacy:metadata:local_iomad_track_certs:id'] = 'Local iomad track cert
 $string['privacy:metadata:local_iomad_track_certs:trackid'] = 'Certificate track id';
 $string['privacy:metadata:local_iomad_track_certs:filename'] = 'Certificate filename';
 $string['privacy:metadata:local_iomad_track_certs'] = 'Local iomad track certificate info';
+$string['fixtracklicensetask'] = 'Iomad track fix license tracking details adhoc task';

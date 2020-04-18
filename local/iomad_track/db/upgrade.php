@@ -471,5 +471,18 @@ mtrace("enrol end " . time());
         upgrade_plugin_savepoint(true, 2020010200, 'local', 'iomad_track');
     }
 
+    if ($oldversion < 2020010201) {
+
+        require_once(dirname(__FILE__) . '/../classes/task/fixlicensedata_background.php');
+
+        // Fire off the adhoc task to fix the license records.
+        $task = new local_iomad_track\task\fixtracklicensetask();
+        \core\task\manager::queue_adhoc_task($task, true);
+
+
+        // Iomad_track savepoint reached.
+        upgrade_plugin_savepoint(true, 2020010201, 'local', 'iomad_track');
+    }
+
     return $result;
 }
