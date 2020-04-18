@@ -16,6 +16,8 @@
 
 namespace local_iomad_track;
 
+defined('MOODLE_INTERNAL') || die();
+
 // In case we ever want to switch back to ordinary certificates
 define('CERTIFICATE', 'iomadcertificate');
 
@@ -409,12 +411,26 @@ class observer {
         $licenseid = $event->other['licenseid'];
         $issuedate = $event->other['issuedate'];
         $modifiedtime = $event->timecreated;
+        $expirysent = null;
+        $notstartedstop = 0;
+        $completedstop = 0;
+        $expiredstop = 0;
 
         // Check if there is already an entry for this.
         if ($entry = $DB->get_record('local_iomad_track', array('userid' => $userid,
                                                                 'courseid' => $courseid,
                                                                 'licenseid' => $licenseid,
                                                                 'timecompleted' => null))) {
+            $licenserec = $DB->get_record('companylicense', array('id' => $licenseid));
+
+            // Is this an educator license?
+            if ($licenserec->type == 2 || $licenserec->type == 3) {
+                $entry->expirysent = $modifiedtime;
+                $entry->notstartedstop = 1;
+                $entry->completedstop = 1;
+                $entry->expiredstop = 1;
+            }
+
             // We already have an entry.  Change the issue time.
             $entry->licenseallocated = $issuedate;
             $entry->modifiedtime = time();
@@ -423,6 +439,14 @@ class observer {
             // Create one.
             if ($courserec = $DB->get_record('course', array('id' => $courseid))) {
                 $licenserec = $DB->get_record('companylicense', array('id' => $licenseid));
+
+                // Is this an educator license?
+                if ($licenserec->type == 2 || $licenserec->type == 3) {
+                    $expirysent = $modifiedtime;
+                    $notstartedstop = 1;
+                    $completedstop = 1;
+                    $expiredstop = 1;
+                }
                 $entry = array('userid' => $userid,
                                'courseid' => $courseid,
                                'coursename' => $courserec->fullname,
@@ -430,6 +454,10 @@ class observer {
                                'licenseid' => $licenseid,
                                'licensename' => $licenserec->name,
                                'licenseallocated' => $issuedate,
+                               'expirysent' => $expirysent,
+                               'notstartedstop' => $notstartedstop,
+                               'completedstop' => $completedstop,
+                               'expiredstop' => $expiredstop,
                                'modifiedtime' => $modifiedtime
                                );
                 $DB->insert_record('local_iomad_track', $entry);
@@ -473,6 +501,12 @@ class observer {
         $timeenrolled = $event->timecreated;
         $modifiedtime = $event->timecreated;
 
+        // Is this course a license course?
+        if ($DB->get_record('iomad_courses', array('courseid' => $courseid, 'licensed' => 1))) {
+            // Ignore it we capture a different event for those.
+            return true;
+        }
+
         // Check if there is already an entry for this.
         if ($entry = $DB->get_record('local_iomad_track', array('userid' => $userid,
                                                                 'courseid' => $courseid,
@@ -511,6 +545,76 @@ class observer {
                                'courseid' => $courseid,
                                'coursename' => $courserec->fullname,
                                'companyid' => $companyid,
+                               'timeenrolled' => $timeenrolled,
+                               'timestarted' => $timeenrolled,
+                               'modifiedtime' => $modifiedtime
+                               );
+                $DB->insert_record('local_iomad_track', $entry);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Consume user license used event
+     * @param object $event the event object
+     */
+    public static function user_license_used($event) {
+        global $DB;
+
+        $userid = $event->userid;
+        $courseid = $event->courseid;
+        $licenseid = $event->other['licenseid'];
+        $licenserecordid = $event->objectid;
+        $timeenrolled = $event->timecreated;
+        $modifiedtime = $event->timecreated;
+
+        // Check if there is already an entry for this.
+        if ($entry = $DB->get_record('local_iomad_track', array('userid' => $userid,
+                                                                'courseid' => $courseid,
+                                                                'licenseid' => $licenseid,
+                                                                'timecompleted' => null))) {
+            // We already have an entry.  Change the issue time.
+            $entry->timeenrolled = $timeenrolled;
+            $entry->timestarted = $timeenrolled;
+            $entry->modifiedtime = $modifiedtime;
+            $DB->update_record('local_iomad_track', $entry);
+        } else {
+            // Create one.
+            if ($courserec = $DB->get_record('course', array('id' => $courseid))) {
+                if ($companies = $DB->get_records_sql("SELECT cu.* FROM {company_users} cu
+                                                      JOIN {company_course} cc on (cu.companyid = cc.companyid)
+                                                      WHERE cu.userid = :userid
+                                                      AND cc.courseid = :courseid
+                                                      ORDER BY cu.id DESC",
+                                                      array('userid' => $userid,
+                                                            'courseid' => $courseid))) {
+
+                    // Searching by company and allocated course.
+                    $company = array_shift($companies);
+                    $companyid = $company->companyid;
+                } else if ($companies = $DB->get_records_sql("SELECT cu.* FROM {company_users} cu
+                                                      WHERE cu.userid = :userid
+                                                      ORDER BY cu.id DESC",
+                                                      array('userid' => $userid))) {
+
+                    // Searching by company only as could be open shared course.
+                    $company = array_shift($companies);
+                    $companyid = $company->companyid;
+                } else {
+                    // Need a default.
+                    $companyid = 0;
+                }
+                $licenserec = $DB->get_record('companylicense', array('id' => $licenseid));
+                $userlicenserec = $DB->get_record('companylicense_users', array('id' => $licenserecordid));
+                $entry = array('userid' => $userid,
+                               'courseid' => $courseid,
+                               'coursename' => $courserec->fullname,
+                               'companyid' => $companyid,
+                               'licenseid' => $licenseid,
+                               'licenseallocated' => $userlicenserec->issuedate,
+                               'licensename' => $licenserec->name,
                                'timeenrolled' => $timeenrolled,
                                'timestarted' => $timeenrolled,
                                'modifiedtime' => $modifiedtime

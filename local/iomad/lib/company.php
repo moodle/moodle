@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once(dirname(__FILE__) . '/iomad.php');
 require_once(dirname(__FILE__) . '/user.php');
@@ -4060,6 +4062,15 @@ class company {
 
                     // Update the userlicense record to mark it as in use.
                     $DB->set_field('companylicense_users', 'isusing', 1, array('id' => $userlicense->id));
+
+                    // Fire an event to record this 
+                    $eventother = array('licenseid' => $licenseid);
+                    $event = \block_iomad_company_admin\event\user_license_used::create(array('context' => \context_course::instance($courseid),
+                                                                                              'objectid' => $userlicense->id,
+                                                                                              'courseid' => $instance->courseid,
+                                                                                              'userid' => $user->id,
+                                                                                              'other' => $eventother));
+                    $event->trigger();
                 }
             }
         }

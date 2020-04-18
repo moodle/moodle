@@ -327,11 +327,11 @@ class company_license_users_form extends \moodleform {
                             if ($allow) {
                                 $recordarray = array('licensecourseid' => $courseid,
                                                      'userid' => $adduser->id,
-                                                     'licenseid' => $this->licenseid,
                                                      'timecompleted' => null);
 
                                 // Check if we are not assigning multiple times.
                                 if (!$DB->get_record('companylicense_users', $recordarray)) {
+                                    $recordarray['licenseid'] = $this->licenseid;
                                     $recordarray['issuedate'] = time();
                                     $recordarray['isusing'] = 0;
                                     $recordarray['id'] = $DB->insert_record('companylicense_users', $recordarray);

@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * License enrolment plugin.
  *
@@ -383,13 +385,14 @@ class enrol_license_plugin extends enrol_plugin {
                 // Update the userlicense record to mark it as in use.
                 $DB->set_field('companylicense_users', 'isusing', 1, array('id' => $userlicense->id));
 
-                // do we need to update the tracking table?
-                if ($track = $DB->get_record('local_iomad_track', array('userid' => $USER->id, 'courseid' => $instance->courseid, 'licenseallocated' => null))) {
-                    $track->licenseallocated = $userlicense->issuedate;
-                    $track->licensename = $license->name;
-                    $track->licenseid = $license->id;
-                    $DB->update_record('local_iomad_track', $track);
-                }
+                // Fire an event to record this 
+                $eventother = array('licenseid' => $license->id);
+                $event = \block_iomad_company_admin\event\user_license_used::create(array('context' => \context_course::instance($courseid),
+                                                                                          'objectid' => $userlicense->id,
+                                                                                          'courseid' => $instance->courseid,
+                                                                                          'userid' => $USER->id,
+                                                                                          'other' => $eventother));
+                $event->trigger();
 
                 // Send welcome.
                 if ($instance->customint4) {

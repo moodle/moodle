@@ -909,8 +909,8 @@ class potential_license_user_selector extends user_selector_base {
         $options['licenseid'] = $this->licenseid;
         $options['departmentid'] = $this->departmentid;
         $options['subdepartments'] = $this->subdepartments;
-        $options['parentdepartmentid'] = $this->program;
-        $options['program'] = $this->parentdepartmentid;
+        $options['parentdepartmentid'] = $this->parentdepartmentid;
+        $options['program'] = $this->program;
         $options['file']    = 'blocks/iomad_company_admin/lib.php';
         $options['multiselect']    = $this->multiselect;
         $options['selectedcourses'] = $this->selectedcourses;
@@ -937,8 +937,7 @@ class potential_license_user_selector extends user_selector_base {
                             AND timecompleted IS NULL";
             } else {
                 $usersql = "SELECT userid,count(licensecourseid) AS coursecount FROM {companylicense_users}
-                            WHERE licenseid=".$this->licenseid." $coursesql
-                            AND timecompleted IS NULL
+                            WHERE timecompleted IS NULL
                             GROUP BY userid
                             $countsql";
             }
