@@ -323,6 +323,7 @@ function email_reports_cron() {
         $checktime = time() - $warnnotstartedcourse->warnnotstarted * 60 * 60 *24;
         $warnnotstartedusers = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
                                                    WHERE courseid = :courseid
+                                                   AND notstartedstop = 0
                                                    AND (
                                                        (timestarted = 0
                                                        AND timeenrolled < :time1
