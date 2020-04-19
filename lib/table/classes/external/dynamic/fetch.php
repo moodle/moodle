@@ -227,11 +227,11 @@ class fetch extends external_api {
 
         ob_start();
         $instance->out($pagesize, true);
-        $participanttablehtml = ob_get_contents();
+        $tablehtml = ob_get_contents();
         ob_end_clean();
 
         return [
-            'html' => $participanttablehtml,
+            'html' => $tablehtml,
             'warnings' => []
         ];
     }
