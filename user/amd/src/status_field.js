@@ -30,6 +30,7 @@ import ModalEvents from 'core/modal_events';
 import ModalFactory from 'core/modal_factory';
 import Notification from 'core/notification';
 import Templates from 'core/templates';
+import {add as notifyUser} from 'core/toast';
 
 const Selectors = {
     editEnrolment: '[data-action="editenrolment"]',
@@ -123,7 +124,7 @@ const showEditDialogue = (link, getBody) => {
             e.preventDefault();
 
             // Submit form data.
-            submitEditFormAjax(link, getBody, modal, userEnrolmentId);
+            submitEditFormAjax(link, getBody, modal, userEnrolmentId, container.dataset);
         });
 
         // Handle hidden event.
@@ -161,9 +162,11 @@ const showUnenrolConfirmation = link => {
             // Submit data.
             submitUnenrolFormAjax(
                 link,
-                modal, {
+                modal,
+                {
                     ueid: userEnrolmentId,
-                }
+                },
+                container.dataset
             );
         });
 
@@ -259,8 +262,9 @@ const showStatusDetails = link => {
  * @param {Function} getBody
  * @param {Object} modal
  * @param {Number} userEnrolmentId
+ * @param {Object} userData
  */
-const submitEditFormAjax = (clickedLink, getBody, modal, userEnrolmentId) => {
+const submitEditFormAjax = (clickedLink, getBody, modal, userEnrolmentId, userData) => {
     const form = modal.getRoot().find('form');
 
     Repository.submitUserEnrolmentForm(form.serialize())
@@ -273,9 +277,17 @@ const submitEditFormAjax = (clickedLink, getBody, modal, userEnrolmentId) => {
         modal.hide();
         modal.destroy();
 
+        return data;
+    })
+    .then(() => {
         DynamicTable.refreshTableContent(getDynamicTableFromLink(clickedLink));
 
-        return data;
+        return Str.get_string('enrolmentupdatedforuser', 'core_enrol', userData);
+    })
+    .then(notificationString => {
+        notifyUser(notificationString);
+
+        return;
     })
     .catch(() => {
         modal.setBody(getBody(userEnrolmentId, JSON.stringify(form.serialize())));
@@ -290,8 +302,9 @@ const submitEditFormAjax = (clickedLink, getBody, modal, userEnrolmentId) => {
  * @param {HTMLElement} clickedLink
  * @param {Object} modal
  * @param {Object} args
+ * @param {Object} userData
  */
-const submitUnenrolFormAjax = (clickedLink, modal, args) => {
+const submitUnenrolFormAjax = (clickedLink, modal, args, userData) => {
     Repository.unenrolUser(args.ueid)
     .then(data => {
         if (!data.result) {
@@ -305,9 +318,17 @@ const submitUnenrolFormAjax = (clickedLink, modal, args) => {
         modal.hide();
         modal.destroy();
 
+        return data;
+    })
+    .then(() => {
         DynamicTable.refreshTableContent(getDynamicTableFromLink(clickedLink));
 
-        return data;
+        return Str.get_string('unenrolleduser', 'core_enrol', userData);
+    })
+    .then(notificationString => {
+        notifyUser(notificationString);
+
+        return;
     })
     .catch(Notification.exception);
 };
