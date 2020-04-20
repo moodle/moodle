@@ -267,9 +267,11 @@ class core_block_externallib_testcase extends externallib_advanced_testcase {
             $returnedblocks[] = $block['name'];
             // Check the configuration returned for this default block.
             if ($block['name'] == 'recentlyaccessedcourses') {
-                $this->assertEquals('displaycategories', $block['configs'][0]['name']);
-                $this->assertEquals(json_encode('0'), $block['configs'][0]['value']);
-                $this->assertEquals('plugin', $block['configs'][0]['type']);
+                // Convert config to associative array to avoid DB sorting randomness.
+                $config = array_column($block['configs'], null, 'name');
+                $this->assertArrayHasKey('displaycategories', $config);
+                $this->assertEquals(json_encode('0'), $config['displaycategories']['value']);
+                $this->assertEquals('plugin', $config['displaycategories']['type']);
             }
         }
         // Remove lp block.
