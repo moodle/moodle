@@ -60,7 +60,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I click on "View a different attempt" "link"
-    And I click on "//div[contains(concat(' ', normalize-space(@class), ' '), ' confirmation-dialogue ')]//input[@value='0']" "xpath_element"
+    And I click on "Attempt 1" "radio" in the "View a different attempt" "dialogue"
     And I click on "View" "button"
     And I set the following fields to these values:
       | Grade | 50 |
