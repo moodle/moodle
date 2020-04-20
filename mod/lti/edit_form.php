@@ -129,11 +129,29 @@ class mod_lti_edit_types_form extends moodleform {
                 $mform->setType('lti_clientid', PARAM_TEXT);
             }
 
-            $mform->addElement('textarea', 'lti_publickey', get_string('publickey', 'lti'), array('rows' => 8, 'cols' => 60));
+            $keyoptions = [
+                LTI_RSA_KEY => get_string('keytype_rsa', 'lti'),
+                LTI_JWK_KEYSET => get_string('keytype_keyset', 'lti'),
+            ];
+            $mform->addElement('select', 'lti_keytype', get_string('keytype', 'lti'), $keyoptions);
+            $mform->setType('lti_keytype', PARAM_TEXT);
+            $mform->addHelpButton('lti_keytype', 'keytype', 'lti');
+            $mform->setDefault('lti_keytype', LTI_JWK_KEYSET);
+            $mform->hideIf('lti_keytype', 'lti_ltiversion', 'neq', LTI_VERSION_1P3);
+
+            $mform->addElement('textarea', 'lti_publickey', get_string('publickey', 'lti'), ['rows' => 8, 'cols' => 60]);
             $mform->setType('lti_publickey', PARAM_TEXT);
             $mform->addHelpButton('lti_publickey', 'publickey', 'lti');
+            $mform->hideIf('lti_publickey', 'lti_keytype', 'neq', LTI_RSA_KEY);
             $mform->hideIf('lti_publickey', 'lti_ltiversion', 'neq', LTI_VERSION_1P3);
             $mform->setForceLtr('lti_publickey');
+
+            $mform->addElement('text', 'lti_publickeyset', get_string('publickeyset', 'lti'), ['size' => '64']);
+            $mform->setType('lti_publickeyset', PARAM_TEXT);
+            $mform->addHelpButton('lti_publickeyset', 'publickeyset', 'lti');
+            $mform->hideIf('lti_publickeyset', 'lti_keytype', 'neq', LTI_JWK_KEYSET);
+            $mform->hideIf('lti_publickeyset', 'lti_ltiversion', 'neq', LTI_VERSION_1P3);
+            $mform->setForceLtr('lti_publickeyset');
 
             $mform->addElement('text', 'lti_initiatelogin', get_string('initiatelogin', 'lti'), array('size' => '64'));
             $mform->setType('lti_initiatelogin', PARAM_URL);
