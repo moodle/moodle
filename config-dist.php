@@ -628,6 +628,13 @@ $CFG->admin = 'admin';
 //
 //      $CFG->debugsessionlock = 5;
 //
+// There are times when a session lock is not required during a request. For a page/service to opt-in whether or not a
+// session lock is required this setting must first be set to 'true'.
+// This is an experimental issue. The session store can not be in the session, please
+// see https://docs.moodle.org/en/Session_handling#Read_only_sessions.
+//
+//      $CFG->enable_read_only_sessions = true;
+//
 // Uninstall plugins from CLI only. This stops admins from uninstalling plugins from the graphical admin
 // user interface, and forces plugins to be uninstalled from the Command Line tool only, found at
 // admin/cli/plugin_uninstall.php.

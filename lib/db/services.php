@@ -748,7 +748,7 @@ $functions = array(
         'type' => 'read',
         'loginrequired' => false,
         'ajax' => true,
-        'requiresessionlock' => true, // Fetching removes from stack.
+        'readonlysession' => false, // Fetching removes from stack.
     ),
     'core_session_touch' => array(
         'classname' => 'core\session\external',
@@ -1375,7 +1375,7 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-        'requiresessionlock' => false, // We don't modify the session.
+        'readonlysession' => true, // We don't modify the session.
     ),
     'core_message_mark_all_notifications_as_read' => array(
         'classname' => 'core_message_external',

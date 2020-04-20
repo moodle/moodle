@@ -34,8 +34,8 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class handler {
-    /** @var boolean $haslock does the session need and/or have a lock? */
-    protected $haslock = false;
+    /** @var boolean $requireswritelock does the session need and/or have a lock? */
+    protected $requireswritelock = false;
 
     /**
      * Start the session.
@@ -50,9 +50,9 @@ abstract class handler {
      * with a write lock, then we will abort the session instead if able.
      */
     public function write_close() {
-        if ($this->has_writelock()) {
+        if ($this->requires_write_lock()) {
             session_write_close();
-            $this->haslock = false;
+            $this->requireswritelock = false;
         } else {
             $this->abort();
         }
@@ -65,7 +65,7 @@ abstract class handler {
      */
     public function abort() {
         session_abort();
-        $this->haslock = false;
+        $this->requireswritelock = false;
     }
 
     /**
@@ -73,10 +73,10 @@ abstract class handler {
      * opened should be writable or not. This is intentionally captured even if your
      * handler doesn't support non-locking sessions, so that behavior (upon session close)
      * matches closely between handlers.
-     * @param bool $needslock true if needs to be open for writing
+     * @param bool $requireswritelock true if needs to be open for writing
      */
-    public function set_needslock($needslock) {
-        $this->haslock = $needslock;
+    public function set_requires_write_lock($requireswritelock) {
+        $this->requireswritelock = $requireswritelock;
     }
 
     /**
@@ -84,8 +84,8 @@ abstract class handler {
      * start() if you support read-only sessions.
      * @return bool true if session is intended to have a write lock.
      */
-    public function has_writelock() {
-        return $this->haslock;
+    public function requires_write_lock() {
+        return $this->requireswritelock;
     }
 
     /**

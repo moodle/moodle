@@ -161,10 +161,10 @@ class external_api {
             } else {
                 $function->loginrequired = true;
             }
-            if (isset($functions[$function->name]['requiresessionlock'])) {
-                $function->requiresessionlock = $functions[$function->name]['requiresessionlock'];
+            if (isset($functions[$function->name]['readonlysession'])) {
+                $function->readonlysession = $functions[$function->name]['readonlysession'];
             } else {
-                $function->requiresessionlock = true;
+                $function->readonlysession = false;
             }
         }
 
@@ -190,7 +190,8 @@ class external_api {
         $externalfunctioninfo = static::external_function_info($function);
 
         // Eventually this should shift into the various handlers and not be handled via config.
-        if ($externalfunctioninfo->requiresessionlock) {
+        $readonlysession = $externalfunctioninfo->readonlysession ?? false;
+        if (!$readonlysession || empty($CFG->enable_read_only_sessions)) {
             \core\session\manager::restart_with_write_lock();
         }
 

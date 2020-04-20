@@ -57,6 +57,9 @@ class manager {
     /** @var string $logintokenkey Key used to get and store request protection for login form. */
     protected static $logintokenkey = 'core_auth_login';
 
+    /** @var array Stores the the SESSION before a request is performed, used to check incorrect read-only modes */
+    private static $priorsession = [];
+
     /**
      * If the current session is not writeable, abort it, and re-open it
      * requesting (and blocking) until a write lock is acquired.
@@ -68,13 +71,9 @@ class manager {
      * as practical across environments.
      */
     public static function restart_with_write_lock() {
-        if (self::$sessionactive) {
-            if (!self::$handler->has_writelock()) {
-                @self::$handler->abort();
-                self::$sessionactive = false;
-            }
-        }
-        if (!self::$sessionactive) {
+        if (self::$sessionactive && !self::$handler->requires_write_lock()) {
+            @self::$handler->abort();
+            self::$sessionactive = false;
             self::start_session(true);
         }
     }
@@ -104,47 +103,32 @@ class manager {
             return;
         }
 
-        if (defined('REQUIRE_SESSION_LOCK') && defined('ENABLE_READ_ONLY_SESSIONS') && ENABLE_READ_ONLY_SESSIONS) {
-            $needslock = REQUIRE_SESSION_LOCK;
+        if (defined('READ_ONLY_SESSION') && !empty($CFG->enable_read_only_sessions)) {
+            $requireslock = !READ_ONLY_SESSION;
         } else {
-            $needslock = true; // For backwards compatibility, we default to assuming that a lock is needed.
+            $requireslock = true; // For backwards compatibility, we default to assuming that a lock is needed.
         }
-        self::start_session($needslock);
+        self::start_session($requireslock);
     }
 
     /**
      * Handles starting a session.
      *
-     * @param bool $needslock If this is false then no write lock will be acquired,
-     *                        and the session will be read-only.
+     * @param bool $requireslock If this is false then no write lock will be acquired,
+     *                           and the session will be read-only.
      */
-    private static function start_session(bool $needslock) {
+    private static function start_session(bool $requireslock) {
         global $PERF;
 
         try {
             self::$handler->init();
-            self::$handler->set_needslock($needslock);
+            self::$handler->set_requires_write_lock($requireslock);
             self::prepare_cookies();
             $isnewsession = empty($_COOKIE[session_name()]);
-
-            if (defined('DEBUG_SESSION_TIMING_MIN_TIME')) {
-                $starttime = microtime(true);
-            }
 
             if (!self::$handler->start()) {
                 // Could not successfully start/recover session.
                 throw new \core\session\exception(get_string('servererror'));
-            }
-
-            // DEBUG_SESSION_TIMING_MIN_TIME if defined is a float, and we'll show a message for
-            // session aquisition that exceeds this amount in seconds.
-            if (defined('DEBUG_SESSION_TIMING_MIN_TIME')) {
-                $duration = microtime(true) - $starttime;
-                if ($duration > DEBUG_SESSION_TIMING_MIN_TIME) {
-                    /* don't log the raw session ID, since the session ID itself is a secret */
-                    error_log("slow_session_id:".hash('sha256', session_id())."|duration:".
-                        round($duration, 3)."s|session_url:".$_SERVER['PHP_SELF']."|write_lock:".($needslock ? '1' : '0'));
-                }
             }
 
             // Grab the time when session lock starts.
@@ -153,6 +137,10 @@ class manager {
             self::initialise_user_session($isnewsession);
             self::$sessionactive = true; // Set here, so the session can be cleared if the security check fails.
             self::check_security();
+
+            if (!$requireslock) {
+                self::$priorsession = (array) $_SESSION['SESSION'];
+            }
 
             // Link global $USER and $SESSION,
             // this is tricky because PHP does not allow references to references
@@ -708,6 +696,28 @@ class manager {
             $PERF->sessionlock['url'] = me();
             self::update_recent_session_locks($PERF->sessionlock);
             self::sessionlock_debugging();
+
+            if (!self::$handler->requires_write_lock()) {
+                // Compare the array of the earlier session data with the array now, if
+                // there is a difference then a lock is required.
+                $arraydiff = self::array_session_diff(
+                    self::$priorsession,
+                    (array) $_SESSION['SESSION']
+                );
+
+                if ($arraydiff) {
+                    if (isset($arraydiff['cachestore_session'])) {
+                        throw new \moodle_exception('The session store can not be in the session when '
+                            . 'enable_read_only_sessions is enabled');
+                    }
+
+                    error_log('This session was started as a read-only session but writes have been detected.');
+                    error_log('The following SESSION params were either added, or were updated.');
+                    foreach ($arraydiff as $key => $value) {
+                        error_log('SESSION key: ' . $key);
+                    }
+                }
+            }
         }
 
         // More control over whether session data
@@ -717,9 +727,13 @@ class manager {
             // indication session start was clean.
             self::$handler->write_close();
         } else {
-            // Otherwise, if possibile lock exists want
+            // Otherwise, if possible lock exists want
             // to clear it, but do not write session.
-            @self::$handler->abort();
+            // If the $handler has not been set then
+            // there is no session to abort.
+            if (isset(self::$handler)) {
+                @self::$handler->abort();
+            }
         }
 
         self::$sessionactive = false;
@@ -1362,5 +1376,28 @@ class manager {
                 debugging($output, DEBUG_DEVELOPER);
             }
         }
+    }
+
+    /**
+     * Compares two arrays outputs the difference.
+     *
+     * Note this does not use array_diff_assoc due to
+     * the use of stdClasses in Moodle sessions.
+     *
+     * @param array $array1
+     * @param array $array2
+     * @return array
+     */
+    private static function array_session_diff(array $array1, array $array2) : array {
+        $difference = [];
+        foreach ($array1 as $key => $value) {
+            if (!isset($array2[$key])) {
+                $difference[$key] = $value;
+            } else if ($array2[$key] !== $value) {
+                $difference[$key] = $value;
+            }
+        }
+
+        return $difference;
     }
 }
