@@ -20,43 +20,28 @@
  * @copyright  2016 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/templates',
-         'jquery',
-         'core/str',
-         'core/config',
-         'core/notification',
-         'core/modal_factory',
-         'core/modal_events',
-         'core/fragment',
-         'core/pending',
-       ],
-       function(Template, $, Str, Config, Notification, ModalFactory, ModalEvents, Fragment, Pending) {
+import jQuery from 'jquery';
+import * as Str from 'core/str';
+import Fragment from 'core/fragment';
+import ModalEvents from 'core/modal_events';
+import ModalFactory from 'core/modal_factory';
+import Notification from 'core/notification';
+import Templates from 'core/templates';
+import Config from 'core/config';
+import Pending from 'core/pending';
 
-    /** @type {Object} The list of selectors for the quick enrolment modal. */
-    var SELECTORS = {
-        COHORTSELECT: "#id_cohortlist",
-        TRIGGERBUTTONS: ".enrolusersbutton.enrol_manual_plugin [type='submit']",
-        UNWANTEDHIDDENFIELDS: ":input[value='_qf__force_multiselect_submission']"
-    };
+const Selectors = {
+    cohortSelector: "#id_cohortlist",
+    triggerButtons: ".enrolusersbutton.enrol_manual_plugin [type='submit']",
+    unwantedHiddenFields: ":input[value='_qf__force_multiselect_submission']"
+};
 
-    /**
-     * Constructor
-     *
-     * @param {Object} options Object containing options. The only valid option at this time is contextid.
-     * Each call to templates.render gets it's own instance of this class.
-     */
-    var QuickEnrolment = function(options) {
-        this.contextid = options.contextid;
+const QuickEnrolment = class {
+    constructor(contextId) {
+        this.contextId = contextId;
 
         this.initModal();
-    };
-    // Class variables and functions.
-
-    /** @var {number} courseid - */
-    QuickEnrolment.prototype.courseid = 0;
-
-    /** @var {Modal} modal */
-    QuickEnrolment.prototype.modal = null;
+    }
 
     /**
      * Private method
@@ -64,10 +49,10 @@ define(['core/templates',
      * @method initModal
      * @private
      */
-    QuickEnrolment.prototype.initModal = function() {
-        var triggerButtons = $(SELECTORS.TRIGGERBUTTONS);
+    initModal() {
+        var triggerButtons = jQuery(Selectors.triggerButtons);
 
-        $.when(
+        jQuery.when(
             Str.get_strings([
                 {key: 'enroluserscohorts', component: 'enrol_manual'},
                 {key: 'enrolusers', component: 'enrol_manual'},
@@ -95,7 +80,7 @@ define(['core/templates',
                 var pendingPromise = new Pending('enrol_manual/quickenrolment:initModal:shown');
                 var bodyPromise = this.getBody();
                 bodyPromise.then(function(html) {
-                    var stringIndex = $(html).find(SELECTORS.COHORTSELECT).length ? 0 : 1;
+                    var stringIndex = jQuery(html).find(Selectors.cohortSelector).length ? 0 : 1;
                     modal.setSaveButtonText(strings[stringIndex]);
 
                     return;
@@ -109,7 +94,8 @@ define(['core/templates',
             return;
         }.bind(this))
         .fail(Notification.exception);
-    };
+
+    }
 
     /**
      * This triggers a form submission, so that any mform elements can do final tricks before the form submission is processed.
@@ -118,10 +104,10 @@ define(['core/templates',
      * @param {Event} e Form submission event.
      * @private
      */
-    QuickEnrolment.prototype.submitForm = function(e) {
+    submitForm(e) {
         e.preventDefault();
         this.modal.getRoot().find('form').submit();
-    };
+    }
 
     /**
      * Private method
@@ -130,7 +116,7 @@ define(['core/templates',
      * @private
      * @param {Event} e Form submission event.
      */
-    QuickEnrolment.prototype.submitFormAjax = function(e) {
+    submitFormAjax(e) {
         // We don't want to do a real form submission.
         e.preventDefault();
 
@@ -138,9 +124,9 @@ define(['core/templates',
 
         // Before send the data through AJAX, we need to parse and remove some unwanted hidden fields.
         // This hidden fields are added automatically by mforms and when it reaches the AJAX we get an error.
-        var hidden = form.find(SELECTORS.UNWANTEDHIDDENFIELDS);
+        var hidden = form.find(Selectors.unwantedHiddenFields);
         hidden.each(function() {
-            $(this).remove();
+            jQuery(this).remove();
         });
 
         var formData = form.serialize();
@@ -154,7 +140,7 @@ define(['core/templates',
         };
 
         var script = Config.wwwroot + '/enrol/manual/ajax.php?' + formData;
-        $.ajax(script, settings)
+        jQuery.ajax(script, settings)
             .then(function(response) {
 
                 if (response.error) {
@@ -172,7 +158,7 @@ define(['core/templates',
                 return;
             })
             .fail(Notification.exception);
-    };
+    }
 
     /**
      * Private method
@@ -181,9 +167,9 @@ define(['core/templates',
      * @private
      * @return {Promise}
      */
-    QuickEnrolment.prototype.getBody = function() {
-        return Fragment.loadFragment('enrol_manual', 'enrol_users_form', this.contextid, {}).fail(Notification.exception);
-    };
+    getBody() {
+        return Fragment.loadFragment('enrol_manual', 'enrol_users_form', this.contextId, {}).fail(Notification.exception);
+    }
 
     /**
      * Private method
@@ -192,21 +178,11 @@ define(['core/templates',
      * @private
      * @return {Promise}
      */
-    QuickEnrolment.prototype.getFooter = function() {
-        return Template.render('enrol_manual/enrol_modal_footer', {});
-    };
+    getFooter() {
+        return Templates.render('enrol_manual/enrol_modal_footer', {});
+    }
+};
 
-    return /** @alias module:enrol_manual/quickenrolment */ {
-        // Public variables and functions.
-        /**
-         * Every call to init creates a new instance of the class with it's own event listeners etc.
-         *
-         * @method init
-         * @public
-         * @param {object} config - config variables for the module.
-         */
-        init: function(config) {
-            (new QuickEnrolment(config));
-        }
-    };
-});
+export const init = ({contextid}) => {
+    new QuickEnrolment(contextid);
+};
