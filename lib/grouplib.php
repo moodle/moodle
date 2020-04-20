@@ -1027,15 +1027,15 @@ function groups_get_members_join($groupid, $useridcolumn, context $context = nul
                     SELECT g.courseid, m.groupid, m.userid
                     FROM {groups_members} m
                     JOIN {groups} g ON g.id = m.groupid
-                ) {$prefix}gm ON ({$prefix}gm.userid = $useridcolumn AND {$prefix}gm.courseid = :{$prefix}gcourseid)";
+                ) {$prefix}gm ON ({$prefix}gm.userid = {$useridcolumn} AND {$prefix}gm.courseid = :{$prefix}gcourseid)";
         $where = "{$prefix}gm.userid IS NULL";
-        $param = array("{$prefix}gcourseid" => $coursecontext->instanceid);
+        $param = ["{$prefix}gcourseid" => $coursecontext->instanceid];
     } else {
         // Get members of defined groupid.
         $join = "JOIN {groups_members} {$prefix}gm
                 ON ({$prefix}gm.userid = $useridcolumn AND {$prefix}gm.groupid = :{$prefix}gmid)";
         $where = '';
-        $param = array("{$prefix}gmid" => $groupid);
+        $param = ["{$prefix}gmid" => $groupid];
     }
 
     return new \core\dml\sql_join($join, $where, $param);
