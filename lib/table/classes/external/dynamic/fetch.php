@@ -123,6 +123,12 @@ class fetch extends external_api {
                     null
                 )
             ),
+            'resetpreferences' => new external_value(
+                PARAM_BOOL,
+                'Whether the table preferences should be reset',
+                VALUE_REQUIRED,
+                null
+            ),
         ]);
     }
 
@@ -140,6 +146,8 @@ class fetch extends external_api {
      * @param string $lastinitial The last name initial to filter on
      * @param int $pagenumber The page number.
      * @param int $pagesize The number of records.
+     * @param string $jointype The join type.
+     * @param bool $resetpreferences Whether it is resetting table preferences or not.
      *
      * @return array
      */
@@ -155,7 +163,8 @@ class fetch extends external_api {
         ?string $lastinitial = null,
         ?int $pagenumber = null,
         ?int $pagesize = null,
-        ?array $hiddencolumns = null
+        ?array $hiddencolumns = null,
+        ?bool $resetpreferences = null
     ) {
 
         global $PAGE;
@@ -173,6 +182,7 @@ class fetch extends external_api {
             'pagenumber' => $pagenumber,
             'pagesize' => $pagesize,
             'hiddencolumns' => $hiddencolumns,
+            'resetpreferences' => $resetpreferences,
         ] = self::validate_parameters(self::execute_parameters(), [
             'component' => $component,
             'handler' => $handler,
@@ -186,6 +196,7 @@ class fetch extends external_api {
             'pagenumber' => $pagenumber,
             'pagesize' => $pagesize,
             'hiddencolumns' => $hiddencolumns,
+            'resetpreferences' => $resetpreferences,
         ]);
 
         $tableclass = "\\{$component}\\table\\{$handler}";
@@ -237,6 +248,12 @@ class fetch extends external_api {
         if ($hiddencolumns !== null) {
             $instance->set_hidden_columns($hiddencolumns);
         }
+
+        if ($resetpreferences === true) {
+            $instance->mark_table_to_reset();
+        }
+
+        $PAGE->set_url($instance->baseurl);
 
         ob_start();
         $instance->out($pagesize, true);
