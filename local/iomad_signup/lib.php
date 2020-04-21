@@ -31,16 +31,6 @@ function local_iomad_signup_user_created($user) {
         $user = $DB->get_record('user', array('id' => $user), '*', MUST_EXIST);
     }
 
-    // the plugin needs to be enabled
-    if (!$CFG->local_iomad_signup_enable) {
-        return true;
-    }
-
-    // If not 'email' auth then we are not interested
-    if (empty($CFG->local_iomad_signup_auth) || !in_array($user->auth, explode(',', $CFG->local_iomad_signup_auth))) {
-        return true;
-    }
-
     // If the user is already in a company then we do nothing more
     // as this came from the self sign up pages.
     if ($userrecord = $DB->get_record('company_users', array('userid' => $user->id))) {
@@ -50,6 +40,16 @@ function local_iomad_signup_user_created($user) {
         if ($CFG->local_iomad_signup_autoenrol) {
             $company->autoenrol($user);
         }
+        return true;
+    }
+
+    // For the rest of this the plugin needs to be enabled.
+    if (!$CFG->local_iomad_signup_enable) {
+        return true;
+    }
+
+    // If not 'email' auth then we are not interested
+    if (empty($CFG->local_iomad_signup_auth) || !in_array($user->auth, explode(',', $CFG->local_iomad_signup_auth))) {
         return true;
     }
 
