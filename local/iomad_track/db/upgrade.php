@@ -473,7 +473,7 @@ mtrace("enrol end " . time());
 
     if ($oldversion < 2020010201) {
 
-        require_once(dirname(__FILE__) . '/../classes/task/fixlicensedata_background.php');
+        require_once(dirname(__FILE__) . '/../classes/task/fixtracklicensetask.php');
 
         // Fire off the adhoc task to fix the license records.
         $task = new local_iomad_track\task\fixtracklicensetask();
