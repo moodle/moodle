@@ -43,15 +43,26 @@
     }
 
 }}
-{{>core_contentbank/toolbar}}
+<div class="d-flex justify-content-between flex-column flex-sm-row">
+    <div class="cb-search-container mb-2">
+        {{>core_contentbank/bankcontent/search}}
+    </div>
+    <div class="cb-toolbar-container mb-2">
+        {{>core_contentbank/bankcontent/toolbar}}
+    </div>
+</div>
 <div class="content-bank-container pb-3 border">
     <div class="content-bank">
         <div class="cb-navbar bg-light p-2 border-bottom">
-            {{#pix}} i/folder {{/pix}}
+            <div class="cb-navbar-breadbrumb">
+                {{#pix}} i/folder {{/pix}}
+            </div>
+            <div class="cb-navbar-totalsearch d-none">
+            </div>
         </div>
         <div class="cb-content-wrapper d-flex flex-wrap p-2">
         {{#contents}}
-            <div class="cb-file position-relative mb-2">
+            <div class="cb-file position-relative mb-2" data-file="{{{name}}}">
                 <div class="p-2">
                     <div class="cb-thumbnail mb-1 text-center">
                         {{{ icon }}}
@@ -60,7 +71,7 @@
                     {{#link}}
                         <a href="{{{ link }}}" class="stretched-link" title="{{{name}}}">
                     {{/link}}
-                            <span class="cb-name word-break-all clamp-2 text-center" >
+                            <span class="cb-name word-break-all clamp-2 text-center" data-region="cb-content-name">
                                 {{{ name }}}
                             </span>
                     {{#link}}

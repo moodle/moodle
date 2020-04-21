@@ -11525,6 +11525,11 @@ body.h5p-embed .h5pmessages {
 .word-break-all {
   word-break: break-all; }
 
+.matchtext {
+  background-color: #b5d9f9;
+  color: #343a40;
+  height: 1.5rem; }
+
 .emoji-picker {
   width: 350px;
   height: 400px; }
@@ -14761,10 +14766,6 @@ a.ygtvspacer:hover {
     flex-shrink: 0; }
     .message-app .footer-container textarea {
       direction: ltr; }
-  .message-app .matchtext {
-    background-color: #b5d9f9;
-    color: #343a40;
-    height: 1.5rem; }
   .message-app .contact-status {
     position: absolute;
     left: 39px;

@@ -72,6 +72,10 @@ class bankcontent implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output): stdClass {
+        global $PAGE;
+
+        $PAGE->requires->js_call_amd('core_contentbank/search', 'init');
+
         $data = new stdClass();
         $contentdata = array();
         foreach ($this->contents as $content) {

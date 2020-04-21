@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_contentbank/toolbar
+    @template core_contentbank/bankcontent/toolbar
 
     Example context (json):
     {
@@ -38,7 +38,7 @@
         {{#tools}}
             {{#link}}<a href="{{{ link }}}" title="{{{ name }}}">{{/link}}
                 <div class="cb-tool icon-no-margin btn btn-secondary btn-lg">
-                    {{#pix}} {{{ icon }}} {{/pix}}
+                    {{#pix}} {{{ icon }}} {{/pix}} <span class="sr-only">{{{ name }}}</span>
                 </div>
             {{#link}}</a>{{/link}}
         {{/tools}}
