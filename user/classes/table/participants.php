@@ -21,8 +21,9 @@
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+declare(strict_types=1);
 
-namespace core_user;
+namespace core_user\table;
 
 use DateTime;
 use context;
@@ -45,7 +46,7 @@ require_once($CFG->dirroot . '/user/lib.php');
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class participants_table extends \table_sql implements dynamic_table {
+class participants extends \table_sql implements dynamic_table {
 
     /**
      * @var int $courseid The course id

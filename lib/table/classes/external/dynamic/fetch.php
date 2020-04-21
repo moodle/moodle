@@ -51,9 +51,14 @@ class fetch extends external_api {
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters ([
+            'component' => new external_value(
+                PARAM_COMPONENT,
+                'Component',
+                VALUE_REQUIRED
+            ),
             'handler' => new external_value(
                 // Note: We do not have a PARAM_CLASSNAME which would have been ideal.
-                PARAM_RAW,
+                PARAM_ALPHANUMEXT,
                 'Handler',
                 VALUE_REQUIRED
             ),
@@ -116,6 +121,7 @@ class fetch extends external_api {
     /**
      * External function to fetch a table view.
      *
+     * @param string $component The component.
      * @param string $handler Dynamic table class name.
      * @param string $uniqueid Unique ID for the container.
      * @param string $sortby The name of a sortable column.
@@ -126,11 +132,11 @@ class fetch extends external_api {
      * @param string $lastinitial The last name initial to filter on
      * @param int $pagenumber The page number.
      * @param int $pagesize The number of records.
-     * @param string $jointype The join type.
      *
      * @return array
      */
     public static function execute(
+        string $component,
         string $handler,
         string $uniqueid,
         string $sortby,
@@ -145,11 +151,8 @@ class fetch extends external_api {
 
         global $PAGE;
 
-        if (!class_exists($handler) || !is_subclass_of($handler, \core_table\dynamic::class)) {
-            throw new \UnexpectedValueException('Unknown table handler, or table handler does not support dynamic updating.');
-        }
-
         [
+            'component' => $component,
             'handler' => $handler,
             'uniqueid' => $uniqueid,
             'sortby' => $sortby,
@@ -161,6 +164,7 @@ class fetch extends external_api {
             'pagenumber' => $pagenumber,
             'pagesize' => $pagesize,
         ] = self::validate_parameters(self::execute_parameters(), [
+            'component' => $component,
             'handler' => $handler,
             'uniqueid' => $uniqueid,
             'sortby' => $sortby,
@@ -173,7 +177,22 @@ class fetch extends external_api {
             'pagesize' => $pagesize,
         ]);
 
-        $filterset = new \core_user\table\participants_filterset();
+        $tableclass = "\\{$component}\\table\\{$handler}";
+        if (!class_exists($tableclass)) {
+            throw new \UnexpectedValueException("Table handler class {$tableclass} not found. " .
+                "Please make sure that your table handler class is under the \\{$component}\\table namespace.");
+        }
+
+        if (!is_subclass_of($tableclass, \core_table\dynamic::class)) {
+            throw new \UnexpectedValueException("Table handler class {$tableclass} does not support dynamic updating.");
+        }
+
+        $filtersetclass = "{$tableclass}_filterset";
+        if (!class_exists($filtersetclass)) {
+            throw new \UnexpectedValueException("The filter specified ({$filtersetclass}) is invalid.");
+        }
+
+        $filterset = new $filtersetclass();
         foreach ($filters as $rawfilter) {
             $filterset->add_filter_from_params(
                 $rawfilter['name'],
@@ -182,7 +201,7 @@ class fetch extends external_api {
             );
         }
 
-        $instance = new $handler($uniqueid);
+        $instance = new $tableclass($uniqueid);
         $instance->set_filterset($filterset);
         $instance->set_sorting($sortby, $sortorder);
 
@@ -208,11 +227,11 @@ class fetch extends external_api {
 
         ob_start();
         $instance->out($pagesize, true);
-        $participanttablehtml = ob_get_contents();
+        $tablehtml = ob_get_contents();
         ob_end_clean();
 
         return [
-            'html' => $participanttablehtml,
+            'html' => $tablehtml,
             'warnings' => []
         ];
     }

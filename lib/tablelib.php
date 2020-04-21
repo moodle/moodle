@@ -1500,6 +1500,26 @@ class flexible_table {
     }
 
     /**
+     * Get dynamic class component.
+     *
+     * @return string
+     */
+    protected function get_component() {
+        $tableclass = explode("\\", get_class($this));
+        return reset($tableclass);
+    }
+
+    /**
+     * Get dynamic class handler.
+     *
+     * @return string
+     */
+    protected function get_handler() {
+        $tableclass = explode("\\", get_class($this));
+        return end($tableclass);
+    }
+
+    /**
      * Get the dynamic table start wrapper.
      * If this is not a dynamic table, then an empty string is returned making this safe to blindly call.
      *
@@ -1510,7 +1530,8 @@ class flexible_table {
             $sortdata = $this->get_sort_order();
             return html_writer::start_tag('div', [
                 'data-region' => 'core_table/dynamic',
-                'data-table-handler' => get_class($this),
+                'data-table-handler' => $this->get_handler(),
+                'data-table-component' => $this->get_component(),
                 'data-table-uniqueid' => $this->uniqueid,
                 'data-table-filters' => json_encode($this->get_filterset()),
                 'data-table-sort-by' => $sortdata['sortby'],
