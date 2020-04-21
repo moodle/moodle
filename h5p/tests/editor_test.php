@@ -22,13 +22,19 @@
  * @copyright  2020 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace core_h5p;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
 
 use advanced_testcase;
 use core_h5p\local\library\autoloader;
-use moodleform;
 use MoodleQuickForm;
 use page_requirements_manager;
+
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  *
@@ -253,7 +259,7 @@ class editor_testcase extends advanced_testcase {
 /**
  * Form object to be used in test case.
  */
-class temp_form extends moodleform {
+class temp_form extends \moodleform {
     /**
      * Form definition.
      */
