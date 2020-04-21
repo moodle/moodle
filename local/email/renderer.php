@@ -29,11 +29,12 @@ class local_email_renderer extends plugin_renderer_base {
      * Back to list of roles button
      */
     public function templateset_buttons($savelink, $managelink, $backlink) {
-        $out = '<p><a class="btn btn-primary" href="'.$savelink.'">' . get_string('savetemplateset', 'local_email') . '</a> '.
-               '<a class="btn btn-primary" href="'.$managelink.'">' . get_string('managetemplatesets', 'local_email') . '</a>';
         if (!empty($backlink)) {
-            $out .= ' <a class="btn btn-primary" href="'.$backlink.'">' . get_string('backtocompanytemplates', 'local_email') . '</a>';
-        }
+            $out = ' <a class="btn btn-primary" href="'.$backlink.'">' . get_string('backtocompanytemplates', 'local_email') . '</a>';
+        } else {
+            $out = '<p><a class="btn btn-primary" href="'.$savelink.'">' . get_string('savetemplateset', 'local_email') . '</a> ';
+            $out .= ' <a class="btn btn-primary" href="'.$managelink.'">' . get_string('managetemplatesets', 'local_email') . '</a>';
+}
         $out .= '</p>';
 
         return $out;
@@ -76,13 +77,51 @@ class local_email_renderer extends plugin_renderer_base {
         $stroverride = get_string('custom', 'local_email');
         $strdefault = get_string('default');
 
+        // Deal with header sliders.
+        $sliced = array_slice($configtemplates, $page * $perpage, $perpage, true);
+        $echecked = " checked ";
+        $eschecked = " checked ";
+        $emchecked = " checked ";
+        $ecount = 0;
+        $emcount = 0;
+        $escount =0;
+
+        foreach ($sliced as $test) {
+            foreach ($templates as $templateid => $template) {
+                if ($template->name == $test) {
+                    if ($template->disabled) {
+                        $ecount++;
+                    }
+                    if ($template->disabledmanager) {
+                        $emcount++;
+                    }
+                    if ($template->disabledsupervisor) {
+                        $escount++;
+                    }
+                }
+            }
+        }
+        if ($ecount == count($sliced)) {
+            $echecked = "";
+        }
+        if ($emcount == count($sliced)) {
+            $emchecked = "";
+        }
+        if ($escount == count($sliced)) {
+            $eschecked = "";
+        }
         $table = new html_table();
         $table->id = 'ReportTable';
-        $table->head = array (get_string('emailtemplatename', 'local_email'),
-                              get_string('enable'),
-                              get_string('enable_manager', 'local_email'),
-                              get_string('enable_supervisor', 'local_email'),
-                              get_string('controls', 'local_email'));
+        $head = array();
+        $head[] = get_string('emailtemplatename', 'local_email');
+        $head[] = get_string('enable') . '</br><label class="switch"><input class="checkbox enableallall" type="checkbox" ' . $echecked. ' value="' . "{$prefix}.e.{$page}" . '" />' .
+                                    "<span class='slider round'></span></label>";
+        $head[] = get_string('enable_manager', 'local_email') . '</br><label class="switch"><input class="checkbox enableallmanager" type="checkbox" ' . $emchecked. ' value="' . "{$prefix}.em.{$page}" . '" />' .
+                                    "<span class='slider round'></span></label>";
+        $head[] = get_string('enable_supervisor', 'local_email') . '</br><label class="switch"><input class="checkbox enableallsupervisor" type="checkbox" ' . $eschecked. ' value="' . "{$prefix}.es.{$page}" . '" />' .
+                                    "<span class='slider round'></span></label>";
+        $head[] = get_string('controls', 'local_email');
+        $table->head = $head;
         $table->align = array ("left", "center", "center", "center", "center", "center", "center", "center");
 
         $i = $page * $perpage;
@@ -109,7 +148,7 @@ class local_email_renderer extends plugin_renderer_base {
                                                                           $templatesetid);
             } else {
                 $row = new html_table_row();
-                $row->cells[] = $templatename;
+                $row->cells[] = get_string($templatename.'_name', 'local_email') . $this->help_icon($templatename.'_name', 'local_email');
                 if ($enable) {
                     if ($template->disabled) {
                         $checked = "";
@@ -117,7 +156,7 @@ class local_email_renderer extends plugin_renderer_base {
                         $checked = "checked";
                     }
                     $value ="{$prefix}.e.{$templatename}";
-                    $enablebutton = '<label class="switch"><input class="checkbox" type="checkbox" ' . $checked. ' value="' . $value . '" />' .
+                    $enablebutton = '<label class="switch"><input class="checkbox enableall" type="checkbox" ' . $checked. ' value="' . $value . '" />' .
                                     "<span class='slider round'></span></label>";
                     $cell = new html_table_cell($enablebutton);
                     $row->cells[] = $cell;
@@ -127,7 +166,7 @@ class local_email_renderer extends plugin_renderer_base {
                         $checked = 'checked';
                     }
                     $value ="{$prefix}.em.{$templatename}";
-                    $enablemanagerbutton = '<label class="switch"><input class="checkbox " type="checkbox" ' . $checked. ' value="' . $value . '" />' .
+                    $enablemanagerbutton = '<label class="switch"><input class="checkbox enablemanager" type="checkbox" ' . $checked. ' value="' . $value . '" />' .
                                            "<span class='slider round'></span></label>";
                     $cell = new html_table_cell($enablemanagerbutton);
                     $row->cells[] = $cell;
@@ -137,7 +176,7 @@ class local_email_renderer extends plugin_renderer_base {
                         $checked = 'checked';
                     }
                     $value ="{$prefix}.es.{$templatename}";
-                    $enablesupervisorbutton = '<label class="switch"><input class="checkbox" type="checkbox" ' . $checked. ' value="' . $value . '" />' .
+                    $enablesupervisorbutton = '<label class="switch"><input class="checkbox enablesupervisor" type="checkbox" ' . $checked. ' value="' . $value . '" />' .
                                               "<span class='slider round'></span></label>";
                     $cell = new html_table_cell($enablesupervisorbutton);
                     $row->cells[] = $cell;

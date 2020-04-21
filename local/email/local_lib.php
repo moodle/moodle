@@ -30,13 +30,13 @@ class local_email {
 
         if ($enable) {
             $value ="{$prefix}.e.{$templatename}";
-            $enablebutton = '<label class="switch"><input class="checkbox" type="checkbox" checked value="' . $value . '" />' .
+            $enablebutton = '<label class="switch"><input class="checkbox enableall" type="checkbox" checked value="' . $value . '" />' .
                              "<span class='slider round'></span></label>";
             $value ="{$prefix}.em.{$templatename}";
-            $enablemanagerbutton = '<label class="switch"><input class="checkbox" type="checkbox" checked value="' . $value . '" />' .
+            $enablemanagerbutton = '<label class="switch"><input class="checkbox enablemanager" type="checkbox" checked value="' . $value . '" />' .
                              "<span class='slider round'></span></label";
             $value ="{$prefix}.es.{$templatename}";
-            $enablesupervisorbutton = '<label class="switch"><input class="checkbox" type="checkbox" checked value="' . $value . '" />' .
+            $enablesupervisorbutton = '<label class="switch"><input class="checkbox enablesupervisor" type="checkbox" checked value="' . $value . '" />' .
                              "<span class='slider round'></span></label>";
 
         } else {

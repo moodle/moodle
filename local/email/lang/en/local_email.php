@@ -154,7 +154,8 @@ $string['user_unsuspended_name'] = 'User unsuspended';
 $string['user_unsuspended_name_help'] = 'This email is sent out to a user when their account is unsuspended';
 $string['completion_course_supervisor_name'] = 'User\'s supervisor completion report';
 $string['completion_warn_supervisor_name'] = 'User\'s supervisor course completion warning.';
-$string['completion_expiry_warn_name'] = 'User\'s supervisor training expired warning';
+$string['completion_expiry_warn_name'] = 'User\'s training expired warning';
+$string['completion_expiry_warn_supervisor_name'] = 'User\'s supervisor training expired warning';
 $string['approval_name_help'] = 'Template sent out to managers when a user has asked for approval to a course.';
 $string['approved_name_help'] = 'Template sent out to users when they have been granted access to a course.';
 $string['course_classroom_approval_name_help'] = 'Template sent out to managers when a user has asked for approval to a training event.';
@@ -185,7 +186,8 @@ $string['user_reset_name_help'] = 'Template sent out to a user when a manager re
 $string['user_create_name_help'] = 'Template sent out to a new user when a new account has been created.';
 $string['completion_course_supervisor_name_help'] = 'Template sent out to a users supervisor email address (if defined) when a user completed a course.';
 $string['completion_warn_supervisor_name_help'] = 'Template sent out to a users supervisor email address (if defined) when a user has not completed a course in the configured time.';
-$string['completion_expiry_warn_name_help'] = 'Template sent out to a users supervisor email address (if defined) when a user\'s training has expired.';
+$string['completion_expiry_warn_name_help'] = 'Template sent out to a user when their training has expired.';
+$string['completion_expiry_warn_supervisor_name_help'] = 'Template sent out to a users supervisor email address (if defined) when a user\'s training has expired.';
 
 
 /* Email templates */
