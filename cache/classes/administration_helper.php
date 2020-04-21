@@ -101,11 +101,29 @@ abstract class administration_helper extends cache_helper {
         ksort($default);
         $return = $return + $default;
 
-        foreach ($instance->get_definition_mappings() as $mapping) {
+        $mappings = $instance->get_definition_mappings();
+        foreach ($mappings as $mapping) {
             if (!array_key_exists($mapping['store'], $return)) {
                 continue;
             }
             $return[$mapping['store']]['mappings']++;
+        }
+
+        // Now get all definitions, and if not mapped, increment the defaults for the mode.
+        $modemappings = $instance->get_mode_mappings();
+        foreach ($instance->get_definitions() as $definition) {
+            // Construct the definition name to search for.
+            $defname = $definition['component'] . '/' . $definition['area'];
+            // Skip if definition is already mapped.
+            if (array_search($defname, array_column($mappings, 'definition')) !== false) {
+                continue;
+            }
+
+            $mode = $definition['mode'];
+            // Get the store name of the default mapping from the mode.
+            $index = array_search($mode, array_column($modemappings, 'mode'));
+            $store = $modemappings[$index]['store'];
+            $return[$store]['mappings']++;
         }
 
         return $return;
