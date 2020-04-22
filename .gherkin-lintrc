@@ -14,7 +14,7 @@
   "no-multiple-empty-lines": "on",
   "no-partially-commented-tag-lines": "on",
   "no-trailing-spaces": "on",
-  "no-unamed-features": "on",
-  "no-unamed-scenarios": "on",
+  "no-unnamed-features": "on",
+  "no-unnamed-scenarios": "on",
   "no-scenario-outlines-without-examples": "on"
 }
