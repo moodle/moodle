@@ -92,7 +92,7 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
     And I should see "Select the picture"
     Then "//*[contains(@id, 'id_answer_editor_0')]//img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist
 
-@javascript @_file_upload
+  @javascript @_file_upload
   Scenario: Duplicate question page with image in feedback.
     Given I follow "Test lesson name"
     And I follow "Add a question page"

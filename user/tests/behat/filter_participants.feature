@@ -70,6 +70,7 @@ Feature: Course participants can be filtered
     And I should not see "<notexpected1>" in the "participants" "table"
     And I should not see "<notexpected2>" in the "participants" "table"
     # Note the 'XX-IGNORE-XX' elements are for when there is less than 2 'not expected' items.
+
     Examples:
       | filter1                         | expected1 | expected2 | expected3 | notexpected1 | notexpected2 |
       | Group: No group                 | Student 1 | Student 4 | Teacher 1 | Student 2    | Student 3    |
@@ -92,6 +93,7 @@ Feature: Course participants can be filtered
     And I should not see "<notexpected1>" in the "participants" "table"
     And I should not see "<notexpected2>" in the "participants" "table"
     # Note the 'XX-IGNORE-XX' elements are for when there is less than 2 'not expected' items.
+
     Examples:
       | filter1                         | expected1 | expected2 | expected3 | notexpected1 | notexpected2 |
       | Group: No group                 | Student 3 |           |           | Student 1    | Student 2    |
