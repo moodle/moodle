@@ -55,6 +55,12 @@ class api {
     const MOODLE_APPS_PORTAL_URL = 'https://apps.moodle.com';
     /** @var int seconds a QR login key will expire. */
     const LOGIN_QR_KEY_TTL = 600;
+    /** @var int QR code disabled value */
+    const QR_CODE_DISABLED = 0;
+    /** @var int QR code type URL value */
+    const QR_CODE_URL = 1;
+    /** @var int QR code type login value */
+    const QR_CODE_LOGIN = 2;
 
     /**
      * Returns a list of Moodle plugins supporting the mobile app.
@@ -626,17 +632,25 @@ class api {
     }
 
     /**
-     * Generates a QR code for automatic login from the mobile app.
+     * Generates a QR code with the site URL or for automatic login from the mobile app.
      *
      * @param  stdClass $mobilesettings tool_mobile settings
-     * @return string base64 data image contents
+     * @return string base64 data image contents, null if qr disabled
      */
     public static function generate_login_qrcode(stdClass $mobilesettings) {
         global $CFG, $USER;
 
+        if ($mobilesettings->qrcodetype == static::QR_CODE_DISABLED) {
+            return null;
+        }
+
         $urlscheme = !empty($mobilesettings->forcedurlscheme) ? $mobilesettings->forcedurlscheme : 'moodlemobile';
-        $qrloginkey = static::get_qrlogin_key();
-        $data = $urlscheme . '://' . $CFG->wwwroot . '?qrlogin=' . $qrloginkey . '&userid=' . $USER->id;
+        $data = $urlscheme . '://' . $CFG->wwwroot;
+
+        if ($mobilesettings->qrcodetype == static::QR_CODE_LOGIN) {
+            $qrloginkey = static::get_qrlogin_key();
+            $data .= '?qrlogin=' . $qrloginkey . '&userid=' . $USER->id;
+        }
 
         $qrcode = new core_qrcode($data);
         $imagedata = 'data:image/png;base64,' . base64_encode($qrcode->getBarcodePngData(5, 5));

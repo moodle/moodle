@@ -628,9 +628,9 @@ class external extends external_api {
         // We need this to make work the format text functions.
         $PAGE->set_context($context);
 
-        $enableqrlogin = get_config('tool_mobile', 'enableqrlogin');
-        if (empty($enableqrlogin)) {
-            throw new moodle_exception('QR login not enabled');
+        $qrcodetype = get_config('tool_mobile', 'qrcodetype');
+        if ($qrcodetype != api::QR_CODE_LOGIN) {
+            throw new moodle_exception('qrcodedisabled', 'tool_mobile');
         }
 
         // Only requests from the Moodle mobile or desktop app. This enhances security to avoid any type of XSS attack.

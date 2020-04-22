@@ -643,9 +643,9 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        set_config('enableqrlogin', 1, 'tool_mobile');
+        set_config('qrcodetype', tool_mobile\api::QR_CODE_DISABLED, 'tool_mobile');
 
-        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('qrcodedisabled', 'tool_mobile'));
         $result = external::get_tokens_for_qr_login('', $USER->id);
     }
 

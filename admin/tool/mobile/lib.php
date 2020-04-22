@@ -129,25 +129,36 @@ function tool_mobile_myprofile_navigation(\core_user\output\myprofile\tree $tree
     $newnodes = [];
     $mobilesettings = get_config('tool_mobile');
 
-    // Check if we should display a QR code for quick login.
-    if (is_https() && !empty($mobilesettings->enableqrlogin)) {
-        $qrcodeforappstr = get_string('qrcodeformobileapplogin', 'tool_mobile');
+    // Check if we should display a QR code.
+    if (!empty($mobilesettings->qrcodetype)) {
+        $mobileqr = null;
+        $qrcodeforappstr = get_string('qrcodeformobileappaccess', 'tool_mobile');
 
-        if (is_siteadmin()) {
-            $mobileqr = get_string('qrsiteadminsnotallowed', 'tool_mobile');
-        } else {
+        if ($mobilesettings->qrcodetype == tool_mobile\api::QR_CODE_LOGIN && is_https()) {
 
+            if (is_siteadmin() || \core\session\manager::is_loggedinas()) {
+                $mobileqr = get_string('qrsiteadminsnotallowed', 'tool_mobile');
+            } else {
+                $qrcodeimg = tool_mobile\api::generate_login_qrcode($mobilesettings);
+
+                $minutes = tool_mobile\api::LOGIN_QR_KEY_TTL / MINSECS;
+                $mobileqr = html_writer::tag('p', get_string('qrcodeformobileapploginabout', 'tool_mobile', $minutes));
+                $mobileqr .= html_writer::link('#qrcode', get_string('viewqrcode', 'tool_mobile'),
+                    ['class' => 'btn btn-primary mt-2', 'data-toggle' => 'collapse',
+                    'role' => 'button', 'aria-expanded' => 'false']);
+                $mobileqr .= html_writer::div(html_writer::img($qrcodeimg, $qrcodeforappstr), 'collapse mt-4', ['id' => 'qrcode']);
+            }
+
+        } else if ($mobilesettings->qrcodetype == tool_mobile\api::QR_CODE_URL) {
             $qrcodeimg = tool_mobile\api::generate_login_qrcode($mobilesettings);
 
-            $minutes = tool_mobile\api::LOGIN_QR_KEY_TTL / MINSECS;
-
-            $mobileqr = get_string('qrcodeformobileapploginabout', 'tool_mobile', $minutes);
-            $mobileqr .= html_writer::link('#qrcode', get_string('viewqrcode', 'tool_mobile'),
-                ['class' => 'btn btn-primary mt-2', 'data-toggle' => 'collapse', 'role' => 'button', 'aria-expanded' => 'false']);
-            $mobileqr .= html_writer::div(html_writer::img($qrcodeimg, $qrcodeforappstr), 'collapse mt-4', ['id' => 'qrcode']);
+            $mobileqr = get_string('qrcodeformobileappurlabout', 'tool_mobile');
+            $mobileqr .= html_writer::div(html_writer::img($qrcodeimg, $qrcodeforappstr));
         }
 
-        $newnodes[] = new core_user\output\myprofile\node('mobile', 'mobileappqr', $qrcodeforappstr, null, null, $mobileqr);
+        if ($mobileqr) {
+            $newnodes[] = new core_user\output\myprofile\node('mobile', 'mobileappqr', $qrcodeforappstr, null, null, $mobileqr);
+        }
     }
 
     // Check if the user is using the app, encouraging him to use it otherwise.
