@@ -109,7 +109,6 @@ form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
     border: 2px solid khaki;
     padding: 5px;
     border-radius: 10px;
-    filter: alpha(opacity=60);
     opacity: 0.6;
     margin: 5px;
     display: inline-block;
