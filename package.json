@@ -31,7 +31,7 @@
     "jshint": "^2.11.0",
     "node-sass": "^4.14.0",
     "semver": "7.3.2",
-    "shifter": "https://github.com/andrewnicols/shifter/archive/v0.5.0_moodle-0.tar.gz",
+    "shifter": "https://github.com/andrewnicols/shifter/archive/v1.2.0_moodle-0.tar.gz",
     "stylelint": "13.3.3",
     "stylelint-checkstyle-formatter": "0.1.2",
     "stylelint-csstree-validator": "1.8.0",
