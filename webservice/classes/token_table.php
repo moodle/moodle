@@ -165,7 +165,7 @@ class token_table extends \table_sql {
         global $USER;
         // Hide the token if it wasn't created by the current user.
         if ($data->creatorid != $USER->id) {
-            return '-';
+            return \html_writer::tag('small', get_string('onlyseecreatedtokens', 'core_webservice'), ['class' => 'text-muted']);
         }
 
         return $data->token;
