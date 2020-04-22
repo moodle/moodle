@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.8.3 ===
+* database_manager::check_database_schema() now checks for missing indexes.
+
 === 3.8.2 ===
 * grade_item::update_final_grade() can now take an optional parameter to set the grade->timemodified. If not present the current time will carry on being used.
 
