@@ -47,11 +47,16 @@ class token_table extends \table_sql {
     /** @var bool $hasviewfullnames Does the user have the viewfullnames capability. */
     protected $hasviewfullnames;
 
+    /** @var object */
+    protected $filterdata;
+
     /**
      * Sets up the table.
+     *
      * @param int $id The id of the table
+     * @param object $filterdata The data submitted by the {@see token_filter}.
      */
-    public function __construct($id) {
+    public function __construct($id, $filterdata = null) {
         parent::__construct($id);
 
         // Get the context.
@@ -60,6 +65,9 @@ class token_table extends \table_sql {
         // Can we see tokens created by all users?
         $this->showalltokens = has_capability('moodle/webservice:managealltokens', $context);
         $this->hasviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+
+        // Filter form values.
+        $this->filterdata = $filterdata;
 
         // Define the headers and columns.
         $headers = [];
@@ -227,41 +235,55 @@ class token_table extends \table_sql {
         $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $creatorfields = $userfieldsapi->get_sql('c', false, 'creator', '', false)->selects;
 
-        $params = ["tokenmode" => EXTERNAL_TOKEN_PERMANENT];
+        $params = ['tokenmode' => EXTERNAL_TOKEN_PERMANENT];
 
-        // TODO: in order to let the administrator delete obsolete token, split the request in multiple request or use LEFT JOIN.
+        $selectfields = "SELECT t.id, t.token, t.iprestriction, t.validuntil, t.creatorid,
+                                u.id AS userid, $usernamefields,
+                                s.id AS serviceid, s.name,
+                                $creatorfields ";
 
-        if ($this->showalltokens) {
-            // Show all tokens.
-            $sql = "SELECT t.id, t.token, u.id AS userid, $usernamefields, s.name, t.iprestriction, t.validuntil, s.id AS serviceid,
-                           t.creatorid, $creatorfields
-                      FROM {external_tokens} t, {user} u, {external_services} s, {user} c
-                     WHERE t.tokentype = :tokenmode AND s.id = t.externalserviceid AND t.userid = u.id AND c.id = t.creatorid";
-            $countsql = "SELECT COUNT(t.id)
-                           FROM {external_tokens} t, {user} u, {external_services} s, {user} c
-                          WHERE t.tokentype = :tokenmode AND s.id = t.externalserviceid AND t.userid = u.id AND c.id = t.creatorid";
-        } else {
+        $selectcount = "SELECT COUNT(t.id) ";
+
+        $sql = "  FROM {external_tokens} t
+                  JOIN {user} u ON u.id = t.userid
+                  JOIN {external_services} s ON s.id = t.externalserviceid
+                  JOIN {user} c ON c.id = t.creatorid
+                 WHERE t.tokentype = :tokenmode";
+
+        if (!$this->showalltokens) {
             // Only show tokens created by the current user.
-            $sql = "SELECT t.id, t.token, u.id AS userid, $usernamefields, s.name, t.iprestriction, t.validuntil, s.id AS serviceid,
-                           t.creatorid, $creatorfields
-                      FROM {external_tokens} t, {user} u, {external_services} s, {user} c
-                     WHERE t.creatorid=:userid AND t.tokentype = :tokenmode AND s.id = t.externalserviceid AND t.userid = u.id AND
-                           c.id = t.creatorid";
-            $countsql = "SELECT COUNT(t.id)
-                           FROM {external_tokens} t, {user} u, {external_services} s, {user} c
-                          WHERE t.creatorid=:userid AND t.tokentype = :tokenmode AND s.id = t.externalserviceid AND
-                                t.userid = u.id AND c.id = t.creatorid";
-            $params["userid"] = $USER->id;
+            $sql .= " AND t.creatorid = :userid";
+            $params['userid'] = $USER->id;
+        }
+
+        if ($this->filterdata->token !== '') {
+            $sql .= " AND " . $DB->sql_like("t.token", ":token");
+            $params['token'] = "%" . $DB->sql_like_escape($this->filterdata->token) . "%";
+        }
+
+        if (!empty($this->filterdata->users)) {
+            list($sqlusers, $paramsusers) = $DB->get_in_or_equal($this->filterdata->users, SQL_PARAMS_NAMED, 'user');
+            $sql .= " AND t.userid {$sqlusers}";
+            $params += $paramsusers;
+        }
+
+        if (!empty($this->filterdata->services)) {
+            list($sqlservices, $paramsservices) = $DB->get_in_or_equal($this->filterdata->services, SQL_PARAMS_NAMED, 'service');
+            $sql .= " AND s.id {$sqlservices}";
+            $params += $paramsservices;
         }
 
         $sort = $this->get_sql_sort();
+        $sortsql = '';
+
         if ($sort) {
-            $sql = $sql . ' ORDER BY ' . $sort;
+            $sortsql = " ORDER BY {$sort}";
         }
 
-        $total = $DB->count_records_sql($countsql, $params);
+        $total = $DB->count_records_sql($selectcount . $sql, $params);
         $this->pagesize($pagesize, $total);
 
-        $this->rawdata = $DB->get_recordset_sql($sql, $params, $this->get_page_start(), $this->get_page_size());
+        $this->rawdata = $DB->get_recordset_sql($selectfields . $sql . $sortsql, $params, $this->get_page_start(),
+            $this->get_page_size());
     }
 }
