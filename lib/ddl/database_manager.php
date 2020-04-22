@@ -962,6 +962,8 @@ class database_manager {
             'extracolumns' => true,
             'missingcolumns' => true,
             'changedcolumns' => true,
+            'missingindexes' => true,
+            'extraindexes' => true
         );
 
         $typesmap = array(
@@ -1001,6 +1003,7 @@ class database_manager {
 
             /** @var database_column_info[] $dbfields */
             $dbfields = $this->mdb->get_columns($tablename, false);
+            $dbindexes = $this->mdb->get_indexes($tablename);
             /** @var xmldb_field[] $fields */
             $fields = $table->getFields();
 
@@ -1096,6 +1099,61 @@ class database_manager {
                 unset($dbfields[$fieldname]);
             }
 
+            // Check for missing indexes/keys.
+            if ($options['missingindexes']) {
+                // Check the foreign keys.
+                if ($keys = $table->getKeys()) {
+                    foreach ($keys as $key) {
+                        // Primary keys are skipped.
+                        if ($key->getType() == XMLDB_KEY_PRIMARY) {
+                            continue;
+                        }
+
+                        $keyname = $key->getName();
+
+                        // Create the interim index.
+                        $index = new xmldb_index('anyname');
+                        $index->setFields($key->getFields());
+                        switch ($key->getType()) {
+                            case XMLDB_KEY_UNIQUE:
+                            case XMLDB_KEY_FOREIGN_UNIQUE:
+                                $index->setUnique(true);
+                                break;
+                            case XMLDB_KEY_FOREIGN:
+                                $index->setUnique(false);
+                                break;
+                        }
+                        if (!$this->index_exists($table, $index)) {
+                            $errors[$tablename][] = $this->get_missing_index_error($table, $index, $keyname);
+                        } else {
+                            $this->remove_index_from_dbindex($dbindexes, $index);
+                        }
+                    }
+                }
+
+                // Check the indexes.
+                if ($indexes = $table->getIndexes()) {
+                    foreach ($indexes as $index) {
+                        if (!$this->index_exists($table, $index)) {
+                            $errors[$tablename][] = $this->get_missing_index_error($table, $index, $index->getName());
+                        } else {
+                            $this->remove_index_from_dbindex($dbindexes, $index);
+                        }
+                    }
+                }
+            }
+
+            // Check if we should show the extra indexes.
+            if ($options['extraindexes']) {
+                // Hack - skip for table 'search_simpledb_index' as this plugin adds indexes dynamically on install
+                // which are not included in install.xml. See search/engine/simpledb/db/install.php.
+                if ($tablename != 'search_simpledb_index') {
+                    foreach ($dbindexes as $indexname => $index) {
+                        $errors[$tablename][] = "Unexpected index '$indexname'.";
+                    }
+                }
+            }
+
             // Check for extra columns (indicates unsupported hacks) - modify install.xml if you want to pass validation.
             foreach ($dbfields as $fieldname => $dbfield) {
                 if ($options['extracolumns']) {
@@ -1126,5 +1184,35 @@ class database_manager {
         }
 
         return $errors;
+    }
+
+    /**
+     * Returns a string describing the missing index error.
+     *
+     * @param xmldb_table $table
+     * @param xmldb_index $index
+     * @param string $indexname
+     * @return string
+     */
+    private function get_missing_index_error(xmldb_table $table, xmldb_index $index, string $indexname): string {
+        $sqlarr = $this->generator->getAddIndexSQL($table, $index);
+        $sqlarr = $this->generator->getEndedStatements($sqlarr);
+        $sqltoadd = reset($sqlarr);
+
+        return "Missing index '" . $indexname . "' " . "(" . $index->readableInfo() . "). \n" . $sqltoadd;
+    }
+
+    /**
+     * Removes an index from the array $dbindexes if it is found.
+     *
+     * @param array $dbindexes
+     * @param xmldb_index $index
+     */
+    private function remove_index_from_dbindex(array &$dbindexes, xmldb_index $index) {
+        foreach ($dbindexes as $key => $dbindex) {
+            if ($dbindex['columns'] == $index->getFields()) {
+                unset($dbindexes[$key]);
+            }
+        }
     }
 }

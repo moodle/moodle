@@ -44,11 +44,13 @@ class check_indexes extends XMLDBCheckAction {
 
         // Get needed strings
         $this->loadStrings(array(
+            'extraindexesfound' => 'tool_xmldb',
             'missing' => 'tool_xmldb',
             'key' => 'tool_xmldb',
             'index' => 'tool_xmldb',
             'missingindexes' => 'tool_xmldb',
-            'nomissingindexesfound' => 'tool_xmldb',
+            'nomissingorextraindexesfound' => 'tool_xmldb',
+            'yesextraindexesfound' => 'tool_xmldb',
             'yesmissingindexesfound' => 'tool_xmldb',
         ));
     }
@@ -58,6 +60,7 @@ class check_indexes extends XMLDBCheckAction {
         $dbman = $DB->get_manager();
 
         $o = '';
+        $dbindexes = $DB->get_indexes($xmldb_table->getName());
         $missing_indexes = array();
 
         // Keys
@@ -88,6 +91,7 @@ class check_indexes extends XMLDBCheckAction {
                     // Check if the index exists in DB
                     if ($dbman->index_exists($xmldb_table, $xmldb_index)) {
                         $o.='<font color="green">' . $this->str['ok'] . '</font>';
+                        $this->remove_index_from_dbindex($dbindexes, $xmldb_index);
                     } else {
                         $o.='<font color="red">' . $this->str['missing'] . '</font>';
                         // Add the missing index to the list
@@ -109,6 +113,7 @@ class check_indexes extends XMLDBCheckAction {
                 // Check if the index exists in DB
                 if ($dbman->index_exists($xmldb_table, $xmldb_index)) {
                     $o.='<font color="green">' . $this->str['ok'] . '</font>';
+                    $this->remove_index_from_dbindex($dbindexes, $xmldb_index);
                 } else {
                     $o.='<font color="red">' . $this->str['missing'] . '</font>';
                     // Add the missing index to the list
@@ -122,6 +127,14 @@ class check_indexes extends XMLDBCheckAction {
             $o.='        </ul>';
         }
 
+        // Hack - skip for table 'search_simpledb_index' as this plugin adds indexes dynamically on install
+        // which are not included in install.xml. See search/engine/simpledb/db/install.php.
+        if ($xmldb_table->getName() != 'search_simpledb_index') {
+            foreach ($dbindexes as $indexname => $index) {
+                $missing_indexes[] = $indexname;
+            }
+        }
+
         return array($o, $missing_indexes);
     }
 
@@ -129,33 +142,56 @@ class check_indexes extends XMLDBCheckAction {
         global $DB;
         $dbman = $DB->get_manager();
 
+        $missingindexes = [];
+        $extraindexes = [];
+
+        foreach ($missing_indexes as $missingindex) {
+            if (is_object($missingindex)) {
+                $missingindexes[] = $missingindex;
+            } else {
+                $extraindexes[] = $missingindex;
+            }
+        }
+
         $s = '';
         $r = '<table class="generaltable boxaligncenter boxwidthwide" border="0" cellpadding="5" cellspacing="0" id="results">';
         $r.= '  <tr><td class="generalboxcontent">';
         $r.= '    <h2 class="main">' . $this->str['searchresults'] . '</h2>';
-        $r.= '    <p class="centerpara">' . $this->str['missingindexes'] . ': ' . count($missing_indexes) . '</p>';
+        $r .= '    <p class="centerpara">' . $this->str['missingindexes'] . ': ' . count($missingindexes) . '</p>';
+        $r .= '    <p class="centerpara">' . $this->str['extraindexesfound'] . ': ' . count($extraindexes) . '</p>';
         $r.= '  </td></tr>';
         $r.= '  <tr><td class="generalboxcontent">';
 
-        // If we have found missing indexes inform about them
-        if (count($missing_indexes)) {
-            $r.= '    <p class="centerpara">' . $this->str['yesmissingindexesfound'] . '</p>';
-            $r.= '        <ul>';
-            foreach ($missing_indexes as $obj) {
-                $xmldb_table = $obj->table;
-                $xmldb_index = $obj->index;
-                $sqlarr = $dbman->generator->getAddIndexSQL($xmldb_table, $xmldb_index);
-                $r.= '            <li>' . $this->str['table'] . ': ' . $xmldb_table->getName() . '. ' .
-                                          $this->str['index'] . ': ' . $xmldb_index->readableInfo() . '</li>';
-                $sqlarr = $dbman->generator->getEndedStatements($sqlarr);
-                $s.= '<code>' . str_replace("\n", '<br />', implode('<br />', $sqlarr)) . '</code><br />';
+        // If we have found missing indexes or extra indexes inform the user about them.
+        if (!empty($missingindexes) || !empty($extraindexes)) {
+            if ($missingindexes) {
+                $r.= '    <p class="centerpara">' . $this->str['yesmissingindexesfound'] . '</p>';
+                $r.= '        <ul>';
+                foreach ($missingindexes as $obj) {
+                    $xmldb_table = $obj->table;
+                    $xmldb_index = $obj->index;
+                    $sqlarr = $dbman->generator->getAddIndexSQL($xmldb_table, $xmldb_index);
+                    $r.= '            <li>' . $this->str['table'] . ': ' . $xmldb_table->getName() . '. ' .
+                                              $this->str['index'] . ': ' . $xmldb_index->readableInfo() . '</li>';
+                    $sqlarr = $dbman->generator->getEndedStatements($sqlarr);
+                    $s.= '<code>' . str_replace("\n", '<br />', implode('<br />', $sqlarr)) . '</code><br />';
 
+                }
+                $r.= '        </ul>';
+                // Add the SQL statements (all together)
+                $r.= '<hr />' . $s;
             }
-            $r.= '        </ul>';
-            // Add the SQL statements (all together)
-            $r.= '<hr />' . $s;
+            if ($extraindexes) {
+                $r .= '<p class="centerpara">' . $this->str['yesextraindexesfound'] . '</p>';
+                $r .= '<ul>';
+                foreach ($extraindexes as $ei) {
+                    $r .= '<li>' . $ei . '</li>';
+                }
+                $r .= '</ul>';
+                $r .= '<hr />';
+            }
         } else {
-            $r.= '    <p class="centerpara">' . $this->str['nomissingindexesfound'] . '</p>';
+            $r .= '<p class="centerpara">' . $this->str['nomissingorextraindexesfound'] . '</p>';
         }
         $r.= '  </td></tr>';
         $r.= '  <tr><td class="generalboxcontent">';
@@ -165,5 +201,19 @@ class check_indexes extends XMLDBCheckAction {
         $r.= '</table>';
 
         return $r;
+    }
+
+    /**
+     * Removes an index from the array $dbindexes if it is found.
+     *
+     * @param array $dbindexes
+     * @param xmldb_index $index
+     */
+    private function remove_index_from_dbindex(array &$dbindexes, xmldb_index $index) {
+        foreach ($dbindexes as $key => $dbindex) {
+            if ($dbindex['columns'] == $index->getFields()) {
+                unset($dbindexes[$key]);
+            }
+        }
     }
 }
