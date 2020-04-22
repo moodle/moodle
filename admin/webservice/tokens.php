@@ -31,6 +31,9 @@ require_once($CFG->dirroot . '/webservice/lib.php');
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
+$ftoken = optional_param('ftoken', '', PARAM_ALPHANUM);
+$fusers = optional_param_array('fusers', [], PARAM_INT);
+$fservices = optional_param_array('fservices', [], PARAM_INT);
 
 admin_externalpage_setup('webservicetokens');
 
@@ -52,9 +55,7 @@ if ($action === 'create') {
             $restricteduser = $webservicemanager->get_ws_authorised_user($data->service, $data->user);
 
             if (empty($restricteduser)) {
-                $allowuserurl = new moodle_url('/admin/webservice/service_users.php', ['id' => $selectedservice->id]);
-                $allowuserlink = html_writer::link($selectedservice->name, $allowuserurl);
-                $errormsg = $OUTPUT->notification(get_string('usernotallowed', 'webservice', $allowuserlink));
+                $errormsg = $OUTPUT->notification(get_string('usernotallowed', 'webservice', $selectedservice->name));
             }
         }
 
@@ -112,21 +113,51 @@ if ($action === 'delete') {
     die();
 }
 
+// Pre-populate the form with the values that come as a part of the URL - typically when using the table_sql control
+// links.
+$filterdata = (object)[
+    'token' => $ftoken,
+    'users' => $fusers,
+    'services' => $fservices,
+];
+
+$filter = new \core_webservice\token_filter($PAGE->url, $filterdata);
+
+$filter->set_data($filterdata);
+
+if ($filter->is_submitted()) {
+    $filterdata = $filter->get_data();
+
+    if (isset($filterdata->resetbutton)) {
+        redirect($PAGE->url);
+    }
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('managetokens', 'core_webservice'));
 
-$table = new \core_webservice\token_table('webservicetokens');
-$table->define_baseurl($PAGE->url);
+echo html_writer::div($OUTPUT->render(new single_button(new moodle_url($PAGE->url, ['action' => 'create']),
+    get_string('createtoken', 'core_webservice'), 'get', true)), 'my-3');
+
+$filter->display();
+
+$table = new \core_webservice\token_table('webservicetokens', $filterdata);
+
+// In order to not lose the filter form values by clicking the table control links, make them part of the table's baseurl.
+$baseurl = new moodle_url($PAGE->url, ['ftoken' => $filterdata->token]);
+
+foreach ($filterdata->users as $i => $userid) {
+    $baseurl->param("fusers[{$i}]", $userid);
+}
+
+foreach ($filterdata->services as $i => $serviceid) {
+    $baseurl->param("fservices[{$i}]", $serviceid);
+}
+
+$table->define_baseurl($baseurl);
+
 $table->attributes['class'] = 'admintable generaltable';
 $table->data = [];
 $table->out(30, false);
 
 echo $OUTPUT->footer();
-
-// TODO Add button
-//$tokenpageurl = "$CFG->wwwroot/$CFG->admin/webservice/tokens.php?sesskey=" . sesskey();
-//
-//$return .= $OUTPUT->box_end();
-//// add a token to the table
-//$return .= "<a href=\"".$tokenpageurl."&amp;action=create\">";
-//$return .= get_string('add')."</a>";
