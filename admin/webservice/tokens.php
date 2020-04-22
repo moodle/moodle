@@ -115,10 +115,6 @@ if ($action === 'delete') {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('managetokens', 'core_webservice'));
 
-if (has_capability('moodle/webservice:managealltokens', context_system::instance())) {
-    echo html_writer::div(get_string('onlyseecreatedtokens', 'core_webservice'), 'alert alert-info');
-}
-
 $table = new \core_webservice\token_table('webservicetokens');
 $table->define_baseurl($PAGE->url);
 $table->attributes['class'] = 'admintable generaltable';
