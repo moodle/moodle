@@ -19,5 +19,6 @@
   "no-unnamed-features": "on",
   "no-unnamed-scenarios": "on",
   "no-scenario-outlines-without-examples": "on",
+  "no-examples-in-scenarios": "on",
   "new-line-at-eof": ["on", "yes"]
 }
