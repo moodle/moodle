@@ -2674,9 +2674,8 @@
       "dev": true
     },
     "istanbul": {
-      "version": "0.1.37",
-      "resolved": "https://registry.npmjs.org/istanbul/-/istanbul-0.1.37.tgz",
-      "integrity": "sha1-7ZwC4q+A2JRtQG1wFNkxk17y1+A=",
+      "version": "https://github.com/andrewnicols/istanbul/archive/v0.1.37_moodle-0.tar.gz",
+      "integrity": "sha512-6i+2THnhvtbNwRHDyVHUy+1VBzlKqxBjpZ//Y3tw9Te0mFz3GPkk0SxvynAekD+s83kmE1mrWCwJP3mbd/e/Zg==",
       "dev": true,
       "requires": {
         "abbrev": "1.0.x",
@@ -2765,12 +2764,6 @@
           "version": "1.0.9",
           "resolved": "https://registry.npmjs.org/which/-/which-1.0.9.tgz",
           "integrity": "sha1-RgwdoPgQED0DIam2M6+eV15kSG8=",
-          "dev": true
-        },
-        "wordwrap": {
-          "version": "0.0.3",
-          "resolved": "https://registry.npmjs.org/wordwrap/-/wordwrap-0.0.3.tgz",
-          "integrity": "sha1-o9XabNXAvAAI03I0u68b7WMFkQc=",
           "dev": true
         }
       }
@@ -3538,14 +3531,6 @@
       "dev": true,
       "requires": {
         "wordwrap": "~0.0.2"
-      },
-      "dependencies": {
-        "wordwrap": {
-          "version": "0.0.3",
-          "resolved": "https://registry.npmjs.org/wordwrap/-/wordwrap-0.0.3.tgz",
-          "integrity": "sha1-o9XabNXAvAAI03I0u68b7WMFkQc=",
-          "dev": true
-        }
       }
     },
     "optionator": {
@@ -3560,6 +3545,14 @@
         "prelude-ls": "~1.1.2",
         "type-check": "~0.3.2",
         "wordwrap": "~1.0.0"
+      },
+      "dependencies": {
+        "wordwrap": {
+          "version": "1.0.0",
+          "resolved": "https://registry.npmjs.org/wordwrap/-/wordwrap-1.0.0.tgz",
+          "integrity": "sha1-J1hIEIkUVqQXHI0CJkQa3pDLyus=",
+          "dev": true
+        }
       }
     },
     "os-homedir": {
@@ -4354,9 +4347,8 @@
       "dev": true
     },
     "shifter": {
-      "version": "0.5.0",
-      "resolved": "https://registry.npmjs.org/shifter/-/shifter-0.5.0.tgz",
-      "integrity": "sha1-nyS3AptrpnACdSDu+Lq4m5L/n2g=",
+      "version": "https://github.com/andrewnicols/shifter/archive/v0.5.0_moodle-0.tar.gz",
+      "integrity": "sha512-D5ITAbIdqWx2leZfL2L21TfeezbTGLrgnB0JWZPPdJwRBa/Fgtdy6XvQ3mW6HtC3eC5x0vtxZedFZCWdAaFXOQ==",
       "dev": true,
       "requires": {
         "ansi-color": "*",
@@ -4364,7 +4356,7 @@
         "cssproc": "~0.0.1",
         "gear": "~0.8.0",
         "gear-lib": "~0.8.0",
-        "istanbul": "0.1.37",
+        "istanbul": "https://github.com/andrewnicols/istanbul/archive/v0.1.37_moodle-0.tar.gz",
         "jshint": "~0.9.0",
         "mkdirp": "*",
         "nopt": "*",
@@ -5435,9 +5427,9 @@
       "dev": true
     },
     "wordwrap": {
-      "version": "1.0.0",
-      "resolved": "https://registry.npmjs.org/wordwrap/-/wordwrap-1.0.0.tgz",
-      "integrity": "sha1-J1hIEIkUVqQXHI0CJkQa3pDLyus=",
+      "version": "0.0.3",
+      "resolved": "https://registry.npmjs.org/wordwrap/-/wordwrap-0.0.3.tgz",
+      "integrity": "sha1-o9XabNXAvAAI03I0u68b7WMFkQc=",
       "dev": true
     },
     "wrap-ansi": {
