@@ -9929,7 +9929,7 @@ body.path-question-type .mform fieldset.hidden {
   border-color: rgba(0, 0, 0, 0.15);
 }
 .groupinfobox h3 {
-  margin-top: 0px;
+  margin-top: 0;
 }
 .groupinfobox .left {
   padding: 10px;
