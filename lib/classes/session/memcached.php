@@ -101,6 +101,8 @@ class memcached extends handler {
      * @return bool success
      */
     public function start() {
+        ini_set('memcached.sess_locking', $this->requires_write_lock() ? '1' : '0');
+
         // NOTE: memcached before 2.2.0 expires session locks automatically after max_execution_time,
         //       this leads to major difference compared to other session drivers that timeout
         //       and stop the second request execution instead.
@@ -148,7 +150,6 @@ class memcached extends handler {
         ini_set('session.save_handler', 'memcached');
         ini_set('session.save_path', $this->savepath);
         ini_set('memcached.sess_prefix', $this->prefix);
-        ini_set('memcached.sess_locking', '1'); // Locking is required!
         ini_set('memcached.sess_lock_expire', $this->lockexpire);
 
         if (version_compare($version, '3.0.0-dev') >= 0) {

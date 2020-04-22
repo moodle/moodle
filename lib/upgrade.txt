@@ -38,6 +38,10 @@ information provided here is intended especially for developers.
 * H5P libraries have been moved from /lib/h5p to h5p/h5plib as an h5plib plugintype.
 * mdn-polyfills has been renamed to polyfills. The reason there is no polyfill from the MDN is
   because there is no example polyfills on the MDN for this functionality.
+* AJAX pages can be called without requiring a session lock if they set READ_ONLY_SESSION to true, eg.
+  define('READ_ONLY_SESSION', true); Note - this also requires $CFG->enable_read_only_sessions to be set to true.
+* External functions can be called without requiring a session lock if they define 'readonlysession' => true in
+  db/services.php. Note - this also requires $CFG->enable_read_only_sessions to be set to true.
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop

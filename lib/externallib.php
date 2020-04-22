@@ -161,6 +161,11 @@ class external_api {
             } else {
                 $function->loginrequired = true;
             }
+            if (isset($functions[$function->name]['readonlysession'])) {
+                $function->readonlysession = $functions[$function->name]['readonlysession'];
+            } else {
+                $function->readonlysession = false;
+            }
         }
 
         return $function;
@@ -183,6 +188,12 @@ class external_api {
         require_once($CFG->libdir . "/pagelib.php");
 
         $externalfunctioninfo = static::external_function_info($function);
+
+        // Eventually this should shift into the various handlers and not be handled via config.
+        $readonlysession = $externalfunctioninfo->readonlysession ?? false;
+        if (!$readonlysession || empty($CFG->enable_read_only_sessions)) {
+            \core\session\manager::restart_with_write_lock();
+        }
 
         $currentpage = $PAGE;
         $currentcourse = $COURSE;
