@@ -1092,6 +1092,12 @@ class quiz_attempt {
      * @return bool true if the navigation should be allowed.
      */
     public function can_navigate_to($slot) {
+        if ($this->attempt->state == self::OVERDUE) {
+            // When the attempt is overdue, students can only see the
+            // attempt summary page and cannot navigate anywhere else.
+            return false;
+        }
+
         switch ($this->get_navigation_method()) {
             case QUIZ_NAVMETHOD_FREE:
                 return true;
@@ -2783,6 +2789,10 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
     }
 
     public function render_end_bits(mod_quiz_renderer $output) {
+        if ($this->page == -1) {
+            // Don't link from the summary page to itself.
+            return '';
+        }
         return html_writer::link($this->attemptobj->summary_url(),
                 get_string('endtest', 'quiz'), array('class' => 'endtestlink')) .
                 $output->countdown_timer($this->attemptobj, time()) .
