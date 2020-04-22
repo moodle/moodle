@@ -1,0 +1,229 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_mobile/subscription
+
+    Template for subscription information.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * registered - Whether the site is registered
+    * appsportalurl - Apps portal url
+
+    Example context (json):
+    {
+        "registered" : true,
+        "appsportalurl": "https://apps.moodle.com",
+        "subscription": {
+            "name": "Pro",
+            "description": "This subscription has a Moodle Product Premium plan free of charge",
+            "timecreated": 1587548810,
+            "expiretime": 1618963200,
+            "features": [
+                {
+                    "name": "multimediapushnotifications",
+                    "enabled": true,
+                    "description": "Multimedia push notifications",
+                    "humanstatus": "Enabled",
+                    "message": {
+                        "type" : "warning",
+                        "message" : "Temporary disabled for a promotion"
+                    }
+                },
+                {
+                    "name": "pushnotificationsdevices",
+                    "enabled": false,
+                    "limit": 50,
+                    "showbar": 1,
+                    "description": "Active user devices for notifications",
+                    "status": 55,
+                    "humanstatus": "55/50",
+                    "barclass": "bg-danger"
+                },
+                {
+                    "name": "custommenuitems",
+                    "enabled": false,
+                    "limit": 4,
+                    "showbar": 1,
+                    "description": "Custom menu items",
+                    "status": 2,
+                    "humanstatus": "2/4"
+                }
+            ]
+        },
+        "messageswarning": [
+            {
+                "message" : "You have surpassed your monthly active user devices limit, some messages are beign ignored. We recommend you to upgrade to a paid plan."
+            }
+        ],
+        "notifications": {
+            "totalsentnotifications" : 7600,
+            "totaldevices" : 60,
+            "currentactivedevices" : 55,
+            "ignorednotificationswarning": {
+                "message" : "You have surpassed your monthly active user devices limit, some messages are beign ignored. We recommend you to upgrade to a paid plan."
+            },
+            "monthly" : [
+                {
+                    "year": 2020,
+                    "month": 4,
+                    "sentnotifications": 4500,
+                    "newdevices": 20,
+                    "activedevices": 55,
+                    "ignorednotifications": 40,
+                    "limitreachedtime": 1586548810
+                },
+                {
+                    "year": 2020,
+                    "month": 3,
+                    "sentnotifications": 4500,
+                    "newdevices":10,
+                    "activedevices": 45,
+                    "ignorednotifications": 0,
+                    "limitreachedtime": 0
+                }
+            ]
+        }
+    }
+}}
+
+{{#messageserror}}
+    {{> core/notification_error}}
+{{/messageserror}}
+{{#messagessuccess}}
+    {{> core/notification_success}}
+{{/messagessuccess}}
+{{#messageswarning}}
+    {{> core/notification_warning}}
+{{/messageswarning}}
+{{#messagesinfo}}
+    {{> core/notification_info}}
+{{/messagesinfo}}
+
+<div id="subscription-overview" class="box">
+
+    <h2>{{# str }} mobileappsubscription, tool_mobile {{/ str }}</h2>
+
+    {{#messageshtml}}
+    {{{message}}}
+    {{/messageshtml}}
+
+    {{#subscription}}
+    <dl class="list-narrow">
+        <dt>{{# str }} name {{/ str }}</dt><dd>{{name}}</dd>
+        <dt>{{# str }} description {{/ str }}</dt><dd>{{description}}</dd>
+        <dt>{{# str }} subscriptioncreated, tool_mobile {{/ str }}</dt><dd>{{#userdate}} {{timecreated}}, {{#str}} strftimedate {{/str}} {{/userdate}}</dd>
+        {{#expiretime}}
+        <dt>{{# str }} subscriptionexpiration, tool_mobile {{/ str }}</dt><dd>{{#userdate}} {{expiretime}}, {{#str}} strftimedate {{/str}} {{/userdate}}</dd>
+        {{/expiretime}}
+    </dl>
+
+    {{^registered}}
+    {{# str }} subscriptionregister, tool_mobile, {{ appsportalurl }} {{/ str }}
+    {{/registered}}
+
+    <h3>{{# str }} subscriptionfeatures, tool_mobile {{/ str }}</h3>
+
+    {{#features}}
+    <dl>
+    {{^limit}}
+        <dt>{{{description}}}</dt><dd>{{{humanstatus}}}</dd>
+    {{/limit}}
+    {{#limit}}
+        <dt>{{{description}}}</dt><dd>
+        {{#showbar}}
+            <div class="progress">
+                <div class="progress-bar progress-bar-animated {{barclass}}" role="progressbar" style="width: 100%" aria-valuenow="{{status}}" aria-valuemin="0" aria-valuemax="{{limit}}">{{humanstatus}}
+                </div>
+            </div>
+        {{/showbar}}
+        {{^showbar}}
+            {{humanstatus}}
+        {{/showbar}}
+        </dd>
+    {{/limit}}
+    {{#message}}
+        <span class="badge badge-{{type}}">{{message}}</span>
+    {{/message}}
+    </dl>
+    {{/features}}
+
+    {{#registered}}
+    {{# str }} subscriptionsseemore, tool_mobile, {{ appsportalurl }} {{/ str }}
+    {{/registered}}
+
+    {{/subscription}}
+</div>
+
+<div id="notifications-overview" class="box">
+    <h3>{{# str }} notifications, tool_mobile {{/ str }}</h3>
+
+    {{^registered}}
+    {{# str }} subscriptionregister, tool_mobile, {{ appsportalurl }} {{/ str }}
+    {{/registered}}
+
+    {{#notifications}}
+
+    {{#ignorednotificationswarning}}
+        {{> core/notification_error}}
+    {{/ignorednotificationswarning}}
+
+    <dl>
+        <dt>{{# str }} notificationscurrentactivedevices, tool_mobile {{/ str }}</dt><dd>{{currentactivedevices}}</dd>
+    </dl>
+
+    <table id="notificationstable" class="generaltable fullwidth">
+        <thead>
+            <tr>
+                <th class="text-center" scope="col">{{#str}}year, form{{/str}}</th>
+                <th class="text-center" scope="col">{{#str}}month{{/str}}</th>
+                <th class="text-center" scope="col">{{#str}}notificationssentnotifications, tool_mobile{{/str}}</th>
+                <th class="text-center" scope="col">{{#str}}notificationsactivedevices, tool_mobile{{/str}}</th>
+                <th class="text-center" scope="col">{{#str}}notificationsnewdevices, tool_mobile{{/str}}</th>
+                <th class="text-center" scope="col">{{#str}}notificationsignorednotifications, tool_mobile{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#notifications.monthly}}
+            <tr>
+                <td class="text-center">{{year}}</td>
+                <td class="text-center">{{month}}</td>
+                <td class="text-center">{{sentnotifications}}</td>
+                <td class="text-center">{{activedevices}}</td>
+                <td class="text-center">{{newdevices}}</td>
+                <td class="text-center">{{ignorednotifications}}</td>
+            </tr>
+           {{/notifications.monthly}}
+        </tbody>
+    </table>
+
+    {{#registered}}
+    {{# str }} notificationsseemore, tool_mobile, {{ appsportalurl }} {{/ str }}
+    {{/registered}}
+
+    {{/notifications}}
+
+    {{^notifications}}
+    {{# str }} notificationsmissingwarning, tool_mobile {{/ str }}
+    {{/notifications}}
+
+</div>

@@ -50,11 +50,20 @@ if ($hassiteconfig) {
 
     // Show only mobile settings if the mobile service is enabled.
     if (!empty($CFG->enablemobilewebservice)) {
-        // General notification about limited features due to app restrictions.
-        $notify = new \core\output\notification(
-            get_string('moodleappsportalfeatureswarning', 'tool_mobile', tool_mobile\api::MOODLE_APPS_PORTAL_URL),
-            \core\output\notification::NOTIFY_WARNING);
-        $featuresnotice = $OUTPUT->render($notify);
+
+        $featuresnotice = null;
+        if (empty($CFG->disablemobileappsubscription)) {
+            // General notification about limited features due to app restrictions.
+            $subscriptionurl = (new moodle_url("/$CFG->admin/tool/mobile/subscription.php"))->out(false);
+            $notify = new \core\output\notification(
+                get_string('moodleappsportalfeatureswarning', 'tool_mobile', $subscriptionurl),
+                \core\output\notification::NOTIFY_WARNING);
+            $featuresnotice = $OUTPUT->render($notify);
+
+            $ADMIN->add('mobileapp', new admin_externalpage('mobileappsubscription',
+                new lang_string('mobileappsubscription', 'tool_mobile'),
+                "$CFG->wwwroot/$CFG->admin/tool/mobile/subscription.php"));
+        }
 
         // Type of login.
         $temp = new admin_settingpage('mobileauthentication', new lang_string('mobileauthentication', 'tool_mobile'));
@@ -92,7 +101,9 @@ if ($hassiteconfig) {
         // Appearance related settings.
         $temp = new admin_settingpage('mobileappearance', new lang_string('mobileappearance', 'tool_mobile'));
 
-        $temp->add(new admin_setting_heading('tool_mobile/moodleappsportalfeaturesappearance', '', $featuresnotice));
+        if (!empty($featuresnotice)) {
+            $temp->add(new admin_setting_heading('tool_mobile/moodleappsportalfeaturesappearance', '', $featuresnotice));
+        }
 
         $temp->add(new admin_setting_configtext('mobilecssurl', new lang_string('mobilecssurl', 'tool_mobile'),
                     new lang_string('configmobilecssurl', 'tool_mobile'), '', PARAM_URL));
@@ -126,7 +137,9 @@ if ($hassiteconfig) {
         // Features related settings.
         $temp = new admin_settingpage('mobilefeatures', new lang_string('mobilefeatures', 'tool_mobile'));
 
-        $temp->add(new admin_setting_heading('tool_mobile/moodleappsportalfeatures', '', $featuresnotice));
+        if (!empty($featuresnotice)) {
+            $temp->add(new admin_setting_heading('tool_mobile/moodleappsportalfeatures', '', $featuresnotice));
+        }
 
         $temp->add(new admin_setting_heading('tool_mobile/logout',
                     new lang_string('logout'), ''));

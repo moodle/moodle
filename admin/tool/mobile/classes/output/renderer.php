@@ -15,25 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Mobile cache definitions.
+ * Renderer.
  *
- * @package    tool_mobile
- * @copyright  2017 Skylar Kelty <S.Kelty@kent.ac.uk>
+ * @package   tool_mobile
+ * @copyright 2020 Moodle Pty Ltd
+ * @author    <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+namespace tool_mobile\output;
 
-$definitions = array(
-    'plugininfo' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'staticacceleration' => true,
-        'staticaccelerationsize' => 1
-    ),
-    'subscriptiondata' => array(
-        'mode' => cache_store::MODE_SESSION,
-        'simplekeys' => true,
-        'simpledata' => false,
-    ),
-);
+use plugin_renderer_base;
+
+
+/**
+ * Renderer class.
+ *
+ * @package    tool_mobile
+ * @copyright  2020 Moodle Pty Ltd
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class renderer extends plugin_renderer_base {
+
+    /**
+     * Defer to template.
+     *
+     * @param \tool_mobile\output\subscription $subscription Subscription
+     * @return string HTML
+     */
+    protected function render_subscription(\tool_mobile\output\subscription $subscription): string {
+        $data = $subscription->export_for_template($this);
+        return parent::render_from_template('tool_mobile/subscription', $data);
+    }
+}

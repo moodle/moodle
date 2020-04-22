@@ -660,4 +660,78 @@ class api {
 
         return $imagedata;
     }
+
+    /**
+     * Gets Moodle app plan subscription information for the current site as it is returned by the Apps Portal.
+     *
+     * @return array Subscription information
+     */
+    public static function get_subscription_information() : ?array {
+        global $CFG;
+
+        // Use session cache to prevent multiple requests.
+        $cache = \cache::make('tool_mobile', 'subscriptiondata');
+        $subscriptiondata = $cache->get(0);
+        if ($subscriptiondata !== false) {
+            return $subscriptiondata;
+        }
+
+        $mobilesettings = get_config('tool_mobile');
+
+        // To validate that the requests come from this site we need to send some private information that only is known by the
+        // Moodle Apps portal or the Sites registration database.
+        $credentials = [];
+
+        if (!empty($CFG->airnotifieraccesskey)) {
+            $credentials[] = ['type' => 'airnotifieraccesskey', 'value' => $CFG->airnotifieraccesskey];
+        }
+        if (\core\hub\registration::is_registered()) {
+            $credentials[] = ['type' => 'siteid', 'value' => $CFG->siteidentifier];
+        }
+
+        // Parameters for the WebService returning site information.
+        $fnparams = (object) [
+            'siteurl' => $CFG->wwwroot,
+            'appids' => [$mobilesettings->androidappid, $mobilesettings->iosappid],
+            'credentials' => $credentials,
+        ];
+        // Prepare the arguments for a request to the AJAX nologin endpoint.
+        $args = [
+            (object) [
+                'index' => 0,
+                'methodname' => 'local_apps_get_site_info',
+                'args' => $fnparams,
+            ]
+        ];
+
+        // Ask the Moodle Apps Portal for the subscription information.
+        $curl = new curl();
+        $curl->setopt(array('CURLOPT_TIMEOUT' => 10, 'CURLOPT_CONNECTTIMEOUT' => 10));
+
+        $serverurl = static::MOODLE_APPS_PORTAL_URL . "/lib/ajax/service-nologin.php";
+        $query = 'args=' . urlencode(json_encode($args));
+        $wsresponse = @json_decode($curl->post($serverurl, $query), true);
+
+        $info = $curl->get_info();
+        if ($curlerrno = $curl->get_errno()) {
+            // CURL connection error.
+            debugging("Unexpected response from the Moodle Apps Portal server, CURL error number: $curlerrno");
+            return null;
+        } else if ($info['http_code'] != 200) {
+            // Unexpected error from server.
+            debugging('Unexpected response from the Moodle Apps Portal server, HTTP code:' . $info['httpcode']);
+            return null;
+        } else if (!empty($wsresponse[0]['error'])) {
+            // Unexpected error from Moodle Apps Portal.
+            debugging('Unexpected response from the Moodle Apps Portal server:' . json_encode($wsresponse[0]));
+            return null;
+        } else if (empty($wsresponse[0]['data'])) {
+            debugging('Unexpected response from the Moodle Apps Portal server:' . json_encode($wsresponse));
+            return null;
+        }
+
+        $cache->set(0, $wsresponse[0]['data']);
+
+        return $wsresponse[0]['data'];
+    }
 }
