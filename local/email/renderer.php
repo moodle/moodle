@@ -238,10 +238,14 @@ class local_email_renderer extends plugin_renderer_base {
                                                 'sesskey' => sesskey()));
             $editlink = new moodle_url('/local/email/template_list.php',
                                         array('templatesetid' => $template->id, 'action' => 'edit'));
+            $applylink = new moodle_url('/local/email/template_apply_form.php',
+                                        array('templatesetid' => $template->id, 'action' => 'apply'));
             $row = array($template->templatesetname, '<a class="btn btn-primary" href="'.$deletelink.'">' .
                                            get_string('deletetemplateset', 'local_email') . '</a> ' .
                                            '<a class="btn btn-primary" href="'.$editlink.'">' .
-                                           get_string('edittemplateset', 'local_email') . '</a>');
+                                           get_string('edittemplateset', 'local_email') . '</a> ' .
+                                           '<a class="btn btn-primary" href="'.$applylink.'">' .
+                                           get_string('applytemplateset', 'local_email') . '</a>');
 
             $table->data[] = $row;
         }

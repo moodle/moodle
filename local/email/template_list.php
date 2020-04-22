@@ -450,7 +450,7 @@ if ($ajaxtemplate) {
 //  Deal with any deletes.
 if ($action == 'delete' && confirm_sesskey()) {
     if ($confirm != md5($templatesetid)) {
-echo $output->header();
+        echo $output->header();
 
         if (!$templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
             print_error('templatesetnotfound', 'local_email');

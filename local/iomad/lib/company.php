@@ -502,6 +502,8 @@ class company {
             $template->companyid = $this->id;
             $DB->insert_record('email_template', $template);
         }
+
+        return true;
     }
 
     /**
