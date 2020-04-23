@@ -495,8 +495,6 @@ class participants extends \table_sql implements dynamic_table {
      * @param filterset $filterset The filterset object to get the filters from.
      */
     public function set_filterset(filterset $filterset): void {
-        parent::set_filterset($filterset);
-
         // Get the context.
         $this->courseid = $filterset->get_filter('courseid')->current();
         $this->course = get_course($this->courseid);
@@ -533,20 +531,14 @@ class participants extends \table_sql implements dynamic_table {
             $this->search = $filterset->get_filter('keywords')->get_filter_values();
         }
 
-        $this->define_baseurl($this->get_base_url());
+        parent::set_filterset($filterset);
     }
 
     /**
-     * Get the base url for the participants table.
-     *
-     * @return moodle_url
+     * Guess the base url for the participants table.
      */
-    public function get_base_url(): moodle_url {
-        if ($this->baseurl === null) {
-            return new moodle_url('/user/index.php', ['id' => $this->courseid]);
-        }
-
-        return $this->baseurl;
+    public function guess_base_url(): void {
+        $this->baseurl = new moodle_url('/user/index.php', ['id' => $this->courseid]);
     }
 
     /**

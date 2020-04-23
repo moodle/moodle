@@ -29,19 +29,10 @@ namespace core_table;
 
 defined('MOODLE_INTERNAL') || die();
 
-use moodle_url;
-
 /**
  * Interface dynamic.
  *
  * @package core_table
  */
 interface dynamic {
-
-    /**
-     * Get the base url.
-     *
-     * @return moodle_url
-     */
-    public function get_base_url(): moodle_url;
 }

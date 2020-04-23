@@ -1728,6 +1728,8 @@ class flexible_table {
      */
     public function set_filterset(filterset $filterset): void {
         $this->filterset = $filterset;
+
+        $this->guess_base_url();
     }
 
     /**
@@ -1737,6 +1739,15 @@ class flexible_table {
      */
     public function get_filterset(): ?filterset {
         return $this->filterset;
+    }
+
+    /**
+     * Attempt to guess the base URL.
+     */
+    public function guess_base_url(): void {
+        if (is_a($this, \core_table\dynamic::class)) {
+            throw new coding_exception('The guess_base_url function must be defined for a dynamic table');
+        }
     }
 }
 
