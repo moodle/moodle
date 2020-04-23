@@ -25,6 +25,8 @@
 
 namespace core\dataformat;
 
+use coding_exception;
+
 /**
  * Base class for dataformat.
  *
@@ -44,6 +46,9 @@ abstract class base {
     /** @var $filename */
     protected $filename = '';
 
+    /** @var string The location to store the output content */
+    protected $filepath = '';
+
     /**
      * Get the file extension
      *
@@ -60,6 +65,24 @@ abstract class base {
      */
     public function set_filename($filename) {
         $this->filename = $filename;
+    }
+
+    /**
+     * Set file path when writing to file
+     *
+     * @param string $filepath
+     * @throws coding_exception
+     */
+    public function set_filepath(string $filepath): void {
+        $filedir = dirname($filepath);
+        if (!is_writable($filedir)) {
+            throw new coding_exception('File path is not writable');
+        }
+
+        $this->filepath = $filepath;
+
+        // Some dataformat writers may expect filename to be set too.
+        $this->set_filename(pathinfo($this->filepath, PATHINFO_FILENAME));
     }
 
     /**
@@ -93,6 +116,17 @@ abstract class base {
         header("Content-Type: $this->mimetype\n");
         $filename = $this->filename . $this->get_extension();
         header("Content-Disposition: attachment; filename=\"$filename\"");
+    }
+
+    /**
+     * Set the dataformat to be output to current file. Calling code must call {@see base::close_output_to_file()} when finished
+     */
+    public function start_output_to_file(): void {
+        // Raise memory limit to ensure we can store the entire content. Start collecting output.
+        raise_memory_limit(MEMORY_EXTRA);
+
+        ob_start();
+        $this->start_output();
     }
 
     /**
@@ -133,5 +167,19 @@ abstract class base {
      */
     public function close_output() {
         // Override me if needed.
+    }
+
+    /**
+     * Write the data to disk. Calling code should have previously called {@see base::start_output_to_file()}
+     *
+     * @return bool Whether the write succeeded
+     */
+    public function close_output_to_file(): bool {
+        $this->close_output();
+
+        $filecontent = ob_get_contents();
+        ob_end_clean();
+
+        return file_put_contents($this->filepath, $filecontent) !== false;
     }
 }
