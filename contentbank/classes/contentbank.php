@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Content bank manager class
+ * Content bank class
  *
  * @package    core_contentbank
  * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
@@ -25,7 +25,7 @@
 namespace core_contentbank;
 
 /**
- * Content bank manager class
+ * Content bank class
  *
  * @package    core_contentbank
  * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
@@ -44,8 +44,9 @@ class contentbank {
         $enabledtypes = \core\plugininfo\contenttype::get_enabled_plugins();
         $types = [];
         foreach ($enabledtypes as $name) {
-            $classname = "\\contenttype_$name\\contenttype";
-            if (class_exists($classname)) {
+            $contenttypeclassname = "\\contenttype_$name\\contenttype";
+            $contentclassname = "\\contenttype_$name\\content";
+            if (class_exists($contenttypeclassname) && class_exists($contentclassname)) {
                 $types[] = $name;
             }
         }
@@ -65,16 +66,14 @@ class contentbank {
             $supportedextensions = [];
             foreach ($this->get_enabled_content_types() as $type) {
                 $classname = "\\contenttype_$type\\contenttype";
-                if (class_exists($classname)) {
-                    $manager = new $classname;
-                    if ($manager->is_feature_supported($manager::CAN_UPLOAD)) {
-                        $extensions = $manager->get_manageable_extensions();
-                        foreach ($extensions as $extension) {
-                            if (array_key_exists($extension, $supportedextensions)) {
-                                $supportedextensions[$extension][] = $type;
-                            } else {
-                                $supportedextensions[$extension] = [$type];
-                            }
+                $contenttype = new $classname;
+                if ($contenttype->is_feature_supported($contenttype::CAN_UPLOAD)) {
+                    $extensions = $contenttype->get_manageable_extensions();
+                    foreach ($extensions as $extension) {
+                        if (array_key_exists($extension, $supportedextensions)) {
+                            $supportedextensions[$extension][] = $type;
+                        } else {
+                            $supportedextensions[$extension] = [$type];
                         }
                     }
                 }
@@ -100,12 +99,10 @@ class contentbank {
             foreach ($supportedextensions as $extension => $types) {
                 foreach ($types as $type) {
                     $classname = "\\contenttype_$type\\contenttype";
-                    if (class_exists($classname)) {
-                        $manager = new $classname($context);
-                        if ($manager->can_upload()) {
-                            $contextextensions[$extension] = $type;
-                            break;
-                        }
+                    $contenttype = new $classname($context);
+                    if ($contenttype->can_upload()) {
+                        $contextextensions[$extension] = $type;
+                        break;
                     }
                 }
             }
