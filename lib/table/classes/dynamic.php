@@ -19,7 +19,6 @@
  *
  * @package core_table
  * @copyright 2020 Simey Lameze <simey@moodle.com>
- *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,12 +26,19 @@ declare(strict_types=1);
 
 namespace core_table;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
- * Interface dynamic.
+ * Interface to identify this table as a table which can be dynamically updated via webservice calls.
+ *
+ * For a table to be defined as dynamic it must meet the following requirements:
+ *
+ * # it must be located with a namespaced class of \[component]\table\[tablename]
+ * # it must define a \core_table\local\filter\filterset implementation in \[component]\table\[tablename]_filterset
+ * # it must override the {{guess_base_url}} function and specify a base URL to be used when constructing URLs
+ * # it must override the {{get_context}} function to specify the correct context
  *
  * @package core_table
+ * @copyright 2020 Simey Lameze <simey@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface dynamic {
 }

@@ -47,6 +47,8 @@ information provided here is intended especially for developers.
   db/services.php. Note - this also requires $CFG->enable_read_only_sessions to be set to true.
 * database_manager::check_database_schema() now checks for missing and extra indexes.
 * Implement a more direct xsendfile_file() method for an alternative_file_system_class
+* A new `dynamic` table interface has been defined, which allows any `flexible_table` to be converted into a table which
+  is updatable via ajax calls. See MDL-68495 and `\core_table\dynamic` for further information.
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop
