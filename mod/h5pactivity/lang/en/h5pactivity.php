@@ -47,6 +47,7 @@ $string['grade_average_attempt'] = 'Average grade';
 $string['grade_last_attempt'] = 'Last attempt';
 $string['grade_first_attempt'] = 'First attempt';
 $string['h5pactivity:addinstance'] = 'Add a new H5P';
+$string['h5pactivity:reviewattempts'] = 'Review H5P attempts';
 $string['h5pactivity:submit'] = 'Submit H5P attempts';
 $string['h5pactivity:view'] = 'View H5P';
 $string['h5pactivityfieldset'] = 'H5P settings';
