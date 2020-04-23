@@ -46,6 +46,7 @@ define('TABLE_P_TOP',    1);
 define('TABLE_P_BOTTOM', 2);
 /**#@-*/
 
+use core_table\local\filter\filterset;
 
 /**
  * @package   moodlecore
@@ -156,6 +157,12 @@ class flexible_table {
 
     /** @var array $hiddencolumns List of hidden columns. */
     protected $hiddencolumns;
+
+    /**
+     * @var filterset The currently applied filerset
+     * This is required for dynamic tables, but can be used by other tables too if desired.
+     */
+    protected $filterset = null;
 
     /**
      * Constructor
@@ -1710,6 +1717,26 @@ class flexible_table {
         }
 
         return $PAGE->context;
+    }
+
+    /**
+     * Set the filterset in the table class.
+     *
+     * The use of filtersets is a requirement for dynamic tables, but can be used by other tables too if desired.
+     *
+     * @param filterset $filterset The filterset object to get filters and table parameters from
+     */
+    public function set_filterset(filterset $filterset): void {
+        $this->filterset = $filterset;
+    }
+
+    /**
+     * Get the currently defined filterset.
+     *
+     * @return filterset
+     */
+    public function get_filterset(): ?filterset {
+        return $this->filterset;
     }
 }
 

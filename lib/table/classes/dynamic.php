@@ -30,7 +30,6 @@ namespace core_table;
 defined('MOODLE_INTERNAL') || die();
 
 use moodle_url;
-use core_table\local\filter\filterset;
 
 /**
  * Interface dynamic.
@@ -45,19 +44,4 @@ interface dynamic {
      * @return moodle_url
      */
     public function get_base_url(): moodle_url;
-
-    /**
-     * Set the filterset filters build table object.
-     *
-     * @param filterset $filterset The filterset object to get the filters from.
-     * @return void
-     */
-    public function set_filterset(filterset $filterset): void;
-
-    /**
-     * Get the currently defined filterset.
-     *
-     * @return filterset
-     */
-    public function get_filterset(): ?filterset;
 }

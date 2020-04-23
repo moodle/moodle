@@ -495,8 +495,7 @@ class participants extends \table_sql implements dynamic_table {
      * @param filterset $filterset The filterset object to get the filters from.
      */
     public function set_filterset(filterset $filterset): void {
-        // Store the filterset for later.
-        $this->filterset = $filterset;
+        parent::set_filterset($filterset);
 
         // Get the context.
         $this->courseid = $filterset->get_filter('courseid')->current();
@@ -559,14 +558,5 @@ class participants extends \table_sql implements dynamic_table {
      */
     public function get_context(): context {
         return $this->context;
-    }
-
-    /**
-     * Get the currently defined filterset.
-     *
-     * @return filterset
-     */
-    public function get_filterset(): ?filterset {
-        return $this->filterset;
     }
 }
