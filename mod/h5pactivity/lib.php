@@ -365,14 +365,14 @@ function h5pactivity_get_file_areas(stdClass $course, stdClass $cm, stdClass $co
  * @param stdClass $cm
  * @param context $context
  * @param string $filearea
- * @param int $itemid
- * @param string $filepath
- * @param string $filename
+ * @param int|null $itemid
+ * @param string|null $filepath
+ * @param string|null $filename
  * @return file_info_stored|null file_info_stored instance or null if not found
  */
 function h5pactivity_get_file_info(file_browser $browser, array $areas, stdClass $course,
-            stdClass $cm, context $context, string $filearea, int $itemid,
-            string $filepath, string $filename): ?file_info_stored {
+            stdClass $cm, context $context, string $filearea, ?int $itemid = null,
+            ?string $filepath = null, ?string $filename = null): ?file_info_stored {
     global $CFG;
 
     if (!has_capability('moodle/course:managefiles', $context)) {
