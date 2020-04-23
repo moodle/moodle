@@ -911,7 +911,12 @@ class company {
         }
 
         // Moving a user.
-        if(!self::upsert_company_user($userid,$this->id,$departmentid,$managertype, true, $ws)) {
+        if ($CFG->iomad_autoenrol_managers && $managertype > 0 ) {
+            $educator = true;
+        } else {
+            $educator = false;
+        }
+        if(!self::upsert_company_user($userid, $this->id, $departmentid, $managertype, $educator, $ws)) {
             if ($ws) {
                 return false;
             } else {
@@ -923,7 +928,7 @@ class company {
     }
 
 
-    public static function upsert_company_user($userid, $companyid, $departmentid, $managertype, $educator=true, $ws=false) {
+    public static function upsert_company_user($userid, $companyid, $departmentid, $managertype, $educator=false, $ws=false) {
         global $DB, $CFG;
 
         $assign = [

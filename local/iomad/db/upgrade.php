@@ -2124,5 +2124,40 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019030108, 'local', 'iomad');
     }
 
+    if ($oldversion < 2019030109) {
+
+        // Security issue that users may be tagged as educators when they shouldn't have been.
+        if ($CFG->iomad_autoenrol_managers) {
+            // Remove any company user educator entry where not a manager.
+            $affected = $DB->get_records('company_users', array('managertype' => 0, 'educator' => 1));
+            foreach ($affected as $companyuser) {
+                $DB->set_field('company_users', 'educator', 0, array('id' => $companyuser->id));
+            }
+        } else {
+            // Get the potentials.
+            $affectedusers = array();
+            $companyusers = $DB->get_records('company_users', array('managertype' => 0, 'educator' => 1));
+            foreach ($companyusers as $companyuser) {
+                if ($DB->get_records_sql("SELECT id FROM {logstore_standard_log}
+                                          WHERE userid = :userid
+                                          AND " . $DB->sql_like('eventname', ':eventname') . "
+                                          AND " . $DB->sql_like('other', ':other'),
+                                          array('userid' => $companyuser->userid,
+                                                'eventname' => '%company_user_assigned',
+                                                'other' => '%Course educator%'))) {
+                    continue;
+                } else {
+                    $affectedusers[$companyuser->id] = $companyuser;
+                }
+                // Deal with the erroneous users.
+                foreach ($affectedusers as $affecteduser) {
+                    company::upsert_company_user($affecteduser->userid, $affecteduser->companyid, $affecteduser->departmentid, $affecteduser->managertype, false);
+                }
+            } 
+        }
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019030109, 'local', 'iomad');
+    }
+
     return $result;
 }
