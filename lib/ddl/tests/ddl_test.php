@@ -2485,13 +2485,14 @@ class core_ddl_testcase extends database_driver_testcase {
         // 4. Unexpected index.
         // 5. Extra columns.
         $errors = $dbmanager->check_database_schema($schema)['test_check_db_schema'];
-        $strmissing = "Missing index 'missingkey' (not unique (courseid)). " . PHP_EOL .
-            "CREATE INDEX {$CFG->prefix}testchecdbsche_cou_ix ON {$CFG->prefix}test_check_db_schema (courseid);";
-
+        // Preprocess $errors to get rid of the non compatible (SQL-dialect dependent) parts.
+        array_walk($errors, function(&$error) {
+            $error = trim(strtok($error, PHP_EOL));
+        });
         $this->assertCount(5, $errors);
         $this->assertContains("column 'courseid' has incorrect type 'I', expected 'N'", $errors);
         $this->assertContains("column 'missingcolumn' is missing", $errors);
-        $this->assertContains($strmissing, $errors);
+        $this->assertContains("Missing index 'missingkey' (not unique (courseid)).", $errors);
         $this->assertContains("Unexpected index '{$CFG->prefix}testchecdbsche_ext_uix'.", $errors);
         $this->assertContains("column 'extracolumn' is not expected (I)", $errors);
     }
