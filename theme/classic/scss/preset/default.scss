@@ -81,6 +81,11 @@ $theme-colors: map-merge((
 // Import Core moodle CSS
 @import "moodle";
 
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 // Preset CSS
 .navbar {
     box-shadow: 0 2px 4px rgba(0, 0, 0, .08);

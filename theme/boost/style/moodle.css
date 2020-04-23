@@ -18508,7 +18508,8 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
       font-size: 4em; }
 
 body {
-  -webkit-font-smoothing: antialiased; }
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
 
 .navbar {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); }
