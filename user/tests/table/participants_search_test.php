@@ -1133,6 +1133,324 @@ class participants_search_test extends advanced_testcase {
     }
 
     /**
+     * Ensure that the groups filter works as expected with the provided test cases.
+     *
+     * @param array $usersdata The list of users to create
+     * @param array $groupsavailable The names of groups that should be created in the course
+     * @param array $filtergroups The names of groups to filter by
+     * @param int $jointype The join type to use when combining filter values
+     * @param int $count The expected count
+     * @param array $expectedusers
+     * @dataProvider groups_provider
+     */
+    public function test_groups_filter(array $usersdata, array $groupsavailable, array $filtergroups, int $jointype, int $count,
+            array $expectedusers): void {
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $users = [];
+
+        // Prepare data for filtering by users in no groups.
+        $nogroupsdata = (object) [
+            'id' => USERSWITHOUTGROUP,
+        ];
+
+        // Map group names to group data.
+         $groupsdata = ['nogroups' => $nogroupsdata];
+        foreach ($groupsavailable as $groupname) {
+            $groupinfo = [
+                'courseid' => $course->id,
+                'name' => $groupname,
+            ];
+
+            $groupsdata[$groupname] = $this->getDataGenerator()->create_group($groupinfo);
+        }
+
+        foreach ($usersdata as $username => $userdata) {
+            $user = $this->getDataGenerator()->create_user(['username' => $username]);
+            $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+            if (array_key_exists('groups', $userdata)) {
+                foreach ($userdata['groups'] as $groupname) {
+                    $userinfo = [
+                        'userid' => $user->id,
+                        'groupid' => (int) $groupsdata[$groupname]->id,
+                    ];
+                    $this->getDataGenerator()->create_group_member($userinfo);
+                }
+            }
+
+            $users[$username] = $user;
+        }
+
+        // Create a secondary course with users. We should not see these users.
+        $this->create_course_with_users(1, 1, 1, 1);
+
+        // Create the basic filter.
+        $filterset = new participants_filterset();
+        $filterset->add_filter(new integer_filter('courseid', null, [(int) $course->id]));
+
+        // Create the groups filter.
+        $groupsfilter = new integer_filter('groups');
+        $filterset->add_filter($groupsfilter);
+
+        // Configure the filter.
+        foreach ($filtergroups as $filtergroupname) {
+            $groupsfilter->add_filter_value((int) $groupsdata[$filtergroupname]->id);
+        }
+        $groupsfilter->set_join_type($jointype);
+
+        // Run the search.
+        $search = new participants_search($course, $coursecontext, $filterset);
+        $rs = $search->get_participants();
+        $this->assertInstanceOf(moodle_recordset::class, $rs);
+        $records = $this->convert_recordset_to_array($rs);
+
+        $this->assertCount($count, $records);
+        $this->assertEquals($count, $search->get_total_participants_count());
+
+        foreach ($expectedusers as $expecteduser) {
+            $this->assertArrayHasKey($users[$expecteduser]->id, $records);
+        }
+    }
+
+    /**
+     * Data provider for groups filter tests.
+     *
+     * @return array
+     */
+    public function groups_provider(): array {
+        $tests = [
+            'Users in different groups' => (object) [
+                'groupsavailable' => [
+                    'groupa',
+                    'groupb',
+                    'groupc',
+                ],
+                'users' => [
+                    'a' => [
+                        'groups' => ['groupa'],
+                    ],
+                    'b' => [
+                        'groups' => ['groupb'],
+                    ],
+                    'c' => [
+                        'groups' => ['groupa', 'groupb'],
+                    ],
+                    'd' => [
+                        'groups' => [],
+                    ],
+                ],
+                'expect' => [
+                    // Tests for jointype: ANY.
+                    'ANY: No filter' => (object) [
+                        'groups' => [],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                        ],
+                    ],
+                    'ANY: Filter on a single group' => (object) [
+                        'groups' => ['groupa'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                        ],
+                    ],
+                    'ANY: Filter on a group with no members' => (object) [
+                        'groups' => ['groupc'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                    'ANY: Filter on multiple groups' => (object) [
+                        'groups' => ['groupa', 'groupb'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                        ],
+                    ],
+                    'ANY: Filter on members of no groups only' => (object) [
+                        'groups' => ['nogroups'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'd',
+                        ],
+                    ],
+                    'ANY: Filter on a single group or no groups' => (object) [
+                        'groups' => ['groupa', 'nogroups'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                            'd',
+                        ],
+                    ],
+                    'ANY: Filter on multiple groups or no groups' => (object) [
+                        'groups' => ['groupa', 'groupb', 'nogroups'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                        ],
+                    ],
+
+                    // Tests for jointype: ALL.
+                    'ALL: No filter' => (object) [
+                        'groups' => [],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                        ],
+                    ],
+                    'ALL: Filter on a single group' => (object) [
+                        'groups' => ['groupa'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                        ],
+                    ],
+                    'ALL: Filter on a group with no members' => (object) [
+                        'groups' => ['groupc'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                    'ALL: Filter on members of no groups only' => (object) [
+                        'groups' => ['nogroups'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'd',
+                        ],
+                    ],
+                    'ALL: Filter on multiple groups' => (object) [
+                        'groups' => ['groupa', 'groupb'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'c',
+                        ],
+                    ],
+                    'ALL: Filter on a single group and no groups' => (object) [
+                        'groups' => ['groupa', 'nogroups'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                    'ALL: Filter on multiple groups and no groups' => (object) [
+                        'groups' => ['groupa', 'groupb', 'nogroups'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+
+                    // Tests for jointype: NONE.
+                    'NONE: No filter' => (object) [
+                        'groups' => [],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                        ],
+                    ],
+                    'NONE: Filter on a single group' => (object) [
+                        'groups' => ['groupa'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'b',
+                            'd',
+                        ],
+                    ],
+                    'NONE: Filter on a group with no members' => (object) [
+                        'groups' => ['groupc'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                        ],
+                    ],
+                    'NONE: Filter on members of no groups only' => (object) [
+                        'groups' => ['nogroups'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                        ],
+                    ],
+                    'NONE: Filter on multiple groups' => (object) [
+                        'groups' => ['groupa', 'groupb'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'd',
+                        ],
+                    ],
+                    'NONE: Filter on a single group and no groups' => (object) [
+                        'groups' => ['groupa', 'nogroups'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'b',
+                        ],
+                    ],
+                    'NONE: Filter on multiple groups and no groups' => (object) [
+                        'groups' => ['groupa', 'groupb', 'nogroups'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                ],
+            ],
+        ];
+
+        $finaltests = [];
+        foreach ($tests as $testname => $testdata) {
+            foreach ($testdata->expect as $expectname => $expectdata) {
+                $finaltests["{$testname} => {$expectname}"] = [
+                    'users' => $testdata->users,
+                    'groupsavailable' => $testdata->groupsavailable,
+                    'filtergroups' => $expectdata->groups,
+                    'jointype' => $expectdata->jointype,
+                    'count' => $expectdata->count,
+                    'expectedusers' => $expectdata->expectedusers,
+                ];
+            }
+        }
+
+        return $finaltests;
+    }
+
+    /**
      * Ensure that the last access filter works as expected with the provided test cases.
      *
      * @param array $usersdata The list of users to create

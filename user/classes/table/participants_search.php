@@ -131,7 +131,7 @@ class participants_search {
      * @return array
      */
     protected function get_participants_sql(string $additionalwhere, array $additionalparams): array {
-        $isfrontpage = ($this->courseid == SITEID);
+        $isfrontpage = ($this->course->id == SITEID);
         $accesssince = 0;
         // Whether to match on users who HAVE accessed since the given time (ie false is 'inactive for more than x').
         $matchaccesssince = false;
@@ -317,7 +317,7 @@ class participants_search {
 
         // Prepare any groups filtering.
         if ($groupids) {
-            $groupjoin = groups_get_members_join($groupids, $uid, $this->context);
+            $groupjoin = groups_get_members_join($groupids, $uid, $this->context, $this->get_groups_jointype());
             $joins[] = $groupjoin->joins;
             $params = array_merge($params, $groupjoin->params);
             if (!empty($groupjoin->wheres)) {
@@ -456,6 +456,31 @@ class participants_search {
         $wheres = implode(" AND ", $wheres);
 
         return new \core\dml\sql_join($joins, $wheres, $params);
+    }
+
+    /**
+     * Fetch the groups filter's grouplib jointype, based on its filterset jointype.
+     * This mapping is to ensure compatibility between the two, should their values ever differ.
+     *
+     * @return int
+     */
+    protected function get_groups_jointype(): int {
+        $groupsfilter = $this->filterset->get_filter('groups');
+
+        switch ($groupsfilter->get_join_type()) {
+            case $groupsfilter::JOINTYPE_NONE:
+                $groupsjoin = GROUPS_JOIN_NONE;
+                break;
+            case $groupsfilter::JOINTYPE_ALL:
+                $groupsjoin = GROUPS_JOIN_ALL;
+                break;
+            default:
+                // Default to ANY jointype.
+                $groupsjoin = GROUPS_JOIN_ANY;
+                break;
+        }
+
+        return $groupsjoin;
     }
 
     /**
