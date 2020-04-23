@@ -58,7 +58,7 @@ define(['jquery', 'core/dragdrop'], function($, dragDrop) {
             dragDropToImageForm.fp = dragDropToImageForm.filePickers();
 
             $('#id_previewareaheader').append(
-                '<div class="ddarea">' +
+                '<div class="ddarea que ddimageortext">' +
                 '  <div class="droparea">' +
                 '    <img class="dropbackground" />' +
                 '    <div class="dropzones"></div>' +
