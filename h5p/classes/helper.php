@@ -84,6 +84,33 @@ class helper {
 
 
     /**
+     * Get the error messages stored in our H5P framework.
+     *
+     * @param stdClass $messages The error, exception and info messages, raised while preparing and running an H5P content.
+     * @param factory $factory The \core_h5p\factory object
+     *
+     * @return stdClass with framework error messages.
+     */
+    public static function get_messages(\stdClass $messages, factory $factory): \stdClass {
+        $core = $factory->get_core();
+
+        // Check if there are some errors and store them in $messages.
+        if (empty($messages->error)) {
+            $messages->error = $core->h5pF->getMessages('error') ?: false;
+        } else {
+            $messages->error = array_merge($messages->error, $core->h5pF->getMessages('error'));
+        }
+
+        if (empty($messages->info)) {
+            $messages->info = $core->h5pF->getMessages('info') ?: false;
+        } else {
+            $messages->info = array_merge($messages->info, $core->h5pF->getMessages('info'));
+        }
+
+        return $messages;
+    }
+
+    /**
      * Get the representation of display options as int.
      *
      * @param core $core The \core_h5p\core object

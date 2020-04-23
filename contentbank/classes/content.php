@@ -44,25 +44,25 @@ abstract class content {
     /**
      * Content bank constructor
      *
-     * @param stdClass $content A contentbanck_content record.
+     * @param stdClass $record A contentbank_content record.
      * @throws coding_exception If content type is not right.
      */
-    public function __construct(stdClass $content) {
+    public function __construct(stdClass $record) {
         // Content type should exist and be linked to plugin classname.
-        $classname = $content->contenttype.'\\content';
+        $classname = $record->contenttype.'\\content';
         if (get_class($this) != $classname) {
-            throw new coding_exception(get_string('contenttypenotfound', 'error', $content->contenttype));
+            throw new coding_exception(get_string('contenttypenotfound', 'error', $record->contenttype));
         }
-        $typeclass = $content->contenttype.'\\contenttype';
+        $typeclass = $record->contenttype.'\\contenttype';
         if (!class_exists($typeclass)) {
-            throw new coding_exception(get_string('contenttypenotfound', 'error', $content->contenttype));
+            throw new coding_exception(get_string('contenttypenotfound', 'error', $record->contenttype));
         }
         // A record with the id must exist in 'contenbank_content' table.
         // To improve performance, we are only checking the id is set, but no querying the database.
-        if (!isset($content->id)) {
+        if (!isset($record->id)) {
             throw new coding_exception(get_string('invalidcontentid', 'error'));
         }
-        $this->content = $content;
+        $this->content = $record;
     }
 
     /**

@@ -27,6 +27,10 @@ require('../config.php');
 require_login();
 
 $id = required_param('id', PARAM_INT);
+$deletecontent = optional_param('deletecontent', null, PARAM_INT);
+
+$PAGE->requires->js_call_amd('core_contentbank/actions', 'init');
+
 $record = $DB->get_record('contentbank_content', ['id' => $id], '*', MUST_EXIST);
 $context = context::instance_by_id($record->contextid, MUST_EXIST);
 require_capability('moodle/contentbank:access', $context);
@@ -52,15 +56,42 @@ $title .= ": ".$record->name;
 $PAGE->set_title($title);
 $PAGE->set_pagetype('contenbank');
 
+$contenttypeclass = "\\$record->contenttype\\contenttype";
+$contenttype = new $contenttypeclass($context);
+$contentclass = "\\$record->contenttype\\content";
+$content = new $contentclass($record);
+if ($contenttype->can_delete($content)) {
+    // Create the cog menu with all the secondary actions, such as delete, rename...
+    $actionmenu = new action_menu();
+    $actionmenu->set_alignment(action_menu::TR, action_menu::BR);
+    // Add the delete content item to the menu.
+    $attributes = [
+                'data-action' => 'deletecontent',
+                'data-contentname' => $content->get_name(),
+                'data-contentid' => $content->get_id(),
+                'data-contextid' => $context->id,
+            ];
+    $actionmenu->add_secondary_action(new action_menu_link(
+        new moodle_url('#'),
+        new pix_icon('t/delete', get_string('delete')),
+        get_string('delete'),
+        false,
+        $attributes
+    ));
+
+    // Add the cog menu to the header.
+    $PAGE->add_header_action(html_writer::div(
+        $OUTPUT->render($actionmenu),
+        'd-print-none',
+        ['id' => 'region-main-settings-menu']
+    ));
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->box_start('generalbox');
 
-$managerlass = "\\$record->contenttype\\contenttype";
-if (class_exists($managerlass)) {
-    $manager = new $managerlass($context);
-    if ($manager->can_access()) {
-        echo $manager->get_view_content($record);
-    }
+if ($contenttype->can_access()) {
+    echo $contenttype->get_view_content($record);
 }
 
 echo $OUTPUT->box_end();

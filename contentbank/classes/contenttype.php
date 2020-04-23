@@ -57,27 +57,46 @@ abstract class contenttype {
     /**
      * Fills content_bank table with appropiate information.
      *
-     * @param stdClass $content  An optional content record compatible object (default null)
-     * @return content       Object with content bank information.
+     * @param stdClass $record An optional content record compatible object (default null)
+     * @return content  Object with content bank information.
      */
-    public function create_content(\stdClass $content = null): ?content {
+    public function create_content(\stdClass $record = null): ?content {
         global $USER, $DB;
 
-        $record = new \stdClass();
-        $record->contenttype = $this->get_contenttype_name();
-        $record->contextid = $this->context->id;
-        $record->name = $content->name ?? '';
-        $record->usercreated = $content->usercreated ?? $USER->id;
-        $record->timecreated = time();
-        $record->usermodified = $record->usercreated;
-        $record->timemodified = $record->timecreated;
-        $record->configdata = $content->configdata ?? '';
-        $record->id = $DB->insert_record('contentbank_content', $record);
-        if ($record->id) {
-            $classname = '\\'.$record->contenttype.'\\content';
-            return new $classname($record);
+        $entry = new \stdClass();
+        $entry->contenttype = $this->get_contenttype_name();
+        $entry->contextid = $this->context->id;
+        $entry->name = $record->name ?? '';
+        $entry->usercreated = $record->usercreated ?? $USER->id;
+        $entry->timecreated = time();
+        $entry->usermodified = $entry->usercreated;
+        $entry->timemodified = $entry->timecreated;
+        $entry->configdata = $record->configdata ?? '';
+        $entry->id = $DB->insert_record('contentbank_content', $entry);
+        if ($entry->id) {
+            $classname = '\\'.$entry->contenttype.'\\content';
+            return new $classname($entry);
         }
         return null;
+    }
+
+    /**
+     * Delete this content from the content_bank.
+     * This method can be overwritten by the plugins if they need to delete specific information.
+     *
+     * @param  content $content The content to delete.
+     * @return boolean true if the content has been deleted; false otherwise.
+     */
+    public function delete_content(content $content): bool {
+        global $DB;
+
+        // Delete the file if it exists.
+        if ($file = $content->get_file()) {
+            $file->delete();
+        }
+
+        // Delete the contentbank DB entry.
+        return $DB->delete_records('contentbank_content', ['id' => $content->get_id()]);
     }
 
     /**
@@ -105,8 +124,8 @@ abstract class contenttype {
     /**
      * Returns the URL where the content will be visualized.
      *
-     * @param stdClass $record  Th content to be displayed.
-     * @return string            URL where to visualize the given content.
+     * @param stdClass $record  The content to be displayed.
+     * @return string           URL where to visualize the given content.
      */
     public function get_view_url(\stdClass $record): string {
         return new moodle_url('/contentbank/view.php', ['id' => $record->id]);
@@ -115,8 +134,8 @@ abstract class contenttype {
     /**
      * Returns the HTML content to add to view.php visualizer.
      *
-     * @param stdClass $record  Th content to be displayed.
-     * @return string            HTML code to include in view.php.
+     * @param stdClass $record  The content to be displayed.
+     * @return string           HTML code to include in view.php.
      */
     public function get_view_content(\stdClass $record): string {
         // Main contenttype class can visualize the content, but plugins could overwrite visualization.
@@ -183,6 +202,40 @@ abstract class contenttype {
      * @return bool     True if plugin allows uploading. False otherwise.
      */
     protected function is_upload_allowed(): bool {
+        // Plugins can overwrite this function to add any check they need.
+        return true;
+    }
+
+    /**
+     * Check if the user can delete this content.
+     *
+     * @param  content $content The content to be deleted.
+     * @return bool True if content could be uploaded. False otherwise.
+     */
+    final public function can_delete(content $content): bool {
+        global $USER;
+
+        if ($this->context->id != $content->get_content()->contextid) {
+            // The content has to have exactly the same context as this contenttype.
+            return false;
+        }
+
+        $hascapability = has_capability('moodle/contentbank:deleteanycontent', $this->context);
+        if ($content->get_content()->usercreated == $USER->id) {
+            // This content has been created by the current user; check if she can delete her content.
+            $hascapability = $hascapability || has_capability('moodle/contentbank:deleteowncontent', $this->context);
+        }
+
+        return $hascapability && $this->is_delete_allowed($content);
+    }
+
+    /**
+     * Returns if content allows deleting.
+     *
+     * @param  content $content The content to be deleted.
+     * @return bool True if content allows uploading. False otherwise.
+     */
+    protected function is_delete_allowed(content $content): bool {
         // Plugins can overwrite this function to add any check they need.
         return true;
     }

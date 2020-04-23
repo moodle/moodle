@@ -23,9 +23,14 @@
  */
 
 $string['author'] = 'Author';
+$string['contentdeleted'] = 'The content has been deleted.';
+$string['contentnotdeleted'] = 'An error was encountered while trying to delete the content.';
+$string['deletecontent'] = 'Delete content';
+$string['deletecontentconfirm'] = '<p>Are you sure you want to delete content <em>\'{$a->name}\'</em>? It will remove the content and all its files.</p><p>This operation can not be undone.</p>';
 $string['file'] = 'Upload content';
 $string['file_help'] = 'Files may be stored in the content bank for use in courses. Only files used by content types enabled on the site may be uploaded.';
 $string['name'] = 'Content';
+$string['nopermissiontodelete'] = 'You have no permissions to delete the content.';
 $string['privacy:metadata:userid'] = 'The ID of the user creating or modifying content bank content.';
 $string['privacy:metadata:content:usercreated'] = 'The user has created the content.';
 $string['privacy:metadata:content:usermodified'] = 'Last user has modified the content.';

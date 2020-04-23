@@ -35,6 +35,47 @@
 class contenttype_h5p_contenttype_plugin_testcase extends advanced_testcase {
 
     /**
+     * Test the behaviour of delete_content().
+     */
+    public function test_delete_content() {
+        global $CFG, $USER, $DB;
+
+        $this->resetAfterTest();
+        $systemcontext = context_system::instance();
+
+        // Create users.
+        $roleid = $DB->get_field('role', 'id', array('shortname' => 'manager'));
+        $manager = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->role_assign($roleid, $manager->id);
+        $this->setUser($manager);
+
+        // Add an H5P file to the content bank.
+        $filepath = $CFG->dirroot . '/h5p/tests/fixtures/filltheblanks.h5p';
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $contents = $generator->generate_contentbank_data('contenttype_h5p', 2, $USER->id, $systemcontext, true, $filepath);
+        $content1 = array_shift($contents);
+        $content2 = array_shift($contents);
+
+        // Load this H5P file though the player to create the H5P DB entries.
+        $h5pplayer = new \core_h5p\player($content1->get_file_url(), new \stdClass(), true);
+        $h5pplayer->add_assets_to_page();
+        $h5pplayer->output();
+        $h5pplayer = new \core_h5p\player($content2->get_file_url(), new \stdClass(), true);
+        $h5pplayer->add_assets_to_page();
+        $h5pplayer->output();
+
+        // Check the H5P content has been created.
+        $this->assertEquals(2, $DB->count_records('h5p'));
+        $this->assertEquals(2, $DB->count_records('contentbank_content'));
+
+        // Check the H5P content is removed after calling this method.
+        $contenttype = new \contenttype_h5p\contenttype($systemcontext);
+        $contenttype->delete_content($content1);
+        $this->assertEquals(1, $DB->count_records('h5p'));
+        $this->assertEquals(1, $DB->count_records('contentbank_content'));
+    }
+
+    /**
      * Tests can_upload behavior.
      *
      * @covers ::can_upload
