@@ -831,9 +831,9 @@ class flexible_table {
      * @return string contents of cell in column 'fullname', for this row.
      */
     function col_fullname($row) {
-        global $PAGE, $COURSE;
+        global $COURSE;
 
-        $name = fullname($row, has_capability('moodle/site:viewfullnames', $PAGE->context));
+        $name = fullname($row, has_capability('moodle/site:viewfullnames', $this->get_context()));
         if ($this->download) {
             return $name;
         }
@@ -1211,7 +1211,7 @@ class flexible_table {
      * This function is not part of the public api.
      */
     function print_headers() {
-        global $CFG, $OUTPUT, $PAGE;
+        global $CFG, $OUTPUT;
 
         echo html_writer::start_tag('thead');
         echo html_writer::start_tag('tr');
@@ -1233,7 +1233,7 @@ class flexible_table {
 
                 case 'fullname':
                     // Check the full name display for sortable fields.
-                    if (has_capability('moodle/site:viewfullnames', $PAGE->context)) {
+                    if (has_capability('moodle/site:viewfullnames', $this->get_context())) {
                         $nameformat = $CFG->alternativefullnameformat;
                     } else {
                         $nameformat = $CFG->fullnamedisplay;
@@ -1692,6 +1692,24 @@ class flexible_table {
         }
 
         return false;
+    }
+
+    /**
+     * Get the context for the table.
+     *
+     * Note: This function _must_ be overridden by dynamic tables to ensure that the context is correctly determined
+     * from the filterset parameters.
+     *
+     * @return context
+     */
+    public function get_context(): context {
+        global $PAGE;
+
+        if (is_a($this, \core_table\dynamic::class)) {
+            throw new coding_exception('The get_context function must be defined for a dynamic table');
+        }
+
+        return $PAGE->context;
     }
 }
 
