@@ -538,15 +538,6 @@ class participants extends \table_sql implements dynamic_table {
     }
 
     /**
-     * Get an unique id for the participants table.
-     * @param string $argument An argument for the unique id, can be course id.
-     * @return string
-     */
-    public static function get_unique_id_from_argument(string $argument): string {
-        return "user-index-participants-{$argument}";
-    }
-
-    /**
      * Get the base url for the participants table.
      *
      * @return moodle_url

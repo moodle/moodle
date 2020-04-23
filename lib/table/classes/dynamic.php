@@ -41,19 +41,6 @@ use core_table\local\filter\filterset;
 interface dynamic {
 
     /**
-     * Take a string and convert it to the format expected by the table.
-     * For example, you may have a format such as:
-     *
-     *   mod_assign-submissions-[courseid]
-     *
-     * Passing this function an argument of [courseid] would return the fully-formed string.
-     *
-     * @param string $argument
-     * @return string
-     */
-    public static function get_unique_id_from_argument(string $argument): string;
-
-    /**
      * Get the base url.
      *
      * @return moodle_url

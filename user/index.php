@@ -275,7 +275,7 @@ if (count($keywordfilter)) {
     $filterset->add_filter($keywordfilter);
 }
 
-$participanttable = new \core_user\table\participants(\core_user\table\participants::get_unique_id_from_argument($course->id));
+$participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
 $participanttable->set_selectall($selectall);
 $participanttable->set_filterset($filterset);
 $participanttable->define_baseurl($baseurl);
