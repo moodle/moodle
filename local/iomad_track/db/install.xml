@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/iomad_track/db" VERSION="20190905" COMMENT="XMLDB file for Moodle local/iomad_track"
+<XMLDB PATH="local/iomad_track/db" VERSION="20200424" COMMENT="XMLDB file for Moodle local/iomad_track"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -13,6 +13,7 @@
         <FIELD NAME="timecompleted" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="Time when course was completed"/>
         <FIELD NAME="timeenrolled" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timestarted" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timeexpires" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="finalscore" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
         <FIELD NAME="companyid" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="licenseid" TYPE="int" LENGTH="20" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
@@ -32,6 +33,8 @@
         <INDEX NAME="companycourse" UNIQUE="false" FIELDS="companyid, courseid"/>
         <INDEX NAME="usercourseenrol" UNIQUE="false" FIELDS="userid, courseid, timeenrolled"/>
         <INDEX NAME="usercourselicense" UNIQUE="false" FIELDS="userid, courseid, licenseid, licenseallocated"/>
+        <INDEX NAME="usercourseexpire" UNIQUE="false" FIELDS="userid, courseid, timeexpires"/>
+        <INDEX NAME="usercoursecomplete" UNIQUE="false" FIELDS="userid, courseid, timecompleted"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="local_iomad_track_certs" COMMENT="Record certificates issued">

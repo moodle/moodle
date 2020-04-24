@@ -42,11 +42,11 @@ class local_report_user_completion_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_coursename($row) {
-        global $output;
+        global $output, $params;
 
         if (!$this->is_downloading()) {
             $completionurl = '/local/report_completion/index.php';
-            return $output->single_button(new moodle_url($completionurl, array('courseid' => $row->courseid)), format_string($row->coursename, true, 1));
+            return $output->single_button(new moodle_url($completionurl, array('courseid' => $row->courseid, 'validonly' => $params['validonly'])), format_string($row->coursename, true, 1));
         } else {
             return format_string($row->coursename, true, 1);
         }
@@ -105,15 +105,12 @@ class local_report_user_completion_table extends table_sql {
     public function col_timeexpires($row) {
         global $CFG, $DB;
 
-        if ($icourserec = $DB->get_record_sql("SELECT * FROM {iomad_courses} WHERE courseid = :courseid AND validlength !=0", array('courseid' => $row->courseid))) {
-            if (!empty($row->timecompleted)) {
-                $expiredate = $row->timecompleted + $icourserec->validlength * 24 * 60 * 60;
-                return date($CFG->iomad_date_format, $expiredate);
-            } else {
-                return;
-            }
-        } else {
+        if (!empty($row->timecompleted) && empty($row->timeexpires)) {
             return get_string('notapplicable', 'local_report_completion');
+        } else {
+            if (!empty($row->timeexpires)) {
+                return date($CFG->iomad_date_format, $row->timeexpires);
+            }
         }
     }
 
@@ -186,7 +183,7 @@ class local_report_user_completion_table extends table_sql {
                     }
                 } else {
                     if (!empty($row->timecompleted)) {
-                        if (has_capability('local/report_users:clearentries ', context_system::instance())) {
+                        if (has_capability('local/report_users:clearentries', context_system::instance())) {
                             $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
                         }
                     } else if ($DB->get_record('companylicense_users', array('userid' => $row->userid, 'licensecourseid' => $row->courseid, 'licenseid' => $row->licenseid, 'issuedate' => $row->licenseallocated, 'isusing' => 1))) {

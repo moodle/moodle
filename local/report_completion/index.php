@@ -53,6 +53,8 @@ $toraw = optional_param_array('comptoraw', null, PARAM_INT);
 $yearfrom = optional_param_array('fromarray', null, PARAM_INT);
 $yearto = optional_param_array('toarray', null, PARAM_INT);
 $showpercentage = optional_param('showpercentage', 0, PARAM_INT);
+$submitbutton = optional_param('submitbutton', '', PARAM_CLEAN);
+$validonly = optional_param('validonly', 0, PARAM_BOOL);
 
 require_login($SITE);
 $context = context_system::instance();
@@ -133,9 +135,10 @@ if ($toraw) {
     }
 }
 $params['showpercentage'] = $showpercentage;
+$params['validonly'] = $validonly;
 
 // Url stuff.
-$url = new moodle_url('/local/report_completion/index.php');
+$url = new moodle_url('/local/report_completion/index.php', array('validonly' => $validonly));
 $dashboardurl = new moodle_url('/my');
 
 // Page stuff:.
@@ -299,7 +302,7 @@ if (empty($courseid)) {
             echo html_writer::end_tag('div');
         }
 
-        // Also for suspended user controls.
+        // Also for percentage of user controls.
         $showpercentageparams = $params;
         if (!$showpercentage) {
             $showpercentageparams['showpercentage'] = 1;
@@ -314,6 +317,20 @@ if (empty($courseid)) {
             echo $output->single_button($percentageuserslink, get_string("hidepercentageusers", 'local_report_completion'));
             echo html_writer::end_tag('div');
         }
+
+        // Also for validonly courses user controls.
+        $validonlyparams = $params;
+        $validonlyparams['validonly'] = !$validonly;
+        if (!$validonly) {
+            $validonlystring = get_string('hidevalidcourses', 'block_iomad_company_admin');
+        } else {
+            $validonlystring = get_string('showvalidcourses', 'block_iomad_company_admin');
+        }
+        $validonlylink = new moodle_url($url, $validonlyparams);
+        echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+        echo $output->single_button($validonlylink, $validonlystring);
+        echo html_writer::end_tag('div');
+
         echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
         $mform->display();
         echo html_writer::end_tag('div');
@@ -335,8 +352,9 @@ if (empty($courseid)) {
     // Set up the SQL for the table.
     $selectsql = "courseid as id, coursename, $departmentid AS departmentid, $showsuspended AS showsuspended, companyid";
     $fromsql = "{local_iomad_track}";
-    $wheresql = "companyid = :companyid $coursesearchsql group by courseid";
     $sqlparams = array('companyid' => $companyid) + $searchparams;
+
+    $wheresql = "companyid = :companyid $coursesearchsql group by courseid";
 
     // Set up the headers for the table.
     $courseheaders = array(get_string('coursename', 'local_report_completion'),
@@ -408,8 +426,9 @@ if (empty($courseid)) {
                 $options['adddodownload'] = false;
                 $options['compfromraw'] = $from;
                 $options['comptoraw'] = $to;
+                $options['addvalidonly'] = true;
                 $mform = new iomad_user_filter_form(null, $options);
-                $mform->set_data(array('departmentid' => $departmentid));
+                $mform->set_data(array('departmentid' => $departmentid, 'validonly' => $validonly));
                 $mform->set_data($options);
                 $mform->get_data();
 
@@ -420,6 +439,7 @@ if (empty($courseid)) {
     }
 
     $sqlparams = array('companyid' => $companyid, 'courseid' => $courseid);
+
     // Deal with where we are on the department tree.
     $currentdepartment = company::get_departmentbyid($departmentid);
     $showdepartments = company::get_subdepartments_list($currentdepartment);
@@ -455,10 +475,18 @@ if (empty($courseid)) {
         $sqlparams['completedto'] = $params['to'];
     }
 
+    // Just valid courses?
+    if ($validonly) {
+        $validsql = " AND (lit.timeexpires > :runtime || (lit.timecompleted IS NULL) || (lit.timecompleted > 0 AND lit.timeexpires IS NULL))";
+        $sqlparams['runtime'] = time();
+    } else {
+        $validsql = "";
+    }
+
     // Set up the initial SQL for the form.
-    $selectsql = "lit.id,u.id as userid,u.firstname,u.lastname,d.name AS department,u.email,lit.id as certsource, lit.courseid,lit.coursename,lit.timecompleted,lit.timeenrolled,lit.timestarted,lit.finalscore,lit.licenseid,lit.licensename, lit.licenseallocated, lit.timecompleted AS timeexpires";
+    $selectsql = "lit.id,u.id as userid,u.firstname,u.lastname,d.name AS department,u.email,lit.id as certsource, lit.courseid,lit.coursename,lit.timecompleted,lit.timeenrolled,lit.timestarted,lit.timeexpires,lit.finalscore,lit.licenseid,lit.licensename, lit.licenseallocated";
     $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.userid = cu.userid AND lit.companyid = cu.companyid) JOIN {department} d ON (cu.departmentid = d.id)";
-    $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $datesql $coursesql";
+    $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $datesql $coursesql $validsql";
     $sqlparams = $sqlparams + $searchinfo->searchparams;
 
     // Set up the headers for the form.
@@ -526,7 +554,7 @@ if (empty($courseid)) {
 
     // Does this course have an expiry time?
     if (($courseid == 1 && $DB->get_records_sql("SELECT id FROM {iomad_courses} WHERE courseid IN (SELECT courseid FROM {local_iomad_track} WHERE companyid = :companyid) AND expireafter != 0", array('companyid' => $company->id))) ||
-        $DB->get_record_sql("SELECT id FROM {iomad_courses} WHERE courseid = :courseid AND expireafter != 0", array('courseid' => $courseid))) {
+        $DB->get_record_sql("SELECT id FROM {iomad_courses} WHERE courseid = :courseid AND validlength > 0", array('courseid' => $courseid))) {
         $columns[] = 'timeexpires';
         $headers[] = get_string('timeexpires', 'local_report_completion');
     }

@@ -30,9 +30,11 @@ $delete = optional_param('delete', 0, PARAM_INT);
 $rowid = optional_param('rowid', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_CLEAN);
 $confirm = optional_param('confirm', 0, PARAM_INT);
+$validonly = optional_param('validonly', $CFG->iomad_hidevalidcourses, PARAM_BOOL);
 
 $params = array();
 $params['userid'] = $userid;
+$params['validonly'] = $validonly;
 
 // Check permissions.
 require_login();
@@ -61,7 +63,7 @@ if (empty($CFG->defaulthomepage)) {
 }
 if (iomad::has_capability('local/report_completion:view', $context)) {
     $PAGE->navbar->add(get_string('pluginname', 'local_report_completion'),
-                       new moodle_url($CFG->wwwroot . "/local/report_completion/index.php"));
+                       new moodle_url($CFG->wwwroot . "/local/report_completion/index.php", array('validonly' => $validonly)));
 }
 $PAGE->navbar->add($linktext, $linkurl);
 
@@ -166,15 +168,33 @@ if (!$table->is_downloading()) {
             echo $output->single_button($url, get_string('userlicenses', 'block_iomad_company_admin'));
             echo html_writer::end_tag('div');
         }
+        $url = new moodle_url(basename(__FILE__), array('userid' => $userid, 'validonly' => !$validonly));
+        if (!$validonly) {
+            $validstring = get_string('hidevalidcourses', 'block_iomad_company_admin');
+        } else {
+            $validstring = get_string('showvalidcourses', 'block_iomad_company_admin');
+        }
+        echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+        echo $output->single_button($url, $validstring);
+        echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
         echo html_writer::start_tag('div', array('class' => 'iomadclear'));
 }
 
 // Set up the initial SQL for the form.
-$selectsql = "lit.id,lit.userid,lit.courseid,lit.coursename,lit.licenseid,lit.licensename,lit.licenseallocated,lit.timeenrolled,lit.timestarted,lit.timecompleted,lit.finalscore,lit.id as certsource, cc.timecompleted AS action";
+$selectsql = "lit.id,lit.userid,lit.courseid,lit.coursename,lit.licenseid,lit.licensename,lit.licenseallocated,lit.timeenrolled,lit.timestarted,lit.timecompleted,lit.timeexpires,lit.finalscore,lit.id as certsource, cc.timecompleted AS action";
 $fromsql = "{local_iomad_track} lit LEFT JOIN {course_completions} cc ON (lit.courseid = cc.course AND lit.userid = cc.userid AND lit.timecompleted = cc.timecompleted AND lit.timecompleted IS NOT NULL)";
-$wheresql = " lit.userid = :userid AND lit.companyid = :companyid AND lit.courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) .")";
 $sqlparams = array('userid' => $userid, 'companyid' => $companyid);
+
+// Just valid courses?
+if ($validonly) {
+    $validsql = " AND (lit.timeexpires > :runtime || (lit.timecompleted IS NULL) || (lit.timecompleted > 0 AND lit.timeexpires IS NULL))";
+    $sqlparams['runtime'] = time();
+} else {
+    $validsql = "";
+}
+
+$wheresql = " lit.userid = :userid AND lit.companyid = :companyid AND lit.courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) .") $validsql";
 
 // Set up the headers for the form.
 $headers = array(get_string('course', 'local_report_completion'),

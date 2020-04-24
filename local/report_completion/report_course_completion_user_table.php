@@ -42,12 +42,13 @@ class local_report_course_completion_user_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_firstname($row) {
-        global $CFG;
+        global $CFG, $params;
 
         $userurl = '/local/report_users/userdisplay.php';
         if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
             return "<a href='".
                     new moodle_url($userurl, array('userid' => $row->userid,
+                                                   'validonly' => $params['validonly'],
                                                    'courseid' => $row->courseid)).
                     "'>$row->firstname</a>";
         } else {
@@ -61,12 +62,13 @@ class local_report_course_completion_user_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_lastname($row) {
-        global $CFG;
+        global $CFG, $params;
 
         $userurl = '/local/report_users/userdisplay.php';
         if (!$this->is_downloading()) {
             return "<a href='".
                     new moodle_url($userurl, array('userid' => $row->userid,
+                                                   'validonly' => $params['validonly'],
                                                    'courseid' => $row->courseid)).
                     "'>$row->lastname</a>";
         } else {
@@ -127,15 +129,14 @@ class local_report_course_completion_user_table extends table_sql {
     public function col_timeexpires($row) {
         global $CFG, $DB;
 
-        if ($icourserec = $DB->get_record_sql("SELECT * FROM {iomad_courses} WHERE courseid = :courseid AND validlength !=0", array('courseid' => $row->courseid))) {
-            if (!empty($row->timecompleted)) {
-                $expiredate = $row->timecompleted + $icourserec->validlength * 24 * 60 * 60;
-                return date($CFG->iomad_date_format, $expiredate);
-            } else {
-                return;
-            }
-        } else {
+        if (empty($row->timecompleted)) {
+            return;
+        } else if (empty($row->timeexpires)) {
             return get_string('notapplicable', 'local_report_completion');
+        } else {
+            if (!empty($row->timeexpires)) {
+                return date($CFG->iomad_date_format, $row->timeexpires);
+            }
         }
     }
 

@@ -976,6 +976,7 @@ class iomad_user_filter_form extends moodleform {
     protected $fromname;
     protected $toname;
     protected $useusertype;
+    protected $validonly;
 
     public function definition() {
         global $CFG, $DB, $USER, $SESSION;
@@ -1036,6 +1037,12 @@ class iomad_user_filter_form extends moodleform {
             $useusertype = true;
         } else {
             $useusertype = false;
+        }
+
+        if (!empty($this->_customdata['addvalidonly'])) {
+            $this->validonly = true;
+        } else {
+            $this->validonly = false;
         }
 
         $mform =& $this->_form;
@@ -1118,6 +1125,10 @@ class iomad_user_filter_form extends moodleform {
             $mform->addElement('hidden', 'showsuspended');
         }
         $mform->setType('showsuspended', PARAM_INT);
+
+        if ($this->validonly) {
+            $mform->addElement('checkbox', 'validonly', get_string('hidevalidcourses', 'block_iomad_company_admin'));
+        }
 
         if (!$useshowall) {
             $mform->addElement('hidden', 'showall');

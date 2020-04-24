@@ -1148,7 +1148,7 @@ class block_iomad_company_admin_external extends external_api {
      * @return array of department records.
      */
     public static function update_courses($courses) {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
 
         // Validate parameters
         $params = self::validate_parameters(self::update_courses_parameters(), array('courses' => $courses));
@@ -1174,6 +1174,15 @@ class block_iomad_company_admin_external extends external_api {
                 if (!$DB->update_record('iomad_courses', $courserecord)) {
                     $succeeded = false;
                 }
+
+                // Fire an event for this.
+                $eventother = array('iomadcourse' => $currentrecord);
+                $event = \block_iomad_company_admin\event\company_course_updated::create(array('context' => context_system::instance(),
+                                                                                               'objectid' => $currentrecord->id,
+                                                                                               'userid' => $USER->id,
+                                                                                               'other' => $eventother));
+                $event->trigger();
+
             }
         }
 

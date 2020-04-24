@@ -184,6 +184,14 @@ class observer {
         $comprec = $DB->get_record('course_completions', array('userid' => $userid,
                                                                'course' => $courseid));
 
+        // Does this course have a valid length?
+        $offset = 0;
+        if ($iomadrec = $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
+            if ($iomadrec->validlength > 0) {
+                $offset = $iomadrec->validlength * 24 * 60 * 60;
+            }
+        }
+
         // Get the enrolment record as sometime the completion record isn't fully formed after a completion reset.
         $enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
                                          JOIN {enrol} e ON (ue.enrolid = e.id)
@@ -286,6 +294,11 @@ class observer {
             $completion->licensename = $licensename;
             $completion->modifiedtime = time();
 
+            // Deal with completion valid length.
+            if (!empty($offest)) {
+                $completion->timeexpires = $completion->timecompleted + $offset;
+            }
+
             $trackid = $DB->insert_record('local_iomad_track', $completion);
         } else {
             $current->timecompleted = $comprec->timecompleted;
@@ -332,6 +345,11 @@ class observer {
             if ($broken) {
                 // Update the completion record.
                 $DB->update_record('course_completions', $comprec);
+            }
+
+            // Deal with completion valid length.
+            if (!empty($offest)) {
+                $current->timeexpires = $current->timecompleted + $offset;
             }
 
             $current->modifiedtime = time();
@@ -688,4 +706,29 @@ class observer {
         return true;
     }
 
+    /**
+     * Consume company course updated event
+     * @param object $event the event object
+     */
+    public static function company_course_updated($event) {
+        global $DB;
+
+        $courseid = $event->objectid;
+        $original = $event->other['iomadcourse'];
+
+        // Check if the validlength has changed.
+        if ($current = $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
+            if ($current->validlength != $original['validlength']) {
+                $offset = $current->validlength * 24 *60 * 60;
+                $DB->execute("UPDATE {local_iomad_track}
+                              SET timeexpires = timecompleted + :offset
+                              WHERE courseid = :courseid
+                              AND timecompleted > 0",
+                              array('offset' => $offset,
+                                     'courseid' => $courseid));
+            }
+        }
+
+        return true;
+    }
 }

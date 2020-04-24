@@ -484,5 +484,53 @@ mtrace("enrol end " . time());
         upgrade_plugin_savepoint(true, 2020010201, 'local', 'iomad_track');
     }
 
+    if ($oldversion < 2020042400) {
+
+        // Define field timeexpires to be added to local_iomad_track.
+        $table = new xmldb_table('local_iomad_track');
+        $field = new xmldb_field('timeexpires', XMLDB_TYPE_INTEGER, '11', null, null, null, null, 'timestarted');
+
+        // Conditionally launch add field timeexpires.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define index usercourseexpire (not unique) to be added to local_iomad_track.
+        $table = new xmldb_table('local_iomad_track');
+        $index = new xmldb_index('usercourseexpire', XMLDB_INDEX_NOTUNIQUE, ['userid', 'courseid', 'timeexpires']);
+
+        // Conditionally launch add index usercourseexpire.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index usercoursecomplete (not unique) to be added to local_iomad_track.
+        $table = new xmldb_table('local_iomad_track');
+        $index = new xmldb_index('usercoursecomplete', XMLDB_INDEX_NOTUNIQUE, ['userid', 'courseid', 'timecompleted']);
+
+        // Conditionally launch add index usercoursecomplete.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+
+        // Calculate the timeexpired for all users.
+        // Get the courses where there is a expired value.
+        $expirycourses = $DB->get_records_sql("SELECT courseid,validlength FROM {iomad_courses}
+                                               WHERE validlength > 0");
+        foreach ($expirycourses as $expirycourse) {
+            $offset = $expirycourse->validlength * 24 * 60 * 60;
+            $DB->execute("UPDATE {local_iomad_track}
+                          SET timeexpires = timecompleted + :offset
+                          WHERE courseid = :courseid
+                          AND timecompleted > 0",
+                          array('courseid' => $expirycourse->courseid,
+                                'offset' => $offset));
+        }
+
+        // Iomad_track savepoint reached.
+        //upgrade_plugin_savepoint(true, 2020042400, 'local', 'iomad_track');
+    }
+
     return $result;
 }

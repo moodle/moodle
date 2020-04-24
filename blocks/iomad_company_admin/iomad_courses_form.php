@@ -87,6 +87,8 @@ if (!empty($update)) {
     if (!$coursedetails = (array) $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
         print_error(get_string('invaliddetails', 'block_iomad_company_admin'));
     } else {
+        // Keep the original details for the event.
+        $originaldetails = $coursedetails;
         if ('license' == $update) {
             if ($license == 3) {
                 $coursedetails['licensed'] = 0;
@@ -245,6 +247,13 @@ if (!empty($update)) {
             $coursedetails['hasgrade'] = $hasgrade;
             $DB->update_record('iomad_courses', $coursedetails);
         }
+        // Fire an event for this.
+        $eventother = array('iomadcourse' => $originaldetails);
+        $event = \block_iomad_company_admin\event\company_course_updated::create(array('context' => context_system::instance(),
+                                                                                       'objectid' => $courseid,
+                                                                                       'userid' => $USER->id,
+                                                                                       'other' => $eventother));
+        $event->trigger();
     }
 }
 

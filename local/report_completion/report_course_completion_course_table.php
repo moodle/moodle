@@ -42,11 +42,12 @@ class local_report_course_completion_course_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_coursename($row) {
-        global $output;
+        global $output, $params;
 
         if (!$this->is_downloading()) {
             $courseuserslink = new moodle_url('/local/report_completion/index.php',
                                               array('courseid' => $row->id,
+                                                    'validonly' => $params['validonly'],
                                                     'departmentid' => $row->departmentid));
             $coursemonthlylink = new moodle_url('/local/report_completion_monthly/index.php',
                                                 array('courseid' => $row->id,
@@ -253,6 +254,15 @@ class local_report_course_completion_course_table extends table_sql {
             $sqlparams['completedto'] = $params['to'];
         }
 
+    // Just valid courses?
+    if ($params['validonly']) {
+        $validcompletedsql = " AND (lit.timeexpires > :runtime || (lit.timecompleted > 0 AND lit.timeexpires IS NULL))";
+        $sqlparams['runtime'] = time();
+    } else {
+        $validcompletedsql = "";
+    }
+
+
         // Count the completed users.
         $completed = $DB->count_records_sql("SELECT COUNT(lit.id)
                                              FROM {local_iomad_track} lit
@@ -263,6 +273,7 @@ class local_report_course_completion_course_table extends table_sql {
                                              AND lit.timecompleted IS NOT NULL
                                              $datesql
                                              $suspendedsql
+                                             $validcompletedsql
                                              $departmentsql",
                                              $sqlparams);
 
