@@ -187,7 +187,7 @@ class mod_quiz_attempt_walkthrough_testcase extends advanced_testcase {
             $this->assertFalse($attemptobj->has_response_to_at_least_one_graded_question());
 
             $tosubmit = array();
-            $selectedquestionid = $quba->get_question_attempt(1)->get_question()->id;
+            $selectedquestionid = $quba->get_question_attempt(1)->get_question_id();
             $tosubmit[1] = array('answer' => $randqanswer);
             $tosubmit[2] = array(
                 'frog' => 'amphibian',

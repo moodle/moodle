@@ -316,7 +316,7 @@ function quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt) {
 
     $oldnumberstonew = array();
     foreach ($oldquba->get_attempt_iterator() as $oldslot => $oldqa) {
-        $newslot = $quba->add_question($oldqa->get_question(), $oldqa->get_max_mark());
+        $newslot = $quba->add_question($oldqa->get_question(false), $oldqa->get_max_mark());
 
         $quba->start_question_based_on($newslot, $oldqa);
 

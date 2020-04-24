@@ -188,7 +188,8 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
     public function manual_comment_view(question_attempt $qa, question_display_options $options) {
         $output = '';
         if ($qa->has_manual_comment()) {
-            $output .= get_string('commentx', 'question', $qa->get_behaviour()->format_comment(null, null, $options->context));
+            $output .= get_string('commentx', 'question',
+                    $qa->get_behaviour(false)->format_comment(null, null, $options->context));
         }
         if ($options->manualcommentlink) {
             $url = new moodle_url($options->manualcommentlink, array('slot' => $qa->get_slot()));

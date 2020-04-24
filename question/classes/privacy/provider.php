@@ -165,7 +165,7 @@ class provider implements
         ]);
 
         foreach ($quba->get_attempt_iterator() as $qa) {
-            $question = $qa->get_question();
+            $question = $qa->get_question(false);
             $slotno = $qa->get_slot();
             $questionnocontext = array_merge($questionscontext, [$slotno]);
 
@@ -197,7 +197,6 @@ class provider implements
                 }
 
                 if ($options->manualcomment != \question_display_options::HIDDEN) {
-                    $behaviour = $qa->get_behaviour();
                     if ($qa->has_manual_comment()) {
                         // Note - the export of the step data will ensure that the files are exported.
                         // No need to do it again here.
@@ -211,7 +210,7 @@ class provider implements
                                 $step->get_id(),
                                 $comment
                             );
-                        $data->comment = $behaviour->format_comment($comment, $commentformat);
+                        $data->comment = $qa->get_behaviour(false)->format_comment($comment, $commentformat);
                     }
                 }
 
@@ -272,7 +271,6 @@ class provider implements
                 }
 
                 if ($step->has_behaviour_var('comment')) {
-                    $behaviour = $qa->get_behaviour();
                     $comment = $step->get_behaviour_var('comment');
                     $commentformat = $step->get_behaviour_var('commentformat');
 
@@ -300,7 +298,7 @@ class provider implements
                             $step->get_id()
                         );
 
-                    $stepdata->comment = $behaviour->format_comment($comment, $commentformat);
+                    $stepdata->comment = $qa->get_behaviour(false)->format_comment($comment, $commentformat);
                 }
 
                 // Export any response files associated with this step.

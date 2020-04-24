@@ -92,10 +92,10 @@ class question_usage_by_activity_test extends advanced_testcase {
         $slot = $quba->add_question($tf);
 
         // Exercise SUT and verify.
-        $this->assertSame($tf, $quba->get_question($slot));
+        $this->assertSame($tf, $quba->get_question($slot, false));
 
         $this->expectException('moodle_exception');
-        $quba->get_question($slot + 1);
+        $quba->get_question($slot + 1, false);
     }
 
     public function test_extract_responses() {

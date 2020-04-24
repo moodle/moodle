@@ -1162,7 +1162,7 @@ class quiz_attempt {
             return $options;
         }
 
-        $question = $this->quba->get_question($slot);
+        $question = $this->quba->get_question($slot, false);
         if (!question_has_capability_on($question, 'edit', $question->category)) {
             return $options;
         }
@@ -1267,7 +1267,7 @@ class quiz_attempt {
      *     question length, which could theoretically be greater than one.
      */
     public function is_real_question($slot) {
-        return $this->quba->get_question($slot)->length;
+        return $this->quba->get_question($slot, false)->length;
     }
 
     /**
@@ -1368,7 +1368,7 @@ class quiz_attempt {
      *      by the quiz.
      */
     public function get_question_name($slot) {
-        return $this->quba->get_question($slot)->name;
+        return $this->quba->get_question($slot, false)->name;
     }
 
     /**
@@ -1441,7 +1441,7 @@ class quiz_attempt {
      * @since  Moodle 3.1
      */
     public function get_question_type_name($slot) {
-        return $this->quba->get_question($slot)->get_type_name();
+        return $this->quba->get_question($slot, false)->get_type_name();
     }
 
     /**
@@ -1767,7 +1767,7 @@ class quiz_attempt {
      * @return question_attempt the placeholder question attempt.
      */
     protected function make_blocked_question_placeholder($slot) {
-        $replacedquestion = $this->get_question_attempt($slot)->get_question();
+        $replacedquestion = $this->get_question_attempt($slot)->get_question(false);
 
         question_bank::load_question_definition_classes('description');
         $question = new qtype_description_question();
@@ -2690,7 +2690,7 @@ abstract class quiz_nav_panel_base {
     }
 
     protected function get_state_string(question_attempt $qa, $showcorrectness) {
-        if ($qa->get_question()->length > 0) {
+        if ($qa->get_question(false)->length > 0) {
             return $qa->get_state_string($showcorrectness);
         }
 

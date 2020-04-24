@@ -696,7 +696,7 @@ abstract class question_flags {
     public static function get_postdata(question_attempt $qa) {
         $qaid = $qa->get_database_id();
         $qubaid = $qa->get_usage_id();
-        $qid = $qa->get_question()->id;
+        $qid = $qa->get_question_id();
         $slot = $qa->get_slot();
         $checksum = self::get_toggle_checksum($qubaid, $qid, $qaid, $slot);
         return "qaid={$qaid}&qubaid={$qubaid}&qid={$qid}&slot={$slot}&checksum={$checksum}&sesskey=" .

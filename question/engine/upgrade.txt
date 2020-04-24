@@ -23,6 +23,10 @@ This files describes API changes for the core question engine.
    false to these functions, to get the possible performance benefit.
    In addition, there is a new method $qa->get_question_id() to handle that case more simply.
 
+   Note that you don't have worry about this in places like the renderer for your question
+   type, because by the time you are in the renderer, the question will already have been
+   initialised.
+
 
 === 3.7 ===
 

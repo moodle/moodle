@@ -541,7 +541,7 @@ class quiz_grading_report extends quiz_default_report {
 
             // Add the event we will trigger later.
             $params = [
-                'objectid' => $attemptobj->get_question_attempt($assumedslotforevents)->get_question()->id,
+                'objectid' => $attemptobj->get_question_attempt($assumedslotforevents)->get_question_id(),
                 'courseid' => $attemptobj->get_courseid(),
                 'context' => context_module::instance($attemptobj->get_cmid()),
                 'other' => [
