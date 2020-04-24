@@ -289,7 +289,13 @@ ob_end_clean();
 echo html_writer::tag('p', get_string('participantscount', 'moodle', $participanttable->totalrows));
 
 if ($bulkoperations) {
-    echo '<form action="action_redir.php" method="post" id="participantsform">';
+    echo html_writer::start_tag('form', [
+        'action' => 'action_redir.php',
+        'method' => 'post',
+        'id' => 'participantsform',
+        'data-course-id' => $course->id,
+        'data-table-unique-id' => $participanttable->uniqueid,
+    ]);
     echo '<div>';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
@@ -392,13 +398,14 @@ if ($bulkoperations) {
     echo html_writer::tag('div', $label . $select);
 
     echo '<input type="hidden" name="id" value="' . $course->id . '" />';
+    echo '<div class="d-none" data-region="state-help-icon">' . $OUTPUT->help_icon('publishstate', 'notes') . '</div>';
     echo '</div></div></div>';
     echo '</form>';
 
-    $options = new stdClass();
-    $options->courseid = $course->id;
-    $options->noteStateNames = note_get_state_names();
-    $options->stateHelpIcon = $OUTPUT->help_icon('publishstate', 'notes');
+    $options = (object) [
+        'uniqueid' => $participanttable->uniqueid,
+        'noteStateNames' => note_get_state_names(),
+    ];
     $PAGE->requires->js_call_amd('core_user/participants', 'init', [$options]);
 }
 
