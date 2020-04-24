@@ -23,7 +23,6 @@
  */
 
 $string['email'] = 'Send email notifications to';
-$string['emaildigestsubject'] = 'Messages digest';
 $string['emaildigestunreadmessages'] = 'Unread messages';
 $string['emaildigestviewallmessages'] = 'View all messages';
 $string['emailonlyfromnoreplyaddress'] = 'Always send email from the no-reply address?';
@@ -46,3 +45,5 @@ $string['privacy:metadata:subject'] = 'The subject line of the message.';
 $string['privacy:metadata:userfrom'] = 'The user sending the message.';
 $string['tasksendemail'] = 'Messages digest mailings';
 
+// Deprecated since Moodle 3.9.
+$string['emaildigestsubject'] = 'Messages digest';
