@@ -1828,6 +1828,76 @@ class core_ddl_testcase extends database_driver_testcase {
         $this->assertFalse($dbman->table_exists('test_table1'));
     }
 
+    /**
+     * get_columns should return an empty array for ex-temptables.
+     */
+    public function test_leftover_temp_tables_columns() {
+        $DB = $this->tdb; // Do not use global $DB!
+        $dbman = $this->tdb->get_manager();
+
+        // Create temp table0.
+        $table0 = $this->tables['test_table0'];
+        $dbman->create_temp_table($table0);
+
+        $dbman->drop_table($table0);
+
+        // Get columns and perform some basic tests.
+        $columns = $DB->get_columns('test_table0');
+        $this->assertEquals([], $columns);
+    }
+
+    /**
+     * Deleting a temp table should not purge the whole cache
+     */
+    public function test_leftover_temp_tables_cache() {
+        $DB = $this->tdb; // Do not use global $DB!
+        $dbman = $this->tdb->get_manager();
+
+        // Create 2 temp tables.
+        $table0 = $this->tables['test_table0'];
+        $dbman->create_temp_table($table0);
+        $table1 = $this->tables['test_table1'];
+        $dbman->create_temp_table($table1);
+
+        // Create a normal table.
+        $table2 = new xmldb_table ('test_table2');
+        $table2->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table2->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table2->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table2->setComment("This is a test'n drop table. You can drop it safely");
+        $this->tables[$table2->getName()] = $table2;
+        $dbman->create_table($table2);
+
+        // Get columns for the tables, so that relevant caches are populated with their data.
+        $DB->get_columns('test_table0');
+        $DB->get_columns('test_table1');
+        $DB->get_columns('test_table2');
+
+        $dbman->drop_table($table0);
+
+        $rc = new ReflectionClass('moodle_database');
+        $rcm = $rc->getMethod('get_temp_tables_cache');
+        $rcm->setAccessible(true);
+        $metacachetemp = $rcm->invokeArgs($DB, []);
+
+        // Data of test_table0 should be removed from the cache.
+        $this->assertEquals(false, $metacachetemp->has('test_table0'));
+
+        // Data of test_table1 should be intact.
+        $this->assertEquals(true, $metacachetemp->has('test_table1'));
+
+        $rc = new ReflectionClass('moodle_database');
+        $rcm = $rc->getMethod('get_metacache');
+        $rcm->setAccessible(true);
+        $metacache = $rcm->invokeArgs($DB, []);
+
+        // Data of test_table2 should be intact.
+        $this->assertEquals(true, $metacache->has('test_table2'));
+
+        // Delete the leftover temp table.
+        $dbman->drop_table($table1);
+    }
+
     public function test_reset_sequence() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
