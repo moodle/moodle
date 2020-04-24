@@ -47,6 +47,9 @@ class token_table extends \table_sql {
     /** @var bool $hasviewfullnames Does the user have the viewfullnames capability. */
     protected $hasviewfullnames;
 
+    /** @var array */
+    protected $userextrafields;
+
     /** @var object */
     protected $filterdata;
 
@@ -65,6 +68,9 @@ class token_table extends \table_sql {
         // Can we see tokens created by all users?
         $this->showalltokens = has_capability('moodle/webservice:managealltokens', $context);
         $this->hasviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+
+        // List of user identity fields.
+        $this->userextrafields = \core\user_fields::get_identity_fields(\context_system::instance(), false);
 
         // Filter form values.
         $this->filterdata = $filterdata;
@@ -142,8 +148,18 @@ class token_table extends \table_sql {
     public function col_fullname($data) {
         global $OUTPUT;
 
+        $identity = [];
+
+        foreach ($this->userextrafields as $userextrafield) {
+            $identity[] = $data->$userextrafield;
+        }
+
         $userprofilurl = new \moodle_url('/user/profile.php', ['id' => $data->userid]);
         $content = \html_writer::link($userprofilurl, fullname($data, $this->hasviewfullnames));
+
+        if ($identity) {
+            $content .= \html_writer::div('<small>' . implode(', ', $identity) . '</small>', 'useridentity text-muted');
+        }
 
         // Make up list of capabilities that the user is missing for the given webservice.
         $webservicemanager = new \webservice();
@@ -156,7 +172,7 @@ class token_table extends \table_sql {
             }, $usermissingcaps[$data->userid]);
             $list = \html_writer::alist($links);
             $help = $OUTPUT->help_icon('missingcaps', 'webservice');
-            $content .= print_collapsible_region(\html_writer::div($list . $help, 'missingcaps'), 'small',
+            $content .= print_collapsible_region(\html_writer::div($list . $help, 'missingcaps'), 'small mt-2',
                 \html_writer::random_id('usermissingcaps'), get_string('usermissingcaps', 'webservice', $count), '', true, true);
         }
 
@@ -234,6 +250,10 @@ class token_table extends \table_sql {
         $userfieldsapi = \core\user_fields::for_name();
         $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $creatorfields = $userfieldsapi->get_sql('c', false, 'creator', '', false)->selects;
+
+        if (!empty($this->userextrafields)) {
+            $usernamefields .= ',u.' . implode(',u.', $this->userextrafields);
+        }
 
         $params = ['tokenmode' => EXTERNAL_TOKEN_PERMANENT];
 
