@@ -42,7 +42,6 @@ $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT); // How 
 $contextid    = optional_param('contextid', 0, PARAM_INT); // One of this or.
 $courseid     = optional_param('id', 0, PARAM_INT); // This are required.
 $newcourse    = optional_param('newcourse', false, PARAM_BOOL);
-$selectall    = optional_param('selectall', false, PARAM_BOOL); // When rendering checkboxes against users mark them all checked.
 $roleid       = optional_param('roleid', 0, PARAM_INT);
 $groupparam   = optional_param('group', 0, PARAM_INT);
 
@@ -276,7 +275,6 @@ if (count($keywordfilter)) {
 }
 
 $participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
-$participanttable->set_selectall($selectall);
 $participanttable->set_filterset($filterset);
 $participanttable->define_baseurl($baseurl);
 
@@ -293,7 +291,7 @@ if ($bulkoperations) {
         'id' => 'participantsform',
         'data-course-id' => $course->id,
         'data-table-unique-id' => $participanttable->uniqueid,
-        'data-table-default-per-page' => DEFAULT_PAGE_SIZE,
+        'data-table-default-per-page' => ($perpage < DEFAULT_PAGE_SIZE) ? $perpage : DEFAULT_PAGE_SIZE,
     ]);
     echo '<div>';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';

@@ -55,11 +55,6 @@ class participants extends \table_sql implements dynamic_table {
     protected $courseid;
 
     /**
-     * @var bool $selectall Has the user selected all users on the page?
-     */
-    protected $selectall;
-
-    /**
      * @var string[] The list of countries.
      */
     protected $countries;
@@ -134,10 +129,10 @@ class participants extends \table_sql implements dynamic_table {
             $mastercheckbox = new \core\output\checkbox_toggleall('participants-table', true, [
                 'id' => 'select-all-participants',
                 'name' => 'select-all-participants',
-                'label' => $this->selectall ? get_string('deselectall') : get_string('selectall'),
+                'label' => get_string('selectall'),
                 'labelclasses' => 'sr-only',
                 'classes' => 'm-1',
-                'checked' => $this->selectall
+                'checked' => false,
             ]);
             $headers[] = $OUTPUT->render($mastercheckbox);
             $columns[] = 'select';
@@ -236,7 +231,7 @@ class participants extends \table_sql implements dynamic_table {
             'classes' => 'usercheckbox m-1',
             'id' => 'user' . $data->id,
             'name' => 'user' . $data->id,
-            'checked' => $this->selectall,
+            'checked' => false,
             'label' => get_string('selectitem', 'moodle', fullname($data)),
             'labelclasses' => 'accesshide',
         ]);
@@ -451,17 +446,6 @@ class participants extends \table_sql implements dynamic_table {
             return parent::show_hide_link($column, $index);
         }
         return '';
-    }
-
-    /**
-     * Set the value for selectall.
-     *
-     * Note: This will be removed later in the 3.9 development cycle.
-     *
-     * @param bool $selectall
-     */
-    public function set_selectall(bool $selectall): void {
-        $this->selectall = $selectall;
     }
 
     /**
