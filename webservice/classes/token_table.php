@@ -84,7 +84,7 @@ class token_table extends \table_sql {
         $headers[] = get_string('user');
         $columns[] = 'fullname';
         $headers[] = get_string('service', 'webservice');
-        $columns[] = 'name';
+        $columns[] = 'servicename';
         $headers[] = get_string('iprestriction', 'webservice');
         $columns[] = 'iprestriction';
         $headers[] = get_string('validuntil', 'webservice');
@@ -165,7 +165,8 @@ class token_table extends \table_sql {
         $webservicemanager = new \webservice();
         $usermissingcaps = $webservicemanager->get_missing_capabilities_by_users([['id' => $data->userid]], $data->serviceid);
 
-        if (!is_siteadmin($data->userid) && array_key_exists($data->userid, $usermissingcaps)) {
+        if ($data->serviceshortname <> MOODLE_OFFICIAL_MOBILE_SERVICE && !is_siteadmin($data->userid)
+                && array_key_exists($data->userid, $usermissingcaps)) {
             $count = \html_writer::span(count($usermissingcaps[$data->userid]), 'badge badge-danger');
             $links = array_map(function($capname) {
                 return get_capability_docs_link((object)['name' => $capname]) . \html_writer::div($capname, 'text-muted');
@@ -217,6 +218,16 @@ class token_table extends \table_sql {
     }
 
     /**
+     * Format the service name column.
+     *
+     * @param \stdClass $data
+     * @return string
+     */
+    public function col_servicename($data) {
+        return \html_writer::div(s($data->servicename)) . \html_writer::div(s($data->serviceshortname), 'small text-muted');
+    }
+
+    /**
      * This function is used for the extra user fields.
      *
      * These are being dynamically added to the table so there are no functions 'col_<userfieldname>' as
@@ -259,7 +270,7 @@ class token_table extends \table_sql {
 
         $selectfields = "SELECT t.id, t.token, t.iprestriction, t.validuntil, t.creatorid,
                                 u.id AS userid, $usernamefields,
-                                s.id AS serviceid, s.name,
+                                s.id AS serviceid, s.name AS servicename, s.shortname AS serviceshortname,
                                 $creatorfields ";
 
         $selectcount = "SELECT COUNT(t.id) ";
