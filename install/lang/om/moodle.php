@@ -30,5 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = 'ja';
-$string['thislanguage'] = '日本語 - Workplace';
+$string['language'] = 'Qooqa ykn Afaan';
+$string['next'] = 'Kan itti aanuu';
+$string['previous'] = 'Kan duraa';
