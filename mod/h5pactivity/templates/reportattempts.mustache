@@ -1,0 +1,156 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_h5pactivity/reportattempts
+
+    This template will render the report link inside a H5P activity.
+
+    Variables required for this template:
+    * attempts - Full attempts list
+
+    Variables optional for this template:
+    * title - optional selected attempt name
+    * scored - The scored attempt
+    * attemptscount - The current number of attempts
+
+    Example context (json):
+    {
+        "attempts": [
+            {
+                "id": 7,
+                "h5pactivityid": 1,
+                "userid": 5,
+                "timecreated": 1587654916,
+                "timemodified": 1587654916,
+                "attempt": 1,
+                "rawscore": 6,
+                "maxscore": 6,
+                "duration": "14 seconds",
+                "durationcompact": "14''",
+                "completion": 1,
+                "completionicon": "<i class=\"icon fa fa-check-circle fa-fw \"><\/i>",
+                "success": 1,
+                "successicon": "<i class=\"icon fa fa-check-circle fa-fw \"><\/i>",
+                "scaled": 1,
+                "reporturl": {},
+                "score": "6 out of 6"
+            },
+            {
+                "id": 8,
+                "h5pactivityid": 1,
+                "userid": 5,
+                "timecreated": 1587654927,
+                "timemodified": 1587654927,
+                "attempt": 2,
+                "rawscore": 1,
+                "maxscore": 6,
+                "duration": "25 seconds",
+                "durationcompact": "25''",
+                "completion": 1,
+                "completionicon": "<i class=\"icon fa fa-check-circle fa-fw \"><\/i>",
+                "success": 0,
+                "successicon": "<i class=\"icon fa fa-circle-o fa-fw \"><\/i>",
+                "scaled": 0,
+                "reporturl": {},
+                "score": "1 out of 6"
+            },
+            {
+                "id": 9,
+                "h5pactivityid": 1,
+                "userid": 5,
+                "timecreated": 1587654942,
+                "timemodified": 1587654942,
+                "attempt": 3,
+                "rawscore": 3,
+                "maxscore": 6,
+                "duration": "40 seconds",
+                "durationcompact": "40''",
+                "completion": 1,
+                "completionicon": "<i class=\"icon fa fa-check-circle fa-fw \"><\/i>",
+                "success": 0,
+                "successicon": "<i class=\"icon fa fa-circle-o fa-fw \"><\/i>",
+                "scaled": 0,
+                "reporturl": {},
+                "score": "3 out of 6"
+            }
+        ],
+        "user": {
+            "id": "5",
+            "auth": "manual",
+            "idnumber": "",
+            "firstname": "Miguel",
+            "lastname": "Alonso",
+            "email": "s3@example.com",
+            "institution": "Moodle HQ",
+            "department": "Development",
+            "address": "",
+            "city": "Barcelona",
+            "country": "ES",
+            "lang": "en",
+            "picture": "[USERPIC]",
+            "fullname": "Miguel Alonso"
+        },
+        "scored": {
+            "title": "Highest score attempt",
+            "attempts": [
+                {
+                    "id": 7,
+                    "h5pactivityid": 1,
+                    "userid": 5,
+                    "timecreated": 1587654916,
+                    "timemodified": 1587654916,
+                    "attempt": 1,
+                    "rawscore": 6,
+                    "maxscore": 6,
+                    "duration": "14 seconds",
+                    "durationcompact": "14''",
+                    "completion": 1,
+                    "completionicon": "<i class=\"icon fa fa-check-circle fa-fw \"><\/i>",
+                    "success": 1,
+                    "successicon": "<i class=\"icon fa fa-check-circle fa-fw \"><\/i>",
+                    "scaled": 1,
+                    "reporturl": {},
+                    "score": "6 out of 6"
+                }
+            ]
+        }
+    }
+
+}}
+{{#user}}
+<h2 class="mb-4">
+    {{{picture}}}
+    {{#title}}{{title}}{{/title}}
+    {{^title}}{{#str}} attempts, mod_h5pactivity {{/str}}: {{fullname}}{{/title}}
+</h2>
+{{/user}}
+
+{{#scored}}
+    <h3>{{title}}</h3>
+    {{>mod_h5pactivity/attempts}}
+{{/scored}}
+
+<h3>{{#str}}all_attempts, mod_h5pactivity{{/str}}</h3>
+
+{{^attemptscount}}
+    <div class="alert alert-warning">
+      {{#str}} attempts_none, mod_h5pactivity {{/str}}
+    </div>
+{{/attemptscount}}
+{{#attemptscount}}
+    {{>mod_h5pactivity/attempts}}
+{{/attemptscount}}

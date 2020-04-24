@@ -63,6 +63,7 @@ class mod_h5pactivity_generator_testcase extends advanced_testcase {
         $this->assertEquals(6, $activity->displayoptions);
         $this->assertEquals(0, $activity->enabletracking);
         $this->assertEquals(manager::GRADELASTATTEMPT, $activity->grademethod);
+        $this->assertEquals(manager::REVIEWCOMPLETION, $activity->reviewmode);
         $this->assertEquals(2, count($records));
         $this->assertEquals('Another h5pactivity', $records[$activity->id]->name);
 

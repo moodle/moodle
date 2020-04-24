@@ -58,7 +58,7 @@ $capabilities = [
     ],
 
     'mod/h5pactivity:reviewattempts' => array(
-        'captype' => 'write',
+        'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'teacher' => CAP_ALLOW,

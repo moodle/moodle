@@ -265,6 +265,80 @@ class manager_testcase extends \advanced_testcase {
     }
 
     /**
+     * Test static get_selected_attempt.
+     *
+     * @dataProvider get_selected_attempt_data
+     * @param int $enabletracking if tracking is enabled
+     * @param int $gradingmethod new grading method
+     * @param int $result the expected result
+     */
+    public function test_get_selected_attempt(int $enabletracking, int $gradingmethod, int $result) {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module('h5pactivity',
+                ['course' => $course, 'enabletracking' => $enabletracking, 'grademethod' => $gradingmethod]);
+
+        $manager = manager::create_from_instance($activity);
+
+        $selected = $manager->get_selected_attempt();
+
+        $this->assertEquals($result, $selected[0]);
+        $this->assertNotEmpty($selected[1]);
+    }
+
+    /**
+     * Data provider for get_users_scaled_score.
+     *
+     * @return array
+     */
+    public function get_selected_attempt_data(): array {
+        return [
+            'Tracking with max attempt method' => [
+                1, manager::GRADEHIGHESTATTEMPT, manager::GRADEHIGHESTATTEMPT
+            ],
+            'Tracking with average attempt method' => [
+                1, manager::GRADEAVERAGEATTEMPT, manager::GRADEAVERAGEATTEMPT
+            ],
+            'Tracking with last attempt method' => [
+                1, manager::GRADELASTATTEMPT, manager::GRADELASTATTEMPT
+            ],
+            'Tracking with first attempt method' => [
+                1, manager::GRADEFIRSTATTEMPT, manager::GRADEFIRSTATTEMPT
+            ],
+            'Tracking with manual attempt grading' => [
+                1, manager::GRADEMANUAL, manager::GRADEMANUAL
+            ],
+            'No tracking with max attempt method' => [
+                0, manager::GRADEHIGHESTATTEMPT, manager::GRADEMANUAL
+            ],
+            'No tracking with average attempt method' => [
+                0, manager::GRADEAVERAGEATTEMPT, manager::GRADEMANUAL
+            ],
+            'No tracking with last attempt method' => [
+                0, manager::GRADELASTATTEMPT, manager::GRADEMANUAL
+            ],
+            'No tracking with first attempt method' => [
+                0, manager::GRADEFIRSTATTEMPT, manager::GRADEMANUAL
+            ],
+            'No tracking with manual attempt grading' => [
+                0, manager::GRADEMANUAL, manager::GRADEMANUAL
+            ],
+        ];
+    }
+
+    /**
+     * Test static get_review_modes.
+     */
+    public function test_get_review_modes() {
+        $methods = manager::get_review_modes();
+        $this->assertCount(2, $methods);
+        $this->assertNotEmpty($methods[manager::REVIEWCOMPLETION]);
+        $this->assertNotEmpty($methods[manager::REVIEWNONE]);
+    }
+
+    /**
      * Test get_grader method.
      */
     public function test_get_grader() {
@@ -280,6 +354,388 @@ class manager_testcase extends \advanced_testcase {
         $grader = $manager->get_grader();
 
         $this->assertInstanceOf('mod_h5pactivity\local\grader', $grader);
+    }
+
+
+    /**
+     * Test static can_view_all_attempts.
+     *
+     * @dataProvider can_view_all_attempts_data
+     * @param int $enabletracking if tracking is enabled
+     * @param bool $usestudent if test must be done with a user role
+     * @param bool $useloggedin if test must be done with the loggedin user
+     * @param bool $result the expected result
+     */
+    public function test_can_view_all_attempts(int $enabletracking, bool $usestudent, bool $useloggedin, bool $result) {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module('h5pactivity',
+                ['course' => $course, 'enabletracking' => $enabletracking]);
+
+        $manager = manager::create_from_instance($activity);
+
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $loggedin = $USER;
+
+        // We want to test what when the method is called to check a different user than $USER.
+        if (!$usestudent) {
+            $loggedin = $user;
+            $user = $USER;
+        }
+
+        if ($useloggedin) {
+            $this->setUser($user);
+            $user = null;
+        } else {
+            $this->setUser($loggedin);
+        }
+
+        $this->assertEquals($result, $manager->can_view_all_attempts($user));
+    }
+
+    /**
+     * Data provider for test_can_view_all_attempts.
+     *
+     * @return array
+     */
+    public function can_view_all_attempts_data(): array {
+        return [
+            // No tracking cases.
+            'No tracking with admin using $USER' => [
+                0, false, false, false
+            ],
+            'No tracking with student using $USER' => [
+                0, true, false, false
+            ],
+            'No tracking with admin loggedin' => [
+                0, false, true, false
+            ],
+            'No tracking with student loggedin' => [
+                0, true, true, false
+            ],
+            // Tracking enabled cases.
+            'Tracking with admin using $USER' => [
+                1, false, false, true
+            ],
+            'Tracking with student using $USER' => [
+                1, true, false, false
+            ],
+            'Tracking with admin loggedin' => [
+                1, false, true, true
+            ],
+            'Tracking with student loggedin' => [
+                1, true, true, false
+            ],
+        ];
+    }
+
+    /**
+     * Test static can_view_own_attempts.
+     *
+     * @dataProvider can_view_own_attempts_data
+     * @param int $enabletracking if tracking is enabled
+     * @param int $reviewmode the attempt review mode
+     * @param bool $useloggedin if test must be done with the loggedin user
+     * @param bool $hasattempts if the student have attempts
+     * @param bool $result the expected result
+     */
+    public function test_can_view_own_attempts(int $enabletracking, int $reviewmode,
+            bool $useloggedin, bool $hasattempts, bool $result) {
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module('h5pactivity',
+                ['course' => $course, 'enabletracking' => $enabletracking, 'reviewmode' => $reviewmode]);
+
+        $manager = manager::create_from_instance($activity);
+
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        if ($hasattempts) {
+            $this->generate_fake_attempts($activity, $user, 1);
+        }
+
+        if ($useloggedin) {
+            $this->setUser($user);
+            $user = null;
+        }
+
+        $this->assertEquals($result, $manager->can_view_own_attempts($user));
+    }
+
+    /**
+     * Data provider for test_can_view_own_attempts.
+     *
+     * @return array
+     */
+    public function can_view_own_attempts_data(): array {
+        return [
+            // No tracking cases.
+            'No tracking, review none, using $USER, without attempts' => [
+                0, manager::REVIEWNONE, false, false, false
+            ],
+            'No tracking, review enabled, using $USER, without attempts' => [
+                0, manager::REVIEWCOMPLETION, false, false, false
+            ],
+            'No tracking, review none, loggedin, without attempts' => [
+                0, manager::REVIEWNONE, true, false, false
+            ],
+            'No tracking, review enabled, loggedin, without attempts' => [
+                0, manager::REVIEWCOMPLETION, true, false, false
+            ],
+            'No tracking, review none, using $USER, with attempts' => [
+                0, manager::REVIEWNONE, false, true, false
+            ],
+            'No tracking, review enabled, using $USER, with attempts' => [
+                0, manager::REVIEWCOMPLETION, false, true, false
+            ],
+            'No tracking, review none, loggedin, with attempts' => [
+                0, manager::REVIEWNONE, true, true, false
+            ],
+            'No tracking, review enabled, loggedin, with attempts' => [
+                0, manager::REVIEWCOMPLETION, true, true, false
+            ],
+            // Tracking enabled cases.
+            'Tracking enabled, review none, using $USER, without attempts' => [
+                1, manager::REVIEWNONE, false, false, false
+            ],
+            'Tracking enabled, review enabled, using $USER, without attempts' => [
+                1, manager::REVIEWCOMPLETION, false, false, true
+            ],
+            'Tracking enabled, review none, loggedin, without attempts' => [
+                1, manager::REVIEWNONE, true, false, false
+            ],
+            'Tracking enabled, review enabled, loggedin, without attempts' => [
+                1, manager::REVIEWCOMPLETION, true, false, true
+            ],
+            'Tracking enabled, review none, using $USER, with attempts' => [
+                1, manager::REVIEWNONE, false, true, false
+            ],
+            'Tracking enabled, review enabled, using $USER, with attempts' => [
+                1, manager::REVIEWCOMPLETION, false, true, true
+            ],
+            'Tracking enabled, review none, loggedin, with attempts' => [
+                1, manager::REVIEWNONE, true, true, false
+            ],
+            'Tracking enabled, review enabled, loggedin, with attempts' => [
+                1, manager::REVIEWCOMPLETION, true, true, true
+            ],
+        ];
+    }
+
+    /**
+     * Test static count_attempts.
+     */
+    public function test_count_attempts() {
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module('h5pactivity',
+                ['course' => $course]);
+
+        $manager = manager::create_from_instance($activity);
+
+        // User without attempts.
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // User with 1 attempt.
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->generate_fake_attempts($activity, $user2, 1);
+
+        // User with 2 attempts.
+        $user3 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->generate_fake_attempts($activity, $user3, 1);
+
+        // Incomplete user2 and 3 has only 3 attempts completed.
+        $this->assertEquals(0, $manager->count_attempts($user1->id));
+        $this->assertEquals(3, $manager->count_attempts($user2->id));
+        $this->assertEquals(3, $manager->count_attempts($user3->id));
+    }
+
+    /**
+     * Test static count_attempts.
+     */
+    public function test_count_users_attempts() {
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module('h5pactivity',
+                ['course' => $course]);
+
+        $manager = manager::create_from_instance($activity);
+
+        // User without attempts.
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // User with 1 attempt.
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->generate_fake_attempts($activity, $user2, 1);
+
+        // User with 2 attempts.
+        $user3 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->generate_fake_attempts($activity, $user3, 1);
+
+        $attempts = $manager->count_users_attempts();
+        $this->assertArrayNotHasKey($user1->id, $attempts);
+        $this->assertArrayHasKey($user2->id, $attempts);
+        $this->assertEquals(4, $attempts[$user2->id]);
+        $this->assertArrayHasKey($user3->id, $attempts);
+        $this->assertEquals(4, $attempts[$user3->id]);
+    }
+
+    /**
+     * Test static get_report.
+     *
+     * @dataProvider get_report_data
+     * @param int $enabletracking if tracking is enabled
+     * @param int $reviewmode the attempt review mode
+     * @param bool $createattempts if the student have attempts
+     * @param string $role the user role (student or editingteacher)
+     * @param array $results the expected classname (or null)
+     */
+    public function test_get_report(int $enabletracking, int $reviewmode, bool $createattempts,
+            string $role, array $results) {
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module('h5pactivity',
+                ['course' => $course, 'enabletracking' => $enabletracking, 'reviewmode' => $reviewmode]);
+
+        $manager = manager::create_from_instance($activity);
+        $cm = get_coursemodule_from_id('h5pactivity', $activity->cmid, 0, false, MUST_EXIST);
+
+        $users = [
+            'editingteacher' => $this->getDataGenerator()->create_and_enrol($course, 'editingteacher'),
+            'student' => $this->getDataGenerator()->create_and_enrol($course, 'student'),
+            'otheruser' => $this->getDataGenerator()->create_and_enrol($course, 'student'),
+        ];
+
+        $attempts = [];
+        if ($createattempts) {
+            $this->generate_fake_attempts($activity, $users['student'], 1);
+            $this->generate_fake_attempts($activity, $users['otheruser'], 2);
+            $attempts['student'] = attempt::last_attempt($users['student'], $cm);
+            $attempts['otheruser'] = attempt::last_attempt($users['otheruser'], $cm);
+        }
+
+        $classnamebase = 'mod_h5pactivity\\local\\report\\';
+
+        $attemptid = null;
+        if (isset($attempts['student'])) {
+            $attemptid = $attempts['student']->get_id() ?? null;
+        }
+        $userid = $users['student']->id;
+
+        // Check reports.
+        $this->setUser($users[$role]);
+
+        $report = $manager->get_report(null, null);
+        if ($results[0] === null) {
+            $this->assertNull($report);
+        } else {
+            $this->assertEquals($classnamebase.$results[0], get_class($report));
+        }
+
+        $report = $manager->get_report($userid, null);
+        if ($results[1] === null) {
+            $this->assertNull($report);
+        } else {
+            $this->assertEquals($classnamebase.$results[1], get_class($report));
+        }
+
+        $report = $manager->get_report($userid, $attemptid);
+        if ($results[2] === null) {
+            $this->assertNull($report);
+        } else {
+            $this->assertEquals($classnamebase.$results[2], get_class($report));
+        }
+
+        // Check that student cannot access another student reports.
+        if ($role == 'student') {
+            $attemptid = null;
+            if (isset($attempts['otheruser'])) {
+                $attemptid = $attempts['otheruser']->get_id() ?? null;
+            }
+            $userid = $users['otheruser']->id;
+
+            $report = $manager->get_report($userid, null);
+            $this->assertNull($report);
+
+            $report = $manager->get_report($userid, $attemptid);
+            $this->assertNull($report);
+        }
+    }
+
+    /**
+     * Data provider for test_get_report.
+     *
+     * @return array
+     */
+    public function get_report_data(): array {
+        return [
+            // No tracking scenarios.
+            'No tracking, review none, no attempts, teacher' => [
+                0, manager::REVIEWNONE, false, 'editingteacher', [null, null, null]
+            ],
+            'No tracking, review own, no attempts, teacher' => [
+                0, manager::REVIEWCOMPLETION, false, 'editingteacher', [null, null, null]
+            ],
+            'No tracking, review none, no attempts, student' => [
+                0, manager::REVIEWNONE, false, 'student', [null, null, null]
+            ],
+            'No tracking, review own, no attempts, student' => [
+                0, manager::REVIEWCOMPLETION, false, 'student', [null, null, null]
+            ],
+            'No tracking, review none, with attempts, teacher' => [
+                0, manager::REVIEWNONE, true, 'editingteacher', [null, null, null]
+            ],
+            'No tracking, review own, with attempts, teacher' => [
+                0, manager::REVIEWCOMPLETION, true, 'editingteacher', [null, null, null]
+            ],
+            'No tracking, review none, with attempts, student' => [
+                0, manager::REVIEWNONE, true, 'student', [null, null, null]
+            ],
+            'No tracking, review own, with attempts, student' => [
+                0, manager::REVIEWCOMPLETION, true, 'student', [null, null, null]
+            ],
+            // Tracking enabled scenarios.
+            'Tracking enabled, review none, no attempts, teacher' => [
+                1, manager::REVIEWNONE, false, 'editingteacher', ['participants', 'attempts', 'attempts']
+            ],
+            'Tracking enabled, review own, no attempts, teacher' => [
+                1, manager::REVIEWCOMPLETION, false, 'editingteacher', ['participants', 'attempts', 'attempts']
+            ],
+            'Tracking enabled, review none, no attempts, student' => [
+                1, manager::REVIEWNONE, false, 'student', [null, null, null]
+            ],
+            'Tracking enabled, review own, no attempts, student' => [
+                1, manager::REVIEWCOMPLETION, false, 'student', ['attempts', 'attempts', 'attempts']
+            ],
+            'Tracking enabled, review none, with attempts, teacher' => [
+                1, manager::REVIEWNONE, true, 'editingteacher', ['participants', 'attempts', 'results']
+            ],
+            'Tracking enabled, review own, with attempts, teacher' => [
+                1, manager::REVIEWCOMPLETION, true, 'editingteacher', ['participants', 'attempts', 'results']
+            ],
+            'Tracking enabled, review none, with attempts, student' => [
+                1, manager::REVIEWNONE, true, 'student', [null, null, null]
+            ],
+            'Tracking enabled, review own, with attempts, student' => [
+                1, manager::REVIEWCOMPLETION, true, 'student', ['attempts', 'attempts', 'results']
+            ],
+        ];
     }
 
     /**

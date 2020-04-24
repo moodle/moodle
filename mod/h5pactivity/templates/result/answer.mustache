@@ -1,0 +1,66 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_h5pactivity/result/answer
+
+    This template render all kind of answers/choice in a results table.
+
+    Variables required for this template:
+    * answer - The answer/choice text
+
+    Variables optional for this template:
+    * pass - The answer pass
+    * fail - The answer failed
+    * correct - The answer is correct
+    * incorrect - The answer is not correct
+    * text - The choice is just text
+    * checked - The choice must be checked
+    * unchecked - The choice must be unchecked
+
+    Example context (json):
+    {
+        "answer": "This was the ansewer,",
+        "correct": true,
+        "incorrect": true,
+        "text": true,
+        "checked": true,
+        "unchecked": true,
+        "pass": true,
+        "fail": true
+    }
+
+}}
+{{#correct}}
+    {{#pix}}i/valid, moodle, {{#str}}answer_correct, mod_h5pactivity{{/str}}{{/pix}}{{answer}}
+{{/correct}}
+{{#incorrect}}
+    {{#pix}}i/invalid, moodle, {{#str}}answer_incorrect, mod_h5pactivity{{/str}}{{/pix}}{{answer}}
+{{/incorrect}}
+{{#text}}
+    {{answer}}
+{{/text}}
+{{#checked}}
+    {{#pix}}i/checkedcircle, moodle, {{#str}}answer_checked, mod_h5pactivity{{/str}}{{/pix}}
+{{/checked}}
+{{#unchecked}}
+{{/unchecked}}
+{{#pass}}
+    {{#pix}}i/valid, moodle, {{#str}}answer_pass, mod_h5pactivity{{/str}}{{/pix}}
+{{/pass}}
+{{#fail}}
+    {{#pix}}i/invalid, moodle, {{#str}}answer_fail, mod_h5pactivity{{/str}}{{/pix}}
+{{/fail}}
