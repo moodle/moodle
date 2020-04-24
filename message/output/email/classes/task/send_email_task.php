@@ -57,7 +57,7 @@ class send_email_task extends scheduled_task {
      * Send out emails.
      */
     public function execute() {
-        global $DB, $PAGE;
+        global $DB, $PAGE, $SITE;
 
         // Get the maximum id we are going to use.
         // We use this as records may be added to the table while this task runs.
@@ -91,7 +91,7 @@ class send_email_task extends scheduled_task {
             }
             $conversations->close();
             if ($hascontent) {
-                $subject = get_string('emaildigestsubject', 'message_email');
+                $subject = get_string('messagedigestemailsubject', 'message_email', format_string($SITE->fullname));
                 $message = $textrenderer->render($renderable);
                 $messagehtml = $htmlrenderer->render($renderable);
                 if (email_to_user($user, $noreplyuser, $subject, $message, $messagehtml)) {
