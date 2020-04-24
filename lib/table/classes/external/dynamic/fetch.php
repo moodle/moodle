@@ -67,15 +67,22 @@ class fetch extends external_api {
                 'Unique ID for the container',
                 VALUE_REQUIRED
             ),
-            'sortby' => new external_value(
-                PARAM_ALPHANUMEXT,
-                'The name of a sortable column',
-                VALUE_REQUIRED
-            ),
-            'sortorder' => new external_value(
-                PARAM_ALPHANUMEXT,
-                'The sort order',
-                VALUE_REQUIRED
+            'sortdata' => new external_multiple_structure(
+                new external_single_structure([
+                    'sortby' => new external_value(
+                        PARAM_ALPHANUMEXT,
+                        'The name of a sortable column',
+                        VALUE_REQUIRED
+                    ),
+                    'sortorder' => new external_value(
+                        PARAM_ALPHANUMEXT,
+                        'The direction that this column should be sorted by',
+                        VALUE_REQUIRED
+                    ),
+                ]),
+                'The combined sort order of the table. Multiple fields can be specified.',
+                VALUE_OPTIONAL,
+                []
             ),
             'filters' => new external_multiple_structure(
                 new external_single_structure([
@@ -138,8 +145,7 @@ class fetch extends external_api {
      * @param string $component The component.
      * @param string $handler Dynamic table class name.
      * @param string $uniqueid Unique ID for the container.
-     * @param string $sortby The name of a sortable column.
-     * @param string $sortorder The sort order.
+     * @param array $sortdata The columns and order to sort by
      * @param array $filters The filters that will be applied in the request.
      * @param string $jointype The join type.
      * @param string $firstinitial The first name initial to filter on
@@ -155,8 +161,7 @@ class fetch extends external_api {
         string $component,
         string $handler,
         string $uniqueid,
-        string $sortby,
-        string $sortorder,
+        array $sortdata,
         ?array $filters = null,
         ?string $jointype = null,
         ?string $firstinitial = null,
@@ -166,15 +171,13 @@ class fetch extends external_api {
         ?array $hiddencolumns = null,
         ?bool $resetpreferences = null
     ) {
-
         global $PAGE;
 
         [
             'component' => $component,
             'handler' => $handler,
             'uniqueid' => $uniqueid,
-            'sortby' => $sortby,
-            'sortorder' => $sortorder,
+            'sortdata' => $sortdata,
             'filters' => $filters,
             'jointype' => $jointype,
             'firstinitial' => $firstinitial,
@@ -187,8 +190,7 @@ class fetch extends external_api {
             'component' => $component,
             'handler' => $handler,
             'uniqueid' => $uniqueid,
-            'sortby' => $sortby,
-            'sortorder' => $sortorder,
+            'sortdata' => $sortdata,
             'filters' => $filters,
             'jointype' => $jointype,
             'firstinitial' => $firstinitial,
@@ -227,7 +229,7 @@ class fetch extends external_api {
         $instance->set_filterset($filterset);
         self::validate_context($instance->get_context());
 
-        $instance->set_sorting($sortby, $sortorder);
+        $instance->set_sortdata($sortdata);
 
         if ($firstinitial !== null) {
             $instance->set_first_initial($firstinitial);
