@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['countparticipantsfound'] = '{$a} participants found';
 $string['privacy:courserequestpath'] = 'Requested courses';
 $string['privacy:descriptionpath'] = 'Profile description';
 $string['privacy:devicespath'] = 'User devices';

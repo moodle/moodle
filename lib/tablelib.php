@@ -1658,6 +1658,7 @@ class flexible_table {
                 'data-table-page-number' => $this->currpage + 1,
                 'data-table-page-size' => $this->pagesize,
                 'data-table-hidden-columns' => json_encode(array_keys($this->prefs['collapse'])),
+                'data-table-total-rows' => $this->totalrows,
             ]);
         }
 

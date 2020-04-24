@@ -86,7 +86,7 @@ Feature: Course participants can be filtered to display all the users
     And I click on "Role: Student" item in the autocomplete list
     And I click on "Show all 24" "link"
     Then I should see "Role: Student"
-    And I should see "Number of participants: 24" in the "//div[@class='userlist']" "xpath_element"
+    And I should see "24 participants found"
     And I should see "Show 20 per page"
 
   @javascript
@@ -101,7 +101,7 @@ Feature: Course participants can be filtered to display all the users
     And I click on "Show all 23" "link"
     Then I should see "Role: Student"
     And I should see "Status: Active"
-    And I should see "Number of participants: 23" in the "//div[@class='userlist']" "xpath_element"
+    And I should see "23 participants found"
     And I should see "Student 1"
     And I should not see "Student 24"
     And I should see "Show 20 per page"

@@ -286,8 +286,6 @@ $participanttable->out($perpage, true);
 $participanttablehtml = ob_get_contents();
 ob_end_clean();
 
-echo html_writer::tag('p', get_string('participantscount', 'moodle', $participanttable->totalrows));
-
 if ($bulkoperations) {
     echo html_writer::start_tag('form', [
         'action' => 'action_redir.php',
@@ -295,11 +293,20 @@ if ($bulkoperations) {
         'id' => 'participantsform',
         'data-course-id' => $course->id,
         'data-table-unique-id' => $participanttable->uniqueid,
+        'data-table-default-per-page' => DEFAULT_PAGE_SIZE,
     ]);
     echo '<div>';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
 }
+
+echo html_writer::tag(
+    'p',
+    get_string('countparticipantsfound', 'core_user', $participanttable->totalrows),
+    [
+        'data-region' => 'participant-count',
+    ]
+);
 
 echo $participanttablehtml;
 
@@ -307,33 +314,43 @@ $perpageurl = clone($baseurl);
 $perpageurl->remove_params('perpage');
 if ($perpage == SHOW_ALL_PAGE_SIZE && $participanttable->totalrows > DEFAULT_PAGE_SIZE) {
     $perpageurl->param('perpage', DEFAULT_PAGE_SIZE);
-    echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showperpage', '', DEFAULT_PAGE_SIZE)), array(), 'showall');
+    echo $OUTPUT->container(html_writer::link(
+        $perpageurl,
+        get_string('showperpage', '', DEFAULT_PAGE_SIZE),
+        [
+            'data-action' => 'showcount',
+            'data-target-page-size' => DEFAULT_PAGE_SIZE,
+        ]
+    ), [], 'showall');
 
 } else if ($participanttable->get_page_size() < $participanttable->totalrows) {
     $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-    echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showall', '', $participanttable->totalrows)),
-        array(), 'showall');
+    echo $OUTPUT->container(html_writer::link(
+        $perpageurl,
+        get_string('showall', '', $participanttable->totalrows),
+        [
+            'data-action' => 'showcount',
+            'data-target-page-size' => SHOW_ALL_PAGE_SIZE,
+        ]
+    ),
+    [], 'showall');
 }
 
 if ($bulkoperations) {
     echo '<br /><div class="buttons"><div class="form-inline">';
 
-    if ($participanttable->get_page_size() < $participanttable->totalrows) {
-        $perpageurl = clone($baseurl);
-        $perpageurl->remove_params('perpage');
-        $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-        $perpageurl->param('selectall', true);
-        $showalllink = $perpageurl;
-    } else {
-        $showalllink = false;
-    }
-
     echo html_writer::start_tag('div', array('class' => 'btn-group'));
+
     if ($participanttable->get_page_size() < $participanttable->totalrows) {
-        // Select all users, refresh page showing all users and mark them all selected.
+        // Select all users, refresh table showing all users and mark them all selected.
         $label = get_string('selectalluserswithcount', 'moodle', $participanttable->totalrows);
-        echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checkall', 'class' => 'btn btn-secondary',
-                'value' => $label, 'data-showallink' => $showalllink));
+        echo html_writer::empty_tag('input', [
+            'type' => 'button',
+            'id' => 'checkall',
+            'class' => 'btn btn-secondary',
+            'value' => $label,
+            'data-target-page-size' => $participanttable->totalrows,
+        ]);
     }
     echo html_writer::end_tag('div');
     $displaylist = array();
