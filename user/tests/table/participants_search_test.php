@@ -330,6 +330,90 @@ class participants_search_test extends advanced_testcase {
                             'b',
                         ],
                     ],
+                    'ALL: Filter on student, teacher' => (object) [
+                        'roles' => ['student', 'teacher'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                    'ALL: Filter on student, manager (category level role))' => (object) [
+                        'roles' => ['student', 'manager'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                    'ALL: Filter on student, coursecreator (not assigned))' => (object) [
+                        'roles' => ['student', 'coursecreator'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+
+                    // Tests for jointype: NONE.
+                    'NONE: No role filter' => (object) [
+                        'roles' => [],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 8,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                            'e',
+                            'f',
+                            'g',
+                            'h',
+                        ],
+                    ],
+                    'NONE: Filter on student' => (object) [
+                        'roles' => ['student'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 6,
+                        'expectedusers' => [
+                            'c',
+                            'd',
+                            'e',
+                            'f',
+                            'g',
+                            'h',
+                        ],
+                    ],
+                    'NONE: Filter on student, teacher' => (object) [
+                        'roles' => ['student', 'teacher'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'c',
+                            'd',
+                            'g',
+                            'h',
+                        ],
+                    ],
+                    'NONE: Filter on student, manager (category level role))' => (object) [
+                        'roles' => ['student', 'manager'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 5,
+                        'expectedusers' => [
+                            'c',
+                            'd',
+                            'e',
+                            'f',
+                            'g',
+                        ],
+                    ],
+                    'NONE: Filter on student, coursecreator (not assigned))' => (object) [
+                        'roles' => ['student', 'coursecreator'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 6,
+                        'expectedusers' => [
+                            'c',
+                            'd',
+                            'e',
+                            'f',
+                            'g',
+                            'h',
+                        ],
+                    ],
                 ],
             ],
             'Users with multiple roles' => (object) [
@@ -524,6 +608,135 @@ class participants_search_test extends advanced_testcase {
                             'e',
                         ],
                     ],
+                    'ALL: Filter on student, teacher' => (object) [
+                        'roles' => ['student', 'teacher'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'b',
+                        ],
+                    ],
+                    'ALL: Filter on teacher, editingteacher' => (object) [
+                        'roles' => ['teacher', 'editingteacher'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'e',
+                        ],
+                    ],
+                    'ALL: Filter on student, manager (category level role)' => (object) [
+                        'roles' => ['student', 'manager'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                    'ALL: Filter on student, coursecreator (not assigned)' => (object) [
+                        'roles' => ['student', 'coursecreator'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+
+                    // Tests for jointype: NONE.
+                    'NONE: No role filter' => (object) [
+                        'roles' => [],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 8,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                            'd',
+                            'e',
+                            'f',
+                            'g',
+                            'h',
+                        ],
+                    ],
+                    'NONE: Filter on student' => (object) [
+                        'roles' => ['student'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 6,
+                        'expectedusers' => [
+                            'c',
+                            'd',
+                            'e',
+                            'f',
+                            'g',
+                            'h',
+                        ],
+                    ],
+                    'NONE: Filter on teacher' => (object) [
+                        'roles' => ['teacher'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 5,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                            'd',
+                            'g',
+                            'h',
+                        ],
+                    ],
+                    'NONE: Filter on editingteacher' => (object) [
+                        'roles' => ['editingteacher'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 5,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'f',
+                            'g',
+                            'h',
+                        ],
+                    ],
+                    'NONE: Filter on student, teacher' => (object) [
+                        'roles' => ['student', 'teacher'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 5,
+                        'expectedusers' => [
+                            'c',
+                            'd',
+                            'e',
+                            'g',
+                            'h',
+                        ],
+                    ],
+                    'NONE: Filter on student, teacher' => (object) [
+                        'roles' => ['teacher', 'editingteacher'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'a',
+                            'g',
+                            'h',
+                        ],
+                    ],
+                    'NONE: Filter on student, manager (category level role)' => (object) [
+                        'roles' => ['student', 'manager'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 5,
+                        'expectedusers' => [
+                            'c',
+                            'd',
+                            'e',
+                            'f',
+                            'g',
+                        ],
+                    ],
+                    'NONE: Filter on student, coursecreator (not assigned)' => (object) [
+                        'roles' => ['student', 'coursecreator'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 6,
+                        'expectedusers' => [
+                            'c',
+                            'd',
+                            'e',
+                            'f',
+                            'g',
+                            'h',
+                        ],
+                    ],
                 ],
             ],
         ];
@@ -560,6 +773,12 @@ class participants_search_test extends advanced_testcase {
         $users = [];
 
         foreach ($usersdata as $username => $userdata) {
+            // Prevent randomly generated field values that may cause false fails.
+            $userdata['firstnamephonetic'] = $userdata['firstnamephonetic'] ?? $userdata['firstname'];
+            $userdata['lastnamephonetic'] = $userdata['lastnamephonetic'] ?? $userdata['lastname'];
+            $userdata['middlename'] = $userdata['middlename'] ?? '';
+            $userdata['alternatename'] = $userdata['alternatename'] ?? $username;
+
             $user = $this->getDataGenerator()->create_user($userdata);
             $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
             $users[$username] = $user;
@@ -603,7 +822,7 @@ class participants_search_test extends advanced_testcase {
      */
     public function keywords_provider(): array {
         $tests = [
-            // Users where the keyword matches firstname, lastname, or username.
+            // Users where the keyword matches basic user fields such as names and email.
             'Users with basic names' => (object) [
                 'users' => [
                     'adam.ant' => [
@@ -613,19 +832,25 @@ class participants_search_test extends advanced_testcase {
                     'barbara.bennett' => [
                         'firstname' => 'Barbara',
                         'lastname' => 'Bennett',
+                        'alternatename' => 'Babs',
+                        'firstnamephonetic' => 'Barbra',
+                        'lastnamephonetic' => 'Benit',
                     ],
                     'colin.carnforth' => [
                         'firstname' => 'Colin',
                         'lastname' => 'Carnforth',
+                        'middlename' => 'Jeffery',
                     ],
                     'tony.rogers' => [
                         'firstname' => 'Anthony',
                         'lastname' => 'Rogers',
+                        'lastnamephonetic' => 'Rowjours',
                     ],
                     'sarah.rester' => [
                         'firstname' => 'Sarah',
                         'lastname' => 'Rester',
                         'email' => 'zazu@example.com',
+                        'firstnamephonetic' => 'Sera',
                     ],
                 ],
                 'expect' => [
@@ -642,7 +867,7 @@ class participants_search_test extends advanced_testcase {
                             'sarah.rester',
                         ],
                     ],
-                    'ANY: First name only' => (object) [
+                    'ANY: Filter on first name only' => (object) [
                         'keywords' => ['adam'],
                         'jointype' => filter::JOINTYPE_ANY,
                         'count' => 1,
@@ -650,7 +875,7 @@ class participants_search_test extends advanced_testcase {
                             'adam.ant',
                         ],
                     ],
-                    'ANY: Last name only' => (object) [
+                    'ANY: Filter on last name only' => (object) [
                         'keywords' => ['BeNNeTt'],
                         'jointype' => filter::JOINTYPE_ANY,
                         'count' => 1,
@@ -658,7 +883,7 @@ class participants_search_test extends advanced_testcase {
                             'barbara.bennett',
                         ],
                     ],
-                    'ANY: First/Last name' => (object) [
+                    'ANY: Filter on first/Last name' => (object) [
                         'keywords' => ['ant'],
                         'jointype' => filter::JOINTYPE_ANY,
                         'count' => 2,
@@ -667,18 +892,70 @@ class participants_search_test extends advanced_testcase {
                             'tony.rogers',
                         ],
                     ],
-                    'ANY: Username (no match)' => (object) [
+                    'ANY: Filter on middlename only' => (object) [
+                        'keywords' => ['Jeff'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'colin.carnforth',
+                        ],
+                    ],
+                    'ANY: Filter on username (no match)' => (object) [
                         'keywords' => ['sara.rester'],
                         'jointype' => filter::JOINTYPE_ANY,
                         'count' => 0,
                         'expectedusers' => [],
                     ],
-                    'ANY: Email' => (object) [
+                    'ANY: Filter on email only' => (object) [
                         'keywords' => ['zazu'],
                         'jointype' => filter::JOINTYPE_ANY,
                         'count' => 1,
                         'expectedusers' => [
                             'sarah.rester',
+                        ],
+                    ],
+                    'ANY: Filter on first name phonetic only' => (object) [
+                        'keywords' => ['Sera'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'sarah.rester',
+                        ],
+                    ],
+                    'ANY: Filter on last name phonetic only' => (object) [
+                        'keywords' => ['jour'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'tony.rogers',
+                        ],
+                    ],
+                    'ANY: Filter on alternate name only' => (object) [
+                        'keywords' => ['Babs'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'barbara.bennett',
+                        ],
+                    ],
+                    'ANY: Filter on multiple keywords (first/middle/last name)' => (object) [
+                        'keywords' => ['ant', 'Jeff', 'rog'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'colin.carnforth',
+                            'tony.rogers',
+                        ],
+                    ],
+                    'ANY: Filter on multiple keywords (phonetic/alternate names)' => (object) [
+                        'keywords' => ['era', 'Bab', 'ours'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'barbara.bennett',
+                            'sarah.rester',
+                            'tony.rogers',
                         ],
                     ],
 
@@ -695,7 +972,7 @@ class participants_search_test extends advanced_testcase {
                             'sarah.rester',
                         ],
                     ],
-                    'ALL: First name only' => (object) [
+                    'ALL: Filter on first name only' => (object) [
                         'keywords' => ['adam'],
                         'jointype' => filter::JOINTYPE_ALL,
                         'count' => 1,
@@ -703,7 +980,7 @@ class participants_search_test extends advanced_testcase {
                             'adam.ant',
                         ],
                     ],
-                    'ALL: Last name only' => (object) [
+                    'ALL: Filter on last name only' => (object) [
                         'keywords' => ['BeNNeTt'],
                         'jointype' => filter::JOINTYPE_ALL,
                         'count' => 1,
@@ -711,7 +988,7 @@ class participants_search_test extends advanced_testcase {
                             'barbara.bennett',
                         ],
                     ],
-                    'ALL: First/Last name' => (object) [
+                    'ALL: Filter on first/Last name' => (object) [
                         'keywords' => ['ant'],
                         'jointype' => filter::JOINTYPE_ALL,
                         'count' => 2,
@@ -720,13 +997,21 @@ class participants_search_test extends advanced_testcase {
                             'tony.rogers',
                         ],
                     ],
-                    'ALL: Username (no match)' => (object) [
+                    'ALL: Filter on middlename only' => (object) [
+                        'keywords' => ['Jeff'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'colin.carnforth',
+                        ],
+                    ],
+                    'ALL: Filter on username (no match)' => (object) [
                         'keywords' => ['sara.rester'],
                         'jointype' => filter::JOINTYPE_ALL,
                         'count' => 0,
                         'expectedusers' => [],
                     ],
-                    'ALL: Email' => (object) [
+                    'ALL: Filter on email only' => (object) [
                         'keywords' => ['zazu'],
                         'jointype' => filter::JOINTYPE_ALL,
                         'count' => 1,
@@ -734,12 +1019,190 @@ class participants_search_test extends advanced_testcase {
                             'sarah.rester',
                         ],
                     ],
-                    'ALL: Multiple keywords' => (object) [
+                    'ALL: Filter on first name phonetic only' => (object) [
+                        'keywords' => ['Sera'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'sarah.rester',
+                        ],
+                    ],
+                    'ALL: Filter on last name phonetic only' => (object) [
+                        'keywords' => ['jour'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'tony.rogers',
+                        ],
+                    ],
+                    'ALL: Filter on alternate name only' => (object) [
+                        'keywords' => ['Babs'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'barbara.bennett',
+                        ],
+                    ],
+                    'ALL: Filter on multiple keywords (first/last name)' => (object) [
                         'keywords' => ['ant', 'rog'],
                         'jointype' => filter::JOINTYPE_ALL,
                         'count' => 1,
                         'expectedusers' => [
                             'tony.rogers',
+                        ],
+                    ],
+                    'ALL: Filter on multiple keywords (first/middle/last name)' => (object) [
+                        'keywords' => ['ant', 'Jeff', 'rog'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                    'ALL: Filter on multiple keywords (phonetic/alternate names)' => (object) [
+                        'keywords' => ['Bab', 'bra', 'nit'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'barbara.bennett',
+                        ],
+                    ],
+
+                    // Tests for jointype: NONE.
+                    'NONE: No filter' => (object) [
+                        'keywords' => [],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 5,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'barbara.bennett',
+                            'colin.carnforth',
+                            'tony.rogers',
+                            'sarah.rester',
+                        ],
+                    ],
+                    'NONE: Filter on first name only' => (object) [
+                        'keywords' => ['ara'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'colin.carnforth',
+                            'tony.rogers',
+                        ],
+                    ],
+                    'NONE: Filter on last name only' => (object) [
+                        'keywords' => ['BeNNeTt'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'colin.carnforth',
+                            'tony.rogers',
+                            'sarah.rester',
+                        ],
+                    ],
+                    'NONE: Filter on first/Last name' => (object) [
+                        'keywords' => ['ar'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'tony.rogers',
+                        ],
+                    ],
+                    'NONE: Filter on middlename only' => (object) [
+                        'keywords' => ['Jeff'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'barbara.bennett',
+                            'tony.rogers',
+                            'sarah.rester',
+                        ],
+                    ],
+                    'NONE: Filter on username (no match)' => (object) [
+                        'keywords' => ['sara.rester'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 5,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'barbara.bennett',
+                            'colin.carnforth',
+                            'tony.rogers',
+                            'sarah.rester',
+                        ],
+                    ],
+                    'NONE: Filter on email' => (object) [
+                        'keywords' => ['zazu'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'barbara.bennett',
+                            'colin.carnforth',
+                            'tony.rogers',
+                        ],
+                    ],
+                    'NONE: Filter on first name phonetic only' => (object) [
+                        'keywords' => ['Sera'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'barbara.bennett',
+                            'colin.carnforth',
+                            'tony.rogers',
+                        ],
+                    ],
+                    'NONE: Filter on last name phonetic only' => (object) [
+                        'keywords' => ['jour'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'barbara.bennett',
+                            'colin.carnforth',
+                            'sarah.rester',
+                        ],
+                    ],
+                    'NONE: Filter on alternate name only' => (object) [
+                        'keywords' => ['Babs'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'colin.carnforth',
+                            'tony.rogers',
+                            'sarah.rester',
+                        ],
+                    ],
+                    'NONE: Filter on multiple keywords (first/last name)' => (object) [
+                        'keywords' => ['ara', 'rog'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'colin.carnforth',
+                        ],
+                    ],
+                    'NONE: Filter on multiple keywords (first/middle/last name)' => (object) [
+                        'keywords' => ['ant', 'Jeff', 'rog'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'barbara.bennett',
+                            'sarah.rester',
+                        ],
+                    ],
+                    'NONE: Filter on multiple keywords (phonetic/alternate names)' => (object) [
+                        'keywords' => ['Bab', 'bra', 'nit'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'colin.carnforth',
+                            'tony.rogers',
+                            'sarah.rester',
                         ],
                     ],
                 ],
