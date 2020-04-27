@@ -44,27 +44,28 @@
 
 }}
 {{>core_contentbank/toolbar}}
-<div class="content-bank-container card">
+<div class="content-bank-container pb-3 border">
     <div class="content-bank">
-        <div class="cb-navbar">
+        <div class="cb-navbar bg-light p-2 border-bottom">
             {{#pix}} i/folder {{/pix}}
         </div>
-        <div class="cb-content-wrapper">
+        <div class="cb-content-wrapper d-flex flex-wrap p-2">
         {{#contents}}
-            <div class="cb-content">
-                <div class="cb-iconview">
-                    <div class="cb-file text-center position-relative">
-                        {{#link}}<a href="{{{ link }}}">{{/link}}
-                            <div style="position:relative;">
-                                <div class="cb-thumbnail text-center d-block" style="width: 110px; height: 110px;">
-                                    {{{ icon }}}
-                                </div>
-                            </div>
-                            <div class="cb-contentname-field position-absolute overflow-visible">
-                                <div class="cb-contentname text-truncate" style="width: 112px;">{{{ name }}}</div>
-                            </div>
-                        {{#link}}</a>{{/link}}
+            <div class="cb-file position-relative mb-2">
+                <div class="p-2">
+                    <div class="cb-thumbnail mb-1 text-center">
+                        {{{ icon }}}
                     </div>
+
+                    {{#link}}
+                        <a href="{{{ link }}}" class="stretched-link" title="{{{name}}}">
+                    {{/link}}
+                            <span class="cb-name word-break-all clamp-2 text-center" >
+                                {{{ name }}}
+                            </span>
+                    {{#link}}
+                        </a>
+                    {{/link}}
                 </div>
             </div>
         {{/contents}}

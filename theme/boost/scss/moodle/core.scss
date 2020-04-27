@@ -2348,6 +2348,17 @@ body.h5p-embed {
     float: right !important; /* stylelint-disable-line declaration-no-important */
 }
 
+.clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.word-break-all {
+    word-break: break-all;
+}
+
 // Emoji picker.
 $picker-width: 350px !default;
 $picker-width-xs: 320px !default;
