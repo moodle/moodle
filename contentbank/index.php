@@ -27,6 +27,7 @@ require('../config.php');
 require_login();
 
 $contextid    = optional_param('contextid', \context_system::instance()->id, PARAM_INT);
+$search = optional_param('search', '', PARAM_CLEAN);
 $context = context::instance_by_id($contextid, MUST_EXIST);
 
 require_capability('moodle/contentbank:access', $context);
@@ -46,27 +47,13 @@ $PAGE->set_heading($title);
 $PAGE->set_pagetype('contenbank');
 
 // Get all contents managed by active plugins to render.
-$foldercontents = array();
-$contents = $DB->get_records('contentbank_content', ['contextid' => $contextid]);
-foreach ($contents as $content) {
-    $plugin = core_plugin_manager::instance()->get_plugin_info($content->contenttype);
-    if (!$plugin || !$plugin->is_enabled()) {
-        continue;
-    }
-    $contentclass = "\\$content->contenttype\\content";
-    if (class_exists($contentclass)) {
-        $contentmanager = new $contentclass($content);
-        if ($contentmanager->can_view()) {
-            $foldercontents[] = $contentmanager;
-        }
-    }
-}
+$cb = new \core_contentbank\contentbank();
+$foldercontents = $cb->search_contents($search, $contextid);
 
 // Get the toolbar ready.
 $toolbar = array ();
 if (has_capability('moodle/contentbank:upload', $context)) {
     // Don' show upload button if there's no plugin to support any file extension.
-    $cb = new \core_contentbank\contentbank();
     $accepted = $cb->get_supported_extensions_as_string($context);
     if (!empty($accepted)) {
         $importurl = new moodle_url('/contentbank/upload.php', ['contextid' => $contextid]);

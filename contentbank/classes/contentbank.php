@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Content bank manager class
+ * Content bank class
  *
  * @package    core_contentbank
  * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
@@ -25,7 +25,7 @@
 namespace core_contentbank;
 
 /**
- * Content bank manager class
+ * Content bank class
  *
  * @package    core_contentbank
  * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
@@ -44,8 +44,9 @@ class contentbank {
         $enabledtypes = \core\plugininfo\contenttype::get_enabled_plugins();
         $types = [];
         foreach ($enabledtypes as $name) {
-            $classname = "\\contenttype_$name\\contenttype";
-            if (class_exists($classname)) {
+            $contenttypeclassname = "\\contenttype_$name\\contenttype";
+            $contentclassname = "\\contenttype_$name\\content";
+            if (class_exists($contenttypeclassname) && class_exists($contentclassname)) {
                 $types[] = $name;
             }
         }
@@ -65,16 +66,14 @@ class contentbank {
             $supportedextensions = [];
             foreach ($this->get_enabled_content_types() as $type) {
                 $classname = "\\contenttype_$type\\contenttype";
-                if (class_exists($classname)) {
-                    $manager = new $classname;
-                    if ($manager->is_feature_supported($manager::CAN_UPLOAD)) {
-                        $extensions = $manager->get_manageable_extensions();
-                        foreach ($extensions as $extension) {
-                            if (array_key_exists($extension, $supportedextensions)) {
-                                $supportedextensions[$extension][] = $type;
-                            } else {
-                                $supportedextensions[$extension] = [$type];
-                            }
+                $contenttype = new $classname;
+                if ($contenttype->is_feature_supported($contenttype::CAN_UPLOAD)) {
+                    $extensions = $contenttype->get_manageable_extensions();
+                    foreach ($extensions as $extension) {
+                        if (array_key_exists($extension, $supportedextensions)) {
+                            $supportedextensions[$extension][] = $type;
+                        } else {
+                            $supportedextensions[$extension] = [$type];
                         }
                     }
                 }
@@ -100,12 +99,10 @@ class contentbank {
             foreach ($supportedextensions as $extension => $types) {
                 foreach ($types as $type) {
                     $classname = "\\contenttype_$type\\contenttype";
-                    if (class_exists($classname)) {
-                        $manager = new $classname($context);
-                        if ($manager->can_upload()) {
-                            $contextextensions[$extension] = $type;
-                            break;
-                        }
+                    $contenttype = new $classname($context);
+                    if ($contenttype->can_upload()) {
+                        $contextextensions[$extension] = $type;
+                        break;
                     }
                 }
             }
@@ -154,5 +151,55 @@ class contentbank {
             return $supporters[$extension];
         }
         return null;
+    }
+
+    /**
+     * Find the contents with %$search% in the contextid defined.
+     * If contextid and search are empty, all contents are returned.
+     * In all the cases, only the contents for the enabled contentbank-type plugins are returned.
+     *
+     * @param  string|null $search Optional string to search (for now it will search only into the name).
+     * @param  int $contextid Optional contextid to search.
+     * @return array The contents for the enabled contentbank-type plugins having $search as name and placed in $contextid.
+     */
+    public function search_contents(?string $search = null, ?int $contextid = 0): array {
+        global $DB;
+
+        $contents = [];
+
+        // Get only contents for enabled content-type plugins.
+        $contenttypes = array_map(function($contenttypename) {
+            return "contenttype_$contenttypename";
+        }, $this->get_enabled_content_types());
+        if (empty($contenttypes)) {
+            // Early return if there are no content-type plugins enabled.
+            return $contents;
+        }
+
+        list($sqlcontenttypes, $params) = $DB->get_in_or_equal($contenttypes, SQL_PARAMS_NAMED);
+        $sql = " contenttype $sqlcontenttypes ";
+
+        // Filter contents on this context (if defined).
+        if (!empty($contextid)) {
+            $params['contextid'] = $contextid;
+            $sql .= ' AND contextid = :contextid ';
+        }
+
+        // Search for contents having this string (if defined).
+        if (!empty($search)) {
+            $sql .= ' AND ' . $DB->sql_like('name', ':name', false, false);
+            $params['name'] = '%' . $DB->sql_like_escape($search) . '%';
+        }
+
+        $records = $DB->get_records_select('contentbank_content', $sql, $params);
+        foreach ($records as $record) {
+            $contentclass = "\\$record->contenttype\\content";
+            $content = new $contentclass($record);
+            if ($content->is_view_allowed()) {
+                $contents[] = $content;
+            }
+        }
+
+        return $contents;
     }
 }
