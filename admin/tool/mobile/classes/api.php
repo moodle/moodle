@@ -688,6 +688,10 @@ class api {
         if (\core\hub\registration::is_registered()) {
             $credentials[] = ['type' => 'siteid', 'value' => $CFG->siteidentifier];
         }
+        // Generate a hash key for validating that the request is coming from this site via WS.
+        $sitesubscriptionkey = json_encode(['validuntil' => time() + 10 * MINSECS, 'key' => complex_random_string(32)]);
+        set_config('sitesubscriptionkey', $sitesubscriptionkey, 'tool_mobile');
+        $credentials[] = ['type' => 'sitesubscriptionkey', 'value' => $sitesubscriptionkey];
 
         // Parameters for the WebService returning site information.
         $fnparams = (object) [
