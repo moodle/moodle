@@ -1451,7 +1451,7 @@ class iomad {
         }
 
         // Warning: will return UNCONFIRMED USERS!
-        return $DB->get_records_sql("SELECT *
+        return $DB->get_records_sql("SELECT *, 0 as depth
                                      FROM {company}
                                      WHERE $select $sort",
                                      $params, $page, $recordsperpage);
