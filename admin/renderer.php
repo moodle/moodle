@@ -813,7 +813,7 @@ class core_admin_renderer extends plugin_renderer_base {
             }
         }
 
-        $updateinfo .= $this->container_start('checkforupdates');
+        $updateinfo .= $this->container_start('checkforupdates mt-1');
         $fetchurl = new moodle_url('/admin/index.php', array('fetchupdates' => 1, 'sesskey' => sesskey(), 'cache' => 0));
         $updateinfo .= $this->single_button($fetchurl, get_string('checkforupdates', 'core_plugin'));
         if ($fetch) {
@@ -902,7 +902,7 @@ class core_admin_renderer extends plugin_renderer_base {
      */
     protected function moodle_available_update_info(\core\update\info $updateinfo) {
 
-        $boxclasses = 'moodleupdateinfo';
+        $boxclasses = 'moodleupdateinfo mb-2';
         $info = array();
 
         if (isset($updateinfo->release)) {
@@ -922,7 +922,8 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         if (isset($updateinfo->download)) {
-            $info[] = html_writer::link($updateinfo->download, get_string('download'), array('class' => 'info download'));
+            $info[] = html_writer::link($updateinfo->download, get_string('download'),
+                array('class' => 'info download btn btn-secondary'));
         }
 
         if (isset($updateinfo->url)) {
@@ -930,9 +931,9 @@ class core_admin_renderer extends plugin_renderer_base {
                 array('class' => 'info more'));
         }
 
-        $box  = $this->output->box_start($boxclasses);
-        $box .= $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '');
-        $box .= $this->output->box_end();
+        $box  = $this->output->container_start($boxclasses);
+        $box .= $this->output->container(implode(html_writer::tag('span', ' | ', array('class' => 'separator')), $info), '');
+        $box .= $this->output->container_end();
 
         return $box;
     }
