@@ -330,6 +330,26 @@ class helper {
                 'string' => new \lang_string('restorecourse', 'admin')
             );
         }
+        // Recyclebyn.
+        if (\tool_recyclebin\category_bin::is_enabled()) {
+            $categorybin = new \tool_recyclebin\category_bin($category->id);
+            if ($categorybin->can_view()) {
+                $autohide = get_config('tool_recyclebin', 'autohide');
+                if ($autohide) {
+                    $items = $categorybin->get_items();
+                } else {
+                    $items = [];
+                }
+                if (!$autohide || !empty($items)) {
+                    $pluginname = get_string('pluginname', 'tool_recyclebin');
+                    $actions['recyclebin'] = [
+                       'url' => new \moodle_url('/admin/tool/recyclebin/index.php', ['contextid' => $category->get_context()->id]),
+                       'icon' => new \pix_icon('trash', $pluginname, 'tool_recyclebin'),
+                       'string' => $pluginname
+                    ];
+                }
+            }
+        }
 
         return $actions;
     }
