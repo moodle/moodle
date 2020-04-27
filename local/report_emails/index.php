@@ -246,14 +246,20 @@ if ($emailid and confirm_sesskey()) {
 // Do we have any additional reporting fields?
 $extrafields = array();
 if (!empty($CFG->iomad_report_fields)) {
+    $companyrec = $DB->get_record('company', array('id' => $companyid));
     foreach (explode(',', $CFG->iomad_report_fields) as $extrafield) {
         $extrafields[$extrafield] = new stdclass();
         $extrafields[$extrafield]->name = $extrafield;
         if (strpos($extrafield, 'profile_field') !== false) {
             // Its an optional profile field.
             $profilefield = $DB->get_record('user_info_field', array('shortname' => str_replace('profile_field_', '', $extrafield)));
-            $extrafields[$extrafield]->title = $profilefield->name;
-            $extrafields[$extrafield]->fieldid = $profilefield->id;
+            if ($profilefield->categoryid == $companyrec->profileid ||
+                !$DB->get_record('company', array('profileid' => $profilefield->categoryid))) {
+                $extrafields[$extrafield]->title = $profilefield->name;
+                $extrafields[$extrafield]->fieldid = $profilefield->id;
+            } else {
+                unset($extrafields[$extrafield]);
+            }
         } else {
             $extrafields[$extrafield]->title = get_string($extrafield);
         }
