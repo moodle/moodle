@@ -2169,7 +2169,7 @@ function readfile_accel($file, $mimetype, $accelerate) {
         if (is_object($file)) {
             $fs = get_file_storage();
             if ($fs->supports_xsendfile()) {
-                if ($fs->xsendfile($file->get_contenthash())) {
+                if ($fs->xsendfile_file($file)) {
                     return;
                 }
             }
