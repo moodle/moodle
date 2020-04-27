@@ -235,6 +235,11 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
             new lang_string('generalgroups', 'backup'), new lang_string('configgeneralgroups', 'backup'),
             array('value' => 1, 'locked' => 0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_competencies', new lang_string('generalcompetencies','backup'), new lang_string('configgeneralcompetencies','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_contentbankcontent',
+        new lang_string('generalcontentbankcontent', 'backup'),
+        new lang_string('configgeneralcontentbankcontent', 'backup'),
+        ['value' => 1, 'locked' => 0])
+    );
 
     $ADMIN->add('backups', $temp);
 
@@ -256,6 +261,12 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
             new lang_string('generalgroups', 'backup'), new lang_string('configgeneralgroups', 'backup'),
             array('value' => 1, 'locked' => 0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_import_competencies', new lang_string('generalcompetencies','backup'), new lang_string('configgeneralcompetencies','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock(
+        'backup/backup_import_contentbankcontent',
+        new lang_string('generalcontentbankcontent', 'backup'),
+        new lang_string('configgeneralcontentbankcontent', 'backup'),
+        ['value' => 1, 'locked' => 0])
+    );
 
     $ADMIN->add('backups', $temp);
 
@@ -375,6 +386,12 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_groups', new lang_string('generalgroups', 'backup'),
             new lang_string('configgeneralgroups', 'backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_competencies', new lang_string('generalcompetencies','backup'), new lang_string('configgeneralcompetencies','backup'), 1));
+    $temp->add(new admin_setting_configcheckbox(
+        'backup/backup_auto_contentbankcontent',
+        new lang_string('generalcontentbankcontent', 'backup'),
+        new lang_string('configgeneralcontentbankcontent', 'backup'),
+        1)
+    );
 
     //$temp->add(new admin_setting_configcheckbox('backup/backup_auto_messages', new lang_string('messages', 'message'), new lang_string('backupmessageshelp','message'), 0));
     //$temp->add(new admin_setting_configcheckbox('backup/backup_auto_blogs', new lang_string('blogs', 'blog'), new lang_string('backupblogshelp','blog'), 0));
@@ -435,6 +452,9 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_competencies',
         new lang_string('generalcompetencies', 'backup'),
         new lang_string('configrestorecompetencies', 'backup'), array('value' => 1, 'locked' => 0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('restore/restore_general_contentbankcontent',
+        new lang_string('generalcontentbankcontent', 'backup'),
+        new lang_string('configrestorecontentbankcontent', 'backup'), array('value' => 1, 'locked' => 0)));
 
     // Restore defaults when merging into another course.
     $temp->add(new admin_setting_heading('mergerestoredefaults', new lang_string('mergerestoredefaults', 'backup'), ''));

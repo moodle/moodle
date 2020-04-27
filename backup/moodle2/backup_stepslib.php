@@ -2740,3 +2740,34 @@ class backup_completion_defaults_structure_step extends backup_structure_step {
 
     }
 }
+
+/**
+ * Structure step in charge of constructing the contentbank.xml file for all the contents found in a given context
+ */
+class backup_contentbankcontent_structure_step extends backup_structure_step {
+
+    /**
+     * Define structure for content bank step
+     */
+    protected function define_structure() {
+
+        // Define each element separated.
+        $contents = new backup_nested_element('contents');
+        $content = new backup_nested_element('content', ['id'], [
+            'name', 'contenttype', 'instanceid', 'configdata', 'usercreated', 'usermodified', 'timecreated', 'timemodified']);
+
+        // Build the tree.
+        $contents->add_child($content);
+
+        // Define sources.
+        $content->set_source_table('contentbank_content', ['contextid' => backup::VAR_CONTEXTID]);
+
+        // Define annotations.
+        $content->annotate_ids('user', 'usercreated');
+        $content->annotate_ids('user', 'usermodified');
+        $content->annotate_files('contentbank', 'public', 'id');
+
+        // Return the root element (contents).
+        return $contents;
+    }
+}

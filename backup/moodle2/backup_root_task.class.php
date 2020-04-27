@@ -179,5 +179,10 @@ class backup_root_task extends backup_task {
         $customfields = new backup_customfield_setting('customfield', base_setting::IS_BOOLEAN, true);
         $customfields->set_ui(new backup_setting_ui_checkbox($customfields, get_string('rootsettingcustomfield', 'backup')));
         $this->add_setting($customfields);
+
+        // Define content bank content inclusion setting.
+        $contentbank = new backup_contentbankcontent_setting('contentbankcontent', base_setting::IS_BOOLEAN, true);
+        $contentbank->set_ui(new backup_setting_ui_checkbox($contentbank, get_string('rootsettingcontentbankcontent', 'backup')));
+        $this->add_setting($contentbank);
     }
 }
