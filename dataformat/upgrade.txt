@@ -9,6 +9,13 @@ information provided here is intended especially for developers.
 * Calls to the following dataformat plugin methods have been removed:
   - write_header()
   - write_footer()
+* The following methods have been added to the base class to allow instances to define support for exporting
+  HTML content, with additional support for defining how images should be embedded:
+  - supports_html()
+  - export_html_image_source()
+* Dataformat writers should also call the following method to ensure data is properly formatted before being
+  written, which takes into account prior methods defining support for HTML:
+  - format_record()
 
 === 3.4 ===
 * In order to allow multiple sheets in an exported file the functions write_header() and write_footer() have

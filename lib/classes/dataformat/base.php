@@ -163,7 +163,62 @@ abstract class base {
     protected function format_record($record): array {
         $record = (array)$record;
 
+        // If the dataformat supports export of HTML, we need to allow them to manage embedded images.
+        if ($this->supports_html()) {
+            $record = array_map([$this, 'replace_pluginfile_images'], $record);
+        }
+
         return $record;
+    }
+
+    /**
+     * Given a stored_file, return a suitable source attribute for an img element in the export (or null to use the original)
+     *
+     * @param \stored_file $file
+     * @return string|null
+     */
+    protected function export_html_image_source(\stored_file $file): ?string {
+        return null;
+    }
+
+    /**
+     * We need to locate all img tags within a given cell that match pluginfile URL's. Partly so the exported file will show
+     * the image without requiring the user is logged in; and also to prevent some of the dataformats requesting the file
+     * themselves, which is likely to fail due to them not having an active session
+     *
+     * @param string|null $content
+     * @return string
+     */
+    protected function replace_pluginfile_images(?string $content): string {
+        $content = (string)$content;
+
+        // Examine content to see if it contains any HTML image tags.
+        return preg_replace_callback('/(?<pre><img[^>]+src=")(?<source>[^"]*)(?<post>".*>)/i', function(array $matches) {
+            $source = $matches['source'];
+
+            // Now check if the image source looks like a pluginfile URL.
+            if (preg_match('/pluginfile.php\/(?<context>\d+)\/(?<component>[^\/]+)\/(?<filearea>[^\/]+)\/(?:(?<itemid>\d+)\/)?' .
+                    '(?<path>.*)/u', $source, $args)) {
+
+                $context = $args['context'];
+                $component = clean_param($args['component'], PARAM_COMPONENT);
+                $filearea = clean_param($args['filearea'], PARAM_AREA);
+                $itemid = $args['itemid'] ?: 0;
+                $path = clean_param(urldecode($args['path']), PARAM_PATH);
+
+                // Try and get the matching file from storage, allow the dataformat to define the replacement source.
+                $fullpath = "/{$context}/{$component}/{$filearea}/{$itemid}/{$path}";
+                if ($file = get_file_storage()->get_file_by_hash(sha1($fullpath))) {
+                    $exportsource = $this->export_html_image_source($file);
+
+                    if ($exportsource) {
+                        $source = $exportsource;
+                    }
+                }
+            }
+
+            return $matches['pre'] . $source . $matches['post'];
+        }, $content);
     }
 
     /**
