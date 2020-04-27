@@ -90,6 +90,20 @@ $chart8->add_series($expensesline);
 $chart8->add_series($sales);
 $chart8->set_labels($labels);
 
+$hills = new \core\chart_series('Hills', [700, 870, 660, 950]);
+$mountain = new \core\chart_series('Mountain', [400, 460, 1350, 540]);
+$sky = new \core\chart_series('Sky', [1400, 1500, 1550, 1500]);
+$chart9 = new \core\chart_line();
+$chart9->set_title('AREA FILL CHART');
+$chart9->add_series($hills);
+$chart9->add_series($mountain);
+$chart9->add_series($sky);
+$chart9->set_labels($labels);
+$hills->set_smooth(true);
+$hills->set_fill('origin');
+$mountain->set_fill('-1');
+$sky->set_fill('end');
+
 echo $OUTPUT->render($chart);
 echo $OUTPUT->render($chart2);
 echo $OUTPUT->render($chart3);
@@ -98,4 +112,5 @@ echo $OUTPUT->render($chart5);
 echo $OUTPUT->render($chart6);
 echo $OUTPUT->render($chart7);
 echo $OUTPUT->render($chart8);
+echo $OUTPUT->render($chart9);
 echo $OUTPUT->footer();

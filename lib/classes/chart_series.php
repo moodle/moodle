@@ -44,6 +44,8 @@ class chart_series implements JsonSerializable {
 
     /** @var string[] Colors of the series. */
     protected $colors = [];
+    /** @var string Fill mode for area charts. See https://www.chartjs.org/docs/latest/charts/area.html */
+    protected $fill = null;
     /** @var string Label for this series. */
     protected $label;
     /** @var string[] Labels for the values of the series. */
@@ -95,6 +97,13 @@ class chart_series implements JsonSerializable {
      */
     public function get_count() {
         return count($this->values);
+    }
+
+    /**
+     * Get area fill mode for series.
+     */
+    public function get_fill() {
+        return $this->fill;
     }
 
     /**
@@ -181,6 +190,7 @@ class chart_series implements JsonSerializable {
             'type' => $this->type,
             'values' => $this->values,
             'colors' => $this->colors,
+            'fill' => $this->fill,
             'axes' => [
                 'x' => $this->xaxis,
                 'y' => $this->yaxis,
@@ -206,6 +216,14 @@ class chart_series implements JsonSerializable {
      */
     public function set_colors(array $colors) {
         $this->colors = $colors;
+    }
+
+    /**
+     * Set fill mode for the series.
+     * @param string $fill
+     */
+    public function set_fill($fill) {
+        $this->fill = $fill;
     }
 
     /**
