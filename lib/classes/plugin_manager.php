@@ -1966,7 +1966,7 @@ class core_plugin_manager {
             'report' => array(
                 'backups', 'competency', 'completion', 'configlog', 'courseoverview', 'eventlist',
                 'insights', 'log', 'loglive', 'outline', 'participation', 'progress', 'questioninstances',
-                'security', 'stats', 'performance', 'usersessions'
+                'security', 'stats', 'status', 'performance', 'usersessions'
             ),
 
             'repository' => array(
