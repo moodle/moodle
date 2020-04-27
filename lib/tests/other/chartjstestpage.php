@@ -104,6 +104,24 @@ $hills->set_fill('origin');
 $mountain->set_fill('-1');
 $sky->set_fill('end');
 
+$chart10 = new \core\chart_bar();
+$chart10->set_title('BAR CHART WITH LEGEND OPTIONS (LEGEND POSITION IN THE LEFT)');
+$expensesline = new \core\chart_series('Expenses', [400, 460, 1120, 540]);
+$expensesline->set_type(\core\chart_series::TYPE_LINE);
+$chart10->add_series($expensesline);
+$chart10->set_legend_options(['position' => 'left', 'reverse' => true]);
+$chart10->add_series($sales);
+$chart10->set_labels($labels);
+
+$chart11 = new \core\chart_bar();
+$chart11->set_title('BAR CHART WITH LEGEND OPTIONS (LEGEND HIDDEN)');
+$expensesline = new \core\chart_series('Expenses', [400, 460, 1120, 540]);
+$expensesline->set_type(\core\chart_series::TYPE_LINE);
+$chart11->add_series($expensesline);
+$chart11->set_legend_options(['display' => false]);
+$chart11->add_series($sales);
+$chart11->set_labels($labels);
+
 echo $OUTPUT->render($chart);
 echo $OUTPUT->render($chart2);
 echo $OUTPUT->render($chart3);
@@ -113,4 +131,7 @@ echo $OUTPUT->render($chart6);
 echo $OUTPUT->render($chart7);
 echo $OUTPUT->render($chart8);
 echo $OUTPUT->render($chart9);
+echo $OUTPUT->render($chart10);
+echo $OUTPUT->render($chart11);
+
 echo $OUTPUT->footer();
