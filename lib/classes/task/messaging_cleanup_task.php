@@ -38,7 +38,7 @@ class messaging_cleanup_task extends scheduled_task {
     }
 
     /**
-     * Do the job.
+     * Do the job. Each message processor also gets the chance to perform it's own cleanup.
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
@@ -46,9 +46,17 @@ class messaging_cleanup_task extends scheduled_task {
 
         $timenow = time();
 
+        $processors = get_message_processors(true);
+
         // Cleanup read and unread notifications.
         if (!empty($CFG->messagingdeleteallnotificationsdelay)) {
             $notificationdeletetime = $timenow - $CFG->messagingdeleteallnotificationsdelay;
+
+            /** @var \message_output $processor */
+            foreach (array_column($processors, 'object') as $processor) {
+                $processor->cleanup_all_notifications($notificationdeletetime);
+            }
+
             $params = array('notificationdeletetime' => $notificationdeletetime);
             $DB->delete_records_select('notifications', 'timecreated < :notificationdeletetime', $params);
         }
@@ -56,6 +64,12 @@ class messaging_cleanup_task extends scheduled_task {
         // Cleanup read notifications.
         if (!empty($CFG->messagingdeletereadnotificationsdelay)) {
             $notificationdeletetime = $timenow - $CFG->messagingdeletereadnotificationsdelay;
+
+            /** @var \message_output $processor */
+            foreach (array_column($processors, 'object') as $processor) {
+                $processor->cleanup_read_notifications($notificationdeletetime);
+            }
+
             $params = array('notificationdeletetime' => $notificationdeletetime);
             $DB->delete_records_select('notifications', 'timeread < :notificationdeletetime', $params);
         }
