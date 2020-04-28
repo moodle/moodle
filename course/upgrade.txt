@@ -5,6 +5,15 @@ information provided here is intended especially for developers.
 
 * The function get_module_metadata is now deprecated. Please use \core_course\local\service\content_item_service instead.
 * Activity module names are now PARAM_ALPHANUM instead of PARAM_ALPHA so integers can be used in activity module names
+* The following functions have been added to core_course_renderer class to have more granularity. They can be overriden in
+  extending classes:
+  - course_name
+  - course_enrolment_icons
+  - course_summary
+  - course_contacts
+  - course_overview_files
+  - course_category_name
+  - course_custom_fields
 
 === 3.8 ===
 
