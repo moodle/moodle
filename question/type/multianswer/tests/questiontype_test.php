@@ -115,6 +115,117 @@ class qtype_multianswer_test extends advanced_testcase {
         $this->assertEquals(0.1666667, $this->qtype->get_random_guess_score($q), '', 0.0000001);
     }
 
+    public function test_load_question() {
+        $this->resetAfterTest();
+
+        $syscontext = context_system::instance();
+        /** @var core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category(['contextid' => $syscontext->id]);
+
+        $fromform = test_question_maker::get_question_form_data('multianswer');
+        $fromform->category = $category->id . ',' . $syscontext->id;
+
+        $question = new stdClass();
+        $question->category = $category->id;
+        $question->qtype = 'multianswer';
+        $question->createdby = 0;
+
+        // Note, $question gets modified during save because of the way subquestions
+        // are extracted.
+        $question = $this->qtype->save_question($question, $fromform);
+
+        $questiondata = question_bank::load_question_data($question->id);
+
+        $this->assertEquals(['id', 'category', 'parent', 'name', 'questiontext', 'questiontextformat',
+                'generalfeedback', 'generalfeedbackformat', 'defaultmark', 'penalty', 'qtype',
+                'length', 'stamp', 'version', 'hidden', 'timecreated', 'timemodified',
+                'createdby', 'modifiedby', 'idnumber', 'contextid', 'options', 'hints', 'categoryobject'],
+                array_keys(get_object_vars($questiondata)));
+        $this->assertEquals($category->id, $questiondata->category);
+        $this->assertEquals(0, $questiondata->parent);
+        $this->assertEquals($fromform->name, $questiondata->name);
+        $this->assertEquals($fromform->questiontext, $questiondata->questiontext);
+        $this->assertEquals($fromform->questiontextformat, $questiondata->questiontextformat);
+        $this->assertEquals($fromform->generalfeedback['text'], $questiondata->generalfeedback);
+        $this->assertEquals($fromform->generalfeedback['format'], $questiondata->generalfeedbackformat);
+        $this->assertEquals($fromform->defaultmark, $questiondata->defaultmark);
+        $this->assertEquals(0, $questiondata->penalty);
+        $this->assertEquals('multianswer', $questiondata->qtype);
+        $this->assertEquals(1, $questiondata->length);
+        $this->assertEquals(0, $questiondata->hidden);
+        $this->assertEquals($question->createdby, $questiondata->createdby);
+        $this->assertEquals($question->createdby, $questiondata->modifiedby);
+        $this->assertEquals('', $questiondata->idnumber);
+        $this->assertEquals($syscontext->id, $questiondata->contextid);
+
+        // Build the expected hint base.
+        $hintbase = [
+            'questionid' => $questiondata->id,
+            'shownumcorrect' => 0,
+            'clearwrong' => 0,
+            'options' => null];
+        $expectedhints = [];
+        foreach ($fromform->hint as $key => $value) {
+            $hint = $hintbase + [
+                'hint' => $value['text'],
+                'hintformat' => $value['format'],
+            ];
+            $expectedhints[] = (object)$hint;
+        }
+        // Need to get rid of ids.
+        $gothints = array_map(function($hint) {
+            unset($hint->id);
+            return $hint;
+        }, $questiondata->hints);
+        // Compare hints.
+        $this->assertEquals($expectedhints, array_values($gothints));
+
+        // Options.
+        $this->assertEquals(['answers', 'questions'], array_keys(get_object_vars($questiondata->options)));
+        $this->assertEquals(count($fromform->options->questions), count($questiondata->options->questions));
+
+        // Option answers.
+        $this->assertEquals([], $questiondata->options->answers);
+
+        // Build the expected questions. We aren't going deeper to subquestion answers, options... that's another qtype job.
+        $expectedquestions = [];
+        foreach ($fromform->options->questions as $key => $value) {
+            $question = [
+                'id' => $value->id,
+                'category' => $category->id,
+                'parent' => $questiondata->id,
+                'name' => $value->name,
+                'questiontext' => $value->questiontext,
+                'questiontextformat' => $value->questiontextformat,
+                'generalfeedback' => $value->generalfeedback,
+                'generalfeedbackformat' => $value->generalfeedbackformat,
+                'defaultmark' => (float) $value->defaultmark,
+                'penalty' => (float)$value->penalty,
+                'qtype' => $value->qtype,
+                'length' => $value->length,
+                'stamp' => $value->stamp,
+                'hidden' => 0,
+                'timecreated' => $value->timecreated,
+                'timemodified' => $value->timemodified,
+                'createdby' => $value->createdby,
+                'modifiedby' => $value->modifiedby,
+            ];
+            $expectedquestions[] = (object)$question;
+        }
+        // Need to get rid of (version, idnumber, options, hints, maxmark). They are missing @ fromform.
+        $gotquestions = array_map(function($question) {
+                unset($question->version);
+                unset($question->idnumber);
+                unset($question->options);
+                unset($question->hints);
+                unset($question->maxmark);
+                return $question;
+        }, $questiondata->options->questions);
+        // Compare questions.
+        $this->assertEquals($expectedquestions, array_values($gotquestions));
+    }
+
     public function test_question_saving_twosubq() {
         $this->resetAfterTest(true);
         $this->setAdminUser();
