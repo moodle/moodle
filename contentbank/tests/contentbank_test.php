@@ -314,4 +314,38 @@ class core_contentbank_testcase extends advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test create_content_from_file function.
+     *
+     * @covers ::create_content_from_file
+     */
+    public function test_create_content_from_file() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $systemcontext = \context_system::instance();
+        $name = 'dummy_h5p.h5p';
+
+        // Create a dummy H5P file.
+        $dummyh5p = array(
+            'contextid' => $systemcontext->id,
+            'component' => 'contentbank',
+            'filearea' => 'public',
+            'itemid' => 1,
+            'filepath' => '/',
+            'filename' => $name,
+            'userid' => $USER->id
+        );
+        $fs = get_file_storage();
+        $dummyh5pfile = $fs->create_file_from_string($dummyh5p, 'Dummy H5Pcontent');
+
+        $cb = new \core_contentbank\contentbank();
+        $content = $cb->create_content_from_file($systemcontext, $USER->id, $dummyh5pfile);
+
+        $this->assertEquals('contenttype_h5p', $content->get_content_type());
+        $this->assertInstanceOf('\\contenttype_h5p\\content', $content);
+        $this->assertEquals($name, $content->get_name());
+    }
 }
