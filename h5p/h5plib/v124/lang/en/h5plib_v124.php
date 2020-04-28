@@ -25,5 +25,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'H5P framework v1.24';
-$string['pluginname_help'] = 'H5P framework. Version 1.24';
-$string['privacy:metadata'] = 'H5P framework v1.24 do not store any personal data.';
+$string['pluginname_help'] = 'H5P framework version 1.24.';
+$string['privacy:metadata'] = 'The H5P framework v1.24 does not store any personal data.';
