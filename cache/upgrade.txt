@@ -1,6 +1,9 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
+=== 3.9 ===
+* The record_cache_hit/miss/set methods now take a cache_store instead of a cache_definition object
+
 === 3.8 ===
 * The Redis cache store can now make use of the Zstandard compression algorithm (see MDL-66428).
 

@@ -2092,15 +2092,15 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertFalse($request->get('missMe'));
 
         $endstats = cache_helper::get_stats();
-        $this->assertEquals(2, $endstats[$applicationid]['stores']['cachestore_file']['misses']);
-        $this->assertEquals(0, $endstats[$applicationid]['stores']['cachestore_file']['hits']);
-        $this->assertEquals(0, $endstats[$applicationid]['stores']['cachestore_file']['sets']);
-        $this->assertEquals(3, $endstats[$sessionid]['stores']['cachestore_session']['misses']);
-        $this->assertEquals(0, $endstats[$sessionid]['stores']['cachestore_session']['hits']);
-        $this->assertEquals(1, $endstats[$sessionid]['stores']['cachestore_session']['sets']);
-        $this->assertEquals(4, $endstats[$requestid]['stores']['cachestore_static']['misses']);
-        $this->assertEquals(0, $endstats[$requestid]['stores']['cachestore_static']['hits']);
-        $this->assertEquals(0, $endstats[$requestid]['stores']['cachestore_static']['sets']);
+        $this->assertEquals(2, $endstats[$applicationid]['stores']['default_application']['misses']);
+        $this->assertEquals(0, $endstats[$applicationid]['stores']['default_application']['hits']);
+        $this->assertEquals(0, $endstats[$applicationid]['stores']['default_application']['sets']);
+        $this->assertEquals(3, $endstats[$sessionid]['stores']['default_session']['misses']);
+        $this->assertEquals(0, $endstats[$sessionid]['stores']['default_session']['hits']);
+        $this->assertEquals(1, $endstats[$sessionid]['stores']['default_session']['sets']);
+        $this->assertEquals(4, $endstats[$requestid]['stores']['default_request']['misses']);
+        $this->assertEquals(0, $endstats[$requestid]['stores']['default_request']['hits']);
+        $this->assertEquals(0, $endstats[$requestid]['stores']['default_request']['sets']);
 
         $startstats = cache_helper::get_stats();
 
@@ -2116,24 +2116,24 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertTrue($request->set('setMe4', 4));
 
         $endstats = cache_helper::get_stats();
-        $this->assertEquals(0, $endstats[$applicationid]['stores']['cachestore_file']['misses'] -
-            $startstats[$applicationid]['stores']['cachestore_file']['misses']);
-        $this->assertEquals(0, $endstats[$applicationid]['stores']['cachestore_file']['hits'] -
-            $startstats[$applicationid]['stores']['cachestore_file']['hits']);
-        $this->assertEquals(2, $endstats[$applicationid]['stores']['cachestore_file']['sets'] -
-            $startstats[$applicationid]['stores']['cachestore_file']['sets']);
-        $this->assertEquals(0, $endstats[$sessionid]['stores']['cachestore_session']['misses'] -
-            $startstats[$sessionid]['stores']['cachestore_session']['misses']);
-        $this->assertEquals(0, $endstats[$sessionid]['stores']['cachestore_session']['hits'] -
-            $startstats[$sessionid]['stores']['cachestore_session']['hits']);
-        $this->assertEquals(3, $endstats[$sessionid]['stores']['cachestore_session']['sets'] -
-            $startstats[$sessionid]['stores']['cachestore_session']['sets']);
-        $this->assertEquals(0, $endstats[$requestid]['stores']['cachestore_static']['misses'] -
-            $startstats[$requestid]['stores']['cachestore_static']['misses']);
-        $this->assertEquals(0, $endstats[$requestid]['stores']['cachestore_static']['hits'] -
-            $startstats[$requestid]['stores']['cachestore_static']['hits']);
-        $this->assertEquals(4, $endstats[$requestid]['stores']['cachestore_static']['sets'] -
-            $startstats[$requestid]['stores']['cachestore_static']['sets']);
+        $this->assertEquals(0, $endstats[$applicationid]['stores']['default_application']['misses'] -
+                             $startstats[$applicationid]['stores']['default_application']['misses']);
+        $this->assertEquals(0, $endstats[$applicationid]['stores']['default_application']['hits'] -
+                             $startstats[$applicationid]['stores']['default_application']['hits']);
+        $this->assertEquals(2, $endstats[$applicationid]['stores']['default_application']['sets'] -
+                             $startstats[$applicationid]['stores']['default_application']['sets']);
+        $this->assertEquals(0, $endstats[$sessionid]['stores']['default_session']['misses'] -
+                             $startstats[$sessionid]['stores']['default_session']['misses']);
+        $this->assertEquals(0, $endstats[$sessionid]['stores']['default_session']['hits'] -
+                             $startstats[$sessionid]['stores']['default_session']['hits']);
+        $this->assertEquals(3, $endstats[$sessionid]['stores']['default_session']['sets'] -
+                             $startstats[$sessionid]['stores']['default_session']['sets']);
+        $this->assertEquals(0, $endstats[$requestid]['stores']['default_request']['misses'] -
+                             $startstats[$requestid]['stores']['default_request']['misses']);
+        $this->assertEquals(0, $endstats[$requestid]['stores']['default_request']['hits'] -
+                             $startstats[$requestid]['stores']['default_request']['hits']);
+        $this->assertEquals(4, $endstats[$requestid]['stores']['default_request']['sets'] -
+                             $startstats[$requestid]['stores']['default_request']['sets']);
 
         $startstats = cache_helper::get_stats();
 
@@ -2149,24 +2149,24 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertEquals($request->get('setMe4'), 4);
 
         $endstats = cache_helper::get_stats();
-        $this->assertEquals(0, $endstats[$applicationid]['stores']['cachestore_file']['misses'] -
-            $startstats[$applicationid]['stores']['cachestore_file']['misses']);
-        $this->assertEquals(2, $endstats[$applicationid]['stores']['cachestore_file']['hits'] -
-            $startstats[$applicationid]['stores']['cachestore_file']['hits']);
-        $this->assertEquals(0, $endstats[$applicationid]['stores']['cachestore_file']['sets'] -
-            $startstats[$applicationid]['stores']['cachestore_file']['sets']);
-        $this->assertEquals(0, $endstats[$sessionid]['stores']['cachestore_session']['misses'] -
-            $startstats[$sessionid]['stores']['cachestore_session']['misses']);
-        $this->assertEquals(3, $endstats[$sessionid]['stores']['cachestore_session']['hits'] -
-            $startstats[$sessionid]['stores']['cachestore_session']['hits']);
-        $this->assertEquals(0, $endstats[$sessionid]['stores']['cachestore_session']['sets'] -
-            $startstats[$sessionid]['stores']['cachestore_session']['sets']);
-        $this->assertEquals(0, $endstats[$requestid]['stores']['cachestore_static']['misses'] -
-            $startstats[$requestid]['stores']['cachestore_static']['misses']);
-        $this->assertEquals(4, $endstats[$requestid]['stores']['cachestore_static']['hits'] -
-            $startstats[$requestid]['stores']['cachestore_static']['hits']);
-        $this->assertEquals(0, $endstats[$requestid]['stores']['cachestore_static']['sets'] -
-            $startstats[$requestid]['stores']['cachestore_static']['sets']);
+        $this->assertEquals(0, $endstats[$applicationid]['stores']['default_application']['misses'] -
+                             $startstats[$applicationid]['stores']['default_application']['misses']);
+        $this->assertEquals(2, $endstats[$applicationid]['stores']['default_application']['hits'] -
+                             $startstats[$applicationid]['stores']['default_application']['hits']);
+        $this->assertEquals(0, $endstats[$applicationid]['stores']['default_application']['sets'] -
+                             $startstats[$applicationid]['stores']['default_application']['sets']);
+        $this->assertEquals(0, $endstats[$sessionid]['stores']['default_session']['misses'] -
+                             $startstats[$sessionid]['stores']['default_session']['misses']);
+        $this->assertEquals(3, $endstats[$sessionid]['stores']['default_session']['hits'] -
+                             $startstats[$sessionid]['stores']['default_session']['hits']);
+        $this->assertEquals(0, $endstats[$sessionid]['stores']['default_session']['sets'] -
+                             $startstats[$sessionid]['stores']['default_session']['sets']);
+        $this->assertEquals(0, $endstats[$requestid]['stores']['default_request']['misses'] -
+                             $startstats[$requestid]['stores']['default_request']['misses']);
+        $this->assertEquals(4, $endstats[$requestid]['stores']['default_request']['hits'] -
+                             $startstats[$requestid]['stores']['default_request']['hits']);
+        $this->assertEquals(0, $endstats[$requestid]['stores']['default_request']['sets'] -
+                             $startstats[$requestid]['stores']['default_request']['sets']);
 
         $startstats = cache_helper::get_stats();
 
@@ -2176,24 +2176,24 @@ class core_cache_testcase extends advanced_testcase {
         $request->get_many(array('setMe1', 'setMe2', 'setMe3', 'setMe4'));
 
         $endstats = cache_helper::get_stats();
-        $this->assertEquals(0, $endstats[$applicationid]['stores']['cachestore_file']['misses'] -
-            $startstats[$applicationid]['stores']['cachestore_file']['misses']);
-        $this->assertEquals(2, $endstats[$applicationid]['stores']['cachestore_file']['hits'] -
-            $startstats[$applicationid]['stores']['cachestore_file']['hits']);
-        $this->assertEquals(0, $endstats[$applicationid]['stores']['cachestore_file']['sets'] -
-            $startstats[$applicationid]['stores']['cachestore_file']['sets']);
-        $this->assertEquals(0, $endstats[$sessionid]['stores']['cachestore_session']['misses'] -
-            $startstats[$sessionid]['stores']['cachestore_session']['misses']);
-        $this->assertEquals(3, $endstats[$sessionid]['stores']['cachestore_session']['hits'] -
-            $startstats[$sessionid]['stores']['cachestore_session']['hits']);
-        $this->assertEquals(0, $endstats[$sessionid]['stores']['cachestore_session']['sets'] -
-            $startstats[$sessionid]['stores']['cachestore_session']['sets']);
-        $this->assertEquals(0, $endstats[$requestid]['stores']['cachestore_static']['misses'] -
-            $startstats[$requestid]['stores']['cachestore_static']['misses']);
-        $this->assertEquals(4, $endstats[$requestid]['stores']['cachestore_static']['hits'] -
-            $startstats[$requestid]['stores']['cachestore_static']['hits']);
-        $this->assertEquals(0, $endstats[$requestid]['stores']['cachestore_static']['sets'] -
-            $startstats[$requestid]['stores']['cachestore_static']['sets']);
+        $this->assertEquals(0, $endstats[$applicationid]['stores']['default_application']['misses'] -
+                             $startstats[$applicationid]['stores']['default_application']['misses']);
+        $this->assertEquals(2, $endstats[$applicationid]['stores']['default_application']['hits'] -
+                             $startstats[$applicationid]['stores']['default_application']['hits']);
+        $this->assertEquals(0, $endstats[$applicationid]['stores']['default_application']['sets'] -
+                             $startstats[$applicationid]['stores']['default_application']['sets']);
+        $this->assertEquals(0, $endstats[$sessionid]['stores']['default_session']['misses'] -
+                             $startstats[$sessionid]['stores']['default_session']['misses']);
+        $this->assertEquals(3, $endstats[$sessionid]['stores']['default_session']['hits'] -
+                             $startstats[$sessionid]['stores']['default_session']['hits']);
+        $this->assertEquals(0, $endstats[$sessionid]['stores']['default_session']['sets'] -
+                             $startstats[$sessionid]['stores']['default_session']['sets']);
+        $this->assertEquals(0, $endstats[$requestid]['stores']['default_request']['misses'] -
+                             $startstats[$requestid]['stores']['default_request']['misses']);
+        $this->assertEquals(4, $endstats[$requestid]['stores']['default_request']['hits'] -
+                             $startstats[$requestid]['stores']['default_request']['hits']);
+        $this->assertEquals(0, $endstats[$requestid]['stores']['default_request']['sets'] -
+                             $startstats[$requestid]['stores']['default_request']['sets']);
     }
 
     public function test_static_cache() {
@@ -2225,8 +2225,8 @@ class core_cache_testcase extends advanced_testcase {
 
         // Check that the static acceleration worked, even on empty arrays and the number 0.
         $endstats = cache_helper::get_stats();
-        $this->assertEquals(0, $endstats[$applicationid]['stores']['** static acceleration **']['misses']);
-        $this->assertEquals(3, $endstats[$applicationid]['stores']['** static acceleration **']['hits']);
+        $this->assertEquals(0, $endstats[$applicationid]['stores']['** static accel. **']['misses']);
+        $this->assertEquals(3, $endstats[$applicationid]['stores']['** static accel. **']['hits']);
     }
 
     public function test_performance_debug_off() {
