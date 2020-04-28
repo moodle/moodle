@@ -448,7 +448,7 @@ function ldap_stripslashes($text) {
     $text = preg_replace_callback($quoted,
                                   function ($match) use ($specialchars) {
                                       if (ctype_xdigit(ltrim($match[1], '\\'))) {
-                                          return chr(hexdec($match[1]));
+                                          return chr(hexdec(ltrim($match[1], '\\')));
                                       } else {
                                           return str_replace($specialchars[LDAP_DN_SPECIAL_CHARS_QUOTED_ALPHA],
                                                              $specialchars[LDAP_DN_SPECIAL_CHARS],
