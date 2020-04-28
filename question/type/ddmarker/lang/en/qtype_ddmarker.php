@@ -76,7 +76,9 @@ $string['pluginname_help'] = 'Drag and drop markers require the respondent to dr
 $string['pluginname_link'] = 'question/type/ddmarker';
 $string['pluginnameadding'] = 'Adding drag and drop markers';
 $string['pluginnameediting'] = 'Editing drag and drop markers';
-$string['pluginnamesummary'] = 'Markers are dragged and dropped onto a background image.';
+$string['pluginnamesummary'] = 'Markers are dragged and dropped onto a background image.
+
+Note: This question type is not accessible to users who are visually impaired.';
 $string['previewareaheader'] = 'Preview';
 $string['previewareamessage'] = 'Select a background image file, enter text labels for markers and define the drop zones on the background image to which they must be dragged.';
 $string['privacy:metadata'] = 'The Drag and drop markers question type plugin does not store any personal data.';
