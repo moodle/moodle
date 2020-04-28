@@ -34,7 +34,7 @@
     cursor: move;
 }
 
-.que.ddwtos .readonly .draghome {
+.que.ddwtos.qtype_ddwtos-readonly .draghome {
     cursor: default;
 }
 

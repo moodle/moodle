@@ -314,11 +314,11 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         // Is there already a drag in this drop? if so, evict it.
         var oldDrag = this.getCurrentDragInPlace(this.getPlace(drop));
         if (oldDrag.length !== 0) {
-            oldDrag.addClass('beingdragged');
-            oldDrag.offset(oldDrag.offset());
             var currentPlace = this.getClassnameNumericSuffix(oldDrag, 'inplace');
             var hiddenDrop = this.getDrop(oldDrag, currentPlace);
             hiddenDrop.addClass('active');
+            oldDrag.addClass('beingdragged');
+            oldDrag.offset(hiddenDrop.offset());
             this.sendDragHome(oldDrag);
         }
 
