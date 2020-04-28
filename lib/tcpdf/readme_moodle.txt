@@ -9,6 +9,7 @@ Description of TCPDF library import 6.3.2
   * 18dabac - https://git.io/JeKfU
   * 60c9db7 - https://git.io/JeKfT
   * 1adcd76 - https://git.io/JeKft
+  * 5e4d999 - https://git.io/JvrxB
 * visit http://127.0.0.1/lib/tests/other/pdflibtestpage.php and view the pdf
 
 Important
