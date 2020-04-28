@@ -42,7 +42,7 @@ class contentbank {
      *
      * @return string[] Array of contentbank contenttypes.
      */
-    private function get_enabled_content_types(): array {
+    public function get_enabled_content_types(): array {
         $enabledtypes = \core\plugininfo\contenttype::get_enabled_plugins();
         $types = [];
         foreach ($enabledtypes as $name) {
@@ -159,20 +159,28 @@ class contentbank {
      * Find the contents with %$search% in the contextid defined.
      * If contextid and search are empty, all contents are returned.
      * In all the cases, only the contents for the enabled contentbank-type plugins are returned.
+     * No content-type permissions are validated here. It is the caller responsability to check that the user can access to them.
+     * The only validation done here is, for each content, a call to the method $content->is_view_allowed().
      *
      * @param  string|null $search Optional string to search (for now it will search only into the name).
      * @param  int $contextid Optional contextid to search.
+     * @param  array $contenttypenames Optional array with the list of content-type names to search.
      * @return array The contents for the enabled contentbank-type plugins having $search as name and placed in $contextid.
      */
-    public function search_contents(?string $search = null, ?int $contextid = 0): array {
+    public function search_contents(?string $search = null, ?int $contextid = 0, ?array $contenttypenames = null): array {
         global $DB;
 
         $contents = [];
 
         // Get only contents for enabled content-type plugins.
-        $contenttypes = array_map(function($contenttypename) {
-            return "contenttype_$contenttypename";
-        }, $this->get_enabled_content_types());
+        $contenttypes = [];
+        $enabledcontenttypes = $this->get_enabled_content_types();
+        foreach ($enabledcontenttypes as $contenttypename) {
+            if (empty($contenttypenames) || in_array($contenttypename, $contenttypenames)) {
+                $contenttypes[] = "contenttype_$contenttypename";
+            }
+        }
+
         if (empty($contenttypes)) {
             // Early return if there are no content-type plugins enabled.
             return $contents;

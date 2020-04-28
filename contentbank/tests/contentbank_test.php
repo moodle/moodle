@@ -185,7 +185,8 @@ class core_contentbank_testcase extends advanced_testcase {
      * @param  int $expectedresult Expected result.
      * @param  array $contexts List of contexts where to create content.
      */
-    public function test_search_contents(?string $search, string $where, int $expectedresult, array $contexts = []): void {
+    public function test_search_contents(?string $search, string $where, int $expectedresult, array $contexts = [],
+            array $contenttypes = null): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -219,7 +220,7 @@ class core_contentbank_testcase extends advanced_testcase {
 
         // Search for some content.
         $cb = new \core_contentbank\contentbank();
-        $contents = $cb->search_contents($search, $contextid);
+        $contents = $cb->search_contents($search, $contextid, $contenttypes);
 
         $this->assertCount($expectedresult, $contents);
         if (!empty($contents) && !empty($search)) {
@@ -320,6 +321,13 @@ class core_contentbank_testcase extends advanced_testcase {
                 '',
                 0,
                 []
+            ],
+            'Search with unexisting content-type' => [
+                null,
+                'course',
+                0,
+                ['system', 'category', 'course'],
+                ['contenttype_unexisting'],
             ],
         ];
     }
