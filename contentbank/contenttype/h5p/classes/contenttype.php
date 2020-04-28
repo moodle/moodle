@@ -24,6 +24,7 @@
 
 namespace contenttype_h5p;
 
+use core\event\contentbank_content_viewed;
 use stdClass;
 use html_writer;
 
@@ -60,6 +61,10 @@ class contenttype extends \core_contentbank\contenttype {
      * @return string            HTML code to include in view.php.
      */
     public function get_view_content(\stdClass $record): string {
+        // Trigger an event for viewing this content.
+        $event = contentbank_content_viewed::create_from_record($record);
+        $event->trigger();
+
         $content = new content($record);
         $fileurl = $content->get_file_url();
         $html = html_writer::tag('h2', $content->get_name());
