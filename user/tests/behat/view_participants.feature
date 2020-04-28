@@ -105,6 +105,7 @@ Feature: View course participants
     And the field "Select 'Student 17x'" matches value "0"
     And the field "Select 'Student 18x'" matches value "0"
 
+  @javascript
   Scenario: Sort and paginate the list of users
     Given I log in as "teacher1x"
     And the following "course enrolments" exist:
