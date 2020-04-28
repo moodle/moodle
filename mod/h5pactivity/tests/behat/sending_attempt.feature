@@ -21,7 +21,7 @@ Feature: Do a H5P attempt
       | moodle/h5p:updatelibraries | Allow      | editingteacher | System       |           |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "H5P activity" to section "1"
+    And I add a "H5P" to section "1"
     And I set the following fields to these values:
       | Name        | Awesome H5P package |
       | Description | Description         |

@@ -22,7 +22,7 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity to a course
-    When I add a "H5P activity" to section "1"
+    When I add a "H5P" to section "1"
     And I set the following fields to these values:
       | Name        | Awesome H5P package |
       | Description | Description         |
@@ -39,7 +39,7 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity with download
-    When I add a "H5P activity" to section "1"
+    When I add a "H5P" to section "1"
     And I set the following fields to these values:
       | Name                       | Awesome H5P package |
       | Description                | Description         |
@@ -56,7 +56,7 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity with embed
-    When I add a "H5P activity" to section "1"
+    When I add a "H5P" to section "1"
     And I set the following fields to these values:
       | Name              | Awesome H5P package |
       | Description       | Description         |
@@ -73,7 +73,7 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity with copyright
-    When I add a "H5P activity" to section "1"
+    When I add a "H5P" to section "1"
     And I set the following fields to these values:
       | Name                  | Awesome H5P package |
       | Description           | Description         |
@@ -90,7 +90,7 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity with copyright in a content without copyright
-    When I add a "H5P activity" to section "1"
+    When I add a "H5P" to section "1"
     And I set the following fields to these values:
       | Name                  | Awesome H5P package |
       | Description           | Description         |
@@ -107,7 +107,7 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity to a course with all display options enabled
-    When I add a "H5P activity" to section "1"
+    When I add a "H5P" to section "1"
     And I set the following fields to these values:
       | Name                       | Awesome H5P package |
       | Description                | Description         |
