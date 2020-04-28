@@ -65,7 +65,8 @@ class fetch_test extends advanced_testcase {
         $this->resetAfterTest();
 
         $this->expectException(\UnexpectedValueException::class);
-        fetch::execute("core_users", "participants", "", "email", "4", [], "1");
+        fetch::execute("core_users", "participants", "", "email", "4", [], (string)filter::JOINTYPE_ANY,
+            null, null, null, null, []);
     }
 
     /**
@@ -79,7 +80,8 @@ class fetch_test extends advanced_testcase {
         $this->expectExceptionMessage("Table handler class {$handler} not found. Please make sure that your table handler class is under the \\core_user\\table namespace.");
 
         // Tests that invalid users_participants_table class gets an exception.
-        fetch::execute("core_user", "users_participants_table", "", "email", "4", [], "1");
+        fetch::execute("core_user", "users_participants_table", "", "email", "4", [], (string)filter::JOINTYPE_ANY,
+            null, null, null, null, []);
     }
 
     /**
@@ -129,7 +131,9 @@ class fetch_test extends advanced_testcase {
         ];
 
         $participantstable = fetch::execute("core_user", "participants",
-            "user-index-participants-{$course->id}", "firstname", "4", $filter, (string)filter::JOINTYPE_ANY);
+            "user-index-participants-{$course->id}", "firstname", "4", $filter, (string)filter::JOINTYPE_ANY,
+            null, null, null, null, []);
+
         $html = $participantstable['html'];
 
         $this->assertStringContainsString($user1->email, $html);
