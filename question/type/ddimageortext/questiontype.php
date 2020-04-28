@@ -27,11 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/type/ddimageortext/questiontypebase.php');
 
-define('QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXWIDTH', 600);
-define('QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXHEIGHT', 400);
-define('QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXWIDTH', 150);
-define('QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXHEIGHT', 100);
-
 /**
  * The drag-and-drop onto image question type class.
  *
@@ -114,9 +109,6 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
                 }
 
                 if ($formdata->drags[$dragno]['dragitemtype'] == 'image') {
-                    self::constrain_image_size_in_draft_area($draftitemid,
-                                        QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXWIDTH,
-                                        QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXHEIGHT);
                     file_save_draft_area_files($draftitemid, $formdata->context->id,
                                         'qtype_ddimageortext', 'dragimage', $drag->id,
                                         array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
@@ -135,10 +127,6 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
             list($sql, $params) = $DB->get_in_or_equal(array_values($olddragids));
             $DB->delete_records_select('qtype_ddimageortext_drags', "id $sql", $params);
         }
-
-        self::constrain_image_size_in_draft_area($formdata->bgimage,
-                                                    QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXWIDTH,
-                                                    QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXHEIGHT);
         file_save_draft_area_files($formdata->bgimage, $formdata->context->id,
                                     'qtype_ddimageortext', 'bgimage', $formdata->id,
                                     array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
