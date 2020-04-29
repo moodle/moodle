@@ -403,7 +403,8 @@ const renderEventSummaryModal = (eventId) => {
                 candelete: eventData.candelete,
                 headerclasses: getEventTypeClassFromType(eventData.normalisedeventtype),
                 isactionevent: eventData.isactionevent,
-                url: eventData.url
+                url: eventData.url,
+                action: eventData.action
             }
         };
 

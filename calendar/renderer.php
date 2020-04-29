@@ -135,12 +135,15 @@ class core_calendar_renderer extends plugin_renderer_base {
     /**
      * Displays an event
      *
+     * @deprecated since 3.9
+     *
      * @param calendar_event $event
      * @param bool $showactions
      * @return string
      */
     public function event(calendar_event $event, $showactions=true) {
         global $CFG;
+        debugging('This function is no longer used', DEBUG_DEVELOPER);
 
         $event = calendar_add_event_metadata($event);
         $context = $event->context;

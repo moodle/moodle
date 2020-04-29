@@ -2314,5 +2314,29 @@ function xmldb_main_upgrade($oldversion) {
 
         upgrade_main_savepoint(true, 2020042800.01);
     }
+
+    if ($oldversion < 2020051900.01) {
+        // Define field component to be added to event.
+        $table = new xmldb_table('event');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'repeatid');
+
+        // Conditionally launch add field component.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define index component (not unique) to be added to event.
+        $table = new xmldb_table('event');
+        $index = new xmldb_index('component', XMLDB_INDEX_NOTUNIQUE, ['component', 'eventtype', 'instance']);
+
+        // Conditionally launch add index component.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020051900.01);
+    }
+
     return true;
 }
