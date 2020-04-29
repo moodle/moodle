@@ -44,7 +44,7 @@ Feature: The various checks that may happen when an attept is started
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
     And I press "Attempt quiz now"
     Then I should see "To attempt this quiz you need to know the quiz password" in the "Start attempt" "dialogue"
-    And I should see "The quiz has a time limit of 1 hour. Time will " in the "Start attempt" "dialogue"
+    And I should see "Your attempt will have a time limit of 1 hour. When you " in the "Start attempt" "dialogue"
     And I set the field "Quiz password" to "Frog"
     And I click on "Start attempt" "button" in the "Start attempt" "dialogue"
     And I should see "Text of the first question"
@@ -77,7 +77,7 @@ Feature: The various checks that may happen when an attept is started
     And I click on "Start attempt" "button" in the "Start attempt" "dialogue"
     Then I should see "Quiz 1 description"
     And I should see "To attempt this quiz you need to know the quiz password"
-    And I should see "The quiz has a time limit of 1 hour. Time will "
+    And I should see "Your attempt will have a time limit of 1 hour. When you "
     And I should see "The password entered was incorrect"
     And I set the field "Quiz password" to "Frog"
     # On Mac/FF tab key is needed as text field in dialogue and page have same id.
@@ -99,7 +99,7 @@ Feature: The various checks that may happen when an attept is started
     And I click on "Start attempt" "button" in the "Start attempt" "dialogue"
     And I should see "Quiz 1 description"
     And I should see "To attempt this quiz you need to know the quiz password"
-    And I should see "The quiz has a time limit of 1 hour. Time will "
+    And I should see "Your attempt will have a time limit of 1 hour. When you "
     And I should see "The password entered was incorrect"
     And I set the field "Quiz password" to "Frog"
     # On Mac/FF tab key is needed as text field in dialogue and page have same id.
