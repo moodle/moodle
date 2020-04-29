@@ -1511,7 +1511,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
  */
 .modchooser .modal-body {
     padding: 0;
-    height: 640px;
+    min-height: 640px;
     overflow-y: auto;
 
     .loading-icon {
@@ -1521,8 +1521,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
             font-size: 3em;
             height: 1em;
             width: 1em;
-            margin: 5em auto;
         }
+    }
+    .carousel-item .loading-icon .icon {
+        margin: 5em auto;
     }
 }
 
@@ -1582,7 +1584,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     background-color: $white;
     overflow-x: hidden;
     overflow-y: auto;
-    height: 640px;
+    min-height: 640px;
 
     .content {
         overflow-y: auto;

@@ -10861,7 +10861,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
  */
 .modchooser .modal-body {
   padding: 0;
-  height: 640px;
+  min-height: 640px;
   overflow-y: auto; }
   .modchooser .modal-body .loading-icon {
     opacity: 1; }
@@ -10869,8 +10869,9 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
       display: block;
       font-size: 3em;
       height: 1em;
-      width: 1em;
-      margin: 5em auto; }
+      width: 1em; }
+  .modchooser .modal-body .carousel-item .loading-icon .icon {
+    margin: 5em auto; }
 
 .modchoosercontainer.noscroll {
   overflow-y: hidden; }
@@ -10916,7 +10917,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   background-color: #fff;
   overflow-x: hidden;
   overflow-y: auto;
-  height: 640px; }
+  min-height: 640px; }
   .modchooser .modal-body .optionsummary .content {
     overflow-y: auto; }
     .modchooser .modal-body .optionsummary .content .heading .icon {
