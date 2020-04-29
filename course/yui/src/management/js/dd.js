@@ -1,5 +1,3 @@
-/* global Console */
-
 /**
  * Drag and Drop handler
  *
@@ -8,9 +6,9 @@
  * @constructor
  * @extends Base
  */
-function DragDrop(config) {
+DragDrop = function(config) {
     Console.superclass.constructor.apply(this, [config]);
-}
+};
 DragDrop.NAME = 'moodle-course-management-dd';
 DragDrop.CSS_PREFIX = 'management-dd';
 DragDrop.ATTRS = {

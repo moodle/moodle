@@ -1,5 +1,3 @@
-/* global TOOLBOX, BODY, SELECTOR */
-
 /**
  * Resource and activity toolbox class.
  *
