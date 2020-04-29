@@ -9600,7 +9600,7 @@ a.dimmed_text:visited,
 .usersuspended a:visited,
 .dimmed_category,
 .dimmed_category a, .tag_feed .media .muted a, #page-admin-qtypes .disabled,
-#page-admin-qbehaviours .disabled, #page-admin-plugins #plugins-control-panel .pluginname .componentname, #page-admin-plugins #plugins-control-panel .version .versionnumber, #page-admin-plugins #plugins-control-panel .notes .requiredby, #plugins-check-page .page-description, #plugins-check-page #plugins-check .requires-ok, #plugins-check-page #plugins-check .displayname .plugindir, #plugins-check-page #plugins-check-available-dependencies .displayname .component, #page-admin-search .adminpagepath li, .block .minicalendar td.weekend, .section .activity .stealth, .course-content .section-summary .section-summary-activities .activity-count, .course-content ul li.section.hidden .sectionname > span,
+#page-admin-qbehaviours .disabled, #page-admin-plugins #plugins-control-panel .pluginname .componentname, #page-admin-plugins #plugins-control-panel .version .versionnumber, #page-admin-plugins #plugins-control-panel .notes .requiredby, #page-admin-search .adminpagepath li, .block .minicalendar td.weekend, .section .activity .stealth, .course-content .section-summary .section-summary-activities .activity-count, .course-content ul li.section.hidden .sectionname > span,
 .course-content ul li.section.hidden .content > div.summary,
 .course-content ul li.section.hidden .activity .activityinstance, #course-category-listings .listitem[data-visible="0"], #course-category-listings .listitem[data-visible="0"] > div > a, #course-category-listings .listing-pagination-totals.dimmed, .fitem.disabled .fp-btn-choose, .form-defaultinfo,
 .form-label .form-shortname, .formsettingheading .form-horizontal, .no-felement.fstatic, .path-backup .backup_progress .backup_stage {
@@ -12315,64 +12315,9 @@ body.h5p-embed .h5pmessages {
 #page-admin-plugins #plugins-control-panel .notes .requiredby {
   font-size: 0.8203125rem; }
 
-#plugins-check-page .checkforupdates .singlebutton {
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page .checkforupdates .singlebutton div,
-  #plugins-check-page .checkforupdates .singlebutton input {
-    margin: 0 3px 0 0; }
-
-#plugins-check-page #plugins-check-info .actions > div {
-  display: inline-block;
-  margin-right: 1em; }
-
-#plugins-check-page #plugins-check-info .actions .singlebutton {
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page #plugins-check-info .actions .singlebutton div,
-  #plugins-check-page #plugins-check-info .actions .singlebutton input {
-    margin: 0 3px 0 0; }
-
 #plugins-check-page #plugins-check .status-missing td,
 #plugins-check-page #plugins-check .status-downgrade td {
   background-color: #f6d9d8; }
-
-#plugins-check-page #plugins-check .displayname .plugindir {
-  font-size: 0.8203125rem; }
-
-#plugins-check-page #plugins-check .requires ul {
-  margin-left: 13px; }
-
-#plugins-check-page #plugins-check .status .actionbutton {
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page #plugins-check .status .actionbutton input {
-    margin: 0; }
-
-#plugins-check-page .plugins-check-dependencies-actions > div {
-  display: inline-block;
-  margin-right: 1em; }
-
-#plugins-check-page .plugins-check-dependencies-actions .singlebutton {
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page .plugins-check-dependencies-actions .singlebutton div,
-  #plugins-check-page .plugins-check-dependencies-actions .singlebutton input {
-    margin: 0 3px 0 0; }
-
-#plugins-check-page #plugins-check-available-dependencies .displayname .component {
-  font-size: 0.8203125rem; }
-
-#plugins-check-page #plugins-check-available-dependencies .info .actions > div {
-  display: inline-block;
-  margin-right: 1em; }
-
-#plugins-check-page #plugins-check-available-dependencies .info .actions .dependencyinstall {
-  display: block;
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page #plugins-check-available-dependencies .info .actions .dependencyinstall input {
-    margin: 0; }
 
 #plugins-check-page .pluginupdateinfo,
 #plugins-control-panel .pluginupdateinfo {
@@ -16706,7 +16651,7 @@ select {
   .path-mod-forum .nested-v2-display-mode .usersuspended a, .usersuspended .path-mod-forum .nested-v2-display-mode a,
   .path-mod-forum .nested-v2-display-mode .dimmed_category,
   .path-mod-forum .nested-v2-display-mode .dimmed_category a, .dimmed_category .path-mod-forum .nested-v2-display-mode a, .path-mod-forum .nested-v2-display-mode .tag_feed .media .muted a, .tag_feed .media .muted .path-mod-forum .nested-v2-display-mode a, .path-mod-forum .nested-v2-display-mode #page-admin-qtypes .disabled, #page-admin-qtypes .path-mod-forum .nested-v2-display-mode .disabled,
-  .path-mod-forum .nested-v2-display-mode #page-admin-qbehaviours .disabled, #page-admin-qbehaviours .path-mod-forum .nested-v2-display-mode .disabled, .path-mod-forum .nested-v2-display-mode #page-admin-plugins #plugins-control-panel .pluginname .componentname, #page-admin-plugins #plugins-control-panel .pluginname .path-mod-forum .nested-v2-display-mode .componentname, .path-mod-forum .nested-v2-display-mode #page-admin-plugins #plugins-control-panel .version .versionnumber, #page-admin-plugins #plugins-control-panel .version .path-mod-forum .nested-v2-display-mode .versionnumber, .path-mod-forum .nested-v2-display-mode #page-admin-plugins #plugins-control-panel .notes .requiredby, #page-admin-plugins #plugins-control-panel .notes .path-mod-forum .nested-v2-display-mode .requiredby, .path-mod-forum .nested-v2-display-mode #plugins-check-page .page-description, #plugins-check-page .path-mod-forum .nested-v2-display-mode .page-description, .path-mod-forum .nested-v2-display-mode #plugins-check-page #plugins-check .requires-ok, #plugins-check-page #plugins-check .path-mod-forum .nested-v2-display-mode .requires-ok, .path-mod-forum .nested-v2-display-mode #plugins-check-page #plugins-check .displayname .plugindir, #plugins-check-page #plugins-check .displayname .path-mod-forum .nested-v2-display-mode .plugindir, .path-mod-forum .nested-v2-display-mode #plugins-check-page #plugins-check-available-dependencies .displayname .component, #plugins-check-page #plugins-check-available-dependencies .displayname .path-mod-forum .nested-v2-display-mode .component, .path-mod-forum .nested-v2-display-mode #page-admin-search .adminpagepath li, #page-admin-search .adminpagepath .path-mod-forum .nested-v2-display-mode li, .path-mod-forum .nested-v2-display-mode .block .minicalendar td.weekend, .block .minicalendar .path-mod-forum .nested-v2-display-mode td.weekend, .path-mod-forum .nested-v2-display-mode .section .activity .stealth, .section .activity .path-mod-forum .nested-v2-display-mode .stealth, .path-mod-forum .nested-v2-display-mode .course-content .section-summary .section-summary-activities .activity-count, .course-content .section-summary .section-summary-activities .path-mod-forum .nested-v2-display-mode .activity-count, .path-mod-forum .nested-v2-display-mode .course-content ul li.section.hidden .sectionname > span, .course-content ul li.section.hidden .path-mod-forum .nested-v2-display-mode .sectionname > span,
+  .path-mod-forum .nested-v2-display-mode #page-admin-qbehaviours .disabled, #page-admin-qbehaviours .path-mod-forum .nested-v2-display-mode .disabled, .path-mod-forum .nested-v2-display-mode #page-admin-plugins #plugins-control-panel .pluginname .componentname, #page-admin-plugins #plugins-control-panel .pluginname .path-mod-forum .nested-v2-display-mode .componentname, .path-mod-forum .nested-v2-display-mode #page-admin-plugins #plugins-control-panel .version .versionnumber, #page-admin-plugins #plugins-control-panel .version .path-mod-forum .nested-v2-display-mode .versionnumber, .path-mod-forum .nested-v2-display-mode #page-admin-plugins #plugins-control-panel .notes .requiredby, #page-admin-plugins #plugins-control-panel .notes .path-mod-forum .nested-v2-display-mode .requiredby, .path-mod-forum .nested-v2-display-mode #page-admin-search .adminpagepath li, #page-admin-search .adminpagepath .path-mod-forum .nested-v2-display-mode li, .path-mod-forum .nested-v2-display-mode .block .minicalendar td.weekend, .block .minicalendar .path-mod-forum .nested-v2-display-mode td.weekend, .path-mod-forum .nested-v2-display-mode .section .activity .stealth, .section .activity .path-mod-forum .nested-v2-display-mode .stealth, .path-mod-forum .nested-v2-display-mode .course-content .section-summary .section-summary-activities .activity-count, .course-content .section-summary .section-summary-activities .path-mod-forum .nested-v2-display-mode .activity-count, .path-mod-forum .nested-v2-display-mode .course-content ul li.section.hidden .sectionname > span, .course-content ul li.section.hidden .path-mod-forum .nested-v2-display-mode .sectionname > span,
   .path-mod-forum .nested-v2-display-mode .course-content ul li.section.hidden .content > div.summary, .course-content ul li.section.hidden .path-mod-forum .nested-v2-display-mode .content > div.summary,
   .path-mod-forum .nested-v2-display-mode .course-content ul li.section.hidden .activity .activityinstance, .course-content ul li.section.hidden .activity .path-mod-forum .nested-v2-display-mode .activityinstance, .path-mod-forum .nested-v2-display-mode #course-category-listings .listitem[data-visible="0"], #course-category-listings .path-mod-forum .nested-v2-display-mode .listitem[data-visible="0"], .path-mod-forum .nested-v2-display-mode #course-category-listings .listitem[data-visible="0"] > div > a, #course-category-listings .path-mod-forum .nested-v2-display-mode .listitem[data-visible="0"] > div > a, .path-mod-forum .nested-v2-display-mode #course-category-listings .listing-pagination-totals.dimmed, #course-category-listings .path-mod-forum .nested-v2-display-mode .listing-pagination-totals.dimmed, .path-mod-forum .nested-v2-display-mode .fitem.disabled .fp-btn-choose, .fitem.disabled .path-mod-forum .nested-v2-display-mode .fp-btn-choose, .path-mod-forum .nested-v2-display-mode .form-defaultinfo,
   .path-mod-forum .nested-v2-display-mode .form-label .form-shortname, .form-label .path-mod-forum .nested-v2-display-mode .form-shortname, .path-mod-forum .nested-v2-display-mode .formsettingheading .form-horizontal, .formsettingheading .path-mod-forum .nested-v2-display-mode .form-horizontal, .path-mod-forum .nested-v2-display-mode .no-felement.fstatic, .path-mod-forum .nested-v2-display-mode .path-backup .backup_progress .backup_stage, .path-backup .backup_progress .path-mod-forum .nested-v2-display-mode .backup_stage,
@@ -16734,14 +16679,6 @@ select {
   #page-admin-plugins #plugins-control-panel .version .path-mod-forum.nested-v2-display-mode .versionnumber,
   .path-mod-forum.nested-v2-display-mode #page-admin-plugins #plugins-control-panel .notes .requiredby,
   #page-admin-plugins #plugins-control-panel .notes .path-mod-forum.nested-v2-display-mode .requiredby,
-  .path-mod-forum.nested-v2-display-mode #plugins-check-page .page-description,
-  #plugins-check-page .path-mod-forum.nested-v2-display-mode .page-description,
-  .path-mod-forum.nested-v2-display-mode #plugins-check-page #plugins-check .requires-ok,
-  #plugins-check-page #plugins-check .path-mod-forum.nested-v2-display-mode .requires-ok,
-  .path-mod-forum.nested-v2-display-mode #plugins-check-page #plugins-check .displayname .plugindir,
-  #plugins-check-page #plugins-check .displayname .path-mod-forum.nested-v2-display-mode .plugindir,
-  .path-mod-forum.nested-v2-display-mode #plugins-check-page #plugins-check-available-dependencies .displayname .component,
-  #plugins-check-page #plugins-check-available-dependencies .displayname .path-mod-forum.nested-v2-display-mode .component,
   .path-mod-forum.nested-v2-display-mode #page-admin-search .adminpagepath li,
   #page-admin-search .adminpagepath .path-mod-forum.nested-v2-display-mode li,
   .path-mod-forum.nested-v2-display-mode .block .minicalendar td.weekend,

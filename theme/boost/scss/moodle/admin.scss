@@ -557,117 +557,13 @@
 
 // Plugins check page displayed during upgrade.
 #plugins-check-page {
-    .page-description {
-        @extend .text-muted;
-    }
-
-    // Check for updates.
-    .checkforupdates {
-        .singlebutton {
-            margin: 5px 0;
-            padding: 0;
-
-            div,
-            input {
-                margin: 0 3px 0 0;
-            }
-        }
-    }
-
-    // Section before the plugins check table.
-    #plugins-check-info {
-        .actions {
-            > div {
-                display: inline-block;
-                margin-right: 1em;
-            }
-
-            .singlebutton {
-                margin: 5px 0;
-                padding: 0;
-
-                div,
-                input {
-                    margin: 0 3px 0 0;
-                }
-            }
-        }
-    }
 
     // Plugins check table.
     #plugins-check {
-        .requires-ok {
-            @extend .text-muted;
-        }
-
         .status-missing,
         .status-downgrade {
             td {
                 background-color: $state-danger-bg;
-            }
-        }
-
-        .displayname {
-            .plugindir {
-                @extend .text-muted;
-                font-size: $font-size-sm;
-            }
-        }
-
-        .requires ul {
-            margin-left: 13px; // To undo the default 25px, does not look that great inside a table cell;
-        }
-
-        .status {
-            .actionbutton {
-                margin: 5px 0;
-                padding: 0;
-
-                input {
-                    margin: 0;
-                }
-            }
-        }
-    }
-
-    .plugins-check-dependencies-actions {
-        > div {
-            display: inline-block;
-            margin-right: 1em;
-        }
-
-        .singlebutton {
-            margin: 5px 0;
-            padding: 0;
-
-            div,
-            input {
-                margin: 0 3px 0 0;
-            }
-        }
-    }
-
-    // List of available dependencies on the plugins check page.
-    #plugins-check-available-dependencies {
-        .displayname .component {
-            font-size: $font-size-sm;
-            @extend .text-muted;
-        }
-
-        .info .actions {
-            > div {
-                display: inline-block;
-                margin-right: 1em;
-            }
-
-            .dependencyinstall {
-                display: block;
-                margin: 5px 0;
-                padding: 0;
-
-                input {
-                    margin: 0;
-                }
             }
         }
     }
