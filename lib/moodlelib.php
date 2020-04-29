@@ -9438,7 +9438,7 @@ function get_performance_info() {
         // Attempt to avoid devs debugging peformance issues, when its caused by css building and so on.
         $info['html'] .= '<p><strong>Warning: Theme designer mode is enabled.</strong></p>';
     }
-    $info['html'] .= '<ul class="list-unstyled ml-1 row">';         // Holds userfriendly HTML representation.
+    $info['html'] .= '<ul class="list-unstyled row mx-md-0">';         // Holds userfriendly HTML representation.
 
     $info['realtime'] = microtime_diff($PERF->starttime, microtime());
 
@@ -9462,7 +9462,7 @@ function get_performance_info() {
         $info['txt']  .= 'memory_peak: '.$info['memory_peak'].'B (' . display_size($info['memory_peak']).') ';
     }
 
-    $info['html'] .= '</ul><ul class="list-unstyled ml-1 row">';
+    $info['html'] .= '</ul><ul class="list-unstyled row mx-md-0">';
     $inc = get_included_files();
     $info['includecount'] = count($inc);
     $info['html'] .= '<li class="included col-sm-4">Included '.$info['includecount'].' files</li> ';
@@ -9550,7 +9550,7 @@ function get_performance_info() {
     if ($stats = cache_helper::get_stats()) {
 
         $table = new html_table();
-        $table->attributes['class'] = 'cachesused table table-dark table-sm w-auto table-striped';
+        $table->attributes['class'] = 'cachesused table table-dark table-sm w-auto table-bordered';
         $table->head = ['Mode', 'Cache item', 'Static', 'H', 'M', get_string('mappingprimary', 'cache'), 'H', 'M', 'S'];
         $table->data = [];
         $table->align = ['left', 'left', 'left', 'right', 'right', 'left', 'right', 'right', 'right'];
@@ -9624,11 +9624,11 @@ function get_performance_info() {
                 $misses += $data['misses'];
                 $sets   += $data['sets'];
                 if ($data['hits'] == 0 and $data['misses'] > 0) {
-                    $cachestoreclass = 'nohits text-danger';
+                    $cachestoreclass = 'nohits bg-danger';
                 } else if ($data['hits'] < $data['misses']) {
-                    $cachestoreclass = 'lowhits text-warning';
+                    $cachestoreclass = 'lowhits bg-warning text-dark';
                 } else {
-                    $cachestoreclass = 'hihits text-success';
+                    $cachestoreclass = 'hihits';
                 }
                 $text .= "$store($data[hits]/$data[misses]/$data[sets]) ";
                 $cell = new html_table_cell($store);
@@ -9681,7 +9681,7 @@ function get_performance_info() {
         }
 
         $table = new html_table();
-        $table->attributes['class'] = 'cachesused table table-dark table-sm w-auto table-striped';
+        $table->attributes['class'] = 'cachesused table table-dark table-sm w-auto table-bordered';
         $table->head = [get_string('storename', 'cache'), get_string('type_cachestore', 'plugin'), 'H', 'M', 'S'];
         $table->data = [];
         $table->align = ['left', 'left', 'right', 'right', 'right'];
@@ -9691,11 +9691,11 @@ function get_performance_info() {
         foreach ($storetotals as $store => $data) {
             $row = [];
             if ($data['hits'] == 0 and $data['misses'] > 0) {
-                $cachestoreclass = 'nohits text-danger';
+                $cachestoreclass = 'nohits bg-danger';
             } else if ($data['hits'] < $data['misses']) {
-                $cachestoreclass = 'lowhits text-warning';
+                $cachestoreclass = 'lowhits bg-warning text-dark';
             } else {
-                $cachestoreclass = 'hihits text-success';
+                $cachestoreclass = 'hihits';
             }
             $cell = new html_table_cell($store);
             $cell->attributes = ['class' => $cachestoreclass];
@@ -9734,7 +9734,7 @@ function get_performance_info() {
         $info['txt'] .= 'Caches used (hits/misses/sets): 0/0/0 ';
     }
 
-    $info['html'] = '<div class="performanceinfo siteinfo container-fluid">'.$info['html'].'</div>';
+    $info['html'] = '<div class="performanceinfo siteinfo container-fluid px-md-0 overflow-auto mt-3">'.$info['html'].'</div>';
     return $info;
 }
 
