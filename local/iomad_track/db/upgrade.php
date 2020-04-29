@@ -546,7 +546,8 @@ mtrace("enrol end " . time());
                                          JOIN {course_completions} cc
                                          ON (lit.courseid = cc.course AND lit.userid = cc.userid)
                                          WHERE
-                                         lit.timeenrolled IS NULL
+                                         lit.timecompleted IS NULL
+                                         and cc.timecompleted > 0
                                          and clu.isusing = 1");
         foreach ($records as $record) {
             if (empty($record->timeenrolled)) {
