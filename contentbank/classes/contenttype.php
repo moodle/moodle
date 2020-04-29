@@ -41,7 +41,10 @@ abstract class contenttype {
     /** Plugin implements uploading feature */
     const CAN_UPLOAD = 'upload';
 
-    /** @var context This contenttype's context. **/
+    /** Plugin implements edition feature */
+    const CAN_EDIT = 'edit';
+
+    /** @var \context This contenttype's context. **/
     protected $context = null;
 
     /**
@@ -59,7 +62,7 @@ abstract class contenttype {
     /**
      * Fills content_bank table with appropiate information.
      *
-     * @param stdClass $record An optional content record compatible object (default null)
+     * @param \stdClass $record An optional content record compatible object (default null)
      * @return content  Object with content bank information.
      */
     public function create_content(\stdClass $record = null): ?content {
@@ -127,7 +130,7 @@ abstract class contenttype {
      * This method can be overwritten by the plugins if they need to change some other specific information.
      *
      * @param  content $content The content to rename.
-     * @param string $name  The name of the content.
+     * @param  string $name  The name of the content.
      * @return boolean true if the content has been renamed; false otherwise.
      */
     public function rename_content(content $content, string $name): bool {
@@ -139,7 +142,7 @@ abstract class contenttype {
      * This method can be overwritten by the plugins if they need to change some other specific information.
      *
      * @param  content $content The content to rename.
-     * @param context $context  The new context.
+     * @param  \context $context  The new context.
      * @return boolean true if the content has been renamed; false otherwise.
      */
     public function move_content(content $content, \context $context): bool {
@@ -326,6 +329,37 @@ abstract class contenttype {
     }
 
     /**
+     * Returns whether or not the user has permission to use the editor.
+     *
+     * @return bool     True if the user can edit content. False otherwise.
+     */
+    final public function can_edit(): bool {
+        if (!$this->is_feature_supported(self::CAN_EDIT)) {
+            return false;
+        }
+
+        if (!$this->can_access()) {
+            return false;
+        }
+
+        $classname = 'contenttype/'.$this->get_plugin_name();
+
+        $editioncap = $classname.':useeditor';
+        $hascapabilities = has_all_capabilities(['moodle/contentbank:useeditor', $editioncap], $this->context);
+        return $hascapabilities && $this->is_edit_allowed();
+    }
+
+    /**
+     * Returns plugin allows edition.
+     *
+     * @return bool     True if plugin allows edition. False otherwise.
+     */
+    protected function is_edit_allowed(): bool {
+        // Plugins can overwrite this function to add any check they need.
+        return true;
+    }
+
+    /**
      * Returns the plugin supports the feature.
      *
      * @param string $feature Feature code e.g CAN_UPLOAD
@@ -348,4 +382,17 @@ abstract class contenttype {
      * @return array
      */
     abstract public function get_manageable_extensions(): array;
+
+    /**
+     * Returns the list of different types of the given content type.
+     *
+     * A content type can have one or more options for creating content. This method will report all of them or only the content
+     * type itself if it has no other options.
+     *
+     * @return array An object for each type:
+     *     - string typename: descriptive name of the type.
+     *     - string typeeditorparams: params required by this content type editor.
+     *     - url typeicon: this type icon.
+     */
+    abstract public function get_contenttype_types(): array;
 }

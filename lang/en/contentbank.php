@@ -24,6 +24,7 @@
 
 $string['author'] = 'Author';
 $string['contentbank'] = 'Content bank';
+$string['close'] = 'Close';
 $string['contentdeleted'] = 'The content has been deleted.';
 $string['contentname'] = 'Content name';
 $string['contentnotdeleted'] = 'An error was encountered while trying to delete the content.';
@@ -45,6 +46,7 @@ $string['file_help'] = 'Files may be stored in the content bank for use in cours
 $string['itemsfound'] = '{$a} items found';
 $string['lastmodified'] = 'Last modified';
 $string['name'] = 'Content';
+$string['nocontenttypes'] = 'No content types available';
 $string['nopermissiontodelete'] = 'You do not have permission to delete content.';
 $string['nopermissiontomanage'] = 'You do not have permission to manage content.';
 $string['privacy:metadata:content:contenttype'] = 'The contenttype plugin of the content in the content bank.';

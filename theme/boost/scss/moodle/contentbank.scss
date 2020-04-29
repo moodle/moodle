@@ -121,3 +121,8 @@
         }
     }
 }
+
+.cb-toolbar .dropdown-scrollable {
+    max-height: 190px;
+    overflow-y: auto;
+}

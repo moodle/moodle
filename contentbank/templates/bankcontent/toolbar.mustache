@@ -21,6 +21,27 @@
     {
         "tools": [
             {
+                "name": "Add",
+                "dropdown": true,
+                "link": "http://something/contentbank/edit.php?contextid=1",
+                "contenttypes": [
+                    {
+                        "name": "h5p",
+                        "baseurl": "http://something/contentbank/edit.php?contextid=1&plugin=h5p",
+                        "types": [
+                            {
+                                "typename": "H5P Interactive Content"
+                            },
+                            {
+                                "typename": "Accordion",
+                                "typeeditorparams": "library=Accordion-1.4",
+                                "typeicon": "http://something/pluginfile.php/1/core_h5p/libraries/13/H5P.Accordion-1.4/icon.svg"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
                 "name": "Upload",
                 "link": "http://something/contentbank/contenttype/h5p/view.php?url=http://something/pluginfile.php/1/contentbank/public/accordion.h5p",
                 "icon" : "i/upload"
@@ -34,9 +55,14 @@
 }}
 
 {{#tools}}
-    <a href="{{{ link }}}" class="icon-no-margin btn btn-secondary" title="{{{ name }}}">
-        {{#pix}} {{{ icon }}} {{/pix}} {{{ name }}}
-    </a>
+    {{#dropdown}}
+        {{>core_contentbank/bankcontent/toolbar_dropdown}}
+    {{/dropdown}}
+    {{^dropdown}}
+        <a href="{{{ link }}}" class="icon-no-margin btn btn-secondary" title="{{{ name }}}">
+            {{#pix}} {{{ icon }}} {{/pix}} {{{ name }}}
+        </a>
+    {{/dropdown}}
 {{/tools}}
 <button class="icon-no-margin btn btn-secondary active ml-2"
 title="{{#str}}  displayicons, contentbank  {{/str}}"

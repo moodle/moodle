@@ -507,4 +507,100 @@ class core_contentbank_testcase extends advanced_testcase {
         // Check there's no error when trying to move content context from an empty content bank.
         $this->assertTrue($cb->delete_contents($systemcontext, $coursecontext));
     }
+
+    /**
+     * Data provider for get_contenttypes_with_capability_feature.
+     *
+     * @return  array
+     */
+    public function get_contenttypes_with_capability_feature_provider(): array {
+        return [
+            'no-contenttypes_enabled' => [
+                'contenttypesenabled' => [],
+                'contenttypescanfeature' => [],
+            ],
+            'contenttype_enabled_noeditable' => [
+                'contenttypesenabled' => ['testable'],
+                'contenttypescanfeature' => [],
+            ],
+            'contenttype_enabled_editable' => [
+                'contenttypesenabled' => ['testable'],
+                'contenttypescanfeature' => ['testable'],
+            ],
+            'no-contenttype_enabled_editable' => [
+                'contenttypesenabled' => [],
+                'contenttypescanfeature' => ['testable'],
+            ],
+        ];
+    }
+
+    /**
+     * Tests for get_contenttypes_with_capability_feature() function.
+     *
+     * @dataProvider    get_contenttypes_with_capability_feature_provider
+     * @param   array $contenttypesenabled Content types enabled.
+     * @param   array $contenttypescanfeature Content types the user has the permission to use the feature.
+     *
+     * @covers ::get_contenttypes_with_capability_feature
+     */
+    public function test_get_contenttypes_with_capability_feature(array $contenttypesenabled, array $contenttypescanfeature): void {
+        $this->resetAfterTest();
+
+        $cb = new contentbank();
+
+        $plugins = [];
+
+        // Content types not enabled where the user has permission to use a feature.
+        if (empty($contenttypesenabled) && !empty($contenttypescanfeature)) {
+            $enabled = false;
+
+            // Mock core_plugin_manager class and the method get_plugins_of_type.
+            $pluginmanager = $this->getMockBuilder(\core_plugin_manager::class)
+                ->disableOriginalConstructor()
+                ->setMethods(['get_plugins_of_type'])
+                ->getMock();
+
+            // Replace protected singletoninstance reference (core_plugin_manager property) with mock object.
+            $ref = new \ReflectionProperty(\core_plugin_manager::class, 'singletoninstance');
+            $ref->setAccessible(true);
+            $ref->setValue(null, $pluginmanager);
+
+            // Return values of get_plugins_of_type method.
+            foreach ($contenttypescanfeature as $contenttypepluginname) {
+                $contenttypeplugin = new \stdClass();
+                $contenttypeplugin->name = $contenttypepluginname;
+                $contenttypeplugin->type = 'contenttype';
+                // Add the feature to the fake content type.
+                $classname = "\\contenttype_$contenttypepluginname\\contenttype";
+                $classname::$featurestotest = ['test2'];
+                $plugins[] = $contenttypeplugin;
+            }
+
+            // Set expectations and return values.
+            $pluginmanager->expects($this->once())
+                ->method('get_plugins_of_type')
+                ->with('contenttype')
+                ->willReturn($plugins);
+        } else {
+            $enabled = true;
+            // Get access to private property enabledcontenttypes.
+            $rc = new \ReflectionClass(\core_contentbank\contentbank::class);
+            $rcp = $rc->getProperty('enabledcontenttypes');
+            $rcp->setAccessible(true);
+
+            foreach ($contenttypesenabled as $contenttypename) {
+                $plugins["\\contenttype_$contenttypename\\contenttype"] = $contenttypename;
+                // Add to the testable contenttype the feature to test.
+                if (in_array($contenttypename, $contenttypescanfeature)) {
+                    $classname = "\\contenttype_$contenttypename\\contenttype";
+                    $classname::$featurestotest = ['test2'];
+                }
+            }
+            // Set as enabled content types only those in the test.
+            $rcp->setValue($cb, $plugins);
+        }
+
+        $actual = $cb->get_contenttypes_with_capability_feature('test2', null, $enabled);
+        $this->assertEquals($contenttypescanfeature, array_values($actual));
+    }
 }
