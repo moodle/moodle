@@ -123,7 +123,7 @@ class mod_h5pactivity_privacy_testcase extends provider_testcase {
         $this->export_context_data_for_user($this->student1->id, $this->context, $component);
 
         $data = $writer->get_data([]);
-        $this->assertEquals('H5P activity 1', $data->name);
+        $this->assertEquals('H5P 1', $data->name);
 
         $data = $writer->get_data($subcontextattempt1);
         $this->assertCount(1, (array) $data);

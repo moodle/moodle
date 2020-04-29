@@ -48,7 +48,7 @@ Feature: H5P file upload to content bank for admins
     And I click on "Save changes" "button"
     And I wait until the page is ready
     And I should see "filltheblanks.h5p"
-    And I navigate to "Plugins > Content bank > Manage content bank content types" in site administration
+    And I navigate to "Plugins > Content bank > Manage content types" in site administration
     And I click on "Disable" "icon" in the "H5P" "table_row"
     And I wait until the page is ready
     When I click on "Content bank" "link"

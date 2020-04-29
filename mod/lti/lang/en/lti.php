@@ -233,8 +233,8 @@ $string['invalidid'] = 'LTI ID was incorrect';
 $string['jwtsecurity'] = 'LTI 1.3';
 $string['keytype'] = 'Public key type';
 $string['keytype_help'] = 'The authentication method used to validate the tool.';
-$string['keytype_keyset'] = 'Keyset Url';
-$string['keytype_rsa'] = 'RSA Key';
+$string['keytype_keyset'] = 'Keyset URL';
+$string['keytype_rsa'] = 'RSA key';
 $string['launch_in_moodle'] = 'Launch tool in Moodle';
 $string['launch_in_popup'] = 'Launch tool in a pop-up';
 $string['launch_url'] = 'Tool URL';
@@ -333,17 +333,17 @@ $string['notypes'] = 'There are currently no LTI tools set up in Moodle. Click t
 $string['noviewusers'] = 'No users were found with permissions to use this tool';
 $string['oauthsecurity'] = 'LTI 1.0/1.1';
 $string['optionalsettings'] = 'Optional settings';
-$string['organization'] = 'Organization details';
-$string['organizationdescr'] = 'Organization description';
-$string['organizationid_default'] = 'Default organization ID';
+$string['organization'] = 'Organisation details';
+$string['organizationdescr'] = 'Organisation description';
+$string['organizationid_default'] = 'Default organisation ID';
 $string['siteid'] = 'Site ID';
 $string['sitehost'] = 'Site hostname';
-$string['organizationid_default_help'] = 'Default value to use for Organization ID. Site ID identifies this installation of moodle.';
-$string['organizationidguid'] = 'Organization ID';
+$string['organizationid_default_help'] = 'The default value to use for Organisation ID. Site ID identifies this installation of Moodle.';
+$string['organizationidguid'] = 'Organisation ID';
 $string['organizationidguid_help'] = 'A unique identifier for this Moodle instance passed to the tool as the Platform Instance GUID.
 
 If this field is left blank, the default value will be used.';
-$string['organizationurl'] = 'Organization URL';
+$string['organizationurl'] = 'Organisation URL';
 $string['organizationurl_help'] = 'The base URL of this Moodle instance.
 
 If this field is left blank, a default value will be used based on the site configuration.';
@@ -404,7 +404,7 @@ $string['privacy:metadata:useridnumber'] = 'The ID number of the user accessing 
 $string['privacy:metadata:username'] = 'The username of the user accessing the LTI Consumer';
 $string['publickey'] = 'Public key';
 $string['publickeyset'] = 'Public keyset';
-$string['publickeyset_help'] = 'Public keyset from where moodle will retrieve the tool\'s public key to allow signatures of incoming messages and service requests to be verified.';
+$string['publickeyset_help'] = 'Public keyset from where this site will retrieve the tool\'s public key to allow signatures of incoming messages and service requests to be verified.';
 $string['publickey_help'] = 'The public key (in PEM format) provided by the tool to allow signatures of incoming messages and service requests to be verified.';
 $string['quickgrade'] = 'Allow quick grading';
 $string['quickgrade_help'] = 'If enabled, multiple tools can be graded on one page. Add grades and comments then click the "Save all my feedback" button to save all changes for that page.';
@@ -589,7 +589,7 @@ $string['validurl'] = 'A valid URL must start with http(s)://';
 $string['viewsubmissions'] = 'View submissions and grading screen';
 
 // Deprecated since Moodle 3.9.
-$string['organizationid'] = 'Organization ID';
-$string['organizationid_help'] = 'A unique identifier for this Moodle instance. Typically, the DNS name of the organization is used.
+$string['organizationid'] = 'Organisation ID';
+$string['organizationid_help'] = 'A unique identifier for this Moodle instance. Typically, the DNS name of the organisation is used.
 
 If this field is left blank, the host name of this Moodle site will be used as the default value.';

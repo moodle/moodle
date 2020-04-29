@@ -25,5 +25,5 @@
 $string['pluginname'] = 'H5P';
 $string['pluginname_help'] = 'Content bank to upload and share H5P content';
 $string['privacy:metadata'] = 'The H5P content bank plugin does not store any personal data.';
-$string['h5p:access'] = 'Access to H5P content in the content bank';
-$string['h5p:upload'] = 'Upload a new H5P content';
+$string['h5p:access'] = 'Access H5P content in the content bank';
+$string['h5p:upload'] = 'Upload new H5P content';
