@@ -193,7 +193,7 @@ class contentbank {
             $params['name'] = '%' . $DB->sql_like_escape($search) . '%';
         }
 
-        $records = $DB->get_records_select('contentbank_content', $sql, $params);
+        $records = $DB->get_records_select('contentbank_content', $sql, $params, 'name ASC');
         foreach ($records as $record) {
             $contentclass = "\\$record->contenttype\\content";
             $content = new $contentclass($record);
