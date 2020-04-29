@@ -326,13 +326,13 @@ $string['notypes'] = 'There are currently no LTI tools set up in Moodle. Click t
 $string['noviewusers'] = 'No users were found with permissions to use this tool';
 $string['oauthsecurity'] = 'LTI 1.0/1.1';
 $string['optionalsettings'] = 'Optional settings';
-$string['organization'] = 'Organization details';
-$string['organizationdescr'] = 'Organization description';
-$string['organizationid'] = 'Organization ID';
-$string['organizationid_help'] = 'A unique identifier for this Moodle instance. Typically, the DNS name of the organization is used.
+$string['organization'] = 'Organisation details';
+$string['organizationdescr'] = 'Organisation description';
+$string['organizationid'] = 'Organisation ID';
+$string['organizationid_help'] = 'A unique identifier for this Moodle instance. Typically, the DNS name of the organisation is used.
 
 If this field is left blank, the host name of this Moodle site will be used as the default value.';
-$string['organizationurl'] = 'Organization URL';
+$string['organizationurl'] = 'Organisation URL';
 $string['organizationurl_help'] = 'The base URL of this Moodle instance.
 
 If this field is left blank, a default value will be used based on the site configuration.';
