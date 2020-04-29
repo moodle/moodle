@@ -529,8 +529,65 @@ mtrace("enrol end " . time());
         }
 
         // Iomad_track savepoint reached.
-        //upgrade_plugin_savepoint(true, 2020042400, 'local', 'iomad_track');
+        upgrade_plugin_savepoint(true, 2020042400, 'local', 'iomad_track');
     }
 
-    return $result;
+
+    if ($oldversion < 2020042900) {
+
+        require_once(dirname(__FILE__) . '/../lib.php');
+        require_once(dirname(__FILE__) . '/install.php');
+
+        // Need to fix records which are broken due to error in enrol/license code.
+        $records = $DB->get_records_sql("SELECT lit.*,clu.licenseid AS reallicenseid, cc.timeenrolled AS cctimeentolled, cc.timestarted AS cctimestarted, cc.timecompleted AS cctimecompleted
+                                         FROM {local_iomad_track} lit
+                                         JOIN {companylicense_users} clu
+                                         ON (lit.userid = clu.userid AND lit.courseid = clu.licensecourseid AND lit.licenseallocated = clu.issuedate)
+                                         JOIN {course_completions} cc
+                                         ON (lit.courseid = cc.course AND lit.userid = cc.userid)
+                                         WHERE
+                                         lit.timeenrolled IS NULL
+                                         and clu.isusing = 1");
+        foreach ($records as $record) {
+            if (empty($record->timeenrolled)) {
+                if (!empty($record->cctimeenrolled)) {
+                    $record->timeenrolled = $record->cctimeenrolled;
+                } else {
+                    // Need to get it from the enrolment record.
+                    $enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+                                                     JOIN {enrol} e ON (ue.enrolid = e.id)
+                                                     WHERE ue.userid = :userid
+                                                     AND e.courseid = :courseid
+                                                     AND e.status = 0",
+                                                     array('userid' => $record->userid,
+                                                           'courseid' => $record->courseid));
+                    $record->timeenrolled = $enrolrec->starttime;
+                }
+            }
+            $record->timestarted = $record->cctimestarted;
+            if (empty($record->timecompleted) && !empty($record->cctimecompleted)) {
+                $record->timecompleted = $record->cctimecompleted;
+                $completed = true;
+            } else {
+                $completed = false;
+            }
+            if (empty($record->licensename) || $record->licenseid != $record->reallicenseid) {
+                $record->licenseid = $record->reallicenseid;
+                if ($licenserec = $DB->get_record('companylicense', array('id' => $record->reallicenseid))) {
+                    $record->licensename = $licenserec->name;
+                }
+            }
+            $DB->update_record('local_iomad_track', $record);
+            if ($complete) {
+                // Generate the certificates.
+                local_iomad_track_delete_entry($record->id, false);
+                xmldb_local_iomad_track_record_certificates($record->courseid, $record->userid, $record->id);
+            }
+        }
+
+        // Iomad_track savepoint reached.
+        upgrade_plugin_savepoint(true, 2020042900, 'local', 'iomad_track');
+    }
+
+   return $result;
 }

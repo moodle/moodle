@@ -386,8 +386,8 @@ class enrol_license_plugin extends enrol_plugin {
                 $DB->set_field('companylicense_users', 'isusing', 1, array('id' => $userlicense->id));
 
                 // Fire an event to record this 
-                $eventother = array('licenseid' => $license->id);
-                $event = \block_iomad_company_admin\event\user_license_used::create(array('context' => \context_course::instance($courseid),
+                $eventother = array('licenseid' => $userlicense->licenseid);
+                $event = \block_iomad_company_admin\event\user_license_used::create(array('context' => \context_course::instance($instance->courseid),
                                                                                           'objectid' => $userlicense->id,
                                                                                           'courseid' => $instance->courseid,
                                                                                           'userid' => $USER->id,
