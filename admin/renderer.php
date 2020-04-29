@@ -361,14 +361,15 @@ class core_admin_renderer extends plugin_renderer_base {
         $output = '';
 
         if ($checker->enabled()) {
-            $output .= $this->container_start('checkforupdates');
+            $output .= $this->container_start('checkforupdates mb-4');
             $output .= $this->single_button(
                 new moodle_url($reloadurl, array('fetchupdates' => 1)),
                 get_string('checkforupdates', 'core_plugin')
             );
             if ($timefetched = $checker->get_last_timefetched()) {
                 $timefetched = userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'));
-                $output .= $this->container(get_string('checkforupdateslast', 'core_plugin', $timefetched), 'lasttimefetched');
+                $output .= $this->container(get_string('checkforupdateslast', 'core_plugin', $timefetched),
+                    'lasttimefetched small text-muted mt-1');
             }
             $output .= $this->container_end();
         }
@@ -1045,7 +1046,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 $displayname = new html_table_cell(
                     $icon.
                     html_writer::span($plugin->displayname, 'pluginname').
-                    html_writer::div($plugin->get_dir(), 'plugindir')
+                    html_writer::div($plugin->get_dir(), 'plugindir text-muted small')
                 );
 
                 $versiondb = new html_table_cell($plugin->versiondb);
@@ -1082,7 +1083,7 @@ class core_admin_renderer extends plugin_renderer_base {
                         break;
                     case core_plugin_manager::PLUGIN_STATUS_NODB:
                     case core_plugin_manager::PLUGIN_STATUS_UPTODATE:
-                        $statusclass .= $dependenciesok ? '' : 'badge-warning';
+                        $statusclass .= $dependenciesok ? 'badge-light' : 'badge-warning';
                         break;
                 }
                 $status = html_writer::span(get_string('status_' . $statuscode, 'core_plugin'), $statusclass);
@@ -1092,7 +1093,7 @@ class core_admin_renderer extends plugin_renderer_base {
                         new moodle_url($this->page->url, array('abortinstall' => $plugin->component)),
                         get_string('cancelinstallone', 'core_plugin'),
                         'post',
-                        array('class' => 'actionbutton cancelinstallone')
+                        array('class' => 'actionbutton cancelinstallone d-block mt-1')
                     );
                 }
 
@@ -1101,7 +1102,7 @@ class core_admin_renderer extends plugin_renderer_base {
                         new moodle_url($this->page->url, array('abortupgrade' => $plugin->component)),
                         get_string('cancelupgradeone', 'core_plugin'),
                         'post',
-                        array('class' => 'actionbutton cancelupgradeone')
+                        array('class' => 'actionbutton cancelupgradeone d-block mt-1')
                     );
                 }
 
@@ -1174,7 +1175,7 @@ class core_admin_renderer extends plugin_renderer_base {
             }
         }
 
-        $out .= $this->output->container_start('actions');
+        $out .= $this->output->container_start('actions mb-2');
 
         $installableupdates = $pluginman->filter_installable($pluginman->available_updates());
         if ($installableupdates) {
@@ -1182,7 +1183,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 new moodle_url($this->page->url, array('installupdatex' => 1)),
                 get_string('updateavailableinstallall', 'core_admin', count($installableupdates)),
                 'post',
-                array('class' => 'singlebutton updateavailableinstallall')
+                array('class' => 'singlebutton updateavailableinstallall mr-1')
             );
         }
 
@@ -1191,7 +1192,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 new moodle_url($this->page->url, array('abortinstallx' => 1)),
                 get_string('cancelinstallall', 'core_plugin', count($installabortable)),
                 'post',
-                array('class' => 'singlebutton cancelinstallall')
+                array('class' => 'singlebutton cancelinstallall mr-1')
             );
         }
 
@@ -1200,15 +1201,17 @@ class core_admin_renderer extends plugin_renderer_base {
                 new moodle_url($this->page->url, array('abortupgradex' => 1)),
                 get_string('cancelupgradeall', 'core_plugin', count($upgradeabortable)),
                 'post',
-                array('class' => 'singlebutton cancelupgradeall')
+                array('class' => 'singlebutton cancelupgradeall mr-1')
             );
         }
 
         $out .= html_writer::div(html_writer::link(new moodle_url($this->page->url, array('showallplugins' => 0)),
-            get_string('plugincheckattention', 'core_plugin')).' '.html_writer::span($sumattention, 'badge'));
+            get_string('plugincheckattention', 'core_plugin')).' '.html_writer::span($sumattention, 'badge badge-light'),
+            'btn btn-link mr-1');
 
         $out .= html_writer::div(html_writer::link(new moodle_url($this->page->url, array('showallplugins' => 1)),
-            get_string('plugincheckall', 'core_plugin')).' '.html_writer::span($sumtotal, 'badge'));
+            get_string('plugincheckall', 'core_plugin')).' '.html_writer::span($sumtotal, 'badge badge-light'),
+            'btn btn-link mr-1');
 
         $out .= $this->output->container_end(); // End of .actions container.
         $out .= $this->output->container_end(); // End of #plugins-check-info container.
@@ -1276,12 +1279,13 @@ class core_admin_renderer extends plugin_renderer_base {
             }
         }
 
-        $out  = $this->output->container_start('plugins-check-dependencies');
+        $out  = $this->output->container_start('plugins-check-dependencies mb-4');
 
         if ($unavailable or $unknown) {
             $out .= $this->output->heading(get_string('misdepsunavail', 'core_plugin'));
             if ($unknown) {
-                $out .= $this->output->notification(get_string('misdepsunknownlist', 'core_plugin', implode(', ', $unknown)));
+                $out .= $this->output->render((new \core\output\notification(get_string('misdepsunknownlist', 'core_plugin',
+                    implode(', ', $unknown))))->set_show_closebutton(false));
             }
             if ($unavailable) {
                 $unavailablelist = array();
@@ -1295,18 +1299,18 @@ class core_admin_renderer extends plugin_renderer_base {
                     }
                     $unavailablelist[] = $unavailablelistitem;
                 }
-                $out .= $this->output->notification(get_string('misdepsunavaillist', 'core_plugin',
-                    implode(', ', $unavailablelist)));
+                $out .= $this->output->render((new \core\output\notification(get_string('misdepsunavaillist', 'core_plugin',
+                    implode(', ', $unavailablelist))))->set_show_closebutton(false));
             }
-            $out .= $this->output->container_start('plugins-check-dependencies-actions');
+            $out .= $this->output->container_start('plugins-check-dependencies-actions mb-4');
             $out .= ' '.html_writer::link(new moodle_url('/admin/tool/installaddon/'),
-                get_string('dependencyuploadmissing', 'core_plugin'));
+                get_string('dependencyuploadmissing', 'core_plugin'), array('class' => 'btn btn-secondary'));
             $out .= $this->output->container_end(); // End of .plugins-check-dependencies-actions container.
         }
 
         if ($available) {
             $out .= $this->output->heading(get_string('misdepsavail', 'core_plugin'));
-            $out .= $this->output->container_start('plugins-check-dependencies-actions');
+            $out .= $this->output->container_start('plugins-check-dependencies-actions mb-2');
 
             $installable = $pluginman->filter_installable($available);
             if ($installable) {
@@ -1314,12 +1318,13 @@ class core_admin_renderer extends plugin_renderer_base {
                     new moodle_url($this->page->url, array('installdepx' => 1)),
                     get_string('dependencyinstallmissing', 'core_plugin', count($installable)),
                     'post',
-                    array('class' => 'singlebutton dependencyinstallmissing')
+                    array('class' => 'singlebutton dependencyinstallmissing d-inline-block mr-1')
                 );
             }
 
             $out .= html_writer::div(html_writer::link(new moodle_url('/admin/tool/installaddon/'),
-                get_string('dependencyuploadmissing', 'core_plugin')), 'dependencyuploadmissing');
+                get_string('dependencyuploadmissing', 'core_plugin'), array('class' => 'btn btn-link')),
+                'dependencyuploadmissing d-inline-block mr-1');
 
             $out .= $this->output->container_end(); // End of .plugins-check-dependencies-actions container.
 
@@ -1360,7 +1365,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 if ($CFG->branch == str_replace('.', '', $moodle->release)) {
                     $supportedmoodles[] = html_writer::span($moodle->release, 'badge badge-success');
                 } else {
-                    $supportedmoodles[] = html_writer::span($moodle->release, 'label');
+                    $supportedmoodles[] = html_writer::span($moodle->release, 'badge badge-light');
                 }
             }
 
@@ -1374,7 +1379,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 }
                 $info = html_writer::div(
                     get_string('requiredby', 'core_plugin', implode(', ', $requriedby)),
-                    'requiredby'
+                    'requiredby mb-1'
                 );
             } else {
                 $info = '';
@@ -1385,35 +1390,36 @@ class core_admin_renderer extends plugin_renderer_base {
             $info .= html_writer::div(
                 html_writer::link('https://moodle.org/plugins/view.php?plugin='.$plugin->component,
                     get_string('misdepinfoplugin', 'core_plugin')),
-                'misdepinfoplugin'
+                'misdepinfoplugin d-inline-block mr-3 mb-1'
             );
 
             $info .= html_writer::div(
                 html_writer::link('https://moodle.org/plugins/pluginversion.php?id='.$plugin->version->id,
                     get_string('misdepinfoversion', 'core_plugin')),
-                'misdepinfoversion'
+                'misdepinfoversion d-inline-block mr-3 mb-1'
             );
 
-            $info .= html_writer::div(html_writer::link($plugin->version->downloadurl, get_string('download')), 'misdepdownload');
+            $info .= html_writer::div(html_writer::link($plugin->version->downloadurl, get_string('download')),
+                'misdepdownload d-inline-block mr-3 mb-1');
 
             if ($pluginman->is_remote_plugin_installable($plugin->component, $plugin->version->version, $reason)) {
                 $info .= $this->output->single_button(
                     new moodle_url($this->page->url, array('installdep' => $plugin->component)),
                     get_string('dependencyinstall', 'core_plugin'),
                     'post',
-                    array('class' => 'singlebutton dependencyinstall')
+                    array('class' => 'singlebutton dependencyinstall mr-3 mb-1')
                 );
             } else {
                 $reasonhelp = $this->info_remote_plugin_not_installable($reason);
                 if ($reasonhelp) {
-                    $info .= html_writer::div($reasonhelp, 'reasonhelp dependencyinstall');
+                    $info .= html_writer::div($reasonhelp, 'reasonhelp dependencyinstall d-inline-block mr-3 mb-1');
                 }
             }
 
             $info .= $this->output->container_end(); // End of .actions container.
 
             $table->data[] = array(
-                html_writer::div($plugin->name, 'name').' '.html_writer::div($plugin->component, 'component'),
+                html_writer::div($plugin->name, 'name').' '.html_writer::div($plugin->component, 'component text-muted small'),
                 $plugin->version->release,
                 $plugin->version->version,
                 implode(' ', $supportedmoodles),
@@ -1461,7 +1467,7 @@ class core_admin_renderer extends plugin_renderer_base {
         foreach ($requirements as $reqname => $reqinfo) {
             if ($reqname === 'core') {
                 if ($reqinfo->status == $pluginman::REQUIREMENT_STATUS_OK) {
-                    $class = 'requires-ok';
+                    $class = 'requires-ok text-muted';
                     $label = '';
                 } else {
                     $class = 'requires-failed';
@@ -1490,7 +1496,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 if ($reqinfo->status == $pluginman::REQUIREMENT_STATUS_OK) {
                     $label = '';
-                    $class = 'requires-ok';
+                    $class = 'requires-ok text-muted';
 
                 } else if ($reqinfo->status == $pluginman::REQUIREMENT_STATUS_MISSING) {
                     if ($reqinfo->availability == $pluginman::REQUIREMENT_AVAILABLE) {
@@ -1544,13 +1550,14 @@ class core_admin_renderer extends plugin_renderer_base {
             return '';
         }
 
-        $out = html_writer::tag('ul', implode("\n", $requires));
+        $out = html_writer::tag('ul', implode("\n", $requires), array('class' => 'm-0'));
 
         if ($displayuploadlink) {
             $out .= html_writer::div(
                 html_writer::link(
                     new moodle_url('/admin/tool/installaddon/'),
-                    get_string('dependencyuploadmissing', 'core_plugin')
+                    get_string('dependencyuploadmissing', 'core_plugin'),
+                    array('class' => 'btn btn-secondary btn-sm m-1')
                 ),
                 'dependencyuploadmissing'
             );
@@ -1560,7 +1567,8 @@ class core_admin_renderer extends plugin_renderer_base {
             $out .= html_writer::div(
                 html_writer::link(
                     new moodle_url($this->page->url, array('sesskey' => sesskey(), 'fetchupdates' => 1)),
-                    get_string('checkforupdates', 'core_plugin')
+                    get_string('checkforupdates', 'core_plugin'),
+                    array('class' => 'btn btn-secondary btn-sm m-1')
                 ),
                 'checkforupdates'
             );
