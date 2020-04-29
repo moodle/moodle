@@ -22,7 +22,7 @@ Feature: Atto with enable/disable function.
     Then the "disabled" attribute of "button.atto_collapse_button" "css_element" should contain "disabled"
     And the "disabled" attribute of "button.atto_title_button" "css_element" should contain "disabled"
     And the "disabled" attribute of "button.atto_bold_button_bold" "css_element" should contain "disabled"
-    And the "disabled" attribute of "button.atto_italic_button_italic" "css_element" should contain "disabled"
+    And the "disabled" attribute of "button.atto_italic_button" "css_element" should contain "disabled"
     And the "disabled" attribute of "button.atto_unorderedlist_button_insertUnorderedList" "css_element" should contain "disabled"
     And the "disabled" attribute of "button.atto_orderedlist_button_insertOrderedList" "css_element" should contain "disabled"
     And the "disabled" attribute of "button.atto_link_button" "css_element" should contain "disabled"
@@ -36,7 +36,7 @@ Feature: Atto with enable/disable function.
     Then "button.atto_collapse_button[disabled]" "css_element" should not exist
     And "button.atto_title_button[disabled]" "css_element" should not exist
     And "button.atto_bold_button_bold[disabled]" "css_element" should not exist
-    And "button.atto_italic_button_italic[disabled]" "css_element" should not exist
+    And "button.atto_italic_button[disabled]" "css_element" should not exist
     And "button.atto_unorderedlist_button_insertUnorderedList[disabled]" "css_element" should not exist
     And "button.atto_orderedlist_button_insertOrderedList[disabled]" "css_element" should not exist
     And "button.atto_link_button[disabled]" "css_element" should not exist
