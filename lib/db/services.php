@@ -2800,6 +2800,15 @@ $functions = array(
         'ajax'          => 'true',
         'capabilities'  => 'moodle/contentbank:manageowncontent',
     ],
+    'core_create_userfeedback_action_record' => [
+        'classname'     => 'core\external\userfeedback\record_action',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Record the action that the user takes in the user feedback notification for future use.',
+        'type'          => 'write',
+        'ajax'          => 'true',
+        'capabilities'  => '',
+    ],
 );
 
 $services = array(
