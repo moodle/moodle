@@ -2306,5 +2306,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020041700.01);
     }
 
+    if ($oldversion < 2020042800.01) {
+        // Delete obsolete config value.
+        unset_config('enablesafebrowserintegration');
+        // Clean up config of the old plugin.
+        unset_all_config_for_plugin('quizaccess_safebrowser');
+
+        upgrade_main_savepoint(true, 2020042800.01);
+    }
     return true;
 }

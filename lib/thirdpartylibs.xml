@@ -326,4 +326,10 @@
     <license>MIT</license>
     <version>1.1.8</version>
   </library>
+  <library>
+    <location>plist/</location>
+    <name>plist</name>
+    <license>MIT</license>
+    <version>2.0.1</version>
+  </library>
 </libraries>
