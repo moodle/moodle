@@ -17630,10 +17630,6 @@ p.arrow_button {
 #page-grade-grading-form-rubric-edit .gradingform_rubric_editform .status {
   font-size: 70%; }
 
-.gradingform_rubric.editor .addlevel input,
-.gradingform_rubric.editor .addcriterion input {
-  background: #fff none no-repeat top left; }
-
 #rubric-rubric.gradingform_rubric #rubric-criteria {
   margin-bottom: 1em; }
   #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .description {
@@ -17677,11 +17673,11 @@ p.arrow_button {
     #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .scorevalue input.hiddenelement, #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .scorevalue input.pseudotablink {
       width: 0; }
   #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel {
-    vertical-align: middle; }
+    vertical-align: top;
+    padding-top: 6px; }
     #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .addlevel input {
-      background-position: 0 0;
       height: 30px;
-      margin-right: 5px; }
+      line-height: 1rem; }
 
 #rubric-rubric.gradingform_rubric .addcriterion {
   margin-left: 5px;
