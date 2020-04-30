@@ -2302,4 +2302,532 @@ class participants_search_test extends advanced_testcase {
 
         return $finaltests;
     }
+
+    /**
+     * Ensure that the joins between filters in the filterset work as expected with the provided test cases.
+     *
+     * @param array $usersdata The list of users to create
+     * @param array $filterdata The data to filter by
+     * @param array $groupsavailable The names of groups that should be created in the course
+     * @param int $jointype The join type to used between each filter being applied
+     * @param int $count The expected count
+     * @param array $expectedusers
+     * @dataProvider filterset_joins_provider
+     */
+    public function test_filterset_joins(array $usersdata, array $filterdata, array $groupsavailable, int $jointype, int $count,
+            array $expectedusers): void {
+        global $DB;
+
+        // Ensure sufficient capabilities to view all statuses.
+        $this->setAdminUser();
+
+        // Remove the default role.
+        set_config('roleid', 0, 'enrol_manual');
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $roles = $DB->get_records_menu('role', [], '', 'shortname, id');
+        $users = [];
+
+        // Ensure all enrolment methods are enabled (and mapped where required for filtering later).
+        $enrolinstances = enrol_get_instances($course->id, false);
+        $enrolinstancesmap = [];
+        foreach ($enrolinstances as $instance) {
+            $plugin = enrol_get_plugin($instance->enrol);
+            $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
+
+            $enrolinstancesmap[$instance->enrol] = (int) $instance->id;
+        }
+
+        // Create the required course groups and mapping.
+        $nogroupsdata = (object) [
+            'id' => USERSWITHOUTGROUP,
+        ];
+
+         $groupsdata = ['nogroups' => $nogroupsdata];
+        foreach ($groupsavailable as $groupname) {
+            $groupinfo = [
+                'courseid' => $course->id,
+                'name' => $groupname,
+            ];
+
+            $groupsdata[$groupname] = $this->getDataGenerator()->create_group($groupinfo);
+        }
+
+        // Create test users.
+        foreach ($usersdata as $username => $userdata) {
+            $usertimestamp = empty($userdata['lastlogin']) ? 0 : strtotime($userdata['lastlogin']);
+            unset($userdata['lastlogin']);
+
+            // Prevent randomly generated field values that may cause false fails.
+            $userdata['firstnamephonetic'] = $userdata['firstnamephonetic'] ?? $userdata['firstname'];
+            $userdata['lastnamephonetic'] = $userdata['lastnamephonetic'] ?? $userdata['lastname'];
+            $userdata['middlename'] = $userdata['middlename'] ?? '';
+            $userdata['alternatename'] = $userdata['alternatename'] ?? $username;
+
+            $user = $this->getDataGenerator()->create_user($userdata);
+
+            foreach ($userdata['enrolments'] as $details) {
+                $this->getDataGenerator()->enrol_user($user->id, $course->id, $roles[$details['role']],
+                        $details['method'], 0, 0, $details['status']);
+            }
+
+            foreach ($userdata['groups'] as $groupname) {
+                $userinfo = [
+                    'userid' => $user->id,
+                    'groupid' => (int) $groupsdata[$groupname]->id,
+                ];
+                $this->getDataGenerator()->create_group_member($userinfo);
+            }
+
+            if ($usertimestamp > 0) {
+                $this->getDataGenerator()->create_user_course_lastaccess($user, $course, $usertimestamp);
+            }
+
+            $users[$username] = $user;
+        }
+
+        // Create a secondary course with users. We should not see these users.
+        $this->create_course_with_users(10, 10, 10, 10);
+
+        // Create the basic filterset.
+        $filterset = new participants_filterset();
+        $filterset->set_join_type($jointype);
+        $filterset->add_filter(new integer_filter('courseid', null, [(int) $course->id]));
+
+        // Apply the keywords filter if required.
+        if (array_key_exists('keywords', $filterdata)) {
+            $keywordfilter = new string_filter('keywords');
+            $filterset->add_filter($keywordfilter);
+
+            foreach ($filterdata['keywords']['values'] as $keyword) {
+                $keywordfilter->add_filter_value($keyword);
+            }
+            $keywordfilter->set_join_type($filterdata['keywords']['jointype']);
+        }
+
+        // Apply enrolment methods filter if required.
+        if (array_key_exists('enrolmethods', $filterdata)) {
+            $enrolmethodfilter = new integer_filter('enrolments');
+            $filterset->add_filter($enrolmethodfilter);
+
+            foreach ($filterdata['enrolmethods']['values'] as $enrolmethod) {
+                $enrolmethodfilter->add_filter_value($enrolinstancesmap[$enrolmethod]);
+            }
+            $enrolmethodfilter->set_join_type($filterdata['enrolmethods']['jointype']);
+        }
+
+        // Apply roles filter if required.
+        if (array_key_exists('courseroles', $filterdata)) {
+            $rolefilter = new integer_filter('roles');
+            $filterset->add_filter($rolefilter);
+
+            foreach ($filterdata['courseroles']['values'] as $rolename) {
+                $rolefilter->add_filter_value((int) $roles[$rolename]);
+            }
+            $rolefilter->set_join_type($filterdata['courseroles']['jointype']);
+        }
+
+        // Apply status filter if required.
+        if (array_key_exists('status', $filterdata)) {
+            $statusfilter = new integer_filter('status');
+            $filterset->add_filter($statusfilter);
+
+            foreach ($filterdata['status']['values'] as $status) {
+                $statusfilter->add_filter_value($status);
+            }
+            $statusfilter->set_join_type($filterdata['status']['jointype']);
+        }
+
+        // Apply groups filter if required.
+        if (array_key_exists('groups', $filterdata)) {
+            $groupsfilter = new integer_filter('groups');
+            $filterset->add_filter($groupsfilter);
+
+            foreach ($filterdata['groups']['values'] as $filtergroupname) {
+                $groupsfilter->add_filter_value((int) $groupsdata[$filtergroupname]->id);
+            }
+            $groupsfilter->set_join_type($filterdata['groups']['jointype']);
+        }
+
+        // Apply last access filter if required.
+        if (array_key_exists('accesssince', $filterdata)) {
+            $lastaccessfilter = new integer_filter('accesssince');
+            $filterset->add_filter($lastaccessfilter);
+
+            foreach ($filterdata['accesssince']['values'] as $accessstring) {
+                $lastaccessfilter->add_filter_value(strtotime($accessstring));
+            }
+            $lastaccessfilter->set_join_type($filterdata['accesssince']['jointype']);
+        }
+
+        // Run the search.
+        $search = new participants_search($course, $coursecontext, $filterset);
+        $rs = $search->get_participants();
+        $this->assertInstanceOf(moodle_recordset::class, $rs);
+        $records = $this->convert_recordset_to_array($rs);
+
+        $this->assertCount($count, $records);
+        $this->assertEquals($count, $search->get_total_participants_count());
+
+        foreach ($expectedusers as $expecteduser) {
+            $this->assertArrayHasKey($users[$expecteduser]->id, $records);
+        }
+    }
+
+    /**
+     * Data provider for filterset join tests.
+     *
+     * @return array
+     */
+    public function filterset_joins_provider(): array {
+        $tests = [
+            // Users with different configurations.
+            'Users with different configurations' => (object) [
+                'groupsavailable' => [
+                    'groupa',
+                    'groupb',
+                    'groupc',
+                ],
+                'users' => [
+                    'adam.ant' => [
+                        'firstname' => 'Adam',
+                        'lastname' => 'Ant',
+                        'enrolments' => [
+                            [
+                                'role' => 'student',
+                                'method' => 'manual',
+                                'status' => ENROL_USER_ACTIVE,
+                            ],
+                        ],
+                        'groups' => ['groupa'],
+                        'lastlogin' => '-3 days',
+                    ],
+                    'barbara.bennett' => [
+                        'firstname' => 'Barbara',
+                        'lastname' => 'Bennett',
+                        'enrolments' => [
+                            [
+                                'role' => 'student',
+                                'method' => 'manual',
+                                'status' => ENROL_USER_ACTIVE,
+                            ],
+                            [
+                                'role' => 'teacher',
+                                'method' => 'manual',
+                                'status' => ENROL_USER_ACTIVE,
+                            ],
+                        ],
+                        'groups' => ['groupb'],
+                        'lastlogin' => '-2 weeks',
+                    ],
+                    'colin.carnforth' => [
+                        'firstname' => 'Colin',
+                        'lastname' => 'Carnforth',
+                        'enrolments' => [
+                            [
+                                'role' => 'editingteacher',
+                                'method' => 'self',
+                                'status' => ENROL_USER_SUSPENDED,
+                            ],
+                        ],
+                        'groups' => ['groupa', 'groupb'],
+                        'lastlogin' => '-5 months',
+                    ],
+                    'tony.rogers' => [
+                        'firstname' => 'Anthony',
+                        'lastname' => 'Rogers',
+                        'enrolments' => [
+                            [
+                                'role' => 'editingteacher',
+                                'method' => 'self',
+                                'status' => ENROL_USER_SUSPENDED,
+                            ],
+                        ],
+                        'groups' => [],
+                        'lastlogin' => '-10 months',
+                    ],
+                    'sarah.rester' => [
+                        'firstname' => 'Sarah',
+                        'lastname' => 'Rester',
+                        'email' => 'zazu@example.com',
+                        'enrolments' => [
+                            [
+                                'role' => 'teacher',
+                                'method' => 'manual',
+                                'status' => ENROL_USER_ACTIVE,
+                            ],
+                            [
+                                'role' => 'editingteacher',
+                                'method' => 'self',
+                                'status' => ENROL_USER_SUSPENDED,
+                            ],
+                        ],
+                        'groups' => [],
+                        'lastlogin' => '-11 months',
+                    ],
+                    'morgan.crikeyson' => [
+                        'firstname' => 'Morgan',
+                        'lastname' => 'Crikeyson',
+                        'enrolments' => [
+                            [
+                                'role' => 'teacher',
+                                'method' => 'manual',
+                                'status' => ENROL_USER_ACTIVE,
+                            ],
+                        ],
+                        'groups' => ['groupa'],
+                        'lastlogin' => '-1 week',
+                    ],
+                    'jonathan.bravo' => [
+                        'firstname' => 'Jonathan',
+                        'lastname' => 'Bravo',
+                        'enrolments' => [
+                            [
+                                'role' => 'student',
+                                'method' => 'manual',
+                                'status' => ENROL_USER_ACTIVE,
+                            ],
+                        ],
+                        'groups' => [],
+                        // Never logged in.
+                        'lastlogin' => '',
+                    ],
+                ],
+                'expect' => [
+                    // Tests for jointype: ANY.
+                    'ANY: No filters in filterset' => (object) [
+                        'filterdata' => [],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 7,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'barbara.bennett',
+                            'colin.carnforth',
+                            'tony.rogers',
+                            'sarah.rester',
+                            'morgan.crikeyson',
+                            'jonathan.bravo',
+                        ],
+                    ],
+                    'ANY: Filterset containing a single filter type' => (object) [
+                        'filterdata' => [
+                            'enrolmethods' => [
+                                'values' => ['self'],
+                                'jointype' => filter::JOINTYPE_ANY,
+                            ],
+                        ],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'colin.carnforth',
+                            'tony.rogers',
+                            'sarah.rester',
+                        ],
+                    ],
+                    'ANY: Filterset matching all filter types on different users' => (object) [
+                        'filterdata' => [
+                            // Match Adam only.
+                            'keywords' => [
+                                'values' => ['adam'],
+                                'jointype' => filter::JOINTYPE_ALL,
+                            ],
+                            // Match Sarah only.
+                            'enrolmethods' => [
+                                'values' => ['manual', 'self'],
+                                'jointype' => filter::JOINTYPE_ALL,
+                            ],
+                            // Match Barbara only.
+                            'courseroles' => [
+                                'values' => ['student', 'teacher'],
+                                'jointype' => filter::JOINTYPE_ALL,
+                            ],
+                            // Match Sarah only.
+                            'statuses' => [
+                                'values' => ['active', 'suspended'],
+                                'jointype' => filter::JOINTYPE_ALL,
+                            ],
+                            // Match Colin only.
+                            'groups' => [
+                                'values' => ['groupa', 'groupb'],
+                                'jointype' => filter::JOINTYPE_ALL,
+                            ],
+                            // Match Jonathan only.
+                            'accesssince' => [
+                                'values' => ['-1 year'],
+                                'jointype' => filter::JOINTYPE_ALL,
+                                ],
+                        ],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 5,
+                        // Morgan and Tony are not matched, to confirm filtering is not just returning all users.
+                        'expectedusers' => [
+                            'adam.ant',
+                            'barbara.bennett',
+                            'colin.carnforth',
+                            'sarah.rester',
+                            'jonathan.bravo',
+                        ],
+                    ],
+
+                    // Tests for jointype: ALL.
+                    'ALL: No filters in filterset' => (object) [
+                        'filterdata' => [],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 7,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'barbara.bennett',
+                            'colin.carnforth',
+                            'tony.rogers',
+                            'sarah.rester',
+                            'morgan.crikeyson',
+                            'jonathan.bravo',
+                        ],
+                    ],
+                    'ALL: Filterset containing a single filter type' => (object) [
+                        'filterdata' => [
+                            'enrolmethods' => [
+                                'values' => ['self'],
+                                'jointype' => filter::JOINTYPE_ANY,
+                            ],
+                        ],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'colin.carnforth',
+                            'tony.rogers',
+                            'sarah.rester',
+                        ],
+                    ],
+                    'ALL: Filterset combining all filter types' => (object) [
+                        'filterdata' => [
+                            // Exclude Adam, Tony, Morgan and Jonathan.
+                            'keywords' => [
+                                'values' => ['ar'],
+                                'jointype' => filter::JOINTYPE_ANY,
+                            ],
+                            // Exclude Colin and Tony.
+                            'enrolmethods' => [
+                                'values' => ['manual'],
+                                'jointype' => filter::JOINTYPE_ANY,
+                            ],
+                            // Exclude Adam, Barbara and Jonathan.
+                            'courseroles' => [
+                                'values' => ['student'],
+                                'jointype' => filter::JOINTYPE_NONE,
+                            ],
+                            // Exclude Colin and Tony.
+                            'statuses' => [
+                                'values' => ['active'],
+                                'jointype' => filter::JOINTYPE_ALL,
+                            ],
+                            // Exclude Barbara.
+                            'groups' => [
+                                'values' => ['groupa', 'nogroups'],
+                                'jointype' => filter::JOINTYPE_ANY,
+                            ],
+                            // Exclude Adam, Colin and Barbara.
+                            'accesssince' => [
+                                'values' => ['-6 months'],
+                                'jointype' => filter::JOINTYPE_ALL,
+                                ],
+                        ],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'sarah.rester',
+                        ],
+                    ],
+
+                    // Tests for jointype: NONE.
+                    'NONE: No filters in filterset' => (object) [
+                        'filterdata' => [],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 7,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'barbara.bennett',
+                            'colin.carnforth',
+                            'tony.rogers',
+                            'sarah.rester',
+                            'morgan.crikeyson',
+                            'jonathan.bravo',
+                        ],
+                    ],
+                    'NONE: Filterset containing a single filter type' => (object) [
+                        'filterdata' => [
+                            'enrolmethods' => [
+                                'values' => ['self'],
+                                'jointype' => filter::JOINTYPE_ANY,
+                            ],
+                        ],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 4,
+                        'expectedusers' => [
+                            'adam.ant',
+                            'barbara.bennett',
+                            'morgan.crikeyson',
+                            'jonathan.bravo',
+                        ],
+                    ],
+                    'NONE: Filterset combining all filter types' => (object) [
+                        'filterdata' => [
+                            // Excludes Adam.
+                            'keywords' => [
+                                'values' => ['adam'],
+                                'jointype' => filter::JOINTYPE_ANY,
+                            ],
+                            // Excludes Colin, Tony and Sarah.
+                            'enrolmethods' => [
+                                'values' => ['self'],
+                                'jointype' => filter::JOINTYPE_ANY,
+                            ],
+                            // Excludes Jonathan.
+                            'courseroles' => [
+                                'values' => ['student'],
+                                'jointype' => filter::JOINTYPE_NONE,
+                            ],
+                            // Excludes Colin, Tony and Sarah.
+                            'statuses' => [
+                                'values' => ['suspended'],
+                                'jointype' => filter::JOINTYPE_ALL,
+                            ],
+                            // Excludes Adam, Colin, Tony, Sarah, Morgan and Jonathan.
+                            'groups' => [
+                                'values' => ['groupa', 'nogroups'],
+                                'jointype' => filter::JOINTYPE_ANY,
+                            ],
+                            // Excludes Tony and Sarah.
+                            'accesssince' => [
+                                'values' => ['-6 months'],
+                                'jointype' => filter::JOINTYPE_ALL,
+                                ],
+                        ],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'barbara.bennett',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $finaltests = [];
+        foreach ($tests as $testname => $testdata) {
+            foreach ($testdata->expect as $expectname => $expectdata) {
+                $finaltests["{$testname} => {$expectname}"] = [
+                    'users' => $testdata->users,
+                    'filterdata' => $expectdata->filterdata,
+                    'groupsavailable' => $testdata->groupsavailable,
+                    'jointype' => $expectdata->jointype,
+                    'count' => $expectdata->count,
+                    'expectedusers' => $expectdata->expectedusers,
+                ];
+            }
+        }
+
+        return $finaltests;
+    }
 }
