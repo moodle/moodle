@@ -11772,6 +11772,9 @@ body.h5p-embed .h5pmessages {
   color: #343a40;
   height: 1.5rem; }
 
+.border-radius {
+  border-radius: 0.25rem; }
+
 .emoji-picker {
   width: 350px;
   height: 400px; }

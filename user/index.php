@@ -242,7 +242,7 @@ $enrolbuttonsout = '';
 foreach ($enrolbuttons as $enrolbutton) {
     $enrolbuttonsout .= $enrolrenderer->render($enrolbutton);
 }
-echo html_writer::div($enrolbuttonsout, 'float-right', [
+echo html_writer::div($enrolbuttonsout, 'd-flex justify-content-end', [
     'data-region' => 'wrapper',
     'data-table-uniqueid' => $participanttable->uniqueid,
 ]);

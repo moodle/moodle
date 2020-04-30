@@ -40,9 +40,9 @@
     }
 }}
 
-<div id="core_user-participantsfilter-{{uniqid}}" class="filter-group mt-5 p-3 rounded border border-secondary" data-table-region="{{tableregionid}}" data-table-course-id="{{courseid}}" data-filterverb="1">
+<div id="core_user-participantsfilter-{{uniqid}}" class="filter-group my-2 p-2 bg-light border-radius border" data-table-region="{{tableregionid}}" data-table-course-id="{{courseid}}" data-filterverb="1">
     <div data-filterregion="filtermatch" class="hidden">
-        <label for="core_user-local-participantsfilter-jointype-{{uniqid}}" class="pt-2">{{#str}}match, core_user{{/str}}</label>
+        <label for="core_user-local-participantsfilter-jointype-{{uniqid}}" class="my-0">{{#str}}match, core_user{{/str}}</label>
         <select class="custom-select" data-filterfield="join" id="core_user-local-participantsfilter-jointype-{{uniqid}}">
             <option value="0">{{#str}}none{{/str}}</option>
             <option selected=selected value="1">{{#str}}any{{/str}}</option>
@@ -54,16 +54,13 @@
         {{> core_user/local/participantsfilter/filterrow }}
     </div>
 
-    <div class="display-block" data-filterregion="actions">
+    <div class="d-flex" data-filterregion="actions">
         &nbsp;
-        <button type="button" class="btn btn-link d-inline-block float-left" data-filteraction="add">
+        <button type="button" class="btn btn-link text-reset" data-filteraction="add">
             <i class="fa fa-plus"></i><span class="pl-3">{{#str}}addcondition, core_user{{/str}}</span>
         </button>
-
-        <div class="float-right">
-            <button data-filteraction="reset" type="button" class="btn btn-light d-inline-block">{{#str}}clearfilters, core_user{{/str}}</button>
-            <button data-filteraction="apply" type="button" class="btn btn-primary d-inline-block">{{#str}}applyfilters, core_user{{/str}}</button>
-        </div>
+        <button data-filteraction="reset" type="button" class="btn btn-secondary ml-auto mr-2">{{#str}}clearfilters, core_user{{/str}}</button>
+        <button data-filteraction="apply" type="button" class="btn btn-primary">{{#str}}applyfilters, core_user{{/str}}</button>
     </div>
 
     {{> core_user/local/participantsfilter/filtertypes}}
