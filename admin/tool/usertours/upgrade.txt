@@ -1,4 +1,9 @@
 This files describes API changes in the tool_usertours code.
 
+=== 3.8.4 ===
+* The `tourconfig` property returned by the `tool_usertours_fetch_and_start_tour`
+  external method is now optional, and will be omitted if the tour shouldn't be
+  shown to the current user
+
 === 3.5 ===
 * Third party library Popper.js was moved from this plugin into core (core/popper)

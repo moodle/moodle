@@ -69,6 +69,11 @@ function(ajax, BootstrapTour, $, templates, str, log, notification) {
                 templates.render('tool_usertours/tourstep', {})
             )
             .then(function(response, template) {
+                // If we don't have any tour config (because it doesn't need showing for the current user), return early.
+                if (!response.hasOwnProperty('tourconfig')) {
+                    return;
+                }
+
                 return usertours.startBootstrapTour(tourId, template[0], response.tourconfig);
             })
             .always(function() {
