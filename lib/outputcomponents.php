@@ -3065,7 +3065,7 @@ class paging_bar implements renderable, templatable {
 
         if ($this->page > 0) {
             $data->previous = [
-                'page' => $this->page - 1,
+                'page' => $this->page,
                 'url' => (new moodle_url($this->baseurl, [$this->pagevar => $this->page - 1]))->out(false)
             ];
         }
@@ -3111,7 +3111,7 @@ class paging_bar implements renderable, templatable {
 
         if ($this->page + 1 != $lastpage) {
             $data->next = [
-                'page' => $this->page + 1,
+                'page' => $this->page + 2,
                 'url' => (new moodle_url($this->baseurl, [$this->pagevar => $this->page + 1]))->out(false)
             ];
         }
