@@ -2286,6 +2286,7 @@ function calendar_edit_event_allowed($event, $manualedit = false) {
     }
 
     if ($manualedit && !empty($event->component)) {
+        // TODO possibly we can later add a callback similar to core_calendar_event_timestart_updated in the modules.
         return false;
     }
 
@@ -3686,6 +3687,7 @@ function calendar_get_filter_types() {
         'course',
         'group',
         'user',
+        'other'
     ];
 
     return array_map(function($type) {

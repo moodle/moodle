@@ -89,6 +89,8 @@
                                         {{/underway}}
                                         {{^underway}}
                                             <li data-region="event-item"
+                                                dava-event-component="{{component}}"
+                                                data-event-eventtype="{{eventtype}}"
                                                 data-eventtype-{{normalisedeventtype}}="1"
                                                 {{#draggable}}
                                                     draggable="true"

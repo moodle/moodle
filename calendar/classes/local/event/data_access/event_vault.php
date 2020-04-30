@@ -211,6 +211,9 @@ class event_vault implements event_vault_interface {
             return array_merge($carry, $groupings[0]);
         }, []);
 
+        // Always include the site events.
+        $courseids = $courseids ? array_merge($courseids, [SITEID]) : $courseids;
+
         return $this->get_events(
             null,
             null,

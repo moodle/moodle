@@ -133,7 +133,8 @@ class container {
                         }
                     }
 
-                    // At present we only have a bail-out check for events in course modules.
+                    // For non-module events we assume that all checks were done in core_calendar_is_event_visible callback.
+                    // For module events we also check that the course module and course itself are visible to the user.
                     if (empty($dbrow->modulename)) {
                         return false;
                     }

@@ -288,6 +288,10 @@ class event_exporter_base extends exporter {
         $iconexporter = new event_icon_exporter($event, ['context' => $context]);
         $identifier = 'type' . $values['normalisedeventtype'];
         $stringexists = get_string_manager()->string_exists($identifier, 'calendar');
+        if (!$stringexists) {
+            // Property normalisedeventtype is used to build the name of the CSS class for the events.
+            $values['normalisedeventtype'] = 'other';
+        }
         $values['normalisedeventtypetext'] = $stringexists ? get_string($identifier, 'calendar') : '';
 
         $values['icon'] = $iconexporter->export($output);
