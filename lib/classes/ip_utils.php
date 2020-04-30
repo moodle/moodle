@@ -245,4 +245,22 @@ final class ip_utils {
         return false;
     }
 
+    /**
+     * Return IP address for given hostname, or null on failure
+     *
+     * @param string $hostname
+     * @return string|null
+     */
+    public static function get_ip_address(string $hostname): ?string {
+        if (self::is_domain_name($hostname)) {
+            $address = gethostbyname($hostname);
+
+            // If address is different from hostname, we have success.
+            if (strcasecmp($address, $hostname) !== 0) {
+                return $address;
+            }
+        }
+
+        return null;
+    }
 }

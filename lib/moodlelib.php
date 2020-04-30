@@ -10571,17 +10571,25 @@ function get_callable_name($callable) {
  * It just performs some simple checks, and mainly is used for places where we want to hide some options
  * such as site registration when $CFG->wwwroot is not publicly accessible.
  * Good thing is there is no false negative.
+ * Note that it's possible to force the result of this check by specifying $CFG->site_is_public in config.php
  *
  * @return bool
  */
 function site_is_public() {
     global $CFG;
 
+    // Return early if site admin has forced this setting.
+    if (isset($CFG->site_is_public)) {
+        return (bool)$CFG->site_is_public;
+    }
+
     $host = parse_url($CFG->wwwroot, PHP_URL_HOST);
 
     if ($host === 'localhost' || preg_match('|^127\.\d+\.\d+\.\d+$|', $host)) {
         $ispublic = false;
     } else if (\core\ip_utils::is_ip_address($host) && !ip_is_public($host)) {
+        $ispublic = false;
+    } else if (($address = \core\ip_utils::get_ip_address($host)) && !ip_is_public($address)) {
         $ispublic = false;
     } else {
         $ispublic = true;
