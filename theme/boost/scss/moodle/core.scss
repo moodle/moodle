@@ -2654,3 +2654,21 @@ $picker-emojis-per-row: 7 !default;
         z-index: inherit;
     }
 }
+
+.link-underline {
+    text-decoration: underline;
+    &:focus {
+        text-decoration: none;
+    }
+}
+
+.alert.cta {
+    .icon {
+        padding: 0.3rem;
+        &.fa {
+            border-radius: 50%;
+            border-style: solid;
+            border-width: 0.125rem;
+        }
+    }
+}
