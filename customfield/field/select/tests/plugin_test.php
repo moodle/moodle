@@ -158,6 +158,42 @@ class customfield_select_plugin_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see test_parse_value}
+     *
+     * @return array
+     */
+    public function parse_value_provider() : array {
+        return [
+            ['Red', 1],
+            ['Blue', 2],
+            ['Green', 3],
+            ['Mauve', 0],
+        ];
+    }
+
+    /**
+     * Test field parse_value method
+     *
+     * @param string $value
+     * @param int $expected
+     * @return void
+     *
+     * @dataProvider parse_value_provider
+     */
+    public function test_parse_value(string $value, int $expected) {
+        $field = $this->get_generator()->create_field([
+            'categoryid' => $this->cfcat->get('id'),
+            'type' => 'select',
+            'shortname' => 'myselect',
+            'configdata' => [
+                'options' => "Red\nBlue\nGreen",
+            ],
+        ]);
+
+        $this->assertSame($expected, $field->parse_value($value));
+    }
+
+    /**
      * Deleting fields and data
      */
     public function test_delete() {

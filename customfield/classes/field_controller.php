@@ -124,6 +124,18 @@ abstract class field_controller {
     }
 
     /**
+     * Perform pre-processing of field values, for example those that originate from an external source (e.g. upload course tool)
+     *
+     * Override in plugin classes as necessary
+     *
+     * @param string $value
+     * @return mixed
+     */
+    public function parse_value(string $value) {
+        return $value;
+    }
+
+    /**
      * Validate the data on the field configuration form
      *
      * Plugins can override it

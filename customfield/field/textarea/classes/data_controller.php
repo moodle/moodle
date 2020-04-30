@@ -59,7 +59,7 @@ class data_controller extends \core_customfield\data_controller {
      *
      * @return string
      */
-    protected function get_form_element_name() : string {
+    public function get_form_element_name() : string {
         return parent::get_form_element_name() . '_editor';
     }
 

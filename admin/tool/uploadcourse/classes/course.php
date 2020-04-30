@@ -285,6 +285,15 @@ class tool_uploadcourse_course {
     }
 
     /**
+     * Return array of valid fields for default values
+     *
+     * @return array
+     */
+    protected function get_valid_fields() {
+        return array_merge(self::$validfields, \tool_uploadcourse_helper::get_custom_course_field_names());
+    }
+
+    /**
      * Assemble the course data based on defaults.
      *
      * This returns the final data to be passed to create_course().
@@ -293,7 +302,7 @@ class tool_uploadcourse_course {
      * @return array
      */
     protected function get_final_create_data($data) {
-        foreach (self::$validfields as $field) {
+        foreach ($this->get_valid_fields() as $field) {
             if (!isset($data[$field]) && isset($this->defaults[$field])) {
                 $data[$field] = $this->defaults[$field];
             }
@@ -316,9 +325,9 @@ class tool_uploadcourse_course {
         global $DB;
         $newdata = array();
         $existingdata = $DB->get_record('course', array('shortname' => $this->shortname));
-        foreach (self::$validfields as $field) {
+        foreach ($this->get_valid_fields() as $field) {
             if ($missingonly) {
-                if (!is_null($existingdata->$field) and $existingdata->$field !== '') {
+                if (isset($existingdata->$field) and $existingdata->$field !== '') {
                     continue;
                 }
             }
@@ -697,6 +706,27 @@ class tool_uploadcourse_course {
         }
         foreach ($rolenames as $rolekey => $rolename) {
             $coursedata[$rolekey] = $rolename;
+        }
+
+        // Custom fields. If the course already exists and mode isn't set to force creation, we can use its context.
+        if ($exists && $mode !== tool_uploadcourse_processor::MODE_CREATE_ALL) {
+            $context = context_course::instance($coursedata['id']);
+        } else {
+            // The category ID is taken from the defaults if it exists, otherwise from course data.
+            $context = context_coursecat::instance($this->defaults['category'] ?? $coursedata['category']);
+        }
+        $customfielddata = tool_uploadcourse_helper::get_custom_course_field_data($this->rawdata, $this->defaults, $context,
+            $errors);
+        if (!empty($errors)) {
+            foreach ($errors as $key => $message) {
+                $this->error($key, $message);
+            }
+
+            return false;
+        }
+
+        foreach ($customfielddata as $name => $value) {
+            $coursedata[$name] = $value;
         }
 
         // Some validation.
