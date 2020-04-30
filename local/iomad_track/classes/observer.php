@@ -202,7 +202,8 @@ class observer {
                                                'courseid' => $courseid));
 
         // Is this a duplicate event?
-        if ($DB->get_record_sql("SELECT id FROM {local_iomad_track}
+        if (!empty($enrolrec->timestart) &&
+             $DB->get_record_sql("SELECT id FROM {local_iomad_track}
                                  WHERE userid = :userid
                                  AND courseid = :courseid
                                  AND timeenrolled = :timeenrolled
