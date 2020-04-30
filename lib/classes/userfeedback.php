@@ -45,4 +45,92 @@ class core_userfeedback {
      * @var int Do not ask user to give feedback.
      */
     public const REMIND_NEVER = 3;
+
+    /**
+     * Displays the feedback reminder block.
+     */
+    public static function print_reminder_block(): void {
+        global $PAGE;
+
+        static $jscalled = false;
+
+        $actions = [
+            [
+                'title' => get_string('calltofeedback_give'),
+                'url' => '#',
+                'data' => [
+                        'action' => 'give',
+                ],
+            ],
+            [
+                'title' => get_string('calltofeedback_remind'),
+                'url' => '#',
+                'data' => [
+                    'action' => 'remind',
+                ],
+            ],
+        ];
+        $icon = [
+            'pix' => 'i/bullhorn',
+            'component' => 'core'
+        ];
+
+        \core\notification::add_call_to_action($icon, get_string('calltofeedback'), $actions, 'core/userfeedback');
+
+        if (!$jscalled) {
+            $jscalled = true;
+            // Calling the following more than once will register event listeners twice.
+            $PAGE->requires->js_call_amd('core/userfeedback', 'registerEventListeners');
+        }
+    }
+
+    /**
+     * Indicates whether the feedback reminder block should be shown or not.
+     *
+     * @return bool
+     */
+    public static function should_display_reminder(): bool {
+        global $CFG;
+
+        if ($CFG->enableuserfeedback && isloggedin() && !isguestuser()) {
+            $give = get_user_preferences('core_userfeedback_give');
+            $remind = get_user_preferences('core_userfeedback_remind');
+
+            $lastactiontime = max($give ?: 0, $remind ?: 0);
+
+            switch ($CFG->userfeedback_nextreminder) {
+                case self::REMIND_AFTER_UPGRADE:
+                    $lastupgrade = self::last_major_upgrade_time();
+                    if ($lastupgrade >= $lastactiontime) {
+                        return $lastupgrade + ($CFG->userfeedback_remindafter * DAYSECS) < time();
+                    }
+                    break;
+                case self::REMIND_PERIODICALLY:
+                    return $lastactiontime + ($CFG->userfeedback_remindafter * DAYSECS) < time();
+                    break;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the last major upgrade time
+     *
+     * @return int
+     */
+    private static function last_major_upgrade_time(): int {
+        global $DB;
+
+        $targetversioncast = $DB->sql_cast_char2real('targetversion');
+        $versioncast = $DB->sql_cast_char2real('version');
+
+        // A time difference more than 3 months has to be a core upgrade.
+        $time = $DB->get_field_sql("SELECT timemodified
+                                     FROM {upgrade_log}
+                                    WHERE plugin = 'core' AND $targetversioncast - $versioncast > 30000
+                                 ORDER BY timemodified DESC
+                                    LIMIT 1");
+
+        return (int)$time;
+    }
 }
