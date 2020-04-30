@@ -121,6 +121,10 @@ if ($mform_signup->is_cancelled()) {
     redirect($redirect);
 
 } else if ($user = $mform_signup->get_data()) {
+    if (!empty($SESSION->company) && $CFG->local_iomad_signup_useemail) {
+        $user->username = $user->email;
+    }
+
     // Add missing required fields.
     $user = signup_setup_new_user($user);
 
