@@ -111,10 +111,6 @@ class core_course_deletecategory_form extends moodleform {
         $mform->setType('categoryid', PARAM_ALPHANUM);
         $mform->addElement('hidden', 'action', 'deletecategory');
         $mform->setType('action', PARAM_ALPHANUM);
-        $mform->addElement('hidden', 'sure');
-        // This gets set by default to ensure that if the user changes it manually we can detect it.
-        $mform->setDefault('sure', md5(serialize($this->coursecat)));
-        $mform->setType('sure', PARAM_ALPHANUM);
 
         $this->add_action_buttons(true, get_string('delete'));
     }
@@ -131,10 +127,6 @@ class core_course_deletecategory_form extends moodleform {
         if (empty($data['fulldelete']) && empty($data['newparent'])) {
             // When they have chosen the move option, they must specify a destination.
             $errors['newparent'] = get_string('required');
-        }
-
-        if ($data['sure'] !== md5(serialize($this->coursecat))) {
-            $errors['categorylabel'] = get_string('categorymodifiedcancel');
         }
 
         return $errors;
