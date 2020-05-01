@@ -32,6 +32,7 @@ $string['contentnotrenamed'] = 'An error was encountered while trying to rename 
 $string['contentrenamed'] = 'The content has been renamed.';
 $string['contentsmoved'] = 'Content bank contents moved to {$a}.';
 $string['contenttypenoaccess'] = 'You can not view this {$a} instance';
+$string['contenttypenoedit'] = 'You can not edit contents of the {$a} content type';
 $string['eventcontentcreated'] = 'Content created';
 $string['eventcontentdeleted'] = 'Content deleted';
 $string['eventcontentupdated'] = 'Content updated';
