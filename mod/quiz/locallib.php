@@ -2125,13 +2125,13 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         );
     }
 
+    $trans = $DB->start_delegated_transaction();
     $slots = $DB->get_records('quiz_slots', array('quizid' => $quiz->id),
             'slot', 'questionid, slot, page, id');
     if (array_key_exists($questionid, $slots)) {
+        $trans->allow_commit();
         return false;
     }
-
-    $trans = $DB->start_delegated_transaction();
 
     $maxpage = 1;
     $numonlastpage = 0;
