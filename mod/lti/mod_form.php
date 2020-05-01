@@ -256,7 +256,11 @@ class mod_lti_mod_form extends moodleform_mod {
             $mform->addHelpButton('secureicon', 'secure_icon_url', 'lti');
             $mform->hideIf('secureicon', 'typeid', 'in', $noncontentitemtypes);
         } else {
-            // Keep those in the form to allow deep linking, key and secret are removed altogether.
+            // Keep those in the form to allow deep linking.
+            $mform->addElement('hidden', 'resourcekey', '', array('id' => 'id_resourcekey'));
+            $mform->setType('resourcekey', PARAM_TEXT);
+            $mform->addElement('hidden', 'password', '', array('id' => 'id_password'));
+            $mform->setType('password', PARAM_TEXT);
             $mform->addElement('hidden', 'instructorcustomparameters', '', array('id' => 'id_instructorcustomparameters'));
             $mform->setType('instructorcustomparameters', PARAM_TEXT);
             $mform->addElement('hidden', 'icon', '', array('id' => 'id_icon'));
