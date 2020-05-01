@@ -76,14 +76,23 @@ class core_course_deletecategory_form extends moodleform {
         // Describe the contents of this category.
         $contents = '';
         if ($this->coursecat->has_children()) {
-            $contents .= '<li>' . get_string('subcategories') . '</li>';
+            $contents .= html_writer::tag('li', get_string('subcategories'));
         }
         if ($this->coursecat->has_courses()) {
-            $contents .= '<li>' . get_string('courses') . '</li>';
+            $contents .= html_writer::tag('li', get_string('courses'));
         }
         if (question_context_has_any_questions($categorycontext)) {
-            $contents .= '<li>' . get_string('questionsinthequestionbank') . '</li>';
+            $contents .= html_writer::tag('li', get_string('questionsinthequestionbank'));
         }
+
+        // Check if plugins can provide more info.
+        $pluginfunctions = $this->coursecat->get_plugins_callback_function('get_course_category_contents');
+        foreach ($pluginfunctions as $pluginfunction) {
+            if ($plugincontents = $pluginfunction($this->coursecat)) {
+                $contents .= html_writer::tag('li', $plugincontents);
+            }
+        }
+
         if (!empty($contents)) {
             $mform->addElement('static', 'emptymessage', get_string('thiscategorycontains'), html_writer::tag('ul', $contents));
         } else {
@@ -92,7 +101,9 @@ class core_course_deletecategory_form extends moodleform {
 
         // Give the options for what to do.
         $mform->addElement('select', 'fulldelete', get_string('whattodo'), $options);
+
         if (count($options) == 1) {
+            // Freeze selector if only one option available.
             $optionkeys = array_keys($options);
             $option = reset($optionkeys);
             $mform->hardFreeze('fulldelete');
@@ -127,6 +138,11 @@ class core_course_deletecategory_form extends moodleform {
         if (empty($data['fulldelete']) && empty($data['newparent'])) {
             // When they have chosen the move option, they must specify a destination.
             $errors['newparent'] = get_string('required');
+            return $errors;
+        }
+
+        if (!empty($data['newparent']) && !$this->coursecat->can_move_content_to($data['newparent'])) {
+            $errors['newparent'] = get_string('movecatcontentstoselected', 'error');
         }
 
         return $errors;
