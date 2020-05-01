@@ -108,9 +108,9 @@ if (!empty($microthreads)) {
     $table = new html_table();
     $table->head = array(get_string('name'), '');
     $table->align('center', 'center');
-    $table->width = 95%;
+    $table->width = '95%';
 
-    forearch ($microthreads as $microthread) {
+    foreach ($microthreads as $microthread) {
         $deleteurl = '';
         $assignurl = '';
         $editurl = '';

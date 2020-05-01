@@ -976,7 +976,7 @@ class company {
                 // We have a company manager from another company.
                 // Deal with company courses.
                 if ($CFG->iomad_autoenrol_managers && $companycourses = $DB->get_records('company_course',
-                                                        array('companyid' => $ompanyid))) {
+                                                        array('companyid' => $companyid))) {
                     foreach ($companycourses as $companycourse) {
                         if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
                             if ($DB->record_exists('company_created_courses',

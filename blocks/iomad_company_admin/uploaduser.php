@@ -567,7 +567,7 @@ if ($mform->is_cancelled()) {
                         // This should not happen!
                         $upt->track('status', $strusernotaddederror, 'error');
                         $userserrors++;
-                        continue;
+                        continue 2;
                     }
                     break;
 
