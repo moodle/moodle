@@ -143,7 +143,6 @@ class quizaccess_seb_quiz_settings_testcase extends quizaccess_seb_testcase {
         $settings = $this->get_test_settings();
 
         $quizsettings = new quiz_settings(0, $settings);
-        $quizsettings->create();
         $configkey = $quizsettings->get_config_key();
         $this->assertEquals("89557366c34cb64a33781e1fb767cb15380731efdfb967e037476ef420f1d7b8",
             $configkey
@@ -157,12 +156,11 @@ class quizaccess_seb_quiz_settings_testcase extends quizaccess_seb_testcase {
         $settings = $this->get_test_settings();
 
         $quizsettings = new quiz_settings(0, $settings);
-        $quizsettings->create();
         $configkey = $quizsettings->get_config_key();
         $this->assertEquals("89557366c34cb64a33781e1fb767cb15380731efdfb967e037476ef420f1d7b8",
                 $configkey);
+
         $quizsettings->set('filterembeddedcontent', 1); // Alter the settings.
-        $quizsettings->save();
         $configkey = $quizsettings->get_config_key();
         $this->assertEquals("4476e7fc1e4e769c930685535b0f6377e6f736cd6c24b68db512455a95f028b5",
             $configkey);
@@ -178,7 +176,6 @@ class quizaccess_seb_quiz_settings_testcase extends quizaccess_seb_testcase {
      */
     public function test_filter_rules_added_to_config(stdClass $settings, string $expectedxml) {
         $quizsettings = new quiz_settings(0, $settings);
-        $quizsettings->create();
         $config = $quizsettings->get_config();
         $this->assertEquals($expectedxml, $config);
     }
