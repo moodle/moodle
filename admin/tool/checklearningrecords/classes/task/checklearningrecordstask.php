@@ -81,10 +81,24 @@ class checklearningrecordstask extends adhoc_task {
                                                     WHERE
                                                     cc.timecompleted > 0
                                                     AND lit.timecompleted IS NULL
-                                                    AND lit.timestarted != NULL");
+                                                    AND lit.timestarted > 0");
 
         do_fixmissingcompletions($missingcompletions);
 
+        // Sort out all expiry.
+        // Calculate the timeexpired for all users.
+        // Get the courses where there is a expired value.
+        $expirycourses = $DB->get_records_sql("SELECT courseid,validlength FROM {iomad_courses}
+                                               WHERE validlength > 0");
+        foreach ($expirycourses as $expirycourse) {
+            $offset = $expirycourse->validlength * 24 * 60 * 60;
+            $DB->execute("UPDATE {local_iomad_track}
+                          SET timeexpires = timecompleted + :offset
+                          WHERE courseid = :courseid
+                          AND timecompleted > 0",
+                          array('courseid' => $expirycourse->courseid,
+                         'offset' => $offset));
+        }
     }
 
     /**
