@@ -45,7 +45,9 @@ class contenttype extends \core_contentbank\contenttype {
     public function delete_content(\core_contentbank\content $content): bool {
         // Delete the H5P content.
         $factory = new \core_h5p\factory();
-        \core_h5p\api::delete_content_from_pluginfile_url($content->get_file_url(), $factory);
+        if (!empty($content->get_file_url())) {
+            \core_h5p\api::delete_content_from_pluginfile_url($content->get_file_url(), $factory);
+        }
 
         // Delete the content from the content_bank.
         return parent::delete_content($content);
