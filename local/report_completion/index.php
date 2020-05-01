@@ -354,7 +354,7 @@ if (empty($courseid)) {
     $fromsql = "{local_iomad_track}";
     $sqlparams = array('companyid' => $companyid) + $searchparams;
 
-    $wheresql = "companyid = :companyid $coursesearchsql group by courseid";
+    $wheresql = "companyid = :companyid $coursesearchsql group by courseid, coursename, companyid";
 
     // Set up the headers for the table.
     $courseheaders = array(get_string('coursename', 'local_report_completion'),
