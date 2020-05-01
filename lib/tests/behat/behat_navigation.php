@@ -701,6 +701,8 @@ class behat_navigation extends behat_base {
      * Recognised page names are:
      * | Page type     | Identifier meaning | description                          |
      * | Category page | category idnumber  | List of courses in that category.    |
+     * | Course        | course shortname   | Main course home pag                 |
+     * | Activity      | activity idnumber  | Start page for that activity         |
      *
      * @param string $type identifies which type of page this is, e.g. 'Category page'.
      * @param string $identifier identifies the particular page, e.g. 'test-cat'.
@@ -718,13 +720,29 @@ class behat_navigation extends behat_base {
                 }
                 return new moodle_url('/course/category.php', ['id' => $categoryid]);
 
+            case 'Course':
+                $courseid = $DB->get_field_select('course', 'id', 'shortname = ?', [$identifier], IGNORE_MISSING);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                            $identifier . '" does not exist');
+                }
+                return new moodle_url('/course/view.php', ['id' => $courseid]);
+
+            case 'Activity':
+                $cm = $DB->get_record('course_modules', ['idnumber' => $identifier], 'id, course', IGNORE_MISSING);
+                if (!$cm) {
+                    throw new Exception('The specified activity with idnumber "' . $identifier . '" does not exist');
+                }
+                $modinfo = get_fast_modinfo($cm->course);
+                return $modinfo->cms[$cm->id]->url;
+
             default:
                 throw new Exception('Unrecognised core page type "' . $type . '."');
         }
     }
 
     /**
-     * Opens the course homepage.
+     * Opens the course homepage. (Consider using 'I am on the "shortname" "Course" page' step instead.)
      *
      * @Given /^I am on "(?P<coursefullname_string>(?:[^"]|\\")*)" course homepage$/
      * @throws coding_exception
