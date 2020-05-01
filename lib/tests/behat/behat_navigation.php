@@ -962,4 +962,21 @@ class behat_navigation extends behat_base {
         throw new ElementNotFoundException($this->getSession(),
                 'Link "' . join(' > ', $nodelist) . '" in the current page edit menu"');
     }
+
+    /**
+     * Visit a fixture page for testing stuff that is not available in core.
+     *
+     * Please always, to prevent unwanted requests, protect behat fixture files with:
+     *     defined('BEHAT_SITE_RUNNING') || die();
+     *
+     * @Given /^I am on fixture page "(?P<url_string>(?:[^"]|\\")*)"$/
+     * @param string $url local path to fixture page
+     */
+    public function i_am_on_fixture_page($url) {
+        $fixtureregex = '|^/[a-z0-9_\-/]*/tests/behat/fixtures/[a-z0-9_\-]*\.php$|';
+        if (!preg_match($fixtureregex, $url)) {
+            throw new coding_exception("URL {$url} is not a fixture URL");
+        }
+        $this->getSession()->visit($this->locate_path($url));
+    }
 }
