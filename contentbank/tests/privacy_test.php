@@ -105,8 +105,12 @@ class core_contentbank_privacy_testcase extends provider_testcase {
         // Get the userlist to Context Course, Manager and Teacher will be there.
         $userlist = new userlist($scenario->coursecontext, 'core_contentbank');
         provider::get_users_in_context($userlist);
-        $this->assertEquals([$scenario->manager->id, $scenario->teacher->id],
-            $userlist->get_userids());
+
+        $expected = [$scenario->manager->id, $scenario->teacher->id];
+        sort($expected);
+        $actual = $userlist->get_userids();
+        sort($actual);
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -223,9 +227,13 @@ class core_contentbank_privacy_testcase extends provider_testcase {
         $userlist2 = new userlist($scenario->coursecontext, 'core_contentbank');
         provider::get_users_in_context($userlist2);
         $this->assertCount(2, $userlist2);
+
         // Manager and Teacher should be.
-        $this->assertEquals([$scenario->manager->id, $scenario->teacher->id],
-            $userlist2->get_userids());
+        $expected = [$scenario->manager->id, $scenario->teacher->id];
+        sort($expected);
+        $actual = $userlist2->get_userids();
+        sort($actual);
+        $this->assertEquals($expected, $actual);
 
         // Convert $userlist1 into an approved_contextlist.
         $approvedlist1 = new approved_userlist($scenario->coursecategorycontext, 'core_contentbank', $userlist1->get_userids());
