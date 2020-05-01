@@ -52,7 +52,7 @@ class provider implements
      * @param collection $collection The initialised collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_database_table('contentbank_content', [
             'name' => 'privacy:metadata:content:name',
             'contenttype' => 'privacy:metadata:content:contenttype',
@@ -71,7 +71,7 @@ class provider implements
      * @param   int $userid The user to search.
      * @return  contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $sql = "SELECT DISTINCT ctx.id
                   FROM {context} ctx
                   JOIN {contentbank_content} cb
@@ -85,7 +85,7 @@ class provider implements
             'userid'        => $userid,
             'contextlevel1' => CONTEXT_SYSTEM,
             'contextlevel2' => CONTEXT_COURSECAT,
-            'contextlevel3' => CONTEXT_COURSE
+            'contextlevel3' => CONTEXT_COURSE,
         ];
 
         $contextlist = new contextlist();
@@ -105,7 +105,7 @@ class provider implements
         $allowedcontextlevels = [
             CONTEXT_SYSTEM,
             CONTEXT_COURSECAT,
-            CONTEXT_COURSE
+            CONTEXT_COURSE,
         ];
 
         if (!in_array($context->contextlevel, $allowedcontextlevels)) {
@@ -167,8 +167,8 @@ class provider implements
         $data = [];
         $lastcontextid = null;
         $subcontext = [
-                get_string('name', 'core_contentbank')
-            ];
+            get_string('name', 'core_contentbank'),
+        ];
         foreach ($contents as $content) {
             // The core_contentbank data export is organised in:
             // {Sytem|Course Category|Course Context Level}/Content/data.json.
@@ -208,7 +208,7 @@ class provider implements
         global $DB;
 
         if (!$context instanceof context_system && !$context instanceof context_coursecat
-            && !$context instanceof context_course) {
+                && !$context instanceof context_course) {
             return;
         }
 
@@ -224,7 +224,7 @@ class provider implements
         $context = $userlist->get_context();
 
         if (!$context instanceof context_system && !$context instanceof context_coursecat
-            && !$context instanceof context_course) {
+                && !$context instanceof context_course) {
             return;
         }
 
