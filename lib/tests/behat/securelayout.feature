@@ -14,8 +14,7 @@ Feature: Page displaying with secure layout
       | label      | L1   | <a href="../lib/tests/fixtures/securetestpage.php">Fixture link</a> | C1     | label1   |
 
   Scenario: Confirm that there is no header link
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage
+    Given I am on the "C1" "Course" page logged in as "admin"
     When I follow "Fixture link"
     Then I should see "Acceptance test site" in the "nav" "css_element"
     But "Acceptance test site" "link" should not exist
