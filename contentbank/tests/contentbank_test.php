@@ -181,11 +181,11 @@ class core_contentbank_testcase extends advanced_testcase {
      *
      * @dataProvider search_contents_provider
      * @param  string $search String to search.
-     * @param  int $contextid Contextid to search.
+     * @param  string $where Context where to search.
      * @param  int $expectedresult Expected result.
      * @param  array $contexts List of contexts where to create content.
      */
-    public function test_search_contents(?string $search, int $contextid, int $expectedresult, array $contexts = []): void {
+    public function test_search_contents(?string $search, string $where, int $expectedresult, array $contexts = []): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -195,11 +195,26 @@ class core_contentbank_testcase extends advanced_testcase {
         $manager = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->role_assign($managerroleid, $manager->id);
 
+        // Create a category and a course.
+        $coursecat = $this->getDataGenerator()->create_category();
+        $course = $this->getDataGenerator()->create_course();
+        $existingcontexts = [];
+        $existingcontexts['system'] = \context_system::instance();
+        $existingcontexts['category'] = \context_coursecat::instance($coursecat->id);
+        $existingcontexts['course'] = \context_course::instance($course->id);
+
+        if (empty($where)) {
+            $contextid = 0;
+        } else {
+            $contextid = $existingcontexts[$where]->id;
+        }
+
         // Add some content to the content bank.
         $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
         foreach ($contexts as $context) {
+            $contextinstance = $existingcontexts[$context];
             $records = $generator->generate_contentbank_data('contenttype_h5p', 3,
-                $manager->id, $context, false);
+                $manager->id, $contextinstance, false);
         }
 
         // Search for some content.
@@ -220,95 +235,89 @@ class core_contentbank_testcase extends advanced_testcase {
      * @return array
      */
     public function search_contents_provider(): array {
-        // Create a category and a course.
-        $systemcontext = \context_system::instance();
-        $coursecat = $this->getDataGenerator()->create_category();
-        $course = $this->getDataGenerator()->create_course();
-        $coursecatcontext = \context_coursecat::instance($coursecat->id);
-        $coursecontext = \context_course::instance($course->id);
 
         return [
             'Search all content in all contexts' => [
                 null,
-                0,
+                '',
                 9,
-                [$systemcontext, $coursecatcontext, $coursecontext]
+                ['system', 'category', 'course']
             ],
             'Search in all contexts for existing string in all contents' => [
                 'content',
-                0,
+                '',
                 9,
-                [$systemcontext, $coursecatcontext, $coursecontext]
+                ['system', 'category', 'course']
             ],
             'Search in all contexts for unexisting string in all contents' => [
                 'chocolate',
+                '',
                 0,
-                0,
-                [$systemcontext, $coursecatcontext, $coursecontext]
+                ['system', 'category', 'course']
             ],
             'Search in all contexts for existing string in some contents' => [
                 '1',
-                0,
+                '',
                 3,
-                [$systemcontext, $coursecatcontext, $coursecontext]
+                ['system', 'category', 'course']
             ],
             'Search in all contexts for existing string in some contents (create only 1 context)' => [
                 '1',
-                0,
+                '',
                 1,
-                [$systemcontext]
+                ['system']
             ],
             'Search in system context for existing string in all contents' => [
                 'content',
-                $systemcontext->id,
+                'system',
                 3,
-                [$systemcontext, $coursecatcontext, $coursecontext]
+                ['system', 'category', 'course']
             ],
             'Search in category context for unexisting string in all contents' => [
                 'chocolate',
-                $coursecatcontext->id,
+                'category',
                 0,
-                [$systemcontext, $coursecatcontext, $coursecontext]
+                ['system', 'category', 'course']
             ],
             'Search in course context for existing string in some contents' => [
                 '1',
-                $coursecontext->id,
+                'course',
                 1,
-                [$systemcontext, $coursecatcontext, $coursecontext]
+                ['system', 'category', 'course']
             ],
             'Search in system context' => [
                 null,
-                $systemcontext->id,
+                'system',
                 3,
-                [$systemcontext, $coursecatcontext, $coursecontext]
+                ['system', 'category', 'course']
             ],
             'Search in course context with existing content' => [
                 null,
-                $coursecontext->id,
+                'course',
                 3,
-                [$systemcontext, $coursecatcontext, $coursecontext]
+                ['system', 'category', 'course']
             ],
             'Search in course context without existing content' => [
                 null,
-                $coursecontext->id,
+                'course',
                 0,
-                [$systemcontext, $coursecatcontext]
+                ['system', 'category']
             ],
             'Search in an empty contentbank' => [
                 null,
-                0,
+                '',
                 0,
                 []
             ],
             'Search in a context in an empty contentbank' => [
                 null,
-                $systemcontext->id,
+                'system',
                 0,
                 []
             ],
             'Search for a string in an empty contentbank' => [
                 'content',
-                0,
+                '',
                 0,
                 []
             ],
