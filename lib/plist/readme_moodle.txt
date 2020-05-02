@@ -14,6 +14,11 @@ Removed:
  * examples
  * tests
 
+Local changes:
+(always verify if the changes below are already fixed by the
+next version to import or they need to be re-applied manually)
+  * PHP 7.4 comp: bf527c8 - Partially applied https://github.com/TECLIB/CFPropertyList/pull/61
+
 Added:
  * readme_moodle.txt
 
