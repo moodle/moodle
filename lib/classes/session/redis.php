@@ -52,6 +52,8 @@ class redis extends handler {
     protected $prefix = '';
     /** @var int $acquiretimeout how long to wait for session lock in seconds */
     protected $acquiretimeout = 120;
+    /** @var int $lockretry how long to wait between session lock attempts in ms */
+    protected $lockretry = 100;
     /** @var int $serializer The serializer to use */
     protected $serializer = \Redis::SERIALIZER_PHP;
     /**
@@ -97,6 +99,10 @@ class redis extends handler {
 
         if (isset($CFG->session_redis_acquire_lock_timeout)) {
             $this->acquiretimeout = (int)$CFG->session_redis_acquire_lock_timeout;
+        }
+
+        if (isset($CFG->session_redis_acquire_lock_retry)) {
+            $this->lockretry = (int)$CFG->session_redis_acquire_lock_retry;
         }
 
         if (!empty($CFG->session_redis_serializer_use_igbinary) && defined('\Redis::SERIALIZER_IGBINARY')) {
@@ -393,7 +399,21 @@ class redis extends handler {
                 throw new exception("Unable to obtain session lock");
             }
 
-            usleep(rand(100000, 1000000));
+            if ($this->time() < $startlocktime + 5) {
+                // We want a random delay to stagger the polling load. Ideally
+                // this delay should be a fraction of the average response
+                // time. If it is too small we will poll too much and if it is
+                // too large we will waste time waiting for no reason. 100ms is
+                // the default starting point.
+                $delay = rand($this->lockretry, $this->lockretry * 1.1);
+            } else {
+                // If we don't get a lock within 5 seconds then there must be a
+                // very long lived process holding the lock so throttle back to
+                // just polling roughly once a second.
+                $delay = rand(1000, 1100);
+            }
+
+            usleep($delay * 1000);
         }
     }
 
