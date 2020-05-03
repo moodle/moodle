@@ -22,11 +22,13 @@
  * @copyright  2020 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace core_h5p;
+
+defined('MOODLE_INTERNAL') || die();
 
 use advanced_testcase;
 use core_h5p\local\library\autoloader;
-use moodleform;
 use MoodleQuickForm;
 use page_requirements_manager;
 
@@ -41,6 +43,34 @@ use page_requirements_manager;
  * @runTestsInSeparateProcesses
  */
 class editor_testcase extends advanced_testcase {
+
+    /**
+     * Form object to be used in test case.
+     */
+    protected function get_test_form() {
+        global $CFG;
+
+        require_once($CFG->libdir . '/formslib.php');
+
+        return new class extends \moodleform {
+            /**
+             * Form definition.
+             */
+            public function definition(): void {
+                // No definition required.
+            }
+
+            /**
+             * Returns form reference.
+             *
+             * @return MoodleQuickForm
+             */
+            public function getform() {
+                $mform = $this->_form;
+                return $mform;
+            }
+        };
+    }
 
     /**
      * Test that existing content is properly set.
@@ -153,7 +183,7 @@ class editor_testcase extends advanced_testcase {
         global $PAGE, $CFG;
 
         // Get form data.
-        $form = new temp_form();
+        $form = $this->get_test_form();
         $mform = $form->getform();
 
         // Call method.
@@ -247,29 +277,5 @@ class editor_testcase extends advanced_testcase {
         $fs = get_file_storage();
         $out = $fs->get_file($contextid, file_storage::COMPONENT, $filearea, 0, '/', $filename);
         $this->assertNotEmpty($out);
-    }
-}
-
-/**
- * Form object to be used in test case.
- */
-class temp_form extends moodleform {
-    /**
-     * Form definition.
-     */
-    public function definition(): void {
-        // No definition required.
-    }
-
-    /**
-     * Returns form reference.
-     *
-     * @return MoodleQuickForm
-     */
-    public function getform() {
-        $mform = $this->_form;
-        // Set submitted flag, to simulate submission.
-        $mform->_flagSubmitted = true;
-        return $mform;
     }
 }
