@@ -201,7 +201,7 @@ class media_videojs_plugin extends core_media_player_native {
             }
         }
 
-        return html_writer::div($text, 'mediaplugin mediaplugin_videojs');
+        return html_writer::div($text, 'mediaplugin mediaplugin_videojs d-block');
     }
 
     /**

@@ -903,7 +903,7 @@ class core_course_renderer extends plugin_renderer_base {
             $output .= course_get_cm_move($mod, $sectionreturn);
         }
 
-        $output .= html_writer::start_tag('div', array('class' => 'mod-indent-outer'));
+        $output .= html_writer::start_tag('div', array('class' => 'mod-indent-outer w-100'));
 
         // This div is used to indent the content.
         $output .= html_writer::div('', $indentclasses);
