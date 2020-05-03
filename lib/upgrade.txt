@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 3.8.3 ===
 * database_manager::check_database_schema() now checks for missing indexes.
+* Added function cleanup_after_drop to the database_manager class to take care of all the cleanups that need to be done after a table is dropped.
 
 === 3.8.2 ===
 * grade_item::update_final_grade() can now take an optional parameter to set the grade->timemodified. If not present the current time will carry on being used.
