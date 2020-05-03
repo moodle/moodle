@@ -2809,6 +2809,16 @@ $functions = array(
         'ajax'          => 'true',
         'capabilities'  => '',
     ],
+    'core_get_userfeedback_url' => [
+        'classname'     => 'core\external\userfeedback\generate_url',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Generate a dynamic URL for the external user feedback site.' .
+                           ' The URL includes some parameters to pre-fill the user feedback form.',
+        'type'          => 'read',
+        'ajax'          => 'true',
+        'capabilities'  => '',
+    ],
 );
 
 $services = array(
