@@ -835,6 +835,12 @@ class core_renderer extends renderer_base {
             }
         }
 
+        if (isloggedin() && !isguestuser()) {
+            $output .= html_writer::div(
+                $this->render_from_template('core/userfeedback_footer_link', ['url' => core_userfeedback::make_link()->out(false)])
+            );
+        }
+
         // This function is normally called from a layout.php file in {@link core_renderer::header()}
         // but some of the content won't be known until later, so we return a placeholder
         // for now. This will be replaced with the real content in {@link core_renderer::footer()}.

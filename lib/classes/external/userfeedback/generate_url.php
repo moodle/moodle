@@ -59,9 +59,7 @@ class generate_url extends external_api {
      * @return \stdClass
      */
     public static function execute(int $contextid) {
-        global $CFG, $PAGE;
-
-        require_once($CFG->libdir . '/adminlib.php');
+        global $PAGE;
 
         external_api::validate_parameters(self::execute_parameters(), ['contextid' => $contextid]);
 
@@ -69,22 +67,7 @@ class generate_url extends external_api {
         self::validate_context($context);
         $PAGE->set_context($context);
 
-        $baseurl = $CFG->userfeedback_url ?? 'https://feedback.moodle.org/lms';
-        $lang = clean_param(current_language(), PARAM_LANG); // Avoid breaking WS because of incorrect package langs.
-        $moodleurl = $CFG->wwwroot;
-        $moodleversion = $CFG->release;
-        $theme = $PAGE->theme->name;
-        $themeversion = get_component_version('theme_' . $theme);
-
-        $firstseparator = strpos($baseurl, '?') === false ? '?' : '&';
-
-        $url = $baseurl . $firstseparator . 'lang=' . $lang;
-        $url .= '&moodle_url=' . rawurlencode($moodleurl) .
-                '&moodle_version=' . rawurlencode($moodleversion) .
-                '&theme=' . rawurlencode($theme) .
-                '&theme_version=' . $themeversion;
-
-        return $url;
+        return \core_userfeedback::make_link()->out(false);
     }
 
     /**
