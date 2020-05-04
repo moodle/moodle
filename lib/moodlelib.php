@@ -6208,12 +6208,31 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
 
             // Before doing the comparison, make sure that the paths are correct (Windows uses slashes in the other direction).
             $attachpath = str_replace('\\', '/', $attachmentpath);
-            // Make sure both variables are normalised before comparing.
-            $temppath = str_replace('\\', '/', realpath($CFG->tempdir));
 
-            // If the attachment is a full path to a file in the tempdir, use it as is,
+            // Add allowed paths to an array (also check if it's not empty).
+            $allowedpaths = array_filter([
+                $CFG->cachedir,
+                $CFG->dataroot,
+                $CFG->dirroot,
+                $CFG->localcachedir,
+                $CFG->tempdir
+            ]);
+            // Set addpath to true.
+            $addpath = true;
+            // Check if attachment includes one of the allowed paths.
+            foreach ($allowedpaths as $tmpvar) {
+                // Make sure both variables are normalised before comparing.
+                $temppath = str_replace('\\', '/', realpath($tmpvar));
+                // Set addpath to false if the attachment includes one of the allowed paths.
+                if (strpos($attachpath, $temppath) === 0) {
+                    $addpath = false;
+                    break;
+                }
+            }
+
+            // If the attachment is a full path to a file in the multiple allowed paths, use it as is,
             // otherwise assume it is a relative path from the dataroot (for backwards compatibility reasons).
-            if (strpos($attachpath, $temppath) !== 0) {
+            if ($addpath == true) {
                 $attachmentpath = $CFG->dataroot . '/' . $attachmentpath;
             }
 
