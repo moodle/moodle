@@ -47,6 +47,7 @@ information provided here is intended especially for developers.
   db/services.php. Note - this also requires $CFG->enable_read_only_sessions to be set to true.
 * database_manager::check_database_schema() now checks for missing and extra indexes.
 * Implement a more direct xsendfile_file() method for an alternative_file_system_class
+* The download_as_dataformat() method has been deprecated. Please use \core\dataformat::download_data() instead
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop

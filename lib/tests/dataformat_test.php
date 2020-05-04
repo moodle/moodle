@@ -25,11 +25,7 @@
 namespace core;
 
 use core_component;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once("{$CFG->libdir}/dataformatlib.php");
+use core\dataformat;
 
 /**
  * Dataformat tests
@@ -41,11 +37,11 @@ require_once("{$CFG->libdir}/dataformatlib.php");
 class dataformat_testcase extends \advanced_testcase {
 
     /**
-     * Data provider for {@see test_write_file_as_dataformat}
+     * Data provider for {@see test_write_data)
      *
      * @return array
      */
-    public function write_file_as_dataformat_provider(): array {
+    public function write_data_provider(): array {
         $data = [];
 
         $dataformats = core_component::get_plugin_list('dataformat');
@@ -62,9 +58,9 @@ class dataformat_testcase extends \advanced_testcase {
      * @param string $dataformat
      * @return void
      *
-     * @dataProvider write_file_as_dataformat_provider
+     * @dataProvider write_data_provider
      */
-    public function test_write_file_as_dataformat(string $dataformat): void {
+    public function test_write_data(string $dataformat): void {
         $columns = ['fruit', 'colour', 'animal'];
         $rows = [
             ['banana', 'yellow', 'monkey'],
@@ -73,7 +69,7 @@ class dataformat_testcase extends \advanced_testcase {
         ];
 
         // Export to file. Assert that the exported file exists and is non-zero in size.
-        $exportfile = write_file_as_dataformat('My export', $dataformat, $columns, $rows);
+        $exportfile = dataformat::write_data('My export', $dataformat, $columns, $rows);
         $this->assertFileExists($exportfile);
         $this->assertGreaterThan(0, filesize($exportfile));
     }
