@@ -454,6 +454,48 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, count($result['assignments']));
     }
 
+    public function test_get_submissions_group_submission() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $result = $this->create_assign_with_student_and_teacher(array(
+            'assignsubmission_onlinetext_enabled' => 1,
+            'teamsubmission' => 1
+        ));
+        $assignmodule = $result['assign'];
+        $student = $result['student'];
+        $teacher = $result['teacher'];
+        $course = $result['course'];
+        $context = context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $cm = get_coursemodule_from_instance('assign', $assignmodule->id);
+        $context = context_module::instance($cm->id);
+        $assign = new mod_assign_testable_assign($context, $cm, $course);
+
+        groups_add_member($group, $student);
+
+        $this->setUser($student);
+        $submission = $assign->get_group_submission($student->id, $group->id, true);
+        $sid = $submission->id;
+
+        $this->setUser($teacher);
+
+        $assignmentids[] = $assignmodule->id;
+        $result = mod_assign_external::get_submissions($assignmentids);
+        $result = external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
+
+        $this->assertEquals(1, count($result['assignments']));
+        $assignment = $result['assignments'][0];
+        $this->assertEquals($assignmodule->id, $assignment['assignmentid']);
+        $this->assertEquals(1, count($assignment['submissions']));
+        $submission = $assignment['submissions'][0];
+        $this->assertEquals($sid, $submission['id']);
+        $this->assertEquals($group->id, $submission['groupid']);
+        $this->assertEquals(0, $submission['userid']);
+    }
+
     /**
      * Test get_user_flags
      */
