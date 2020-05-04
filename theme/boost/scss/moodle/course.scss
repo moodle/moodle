@@ -854,7 +854,7 @@ span.editinstructions {
     .listitem {
 
         &[data-selected='1'] {
-            border-left: calc(#{$list-group-border-width} + 5px) solid map-get($theme-colors, 'info');
+            border-left: 6px solid map-get($theme-colors, 'info');
             padding-left: calc(#{$list-group-item-padding-x} - 5px);
         }
     }
