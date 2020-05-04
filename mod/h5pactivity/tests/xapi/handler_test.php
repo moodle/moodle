@@ -31,6 +31,7 @@ use \core_xapi\local\statement\item_agent;
 use \core_xapi\local\statement\item_activity;
 use \core_xapi\local\statement\item_definition;
 use \core_xapi\local\statement\item_verb;
+use \core_xapi\local\statement\item_result;
 use context_module;
 use stdClass;
 
@@ -176,7 +177,7 @@ class handler_testcase extends \advanced_testcase {
             $statement->set_object(item_activity::create_from_id('paella', $definition));
         }
         if ($hasresult) {
-            $statement->set_result(item::create_from_data((object)[
+            $statement->set_result(item_result::create_from_data((object)[
                 'completion' => true,
                 'success' => true,
                 'score' => (object) ['min' => 0, 'max' => 2, 'raw' => 2, 'scaled' => 1],
@@ -302,7 +303,7 @@ class handler_testcase extends \advanced_testcase {
             'correctResponsesPattern' => '1',
         ]);
         $statement->set_object(item_activity::create_from_id($context->id, $definition));
-        $statement->set_result(item::create_from_data((object)[
+        $statement->set_result(item_result::create_from_data((object)[
             'completion' => true,
             'success' => true,
             'score' => (object) ['min' => 0, 'max' => 2, 'raw' => 2, 'scaled' => 1],
@@ -317,7 +318,7 @@ class handler_testcase extends \advanced_testcase {
             'correctResponsesPattern' => '1',
         ]);
         $statement->set_object(item_activity::create_from_id($context->id.'?subContentId=111-222-333', $definition));
-        $statement->set_result(item::create_from_data((object)[
+        $statement->set_result(item_result::create_from_data((object)[
             'completion' => true,
             'success' => true,
             'score' => (object) ['min' => 0, 'max' => 1, 'raw' => 0, 'scaled' => 0],

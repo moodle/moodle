@@ -28,6 +28,9 @@ use core_xapi\local\statement\item;
 use core_xapi\local\statement\item_actor;
 use core_xapi\local\statement\item_object;
 use core_xapi\local\statement\item_verb;
+use core_xapi\local\statement\item_result;
+use core_xapi\local\statement\item_attachment;
+use core_xapi\local\statement\item_context;
 use core_xapi\xapi_exception;
 use JsonSerializable;
 use stdClass;
@@ -42,39 +45,39 @@ defined('MOODLE_INTERNAL') || die();
  */
 class statement implements JsonSerializable {
 
-    /** @var actor The statement actor. */
+    /** @var item_actor The statement actor. */
     protected $actor = null;
 
-    /** @var verb The statement verb. */
+    /** @var item_verb The statement verb. */
     protected $verb = null;
 
-    /** @var object The statement object. */
+    /** @var item_object The statement object. */
     protected $object = null;
 
-    /** @var result The statement result. */
+    /** @var item_result The statement result. */
     protected $result = null;
 
-    /** @var context The statement context. */
+    /** @var item_context The statement context. */
     protected $context = null;
 
-    /** @var timestamp The statement timestamp. */
+    /** @var string The statement timestamp. */
     protected $timestamp = null;
 
-    /** @var stored The statement stored. */
+    /** @var string The statement stored. */
     protected $stored = null;
 
     /** @var authority The statement authority. */
     protected $authority = null;
 
-    /** @var version The statement version. */
+    /** @var string The statement version. */
     protected $version = null;
 
-    /** @var attachments The statement attachments. */
+    /** @var item_attachment[] The statement attachments. */
     protected $attachments = null;
 
     /** @var additionalfields list of additional fields. */
     private static $additionalsfields = [
-        'context', 'result', 'timestamp', 'stored', 'authority', 'version', 'attachments'
+        'timestamp', 'stored', 'version'
     ];
 
     /**
@@ -97,11 +100,32 @@ class statement implements JsonSerializable {
         $result->set_verb(item_verb::create_from_data($data->verb));
         $result->set_object(item_object::create_from_data($data->object));
 
+        if (isset($data->result)) {
+            $result->set_result(item_result::create_from_data($data->result));
+        }
+
+        if (!empty($data->attachments)) {
+            if (!is_array($data->attachments)) {
+                throw new xapi_exception("Attachments must be an array");
+            }
+            foreach ($data->attachments as $attachment) {
+                $result->add_attachment(item_attachment::create_from_data($attachment));
+            }
+        }
+
+        if (isset($data->context)) {
+            $result->set_context(item_context::create_from_data($data->context));
+        }
+
+        if (isset($data->authority)) {
+            $result->set_authority(item_actor::create_from_data($data->authority));
+        }
+
         // Store other generic xAPI statement fields.
         foreach (self::$additionalsfields as $additional) {
             if (isset($data->$additional)) {
                 $method = 'set_'.$additional;
-                $result->$method(item::create_from_data($data->$additional));
+                $result->$method($data->$additional);
             }
         }
         return $result;
@@ -118,6 +142,18 @@ class statement implements JsonSerializable {
             'verb' => $this->verb,
             'object' => $this->object,
         ];
+        if (!empty($this->result)) {
+            $result->result = $this->result;
+        }
+        if (!empty($this->context)) {
+            $result->context = $this->context;
+        }
+        if (!empty($this->authority)) {
+            $result->authority = $this->authority;
+        }
+        if (!empty($this->attachments)) {
+            $result->attachments = $this->attachments;
+        }
         foreach (self::$additionalsfields as $additional) {
             if (!empty($this->$additional)) {
                 $result->$additional = $this->$additional;
@@ -179,36 +215,36 @@ class statement implements JsonSerializable {
     /**
      * Set the statement context.
      *
-     * @param item $context context item element
+     * @param item_context $context context item element
      */
-    public function set_context(item $context): void {
+    public function set_context(item_context $context): void {
         $this->context = $context;
     }
 
     /**
      * Set the statement result.
      *
-     * @param item $result result item element
+     * @param item_result $result result item element
      */
-    public function set_result(item $result): void {
+    public function set_result(item_result $result): void {
         $this->result = $result;
     }
 
     /**
      * Set the statement timestamp.
      *
-     * @param item $timestamp timestamp item element
+     * @param string $timestamp timestamp element
      */
-    public function set_timestamp(item $timestamp): void {
+    public function set_timestamp(string $timestamp): void {
         $this->timestamp = $timestamp;
     }
 
     /**
      * Set the statement stored.
      *
-     * @param item $stored stored item element
+     * @param string $stored stored element
      */
-    public function set_stored(item $stored): void {
+    public function set_stored(string $stored): void {
         $this->stored = $stored;
     }
 
@@ -217,26 +253,29 @@ class statement implements JsonSerializable {
      *
      * @param item $authority authority item element
      */
-    public function set_authority(item $authority): void {
+    public function set_authority(item_actor $authority): void {
         $this->authority = $authority;
     }
 
     /**
      * Set the statement version.
      *
-     * @param item $version version item element
+     * @param string $version version element
      */
-    public function set_version(item $version): void {
+    public function set_version(string $version): void {
         $this->version = $version;
     }
 
     /**
-     * Set the statement attachments.
+     * Adds and attachment to the statement.
      *
      * @param item $attachments attachments item element
      */
-    public function set_attachments(item $attachments): void {
-        $this->attachments = $attachments;
+    public function add_attachment(item_attachment $attachment): void {
+        if ($this->attachments === null) {
+            $this->attachments = [];
+        }
+        $this->attachments[] = $attachment;
     }
 
     /**
@@ -341,7 +380,7 @@ class statement implements JsonSerializable {
      *
      * @return item|null
      */
-    public function get_context(): ?item {
+    public function get_context(): ?item_context {
         return $this->context;
     }
 
@@ -350,25 +389,25 @@ class statement implements JsonSerializable {
      *
      * @return item|null
      */
-    public function get_result(): ?item {
+    public function get_result(): ?item_result {
         return $this->result;
     }
 
     /**
      * Return the statement timestamp if it is defined.
      *
-     * @return item|null
+     * @return string|null
      */
-    public function get_timestamp(): ?item {
+    public function get_timestamp(): ?string {
         return $this->timestamp;
     }
 
     /**
      * Return the statement stored if it is defined.
      *
-     * @return item|null
+     * @return string|null
      */
-    public function get_stored(): ?item {
+    public function get_stored(): ?string {
         return $this->stored;
     }
 
@@ -377,25 +416,25 @@ class statement implements JsonSerializable {
      *
      * @return item|null
      */
-    public function get_authority(): ?item {
+    public function get_authority(): ?item_actor {
         return $this->authority;
     }
 
     /**
      * Return the statement version if it is defined.
      *
-     * @return item|null
+     * @return string|null
      */
-    public function get_version(): ?item {
+    public function get_version(): ?string {
         return $this->version;
     }
 
     /**
      * Return the statement attachments if it is defined.
      *
-     * @return item|null
+     * @return item_attachment[]|null
      */
-    public function get_attachments(): ?item {
+    public function get_attachments(): ?array {
         return $this->attachments;
     }
 }
