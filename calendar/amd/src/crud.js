@@ -63,6 +63,7 @@ function(
      * @return {Promise}
      */
     function confirmDeletion(eventId, eventTitle, eventCount) {
+        var pendingPromise = new Pending('core_calendar/crud:confirmDeletion');
         var deleteStrings = [
             {
                 key: 'deleteevent',
@@ -138,6 +139,11 @@ function(
             });
 
             return deleteModal;
+        })
+        .then(function(modal) {
+            pendingPromise.resolve();
+
+            return modal;
         })
         .catch(Notification.exception);
 

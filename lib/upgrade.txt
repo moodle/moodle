@@ -49,6 +49,9 @@ information provided here is intended especially for developers.
 * Implement a more direct xsendfile_file() method for an alternative_file_system_class
 * A new `dynamic` table interface has been defined, which allows any `flexible_table` to be converted into a table which
   is updatable via ajax calls. See MDL-68495 and `\core_table\dynamic` for further information.
+* The core/notification module has been updated to use AMD modals for its confirmation and alert dialogues.
+  The confirmation dialogue no longer has a configurable "No" button as per similar changes in MDL-59759.
+  This set of confirmation modals was unintentionally missed from that deprecation process.
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop
