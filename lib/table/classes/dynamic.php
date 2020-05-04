@@ -19,7 +19,6 @@
  *
  * @package core_table
  * @copyright 2020 Simey Lameze <simey@moodle.com>
- *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,60 +26,19 @@ declare(strict_types=1);
 
 namespace core_table;
 
-defined('MOODLE_INTERNAL') || die();
-
-use moodle_url;
-use context;
-use core_table\local\filter\filterset;
-
 /**
- * Interface dynamic.
+ * Interface to identify this table as a table which can be dynamically updated via webservice calls.
+ *
+ * For a table to be defined as dynamic it must meet the following requirements:
+ *
+ * # it must be located with a namespaced class of \[component]\table\[tablename]
+ * # it must define a \core_table\local\filter\filterset implementation in \[component]\table\[tablename]_filterset
+ * # it must override the {{guess_base_url}} function and specify a base URL to be used when constructing URLs
+ * # it must override the {{get_context}} function to specify the correct context
  *
  * @package core_table
+ * @copyright 2020 Simey Lameze <simey@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface dynamic {
-
-    /**
-     * Take a string and convert it to the format expected by the table.
-     * For example, you may have a format such as:
-     *
-     *   mod_assign-submissions-[courseid]
-     *
-     * Passing this function an argument of [courseid] would return the fully-formed string.
-     *
-     * @param string $argument
-     * @return string
-     */
-    public static function get_unique_id_from_argument(string $argument): string;
-
-    /**
-     * Get the base url.
-     *
-     * @return moodle_url
-     */
-    public function get_base_url(): moodle_url;
-
-    /**
-     * Set the filterset filters build table object.
-     *
-     * @param filterset $filterset The filterset object to get the filters from.
-     * @return void
-     */
-    public function set_filterset(filterset $filterset): void;
-
-    /**
-     * Get the currently defined filterset.
-     *
-     * @return filterset
-     */
-    public function get_filterset(): ?filterset;
-
-    /**
-     * Get the context of the current table.
-     *
-     * Note: This function should not be called until after the filterset has been provided.
-     *
-     * @return context
-     */
-    public function get_context(): ?context;
 }

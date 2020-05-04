@@ -214,6 +214,8 @@ class fetch extends external_api {
 
         $instance = new $tableclass($uniqueid);
         $instance->set_filterset($filterset);
+        self::validate_context($instance->get_context());
+
         $instance->set_sorting($sortby, $sortorder);
 
         if ($firstinitial !== null) {
@@ -235,10 +237,6 @@ class fetch extends external_api {
         if ($hiddencolumns !== null) {
             $instance->set_hidden_columns($hiddencolumns);
         }
-
-        $context = $instance->get_context();
-        self::validate_context($context);
-        $PAGE->set_url($instance->get_base_url());
 
         ob_start();
         $instance->out($pagesize, true);

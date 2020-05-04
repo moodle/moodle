@@ -181,7 +181,7 @@ class mod_feedback_responses_table extends table_sql {
      * Current context
      * @return context_module
      */
-    protected function get_context() {
+    public function get_context(): context {
         return context_module::instance($this->feedbackstructure->get_cm()->id);
     }
 
