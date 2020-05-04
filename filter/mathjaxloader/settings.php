@@ -33,7 +33,7 @@ if ($ADMIN->fulltree) {
     $item = new admin_setting_configtext('filter_mathjaxloader/httpsurl',
                                          new lang_string('httpsurl', 'filter_mathjaxloader'),
                                          new lang_string('httpsurl_help', 'filter_mathjaxloader'),
-                                         'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js',
+                                         'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/MathJax.js',
                                          PARAM_RAW);
     $settings->add($item);
 
