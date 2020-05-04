@@ -51,7 +51,8 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
         if (this.shape.getCoordinates() === coordinates) {
             return;
         }
-        if (!this.shape.parse(coordinates)) {
+        // We don't need to scale the shape for editing form.
+        if (!this.shape.parse(coordinates, 1)) {
             // Invalid coordinates. Don't update the preview.
             return;
         }
@@ -70,6 +71,8 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
             // Simple update.
             this.updateSvgEl();
         }
+        // Update the rounded coordinates if needed.
+        this.setCoordinatesInForm();
     };
 
     /**

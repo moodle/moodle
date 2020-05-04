@@ -33,10 +33,10 @@ Feature: Preview a drag-drop marker question
     And I change window size to "large"
     And I wait "2" seconds
     # Odd, but the <br>s go to nothing, not a space.
-    And I drag "OU" to "342,230" in the drag and drop markers question
-    And I drag "Railway station" to "254,197" in the drag and drop markers question
-    And I drag "Railway station,1" to "326,319" in the drag and drop markers question
-    And I drag "Railway station,2" to "203,101" in the drag and drop markers question
+    And I drag "OU" to "345,230" in the drag and drop markers question
+    And I drag "Railway station" to "262,197" in the drag and drop markers question
+    And I drag "Railway station" to "334,319" in the drag and drop markers question
+    And I drag "Railway station" to "211,101" in the drag and drop markers question
     And I press "Submit and finish"
     Then the state of "Please place the markers on the map of Milton Keynes" question is shown as "Correct"
     And I should see "Mark 1.00 out of 1.00"

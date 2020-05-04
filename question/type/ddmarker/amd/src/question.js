@@ -30,56 +30,44 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
      * Object to handle one drag-drop markers question.
      *
      * @param {String} containerId id of the outer div for this question.
-     * @param {String} bgImgUrl the URL of the background image.
      * @param {boolean} readOnly whether the question is being displayed read-only.
      * @param {Object[]} visibleDropZones the geometry of any drop-zones to show.
      *      Objects have fields shape, coords and markertext.
      * @constructor
      */
-    function DragDropMarkersQuestion(containerId, bgImgUrl, readOnly, visibleDropZones) {
+    function DragDropMarkersQuestion(containerId, readOnly, visibleDropZones) {
+        var thisQ = this;
         this.containerId = containerId;
         this.visibleDropZones = visibleDropZones;
+        this.shapes = [];
+        this.shapeSVGs = [];
+        this.isPrinting = false;
         if (readOnly) {
             this.getRoot().addClass('qtype_ddmarker-readonly');
         }
-        this.loadImage(bgImgUrl);
+        thisQ.cloneDrags();
+        thisQ.repositionDrags();
+        thisQ.drawDropzones();
     }
-
-    /**
-     * Load the background image is loaded, then do the rest of the display.
-     *
-     * @param {String} bgImgUrl the URL of the background image.
-     */
-    DragDropMarkersQuestion.prototype.loadImage = function(bgImgUrl) {
-        var thisQ = this;
-        this.getRoot().find('.dropbackground')
-            .one('load', function() {
-                if (thisQ.visibleDropZones.length > 0) {
-                    thisQ.drawDropzones();
-                }
-                thisQ.repositionDrags();
-            })
-            .attr('src', bgImgUrl)
-            .css({'border': '1px solid #000', 'max-width': 'none'});
-    };
 
     /**
      * Draws the svg shapes of any drop zones that should be visible for feedback purposes.
      */
     DragDropMarkersQuestion.prototype.drawDropzones = function() {
-        var bgImage = this.getRoot().find('img.dropbackground');
+        if (this.visibleDropZones.length > 0) {
+            var bgImage = this.bgImage();
 
-        this.getRoot().find('div.dropzones').html('<svg xmlns="http://www.w3.org/2000/svg" class="dropzones" ' +
-            'width="' + bgImage.outerWidth() + '" ' +
-            'height="' + bgImage.outerHeight() + '"></svg>');
-        var svg = this.getRoot().find('svg.dropzones');
-        svg.css('position', 'absolute');
+            this.getRoot().find('div.dropzones').html('<svg xmlns="http://www.w3.org/2000/svg" class="dropzones" ' +
+                'width="' + bgImage.outerWidth() + '" ' +
+                'height="' + bgImage.outerHeight() + '"></svg>');
+            var svg = this.getRoot().find('svg.dropzones');
 
-        var nextColourIndex = 0;
-        for (var dropZoneNo = 0; dropZoneNo < this.visibleDropZones.length; dropZoneNo++) {
-            var colourClass = 'color' + nextColourIndex;
-            nextColourIndex = (nextColourIndex + 1) % 8;
-            this.addDropzone(svg, dropZoneNo, colourClass);
+            var nextColourIndex = 0;
+            for (var dropZoneNo = 0; dropZoneNo < this.visibleDropZones.length; dropZoneNo++) {
+                var colourClass = 'color' + nextColourIndex;
+                nextColourIndex = (nextColourIndex + 1) % 8;
+                this.addDropzone(svg, dropZoneNo, colourClass);
+            }
         }
     };
 
@@ -93,8 +81,9 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
     DragDropMarkersQuestion.prototype.addDropzone = function(svg, dropZoneNo, colourClass) {
         var dropZone = this.visibleDropZones[dropZoneNo],
             shape = Shapes.make(dropZone.shape, ''),
-            existingmarkertext;
-        if (!shape.parse(dropZone.coords)) {
+            existingmarkertext,
+            bgRatio = this.bgRatio();
+        if (!shape.parse(dropZone.coords, bgRatio)) {
             return;
         }
 
@@ -109,40 +98,26 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
             var classnames = 'markertext markertext' + dropZoneNo;
             this.getRoot().find('div.markertexts').append('<span class="' + classnames + '">' +
                 dropZone.markertext + '</span>');
+            var markerspan = this.getRoot().find('div.ddarea div.markertexts span.markertext' + dropZoneNo);
+            if (markerspan.length) {
+                var handles = shape.getHandlePositions();
+                var positionLeft = handles.moveHandle.x - (markerspan.outerWidth() / 2) - 4;
+                var positionTop = handles.moveHandle.y - (markerspan.outerHeight() / 2);
+                markerspan
+                    .css('left', positionLeft)
+                    .css('top', positionTop);
+                markerspan
+                    .data('originX', markerspan.position().left / bgRatio)
+                    .data('originY', markerspan.position().top / bgRatio);
+                this.handleElementScale(markerspan, 'center');
+            }
         }
 
         var shapeSVG = shape.makeSvg(svg[0]);
         shapeSVG.setAttribute('class', 'dropzone ' + colourClass);
-    };
 
-    /**
-     * Draws the drag items on the page (and drop zones if required).
-     * The idea is to re-draw all the drags and drops whenever there is a change
-     * like a widow resize or an item dropped in place.
-     */
-    DragDropMarkersQuestion.prototype.repositionDropZones = function() {
-        var svg = this.getRoot().find('svg.dropzones');
-        if (svg.length === 0) {
-            return;
-        }
-        var bgPosition = this.convertToWindowXY(new Shapes.Point(-1, 0));
-        svg.offset({'left': bgPosition.x, 'top': bgPosition.y});
-
-        for (var dropZoneNo = 0; dropZoneNo < this.visibleDropZones.length; dropZoneNo++) {
-            var markerspan = this.getRoot().find('div.ddarea div.markertexts span.markertext' + dropZoneNo);
-            if (markerspan.length === 0) {
-                continue;
-            }
-            var dropZone = this.visibleDropZones[dropZoneNo],
-                shape = Shapes.make(dropZone.shape, '');
-            if (!shape.parse(dropZone.coords)) {
-                continue;
-            }
-            var handles = shape.getHandlePositions(),
-                textPos = this.convertToWindowXY(handles.moveHandle.offset(
-                    -markerspan.outerWidth() / 2, -markerspan.outerHeight() / 2));
-            markerspan.offset({'left': textPos.x - 4, 'top': textPos.y});
-        }
+        this.shapes[this.shapes.length] = shape;
+        this.shapeSVGs[this.shapeSVGs.length] = shapeSVG;
     };
 
     /**
@@ -154,37 +129,25 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
         var root = this.getRoot(),
             thisQ = this;
 
-        root.find('div.dragitems .dragitem').each(function(key, item) {
+        root.find('div.draghomes .marker').not('.dragplaceholder').each(function(key, item) {
             $(item).addClass('unneeded');
         });
 
         root.find('input.choices').each(function(key, input) {
             var choiceNo = thisQ.getChoiceNoFromElement(input),
-                coords = thisQ.getCoords(input),
-                dragHome = thisQ.dragHome(choiceNo);
-            for (var i = 0; i < coords.length; i++) {
-                var drag = thisQ.dragItem(choiceNo, i);
-                if (!drag.length || drag.hasClass('beingdragged')) {
-                    drag = thisQ.cloneNewDragItem(dragHome, i);
-                } else {
-                    drag.removeClass('unneeded');
+                coords = thisQ.getCoords(input);
+            if (coords.length) {
+                var drag = thisQ.getRoot().find('.draghomes' + ' span.marker' + '.choice' + choiceNo).not('.dragplaceholder');
+                drag.remove();
+                for (var i = 0; i < coords.length; i++) {
+                    var dragInDrop = drag.clone();
+                    dragInDrop.data('pagex', coords[i].x).data('pagey', coords[i].y);
+                    thisQ.sendDragToDrop(dragInDrop, false);
                 }
-                drag.offset({'left': coords[i].x, 'top': coords[i].y});
+                thisQ.getDragClone(drag).addClass('active');
+                thisQ.cloneDragIfNeeded(drag);
             }
         });
-
-        root.find('div.dragitems .dragitem').each(function(key, itm) {
-            var item = $(itm);
-            if (item.hasClass('unneeded') && !item.hasClass('beingdragged')) {
-                item.remove();
-            }
-        });
-
-        this.repositionDropZones();
-
-        var bgImage = this.bgImage(),
-            bgPosition = bgImage.offset();
-        bgImage.data('prev-top', bgPosition.top).data('prev-left', bgPosition.left);
     };
 
     /**
@@ -197,21 +160,13 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
      * @returns {Point[]} coordinates of however many copies of the drag item should be shown.
      */
     DragDropMarkersQuestion.prototype.getCoords = function(inputNode) {
-        var root = this.getRoot(),
-            choiceNo = this.getChoiceNoFromElement(inputNode),
-            noOfDrags = Number(this.getClassnameNumericSuffix(inputNode, 'noofdrags')),
-            dragging = root.find('span.dragitem.beingdragged.choice' + choiceNo).length > 0,
-            coords = [],
+        var coords = [],
             val = $(inputNode).val();
         if (val !== '') {
             var coordsStrings = val.split(';');
             for (var i = 0; i < coordsStrings.length; i++) {
                 coords[i] = this.convertToWindowXY(Shapes.Point.parse(coordsStrings[i]));
             }
-        }
-        var displayeddrags = coords.length + (dragging ? 1 : 0);
-        if ($(inputNode).hasClass('infinite') || (displayeddrags < noOfDrags)) {
-            coords[coords.length] = this.dragHomeXY(choiceNo);
         }
         return coords;
     };
@@ -252,19 +207,10 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
      */
     DragDropMarkersQuestion.prototype.coordsInBgImg = function(point) {
         var bgImage = this.bgImage();
-        return point.x > 0 && point.x <= bgImage.width() &&
-                point.y > 0 && point.y <= bgImage.height();
-    };
+        var bgPosition = bgImage.offset();
 
-    /**
-     * Returns coordinates for the home position of a choice.
-     *
-     * @param {Number} choiceNo
-     * @returns {Point} coordinates
-     */
-    DragDropMarkersQuestion.prototype.dragHomeXY = function(choiceNo) {
-        var dragItemHome = this.dragHome(choiceNo);
-        return new Shapes.Point(dragItemHome.offset().left, dragItemHome.offset().top);
+        return point.x >= bgPosition.left && point.x < bgPosition.left + bgImage.width()
+            && point.y >= bgPosition.top && point.y < bgPosition.top + bgImage.height();
     };
 
     /**
@@ -283,52 +229,28 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
         return this.getRoot().find('img.dropbackground');
     };
 
-    /**
-     * Return the DOM node for this choice's home position.
-     * @param {Number} choiceNo
-     * @returns {jQuery} containing the home.
-     */
-    DragDropMarkersQuestion.prototype.dragHome = function(choiceNo) {
-        return this.getRoot().find('div.dragitems span.draghome.choice' + choiceNo);
-    };
-
-    /**
-     * Return the DOM node for a particular instance of a particular choice.
-     * @param {Number} choiceNo
-     * @param {Number} itemNo
-     * @returns {jQuery} containing the item.
-     */
-    DragDropMarkersQuestion.prototype.dragItem = function(choiceNo, itemNo) {
-        return this.getRoot().find('div.dragitems span.dragitem.choice' + choiceNo + '.item' + itemNo);
-    };
-
-    /**
-     * Create a draggable copy of the drag item.
-     *
-     * @param {jQuery} dragHome to clone
-     * @param {Number} itemNo new item number
-     * @return {jQuery} drag
-     */
-    DragDropMarkersQuestion.prototype.cloneNewDragItem = function(dragHome, itemNo) {
-        var drag = dragHome.clone(true);
-        drag.removeClass('draghome').addClass('dragitem').addClass('item' + itemNo);
-        dragHome.after(drag);
-        drag.attr('tabIndex', 0);
-        return drag;
-    };
-
     DragDropMarkersQuestion.prototype.handleDragStart = function(e) {
         var thisQ = this,
-            dragged = $(e.target).closest('.dragitem');
+            dragged = $(e.target).closest('.marker');
 
         var info = dragDrop.prepare(e);
         if (!info.start) {
             return;
         }
 
-        dragged.addClass('beingdragged');
+        dragged.addClass('beingdragged').css('transform', '');
+
+        var placed = !dragged.hasClass('unneeded');
+        if (!placed) {
+            var hiddenDrag = thisQ.getDragClone(dragged);
+            if (hiddenDrag.length) {
+                hiddenDrag.addClass('active');
+                dragged.offset(hiddenDrag.offset());
+            }
+        }
+
         dragDrop.start(e, dragged, function() {
-            void (1); // Nothing to do, but we need a function.
+            void (1);
         }, function(x, y, dragged) {
             thisQ.dragEnd(dragged);
         });
@@ -339,52 +261,56 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
      * @param {jQuery} dragged the marker that was dragged.
      */
     DragDropMarkersQuestion.prototype.dragEnd = function(dragged) {
-        dragged.removeClass('beingdragged');
-        var choiceNo = this.getChoiceNoFromElement(dragged);
-        this.saveCoordsForChoice(choiceNo, dragged);
-        this.repositionDrags();
+        var placed = false,
+            choiceNo = this.getChoiceNoFromElement(dragged),
+            bgRatio = this.bgRatio(),
+            dragXY;
+
+        dragged.data('pagex', dragged.offset().left).data('pagey', dragged.offset().top);
+        dragXY = new Shapes.Point(dragged.data('pagex'), dragged.data('pagey'));
+        if (this.coordsInBgImg(dragXY)) {
+            this.sendDragToDrop(dragged, true);
+            placed = true;
+
+            // It seems that the dragdrop sometimes leaves the drag
+            // one pixel out of position. Put it in exactly the right place.
+            var bgImgXY = this.convertToBgImgXY(dragXY);
+            bgImgXY = new Shapes.Point(bgImgXY.x / bgRatio, bgImgXY.y / bgRatio);
+            dragged.data('originX', bgImgXY.x).data('originY', bgImgXY.y);
+        }
+
+        if (!placed) {
+            this.sendDragHome(dragged);
+            this.removeDragIfNeeded(dragged);
+        } else {
+            this.cloneDragIfNeeded(dragged);
+        }
+
+        this.saveCoordsForChoice(choiceNo);
     };
 
     /**
      * Save the coordinates for a dropped item in the form field.
      * @param {Number} choiceNo which copy of the choice this was.
-     * @param {jQuery} dropped the choice that was dropped here.
      */
-    DragDropMarkersQuestion.prototype.saveCoordsForChoice = function(choiceNo, dropped) {
+    DragDropMarkersQuestion.prototype.saveCoordsForChoice = function(choiceNo) {
         var coords = [],
-            numItems = this.getRoot().find('span.dragitem.choice' + choiceNo).length,
-            bgImgXY,
-            addme = true;
+            items = this.getRoot().find('div.droparea span.marker.choice' + choiceNo),
+            thiQ = this,
+            bgRatio = this.bgRatio();
 
-        // Re-build the coords array based on data in the ddform inputs.
-        // While long winded and unnecessary if there is only one drop item
-        // for a choice, it does account for moving any one of several drop items
-        // within a choice that have already been placed.
-        for (var i = 0; i <= numItems; i++) {
-            var drag = this.dragItem(choiceNo, i);
-            if (drag.length === 0) {
-                continue;
-            }
-
-            if (!drag.hasClass('beingdragged')) {
-                bgImgXY = this.convertToBgImgXY(new Shapes.Point(drag.offset().left, drag.offset().top));
-                if (this.coordsInBgImg(bgImgXY)) {
-                    coords[coords.length] = bgImgXY;
+        if (items.length) {
+            items.each(function() {
+                var drag = $(this);
+                if (!drag.hasClass('beingdragged')) {
+                    var dragXY = new Shapes.Point(drag.data('pagex'), drag.data('pagey'));
+                    if (thiQ.coordsInBgImg(dragXY)) {
+                        var bgImgXY = thiQ.convertToBgImgXY(dragXY);
+                        bgImgXY = new Shapes.Point(bgImgXY.x / bgRatio, bgImgXY.y / bgRatio);
+                        coords[coords.length] = bgImgXY;
+                    }
                 }
-            }
-
-            if (dropped && dropped.length !== 0 && (dropped[0].innerText === drag[0].innerText)) {
-                addme = false;
-            }
-        }
-
-        // If dropped has been passed it is because a new item has been dropped onto the background image
-        // so add its coordinates to the array.
-        if (addme) {
-            bgImgXY = this.convertToBgImgXY(new Shapes.Point(dropped.offset().left, dropped.offset().top));
-            if (this.coordsInBgImg(bgImgXY)) {
-                coords[coords.length] = bgImgXY;
-            }
+            });
         }
 
         this.getRoot().find('input.choice' + choiceNo).val(coords.join(';'));
@@ -395,7 +321,7 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
      * @param {KeyboardEvent} e
      */
     DragDropMarkersQuestion.prototype.handleKeyPress = function(e) {
-        var drag = $(e.target).closest('.dragitem'),
+        var drag = $(e.target).closest('.marker'),
             point = new Shapes.Point(drag.offset().left, drag.offset().top),
             choiceNo = this.getChoiceNoFromElement(drag);
 
@@ -427,12 +353,28 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
 
         if (point !== null) {
             point = this.constrainToBgImg(point);
+            drag.offset({'left': point.x, 'top': point.y});
+            drag.data('pagex', drag.offset().left).data('pagey', drag.offset().top);
+            var dragXY = this.convertToBgImgXY(new Shapes.Point(drag.data('pagex'), drag.data('pagey')));
+            drag.data('originX', dragXY.x / this.bgRatio()).data('originY', dragXY.y / this.bgRatio());
+            if (this.coordsInBgImg(new Shapes.Point(drag.offset().left, drag.offset().top))) {
+                if (drag.hasClass('unneeded')) {
+                    this.sendDragToDrop(drag, true);
+                    var hiddenDrag = this.getDragClone(drag);
+                    if (hiddenDrag.length) {
+                        hiddenDrag.addClass('active');
+                    }
+                    this.cloneDragIfNeeded(drag);
+                }
+            }
         } else {
-            point = this.dragHomeXY(choiceNo);
+            drag.css('left', '').css('top', '');
+            drag.data('pagex', drag.offset().left).data('pagey', drag.offset().top);
+            this.sendDragHome(drag);
+            this.removeDragIfNeeded(drag);
         }
-        drag.offset({'left': point.x, 'top': point.y});
-        this.saveCoordsForChoice(choiceNo, drag);
-        this.repositionDrags();
+        drag.focus();
+        this.saveCoordsForChoice(choiceNo);
     };
 
     /**
@@ -488,27 +430,204 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
      * Handle when the window is resized.
      */
     DragDropMarkersQuestion.prototype.handleResize = function() {
-        this.repositionDrags();
+        var thisQ = this,
+            bgRatio = this.bgRatio();
+        if (this.isPrinting) {
+            bgRatio = 1;
+        }
+
+        this.getRoot().find('div.droparea .marker').not('.beingdragged').each(function(key, drag) {
+            $(drag)
+                .css('left', parseFloat($(drag).data('originX')) * parseFloat(bgRatio))
+                .css('top', parseFloat($(drag).data('originY')) * parseFloat(bgRatio));
+            thisQ.handleElementScale(drag, 'left top');
+        });
+
+        this.getRoot().find('div.droparea svg.dropzones')
+            .width(this.bgImage().width())
+            .height(this.bgImage().height());
+
+        for (var dropZoneNo = 0; dropZoneNo < this.visibleDropZones.length; dropZoneNo++) {
+            var dropZone = thisQ.visibleDropZones[dropZoneNo];
+            var originCoords = dropZone.coords;
+            var shape = thisQ.shapes[dropZoneNo];
+            var shapeSVG = thisQ.shapeSVGs[dropZoneNo];
+            shape.parse(originCoords, bgRatio);
+            shape.updateSvg(shapeSVG);
+
+            var handles = shape.getHandlePositions();
+            var markerSpan = this.getRoot().find('div.ddarea div.markertexts span.markertext' + dropZoneNo);
+            markerSpan
+                .css('left', handles.moveHandle.x - (markerSpan.outerWidth() / 2) - 4)
+                .css('top', handles.moveHandle.y - (markerSpan.outerHeight() / 2));
+            thisQ.handleElementScale(markerSpan, 'center');
+        }
     };
 
     /**
-     * Check to see if the background image has moved. If so, refresh the layout.
+     * Clone the drag.
      */
-    DragDropMarkersQuestion.prototype.fixLayoutIfBackgroundMoved = function() {
-        var bgImage = this.bgImage(),
-            bgPosition = bgImage.offset(),
-            prevTop = bgImage.data('prev-top'),
-            prevLeft = bgImage.data('prev-left');
-        if (prevLeft === undefined || prevTop === undefined) {
-            // Question is not set up yet. Nothing to do.
-            return;
+    DragDropMarkersQuestion.prototype.cloneDrags = function() {
+        var thisQ = this;
+        this.getRoot().find('div.draghomes span.marker').each(function(index, draghome) {
+            var drag = $(draghome);
+            var placeHolder = drag.clone();
+            placeHolder.removeClass();
+            placeHolder.addClass('marker choice' +
+                thisQ.getChoiceNoFromElement(drag) + ' dragno' + thisQ.getDragNo(drag) + ' dragplaceholder');
+            drag.before(placeHolder);
+        });
+    };
+
+    /**
+     * Get the drag number of a drag.
+     *
+     * @param {jQuery} drag the drag.
+     * @returns {Number} the drag number.
+     */
+    DragDropMarkersQuestion.prototype.getDragNo = function(drag) {
+        return this.getClassnameNumericSuffix(drag, 'dragno');
+    };
+
+    /**
+     * Get drag clone for a given drag.
+     *
+     * @param {jQuery} drag the drag.
+     * @returns {jQuery} the drag's clone.
+     */
+    DragDropMarkersQuestion.prototype.getDragClone = function(drag) {
+        return this.getRoot().find('.draghomes' + ' span.marker' +
+            '.choice' + this.getChoiceNoFromElement(drag) + '.dragno' + this.getDragNo(drag) + '.dragplaceholder');
+    };
+
+    /**
+     * Get the drop area element.
+     * @returns {jQuery} droparea element.
+     */
+    DragDropMarkersQuestion.prototype.dropArea = function() {
+        return this.getRoot().find('div.droparea');
+    };
+
+    /**
+     * Animate a drag back to its home.
+     *
+     * @param {jQuery} drag the item being moved.
+     */
+    DragDropMarkersQuestion.prototype.sendDragHome = function(drag) {
+        drag.removeClass('beingdragged')
+            .addClass('unneeded')
+            .css('top', '')
+            .css('left', '')
+            .css('transform', '');
+        var placeHolder = this.getDragClone(drag);
+        placeHolder.after(drag);
+        placeHolder.removeClass('active');
+    };
+
+    /**
+     * Animate a drag item into a given place.
+     *
+     * @param {jQuery} drag the item to place.
+     * @param {boolean} isScaling Scaling or not
+     */
+    DragDropMarkersQuestion.prototype.sendDragToDrop = function(drag, isScaling) {
+        var dropArea = this.dropArea(),
+            bgRatio = this.bgRatio();
+        drag.removeClass('beingdragged').removeClass('unneeded');
+        var dragXY = this.convertToBgImgXY(new Shapes.Point(drag.data('pagex'), drag.data('pagey')));
+        if (isScaling) {
+            drag.data('originX', dragXY.x / bgRatio).data('originY', dragXY.y / bgRatio);
+            drag.css('left', dragXY.x).css('top', dragXY.y);
+        } else {
+            drag.data('originX', dragXY.x).data('originY', dragXY.y);
+            drag.css('left', dragXY.x * bgRatio).css('top', dragXY.y * bgRatio);
         }
-        if (prevTop === bgPosition.top && prevLeft === bgPosition.left) {
-            // Things have not moved.
-            return;
+        dropArea.append(drag);
+        this.handleElementScale(drag, 'left top');
+    };
+
+    /**
+     * Clone the drag at the draghome area if needed.
+     *
+     * @param {jQuery} drag the item to place.
+     */
+    DragDropMarkersQuestion.prototype.cloneDragIfNeeded = function(drag) {
+        var inputNode = this.getInput(drag),
+            noOfDrags = Number(this.getClassnameNumericSuffix(inputNode, 'noofdrags')),
+            displayedDragsInDropArea = this.getRoot().find('div.droparea .marker.choice' +
+                this.getChoiceNoFromElement(drag) + '.dragno' + this.getDragNo(drag)).length,
+            displayedDragsInDragHomes = this.getRoot().find('div.draghomes .marker.choice' +
+                this.getChoiceNoFromElement(drag) + '.dragno' + this.getDragNo(drag)).not('.dragplaceholder').length;
+
+        if (displayedDragsInDropArea < noOfDrags && displayedDragsInDragHomes === 0) {
+            var dragclone = drag.clone();
+            dragclone.addClass('unneeded')
+                .css('top', '')
+                .css('left', '')
+                .css('transform', '');
+            this.getDragClone(drag)
+                .removeClass('active')
+                .after(dragclone);
         }
-        // We need to reposition things.
-        this.repositionDrags();
+    };
+
+    /**
+     * Remove the clone drag at the draghome area if needed.
+     *
+     * @param {jQuery} drag the item to place.
+     */
+    DragDropMarkersQuestion.prototype.removeDragIfNeeded = function(drag) {
+        var displayeddrags = this.getRoot().find('div.draghomes .marker.choice' +
+            this.getChoiceNoFromElement(drag) + '.dragno' + this.getDragNo(drag)).not('.dragplaceholder').length;
+        if (displayeddrags > 1) {
+            this.getRoot().find('div.draghomes .marker.choice' +
+                this.getChoiceNoFromElement(drag) + '.dragno' + this.getDragNo(drag)).not('.dragplaceholder').first().remove();
+        }
+    };
+
+    /**
+     * Get the input belong to drag.
+     *
+     * @param {jQuery} drag the item to place.
+     * @returns {jQuery} input element.
+     */
+    DragDropMarkersQuestion.prototype.getInput = function(drag) {
+        var choiceNo = this.getChoiceNoFromElement(drag);
+        return this.getRoot().find('input.choices.choice' + choiceNo);
+    };
+
+    /**
+     * Return the background ratio.
+     *
+     * @returns {number} Background ratio.
+     */
+    DragDropMarkersQuestion.prototype.bgRatio = function() {
+        var bgImg = this.bgImage();
+        var bgImgNaturalWidth = bgImg.get(0).naturalWidth;
+        var bgImgClientWidth = bgImg.width();
+
+        return bgImgClientWidth / bgImgNaturalWidth;
+    };
+
+    /**
+     * Scale the drag if needed.
+     *
+     * @param {jQuery} element the item to place.
+     * @param {String} type scaling type
+     */
+    DragDropMarkersQuestion.prototype.handleElementScale = function(element, type) {
+        var bgRatio = parseFloat(this.bgRatio());
+        if (this.isPrinting) {
+            bgRatio = 1;
+        }
+        $(element).css({
+            '-webkit-transform': 'scale(' + bgRatio + ')',
+            '-moz-transform': 'scale(' + bgRatio + ')',
+            '-ms-transform': 'scale(' + bgRatio + ')',
+            '-o-transform': 'scale(' + bgRatio + ')',
+            'transform': 'scale(' + bgRatio + ')',
+            'transform-origin': type
+        });
     };
 
     /**
@@ -525,6 +644,16 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
         eventHandlersInitialised: false,
 
         /**
+         * {boolean} is printing or not.
+         */
+        isPrinting: false,
+
+        /**
+         * {boolean} is keyboard navigation.
+         */
+        isKeyboardNavigation: false,
+
+        /**
          * {Object} all the questions on this page, indexed by containerId (id on the .que div).
          */
         questions: {}, // An object containing all the information about each question on the page.
@@ -533,13 +662,12 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
          * Initialise one question.
          *
          * @param {String} containerId the id of the div.que that contains this question.
-         * @param {String} bgImgUrl URL fo the background image.
          * @param {boolean} readOnly whether the question is read-only.
          * @param {Object[]} visibleDropZones data on any drop zones to draw as part of the feedback.
          */
-        init: function(containerId, bgImgUrl, readOnly, visibleDropZones) {
+        init: function(containerId, readOnly, visibleDropZones) {
             questionManager.questions[containerId] =
-                new DragDropMarkersQuestion(containerId, bgImgUrl, readOnly, visibleDropZones);
+                new DragDropMarkersQuestion(containerId, readOnly, visibleDropZones);
             if (!questionManager.eventHandlersInitialised) {
                 questionManager.setupEventHandlers();
                 questionManager.eventHandlersInitialised = true;
@@ -550,14 +678,45 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
          * Set up the event handlers that make this question type work. (Done once per page.)
          */
         setupEventHandlers: function() {
-            $('body').on('mousedown touchstart',
-                '.que.ddmarker:not(.qtype_ddmarker-readonly) div.dragitems .dragitem',
-                questionManager.handleDragStart)
+            $('body')
+                .on('mousedown touchstart',
+                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.draghomes .marker', questionManager.handleDragStart)
+                .on('mousedown touchstart',
+                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.droparea .marker', questionManager.handleDragStart)
                 .on('keydown keypress',
-                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.dragitems .dragitem',
-                    questionManager.handleKeyPress);
-            $(window).on('resize', questionManager.handleWindowResize);
-            setTimeout(questionManager.fixLayoutIfThingsMoved, 100);
+                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.draghomes .marker', questionManager.handleKeyPress)
+                .on('keydown keypress',
+                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.droparea .marker', questionManager.handleKeyPress)
+                .on('focusin',
+                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.draghomes .marker', function(e) {
+                        questionManager.handleKeyboardFocus(e, true);
+                    })
+                .on('focusin',
+                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.droparea .marker', function(e) {
+                        questionManager.handleKeyboardFocus(e, true);
+                    })
+                .on('focusout',
+                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.draghomes .marker', function(e) {
+                        questionManager.handleKeyboardFocus(e, false);
+                    })
+                .on('focusout',
+                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.droparea .marker', function(e) {
+                        questionManager.handleKeyboardFocus(e, false);
+                    });
+            $(window).on('resize', function() {
+                questionManager.handleWindowResize(false);
+            });
+            window.addEventListener('beforeprint', function() {
+                questionManager.isPrinting = true;
+                questionManager.handleWindowResize(questionManager.isPrinting);
+            });
+            window.addEventListener('afterprint', function() {
+                questionManager.isPrinting = false;
+                questionManager.handleWindowResize(questionManager.isPrinting);
+            });
+            setTimeout(function() {
+                questionManager.fixLayoutIfThingsMoved();
+            }, 100);
         },
 
         /**
@@ -585,13 +744,24 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
 
         /**
          * Handle when the window is resized.
+         * @param {boolean} isPrinting
          */
-        handleWindowResize: function() {
+        handleWindowResize: function(isPrinting) {
             for (var containerId in questionManager.questions) {
                 if (questionManager.questions.hasOwnProperty(containerId)) {
+                    questionManager.questions[containerId].isPrinting = isPrinting;
                     questionManager.questions[containerId].handleResize();
                 }
             }
+        },
+
+        /**
+         * Handle focus lost events on markers.
+         * @param {Event} e
+         * @param {boolean} isNavigating
+         */
+        handleKeyboardFocus: function(e, isNavigating) {
+            questionManager.isKeyboardNavigation = isNavigating;
         },
 
         /**
@@ -600,16 +770,15 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
          * Therefore, we need to periodically check everything is in the right position.
          */
         fixLayoutIfThingsMoved: function() {
-            for (var containerId in questionManager.questions) {
-                if (questionManager.questions.hasOwnProperty(containerId)) {
-                    questionManager.questions[containerId].fixLayoutIfBackgroundMoved();
-                }
+            if (!questionManager.isKeyboardNavigation) {
+                this.handleWindowResize(questionManager.isPrinting);
             }
-
             // We use setTimeout after finishing work, rather than setInterval,
             // in case positioning things is slow. We want 100 ms gap
             // between executions, not what setInterval does.
-            setTimeout(questionManager.fixLayoutIfThingsMoved, 100);
+            setTimeout(function() {
+                questionManager.fixLayoutIfThingsMoved(questionManager.isPrinting);
+            }, 100);
         },
 
         /**
