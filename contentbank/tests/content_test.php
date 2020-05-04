@@ -65,6 +65,55 @@ class core_contenttype_content_testcase extends \advanced_testcase {
     }
 
     /**
+     * Data provider for test_set_name.
+     *
+     * @return  array
+     */
+    public function set_name_provider() {
+        return [
+            'Standard name' => ['New name', 'New name'],
+            'Name with digits' => ['Today is 17/04/2017', 'Today is 17/04/2017'],
+            'Name with symbols' => ['Follow us: @moodle', 'Follow us: @moodle'],
+            'Name with tags' => ['This is <b>bold</b>', 'This is bold'],
+            'Long name' => [str_repeat('a', 100), str_repeat('a', 100)],
+            'Too long name' => [str_repeat('a', 300), str_repeat('a', 255)]
+        ];
+    }
+
+    /**
+     * Tests for 'set_name' behaviour.
+     *
+     * @dataProvider    set_name_provider
+     * @param   string  $newname    The name to set
+     * @param   string   $expected   The name result
+     *
+     * @covers ::set_name
+     */
+    public function test_set_name(string $newname, string $expected) {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $oldname = "Old name";
+        $context = context_system::instance();
+
+        // Create content.
+        $record = new stdClass();
+        $record->name = $oldname;
+
+        $contenttype = new contenttype($context);
+        $content = $contenttype->create_content($record);
+        $this->assertEquals($oldname, $content->get_name());
+
+        $content->set_name($newname);
+        $this->assertEquals($expected, $content->get_name());
+
+        $record = $DB->get_record('contentbank_content', ['id' => $content->get_id()]);
+        $this->assertEquals($expected, $record->name);
+    }
+
+    /**
      * Tests for behaviour of get_content_type().
      *
      * @covers ::get_content_type

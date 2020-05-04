@@ -35,7 +35,10 @@ $record = $DB->get_record('contentbank_content', ['id' => $id], '*', MUST_EXIST)
 $context = context::instance_by_id($record->contextid, MUST_EXIST);
 require_capability('moodle/contentbank:access', $context);
 
-$returnurl = new \moodle_url('/contentbank/index.php');
+$statusmsg = optional_param('statusmsg', '', PARAM_RAW);
+$errormsg = optional_param('errormsg', '', PARAM_RAW);
+
+$returnurl = new \moodle_url('/contentbank/index.php', ['contextid' => $context->id]);
 $plugin = core_plugin_manager::instance()->get_plugin_info($record->contenttype);
 if (!$plugin || !$plugin->is_enabled()) {
     print_error('unsupported', 'core_contentbank', $returnurl);
@@ -46,7 +49,6 @@ $title = get_string('contentbank');
 if ($PAGE->course) {
     require_login($PAGE->course->id);
 }
-$returnurl = new \moodle_url('/contentbank/index.php', ['contextid' => $context->id]);
 
 $PAGE->set_url(new \moodle_url('/contentbank/view.php', ['id' => $id]));
 $PAGE->set_context($context);
@@ -57,13 +59,32 @@ $PAGE->set_title($title);
 $PAGE->set_pagetype('contenbank');
 
 $contenttypeclass = "\\$record->contenttype\\contenttype";
-$contenttype = new $contenttypeclass($context);
 $contentclass = "\\$record->contenttype\\content";
+if (!class_exists($contenttypeclass) || !class_exists($contentclass)) {
+    print_error('contenttypenotfound', 'error', $returnurl, $record->contenttype);
+}
+$contenttype = new $contenttypeclass($context);
 $content = new $contentclass($record);
+
+// Create the cog menu with all the secondary actions, such as delete, rename...
+$actionmenu = new action_menu();
+$actionmenu->set_alignment(action_menu::TR, action_menu::BR);
+if ($contenttype->can_manage($content)) {
+    // Add the rename content item to the menu.
+    $attributes = [
+        'data-action' => 'renamecontent',
+        'data-contentname' => $content->get_name(),
+        'data-contentid' => $content->get_id(),
+    ];
+    $actionmenu->add_secondary_action(new action_menu_link(
+        new moodle_url('#'),
+        new pix_icon('e/styleparagraph', get_string('rename')),
+        get_string('rename'),
+        false,
+        $attributes
+    ));
+}
 if ($contenttype->can_delete($content)) {
-    // Create the cog menu with all the secondary actions, such as delete, rename...
-    $actionmenu = new action_menu();
-    $actionmenu->set_alignment(action_menu::TR, action_menu::BR);
     // Add the delete content item to the menu.
     $attributes = [
                 'data-action' => 'deletecontent',
@@ -78,18 +99,24 @@ if ($contenttype->can_delete($content)) {
         false,
         $attributes
     ));
-
-    // Add the cog menu to the header.
-    $PAGE->add_header_action(html_writer::div(
-        $OUTPUT->render($actionmenu),
-        'd-print-none',
-        ['id' => 'region-main-settings-menu']
-    ));
 }
+
+// Add the cog menu to the header.
+$PAGE->add_header_action(html_writer::div(
+    $OUTPUT->render($actionmenu),
+    'd-print-none',
+    ['id' => 'region-main-settings-menu']
+));
 
 echo $OUTPUT->header();
 echo $OUTPUT->box_start('generalbox');
 
+// If needed, display notifications.
+if ($errormsg !== '') {
+    echo $OUTPUT->notification($errormsg);
+} else if ($statusmsg !== '') {
+    echo $OUTPUT->notification($statusmsg, 'notifysuccess');
+}
 if ($contenttype->can_access()) {
     echo $contenttype->get_view_content($record);
 }

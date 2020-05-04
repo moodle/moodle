@@ -217,6 +217,11 @@ class behat_core_generator extends behat_generator_base {
                 'required' => array('user', 'preference', 'value'),
                 'switchids' => array('user' => 'userid')
             ],
+            'contentbank content' => [
+                'datagenerator' => 'contentbank_content',
+                'required' => array('course', 'contenttype', 'user', 'contentname'),
+                'switchids' => array('course' => 'courseid', 'user' => 'userid')
+            ],
         ];
     }
 
@@ -815,5 +820,23 @@ class behat_core_generator extends behat_generator_base {
      */
     protected function process_user_preferences(array $data) {
         set_user_preference($data['preference'], $data['value'], $data['userid']);
+    }
+
+    /**
+     * Create content in the given context's content bank
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_contentbank_content(array $data) {
+        $context = context_course::instance($data['courseid']);
+        $contenttypeclass = "\\".$data['contenttype']."\\contenttype";
+        if (class_exists($contenttypeclass)) {
+            $contenttype = new $contenttypeclass($context);
+            $record = new stdClass();
+            $record->usercreated = $data['userid'];
+            $record->name = $data['contentname'];
+            $content = $contenttype->create_content($record);
+        }
     }
 }
