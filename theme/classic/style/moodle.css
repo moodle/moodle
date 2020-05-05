@@ -10631,16 +10631,16 @@ div.editor_atto_toolbar button .icon {
 .dir-ltr .dir-ltr-hide {
   display: none; }
 
-.switch {
+body:not(.behat-site) .switch {
   position: relative; }
-  .switch input {
+  body:not(.behat-site) .switch input {
     float: left;
     width: 1px;
     transform: translateX(1px);
     padding: 0;
     margin: 0;
     opacity: 0; }
-    .switch input + label {
+    body:not(.behat-site) .switch input + label {
       position: relative;
       min-height: 1.725rem;
       min-width: 3.45rem;
@@ -10652,8 +10652,8 @@ div.editor_atto_toolbar button .icon {
       user-select: none;
       vertical-align: middle;
       padding-left: 3.95rem; }
-    .switch input + label::before,
-    .switch input + label::after {
+    body:not(.behat-site) .switch input + label::before,
+    body:not(.behat-site) .switch input + label::after {
       content: '';
       position: absolute;
       top: calc(50% - 0.8625rem);
@@ -10662,12 +10662,12 @@ div.editor_atto_toolbar button .icon {
       height: 1.725rem;
       bottom: 0;
       display: block; }
-    .switch input + label::before {
+    body:not(.behat-site) .switch input + label::before {
       right: 0;
       background-color: #dee2e6;
       border-radius: 1.725rem;
       transition: 0.2s all; }
-    .switch input + label::after {
+    body:not(.behat-site) .switch input + label::after {
       margin-top: 2px;
       left: 2px;
       width: calc(1.725rem - 4px);
@@ -10675,17 +10675,17 @@ div.editor_atto_toolbar button .icon {
       border-radius: 50%;
       background-color: #fff;
       transition: 0.2s all; }
-    .switch input:checked + label::before {
+    body:not(.behat-site) .switch input:checked + label::before {
       background-color: #1177d1; }
-    .switch input:checked + label::after {
+    body:not(.behat-site) .switch input:checked + label::after {
       margin-left: 1.725rem; }
-    .switch input:focus + label::before {
+    body:not(.behat-site) .switch input:focus + label::before {
       outline: none;
       box-shadow: 0 0 0 0.2rem rgba(17, 119, 209, 0.25); }
-    .switch input:disabled + label {
+    body:not(.behat-site) .switch input:disabled + label {
       color: #6c757d;
       cursor: not-allowed; }
-    .switch input:disabled + label::before {
+    body:not(.behat-site) .switch input:disabled + label::before {
       background-color: #e9ecef; }
 
 .paged-content-page-container {

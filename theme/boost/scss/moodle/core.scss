@@ -2174,7 +2174,7 @@ $switch-thumb-padding-double: ($switch-thumb-padding * 2) !default;
 $switch-focus-box-shadow: 0 0 0 $input-btn-focus-width rgba(map-get($theme-colors, 'primary'), .25);
 $switch-transition: .2s all !default;
 
-.switch {
+body:not(.behat-site) .switch {
     position: relative;
 
     input {
