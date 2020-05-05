@@ -39,8 +39,9 @@ Feature: Add images to Atto
     And I take focus off "Height" "field"
     And the field "Width" matches value "123"
     And the field "Height" matches value "456"
-    And I click on "Save image" "button"
-    And I click on "Update profile" "button"
+    And I change window size to "large"
+    And I press "Save image"
+    And I press "Update profile"
     And I click on "Edit profile" "link" in the "region-main" "region"
     And I select the text in the "Description" Atto editor
     And I click on "Insert or edit image" "button"
