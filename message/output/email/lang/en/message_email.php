@@ -23,11 +23,11 @@
  */
 
 $string['email'] = 'Send email notifications to';
-$string['emaildigestsubject'] = 'Messages digest';
 $string['emaildigestunreadmessages'] = 'Unread messages';
 $string['emaildigestviewallmessages'] = 'View all messages';
 $string['emailonlyfromnoreplyaddress'] = 'Always send email from the no-reply address?';
 $string['ifemailleftempty'] = 'Leave empty to send notifications to {$a}';
+$string['messagedigestemailsubject'] = '{$a}: Messages digest';
 $string['pluginname'] = 'Email';
 $string['privacy:metadata:attachment'] = 'A file on the filesystem.';
 $string['privacy:metadata:attachname'] = 'The name of the attached file (extension indicates MIME).';
@@ -45,3 +45,5 @@ $string['privacy:metadata:subject'] = 'The subject line of the message.';
 $string['privacy:metadata:userfrom'] = 'The user sending the message.';
 $string['tasksendemail'] = 'Messages digest mailings';
 
+// Deprecated since Moodle 3.9.
+$string['emaildigestsubject'] = 'Messages digest';
