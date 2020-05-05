@@ -2155,6 +2155,10 @@ class core_questionlib_testcase extends advanced_testcase {
             ['id9', 'id10'],
             ['id009', 'id010'],
             ['id999', 'id1000'],
+            ['0', '1'],
+            ['-1', '-2'],
+            ['1.0E+29', '1.0E+30'], // Idnumbers are strings, not floats.
+            ['1.0E-29', '1.0E-30'], // By the way, this is not a sensible idnumber!
         ];
     }
 
