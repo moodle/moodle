@@ -72,6 +72,13 @@ class writer extends \core\dataformat\base {
     public function send_http_headers() {
     }
 
+    /**
+     * Start output to file, note that the actual writing of the file is done in {@see close_output_to_file()}
+     */
+    public function start_output_to_file(): void {
+        $this->start_output();
+    }
+
     public function start_output() {
         $this->pdf->AddPage('L');
     }
@@ -124,6 +131,17 @@ class writer extends \core\dataformat\base {
         $filename = $this->filename . $this->get_extension();
 
         $this->pdf->Output($filename, 'D');
+    }
+
+    /**
+     * Write data to disk
+     *
+     * @return bool
+     */
+    public function close_output_to_file(): bool {
+        $this->pdf->Output($this->filepath, 'F');
+
+        return true;
     }
 
     /**

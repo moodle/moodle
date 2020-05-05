@@ -52,6 +52,7 @@ information provided here is intended especially for developers.
 * The core/notification module has been updated to use AMD modals for its confirmation and alert dialogues.
   The confirmation dialogue no longer has a configurable "No" button as per similar changes in MDL-59759.
   This set of confirmation modals was unintentionally missed from that deprecation process.
+* The download_as_dataformat() method has been deprecated. Please use \core\dataformat::download_data() instead
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop
