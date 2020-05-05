@@ -2407,13 +2407,16 @@ function core_question_find_next_unused_idnumber(?string $oldidnumber, int $cate
             [$categoryid], '', 'idnumber, 1');
 
     // Find the next unused idnumber.
-    $newidnumber = $oldidnumber;
+    $numberbit = 'X' . $matches[0]; // Need a string here so PHP does not do '0001' + 1 = 2.
+    $stem = substr($oldidnumber, 0, -strlen($matches[0]));
     do {
+
         // If we have got to something9999, insert an extra digit before incrementing.
-        if (preg_match('~^(.*[^0-9])(9+)$~', $newidnumber, $matches)) {
-            $newidnumber = $matches[1] . '0' . $matches[2];
+        if (preg_match('~^(.*[^0-9])(9+)$~', $numberbit, $matches)) {
+            $numberbit = $matches[1] . '0' . $matches[2];
         }
-        $newidnumber++;
+        $numberbit++;
+        $newidnumber = $stem . substr($numberbit, 1);
     } while (isset($usedidnumbers[$newidnumber]));
 
     return (string) $newidnumber;
