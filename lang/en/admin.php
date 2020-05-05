@@ -1159,6 +1159,7 @@ $string['simplexmlrequired'] = 'The SimpleXML PHP extension is now required by M
 $string['sitemenubar'] = 'Site navigation';
 $string['sitemailcharset'] = 'Character set';
 $string['sitemaintenance'] = 'The site is undergoing maintenance and is currently not available';
+$string['sitemaintenancetitle'] = '{$a} under maintenance';
 $string['sitemaintenancemode'] = 'Maintenance mode';
 $string['sitemaintenanceoff'] = 'Maintenance mode has been disabled and the site is running normally again';
 $string['sitemaintenanceon'] = 'Your site is currently in maintenance mode (only admins can log in or use the site).';
