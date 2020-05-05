@@ -2179,7 +2179,7 @@ $switch-thumb-size-half: $switch-height-half !default;
 $switch-focus-box-shadow: 0 0 0 ($input-btn-focus-width * 2) rgba(map-get($theme-colors, 'primary'), .25);
 $switch-transition: .2s all !default;
 
-.switch {
+body:not(.behat-site) .switch {
     position: relative;
     display: inline-block;
 

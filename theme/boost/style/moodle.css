@@ -11319,10 +11319,10 @@ div.editor_atto_toolbar button .icon {
 .dir-ltr .dir-ltr-hide {
   display: none; }
 
-.switch {
+body:not(.behat-site) .switch {
   position: relative;
   display: inline-block; }
-  .switch input {
+  body:not(.behat-site) .switch input {
     float: left;
     width: 1px;
     transform: translateX(1px);
@@ -11330,7 +11330,7 @@ div.editor_atto_toolbar button .icon {
     margin: 0;
     opacity: 0;
     line-height: 1.25rem; }
-    .switch input + label {
+    body:not(.behat-site) .switch input + label {
       position: relative;
       min-height: 1.25rem;
       min-width: 2.5rem;
@@ -11341,14 +11341,14 @@ div.editor_atto_toolbar button .icon {
       outline: none;
       user-select: none;
       padding-left: 3rem; }
-    .switch input + label::before,
-    .switch input + label::after {
+    body:not(.behat-site) .switch input + label::before,
+    body:not(.behat-site) .switch input + label::after {
       content: '';
       position: absolute;
       left: 0;
       bottom: 0;
       display: block; }
-    .switch input + label::before {
+    body:not(.behat-site) .switch input + label::before {
       right: 0;
       height: 1rem;
       width: 2.5rem;
@@ -11356,7 +11356,7 @@ div.editor_atto_toolbar button .icon {
       background-color: #dee2e6;
       border-radius: 1.25rem;
       transition: 0.2s all; }
-    .switch input + label::after {
+    body:not(.behat-site) .switch input + label::after {
       left: 0;
       width: 1.25rem;
       height: 1.25rem;
@@ -11365,24 +11365,24 @@ div.editor_atto_toolbar button .icon {
       background-color: #fff;
       transition: 0.2s all;
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12); }
-    .switch input:checked + label::before {
+    body:not(.behat-site) .switch input:checked + label::before {
       background-color: rgba(17, 119, 209, 0.4); }
-    .switch input:checked + label::after {
+    body:not(.behat-site) .switch input:checked + label::after {
       margin-left: 1.25rem;
       background-color: #1177d1; }
-    .switch input:focus + label::before {
+    body:not(.behat-site) .switch input:focus + label::before {
       outline: none; }
-    .switch input:focus + label::after {
+    body:not(.behat-site) .switch input:focus + label::after {
       outline: none;
       box-shadow: 0 0 0 0.4rem rgba(17, 119, 209, 0.25); }
-    .switch input:disabled + label {
+    body:not(.behat-site) .switch input:disabled + label {
       color: #6c757d;
       cursor: not-allowed; }
-    .switch input:disabled + label::before {
+    body:not(.behat-site) .switch input:disabled + label::before {
       background-color: #e9ecef; }
-    .switch input:disabled + label::after {
+    body:not(.behat-site) .switch input:disabled + label::after {
       background-color: #6c757d; }
-  .switch.sr-only-label input + label {
+  body:not(.behat-site) .switch.sr-only-label input + label {
     text-indent: -9999px;
     margin-bottom: 0;
     padding-left: 0; }
