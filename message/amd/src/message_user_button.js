@@ -20,8 +20,19 @@
  * @copyright  2019 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/custom_interaction_events', 'core_message/message_drawer_helper'],
-    function($, CustomEvents, MessageDrawerHelper) {
+define(['jquery', 'core/custom_interaction_events', 'core_message/message_drawer_helper', 'core/templates'],
+    function($, CustomEvents, MessageDrawerHelper, Templates) {
+
+
+        var SELECTORS = {
+            MESSAGE_TEXTAREA: '[data-region="send-message-txt"]',
+            MESSAGE_USER_BUTTON: '#message-user-button',
+            MESSAGE_JUMP: '[data-region="jumpto"]'
+        };
+
+        var TEMPLATES = {
+            CONTENT: 'core_message/message_jumpto'
+        };
 
         /**
          * Get the id for the user being messaged.
@@ -53,15 +64,38 @@ define(['jquery', 'core/custom_interaction_events', 'core_message/message_drawer
         var send = function(element) {
             element = $(element);
 
+            var args = {
+                conversationid: getConversationId(element),
+                buttonid: $(element).attr('id'),
+                userid: getUserId(element)
+            };
+
+            Templates.render(TEMPLATES.CONTENT, {})
+                .then(function(html) {
+                    element.after(html);
+                })
+                .then(function() {
+                    $(SELECTORS.MESSAGE_USER_BUTTON).next().focus(function() {
+                        $(SELECTORS.MESSAGE_TEXTAREA).focus();
+                    });
+                });
+
             CustomEvents.define(element, [CustomEvents.events.activate]);
 
             element.on(CustomEvents.events.activate, function(e, data) {
-                var conversationid = getConversationId(element);
-                if (conversationid) {
-                    MessageDrawerHelper.showConversation(conversationid);
+                if ($(e.target).hasClass('active')) {
+                    MessageDrawerHelper.hide();
+                    $(SELECTORS.MESSAGE_USER_BUTTON).next().attr('tabindex', -1);
                 } else {
-                    MessageDrawerHelper.createConversationWithUser(getUserId(element));
+                    $(SELECTORS.MESSAGE_USER_BUTTON).next().attr('tabindex', 0);
+                    if (args.conversationid) {
+                        MessageDrawerHelper.showConversation(args);
+                    } else {
+                        MessageDrawerHelper.createConversationWithUser(args);
+                    }
                 }
+                $(e.target).focus();
+                $(e.target).toggleClass('active');
                 e.preventDefault();
                 data.originalEvent.preventDefault();
             });

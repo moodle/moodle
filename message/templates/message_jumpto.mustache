@@ -15,30 +15,13 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/drawer
+    @template core_message/message_jump_botton
 
-    This template will render a generic drawer panel.
-
-    Classes required for JS:
-    * none
-
-    Data attributes required for JS:
-    * none
-
-    Context variables required for this template:
-    * none
+    This template will render the jump button used for keyboard navigation.
 
     Example context (json):
-    {}
+    {
+    }
+
 }}
-<div
-    id="{{$drawerid}}drawer-{{uniqid}}{{/drawerid}}"
-    class="{{$drawerclasses}}{{/drawerclasses}} drawer bg-white {{^show}}hidden{{/show}}"
-    aria-expanded="{{#show}}true{{/show}}{{^show}}false{{/show}}"
-    {{^show}}aria-hidden="true"{{/show}}
-    data-region="right-hand-drawer"
-    role="region"
-    tabindex="0"
->
-    {{$drawercontent}}{{/drawercontent}}
-</div>
+<span class="sr-only sr-only-focusable" data-region="jumpto" tabindex="-1"></span>
