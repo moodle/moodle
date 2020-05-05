@@ -40,11 +40,11 @@ class contenttype extends \core_contentbank\contenttype {
     /**
      * Returns the URL where the content will be visualized.
      *
-     * @param stdClass $record  Th content to be displayed.
+     * @param  content $content The content to delete.
      * @return string            URL where to visualize the given content.
      */
-    public function get_view_url(\stdClass $record): string {
-        $fileurl = $this->get_file_url($record->id);
+    public function get_view_url(content $content): string {
+        $fileurl = $this->get_file_url($content->get_id());
         $url = $fileurl."?forcedownload=1";
 
         return $url;
