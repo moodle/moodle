@@ -163,18 +163,18 @@ class qformat_gift extends qformat_default {
         // converts it into a question object suitable for processing and insertion into Moodle.
 
         $question = $this->defaultquestion();
-        $comment = null;
         // Define replaced by simple assignment, stop redefine notices.
         $giftanswerweightregex = '/^%\-*([0-9]{1,2})\.?([0-9]*)%/';
 
-        // REMOVED COMMENTED LINES and IMPLODE.
+        // Separate comments and implode.
+        $comments = '';
         foreach ($lines as $key => $line) {
             $line = trim($line);
             if (substr($line, 0, 2) == '//') {
+                $comments .= $line . "\n";
                 $lines[$key] = ' ';
             }
         }
-
         $text = trim(implode("\n", $lines));
 
         if ($text == '') {
@@ -312,6 +312,10 @@ class qformat_gift extends qformat_default {
                 $question->qtype = 'shortanswer';
             }
         }
+
+        // Extract any idnumber and tags from the comments.
+        list($question->idnumber, $question->tags) =
+                $this->extract_idnumber_and_tags_from_comment($comments);
 
         if (!isset($question->qtype)) {
             $giftqtypenotset = get_string('giftqtypenotset', 'qformat_gift');
@@ -600,6 +604,55 @@ class qformat_gift extends qformat_default {
         }
     }
 
+    /**
+     * Extract any tags or idnumber declared in the question comment.
+     *
+     * @param string $comment E.g. "// Line 1.\n//Line 2.\n".
+     * @return array with two elements. string $idnumber (or '') and string[] of tags.
+     */
+    public function extract_idnumber_and_tags_from_comment(string $comment): array {
+
+        // Find the idnumber, if any. There should not be more than one, but if so, we just find the first.
+        $idnumber = '';
+        if (preg_match('~
+                # Start of id token.
+                \[id:
+
+                # Any number of (non-control) characters, with any ] escaped.
+                # This is the bit we want so capture it.
+                (
+                    (?:\\\\]|[^][:cntrl:]])+
+                )
+
+                # End of id token.
+                ]
+                ~x', $comment, $match)) {
+            $idnumber = str_replace('\]', ']', trim($match[1]));
+        }
+
+        // Find any tags.
+        $tags = [];
+        if (preg_match_all('~
+                # Start of tag token.
+                \[tag:
+
+                # Any number of allowed characters (see PARAM_TAG), with any ] escaped.
+                # This is the bit we want so capture it.
+                (
+                    (?:\\\\]|[^]<>`[:cntrl:]]|)+
+                )
+
+                # End of tag token.
+                ]
+                ~x', $comment, $matches)) {
+            foreach ($matches[1] as $rawtag) {
+                $tags[] = str_replace('\]', ']', trim($rawtag));
+            }
+        }
+
+        return [$idnumber, $tags];
+    }
+
     public function write_name($name) {
         return '::' . $this->repchar($name) . '::';
     }
@@ -635,10 +688,10 @@ class qformat_gift extends qformat_default {
     }
 
     public function writequestion($question) {
-        global $OUTPUT;
 
         // Start with a comment.
         $expout = "// question: {$question->id}  name: {$question->name}\n";
+        $expout .= $this->write_idnumber_and_tags($question);
 
         // Output depends on question type.
         switch($question->qtype) {
@@ -774,5 +827,48 @@ class qformat_gift extends qformat_default {
         // Add empty line to delimit questions.
         $expout .= "\n";
         return $expout;
+    }
+
+    /**
+     * Prepare any question idnumber or tags for export.
+     *
+     * @param stdClass $questiondata the question data we are exporting.
+     * @return string a string that can be written as a line in the GIFT file,
+     *      e.g. "// [id:myid] [tag:some-tag]\n". Will be '' if none.
+     */
+    public function write_idnumber_and_tags(stdClass $questiondata): string {
+        if ($questiondata->qtype == 'category') {
+            return '';
+        }
+
+        $bits = [];
+
+        if (isset($questiondata->idnumber) && $questiondata->idnumber !== '') {
+            $bits[] = '[id:' . str_replace(']', '\]', $questiondata->idnumber) . ']';
+        }
+
+        // Write the question tags.
+        if (core_tag_tag::is_enabled('core_question', 'question')) {
+            $tagobjects = core_tag_tag::get_item_tags('core_question', 'question', $questiondata->id);
+
+            if (!empty($tagobjects)) {
+                $context = context::instance_by_id($questiondata->contextid);
+                $sortedtagobjects = question_sort_tags($tagobjects, $context, [$this->course]);
+
+                // Currently we ignore course tags. This should probably be fixed in future.
+
+                if (!empty($sortedtagobjects->tags)) {
+                    foreach ($sortedtagobjects->tags as $tag) {
+                        $bits[] = '[tag:' . str_replace(']', '\]', $tag) . ']';
+                    }
+                }
+            }
+        }
+
+        if (!$bits) {
+            return '';
+        }
+
+        return '// ' . implode(' ', $bits) . "\n";
     }
 }
