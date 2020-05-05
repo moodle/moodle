@@ -390,9 +390,11 @@ YUI.add('moodle-core_filepicker', function(Y) {
             div.appendChild(checkboxLabel);
             div.appendChild(checkbox);
 
-
+            // Define the selector for the click event handler.
+            var clickEventSelector = 'tr';
             // Enable the selectable checkboxes
             if (options.disablecheckboxes != undefined && !options.disablecheckboxes) {
+                clickEventSelector = 'tr td:not(:first-child)';
                 cols.unshift({
                     key: "",
                     label: div.getContent(),
@@ -411,7 +413,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
                     }
                     Y.bind(callback, this)(e, record.getAttrs());
                 }
-            }, 'tr td:not(:first-child)', options.callbackcontext, scope.tableview);
+            }, clickEventSelector, options.callbackcontext, scope.tableview);
 
             if (options.rightclickcallback) {
                 scope.tableview.delegate('contextmenu', function (e, tableview) {
