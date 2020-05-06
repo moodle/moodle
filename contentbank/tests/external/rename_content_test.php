@@ -24,7 +24,7 @@
  * @since      Moodle 3.9
  */
 
-namespace core_contentbank;
+namespace core_contentbank\external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,9 +33,6 @@ require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.p
 require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php');
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use core_contentbank\external\delete_content;
-use core_contentbank\external\external;
-use core_contentbank\external\rename_content;
 use external_api;
 
 /**

@@ -25,12 +25,6 @@
 
 namespace core_contentbank;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.php');
-require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php');
-
 use stdClass;
 use context_system;
 use contenttype_testable\contenttype as contenttype;
@@ -63,6 +57,16 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
 
     /** @var contenttype The contenttype instance. */
     protected $contenttype;
+
+    /**
+     * Setup to ensure that fixtures are loaded.
+     */
+    public static function setupBeforeClass(): void {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.php');
+        require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php');
+    }
 
     /**
      * Tests get_contenttype_name result.

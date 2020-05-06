@@ -24,14 +24,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_contentbank;
+namespace core_contentbank\external;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php');
 
-use core_contentbank\external\delete_content;
 use dml_missing_record_exception;
 use external_api;
 use externallib_advanced_testcase;
