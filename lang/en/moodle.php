@@ -2166,7 +2166,6 @@ $string['userdescription'] = 'Description';
 $string['userdescription_help'] = 'This box enables you to enter some text about yourself which will then be displayed on your profile page for others to view.';
 $string['userdetails'] = 'User details';
 $string['userfiles'] = 'User files';
-$string['userfilterplaceholder'] = 'Search keyword or select filter';
 $string['userlist'] = 'User list';
 $string['usermenu'] = 'User menu';
 $string['username'] = 'Username';
@@ -2292,3 +2291,4 @@ $string['sitemessage'] = 'Message users';
 
 // Deprecated since Moodle 3.9.
 $string['participantscount'] = 'Number of participants: {$a}';
+$string['userfilterplaceholder'] = 'Search keyword or select filter';
