@@ -471,6 +471,7 @@ class quiz_settings extends persistent {
         $template = template::get_record(['id' => $this->get('templateid')]);
         $this->plist = new property_list($template->get('content'));
 
+        $this->process_bool_setting('allowuserquitseb');
         $this->process_quit_password_settings();
         $this->process_quit_url_from_template_or_config();
         $this->process_required_enforced_settings();
@@ -492,7 +493,6 @@ class quiz_settings extends persistent {
             $this->plist = new property_list($file->get_content());
         }
 
-        $this->process_quit_password_settings();
         $this->process_quit_url_from_template_or_config();
         $this->process_required_enforced_settings();
 
@@ -525,10 +525,25 @@ class quiz_settings extends persistent {
         $map = $this->get_bool_seb_setting_map();
         foreach ($settings as $setting => $value) {
             if (isset($map[$setting])) {
-                $enabled = $value == 1 ? true : false;
-                $this->plist->add_element_to_root($map[$setting], new CFBoolean($enabled));
+                $this->process_bool_setting($setting);
             }
         }
+    }
+
+    /**
+     * Process provided single bool setting.
+     *
+     * @param string $name Setting name matching one from self::get_bool_seb_setting_map.
+     */
+    private function process_bool_setting(string $name) {
+        $map = $this->get_bool_seb_setting_map();
+
+        if (!isset($map[$name])) {
+            throw new \coding_exception('Provided setting name can not be found in known bool settings');
+        }
+
+        $enabled = $this->raw_get($name) == 1 ? true : false;
+        $this->plist->set_or_update_value($map[$name], new CFBoolean($enabled));
     }
 
     /**
@@ -540,6 +555,8 @@ class quiz_settings extends persistent {
             // Hash quit password.
             $hashedpassword = hash('SHA256', $settings->quitpassword);
             $this->plist->add_element_to_root('hashedQuitPassword', new CFString($hashedpassword));
+        } else if (!is_null($this->plist->get_element_value('hashedQuitPassword'))) {
+            $this->plist->delete_element('hashedQuitPassword');
         }
     }
 

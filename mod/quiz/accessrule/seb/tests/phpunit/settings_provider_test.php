@@ -286,7 +286,7 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
         );
 
         $this->assertArrayHasKey('seb_allowuserquitseb', $settinghideifs);
-        $this->assertCount(2, $settinghideifs['seb_allowuserquitseb']);
+        $this->assertCount(3, $settinghideifs['seb_allowuserquitseb']);
         $this->assert_hide_if(
             $settinghideifs['seb_allowuserquitseb'][0],
             'seb_allowuserquitseb',
@@ -301,9 +301,16 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
             'eq',
             settings_provider::USE_SEB_CLIENT_CONFIG
         );
+        $this->assert_hide_if(
+            $settinghideifs['seb_allowuserquitseb'][2],
+            'seb_allowuserquitseb',
+            'seb_requiresafeexambrowser',
+            'eq',
+            settings_provider::USE_SEB_UPLOAD_CONFIG
+        );
 
         $this->assertArrayHasKey('seb_quitpassword', $settinghideifs);
-        $this->assertCount(3, $settinghideifs['seb_quitpassword']);
+        $this->assertCount(4, $settinghideifs['seb_quitpassword']);
         $this->assert_hide_if(
             $settinghideifs['seb_quitpassword'][0],
             'seb_quitpassword',
@@ -320,6 +327,13 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
         );
         $this->assert_hide_if(
             $settinghideifs['seb_quitpassword'][2],
+            'seb_quitpassword',
+            'seb_requiresafeexambrowser',
+            'eq',
+            settings_provider::USE_SEB_UPLOAD_CONFIG
+        );
+        $this->assert_hide_if(
+            $settinghideifs['seb_quitpassword'][3],
             'seb_quitpassword',
             'seb_allowuserquitseb',
             'eq',
@@ -1267,8 +1281,7 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test filter_plugin_settings method for using uploaded config.
      */
     public function test_filter_plugin_settings_for_uploaded_config() {
-        $notnulls = ['requiresafeexambrowser', 'showsebdownloadlink', 'allowuserquitseb',
-            'quitpassword', 'allowedbrowserexamkeys'];
+        $notnulls = ['requiresafeexambrowser', 'showsebdownloadlink', 'allowedbrowserexamkeys'];
         $this->assert_filter_plugin_settings(settings_provider::USE_SEB_UPLOAD_CONFIG, $notnulls);
     }
 
@@ -1353,9 +1366,6 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
             settings_provider::USE_SEB_UPLOAD_CONFIG => [
                 'filemanager_sebconfigfile' => [],
                 'seb_showsebdownloadlink' => [],
-                'seb_allowuserquitseb' => [
-                    'seb_quitpassword' => [],
-                ],
                 'seb_allowedbrowserexamkeys' => [],
             ],
             settings_provider::USE_SEB_CLIENT_CONFIG => [
