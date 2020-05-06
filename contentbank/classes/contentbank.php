@@ -24,6 +24,8 @@
 
 namespace core_contentbank;
 
+use stored_file;
+
 /**
  * Content bank class
  *
@@ -201,5 +203,33 @@ class contentbank {
         }
 
         return $contents;
+    }
+
+    /**
+     * Create content from a file information.
+     *
+     * @param \context $context Context where to upload the file and content.
+     * @param int $userid Id of the user uploading the file.
+     * @param stored_file $file The file to get information from
+     * @return content
+     */
+    public function create_content_from_file(\context $context, int $userid, stored_file $file): ?content {
+        global $USER;
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+        // Get the contenttype to manage given file's extension.
+        $filename = $file->get_filename();
+        $extension = $this->get_extension($filename);
+        $plugin = $this->get_extension_supporter($extension, $context);
+        $classname = '\\contenttype_'.$plugin.'\\contenttype';
+        $record = new \stdClass();
+        $record->name = $filename;
+        $record->usercreated = $userid;
+        $contentype = new $classname($context);
+        $content = $contentype->create_content($record);
+        $event = \core\event\contentbank_content_uploaded::create_from_record($content->get_content());
+        $event->trigger();
+        return $content;
     }
 }
