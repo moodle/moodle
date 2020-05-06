@@ -514,7 +514,6 @@ class flexible_table {
      * @return type?
      */
     function setup() {
-        global $SESSION;
 
         if (empty($this->columns) || empty($this->uniqueid)) {
             return false;
@@ -1404,6 +1403,7 @@ class flexible_table {
      * Initialise table preferences.
      */
     protected function initialise_table_preferences(): void {
+        global $SESSION;
 
         // Load any existing user preferences.
         if ($this->persistent) {
@@ -1484,6 +1484,8 @@ class flexible_table {
      * @param array $oldprefs Old preferences to compare against.
      */
     protected function save_preferences($oldprefs): void {
+        global $SESSION;
+
         if ($this->prefs != $oldprefs) {
             if ($this->persistent) {
                 set_user_preference('flextable_' . $this->uniqueid, json_encode($this->prefs));
