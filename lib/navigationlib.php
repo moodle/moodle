@@ -2918,15 +2918,14 @@ class global_navigation extends navigation_node {
             $context = $this->page->context;
             switch ($context->contextlevel) {
                 case CONTEXT_COURSECAT:
-                    $type = self::TYPE_CATEGORY;
+                    // OK, expected context level.
                     break;
                 case CONTEXT_COURSE:
-                    $type = self::TYPE_COURSE;
+                    // OK, expected context level if not on frontpage.
                     if ($COURSE->id != $SITE->id) {
                         break;
                     }
                 default:
-                    $type = self::TYPE_CUSTOM;
                     $context = $sitecontext;
             }
 
@@ -2934,7 +2933,7 @@ class global_navigation extends navigation_node {
             if (has_capability('moodle/contentbank:access', $context)) {
                 $url = new moodle_url('/contentbank/index.php', $params);
                 $node = $coursenode->add(get_string('contentbank'), $url,
-                    $type, null, 'contentbank', new pix_icon('i/contentbank', ''));
+                    self::TYPE_CUSTOM, null, 'contentbank', new pix_icon('i/contentbank', ''));
                 $node->showinflatnavigation = true;
             }
         }
