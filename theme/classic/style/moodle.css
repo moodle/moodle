@@ -12112,24 +12112,25 @@ body:not(.editing) .sitetopic ul.section {
 
 .course-content ul.topics,
 .course-content ul.weeks {
-  padding: 0; }
+  padding: 0;
+  margin: 0;
+  list-style: none; }
   .course-content ul.topics li.section,
   .course-content ul.weeks li.section {
     margin-top: 1rem;
     padding-bottom: 1rem; }
-    .course-content ul.topics li.section .content,
-    .course-content ul.weeks li.section .content {
-      margin: 0;
-      padding: 0; }
     .course-content ul.topics li.section .summary,
     .course-content ul.topics li.section .content > .availabilityinfo,
     .course-content ul.weeks li.section .summary,
     .course-content ul.weeks li.section .content > .availabilityinfo {
       margin-left: 25px; }
     .course-content ul.topics li.section .left,
-    .course-content ul.weeks li.section .left {
-      padding-top: 0;
-      text-align: right; }
+    .course-content ul.topics li.section .right,
+    .course-content ul.weeks li.section .left,
+    .course-content ul.weeks li.section .right {
+      padding: 0 6px 0;
+      text-align: right;
+      width: auto; }
 
 .course-content {
   margin-top: 0; }
