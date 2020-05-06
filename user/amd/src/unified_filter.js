@@ -16,6 +16,7 @@
 /**
  * Unified filter page JS module for the course participants page.
  *
+ * @deprecated since Moodle 3.9 MDL-68612 - user unified filter replaced by participants filter.
  * @module     core_user/unified_filter
  * @package    core_user
  * @copyright  2017 Jun Pataleta
@@ -37,6 +38,7 @@ define(['jquery', 'core/form-autocomplete', 'core/str', 'core/notification'],
     /**
      * Init function.
      *
+     * @deprecated since Moodle 3.9 MDL-68612 - user unified filter replaced by participants filter.
      * @method init
      * @private
      */
@@ -117,6 +119,7 @@ define(['jquery', 'core/form-autocomplete', 'core/str', 'core/notification'],
     /**
      * Return the unified user filter form.
      *
+     * @deprecated since Moodle 3.9 MDL-68612 - user unified filter replaced by participants filter.
      * @method getForm
      * @return {DOMElement}
      */
