@@ -73,6 +73,7 @@
             type="button"
           >
             {{# pix }} info, gradingform_guide {{/ pix }}
+            <span class="sr-only">{{#str}}informationforcriterion, gradingform_guide, {{name}}{{/str}}</span>
         </button>
         <button class="criterion-toggle btn btn-icon icon-no-margin text-reset p-0 font-weight-bold mb-0 ml-auto"
                 type="button"
@@ -103,16 +104,21 @@
         <div class="form-group">
           <label for="gradingform_guide-{{uniqid}}-criteria-{{id}}-score">{{#str}}outof, gradingform_guide, {{maxscore}}{{/str}}</label>
           <input class="form-control" type="number" name="advancedgrading[criteria][{{id}}][score]" value="{{score}}"
-              id="gradingform_guide-{{uniqid}}-criteria-{{id}}-score"
-              aria-describedby="gradingform_guide-{{uniqid}}-help-{{id}}-score">
-          <small id="gradingform_guide-{{uniqid}}-help-{{id}}-score" class="sr-only">{{#str}}grade_help, gradingform_guide{{/str}}</small>
+            id="gradingform_guide-{{uniqid}}-criteria-{{id}}-score"
+            aria-describedby="gradingform_guide-{{uniqid}}-help-{{id}}-score"
+            min="0" max="{{maxscore}}"
+            aria-label="{{#str}}scoreforcriterion, gradingform_guide, {{name}}{{/str}}">
+          <span id="gradingform_guide-{{uniqid}}-help-{{id}}-score" aria-hidden="true" class="sr-only">{{!
+            }}{{#str}}score_help, gradingform_guide, { "criterion":  {{# quote }}{{ name }}{{/ quote }}, "maxscore": {{# quote }}{{ maxscore }}{{/ quote }} }{{/str}}
+          </span>
         </div>
         <div class="form-group ">
-          <label class="text-muted" for="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark">{{#str}}additionalcomments, gradingform_guide{{/str}}</label>
+          <label for="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark">{{#str}}additionalcomments, gradingform_guide{{/str}}</label>
           <div class="input-group mb-3 form-inset form-inset-right">
             <textarea class="form-control" type="text" name="advancedgrading[criteria][{{id}}][remark]"
                 id="gradingform_guide-{{uniqid}}-criteria-{{id}}-remark"
                 aria-describedby="gradingform_guide-{{uniqid}}-help-{{id}}-remark"
+                aria-label="{{#str}}additionalcommentsforcriterion, gradingform_guide, {{name}}{{/str}}"
                 data-gradingform-guide-role="remark"
                 rows="2"
                 data-max-rows="5"
@@ -128,6 +134,7 @@
                 type="button"
               >
                   {{#pix}}plus, gradingform_guide{{/pix}}
+                  <span class="sr-only">{{#str}}commentpickerforcriterion, gradingform_guide, {{name}}{{/str}}</span>
               </button>
             {{/hascomments}}
           </div>
@@ -143,7 +150,7 @@
               </div>
             </div>
           {{/hascomments}}
-          <small id="gradingform_guide-{{uniqid}}-help-{{id}}-remark" class="sr-only">{{#str}}grade_help, gradingform_guide{{/str}}</small>
+          <span id="gradingform_guide-{{uniqid}}-help-{{id}}-remark" aria-hidden="true" class="sr-only">{{#str}}remark_help, gradingform_guide{{/str}}</span>
         </div>
       </div>
     </div>
