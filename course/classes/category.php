@@ -2169,7 +2169,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         $event = \core\event\course_category_deleted::create(array(
             'objectid' => $this->id,
             'context' => $context,
-            'other' => array('name' => $this->name)
+            'other' => array('name' => $this->name, 'contentmovedcategoryid' => $newparentid)
         ));
         $event->set_coursecat($this);
         $event->trigger();
