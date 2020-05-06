@@ -53,7 +53,7 @@ class block_recent_activity_renderer extends plugin_renderer_base {
         $output .= html_writer::tag('div',
                 html_writer::link(new moodle_url('/course/recent.php', array('id' => $course->id)),
                     get_string('recentactivityreport')),
-                array('class' => 'activityhead'));
+                array('class' => 'activityhead mb-3'));
 
         $content = false;
 
@@ -79,7 +79,7 @@ class block_recent_activity_renderer extends plugin_renderer_base {
         // Next, have there been any modifications to the course structure?
         if (!empty($structuralchanges)) {
             $content = true;
-            $output .= $this->heading(get_string("courseupdates").':', 3);
+            $output .= $this->heading(get_string("courseupdates") . ':', 6);
             foreach ($structuralchanges as $changeinfo => $change) {
                 $output .= $this->structural_change($change);
             }
