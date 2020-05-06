@@ -181,12 +181,12 @@ abstract class contenttype {
     /**
      * Returns the HTML code to render the icon for content bank contents.
      *
-     * @param string $contentname   The contentname to add as alt value to the icon.
+     * @param  content $content The content to be displayed.
      * @return string               HTML code to render the icon
      */
-    public function get_icon(string $contentname): string {
+    public function get_icon(content $content): string {
         global $OUTPUT;
-        return $OUTPUT->pix_icon('f/unknown-64', $contentname, 'moodle', ['class' => 'iconsize-big']);
+        return $OUTPUT->image_url('f/unknown-64', 'moodle')->out(false);
     }
 
     /**
