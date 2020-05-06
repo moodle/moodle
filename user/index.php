@@ -43,7 +43,7 @@ $contextid    = optional_param('contextid', 0, PARAM_INT); // One of this or.
 $courseid     = optional_param('id', 0, PARAM_INT); // This are required.
 $newcourse    = optional_param('newcourse', false, PARAM_BOOL);
 $roleid       = optional_param('roleid', 0, PARAM_INT);
-$groupparam   = optional_param('group', 0, PARAM_INT);
+$urlgroupid   = optional_param('group', 0, PARAM_INT);
 
 $PAGE->set_url('/user/index.php', array(
         'page' => $page,
@@ -102,137 +102,47 @@ if ($node) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('participants'));
 
-// Get the currently applied filters.
-$filtersapplied = optional_param_array('unified-filters', [], PARAM_NOTAGS);
-$filterwassubmitted = optional_param('unified-filter-submitted', 0, PARAM_BOOL);
-
-// If they passed a role make sure they can view that role.
-if ($roleid) {
-    $viewableroles = get_profile_roles($context);
-
-    // Check if the user can view this role.
-    if (array_key_exists($roleid, $viewableroles)) {
-        $filtersapplied[] = USER_FILTER_ROLE . ':' . $roleid;
-    } else {
-        $roleid = 0;
-    }
-}
-
-// Default group ID.
-$groupid = false;
-$canaccessallgroups = has_capability('moodle/site:accessallgroups', $context);
-if ($course->groupmode != NOGROUPS) {
-    if ($canaccessallgroups) {
-        // Change the group if the user can access all groups and has specified group in the URL.
-        if ($groupparam) {
-            $groupid = $groupparam;
-        }
-    } else {
-        // Otherwise, get the user's default group.
-        $groupid = groups_get_course_group($course, true);
-        if ($course->groupmode == SEPARATEGROUPS && !$groupid) {
-            // The user is not in the group so show message and exit.
-            echo $OUTPUT->notification(get_string('notingroup'));
-            echo $OUTPUT->footer();
-            exit;
-        }
-    }
-}
-$hasgroupfilter = false;
-$lastaccess = 0;
-$searchkeywords = [];
-$enrolid = 0;
+$filterset = new \core_user\table\participants_filterset();
+$filterset->add_filter(new integer_filter('courseid', filter::JOINTYPE_DEFAULT, [(int)$course->id]));
 
 $participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
 
-$filterset = new \core_user\table\participants_filterset();
-$filterset->add_filter(new integer_filter('courseid', filter::JOINTYPE_DEFAULT, [(int)$course->id]));
-$enrolfilter = new integer_filter('enrolments');
-$groupfilter = new integer_filter('groups');
-$keywordfilter = new string_filter('keywords');
-$lastaccessfilter = new integer_filter('accesssince');
-$rolefilter = new integer_filter('roles');
-$statusfilter = new integer_filter('status');
+$canaccessallgroups = has_capability('moodle/site:accessallgroups', $context);
+$filtergroupids = $urlgroupid ? [$urlgroupid] : [];
 
-foreach ($filtersapplied as $filter) {
-    $filtervalue = explode(':', $filter, 2);
-    $value = null;
-    if (count($filtervalue) == 2) {
-        $key = clean_param($filtervalue[0], PARAM_INT);
-        $value = clean_param($filtervalue[1], PARAM_INT);
-    } else {
-        // Search string.
-        $key = USER_FILTER_STRING;
-        $value = clean_param($filtervalue[0], PARAM_TEXT);
-    }
+// Force group filtering if user should only see a subset of groups' users.
+if ($course->groupmode == SEPARATEGROUPS && !$canaccessallgroups) {
+    $filtergroupids = array_keys(groups_get_all_groups($course->id, $USER->id));
 
-    switch ($key) {
-        case USER_FILTER_ENROLMENT:
-            $enrolid = $value;
-            $enrolfilter->add_filter_value($value);
-            break;
-        case USER_FILTER_GROUP:
-            $groupid = $value;
-            $groupfilter->add_filter_value($value);
-            $hasgroupfilter = true;
-            break;
-        case USER_FILTER_LAST_ACCESS:
-            $lastaccess = $value;
-            $lastaccessfilter->add_filter_value($value);
-            break;
-        case USER_FILTER_ROLE:
-            $roleid = $value;
-            $rolefilter->add_filter_value($value);
-            break;
-        case USER_FILTER_STATUS:
-            // We only accept active/suspended statuses.
-            if ($value == ENROL_USER_ACTIVE || $value == ENROL_USER_SUSPENDED) {
-                $status = $value;
-                $statusfilter->add_filter_value($value);
-            }
-            break;
-        default:
-            // Search string.
-            $searchkeywords[] = $value;
-            $keywordfilter->add_filter_value($value);
-            break;
-    }
-}
-// If course supports groups we may need to set a default.
-if (!empty($groupid)) {
-    if ($canaccessallgroups) {
-        // User can access all groups, let them filter by whatever was selected.
-        $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
-        $groupfilter->add_filter_value((int)$groupid);
-    } else if (!$filterwassubmitted && $course->groupmode == VISIBLEGROUPS) {
-        // If we are in a course with visible groups and the user has not submitted anything and does not have
-        // access to all groups, then set a default group.
-        $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
-        $groupfilter->add_filter_value((int)$groupid);
-    } else if (!$hasgroupfilter && $course->groupmode != VISIBLEGROUPS) {
-        // The user can't access all groups and has not set a group filter in a course where the groups are not visible
-        // then apply a default group filter.
-        $filtersapplied[] = USER_FILTER_GROUP . ':' . $groupid;
-        $groupfilter->add_filter_value((int)$groupid);
-    } else if (!$hasgroupfilter) { // No need for the group id to be set.
-        $groupid = false;
+    if (empty($filtergroupids)) {
+        // The user is not in a group so show message and exit.
+        echo $OUTPUT->notification(get_string('notingroup'));
+        echo $OUTPUT->footer();
+        exit();
     }
 }
 
-if ($groupid > 0 && ($course->groupmode != SEPARATEGROUPS || $canaccessallgroups)) {
+// Apply groups filter if included in URL or forced due to lack of capabilities.
+if (!empty($filtergroupids)) {
+    $filterset->add_filter(new integer_filter('groups', filter::JOINTYPE_DEFAULT, $filtergroupids));
+}
+
+// Display single group information if requested in the URL.
+if ($urlgroupid > 0 && ($course->groupmode != SEPARATEGROUPS || $canaccessallgroups)) {
     $grouprenderer = $PAGE->get_renderer('core_group');
-    $groupdetailpage = new \core_group\output\group_details($groupid);
+    $groupdetailpage = new \core_group\output\group_details($urlgroupid);
     echo $grouprenderer->group_details($groupdetailpage);
 }
 
-// Should use this variable so that we don't break stuff every time a variable is added or changed.
-$baseurl = new moodle_url('/user/index.php', array(
-        'contextid' => $context->id,
-        'id' => $course->id,
-        'perpage' => $perpage));
+// Filter by role if passed via URL (used on profile page).
+if ($roleid) {
+    $viewableroles = get_profile_roles($context);
 
-$participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
-$participanttable->define_baseurl($baseurl);
+    // Apply filter if the user can view this role.
+    if (array_key_exists($roleid, $viewableroles)) {
+        $filterset->add_filter(new integer_filter('roles', filter::JOINTYPE_DEFAULT, [$roleid]));
+    }
+}
 
 // Manage enrolments.
 $manager = new course_enrolment_manager($PAGE, $course);
@@ -242,49 +152,17 @@ $enrolbuttonsout = '';
 foreach ($enrolbuttons as $enrolbutton) {
     $enrolbuttonsout .= $enrolrenderer->render($enrolbutton);
 }
+
 echo html_writer::div($enrolbuttonsout, 'd-flex justify-content-end', [
     'data-region' => 'wrapper',
     'data-table-uniqueid' => $participanttable->uniqueid,
 ]);
-
-// Render the unified filter.
-$renderer = $PAGE->get_renderer('core_user');
-echo $renderer->unified_filter($course, $context, $filtersapplied, $baseurl);
 
 // Render the user filters.
 $userrenderer = $PAGE->get_renderer('core_user');
 echo $userrenderer->participants_filter($context, $participanttable->uniqueid);
 
 echo '<div class="userlist">';
-
-// Add filters to the baseurl after creating unified_filter to avoid losing them.
-foreach (array_unique($filtersapplied) as $filterix => $filter) {
-    $baseurl->param('unified-filters[' . $filterix . ']', $filter);
-}
-
-if (count($groupfilter)) {
-    $filterset->add_filter($groupfilter);
-}
-
-if (count($lastaccessfilter)) {
-    $filterset->add_filter($lastaccessfilter);
-}
-
-if (count($rolefilter)) {
-    $filterset->add_filter($rolefilter);
-}
-
-if (count($enrolfilter)) {
-    $filterset->add_filter($enrolfilter);
-}
-
-if (count($statusfilter)) {
-    $filterset->add_filter($statusfilter);
-}
-
-if (count($keywordfilter)) {
-    $filterset->add_filter($keywordfilter);
-}
 
 // Do this so we can get the total number of rows.
 ob_start();
@@ -317,8 +195,10 @@ echo html_writer::tag(
 
 echo $participanttablehtml;
 
-$perpageurl = clone($baseurl);
-$perpageurl->remove_params('perpage');
+$perpageurl = new moodle_url('/user/index.php', [
+    'contextid' => $context->id,
+    'id' => $course->id,
+]);
 $perpagesize = DEFAULT_PAGE_SIZE;
 $perpagevisible = false;
 $perpagestring = '';
