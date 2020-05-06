@@ -330,24 +330,23 @@ body:not(.editing)  .sitetopic ul.section {
 .course-content ul.topics,
 .course-content ul.weeks {
     padding: 0;
+    margin: 0;
+    list-style: none;
 
     li.section {
         margin-top: $spacer;
         padding-bottom: $spacer;
-
-        .content {
-            margin: 0;
-            padding: 0;
-        }
 
         .summary,
         .content > .availabilityinfo {
             margin-left: 25px;
         }
 
-        .left {
-            padding-top: 0;
+        .left,
+        .right {
+            padding: 0 6px 0;
             text-align: right;
+            width: auto;
         }
     }
 }
