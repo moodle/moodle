@@ -24,6 +24,12 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
+
+    $notify = new \core\output\notification(
+        get_string('moodleappsportallimitswarning', 'message_airnotifier'),
+        \core\output\notification::NOTIFY_WARNING);
+    $settings->add(new admin_setting_heading('tool_mobile/moodleappsportalfeaturesappearance', '', $OUTPUT->render($notify)));
+
     // The processor should be enabled by the same enable mobile setting.
     $settings->add(new admin_setting_configtext('airnotifierurl',
                     get_string('airnotifierurl', 'message_airnotifier'),
