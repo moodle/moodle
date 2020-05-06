@@ -776,7 +776,7 @@ function has_capability_in_accessdata($capability, context $context, array &$acc
     // Build $paths as a list of current + all parent "paths" with order bottom-to-top
     $path = $context->path;
     $paths = array($path);
-    while($path = rtrim($path, '0123456789')) {
+    while ($path = rtrim($path, '0123456789')) {
         $path = rtrim($path, '/');
         if ($path === '') {
             break;
@@ -1106,7 +1106,7 @@ function remove_temp_course_roles(context_course $coursecontext) {
     $ras = $DB->get_records_sql($sql, array('contextid'=>$coursecontext->id, 'userid'=>$USER->id));
 
     $USER->access['ra'][$coursecontext->path] = array();
-    foreach($ras as $r) {
+    foreach ($ras as $r) {
         $USER->access['ra'][$coursecontext->path][(int)$r->id] = (int)$r->id;
     }
 }
@@ -1641,7 +1641,7 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
     }
 
     $ras = $DB->get_records('role_assignments', $params);
-    foreach($ras as $ra) {
+    foreach ($ras as $ra) {
         $DB->delete_records('role_assignments', array('id'=>$ra->id));
         if ($context = context::instance_by_id($ra->contextid, IGNORE_MISSING)) {
             // Role assignments have changed, so mark user as dirty.
@@ -1675,10 +1675,10 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
         if ($context) {
             $contexts = $context->get_child_contexts();
             $mparams = $params;
-            foreach($contexts as $context) {
+            foreach ($contexts as $context) {
                 $mparams['contextid'] = $context->id;
                 $ras = $DB->get_records('role_assignments', $mparams);
-                foreach($ras as $ra) {
+                foreach ($ras as $ra) {
                     $DB->delete_records('role_assignments', array('id'=>$ra->id));
                     // Role assignments have changed, so mark user as dirty.
                     mark_user_dirty($ra->userid);
@@ -1956,7 +1956,7 @@ function can_access_course(stdClass $course, $user = null, $withcapability = '',
     // if not enrolled try to gain temporary guest access
     $instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder, id ASC');
     $enrols = enrol_get_plugins(true);
-    foreach($instances as $instance) {
+    foreach ($instances as $instance) {
         if (!isset($enrols[$instance->enrol])) {
             continue;
         }
@@ -2045,7 +2045,7 @@ function get_default_capabilities($archetype) {
             $alldefs = array_merge($alldefs, load_capability_def($cap['component']));
         }
     }
-    foreach($alldefs as $name=>$def) {
+    foreach ($alldefs as $name=>$def) {
         // Use array 'archetypes if available. Only if not specified, use 'legacy'.
         if (isset($def['archetypes'])) {
             if (isset($def['archetypes'][$archetype])) {
@@ -2166,7 +2166,7 @@ function reset_role_capabilities($roleid) {
     $DB->delete_records('role_capabilities',
             array('roleid' => $roleid, 'contextid' => $systemcontext->id));
 
-    foreach($defaultcaps as $cap=>$permission) {
+    foreach ($defaultcaps as $cap=>$permission) {
         assign_capability($cap, $permission, $roleid, $systemcontext->id);
     }
 
@@ -2193,7 +2193,7 @@ function update_capabilities($component = 'moodle') {
     $storedcaps = array();
 
     $filecaps = load_capability_def($component);
-    foreach($filecaps as $capname=>$unused) {
+    foreach ($filecaps as $capname=>$unused) {
         if (!preg_match('|^[a-z]+/[a-z_0-9]+:[a-z_0-9]+$|', $capname)) {
             debugging("Coding problem: Invalid capability name '$capname', use 'clonepermissionsfrom' field for migration.");
         }
@@ -2323,7 +2323,7 @@ function capabilities_cleanup($component, $newcapdef = null) {
 
                 // Delete from roles.
                 if ($roles = get_roles_with_capability($cachedcap->name)) {
-                    foreach($roles as $role) {
+                    foreach ($roles as $role) {
                         if (!unassign_capability($cachedcap->name, $role->id)) {
                             print_error('cannotunassigncap', 'error', '', (object)array('cap'=>$cachedcap->name, 'role'=>$role->name));
                         }
@@ -3468,7 +3468,7 @@ function get_with_capability_join(context $context, $capability, $useridcolumn) 
             if (empty($defs[$cap][$path])) {
                 continue;
             }
-            foreach($defs[$cap][$path] as $roleid => $perm) {
+            foreach ($defs[$cap][$path] as $roleid => $perm) {
                 if ($perm == CAP_PROHIBIT) {
                     $access[$cap][$roleid] = CAP_PROHIBIT;
                     continue;
@@ -4077,7 +4077,7 @@ function get_user_capability_course($capability, $userid = null, $doanything = t
     $fieldlist = '';
     if ($fieldsexceptid) {
         $fields = array_map('trim', explode(',', $fieldsexceptid));
-        foreach($fields as $field) {
+        foreach ($fields as $field) {
             // Context fields have a different alias.
             if (strpos($field, 'ctx') === 0) {
                 switch($field) {
@@ -4100,7 +4100,7 @@ function get_user_capability_course($capability, $userid = null, $doanything = t
     if ($orderby) {
         $fields = explode(',', $orderby);
         $orderby = '';
-        foreach($fields as $field) {
+        foreach ($fields as $field) {
             if ($orderby) {
                 $orderby .= ',';
             }
@@ -4590,7 +4590,7 @@ function get_roles_with_cap_in_context($context, $capability) {
 
     $forbidden = array();
     $needed    = array();
-    foreach($capdefs as $def) {
+    foreach ($capdefs as $def) {
         if (isset($forbidden[$def->roleid])) {
             continue;
         }
@@ -4610,7 +4610,7 @@ function get_roles_with_cap_in_context($context, $capability) {
     unset($capdefs);
 
     // remove all those roles not allowing
-    foreach($needed as $key=>$value) {
+    foreach ($needed as $key=>$value) {
         if (!$value) {
             unset($needed[$key]);
         } else {
@@ -4632,7 +4632,7 @@ function get_roles_with_cap_in_context($context, $capability) {
 function get_roles_with_caps_in_context($context, $capabilities) {
     $neededarr = array();
     $forbiddenarr = array();
-    foreach($capabilities as $caprequired) {
+    foreach ($capabilities as $caprequired) {
         list($neededarr[], $forbiddenarr[]) = get_roles_with_cap_in_context($context, $caprequired);
     }
 
@@ -4746,7 +4746,7 @@ function role_change_permission($roleid, $context, $capname, $permission) {
           ORDER BY ctx.depth DESC";
 
     if ($existing = $DB->get_records_sql($sql, $params)) {
-        foreach($existing as $e) {
+        foreach ($existing as $e) {
             if ($e->permission == CAP_PROHIBIT) {
                 // prohibit can not be overridden, no point in changing anything
                 return;
@@ -4903,7 +4903,7 @@ abstract class context extends stdClass implements IteratorAggregate {
 
         if (self::$cache_count >= CONTEXT_CACHE_MAX_SIZE) {
             $i = 0;
-            foreach(self::$cache_contextsbyid as $ctx) {
+            foreach (self::$cache_contextsbyid as $ctx) {
                 $i++;
                 if ($i <= 100) {
                     // we want to keep the first contexts to be loaded on this page, hopefully they will be needed again later
