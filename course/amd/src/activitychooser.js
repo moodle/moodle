@@ -79,7 +79,13 @@ const registerListenerEvents = (courseId) => {
         document.addEventListener(event, async(e) => {
             if (e.target.closest(selectors.elements.sectionmodchooser)) {
                 const data = await fetchModuleData();
-                const caller = e.target.closest(selectors.elements.sectionmodchooser);
+                // We need to know who called this.
+                // Standard courses use the ID in the main section info.
+                const sectionDiv = e.target.closest(selectors.elements.section);
+                // Front page courses need some special handling.
+                const button = e.target.closest(selectors.elements.sectionmodchooser);
+                // If we don't have a section ID use the fallback ID.
+                const caller = sectionDiv || button;
                 const favouriteFunction = partiallyAppliedFavouriteManager(data, caller.dataset.sectionid);
                 const builtModuleData = sectionIdMapper(data, caller.dataset.sectionid);
                 const sectionModal = await modalBuilder(builtModuleData);
