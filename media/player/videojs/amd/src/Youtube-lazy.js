@@ -1,13 +1,17 @@
 /* The MIT License (MIT)
+
 Copyright (c) 2014-2015 Benoit Tremblay <trembl.ben@gmail.com>
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
+
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -363,7 +367,7 @@ THE SOFTWARE. */
         options.startSeconds = this.options_.start;
       }
       if (this.options_.end) {
-        options.endEnd = this.options_.end;
+        options.endSeconds = this.options_.end;
       }
       this.ytPlayer.loadVideoById(options);
     },
@@ -376,7 +380,7 @@ THE SOFTWARE. */
         options.startSeconds = this.options_.start;
       }
       if (this.options_.end) {
-        options.endEnd = this.options_.end;
+        options.endSeconds = this.options_.end;
       }
       this.ytPlayer.cueVideoById(options);
     },
@@ -736,6 +740,11 @@ THE SOFTWARE. */
     var loaded = false;
     var tag = document.createElement('script');
     var firstScriptTag = document.getElementsByTagName('script')[0];
+    if (!firstScriptTag) {
+      // when loaded in jest without jsdom setup it doesn't get any element.
+      // In jest it doesn't really make sense to do anything, because no one is watching youtube in jest
+      return;
+    }
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     tag.onload = function () {
       if (!loaded) {
