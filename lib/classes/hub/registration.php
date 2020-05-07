@@ -362,6 +362,14 @@ class registration {
             api::update_registration($siteinfo);
             self::$registration = null;
         }
+
+        // Finally, allow other plugins to perform actions once a site is registered for first time.
+        $pluginsfunction = get_plugins_with_function('post_site_registration_confirmed');
+        foreach ($pluginsfunction as $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($registration->id);
+            }
+        }
     }
 
     /**
