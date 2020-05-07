@@ -75,18 +75,66 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
             throw new portfolio_plugin_exception('noauthtoken', 'portfolio_googledocs');
         }
 
+        // Create a parent directory for the export to Google Drive so that all files from the
+        // same export can be contained in one place for easy downloading.
+        $now = time();
+        $exportdirectoryname = $this->exporter->get('caller')->display_name();
+        $exportdirectoryname = strtolower(join('-', explode(' ', $exportdirectoryname)));
+        $exportdirectoryname = "/portfolio-export-{$exportdirectoryname}-{$now}";
+        $directoryids = [];
+
         foreach ($this->exporter->get_tempfiles() as $file) {
+            $filepath = $exportdirectoryname . $file->get_filepath();
+            $directories = array_filter(explode('/', $filepath), function($part) {
+                return !empty($part);
+            });
+
+            // Track how deep into the directory structure we are. This is the key
+            // we'll use to keep track of previously created directory ids.
+            $path = '/';
+            // Track the parent directory so that we can look up it's id for creating
+            // subdirectories in Google Drive.
+            $parentpath = null;
+
+            // Create each of the directories in Google Drive that we need.
+            foreach ($directories as $directory) {
+                // Update the current path for this file.
+                $path .= "${directory}/";
+
+                if (!isset($directoryids[$path])) {
+                    // This directory hasn't been created yet so let's go ahead and create it.
+                    $parents = !is_null($parentpath) ? [$directoryids[$parentpath]] : [];
+                    try {
+                        $filemetadata = new Google_Service_Drive_DriveFile([
+                            'title' => $directory,
+                            'mimeType' => 'application/vnd.google-apps.folder',
+                            'parents' => $parents
+                        ]);
+
+                        $drivefile = $this->service->files->insert($filemetadata, ['fields' => 'id']);
+                        $directoryids[$path] = ['id' => $drivefile->id];
+                    } catch (Exception $e) {
+                        throw new portfolio_plugin_exception('sendfailed', 'portfolio_gdocs', $directory);
+                    }
+                }
+
+                $parentpath = $path;
+            }
+
             try {
                 // Create drivefile object and fill it with data.
                 $drivefile = new Google_Service_Drive_DriveFile();
                 $drivefile->setTitle($file->get_filename());
                 $drivefile->setMimeType($file->get_mimetype());
+                // Add the parent directory id to make sure the file gets created in the correct
+                // directory in Google Drive.
+                $drivefile->setParents([$directoryids[$filepath]]);
 
                 $filecontent = $file->get_content();
-                $createdfile = $this->service->files->insert($drivefile,
-                                                            array('data' => $filecontent,
-                                                                  'mimeType' => $file->get_mimetype(),
-                                                                  'uploadType' => 'multipart'));
+                $this->service->files->insert($drivefile,
+                                              array('data' => $filecontent,
+                                                    'mimeType' => $file->get_mimetype(),
+                                                    'uploadType' => 'multipart'));
             } catch ( Exception $e ) {
                 throw new portfolio_plugin_exception('sendfailed', 'portfolio_gdocs', $file->get_filename());
             }
