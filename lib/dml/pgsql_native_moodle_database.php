@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/moodle_database.php');
+require_once(__DIR__.'/moodle_read_slave_trait.php');
 require_once(__DIR__.'/pgsql_native_moodle_recordset.php');
 require_once(__DIR__.'/pgsql_native_moodle_temptables.php');
 
@@ -36,6 +37,14 @@ require_once(__DIR__.'/pgsql_native_moodle_temptables.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pgsql_native_moodle_database extends moodle_database {
+    use moodle_read_slave_trait {
+        select_db_handle as read_slave_select_db_handle;
+        can_use_readonly as read_slave_can_use_readonly;
+        query_start as read_slave_query_start;
+    }
+
+    /** @var array $dbhcursor keep track of open cursors */
+    private $dbhcursor = [];
 
     /** @var resource $pgsql database resource */
     protected $pgsql     = null;
@@ -110,7 +119,6 @@ class pgsql_native_moodle_database extends moodle_database {
 
     /**
      * Connect to db
-     * Must be called before other methods.
      * @param string $dbhost The database host.
      * @param string $dbuser The database username.
      * @param string $dbpass The database username's password.
@@ -120,7 +128,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_connection_exception if error
      */
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
+    public function raw_connect(string $dbhost, string $dbuser, string $dbpass, string $dbname, $prefix, array $dboptions=null): bool {
         if ($prefix == '' and !$this->external) {
             //Enforce prefixes for everybody but mysql
             throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
@@ -158,6 +166,10 @@ class pgsql_native_moodle_database extends moodle_database {
                 $port = "port ='".$this->dboptions['dbport']."'";
             }
             $connection = "host='$this->dbhost' $port user='$this->dbuser' password='$pass' dbname='$this->dbname'";
+        }
+
+        if (!empty($this->dboptions['connecttimeout'])) {
+            $connection .= " connect_timeout=".$this->dboptions['connecttimeout'];
         }
 
         if (empty($this->dboptions['dbhandlesoptions'])) {
@@ -232,6 +244,64 @@ class pgsql_native_moodle_database extends moodle_database {
         }
     }
 
+    /**
+     * Gets db handle currently used with queries
+     * @return resource
+     */
+    protected function get_db_handle() {
+        return $this->pgsql;
+    }
+
+    /**
+     * Sets db handle to be used with subsequent queries
+     * @param resource $dbh
+     * @return void
+     */
+    protected function set_db_handle($dbh): void {
+        $this->pgsql = $dbh;
+    }
+
+    /**
+     * Select appropriate db handle - readwrite or readonly
+     * @param int $type type of query
+     * @param string $sql
+     * @return void
+     */
+    protected function select_db_handle(int $type, string $sql): void {
+        $this->read_slave_select_db_handle($type, $sql);
+
+        if (preg_match('/^DECLARE (crs\w*) NO SCROLL CURSOR/', $sql, $match)) {
+            $cursor = $match[1];
+            $this->dbhcursor[$cursor] = $this->pgsql;
+        }
+        if (preg_match('/^(?:FETCH \d+ FROM|CLOSE) (crs\w*)\b/', $sql, $match)) {
+            $cursor = $match[1];
+            $this->pgsql = $this->dbhcursor[$cursor];
+        }
+    }
+
+    /**
+     * Check if The query qualifies for readonly connection execution
+     * Logging queries are exempt, those are write operations that circumvent
+     * standard query_start/query_end paths.
+     * @param int $type type of query
+     * @param string $sql
+     * @return bool
+     */
+    protected function can_use_readonly(int $type, string $sql): bool {
+        // ... pg_*lock queries always go to master.
+        if (preg_match('/\bpg_\w*lock/', $sql)) {
+            return false;
+        }
+
+        // ... a nuisance - temptables use this.
+        if (preg_match('/\bpg_constraint/', $sql) && $this->temptables->get_temptables()) {
+            return false;
+        }
+
+        return $this->read_slave_can_use_readonly($type, $sql);
+
+    }
 
     /**
      * Called before each db query.
@@ -242,8 +312,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return void
      */
     protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
-        parent::query_start($sql, $params, $type, $extrainfo);
-        // pgsql driver tents to send debug to output, we do not need that ;-)
+        $this->read_slave_query_start($sql, $params, $type, $extrainfo);
+        // pgsql driver tends to send debug to output, we do not need that.
         $this->last_error_reporting = error_reporting(0);
     }
 
@@ -733,8 +803,6 @@ class pgsql_native_moodle_database extends moodle_database {
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
-        $this->query_start($sql, $params, SQL_QUERY_SELECT);
-
         // For any query that doesn't explicitly specify a limit, we must use cursors to stop it
         // loading the entire thing (unless the config setting is turned off).
         $usecursors = !$limitnum && ($this->get_fetch_buffer_size() > 0);
@@ -747,11 +815,13 @@ class pgsql_native_moodle_database extends moodle_database {
 
             // Do the query to a cursor.
             $sql = 'DECLARE ' . $cursorname . ' NO SCROLL CURSOR WITH HOLD FOR ' . $sql;
-            $result = pg_query_params($this->pgsql, $sql, $params);
         } else {
-            $result = pg_query_params($this->pgsql, $sql, $params);
             $cursorname = '';
         }
+
+        $this->query_start($sql, $params, SQL_QUERY_SELECT);
+
+        $result = pg_query_params($this->pgsql, $sql, $params);
 
         $this->query_end($result);
         if ($usecursors) {

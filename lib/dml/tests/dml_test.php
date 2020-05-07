@@ -5140,6 +5140,16 @@ class core_dml_testcase extends database_driver_testcase {
         if (!isset($cfg->dboptions)) {
             $cfg->dboptions = array();
         }
+        // If we have a readonly slave situation, we need to either observe
+        // the latency, or if the latency is not specified we need to take
+        // the slave out because the table may not have propagated yet.
+        if (isset($cfg->dboptions['readonly'])) {
+            if (isset($cfg->dboptions['readonly']['latency'])) {
+                usleep(intval(1000000 * $cfg->dboptions['readonly']['latency']));
+            } else {
+                unset($cfg->dboptions['readonly']);
+            }
+        }
         $DB2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
         $DB2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
 

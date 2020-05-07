@@ -108,13 +108,13 @@ abstract class moodle_database {
     /** @var float Last time in seconds with millisecond precision. */
     protected $last_time;
     /** @var bool Flag indicating logging of query in progress. This helps prevent infinite loops. */
-    private $loggingquery = false;
+    protected $loggingquery = false;
 
     /** @var bool True if the db is used for db sessions. */
     protected $used_for_db_sessions = false;
 
     /** @var array Array containing open transactions. */
-    private $transactions = array();
+    protected $transactions = array();
     /** @var bool Flag used to force rollback of all current transactions. */
     private $force_rollback = false;
 
@@ -2715,6 +2715,22 @@ abstract class moodle_database {
      */
     public function perf_get_reads() {
         return $this->reads;
+    }
+
+    /**
+     * Returns whether we want to connect to slave database for read queries.
+     * @return bool Want read only connection
+     */
+    public function want_read_slave(): bool {
+        return false;
+    }
+
+    /**
+     * Returns the number of reads before first write done by this database.
+     * @return int Number of reads.
+     */
+    public function perf_get_reads_slave(): int {
+        return 0;
     }
 
     /**
