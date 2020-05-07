@@ -80,6 +80,8 @@ if ($mform->is_cancelled()) {
         $file = reset($files);
         $content = $cb->create_content_from_file($context, $USER->id, $file);
         file_save_draft_area_files($formdata->file, $contextid, 'contentbank', 'public', $content->get_id());
+        $viewurl = new \moodle_url('/contentbank/view.php', ['id' => $content->get_id(), 'contextid' => $contextid]);
+        redirect($viewurl);
     }
     redirect($returnurl);
 }

@@ -34,7 +34,6 @@ Feature: H5P file upload to content bank for admins
     And I click on "Select this file" "button"
     And I click on "Save changes" "button"
     And I wait until the page is ready
-    And I click on "filltheblanks.h5p" "link"
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     Then I should see "Of which countries"
