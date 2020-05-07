@@ -165,6 +165,7 @@ class mod_h5pactivity_generator extends testing_module_generator {
 
         $result->subcontent = '14fcc986-728b-47f3-915b-'.$userid;
         $result->interactiontype = 'matching';
+        $result->correctpattern = '["0[.]1[,]1[.]0[,]2[.]2"]';
         $result->response = '1[.]0[,]0[.]1[,]2[.]2';
         $result->additionals = '{"source":[{"id":"0","description":{"en-US":"A berry"}}'.
                 ',{"id":"1","description":{"en-US":"An orange berry"}},'.
