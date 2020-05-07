@@ -99,6 +99,11 @@ class quizaccess_seb_provider_testcase extends advanced_testcase {
 
         $context = context_module::instance($this->quiz->cmid);
 
+        // Add another course_module of a differenty type - doing this lets us
+        // test that the data exporter is correctly limiting its selection to
+        // the quiz and not anything with the same instance id.
+        $this->getDataGenerator()->create_module('label', array('course' => $this->course->id));
+
         $contextlist = provider::get_contexts_for_userid($this->user->id);
         $approvedcontextlist = new approved_contextlist(
             $this->user,

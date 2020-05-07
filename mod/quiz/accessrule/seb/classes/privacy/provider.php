@@ -93,12 +93,14 @@ class provider implements
         $sql = "SELECT c.id
                   FROM {quizaccess_seb_quizsettings} qs
                   JOIN {course_modules} cm ON cm.instance = qs.quizid
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
                   JOIN {context} c ON c.instanceid = cm.id AND c.contextlevel = :context
                  WHERE qs.usermodified = :userid
               GROUP BY c.id";
 
         $params = [
             'context' => CONTEXT_MODULE,
+            'modulename' => 'quiz',
             'userid' => $userid
         ];
 
@@ -108,6 +110,7 @@ class provider implements
                   FROM {quizaccess_seb_template} tem
                   JOIN {quizaccess_seb_quizsettings} qs ON qs.templateid = tem.id
                   JOIN {course_modules} cm ON cm.instance = qs.quizid
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
                   JOIN {context} c ON c.instanceid = cm.id AND c.contextlevel = :context
                  WHERE qs.usermodified = :userid
               GROUP BY c.id";
@@ -139,6 +142,7 @@ class provider implements
         }
 
         list($insql, $params) = $DB->get_in_or_equal($cmids, SQL_PARAMS_NAMED);
+        $params['modulename'] = 'quiz';
 
         // SEB quiz settings.
         $sql = "SELECT qs.id as id,
@@ -148,6 +152,7 @@ class provider implements
                        qs.timemodified as timemodified
                   FROM {quizaccess_seb_quizsettings} qs
                   JOIN {course_modules} cm ON cm.instance = qs.quizid
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
                  WHERE cm.id {$insql}";
 
         $quizsettingslist = $DB->get_records_sql($sql, $params);
@@ -180,6 +185,7 @@ class provider implements
                   FROM {quizaccess_seb_template} tem
                   JOIN {quizaccess_seb_quizsettings} qs ON qs.templateid = tem.id
                   JOIN {course_modules} cm ON cm.instance = qs.quizid
+                  JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
                  WHERE cm.id {$insql}";
 
         $templatesettingslist = $DB->get_records_sql($sql, $params);
@@ -262,8 +268,9 @@ class provider implements
         $sql = "SELECT qs.usermodified AS userid
                   FROM {quizaccess_seb_quizsettings} qs
                   JOIN {course_modules} cm ON cm.instance = qs.quizid
+                  JOIN {modules} m ON cm.module = m.id AND m.name = ?
                  WHERE cm.id = ?";
-        $params = [$context->instanceid];
+        $params = ['quiz', $context->instanceid];
         $userlist->add_from_sql('userid', $sql, $params);
     }
 
