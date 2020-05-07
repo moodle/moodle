@@ -103,8 +103,8 @@ Feature: Safe Exam Browser settings in quiz edit form
     And I set the field "Require the use of Safe Exam Browser" to "Yes – Upload my own config"
     Then I should see "Upload Safe Exam Browser config file"
     Then I should see "Show Safe Exam Browser download button"
-    Then I should see "Enable quitting of SEB"
-    Then I should see "Quit password"
+    Then I should not see "Enable quitting of SEB"
+    Then I should not see "Quit password"
     Then I should see "Allowed Browser Exam Keys"
     Then I should not see "Show Exit Safe Exam Browser button, configured with this quit link"
     Then I should not see "Ask user to confirm quitting"
@@ -125,8 +125,6 @@ Feature: Safe Exam Browser settings in quiz edit form
     Then I should not see "Regex blocked"
     Then I should not see "Safe Exam Browser config template"
     Then I should not see "Template 1"
-    And I set the field "Enable quitting of SEB" to "No"
-    Then I should not see "Quit password"
 
   Scenario: SEB settings if using Use an existing template
     Given the following "quizaccess_seb > seb templates" exist:

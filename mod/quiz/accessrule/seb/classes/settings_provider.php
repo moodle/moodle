@@ -902,9 +902,6 @@ class settings_provider {
             self::USE_SEB_UPLOAD_CONFIG => [
                 'filemanager_sebconfigfile' => [],
                 'seb_showsebdownloadlink' => [],
-                'seb_allowuserquitseb' => [
-                    'seb_quitpassword' => [],
-                ],
                 'seb_allowedbrowserexamkeys' => [],
             ],
             self::USE_SEB_CLIENT_CONFIG => [
@@ -976,16 +973,18 @@ class settings_provider {
             }
         }
 
-        // Specific case for "Enable quitting of SEB". It should available for Manual, Template and Uploaded config.
+        // Specific case for "Enable quitting of SEB". It should available for Manual and Template.
         $hideifs['seb_allowuserquitseb'] = [
             new hideif_rule('seb_allowuserquitseb', 'seb_requiresafeexambrowser', 'eq', self::USE_SEB_NO),
             new hideif_rule('seb_allowuserquitseb', 'seb_requiresafeexambrowser', 'eq', self::USE_SEB_CLIENT_CONFIG),
+            new hideif_rule('seb_allowuserquitseb', 'seb_requiresafeexambrowser', 'eq', self::USE_SEB_UPLOAD_CONFIG),
         ];
 
-        // Specific case for "Quit password". It should be available for Manual, Template and Uploaded config. As it's parent.
+        // Specific case for "Quit password". It should be available for Manual and Template. As it's parent.
         $hideifs['seb_quitpassword'] = [
             new hideif_rule('seb_quitpassword', 'seb_requiresafeexambrowser', 'eq', self::USE_SEB_NO),
             new hideif_rule('seb_quitpassword', 'seb_requiresafeexambrowser', 'eq', self::USE_SEB_CLIENT_CONFIG),
+            new hideif_rule('seb_quitpassword', 'seb_requiresafeexambrowser', 'eq', self::USE_SEB_UPLOAD_CONFIG),
             new hideif_rule('seb_quitpassword', 'seb_allowuserquitseb', 'eq', 0),
         ];
 

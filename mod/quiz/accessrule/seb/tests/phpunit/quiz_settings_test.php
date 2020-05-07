@@ -237,49 +237,176 @@ class quizaccess_seb_quiz_settings_testcase extends quizaccess_seb_testcase {
     }
 
     /**
-     * Test using USE_SEB_TEMPLATE and have it override defaults.
+     * A helper function to build a config file.
+     *
+     * @param mixed $allowuserquitseb Required allowQuit setting.
+     * @param mixed $quitpassword Required hashedQuitPassword setting.
+     *
+     * @return string
      */
-    public function test_using_seb_template_override_settings() {
-        $template = $this->create_template();
+    protected function get_config_xml($allowuserquitseb = null, $quitpassword = null) {
+        $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            . "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
+            . "<plist version=\"1.0\"><dict><key>allowWlan</key><false/><key>startURL</key>"
+            . "<string>https://safeexambrowser.org/start</string>"
+            . "<key>sendBrowserExamKey</key><true/>";
+
+        if (!is_null($allowuserquitseb)) {
+            $allowuserquitseb = empty($allowuserquitseb) ? 'false' : 'true';
+            $xml .= "<key>allowQuit</key><{$allowuserquitseb}/>";
+        }
+
+        if (!is_null($quitpassword)) {
+            $xml .= "<key>hashedQuitPassword</key><string>{$quitpassword}</string>";
+        }
+
+        $xml .= "</dict></plist>\n";
+
+        return $xml;
+    }
+
+    /**
+     * Test using USE_SEB_TEMPLATE and have it override settings from the template when they are set.
+     */
+    public function test_using_seb_template_override_settings_when_they_set_in_template() {
+        $xml = $this->get_config_xml(true, 'password');
+        $template = $this->create_template($xml);
+
         $this->assertContains("<key>startURL</key><string>https://safeexambrowser.org/start</string>", $template->get('content'));
         $this->assertContains("<key>allowQuit</key><true/>", $template->get('content'));
+        $this->assertContains("<key>hashedQuitPassword</key><string>password</string>", $template->get('content'));
 
         $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $quizsettings->set('requiresafeexambrowser', settings_provider::USE_SEB_TEMPLATE);
         $quizsettings->set('templateid', $template->get('id'));
-        $quizsettings->set('allowuserquitseb', 0);
-        $quizsettings->set('quitpassword', '123');
+        $quizsettings->set('allowuserquitseb', 1);
         $quizsettings->save();
+
         $this->assertContains(
             "<key>startURL</key><string>https://www.example.com/moodle/mod/quiz/view.php?id={$this->quiz->cmid}</string>",
             $quizsettings->get_config()
         );
+
         $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
-        $hashedpassword = hash('SHA256', '123');
-        $this->assertNotContains("<key>hashedQuitPassword</key><string>123</string>", $quizsettings->get_config());
+        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
+
+        $quizsettings->set('quitpassword', 'new password');
+        $quizsettings->save();
+        $hashedpassword = hash('SHA256', 'new password');
+        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertNotContains("<key>hashedQuitPassword</key><string>password</string>", $quizsettings->get_config());
         $this->assertContains("<key>hashedQuitPassword</key><string>{$hashedpassword}</string>", $quizsettings->get_config());
+
+        $quizsettings->set('allowuserquitseb', 0);
+        $quizsettings->set('quitpassword', '');
+        $quizsettings->save();
+        $this->assertContains("<key>allowQuit</key><false/>", $quizsettings->get_config());
+        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
     }
 
     /**
-     * Test using USE_SEB_UPLOAD_CONFIG and overriding the password.
+     * Test using USE_SEB_TEMPLATE and have it override settings from the template when they are not set.
      */
-    public function test_using_own_config_and_overriding_password() {
-        $url = new moodle_url("/mod/quiz/view.php", ['id' => $this->quiz->cmid]);
-        $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            . "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
-            . "<plist version=\"1.0\"><dict><key>hashedQuitPassword</key><string>hashedpassword</string>"
-            . "<key>allowWlan</key><false/><key>startURL</key><string>$url</string>"
-            . "<key>sendBrowserExamKey</key><true/></dict></plist>\n";
-        $itemid = $this->create_module_test_file($xml, $this->quiz->cmid);
+    public function test_using_seb_template_override_settings_when_not_set_in_template() {
+        $xml = $this->get_config_xml();
+        $template = $this->create_template($xml);
+
+        $this->assertContains("<key>startURL</key><string>https://safeexambrowser.org/start</string>", $template->get('content'));
+        $this->assertNotContains("<key>allowQuit</key><true/>", $template->get('content'));
+        $this->assertNotContains("<key>hashedQuitPassword</key><string>password</string>", $template->get('content'));
+
+        $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $quizsettings->set('requiresafeexambrowser', settings_provider::USE_SEB_TEMPLATE);
+        $quizsettings->set('templateid', $template->get('id'));
+        $quizsettings->set('allowuserquitseb', 1);
+        $quizsettings->save();
+
+        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
+
+        $quizsettings->set('quitpassword', 'new password');
+        $quizsettings->save();
+        $hashedpassword = hash('SHA256', 'new password');
+        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertContains("<key>hashedQuitPassword</key><string>{$hashedpassword}</string>", $quizsettings->get_config());
+
+        $quizsettings->set('allowuserquitseb', 0);
+        $quizsettings->set('quitpassword', '');
+        $quizsettings->save();
+        $this->assertContains("<key>allowQuit</key><false/>", $quizsettings->get_config());
+        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
+    }
+
+    /**
+     * Test using USE_SEB_UPLOAD_CONFIG and use settings from the file if they are set.
+     */
+    public function test_using_own_config_settings_are_not_overridden_if_set() {
+        $xml = $this->get_config_xml(true, 'password');
+        $this->create_module_test_file($xml, $this->quiz->cmid);
+
         $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $quizsettings->set('requiresafeexambrowser', settings_provider::USE_SEB_UPLOAD_CONFIG);
-        $quizsettings->set('quitpassword', '123');
+        $quizsettings->set('allowuserquitseb', 0);
+        $quizsettings->set('quitpassword', '');
         $quizsettings->save();
-        $config = $quizsettings->get_config();
 
-        $hashedpassword = hash('SHA256', '123');
-        $this->assertNotContains("<key>hashedQuitPassword</key><string>hashedpassword</string>", $config);
-        $this->assertContains("<key>hashedQuitPassword</key><string>{$hashedpassword}</string>", $config);
+        $this->assertContains(
+            "<key>startURL</key><string>https://www.example.com/moodle/mod/quiz/view.php?id={$this->quiz->cmid}</string>",
+            $quizsettings->get_config()
+        );
+
+        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertContains("<key>hashedQuitPassword</key><string>password</string>", $quizsettings->get_config());
+
+        $quizsettings->set('quitpassword', 'new password');
+        $quizsettings->save();
+        $hashedpassword = hash('SHA256', 'new password');
+
+        $this->assertNotContains("<key>hashedQuitPassword</key><string>{$hashedpassword}</string>", $quizsettings->get_config());
+        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertContains("<key>hashedQuitPassword</key><string>password</string>", $quizsettings->get_config());
+
+        $quizsettings->set('allowuserquitseb', 0);
+        $quizsettings->set('quitpassword', '');
+        $quizsettings->save();
+
+        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertContains("<key>hashedQuitPassword</key><string>password</string>", $quizsettings->get_config());
+    }
+
+    /**
+     * Test using USE_SEB_UPLOAD_CONFIG and use settings from the file if they are not set.
+     */
+    public function test_using_own_config_settings_are_not_overridden_if_not_set() {
+        $xml = $this->get_config_xml();
+        $this->create_module_test_file($xml, $this->quiz->cmid);
+
+        $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $quizsettings->set('requiresafeexambrowser', settings_provider::USE_SEB_UPLOAD_CONFIG);
+        $quizsettings->set('allowuserquitseb', 1);
+        $quizsettings->set('quitpassword', '');
+        $quizsettings->save();
+
+        $this->assertContains(
+            "<key>startURL</key><string>https://www.example.com/moodle/mod/quiz/view.php?id={$this->quiz->cmid}</string>",
+            $quizsettings->get_config()
+        );
+
+        $this->assertNotContains("allowQuit", $quizsettings->get_config());
+        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
+
+        $quizsettings->set('quitpassword', 'new password');
+        $quizsettings->save();
+
+        $this->assertNotContains("allowQuit", $quizsettings->get_config());
+        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
+
+        $quizsettings->set('allowuserquitseb', 0);
+        $quizsettings->set('quitpassword', '');
+        $quizsettings->save();
+
+        $this->assertNotContains("allowQuit", $quizsettings->get_config());
+        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
     }
 
     /**
