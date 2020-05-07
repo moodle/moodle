@@ -3386,6 +3386,90 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see test_email_to_user_attachment}
+     *
+     * @return array
+     */
+    public function email_to_user_attachment_provider(): array {
+        global $CFG;
+
+        // Return all paths that can be used to send attachments from.
+        return [
+            'cachedir' => [$CFG->cachedir],
+            'dataroot' => [$CFG->dataroot],
+            'dirroot' => [$CFG->dirroot],
+            'localcachedir' => [$CFG->localcachedir],
+            'tempdir' => [$CFG->tempdir],
+            // Pass null to indicate we want to test a path relative to $CFG->dataroot.
+            'relative' => [null]
+        ];
+    }
+
+    /**
+     * Test sending attachments with email_to_user
+     *
+     * @param string|null $filedir
+     *
+     * @dataProvider email_to_user_attachment_provider
+     */
+    public function test_email_to_user_attachment(?string $filedir): void {
+        global $CFG;
+
+        // If $filedir is null, then write our test file to $CFG->dataroot.
+        $filepath = ($filedir ?: $CFG->dataroot) . '/hello.txt';
+        file_put_contents($filepath, 'Hello');
+
+        $user = core_user::get_support_user();
+        $message = 'Test attachment path';
+
+        // Create sink to catch all sent e-mails.
+        $sink = $this->redirectEmails();
+
+        // Attachment path will be that of the test file if $filedir was passed, otherwise the relative path from $CFG->dataroot.
+        $filename = basename($filepath);
+        $attachmentpath = $filedir ? $filepath : $filename;
+        email_to_user($user, $user, $message, $message, $message, $attachmentpath, $filename);
+
+        $messages = $sink->get_messages();
+        $sink->close();
+
+        $this->assertCount(1, $messages);
+
+        // Verify attachment in message body (attachment is in MIME format, but we can detect some Content fields).
+        $messagebody = reset($messages)->body;
+        $this->assertContains('Content-Type: text/plain; name="' . $filename . '"', $messagebody);
+        $this->assertContains('Content-Disposition: attachment; filename=' . $filename, $messagebody);
+
+        // Cleanup.
+        unlink($filepath);
+    }
+
+    /**
+     * Test sending an attachment that doesn't exist to email_to_user
+     */
+    public function test_email_to_user_attachment_missing(): void {
+        $user = core_user::get_support_user();
+        $message = 'Test attachment path';
+
+        // Create sink to catch all sent e-mails.
+        $sink = $this->redirectEmails();
+
+        $attachmentpath = '/hola/hello.txt';
+        $filename = basename($attachmentpath);
+        email_to_user($user, $user, $message, $message, $message, $attachmentpath, $filename);
+
+        $messages = $sink->get_messages();
+        $sink->close();
+
+        $this->assertCount(1, $messages);
+
+        // Verify attachment not in message body (attachment is in MIME format, but we can detect some Content fields).
+        $messagebody = reset($messages)->body;
+        $this->assertNotContains('Content-Type: text/plain; name="' . $filename . '"', $messagebody);
+        $this->assertNotContains('Content-Disposition: attachment; filename=' . $filename, $messagebody);
+    }
+
+    /**
      * Test setnew_password_and_mail.
      */
     public function test_setnew_password_and_mail() {
