@@ -8598,7 +8598,7 @@ a.dimmed_text:visited,
 .usersuspended a:visited,
 .dimmed_category,
 .dimmed_category a, .tag_feed .media .muted a, #page-admin-qtypes .disabled,
-#page-admin-qbehaviours .disabled, #page-admin-plugins #plugins-control-panel .pluginname .componentname, #page-admin-plugins #plugins-control-panel .version .versionnumber, #page-admin-plugins #plugins-control-panel .notes .requiredby, #plugins-check-page .page-description, #plugins-check-page #plugins-check .requires-ok, #plugins-check-page #plugins-check .displayname .plugindir, #plugins-check-page #plugins-check-available-dependencies .displayname .component, #page-admin-search .adminpagepath li, .block .minicalendar td.weekend, .section .activity .stealth, .course-content .section-summary .section-summary-activities .activity-count, .course-content ul li.section.hidden .sectionname > span,
+#page-admin-qbehaviours .disabled, #page-admin-plugins #plugins-control-panel .pluginname .componentname, #page-admin-plugins #plugins-control-panel .version .versionnumber, #page-admin-plugins #plugins-control-panel .notes .requiredby, #page-admin-search .adminpagepath li, .block .minicalendar td.weekend, .section .activity .stealth, .course-content .section-summary .section-summary-activities .activity-count, .course-content ul li.section.hidden .sectionname > span,
 .course-content ul li.section.hidden .content > div.summary,
 .course-content ul li.section.hidden .activity .activityinstance, #course-category-listings .listitem[data-visible="0"], #course-category-listings .listitem[data-visible="0"] > div > a, #course-category-listings .listing-pagination-totals.dimmed, .fitem.disabled .fp-btn-choose, .form-defaultinfo,
 .form-label .form-shortname, .formsettingheading .form-horizontal, .no-felement.fstatic, .path-backup .backup_progress .backup_stage {
@@ -11195,64 +11195,9 @@ body:not(.behat-site) .switch {
 #page-admin-plugins #plugins-control-panel .notes .requiredby {
   font-size: 0.8203125rem; }
 
-#plugins-check-page .checkforupdates .singlebutton {
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page .checkforupdates .singlebutton div,
-  #plugins-check-page .checkforupdates .singlebutton input {
-    margin: 0 3px 0 0; }
-
-#plugins-check-page #plugins-check-info .actions > div {
-  display: inline-block;
-  margin-right: 1em; }
-
-#plugins-check-page #plugins-check-info .actions .singlebutton {
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page #plugins-check-info .actions .singlebutton div,
-  #plugins-check-page #plugins-check-info .actions .singlebutton input {
-    margin: 0 3px 0 0; }
-
 #plugins-check-page #plugins-check .status-missing td,
 #plugins-check-page #plugins-check .status-downgrade td {
   background-color: #f6d9d8; }
-
-#plugins-check-page #plugins-check .displayname .plugindir {
-  font-size: 0.8203125rem; }
-
-#plugins-check-page #plugins-check .requires ul {
-  margin-left: 13px; }
-
-#plugins-check-page #plugins-check .status .actionbutton {
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page #plugins-check .status .actionbutton input {
-    margin: 0; }
-
-#plugins-check-page .plugins-check-dependencies-actions > div {
-  display: inline-block;
-  margin-right: 1em; }
-
-#plugins-check-page .plugins-check-dependencies-actions .singlebutton {
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page .plugins-check-dependencies-actions .singlebutton div,
-  #plugins-check-page .plugins-check-dependencies-actions .singlebutton input {
-    margin: 0 3px 0 0; }
-
-#plugins-check-page #plugins-check-available-dependencies .displayname .component {
-  font-size: 0.8203125rem; }
-
-#plugins-check-page #plugins-check-available-dependencies .info .actions > div {
-  display: inline-block;
-  margin-right: 1em; }
-
-#plugins-check-page #plugins-check-available-dependencies .info .actions .dependencyinstall {
-  display: block;
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page #plugins-check-available-dependencies .info .actions .dependencyinstall input {
-    margin: 0; }
 
 #plugins-check-page .pluginupdateinfo,
 #plugins-control-panel .pluginupdateinfo {
