@@ -67,6 +67,8 @@ if (!is_null($storedsecret)) {
         // Remove the verification vars and redirect to the mypackpack page.
         unset_user_preference('badges_email_verify_secret');
         unset_user_preference('badges_email_verify_address');
+        unset_user_preference('badges_email_verify_backpackid');
+        unset_user_preference('badges_email_verify_password');
         redirect(new moodle_url($redirect), get_string('backpackemailverifysuccess', 'badges'),
             null, \core\output\notification::NOTIFY_SUCCESS);
     } else {

@@ -49,7 +49,7 @@ if (!empty($issuedbadge->recipient->id)) {
     $badge = new badge($badgeid);
     $backpack = $DB->get_record('badge_backpack', array('userid' => $USER->id));
     $sitebackpack = badges_get_site_primary_backpack();
-    $userbackpack = badges_get_site_backpack($backpack->externalbackpackid);
+    $userbackpack = badges_get_site_backpack($backpack->externalbackpackid, $USER->id);
     $assertion = new core_badges_assertion($id, $sitebackpack->apiversion);
     $api = new \core_badges\backpack_api($sitebackpack);
     $api->authenticate();
