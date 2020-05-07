@@ -86,8 +86,8 @@ if ($removeid) {
 
     $title = get_string('existingcohortroles', 'tool_cohortroles');
     echo $output->heading($title);
-    $url = new moodle_url('/admin/tool/cohortroles/index.php');
-    $table = new tool_cohortroles\output\cohort_role_assignments_table(uniqid(), $url);
+
+    $table = new tool_cohortroles\output\cohort_role_assignments_table('cohort-role-assignments', $pageurl);
     echo $table->out(50, true);
 
     echo $output->spacer();
