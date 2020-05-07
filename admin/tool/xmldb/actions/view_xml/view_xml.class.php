@@ -68,13 +68,13 @@ class view_xml extends XMLDBAction {
 
         // Get the file parameter
         $file = required_param('file', PARAM_PATH);
-        $file = $CFG->dirroot . $file;
-        // File must be under $CFG->wwwroot and
-        // under one db directory (simple protection)
-        if (substr($file, 0, strlen($CFG->dirroot)) == $CFG->dirroot &&
-            substr(dirname($file), -2, 2) == 'db') {
+
+        $fullpath = $CFG->dirroot . $file;
+        // File param must start with / and end with /db/install.xml to be safe.
+        if (substr($file, 0, 1) == '/' &&
+            substr($file, -15, 15) == '/db/install.xml') {
             // Everything is ok. Load the file to memory
-            $this->output = file_get_contents($file);
+            $this->output = file_get_contents($fullpath);
         } else {
             // Switch to HTML and error
             $this->does_generate = ACTION_GENERATE_HTML;
