@@ -12070,72 +12070,9 @@ body.h5p-embed .h5pmessages {
   font-size: 0.8203125rem;
   color: #6c757d; }
 
-#plugins-check-page .page-description {
-  color: #6c757d; }
-
-#plugins-check-page .checkforupdates .singlebutton {
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page .checkforupdates .singlebutton div,
-  #plugins-check-page .checkforupdates .singlebutton input {
-    margin: 0 3px 0 0; }
-
-#plugins-check-page #plugins-check-info .actions > div {
-  display: inline-block;
-  margin-right: 1em; }
-
-#plugins-check-page #plugins-check-info .actions .singlebutton {
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page #plugins-check-info .actions .singlebutton div,
-  #plugins-check-page #plugins-check-info .actions .singlebutton input {
-    margin: 0 3px 0 0; }
-
-#plugins-check-page #plugins-check .requires-ok {
-  color: #6c757d; }
-
 #plugins-check-page #plugins-check .status-missing td,
 #plugins-check-page #plugins-check .status-downgrade td {
   background-color: #f6d9d8; }
-
-#plugins-check-page #plugins-check .displayname .plugindir {
-  color: #6c757d;
-  font-size: 0.8203125rem; }
-
-#plugins-check-page #plugins-check .requires ul {
-  margin-left: 13px; }
-
-#plugins-check-page #plugins-check .status .actionbutton {
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page #plugins-check .status .actionbutton input {
-    margin: 0; }
-
-#plugins-check-page .plugins-check-dependencies-actions > div {
-  display: inline-block;
-  margin-right: 1em; }
-
-#plugins-check-page .plugins-check-dependencies-actions .singlebutton {
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page .plugins-check-dependencies-actions .singlebutton div,
-  #plugins-check-page .plugins-check-dependencies-actions .singlebutton input {
-    margin: 0 3px 0 0; }
-
-#plugins-check-page #plugins-check-available-dependencies .displayname .component {
-  font-size: 0.8203125rem;
-  color: #6c757d; }
-
-#plugins-check-page #plugins-check-available-dependencies .info .actions > div {
-  display: inline-block;
-  margin-right: 1em; }
-
-#plugins-check-page #plugins-check-available-dependencies .info .actions .dependencyinstall {
-  display: block;
-  margin: 5px 0;
-  padding: 0; }
-  #plugins-check-page #plugins-check-available-dependencies .info .actions .dependencyinstall input {
-    margin: 0; }
 
 #plugins-check-page .pluginupdateinfo,
 #plugins-control-panel .pluginupdateinfo {
