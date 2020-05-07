@@ -692,35 +692,44 @@ class provider implements
     protected static function export_all_posts(int $userid, array $mappings) {
         global $DB;
 
-        // Find all of the posts, and post subscriptions for this forum.
-        list($foruminsql, $forumparams) = $DB->get_in_or_equal(array_keys($mappings), SQL_PARAMS_NAMED);
-        $ratingsql = \core_rating\privacy\provider::get_sql_join('rat', 'mod_forum', 'post', 'p.id', $userid);
-        $sql = "SELECT
-                    p.discussion AS id,
-                    f.id AS forumid,
-                    d.name,
-                    d.groupid
-                  FROM {forum} f
-                  JOIN {forum_discussions} d ON d.forum = f.id
-                  JOIN {forum_posts} p ON p.discussion = d.id
-             LEFT JOIN {forum_read} fr ON fr.postid = p.id AND fr.userid = :readuserid
-            {$ratingsql->join}
-                 WHERE f.id ${foruminsql} AND
-                (
-                    p.userid = :postuserid OR
-                    p.privatereplyto = :privatereplyrecipient OR
-                    fr.id IS NOT NULL OR
-                    {$ratingsql->userwhere}
-                )
-              GROUP BY f.id, p.discussion, d.name, d.groupid
-        ";
+        $commonsql = "SELECT p.discussion AS id, f.id AS forumid, d.name, d.groupid
+                        FROM {forum} f
+                        JOIN {forum_discussions} d ON d.forum = f.id
+                        JOIN {forum_posts} p ON p.discussion = d.id";
+
+        // All discussions with posts authored by the user or containing private replies to the user.
+        list($foruminsql1, $forumparams1) = $DB->get_in_or_equal(array_keys($mappings), SQL_PARAMS_NAMED);
+        $sql1 = "{$commonsql}
+                       WHERE f.id {$foruminsql1}
+                         AND (p.userid = :postuserid OR p.privatereplyto = :privatereplyrecipient)";
+
+        // All discussions with the posts marked as read by the user.
+        list($foruminsql2, $forumparams2) = $DB->get_in_or_equal(array_keys($mappings), SQL_PARAMS_NAMED);
+        $sql2 = "{$commonsql}
+                        JOIN {forum_read} fr ON fr.postid = p.id
+                       WHERE f.id {$foruminsql2}
+                         AND fr.userid = :readuserid";
+
+        // All discussions with ratings provided by the user.
+        list($foruminsql3, $forumparams3) = $DB->get_in_or_equal(array_keys($mappings), SQL_PARAMS_NAMED);
+        $ratingsql = \core_rating\privacy\provider::get_sql_join('rat', 'mod_forum', 'post', 'p.id', $userid, true);
+        $sql3 = "{$commonsql}
+                 {$ratingsql->join}
+                       WHERE f.id {$foruminsql3}
+                         AND {$ratingsql->userwhere}";
+
+        $sql = "SELECT *
+                  FROM ({$sql1} UNION {$sql2} UNION {$sql3}) united
+              GROUP BY id, forumid, name, groupid";
 
         $params = [
-            'postuserid'    => $userid,
-            'readuserid'    => $userid,
+            'postuserid' => $userid,
+            'readuserid' => $userid,
             'privatereplyrecipient' => $userid,
         ];
-        $params += $forumparams;
+        $params += $forumparams1;
+        $params += $forumparams2;
+        $params += $forumparams3;
         $params += $ratingsql->params;
 
         $discussions = $DB->get_records_sql($sql, $params);
