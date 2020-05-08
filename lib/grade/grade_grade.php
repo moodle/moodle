@@ -1111,6 +1111,9 @@ class grade_grade extends grade_object {
      * @return bool Returns true if the deletion was successful, false otherwise.
      */
     public function delete($source = null) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
         $success = parent::delete($source);
 
         // If the grade was deleted successfully trigger a grade_deleted event.
@@ -1119,6 +1122,7 @@ class grade_grade extends grade_object {
             \core\event\grade_deleted::create_from_grade($this)->trigger();
         }
 
+        $transaction->allow_commit();
         return $success;
     }
 
