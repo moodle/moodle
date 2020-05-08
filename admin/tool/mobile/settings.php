@@ -58,6 +58,9 @@ if ($hassiteconfig) {
 
         // Type of login.
         $temp = new admin_settingpage('mobileauthentication', new lang_string('mobileauthentication', 'tool_mobile'));
+
+        $temp->add(new admin_setting_heading('tool_mobile/moodleappsportalfeaturesauth', '', $featuresnotice));
+
         $options = array(
             tool_mobile\api::LOGIN_VIA_APP => new lang_string('loginintheapp', 'tool_mobile'),
             tool_mobile\api::LOGIN_VIA_BROWSER => new lang_string('logininthebrowser', 'tool_mobile'),
@@ -66,6 +69,15 @@ if ($hassiteconfig) {
         $temp->add(new admin_setting_configselect('tool_mobile/typeoflogin',
                     new lang_string('typeoflogin', 'tool_mobile'),
                     new lang_string('typeoflogin_desc', 'tool_mobile'), 1, $options));
+
+        $options = [
+            tool_mobile\api::QR_CODE_DISABLED => new lang_string('qrcodedisabled', 'tool_mobile'),
+            tool_mobile\api::QR_CODE_URL => new lang_string('qrcodetypeurl', 'tool_mobile'),
+            tool_mobile\api::QR_CODE_LOGIN => new lang_string('qrcodetypelogin', 'tool_mobile'),
+        ];
+        $temp->add(new admin_setting_configselect('tool_mobile/qrcodetype',
+                    new lang_string('qrcodetype', 'tool_mobile'),
+                    new lang_string('qrcodetype_desc', 'tool_mobile'), tool_mobile\api::QR_CODE_LOGIN, $options));
 
         $temp->add(new admin_setting_configtext('tool_mobile/forcedurlscheme',
                     new lang_string('forcedurlscheme_key', 'tool_mobile'),

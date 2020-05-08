@@ -31,6 +31,8 @@ use moodle_url;
 use moodle_exception;
 use lang_string;
 use curl;
+use core_qrcode;
+use stdClass;
 
 /**
  * API exposed by tool_mobile, to be used mostly by external functions and the plugin settings.
@@ -51,6 +53,14 @@ class api {
     const LOGIN_KEY_TTL = 60;
     /** @var string URL of the Moodle Apps Portal */
     const MOODLE_APPS_PORTAL_URL = 'https://apps.moodle.com';
+    /** @var int seconds a QR login key will expire. */
+    const LOGIN_QR_KEY_TTL = 600;
+    /** @var int QR code disabled value */
+    const QR_CODE_DISABLED = 0;
+    /** @var int QR code type URL value */
+    const QR_CODE_URL = 1;
+    /** @var int QR code type login value */
+    const QR_CODE_LOGIN = 2;
 
     /**
      * Returns a list of Moodle plugins supporting the mobile app.
@@ -336,6 +346,7 @@ class api {
 
     /**
      * Creates an auto-login key for the current user, this key is restricted by time and ip address.
+     * This key is used for automatically login the user in the site when the Moodle app opens the site in a mobile browser.
      *
      * @return string the key
      * @since Moodle 3.2
@@ -348,6 +359,24 @@ class api {
         // Create a new key.
         $iprestriction = getremoteaddr();
         $validuntil = time() + self::LOGIN_KEY_TTL;
+        return create_user_key('tool_mobile', $USER->id, null, $iprestriction, $validuntil);
+    }
+
+    /**
+     * Creates a QR login key for the current user, this key is restricted by time and ip address.
+     * This key is used for automatically login the user in the site when the user scans a QR code in the Moodle app.
+     *
+     * @return string the key
+     * @since Moodle 3.9
+     */
+    public static function get_qrlogin_key() {
+        global $USER;
+        // Delete previous keys.
+        delete_user_key('tool_mobile', $USER->id);
+
+        // Create a new key.
+        $iprestriction = getremoteaddr(null);
+        $validuntil = time() + self::LOGIN_QR_KEY_TTL;
         return create_user_key('tool_mobile', $USER->id, null, $iprestriction, $validuntil);
     }
 
@@ -600,5 +629,32 @@ class api {
         }
 
         return $warnings;
+    }
+
+    /**
+     * Generates a QR code with the site URL or for automatic login from the mobile app.
+     *
+     * @param  stdClass $mobilesettings tool_mobile settings
+     * @return string base64 data image contents, null if qr disabled
+     */
+    public static function generate_login_qrcode(stdClass $mobilesettings) {
+        global $CFG, $USER;
+
+        if ($mobilesettings->qrcodetype == static::QR_CODE_DISABLED) {
+            return null;
+        }
+
+        $urlscheme = !empty($mobilesettings->forcedurlscheme) ? $mobilesettings->forcedurlscheme : 'moodlemobile';
+        $data = $urlscheme . '://' . $CFG->wwwroot;
+
+        if ($mobilesettings->qrcodetype == static::QR_CODE_LOGIN) {
+            $qrloginkey = static::get_qrlogin_key();
+            $data .= '?qrlogin=' . $qrloginkey . '&userid=' . $USER->id;
+        }
+
+        $qrcode = new core_qrcode($data);
+        $imagedata = 'data:image/png;base64,' . base64_encode($qrcode->getBarcodePngData(5, 5));
+
+        return $imagedata;
     }
 }

@@ -15,17 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info
+ * Class for generating QR codes. Wrapper class that extends TCPDF.
  *
- * @package    tool_mobile
- * @copyright  2016 Juan Leyva
+ * @package    core
+ * @copyright  2020 Moodle Pty Ltd.
+ * @author     Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-$plugin->version   = 2019111801; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2019111200; // Requires this Moodle version.
-$plugin->component = 'tool_mobile'; // Full name of the plugin (used for diagnostics).
-$plugin->dependencies = array(
-    'webservice_rest' => 2019111200
-);
+
+require_once($CFG->libdir . '/tcpdf/tcpdf_barcodes_2d.php');
+
+/**
+ * Class for generating QR codes. Wrapper class that extends TCPDF.
+ *
+ * @copyright  2020 Moodle Pty Ltd.
+ */
+class core_qrcode extends TCPDF2DBarcode {
+
+    /**
+     * Overrided constructor to force QR codes.
+     *
+     * @param string $data the data to generate the code
+     */
+    public function __construct($data) {
+
+        parent::__construct($data, 'QRCODE');
+    }
+}
