@@ -710,12 +710,16 @@ class grade_report_grader extends grade_report {
         $rows = $this->get_left_icons_row($rows, $colspan);
 
         $suspendedstring = null;
+
+        $usercount = 0;
         foreach ($this->users as $userid => $user) {
             $userrow = new html_table_row();
             $userrow->id = 'fixed_user_'.$userid;
+            $userrow->attributes['class'] = ($usercount % 2) ? 'userrow even' : 'userrow odd';
 
             $usercell = new html_table_cell();
-            $usercell->attributes['class'] = 'header user';
+            $usercell->attributes['class'] = ($usercount % 2) ? 'header user even' : 'header user odd';
+            $usercount++;
 
             $usercell->header = true;
             $usercell->scope = 'row';
