@@ -123,6 +123,9 @@ class mod_h5pactivity_generator extends testing_module_generator {
                 'attempt' => $attemptnum,
                 'rawscore' => 3,
                 'maxscore' => 5,
+                'completion' => 1,
+                'success' => 1,
+                'scaled' => 0.6,
             ];
         $attempt->id = $DB->insert_record('h5pactivity_attempts', $attempt);
 
@@ -139,6 +142,9 @@ class mod_h5pactivity_generator extends testing_module_generator {
                         $cmid.'},"contextExtensions":{}}',
                 'rawscore' => 3,
                 'maxscore' => 5,
+                'completion' => 1,
+                'success' => 1,
+                'scaled' => 0.6,
             ];
         $DB->insert_record('h5pactivity_attempts_results', $result);
 
@@ -154,6 +160,7 @@ class mod_h5pactivity_generator extends testing_module_generator {
                 ',"http:\/\/h5p.org\/x-api\/h5p-subContentId":"'.$result->interactiontype.
                 '"},"contextExtensions":{}}';
         $result->rawscore = 1;
+        $result->scaled = 0.2;
         $DB->insert_record('h5pactivity_attempts_results', $result);
 
         $result->subcontent = '14fcc986-728b-47f3-915b-'.$userid;
@@ -167,6 +174,7 @@ class mod_h5pactivity_generator extends testing_module_generator {
                 '{"id":"2","description":{"en-US":"Redcurrant\n"}}],'.
                 '"contextExtensions":{}}';
         $result->rawscore = 2;
+        $result->scaled = 0.4;
         $DB->insert_record('h5pactivity_attempts_results', $result);
 
         return $attempt;
