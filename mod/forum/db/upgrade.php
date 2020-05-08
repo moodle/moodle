@@ -246,5 +246,17 @@ function xmldb_forum_upgrade($oldversion) {
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2020072100) {
+        // Add index privatereplyto (not unique) to the forum_posts table.
+        $table = new xmldb_table('forum_posts');
+        $index = new xmldb_index('privatereplyto', XMLDB_INDEX_NOTUNIQUE, ['privatereplyto']);
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_mod_savepoint(true, 2020072100, 'forum');
+    }
+
     return true;
 }
