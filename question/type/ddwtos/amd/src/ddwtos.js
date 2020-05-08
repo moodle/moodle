@@ -314,11 +314,11 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         // Is there already a drag in this drop? if so, evict it.
         var oldDrag = this.getCurrentDragInPlace(this.getPlace(drop));
         if (oldDrag.length !== 0) {
-            oldDrag.addClass('beingdragged');
-            oldDrag.offset(oldDrag.offset());
             var currentPlace = this.getClassnameNumericSuffix(oldDrag, 'inplace');
             var hiddenDrop = this.getDrop(oldDrag, currentPlace);
             hiddenDrop.addClass('active');
+            oldDrag.addClass('beingdragged');
+            oldDrag.offset(hiddenDrop.offset());
             this.sendDragHome(oldDrag);
         }
 
@@ -387,11 +387,33 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                 break;
 
             default:
+                questionManager.isKeyboardNavigation = false;
                 return; // To avoid the preventDefault below.
         }
 
         if (nextDrag.length) {
             nextDrag.data('isfocus', true);
+            nextDrag.addClass('beingdragged');
+            var hiddenDrag = this.getDragClone(nextDrag);
+            if (hiddenDrag.length) {
+                if (nextDrag.hasClass('infinite')) {
+                    var noOfDrags = this.noOfDropsInGroup(this.getGroup(nextDrag));
+                    var cloneDrags = this.getInfiniteDragClones(nextDrag, false);
+                    if (cloneDrags.length < noOfDrags) {
+                        var cloneDrag = nextDrag.clone();
+                        cloneDrag.removeClass('beingdragged');
+                        cloneDrag.removeAttr('tabindex');
+                        hiddenDrag.after(cloneDrag);
+                        nextDrag.offset(cloneDrag.offset());
+                    } else {
+                        hiddenDrag.addClass('active');
+                        nextDrag.offset(hiddenDrag.offset());
+                    }
+                } else {
+                    hiddenDrag.addClass('active');
+                    nextDrag.offset(hiddenDrag.offset());
+                }
+            }
         } else {
             drop.data('isfocus', true);
         }
@@ -689,6 +711,11 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         eventHandlersInitialised: false,
 
         /**
+         * {boolean} is keyboard navigation or not.
+         */
+        isKeyboardNavigation: false,
+
+        /**
          * {DragDropToTextQuestion[]} all the questions on this page, indexed by containerId (id on the .que div).
          */
         questions: {},
@@ -740,6 +767,10 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
          * @param {KeyboardEvent} e
          */
         handleKeyPress: function(e) {
+            if (questionManager.isKeyboardNavigation) {
+                return;
+            }
+            questionManager.isKeyboardNavigation = true;
             var question = questionManager.getQuestionForEvent(e);
             if (question) {
                 question.handleKeyPress(e);
@@ -775,34 +806,18 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                 drag.removeAttr('tabindex');
                 drag.removeData('unplaced');
                 if (drag.hasClass('infinite') && thisQ.getInfiniteDragClones(drag, true).length > 1) {
-                    setTimeout(function() {
-                        thisQ.getInfiniteDragClones(drag, true).first().remove();
-                    });
+                    thisQ.getInfiniteDragClones(drag, true).first().remove();
                 }
             }
             if (typeof drag.data('isfocus') !== 'undefined' && drag.data('isfocus') === true) {
-                var hiddenDrag = thisQ.getDragClone(drag);
-                if (hiddenDrag.length) {
-                    if (drag.hasClass('infinite')) {
-                        var noOfDrags = thisQ.noOfDropsInGroup(thisQ.getGroup(drag));
-                        var cloneDrags = thisQ.getInfiniteDragClones(drag, false);
-                        if (cloneDrags.length < noOfDrags) {
-                            var cloneDrag = drag.clone();
-                            cloneDrag.removeClass('beingdragged');
-                            cloneDrag.removeAttr('tabindex');
-                            hiddenDrag.after(cloneDrag);
-                        } else {
-                            hiddenDrag.addClass('active');
-                        }
-                    } else {
-                        hiddenDrag.addClass('active');
-                    }
-                }
                 drag.focus();
                 drag.removeData('isfocus');
             }
             if (typeof target.data('isfocus') !== 'undefined' && target.data('isfocus') === true) {
                 target.removeData('isfocus');
+            }
+            if (questionManager.isKeyboardNavigation) {
+                questionManager.isKeyboardNavigation = false;
             }
         }
     };
