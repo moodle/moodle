@@ -21,14 +21,17 @@ class iomad_commerce {
         $call = 'updateCompany';
         $payload = array('origname' => $oldcompany->name,
                          'newname' => $company->name);
-        $response = self::docall($call, $payload);
+        $response = self::docall($call, $payload, $company->id);
     }
 
-    public static function update_user($user) {
+    public static function update_user($user, $companyid) {
 
         $call = 'updateUser';
         if (empty($user->company)) {
             $user->company = 'Registered';
+        }
+        if (empty($user->manager)) {
+            $user->manager = 0;
         }
         $payload = array('userid' => $user->id,
                          'username' => $user->username,
@@ -42,10 +45,10 @@ class iomad_commerce {
                          'country' => $user->country,
                          'manager' => $user->manager);
 
-        $response = self::docall($call, $payload);
+        $response = self::docall($call, $payload, $companyid);
     }
 
-    public static function assign_user($user, $companyname = "") {
+    public static function assign_user($user, $companyname = "", $companyid) {
 
         $call = 'updateUser';
         if (empty($user->manager)) {
@@ -68,23 +71,35 @@ class iomad_commerce {
                          'city' => $user->city,
                          'country' => $user->country,
                          'manager' => $user->manager);
-        $response = self::docall($call, $payload);
+        $response = self::docall($call, $payload, $companyid);
     }
 
-    public static function delete_user($username) {
+    public static function delete_user($username, $companyid) {
 
         $call = 'deleteUser';
         $payload = array('username' => $username);
-        self::docall($call, $payload);
+        self::docall($call, $payload, $companyid);
     }
 
-    private static function docall($call, $payload) {
+    private static function docall($call, $payload, $companyid) {
         global $CFG;
 
-        $wsdlurl = $CFG->commerce_externalshop_url . '/wp-content/plugins/wpiomadsoap/wsdl/wpiomadsoap.wsdl';
-        $soapserverurl = $CFG->commerce_externalshop_url . '/?api=soap&version=v1';
+        $opts = array(
+                        'http' => array('user_agent' => 'PHPSoapClient')
+        );
+        $soapcontext = stream_context_create($opts);
+        $checkname = "commerce_externalshop_url_$companyid";
+        if (!empty($CFG->$checkname)) {
+            $mainurl = $CFG->$checkname;
+        } else {
+            $mainurl = $CFG->commerce_externalshop_url;
+        }
+        $wsdlurl = $mainurl . '/wp-content/plugins/wpiomadsoap/wsdl/wpiomadsoap.wsdl';
+        $soapserverurl = $mainurl . '/?api=soap&version=v1&wsdl';
 
-        $client = new SoapClient($wsdlurl, array('cache_wsdl' => WSDL_CACHE_NONE, 'trace' => 1));
+        $client = new SoapClient($wsdlurl, array('stream_context' => $soapcontext,
+                                                 'cache_wsdl' => WSDL_CACHE_NONE,
+                                                 'trace' => 1));
         try {
             $client->__setLocation($soapserverurl);
             $response = $client->__soapCall($call, $payload);

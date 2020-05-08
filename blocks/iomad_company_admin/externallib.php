@@ -2252,14 +2252,8 @@ class block_iomad_company_admin_external extends external_api {
      */
     public static function sync_users_parameters() {
         return new external_function_parameters(
-                array('options' => new external_single_structure(
-                            array('ids' => new external_multiple_structure(
-                                        new external_value(PARAM_INT, 'Course id')
-                                        , 'List of course id. If empty return all courses
-                                            except front page course.',
-                                        VALUE_OPTIONAL)
-                            ), 'options - operator OR is used', VALUE_DEFAULT, array())
-                )
+            array('source' => new external_value(PARAM_URL, 'The user that is going to be enrolled'),
+            )
         );
     }
 
@@ -2270,16 +2264,43 @@ class block_iomad_company_admin_external extends external_api {
      * @param array $enrolments  An array of user enrolment
      * @since Moodle 2.2
      */
-    public static function sync_users() {
-        global $DB, $CFG;
+    public static function sync_users($source) {
+        global $DB, $CFG, $_POST;
 
         require_capability('moodle/user:update', context_system::instance());
 
-        // Get all of the company users.
+        $params = self::validate_parameters(self::sync_users_parameters(),
+                array('source' => $source));
+
+
+        if (!empty($CFG->commerce_externalshop_url)) {
+            // Do all companies have access?
+            if (empty($CFG->commerce_admin_enableall)) {
+                $companies = $DB->get_records('company', array('ecommerce' => 1));
+            } else {
+                $companies = $DB->get_records('company');
+            }
+            // Do any have their own shop enabled?
+            foreach ($companies as $id => $company) {
+                $name = "commerce_externalshop_url_$id";
+                if (!empty($CFG->$name) && $CFG->$name != $params['source']) {
+                    // Remove if it doesn't match this one.
+                    unset($companies[$id]);
+                }
+            }
+        } else {
+            return true;
+        }
+        if (empty($companies)) {
+            return true;
+        }
+
+        $companysql = " AND companyid IN (" . join(',', array_keys($companies)) . ") ";
         $users = $DB->get_records_sql("SELECT distinct userid from {company_users}
                                        WHERE userid NOT IN (
                                          SELECT id FROM {user} where deleted = 1
-                                       )");
+                                       )
+                                       $companysql");
         foreach ($users as $user) {
             \core\event\user_updated::create_from_userid($user->userid)->trigger();
         }
@@ -2324,7 +2345,7 @@ class block_iomad_company_admin_external extends external_api {
     }
 
     /**
-     * Restrict capability 
+     * Restrict capability
      * Non-zero $templateid identifies template rather than real company
      *
      * @param string $capability

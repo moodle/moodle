@@ -55,7 +55,7 @@ class company {
                     $result->$field = $this->companyrecord->$field;
                 } else {
                     throw new \Exception("Field not found in company record - " . $field);
-                }    
+                }
             }
             return $result;
         }
@@ -1222,7 +1222,7 @@ class company {
                 }
             }
             if ($user->managertype != 0 && $managertype == 0) {
-                // Demoting a manager to a user.    
+                // Demoting a manager to a user.
                 // Deal with company course roles.
                 if ($CFG->iomad_autoenrol_managers &&
                     $companycourses = $DB->get_records('company_course', array('companyid' => $companyid))) {
@@ -1235,7 +1235,7 @@ class company {
                 }
                 if ($DB->get_records_sql("SELECT id FROM {company_users}
                                           WHERE userid = :userid
-                                          AND companyid NOT IN 
+                                          AND companyid NOT IN
                                           (" . join(',', array_keys($companytree)) .")
                                           AND managertype = 1",
                                           array('userid' => $userid,
@@ -3044,10 +3044,17 @@ class company {
      *
      **/
     public function ecommerce($ecommerce) {
-        global $DB;
+        global $CFG, $DB;
 
         // Set the ecommerce field for the company.
         $DB->set_field('company', 'ecommerce', $ecommerce, array('id' => $this->id));
+
+        // Do we have to update it on the external site?
+        if (!empty($ecommerce) && $CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
+            // Let's set up the adhoc task.
+            $task = new \block_iomad_company_admin\task\companyenableshop();
+            $task->queue_task($this->id);
+        }
     }
 
     /**
@@ -3414,6 +3421,10 @@ class company {
 
         if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
             // Fire off the payload to the external site.
+            if (empty($CFG->commerce_admin_enableall) && empty($company->ecommerce)) {
+                return true;
+            }
+
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
             iomad_commerce::update_company($company, $company);
         }
@@ -3508,7 +3519,7 @@ class company {
             $coursecat = $DB->get_record('course_categories', array('id' => $company->category),'*',MUST_EXIST);
             $coursecat->name = $company->name;
             $DB->update_record('course_categories', $coursecat);
-            fix_course_sortorder();            
+            fix_course_sortorder();
         }
 
         return true;
@@ -3677,15 +3688,18 @@ class company {
         $user->manager = 'no';
 
         if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
-            if (empty($user->company)) {
-                if ($company = self::by_userid($userid)) {
+            if ($company = self::by_userid($userid)) {
+                if (empty($CFG->commerce_admin_enableall) && empty($company->companyrecord->ecommerce)) {
+                    return true;
+                }
+                if (empty($user->company)) {
                     $user->company = $company->get_name();
                 }
             }
 
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
-            iomad_commerce::update_user($user);
+            iomad_commerce::update_user($user, $company->id);
         }
 
         return true;
@@ -3718,15 +3732,16 @@ class company {
         $user->company = $company->name;
 
         if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
+            if (empty($CFG->commerce_admin_enableall) && empty($company->ecommerce)) {
+                return true;
+            }
             if (empty($user->company)) {
-                if ($company = self::by_userid($userid)) {
-                    $user->company = $company->get_name();
-                }
+                $user->company = $company->get_name();
             }
 
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
-            iomad_commerce::update_user($user);
+            iomad_commerce::update_user($user, $company->id);
         }
 
         return true;
@@ -3879,15 +3894,16 @@ class company {
             }
         }
 
+        $usercompany = self::by_userid($userid);
+        $usercompanyrec = $DB->get_record('company_users', array('userid' => $userid, 'companyid' => $usercompany->id));
+
         if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
             $user = $DB->get_record('user', array('id' => $userid));
-            iomad_commerce::delete_user($user->username);
+            iomad_commerce::delete_user($user->username, $usercompany->id);
         }
 
-        $usercompany = self::by_userid($userid);
-        $usercompanyrec = $DB->get_record('company_users', array('userid' => $userid, 'companyid' => $usercompany->id));
         $user = $DB->get_record('user', array('id' => $userid));
         if (isset($usercompanyrec->managertype) && $usercompanyrec->managertype == 0) {
             EmailTemplate::send('user_deleted',
@@ -3931,9 +3947,12 @@ class company {
         }
 
         if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
+            if (empty($CFG->commerce_admin_enableall) && empty($company->companyrecord->ecommerce)) {
+                return true;
+            }
             // Fire off the payload to the external site.
             require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
-            iomad_commerce::assign_user($user, $companyrec->name);
+            iomad_commerce::assign_user($user, $companyrec->name, $companyrec->id);
         }
 
         return true;
@@ -4065,7 +4084,7 @@ class company {
                     // Update the userlicense record to mark it as in use.
                     $DB->set_field('companylicense_users', 'isusing', 1, array('id' => $userlicense->id));
 
-                    // Fire an event to record this 
+                    // Fire an event to record this
                     $eventother = array('licenseid' => $licenseid);
                     $event = \block_iomad_company_admin\event\user_license_used::create(array('context' => \context_course::instance($courseid),
                                                                                               'objectid' => $userlicense->id,
