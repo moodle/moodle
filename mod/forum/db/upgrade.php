@@ -294,5 +294,17 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019111801, 'forum');
     }
 
+    if ($oldversion < 2019111802) {
+        // Add index privatereplyto (not unique) to the forum_posts table.
+        $table = new xmldb_table('forum_posts');
+        $index = new xmldb_index('privatereplyto', XMLDB_INDEX_NOTUNIQUE, ['privatereplyto']);
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_mod_savepoint(true, 2019111802, 'forum');
+    }
+
     return true;
 }
