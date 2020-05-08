@@ -1055,6 +1055,15 @@ $CFG->admin = 'admin';
 //      $CFG->alternative_file_system_class = '\\local_myfilestorage\\file_system';
 //
 //=========================================================================
+// 15. CAMPAIGN CONTENT
+//=========================================================================
+//
+// We have added a campaign content to the notifications page, in case you want to hide that from your site you just
+// need to set showcampaigncontent setting to false.
+//
+//      $CFG->showcampaigncontent = true;
+//
+//=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
 

@@ -282,6 +282,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param bool $overridetossl Whether or not ssl is being forced.
      * @param bool $invalidforgottenpasswordurl Whether the forgotten password URL does not link to a valid URL.
      * @param bool $croninfrequent If true, warn that cron hasn't run in the past few minutes
+     * @param bool $showcampaigncontent Whether the campaign content should be visible or not.
      *
      * @return string HTML to output.
      */
@@ -289,7 +290,9 @@ class core_admin_renderer extends plugin_renderer_base {
             $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch,
             $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0,
             $themedesignermode = false, $devlibdir = false, $mobileconfigured = false,
-            $overridetossl = false, $invalidforgottenpasswordurl = false, $croninfrequent = false) {
+            $overridetossl = false, $invalidforgottenpasswordurl = false, $croninfrequent = false,
+            $showcampaigncontent = false) {
+
         global $CFG;
         $output = '';
 
@@ -312,6 +315,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->registration_warning($registered);
         $output .= $this->mobile_configuration_warning($mobileconfigured);
         $output .= $this->forgotten_password_url_warning($invalidforgottenpasswordurl);
+        $output .= $this->campaign_content($showcampaigncontent);
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
@@ -876,6 +880,20 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         return $output;
+    }
+
+    /**
+     * Display campaign content.
+     *
+     * @param bool $showcampaigncontent Whether the campaign content should be visible or not.
+     * @return string the campaign content raw html.
+     */
+    protected function campaign_content(bool $showcampaigncontent): string {
+        if (!$showcampaigncontent) {
+            return '';
+        }
+
+        return $this->render_from_template('core/campaign_content', ['lang' => current_language()]);
     }
 
     /**
