@@ -400,8 +400,13 @@ class grade_item extends grade_object {
      * @return bool success
      */
     public function delete($source=null) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
         $this->delete_all_grades($source);
-        return parent::delete($source);
+        $success = parent::delete($source);
+        $transaction->allow_commit();
+        return $success;
     }
 
     /**
@@ -411,6 +416,10 @@ class grade_item extends grade_object {
      * @return bool
      */
     public function delete_all_grades($source=null) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
         if (!$this->is_course_item()) {
             $this->force_regrading();
         }
@@ -427,6 +436,8 @@ class grade_item extends grade_object {
             $fs = new file_storage();
             $fs->delete_area_files($this->get_context()->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
         }
+
+        $transaction->allow_commit();
 
         return true;
     }
