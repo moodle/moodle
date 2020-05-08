@@ -30,5 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thisdirection'] = 'rtl';
-$string['thislanguage'] = 'پښتو';
+$string['parentlanguage'] = 'en_us';
+$string['thislanguage'] = 'English for Workplace - United States';

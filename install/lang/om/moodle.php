@@ -30,5 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thisdirection'] = 'rtl';
-$string['thislanguage'] = 'پښتو';
+$string['language'] = 'Qooqa ykn Afaan';
+$string['next'] = 'Kan itti aanuu';
+$string['previous'] = 'Kan duraa';
