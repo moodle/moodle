@@ -85,7 +85,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
         $fs = get_file_storage();
 
         $clientlogo = '';
-        $companyid = \iomad::is_company_user();
+        $companyid = \iomad::get_my_companyid(\context_system::instance());
         if ($companyid) {
             $context = \context_system::instance();
             $files = $fs->get_area_files($context->id, 'theme_iomad', 'companylogo', $companyid );
@@ -166,7 +166,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
         $css = '';
 
         // Get company colours
-        $companyid = \iomad::is_company_user();
+        $companyid = \iomad::get_my_companyid(\context_system::instance());
         if ($companyid) {
             $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
             $linkcolor = $company->linkcolor;
@@ -207,7 +207,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
         }
 
         // Deal with company custom menu items.
-        if ($companyid = \iomad::is_company_user()) {
+        if ($companyid = \iomad::get_my_companyid(\context_system::instance());
             if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
                 if (!empty($companyrec->custommenuitems)) {
                     $custommenuitems = $companyrec->custommenuitems;
@@ -232,7 +232,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
         }
 
         // Deal with company custom menu items.
-        if ($companyid = \iomad::is_company_user()) {
+        if ($companyid = \iomad::get_my_companyid(\context_system::instance());
             if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
                 if (!empty($companyrec->custommenuitems)) {
                     $custommenuitems = $companyrec->custommenuitems;
@@ -274,7 +274,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
 
         $custommenuitems = false;
         // Deal with company custom menu items.
-        if ($companyid = \iomad::is_company_user()) {
+        if ($companyid = \iomad::get_my_companyid(\context_system::instance());
             if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
                 if (!empty($companyrec->custommenuitems)) {
                     $custommenuitems = true;

@@ -32,7 +32,7 @@ class iomad {
     public static function get_my_companyid($context, $required=true) {
         global $SESSION, $USER;
         // are we logged in?
-        if (empty($USER->id)) {
+        if (empty($USER->id) && empty($SESSION->currenteditingcompany)) {
             return -1;
         }
 
@@ -42,8 +42,11 @@ class iomad {
         } else if (self::is_company_user()) {
             $companyid = self::companyid();
         } else if (self::has_capability('block/iomad_company_admin:edit_departments', $context) && $required) {
-            redirect(new moodle_url('/my'),
-                                     get_string('pleaseselect', 'block_iomad_company_admin'));
+            if (!empty($SESSION->company->id)) {
+                return $SESSION->company->id;
+            } else {
+                redirect(new moodle_url('/my'), get_string('pleaseselect', 'block_iomad_company_admin'));
+            }
         } else {
             $companyid = 0;
         }

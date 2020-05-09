@@ -95,7 +95,7 @@ class core_renderer extends \core_renderer {
         $css = '';
 
         // Get company colours
-        $companyid = \iomad::is_company_user();
+        $companyid = \iomad::get_my_companyid(\context_system::instance());
         if ($companyid) {
             $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
             $linkcolor = $company->linkcolor;

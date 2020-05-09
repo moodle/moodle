@@ -70,10 +70,10 @@ class company {
      * Returns class object.
      *
      **/
-    public static function by_userid($userid) {
+    public static function by_userid($userid, $login = false) {
         global $DB, $SESSION;
 
-        if (!empty($SESSION->currenteditingcompany)) {
+        if (!$login && !empty($SESSION->currenteditingcompany)) {
             return new company($SESSION->currenteditingcompany);
         } else {
             if ($companies = $DB->get_records('company_users', array('userid' => $userid), 'companyid DESC')) {

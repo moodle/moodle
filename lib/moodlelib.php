@@ -4699,6 +4699,19 @@ function complete_user_login($user) {
     // Select password change url.
     $userauth = get_auth_plugin($USER->auth);
 
+    // IOMAD: if we have a SESSION for the company
+    // Check that it matches the user's actual company.
+    if (!empty($SESSION->currenteditingcompany)) {
+        if ($company = company::by_userid($USER->id, true)) {
+            if ($company->id != $SESSION->currenteditingcompany) {
+                $SESSION->currenteditingcompany = $company->id;
+                $SESSION->company = $company;
+            }
+        } else {
+            unset($SESSION->currenteditingcompany);
+        }
+    }
+
     // Check whether the user should be changing password.
     if (get_user_preferences('auth_forcepasswordchange', false)) {
         if ($userauth->can_change_password()) {
