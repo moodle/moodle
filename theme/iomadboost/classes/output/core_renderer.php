@@ -168,7 +168,7 @@ class core_renderer extends \core_renderer {
         $fs = get_file_storage();
 
         $clientlogo = '';
-        $companyid = \iomad::is_company_user();
+        $companyid = theme/iomadbootstrap/classes/output/core_renderer.php
         if ($companyid) {
             $context = \context_system::instance();
             $files = $fs->get_area_files($context->id, 'theme_iomad', 'companylogo', $companyid );
@@ -247,7 +247,7 @@ class core_renderer extends \core_renderer {
         }
 
         // Deal with company custom menu items.
-        if ($companyid = \iomad::is_company_user()) {
+        if ($companyid = theme/iomadbootstrap/classes/output/core_renderer.php
             if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
                 if (!empty($companyrec->custommenuitems)) {
                     $custommenuitems = $companyrec->custommenuitems;
@@ -272,7 +272,7 @@ class core_renderer extends \core_renderer {
         }
 
         // Deal with company custom menu items.
-        if ($companyid = \iomad::is_company_user()) {
+        if ($companyid = theme/iomadbootstrap/classes/output/core_renderer.php
             if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
                 if (!empty($companyrec->custommenuitems)) {
                     $custommenuitems = $companyrec->custommenuitems;
@@ -352,7 +352,7 @@ class core_renderer extends \core_renderer {
 
         $custommenuitems = false;
         // Deal with company custom menu items.
-        if ($companyid = \iomad::is_company_user()) {
+        if ($companyid = theme/iomadbootstrap/classes/output/core_renderer.php
             if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
                 if (!empty($companyrec->custommenuitems)) {
                     $custommenuitems = true;
