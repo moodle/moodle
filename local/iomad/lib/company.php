@@ -939,6 +939,11 @@ class company {
         $company = new company($companyid);
         $managertypes = $company->get_managertypes();
 
+        // Is this a real user?
+        if (!$userrec = $DB->get_record('user', array('id' => $userid))) {
+            return false;
+        }
+
         // Get the system context.
         $systemcontext = context_system::instance();
 
@@ -996,7 +1001,7 @@ class company {
                     }
                     // External company managers don't go down the child company tree.
                 } else if ($managertype == 1) {
-                    // Give them the department manager role.
+                    // Give them the company manager role.
                     role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
                     role_unassign($companyreporterrole->id, $userid, $systemcontext->id);
                     role_assign($companymanagerrole->id, $userid, $systemcontext->id);
@@ -1025,6 +1030,15 @@ class company {
                             }
                         }
                     }
+
+                    $companycount = $DB->count_records_select('company_users', "userid = :userid AND (managertype = 1 OR managertype = 2)",
+                                                            array('userid' => $userid));
+                    if ($companycount == 0) {
+                        // Fire an email for this.
+                        EmailTemplate::send('user_promoted',
+                                       array('company' => $company->companyrecord,
+                                             'user' => $userrec));
+                    }
                 } else if ($managertype == 2) {
                     // Give them the department manager role.
                     role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
@@ -1044,8 +1058,17 @@ class company {
                             }
                         }
                     }
+
+                    $companycount = $DB->count_records_select('company_users', "userid = :userid AND (managertype = 1 OR managertype = 2)",
+                                                            array('userid' => $userid));
+                    if ($companycount == 0) {
+                        // Fire an email for this.
+                        EmailTemplate::send('user_promoted',
+                                       array('company' => $company->companyrecord,
+                                             'user' => $userrec));
+                    }
                 } else if ($managertype == 4 ) {
-                    // Give them the department manager role.
+                    // Give them the company reporter role.
                     role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
                     role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
                     role_assign($companyreporterrole->id, $userid, $systemcontext->id);
@@ -1111,7 +1134,7 @@ class company {
             // Deal with any management role changes.
             if ($managertype != 0) {
                 if ($managertype == 1) {
-                    // Give them the department manager role.
+                    // Give them the company manager role.
                     role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
                     role_unassign($companyreporterrole->id, $userid, $systemcontext->id);
                     role_assign($companymanagerrole->id, $userid, $systemcontext->id);
@@ -1140,6 +1163,17 @@ class company {
                             }
                         }
                     }
+
+                    if ($user->managertype == 0) {
+                        $companycount = $DB->count_records_select('company_users', "userid = :userid AND (managertype = 1 OR managertype = 2)",
+                                                                array('userid' => $userid));
+                        if ($companycount == 0) {
+                            // Fire an email for this.
+                            EmailTemplate::send('user_promoted',
+                                           array('company' => $company->companyrecord,
+                                                 'user' => $userrec));
+                        }
+                    }
                 } else if ($managertype == 2) {
                     // Give them the department manager role.
                     role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
@@ -1158,6 +1192,12 @@ class company {
                                                     $companycoursenoneditorrole->id);
                             }
                         }
+                    }
+                    if ($user->managertype == 0) {
+                        // Fire an email for this.
+                        EmailTemplate::send('user_promoted',
+                                       array('company' => $company->companyrecord,
+                                             'user' => $userrec));
                     }
                 } else if ($managertype == 3 && !$CFG->iomad_autoenrol_managers) {
                     // Deal with company course roles.
@@ -1193,7 +1233,7 @@ class company {
                         }
                     }
                 } else if ($managertype == 4 ) {
-                    // Give them the department manager role.
+                    // Give them the company reporter role.
                     role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
                     role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
                     role_assign($companyreporterrole->id, $userid, $systemcontext->id);
@@ -1268,6 +1308,17 @@ class company {
                         $childdepartment = self::get_company_parentnode($childcompany->id);
                         self::upsert_company_user($userid,$childcompany->id, $childdepartment->id, $managertype, $educator);
                         $DB->delete_records('company_users', array('companyid' => $childcompany->id, 'userid' => $userid));
+                    }
+                }
+
+                if ($user->managertype == 1 || $user->managertype == 2) {
+                    $companycount = $DB->count_records_select('company_users', "userid = :userid AND (managertype = 1 OR managertype = 2)",
+                                                  array('userid' => $userid));
+                    if ($companycount == 1) {
+                        // Fire an email for this.
+                        EmailTemplate::send('admin_deleted',
+                                       array('company' => $company->companyrecord,
+                                             'user' => $userrec));
                     }
                 }
             }
@@ -3905,16 +3956,10 @@ class company {
         }
 
         $user = $DB->get_record('user', array('id' => $userid));
-        if (isset($usercompanyrec->managertype) && $usercompanyrec->managertype == 0) {
-            EmailTemplate::send('user_deleted',
-                                 array('company' => $usercompany,
-                                       'user' => $user));
+        EmailTemplate::send('user_deleted',
+                             array('company' => $usercompany,
+                                   'user' => $user));
 
-        } else {
-            EmailTemplate::send('admin_deleted',
-                                 array('company' => $usercompany,
-                                       'user' => $user));
-        }
         // Remove the user from any company.
         $DB->delete_records('company_users', array('userid' => $userid));
 

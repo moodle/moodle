@@ -419,9 +419,9 @@ $string['user_deleted_body'] = "<p>Hello {User_FirstName} {User_LastName},</p>
 <p>Your account has been deleted on {SiteURL}. You no longer have access to any of your training courses</p>
 <p>If you feel that this is in error, please contact your manager</p>
 <p>Your email: {User_Email}</p>";
-$string['admin_deleted_subject'] = "Account has been deleted";
-$string['admin_deleted_body'] = "<p>Hello {User_FirstName} {User_LastName},</p>
-<p>Your account has been deleted on {SiteURL}. You no longer have access to manage your company</p>
+$string['admin_deleted_subject'] = "Account has been demoted";
+$string['admin_deleted_body'] = "<p>Hello {User_Firstname} {User_Lastname},</p>
+<p>Your admin privileges have been revoked on {SiteURL}. You no longer have access to manage your company</p>
 <p>Your email: {User_Email}</p><p>If you feel that this is in error, please contact your manager.</p>";
 $string['user_suspended_subject'] = "Account has been suspended";
 $string['user_suspended_body'] = "<p>Hello {User_FirstName} {User_LastName},</p>
