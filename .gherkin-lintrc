@@ -18,5 +18,6 @@
   "no-trailing-spaces": "on",
   "no-unnamed-features": "on",
   "no-unnamed-scenarios": "on",
-  "no-scenario-outlines-without-examples": "on"
+  "no-scenario-outlines-without-examples": "on",
+  "new-line-at-eof": ["on", "yes"]
 }
