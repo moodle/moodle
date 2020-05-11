@@ -49,15 +49,28 @@
 }}
 <div class="form-item row" id="{{id}}">
     <div class="form-label col-sm-3 text-sm-right">
-        <label {{#labelfor}}for="{{labelfor}}"{{/labelfor}}>
-            {{{title}}}
-            {{#override}}
-                <div class="form-overridden">{{override}}</div>
-            {{/override}}
-            {{#warning}}
-                <div class="form-warning">{{warning}}</div>
-            {{/warning}}
-        </label>
+        {{#customcontrol}}
+            <p {{#labelfor}}id="{{labelfor}}_label"{{/labelfor}}>
+                {{{title}}}
+                {{#override}}
+                    <div class="form-overridden">{{override}}</div>
+                {{/override}}
+                {{#warning}}
+                    <div class="form-warning">{{warning}}</div>
+                {{/warning}}
+            </p>
+        {{/customcontrol}}
+        {{^customcontrol}}
+            <label {{#labelfor}}for="{{labelfor}}"{{/labelfor}}>
+                {{{title}}}
+                {{#override}}
+                    <div class="form-overridden">{{override}}</div>
+                {{/override}}
+                {{#warning}}
+                    <div class="form-warning">{{warning}}</div>
+                {{/warning}}
+            </label>
+        {{/customcontrol}}
         <span class="form-shortname d-block small text-muted">{{{name}}}</span>
     </div>
     <div class="form-setting col-sm-9">
@@ -72,3 +85,16 @@
         {{#dependenton}}<div class="form-dependenton mb-4 text-muted">{{{.}}}</div>{{/dependenton}}
     </div>
 </div>
+{{#customcontrol}}
+    {{#js}}
+        require(['jquery'], function($) {
+            $('#{{id}}_label').css('cursor', 'default');
+            $('#{{id}}_label').click(function() {
+                $('#{{id}}')
+                    .find('button, a, input:not([type="hidden"]), select, textarea, [tabindex]')
+                    .filter(':not([disabled]):not([tabindex="0"]):not([tabindex="-1"])')
+                    .first().focus();
+            });
+        });
+    {{/js}}
+{{/customcontrol}}
