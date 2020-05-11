@@ -3463,6 +3463,35 @@ EOD;
     }
 
     /**
+     * Secure layout login info.
+     *
+     * @return string
+     */
+    public function secure_layout_login_info() {
+        if (get_config('core', 'logininfoinsecurelayout')) {
+            return $this->login_info(false);
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Returns the language menu in the secure layout.
+     *
+     * No custom menu items are passed though, such that it will render only the language selection.
+     *
+     * @return string
+     */
+    public function secure_layout_language_menu() {
+        if (get_config('core', 'langmenuinsecurelayout')) {
+            $custommenu = new custom_menu('', current_language());
+            return $this->render_custom_menu($custommenu);
+        } else {
+            return '';
+        }
+    }
+
+    /**
      * This renders the navbar.
      * Uses bootstrap compatible html.
      */
