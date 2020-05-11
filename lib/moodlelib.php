@@ -5335,6 +5335,13 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         echo $OUTPUT->notification($strdeleted.get_string('questions', 'question'), 'notifysuccess');
     }
 
+    // Delete content bank contents.
+    $cb = new \core_contentbank\contentbank();
+    $cbdeleted = $cb->delete_contents($coursecontext);
+    if ($showfeedback && $cbdeleted) {
+        echo $OUTPUT->notification($strdeleted.get_string('contentbank', 'contentbank'), 'notifysuccess');
+    }
+
     // Make sure there are no subcontexts left - all valid blocks and modules should be already gone.
     $childcontexts = $coursecontext->get_child_contexts(); // Returns all subcontexts since 2.2.
     foreach ($childcontexts as $childcontext) {

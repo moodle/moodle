@@ -135,6 +135,18 @@ abstract class contenttype {
     }
 
     /**
+     * Move content to another context.
+     * This method can be overwritten by the plugins if they need to change some other specific information.
+     *
+     * @param  content $content The content to rename.
+     * @param context $context  The new context.
+     * @return boolean true if the content has been renamed; false otherwise.
+     */
+    public function move_content(content $content, \context $context): bool {
+        return $content->set_contextid($context->id);
+    }
+
+    /**
      * Returns the contenttype name of this content.
      *
      * @return string   Content type of the current instance
