@@ -299,7 +299,6 @@ M.mod_quiz = M.mod_quiz || {};
 M.mod_quiz.init_section_dragdrop = function(params) {
     new DRAGSECTION(params);
 };
-/* global SELECTOR */
 /**
  * Resource drag and drop.
  *

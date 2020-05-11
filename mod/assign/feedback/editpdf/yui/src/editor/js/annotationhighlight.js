@@ -12,13 +12,12 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/* global ANNOTATIONCOLOUR */
 
 /**
  * Provides an in browser PDF editor.
  *
  * @module moodle-assignfeedback_editpdf-editor
- */
+*/
 
 /**
  * Class representing a highlight.

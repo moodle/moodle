@@ -259,12 +259,12 @@ Feature: Course category management interface performs as expected
     And I should see category listing <cat1> before <cat2>
     And I should see category listing <cat2> before <cat3>
 
-  Examples:
-    | sortby | cat1 | cat2 | cat3 |
-    | "Sort by Category name ascending"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "Sort by Category name descending"      | "Social studies"          | "Extended social studies" | "Applied sciences" |
-    | "Sort by Category ID number ascending"  | "Extended social studies" | "Social studies"          | "Applied sciences" |
-    | "Sort by Category ID number descending" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
+    Examples:
+      | sortby | cat1 | cat2 | cat3 |
+      | "Sort by Category name ascending"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+      | "Sort by Category name descending"      | "Social studies"          | "Extended social studies" | "Applied sciences" |
+      | "Sort by Category ID number ascending"  | "Extended social studies" | "Social studies"          | "Applied sciences" |
+      | "Sort by Category ID number descending" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
 
   @javascript
   Scenario Outline: Sub categories are displayed correctly when resorted
@@ -289,12 +289,12 @@ Feature: Course category management interface performs as expected
     And I should see category listing <cat1> before <cat2>
     And I should see category listing <cat2> before <cat3>
 
-  Examples:
-    | sortby | cat1 | cat2 | cat3 |
-    | "resortbyname"         | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "resortbynamedesc"     | "Social studies"          | "Extended social studies" | "Applied sciences" |
-    | "resortbyidnumber"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
-    | "resortbyidnumberdesc" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
+    Examples:
+      | sortby | cat1 | cat2 | cat3 |
+      | "resortbyname"         | "Applied sciences"        | "Extended social studies" | "Social studies" |
+      | "resortbynamedesc"     | "Social studies"          | "Extended social studies" | "Applied sciences" |
+      | "resortbyidnumber"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
+      | "resortbyidnumberdesc" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
 
   @javascript
   Scenario Outline: Test courses are displayed correctly after being resorted.
@@ -330,16 +330,16 @@ Feature: Course category management interface performs as expected
     And I should see course listing <course1> before <course2>
     And I should see course listing <course2> before <course3>
 
-  Examples:
-    | sortby | course1 | course2 | course3 |
-    | "Sort by Course full name ascending"     | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "Sort by Course full name descending"    | "Social studies"          | "Extended social studies" | "Applied sciences" |
-    | "Sort by Course short name ascending"    | "Extended social studies" | "Applied sciences"        | "Social studies" |
-    | "Sort by Course short name descending"   | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "Sort by Course ID number ascending"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
-    | "Sort by Course ID number descending"    | "Applied sciences"        | "Social studies"          | "Extended social studies" |
-    | "Sort by Course time created ascending"  | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "Sort by Course time created descending" | "Extended social studies" | "Applied sciences"        | "Social studies" |
+    Examples:
+      | sortby | course1 | course2 | course3 |
+      | "Sort by Course full name ascending"     | "Applied sciences"        | "Extended social studies" | "Social studies" |
+      | "Sort by Course full name descending"    | "Social studies"          | "Extended social studies" | "Applied sciences" |
+      | "Sort by Course short name ascending"    | "Extended social studies" | "Applied sciences"        | "Social studies" |
+      | "Sort by Course short name descending"   | "Social studies"          | "Applied sciences"        | "Extended social studies" |
+      | "Sort by Course ID number ascending"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
+      | "Sort by Course ID number descending"    | "Applied sciences"        | "Social studies"          | "Extended social studies" |
+      | "Sort by Course time created ascending"  | "Social studies"          | "Applied sciences"        | "Extended social studies" |
+      | "Sort by Course time created descending" | "Extended social studies" | "Applied sciences"        | "Social studies" |
 
   @javascript
   Scenario: Test course pagination

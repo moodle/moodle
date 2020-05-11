@@ -54,6 +54,7 @@ Feature: Set the site home page and dashboard as the default home page
     And I set the field "Home page" to "<preference>"
     And I press "Save changes"
     Then "<breadcrumb>" "text" should exist in the ".breadcrumb" "css_element"
+
     Examples:
       | preference | breadcrumb |
       | Site       | Home       |

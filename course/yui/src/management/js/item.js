@@ -6,9 +6,9 @@
  * @constructor
  * @extends Base
  */
-function Item() {
+Item = function() {
     Item.superclass.constructor.apply(this, arguments);
-}
+};
 Item.NAME = 'moodle-course-management-item';
 Item.CSS_PREFIX = 'management-item';
 Item.ATTRS = {

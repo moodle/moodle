@@ -26,7 +26,7 @@
     font-weight: 100;
     line-height: 1;
     color: #a2a2a2;
-    filter: alpha(opacity=20);
+    opacity: 0.2;
     position: absolute;
     font-family: helvetica, arial, verdana, sans-serif;
     top: 0;

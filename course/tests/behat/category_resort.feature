@@ -23,12 +23,12 @@ Feature: Test we can resort categories in the management interface.
     And I should see category listing <cat1> before <cat2>
     And I should see category listing <cat2> before <cat3>
 
-  Examples:
-    | sortby | cat1 | cat2 | cat3 |
-    | "Sort by Category name ascending"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "Sort by Category name descending"      | "Social studies"          | "Extended social studies" | "Applied sciences" |
-    | "Sort by Category ID number ascending"  | "Extended social studies" | "Social studies"          | "Applied sciences" |
-    | "Sort by Category ID number descending" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
+    Examples:
+      | sortby | cat1 | cat2 | cat3 |
+      | "Sort by Category name ascending"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+      | "Sort by Category name descending"      | "Social studies"          | "Extended social studies" | "Applied sciences" |
+      | "Sort by Category ID number ascending"  | "Extended social studies" | "Social studies"          | "Applied sciences" |
+      | "Sort by Category ID number descending" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
 
   Scenario Outline: Test bulk sorting current category.
     Given the following "categories" exist:
@@ -52,12 +52,12 @@ Feature: Test we can resort categories in the management interface.
     And I should see category listing <cat1> before <cat2>
     And I should see category listing <cat2> before <cat3>
 
-  Examples:
-    | sortby | cat1 | cat2 | cat3 |
-    | "Sort by Category name ascending"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "Sort by Category name descending"      | "Social studies"          | "Extended social studies" | "Applied sciences" |
-    | "Sort by Category ID number ascending"  | "Extended social studies" | "Social studies"          | "Applied sciences" |
-    | "Sort by Category ID number descending" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
+    Examples:
+      | sortby | cat1 | cat2 | cat3 |
+      | "Sort by Category name ascending"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+      | "Sort by Category name descending"      | "Social studies"          | "Extended social studies" | "Applied sciences" |
+      | "Sort by Category ID number ascending"  | "Extended social studies" | "Social studies"          | "Applied sciences" |
+      | "Sort by Category ID number descending" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
 
   Scenario Outline: Test resorting subcategories.
     Given the following "categories" exist:
@@ -79,12 +79,12 @@ Feature: Test we can resort categories in the management interface.
     And I should see category listing <cat1> before <cat2>
     And I should see category listing <cat2> before <cat3>
 
-  Examples:
-    | sortby | cat1 | cat2 | cat3 |
-    | "resortbyname"         | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "resortbynamedesc"     | "Social studies"          | "Extended social studies" | "Applied sciences" |
-    | "resortbyidnumber"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
-    | "resortbyidnumberdesc" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
+    Examples:
+      | sortby | cat1 | cat2 | cat3 |
+      | "resortbyname"         | "Applied sciences"        | "Extended social studies" | "Social studies" |
+      | "resortbynamedesc"     | "Social studies"          | "Extended social studies" | "Applied sciences" |
+      | "resortbyidnumber"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
+      | "resortbyidnumberdesc" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
 
   @javascript
   Scenario Outline: Test resorting subcategories with JS enabled.
@@ -109,12 +109,12 @@ Feature: Test we can resort categories in the management interface.
     And I should see category listing <cat1> before <cat2>
     And I should see category listing <cat2> before <cat3>
 
-  Examples:
-    | sortby | cat1 | cat2 | cat3 |
-    | "resortbyname"         | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "resortbynamedesc"     | "Social studies"          | "Extended social studies" | "Applied sciences" |
-    | "resortbyidnumber"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
-    | "resortbyidnumberdesc" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
+    Examples:
+      | sortby | cat1 | cat2 | cat3 |
+      | "resortbyname"         | "Applied sciences"        | "Extended social studies" | "Social studies" |
+      | "resortbynamedesc"     | "Social studies"          | "Extended social studies" | "Applied sciences" |
+      | "resortbyidnumber"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
+      | "resortbyidnumberdesc" | "Applied sciences"        | "Social studies"          | "Extended social studies" |
 
   # The scenario below this is the same but with JS enabled.
   Scenario: Test moving categories up and down by one.

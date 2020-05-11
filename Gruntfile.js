@@ -149,6 +149,7 @@ module.exports = function(grunt) {
     const watchmanClient = new watchman.Client();
     const fs = require('fs');
     const ComponentList = require(path.resolve('GruntfileComponents.js'));
+    const sass = require('node-sass');
 
     // Verify the node version is new enough.
     var expected = semver.validRange(grunt.file.readJSON('package.json').engines.node);
@@ -358,6 +359,7 @@ module.exports = function(grunt) {
                 }
             },
             options: {
+                implementation: sass,
                 includePaths: ["theme/boost/scss/", "theme/classic/scss/"]
             }
         },
@@ -527,23 +529,28 @@ module.exports = function(grunt) {
         const options = grunt.config('gherkinlint.options');
 
         // Grab the gherkin-lint linter and required scaffolding.
-        const linter = require('gherkin-lint/src/linter.js');
-        const featureFinder = require('gherkin-lint/src/feature-finder.js');
-        const configParser = require('gherkin-lint/src/config-parser.js');
-        const formatter = require('gherkin-lint/src/formatters/stylish.js');
+        const linter = require('gherkin-lint/dist/linter.js');
+        const featureFinder = require('gherkin-lint/dist/feature-finder.js');
+        const configParser = require('gherkin-lint/dist/config-parser.js');
+        const formatter = require('gherkin-lint/dist/formatters/stylish.js');
 
         // Run the linter.
-        const results = linter.lint(
+        return linter.lint(
             featureFinder.getFeatureFiles(grunt.file.expand(options.files)),
             configParser.getConfiguration(configParser.defaultConfigFileName)
-        );
+        )
+        .then(results => {
+            // Print the results out uncondtionally.
+            formatter.printResults(results);
 
-        // Print the results out uncondtionally.
-        formatter.printResults(results);
-
-        // Report on the results.
-        // The done function takes a bool whereby a falsey statement causes the task to fail.
-        done(results.every(result => result.errors.length === 0));
+            return results;
+        })
+        .then(results => {
+            // Report on the results.
+            // The done function takes a bool whereby a falsey statement causes the task to fail.
+            return results.every(result => result.errors.length === 0);
+        })
+        .then(done); // eslint-disable-line promise/no-callback-in-promise
     };
 
     tasks.startup = function() {
