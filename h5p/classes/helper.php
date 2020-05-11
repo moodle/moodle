@@ -259,7 +259,7 @@ class helper {
                 '/admin/tool/task/scheduledtasks.php',
                 array('action' => 'edit', 'task' => get_class($task))
             );
-            if ($status && \tool_task\run_from_cli::is_runnable() && get_config('tool_task', 'enablerunnow')) {
+            if ($status && \core\task\manager::is_runnable() && get_config('tool_task', 'enablerunnow')) {
                 $statusaction = \html_writer::link(
                     new \moodle_url('/admin/tool/task/schedule_task.php',
                         array('task' => get_class($task))),

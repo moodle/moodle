@@ -75,7 +75,7 @@ class tool_task_renderer extends plugin_renderer_base {
         $data = [];
         $yes = get_string('yes');
         $no = get_string('no');
-        $canruntasks = tool_task\run_from_cli::is_runnable();
+        $canruntasks = \core\task\manager::is_runnable();
         foreach ($tasks as $task) {
             $classname = get_class($task);
             $defaulttask = \core\task\manager::get_default_scheduled_task($classname, false);
