@@ -446,4 +446,12 @@ $definitions = array(
         'simpledata' => true,
         'staticacceleration' => true,
     ],
+
+    // Language strings for H5P content-type libraries.
+    // Key "{$libraryname}/{$language}"" contains translations for a given library and language.
+    // Key "$libraryname" has a list of all of the available languages for the library.
+    'h5p_content_type_translations' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simpledata' => true,
+    ],
 );
