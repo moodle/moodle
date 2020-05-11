@@ -17400,6 +17400,15 @@ table caption {
   text-align: left;
   caption-side: top; }
 
+.table-dynamic .loading-icon {
+  position: absolute;
+  left: calc(50% - 1.5rem);
+  top: 200px; }
+  .table-dynamic .loading-icon .icon {
+    height: 3rem;
+    width: 3rem;
+    font-size: 3rem; }
+
 .singlebutton {
   display: inline-block; }
   .singlebutton + .singlebutton {

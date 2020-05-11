@@ -1645,6 +1645,7 @@ class flexible_table {
         if (is_a($this, \core_table\dynamic::class)) {
             $sortdata = $this->get_sort_order();
             return html_writer::start_tag('div', [
+                'class' => 'table-dynamic position-relative',
                 'data-region' => 'core_table/dynamic',
                 'data-table-handler' => $this->get_handler(),
                 'data-table-component' => $this->get_component(),
