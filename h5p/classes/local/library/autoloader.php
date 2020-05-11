@@ -50,10 +50,27 @@ class autoloader {
     }
 
     /**
-     * Returns the default H5P library handler.
+     * Returns the default H5P library handler class.
+     *
      * @return string|null H5P library handler class
      */
     public static function get_default_handler(): ?string {
+        $default = null;
+        $handlers = self::get_all_handlers();
+        if (!empty($handlers)) {
+            // The default handler will be the first value in the list.
+            $default = array_shift($handlers);
+        }
+
+        return $default;
+    }
+
+    /**
+     * Returns the default H5P library handler.
+     *
+     * @return string|null H5P library handler
+     */
+    public static function get_default_handler_library(): ?string {
         $default = null;
         $handlers = self::get_all_handlers();
         if (!empty($handlers)) {
@@ -81,7 +98,7 @@ class autoloader {
             }
         }
 
-        // If no handler has been defined or it doesn't exist, return the default one.
+        // If no handler has been defined, return the default one.
         $defaulthandler = self::get_default_handler();
         if (empty($defaulthandler)) {
             // If there is no default handler, throw an exception.

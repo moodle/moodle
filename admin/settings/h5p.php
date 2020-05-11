@@ -33,7 +33,7 @@ $ADMIN->add('h5p', new admin_externalpage('h5pmanagelibraries', get_string('h5pm
     new moodle_url('/h5p/libraries.php'), ['moodle/site:config', 'moodle/h5p:updatelibraries']));
 
 // H5P settings.
-$defaulth5plib = \core_h5p\local\library\autoloader::get_default_handler();
+$defaulth5plib = \core_h5p\local\library\autoloader::get_default_handler_library();
 if (!empty($defaulth5plib)) {
     // As for now this page only has this setting, it will be hidden if there isn't any H5P libraries handler defined.
     $settings = new admin_settingpage('h5psettings', new lang_string('h5psettings', 'core_h5p'));
