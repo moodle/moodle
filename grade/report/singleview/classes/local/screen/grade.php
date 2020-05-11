@@ -164,7 +164,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
     public function original_headers() {
         return array(
             '', // For filter icon.
-            get_string('firstname') . ' (' . get_string('alternatename') . ') ' . get_string('lastname'),
+            get_string('fullnameuser', 'core'),
             get_string('range', 'grades'),
             get_string('grade', 'grades'),
             get_string('feedback', 'grades'),
@@ -198,8 +198,8 @@ class grade extends tablelike implements selectable_items, filterable_items {
             $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked') . ' ';
         }
 
-        if (!empty($item->alternatename)) {
-            $fullname = $lockicon . $item->alternatename . ' (' . $item->firstname . ') ' . $item->lastname;
+        if (has_capability('moodle/site:viewfullnames', \context_course::instance($this->courseid))) {
+            $fullname = $lockicon . fullname($item, true);
         } else {
             $fullname = $lockicon . fullname($item);
         }
