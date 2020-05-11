@@ -114,6 +114,7 @@ class quizaccess_seb_backup_restore_testcase extends quizaccess_seb_testcase {
             backup::INTERACTIVE_NO, backup::MODE_GENERAL, $this->user->id, backup::TARGET_CURRENT_ADDING);
         $this->assertTrue($rc->execute_precheck());
         $rc->execute_plan();
+        $rc->destroy();
     }
 
     /**
