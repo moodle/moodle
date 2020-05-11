@@ -1,5 +1,26 @@
 {{< core_form/element-template }}
+    {{$label}}
+        {{^element.hiddenlabel}}
+            <p id="{{element.id}}_label" class="col-form-label d-inline" aria-hidden="true">
+                {{{label}}}
+            </p>
+        {{/element.hiddenlabel}}
+    {{/label}}
     {{$element}}
-        {{{element.html}}}
+        <fieldset class="w-100 m-0 p-0 border-0" id="{{element.id}}_fieldset">
+            <legend class="sr-only">{{label}}</legend>
+            {{{element.html}}}
+        </fieldset>
     {{/element}}
 {{/ core_form/element-template }}
+{{#js}}
+(function() {
+    var label = document.getElementById('{{element.id}}_label');
+    if (label) {
+        label.style.cursor = 'default';
+        label.addEventListener('click', function() {
+            document.querySelectorAll('#{{element.id}}_fieldset .fp-btn-choose')[0].focus();
+        });
+    }
+})();
+{{/js}}
