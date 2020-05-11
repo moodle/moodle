@@ -311,6 +311,46 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
     }
 
     /**
+     * Test the behaviour of move_content().
+     */
+    public function test_move_content() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $systemcontext = context_system::instance();
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
+
+        // Add some content to the content bank.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $systemcontents = $generator->generate_contentbank_data('contenttype_testable', 3, 0, $systemcontext);
+        $generator->generate_contentbank_data('contenttype_testable', 3, 0, $coursecontext);
+        $systemcontent = reset($systemcontents);
+
+        // Check the content has been created as expected.
+        $this->assertEquals(6, $DB->count_records('contentbank_content'));
+        $this->assertEquals(3, $DB->count_records('contentbank_content', ['contextid' => $systemcontext->id]));
+        $this->assertEquals(3, $DB->count_records('contentbank_content', ['contextid' => $coursecontext->id]));
+
+        // Check the content files has been created as expected.
+        $this->assertEquals(12, $DB->count_records('files', ['component' => 'contentbank']));
+        $this->assertEquals(6, $DB->count_records('files', ['component' => 'contentbank', 'contextid' => $systemcontext->id]));
+        $this->assertEquals(6, $DB->count_records('files', ['component' => 'contentbank', 'contextid' => $coursecontext->id]));
+
+        // Check the content is moved as expected.
+        $contenttype = new contenttype($systemcontext);
+        $this->assertTrue($contenttype->move_content($systemcontent, $coursecontext));
+        $this->assertEquals(6, $DB->count_records('contentbank_content'));
+        $this->assertEquals(2, $DB->count_records('contentbank_content', ['contextid' => $systemcontext->id]));
+        $this->assertEquals(4, $DB->count_records('contentbank_content', ['contextid' => $coursecontext->id]));
+
+        // Check the content files were moved as expected.
+        $this->assertEquals(12, $DB->count_records('files', ['component' => 'contentbank']));
+        $this->assertEquals(4, $DB->count_records('files', ['component' => 'contentbank', 'contextid' => $systemcontext->id]));
+        $this->assertEquals(8, $DB->count_records('files', ['component' => 'contentbank', 'contextid' => $coursecontext->id]));
+    }
+
+    /**
      * Test the behaviour of can_manage().
      *
      * @covers ::can_manage
