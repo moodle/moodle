@@ -9,13 +9,13 @@ Feature: We can use Single view
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And the following "users" exist:
-      | username | firstname | lastname | email | idnumber | alternatename |
-      | teacher1 | Teacher | 1 | teacher1@example.com | t1 | fred |
-      | teacher2 | No edit | 1 | teacher2@example.com | t2 | nick |
-      | student1 | Student | 1 | student1@example.com | s1 | james |
-      | student2 | Student | 2 | student1@example.com | s2 | holly |
-      | student3 | Student | 3 | student1@example.com | s3 | anna |
-      | student4 | Student | 4 | student1@example.com | s4 | zac |
+      | username | firstname | lastname    | email                | idnumber | middlename | alternatename | firstnamephonetic | lastnamephonetic |
+      | teacher1 | Teacher   | 1           | teacher1@example.com | t1       |            | fred          |                   |                  |
+      | teacher2 | No edit   | 1           | teacher2@example.com | t2       |            | nick          |                   |                  |
+      | student1 | Grainne   | Beauchamp   | student1@example.com | s1       | Ann        | Jill          | Gronya            | Beecham          |
+      | student2 | Niamh     | Cholmondely | student2@example.com | s2       | Jane       | Nina          | Nee               | Chumlee          |
+      | student3 | Siobhan   | Desforges   | student3@example.com | s3       | Sarah      | Sev           | Shevon            | De-forjay        |
+      | student4 | Student   | 4           | student4@example.com | s4       |            | zac           |                   |                  |
     And the following "scales" exist:
       | name | scale |
       | Test Scale | Disappointing, Good, Very good, Excellent |
@@ -50,6 +50,9 @@ Feature: We can use Single view
       | capability                  | permission | role     | contextlevel  | reference |
       | moodle/grade:edit           | Allow      | teacher  | Course        | C1        |
       | gradereport/singleview:view | Allow      | teacher  | Course        | C1        |
+    And the following config values are set as admin:
+      | fullnamedisplay | firstnamephonetic,lastnamephonetic |
+      | alternativefullnameformat | middlename, alternatename, firstname, lastname |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     Given I navigate to "View > Grader report" in the course gradebook
@@ -57,7 +60,7 @@ Feature: We can use Single view
   @javascript
   Scenario: I can update grades, add feedback and exclude grades.
     Given I navigate to "View > Single view" in the course gradebook
-    And I select "Student 4" from the "Select user..." singleselect
+    And I select "Student" from the "Select user..." singleselect
     And I set the field "Override for Test assignment one" to "1"
     When I set the following fields to these values:
         | Grade for Test assignment one | 10.00 |
@@ -76,29 +79,29 @@ Feature: We can use Single view
     And the field "Grade for Test grade item" matches value "45.00"
     And the field "Grade for Course total" matches value "55.00"
     And I click on "Show grades for Test assignment three" "link"
-    And I click on "Override for james (Student) 1" "checkbox"
+    And I click on "Override for Ann, Jill, Grainne, Beauchamp" "checkbox"
     And I set the following fields to these values:
-        | Grade for james (Student) 1 | 12.05 |
-        | Feedback for james (Student) 1 | test data2 |
-    And I set the field "Exclude for holly (Student) 2" to "1"
+        | Grade for Ann, Jill, Grainne, Beauchamp | 12.05 |
+        | Feedback for Ann, Jill, Grainne, Beauchamp | test data2 |
+    And I set the field "Exclude for Jane, Nina, Niamh, Cholmondely" to "1"
     And I press "Save"
     Then I should see "Grades were set for 2 items"
     And I press "Continue"
-    And the field "Grade for james (Student) 1" matches value "12.05"
-    And the field "Exclude for holly (Student) 2" matches value "1"
+    And the field "Grade for Ann, Jill, Grainne, Beauchamp" matches value "12.05"
+    And the field "Exclude for Jane, Nina, Niamh, Cholmondely" matches value "1"
     And I select "new grade item 1" from the "Select grade item..." singleselect
-    And I set the field "Grade for james (Student) 1" to "Very good"
+    And I set the field "Grade for Ann, Jill, Grainne, Beauchamp" to "Very good"
     And I press "Save"
     Then I should see "Grades were set for 1 items"
     And I press "Continue"
     And the following should exist in the "generaltable" table:
         | First name (Alternate name) Surname | Grade |
-        | james (Student) 1 | Very good |
+        | Ann, Jill, Grainne, Beauchamp | Very good |
     And I log out
     And I log in as "teacher2"
     And I am on "Course 1" course homepage
     Given I navigate to "View > Single view" in the course gradebook
-    And I select "Student 4" from the "Select user..." singleselect
+    And I select "Student" from the "Select user..." singleselect
     And the "Exclude for Test assignment one" "checkbox" should be disabled
     And the "Override for Test assignment one" "checkbox" should be enabled
 
@@ -106,12 +109,12 @@ Feature: We can use Single view
     Given I follow "Single view for Test assignment one"
     Then I should see "Test assignment one"
     Then I navigate to "View > Grader report" in the course gradebook
-    And I follow "Single view for Student 1"
-    Then I should see "Student 1"
+    And I follow "Single view for Ann, Jill, Grainne, Beauchamp"
+    Then I should see "Gronya,Beecham"
 
   Scenario: I can bulk update grades.
-    Given I follow "Single view for Student 1"
-    Then I should see "Student 1"
+    Given I follow "Single view for Ann, Jill, Grainne, Beauchamp"
+    Then I should see "Gronya,Beecham"
     When I set the field "For" to "All grades"
     And I set the field "Insert value" to "1.0"
     And I set the field "Perform bulk insert" to "1"
@@ -119,12 +122,12 @@ Feature: We can use Single view
     Then I should see "Grades were set for 6 items"
 
   Scenario: Navigation works in the Single view.
-    Given I follow "Single view for Student 1"
-    Then I should see "Student 1"
-    And I follow "Student 2"
-    Then I should see "Student 2"
-    And I follow "Student 1"
-    Then I should see "Student 1"
+    Given I follow "Single view for Ann, Jill, Grainne, Beauchamp"
+    Then I should see "Gronya,Beecham"
+    And I follow "Nee,Chumlee"
+    Then I should see "Nee,Chumlee"
+    And I follow "Gronya,Beecham"
+    Then I should see "Gronya,Beecham"
     And I click on "Show grades for Test assignment four" "link"
     Then I should see "Test assignment four"
     And I follow "Test assignment three"
@@ -134,7 +137,7 @@ Feature: We can use Single view
 
   Scenario: Activities are clickable only when
     it has a valid activity page.
-    Given I follow "Single view for Student 1"
+    Given I follow "Single view for Ann, Jill, Grainne, Beauchamp"
     And "new grade item 1" "link" should not exist in the "//tbody//tr[position()=1]//td[position()=2]" "xpath_element"
     Then "Category total" "link" should not exist in the "//tbody//tr[position()=2]//td[position()=2]" "xpath_element"
     And "Course total" "link" should not exist in the "//tbody//tr[position()=last()]//td[position()=2]" "xpath_element"
