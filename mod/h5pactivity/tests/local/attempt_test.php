@@ -34,8 +34,6 @@ use \core_xapi\local\statement\item_verb;
 use \core_xapi\local\statement\item_result;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Attempt tests class for mod_h5pactivity.
  *

@@ -22,10 +22,10 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 use mod_h5pactivity\local\manager;
 use mod_h5pactivity\local\grader;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Checks if H5P activity supports a specific feature.

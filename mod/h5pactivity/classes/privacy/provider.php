@@ -35,8 +35,6 @@ use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy API implementation for the H5P activity plugin.
  *

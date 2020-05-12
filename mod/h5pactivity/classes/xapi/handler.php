@@ -35,6 +35,7 @@ use context_module;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->dirroot.'/mod/h5pactivity/lib.php');
 
 /**

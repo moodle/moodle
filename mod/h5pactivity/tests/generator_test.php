@@ -25,8 +25,6 @@
 
 use mod_h5pactivity\local\manager;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Genarator tests class for mod_h5pactivity.
  *

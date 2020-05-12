@@ -28,8 +28,6 @@ namespace mod_h5pactivity\local;
 use stdClass;
 use core_xapi\local\statement;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class attempt for H5P activity
  *

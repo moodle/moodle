@@ -26,6 +26,7 @@ use mod_h5pactivity\local\manager;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 /**
