@@ -163,7 +163,7 @@ class core_renderer extends \core_renderer {
      * @return string logo url or false;
      */
     protected function get_iomad_logo($maxwidth = 100, $maxheight = 100) {
-        global $CFG; $DB;
+        global $CFG, $DB;
 
         $fs = get_file_storage();
 
