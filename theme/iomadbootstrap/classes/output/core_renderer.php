@@ -86,7 +86,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
 
         $clientlogo = '';
         $companyid = \iomad::get_my_companyid(\context_system::instance());
-        if ($companyid) {
+        if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
             $context = \context_system::instance();
             $files = $fs->get_area_files($context->id, 'theme_iomad', 'companylogo', $companyid );
             if ($files) {
@@ -167,7 +167,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
 
         // Get company colours
         $companyid = \iomad::get_my_companyid(\context_system::instance());
-        if ($companyid) {
+        if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
             $company = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
             $linkcolor = $company->linkcolor;
             if ($linkcolor) {
