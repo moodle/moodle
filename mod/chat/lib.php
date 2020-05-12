@@ -123,7 +123,8 @@ function chat_add_instance($chat) {
         $event = new stdClass();
         $event->type        = CALENDAR_EVENT_TYPE_ACTION;
         $event->name        = $chat->name;
-        $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
+        $event->description = format_module_intro('chat', $chat, $chat->coursemodule, false);
+        $event->format      = FORMAT_HTML;
         $event->courseid    = $chat->course;
         $event->groupid     = 0;
         $event->userid      = 0;
@@ -169,7 +170,8 @@ function chat_update_instance($chat) {
         if ($chat->schedule > 0) {
             $event->type        = CALENDAR_EVENT_TYPE_ACTION;
             $event->name        = $chat->name;
-            $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
+            $event->description = format_module_intro('chat', $chat, $chat->coursemodule, false);
+            $event->format      = FORMAT_HTML;
             $event->timestart   = $chat->chattime;
             $event->timesort    = $chat->chattime;
 
@@ -186,7 +188,8 @@ function chat_update_instance($chat) {
             $event = new stdClass();
             $event->type        = CALENDAR_EVENT_TYPE_ACTION;
             $event->name        = $chat->name;
-            $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
+            $event->description = format_module_intro('chat', $chat, $chat->coursemodule, false);
+            $event->format      = FORMAT_HTML;
             $event->courseid    = $chat->course;
             $event->groupid     = 0;
             $event->userid      = 0;
@@ -460,7 +463,8 @@ function chat_prepare_update_events($chat, $cm = null) {
     $event = new stdClass();
     $event->name        = $chat->name;
     $event->type        = CALENDAR_EVENT_TYPE_ACTION;
-    $event->description = format_module_intro('chat', $chat, $cm->id);
+    $event->description = format_module_intro('chat', $chat, $cm->id, false);
+    $event->format      = FORMAT_HTML;
     $event->timestart   = $chat->chattime;
     $event->timesort    = $chat->chattime;
     if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id,

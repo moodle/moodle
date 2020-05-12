@@ -809,7 +809,8 @@ function feedback_set_events($feedback) {
         $event->eventtype    = FEEDBACK_EVENT_TYPE_OPEN;
         $event->type         = empty($feedback->timeclose) ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
         $event->name         = get_string('calendarstart', 'feedback', $feedback->name);
-        $event->description  = format_module_intro('feedback', $feedback, $feedback->coursemodule);
+        $event->description  = format_module_intro('feedback', $feedback, $feedback->coursemodule, false);
+        $event->format       = FORMAT_HTML;
         $event->timestart    = $feedback->timeopen;
         $event->timesort     = $feedback->timeopen;
         $event->visible      = instance_is_visible('feedback', $feedback);
@@ -844,7 +845,8 @@ function feedback_set_events($feedback) {
         $event->type         = CALENDAR_EVENT_TYPE_ACTION;
         $event->eventtype    = FEEDBACK_EVENT_TYPE_CLOSE;
         $event->name         = get_string('calendarend', 'feedback', $feedback->name);
-        $event->description  = format_module_intro('feedback', $feedback, $feedback->coursemodule);
+        $event->description  = format_module_intro('feedback', $feedback, $feedback->coursemodule, false);
+        $event->format       = FORMAT_HTML;
         $event->timestart    = $feedback->timeclose;
         $event->timesort     = $feedback->timeclose;
         $event->visible      = instance_is_visible('feedback', $feedback);

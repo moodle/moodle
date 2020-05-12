@@ -1668,6 +1668,7 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
     // the common properties for all events
     $base = new stdClass();
     $base->description  = format_module_intro('workshop', $workshop, $cmid, false);
+    $base->format       = FORMAT_HTML;
     $base->courseid     = $workshop->course;
     $base->groupid      = 0;
     $base->userid       = 0;

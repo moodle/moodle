@@ -297,7 +297,8 @@ function assign_update_events($assign, $override = null) {
 
         $event = new stdClass();
         $event->type = CALENDAR_EVENT_TYPE_ACTION;
-        $event->description = format_module_intro('assign', $assigninstance, $cmid);
+        $event->description = format_module_intro('assign', $assigninstance, $cmid, false);
+        $event->format = FORMAT_HTML;
         // Events module won't show user events when the courseid is nonzero.
         $event->courseid    = ($userid) ? 0 : $assigninstance->course;
         $event->groupid     = $groupid;
