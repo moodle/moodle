@@ -13,6 +13,8 @@ sitemessage,core
 coursemessage,core
 addedrecip,core
 addedrecips,core
+messagecontactrequestsnotification,core_message
+messagecontactrequestsnotificationsubject,core_message
 messagingdisabled,core_message
 messagedselectedcountusersfailed,core
 backtoparticipants,core
