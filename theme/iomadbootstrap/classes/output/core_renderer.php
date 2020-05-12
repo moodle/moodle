@@ -270,7 +270,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
      * @return string HTML fragment
      */
     public function navbar_button() {
-        global $CFG;
+        global $CFG, $DB;
 
         $custommenuitems = false;
         // Deal with company custom menu items.
