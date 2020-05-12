@@ -219,7 +219,7 @@ class behat_core_generator extends behat_generator_base {
             ],
             'contentbank content' => [
                 'datagenerator' => 'contentbank_content',
-                'required' => array('course', 'contenttype', 'user', 'contentname'),
+                'required' => array('contenttype', 'user', 'contentname'),
                 'switchids' => array('course' => 'courseid', 'user' => 'userid')
             ],
         ];
@@ -829,7 +829,14 @@ class behat_core_generator extends behat_generator_base {
      * @return void
      */
     protected function process_contentbank_content(array $data) {
-        $context = context_course::instance($data['courseid']);
+        if (empty($data['contextid'])) {
+            if (empty($data['courseid'])) {
+                throw new Exception('contentbank_content requires the field course or contextid to be specified');
+            }
+            $context = context_course::instance($data['courseid']);
+        } else {
+            $context = context::instance_by_id($data['contextid']);
+        }
         $contenttypeclass = "\\".$data['contenttype']."\\contenttype";
         if (class_exists($contenttypeclass)) {
             $contenttype = new $contenttypeclass($context);
