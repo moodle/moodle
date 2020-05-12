@@ -17,8 +17,7 @@
 /**
  * Version details
  *
- * @package    filter
- * @subpackage urltolink
+ * @package    filter_urltolink
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
