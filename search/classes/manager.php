@@ -1152,8 +1152,20 @@ class manager {
                     $recordset, array($searcharea, 'get_document'), $options));
             $result = $this->engine->add_documents($iterator, $searcharea, $options);
             $recordset->close();
-            if (count($result) === 5) {
-                list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial) = $result;
+            $batchinfo = '';
+            if (count($result) === 6) {
+                [$numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial, $batches] = $result;
+                // Only show the batch count if we actually batched any requests.
+                if ($batches !== $numdocs + $numdocsignored) {
+                    $batchinfo = ' (' . $batches . ' batch' . ($batches === 1 ? '' : 'es') . ')';
+                }
+            } else if (count($result) === 5) {
+                // Backward compatibility for engines that don't return a batch count.
+                [$numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial] = $result;
+                // Deprecated since Moodle 4.0 MDL-68690.
+                // TODO: MDL-68776 This will be deleted in Moodle 4.4.
+                debugging('engine::add_documents() should return $batches (5-value return is deprecated)',
+                        DEBUG_DEVELOPER);
             } else {
                 throw new coding_exception('engine::add_documents() should return $partial (4-value return is deprecated)');
             }
@@ -1168,7 +1180,7 @@ class manager {
                 }
 
                 $progress->output('Processed ' . $numrecords . ' records containing ' . $numdocs .
-                        ' documents, in ' . $elapsed . ' seconds' . $partialtext . '.', 1);
+                        ' documents' . $batchinfo . ', in ' . $elapsed . ' seconds' . $partialtext . '.', 1);
             } else {
                 $progress->output('No new documents to index.', 1);
             }
@@ -1305,8 +1317,20 @@ class manager {
 
             // Use this iterator to add documents.
             $result = $this->engine->add_documents($iterator, $searcharea, $options);
-            if (count($result) === 5) {
-                list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial) = $result;
+            $batchinfo = '';
+            if (count($result) === 6) {
+                [$numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial, $batches] = $result;
+                // Only show the batch count if we actually batched any requests.
+                if ($batches !== $numdocs + $numdocsignored) {
+                    $batchinfo = ' (' . $batches . ' batch' . ($batches === 1 ? '' : 'es') . ')';
+                }
+            } else if (count($result) === 5) {
+                // Backward compatibility for engines that don't return a batch count.
+                [$numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial] = $result;
+                // Deprecated since Moodle 4.0 MDL-68690.
+                // TODO: MDL-68776 This will be deleted in Moodle 4.4 (as should the below bit).
+                debugging('engine::add_documents() should return $batches (5-value return is deprecated)',
+                        DEBUG_DEVELOPER);
             } else {
                 // Backward compatibility for engines that don't support partial adding.
                 list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc) = $result;
@@ -1318,7 +1342,7 @@ class manager {
             if ($numdocs > 0) {
                 $elapsed = round((self::get_current_time() - $elapsed), 3);
                 $progress->output('Processed ' . $numrecords . ' records containing ' . $numdocs .
-                        ' documents, in ' . $elapsed . ' seconds' .
+                        ' documents' . $batchinfo . ', in ' . $elapsed . ' seconds' .
                         ($partial ? ' (not complete)' : '') . '.', 1);
             } else {
                 $progress->output('No documents to index.', 1);

@@ -754,6 +754,32 @@ class engine extends \core_search\engine {
     }
 
     /**
+     * Adds a batch of documents to the engine at once.
+     *
+     * @param \core_search\document[] $documents Documents to add
+     * @param bool $fileindexing If true, indexes files (these are done one at a time)
+     * @return int[] Array of three elements: successfully processed, failed processed, batch count
+     */
+    public function add_document_batch(array $documents, bool $fileindexing = false): array {
+        $docdatabatch = [];
+        foreach ($documents as $document) {
+            $docdatabatch[] = $document->export_for_engine();
+        }
+
+        $resultcounts = $this->add_solr_documents($docdatabatch);
+
+        // Files are processed one document at a time (if there are files it's slow anyway).
+        if ($fileindexing) {
+            foreach ($documents as $document) {
+                // This will take care of updating all attached files in the index.
+                $this->process_document_files($document);
+            }
+        }
+
+        return $resultcounts;
+    }
+
+    /**
      * Replaces underlines at edges of words in the content with spaces.
      *
      * For example '_frogs_' will become 'frogs', '_frogs and toads_' will become 'frogs and toads',
@@ -771,12 +797,12 @@ class engine extends \core_search\engine {
     }
 
     /**
-     * Adds a text document to the search engine.
+     * Creates a Solr document object.
      *
-     * @param array $doc
-     * @return bool
+     * @param array $doc Array of document fields
+     * @return \SolrInputDocument Created document
      */
-    protected function add_solr_document($doc) {
+    protected function create_solr_document(array $doc): \SolrInputDocument {
         $solrdoc = new \SolrInputDocument();
 
         // Replace underlines in the content with spaces. The reason for this is that for italic
@@ -786,9 +812,22 @@ class engine extends \core_search\engine {
             $doc['content'] = self::replace_underlines($doc['content']);
         }
 
+        // Set all the fields.
         foreach ($doc as $field => $value) {
             $solrdoc->addField($field, $value);
         }
+
+        return $solrdoc;
+    }
+
+    /**
+     * Adds a text document to the search engine.
+     *
+     * @param array $doc
+     * @return bool
+     */
+    protected function add_solr_document($doc) {
+        $solrdoc = $this->create_solr_document($doc);
 
         try {
             $result = $this->get_search_client()->addDocument($solrdoc, true, static::AUTOCOMMIT_WITHIN);
@@ -802,6 +841,50 @@ class engine extends \core_search\engine {
         }
 
         return false;
+    }
+
+    /**
+     * Adds multiple text documents to the search engine.
+     *
+     * @param array $docs Array of documents (each an array of fields) to add
+     * @return int[] Array of success, failure, batch count
+     * @throws \core_search\engine_exception
+     */
+    protected function add_solr_documents(array $docs): array {
+        $solrdocs = [];
+        foreach ($docs as $doc) {
+            $solrdocs[] = $this->create_solr_document($doc);
+        }
+
+        try {
+            // Add documents in a batch and report that they all succeeded.
+            $this->get_search_client()->addDocuments($solrdocs, true, static::AUTOCOMMIT_WITHIN);
+            return [count($solrdocs), 0, 1];
+        } catch (\SolrClientException $e) {
+            // If there is an exception, fall through...
+            $donothing = true;
+        } catch (\SolrServerException $e) {
+            // If there is an exception, fall through...
+            $donothing = true;
+        }
+
+        // When there is an error, we fall back to adding them individually so that we can report
+        // which document(s) failed. Since it overwrites, adding the successful ones multiple
+        // times won't hurt.
+        $success = 0;
+        $failure = 0;
+        $batches = 0;
+        foreach ($docs as $doc) {
+            $result = $this->add_solr_document($doc);
+            $batches++;
+            if ($result) {
+                $success++;
+            } else {
+                $failure++;
+            }
+        }
+
+        return [$success, $failure, $batches];
     }
 
     /**
@@ -1443,6 +1526,15 @@ class engine extends \core_search\engine {
      * @return bool True
      */
     public function supports_users() {
+        return true;
+    }
+
+    /**
+     * Solr supports adding documents in a batch.
+     *
+     * @return bool True
+     */
+    public function supports_add_document_batch(): bool {
         return true;
     }
 
