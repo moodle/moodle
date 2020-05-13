@@ -488,7 +488,10 @@ class backup_course_structure_step extends backup_structure_step {
 
         $course->annotate_files('course', 'summary', null);
         $course->annotate_files('course', 'overviewfiles', null);
-        $course->annotate_files('course', 'legacy', null);
+
+        if ($this->get_setting_value('legacyfiles')) {
+            $course->annotate_files('course', 'legacy', null);
+        }
 
         // Return root element ($course)
 

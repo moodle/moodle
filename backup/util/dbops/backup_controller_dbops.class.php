@@ -566,6 +566,7 @@ abstract class backup_controller_dbops extends backup_dbops {
                         'backup_general_groups'             => 'groups',
                         'backup_general_competencies'       => 'competencies',
                         'backup_general_contentbankcontent' => 'contentbankcontent',
+                        'backup_general_legacyfiles'        => 'legacyfiles'
                 );
                 self::apply_admin_config_defaults($controller, $settings, true);
                 break;
@@ -580,6 +581,7 @@ abstract class backup_controller_dbops extends backup_dbops {
                         'backup_import_groups'             => 'groups',
                         'backup_import_competencies'       => 'competencies',
                         'backup_import_contentbankcontent' => 'contentbankcontent',
+                        'backup_import_legacyfiles'        => 'legacyfiles'
                 );
                 self::apply_admin_config_defaults($controller, $settings, true);
                 if ((!$controller->get_interactive()) &&
@@ -611,7 +613,8 @@ abstract class backup_controller_dbops extends backup_dbops {
                         'backup_auto_questionbank'       => 'questionbank',
                         'backup_auto_groups'             => 'groups',
                         'backup_auto_competencies'       => 'competencies',
-                        'backup_auto_contentbankcontent' => 'contentbankcontent'
+                        'backup_auto_contentbankcontent' => 'contentbankcontent',
+                        'backup_auto_legacyfiles'        => 'legacyfiles'
                 );
                 self::apply_admin_config_defaults($controller, $settings, false);
                 break;
