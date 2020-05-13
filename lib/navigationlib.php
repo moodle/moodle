@@ -2845,8 +2845,8 @@ class global_navigation extends navigation_node {
             return true;
         }
 
-        $sitecontext = context_system::instance();
-        $navoptions = course_get_user_navigation_options($sitecontext, $course);
+        $systemcontext = context_system::instance();
+        $navoptions = course_get_user_navigation_options($systemcontext, $course);
 
         // Hidden node that we use to determine if the front page navigation is loaded.
         // This required as there are not other guaranteed nodes that may be loaded.
@@ -2926,7 +2926,14 @@ class global_navigation extends navigation_node {
                         break;
                     }
                 default:
-                    $context = $sitecontext;
+                    // If this context is part of a course (excluding frontpage), use the course context.
+                    // Otherwise, use the system context.
+                    $coursecontext = $context->get_course_context(false);
+                    if ($coursecontext && $coursecontext->instanceid !== $SITE->id) {
+                        $context = $coursecontext;
+                    } else {
+                        $context = $systemcontext;
+                    }
             }
 
             $params = ['contextid' => $context->id];
