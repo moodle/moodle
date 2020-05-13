@@ -3985,6 +3985,60 @@ class restore_activity_grade_history_structure_step extends restore_structure_st
 }
 
 /**
+ * This structure steps restores the content bank content
+ */
+class restore_contentbankcontent_structure_step extends restore_structure_step {
+
+    /**
+     * Define structure for content bank step
+     */
+    protected function define_structure() {
+
+        $paths = [];
+        $paths[] = new restore_path_element('contentbankcontent', '/contents/content');
+
+        return $paths;
+    }
+
+    /**
+     * Define data processed for content bank
+     *
+     * @param mixed  $data
+     */
+    public function process_contentbankcontent($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $params = [
+            'name'           => $data->name,
+            'contextid'      => $this->task->get_contextid(),
+            'contenttype'    => $data->contenttype,
+            'instanceid'     => $data->instanceid,
+            'timecreated'    => $data->timecreated,
+        ];
+        $exists = $DB->record_exists('contentbank_content', $params);
+        if (!$exists) {
+            $params['configdata'] = $data->configdata;
+            $params['usercreated'] = $this->get_mappingid('user', $data->usercreated);
+            $params['usermodified'] = $this->get_mappingid('user', $data->usermodified);
+            $params['timemodified'] = time();
+            $newitemid = $DB->insert_record('contentbank_content', $params);
+            $this->set_mapping('contentbank_content', $oldid, $newitemid, true);
+        }
+    }
+
+    /**
+     * Define data processed after execute for content bank
+     */
+    protected function after_execute() {
+        // Add related files.
+        $this->add_related_files('contentbank', 'public', 'contentbank_content');
+    }
+}
+
+/**
  * This structure steps restores one instance + positions of one block
  * Note: Positions corresponding to one existing context are restored
  * here, but all the ones having unknown contexts are sent to backup_ids

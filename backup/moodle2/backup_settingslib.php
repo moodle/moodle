@@ -199,3 +199,9 @@ class backup_activity_included_setting extends activity_backup_setting {}
  * user information or no, depends of @backup_users_setting
  */
 class backup_activity_userinfo_setting extends activity_backup_setting {}
+
+/**
+ * Root setting to control if backup will include content bank content or no
+ */
+class backup_contentbankcontent_setting extends backup_generic_setting {
+}
