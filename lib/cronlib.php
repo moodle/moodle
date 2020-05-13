@@ -228,6 +228,8 @@ function cron_run_inner_scheduled_task(\core\task\task_base $task) {
         }
         \core\task\manager::scheduled_task_failed($task);
     } finally {
+        // Reset back to the standard admin user.
+        cron_setup_user();
         cron_prepare_core_renderer(true);
     }
     get_mailer('close');
