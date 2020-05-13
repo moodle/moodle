@@ -31,6 +31,7 @@ $string['pluginname'] = 'Config changes';
 $string['setting'] = 'Setting';
 $string['timemodified'] = 'Date';
 $string['user'] = 'User';
+$string['usernone'] = 'CLI or install';
 $string['user_help'] = 'Search by user first name or surname';
 $string['value'] = 'Value';
 $string['value_help'] = 'Search by new or original value of the configuration';

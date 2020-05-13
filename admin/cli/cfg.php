@@ -124,7 +124,12 @@ if ($options['unset'] || $options['set'] !== null) {
         cli_error('The configuration variable is hard-set in the config.php, unable to change.', 4);
     }
 
-    set_config($options['name'], $options['set'], $options['component']);
+    $new = $options['set'];
+    $old = get_config($options['component'], $options['name']);
+    if ($new !== $old) {
+        set_config($options['name'], $options['set'], $options['component']);
+        add_to_config_log($options['name'], $old, $new, $options['component']);
+    }
     exit(0);
 }
 
