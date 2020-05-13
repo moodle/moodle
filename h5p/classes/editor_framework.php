@@ -62,7 +62,14 @@ class editor_framework implements H5peditorStorage {
         $librarykey = helper::get_cache_librarykey(core::record_to_string($library));
         $cachekey = "{$librarykey}/{$lang}";
         $translation = $langcache->get($cachekey);
-        if ($translation) {
+
+        if ($translation !== false) {
+            // When there is no translation we store it in the cache as `null`.
+            // This API requires it be returned as `false`.
+            if ($translation === null) {
+                return false;
+            }
+
             return $translation;
         }
 
@@ -88,14 +95,19 @@ class editor_framework implements H5peditorStorage {
 
         $result = $DB->get_record_sql($sql, $params);
 
-        if (!empty($result)) {
-            // If the JS language file exists, its content should be returned.
-            $fs = get_file_storage();
-            $file = $fs->get_file_by_hash($result->pathnamehash);
-            $translation = $file->get_content();
+        if (empty($result)) {
+            // Save the fact that there is no translation into the cache.
+            // The cache API cannot handle setting a literal `false` value so conver to `null` instead.
+            $langcache->set($cachekey, null);
+
+            return false;
         }
 
-        // Save translation into the cache (even if there is no translation for this language).
+        // Save translation into the cache, and return its content.
+        $fs = get_file_storage();
+        $file = $fs->get_file_by_hash($result->pathnamehash);
+        $translation = $file->get_content();
+
         $langcache->set($cachekey, $translation);
 
         return $translation;
