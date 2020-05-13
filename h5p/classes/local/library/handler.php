@@ -124,6 +124,31 @@ abstract class handler {
     }
 
     /**
+     * Returns a localized string, if it exists in the h5plib plugin and the value it's different from the English version.
+     *
+     * @param string $identifier The key identifier for the localized string
+     * @param string $language Language to get the localized string.
+     * @return string|null The localized string or null if it doesn't exist in this H5P library plugin.
+     */
+    public static function get_h5p_string(string $identifier, string $language): ?string {
+        $value = null;
+        $h5pversion = static::get_h5p_version();
+        $component = 'h5plib_v' . $h5pversion;
+        if (get_string_manager()->string_exists($identifier, $component)) {
+            $defaultmoodlelang = 'en';
+            // In Moodle, all the English strings always will exist because they have to be declared in order to let users
+            // to translate them. That's why, this method will only replace existing key if the value is different from
+            // the English version and the current language is not English.
+            $string = new \lang_string($identifier, $component);
+            if ($language === $defaultmoodlelang || $string->out($language) !== $string->out($defaultmoodlelang)) {
+                $value = $string->out($language);
+            }
+        }
+
+        return $value;
+    }
+
+    /**
      * Return the list of classes with their location within the joubel directory.
      *
      * @return array

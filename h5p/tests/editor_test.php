@@ -214,15 +214,6 @@ class editor_testcase extends advanced_testcase {
             $item = $h5pcorepath . $item . $cachebuster;
         });
 
-        // Add translation script.
-        $language = framework::get_language();
-        $languagescript = "language/{$language}.js";
-
-        if (!file_exists($CFG->dirroot . autoloader::get_h5p_editor_library_base($languagescript))) {
-            $languagescript = 'language/en.js';
-        }
-        $expectedjs[] = autoloader::get_h5p_editor_library_url($languagescript . $cachebuster)->out();
-
         $expectedjs[] = (new \moodle_url('/h5p/js/h5p_overrides.js' . $cachebuster))->out();
         $expectedjs[] = autoloader::get_h5p_editor_library_url('scripts/h5peditor-editor.js' . $cachebuster)->out();
         $expectedjs[] = autoloader::get_h5p_editor_library_url('scripts/h5peditor-init.js' . $cachebuster)->out();

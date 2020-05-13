@@ -150,6 +150,17 @@ class autoloader {
     }
 
     /**
+     * Returns a localized string, if it exists in the h5plib plugin and the value it's different from the English version.
+     *
+     * @param string $identifier The key identifier for the localized string
+     * @param string $language Language to get the localized string.
+     * @return string|null The localized string or null if it doesn't exist in this H5P library plugin.
+     */
+    public static function get_h5p_string(string $identifier, string $language): ?string {
+        return component_class_callback(self::get_handler_classname(), 'get_h5p_string', [$identifier, $language]);
+    }
+
+    /**
      * Register the H5P autoloader.
      */
     public static function register(): void {
