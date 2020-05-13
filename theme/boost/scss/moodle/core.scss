@@ -2359,6 +2359,12 @@ body.h5p-embed {
     word-break: break-all;
 }
 
+.matchtext {
+    background-color: lighten($primary, 40%);
+    color: $body-color;
+    height: 1.5rem;
+}
+
 // Emoji picker.
 $picker-width: 350px !default;
 $picker-width-xs: 320px !default;

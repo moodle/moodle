@@ -46,9 +46,19 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->set_pagetype('contenbank');
 
-// Get all contents managed by active plugins to render.
+// Get all contents managed by active plugins where the user has permission to render them.
 $cb = new \core_contentbank\contentbank();
-$foldercontents = $cb->search_contents($search, $contextid);
+$contenttypes = [];
+$enabledcontenttypes = $cb->get_enabled_content_types();
+foreach ($enabledcontenttypes as $contenttypename) {
+    $contenttypeclass = "\\contenttype_$contenttypename\\contenttype";
+    $contenttype = new $contenttypeclass($context);
+    if ($contenttype->can_access()) {
+        $contenttypes[] = $contenttypename;
+    }
+}
+
+$foldercontents = $cb->search_contents($search, $contextid, $contenttypes);
 
 // Get the toolbar ready.
 $toolbar = array ();

@@ -477,12 +477,6 @@ $message-day-color: color-yiq($message-app-bg) !default;
         }
     }
 
-    .matchtext {
-        background-color: lighten($primary, 40%);
-        color: $body-color;
-        height: 1.5rem;
-    }
-
     .contact-status {
         position: absolute;
         left: 39px;

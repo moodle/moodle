@@ -23,10 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace core_contentbank;
 
-global $CFG;
-require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.php');
+use advanced_testcase;
+use context_course;
+use context_system;
 
 /**
  * Test for extensions manager.
@@ -38,6 +39,16 @@ require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.p
  * @coversDefaultClass \core_contentbank\contentbank
  */
 class core_contentbank_testcase extends advanced_testcase {
+
+    /**
+     * Setup to ensure that fixtures are loaded.
+     */
+    public static function setupBeforeClass(): void {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.php');
+    }
+
     /**
      * Data provider for test_get_extension_supporter.
      *
@@ -62,7 +73,7 @@ class core_contentbank_testcase extends advanced_testcase {
     public function test_get_extension(string $filename, string $expected) {
         $this->resetAfterTest();
 
-        $cb = new \core_contentbank\contentbank();
+        $cb = new contentbank();
 
         $extension = $cb->get_extension($filename);
         $this->assertEquals($expected, $extension);
@@ -93,7 +104,7 @@ class core_contentbank_testcase extends advanced_testcase {
     public function test_get_extension_supporter_for_admins(array $supporters, string $extension, string $expected) {
         $this->resetAfterTest();
 
-        $cb = new \core_contentbank\contentbank();
+        $cb = new contentbank();
         $expectedsupporters = [$extension => $expected];
 
         $systemcontext = context_system::instance();
@@ -117,7 +128,7 @@ class core_contentbank_testcase extends advanced_testcase {
     public function test_get_extension_supporter_for_users(array $supporters, string $extension, string $expected) {
         $this->resetAfterTest();
 
-        $cb = new \core_contentbank\contentbank();
+        $cb = new contentbank();
         $systemcontext = context_system::instance();
 
         // Set a user with no permissions.
@@ -142,7 +153,7 @@ class core_contentbank_testcase extends advanced_testcase {
     public function test_get_extension_supporter_for_teachers(array $supporters, string $extension, string $expected) {
         $this->resetAfterTest();
 
-        $cb = new \core_contentbank\contentbank();
+        $cb = new contentbank();
         $expectedsupporters = [$extension => $expected];
 
         $course = $this->getDataGenerator()->create_course();
@@ -168,7 +179,7 @@ class core_contentbank_testcase extends advanced_testcase {
     public function test_get_extension_supporter(array $supporters, string $extension, string $expected) {
         $this->resetAfterTest();
 
-        $cb = new \core_contentbank\contentbank();
+        $cb = new contentbank();
         $systemcontext = context_system::instance();
         $this->setAdminUser();
 
@@ -185,7 +196,8 @@ class core_contentbank_testcase extends advanced_testcase {
      * @param  int $expectedresult Expected result.
      * @param  array $contexts List of contexts where to create content.
      */
-    public function test_search_contents(?string $search, string $where, int $expectedresult, array $contexts = []): void {
+    public function test_search_contents(?string $search, string $where, int $expectedresult, array $contexts = [],
+            array $contenttypes = null): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -218,8 +230,8 @@ class core_contentbank_testcase extends advanced_testcase {
         }
 
         // Search for some content.
-        $cb = new \core_contentbank\contentbank();
-        $contents = $cb->search_contents($search, $contextid);
+        $cb = new contentbank();
+        $contents = $cb->search_contents($search, $contextid, $contenttypes);
 
         $this->assertCount($expectedresult, $contents);
         if (!empty($contents) && !empty($search)) {
@@ -321,6 +333,13 @@ class core_contentbank_testcase extends advanced_testcase {
                 0,
                 []
             ],
+            'Search with unexisting content-type' => [
+                null,
+                'course',
+                0,
+                ['system', 'category', 'course'],
+                ['contenttype_unexisting'],
+            ],
         ];
     }
 
@@ -350,7 +369,7 @@ class core_contentbank_testcase extends advanced_testcase {
         $fs = get_file_storage();
         $dummyh5pfile = $fs->create_file_from_string($dummyh5p, 'Dummy H5Pcontent');
 
-        $cb = new \core_contentbank\contentbank();
+        $cb = new contentbank();
         $content = $cb->create_content_from_file($systemcontext, $USER->id, $dummyh5pfile);
 
         $this->assertEquals('contenttype_h5p', $content->get_content_type());

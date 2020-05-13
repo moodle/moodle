@@ -72,22 +72,22 @@ class bankcontent implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output): stdClass {
+        global $PAGE;
+
+        $PAGE->requires->js_call_amd('core_contentbank/search', 'init');
+
         $data = new stdClass();
         $contentdata = array();
         foreach ($this->contents as $content) {
             $record = $content->get_content();
-            $managerclass = $content->get_content_type().'\\contenttype';
-            if (class_exists($managerclass)) {
-                $manager = new $managerclass($this->context);
-                if ($manager->can_access()) {
-                    $name = $content->get_name();
-                    $contentdata[] = array(
-                        'name' => $name,
-                        'link' => $manager->get_view_url($record),
-                        'icon' => $manager->get_icon($name)
-                    );
-                }
-            }
+            $contenttypeclass = $content->get_content_type().'\\contenttype';
+            $contenttype = new $contenttypeclass($this->context);
+            $name = $content->get_name();
+            $contentdata[] = array(
+                'name' => $name,
+                'link' => $contenttype->get_view_url($record),
+                'icon' => $contenttype->get_icon($name)
+            );
         }
         $data->contents = $contentdata;
         $data->tools = $this->toolbar;

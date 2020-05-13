@@ -25,8 +25,6 @@
 
 namespace core_contentbank;
 
-defined('MOODLE_INTERNAL') || die();
-
 use stdClass;
 use context_system;
 use context_coursecat;
