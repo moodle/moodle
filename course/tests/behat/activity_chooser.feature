@@ -58,7 +58,7 @@ Feature: Display and choose from the available activities in course
     When I log out
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Courses > Recommended activities" in site administration
+    And I navigate to "Courses > Activity chooser > Recommended activities" in site administration
     And I click on ".activity-recommend-checkbox" "css_element" in the "Book" "table_row"
     # Setup done, lets check it works with a teacher.
     And I log out
@@ -148,3 +148,40 @@ Feature: Display and choose from the available activities in course
     Then I should not see "Search query"
     And ".searchresultscontainer" "css_element" should not exist
     And ".optionscontainer" "css_element" should exist
+
+  Scenario: Teacher gets the base case for the Activity Chooser tab mode
+    Given I click on "Add an activity" "button" in the "Topic 1" "section"
+    And I should see "Activities" in the "Add an activity" "dialogue"
+    When I click on "Activities" "link" in the "Add an activity" "dialogue"
+    Then I should not see "Book" in the "activity" "core_course > Activity chooser tab"
+    And I click on "Resources" "link" in the "Add an activity" "dialogue"
+    And I should not see "Assignment" in the "resources" "core_course > Activity chooser tab"
+
+  Scenario: Teacher gets the simple case for the Activity Chooser tab mode
+    Given I log out
+    And I log in as "admin"
+    And I am on site homepage
+    When I navigate to "Courses > Activity chooser > Activity chooser settings" in site administration
+    And I select "Starred, All, Recommended" from the "Activity chooser tabs" singleselect
+    And I press "Save changes"
+    And I log out
+    And I log in as "teacher"
+    And I am on "Course" course homepage with editing mode on
+    And I click on "Add an activity" "button" in the "Topic 1" "section"
+    Then I should not see "Activities" in the "Add an activity" "dialogue"
+    And I should not see "Resources" in the "Add an activity" "dialogue"
+
+  Scenario: Teacher gets the final case for the Activity Chooser tab mode
+    Given I log out
+    And I log in as "admin"
+    And I am on site homepage
+    When I navigate to "Courses > Activity chooser > Activity chooser settings" in site administration
+    And I select "Starred, Activities, Resources, Recommended" from the "Activity chooser tabs" singleselect
+    And I press "Save changes"
+    And I log out
+    And I log in as "teacher"
+    And I am on "Course" course homepage with editing mode on
+    And I click on "Add an activity" "button" in the "Topic 1" "section"
+    Then I should not see "All" in the "Add an activity" "dialogue"
+    And I should see "Activities" in the "Add an activity" "dialogue"
+    And I should see "Resources" in the "Add an activity" "dialogue"

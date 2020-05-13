@@ -22,7 +22,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['activitychoosercategory'] = 'Activity chooser';
 $string['activitychooserrecommendations'] = 'Recommended activities';
+$string['activitychoosersettings'] = 'Activity chooser settings';
+$string['activitychoosertabmode'] = 'Activity chooser tabs';
+$string['activitychoosertabmode_desc'] = "The activity chooser enables a teacher to easily select activities and resources to add to their course. This setting determines which tabs should be displayed in it. Note that the starred tab is only displayed for a user if they have starred one or more activities and the recommended tab is only displayed if a site administrator has specified some recommended activities.";
+$string['activitychoosertabmodeone'] = 'Starred, All, Activities, Resources, Recommended';
+$string['activitychoosertabmodetwo'] = 'Starred, All, Recommended';
+$string['activitychoosertabmodethree'] = 'Starred, Activities, Resources, Recommended';
 $string['aria:coursecategory'] = 'Course category';
 $string['aria:courseimage'] = 'Course image';
 $string['aria:courseshortname'] = 'Course short name';

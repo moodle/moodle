@@ -194,9 +194,11 @@ const registerListenerEvents = (modal, mappedModules, partialFavourite) => {
         const activeSectionId = body.querySelector(selectors.elements.activetab).getAttribute("href");
         const sectionChooserOptions = body.querySelector(selectors.regions.getSectionChooserOptions(activeSectionId));
         const firstChooserOption = sectionChooserOptions.querySelector(selectors.regions.chooserOption.container);
+
         toggleFocusableChooserOption(firstChooserOption, true);
         initTabsKeyboardNavigation(body);
         initChooserOptionsKeyboardNavigation(body, mappedModules, sectionChooserOptions);
+
         return body;
     })
     .catch();
@@ -214,7 +216,9 @@ const initTabsKeyboardNavigation = (body) => {
     const favTabNav = body.querySelector(selectors.regions.favouriteTabNav);
     const recommendedTabNav = body.querySelector(selectors.regions.recommendedTabNav);
     const defaultTabNav = body.querySelector(selectors.regions.defaultTabNav);
-    const tabNavArray = [favTabNav, recommendedTabNav, defaultTabNav];
+    const activityTabNav = body.querySelector(selectors.regions.activityTabNav);
+    const resourceTabNav = body.querySelector(selectors.regions.resourceTabNav);
+    const tabNavArray = [favTabNav, recommendedTabNav, defaultTabNav, activityTabNav, resourceTabNav];
     tabNavArray.forEach((element) => {
         return element.addEventListener('keydown', (e) => {
             // The first visible navigation tab link.
@@ -556,6 +560,5 @@ export const displayChooser = (modalPromise, sectionModules, partialFavourite) =
         });
 
         return modal;
-    })
-    .catch();
+    }).catch();
 };

@@ -61,12 +61,6 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
             array('moodle/restore:restorecourse')
         )
     );
-    $ADMIN->add('courses',
-        new admin_externalpage('activitychooser', new lang_string('activitychooserrecommendations', 'course'),
-            new moodle_url('/course/recommendations.php'),
-            array('moodle/course:recommendactivity')
-        )
-    );
 
     // Course Default Settings Page.
     // NOTE: these settings must be applied after all other settings because they depend on them.
@@ -186,6 +180,30 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         $ADMIN->add('courses', new admin_externalpage('coursespending', new lang_string('pendingrequests'),
                 $CFG->wwwroot . '/course/pending.php', array('moodle/site:approvecourse')));
     }
+
+    // Add a category for the Activity Chooser.
+    $ADMIN->add('courses', new admin_category('activitychooser', new lang_string('activitychoosercategory', 'course')));
+    $temp = new admin_settingpage('activitychoosersettings', new lang_string('activitychoosersettings', 'course'));
+    $temp->add(
+        new admin_setting_configselect(
+            'activitychoosertabmode',
+            new lang_string('activitychoosertabmode', 'course'),
+            new lang_string('activitychoosertabmode_desc', 'course'),
+            0,
+            [
+                0 => new lang_string('activitychoosertabmodeone', 'course'),
+                1 => new lang_string('activitychoosertabmodetwo', 'course'),
+                2 => new lang_string('activitychoosertabmodethree', 'course'),
+            ]
+        )
+    );
+    $ADMIN->add('activitychooser', $temp);
+    $ADMIN->add('activitychooser',
+        new admin_externalpage('activitychooserrecommended', new lang_string('activitychooserrecommendations', 'course'),
+            new moodle_url('/course/recommendations.php'),
+            array('moodle/course:recommendactivity')
+        )
+    );
 
     // Add a category for backups.
     $ADMIN->add('courses', new admin_category('backups', new lang_string('backups','admin')));
