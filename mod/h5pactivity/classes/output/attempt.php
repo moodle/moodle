@@ -86,8 +86,10 @@ class attempt implements renderable, templatable {
             'durationcompact' => '-',
             'completion' => $attempt->get_completion(),
             'completionicon' => $this->completion_icon($output, $attempt->get_completion()),
+            'completiontext' => $this->completion_icon($output, $attempt->get_completion(), true),
             'success' => $attempt->get_success(),
             'successicon' => $this->success_icon($output, $attempt->get_success()),
+            'successtext' => $this->success_icon($output, $attempt->get_success(), true),
             'scaled' => $attempt->get_scaled(),
             'reporturl' => new moodle_url('/mod/h5pactivity/report.php', [
                 'a' => $attempt->get_h5pactivityid(), 'attemptid' => $attempt->get_id()
@@ -117,37 +119,55 @@ class attempt implements renderable, templatable {
      *
      * @param renderer_base $output the renderer base object
      * @param int|null $completion the current completion value
+     * @param bool $showtext if the icon must have a text or only icon
      * @return string icon HTML
      */
-    private function completion_icon(renderer_base $output, int $completion = null): string {
+    private function completion_icon(renderer_base $output, int $completion = null, bool $showtext = false): string {
         if ($completion === null) {
             return '';
         }
         if ($completion) {
             $alt = get_string('attempt_completion_yes', 'mod_h5pactivity');
-            return $output->pix_icon('i/completion-auto-y', $alt);
+            $icon = 'i/completion-auto-y';
+        } else {
+            $alt = get_string('attempt_completion_no', 'mod_h5pactivity');
+            $icon = 'i/completion-auto-n';
         }
-        $alt = get_string('attempt_completion_no', 'mod_h5pactivity');
-        return $output->pix_icon('i/completion-auto-n', $alt);
+        $text = '';
+        if ($showtext) {
+            $text = $alt;
+            $alt = '';
+        }
+        return $output->pix_icon($icon, $alt).$text;
     }
 
     /**
      * Return a success icon
      * @param renderer_base $output the renderer base object
      * @param int|null $success the current success value
+     * @param bool $showtext if the icon must have a text or only icon
      * @return string icon HTML
      */
-    private function success_icon(renderer_base $output, int $success = null): string {
+    private function success_icon(renderer_base $output, int $success = null, bool $showtext = false): string {
         if ($success === null) {
             $alt = get_string('attempt_success_unknown', 'mod_h5pactivity');
-            return $output->pix_icon('i/empty', $alt);
-        }
-        if ($success) {
+            if ($showtext) {
+                return $alt;
+            }
+            $icon = 'i/empty';
+        } else if ($success) {
             $alt = get_string('attempt_success_pass', 'mod_h5pactivity');
-            return $output->pix_icon('i/checkedcircle', $alt);
+            $icon = 'i/checkedcircle';
+        } else {
+            $alt = get_string('attempt_success_fail', 'mod_h5pactivity');
+            $icon = 'i/uncheckedcircle';
         }
-        $alt = get_string('attempt_success_fail', 'mod_h5pactivity');
-        return $output->pix_icon('i/uncheckedcircle', $alt);
+        $text = '';
+        if ($showtext) {
+            $text = $alt;
+            $alt = '';
+        }
+        return $output->pix_icon($icon, $alt).$text;
     }
 
     /**

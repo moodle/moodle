@@ -82,7 +82,9 @@ class reportresults implements renderable, templatable {
         $data->results = [];
         foreach ($results as $key => $result) {
             $outputresult = output_result::create_from_record($result);
-            $data->results[] = $outputresult->export_for_template($output);
+            if ($outputresult) {
+                $data->results[] = $outputresult->export_for_template($output);
+            }
         }
 
         return $data;

@@ -87,21 +87,32 @@
     }
 
 }}
-<table class="table">
+<table class="table table-striped">
   <thead>
     <tr>
-        <th scope="col" class="">{{optionslabel}}</th>
-        <th scope="col" class="text-center">{{correctlabel}}</th>
-        <th scope="col" class="text-center ">{{answerlabel}}</th>
+        <th scope="col">{{optionslabel}}</th>
+        <th scope="col">{{correctlabel}}</th>
+        <th scope="col">{{answerlabel}}</th>
     </tr>
   </thead>
   <tbody>
     {{#options}}
     <tr>
-      <td>{{description}}</td>
-      <td class="text-center">{{#correctanswer}}{{>mod_h5pactivity/result/answer}}{{/correctanswer}}</td>
-      <td class="text-center">{{#useranswer}}{{>mod_h5pactivity/result/answer}}{{/useranswer}}</td>
+        <td>{{description}}</td>
+        <td>{{#correctanswer}}{{>mod_h5pactivity/result/answer}}{{/correctanswer}}</td>
+        <td>{{#useranswer}}{{>mod_h5pactivity/result/answer}}{{/useranswer}}</td>
     </tr>
     {{/options}}
+    {{#score}}
+    <tr class="table-light">
+        <td colspan="2" class="d-none d-sm-table-cell border-top-3 border-dark"></td>
+        <td class="d-none d-sm-table-cell border-top border-dark">
+            <strong>{{#str}}score, mod_h5pactivity{{/str}}: {{score}}</strong>
+        </td>
+        <td class="d-table-cell d-sm-none text-right border-top border-dark" colspan="3">
+            <strong>{{#str}}score, mod_h5pactivity{{/str}}: {{score}}</strong>
+        </td>
+    </tr>
+    {{/score}}
   </tbody>
 </table>

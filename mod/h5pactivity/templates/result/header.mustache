@@ -39,17 +39,6 @@
     }
 
 }}
-<h3 class="w-100 d-flex flex-column-reverse flex-md-row">
-    <span class="flex-grow-1">
-        {{description}}
-    </span>
-    {{#maxscore}}
-        <span class="align-self-start badge p-3 mb-3 mb-md-0
-                {{#success}}badge-success{{/success}} {{^success}}badge-secondary{{/success}}">
-            {{#success}}
-                {{#pix}}i/checkedcircle, moodle, {{#str}}answer_pass, mod_h5pactivity{{/str}}{{/pix}}
-            {{/success}}
-            {{#score}}{{#str}}score, mod_h5pactivity{{/str}}: {{score}}{{/score}}
-        </span>
-    {{/maxscore}}
+<h3 class="w-100">
+    {{description}}
 </h3>

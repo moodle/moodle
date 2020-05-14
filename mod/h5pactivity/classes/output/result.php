@@ -100,9 +100,13 @@ class result implements renderable, templatable {
      * return the correct result output depending on the interactiontype
      *
      * @param stdClass $result h5pactivity_attempts_results record
-     * @return result
+     * @return result|null the result output class if any
      */
-    public static function create_from_record(stdClass $result): self {
+    public static function create_from_record(stdClass $result): ?self {
+        // Compound result track is omitted from the report.
+        if ($result->interactiontype == 'compound') {
+            return null;
+        }
         $classname = "mod_h5pactivity\\output\\result\\{$result->interactiontype}";
         $classname = str_replace('-', '', $classname);
         if (class_exists($classname)) {

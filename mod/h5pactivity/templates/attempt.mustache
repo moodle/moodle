@@ -69,36 +69,28 @@
     }
 
 }}
-<h2 class="w-100 d-flex flex-column-reverse flex-md-row">
-    <span class="flex-grow-1">
-        {{#user}}
-          {{{picture}}}
-          {{#str}}attempt, mod_h5pactivity{{/str}} #{{attempt}}: {{fullname}}
-        {{/user}}
-        {{^user}}
-          {{#str}}attempt, mod_h5pactivity{{/str}} #{{attempt}}
-        {{/user}}
-    </span>
-    <span class="align-self-start badge p-3 mb-3 mb-md-0
-            {{#success}}badge-success{{/success}} {{^success}}badge-secondary{{/success}}">
-        {{#success}}
-            {{#pix}}i/checkedcircle, moodle, {{#str}}answer_pass, mod_h5pactivity{{/str}}{{/pix}}
-        {{/success}}
-        {{^success}}
-            {{#pix}}i/uncheckedcircle, moodle, {{#str}}answer_fail, mod_h5pactivity{{/str}}{{/pix}}
-        {{/success}}
-        {{#score}}{{#str}}score, mod_h5pactivity{{/str}}: {{score}}{{/score}}
-    </span>
+<h2 class="px-0 px-md-3">
+    {{#user}}
+      {{{picture}}}
+      {{#str}}attempt, mod_h5pactivity{{/str}} #{{attempt}}: {{fullname}}
+    {{/user}}
+    {{^user}}
+      {{#str}}attempt, mod_h5pactivity{{/str}} #{{attempt}}
+    {{/user}}
 </h2>
-<div class="container-fluid">
+<div class="container-fluid mt-4 mb-5 px-0 px-md-3">
     <dl class="row">
-        <dt class="col-sm-3">{{#str}} startdate, mod_h5pactivity {{/str}}</dt>
-        <dd class="col-sm-3">{{#userdate}} {{timemodified}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}</dd>
-        <dt class="col-sm-3">{{#str}} completion, mod_h5pactivity {{/str}}</dt>
-        <dd class="col-sm-3">{{{completionicon}}}</dd>
-        <dt class="col-sm-3 text-truncate">{{#str}} duration, mod_h5pactivity {{/str}}</dt>
-        <dd class="col-sm-3">{{duration}}</dd>
-        <dt class="col-sm-3">{{#str}} success {{/str}}</dt>
-        <dd class="col-sm-3">{{{successicon}}}</dd>
+        <dt class="col-12">{{#str}} startdate, mod_h5pactivity {{/str}}</dt>
+        <dd class="col-12">{{#userdate}} {{timemodified}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}</dd>
+        <dt class="col-12">{{#str}} completion, mod_h5pactivity {{/str}}</dt>
+        <dd class="col-12">{{{completiontext}}}</dd>
+        <dt class="col-12 text-truncate">{{#str}} duration, mod_h5pactivity {{/str}}</dt>
+        <dd class="col-12">{{duration}}</dd>
+        <dt class="col-12">{{#str}} outcome, mod_h5pactivity {{/str}}</dt>
+        <dd class="col-12">{{{successtext}}}</dd>
+        {{#score}}
+            <dt class="col-12">{{#str}} totalscore, mod_h5pactivity {{/str}}</dt>
+            <dd class="col-12">{{score}}</dd>
+        {{/score}}
     </dl>
 </div>
