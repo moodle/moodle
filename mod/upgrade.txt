@@ -5,6 +5,27 @@ information provided here is intended especially for developers.
 
 * The callback get_shortcuts() is now deprecated. Please use get_course_content_items and get_all_content_items instead.
   See source code examples in get_course_content_items() and get_all_content_items() in mod/lti/lib.php for details.
+* When creating the calendar events and setting the event description to match the module intro description, the filters
+  must not be applied on the passed description text. Doing so leads to loosing some expected text filters features and
+  causes unnecessarily early theme and output initialisation in unit tests. If your activity creates calendar events,
+  you probably have code like:
+    ```
+    $event->description = format_module_intro('quiz', $quiz, $cmid);
+    ```
+  You need to change it to:
+    ```
+    $event->description = format_module_intro('quiz', $quiz, $cmid, false);
+    $event->format = FORMAT_HTML;
+    ```
+  Even this is still technically wrong. Content should normally only be formatted just before it is output. Ideally, we
+  should pass the raw description text, format and have a way to copy the embedded files; or provide another way for the
+  calendar to call the right format_text() later. The calendar API does not allow us to do these things easily at the
+  moment. Therefore, this compromise approach is used. The false parameter added ensures that text filters are not run
+  at this time which is important. And the format must be set to HTML, because otherwise it would use the current user's
+  preferred editor default format.
+* Related to the above and to help with detecting the problematic places in contributed 3rd party modules, the
+  testing_module_generator::create_instance() now throws coding_exception if creating a module instance initialised the
+  theme and output as a side effect.
 
 === 3.8 ===
 

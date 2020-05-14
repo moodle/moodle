@@ -1260,7 +1260,8 @@ function quiz_update_events($quiz, $override = null) {
 
         $event = new stdClass();
         $event->type = !$timeclose ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
-        $event->description = format_module_intro('quiz', $quiz, $cmid);
+        $event->description = format_module_intro('quiz', $quiz, $cmid, false);
+        $event->format = FORMAT_HTML;
         // Events module won't show user events when the courseid is nonzero.
         $event->courseid    = ($userid) ? 0 : $quiz->course;
         $event->groupid     = $groupid;
