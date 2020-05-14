@@ -221,6 +221,11 @@ class block_base {
     public function get_content_for_output($output) {
         global $CFG;
 
+        // We can exit early if the current user doesn't have the capability to view the block.
+        if (!has_capability('moodle/block:view', $this->context)) {
+            return null;
+        }
+
         $bc = new block_contents($this->html_attributes());
         $bc->attributes['data-block'] = $this->name();
         $bc->blockinstanceid = $this->instance->id;
