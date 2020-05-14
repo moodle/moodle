@@ -30,6 +30,7 @@ use context;
 use core_table\dynamic as dynamic_table;
 use core_table\local\filter\filterset;
 use core_user\output\status_field;
+use core_user\table\participants_search;
 use moodle_url;
 
 defined('MOODLE_INTERNAL') || die;
@@ -52,36 +53,6 @@ class participants extends \table_sql implements dynamic_table {
      * @var int $courseid The course id
      */
     protected $courseid;
-
-    /**
-     * @var int|false False if groups not used, int if groups used, 0 for all groups.
-     */
-    protected $currentgroup;
-
-    /**
-     * @var int $accesssince The time the user last accessed the site
-     */
-    protected $accesssince;
-
-    /**
-     * @var int $roleid The role we are including, 0 means all enrolled users
-     */
-    protected $roleid;
-
-    /**
-     * @var int $enrolid The applied filter for the user enrolment ID.
-     */
-    protected $enrolid;
-
-    /**
-     * @var int $status The applied filter for the user's enrolment status.
-     */
-    protected $status;
-
-    /**
-     * @var string $search The string being searched.
-     */
-    protected $search;
 
     /**
      * @var bool $selectall Has the user selected all users on the page?
@@ -132,6 +103,11 @@ class participants extends \table_sql implements dynamic_table {
      * @var \stdClass[] Profile roles in this course.
      */
     protected $profileroles;
+
+    /**
+     * @var filterset Filterset describing which participants to include.
+     */
+    protected $filterset;
 
     /** @var \stdClass[] $viewableroles */
     private $viewableroles;
@@ -431,9 +407,9 @@ class participants extends \table_sql implements dynamic_table {
      */
     public function query_db($pagesize, $useinitialsbar = true) {
         list($twhere, $tparams) = $this->get_sql_where();
+        $psearch = new participants_search($this->course, $this->context, $this->filterset);
 
-        $total = user_get_total_participants($this->course->id, $this->currentgroup, $this->accesssince,
-            $this->roleid, $this->enrolid, $this->status, $this->search, $twhere, $tparams);
+        $total = $psearch->get_total_participants_count($twhere, $tparams);
 
         $this->pagesize($pagesize, $total);
 
@@ -442,9 +418,8 @@ class participants extends \table_sql implements dynamic_table {
             $sort = 'ORDER BY ' . $sort;
         }
 
-        $rawdata = user_get_participants($this->course->id, $this->currentgroup, $this->accesssince,
-            $this->roleid, $this->enrolid, $this->status, $this->search, $twhere, $tparams, $sort, $this->get_page_start(),
-            $this->get_page_size());
+        $rawdata = $psearch->get_participants($twhere, $tparams, $sort, $this->get_page_start(), $this->get_page_size());
+
         $this->rawdata = [];
         foreach ($rawdata as $user) {
             $this->rawdata[$user->id] = $user;
@@ -501,36 +476,6 @@ class participants extends \table_sql implements dynamic_table {
         $this->context = \context_course::instance($this->courseid, MUST_EXIST);
 
         // Process the filterset.
-        $this->currentgroup = null;
-        if ($filterset->has_filter('groups')) {
-            $this->currentgroup = $filterset->get_filter('groups')->current();
-        }
-
-        $this->roleid = null;
-        if ($filterset->has_filter('roles')) {
-            $this->roleid = $filterset->get_filter('roles')->current();
-        }
-
-        $this->enrolid = null;
-        if ($filterset->has_filter('enrolments')) {
-            $this->enrolid = $filterset->get_filter('enrolments')->current();
-        }
-
-        $this->status = -1;
-        if ($filterset->has_filter('status')) {
-            $this->status = $filterset->get_filter('status')->current();
-        }
-
-        $this->accesssince = null;
-        if ($filterset->has_filter('accesssince')) {
-            $this->accesssince = $filterset->get_filter('accesssince')->current();
-        }
-
-        $this->search = null;
-        if ($filterset->has_filter('keywords')) {
-            $this->search = $filterset->get_filter('keywords')->get_filter_values();
-        }
-
         parent::set_filterset($filterset);
     }
 
