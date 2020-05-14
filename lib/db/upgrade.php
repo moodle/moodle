@@ -3830,8 +3830,11 @@ function xmldb_main_upgrade($oldversion) {
             $DB->delete_records('competency_userevidencecomp', ['userevidenceid' => $userevidence->id]);
             $DB->delete_records('competency_userevidence', ['id' => $userevidence->id]);
 
-            $context = context_user::instance($userevidence->userid);
-            $fs->delete_area_files($context->id, 'core_competency', 'userevidence', $userevidence->id);
+            if ($record = $DB->get_record('context', ['contextlevel' => CONTEXT_USER, 'instanceid' => $userevidence->userid],
+                    '*', IGNORE_MISSING)) {
+                // Delete all orphaned user evidences files.
+                $fs->delete_area_files($record->id, 'core_competency', 'userevidence', $userevidence->userid);
+            }
         }
 
         $sql = "SELECT cp.id
