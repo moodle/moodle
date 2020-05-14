@@ -26,6 +26,7 @@
 namespace mod_h5pactivity\xapi;
 
 use mod_h5pactivity\local\attempt;
+use mod_h5pactivity\local\manager;
 use mod_h5pactivity\event\statement_received;
 use core_xapi\local\statement;
 use core_xapi\handler as handler_base;
@@ -33,6 +34,9 @@ use core\event\base as event_base;
 use context_module;
 
 defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot.'/mod/h5pactivity/lib.php');
 
 /**
  * Class xapi_handler for H5P statements.
@@ -94,12 +98,15 @@ class handler extends handler_base {
         if (!has_capability('mod/h5pactivity:view', $context, $user)) {
             return null;
         }
-        if (!has_capability('mod/h5pactivity:submit', $context, $user, false)) {
-            return null;
-        }
 
         $cm = get_coursemodule_from_id('h5pactivity', $context->instanceid, 0, false);
         if (!$cm) {
+            return null;
+        }
+
+        $manager = manager::create_from_coursemodule($cm);
+
+        if (!$manager->is_tracking_enabled($user)) {
             return null;
         }
 
@@ -122,7 +129,11 @@ class handler extends handler_base {
             return null;
         }
 
-        // TODO: update grading if necessary.
+        // Update activity if necessary.
+        if ($attempt->get_scoreupdated()) {
+            $grader = $manager->get_grader();
+            $grader->update_grades($user->id);
+        }
 
         // Convert into a Moodle event.
         $minstatement = $statement->minify();

@@ -22,6 +22,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_h5pactivity\local\manager;
+
 defined('MOODLE_INTERNAL') || die();
 
 
@@ -62,6 +64,12 @@ class mod_h5pactivity_generator extends testing_module_generator {
             $core = $factory->get_core();
             $config = \core_h5p\helper::decode_display_options($core);
             $record->displayoptions = \core_h5p\helper::get_display_options($core, $config);
+        }
+        if (!isset($record->enabletracking)) {
+            $record->enabletracking = 1;
+        }
+        if (!isset($record->grademethod)) {
+            $record->grademethod = manager::GRADEHIGHESTATTEMPT;
         }
 
         // The 'packagefile' value corresponds to the draft file area ID. If not specified, create from packagefilepath.

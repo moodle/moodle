@@ -28,8 +28,6 @@ use advanced_testcase;
 use context_course;
 use context_module;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * H5P activity events test cases.
  *

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_h5pactivity generator tests
+ * mod_h5pactivity attempt tests
  *
  * @package    mod_h5pactivity
  * @category   test
@@ -33,8 +33,6 @@ use \core_xapi\local\statement\item_definition;
 use \core_xapi\local\statement\item_verb;
 use \core_xapi\local\statement\item_result;
 use stdClass;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Attempt tests class for mod_h5pactivity.
@@ -138,6 +136,7 @@ class attempt_testcase extends \advanced_testcase {
         $this->assertEquals(0, $attempt->get_duration());
         $this->assertNull($attempt->get_completion());
         $this->assertNull($attempt->get_success());
+        $this->assertFalse($attempt->get_scoreupdated());
 
         $statement = $this->generate_statement($hasdefinition, $hasresult);
         $result = $attempt->save_statement($statement, $subcontent);
@@ -148,6 +147,11 @@ class attempt_testcase extends \advanced_testcase {
         $this->assertEquals($results[4], $attempt->get_duration());
         $this->assertEquals($results[5], $attempt->get_completion());
         $this->assertEquals($results[6], $attempt->get_success());
+        if ($results[5]) {
+            $this->assertTrue($attempt->get_scoreupdated());
+        } else {
+            $this->assertFalse($attempt->get_scoreupdated());
+        }
     }
 
     /**
@@ -294,6 +298,110 @@ class attempt_testcase extends \advanced_testcase {
             ],
             'Delete all attempts from user' => [
                 true, [0, 2, 2, 2, 3, 6]
+            ],
+        ];
+    }
+
+    /**
+     * Test set_score method.
+     *
+     */
+    public function test_set_score(): void {
+        global $DB;
+
+        list($cm, $student, $course) = $this->generate_testing_scenario();
+
+        // Generate one attempt.
+        $attempt = $this->generate_full_attempt($student, $cm);
+
+        $dbattempt = $DB->get_record('h5pactivity_attempts', ['id' => $attempt->get_id()]);
+        $this->assertEquals($dbattempt->rawscore, $attempt->get_rawscore());
+        $this->assertEquals(2, $dbattempt->rawscore);
+        $this->assertEquals($dbattempt->maxscore, $attempt->get_maxscore());
+        $this->assertEquals(2, $dbattempt->maxscore);
+        $this->assertEquals(1, $dbattempt->scaled);
+
+        // Set attempt score.
+        $attempt->set_score(5, 10);
+
+        $this->assertEquals(5, $attempt->get_rawscore());
+        $this->assertEquals(10, $attempt->get_maxscore());
+        $this->assertTrue($attempt->get_scoreupdated());
+
+        // Save new score into DB.
+        $attempt->save();
+
+        $dbattempt = $DB->get_record('h5pactivity_attempts', ['id' => $attempt->get_id()]);
+        $this->assertEquals($dbattempt->rawscore, $attempt->get_rawscore());
+        $this->assertEquals(5, $dbattempt->rawscore);
+        $this->assertEquals($dbattempt->maxscore, $attempt->get_maxscore());
+        $this->assertEquals(10, $dbattempt->maxscore);
+        $this->assertEquals(0.5, $dbattempt->scaled);
+    }
+
+    /**
+     * Test set_duration method.
+     *
+     * @dataProvider basic_setters_data
+     * @param string $attribute the stribute to test
+     * @param int $oldvalue attribute old value
+     * @param int $newvalue attribute new expected value
+     */
+    public function test_basic_setters(string $attribute, int $oldvalue, int $newvalue): void {
+        global $DB;
+
+        list($cm, $student, $course) = $this->generate_testing_scenario();
+
+        // Generate one attempt.
+        $attempt = $this->generate_full_attempt($student, $cm);
+
+        $setmethod = 'set_'.$attribute;
+        $getmethod = 'get_'.$attribute;
+
+        $dbattempt = $DB->get_record('h5pactivity_attempts', ['id' => $attempt->get_id()]);
+        $this->assertEquals($dbattempt->$attribute, $attempt->$getmethod());
+        $this->assertEquals($oldvalue, $dbattempt->$attribute);
+
+        // Set attempt attribute.
+        $attempt->$setmethod($newvalue);
+
+        $this->assertEquals($newvalue, $attempt->$getmethod());
+
+        // Save new score into DB.
+        $attempt->save();
+
+        $dbattempt = $DB->get_record('h5pactivity_attempts', ['id' => $attempt->get_id()]);
+        $this->assertEquals($dbattempt->$attribute, $attempt->$getmethod());
+        $this->assertEquals($newvalue, $dbattempt->$attribute);
+
+        // Set null $attribute.
+        $attempt->$setmethod(null);
+
+        $this->assertNull($attempt->$getmethod());
+
+        // Save new score into DB.
+        $attempt->save();
+
+        $dbattempt = $DB->get_record('h5pactivity_attempts', ['id' => $attempt->get_id()]);
+        $this->assertEquals($dbattempt->$attribute, $attempt->$getmethod());
+        $this->assertNull($dbattempt->$attribute);
+    }
+
+    /**
+     * Data provider for testing basic setters.
+     *
+     * @return array
+     */
+    public function basic_setters_data(): array {
+        return [
+            'Set attempt duration' => [
+                'duration', 25, 35
+            ],
+            'Set attempt completion' => [
+                'completion', 1, 0
+            ],
+            'Set attempt success' => [
+                'success', 1, 0
             ],
         ];
     }
