@@ -124,7 +124,9 @@ Feature: Teacher can search and enrol users one by one into the course
     And I should see "Student 001"
     And I click on "Enrol users" "button" in the "Enrol users" "dialogue"
     Then I should see "Active" in the "Student 001" "table_row"
-    And I should see "1 enrolled users"
+    # The following line is commented out as auto-hidden toasts fire events in the wrong place.
+    # TODO Uncomment this when we upgrade Bootstrap. This issue is fixed in v4.4.0 - see MDL-67386.
+    #And I should see "1 enrolled users"
 
   @javascript
   Scenario: Searching for a non-existing user
