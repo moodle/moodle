@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/base.php');
+require_once(__DIR__ . '/test_helper_trait.php');
 
 /**
  * PHPUnit tests for backup and restore functionality.
@@ -34,7 +34,9 @@ require_once(__DIR__ . '/base.php');
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_backup_restore_testcase extends quizaccess_seb_testcase {
+class quizaccess_seb_backup_restore_testcase extends advanced_testcase {
+    use quizaccess_seb_test_helper_trait;
+
 
     /** @var \quizaccess_seb\template $template A test template. */
     protected $template;
@@ -46,7 +48,11 @@ class quizaccess_seb_backup_restore_testcase extends quizaccess_seb_testcase {
         global $USER;
 
         parent::setUp();
+
+        $this->resetAfterTest();
         $this->setAdminUser();
+
+        $this->course = $this->getDataGenerator()->create_course();
         $this->template = $this->create_template();
         $this->user = $USER;
     }

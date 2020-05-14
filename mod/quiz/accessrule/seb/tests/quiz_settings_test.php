@@ -28,14 +28,16 @@ use quizaccess_seb\settings_provider;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/base.php');
+require_once(__DIR__ . '/test_helper_trait.php');
+
 /**
  * PHPUnit tests for quiz_settings class.
  *
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_quiz_settings_testcase extends quizaccess_seb_testcase {
+class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
+    use quizaccess_seb_test_helper_trait;
 
     /** @var context_module $context Test context. */
     protected $context;
@@ -49,7 +51,10 @@ class quizaccess_seb_quiz_settings_testcase extends quizaccess_seb_testcase {
     public function setUp() {
         parent::setUp();
 
+        $this->resetAfterTest();
+
         $this->setAdminUser();
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->getDataGenerator()->create_module('quiz', [
             'course' => $this->course->id,
             'seb_requiresafeexambrowser' => settings_provider::USE_SEB_CONFIG_MANUALLY,

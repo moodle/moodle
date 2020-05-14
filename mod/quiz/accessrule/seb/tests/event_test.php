@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/base.php');
+require_once(__DIR__ . '/test_helper_trait.php');
 
 /**
  * PHPUnit tests for all plugin events.
@@ -34,7 +34,18 @@ require_once(__DIR__ . '/base.php');
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_event_testcase extends quizaccess_seb_testcase {
+class quizaccess_seb_event_testcase extends advanced_testcase {
+    use quizaccess_seb_test_helper_trait;
+
+    /**
+     * Called before every test.
+     */
+    public function setUp() {
+        parent::setUp();
+
+        $this->resetAfterTest();
+        $this->course = $this->getDataGenerator()->create_course();
+    }
 
     /**
      * Test creating the access_prevented event.

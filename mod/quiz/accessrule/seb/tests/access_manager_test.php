@@ -29,7 +29,7 @@ use quizaccess_seb\settings_provider;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/base.php');
+require_once(__DIR__ . '/test_helper_trait.php');
 
 /**
  * PHPUnit tests for the access manager.
@@ -37,14 +37,18 @@ require_once(__DIR__ . '/base.php');
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizacces_seb_access_manager_testcase extends quizaccess_seb_testcase {
+class quizacces_seb_access_manager_testcase extends advanced_testcase {
+    use quizaccess_seb_test_helper_trait;
 
     /**
      * Called before every test.
      */
     public function setUp() {
         parent::setUp();
+
+        $this->resetAfterTest();
         $this->setAdminUser();
+        $this->course = $this->getDataGenerator()->create_course();
     }
 
     /**
