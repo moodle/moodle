@@ -255,7 +255,7 @@ XPATH
         ,
             'filemanager' => <<<XPATH
 .//*[@data-fieldtype = 'filemanager' or @data-fieldtype = 'filepicker']
-    /descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
+    /descendant::input[@id = substring-before(//p[contains(normalize-space(string(.)), %locator%)]/@id, '_label')]
 XPATH
         ,
              'passwordunmask' => <<<XPATH

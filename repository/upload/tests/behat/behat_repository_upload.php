@@ -209,10 +209,8 @@ class behat_repository_upload extends behat_base {
             $filepickerelement = behat_context_helper::escape($filepickerelement);
             $filepickercontainer = $this->find(
                     'xpath',
-                    "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
-                    "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' felement ')] |" .
-                    "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
-                    "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' form-setting ')]",
+                    "//input[./@id = substring-before(//p[normalize-space(.)=$filepickerelement]/@id, '_label')]" .
+                    "//ancestor::*[@data-fieldtype = 'filemanager' or @data-fieldtype = 'filepicker']",
                     $exception
             );
         }
