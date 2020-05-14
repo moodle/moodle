@@ -42,6 +42,7 @@ import {debounce} from 'core/utils';
 const showModuleHelp = (carousel, moduleData) => {
     const help = carousel.find(selectors.regions.help)[0];
     help.innerHTML = '';
+    help.classList.add('m-auto');
 
     // Add a spinner.
     const spinnerPromise = addIconToContainer(help);
@@ -484,6 +485,37 @@ const searchModules = (modules, searchTerm) => {
 };
 
 /**
+ * Set up our tabindex information across the chooser.
+ *
+ * @method setupKeyboardAccessibility
+ * @param {Promise} modal Our created modal for the section
+ * @param {Map} mappedModules A map of all of the built module information
+ */
+const setupKeyboardAccessibility = (modal, mappedModules) => {
+    modal.getModal()[0].tabIndex = -1;
+
+    modal.getBodyPromise().then(body => {
+        $(selectors.elements.tab).on('shown.bs.tab', (e) => {
+            const activeSectionId = e.target.getAttribute("href");
+            const activeSectionChooserOptions = body[0]
+                .querySelector(selectors.regions.getSectionChooserOptions(activeSectionId));
+            const firstChooserOption = activeSectionChooserOptions
+                .querySelector(selectors.regions.chooserOption.container);
+            const prevActiveSectionId = e.relatedTarget.getAttribute("href");
+            const prevActiveSectionChooserOptions = body[0]
+                .querySelector(selectors.regions.getSectionChooserOptions(prevActiveSectionId));
+
+            // Disable the focus of every chooser option in the previous active section.
+            disableFocusAllChooserOptions(prevActiveSectionChooserOptions);
+            // Enable the focus of the first chooser option in the current active section.
+            toggleFocusableChooserOption(firstChooserOption, true);
+            initChooserOptionsKeyboardNavigation(body[0], mappedModules, activeSectionChooserOptions);
+        });
+        return;
+    }).catch(Notification.exception);
+};
+
+/**
  * Disable the focus of all chooser options in a specific container (section).
  *
  * @method disableFocusAllChooserOptions
@@ -500,13 +532,11 @@ const disableFocusAllChooserOptions = (sectionChooserOptions) => {
  * Display the module chooser.
  *
  * @method displayChooser
- * @param {HTMLElement} origin The calling button
- * @param {Object} modal Our created modal for the section
+ * @param {Promise} modalPromise Our created modal for the section
  * @param {Array} sectionModules An array of all of the built module information
  * @param {Function} partialFavourite Partially applied function we need to manage favourite status
  */
-export const displayChooser = (origin, modal, sectionModules, partialFavourite) => {
-
+export const displayChooser = (modalPromise, sectionModules, partialFavourite) => {
     // Make a map so we can quickly fetch a specific module's object for either rendering or searching.
     const mappedModules = new Map();
     sectionModules.forEach((module) => {
@@ -514,39 +544,18 @@ export const displayChooser = (origin, modal, sectionModules, partialFavourite) 
     });
 
     // Register event listeners.
-    registerListenerEvents(modal, mappedModules, partialFavourite);
+    modalPromise.then(modal => {
+        registerListenerEvents(modal, mappedModules, partialFavourite);
 
-    // We want to focus on the action select when the dialog is closed.
-    modal.getRoot().on(ModalEvents.hidden, () => {
-        modal.destroy();
-    });
+        // We want to focus on the first chooser option element as soon as the modal is opened.
+        setupKeyboardAccessibility(modal, mappedModules);
 
-    // We want to focus on the first chooser option element as soon as the modal is opened.
-    modal.getRoot().on(ModalEvents.shown, () => {
-        modal.getModal()[0].tabIndex = -1;
+        // We want to focus on the action select when the dialog is closed.
+        modal.getRoot().on(ModalEvents.hidden, () => {
+            modal.destroy();
+        });
 
-        modal.getBodyPromise()
-        .then(body => {
-            $(selectors.elements.tab).on('shown.bs.tab', (e) => {
-                const activeSectionId = e.target.getAttribute("href");
-                const activeSectionChooserOptions = body[0]
-                    .querySelector(selectors.regions.getSectionChooserOptions(activeSectionId));
-                const firstChooserOption = activeSectionChooserOptions
-                    .querySelector(selectors.regions.chooserOption.container);
-                const prevActiveSectionId = e.relatedTarget.getAttribute("href");
-                const prevActiveSectionChooserOptions = body[0]
-                    .querySelector(selectors.regions.getSectionChooserOptions(prevActiveSectionId));
-
-                // Disable the focus of every chooser option in the previous active section.
-                disableFocusAllChooserOptions(prevActiveSectionChooserOptions);
-                // Enable the focus of the first chooser option in the current active section.
-                toggleFocusableChooserOption(firstChooserOption, true);
-                initChooserOptionsKeyboardNavigation(body[0], mappedModules, activeSectionChooserOptions);
-            });
-            return;
-        })
-        .catch(Notification.exception);
-    });
-
-    modal.show();
+        return modal;
+    })
+    .catch();
 };

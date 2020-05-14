@@ -78,7 +78,6 @@ const registerListenerEvents = (courseId) => {
     events.forEach((event) => {
         document.addEventListener(event, async(e) => {
             if (e.target.closest(selectors.elements.sectionmodchooser)) {
-                const data = await fetchModuleData();
                 // We need to know who called this.
                 // Standard courses use the ID in the main section info.
                 const sectionDiv = e.target.closest(selectors.elements.section);
@@ -86,11 +85,31 @@ const registerListenerEvents = (courseId) => {
                 const button = e.target.closest(selectors.elements.sectionmodchooser);
                 // If we don't have a section ID use the fallback ID.
                 const caller = sectionDiv || button;
-                const favouriteFunction = partiallyAppliedFavouriteManager(data, caller.dataset.sectionid);
-                const builtModuleData = sectionIdMapper(data, caller.dataset.sectionid);
-                const sectionModal = await modalBuilder(builtModuleData);
 
-                ChooserDialogue.displayChooser(caller, sectionModal, builtModuleData, favouriteFunction);
+                // We want to show the modal instantly but loading whilst waiting for our data.
+                let bodyPromiseResolver;
+                const bodyPromise = new Promise(resolve => {
+                    bodyPromiseResolver = resolve;
+                });
+
+                const sectionModal = buildModal(bodyPromise);
+
+                // Now we have a modal we should start fetching data.
+                const data = await fetchModuleData();
+
+                // Apply the section id to all the module instance links.
+                const builtModuleData = sectionIdMapper(data, caller.dataset.sectionid);
+
+                ChooserDialogue.displayChooser(
+                    sectionModal,
+                    builtModuleData,
+                    partiallyAppliedFavouriteManager(data, caller.dataset.sectionid),
+                );
+
+                bodyPromiseResolver(await Templates.render(
+                    'core_course/activitychooser',
+                    templateDataBuilder(builtModuleData)
+                ));
             }
         });
     });
@@ -102,7 +121,7 @@ const registerListenerEvents = (courseId) => {
  *
  * @method sectionIdMapper
  * @param {Object} webServiceData Our original data from the Web service call
- * @param {Array} id The ID of the section we need to append to the links
+ * @param {Number} id The ID of the section we need to append to the links
  * @return {Array} [modules] with URL's built
  */
 const sectionIdMapper = (webServiceData, id) => {
@@ -113,15 +132,6 @@ const sectionIdMapper = (webServiceData, id) => {
     });
     return newData.content_items;
 };
-
-/**
- * Build a modal on demand to save page load times
- *
- * @method modalBuilder
- * @param {Array} data our array of modules with section ID's applied in the URL field
- * @return {Object} Our modal that we are going to show the user
- */
-const modalBuilder = data => buildModal(templateDataBuilder(data));
 
 /**
  * Given an array of modules we want to figure out where & how to place them into our template object
@@ -158,18 +168,22 @@ const templateDataBuilder = (data) => {
  * Given an object we want to build a modal ready to show
  *
  * @method buildModal
- * @param {Object} data The template data which contains arrays of modules
- * @return {Object} The modal for the calling section with everything already set up
+ * @param {Promise} bodyPromise
+ * @return {Object} The modal ready to display immediately and render body in later.
  */
-const buildModal = data => {
+const buildModal = bodyPromise => {
     return ModalFactory.create({
         type: ModalFactory.types.DEFAULT,
         title: getString('addresourceoractivity'),
-        body: Templates.render('core_course/activitychooser', data),
+        body: bodyPromise,
         large: true,
         templateContext: {
             classes: 'modchooser'
         }
+    })
+    .then(modal => {
+        modal.show();
+        return modal;
     });
 };
 
@@ -240,6 +254,7 @@ const partiallyAppliedFavouriteManager = (moduleData, sectionId) => {
             if (favourite) {
                 result.favourite = true;
 
+                // eslint-disable-next-line camelcase
                 newFaves.content_items = moduleData.content_items.filter(mod => mod.favourite === true);
 
                 const builtFaves = sectionIdMapper(newFaves, sectionId);
