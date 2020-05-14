@@ -1390,9 +1390,7 @@ class page_requirements_manager {
         // First include must be to a module with no dependencies, this prevents multiple requests.
         $prefix = 'M.util.js_pending("core/first");';
         $prefix .= "require(['core/first'], function() {\n";
-        if ($cachejs) {
-            $prefix .= "require(['core/prefetch']);\n";
-        }
+        $prefix .= "require(['core/prefetch']);\n";
         $suffix = 'M.util.js_complete("core/first");';
         $suffix .= "\n});";
         $output .= html_writer::script($prefix . implode(";\n", $this->amdjscode) . $suffix);
