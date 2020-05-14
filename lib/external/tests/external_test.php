@@ -203,7 +203,6 @@ class core_external_testcase extends externallib_advanced_testcase {
     }
 
     public function test_get_user_dates() {
-        global $USER, $CFG, $DB;
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -224,6 +223,11 @@ class core_external_testcase extends externallib_advanced_testcase {
             ],
             [
                 'timestamp' => 1293876000,
+                'format' => '%d %m %Y',
+                'type' => 'gregorian'
+            ],
+            [
+                'timestamp' => 1293876000,
                 'format' => 'some invalid format'
             ],
         ];
@@ -233,6 +237,7 @@ class core_external_testcase extends externallib_advanced_testcase {
 
         $this->assertEquals('Saturday, 1 January 2011, 6:00', $result['dates'][0]);
         $this->assertEquals('1 01 2011', $result['dates'][1]);
-        $this->assertEquals('some invalid format', $result['dates'][2]);
+        $this->assertEquals('1 01 2011', $result['dates'][2]);
+        $this->assertEquals('some invalid format', $result['dates'][3]);
     }
 }

@@ -236,7 +236,7 @@ $allow-reset-style: true !default;
                     vertical-align: top;
 
                     div[role="main"] {
-                        flex: 1;
+                        flex: 1 0 auto;
                     }
 
                     .activity-navigation {
