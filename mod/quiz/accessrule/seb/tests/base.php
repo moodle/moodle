@@ -23,8 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace quizaccess_seb\tests\phpunit;
-
 use quizaccess_seb\access_manager;
 use quizaccess_seb\settings_provider;
 

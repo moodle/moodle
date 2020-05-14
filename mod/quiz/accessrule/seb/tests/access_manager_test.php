@@ -26,7 +26,6 @@
 use quizaccess_seb\access_manager;
 use quizaccess_seb\quiz_settings;
 use quizaccess_seb\settings_provider;
-use quizaccess_seb\tests\phpunit\quizaccess_seb_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
