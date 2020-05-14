@@ -1,6 +1,12 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.8.4 ===
+* Additional parameters were added to core_get_user_dates:
+    - type: specifies the calendar type. Optional, defaults to Gregorian.
+    - fixday: Whether to remove leading zero for day. Optional, defaults to 1.
+    - fixhour: Whether to remove leading zero for hour. Optional, defaults to 1.
+
 === 3.8.3 ===
 * database_manager::check_database_schema() now checks for missing indexes.
 * Added function cleanup_after_drop to the database_manager class to take care of all the cleanups that need to be done after a table is dropped.
