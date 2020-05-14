@@ -259,8 +259,10 @@ class redis extends handler {
                 $this->lock_session($id);
             }
             $sessiondata = $this->connection->get($id);
-            if ($sessiondata === false && $this->requires_write_lock()) {
-                $this->unlock_session($id);
+            if ($sessiondata === false) {
+                if ($this->requires_write_lock()) {
+                    $this->unlock_session($id);
+                }
                 return '';
             }
             $this->connection->expire($id, $this->timeout);

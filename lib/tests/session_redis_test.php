@@ -91,6 +91,14 @@ class core_session_redis_testcase extends advanced_testcase {
         $this->redis->close();
     }
 
+    public function test_normal_session_read_only() {
+        $sess = new \core\session\redis();
+        $sess->set_requires_write_lock(false);
+        $sess->init();
+        $this->assertSame('', $sess->handler_read('sess1'));
+        $this->assertTrue($sess->handler_close());
+    }
+
     public function test_normal_session_start_stop_works() {
         $sess = new \core\session\redis();
         $sess->init();
