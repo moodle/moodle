@@ -202,7 +202,7 @@ class quizaccess_seb_backup_restore_testcase extends quizaccess_seb_testcase {
 
         $expected = \quizaccess_seb\quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $expected->set('requiresafeexambrowser', \quizaccess_seb\settings_provider::USE_SEB_UPLOAD_CONFIG);
-        $xml = file_get_contents(__DIR__ . '/sample_data/unencrypted.seb');
+        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
         $this->create_module_test_file($xml, $this->quiz->cmid);
         $expected->save();
 
@@ -271,7 +271,7 @@ class quizaccess_seb_backup_restore_testcase extends quizaccess_seb_testcase {
         $this->assertEquals(1, quizaccess_seb\quiz_settings::count_records());
         $this->assertEquals(1, quizaccess_seb\template::count_records());
 
-        $newxml = file_get_contents($CFG->dirroot . '/mod/quiz/accessrule/seb/tests/phpunit/sample_data/simpleunencrypted.seb');
+        $newxml = file_get_contents($CFG->dirroot . '/mod/quiz/accessrule/seb/tests/fixtures/simpleunencrypted.seb');
         $this->template->set('content', $newxml);
         $this->template->save();
 

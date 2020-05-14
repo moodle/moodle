@@ -493,7 +493,7 @@ class quizaccess_seb_quiz_settings_testcase extends quizaccess_seb_testcase {
         $this->save_settings_with_optional_template($quizsettings, settings_provider::USE_SEB_TEMPLATE, $templateid);
 
         // Case for USE_SEB_UPLOAD_CONFIG, ensure template id reverts to 0.
-        $xml = file_get_contents(__DIR__ . '/sample_data/unencrypted.seb');
+        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
         $this->create_module_test_file($xml, $this->quiz->cmid);
         $this->save_settings_with_optional_template($quizsettings, settings_provider::USE_SEB_UPLOAD_CONFIG);
         $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
@@ -693,7 +693,7 @@ class quizaccess_seb_quiz_settings_testcase extends quizaccess_seb_testcase {
         $this->assertNull($quizsettings->get_config());
 
         $quizsettings->set('requiresafeexambrowser', settings_provider::USE_SEB_UPLOAD_CONFIG);
-        $xml = file_get_contents(__DIR__ . '/sample_data/unencrypted.seb');
+        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
         $this->create_module_test_file($xml, $this->quiz->cmid);
         $quizsettings->save();
         $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
