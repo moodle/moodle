@@ -33,6 +33,7 @@ use cm_info;
 use moodle_recordset;
 use core_user;
 use stdClass;
+use mod_h5pactivity\event\course_module_viewed;
 
 /**
  * Class manager for H5P activity
@@ -444,5 +445,30 @@ class manager {
             $result[] = new attempt($record);
         }
         return $result;
+    }
+
+    /**
+     * Trigger module viewed event and set the module viewed for completion.
+     *
+     * @param stdClass $course course object
+     * @return void
+     */
+    public function set_module_viewed(stdClass $course): void {
+        global $CFG;
+        require_once($CFG->libdir . '/completionlib.php');
+
+        // Trigger module viewed event.
+        $event = course_module_viewed::create([
+            'objectid' => $this->instance->id,
+            'context' => $this->context
+        ]);
+        $event->add_record_snapshot('course', $course);
+        $event->add_record_snapshot('course_modules', $this->coursemodule);
+        $event->add_record_snapshot('h5pactivity', $this->instance);
+        $event->trigger();
+
+        // Completion.
+        $completion = new \completion_info($course);
+        $completion->set_module_viewed($this->coursemodule);
     }
 }
