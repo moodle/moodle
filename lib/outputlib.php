@@ -1207,8 +1207,6 @@ class theme_config {
      * @return string CSS markup
      */
     public function get_css_content_debug($type, $subtype, $sheet) {
-
-
         if ($type === 'scss') {
             // The SCSS file of the theme is requested.
             $csscontent = $this->get_css_content_from_scss(true);
