@@ -190,13 +190,18 @@ class manager {
      * parameter provides a way to skip those checks on pages which are used frequently. It has
      * no effect if an instance has already been constructed in this request.
      *
+     * The $query parameter indicates that the page is used for queries rather than indexing. If
+     * configured, this will cause the query-only search engine to be used instead of the 'normal'
+     * one.
+     *
      * @see \core_search\engine::is_installed
      * @see \core_search\engine::is_server_ready
      * @param bool $fast Set to true when calling on a page that requires high performance
+     * @param bool $query Set true on a page that is used for querying
      * @throws \core_search\engine_exception
      * @return \core_search\manager
      */
-    public static function instance($fast = false) {
+    public static function instance(bool $fast = false, bool $query = false) {
         global $CFG;
 
         // One per request, this should be purged during testing.
@@ -208,7 +213,7 @@ class manager {
             throw new \core_search\engine_exception('enginenotselected', 'search');
         }
 
-        if (!$engine = static::search_engine_instance()) {
+        if (!$engine = static::search_engine_instance($query)) {
             throw new \core_search\engine_exception('enginenotfound', 'search', '', $CFG->searchengine);
         }
 
@@ -287,17 +292,46 @@ class manager {
     /**
      * Returns an instance of the search engine.
      *
+     * @param bool $query If true, gets the query-only search engine (where configured)
      * @return \core_search\engine
      */
-    public static function search_engine_instance() {
+    public static function search_engine_instance(bool $query = false) {
         global $CFG;
 
-        $classname = '\\search_' . $CFG->searchengine . '\\engine';
-        if (!class_exists($classname)) {
-            return false;
+        if ($query && $CFG->searchenginequeryonly) {
+            return self::search_engine_instance_from_setting($CFG->searchenginequeryonly);
+        } else {
+            return self::search_engine_instance_from_setting($CFG->searchengine);
+        }
+    }
+
+    /**
+     * Loads a search engine based on the name given in settings, which can optionally
+     * include '-alternate' to indicate that an alternate version should be used.
+     *
+     * @param string $setting
+     * @return engine|null
+     */
+    protected static function search_engine_instance_from_setting(string $setting): ?engine {
+        if (preg_match('~^(.*)-alternate$~', $setting, $matches)) {
+            $enginename = $matches[1];
+            $alternate = true;
+        } else {
+            $enginename = $setting;
+            $alternate = false;
         }
 
-        return new $classname();
+        $classname = '\\search_' . $enginename . '\\engine';
+        if (!class_exists($classname)) {
+            return null;
+        }
+
+        if ($alternate) {
+            return new $classname(true);
+        } else {
+            // Use the constructor with no parameters for compatibility.
+            return new $classname();
+        }
     }
 
     /**
