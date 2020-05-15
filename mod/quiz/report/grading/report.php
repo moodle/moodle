@@ -153,30 +153,30 @@ class quiz_grading_report extends quiz_default_report {
             return true;
         }
 
-        $counts = null;
-        if ($slot && $hasquestions) {
-            // Make sure there is something to do.
-            $statecounts = $this->get_question_state_summary(array($slot));
-            foreach ($statecounts as $record) {
-                if ($record->questionid == $questionid) {
-                    $counts = $record;
-                    break;
-                }
-            }
-            // If not, redirect back to the list.
-            if (!$counts || $counts->$grade == 0) {
-                redirect($this->list_questions_url(), get_string('alldoneredirecting', 'quiz_grading'));
-            }
-        }
-
-        // What sort of page to display?
         if (!$slot) {
             $this->display_index($includeauto);
-
-        } else {
-            echo $this->display_grading_interface($slot, $questionid, $grade,
-                    $pagesize, $page, $shownames, $showidnumbers, $order, $counts);
+            return true;
         }
+
+        // Display the grading UI for one question.
+
+        // Make sure there is something to do.
+        $counts = null;
+        $statecounts = $this->get_question_state_summary([$slot]);
+        foreach ($statecounts as $record) {
+            if ($record->questionid == $questionid) {
+                $counts = $record;
+                break;
+            }
+        }
+
+        // If not, redirect back to the list.
+        if (!$counts || $counts->$grade == 0) {
+            redirect($this->list_questions_url(), get_string('alldoneredirecting', 'quiz_grading'));
+        }
+
+        $this->display_grading_interface($slot, $questionid, $grade,
+                $pagesize, $page, $shownames, $showidnumbers, $order, $counts);
         return true;
     }
 
