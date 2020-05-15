@@ -17,8 +17,8 @@ Feature: Import course content bank content
       | teacher1 | C1 | editingteacher |
       | teacher1 | C2 | editingteacher |
     And the following "contentbank content" exist:
-      | course| contenttype     | user     | contentname       |
-      | C1    | contenttype_h5p | teacher1 | ipsums.h5p        |
+      | contextlevel | reference | contenttype     | user     | contentname |
+      | Course       | C1        | contenttype_h5p | teacher1 | ipsums.h5p  |
     And I log in as "teacher1"
 
   Scenario: Import content bank content to another course

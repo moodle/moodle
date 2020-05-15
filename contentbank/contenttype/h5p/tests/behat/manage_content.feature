@@ -15,9 +15,9 @@ Feature: Manage H5P content from the content bank
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And the following "contentbank content" exist:
-      | course| contenttype     | user     | contentname       |
-      | C1    | contenttype_h5p | admin    | filltheblanks.h5p |
-      | C1    | contenttype_h5p | teacher1 | ipsums.h5p        |
+      | contextlevel | reference | contenttype     | user     | contentname       |
+      | Course       | C1        | contenttype_h5p | admin    | filltheblanks.h5p |
+      | Course       | C1        | contenttype_h5p | teacher1 | ipsums.h5p        |
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Navigation" block if not present
