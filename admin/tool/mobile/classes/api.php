@@ -402,7 +402,8 @@ class api {
 
         $availablemods = core_plugin_manager::instance()->get_plugins_of_type('mod');
         $coursemodules = array();
-        $appsupportedmodules = array('assign', 'book', 'chat', 'choice', 'data', 'feedback', 'folder', 'forum', 'glossary', 'imscp',
+        $appsupportedmodules = array(
+            'assign', 'book', 'chat', 'choice', 'data', 'feedback', 'folder', 'forum', 'glossary', 'h5pactivity', 'imscp',
             'label', 'lesson', 'lti', 'page', 'quiz', 'resource', 'scorm', 'survey', 'url', 'wiki', 'workshop');
 
         foreach ($availablemods as $mod) {
@@ -425,6 +426,7 @@ class api {
         $courseblocks = array();
         $appsupportedblocks = array(
             'activity_modules' => 'CoreBlockDelegate_AddonBlockActivityModules',
+            'activity_results' => 'CoreBlockDelegate_AddonBlockActivityResults',
             'site_main_menu' => 'CoreBlockDelegate_AddonBlockSiteMainMenu',
             'myoverview' => 'CoreBlockDelegate_AddonBlockMyOverview',
             'timeline' => 'CoreBlockDelegate_AddonBlockTimeline',
@@ -468,6 +470,7 @@ class api {
                 'NoDelegate_ResponsiveMainMenuItems' => new lang_string('responsivemainmenuitems', 'tool_mobile'),
                 'NoDelegate_H5POffline' => new lang_string('h5poffline', 'tool_mobile'),
                 'NoDelegate_DarkMode' => new lang_string('darkmode', 'tool_mobile'),
+                'CoreFilterDelegate' => new lang_string('type_filter_plural', 'plugin'),
             ),
             "$mainmenu" => array(
                 '$mmSideMenuDelegate_mmaFrontpage' => new lang_string('sitehome'),
