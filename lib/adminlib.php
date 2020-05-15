@@ -3232,14 +3232,20 @@ class admin_setting_configselect extends admin_setting {
     public $choices;
     /** @var array Array of choices grouped using optgroups */
     public $optgroups;
+    /** @var callable|null Loader function for choices */
+    protected $choiceloader = null;
 
     /**
-     * Constructor
+     * Constructor.
+     *
+     * If you want to lazy-load the choices, pass a callback function that returns a choice
+     * array for the $choices parameter.
+     *
      * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param string|int $defaultsetting
-     * @param array $choices array of $value=>$label for each selection
+     * @param array|callable|null $choices array of $value=>$label for each selection, or callback
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
         // Look for optgroup and single options.
@@ -3254,6 +3260,9 @@ class admin_setting_configselect extends admin_setting {
                 }
             }
         }
+        if (is_callable($choices)) {
+            $this->choiceloader = $choices;
+        }
 
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
@@ -3267,12 +3276,12 @@ class admin_setting_configselect extends admin_setting {
      * @return bool true if loaded, false if error
      */
     public function load_choices() {
-        /*
-        if (is_array($this->choices)) {
+        if ($this->choiceloader) {
+            if (!is_array($this->choices)) {
+                $this->choices = call_user_func($this->choiceloader);
+            }
             return true;
         }
-        .... load choices here
-        */
         return true;
     }
 
@@ -3422,7 +3431,6 @@ class admin_setting_configselect extends admin_setting {
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, $warning, $defaultinfo, $query);
     }
 }
-
 
 /**
  * Select multiple items from list

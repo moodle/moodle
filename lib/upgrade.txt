@@ -32,6 +32,8 @@ information provided here is intended especially for developers.
 * The `core_output_load_fontawesome_icon_map` web service has been deprecated and replaced by
   `core_output_load_fontawesome_icon_system_map` which takes the name of the theme to generate the icon system map for.
 * The class coursecat_sortable_records has been removed.
+* Admin setting admin_setting_configselect now supports lazy-loading the options list by supplying
+  a callback function instead of an array of options.
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
