@@ -97,17 +97,16 @@ function(
             });
 
 
-            deletePromise = ModalFactory.create(
-                {
-                    type: ModalFactory.types.SAVE_CANCEL
-                }
-            );
+            deletePromise = ModalFactory.create({
+                type: ModalFactory.types.SAVE_CANCEL,
+            });
         }
 
         var stringsPromise = Str.get_strings(deleteStrings);
 
         var finalPromise = $.when(stringsPromise, deletePromise)
         .then(function(strings, deleteModal) {
+            deleteModal.setRemoveOnClose(true);
             deleteModal.setTitle(strings[0]);
             deleteModal.setBody(strings[1]);
             if (!isRepeatedEvent) {
