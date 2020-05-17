@@ -277,10 +277,11 @@ function edit_module_post_actions($moduleinfo, $course) {
             if ($update) {
                 $item->update();
             }
-            $gradecategory = $grade_item->get_parent_category();
+
             if (!empty($moduleinfo->add)) {
-                if ($grade_item->set_aggregation_fields_for_aggregation(0, $gradecategory->aggregation)) {
-                    $grade_item->update();
+                $gradecategory = $item->get_parent_category();
+                if ($item->set_aggregation_fields_for_aggregation(0, $gradecategory->aggregation)) {
+                    $item->update();
                 }
             }
         }
@@ -304,8 +305,8 @@ function edit_module_post_actions($moduleinfo, $course) {
 
             if (property_exists($moduleinfo, $elname) and $moduleinfo->$elname) {
                 // Check if this is a new outcome grade item.
+                $outcomeexists = false;
                 if ($items) {
-                    $outcomeexists = false;
                     foreach($items as $item) {
                         if ($item->outcomeid == $outcome->id) {
                             $outcomeexists = true;
@@ -339,10 +340,11 @@ function edit_module_post_actions($moduleinfo, $course) {
                 } else if (isset($moduleinfo->gradecat)) {
                     $outcomeitem->set_parent($moduleinfo->gradecat);
                 }
-                $gradecategory = $outcome_item->get_parent_category();
-                if ($outcomeexists == false) {
-                    if ($outcome_item->set_aggregation_fields_for_aggregation(0, $gradecategory->aggregation)) {
-                        $outcome_item->update();
+
+                if (!$outcomeexists) {
+                    $gradecategory = $outcomeitem->get_parent_category();
+                    if ($outcomeitem->set_aggregation_fields_for_aggregation(0, $gradecategory->aggregation)) {
+                        $outcomeitem->update();
                     }
                 }
             }
