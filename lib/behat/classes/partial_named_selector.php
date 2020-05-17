@@ -161,7 +161,7 @@ XPATH
 .//div[
         contains(concat(' ', normalize-space(@class), ' '), ' modal ')
             and
-        normalize-space(descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' modal-header ')] = %locator%)
+        normalize-space(descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' modal-header ')]) = %locator%
     ]
 XPATH
         , 'group_message' => <<<XPATH
