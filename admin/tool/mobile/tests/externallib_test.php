@@ -725,4 +725,67 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->expectExceptionMessage(get_string('apprequired', 'tool_mobile'));
         $result = external::get_tokens_for_qr_login('', $USER->id);
     }
+
+    /**
+     * Test validate subscription key.
+     */
+    public function test_validate_subscription_key_valid() {
+        $this->resetAfterTest(true);
+
+        $sitesubscriptionkey = ['validuntil' => time() + MINSECS, 'key' => complex_random_string(32)];
+        set_config('sitesubscriptionkey', json_encode($sitesubscriptionkey), 'tool_mobile');
+
+        $result = external::validate_subscription_key($sitesubscriptionkey['key']);
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+        $this->assertTrue($result['validated']);
+    }
+
+    /**
+     * Test validate subscription key invalid first and then a valid one.
+     */
+    public function test_validate_subscription_key_invalid_key_first() {
+        $this->resetAfterTest(true);
+
+        $sitesubscriptionkey = ['validuntil' => time() + MINSECS, 'key' => complex_random_string(32)];
+        set_config('sitesubscriptionkey', json_encode($sitesubscriptionkey), 'tool_mobile');
+
+        $result = external::validate_subscription_key('fakekey');
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+        $this->assertFalse($result['validated']);
+
+        // The valid one has been invalidated because the previous attempt.
+        $result = external::validate_subscription_key($sitesubscriptionkey['key']);
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+        $this->assertFalse($result['validated']);
+    }
+
+    /**
+     * Test validate subscription key invalid.
+     */
+    public function test_validate_subscription_key_invalid_key() {
+        $this->resetAfterTest(true);
+
+        $result = external::validate_subscription_key('fakekey');
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+        $this->assertFalse($result['validated']);
+    }
+
+    /**
+     * Test validate subscription key invalid.
+     */
+    public function test_validate_subscription_key_outdated() {
+        $this->resetAfterTest(true);
+
+        $sitesubscriptionkey = ['validuntil' => time() - MINSECS, 'key' => complex_random_string(32)];
+        set_config('sitesubscriptionkey', json_encode($sitesubscriptionkey), 'tool_mobile');
+
+        $result = external::validate_subscription_key($sitesubscriptionkey['key']);
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+        $this->assertFalse($result['validated']);
+    }
 }

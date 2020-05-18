@@ -692,4 +692,63 @@ class external extends external_api {
             ]
         );
     }
+
+    /**
+     * Returns description of validate_subscription_key() parameters.
+     *
+     * @return external_function_parameters
+     * @since  Moodle 3.9
+     */
+    public static function validate_subscription_key_parameters() {
+        return new external_function_parameters(
+            [
+                'key' => new external_value(PARAM_RAW, 'Site subscription temporary key.'),
+            ]
+        );
+    }
+
+    /**
+     * Check if the given site subscription key is valid
+     *
+     * @param string $key subscriptiion temporary key
+     * @return array with the settings and warnings
+     * @since  Moodle 3.9
+     */
+    public static function validate_subscription_key(string $key): array {
+        global $CFG, $PAGE;
+
+        $params = self::validate_parameters(self::validate_subscription_key_parameters(), ['key' => $key]);
+
+        $context = context_system::instance();
+        $PAGE->set_context($context);
+
+        $validated = false;
+        $sitesubscriptionkey = get_config('tool_mobile', 'sitesubscriptionkey');
+        if (!empty($sitesubscriptionkey) && $CFG->enablemobilewebservice && empty($CFG->disablemobileappsubscription)) {
+            $sitesubscriptionkey = json_decode($sitesubscriptionkey);
+            $validated = time() < $sitesubscriptionkey->validuntil && $params['key'] === $sitesubscriptionkey->key;
+            // Delete existing, even if not validated to enforce security and attacks prevention.
+            unset_config('sitesubscriptionkey', 'tool_mobile');
+        }
+
+        return [
+            'validated' => $validated,
+            'warnings' => [],
+        ];
+    }
+
+    /**
+     * Returns description of validate_subscription_key() result value.
+     *
+     * @return external_description
+     * @since  Moodle 3.9
+     */
+    public static function validate_subscription_key_returns() {
+        return new external_single_structure(
+            [
+                'validated' => new external_value(PARAM_BOOL, 'Whether the key is validated or not.'),
+                'warnings' => new external_warnings(),
+            ]
+        );
+    }
 }
