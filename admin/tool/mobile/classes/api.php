@@ -61,6 +61,10 @@ class api {
     const QR_CODE_URL = 1;
     /** @var int QR code type login value */
     const QR_CODE_LOGIN = 2;
+    /** @var string Default Android app id */
+    const DEFAULT_ANDROID_APP_ID = 'com.moodle.moodlemobile';
+    /** @var string Default iOS app id */
+    const DEFAULT_IOS_APP_ID = '633359593';
 
     /**
      * Returns a list of Moodle plugins supporting the mobile app.
@@ -689,14 +693,17 @@ class api {
             $credentials[] = ['type' => 'siteid', 'value' => $CFG->siteidentifier];
         }
         // Generate a hash key for validating that the request is coming from this site via WS.
-        $sitesubscriptionkey = json_encode(['validuntil' => time() + 10 * MINSECS, 'key' => complex_random_string(32)]);
+        $key = complex_random_string(32);
+        $sitesubscriptionkey = json_encode(['validuntil' => time() + 10 * MINSECS, 'key' => $key]);
         set_config('sitesubscriptionkey', $sitesubscriptionkey, 'tool_mobile');
-        $credentials[] = ['type' => 'sitesubscriptionkey', 'value' => $sitesubscriptionkey];
+        $credentials[] = ['type' => 'sitesubscriptionkey', 'value' => $key];
 
         // Parameters for the WebService returning site information.
+        $androidappid = empty($mobilesettings->androidappid) ? static::DEFAULT_ANDROID_APP_ID : $mobilesettings->androidappid;
+        $iosappid = empty($mobilesettings->iosappid) ? static::DEFAULT_IOS_APP_ID : $mobilesettings->iosappid;
         $fnparams = (object) [
             'siteurl' => $CFG->wwwroot,
-            'appids' => [$mobilesettings->androidappid, $mobilesettings->iosappid],
+            'appids' => [$androidappid, $iosappid],
             'credentials' => $credentials,
         ];
         // Prepare the arguments for a request to the AJAX nologin endpoint.

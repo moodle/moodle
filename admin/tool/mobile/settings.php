@@ -124,10 +124,10 @@ if ($hassiteconfig) {
                     new lang_string('enablesmartappbanners_desc', 'tool_mobile'), 0));
 
         $temp->add(new admin_setting_configtext('tool_mobile/iosappid', new lang_string('iosappid', 'tool_mobile'),
-                    new lang_string('iosappid_desc', 'tool_mobile'), '633359593', PARAM_ALPHANUM));
+                    new lang_string('iosappid_desc', 'tool_mobile'), tool_mobile\api::DEFAULT_IOS_APP_ID, PARAM_ALPHANUM));
 
         $temp->add(new admin_setting_configtext('tool_mobile/androidappid', new lang_string('androidappid', 'tool_mobile'),
-                    new lang_string('androidappid_desc', 'tool_mobile'), 'com.moodle.moodlemobile', PARAM_NOTAGS));
+                    new lang_string('androidappid_desc', 'tool_mobile'), tool_mobile\api::DEFAULT_ANDROID_APP_ID, PARAM_NOTAGS));
 
         $temp->add(new admin_setting_configtext('tool_mobile/setuplink', new lang_string('setuplink', 'tool_mobile'),
             new lang_string('setuplink_desc', 'tool_mobile'), 'https://download.moodle.org/mobile', PARAM_URL));

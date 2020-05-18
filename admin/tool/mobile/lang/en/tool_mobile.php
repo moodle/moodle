@@ -98,7 +98,7 @@ $string['notifications'] = 'Notifications';
 $string['notificationsactivedevices'] = 'Active devices';
 $string['notificationsignorednotifications'] = 'Notifications not sent';
 $string['notificationslimitreached'] = 'The monthly active user devices limit has been exceeded. Notifications for some users will not be sent. It is recommended that you upgrade your app plan in the <a href="{$a}" target="_blank">Moodle Apps Portal</a>.';
-$string['notificationsmissingwarning'] = 'Moodle app notification statistics could not be retrieved. This is most likely because mobile notifications are not yet enabled on the site.';
+$string['notificationsmissingwarning'] = 'Moodle app notification statistics could not be retrieved. This is most likely because mobile notifications are not yet enabled on the site. You can enable them in Site Administration / Notifications / Mobile.';
 $string['notificationsnewdevices'] = 'New devices';
 $string['notificationsseemore'] = 'Note: Moodle app usage statistics are not calculated in real time. To access more detailed statistics, including data from previous months, please log in to the <a href="{$a}" target="_blank">Moodle Apps Portal</a>.';
 $string['notificationssentnotifications'] = 'Notifications sent';
