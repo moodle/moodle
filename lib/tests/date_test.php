@@ -170,7 +170,8 @@ class core_date_testcase extends advanced_testcase {
         $phpzones = DateTimeZone::listIdentifiers();
         $manager = get_string_manager();
         foreach ($phpzones as $tz) {
-            $this->assertTrue($manager->string_exists(strtolower($tz), 'core_timezones'));
+            $this->assertTrue($manager->string_exists(strtolower($tz), 'core_timezones'),
+                    'String for timezone ' . strtolower($tz) . ' not found.');
         }
     }
 
