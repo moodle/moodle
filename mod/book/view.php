@@ -152,7 +152,6 @@ foreach ($chapters as $ch) {
 if ($book->navstyle) {
     $navprevicon = right_to_left() ? 'nav_next' : 'nav_prev';
     $navnexticon = right_to_left() ? 'nav_prev' : 'nav_next';
-    $navprevdisicon = right_to_left() ? 'nav_next_dis' : 'nav_prev_dis';
 
     $chnavigation = '';
     if ($previd) {
@@ -166,10 +165,6 @@ if ($book->navstyle) {
                 $cm->id . '&amp;chapterid=' . $previd . '">' .
                 '<span class="chaptername"><span class="arrow">' . $OUTPUT->larrow() . '&nbsp;</span></span>' .
                 $navprev . ':&nbsp;<span class="chaptername">' . $prevtitle . '</span></a>';
-        }
-    } else {
-        if ($book->navstyle == 1) {
-            $chnavigation .= $OUTPUT->pix_icon($navprevdisicon, '', 'mod_book');
         }
     }
     if ($nextid) {
