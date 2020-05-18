@@ -165,6 +165,7 @@ function(
 
         // We have to wait for the modal to finish rendering in order to ensure that
         // the data-event-title property is available to use as the modal title.
+        M.util.js_pending('core_calendar/summary_modal:registerEventListeners:bodyRendered');
         this.getRoot().on(ModalEvents.bodyRendered, function() {
             this.getModal().data({
                 eventTitle: this.getEventTitle(),
@@ -173,7 +174,7 @@ function(
             })
             .attr('data-type', 'event');
             CalendarCrud.registerRemove(this.getModal());
-
+            M.util.js_complete('core_calendar/summary_modal:registerEventListeners:bodyRendered');
         }.bind(this));
 
         $('body').on(CalendarEvents.deleted, function() {
