@@ -97,17 +97,16 @@ function(
             });
 
 
-            deletePromise = ModalFactory.create(
-                {
-                    type: ModalFactory.types.SAVE_CANCEL
-                }
-            );
+            deletePromise = ModalFactory.create({
+                type: ModalFactory.types.SAVE_CANCEL,
+            });
         }
 
         var stringsPromise = Str.get_strings(deleteStrings);
 
         var finalPromise = $.when(stringsPromise, deletePromise)
         .then(function(strings, deleteModal) {
+            deleteModal.setRemoveOnClose(true);
             deleteModal.setTitle(strings[0]);
             deleteModal.setBody(strings[1]);
             if (!isRepeatedEvent) {
@@ -240,7 +239,9 @@ function(
      * @returns {Promise}
      */
     function registerEditListeners(root, eventFormModalPromise) {
-        eventFormModalPromise
+        var pendingPromise = new Pending('core_calendar/crud:registerEditListeners');
+
+        return eventFormModalPromise
         .then(function(modal) {
             // When something within the calendar tells us the user wants
             // to edit an event then show the event form modal.
@@ -252,11 +253,14 @@ function(
 
                 e.stopImmediatePropagation();
             });
-            return;
+            return modal;
         })
-        .fail(Notification.exception);
+        .then(function(modal) {
+            pendingPromise.resolve();
 
-        return eventFormModalPromise;
+            return modal;
+        })
+        .catch(Notification.exception);
     }
 
     return {
