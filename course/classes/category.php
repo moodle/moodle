@@ -1993,7 +1993,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
 
         // Now delete anything that may depend on course category context.
         grade_course_category_delete($this->id, 0, $showfeedback);
-        if (!question_delete_course_category($this, 0, $showfeedback)) {
+        if (!question_delete_course_category($this, null)) {
             throw new moodle_exception('cannotdeletecategoryquestions', '', '', $this->get_formatted_name());
         }
 
@@ -2153,7 +2153,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
 
         // Now delete anything that may depend on course category context.
         grade_course_category_delete($this->id, $newparentid, $showfeedback);
-        if (!question_delete_course_category($this, $newparentcat, $showfeedback)) {
+        if (!question_delete_course_category($this, $newparentcat)) {
             if ($showfeedback) {
                 echo $OUTPUT->notification(get_string('errordeletingquestionsfromcategory', 'question', $catname), 'notifysuccess');
             }
