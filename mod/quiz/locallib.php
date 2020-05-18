@@ -2546,7 +2546,7 @@ function quiz_retrieve_tags_for_slot_ids($slotids) {
                 }
             }
 
-            $carry[$slottag->slotid][] = $slottag;
+            $carry[$slottag->slotid][$slottag->id] = $slottag;
             return $carry;
         },
         $emptytagids
