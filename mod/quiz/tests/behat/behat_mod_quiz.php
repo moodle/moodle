@@ -108,6 +108,10 @@ class behat_mod_quiz extends behat_question_base {
                 return new moodle_url('/mod/quiz/report.php',
                     ['id' => $this->get_cm_by_quiz_name($identifier)->id, 'mode' => 'statistics']);
 
+            case 'Manual grading report':
+                return new moodle_url('/mod/quiz/report.php',
+                        ['id' => $this->get_cm_by_quiz_name($identifier)->id, 'mode' => 'grading']);
+
             case 'Attempt review':
                 if (substr_count($identifier, ' > ') !== 2) {
                     throw new coding_exception('For "attempt review", name must be ' .
