@@ -276,9 +276,9 @@ class attempt_testcase extends \advanced_testcase {
         attempt::delete_all_attempts($cm, $user);
 
         // Check data.
-        for ($i = 0; $i < 4; $i++) {
-            $count = $attempts[$i]->count_results();
-            $this->assertEquals($results[$i], $count);
+        for ($assert = 0; $assert < 4; $assert++) {
+            $count = $attempts[$assert]->count_results();
+            $this->assertEquals($results[$assert], $count);
         }
         $count = $DB->count_records('h5pactivity_attempts');
         $this->assertEquals($results[4], $count);

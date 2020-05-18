@@ -294,6 +294,17 @@ class attempt {
     }
 
     /**
+     * Return all results stored in this attempt.
+     *
+     * @return stdClass[] results records.
+     */
+    public function get_results(): array {
+        global $DB;
+        $conditions = ['attemptid' => $this->record->id];
+        return $DB->get_records('h5pactivity_attempts_results', $conditions, 'id ASC');
+    }
+
+    /**
      * Get additional data for some interaction types.
      *
      * @param stdClass $definition the statement object definition data
@@ -405,6 +416,24 @@ class attempt {
     }
 
     /**
+     * Return the attempt H5P timecreated.
+     *
+     * @return int the attempt timecreated
+     */
+    public function get_timecreated(): int {
+        return $this->record->timecreated;
+    }
+
+    /**
+     * Return the attempt H5P timemodified.
+     *
+     * @return int the attempt timemodified
+     */
+    public function get_timemodified(): int {
+        return $this->record->timemodified;
+    }
+
+    /**
      * Return the attempt H5P activity ID.
      *
      * @return int the attempt userid
@@ -456,6 +485,15 @@ class attempt {
      */
     public function get_success(): ?int {
         return $this->record->success;
+    }
+
+    /**
+     * Return the attempt scaled.
+     *
+     * @return int|null the scaled value
+     */
+    public function get_scaled(): ?int {
+        return $this->record->scaled;
     }
 
     /**

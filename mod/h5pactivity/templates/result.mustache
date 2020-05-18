@@ -1,0 +1,119 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_h5pactivity/result
+
+    This template will render a result choices inside a H5P activity results report.
+
+    Variables required for this template:
+    * description - Result description text
+    * score - Score string (for example: 2 out of 4)
+
+    Variables optional for this template:
+    * hasoptions - If an option table must be present
+    * optionslabel - The right label for available options on this result type
+    * options - An array of mod_h5pactivity/result/options compatible array
+    * content - Extra content in HTML
+    * track - Indicate if the result has displayable tracking
+
+    Example context (json):
+    {
+        "timecreated": "1587655101",
+        "interactiontype": "choice",
+        "description": "Example of some results",
+        "rawscore": "4",
+        "maxscore": "4",
+        "duration": "130",
+        "completion": "1",
+        "success": "1",
+        "hasoptions": true,
+        "optionslabel": "Choice",
+        "options": [
+            {
+                "description": "Choice 1 text",
+                "id": 0,
+                "useranswer": {
+                    "answer": "Correct answer",
+                    "pass": true
+                },
+                "correctanswer": {
+                    "answer": "Answer checked",
+                    "checked": true
+                }
+            },
+            {
+                "description": "Choice 2 text",
+                "id": 1,
+                "useranswer": {
+                    "answer": "Wrong answer",
+                    "fail": true
+                },
+                "correctanswer": {
+                    "answer": "Answer checked",
+                    "unchecked": true
+                }
+            },
+            {
+                "description": "Choice 3 text",
+                "id": 2,
+                "useranswer": {
+                    "answer": "This was the correct text",
+                    "correct": true
+                },
+                "correctanswer": {
+                    "answer": "This was the correct text",
+                    "text": true
+                }
+            },
+            {
+                "description": "Choice 4 text",
+                "id": 3,
+                "correctanswer": {
+                    "answer": "Some text",
+                    "text": true
+                }
+            },
+            {
+                "description": "Choice 4 text",
+                "id": 3,
+                "useranswer": {
+                    "answer": "Some wrong text",
+                    "incorrect": true
+                }
+            }
+        ],
+        "score": "4 out of 4",
+        "content": "<p>This is an optional extra content in <b>HTML</b>.</p>",
+        "track": true
+    }
+
+}}
+
+<div class="container-fluid w-100 my-0 p-0">
+    <div class="row w-100 py-3 px-1 m-0 p-md-3">
+        {{>mod_h5pactivity/result/header}}
+        {{{content}}}
+        {{#hasoptions}}
+            {{>mod_h5pactivity/result/options}}
+        {{/hasoptions}}
+        {{^track}}
+            <div class="alert alert-warning w-100" role="alert">
+              {{#str}}no_compatible_track, mod_h5pactivity, {{interactiontype}}{{/str}}
+            </div>
+        {{/track}}
+    </div>
+</div>

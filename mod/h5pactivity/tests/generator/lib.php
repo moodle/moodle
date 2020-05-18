@@ -71,6 +71,9 @@ class mod_h5pactivity_generator extends testing_module_generator {
         if (!isset($record->grademethod)) {
             $record->grademethod = manager::GRADEHIGHESTATTEMPT;
         }
+        if (!isset($record->reviewmode)) {
+            $record->reviewmode = manager::REVIEWCOMPLETION;
+        }
 
         // The 'packagefile' value corresponds to the draft file area ID. If not specified, create from packagefilepath.
         if (empty($record->packagefile)) {

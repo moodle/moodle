@@ -225,5 +225,20 @@ function xmldb_h5pactivity_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2020041401, 'h5pactivity');
     }
 
+    if ($oldversion < 2020042202) {
+
+        // Define field reviewmode to be added to h5pactivity.
+        $table = new xmldb_table('h5pactivity');
+        $field = new xmldb_field('reviewmode', XMLDB_TYPE_INTEGER, '4', null, null, null, '1', 'grademethod');
+
+        // Conditionally launch add field reviewmode.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // H5pactivity savepoint reached.
+        upgrade_mod_savepoint(true, 2020042202, 'h5pactivity');
+    }
+
     return true;
 }

@@ -25,9 +25,13 @@
 
 namespace mod_h5pactivity\local;
 
+use mod_h5pactivity\local\report\participants;
+use mod_h5pactivity\local\report\attempts;
+use mod_h5pactivity\local\report\results;
 use context_module;
 use cm_info;
 use moodle_recordset;
+use core_user;
 use stdClass;
 
 /**
@@ -54,6 +58,12 @@ class manager {
 
     /** Use first attempt results for grading. */
     const GRADEFIRSTATTEMPT = 4;
+
+    /** Participants cannot review their own attempts. */
+    const REVIEWNONE = 0;
+
+    /** Participants can review their own attempts when have one attempt completed. */
+    const REVIEWCOMPLETION = 1;
 
     /** @var stdClass course_module record. */
     private $instance;
@@ -119,6 +129,38 @@ class manager {
     }
 
     /**
+     * Return the selected attempt criteria.
+     * @return string[] an array "grademethod value", "attempt description"
+     */
+    public function get_selected_attempt(): array {
+        $types = [
+            self::GRADEHIGHESTATTEMPT => get_string('attempt_highest', 'mod_h5pactivity'),
+            self::GRADEAVERAGEATTEMPT => get_string('attempt_average', 'mod_h5pactivity'),
+            self::GRADELASTATTEMPT => get_string('attempt_last', 'mod_h5pactivity'),
+            self::GRADEFIRSTATTEMPT => get_string('attempt_first', 'mod_h5pactivity'),
+            self::GRADEMANUAL => get_string('attempt_none', 'mod_h5pactivity'),
+        ];
+        if ($this->instance->enabletracking) {
+            $key = $this->instance->grademethod;
+        } else {
+            $key = self::GRADEMANUAL;
+        }
+        return [$key, $types[$key]];
+    }
+
+    /**
+     * Return the available review modes.
+     *
+     * @return string[] an array "option value" => "option description"
+     */
+    public static function get_review_modes(): array {
+        return [
+            self::REVIEWCOMPLETION => get_string('review_on_completion', 'mod_h5pactivity'),
+            self::REVIEWNONE => get_string('review_none', 'mod_h5pactivity'),
+        ];
+    }
+
+    /**
      * Check if tracking is enabled in a particular h5pactivity for a specific user.
      *
      * @param stdClass|null $user user record (default $USER)
@@ -133,6 +175,50 @@ class manager {
             $user = $USER;
         }
         return has_capability('mod/h5pactivity:submit', $this->context, $user, false);
+    }
+
+    /**
+     * Check if a user can see the activity attempts list.
+     *
+     * @param stdClass|null $user user record (default $USER)
+     * @return bool if the user can see the attempts link
+     */
+    public function can_view_all_attempts (stdClass $user = null): bool {
+        global $USER;
+        if (!$this->instance->enabletracking) {
+            return false;
+        }
+        if (empty($user)) {
+            $user = $USER;
+        }
+        return has_capability('mod/h5pactivity:reviewattempts', $this->context, $user);
+    }
+
+    /**
+     * Check if a user can see own attempts.
+     *
+     * @param stdClass|null $user user record (default $USER)
+     * @return bool if the user can see the own attempts link
+     */
+    public function can_view_own_attempts (stdClass $user = null): bool {
+        global $USER;
+        if (!$this->instance->enabletracking) {
+            return false;
+        }
+        if (empty($user)) {
+            $user = $USER;
+        }
+        if (has_capability('mod/h5pactivity:reviewattempts', $this->context, $user, false)) {
+            return true;
+        }
+        if ($this->instance->reviewmode == self::REVIEWNONE) {
+            return false;
+        }
+        if ($this->instance->reviewmode == self::REVIEWCOMPLETION) {
+            return true;
+        }
+        return false;
+
     }
 
     /**
@@ -199,6 +285,46 @@ class manager {
     }
 
     /**
+     * Count the activity completed attempts.
+     *
+     * If no user is provided will count all activity attempts.
+     *
+     * @param int|null $userid optional user id (default null)
+     * @return int the total amount of attempts
+     */
+    public function count_attempts(int $userid = null): int {
+        global $DB;
+        $params = [
+            'h5pactivityid' => $this->instance->id,
+            'completion' => 1
+        ];
+        if ($userid) {
+            $params['userid'] = $userid;
+        }
+        return $DB->count_records('h5pactivity_attempts', $params);
+    }
+
+    /**
+     * Return an array of all users and it's total attempts.
+     *
+     * Note: this funciton only returns the list of users with attempts,
+     * it does not check all participants.
+     *
+     * @return array indexed count userid => total number of attempts
+     */
+    public function count_users_attempts(): array {
+        global $DB;
+        $params = [
+            'h5pactivityid' => $this->instance->id,
+        ];
+        $sql = "SELECT userid, count(*)
+                  FROM {h5pactivity_attempts}
+                 WHERE h5pactivityid = :h5pactivityid
+                 GROUP BY userid";
+        return $DB->get_records_sql_menu($sql, $params);
+    }
+
+    /**
      * Return the current context.
      *
      * @return context_module
@@ -208,7 +334,7 @@ class manager {
     }
 
     /**
-     * Return the current context.
+     * Return the current instance.
      *
      * @return stdClass the instance record
      */
@@ -233,5 +359,90 @@ class manager {
     public function get_grader(): grader {
         $idnumber = $this->coursemodule->idnumber ?? '';
         return new grader($this->instance, $idnumber);
+    }
+
+    /**
+     * Return the suitable report to show the attempts.
+     *
+     * This method controls the access to the different reports
+     * the activity have.
+     *
+     * @param int $userid an opional userid to show
+     * @param int $attemptid an optional $attemptid to show
+     * @return report|null available report (or null if no report available)
+     */
+    public function get_report(int $userid = null, int $attemptid = null): ?report {
+        global $USER;
+        $attempt = null;
+        if ($attemptid) {
+            $attempt = $this->get_attempt($attemptid);
+            if (!$attempt) {
+                return null;
+            }
+            // If we have and attempt we can ignore the provided $userid.
+            $userid = $attempt->get_userid();
+        }
+
+        if ($this->can_view_all_attempts()) {
+            $user = core_user::get_user($userid);
+        } else if ($this->can_view_own_attempts()) {
+            $user = $USER;
+            if ($userid && $user->id != $userid) {
+                return null;
+            }
+        } else {
+            return null;
+        }
+
+        // Check if that user can be tracked.
+        if ($user && !$this->is_tracking_enabled($user)) {
+            return null;
+        }
+
+        // Create the proper report.
+        if ($user && $attempt) {
+            return new results($this, $user, $attempt);
+        } else if ($user) {
+            return new attempts($this, $user);
+        }
+        return new participants($this);
+    }
+
+    /**
+     * Return a single attempt.
+     *
+     * @param int $attemptid the attempt id
+     * @return attempt
+     */
+    public function get_attempt(int $attemptid): ?attempt {
+        global $DB;
+        $record = $DB->get_record('h5pactivity_attempts', ['id' => $attemptid]);
+        if (!$record) {
+            return null;
+        }
+        return new attempt($record);
+    }
+
+    /**
+     * Return an array of all user attempts (including incompleted)
+     *
+     * @param int $userid the user id
+     * @return attempt[]
+     */
+    public function get_user_attempts(int $userid): array {
+        global $DB;
+        $records = $DB->get_records(
+            'h5pactivity_attempts',
+            ['userid' => $userid, 'h5pactivityid' => $this->instance->id],
+            'id ASC'
+        );
+        if (!$records) {
+            return [];
+        }
+        $result = [];
+        foreach ($records as $record) {
+            $result[] = new attempt($record);
+        }
+        return $result;
     }
 }

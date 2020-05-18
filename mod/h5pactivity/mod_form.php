@@ -104,6 +104,11 @@ class mod_h5pactivity_mod_form extends moodleform_mod {
         $mform->disabledIf('grademethod', 'grade[modgrade_type]', 'neq', 'point');
         $mform->addHelpButton('grademethod', 'grade_grademethod', 'mod_h5pactivity');
 
+        $options = manager::get_review_modes();
+        $mform->addElement('select', 'reviewmode', get_string('review_mode', 'mod_h5pactivity'), $options);
+        $mform->setType('reviewmode', PARAM_INT);
+        $mform->hideIf('reviewmode', 'enabletracking', 'notchecked');
+
         // Add standard elements.
         $this->standard_coursemodule_elements();
 

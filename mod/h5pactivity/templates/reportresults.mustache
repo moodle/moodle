@@ -1,0 +1,85 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_h5pactivity/reportresults
+
+    This template will render the report results inside a H5P activity.
+
+    Variables required for this template:
+    * attempts - Full attempts list
+
+    Variables optional for this template:
+    * title - optional selected attempt name
+    * scored - The scored attempt
+
+    Example context (json):
+    {
+        "attempt": {
+            "id": 11,
+            "h5pactivityid": 1,
+            "userid": 3,
+            "timecreated": 1587655101,
+            "timemodified": 1587655101,
+            "attempt": 2,
+            "rawscore": 6,
+            "maxscore": 6,
+            "duration": "2 minutes 10 seconds",
+            "completion": 1,
+            "completionicon": "<i class=\"icon fa fa-check-circle fa-fw \"><\/i>",
+            "success": 1,
+            "successicon": "<i class=\"icon fa fa-check-circle fa-fw \"><\/i>",
+            "scaled": 1,
+            "reporturl": {},
+            "score": "6 out of 6",
+            "user": {
+                "id": "3",
+                "username": "s1",
+                "idnumber": "",
+                "firstname": "John",
+                "lastname": "Doe",
+                "email": "s1@example.com",
+                "phone2": "",
+                "institution": "Moodle HQ",
+                "department": "Business",
+                "picture": "[USERPIC]",
+                "fullname": "John Doe"
+            }
+        },
+        "results": [
+            {
+                "timecreated": "1587655101",
+                "interactiontype": "other",
+                "description": "Example of some results",
+                "rawscore": "6",
+                "maxscore": "6",
+                "duration": "130",
+                "completion": "1",
+                "success": "1",
+                "optionslabel": "Example result",
+                "score": "6 out of 6",
+                "content": "<p>See mod_h5pactivity result template for more examples.</p>"
+            }
+        ]
+    }
+
+}}
+{{#attempt}}
+    {{>mod_h5pactivity/attempt}}
+{{/attempt}}
+{{#results}}
+    {{>mod_h5pactivity/result}}
+{{/results}}
