@@ -33,6 +33,7 @@ define([
     'core/modal_events',
     'core_calendar/summary_modal',
     'core/custom_interaction_events',
+    'core/pending',
 ], function(
     $,
     Templates,
@@ -44,7 +45,8 @@ define([
     ModalFactory,
     ModalEvents,
     SummaryModal,
-    CustomEvents
+    CustomEvents,
+    Pending
 ) {
 
         /**
@@ -57,6 +59,7 @@ define([
 
             // Bind click events to event links.
             root.on('click', CalendarSelectors.links.eventLink, function(e) {
+                var pendingPromise = new Pending('core_calendar/view_manager:eventLink:click');
                 var target = $(e.target);
                 var eventId = null;
 
@@ -81,7 +84,11 @@ define([
                     // and causing the day click handler to fire.
                     e.stopPropagation();
 
-                    renderEventSummaryModal(eventId);
+                    renderEventSummaryModal(eventId)
+                    .then(pendingPromise.resolve())
+                    .catch();
+                } else {
+                    pendingPromise.resolve();
                 }
             });
 
@@ -358,8 +365,8 @@ define([
          * @param {object} root The container element.
          * @param {Number} courseId The course id.
          * @param {Number} categoryId The id of the category whose events are shown
-         * @param {String} template The template to be rendered.
          * @param {object} target The element being replaced. If not specified, the calendarwrapper is used.
+         * @param {String} template The template to be rendered.
          * @return {promise}
          */
         var reloadCurrentUpcoming = function(root, courseId, categoryId, target, template) {
@@ -408,12 +415,15 @@ define([
          * Render the event summary modal.
          *
          * @param {Number} eventId The calendar event id.
+         * @returns {Promise}
          */
         var renderEventSummaryModal = function(eventId) {
+            var pendingPromise = new Pending('core_calendar/view_manager:renderEventSummaryModal');
             var typeClass = '';
 
             // Calendar repository promise.
-            CalendarRepository.getEventById(eventId).then(function(getEventResponse) {
+            return CalendarRepository.getEventById(eventId)
+            .then(function(getEventResponse) {
                 if (!getEventResponse.event) {
                     throw new Error('Error encountered while trying to fetch calendar event with ID: ' + eventId);
                 }
@@ -439,7 +449,8 @@ define([
                 // Create the modal.
                 return ModalFactory.create(modalParams);
 
-            }).done(function(modal) {
+            })
+            .then(function(modal) {
                 // Handle hidden event.
                 modal.getRoot().on(ModalEvents.hidden, function() {
                     // Destroy when hidden.
@@ -449,7 +460,14 @@ define([
                 // Finally, render the modal!
                 modal.show();
 
-            }).fail(Notification.exception);
+                return modal;
+            })
+            .then(function(modal) {
+                pendingPromise.resolve();
+
+                return modal;
+            })
+            .catch(Notification.exception);
         };
 
         return {
