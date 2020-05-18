@@ -40,11 +40,11 @@ class contenttype extends \core_contentbank\contenttype {
     /**
      * Returns the URL where the content will be visualized.
      *
-     * @param stdClass $record  Th content to be displayed.
+     * @param  content $content The content to delete.
      * @return string            URL where to visualize the given content.
      */
-    public function get_view_url(\stdClass $record): string {
-        $fileurl = $this->get_file_url($record->id);
+    public function get_view_url(\core_contentbank\content $content): string {
+        $fileurl = $this->get_file_url($content->get_id());
         $url = $fileurl."?forcedownload=1";
 
         return $url;
@@ -53,13 +53,13 @@ class contenttype extends \core_contentbank\contenttype {
     /**
      * Returns the HTML code to render the icon for content bank contents.
      *
-     * @param string $contentname   The contentname to add as alt value to the icon.
+     * @param  content $content The content to delete.
      * @return string               HTML code to render the icon
      */
-    public function get_icon(string $contentname): string {
+    public function get_icon(\core_contentbank\content $content): string {
         global $OUTPUT;
 
-        return $OUTPUT->pix_icon('f/archive-64', $contentname, 'moodle', ['class' => 'iconsize-big']);
+        return $OUTPUT->image_url('f/archive-64', 'moodle')->out(false);
     }
 
     /**

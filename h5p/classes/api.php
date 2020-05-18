@@ -487,4 +487,19 @@ class api {
         $pathnamehash = $fs->get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath, $filename);
         return $pathnamehash;
     }
+
+    /**
+     * Returns the H5P content object corresponding to an H5P content file.
+     *
+     * @param string $pathnamehash The pathnamehash of the file associated to an H5P content.
+     *
+     * @return null|\stdClass H5P content object or null if not found.
+     */
+    public static function get_content_from_pathnamehash(string $pathnamehash): ?\stdClass {
+        global $DB;
+
+        $h5p = $DB->get_record('h5p', ['pathnamehash' => $pathnamehash]);
+
+        return ($h5p) ? $h5p : null;
+    }
 }

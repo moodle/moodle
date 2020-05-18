@@ -25,7 +25,6 @@
 namespace contenttype_h5p;
 
 use core\event\contentbank_content_viewed;
-use stdClass;
 use html_writer;
 
 /**
@@ -57,15 +56,14 @@ class contenttype extends \core_contentbank\contenttype {
     /**
      * Returns the HTML content to add to view.php visualizer.
      *
-     * @param stdClass $record  Th content to be displayed.
+     * @param  content $content The content to be displayed.
      * @return string            HTML code to include in view.php.
      */
-    public function get_view_content(\stdClass $record): string {
+    public function get_view_content(\core_contentbank\content $content): string {
         // Trigger an event for viewing this content.
-        $event = contentbank_content_viewed::create_from_record($record);
+        $event = contentbank_content_viewed::create_from_record($content->get_content());
         $event->trigger();
 
-        $content = new content($record);
         $fileurl = $content->get_file_url();
         $html = html_writer::tag('h2', $content->get_name());
         $html .= \core_h5p\player::display($fileurl, new \stdClass(), true);
@@ -75,12 +73,32 @@ class contenttype extends \core_contentbank\contenttype {
     /**
      * Returns the HTML code to render the icon for H5P content types.
      *
-     * @param string $contentname   The contentname to add as alt value to the icon.
+     * @param  content $content The content to be displayed.
      * @return string            HTML code to render the icon
      */
-    public function get_icon(string $contentname): string {
-        global $OUTPUT;
-        return $OUTPUT->pix_icon('f/h5p-64', $contentname, 'moodle', ['class' => 'iconsize-big']);
+    public function get_icon(\core_contentbank\content $content): string {
+        global $OUTPUT, $DB;
+
+        $iconurl = $OUTPUT->image_url('f/h5p-64', 'moodle')->out(false);
+        $file = $content->get_file();
+        if (!empty($file)) {
+            $h5p = \core_h5p\api::get_content_from_pathnamehash($file->get_pathnamehash());
+            if (!empty($h5p)) {
+                \core_h5p\local\library\autoloader::register();
+                if ($h5plib = $DB->get_record('h5p_libraries', ['id' => $h5p->mainlibraryid])) {
+                    $h5pfilestorage = new \core_h5p\file_storage();
+                    $h5picon = $h5pfilestorage->get_icon_url(
+                            $h5plib->id,
+                            $h5plib->machinename,
+                            $h5plib->majorversion,
+                            $h5plib->minorversion);
+                    if (!empty($h5picon)) {
+                        $iconurl = $h5picon;
+                    }
+                }
+            }
+        }
+        return $iconurl;
     }
 
     /**

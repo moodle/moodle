@@ -23,11 +23,11 @@
             {
                 "name": "accordion.h5p",
                 "link": "http://something/contentbank/contenttype/h5p/view.php?url=http://something/pluginfile.php/1/contentbank/public/accordion.h5p",
-                "icon" : "<img class='icon iconsize-big' alt='accordion.h5p' aria-hidden='true' src='http://something/theme/image.php/boost/core/1581597850/f/h5p-64'>"
+                "icon" : "http://something/theme/image.php/boost/core/1581597850/f/h5p-64"
             },
             {
                 "name": "resume.pdf",
-                "icon": "<img class='icon iconsize-big' alt='resume.pdf' aria-hidden='true' src='http://something/theme/image.php/boost/core/1584597850/f/pdf-64'>"
+                "icon": "http://something/theme/image.php/boost/core/1584597850/f/pdf-64"
             }
         ],
         "tools": [
@@ -65,7 +65,7 @@
             <div class="cb-file position-relative mb-2" data-file="{{{name}}}">
                 <div class="p-2">
                     <div class="cb-thumbnail mb-1 text-center">
-                        {{{ icon }}}
+                        <img class="icon iconsize-big" alt="{{{name}}}" title="{{{name}}}" src="{{{ icon }}}">
                     </div>
 
                     {{#link}}

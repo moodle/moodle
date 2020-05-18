@@ -159,37 +159,34 @@ abstract class contenttype {
     /**
      * Returns the URL where the content will be visualized.
      *
-     * @param stdClass $record  The content to be displayed.
+     * @param  content $content The content to be displayed.
      * @return string           URL where to visualize the given content.
      */
-    public function get_view_url(\stdClass $record): string {
-        return new moodle_url('/contentbank/view.php', ['id' => $record->id]);
+    public function get_view_url(content $content): string {
+        return new moodle_url('/contentbank/view.php', ['id' => $content->get_id()]);
     }
 
     /**
      * Returns the HTML content to add to view.php visualizer.
      *
-     * @param stdClass $record  The content to be displayed.
+     * @param  content $content The content to be displayed.
      * @return string           HTML code to include in view.php.
      */
-    public function get_view_content(\stdClass $record): string {
+    public function get_view_content(content $content): string {
         // Trigger an event for viewing this content.
         $event = contentbank_content_viewed::create_from_record($record);
         $event->trigger();
-
-        // Main contenttype class can visualize the content, but plugins could overwrite visualization.
-        return '';
     }
 
     /**
      * Returns the HTML code to render the icon for content bank contents.
      *
-     * @param string $contentname   The contentname to add as alt value to the icon.
+     * @param  content $content The content to be displayed.
      * @return string               HTML code to render the icon
      */
-    public function get_icon(string $contentname): string {
+    public function get_icon(content $content): string {
         global $OUTPUT;
-        return $OUTPUT->pix_icon('f/unknown-64', $contentname, 'moodle', ['class' => 'iconsize-big']);
+        return $OUTPUT->image_url('f/unknown-64', 'moodle')->out(false);
     }
 
     /**

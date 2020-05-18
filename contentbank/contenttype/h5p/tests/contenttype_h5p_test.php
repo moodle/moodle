@@ -105,4 +105,46 @@ class contenttype_h5p_contenttype_plugin_testcase extends advanced_testcase {
         $this->assertFalse($coursetype->can_upload());
         $this->assertFalse($systemtype->can_upload());
     }
+
+    /**
+     * Tests get_icon result.
+     *
+     * @covers ::get_icon
+     */
+    public function test_get_icon() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $systemcontext = context_system::instance();
+        $this->setAdminUser();
+        $contenttype = new contenttype_h5p\contenttype($systemcontext);
+
+        // Add an H5P fill the blanks file to the content bank.
+        $filepath = $CFG->dirroot . '/h5p/tests/fixtures/filltheblanks.h5p';
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $contents = $generator->generate_contentbank_data('contenttype_h5p', 1, 0, $systemcontext, true, $filepath);
+        $filltheblanks = array_shift($contents);
+
+        // Add an H5P find the words file to the content bank.
+        $filepath = $CFG->dirroot . '/h5p/tests/fixtures/find-the-words.h5p';
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $contents = $generator->generate_contentbank_data('contenttype_h5p', 1, 0, $systemcontext, true, $filepath);
+        $findethewords = array_shift($contents);
+
+        // Check before deploying the icon for both contents is the same: default one.
+        // Because we don't know specific H5P content type yet.
+        $defaulticon = $contenttype->get_icon($filltheblanks);
+        $this->assertEquals($defaulticon, $contenttype->get_icon($findethewords));
+        $this->assertContains('h5p', $defaulticon);
+
+        // Deploy one of the contents though the player to create the H5P DB entries and know specific content type.
+        $h5pplayer = new \core_h5p\player($findethewords->get_file_url(), new \stdClass(), true);
+        $h5pplayer->add_assets_to_page();
+        $h5pplayer->output();
+
+        // Once the H5P has been deployed, we know the specific H5P content type, so the icon returned is not default one.
+        $findicon = $contenttype->get_icon($findethewords);
+        $this->assertNotEquals($defaulticon, $findicon);
+        $this->assertContains('find', $findicon, '', true);
+    }
 }

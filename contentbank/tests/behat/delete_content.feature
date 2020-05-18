@@ -26,14 +26,12 @@ Feature: Delete H5P file from the content bank
     And I click on "Save changes" "button"
 
   Scenario: Admins can delete content from the content bank
-    Given I should see "filltheblanks.h5p"
-    And I follow "filltheblanks.h5p"
-    When I open the action menu in "region-main-settings-menu" "region"
-    Then I should see "Delete"
-    And I choose "Delete" in the open action menu
+    Given I open the action menu in "region-main-settings-menu" "region"
+    And I should see "Delete"
+    When I choose "Delete" in the open action menu
     And I should see "Are you sure you want to delete the content 'filltheblanks.h5p'"
     And I click on "Cancel" "button" in the "Delete content" "dialogue"
-    And I should see "filltheblanks.h5p"
+    Then I should see "filltheblanks.h5p"
     And I open the action menu in "region-main-settings-menu" "region"
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete content" "dialogue"
@@ -68,8 +66,5 @@ Feature: Delete H5P file from the content bank
     And I click on "find-the-words.h5p" "link"
     And I click on "Select this file" "button"
     And I click on "Save changes" "button"
-    And I should see "filltheblanks.h5p"
-    And I should see "find-the-words.h5p"
-    And I follow "find-the-words.h5p"
     And I open the action menu in "region-main-settings-menu" "region"
     And I should see "Delete"
