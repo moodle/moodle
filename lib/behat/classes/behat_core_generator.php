@@ -219,8 +219,8 @@ class behat_core_generator extends behat_generator_base {
             ],
             'contentbank content' => [
                 'datagenerator' => 'contentbank_content',
-                'required' => array('contenttype', 'user', 'contentname'),
-                'switchids' => array('course' => 'courseid', 'user' => 'userid')
+                'required' => array('contextlevel', 'reference', 'contenttype', 'user', 'contentname'),
+                'switchids' => array('user' => 'userid')
             ],
         ];
     }
@@ -823,27 +823,50 @@ class behat_core_generator extends behat_generator_base {
     }
 
     /**
-     * Create content in the given context's content bank
+     * Create content in the given context's content bank.
      *
      * @param array $data
      * @return void
      */
     protected function process_contentbank_content(array $data) {
-        if (empty($data['contextid'])) {
-            if (empty($data['courseid'])) {
-                throw new Exception('contentbank_content requires the field course or contextid to be specified');
-            }
-            $context = context_course::instance($data['courseid']);
-        } else {
-            $context = context::instance_by_id($data['contextid']);
+        global $CFG;
+
+        if (empty($data['contextlevel'])) {
+            throw new Exception('contentbank_content requires the field contextlevel to be specified');
         }
+
+        if (!isset($data['reference'])) {
+            throw new Exception('contentbank_content requires the field reference to be specified');
+        }
+
+        if (empty($data['contenttype'])) {
+            throw new Exception('contentbank_content requires the field contenttype to be specified');
+        }
+
         $contenttypeclass = "\\".$data['contenttype']."\\contenttype";
         if (class_exists($contenttypeclass)) {
+            $context = $this->get_context($data['contextlevel'], $data['reference']);
             $contenttype = new $contenttypeclass($context);
             $record = new stdClass();
             $record->usercreated = $data['userid'];
             $record->name = $data['contentname'];
             $content = $contenttype->create_content($record);
+
+            if (!empty($data['filepath'])) {
+                $fs = get_file_storage();
+                $filerecord = array(
+                    'component' => 'contentbank',
+                    'filearea' => 'public',
+                    'contextid' => $context->id,
+                    'userid' => $data['userid'],
+                    'itemid' => $content->get_id(),
+                    'filename' => $data['contentname'],
+                    'filepath' => '/'
+                );
+                $fs->create_file_from_pathname($filerecord, $CFG->dirroot . $data['filepath']);
+            }
+        } else {
+            throw new Exception('The specified "' . $data['contenttype'] . '" contenttype does not exist');
         }
     }
 }

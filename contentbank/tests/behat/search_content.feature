@@ -6,15 +6,15 @@ Feature: Search content in the content bank
 
   Background:
     Given the following "contentbank content" exist:
-        | contextid | contenttype       | user  | contentname          |
-        | 1         | contenttype_h5p   | admin | santjordi.h5p        |
-        | 1         | contenttype_h5p   | admin | santjordi_rose.h5p   |
-        | 1         | contenttype_h5p   | admin | SantJordi_book       |
-        | 1         | contenttype_h5p   | admin | Dragon_santjordi.h5p |
-        | 1         | contenttype_h5p   | admin | princess.h5p         |
-        | 1         | contenttype_h5p   | admin | mathsbook.h5p        |
-        | 1         | contenttype_h5p   | admin | historybook.h5p      |
-        | 1         | contenttype_h5p   | admin | santvicenc.h5p       |
+      | contextlevel | reference | contenttype     | user     | contentname          |
+      | System       |           | contenttype_h5p | admin    | santjordi.h5p        |
+      | System       |           | contenttype_h5p | admin    | santjordi_rose.h5p   |
+      | System       |           | contenttype_h5p | admin    | SantJordi_book       |
+      | System       |           | contenttype_h5p | admin    | Dragon_santjordi.h5p |
+      | System       |           | contenttype_h5p | admin    | princess.h5p         |
+      | System       |           | contenttype_h5p | admin    | mathsbook.h5p        |
+      | System       |           | contenttype_h5p | admin    | historybook.h5p      |
+      | System       |           | contenttype_h5p | admin    | santvicenc.h5p       |
 
   Scenario: Admins can search content in the content bank
     Given I log in as "admin"
