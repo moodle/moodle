@@ -25,9 +25,16 @@
 
 namespace core_contentbank;
 
+defined('MOODLE_INTERNAL') || die();
+
 use advanced_testcase;
 use context_course;
+use context_coursecat;
 use context_system;
+
+global $CFG;
+require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.php');
+require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php');
 
 /**
  * Test for extensions manager.
@@ -375,5 +382,129 @@ class core_contentbank_testcase extends advanced_testcase {
         $this->assertEquals('contenttype_h5p', $content->get_content_type());
         $this->assertInstanceOf('\\contenttype_h5p\\content', $content);
         $this->assertEquals($name, $content->get_name());
+    }
+
+    /**
+     * Test the behaviour of delete_contents().
+     *
+     * @covers  ::delete_contents
+     */
+    public function test_delete_contents() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $cb = new \core_contentbank\contentbank();
+
+        // Create a category and two courses.
+        $systemcontext = context_system::instance();
+        $coursecat = $this->getDataGenerator()->create_category();
+        $coursecatcontext = context_coursecat::instance($coursecat->id);
+        $course1 = $this->getDataGenerator()->create_course();
+        $course1context = context_course::instance($course1->id);
+        $course2 = $this->getDataGenerator()->create_course();
+        $course2context = context_course::instance($course2->id);
+
+        // Add some content to the content bank.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $systemcontent = $generator->generate_contentbank_data(null, 3, 0, $systemcontext);
+        $categorycontent = $generator->generate_contentbank_data(null, 3, 0, $coursecatcontext);
+        $course1content = $generator->generate_contentbank_data(null, 3, 0, $course1context);
+        $course2content = $generator->generate_contentbank_data(null, 3, 0, $course2context);
+
+        // Check the content has been created as expected.
+        $this->assertEquals(12, $DB->count_records('contentbank_content'));
+
+        // Check the system content is deleted as expected and the rest of the content is not.
+        $this->assertTrue($cb->delete_contents($systemcontext));
+        $this->assertEquals(0, $DB->count_records('contentbank_content', ['contextid' => $systemcontext->id]));
+        // And the rest of the context content exists.
+        $this->assertEquals(9, $DB->count_records('contentbank_content'));
+
+        // Check the course category content is deleted as expected and the rest of the content is not.
+        $this->assertTrue($cb->delete_contents($coursecatcontext));
+        $this->assertEquals(0, $DB->count_records('contentbank_content', ['contextid' => $coursecatcontext->id]));
+        // And the rest of the context content exists.
+        $this->assertEquals(6, $DB->count_records('contentbank_content'));
+
+        // Check the course content is deleted as expected and the rest of the content is not.
+        $this->assertTrue($cb->delete_contents($course1context));
+        $this->assertEquals(0, $DB->count_records('contentbank_content', ['contextid' => $course1context->id]));
+        // And the rest of the context content exists.
+        $this->assertEquals(3, $DB->count_records('contentbank_content'));
+    }
+
+    /**
+     * Test the behaviour of delete_contents() for empty content bank.
+     *
+     * @covers  ::delete_contents
+     */
+    public function test_delete_contents_for_empty_contentbank() {
+
+        $this->resetAfterTest();
+        $cb = new \core_contentbank\contentbank();
+
+        // Create a category and two courses.
+        $systemcontext = \context_system::instance();
+        $coursecat = $this->getDataGenerator()->create_category();
+        $coursecatcontext = \context_coursecat::instance($coursecat->id);
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
+
+        // Check there's no error when trying to delete content from an empty content bank.
+        $this->assertTrue($cb->delete_contents($systemcontext));
+        $this->assertTrue($cb->delete_contents($coursecatcontext));
+        $this->assertTrue($cb->delete_contents($coursecontext));
+    }
+
+    /**
+     * Test the behaviour of move_contents().
+     *
+     * @covers  ::move_contents
+     */
+    public function test_move_contents() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $cb = new \core_contentbank\contentbank();
+
+        // Create a category and two courses.
+        $course1 = $this->getDataGenerator()->create_course();
+        $course1context = context_course::instance($course1->id);
+        $course2 = $this->getDataGenerator()->create_course();
+        $course2context = context_course::instance($course2->id);
+
+        // Add some content to the content bank.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $course1content = $generator->generate_contentbank_data(null, 3, 0, $course1context);
+        $course2content = $generator->generate_contentbank_data(null, 3, 0, $course2context);
+
+        // Check the content has been created as expected.
+        $this->assertEquals(6, $DB->count_records('contentbank_content'));
+        $this->assertEquals(3, $DB->count_records('contentbank_content', ['contextid' => $course1context->id]));
+
+        // Check the content is moved to another context as expected and the rest of the content is not.
+        $this->assertTrue($cb->move_contents($course1context, $course2context));
+        $this->assertEquals(6, $DB->count_records('contentbank_content'));
+        $this->assertEquals(0, $DB->count_records('contentbank_content', ['contextid' => $course1context->id]));
+        $this->assertEquals(6, $DB->count_records('contentbank_content', ['contextid' => $course2context->id]));
+    }
+
+    /**
+     * Test the behaviour of move_contents() for empty content bank.
+     *
+     * @covers  ::move_contents
+     */
+    public function test_move_contents_for_empty_contentbank() {
+
+        $this->resetAfterTest();
+        $cb = new \core_contentbank\contentbank();
+
+        // Create a category and two courses.
+        $systemcontext = \context_system::instance();
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
+
+        // Check there's no error when trying to move content context from an empty content bank.
+        $this->assertTrue($cb->delete_contents($systemcontext, $coursecontext));
     }
 }

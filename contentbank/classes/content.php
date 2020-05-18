@@ -147,6 +147,39 @@ abstract class content {
     }
 
     /**
+     * Set a new contextid to the content.
+     *
+     * @param int $contextid  The new contextid of the content.
+     * @return bool  True if the content has been succesfully updated. False otherwise.
+     */
+    public function set_contextid(int $contextid): bool {
+        if ($this->content->contextid == $contextid) {
+            return true;
+        }
+
+        $oldcontextid = $this->content->contextid;
+        $this->content->contextid = $contextid;
+        $updated = $this->update_content();
+        if ($updated) {
+            // Move files to new context
+            $fs = get_file_storage();
+            $fs->move_area_files_to_new_context($oldcontextid, $contextid, 'contentbank', 'public', $this->content->id);
+        } else {
+            $this->content->contextid = $oldcontextid;
+        }
+        return $updated;
+    }
+
+    /**
+     * Returns the contextid of the content.
+     *
+     * @return int   The id of the content context.
+     */
+    public function get_contextid(): string {
+        return $this->content->contextid;
+    }
+
+    /**
      * Returns the content ID.
      *
      * @return int   The content ID.

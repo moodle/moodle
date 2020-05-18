@@ -25,6 +25,7 @@
 namespace core_contentbank;
 
 use stored_file;
+use context;
 
 /**
  * Content bank class
@@ -88,10 +89,10 @@ class contentbank {
     /**
      * Obtains an array of supported extensions in the given context.
      *
-     * @param \context $context Optional context to check (default null)
+     * @param context $context Optional context to check (default null)
      * @return array The array with all the extensions supported and the supporting plugin names.
      */
-    public function load_context_supported_extensions(\context $context = null): array {
+    public function load_context_supported_extensions(context $context = null): array {
         $extensionscache = \cache::make('core', 'contentbank_context_extensions');
 
         $contextextensions = $extensionscache->get($context->id);
@@ -117,10 +118,10 @@ class contentbank {
      * Obtains a string with all supported extensions by active plugins.
      * Mainly to use as filepicker options parameter.
      *
-     * @param \context $context   Optional context to check (default null)
+     * @param context $context   Optional context to check (default null)
      * @return string A string with all the extensions supported.
      */
-    public function get_supported_extensions_as_string(\context $context = null) {
+    public function get_supported_extensions_as_string(context $context = null) {
         $supported = $this->load_context_supported_extensions($context);
         $extensions = array_keys($supported);
         return implode(',', $extensions);
@@ -144,10 +145,10 @@ class contentbank {
      * Get the first content bank plugin supports a file extension.
      *
      * @param string $extension Content file extension
-     * @param \context $context $context     Optional context to check (default null)
+     * @param context $context $context     Optional context to check (default null)
      * @return string contenttype name supports the file extension or null if the extension is not supported by any allowed plugin.
      */
-    public function get_extension_supporter(string $extension, \context $context = null): ?string {
+    public function get_extension_supporter(string $extension, context $context = null): ?string {
         $supporters = $this->load_context_supported_extensions($context);
         if (array_key_exists($extension, $supporters)) {
             return $supporters[$extension];
@@ -239,5 +240,56 @@ class contentbank {
         $event = \core\event\contentbank_content_uploaded::create_from_record($content->get_content());
         $event->trigger();
         return $content;
+    }
+
+    /**
+     * Delete content bank content by context.
+     *
+     * @param context $context The context to delete content from.
+     * @return bool
+     */
+    public function delete_contents(context $context): bool {
+        global $DB;
+
+        $result = true;
+        $records = $DB->get_records('contentbank_content', ['contextid' => $context->id]);
+        foreach ($records as $record) {
+            $contenttypeclass = "\\$record->contenttype\\contenttype";
+            if (class_exists($contenttypeclass)) {
+                $contenttype = new $contenttypeclass($context);
+                $contentclass = "\\$record->contenttype\\content";
+                $content = new $contentclass($record);
+                if (!$contenttype->delete_content($content)) {
+                    $result = false;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Move content bank content from a context to another.
+     *
+     * @param context $from The context to get content from.
+     * @param context $to The context to move content to.
+     * @return bool
+     */
+    public function move_contents(context $from, context $to): bool {
+        global $DB;
+
+        $result = true;
+        $records = $DB->get_records('contentbank_content', ['contextid' => $from->id]);
+        foreach ($records as $record) {
+            $contenttypeclass = "\\$record->contenttype\\contenttype";
+            if (class_exists($contenttypeclass)) {
+                $contenttype = new $contenttypeclass($from);
+                $contentclass = "\\$record->contenttype\\content";
+                $content = new $contentclass($record);
+                if (!$contenttype->move_content($content, $to)) {
+                    $result = false;
+                }
+            }
+        }
+        return $result;
     }
 }

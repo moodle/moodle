@@ -23,16 +23,19 @@
  */
 
 $string['author'] = 'Author';
+$string['contentbank'] = 'Content bank';
 $string['contentdeleted'] = 'The content has been deleted.';
 $string['contentname'] = 'Content name';
 $string['contentnotdeleted'] = 'An error was encountered while trying to delete the content.';
 $string['contentnotrenamed'] = 'An error was encountered while trying to rename the content.';
 $string['contentrenamed'] = 'The content has been renamed.';
+$string['contentsmoved'] = 'Content bank contents moved to {$a}.';
 $string['eventcontentcreated'] = 'Content created';
 $string['eventcontentdeleted'] = 'Content deleted';
 $string['eventcontentupdated'] = 'Content updated';
 $string['eventcontentuploaded'] = 'Content uploaded';
 $string['eventcontentviewed'] = 'Content viewed';
+$string['errordeletingcontentfromcategory'] = 'Error deleting content from category {$a}.';
 $string['deletecontent'] = 'Delete content';
 $string['deletecontentconfirm'] = 'Are you sure you want to delete the content <em>\'{$a->name}\'</em> and all associated files? This action cannot be undone.';
 $string['file'] = 'Upload content';
