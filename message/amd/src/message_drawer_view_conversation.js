@@ -1865,6 +1865,9 @@ function(
     var resetState = function(body, conversationId, loggedInUserProfile) {
         // Reset all of the states back to the beginning if we're loading a new
         // conversation.
+        if (newMessagesPollTimer) {
+            newMessagesPollTimer.stop();
+        }
         loadedAllMessages = false;
         messagesOffset = 0;
         newMessagesPollTimer = null;
@@ -1891,10 +1894,6 @@ function(
 
         if (!viewState) {
             viewState = initialState;
-        }
-
-        if (newMessagesPollTimer) {
-            newMessagesPollTimer.stop();
         }
 
         render(initialState);
