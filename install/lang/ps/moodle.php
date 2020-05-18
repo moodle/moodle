@@ -30,4 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['moodlelogo'] = 'د موډل نښان';
 $string['next'] = 'بل';
