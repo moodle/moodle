@@ -4552,6 +4552,12 @@ class settings_navigation extends navigation_node {
             $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/import', ''));
         }
 
+        // Copy this course.
+        if ($adminoptions->copy) {
+            $url = new moodle_url('/backup/copy.php', array('id' => $course->id));
+            $coursenode->add(get_string('copycourse'), $url, self::TYPE_SETTING, null, 'copy', new pix_icon('t/copy', ''));
+        }
+
         // Reset this course
         if ($adminoptions->reset) {
             $url = new moodle_url('/course/reset.php', array('id'=>$course->id));

@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 /**
  * Backup external functions.
@@ -67,10 +68,6 @@ class core_backup_external extends external_api {
      * @since Moodle 3.7
      */
     public static function get_async_backup_progress($backupids, $contextid) {
-        global $CFG;
-        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
-        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
-
         // Release session lock.
         \core\session\manager::write_close();
 
@@ -224,7 +221,12 @@ class core_backup_external extends external_api {
                 );
 
         // Context validation.
-        $context = context::instance_by_id($contextid);
+        if ($contextid == 0) {
+            $copyrec = \async_helper::get_backup_record($backupid);
+            $context = context_course::instance($copyrec->itemid);
+        } else {
+            $context = context::instance_by_id($contextid);
+        }
         self::validate_context($context);
         require_capability('moodle/restore:restorecourse', $context);
 
@@ -244,5 +246,164 @@ class core_backup_external extends external_api {
                 array(
                     'restoreurl' => new external_value(PARAM_URL, 'Restore url'),
                 ), 'Table row data.');
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.9
+     */
+    public static function get_copy_progress_parameters() {
+        return new external_function_parameters(
+            array(
+                'copies' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'backupid' => new external_value(PARAM_ALPHANUM, 'Backup id'),
+                            'restoreid' => new external_value(PARAM_ALPHANUM, 'Restore id'),
+                            'operation' => new external_value(PARAM_ALPHANUM, 'Operation type'),
+                        ), 'Copy data'
+                    ), 'Copy data'
+                ),
+            )
+        );
+    }
+
+    /**
+     * Get the data to be used when generating the table row for a course copy,
+     * the table row updates via ajax when copy is complete.
+     *
+     * @param array $copies Array of ids.
+     * @return array $results The array of results.
+     * @since Moodle 3.9
+     */
+    public static function get_copy_progress($copies) {
+        // Release session lock.
+        \core\session\manager::write_close();
+
+        // Parameter validation.
+        self::validate_parameters(
+            self::get_copy_progress_parameters(),
+            array('copies' => $copies)
+            );
+
+        $results = array();
+
+        foreach ($copies as $copy) {
+
+            if ($copy['operation'] == \backup::OPERATION_BACKUP) {
+                $copyid = $copy['backupid'];
+            } else {
+                $copyid = $copy['restoreid'];
+            }
+
+            $copyrec = \async_helper::get_backup_record($copyid);
+            $context = context_course::instance($copyrec->itemid);
+            self::validate_context($context);
+
+            $copycaps = \core_course\management\helper::get_course_copy_capabilities();
+            require_all_capabilities($copycaps, $context);
+
+            if ($copy['operation'] == \backup::OPERATION_BACKUP) {
+                $result = \backup_controller_dbops::get_progress($copyid);
+                if ($result['status'] == \backup::STATUS_FINISHED_OK) {
+                    $copyid = $copy['restoreid'];
+                }
+            }
+
+            $results[] = \backup_controller_dbops::get_progress($copyid);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     * @since Moodle 3.9
+     */
+    public static function get_copy_progress_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'status'   => new external_value(PARAM_INT, 'Copy Status'),
+                    'progress' => new external_value(PARAM_FLOAT, 'Copy progress'),
+                    'backupid' => new external_value(PARAM_ALPHANUM, 'Copy id'),
+                    'operation' => new external_value(PARAM_ALPHANUM, 'Operation type'),
+                ), 'Copy completion status'
+            ), 'Copy data'
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.9
+     */
+    public static function submit_copy_form_parameters() {
+        return new external_function_parameters(
+            array(
+                'jsonformdata' => new external_value(PARAM_RAW, 'The data from the create copy form, encoded as a json array')
+            )
+        );
+    }
+
+    /**
+     * Submit the course group form.
+     *
+     * @param string $jsonformdata The data from the form, encoded as a json array.
+     * @return int new group id.
+     */
+    public static function submit_copy_form($jsonformdata) {
+
+        // Release session lock.
+        \core\session\manager::write_close();
+
+        // We always must pass webservice params through validate_parameters.
+        $params = self::validate_parameters(
+            self::submit_copy_form_parameters(),
+            array('jsonformdata' => $jsonformdata)
+            );
+
+        $formdata = json_decode($params['jsonformdata']);
+
+        $data = array();
+        parse_str($formdata, $data);
+
+        $context = context_course::instance($data['courseid']);
+        self::validate_context($context);
+        $copycaps = \core_course\management\helper::get_course_copy_capabilities();
+        require_all_capabilities($copycaps, $context);
+
+        // Submit the form data.
+        $course = get_course($data['courseid']);
+        $mform = new \core_backup\output\copy_form(
+            null,
+            array('course' => $course, 'returnto' => '', 'returnurl' => ''),
+            'post', '', ['class' => 'ignoredirty'], true, $data);
+        $mdata = $mform->get_data();
+
+        if ($mdata) {
+            // Create the copy task.
+            $backupcopy = new \core_backup\copy\copy($mdata);
+            $copyids = $backupcopy->create_copy();
+        } else {
+            throw new moodle_exception('copyformfail', 'backup');
+        }
+
+        return json_encode($copyids);
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     * @since Moodle 3.9
+     */
+    public static function submit_copy_form_returns() {
+        return new external_value(PARAM_RAW, 'JSON response.');
     }
 }

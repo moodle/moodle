@@ -107,6 +107,7 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($strmanagement);
 $PAGE->set_heading($pageheading);
+$PAGE->requires->js_call_amd('core_course/copy_modal', 'init', array($context->id));
 
 // This is a system level page that operates on other contexts.
 require_login();
