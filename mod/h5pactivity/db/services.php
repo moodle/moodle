@@ -34,5 +34,14 @@ $functions = [
         'type'          => 'read',
         'capabilities'  => 'mod/h5pactivity:view',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
-    ]
+    ],
+    'mod_h5pactivity_view_h5pactivity' => [
+        'classname'     => 'mod_h5pactivity\external\view_h5pactivity',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Trigger the course module viewed event and update the module completion status.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/h5pactivity:view',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 ];
