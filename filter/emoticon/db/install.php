@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,23 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    plugintype
- * @subpackage pluginname
- * @copyright  2010 David Mudrak <david@moodle.com>
+ * Emoticon filter post install hook.
+ *
+ * @package    filter_emoticon
+ * @copyright  2020 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($ADMIN->fulltree) {
+function xmldb_filter_emoticon_install() {
+    global $CFG;
+    require_once($CFG->libdir . "/filterlib.php");
 
-    $settings->add(new admin_setting_configmulticheckbox('filter_urltolink/formats',
-            get_string('settingformats', 'filter_urltolink'),
-            get_string('settingformats_desc', 'filter_urltolink'),
-            [FORMAT_HTML => 1, FORMAT_MARKDOWN => 1, FORMAT_MOODLE => 1], format_text_menu()));
-
-    $settings->add(new admin_setting_configcheckbox('filter_urltolink/embedimages',
-            get_string('embedimages', 'filter_urltolink'),
-            get_string('embedimages_desc', 'filter_urltolink'),
-            1));
+    filter_set_global_state('emoticon', TEXTFILTER_ON, 0);
 }
