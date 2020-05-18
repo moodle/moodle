@@ -63,5 +63,6 @@ export default {
             all: `${getFilterRegion('filtertypedata')} [data-field-name]`,
         },
         typeList: getFilterRegion('filtertypelist'),
+        typeListSelect: `select${getFilterRegion('filtertypelist')}`,
     },
 };

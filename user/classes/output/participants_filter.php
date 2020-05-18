@@ -350,6 +350,7 @@ class participants_filter implements renderable, templatable {
             'tableregionid' => $this->tableregionid,
             'courseid' => $this->context->instanceid,
             'filtertypes' => $this->get_filtertypes(),
+            'rownumber' => 1,
         ];
 
         return $data;
