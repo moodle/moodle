@@ -182,6 +182,7 @@ $string['america/noronha'] = 'America/Noronha';
 $string['america/north_dakota/beulah'] = 'America/North_Dakota/Beulah';
 $string['america/north_dakota/center'] = 'America/North_Dakota/Center';
 $string['america/north_dakota/new_salem'] = 'America/North_Dakota/New_Salem';
+$string['america/nuuk'] = 'America/Nuuk';
 $string['america/ojinaga'] = 'America/Ojinaga';
 $string['america/panama'] = 'America/Panama';
 $string['america/pangnirtung'] = 'America/Pangnirtung';
