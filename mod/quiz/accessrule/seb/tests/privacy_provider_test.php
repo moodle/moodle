@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use quizaccess_seb\tests\phpunit\quizaccess_seb_testcase;
 use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
@@ -33,7 +32,7 @@ use quizaccess_seb\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/base.php');
+require_once(__DIR__ . '/test_helper_trait.php');
 
 /**
  * PHPUnit tests for privacy provider.
@@ -41,13 +40,18 @@ require_once(__DIR__ . '/base.php');
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_provider_testcase extends quizaccess_seb_testcase {
+class quizaccess_seb_provider_testcase extends advanced_testcase {
+    use quizaccess_seb_test_helper_trait;
 
     /**
      * Setup the user, the quiz and ensure that the user is the last user to modify the SEB quiz settings.
      */
     public function setup_test_data() {
+        $this->resetAfterTest();
+
         $this->setAdminUser();
+
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->create_test_quiz($this->course, \quizaccess_seb\settings_provider::USE_SEB_CONFIG_MANUALLY);
 
         $this->user = $this->getDataGenerator()->create_user();
@@ -79,6 +83,8 @@ class quizaccess_seb_provider_testcase extends quizaccess_seb_testcase {
      * That that no module context is found for a user who has not modified any quiz settings.
      */
     public function test_get_no_contexts_for_userid() {
+        $this->resetAfterTest();
+
         $user = $this->getDataGenerator()->create_user();
         $contexts = provider::get_contexts_for_userid($user->id);
         $contextids = $contexts->get_contextids();

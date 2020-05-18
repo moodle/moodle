@@ -50,7 +50,7 @@ class quizaccess_seb_generator extends component_generator_base {
 
         if (!isset($data['content'])) {
             $data['content'] = file_get_contents(
-                $CFG->dirroot . '/mod/quiz/accessrule/seb/tests/phpunit/sample_data/unencrypted.seb'
+                $CFG->dirroot . '/mod/quiz/accessrule/seb/tests/fixtures/unencrypted.seb'
             );
         }
 

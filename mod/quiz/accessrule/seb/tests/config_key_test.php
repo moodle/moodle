@@ -56,8 +56,8 @@ class quizaccess_seb_config_key_testcase extends advanced_testcase {
      * Check that the Config Key hash is not altered if the originatorVersion is present in the XML or not.
      */
     public function test_presence_of_originator_version_does_not_effect_hash() {
-        $xmlwithoriginatorversion = file_get_contents(__DIR__ . '/sample_data/simpleunencrypted.seb');
-        $xmlwithoutoriginatorversion = file_get_contents(__DIR__ . '/sample_data/simpleunencryptedwithoutoriginator.seb');
+        $xmlwithoriginatorversion = file_get_contents(__DIR__ . '/fixtures/simpleunencrypted.seb');
+        $xmlwithoutoriginatorversion = file_get_contents(__DIR__ . '/fixtures/simpleunencryptedwithoutoriginator.seb');
         $hashwithorigver = config_key::generate($xmlwithoriginatorversion)->get_hash();
         $hashwithoutorigver = config_key::generate($xmlwithoutoriginatorversion)->get_hash();
         $this->assertEquals($hashwithorigver, $hashwithoutorigver);

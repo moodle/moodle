@@ -244,11 +244,11 @@ class quizaccess_seb_property_list_testcase extends advanced_testcase {
      * Test that the xml is exported to JSON from a real SEB config file. Expected JSON extracted from SEB logs.
      */
     public function test_export_to_json_full_file() {
-        $xml = file_get_contents(__DIR__ . '/sample_data/unencrypted_mac_001.seb');
+        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted_mac_001.seb');
         $plist = new property_list($xml);
         $plist->delete_element('originatorVersion'); // JSON should not contain originatorVersion key.
         $generatedjson = $plist->to_json();
-        $json = trim(file_get_contents(__DIR__ . '/sample_data/JSON_unencrypted_mac_001.txt'));
+        $json = trim(file_get_contents(__DIR__ . '/fixtures/JSON_unencrypted_mac_001.txt'));
         $this->assertEquals($json, $generatedjson);
     }
 

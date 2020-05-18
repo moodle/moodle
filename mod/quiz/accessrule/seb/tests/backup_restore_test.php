@@ -23,11 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use quizaccess_seb\tests\phpunit\quizaccess_seb_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/base.php');
+require_once(__DIR__ . '/test_helper_trait.php');
 
 /**
  * PHPUnit tests for backup and restore functionality.
@@ -35,7 +34,9 @@ require_once(__DIR__ . '/base.php');
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_backup_restore_testcase extends quizaccess_seb_testcase {
+class quizaccess_seb_backup_restore_testcase extends advanced_testcase {
+    use quizaccess_seb_test_helper_trait;
+
 
     /** @var \quizaccess_seb\template $template A test template. */
     protected $template;
@@ -47,7 +48,11 @@ class quizaccess_seb_backup_restore_testcase extends quizaccess_seb_testcase {
         global $USER;
 
         parent::setUp();
+
+        $this->resetAfterTest();
         $this->setAdminUser();
+
+        $this->course = $this->getDataGenerator()->create_course();
         $this->template = $this->create_template();
         $this->user = $USER;
     }
@@ -202,7 +207,7 @@ class quizaccess_seb_backup_restore_testcase extends quizaccess_seb_testcase {
 
         $expected = \quizaccess_seb\quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $expected->set('requiresafeexambrowser', \quizaccess_seb\settings_provider::USE_SEB_UPLOAD_CONFIG);
-        $xml = file_get_contents(__DIR__ . '/sample_data/unencrypted.seb');
+        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
         $this->create_module_test_file($xml, $this->quiz->cmid);
         $expected->save();
 
@@ -271,7 +276,7 @@ class quizaccess_seb_backup_restore_testcase extends quizaccess_seb_testcase {
         $this->assertEquals(1, quizaccess_seb\quiz_settings::count_records());
         $this->assertEquals(1, quizaccess_seb\template::count_records());
 
-        $newxml = file_get_contents($CFG->dirroot . '/mod/quiz/accessrule/seb/tests/phpunit/sample_data/simpleunencrypted.seb');
+        $newxml = file_get_contents($CFG->dirroot . '/mod/quiz/accessrule/seb/tests/fixtures/simpleunencrypted.seb');
         $this->template->set('content', $newxml);
         $this->template->save();
 

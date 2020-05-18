@@ -23,13 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use quizaccess_seb\tests\phpunit\quizaccess_seb_testcase;
 use quizaccess_seb\quiz_settings;
 use quizaccess_seb\settings_provider;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/base.php');
+require_once(__DIR__ . '/test_helper_trait.php');
 
 /**
  * PHPUnit tests for settings_provider.
@@ -37,7 +36,8 @@ require_once(__DIR__ . '/base.php');
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase {
+class quizaccess_seb_settings_provider_testcase extends advanced_testcase {
+    use quizaccess_seb_test_helper_trait;
 
     /**
      * Mocked quiz form instance.
@@ -586,11 +586,14 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
         }
     }
 
+
     /**
      * Test can check if can manage SEB settings respecting settings structure.
      */
     public function test_can_manage_seb_config_setting() {
+        $this->resetAfterTest();
         $this->setAdminUser();
+        $this->course = $this->getDataGenerator()->create_course();
 
         $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
         $this->context = context_module::instance($this->quiz->cmid);
@@ -632,7 +635,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * @dataProvider settings_capability_data_provider
      */
     public function test_get_requiresafeexambrowser_options($settingcapability) {
+        $this->resetAfterTest();
         $this->setAdminUser();
+        $this->course = $this->getDataGenerator()->create_course();
 
         $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
         $this->context = context_module::instance($this->quiz->cmid);
@@ -698,7 +703,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test SEB usage options with conflicting permissions.
      */
     public function test_get_requiresafeexambrowser_options_with_conflicting_permissions() {
+        $this->resetAfterTest();
         $this->setAdminUser();
+        $this->course = $this->getDataGenerator()->create_course();
 
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
         $this->context = context_module::instance($this->quiz->cmid);
@@ -723,7 +730,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test that SEB options and templates are frozen if conflicting permissions.
      */
     public function test_form_elements_are_frozen_if_conflicting_permissions() {
+        $this->resetAfterTest();
         $this->setAdminUser();
+        $this->course = $this->getDataGenerator()->create_course();
 
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
         $this->context = context_module::instance($this->quiz->cmid);
@@ -755,6 +764,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test that All settings are frozen if quiz was attempted and use seb with manual settings.
      */
     public function test_form_elements_are_locked_when_quiz_attempted_manual() {
+        $this->resetAfterTest();
+        $this->course = $this->getDataGenerator()->create_course();
+
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
         $this->context = context_module::instance($this->quiz->cmid);
 
@@ -781,7 +793,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test that All settings are frozen if a quiz was attempted and use template.
      */
     public function test_form_elements_are_locked_when_quiz_attempted_template() {
+        $this->resetAfterTest();
         $this->setAdminUser();
+        $this->course = $this->getDataGenerator()->create_course();
 
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
         $this->context = context_module::instance($this->quiz->cmid);
@@ -816,7 +830,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test Show Safe Exam Browser download button setting in the form.
      */
     public function test_showsebdownloadlink_in_form() {
+        $this->resetAfterTest();
         $this->setAdminUser();
+        $this->course = $this->getDataGenerator()->create_course();
 
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
         $this->context = context_module::instance($this->quiz->cmid);
@@ -841,7 +857,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test Allowed Browser Exam Keys setting in the form.
      */
     public function test_allowedbrowserexamkeys_in_form() {
+        $this->resetAfterTest();
         $this->setAdminUser();
+        $this->course = $this->getDataGenerator()->create_course();
 
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CLIENT_CONFIG);
         $this->context = context_module::instance($this->quiz->cmid);
@@ -865,6 +883,8 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test the validation of a seb config file.
      */
     public function test_validate_draftarea_configfile_success() {
+        $this->resetAfterTest();
+
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
         $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -880,6 +900,8 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test the validation of a missing seb config file.
      */
     public function test_validate_draftarea_configfile_failure() {
+        $this->resetAfterTest();
+
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
         $xml = "This is not a config file.";
@@ -892,10 +914,12 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test obtaining the draftarea content.
      */
     public function test_get_current_user_draft_file() {
+        $this->resetAfterTest();
+
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $xml = file_get_contents(__DIR__ . '/sample_data/unencrypted.seb');
+        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
         $itemid = $this->create_test_draftarea_file($xml);
         $file = settings_provider::get_current_user_draft_file($itemid);
         $content = $file->get_content();
@@ -907,11 +931,13 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test saving files from the user draft area into the quiz context area storage.
      */
     public function test_save_filemanager_sebconfigfile_draftarea() {
+        $this->resetAfterTest();
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
         $this->context = context_module::instance($this->quiz->cmid);
         $this->set_up_user_and_role();
 
-        $xml = file_get_contents(__DIR__ . '/sample_data/unencrypted.seb');
+        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
 
         $draftitemid = $this->create_test_draftarea_file($xml);
 
@@ -927,11 +953,13 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test deleting the $this->quiz->cmid itemid from the file area.
      */
     public function test_delete_uploaded_config_file() {
+        $this->resetAfterTest();
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
         $this->context = context_module::instance($this->quiz->cmid);
         $this->set_up_user_and_role();
 
-        $xml = file_get_contents(__DIR__ . '/sample_data/unencrypted.seb');
+        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
         $draftitemid = $this->create_test_draftarea_file($xml);
 
         settings_provider::save_filemanager_sebconfigfile_draftarea($draftitemid, $this->quiz->cmid);
@@ -951,14 +979,16 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test getting the file from the context module id file area.
      */
     public function test_get_module_context_sebconfig_file() {
+        $this->resetAfterTest();
         $this->setAdminUser();
 
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
         $this->context = context_module::instance($this->quiz->cmid);
 
         $this->set_up_user_and_role();
 
-        $xml = file_get_contents(__DIR__ . '/sample_data/unencrypted.seb');
+        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
         $draftitemid = $this->create_test_draftarea_file($xml);
 
         $fs = get_file_storage();
@@ -992,6 +1022,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test that users can or can not configure seb settings.
      */
     public function test_can_configure_seb() {
+        $this->resetAfterTest();
+
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
         $this->context = context_module::instance($this->quiz->cmid);
         $this->setAdminUser();
@@ -1010,6 +1043,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test that users can or can not use seb template.
      */
     public function test_can_use_seb_template() {
+        $this->resetAfterTest();
+
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
         $this->context = context_module::instance($this->quiz->cmid);
         $this->setAdminUser();
@@ -1028,6 +1064,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test that users can or can not upload seb config file.
      */
     public function test_can_upload_seb_file() {
+        $this->resetAfterTest();
+
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
         $this->context = context_module::instance($this->quiz->cmid);
         $this->setAdminUser();
@@ -1046,6 +1085,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test that users can or can not change Show Safe Exam Browser download button setting.
      */
     public function test_can_change_seb_showsebdownloadlink() {
+        $this->resetAfterTest();
+
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
         $this->context = context_module::instance($this->quiz->cmid);
         $this->setAdminUser();
@@ -1063,6 +1105,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test that users can or can not change Allowed Browser Exam Keys setting.
      */
     public function test_can_change_seb_allowedbrowserexamkeys() {
+        $this->resetAfterTest();
+        $this->course = $this->getDataGenerator()->create_course();
+
         $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
         $this->context = context_module::instance($this->quiz->cmid);
         $this->setAdminUser();
@@ -1084,6 +1129,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * @dataProvider settings_capability_data_provider
      */
     public function test_can_configure_manually($settingcapability) {
+        $this->resetAfterTest();
+        $this->course = $this->getDataGenerator()->create_course();
+
         $this->quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $this->course->id]);
         $this->context = context_module::instance($this->quiz->cmid);
         $this->setAdminUser();
@@ -1102,6 +1150,9 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test that we can check if the seb settings are locked.
      */
     public function test_is_seb_settings_locked() {
+        $this->resetAfterTest();
+
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->create_test_quiz($this->course);
         $user = $this->getDataGenerator()->create_user();
 
@@ -1115,8 +1166,10 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test that we can check identify conflicting permissions if set to use template.
      */
     public function test_is_conflicting_permissions_for_manage_templates() {
+        $this->resetAfterTest();
         $this->setAdminUser();
 
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
         $this->context = context_module::instance($this->quiz->cmid);
 
@@ -1141,13 +1194,15 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * Test that we can check identify conflicting permissions if set to use own seb file.
      */
     public function test_is_conflicting_permissions_for_upload_seb_file() {
+        $this->resetAfterTest();
         $this->setAdminUser();
 
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
         $this->context = context_module::instance($this->quiz->cmid);
 
         // Save file.
-        $xml = file_get_contents(__DIR__ . '/sample_data/unencrypted.seb');
+        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
         $draftitemid = $this->create_test_draftarea_file($xml);
         settings_provider::save_filemanager_sebconfigfile_draftarea($draftitemid, $this->quiz->cmid);
         $settings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
@@ -1170,8 +1225,10 @@ class quizaccess_seb_settings_provider_testcase extends quizaccess_seb_testcase 
      * @dataProvider settings_capability_data_provider
      */
     public function test_is_conflicting_permissions_for_configure_manually($settingcapability) {
+        $this->resetAfterTest();
         $this->setAdminUser();
 
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
         $this->context = context_module::instance($this->quiz->cmid);
 

@@ -15,15 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for tests. All tests should extend it to get common helper methods.
+ * A test helper trait.
  *
  * @package    quizaccess_seb
  * @author     Andrew Madden <andrewmadden@catalyst-au.net>
  * @copyright  2019 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace quizaccess_seb\tests\phpunit;
 
 use quizaccess_seb\access_manager;
 use quizaccess_seb\settings_provider;
@@ -35,12 +33,12 @@ require_once($CFG->dirroot . "/mod/quiz/accessrule/seb/rule.php"); // Include pl
 require_once($CFG->dirroot . "/mod/quiz/mod_form.php"); // Include plugin rule class.
 
 /**
- * Base class for tests. All tests should extend it to get common helper methods.
+ * A test helper trait. It has some common helper methods.
  *
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class quizaccess_seb_testcase extends \advanced_testcase {
+trait quizaccess_seb_test_helper_trait {
 
     /** @var \stdClass $course Test course to contain quiz. */
     protected $course;
@@ -50,16 +48,6 @@ abstract class quizaccess_seb_testcase extends \advanced_testcase {
 
     /** @var \stdClass $user A test logged-in user. */
     protected $user;
-
-    /**
-     * Called before every test.
-     */
-    public function setUp() {
-        parent::setUp();
-
-        $this->resetAfterTest();
-        $this->course = $this->getDataGenerator()->create_course();
-    }
 
     /**
      * Assign a capability to $USER

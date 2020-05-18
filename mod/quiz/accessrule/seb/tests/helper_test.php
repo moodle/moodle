@@ -23,11 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use quizaccess_seb\tests\phpunit\quizaccess_seb_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/base.php');
+require_once(__DIR__ . '/test_helper_trait.php');
 
 /**
  * PHPUnit tests for helper class.
@@ -35,7 +34,8 @@ require_once(__DIR__ . '/base.php');
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_helper_testcase extends quizaccess_seb_testcase {
+class quizaccess_seb_helper_testhelpertrait extends advanced_testcase {
+    use quizaccess_seb_test_helper_trait;
 
     /**
      * Test that we can check valid seb string.
@@ -80,6 +80,8 @@ class quizaccess_seb_helper_testcase extends quizaccess_seb_testcase {
      * Test that the course module must exist to get a seb config file content.
      */
     public function test_can_not_get_config_content_with_invalid_cmid() {
+        $this->resetAfterTest();
+
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
@@ -104,6 +106,8 @@ class quizaccess_seb_helper_testcase extends quizaccess_seb_testcase {
      * Test that the user must be enrolled to get seb config content.
      */
     public function test_can_not_get_config_content_when_user_not_enrolled_in_course() {
+        $this->resetAfterTest();
+
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->create_test_quiz($course, \quizaccess_seb\settings_provider::USE_SEB_CONFIG_MANUALLY);
@@ -120,7 +124,7 @@ class quizaccess_seb_helper_testcase extends quizaccess_seb_testcase {
      * Test that if SEB quiz settings can't be found, a seb config content won't be provided.
      */
     public function test_can_not_get_config_content_if_config_not_found_for_cmid() {
-        global $DB;
+        $this->resetAfterTest();
 
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
@@ -139,7 +143,7 @@ class quizaccess_seb_helper_testcase extends quizaccess_seb_testcase {
      * That that if config is empty for a quiz, a seb config content won't be provided.
      */
     public function test_can_not_get_config_content_if_config_empty() {
-        global $DB;
+        $this->resetAfterTest();
 
         $this->setAdminUser();
 
@@ -159,6 +163,8 @@ class quizaccess_seb_helper_testcase extends quizaccess_seb_testcase {
      * Test config content is provided successfully.
      */
     public function test_config_provided() {
+        $this->resetAfterTest();
+
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();

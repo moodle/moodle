@@ -25,18 +25,19 @@
 
 use quizaccess_seb\quiz_settings;
 use quizaccess_seb\settings_provider;
-use quizaccess_seb\tests\phpunit\quizaccess_seb_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/base.php');
+require_once(__DIR__ . '/test_helper_trait.php');
+
 /**
  * PHPUnit tests for quiz_settings class.
  *
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_quiz_settings_testcase extends quizaccess_seb_testcase {
+class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
+    use quizaccess_seb_test_helper_trait;
 
     /** @var context_module $context Test context. */
     protected $context;
@@ -50,7 +51,10 @@ class quizaccess_seb_quiz_settings_testcase extends quizaccess_seb_testcase {
     public function setUp() {
         parent::setUp();
 
+        $this->resetAfterTest();
+
         $this->setAdminUser();
+        $this->course = $this->getDataGenerator()->create_course();
         $this->quiz = $this->getDataGenerator()->create_module('quiz', [
             'course' => $this->course->id,
             'seb_requiresafeexambrowser' => settings_provider::USE_SEB_CONFIG_MANUALLY,
@@ -493,7 +497,7 @@ class quizaccess_seb_quiz_settings_testcase extends quizaccess_seb_testcase {
         $this->save_settings_with_optional_template($quizsettings, settings_provider::USE_SEB_TEMPLATE, $templateid);
 
         // Case for USE_SEB_UPLOAD_CONFIG, ensure template id reverts to 0.
-        $xml = file_get_contents(__DIR__ . '/sample_data/unencrypted.seb');
+        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
         $this->create_module_test_file($xml, $this->quiz->cmid);
         $this->save_settings_with_optional_template($quizsettings, settings_provider::USE_SEB_UPLOAD_CONFIG);
         $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
@@ -693,7 +697,7 @@ class quizaccess_seb_quiz_settings_testcase extends quizaccess_seb_testcase {
         $this->assertNull($quizsettings->get_config());
 
         $quizsettings->set('requiresafeexambrowser', settings_provider::USE_SEB_UPLOAD_CONFIG);
-        $xml = file_get_contents(__DIR__ . '/sample_data/unencrypted.seb');
+        $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
         $this->create_module_test_file($xml, $this->quiz->cmid);
         $quizsettings->save();
         $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
