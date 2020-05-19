@@ -115,13 +115,33 @@ class subscription implements \renderable, \templatable {
                         break;
                     // Check menu items.
                     case 'custommenuitems':
+                        $custommenuitems = [];
                         $els = rtrim($ms->custommenuitems, "\n");
-                        $feature['status'] = empty($ms->custommenuitems) ? 0 : count(explode("\n", $els));
+                        if (!empty($els)) {
+                            $custommenuitems = explode("\n", $els);
+                            // Get unique custom menu urls.
+                            $custommenuitems = array_flip(
+                                array_map(function($val) {
+                                    return explode('|', $val)[1];
+                                }, $custommenuitems)
+                            );
+                        }
+                        $feature['status'] = count($custommenuitems);
                         break;
                     // Check language strings.
                     case 'customlanguagestrings':
+                        $langstrings = [];
                         $els = rtrim($ms->customlangstrings, "\n");
-                        $feature['status'] = empty($ms->customlangstrings) ? 0 : count(explode("\n", $els));
+                        if (!empty($els)) {
+                            $langstrings = explode("\n", $els);
+                            // Get unique language string ids.
+                            $langstrings = array_flip(
+                                array_map(function($val) {
+                                    return explode('|', $val)[0];
+                                }, $langstrings)
+                            );
+                        }
+                        $feature['status'] = count($langstrings);
                         break;
                     // Check disabled features strings.
                     case 'disabledfeatures':
