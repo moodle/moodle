@@ -153,7 +153,10 @@ export const init = ({
             if (totalRowCount <= defaultPageSize) {
                 // There are fewer than the default page count numbers of rows.
                 showCountLink.classList.add('hidden');
-                checkCountButton.classList.add('hidden');
+
+                if (checkCountButton) {
+                    checkCountButton.classList.add('hidden');
+                }
             } else if (totalRowCount <= currentPageSize) {
                 // The are fewer than the current page size.
                 pageCountStrings.push({
@@ -172,8 +175,10 @@ export const init = ({
                 showCountLink.classList.remove('hidden');
                 showCountLink.dataset.targetPageSize = defaultPageSize;
 
-                // The 'Check all [x]' button is only visible when there are values to set.
-                checkCountButton.classList.add('hidden');
+                if (checkCountButton) {
+                    // The 'Check all [x]' button is only visible when there are values to set.
+                    checkCountButton.classList.add('hidden');
+                }
             } else {
                 pageCountStrings.push({
                     key: 'showall',
@@ -190,7 +195,10 @@ export const init = ({
                 // Show both the 'Show [x]' link, and the 'Check all [x]' button.
                 showCountLink.classList.remove('hidden');
                 showCountLink.dataset.targetPageSize = totalRowCount;
-                checkCountButton.classList.remove('hidden');
+
+                if (checkCountButton) {
+                    checkCountButton.classList.remove('hidden');
+                }
             }
 
             Str.get_strings(pageCountStrings)
@@ -202,7 +210,7 @@ export const init = ({
                     showCountLink.innerHTML = showCountString;
                 }
 
-                if (selectCountString) {
+                if (selectCountString && checkCountButton) {
                     checkCountButton.value = selectCountString;
                 }
 

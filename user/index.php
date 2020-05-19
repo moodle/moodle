@@ -310,29 +310,31 @@ echo $participanttablehtml;
 
 $perpageurl = clone($baseurl);
 $perpageurl->remove_params('perpage');
+$perpagesize = DEFAULT_PAGE_SIZE;
+$perpagevisible = false;
+
 if ($perpage == SHOW_ALL_PAGE_SIZE && $participanttable->totalrows > DEFAULT_PAGE_SIZE) {
     $perpageurl->param('perpage', DEFAULT_PAGE_SIZE);
-    echo $OUTPUT->container(html_writer::link(
-        $perpageurl,
-        get_string('showperpage', '', DEFAULT_PAGE_SIZE),
-        [
-            'data-action' => 'showcount',
-            'data-target-page-size' => DEFAULT_PAGE_SIZE,
-        ]
-    ), [], 'showall');
-
+    $perpagevisible = true;
 } else if ($participanttable->get_page_size() < $participanttable->totalrows) {
     $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-    echo $OUTPUT->container(html_writer::link(
-        $perpageurl,
-        get_string('showall', '', $participanttable->totalrows),
-        [
-            'data-action' => 'showcount',
-            'data-target-page-size' => SHOW_ALL_PAGE_SIZE,
-        ]
-    ),
-    [], 'showall');
+    $pagesize = SHOW_ALL_PAGE_SIZE;
+    $perpagevisible = true;
 }
+
+$perpageclasses = '';
+if (!$perpagevisible) {
+    $perpageclasses = 'hidden';
+}
+echo $OUTPUT->container(html_writer::link(
+    $perpageurl,
+    get_string('showperpage', '', DEFAULT_PAGE_SIZE),
+    [
+        'data-action' => 'showcount',
+        'data-target-page-size' => $perpagesize,
+        'class' => $perpageclasses,
+    ]
+), [], 'showall');
 
 if ($bulkoperations) {
     echo '<br /><div class="buttons"><div class="form-inline">';
