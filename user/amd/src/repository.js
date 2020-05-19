@@ -51,3 +51,19 @@ export const submitUserEnrolmentForm = formdata => {
         },
     }])[0];
 };
+
+export const createNotesForUsers = notes => {
+    return fetchMany([{
+        methodname: 'core_notes_create_notes',
+        args: {
+            notes
+        }
+    }])[0];
+};
+
+export const sendMessagesToUsers = messages => {
+    return fetchMany([{
+        methodname: 'core_message_send_instant_messages',
+        args: {messages}
+    }])[0];
+};

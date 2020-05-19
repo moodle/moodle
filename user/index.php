@@ -42,7 +42,6 @@ $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT); // How 
 $contextid    = optional_param('contextid', 0, PARAM_INT); // One of this or.
 $courseid     = optional_param('id', 0, PARAM_INT); // This are required.
 $newcourse    = optional_param('newcourse', false, PARAM_BOOL);
-$selectall    = optional_param('selectall', false, PARAM_BOOL); // When rendering checkboxes against users mark them all checked.
 $roleid       = optional_param('roleid', 0, PARAM_INT);
 $groupparam   = optional_param('group', 0, PARAM_INT);
 
@@ -276,7 +275,6 @@ if (count($keywordfilter)) {
 }
 
 $participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
-$participanttable->set_selectall($selectall);
 $participanttable->set_filterset($filterset);
 $participanttable->define_baseurl($baseurl);
 
@@ -286,48 +284,73 @@ $participanttable->out($perpage, true);
 $participanttablehtml = ob_get_contents();
 ob_end_clean();
 
-echo html_writer::tag('p', get_string('participantscount', 'moodle', $participanttable->totalrows));
-
 if ($bulkoperations) {
-    echo '<form action="action_redir.php" method="post" id="participantsform">';
+    echo html_writer::start_tag('form', [
+        'action' => 'action_redir.php',
+        'method' => 'post',
+        'id' => 'participantsform',
+        'data-course-id' => $course->id,
+        'data-table-unique-id' => $participanttable->uniqueid,
+        'data-table-default-per-page' => ($perpage < DEFAULT_PAGE_SIZE) ? $perpage : DEFAULT_PAGE_SIZE,
+    ]);
     echo '<div>';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
 }
 
+echo html_writer::tag(
+    'p',
+    get_string('countparticipantsfound', 'core_user', $participanttable->totalrows),
+    [
+        'data-region' => 'participant-count',
+    ]
+);
+
 echo $participanttablehtml;
 
 $perpageurl = clone($baseurl);
 $perpageurl->remove_params('perpage');
+$perpagesize = DEFAULT_PAGE_SIZE;
+$perpagevisible = false;
+
 if ($perpage == SHOW_ALL_PAGE_SIZE && $participanttable->totalrows > DEFAULT_PAGE_SIZE) {
     $perpageurl->param('perpage', DEFAULT_PAGE_SIZE);
-    echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showperpage', '', DEFAULT_PAGE_SIZE)), array(), 'showall');
-
+    $perpagevisible = true;
 } else if ($participanttable->get_page_size() < $participanttable->totalrows) {
     $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-    echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showall', '', $participanttable->totalrows)),
-        array(), 'showall');
+    $pagesize = SHOW_ALL_PAGE_SIZE;
+    $perpagevisible = true;
 }
+
+$perpageclasses = '';
+if (!$perpagevisible) {
+    $perpageclasses = 'hidden';
+}
+echo $OUTPUT->container(html_writer::link(
+    $perpageurl,
+    get_string('showperpage', '', DEFAULT_PAGE_SIZE),
+    [
+        'data-action' => 'showcount',
+        'data-target-page-size' => $perpagesize,
+        'class' => $perpageclasses,
+    ]
+), [], 'showall');
 
 if ($bulkoperations) {
     echo '<br /><div class="buttons"><div class="form-inline">';
 
-    if ($participanttable->get_page_size() < $participanttable->totalrows) {
-        $perpageurl = clone($baseurl);
-        $perpageurl->remove_params('perpage');
-        $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-        $perpageurl->param('selectall', true);
-        $showalllink = $perpageurl;
-    } else {
-        $showalllink = false;
-    }
-
     echo html_writer::start_tag('div', array('class' => 'btn-group'));
+
     if ($participanttable->get_page_size() < $participanttable->totalrows) {
-        // Select all users, refresh page showing all users and mark them all selected.
+        // Select all users, refresh table showing all users and mark them all selected.
         $label = get_string('selectalluserswithcount', 'moodle', $participanttable->totalrows);
-        echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checkall', 'class' => 'btn btn-secondary',
-                'value' => $label, 'data-showallink' => $showalllink));
+        echo html_writer::empty_tag('input', [
+            'type' => 'button',
+            'id' => 'checkall',
+            'class' => 'btn btn-secondary',
+            'value' => $label,
+            'data-target-page-size' => $participanttable->totalrows,
+        ]);
     }
     echo html_writer::end_tag('div');
     $displaylist = array();
@@ -392,13 +415,14 @@ if ($bulkoperations) {
     echo html_writer::tag('div', $label . $select);
 
     echo '<input type="hidden" name="id" value="' . $course->id . '" />';
+    echo '<div class="d-none" data-region="state-help-icon">' . $OUTPUT->help_icon('publishstate', 'notes') . '</div>';
     echo '</div></div></div>';
     echo '</form>';
 
-    $options = new stdClass();
-    $options->courseid = $course->id;
-    $options->noteStateNames = note_get_state_names();
-    $options->stateHelpIcon = $OUTPUT->help_icon('publishstate', 'notes');
+    $options = (object) [
+        'uniqueid' => $participanttable->uniqueid,
+        'noteStateNames' => note_get_state_names(),
+    ];
     $PAGE->requires->js_call_amd('core_user/participants', 'init', [$options]);
 }
 
