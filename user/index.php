@@ -312,14 +312,18 @@ $perpageurl = clone($baseurl);
 $perpageurl->remove_params('perpage');
 $perpagesize = DEFAULT_PAGE_SIZE;
 $perpagevisible = false;
+$perpagestring = '';
 
 if ($perpage == SHOW_ALL_PAGE_SIZE && $participanttable->totalrows > DEFAULT_PAGE_SIZE) {
-    $perpageurl->param('perpage', DEFAULT_PAGE_SIZE);
+    $perpageurl->param('perpage', $participanttable->totalrows);
+    $perpagesize = SHOW_ALL_PAGE_SIZE;
     $perpagevisible = true;
+    $perpagestring = get_string('showperpage', '', DEFAULT_PAGE_SIZE);
 } else if ($participanttable->get_page_size() < $participanttable->totalrows) {
     $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-    $pagesize = SHOW_ALL_PAGE_SIZE;
+    $perpagesize = SHOW_ALL_PAGE_SIZE;
     $perpagevisible = true;
+    $perpagestring = get_string('showall', '', $participanttable->totalrows);
 }
 
 $perpageclasses = '';
@@ -328,7 +332,7 @@ if (!$perpagevisible) {
 }
 echo $OUTPUT->container(html_writer::link(
     $perpageurl,
-    get_string('showperpage', '', DEFAULT_PAGE_SIZE),
+    $perpagestring,
     [
         'data-action' => 'showcount',
         'data-target-page-size' => $perpagesize,
