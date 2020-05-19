@@ -28,6 +28,7 @@
 require_once(__DIR__ . '/../../../lib/behat/core_behat_file_helper.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
+    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
     Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
@@ -342,7 +343,12 @@ class behat_filepicker extends behat_base {
             "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-content ')]" .
             "//a[contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')]";
 
-        $elements = $this->find_all('xpath', $xpath);
+        try {
+            $elements = $this->find_all('xpath', $xpath);
+        } catch (ElementNotFoundException $e) {
+            $elements = [];
+        }
+
         // Make sure the expected number is equal to the actual number of .fp-file elements.
         if (count($elements) != $expectedcount) {
             throw new ExpectationException("Found " . count($elements) .
