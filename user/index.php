@@ -230,7 +230,6 @@ $baseurl = new moodle_url('/user/index.php', array(
         'perpage' => $perpage));
 
 $participanttable = new \core_user\table\participants("user-index-participants-{$course->id}");
-$participanttable->set_selectall($selectall);
 $participanttable->define_baseurl($baseurl);
 
 // Manage enrolments.
@@ -415,7 +414,7 @@ if ($bulkoperations) {
         'data-action' => 'toggle',
         'data-togglegroup' => 'participants-table',
         'data-toggle' => 'action',
-        'disabled' => empty($selectall)
+        'disabled' => 'disabled'
     );
     $label = html_writer::tag('label', get_string("withselectedusers"),
             ['for' => 'formactionid', 'class' => 'col-form-label d-inline']);
