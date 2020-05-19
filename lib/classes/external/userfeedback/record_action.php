@@ -47,6 +47,7 @@ class record_action extends external_api {
     public static function execute_parameters() {
         return new external_function_parameters([
             'action' => new external_value(PARAM_ALPHA, 'The action taken by user'),
+            'contextid' => new external_value(PARAM_INT, 'The context id of the page the user is in'),
         ]);
     }
 
@@ -54,17 +55,28 @@ class record_action extends external_api {
      * Record users action to the feedback CTA
      *
      * @param string $action The action the user took
+     * @param int $contextid The context id
      * @throws \invalid_parameter_exception
      */
-    public static function execute(string $action) {
-        external_api::validate_parameters(self::execute_parameters(), ['action' => $action]);
+    public static function execute(string $action, int $contextid) {
+        external_api::validate_parameters(self::execute_parameters(), [
+            'action' => $action,
+            'contextid' => $contextid,
+        ]);
+
+        $context = \context::instance_by_id($contextid);
+        self::validate_context($context);
 
         switch ($action) {
             case 'give':
                 set_user_preference('core_userfeedback_give', time());
+                $event = \core\event\userfeedback_give::create(['context' => $context]);
+                $event->trigger();
                 break;
             case 'remind':
                 set_user_preference('core_userfeedback_remind', time());
+                $event = \core\event\userfeedback_remind::create(['context' => $context]);
+                $event->trigger();
                 break;
             default:
                 throw new \invalid_parameter_exception('Invalid value for action parameter (value: ' . $action . '),' .
