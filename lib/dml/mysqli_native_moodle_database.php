@@ -567,6 +567,7 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         $conn = null;
+        $dberr = null;
         try {
             $conn = $this->mysqli->real_connect($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);
         } catch (\Exception $e) {
