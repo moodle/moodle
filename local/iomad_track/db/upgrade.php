@@ -532,7 +532,6 @@ mtrace("enrol end " . time());
         upgrade_plugin_savepoint(true, 2020042400, 'local', 'iomad_track');
     }
 
-
     if ($oldversion < 2020042900) {
 
         require_once(dirname(__FILE__) . '/../lib.php');
@@ -588,6 +587,26 @@ mtrace("enrol end " . time());
 
         // Iomad_track savepoint reached.
         upgrade_plugin_savepoint(true, 2020042900, 'local', 'iomad_track');
+    }
+
+    if ($oldversion < 2020051900) {
+
+        // Calculate the timeexpired for all users.
+        // Get the courses where there is a expired value.
+        $expirycourses = $DB->get_records_sql("SELECT courseid,validlength FROM {iomad_courses}
+                                               WHERE validlength > 0");
+        foreach ($expirycourses as $expirycourse) {
+            $offset = $expirycourse->validlength * 24 * 60 * 60;
+            $DB->execute("UPDATE {local_iomad_track}
+                          SET timeexpires = timecompleted + :offset
+                          WHERE courseid = :courseid
+                          AND timecompleted > 0",
+                          array('courseid' => $expirycourse->courseid,
+                                'offset' => $offset));
+        }
+
+        // Iomad_track savepoint reached.
+        upgrade_plugin_savepoint(true, 2020051900, 'local', 'iomad_track');
     }
 
    return $result;

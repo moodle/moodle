@@ -296,7 +296,7 @@ class observer {
             $completion->modifiedtime = time();
 
             // Deal with completion valid length.
-            if (!empty($offest)) {
+            if (!empty($offset)) {
                 $completion->timeexpires = $completion->timecompleted + $offset;
             }
 
@@ -349,7 +349,7 @@ class observer {
             }
 
             // Deal with completion valid length.
-            if (!empty($offest)) {
+            if (!empty($offset)) {
                 $current->timeexpires = $current->timecompleted + $offset;
             }
 
