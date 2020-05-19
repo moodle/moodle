@@ -33,7 +33,6 @@ $drawer-bg: darken($body-bg, 5%) !default;
 
 [data-region="drawer"] {
     position: fixed;
-    padding: $drawer-padding-x $drawer-padding-y;
     width: $drawer-width;
     top: $fixed-header-y;
     height: calc(100% - #{$navbar-height});
@@ -44,6 +43,12 @@ $drawer-bg: darken($body-bg, 5%) !default;
     -webkit-transition: right 0.5s ease, left 0.5s ease;
     -moz-transition: right 0.5s ease, left 0.5s ease;
     transition: right 0.5s ease, left 0.5s ease;
+}
+
+@include media-breakpoint-up(sm) {
+    [data-region="drawer"] {
+        padding: $drawer-padding-x $drawer-padding-y;
+    }
 }
 #nav-drawer {
     right: auto;
@@ -119,6 +124,10 @@ $right-drawer-width: 320px;
         opacity: 1;
     }
 
+    .closewidget {
+        display: none;
+    }
+
     &.hidden {
         display: block;
         right: $right-drawer-width * -1;
@@ -130,6 +139,25 @@ $right-drawer-width: 320px;
         @include transition(right .2s ease-in-out, visibility 0s ease-in-out .2s, opacity 0s ease-in-out .2s);
     }
 }
+
+@include media-breakpoint-down(sm) {
+    [data-region=right-hand-drawer] {
+        &.drawer {
+            top: 0;
+            height: 100%;
+            z-index: $zindex-fixed;
+        }
+        .closewidget {
+            display: block;
+            padding: 0 0.2rem;
+        }
+    }
+    body.drawer-open-left,
+    body.drawer-open-right {
+        overflow: hidden;
+    }
+}
+
 .dir-rtl {
     [data-region=right-hand-drawer] {
         box-shadow: 2px 2px 4px rgba(0, 0, 0, .08);

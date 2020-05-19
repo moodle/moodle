@@ -44,10 +44,11 @@ body:not(.editing)  .sitetopic ul.section {
     }
 }
 
-.course-content ul.section {
-    margin: $spacer;
+@include media-breakpoint-up(sm) {
+    .course-content ul.section {
+        margin: $spacer;
+    }
 }
-
 .section {
     .side {
         &.left {
@@ -116,10 +117,11 @@ body:not(.editing)  .sitetopic ul.section {
             display: block;
             height: inherit;
         }
-
-        .mod-indent-outer {
-            padding-left: 24px;
-            display: block;
+        @include media-breakpoint-up(sm) {
+            .mod-indent-outer {
+                padding-left: 24px;
+                display: block;
+            }
         }
     }
 
@@ -331,10 +333,16 @@ body:not(.editing)  .sitetopic ul.section {
     li.section {
         margin-top: $spacer;
         padding-bottom: $spacer;
+        .content {
+            margin: 0;
+            padding: 0;
+        }
 
-        .summary,
-        .content > .availabilityinfo {
-            margin-left: 25px;
+        @include media-breakpoint-up(sm) {
+            .summary,
+            .content > .availabilityinfo {
+                margin-left: 25px;
+            }
         }
 
         .left,
@@ -342,6 +350,20 @@ body:not(.editing)  .sitetopic ul.section {
             padding: 0 6px 0;
             text-align: right;
             width: auto;
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    body:not(.editing) {
+        .course-content ul.topics,
+        .course-content ul.weeks {
+            li.section {
+                .left,
+                .right {
+                    display: none;
+                }
+            }
         }
     }
 }
@@ -356,6 +378,11 @@ body:not(.editing)  .sitetopic ul.section {
 
 .course-content li {
     &.section {
+        @include media-breakpoint-down(sm) {
+            ul {
+                padding-left: 0;
+            }
+        }
         ul {
             list-style: disc;
 

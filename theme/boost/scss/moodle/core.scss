@@ -8,22 +8,37 @@ $bg-inverse-link-color: #fff !default;
 #region-main {
     overflow-x: auto;
     overflow-y: visible;
-    border: $card-border-width solid $card-border-color;
-    @if $enable-rounded {
-        @include border-radius($card-border-radius);
-    }
-    padding: $card-spacer-x;
     background-color: $body-bg;
 }
 
-.context-header-settings-menu,
-.region-main-settings-menu {
-    float: right;
-    width: auto;
-    max-width: 4em;
-    height: 2em;
-    display: block;
-    margin-top: 4px;
+@include media-breakpoint-up(sm) {
+    #region-main {
+        border: $card-border-width solid $card-border-color;
+        @if $enable-rounded {
+            @include border-radius($card-border-radius);
+        }
+        padding: $card-spacer-x;
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .context-header-settings-menu,
+    .region-main-settings-menu {
+        float: right;
+        width: auto;
+        max-width: 4em;
+        height: 2em;
+        display: block;
+        margin-top: 4px;
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .context-header-settings-menu,
+    .region-main-settings-menu {
+        display: flex;
+        justify-content: flex-end;
+    }
 }
 
 $gototop-bottom-position: 50px !default;
@@ -46,6 +61,12 @@ $gototop-bottom-position: 50px !default;
         position: absolute;
         right: 0;
         transform: translateY(-100%);
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    #goto-top-link {
+        bottom: 0;
     }
 }
 
@@ -185,6 +206,16 @@ a.autolink.glossary:hover {
     padding: 0;
     background-color: transparent;
     margin-top: -1px;
+}
+
+@include media-breakpoint-down(sm) {
+    .pagelayout-mydashboard,
+    .pagelayout-login {
+        #region-main-box {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
 }
 
 .collapsibleregioncaption img {
@@ -1046,19 +1077,22 @@ tr.flagged-tag a {
     float: left;
     padding-top: 20px;
 }
-$mod-indent-size: 30px;
-/* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
 
-@for $i from 1 through 16 {
-    $width: ($i * $mod-indent-size);
+@include media-breakpoint-up(sm) {
+    $mod-indent-size: 30px;
+    /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
 
-    .mod-indent-#{$i} {
-        width: $width;
+    @for $i from 1 through 16 {
+        $width: ($i * $mod-indent-size);
+
+        .mod-indent-#{$i} {
+            width: $width;
+        }
     }
-}
 
-.mod-indent-huge {
-    width: (16 * $mod-indent-size);
+    .mod-indent-huge {
+        width: (16 * $mod-indent-size);
+    }
 }
 
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
@@ -2013,11 +2047,12 @@ dd:after {
             right: auto;
             white-space: nowrap;
         }
-
-        input {
-            width: 330px;
-            vertical-align: text-bottom;
-            margin-bottom: 0;
+        @include media-breakpoint-up(sm) {
+            input {
+                width: 330px;
+                vertical-align: text-bottom;
+                margin-bottom: 0;
+            }
         }
 
         select {
@@ -2465,5 +2500,77 @@ $picker-emojis-per-row: 7 !default;
 @each $color, $value in $theme-colors {
     .alert-#{$color} a {
         color: darken(theme-color-level($color, $alert-color-level), 10%);
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    #page-navbar {
+        width: 100%;
+    }
+
+    .breadcrumb:not(:empty) {
+        width: 100%;
+        border: ($border-width * 2) solid $gray-200;
+        padding: $spacer / 4;
+        margin-bottom: $spacer / 2;
+        .breadcrumb-item {
+            padding-top: $spacer / 3;
+            padding-bottom: $spacer / 3;
+            display: inline-block;
+        }
+    }
+
+    .mform {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .custom-select {
+        max-width: 100%;
+    }
+    .card .card-body {
+        padding: $card-spacer-x / 2;
+    }
+    #page-header {
+        .card {
+            border: 0;
+            .card-body {
+                padding: 0;
+            }
+        }
+    }
+    .nav-tabs,
+    .nav-pills {
+        margin: 0;
+        border: 0;
+        padding: $spacer / 8;
+        background-color: $gray-200;
+        .nav-item {
+            flex: 1 1 auto;
+            text-align: center;
+        }
+        .nav-link {
+            background: $white;
+            border: 0;
+            margin: $spacer / 8;
+            &.active {
+                @include button-outline-variant($gray-600);
+                border-color: $gray-600;
+            }
+        }
+    }
+}
+
+@media (max-width: map-get($grid-breakpoints, "sm")) and (max-height: 320px) {
+    div#page {
+        margin-top: 0;
+    }
+    .navbar.fixed-top {
+        position: relative;
+        z-index: inherit;
     }
 }

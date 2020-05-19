@@ -73,6 +73,7 @@ function(
         HEADER_CONTAINER: '[data-region="header-container"]',
         BODY_CONTAINER: '[data-region="body-container"]',
         FOOTER_CONTAINER: '[data-region="footer-container"]',
+        CLOSE_BUTTON: '[data-action="closedrawer"]'
     };
 
     /**
@@ -293,6 +294,11 @@ function(
             setJumpFrom(args.buttonid);
             show(namespace, root);
             Router.go(namespace, Routes.VIEW_CONVERSATION, args.conversationid);
+        });
+
+        var closebutton = root.find(SELECTORS.CLOSE_BUTTON);
+        closebutton.on(CustomEvents.events.activate, function() {
+            PubSub.publish(Events.TOGGLE_VISIBILITY);
         });
 
         PubSub.subscribe(Events.CREATE_CONVERSATION_WITH_USER, function(args) {
