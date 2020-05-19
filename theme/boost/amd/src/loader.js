@@ -23,91 +23,87 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
  */
-define(['jquery', './tether', 'core/event', 'core/custom_interaction_events'], function(jQuery, Tether, Event, customEvents) {
 
-    window.jQuery = jQuery;
-    window.Tether = Tether;
-    M.util.js_pending('theme_boost/loader:children');
+import $ from 'jquery';
+import Aria from './aria';
+import Scroll from './scroll';
+import Bootstrap from './bootstrap/index';
+import CustomEvents from 'core/custom_interaction_events';
 
-    require(['theme_boost/aria',
-            'theme_boost/scroll',
-            'theme_boost/pending',
-            'theme_boost/util',
-            'theme_boost/alert',
-            'theme_boost/button',
-            'theme_boost/carousel',
-            'theme_boost/collapse',
-            'theme_boost/dropdown',
-            'theme_boost/modal',
-            'theme_boost/scrollspy',
-            'theme_boost/tab',
-            'theme_boost/tooltip',
-            'theme_boost/popover'],
-            function(Aria, MoodleScroll) {
+/**
+ * Set up the search.
+ *
+ * @method init
+ */
+export {
+    init,
+    Bootstrap
+};
 
-        // We do twice because: https://github.com/twbs/bootstrap/issues/10547
-        jQuery('body').popover({
-            trigger: 'focus',
-            selector: "[data-toggle=popover][data-trigger!=hover]",
-            placement: 'auto'
-        });
+/**
+ * Bootstrap init function
+ */
+const init = () => {
+    rememberTabs();
 
-        // Popovers must close on Escape for accessibility reasons.
-        customEvents.define(jQuery('body'), [
-            customEvents.events.escape,
-        ]);
-        jQuery('body').on(customEvents.events.escape, '[data-toggle=popover]', function() {
-            // Use "blur" instead of "popover('hide')" to prevent issue that the same tooltip can't be opened again.
-            jQuery(this).trigger('blur');
-        });
+    enablePopovers();
 
-        jQuery("html").popover({
-            container: "body",
-            selector: "[data-toggle=popover][data-trigger=hover]",
-            trigger: "hover",
-            delay: {
-                hide: 500
-            }
-        });
+    enableTooltips();
 
-        jQuery("html").tooltip({
-            selector: '[data-toggle="tooltip"]'
-        });
+    const scroll = new Scroll();
+    scroll.init();
 
-        // Disables flipping the dropdowns up and getting hidden behind the navbar.
-        jQuery.fn.dropdown.Constructor.Default.flip = false;
+    // Disables flipping the dropdowns up and getting hidden behind the navbar.
+    $.fn.dropdown.Constructor.Default.flip = false;
 
-        jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-            var hash = jQuery(e.target).attr('href');
-            if (history.replaceState) {
-                history.replaceState(null, null, hash);
-            } else {
-                location.hash = hash;
-            }
-        });
+    Aria.init();
+};
 
-        var hash = window.location.hash;
-        if (hash) {
-           jQuery('.nav-link[href="' + hash + '"]').tab('show');
+/**
+ * Rember the last visited tabs.
+ */
+const rememberTabs = () => {
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        var hash = $(e.target).attr('href');
+        if (history.replaceState) {
+            history.replaceState(null, null, hash);
+        } else {
+            location.hash = hash;
         }
+    });
+    var hash = window.location.hash;
+    if (hash) {
+       $('.nav-link[href="' + hash + '"]').tab('show');
+    }
+};
 
-        // We need to call popover automatically if nodes are added to the page later.
-        Event.getLegacyEvents().done(function(events) {
-            jQuery(document).on(events.FILTER_CONTENT_UPDATED, function() {
-                jQuery('body').popover({
-                    selector: '[data-toggle="popover"]',
-                    trigger: 'focus'
-                });
-
-            });
-        });
-
-        Aria.init();
-        this.scroll = new MoodleScroll();
-        this.scroll.init();
-        M.util.js_complete('theme_boost/loader:children');
+/**
+ * Enable all popovers
+ *
+ */
+const enablePopovers = () => {
+    $('body').popover({
+        selector: '[data-toggle="popover"]',
+        trigger: 'focus hover',
+        placement: 'auto'
     });
 
+    CustomEvents.define($('body'), [
+        CustomEvents.events.escape,
+    ]);
+    $('body').on(CustomEvents.events.escape, '[data-toggle=popover]', function() {
 
-    return {};
-});
+        $(this).trigger('blur');
+    });
+};
+
+/**
+ * Enable tooltips
+ *
+ */
+const enableTooltips = () => {
+    $('body').tooltip({
+        container: 'body',
+        selector: '[data-toggle="tooltip"]'
+    });
+};
