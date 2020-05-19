@@ -30,7 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Adminmappe';
+$string['admindirname'] = 'Adminmáhppa';
 $string['availablelangs'] = 'Tilgjengelige språkpakker';
 $string['chooselanguagehead'] = 'Velg et språk';
 $string['chooselanguagesub'] = 'Velg språk (bare for INSTALLASJONEN). Du vil kunne velge språk for nettsted og bruker på et skjermbilde senere.';
@@ -88,5 +88,5 @@ $string['welcomep40'] = 'Denne pakken inkluderer også  <strong>Moodle {$a->mood
 $string['welcomep50'] = 'Bruken av alle applikasjoner i denne pakken er administrert av egne lisenser. Hele <strong>{$a->installername}</strong>-pakken er <a href="http://www.opensource.org/docs/definition_plain.html">
 åpen kildekode</a> og er distribuert under  <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>-lisensen.';
 $string['welcomep60'] = 'De følgende sidene vil vise deg gjennom noen enkle steg for å konfigurere og sette opp <strong>Moodle</strong> på datamaskinen din. Du kan godta standardinnstillingene, eller justere dem etter egne behov hvis du vil.';
-$string['welcomep70'] = 'Klikk på "Neste" knappen under for å fortsette med <strong>Moodle</strong>-installasjonen';
+$string['welcomep70'] = 'Coahkkal "Boahtte"-boalu joatkit<strong>Moodle</strong>-installašuvnnain';
 $string['wwwroot'] = 'Web addresse';
