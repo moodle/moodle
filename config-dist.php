@@ -79,6 +79,45 @@ $CFG->dboptions = array(
                                 // set to zero if you are using pg_bouncer in
                                 // 'transaction' mode (it is fine in 'session'
                                 // mode).
+    /*
+    'connecttimeout' => null, // Set connect timeout in seconds. Not all drivers support it.
+    'readonly' => [          // Set to read-only slave details, to get safe reads
+                             // from there instead of the master node. Optional.
+                             // Currently supported by pgsql and mysqli variety classes.
+                             // If not supported silently ignored.
+      'instance' => [        // Readonly slave connection parameters
+        [
+          'dbhost' => 'slave.dbhost',
+          'dbport' => '',    // Defaults to master port
+          'dbuser' => '',    // Defaults to master user
+          'dbpass' => '',    // Defaults to master password
+        ],
+        [...],
+      ],
+
+    Instance(s) can alternatively be specified as:
+
+      'instance' => 'slave.dbhost',
+      'instance' => ['slave.dbhost1', 'slave.dbhost2'],
+      'instance' => ['dbhost' => 'slave.dbhost', 'dbport' => '', 'dbuser' => '', 'dbpass' => ''],
+
+      'connecttimeout' => 2, // Set read-only slave connect timeout in seconds. See above.
+      'latency' => 0.5,      // Set read-only slave sync latency in seconds.
+                             // When 'latency' seconds have lapsed after an update to a table
+                             // it is deemed safe to use readonly slave for reading from the table.
+                             // It is optional. If omitted once written to a table it will always
+                             // use master handle for reading.
+                             // Lower values increase the performance, but setting it too low means
+                             // missing the master-slave sync.
+      'exclude_tables' => [  // Tables to exclude from read-only slave feature.
+          'table1',          // Should not be used, unless in rare cases when some area of the system
+          'table2',          // is malfunctioning and you still want to use readonly feature.
+      ],                     // Then one can exclude offending tables while investigating.
+
+    More info available in lib/dml/moodle_read_slave_trait.php where the feature is implemented.
+    ]
+     */
+// For all database config settings see https://docs.moodle.org/en/Database_settings
 );
 
 
