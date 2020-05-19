@@ -39,6 +39,92 @@ require_once($CFG->dirroot . '/mod/wiki/parser/parser.php');
 
 class mod_wiki_wikiparser_test extends basic_testcase {
 
+    /**
+     * URL inside the clickable text of some link should not be turned into a new link via the url_tag_rule.
+     *
+     * @dataProvider urls_inside_link_text_provider
+     * @param string $markup Markup of the Wiki page the text is part of.
+     * @param string $input The input text.
+     * @param string $output The expected output HTML as a result of the parsed input text.
+     */
+    public function test_urls_inside_link_text(string $markup, string $input, string $output) {
+
+        $parsingresult = wiki_parser_proxy::parse($input, $markup, [
+            'link_callback' => '/mod/wiki/locallib.php:wiki_parser_link',
+            'link_callback_args' => ['swid' => 1],
+        ]);
+
+        $this->assertContains($output, $parsingresult['parsed_text']);
+    }
+
+    /**
+     * Provides data sets for {@see self::test_urls_inside_link_text()}.
+     *
+     * @return array
+     */
+    public function urls_inside_link_text_provider() {
+        return [
+            'creole implicit link' => [
+                'markup' => 'creole',
+                'input' => 'Visit https://site.url for more information.',
+                'output' => 'Visit <a href="https://site.url">https://site.url</a> for more information.',
+            ],
+            'creole explicit link' => [
+                'markup' => 'creole',
+                'input' => 'Visit [[https://site.url]] for more information.',
+                'output' => 'Visit <a href="https://site.url">https://site.url</a> for more information.',
+            ],
+            'creole explicit link with text' => [
+                'markup' => 'creole',
+                'input' => 'Visit [[https://site.url|http://www.site.url]] for more information.',
+                'output' => 'Visit <a href="https://site.url">http://www.site.url</a> for more information.',
+            ],
+            'nwiki implicit link' => [
+                'markup' => 'nwiki',
+                'input' => 'Visit https://site.url for more information.',
+                'output' => 'Visit <a href="https://site.url">https://site.url</a> for more information.',
+            ],
+            'nwiki explicit link' => [
+                'markup' => 'nwiki',
+                'input' => 'Visit [https://site.url] for more information.',
+                'output' => 'Visit <a href="https://site.url">https://site.url</a> for more information.',
+            ],
+            'nwiki explicit link with space separated text' => [
+                'markup' => 'nwiki',
+                'input' => 'Visit [https://site.url http://www.site.url] for more information.',
+                'output' => 'Visit <a href="https://site.url">http://www.site.url</a> for more information.',
+            ],
+            'nwiki explicit link with pipe separated text' => [
+                'markup' => 'nwiki',
+                'input' => 'Visit [https://site.url|http://www.site.url] for more information.',
+                'output' => 'Visit <a href="https://site.url">http://www.site.url</a> for more information.',
+            ],
+            'html implicit link' => [
+                'markup' => 'html',
+                'input' => 'Visit https://site.url for more information.',
+                'output' => 'Visit <a href="https://site.url">https://site.url</a> for more information.',
+            ],
+            'html explicit link with text' => [
+                'markup' => 'html',
+                'input' => 'Visit <a href="https://site.url">http://www.site.url</a> for more information.',
+                'output' => 'Visit <a href="https://site.url">http://www.site.url</a> for more information.',
+            ],
+            'html wiki link to non-existing page' => [
+                'markup' => 'html',
+                'input' => 'Visit [[Another page]] for more information.',
+                'output' => 'Visit <a class="wiki_newentry" ' .
+                    'href="https://www.example.com/moodle/mod/wiki/create.php?swid=1&amp;title=Another+page&amp;action=new">' .
+                    'Another page</a> for more information.',
+            ],
+            'html wiki link inside an explicit link' => [
+                // The explicit href URL takes precedence here, the [[...]] is not turned into a wiki link.
+                'markup' => 'html',
+                'input' => 'Visit <a href="https://site.url">[[Another page]]</a> for more information.',
+                'output' => 'Visit <a href="https://site.url">[[Another page]]</a> for more information.',
+            ],
+        ];
+    }
+
     function testCreoleMarkup() {
         $this->assertTestFiles('creole');
     }

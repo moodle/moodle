@@ -46,6 +46,15 @@ class html_parser extends nwiki_parser {
         parent::before_parsing();
 
         $this->minheaderlevel = $this->find_min_header_level($this->string);
+
+        // Protect all explicit links from further wiki parsing. The link text may contain another URL which would get
+        // converted into another link via {@see nwiki_parser::$tagrules} 'url' element.
+        if (preg_match_all('/<a\s[^>]+?>(.*?)<\/a>/is', $this->string, $matches)) {
+            foreach (array_unique($matches[0]) as $match) {
+                $this->string = str_replace($match, $this->protect($match), $this->string);
+            }
+        }
+
         $this->rules($this->string);
     }
 
