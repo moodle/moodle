@@ -85,6 +85,16 @@ abstract class content {
         return $this->content->contenttype;
     }
 
+
+    /**
+     * Returns $this->content->timemodified.
+     *
+     * @return int  $this->content->timemodified.
+     */
+    public function get_timemodified(): int {
+        return $this->content->timemodified;
+    }
+
     /**
      * Updates content_bank table with information in $this->content.
      *

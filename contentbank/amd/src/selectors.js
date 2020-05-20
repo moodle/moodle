@@ -37,18 +37,26 @@ const getDataSelector = (name, value) => {
 export default {
     regions: {
         cbcontentname: getDataSelector('region', 'cb-content-name'),
+        contentbank: getDataSelector('region', 'contentbank'),
+        filearea: getDataSelector('region', 'filearea')
     },
     actions: {
         search: getDataSelector('action', 'searchcontent'),
         clearSearch: getDataSelector('action', 'clearsearchcontent'),
+        viewgrid: getDataSelector('action', 'viewgrid'),
+        viewlist: getDataSelector('action', 'viewlist'),
+        sortname: getDataSelector('action', 'sortname'),
+        sortdate: getDataSelector('action', 'sortdate'),
+        sortsize: getDataSelector('action', 'sortsize'),
+        sorttype: getDataSelector('action', 'sorttype')
     },
     elements: {
-        cbfile: '.cb-file',
+        listitem: '.cb-listitem',
         cbnavbarbreadcrumb: '.cb-navbar-breadbrumb',
         cbnavbartotalsearch: '.cb-navbar-totalsearch',
         clearsearch: '.input-group-append .clear-icon',
-        main: '#region-main',
         searchicon: '.input-group-append .search-icon',
         searchinput: '#searchinput',
+        sortbutton: '.cb-btnsort'
     },
 };

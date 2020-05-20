@@ -36,7 +36,7 @@ import {debounce} from 'core/utils';
 export const init = () => {
     const pendingPromise = new Pending();
 
-    const root = $(selectors.elements.main);
+    const root = $(selectors.regions.contentbank);
     registerListenerEvents(root);
 
     pendingPromise.resolve();
@@ -120,10 +120,10 @@ const toggleSearchResultsView = async(body, searchQuery) => {
  * @return {Array}
  */
 const filterContents = (body, searchTerm) => {
-    const contents = Array.from(body.find(selectors.elements.cbfile));
+    const contents = Array.from(body.find(selectors.elements.listitem));
     const searchResults = [];
     contents.forEach((content) => {
-        const contentName = content.getAttribute('data-file');
+        const contentName = content.getAttribute('data-name');
         if (searchTerm === '' || contentName.toLowerCase().includes(searchTerm.toLowerCase())) {
             // The content matches the search criteria so it should be displayed and hightlighted.
             searchResults.push(content);
