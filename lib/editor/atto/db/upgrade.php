@@ -67,5 +67,40 @@ function xmldb_editor_atto_upgrade($oldversion) {
     // Automatically generated Moodle v3.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2020052100) {
+        // The old default toolbar config for 38 and below.
+        $oldtoolbar = 'collapse = collapse
+style1 = title, bold, italic
+list = unorderedlist, orderedlist
+links = link
+files = image, media, recordrtc, managefiles, h5p
+style2 = underline, strike, subscript, superscript
+align = align
+indent = indent
+insert = equation, charmap, table, clear
+undo = undo
+accessibility = accessibilitychecker, accessibilityhelper
+other = html';
+
+        // Check if the current toolbar config matches the old toolbar config.
+        if (get_config('editor_atto', 'toolbar') === $oldtoolbar) {
+            // If the site is still using the old defaults, upgrade to the new default.
+            $newtoolbar = 'collapse = collapse
+style1 = title, bold, italic
+list = unorderedlist, orderedlist, indent
+links = link
+files = emojipicker, image, media, recordrtc, managefiles, h5p
+style2 = underline, strike, subscript, superscript
+align = align
+insert = equation, charmap, table, clear
+undo = undo
+accessibility = accessibilitychecker, accessibilityhelper
+other = html';
+            set_config('toolbar', $newtoolbar, 'editor_atto');
+        }
+
+        upgrade_plugin_savepoint(true, 2020052100, 'editor', 'atto');
+    }
+
     return true;
 }
