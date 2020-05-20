@@ -186,8 +186,10 @@ abstract class contenttype {
      */
     public function get_view_content(content $content): string {
         // Trigger an event for viewing this content.
-        $event = contentbank_content_viewed::create_from_record($record);
+        $event = contentbank_content_viewed::create_from_record($content->get_content());
         $event->trigger();
+
+        return '';
     }
 
     /**
