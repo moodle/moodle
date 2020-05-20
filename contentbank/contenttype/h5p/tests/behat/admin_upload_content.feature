@@ -70,3 +70,23 @@ Feature: H5P file upload to content bank for admins
     And I expand "Site pages" node
     And I click on "Content bank" "link"
     And I should not see "filltheblanks.h5p"
+
+  Scenario: Admins can upload and deployed content types when libraries are not installed
+    Given I navigate to "H5P > Manage H5P content types" in site administration
+    And I should not see "Fill in the Blanks"
+    And I follow "Dashboard" in the user menu
+    And I expand "Site pages" node
+    And I click on "Content bank" "link"
+    And I should not see "filltheblanks.h5p"
+    When I click on "Upload" "link"
+    And I click on "Choose a file..." "button"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
+    And I click on "filltheblanks.h5p" "link"
+    And I click on "Select this file" "button"
+    And I click on "Save changes" "button"
+    And I switch to "h5p-player" class iframe
+    And I switch to "h5p-iframe" class iframe
+    Then I should see "Of which countries"
+    And I switch to the main frame
+    And I navigate to "H5P > Manage H5P content types" in site administration
+    And I should see "Fill in the Blanks"
