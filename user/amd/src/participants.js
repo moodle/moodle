@@ -59,7 +59,8 @@ export const init = ({
     const registerEventListeners = () => {
         CustomEvents.define(Selectors.bulkActionSelect, [CustomEvents.events.accessibleChange]);
         jQuery(Selectors.bulkActionSelect).on(CustomEvents.events.accessibleChange, e => {
-            const action = e.target.value;
+            const bulkActionSelect = e.target.closest('select');
+            const action = bulkActionSelect.value;
             const tableRoot = getTableFromUniqueId(uniqueid);
             const checkboxes = tableRoot.querySelectorAll(Selectors.bulkUserSelectedCheckBoxes);
 
@@ -88,8 +89,7 @@ export const init = ({
                     .then(modal => {
                         modal.getRoot().on(ModalEvents.hidden, () => {
                             // Focus on the action select when the dialog is closed.
-                            const bulkActionSelector = root.querySelector(Selectors.bulkActionSelect);
-                            bulkActionSelector.focus();
+                            bulkActionSelect.focus();
                         });
 
                         return modal;
@@ -97,10 +97,10 @@ export const init = ({
                     .catch(Notification.exception);
                 }
             } else if (action !== '' && checkboxes.length) {
-                e.target.form.submit();
+                bulkActionSelect.form.submit();
             }
 
-            resetBulkAction(e.target);
+            resetBulkAction(bulkActionSelect);
         });
 
         root.addEventListener('click', e => {
