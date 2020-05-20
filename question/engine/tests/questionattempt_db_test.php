@@ -66,7 +66,7 @@ class question_attempt_db_test extends data_loading_method_test_base {
         $qa = question_attempt::load_from_records($records, 1, new question_usage_null_observer(), 'deferredfeedback');
         question_bank::end_unit_test();
 
-        $this->assertEquals($question->questiontext, $qa->get_question()->questiontext);
+        $this->assertEquals($question->questiontext, $qa->get_question(false)->questiontext);
 
         $this->assertEquals(6, $qa->get_num_steps());
 
@@ -129,7 +129,7 @@ class question_attempt_db_test extends data_loading_method_test_base {
         question_bank::end_unit_test();
 
         $missingq = question_bank::get_qtype('missingtype')->make_deleted_instance(-1, 2);
-        $this->assertEquals($missingq, $qa->get_question());
+        $this->assertEquals($missingq, $qa->get_question(false));
 
         $this->assertEquals(1, $qa->get_num_steps());
 
@@ -162,7 +162,7 @@ class question_attempt_db_test extends data_loading_method_test_base {
         $qa = question_attempt::load_from_records($records, 1, new question_usage_null_observer(), 'deferredfeedback');
         question_bank::end_unit_test();
 
-        $this->assertEquals($question->questiontext, $qa->get_question()->questiontext);
+        $this->assertEquals($question->questiontext, $qa->get_question(false)->questiontext);
 
         $this->assertEquals(4, $qa->get_num_steps());
         $this->assertTrue($qa->has_autosaved_step());
@@ -224,7 +224,7 @@ class question_attempt_db_test extends data_loading_method_test_base {
         $qa = question_attempt::load_from_records($records, 1, $observer, 'deferredfeedback');
         question_bank::end_unit_test();
 
-        $this->assertEquals($question->questiontext, $qa->get_question()->questiontext);
+        $this->assertEquals($question->questiontext, $qa->get_question(false)->questiontext);
 
         $this->assertEquals(3, $qa->get_num_steps());
         $this->assertFalse($qa->has_autosaved_step());

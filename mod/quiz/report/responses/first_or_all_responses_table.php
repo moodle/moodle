@@ -141,7 +141,7 @@ class quiz_first_or_all_responses_table extends quiz_last_responses_table {
      */
     public function get_summary_after_try($tablerow, $slot) {
         $qa = $this->get_question_attempt($tablerow->usageid, $slot);
-        if (!($qa->get_question() instanceof question_manually_gradable)) {
+        if (!($qa->get_question(false) instanceof question_manually_gradable)) {
             // No responses, and we cannot call summarise_response below.
             return null;
         }

@@ -110,7 +110,7 @@ class qtype_missing_test extends question_testcase {
         $output = $qa->render(new question_display_options(), '1');
 
         $this->assertRegExp('/' .
-                preg_quote($qa->get_question()->questiontext, '/') . '/', $output);
+                preg_quote($qa->get_question(false)->questiontext, '/') . '/', $output);
         $this->assertRegExp('/' .
                 preg_quote(get_string('missingqtypewarning', 'qtype_missingtype'), '/') . '/', $output);
         $this->assert(new question_contains_tag_with_attribute(

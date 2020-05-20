@@ -173,7 +173,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
     public function test_regrade_same_steps() {
 
         // Change the question in a minor way and regrade.
-        $this->quba->get_question($this->slot)->answers[14]->fraction = 0.5;
+        $this->quba->get_question($this->slot, false)->answers[14]->fraction = 0.5;
         $this->quba->regrade_all_questions();
 
         // Here, the qa, and all the steps, should be marked as updated.
@@ -205,7 +205,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         // Change the question so that 'toad' is also right, and regrade. This
         // will mean that the try again, and second try states are no longer
         // needed, so they should be dropped.
-        $this->quba->get_question($this->slot)->answers[14]->fraction = 1;
+        $this->quba->get_question($this->slot, false)->answers[14]->fraction = 1;
         $this->quba->regrade_all_questions();
 
         $this->assertEquals(0, count($this->observer->get_attempts_added()));
@@ -253,7 +253,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         $this->quba->process_action($this->slot, array('answer' => 'frog', '-submit' => 1));
         $this->quba->finish_all_questions();
 
-        $this->quba->get_question($this->slot)->answers[14]->fraction = 1;
+        $this->quba->get_question($this->slot, false)->answers[14]->fraction = 1;
         $this->quba->regrade_all_questions();
 
         $this->assertEquals(0, count($this->observer->get_attempts_added()));

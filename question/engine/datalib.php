@@ -118,7 +118,7 @@ class question_engine_data_mapper {
         $record->questionusageid = $qa->get_usage_id();
         $record->slot = $qa->get_slot();
         $record->behaviour = $qa->get_behaviour_name();
-        $record->questionid = $qa->get_question()->id;
+        $record->questionid = $qa->get_question_id();
         $record->variant = $qa->get_variant();
         $record->maxmark = $qa->get_max_mark();
         $record->minfraction = $qa->get_min_fraction();
