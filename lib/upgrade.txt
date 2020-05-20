@@ -71,6 +71,20 @@ information provided here is intended especially for developers.
   - cron_execute_plugin_type()
   - cron_bc_hack_plugin_functions()
   Please, use the Task API instead: https://docs.moodle.org/dev/Task_API
+* Introduce new hooks for plugin developers:
+    - <component>_can_course_category_delete($category)
+    - <component>_can_course_category_delete_move($category, $newcategory)
+  These hooks allow plugin developers greater control over category deletion. Plugin can return false in those
+  functions if category deletion or deletion with content move to the new parent category is not permitted.
+  Both $category and $newcategory params are instances of core_course_category class.
+    - <component>_pre_course_category_delete_move($category, $newcategory)
+  This hook is expanding functionality of existing <component>_pre_course_category_delete hook and allow plugin developers
+  to execute code prior to category deletion when its content is moved to another category.
+  Both $category and $newcategory params are instances of core_course_category class.
+    - <component>_get_course_category_contents($category)
+  This hook allow plugin developers to add information that is displayed on category deletion form. Function should
+  return string, which will be added to the list of category contents shown on the form. $category param is an instance
+  of core_course_category class.
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop
