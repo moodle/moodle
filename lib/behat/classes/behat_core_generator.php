@@ -230,7 +230,12 @@ class behat_core_generator extends behat_generator_base {
                 'datagenerator' => 'setup_backpack_connected',
                 'required' => ['user', 'externalbackpack'],
                 'switchids' => ['user' => 'userid', 'externalbackpack' => 'externalbackpackid']
-            ]
+            ],
+            'last access times' => [
+                'datagenerator' => 'last_access_times',
+                'required' => ['user', 'course', 'lastaccess'],
+                'switchids' => ['user' => 'userid', 'course' => 'courseid'],
+            ],
         ];
     }
 
@@ -950,5 +955,101 @@ class behat_core_generator extends behat_generator_base {
         $backpack->password = '';
         $backpack->externalbackpackid = $data['externalbackpackid'];
         $DB->insert_record('badge_backpack', $backpack);
+    }
+
+    /**
+     * Creates user last access data within given courses.
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_last_access_times(array $data) {
+        global $DB;
+
+        if (!isset($data['userid'])) {
+            throw new Exception('\'last acces times\' requires the field \'user\' to be specified');
+        }
+
+        if (!isset($data['courseid'])) {
+            throw new Exception('\'last acces times\' requires the field \'course\' to be specified');
+        }
+
+        if (!isset($data['lastaccess'])) {
+            throw new Exception('\'last acces times\' requires the field \'lastaccess\' to be specified');
+        }
+
+        $userdata = [];
+        $userdata['old'] = $DB->get_record('user', ['id' => $data['userid']], 'firstaccess, lastaccess, lastlogin, currentlogin');
+        $userdata['new'] = [
+            'firstaccess' => $userdata['old']->firstaccess,
+            'lastaccess' => $userdata['old']->lastaccess,
+            'lastlogin' => $userdata['old']->lastlogin,
+            'currentlogin' => $userdata['old']->currentlogin,
+        ];
+
+        // Check for lastaccess data for this course.
+        $lastaccessdata = [
+            'userid' => $data['userid'],
+            'courseid' => $data['courseid'],
+        ];
+
+        $lastaccessid = $DB->get_field('user_lastaccess', 'id', $lastaccessdata);
+
+        $dbdata = (object) $lastaccessdata;
+        $dbdata->timeaccess = $data['lastaccess'];
+
+        // Set the course last access time.
+        if ($lastaccessid) {
+            $dbdata->id = $lastaccessid;
+            $DB->update_record('user_lastaccess', $dbdata);
+        } else {
+            $DB->insert_record('user_lastaccess', $dbdata);
+        }
+
+        // Store changes to other user access times as needed.
+
+        // Update first access if this is the user's first login, or this access is earlier than their current first access.
+        if (empty($userdata['new']['firstaccess']) ||
+                $userdata['new']['firstaccess'] > $data['lastaccess']) {
+            $userdata['new']['firstaccess'] = $data['lastaccess'];
+        }
+
+        // Update last access if it is the user's most recent access.
+        if (empty($userdata['new']['lastaccess']) ||
+                $userdata['new']['lastaccess'] < $data['lastaccess']) {
+            $userdata['new']['lastaccess'] = $data['lastaccess'];
+        }
+
+        // Update last and current login if it is the user's most recent access.
+        if (empty($userdata['new']['lastlogin']) ||
+                $userdata['new']['lastlogin'] < $data['lastaccess']) {
+            $userdata['new']['lastlogin'] = $data['lastaccess'];
+            $userdata['new']['currentlogin'] = $data['lastaccess'];
+        }
+
+        $updatedata = [];
+
+        if ($userdata['new']['firstaccess'] != $userdata['old']->firstaccess) {
+            $updatedata['firstaccess'] = $userdata['new']['firstaccess'];
+        }
+
+        if ($userdata['new']['lastaccess'] != $userdata['old']->lastaccess) {
+            $updatedata['lastaccess'] = $userdata['new']['lastaccess'];
+        }
+
+        if ($userdata['new']['lastlogin'] != $userdata['old']->lastlogin) {
+            $updatedata['lastlogin'] = $userdata['new']['lastlogin'];
+        }
+
+        if ($userdata['new']['currentlogin'] != $userdata['old']->currentlogin) {
+            $updatedata['currentlogin'] = $userdata['new']['currentlogin'];
+        }
+
+        // Only update user access data if there have been any changes.
+        if (!empty($updatedata)) {
+            $updatedata['id'] = $data['userid'];
+            $updatedata = (object) $updatedata;
+            $DB->update_record('user', $updatedata);
+        }
     }
 }
