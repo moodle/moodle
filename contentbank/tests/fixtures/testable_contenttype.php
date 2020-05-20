@@ -38,19 +38,6 @@ class contenttype extends \core_contentbank\contenttype {
     const CAN_TEST = 'test';
 
     /**
-     * Returns the URL where the content will be visualized.
-     *
-     * @param  content $content The content to delete.
-     * @return string            URL where to visualize the given content.
-     */
-    public function get_view_url(\core_contentbank\content $content): string {
-        $fileurl = $this->get_file_url($content->get_id());
-        $url = $fileurl."?forcedownload=1";
-
-        return $url;
-    }
-
-    /**
      * Returns the HTML code to render the icon for content bank contents.
      *
      * @param  content $content The content to delete.
