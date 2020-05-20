@@ -85,6 +85,7 @@ information provided here is intended especially for developers.
   This hook allow plugin developers to add information that is displayed on category deletion form. Function should
   return string, which will be added to the list of category contents shown on the form. $category param is an instance
   of core_course_category class.
+* Data generator create_user in both unittests and behat now validates user fields and triggers user_created event
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop
