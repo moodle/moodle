@@ -31,16 +31,28 @@ import * as ModalFactory from 'core/modal_factory';
 import {get_string as getString} from 'core/str';
 import Pending from 'core/pending';
 
+// Set up some JS module wide constants that can be added to in the future.
+
+// Tab config options.
+const ALLACTIVITIESRESOURCES = 0;
+const ONLYALL = 1;
+const ACTIVITIESRESOURCES = 2;
+
+// Module types.
+const ACTIVITY = 0;
+const RESOURCE = 1;
+
 /**
  * Set up the activity chooser.
  *
  * @method init
  * @param {Number} courseId Course ID to use later on in fetchModules()
+ * @param {Object} chooserConfig Any PHP config settings that we may need to reference
  */
-export const init = courseId => {
+export const init = (courseId, chooserConfig) => {
     const pendingPromise = new Pending();
 
-    registerListenerEvents(courseId);
+    registerListenerEvents(courseId, chooserConfig);
 
     pendingPromise.resolve();
 };
@@ -50,8 +62,9 @@ export const init = courseId => {
  *
  * @method registerListenerEvents
  * @param {Number} courseId
+ * @param {Object} chooserConfig Any PHP config settings that we may need to reference
  */
-const registerListenerEvents = (courseId) => {
+const registerListenerEvents = (courseId, chooserConfig) => {
     const events = [
         'click',
         CustomEvents.events.activate,
@@ -108,7 +121,7 @@ const registerListenerEvents = (courseId) => {
 
                 bodyPromiseResolver(await Templates.render(
                     'core_course/activitychooser',
-                    templateDataBuilder(builtModuleData)
+                    templateDataBuilder(builtModuleData, chooserConfig)
                 ));
             }
         });
@@ -138,28 +151,57 @@ const sectionIdMapper = (webServiceData, id) => {
  *
  * @method templateDataBuilder
  * @param {Array} data our modules to manipulate into a Templatable object
+ * @param {Object} chooserConfig Any PHP config settings that we may need to reference
  * @return {Object} Our built object ready to render out
  */
-const templateDataBuilder = (data) => {
+const templateDataBuilder = (data, chooserConfig) => {
+    // Setup of various bits and pieces we need to mutate before throwing it to the wolves.
+    let activities = [];
+    let resources = [];
+    let showAll = true;
+    let showActivities = false;
+    let showResources = false;
+
+    // Tab mode can be the following [All, Resources & Activities, All & Activities & Resources].
+    const tabMode = parseInt(chooserConfig.tabmode);
+
     // Filter the incoming data to find favourite & recommended modules.
     const favourites = data.filter(mod => mod.favourite === true);
     const recommended = data.filter(mod => mod.recommended === true);
 
-    // Given the results of the above filters lets figure out what tab to set active.
+    // Both of these modes need Activity & Resource tabs.
+    if ((tabMode === ALLACTIVITIESRESOURCES || tabMode === ACTIVITIESRESOURCES) && tabMode !== ONLYALL) {
+        // Filter the incoming data to find activities then resources.
+        activities = data.filter(mod => mod.archetype === ACTIVITY);
+        resources = data.filter(mod => mod.archetype === RESOURCE);
+        showActivities = true;
+        showResources = true;
 
+        // We want all of the previous information but no 'All' tab.
+        if (tabMode === ACTIVITIESRESOURCES) {
+            showAll = false;
+        }
+    }
+
+    // Given the results of the above filters lets figure out what tab to set active.
     // We have some favourites.
     const favouritesFirst = !!favourites.length;
-    // Check if we have no favourites but have some recommended.
-    const recommendedFirst = !!(recommended.length && favouritesFirst === false);
+    // We are in tabMode 2 without any favourites.
+    const activitiesFirst = showAll === false && favouritesFirst === false;
     // We have nothing fallback to show all modules.
-    const fallback = favouritesFirst === false && recommendedFirst === false;
+    const fallback = showAll === true && favouritesFirst === false;
 
     return {
         'default': data,
+        showAll: showAll,
+        activities: activities,
+        showActivities: showActivities,
+        activitiesFirst: activitiesFirst,
+        resources: resources,
+        showResources: showResources,
         favourites: favourites,
         recommended: recommended,
         favouritesFirst: favouritesFirst,
-        recommendedFirst: recommendedFirst,
         fallback: fallback,
     };
 };
@@ -204,22 +246,22 @@ const nullFavouriteDomManager = (favouriteTabNav, modalBody) => {
         favouriteTabNav.setAttribute('aria-selected', 'false');
         const favouriteTab = modalBody.querySelector(selectors.regions.favouriteTab);
         favouriteTab.classList.remove('active');
-        const recommendedTabNav = modalBody.querySelector(selectors.regions.recommendedTabNav);
         const defaultTabNav = modalBody.querySelector(selectors.regions.defaultTabNav);
-        if (recommendedTabNav.classList.contains('d-none') === false) {
-            recommendedTabNav.classList.add('active');
-            recommendedTabNav.setAttribute('aria-selected', 'true');
-            recommendedTabNav.tabIndex = 0;
-            recommendedTabNav.focus();
-            const recommendedTab = modalBody.querySelector(selectors.regions.recommendedTab);
-            recommendedTab.classList.add('active');
-        } else {
+        const activitiesTabNav = modalBody.querySelector(selectors.regions.activityTabNav);
+        if (defaultTabNav.classList.contains('d-none') === false) {
             defaultTabNav.classList.add('active');
             defaultTabNav.setAttribute('aria-selected', 'true');
             defaultTabNav.tabIndex = 0;
             defaultTabNav.focus();
             const defaultTab = modalBody.querySelector(selectors.regions.defaultTab);
             defaultTab.classList.add('active');
+        } else {
+            activitiesTabNav.classList.add('active');
+            activitiesTabNav.setAttribute('aria-selected', 'true');
+            activitiesTabNav.tabIndex = 0;
+            activitiesTabNav.focus();
+            const activitiesTab = modalBody.querySelector(selectors.regions.activityTab);
+            activitiesTab.classList.add('active');
         }
 
     }

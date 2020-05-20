@@ -158,7 +158,11 @@ class core_course_renderer extends plugin_renderer_base {
             return '';
         }
 
-        $this->page->requires->js_call_amd('core_course/activitychooser', 'init', [$courseid]);
+        // Build an object of config settings that we can then hook into in the Activity Chooser.
+        $chooserconfig = (object) [
+            'tabmode' => get_config('core', 'activitychoosertabmode'),
+        ];
+        $this->page->requires->js_call_amd('core_course/activitychooser', 'init', [$courseid, $chooserconfig]);
 
         return '';
     }

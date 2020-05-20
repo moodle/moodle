@@ -55,20 +55,7 @@
                         >
                             {{#str}} favourites, core {{/str}}
                         </a>
-                        <a class="nav-item nav-link {{#recommendedFirst}}active{{/recommendedFirst}} {{^recommended}}d-none{{/recommended}}"
-                           id="recommended-tab-{{uniqid}}"
-                           data-region="recommended-tab-nav"
-                           data-toggle="tab"
-                           href="#recommended-{{uniqid}}"
-                           role="tab"
-                           aria-label="{{#str}} aria:recommendedtab, core_course {{/str}}"
-                           aria-controls="recommended-{{uniqid}}"
-                           aria-selected="{{#recommendedFirst}}true{{/recommendedFirst}}{{^recommendedFirst}}false{{/recommendedFirst}}"
-                           tabindex="{{#recommendedFirst}}0{{/recommendedFirst}}{{^recommendedFirst}}-1{{/recommendedFirst}}"
-                        >
-                            {{#str}} recommended, core {{/str}}
-                        </a>
-                        <a class="nav-item nav-link {{#fallback}}active{{/fallback}}"
+                        <a class="nav-item nav-link {{#fallback}}active{{/fallback}} {{^showAll}}d-none{{/showAll}}"
                            id="all-tab-{{uniqid}}"
                            data-toggle="tab"
                            data-region="default-tab-nav"
@@ -79,7 +66,46 @@
                            aria-selected="{{#fallback}}true{{/fallback}}{{^fallback}}false{{/fallback}}"
                            tabindex="{{#fallback}}0{{/fallback}}{{^fallback}}-1{{/fallback}}"
                         >
+                            {{#str}} all, core {{/str}}
+                        </a>
+                        <a class="nav-item nav-link {{#activitiesFirst}}active{{/activitiesFirst}} {{^showActivities}}d-none{{/showActivities}}"
+                           id="activity-tab-{{uniqid}}"
+                           data-toggle="tab"
+                           data-region="activity-tab-nav"
+                           href="#activity-{{uniqid}}"
+                           role="tab"
+                           aria-label="{{#str}} activities, core {{/str}}"
+                           aria-controls="activity-{{uniqid}}"
+                           aria-selected="{{#activitiesFirst}}true{{/activitiesFirst}}{{^activitiesFirst}}false{{/activitiesFirst}}"
+                           tabindex="{{#activitiesFirst}}0{{/activitiesFirst}}{{^activitiesFirst}}-1{{/activitiesFirst}}"
+                        >
                             {{#str}} activities, core {{/str}}
+                        </a>
+                        <a class="nav-item nav-link {{^showResources}}d-none{{/showResources}}"
+                           id="resources-tab-{{uniqid}}"
+                           data-toggle="tab"
+                           data-region="resources-tab-nav"
+                           href="#resources-{{uniqid}}"
+                           role="tab"
+                           aria-label="{{#str}} resources, core {{/str}}"
+                           aria-controls="resources-{{uniqid}}"
+                           aria-selected="false"
+                           tabindex="-1"
+                        >
+                            {{#str}} resources, core {{/str}}
+                        </a>
+                        <a class="nav-item nav-link {{^recommended}}d-none{{/recommended}}"
+                           id="recommended-tab-{{uniqid}}"
+                           data-region="recommended-tab-nav"
+                           data-toggle="tab"
+                           href="#recommended-{{uniqid}}"
+                           role="tab"
+                           aria-label="{{#str}} aria:recommendedtab, core_course {{/str}}"
+                           aria-controls="recommended-{{uniqid}}"
+                           aria-selected="false"
+                           tabindex="-1"
+                        >
+                            {{#str}} recommended, core {{/str}}
                         </a>
                     </div>
                     <div class="tab-content" id="tabbed-activities-{{uniqid}}">
@@ -88,18 +114,32 @@
                                 {{>core_course/local/activitychooser/favourites}}
                             </div>
                         </div>
-                        <div class="tab-pane {{#recommendedFirst}}active{{/recommendedFirst}}" id="recommended-{{uniqid}}" data-region="recommended" role="tabpanel" aria-labelledby="recommended-tab-{{uniqid}}">
-                            <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container">
-                                {{#recommended}}
-                                    {{>core_course/local/activitychooser/item}}
-                                {{/recommended}}
-                            </div>
-                        </div>
-                        <div class="tab-pane {{#fallback}}active{{/fallback}}" id="all-{{uniqid}}" data-region="default" role="tabpanel" aria-labelledby="all-tab-{{uniqid}}">
+                        <div class="tab-pane {{#fallback}}active{{/fallback}} {{^showAll}}d-none{{/showAll}}" id="all-{{uniqid}}" data-region="default" role="tabpanel" aria-labelledby="all-tab-{{uniqid}}">
                             <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container">
                                 {{#default}}
                                     {{>core_course/local/activitychooser/item}}
                                 {{/default}}
+                            </div>
+                        </div>
+                        <div class="tab-pane {{#activitiesFirst}}active{{/activitiesFirst}}" id="activity-{{uniqid}}" data-region="activity" role="tabpanel" aria-labelledby="activity-tab-{{uniqid}}">
+                            <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container">
+                                {{#activities}}
+                                    {{>core_course/local/activitychooser/item}}
+                                {{/activities}}
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="resources-{{uniqid}}" data-region="resources" role="tabpanel" aria-labelledby="resources-tab-{{uniqid}}">
+                            <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container">
+                                {{#resources}}
+                                    {{>core_course/local/activitychooser/item}}
+                                {{/resources}}
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="recommended-{{uniqid}}" data-region="recommended" role="tabpanel" aria-labelledby="recommended-tab-{{uniqid}}">
+                            <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container">
+                                {{#recommended}}
+                                    {{>core_course/local/activitychooser/item}}
+                                {{/recommended}}
                             </div>
                         </div>
                     </div>
