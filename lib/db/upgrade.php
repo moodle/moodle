@@ -2338,5 +2338,59 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020051900.01);
     }
 
+    if ($oldversion < 2020052000.00) {
+        // Define table badge_backpack_oauth2 to be created.
+        $table = new xmldb_table('badge_backpack_oauth2');
+
+        // Adding fields to table badge_backpack_oauth2.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('issuerid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('externalbackpackid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('token', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('refreshtoken', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('expires', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('scope', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        // Adding keys to table badge_backpack_oauth2.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+        $table->add_key('issuerid', XMLDB_KEY_FOREIGN, ['issuerid'], 'oauth2_issuer', ['id']);
+        $table->add_key('externalbackpackid', XMLDB_KEY_FOREIGN, ['externalbackpackid'], 'badge_external_backpack', ['id']);
+        // Conditionally launch create table for badge_backpack_oauth2.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define field oauth2_issuerid to be added to badge_external_backpack.
+        $tablebadgeexternalbackpack = new xmldb_table('badge_external_backpack');
+        $fieldoauth2issuerid = new xmldb_field('oauth2_issuerid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'password');
+        $keybackpackoauth2key = new xmldb_key('backpackoauth2key', XMLDB_KEY_FOREIGN, ['oauth2_issuerid'], 'oauth2_issuer', ['id']);
+
+        // Conditionally launch add field oauth2_issuerid.
+        if (!$dbman->field_exists($tablebadgeexternalbackpack, $fieldoauth2issuerid)) {
+            $dbman->add_field($tablebadgeexternalbackpack, $fieldoauth2issuerid);
+
+            // Launch add key backpackoauth2key.
+            $dbman->add_key($tablebadgeexternalbackpack, $keybackpackoauth2key);
+        }
+
+        // Define field assertion to be added to badge_external.
+        $tablebadgeexternal = new xmldb_table('badge_external');
+        $fieldassertion = new xmldb_field('assertion', XMLDB_TYPE_TEXT, null, null, null, null, null, 'entityid');
+
+        // Conditionally launch add field assertion.
+        if (!$dbman->field_exists($tablebadgeexternal, $fieldassertion)) {
+            $dbman->add_field($tablebadgeexternal, $fieldassertion);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020052000.00);
+    }
+
     return true;
 }
