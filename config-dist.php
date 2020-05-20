@@ -319,6 +319,8 @@ $CFG->admin = 'admin';
 //      $CFG->session_redis_prefix = ''; // Optional, default is don't set one.
 //      $CFG->session_redis_acquire_lock_timeout = 120;
 //      $CFG->session_redis_lock_expire = 7200;
+//      $CFG->session_redis_lock_retry = 100; // Optional wait between lock attempts in ms, default is 100.
+//                                            // After 5 seconds it will throttle down to once per second.
 //      Use the igbinary serializer instead of the php default one. Note that phpredis must be compiled with
 //      igbinary support to make the setting to work. Also, if you change the serializer you have to flush the database!
 //      $CFG->session_redis_serializer_use_igbinary = false; // Optional, default is PHP builtin serializer.
