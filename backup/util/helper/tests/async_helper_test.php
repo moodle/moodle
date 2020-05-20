@@ -161,6 +161,7 @@ class core_backup_async_helper_testcase extends \core_privacy\tests\provider_tes
         $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id, \backup::FORMAT_MOODLE,
             \backup::INTERACTIVE_NO, \backup::MODE_COPY, $USER->id, \backup::RELEASESESSION_YES);
         $backupid = $bc->get_backupid();
+        $bc->destroy();
         $copyrec = \async_helper::get_backup_record($backupid);
 
         $this->assertEquals($backupid, $copyrec->backupid);
@@ -185,8 +186,9 @@ class core_backup_async_helper_testcase extends \core_privacy\tests\provider_tes
         $this->assertFalse($ispending);
 
         // Create the initial backupcontoller.
-        new \backup_controller(\backup::TYPE_1COURSE, $course->id, \backup::FORMAT_MOODLE,
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id, \backup::FORMAT_MOODLE,
             \backup::INTERACTIVE_NO, \backup::MODE_ASYNC, $USER->id, \backup::RELEASESESSION_YES);
+        $bc->destroy();
         $ispending = async_helper::is_async_pending($course->id, 'course', 'backup');
 
         // Should be false as there as async backup is false.
@@ -215,8 +217,9 @@ class core_backup_async_helper_testcase extends \core_privacy\tests\provider_tes
         $this->assertFalse($ispending);
 
         // Create the initial backupcontoller.
-        new \backup_controller(\backup::TYPE_1COURSE, $course->id, \backup::FORMAT_MOODLE,
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id, \backup::FORMAT_MOODLE,
             \backup::INTERACTIVE_NO, \backup::MODE_COPY, $USER->id, \backup::RELEASESESSION_YES);
+        $bc->destroy();
         $ispending = async_helper::is_async_pending($course->id, 'course', 'backup');
 
         // Should be True as this a copy operation.
