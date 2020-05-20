@@ -277,6 +277,13 @@ function edit_module_post_actions($moduleinfo, $course) {
             if ($update) {
                 $item->update();
             }
+
+            if (!empty($moduleinfo->add)) {
+                $gradecategory = $item->get_parent_category();
+                if ($item->set_aggregation_fields_for_aggregation(0, $gradecategory->aggregation)) {
+                    $item->update();
+                }
+            }
         }
     }
 
@@ -298,8 +305,8 @@ function edit_module_post_actions($moduleinfo, $course) {
 
             if (property_exists($moduleinfo, $elname) and $moduleinfo->$elname) {
                 // Check if this is a new outcome grade item.
+                $outcomeexists = false;
                 if ($items) {
-                    $outcomeexists = false;
                     foreach($items as $item) {
                         if ($item->outcomeid == $outcome->id) {
                             $outcomeexists = true;
@@ -332,6 +339,13 @@ function edit_module_post_actions($moduleinfo, $course) {
                     $outcomeitem->move_after_sortorder($item->sortorder);
                 } else if (isset($moduleinfo->gradecat)) {
                     $outcomeitem->set_parent($moduleinfo->gradecat);
+                }
+
+                if (!$outcomeexists) {
+                    $gradecategory = $outcomeitem->get_parent_category();
+                    if ($outcomeitem->set_aggregation_fields_for_aggregation(0, $gradecategory->aggregation)) {
+                        $outcomeitem->update();
+                    }
                 }
             }
         }
