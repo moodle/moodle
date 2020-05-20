@@ -53,10 +53,12 @@
                title={{#quote}}{{{name}}}{{/quote}}
                aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{name}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'
             ><h6 class="event-name text-truncate mb-0">{{#quote}}{{{name}}}{{/quote}}</h6></a>
+            {{#course.fullnamedisplay}}
             <small class="text-muted text-truncate mb-0">{{#quote}}{{{course.fullnamedisplay}}}{{/quote}}</small>
+            {{/course.fullnamedisplay}}
             {{#action.actionable}}
             <h6 class="mb-0 pt-2">
-                <a href="{{{action.url}}}" aria-label="{{{action.name}}}" title="{{{action.name}}}" class="list-group-item-action">{{{action.name}}}</a>
+                <a href="{{action.url}}" aria-label="{{action.name}}" title="{{action.name}}" class="list-group-item-action">{{{action.name}}}</a>
                 {{#action.showitemcount}}
                 <span class="badge badge-secondary">{{action.itemcount}}</span>
                 {{/action.showitemcount}}

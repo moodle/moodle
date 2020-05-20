@@ -205,7 +205,8 @@ class core_calendar_repeat_event_collection_event_test_factory implements event_
             ),
             !empty($dbrow->visible),
             new std_proxy($dbrow->subscriptionid, $identity),
-            $dbrow->location
+            $dbrow->location,
+            $dbrow->component
         );
     }
 }

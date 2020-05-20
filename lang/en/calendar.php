@@ -153,6 +153,7 @@ $string['eventtypecategory'] = 'category';
 $string['eventtypecourse'] = 'course';
 $string['eventtypemodule'] = 'module';
 $string['eventtypegroup'] = 'group';
+$string['eventtypeother'] = 'other';
 $string['eventtypeuser'] = 'user';
 $string['hideeventtype'] = 'Hide {$a} events';
 $string['showeventtype'] = 'Show {$a} events';

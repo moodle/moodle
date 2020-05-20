@@ -288,6 +288,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/nosubcat' => 'fa-plus-square-o',
             'core:i/notifications' => 'fa-bell',
             'core:i/open' => 'fa-folder-open',
+            'core:i/otherevent' => 'fa-calendar',
             'core:i/outcomes' => 'fa-tasks',
             'core:i/payment' => 'fa-money',
             'core:i/permissionlock' => 'fa-lock',

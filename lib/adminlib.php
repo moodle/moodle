@@ -206,6 +206,7 @@ function uninstall_plugin($type, $name) {
 
     // delete calendar events
     $DB->delete_records('event', array('modulename' => $pluginname));
+    $DB->delete_records('event', ['component' => $component]);
 
     // Delete scheduled tasks.
     $DB->delete_records('task_scheduled', array('component' => $component));

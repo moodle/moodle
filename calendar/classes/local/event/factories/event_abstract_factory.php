@@ -133,6 +133,7 @@ abstract class event_abstract_factory implements event_factory_interface {
         $user = null;
         $module = null;
         $subscription = null;
+        $component = null;
 
         if ($dbrow->modulename && $dbrow->instance) {
             $module = new cm_info_proxy($dbrow->modulename, $dbrow->instance, $dbrow->courseid);
@@ -171,6 +172,10 @@ abstract class event_abstract_factory implements event_factory_interface {
             $repeatcollection = null;
         }
 
+        if (!empty($dbrow->component)) {
+            $component = $dbrow->component;
+        }
+
         $event = new event(
             $dbrow->id,
             $dbrow->name,
@@ -190,7 +195,8 @@ abstract class event_abstract_factory implements event_factory_interface {
             ),
             !empty($dbrow->visible),
             $subscription,
-            $dbrow->location
+            $dbrow->location,
+            $component
         );
 
         $isactionevent = !empty($dbrow->type) && $dbrow->type == CALENDAR_EVENT_TYPE_ACTION;

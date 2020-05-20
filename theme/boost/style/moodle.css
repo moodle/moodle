@@ -12451,6 +12451,9 @@ body.h5p-embed .h5pmessages {
 .calendar_event_user {
   background-color: #dce7ec; }
 
+.calendar_event_other {
+  background-color: #ced4da; }
+
 .path-calendar .calendartable {
   width: 100%;
   table-layout: fixed; }
@@ -12535,6 +12538,8 @@ body.h5p-embed .h5pmessages {
             background-color: #fee7ae; }
           .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_user {
             background-color: #dce7ec; }
+          .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_other {
+            background-color: #ced4da; }
     .path-calendar .maincalendar .calendarmonth td {
       height: 5em; }
     .path-calendar .maincalendar .calendarmonth .clickable:hover {
@@ -12564,6 +12569,8 @@ body.h5p-embed .h5pmessages {
     border-color: #fee7ae; }
   .path-calendar .maincalendar .calendar_event_user {
     border-color: #dce7ec; }
+  .path-calendar .maincalendar .calendar_event_other {
+    border-color: #ced4da; }
   .path-calendar .maincalendar .calendartable td,
   .path-calendar .maincalendar .calendartable li {
     padding: 0 4px 4px 4px; }
@@ -12622,6 +12629,11 @@ body.h5p-embed .h5pmessages {
     border-bottom: 1px solid #dce7ec; }
     .block .minicalendar td.duration_user.duration_finish {
       background-color: #dce7ec; }
+  .block .minicalendar td.duration_other {
+    border-top: 1px solid #ced4da;
+    border-bottom: 1px solid #ced4da; }
+    .block .minicalendar td.duration_other.duration_finish {
+      background-color: #ced4da; }
   .block .minicalendar caption {
     font-size: inherit;
     font-weight: inherit;

@@ -52,6 +52,8 @@
     }} data-course-id="{{course.id}}"{{!
     }} data-event-id="{{id}}"{{!
     }} class="event m-t-1"{{!
+    }} data-event-component="{{component}}"{{!
+    }} data-event-eventtype="{{eventtype}}"{{!
     }} data-eventtype-{{normalisedeventtype}}="1"{{!
     }} data-event-title="{{name}}"{{!
     }} data-event-count="{{eventcount}}"{{!
@@ -80,10 +82,17 @@
         <div class="description card-body">
             {{> core_calendar/event_details }}
         </div>
-        {{#isactionevent}}
+        {{#action.actionable}}
+            <div class="card-footer text-right bg-transparent">
+                <a href="{{action.url}}" class="card-link">{{{action.name}}}</a>
+            </div>
+        {{/action.actionable}}
+        {{^action.actionable}}
+            {{#isactionevent}}
             <div class="card-footer text-right bg-transparent">
                 <a href="{{url}}" class="card-link">{{#str}} gotoactivity, core_calendar {{/str}}</a>
             </div>
-        {{/isactionevent}}
+            {{/isactionevent}}
+        {{/action.actionable}}
     </div>
 </div>

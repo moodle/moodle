@@ -51,10 +51,6 @@ class event_exporter extends event_exporter_base {
         $values = parent::define_other_properties();
 
         $values['url'] = ['type' => PARAM_URL];
-        $values['action'] = [
-            'type' => event_action_exporter::read_properties_definition(),
-            'optional' => true,
-        ];
         return $values;
     }
 
@@ -86,7 +82,6 @@ class event_exporter extends event_exporter_base {
         } else if ($event->get_type() == 'course') {
             $url = \course_get_url($this->related['course'] ?: SITEID);
         } else {
-            // TODO MDL-58866 We do not have any way to find urls for events outside of course modules.
             $url = \course_get_url($this->related['course'] ?: SITEID);
         }
         $values['url'] = $url->out(false);
@@ -94,17 +89,6 @@ class event_exporter extends event_exporter_base {
         // Override default formatted time to make sure the date portion of the time is always rendered.
         $legacyevent = container::get_event_mapper()->from_event_to_legacy_event($event);
         $values['formattedtime'] = calendar_format_event_time($legacyevent, time(), null, false);
-
-        if ($event instanceof action_event_interface) {
-            $actionrelated = [
-                'context' => $context,
-                'event' => $event
-            ];
-            $actionexporter = new event_action_exporter($event->get_action(), $actionrelated);
-            $values['action'] = $actionexporter->export($output);
-        }
-
-
 
         return $values;
     }
