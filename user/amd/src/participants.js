@@ -30,6 +30,7 @@ import CustomEvents from 'core/custom_interaction_events';
 import DynamicTableSelectors from 'core_table/local/dynamic/selectors';
 import ModalEvents from 'core/modal_events';
 import Notification from 'core/notification';
+import Pending from 'core/pending';
 import jQuery from 'jquery';
 import {showAddNote, showSendMessage} from 'core_user/local/participants/bulkactions';
 
@@ -63,6 +64,7 @@ export const init = ({
             const action = bulkActionSelect.value;
             const tableRoot = getTableFromUniqueId(uniqueid);
             const checkboxes = tableRoot.querySelectorAll(Selectors.bulkUserSelectedCheckBoxes);
+            const pendingPromise = new Pending('core_user/participants:bulkActionSelect');
 
             if (action.indexOf('#') !== -1) {
                 e.preventDefault();
@@ -85,6 +87,7 @@ export const init = ({
                 }
 
                 if (bulkAction) {
+                    const pendingBulkAction = new Pending('core_user/participants:bulkActionSelected');
                     bulkAction
                     .then(modal => {
                         modal.getRoot().on(ModalEvents.hidden, () => {
@@ -92,6 +95,7 @@ export const init = ({
                             bulkActionSelect.focus();
                         });
 
+                        pendingBulkAction.resolve();
                         return modal;
                     })
                     .catch(Notification.exception);
@@ -101,6 +105,7 @@ export const init = ({
             }
 
             resetBulkAction(bulkActionSelect);
+            pendingPromise.resolve();
         });
 
         root.addEventListener('click', e => {
