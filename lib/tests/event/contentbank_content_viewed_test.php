@@ -47,17 +47,18 @@ class contentbank_content_viewed_testcase extends \advanced_testcase {
     }
 
     /**
-     * Test the content updated event.
+     * Test the content viewed event.
      *
      * @covers ::create_from_record
      */
-    public function test_content_updated() {
+    public function test_content_viewed() {
 
         $this->resetAfterTest();
         $this->setAdminUser();
 
         // Save the system context.
         $systemcontext = \context_system::instance();
+        $contenttype = new \contenttype_testable\contenttype();
 
         // Create a content bank content.
         $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
@@ -66,8 +67,8 @@ class contentbank_content_viewed_testcase extends \advanced_testcase {
 
         // Trigger and capture the content viewed event.
         $sink = $this->redirectEvents();
-        $eventtotrigger = \core\event\contentbank_content_viewed::create_from_record($content->get_content());
-        $eventtotrigger->trigger();
+        $result = $contenttype->get_view_content($content);
+        $this->assertEmpty($result);
 
         $events = $sink->get_events();
         $event = reset($events);
@@ -75,5 +76,6 @@ class contentbank_content_viewed_testcase extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\contentbank_content_viewed', $event);
         $this->assertEquals($systemcontext, $event->get_context());
+        $this->assertEquals($content->get_id(), $event->objectid);
     }
 }
