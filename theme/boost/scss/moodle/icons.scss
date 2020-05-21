@@ -16,7 +16,9 @@ $iconsizes: map-merge((
   2: ($icon-width * .5),
   3: $icon-width,
   4: ($icon-width * 1.5),
-  5: ($icon-width * 3)
+  5: ($icon-width * 2),
+  6: ($icon-width * 2.5),
+  7: ($icon-width * 3)
 ), $iconsizes);
 // stylelint-enable
 

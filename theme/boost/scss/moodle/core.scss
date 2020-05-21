@@ -1545,8 +1545,23 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
  */
 .modchooser .modal-body {
     padding: 0;
-    min-height: 640px;
     overflow-y: auto;
+    min-height: 640px;
+    display: flex;
+    flex-direction: column;
+
+    .searchresultitemscontainer-wrapper {
+        min-height: 495px;
+    }
+
+    .carousel-item.active {
+        display: flex;
+    }
+    .chooser-container {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+    }
 
     .loading-icon {
         opacity: 1;
@@ -1558,7 +1573,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         }
     }
     .carousel-item .loading-icon .icon {
-        margin: 5em auto;
+        margin: 1em auto;
     }
 }
 
@@ -1583,8 +1598,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .modchoosercontainer .searchresultitemscontainer {
     overflow-x: hidden;
     .option {
-        // Six items per line.
-        flex-basis: 16.66%;
+        // 2 items per line.
+        flex-basis: calc(50% - 0.5rem);
         .optionactions {
             .optionaction {
                 cursor: pointer;
@@ -1599,15 +1614,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
                 color: $gray-700;
                 &:hover {
                     text-decoration: none;
-                }
-                .optionicon {
-                    .icon {
-                        margin: 0;
-                        padding: 0;
-                        width: 32px;
-                        height: 32px;
-                        font-size: 32px;
-                    }
                 }
             }
         }
@@ -1638,14 +1644,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     }
 }
 
-@include media-breakpoint-down(lg) {
-    .modchoosercontainer .optionscontainer .option,
-    .modchoosercontainer .searchresultitemscontainer .option {
-        // Five items per line.
-        flex-basis: 20%;
-    }
-}
-
 @include media-breakpoint-down(xs) {
     .path-course-view .modal-dialog.modal-lg,
     .path-course-view .modal-content,
@@ -1657,15 +1655,31 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     .modchoosercontainer,
     .optionscontainer,
     .searchresultitemscontainer {
+        min-height: auto;
         height: 100%;
+        overflow-y: auto;
     }
     .path-course-view .modal-dialog.modal-lg {
         margin: 0;
     }
+    .modchooser .modal-body .searchresultitemscontainer-wrapper {
+        min-height: auto;
+    }
+}
+
+@include media-breakpoint-up(sm) {
     .modchoosercontainer .optionscontainer .option,
     .modchoosercontainer .searchresultitemscontainer .option {
-        // Four items per line.
-        flex-basis: 25%;
+        // Three items per line.
+        flex-basis: calc(33.33% - 0.5rem);
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .modchoosercontainer .optionscontainer .option,
+    .modchoosercontainer .searchresultitemscontainer .option {
+        // Six items per line.
+        flex-basis: calc(16.66% - 0.5rem);
     }
 }
 

@@ -11101,8 +11101,18 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
  */
 .modchooser .modal-body {
   padding: 0;
+  overflow-y: auto;
   min-height: 640px;
-  overflow-y: auto; }
+  display: flex;
+  flex-direction: column; }
+  .modchooser .modal-body .searchresultitemscontainer-wrapper {
+    min-height: 495px; }
+  .modchooser .modal-body .carousel-item.active {
+    display: flex; }
+  .modchooser .modal-body .chooser-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto; }
   .modchooser .modal-body .loading-icon {
     opacity: 1; }
     .modchooser .modal-body .loading-icon .icon {
@@ -11111,7 +11121,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
       height: 1em;
       width: 1em; }
   .modchooser .modal-body .carousel-item .loading-icon .icon {
-    margin: 5em auto; }
+    margin: 1em auto; }
 
 .modchoosercontainer.noscroll {
   overflow-y: hidden; }
@@ -11131,7 +11141,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   overflow-x: hidden; }
   .modchoosercontainer .optionscontainer .option,
   .modchoosercontainer .searchresultitemscontainer .option {
-    flex-basis: 16.66%; }
+    flex-basis: calc(50% - 0.5rem); }
     .modchoosercontainer .optionscontainer .option .optionactions .optionaction,
     .modchoosercontainer .searchresultitemscontainer .option .optionactions .optionaction {
       cursor: pointer;
@@ -11145,13 +11155,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
       .modchoosercontainer .optionscontainer .option .optioninfo a:hover,
       .modchoosercontainer .searchresultitemscontainer .option .optioninfo a:hover {
         text-decoration: none; }
-      .modchoosercontainer .optionscontainer .option .optioninfo a .optionicon .icon,
-      .modchoosercontainer .searchresultitemscontainer .option .optioninfo a .optionicon .icon {
-        margin: 0;
-        padding: 0;
-        width: 32px;
-        height: 32px;
-        font-size: 32px; }
 
 .modchooser .modal-body .optionsummary {
   background-color: #fff;
@@ -11169,11 +11172,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     border-top: 1px solid #dee2e6;
     background: #fff; }
 
-@media (max-width: 1199.98px) {
-  .modchoosercontainer .optionscontainer .option,
-  .modchoosercontainer .searchresultitemscontainer .option {
-    flex-basis: 20%; } }
-
 @media (max-width: 575.98px) {
   .path-course-view .modal-dialog.modal-lg,
   .path-course-view .modal-content,
@@ -11185,12 +11183,23 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   .modchoosercontainer,
   .optionscontainer,
   .searchresultitemscontainer {
-    height: 100%; }
+    min-height: auto;
+    height: 100%;
+    overflow-y: auto; }
   .path-course-view .modal-dialog.modal-lg {
     margin: 0; }
+  .modchooser .modal-body .searchresultitemscontainer-wrapper {
+    min-height: auto; } }
+
+@media (min-width: 576px) {
   .modchoosercontainer .optionscontainer .option,
   .modchoosercontainer .searchresultitemscontainer .option {
-    flex-basis: 25%; } }
+    flex-basis: calc(33.33% - 0.5rem); } }
+
+@media (min-width: 992px) {
+  .modchoosercontainer .optionscontainer .option,
+  .modchoosercontainer .searchresultitemscontainer .option {
+    flex-basis: calc(16.66% - 0.5rem); } }
 
 /* Form element: listing */
 .formlistingradio {
@@ -12026,6 +12035,22 @@ body.h5p-embed .h5pmessages {
   /* stylelint-disable-line declaration-no-important */ }
 
 .icon-size-5 .icon {
+  height: 32px !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 32px !important;
+  /* stylelint-disable-line declaration-no-important */
+  font-size: 32px !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.icon-size-6 .icon {
+  height: 40px !important;
+  /* stylelint-disable-line declaration-no-important */
+  width: 40px !important;
+  /* stylelint-disable-line declaration-no-important */
+  font-size: 40px !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.icon-size-7 .icon {
   height: 48px !important;
   /* stylelint-disable-line declaration-no-important */
   width: 48px !important;
@@ -15327,6 +15352,16 @@ a.ygtvspacer:hover {
       width: 44px !important;
       /* stylelint-disable-line declaration-no-important */ }
     .message-app .btn.btn-link.btn-icon.icon-size-5 {
+      height: 52px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 52px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .message-app .btn.btn-link.btn-icon.icon-size-6 {
+      height: 60px !important;
+      /* stylelint-disable-line declaration-no-important */
+      width: 60px !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .message-app .btn.btn-link.btn-icon.icon-size-7 {
       height: 68px !important;
       /* stylelint-disable-line declaration-no-important */
       width: 68px !important;
@@ -18002,6 +18037,24 @@ p.arrow_button {
     line-height: 24px !important;
     /* stylelint-disable-line declaration-no-important */ }
   .btn.btn-icon.icon-size-5 {
+    height: 52px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 52px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 32px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 32px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .btn.btn-icon.icon-size-6 {
+    height: 60px !important;
+    /* stylelint-disable-line declaration-no-important */
+    width: 60px !important;
+    /* stylelint-disable-line declaration-no-important */
+    font-size: 40px !important;
+    /* stylelint-disable-line declaration-no-important */
+    line-height: 40px !important;
+    /* stylelint-disable-line declaration-no-important */ }
+  .btn.btn-icon.icon-size-7 {
     height: 68px !important;
     /* stylelint-disable-line declaration-no-important */
     width: 68px !important;
