@@ -507,6 +507,18 @@ function(
                 timeFrom
             )
             .then(function(result) {
+                // Prevent older requests from contaminating the current view.
+                if (result.id != viewState.id) {
+                    result.messages = [];
+                    // Purge old conversation cache to prevent messages lose.
+                    if (result.id in stateCache) {
+                        delete stateCache[result.id];
+                    }
+                }
+
+                return result;
+            })
+            .then(function(result) {
                 if (result.messages.length && ignoreList.length) {
                     result.messages = result.messages.filter(function(message) {
                         // Skip any messages in our ignore list.
