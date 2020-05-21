@@ -166,11 +166,11 @@ export const init = participantsRegionId => {
         // Remove the actual filter HTML.
         filterRow.remove();
 
-        // Refresh the table.
-        updateTableFromFilter();
-
         // Update the list of available filter types.
         updateFiltersOptions();
+
+        // Refresh the table.
+        updateTableFromFilter();
 
         // Update filter fieldset legends.
         const filterLegends = await getAvailableFilterLegends();
