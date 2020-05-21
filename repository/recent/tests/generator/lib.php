@@ -44,6 +44,9 @@ class repository_recent_generator extends testing_repository_generator {
         if (!isset($record['recentfilesnumber'])) {
             $record['recentfilesnumber'] = '';
         }
+        if (!isset($record['recentfilestimelimit'])) {
+            $record['recentfilestimelimit'] = '';
+        }
         return $record;
     }
 

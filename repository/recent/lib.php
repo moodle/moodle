@@ -34,7 +34,15 @@ require_once($CFG->dirroot . '/repository/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define('DEFAULT_RECENT_FILES_NUM', 50);
+
+/**
+ * DEFAULT_RECENT_FILES_TIME_LIMIT - default time limit.
+ */
+define('DEFAULT_RECENT_FILES_TIME_LIMIT', 6 * 4 * WEEKSECS);
 class repository_recent extends repository {
+
+    /** @var int only retrieve files within the time limit */
+    protected $timelimit;
 
     /**
      * Initialize recent plugin
@@ -51,6 +59,8 @@ class repository_recent extends repository {
         } else {
             $this->number = $number;
         }
+        $timelimit = get_config('recent', 'recentfilestimelimit');
+        $this->timelimit = (int)$timelimit;
     }
 
     /**
@@ -61,31 +71,47 @@ class repository_recent extends repository {
         return $this->get_listing();
     }
 
-    private function get_recent_files($limitfrom = 0, $limit = DEFAULT_RECENT_FILES_NUM) {
+    /**
+     * Only return files within the time limit
+     *
+     * @param int $limitfrom retrieve the files from
+     * @param int $limit limit number of the files
+     * @param int $timelimit only return files with the time limit
+     * @return array list of recent files
+     */
+    private function get_recent_files($limitfrom = 0, $limit = DEFAULT_RECENT_FILES_NUM, $timelimit = 0) {
         // XXX: get current itemid
         global $USER, $DB, $itemid;
+        $timelimitsql = '';
+        if ($timelimit > 0) {
+            $timelimitsql = "AND timemodified >= :timelimit";
+            $timelimitparam = ['timelimit' => time() - $timelimit];
+        }
         // This SQL will ignore draft files if not owned by current user.
         // Ignore all file references.
-        $sql = 'SELECT files1.*
+        $sql = "SELECT files1.id, files1.contextid, files1.component, files1.filearea,
+                       files1.itemid, files1.filepath, files1.filename, files1.pathnamehash
                   FROM {files} files1
-             LEFT JOIN {files_reference} r
-                       ON files1.referencefileid = r.id
                   JOIN (
                       SELECT contenthash, filename, MAX(id) AS id
                         FROM {files}
                        WHERE userid = :userid
+                         AND referencefileid is NULL
                          AND filename != :filename
                          AND ((filearea = :filearea1 AND itemid = :itemid) OR filearea != :filearea2)
+                         $timelimitsql
                     GROUP BY contenthash, filename
                   ) files2 ON files1.id = files2.id
-                 WHERE r.repositoryid is NULL
-              ORDER BY files1.timemodified DESC';
+              ORDER BY files1.timemodified DESC";
         $params = array(
             'userid' => $USER->id,
             'filename' => '.',
             'filearea1' => 'draft',
             'itemid' => $itemid,
             'filearea2' => 'draft');
+        if (isset($timelimitparam)) {
+            $params = array_merge($params, $timelimitparam);
+        }
         $rs = $DB->get_recordset_sql($sql, $params, $limitfrom, $limit);
         $result = array();
         foreach ($rs as $file_record) {
@@ -116,7 +142,7 @@ class repository_recent extends repository {
         $ret['nosearch'] = true;
         $ret['nologin'] = true;
         $list = array();
-        $files = $this->get_recent_files(0, $this->number);
+        $files = $this->get_recent_files(0, $this->number, $this->timelimit);
 
         try {
             foreach ($files as $file) {
@@ -156,7 +182,7 @@ class repository_recent extends repository {
     }
 
     public static function get_type_option_names() {
-        return array('recentfilesnumber', 'pluginname');
+        return array('recentfilesnumber', 'recentfilestimelimit', 'pluginname');
     }
 
     public static function type_config_form($mform, $classname = 'repository') {
@@ -168,6 +194,11 @@ class repository_recent extends repository {
         $mform->addElement('text', 'recentfilesnumber', get_string('recentfilesnumber', 'repository_recent'));
         $mform->setType('recentfilesnumber', PARAM_INT);
         $mform->setDefault('recentfilesnumber', $number);
+
+        $mform->addElement('duration', 'recentfilestimelimit',
+            get_string('timelimit', 'repository_recent'), ['units' => [DAYSECS, WEEKSECS], 'optional' => true]);
+        $mform->addHelpButton('recentfilestimelimit', 'timelimit', 'repository_recent');
+        $mform->setDefault('recentfilestimelimit', DEFAULT_RECENT_FILES_TIME_LIMIT);
     }
 
     /**
