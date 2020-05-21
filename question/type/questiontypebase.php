@@ -461,7 +461,7 @@ class question_type {
             $event->trigger();
         }
 
-        $transaction->allow_commit ();
+        $transaction->allow_commit();
 
         return $question;
     }
