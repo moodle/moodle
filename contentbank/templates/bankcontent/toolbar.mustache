@@ -38,12 +38,12 @@
         {{#pix}} {{{ icon }}} {{/pix}} {{{ name }}}
     </a>
 {{/tools}}
-<button class="icon-no-margin btn btn-secondary active ml-2"
+<button class="icon-no-margin btn btn-secondary {{^viewlist}}active{{/viewlist}} ml-2"
 title="{{#str}}  displayicons, contentbank  {{/str}}"
 data-action="viewgrid">
     {{#pix}}a/view_icon_active, core, {{#str}} displayicons, contentbank {{/str}} {{/pix}}
 </button>
-<button class="icon-no-margin btn btn-secondary"
+<button class="icon-no-margin btn btn-secondary {{#viewlist}}active{{/viewlist}}"
 title="{{#str}} displaydetails, contentbank {{/str}}"
 data-action="viewlist">
     {{#pix}}t/viewdetails, core, {{#str}} displaydetails, contentbank {{/str}} {{/pix}}

@@ -44,7 +44,8 @@ use context_course;
 class provider implements
     \core_privacy\local\metadata\provider,
     \core_privacy\local\request\core_userlist_provider,
-    \core_privacy\local\request\plugin\provider {
+    \core_privacy\local\request\plugin\provider,
+    \core_privacy\local\request\user_preference_provider {
 
     /**
      * Returns meta data about this system.
@@ -63,6 +64,26 @@ class provider implements
         ], 'privacy:metadata:contentbankcontent');
 
         return $collection;
+    }
+
+    /**
+     * Export all user preferences for the contentbank
+     *
+     * @param int $userid The userid of the user whose data is to be exported.
+     */
+    public static function export_user_preferences(int $userid) {
+        $preference = get_user_preferences('core_contentbank_view_list', null, $userid);
+        if (isset($preference)) {
+            writer::export_user_preference(
+                    'core_contentbank',
+                    'core_contentbank_view_list',
+                    $preference,
+                    get_string('privacy:request:preference:set', 'core_contentbank', (object) [
+                            'name' => 'core_contentbank_view_list',
+                            'value' => $preference,
+                    ])
+            );
+        }
     }
 
     /**

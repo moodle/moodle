@@ -97,6 +97,7 @@ class bankcontent implements renderable, templatable {
                 'type' => $mimetype
             );
         }
+        $data->viewlist = get_user_preferences('core_contentbank_view_list');
         $data->contents = $contentdata;
         $data->tools = $this->toolbar;
         return $data;
