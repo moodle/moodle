@@ -149,7 +149,8 @@ if ($mform->is_cancelled()) {
     // Now, delete the remaining records.
     if (!empty($recordstokeep)) {
         list($select, $params) = $DB->get_in_or_equal($recordstokeep, SQL_PARAMS_QM, 'param', false);
-        $DB->delete_records_select('quiz_slot_tags', "id $select", $params);
+        array_unshift($params, $slot->id);
+        $DB->delete_records_select('quiz_slot_tags', "slotid = ? AND id $select", $params);
     } else {
         $DB->delete_records('quiz_slot_tags', array('slotid' => $slot->id));
     }
