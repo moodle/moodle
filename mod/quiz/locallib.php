@@ -2522,13 +2522,13 @@ function quiz_is_overriden_calendar_event(\calendar_event $event) {
  * has one tag, and the third has zero tags. The return structure will look like:
  * [
  *      1 => [
- *          { ...tag data... },
- *          { ...tag data... },
+ *          quiz_slot_tags.id => { ...tag data... },
+ *          quiz_slot_tags.id => { ...tag data... },
  *      ],
  *      2 => [
- *          { ...tag data... }
+ *          quiz_slot_tags.id => { ...tag data... },
  *      ],
- *      3 => []
+ *      3 => [],
  * ]
  *
  * @param int[] $slotids The list of id for the quiz slots.
@@ -2580,7 +2580,7 @@ function quiz_retrieve_tags_for_slot_ids($slotids) {
                 }
             }
 
-            $carry[$slottag->slotid][] = $slottag;
+            $carry[$slottag->slotid][$slottag->id] = $slottag;
             return $carry;
         },
         $emptytagids
