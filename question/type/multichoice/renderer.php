@@ -138,7 +138,9 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
                 array('class' => 'qtext'));
 
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
-        $result .= html_writer::tag('div', $this->prompt(), array('class' => 'prompt'));
+        if ($question->showstandardinstruction == 1) {
+            $result .= html_writer::tag('div', $this->prompt(), array('class' => 'prompt'));
+        }
 
         $result .= html_writer::start_tag('div', array('class' => 'answer'));
         foreach ($radiobuttons as $key => $radio) {

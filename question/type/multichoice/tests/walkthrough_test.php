@@ -76,6 +76,34 @@ class qtype_multichoice_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 new question_pattern_expectation('/class="r1"/'));
     }
 
+    public function test_deferredfeedback_feedback_multichoice_single_showstandardunstruction_yes() {
+
+        // Create a multichoice, single question.
+        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc->showstandardinstruction = true;
+
+        $this->start_attempt_at_question($mc, 'deferredfeedback', 3);
+        $this->render();
+
+        // Check for 'Show standard instruction'.
+        $standardinstruction = get_string('selectone', 'qtype_multichoice');
+        $this->assertStringContainsString($standardinstruction, $this->currentoutput);
+    }
+
+    public function test_deferredfeedback_feedback_multichoice_single_showstandardunstruction_no() {
+
+        // Create a multichoice, single question.
+        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc->showstandardinstruction = false;
+
+        $this->start_attempt_at_question($mc, 'deferredfeedback', 3);
+        $this->render();
+
+        // Check for 'Show standard instruction'.
+        $standardinstruction = get_string('selectmulti', 'qtype_multichoice');
+        $this->assertStringNotContainsString($standardinstruction, $this->currentoutput);
+    }
+
     public function test_deferredfeedback_feedback_multichoice_multi() {
         // Create a multichoice, multi question.
         $mc = test_question_maker::make_a_multichoice_multi_question();
@@ -97,4 +125,33 @@ class qtype_multichoice_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 new question_pattern_expectation('/class="r0 correct"/'),
                 new question_pattern_expectation('/class="r1"/'));
     }
+
+    public function test_deferredfeedback_feedback_multichoice_multi_showstandardunstruction_yes() {
+
+        // Create a multichoice, multi question.
+        $mc = test_question_maker::make_a_multichoice_multi_question();
+        $mc->showstandardinstruction = true;
+
+        $this->start_attempt_at_question($mc, 'deferredfeedback', 3);
+        $this->render();
+
+        // Check for 'Show standard instruction'.
+        $standardinstruction = get_string('selectmulti', 'qtype_multichoice');
+        $this->assertStringContainsString($standardinstruction, $this->currentoutput);
+    }
+
+    public function test_deferredfeedback_feedback_multichoice_multi_showstandardunstruction_no() {
+
+        // Create a multichoice, multi question.
+        $mc = test_question_maker::make_a_multichoice_multi_question();
+        $mc->showstandardinstruction = false;
+
+        $this->start_attempt_at_question($mc, 'deferredfeedback', 3);
+        $this->render();
+
+        // Check for 'Show standard instruction'.
+        $standardinstruction = get_string('selectmulti', 'qtype_multichoice');
+        $this->assertStringNotContainsString($standardinstruction, $this->currentoutput);
+    }
+
 }

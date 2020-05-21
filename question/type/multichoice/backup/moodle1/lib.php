@@ -62,6 +62,7 @@ class moodle1_qtype_multichoice_handler extends moodle1_qtype_handler {
                 'incorrectfeedback'              => '',
                 'incorrectfeedbackformat'        => FORMAT_HTML,
                 'answernumbering'                => 'abc',
+                'showstandardinstruction'        => 0
             ));
         }
         $this->write_multichoice($data['multichoice'], $data['oldquestiontextformat'], $data['id']);

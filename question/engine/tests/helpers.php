@@ -329,6 +329,7 @@ class test_question_maker {
 
         $mc->shuffleanswers = 1;
         $mc->answernumbering = 'abc';
+        $mc->showstandardinstruction = 0;
 
         $mc->answers = array(
             13 => new question_answer(13, 'A', 1, 'A is right', FORMAT_HTML),
@@ -355,6 +356,7 @@ class test_question_maker {
 
         $mc->shuffleanswers = 1;
         $mc->answernumbering = 'abc';
+        $mc->showstandardinstruction = 0;
 
         self::set_standard_combined_feedback_fields($mc);
 
