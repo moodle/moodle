@@ -55,56 +55,45 @@ class core_h5p_external_testcase extends externallib_advanced_testcase {
      * test_get_trusted_h5p_file description
      */
     public function test_get_trusted_h5p_file() {
-        global $DB;
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
         // This is a valid .H5P file.
         $filename = 'find-the-words.h5p';
-        $path = __DIR__ . '/fixtures/'.$filename;
         $syscontext = \context_system::instance();
-        $filerecord = [
-            'contextid' => $syscontext->id,
-            'component' => \core_h5p\file_storage::COMPONENT,
-            'filearea'  => 'unittest',
-            'itemid'    => 0,
-            'filepath'  => '/',
-            'filename'  => $filename,
-        ];
-        // Load the h5p file into DB.
-        $fs = get_file_storage();
-        $file = $fs->create_file_from_pathname($filerecord, $path);
+
+        // Create a fake export H5P file with normal pluginfile call.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        $deployedfile = $generator->create_export_file($filename,
+            $syscontext->id,
+            \core_h5p\file_storage::COMPONENT,
+            \core_h5p\file_storage::EXPORT_FILEAREA,
+            $generator::PLUGINFILE);
+
         // Make the URL to pass to the WS.
         $url  = \moodle_url::make_pluginfile_url(
             $syscontext->id,
             \core_h5p\file_storage::COMPONENT,
-            'unittest',
+            \core_h5p\file_storage::EXPORT_FILEAREA,
             0,
             '/',
             $filename
         );
+
         // Call the WS.
-        $result = external::get_trusted_h5p_file($url->out(), 0, 0, 0, 0);
+        $result = external::get_trusted_h5p_file($url->out(false), 0, 0, 0, 0);
         $result = external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
         // Expected result: Just 1 record on files and none on warnings.
         $this->assertCount(1, $result['files']);
         $this->assertCount(0, $result['warnings']);
-        // Get the export file in the DB to compare with the ws's results.
-        $fileh5p = $this->get_export_file($filename, $file->get_pathnamehash());
-        $fileh5purl  = \moodle_url::make_pluginfile_url(
-            $syscontext->id,
-            \core_h5p\file_storage::COMPONENT,
-            \core_h5p\file_storage::EXPORT_FILEAREA,
-            '',
-            '',
-            $fileh5p->get_filename()
-        );
-        $this->assertEquals($fileh5p->get_filepath(), $result['files'][0]['filepath']);
-        $this->assertEquals($fileh5p->get_mimetype(), $result['files'][0]['mimetype']);
-        $this->assertEquals($fileh5p->get_filesize(), $result['files'][0]['filesize']);
-        $this->assertEquals($fileh5p->get_timemodified(), $result['files'][0]['timemodified']);
-        $this->assertEquals($fileh5p->get_filename(), $result['files'][0]['filename']);
-        $this->assertEquals($fileh5purl->out(), $result['files'][0]['fileurl']);
+
+        // Check info export file to compare with the ws's results.
+        $this->assertEquals($deployedfile['filepath'], $result['files'][0]['filepath']);
+        $this->assertEquals($deployedfile['mimetype'], $result['files'][0]['mimetype']);
+        $this->assertEquals($deployedfile['filesize'], $result['files'][0]['filesize']);
+        $this->assertEquals($deployedfile['timemodified'], $result['files'][0]['timemodified']);
+        $this->assertEquals($deployedfile['filename'], $result['files'][0]['filename']);
+        $this->assertEquals($deployedfile['fileurl'], $result['files'][0]['fileurl']);
     }
 
     /**
@@ -170,56 +159,41 @@ class core_h5p_external_testcase extends externallib_advanced_testcase {
      * using webservice/pluginfile.php as url param.
      */
     public function test_allow_webservice_pluginfile_in_url_param() {
-        global $DB;
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
         // This is a valid .H5P file.
         $filename = 'find-the-words.h5p';
-        $path = __DIR__ . '/fixtures/'.$filename;
         $syscontext = \context_system::instance();
-        $filerecord = [
-            'contextid' => $syscontext->id,
-            'component' => \core_h5p\file_storage::COMPONENT,
-            'filearea'  => 'unittest',
-            'itemid'    => 0,
-            'filepath'  => '/',
-            'filename'  => $filename,
-        ];
-        // Load the h5p file into DB.
-        $fs = get_file_storage();
-        $file = $fs->create_file_from_pathname($filerecord, $path);
+
+        // Create a fake export H5P file with webservice call.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        $deployedfile = $generator->create_export_file($filename,
+            $syscontext->id,
+            \core_h5p\file_storage::COMPONENT,
+            \core_h5p\file_storage::EXPORT_FILEAREA);
+
         // Make the URL to pass to the WS.
         $url  = \moodle_url::make_webservice_pluginfile_url(
             $syscontext->id,
             \core_h5p\file_storage::COMPONENT,
-            'unittest',
+            \core_h5p\file_storage::EXPORT_FILEAREA,
             0,
             '/',
             $filename
         );
+
         // Call the WS.
         $result = external::get_trusted_h5p_file($url->out(), 0, 0, 0, 0);
         $result = external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
-        // Expected result: Just 1 record on files and none on warnings.
-        $this->assertCount(1, $result['files']);
-        $this->assertCount(0, $result['warnings']);
-        // Get the export file in the DB to compare with the ws's results.
-        $fileh5p = $this->get_export_file($filename, $file->get_pathnamehash());
-        $fileh5purl  = \moodle_url::make_webservice_pluginfile_url(
-            $syscontext->id,
-            \core_h5p\file_storage::COMPONENT,
-            \core_h5p\file_storage::EXPORT_FILEAREA,
-            '',
-            '',
-            $fileh5p->get_filename()
-        );
-        $this->assertEquals($fileh5p->get_filepath(), $result['files'][0]['filepath']);
-        $this->assertEquals($fileh5p->get_mimetype(), $result['files'][0]['mimetype']);
-        $this->assertEquals($fileh5p->get_filesize(), $result['files'][0]['filesize']);
-        $this->assertEquals($fileh5p->get_timemodified(), $result['files'][0]['timemodified']);
-        $this->assertEquals($fileh5p->get_filename(), $result['files'][0]['filename']);
-        $this->assertEquals($fileh5purl->out(), $result['files'][0]['fileurl']);
+
+        // Check info export file to compare with the ws's results.
+        $this->assertEquals($deployedfile['filepath'], $result['files'][0]['filepath']);
+        $this->assertEquals($deployedfile['mimetype'], $result['files'][0]['mimetype']);
+        $this->assertEquals($deployedfile['filesize'], $result['files'][0]['filesize']);
+        $this->assertEquals($deployedfile['timemodified'], $result['files'][0]['timemodified']);
+        $this->assertEquals($deployedfile['filename'], $result['files'][0]['filename']);
+        $this->assertEquals($deployedfile['fileurl'], $result['files'][0]['fileurl']);
     }
 
     /**
@@ -227,83 +201,46 @@ class core_h5p_external_testcase extends externallib_advanced_testcase {
      * using tokenpluginfile.php as url param.
      */
     public function test_allow_tokenluginfile_in_url_param() {
-        global $DB;
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
         // This is a valid .H5P file.
         $filename = 'find-the-words.h5p';
-        $path = __DIR__ . '/fixtures/'.$filename;
         $syscontext = \context_system::instance();
-        $filerecord = [
-            'contextid' => $syscontext->id,
-            'component' => \core_h5p\file_storage::COMPONENT,
-            'filearea'  => 'unittest',
-            'itemid'    => 0,
-            'filepath'  => '/',
-            'filename'  => $filename,
-        ];
-        // Load the h5p file into DB.
-        $fs = get_file_storage();
-        $file = $fs->create_file_from_pathname($filerecord, $path);
+
+        // Create a fake export H5P file with tokenfile call.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        $deployedfile = $generator->create_export_file($filename,
+            $syscontext->id,
+            \core_h5p\file_storage::COMPONENT,
+            \core_h5p\file_storage::EXPORT_FILEAREA,
+            $generator::TOKENPLUGINFILE);
+
         // Make the URL to pass to the WS.
         $url  = \moodle_url::make_pluginfile_url(
             $syscontext->id,
             \core_h5p\file_storage::COMPONENT,
-            'unittest',
+            \core_h5p\file_storage::EXPORT_FILEAREA,
             0,
             '/',
             $filename,
             false,
             true
         );
+
         // Call the WS.
-        $result = external::get_trusted_h5p_file($url->out(), 0, 0, 0, 0);
+        $result = external::get_trusted_h5p_file($url->out(false), 0, 0, 0, 0);
         $result = external_api::clean_returnvalue(external::get_trusted_h5p_file_returns(), $result);
         // Expected result: Just 1 record on files and none on warnings.
         $this->assertCount(1, $result['files']);
         $this->assertCount(0, $result['warnings']);
-        // Get the export file in the DB to compare with the ws's results.
-        $fileh5p = $this->get_export_file($filename, $file->get_pathnamehash());
-        $fileh5purl  = \moodle_url::make_pluginfile_url(
-            $syscontext->id,
-            \core_h5p\file_storage::COMPONENT,
-            \core_h5p\file_storage::EXPORT_FILEAREA,
-            '',
-            '',
-            $fileh5p->get_filename(),
-            false,
-            true
-        );
-        $this->assertEquals($fileh5p->get_filepath(), $result['files'][0]['filepath']);
-        $this->assertEquals($fileh5p->get_mimetype(), $result['files'][0]['mimetype']);
-        $this->assertEquals($fileh5p->get_filesize(), $result['files'][0]['filesize']);
-        $this->assertEquals($fileh5p->get_timemodified(), $result['files'][0]['timemodified']);
-        $this->assertEquals($fileh5p->get_filename(), $result['files'][0]['filename']);
-        $this->assertEquals($fileh5purl->out(), $result['files'][0]['fileurl']);
-    }
 
-    /**
-     * Get the H5P export file.
-     *
-     * @param string $filename
-     * @param string $pathnamehash
-     * @return stored_file
-     */
-    protected function get_export_file($filename, $pathnamehash) {
-        global $DB;
-
-        // Simulate the filenameexport using slug as H5P does.
-        $id = $DB->get_field('h5p', 'id', ['pathnamehash' => $pathnamehash]);
-        $filenameexport = basename($filename, '.h5p').'-'.$id.'-'.$id.'.h5p';
-        $syscontext = \context_system::instance();
-        $fs = get_file_storage();
-        $fileh5p = $fs->get_file($syscontext->id,
-            \core_h5p\file_storage::COMPONENT,
-            \core_h5p\file_storage::EXPORT_FILEAREA,
-            0,
-            '/',
-            $filenameexport);
-        return $fileh5p;
+        // Check info export file to compare with the ws's results.
+        $this->assertEquals($deployedfile['filepath'], $result['files'][0]['filepath']);
+        $this->assertEquals($deployedfile['mimetype'], $result['files'][0]['mimetype']);
+        $this->assertEquals($deployedfile['filesize'], $result['files'][0]['filesize']);
+        $this->assertEquals($deployedfile['timemodified'], $result['files'][0]['timemodified']);
+        $this->assertEquals($deployedfile['filename'], $result['files'][0]['filename']);
+        $this->assertEquals($deployedfile['fileurl'], $result['files'][0]['fileurl']);
     }
 }

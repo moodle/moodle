@@ -25,6 +25,8 @@
 
 use core_h5p\local\library\autoloader;
 use core_h5p\core;
+use core_h5p\player;
+use core_h5p\factory;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,6 +39,13 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_h5p_generator extends \component_generator_base {
+
+    /** Url pointing to webservice plugin file. */
+    public const WSPLUGINFILE = 0;
+    /** Url pointing to token plugin file. */
+    public const TOKENPLUGINFILE = 1;
+    /** Url pointing to plugin file. */
+    public const PLUGINFILE = 2;
 
     /**
      * Convenience function to create a file.
@@ -427,5 +436,122 @@ class core_h5p_generator extends \component_generator_base {
 
         $fs = new file_storage();
         return $fs->create_file_from_string($filerecord, $content);
+    }
+
+    /**
+     * Create a fake export H5P deployed file.
+     *
+     * @param string $filename Name of the H5P file to deploy.
+     * @param int $contextid Context id of the H5P activity.
+     * @param string $component component.
+     * @param string $filearea file area.
+     * @param int $typeurl Type of url to create the export url plugin file.
+     * @return array return deployed file information.
+     */
+    public function create_export_file(string $filename, int $contextid,
+        string $component,
+        string $filearea,
+        int $typeurl = self::WSPLUGINFILE): array {
+        global $CFG;
+
+        // We need the autoloader for H5P player.
+        autoloader::register();
+
+        $path = $CFG->dirroot.'/h5p/tests/fixtures/'.$filename;
+        $filerecord = [
+            'contextid' => $contextid,
+            'component' => $component,
+            'filearea'  => $filearea,
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => $filename,
+        ];
+        // Load the h5p file into DB.
+        $fs = get_file_storage();
+        if (!$fs->get_file($contextid, $component, $filearea, $filerecord['itemid'], $filerecord['filepath'], $filename)) {
+            $fs->create_file_from_pathname($filerecord, $path);
+        }
+
+        // Make the URL to pass to the player.
+        if ($typeurl == self::WSPLUGINFILE) {
+            $url = \moodle_url::make_webservice_pluginfile_url(
+                $filerecord['contextid'],
+                $filerecord['component'],
+                $filerecord['filearea'],
+                $filerecord['itemid'],
+                $filerecord['filepath'],
+                $filerecord['filename']
+            );
+        } else {
+            $includetoken = false;
+            if ($typeurl == self::TOKENPLUGINFILE) {
+                $includetoken = true;
+            }
+            $url = \moodle_url::make_pluginfile_url(
+                $filerecord['contextid'],
+                $filerecord['component'],
+                $filerecord['filearea'],
+                $filerecord['itemid'],
+                $filerecord['filepath'],
+                $filerecord['filename'],
+                false,
+                $includetoken
+            );
+        }
+
+        $config = new stdClass();
+        $h5pplayer = new player($url->out(false), $config);
+        // We need to add assets to page to create the export file.
+        $h5pplayer->add_assets_to_page();
+
+        // Call the method. We need the id of the new H5P content.
+        $rc = new \ReflectionClass(player::class);
+        $rcp = $rc->getProperty('h5pid');
+        $rcp->setAccessible(true);
+        $h5pid = $rcp->getValue($h5pplayer);
+
+        // Get the info export file.
+        $factory = new factory();
+        $core = $factory->get_core();
+        $content = $core->loadContent($h5pid);
+        $slug = $content['slug'] ? $content['slug'] . '-' : '';
+        $exportfilename = "{$slug}{$h5pid}.h5p";
+        $fileh5p = $core->fs->get_export_file($exportfilename);
+        $deployedfile = [];
+        $deployedfile['filename'] = $fileh5p->get_filename();
+        $deployedfile['filepath'] = $fileh5p->get_filepath();
+        $deployedfile['mimetype'] = $fileh5p->get_mimetype();
+        $deployedfile['filesize'] = $fileh5p->get_filesize();
+        $deployedfile['timemodified'] = $fileh5p->get_timemodified();
+
+        // Create the url depending the request was made through typeurl.
+        if ($typeurl == self::WSPLUGINFILE) {
+            $url  = \moodle_url::make_webservice_pluginfile_url(
+                $fileh5p->get_contextid(),
+                $fileh5p->get_component(),
+                $fileh5p->get_filearea(),
+                '',
+                '',
+                $fileh5p->get_filename()
+            );
+        } else {
+            $includetoken = false;
+            if ($typeurl == self::TOKENPLUGINFILE) {
+                $includetoken = true;
+            }
+            $url = \moodle_url::make_pluginfile_url(
+                $fileh5p->get_contextid(),
+                $fileh5p->get_component(),
+                $fileh5p->get_filearea(),
+                '',
+                '',
+                $fileh5p->get_filename(),
+                false,
+                $includetoken
+            );
+        }
+        $deployedfile['fileurl'] = $url->out(false);
+
+        return $deployedfile;
     }
 }

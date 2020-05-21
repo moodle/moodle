@@ -502,4 +502,43 @@ class api {
 
         return ($h5p) ? $h5p : null;
     }
+
+    /**
+     * Return the H5P export information file when the file has been deployed.
+     * Otherwise, return null if H5P file:
+     * i) has not been deployed.
+     * ii) has changed the content.
+     *
+     * The information returned will be:
+     * - filename, filepath, mimetype, filesize, timemodified and fileurl.
+     *
+     * @param int $contextid ContextId of the H5P activity.
+     * @param factory $factory The \core_h5p\factory object.
+     * @param string $component component
+     * @param string $filearea file area
+     * @return array|null Return file info otherwise null.
+     */
+    public static function get_export_info_from_context_id(int $contextid,
+        factory $factory,
+        string $component,
+        string $filearea): ?array {
+
+        $core = $factory->get_core();
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($contextid, $component, $filearea, 0, 'id', false);
+        $file = reset($files);
+
+        if ($h5p = self::get_content_from_pathnamehash($file->get_pathnamehash())) {
+            if ($h5p->contenthash == $file->get_contenthash()) {
+                $content = $core->loadContent($h5p->id);
+                $slug = $content['slug'] ? $content['slug'] . '-' : '';
+                $filename = "{$slug}{$content['id']}.h5p";
+                $deployedfile = helper::get_export_info($filename, null, $factory);
+
+                return $deployedfile;
+            }
+        }
+
+        return null;
+    }
 }

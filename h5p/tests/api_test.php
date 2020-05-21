@@ -451,4 +451,56 @@ class api_testcase extends \advanced_testcase {
         api::delete_content_from_pluginfile_url($url->out(), $factory);
         $this->assertEquals(0, $DB->count_records('h5p'));
     }
+
+    /**
+     * Test the behaviour of get_export_info_from_context_id().
+     */
+    public function test_get_export_info_from_context_id(): void {
+        global $DB;
+
+        $this->setRunTestInSeparateProcess(true);
+        $this->resetAfterTest();
+        $factory = new factory();
+
+        // Create the H5P data.
+        $filename = 'find-the-words.h5p';
+        $syscontext = \context_system::instance();
+
+        // Test scenario 1: H5P exists and deployed.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        $fakeexportfile = $generator->create_export_file($filename,
+            $syscontext->id,
+            \core_h5p\file_storage::COMPONENT,
+            \core_h5p\file_storage::EXPORT_FILEAREA);
+
+        $exportfile = api::get_export_info_from_context_id($syscontext->id,
+            $factory,
+            \core_h5p\file_storage::COMPONENT,
+            \core_h5p\file_storage::EXPORT_FILEAREA);
+        $this->assertEquals($fakeexportfile['filename'], $exportfile['filename']);
+        $this->assertEquals($fakeexportfile['filepath'], $exportfile['filepath']);
+        $this->assertEquals($fakeexportfile['filesize'], $exportfile['filesize']);
+        $this->assertEquals($fakeexportfile['timemodified'], $exportfile['timemodified']);
+        $this->assertEquals($fakeexportfile['fileurl'], $exportfile['fileurl']);
+
+        // Test scenario 2: H5P exist, deployed but the content has changed.
+        // We need to change the contenthash to simulate the H5P file was changed.
+        $h5pfile = $DB->get_record('h5p', []);
+        $h5pfile->contenthash = sha1('testedit');
+        $DB->update_record('h5p', $h5pfile);
+        $exportfile = api::get_export_info_from_context_id($syscontext->id,
+            $factory,
+            \core_h5p\file_storage::COMPONENT,
+            \core_h5p\file_storage::EXPORT_FILEAREA);
+        $this->assertNull($exportfile);
+
+        // Tests scenario 3: H5P is not deployed.
+        // We need to delete the H5P record to simulate the H5P was not deployed.
+        $DB->delete_records('h5p', ['id' => $h5pfile->id]);
+        $exportfile = api::get_export_info_from_context_id($syscontext->id,
+            $factory,
+            \core_h5p\file_storage::COMPONENT,
+            \core_h5p\file_storage::EXPORT_FILEAREA);
+        $this->assertNull($exportfile);
+    }
 }
