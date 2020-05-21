@@ -165,7 +165,7 @@ class qtype_random extends question_type {
             if ($categoryname) {
                 $a->category = $categoryname;
             }
-            $a->tags = implode(',', array_map(function($tagname) {
+            $a->tags = implode(', ', array_map(function($tagname) {
                 return explode(',', $tagname)[1];
             }, $tagnames));
         } else {
