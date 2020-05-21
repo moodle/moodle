@@ -739,6 +739,70 @@ class manager_testcase extends \advanced_testcase {
     }
 
     /**
+     * Test get_attempt method.
+     *
+     * @dataProvider get_attempt_data
+     * @param string $attemptname the attempt to use
+     * @param string|null $result the expected attempt ID or null for none
+     */
+    public function test_get_attempt(string $attemptname, ?string $result): void {
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
+        $cm = get_coursemodule_from_id('h5pactivity', $activity->cmid, 0, false, MUST_EXIST);
+
+        $otheractivity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
+        $othercm = get_coursemodule_from_id('h5pactivity', $otheractivity->cmid, 0, false, MUST_EXIST);
+
+        $manager = manager::create_from_instance($activity);
+
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $attempts = ['inexistent' => 0];
+
+        $this->generate_fake_attempts($activity, $user, 1);
+        $attempt = attempt::last_attempt($user, $cm);
+        $attempts['current'] = $attempt->get_id();
+
+        $this->generate_fake_attempts($otheractivity, $user, 1);
+        $attempt = attempt::last_attempt($user, $othercm);
+        $attempts['other'] = $attempt->get_id();
+
+        $attempt = $manager->get_attempt($attempts[$attemptname]);
+        if ($result === null) {
+            $this->assertNull($attempt);
+        } else {
+            $this->assertEquals($attempts[$attemptname], $attempt->get_id());
+            $this->assertEquals($activity->id, $attempt->get_h5pactivityid());
+            $this->assertEquals($user->id, $attempt->get_userid());
+            $this->assertEquals(4, $attempt->get_attempt());
+        }
+    }
+
+    /**
+     * Data provider for test_get_attempt.
+     *
+     * @return array
+     */
+    public function get_attempt_data(): array {
+        return [
+            'Get the current activity attempt' => [
+                'current', 'current'
+            ],
+            'Try to get another activity attempt' => [
+                'other', null
+            ],
+            'Try to get an inexistent attempt' => [
+                'inexistent', null
+            ],
+        ];
+    }
+
+    /**
      * Insert fake attempt data into h5pactiviyt_attempts.
      *
      * This function insert 4 attempts. 3 of them finished with different gradings
