@@ -2764,10 +2764,10 @@ $functions = array(
         'capabilities'  => '',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
-    'core_table_dynamic_fetch' => [
-        'classname' => 'core_table\external\dynamic\fetch',
+    'core_table_get_dynamic_table_content' => [
+        'classname' => 'core_table\external\dynamic\get',
         'methodname' => 'execute',
-        'description' => 'Fetch a dynamic table view raw html',
+        'description' => 'Get the dynamic table content raw html',
         'type' => 'read',
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],

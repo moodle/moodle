@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for core_table\external\fetch;
+ * Unit tests for core_table\external\dynamic\get;
  *
  * @package   core_table
  * @category  test
@@ -31,14 +31,14 @@ use core_table\local\filter\filter;
 use advanced_testcase;
 
 /**
- * Unit tests for core_table\external\fetch;
+ * Unit tests for core_table\external\dynamic\get;
  *
  * @package   core_table
  * @category  test
  * @copyright  2020 Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class fetch_test extends advanced_testcase {
+class get_test extends advanced_testcase {
 
     /**
      * Setup before class.
@@ -55,7 +55,7 @@ class fetch_test extends advanced_testcase {
         $this->resetAfterTest();
 
         $this->expectException(\invalid_parameter_exception::class);
-        fetch::execute(
+        get::execute(
             "core-user",
             "participants",
             "",
@@ -79,7 +79,7 @@ class fetch_test extends advanced_testcase {
         $this->resetAfterTest();
 
         $this->expectException(\UnexpectedValueException::class);
-        fetch::execute(
+        get::execute(
             "core_users",
             "participants",
             "",
@@ -106,7 +106,7 @@ class fetch_test extends advanced_testcase {
         $this->expectExceptionMessage("Table handler class {$handler} not found. Please make sure that your table handler class is under the \\core_user\\table namespace.");
 
         // Tests that invalid users_participants_table class gets an exception.
-        fetch::execute(
+        get::execute(
             "core_user",
             "users_participants_table",
             "",
@@ -143,7 +143,7 @@ class fetch_test extends advanced_testcase {
         $this->expectExceptionMessage("Invalid parameter value detected (filters => Invalid parameter value detected " .
         "(Missing required key in single structure: name): Missing required key in single structure: name");
 
-        fetch::execute(
+        get::execute(
             "core_user",
             "participants", "user-index-participants-{$course->id}",
             $this->get_sort_array(['firstname' => SORT_ASC]),
@@ -153,9 +153,9 @@ class fetch_test extends advanced_testcase {
     }
 
     /**
-     * Test execute fetch table.
+     * Test execute method.
      */
-    public function test_execute_fetch_table(): void {
+    public function test_table_get_execute(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -176,7 +176,7 @@ class fetch_test extends advanced_testcase {
             ]
         ];
 
-        $participantstable = fetch::execute(
+        $participantstable = get::execute(
             "core_user",
             "participants",
             "user-index-participants-{$course->id}",
