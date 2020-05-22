@@ -37,13 +37,14 @@
         if (has_capability('moodle/grade:manageoutcomes', $context)) {
         ?>
         <td class="p-l-1 p-r-1">
-            <p class="arrow_button">
-                <input name="add" class="btn btn_secondary" id="add" type="submit" value="<?php echo '&nbsp; ' . $OUTPUT->larrow() . ' &nbsp; &nbsp; ' .
+            <div class="m-y-1">
+                <input name="add" class="btn btn-secondary" id="add" type="submit" value="<?php echo $OUTPUT->larrow() . ' ' .
                     get_string('add'); ?>" title="<?php print_string('add'); ?>" />
-                <br />
-                <input name="remove" class="btn btn_secondary" id="remove" type="submit" value="<?php echo '&nbsp;' . get_string('remove') . ' &nbsp; &nbsp; ' .
-                    $OUTPUT->rarrow(); ?>" title="<?php print_string('remove'); ?>" />
-            </p>
+            </div>
+            <div class="m-y-1">
+                <input name="remove" class="btn btn-secondary" id="remove" type="submit" value="<?php echo get_string('remove') .
+                    ' ' . $OUTPUT->rarrow(); ?>" title="<?php print_string('remove'); ?>" />
+            </div>
         </td>
         <?php } ?>
         <td>
