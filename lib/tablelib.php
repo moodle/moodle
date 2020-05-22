@@ -87,14 +87,9 @@ class flexible_table {
     var $is_sortable    = false;
 
     /**
-     * @var string The field name to sort by.
+     * @var array The fields to sort.
      */
-    protected $sortby;
-
-    /**
-     * @var string $sortorder The direction for sorting.
-     */
-    protected $sortorder;
+    protected $sortdata;
 
     /** @var string The manually set first name initial preference */
     protected $ifirst;
@@ -1301,40 +1296,43 @@ class flexible_table {
      * Calculate the preferences for sort order based on user-supplied values and get params.
      */
     protected function set_sorting_preferences(): void {
-        $sortorder = $this->sortorder;
-        $sortby = $this->sortby;
+        $sortdata = $this->sortdata;
 
-        if ($sortorder === null || $sortby === null) {
+        if ($sortdata === null) {
+            $sortdata = $this->prefs['sortby'];
+
             $sortorder = optional_param($this->request[TABLE_VAR_DIR], $this->sort_default_order, PARAM_INT);
             $sortby = optional_param($this->request[TABLE_VAR_SORT], '', PARAM_ALPHANUMEXT);
-        }
 
-        $isvalidsort = $sortby && $this->is_sortable($sortby);
-        $isvalidsort = $isvalidsort && empty($this->prefs['collapse'][$sortby]);
-        $isrealcolumn = isset($this->columns[$sortby]);
-        $isfullnamefield = isset($this->columns['fullname']) && in_array($sortby, get_all_user_name_fields());
-
-        if ($isvalidsort && ($isrealcolumn || $isfullnamefield)) {
-            if (array_key_exists($sortby, $this->prefs['sortby'])) {
+            if (array_key_exists($sortby, $sortdata)) {
                 // This key already exists somewhere. Change its sortorder and bring it to the top.
-                $sortorder = $this->prefs['sortby'][$sortby] = $sortorder;
-                unset($this->prefs['sortby'][$sortby]);
-                $this->prefs['sortby'] = array_merge(array($sortby => $sortorder), $this->prefs['sortby']);
-            } else {
-                // Key doesn't exist, so just add it to the beginning of the array, ascending order.
-                $this->prefs['sortby'] = array_merge(array($sortby => $sortorder), $this->prefs['sortby']);
+                //$sortorder = $sortdata[$sortby] = $sortorder;
+                unset($sortdata['sortby'][$sortby]);
             }
-
-            // Finally, make sure that no more than $this->maxsortkeys are present into the array.
-            $this->prefs['sortby'] = array_slice($this->prefs['sortby'], 0, $this->maxsortkeys);
+            $sortdata = array_merge([$sortby => $sortorder], $sortdata);
         }
+
+        $usernamefields = get_all_user_name_fields();
+        $sortdata = array_filter($sortdata, function($sortby) use ($usernamefields) {
+            $isvalidsort = $sortby && $this->is_sortable($sortby);
+            $isvalidsort = $isvalidsort && empty($this->prefs['collapse'][$sortby]);
+            $isrealcolumn = isset($this->columns[$sortby]);
+            $isfullnamefield = isset($this->columns['fullname']) && in_array($sortby, $usernamefields);
+
+            return $isvalidsort && ($isrealcolumn || $isfullnamefield);
+        }, ARRAY_FILTER_USE_KEY);
+
+        // Finally, make sure that no more than $this->maxsortkeys are present into the array.
+        $sortdata = array_slice($sortdata, 0, $this->maxsortkeys);
 
         // If a default order is defined and it is not in the current list of order by columns, add it at the end.
         // This prevents results from being returned in a random order if the only order by column contains equal values.
-        if (!empty($this->sort_default_column) && !array_key_exists($this->sort_default_column, $this->prefs['sortby'])) {
-            $defaultsort = array($this->sort_default_column => $this->sort_default_order);
-            $this->prefs['sortby'] = array_merge($this->prefs['sortby'], $defaultsort);
+        if (!empty($this->sort_default_column) && !array_key_exists($this->sort_default_column, $sortdata)) {
+            $sortdata = array_merge($sortdata, [$this->sort_default_column => $this->sort_default_order]);
         }
+
+        // Apply the sortdata to the preference.
+        $this->prefs['sortby'] = $sortdata;
     }
 
     /**
@@ -1431,8 +1429,7 @@ class flexible_table {
 
         // Save user preferences if they have changed.
         if ($this->is_resetting_preferences()) {
-            $this->sortorder = null;
-            $this->sortby = null;
+            $this->sortdata = null;
             $this->ifirst = null;
             $this->ilast = null;
         }
@@ -1502,9 +1499,13 @@ class flexible_table {
      * @param string $sortby The field to sort by.
      * @param int $sortorder The sort order.
      */
-    public function set_sorting(string $sortby, int $sortorder): void {
-        $this->sortby = $sortby;
-        $this->sortorder = $sortorder;
+    public function set_sortdata(array $sortdata): void {
+        $this->sortdata = [];
+        foreach ($sortdata as $sortitem) {
+            if (!array_key_exists($sortitem['sortby'], $this->sortdata)) {
+                $this->sortdata[$sortitem['sortby']] = $sortitem['sortorder'];
+            }
+        }
     }
 
     /**
@@ -1643,7 +1644,13 @@ class flexible_table {
      */
     protected function get_dynamic_table_html_start(): string {
         if (is_a($this, \core_table\dynamic::class)) {
-            $sortdata = $this->get_sort_order();
+            $sortdata = array_map(function($sortby, $sortorder) {
+                return [
+                    'sortby' => $sortby,
+                    'sortorder' => $sortorder,
+                ];
+            }, array_keys($this->prefs['sortby']), array_values($this->prefs['sortby']));;
+
             return html_writer::start_tag('div', [
                 'class' => 'table-dynamic position-relative',
                 'data-region' => 'core_table/dynamic',
@@ -1651,8 +1658,7 @@ class flexible_table {
                 'data-table-component' => $this->get_component(),
                 'data-table-uniqueid' => $this->uniqueid,
                 'data-table-filters' => json_encode($this->get_filterset()),
-                'data-table-sort-by' => $sortdata['sortby'],
-                'data-table-sort-order' => $sortdata['sortorder'],
+                'data-table-sort-data' => json_encode($sortdata),
                 'data-table-first-initial' => $this->prefs['i_first'],
                 'data-table-last-initial' => $this->prefs['i_last'],
                 'data-table-page-number' => $this->currpage + 1,

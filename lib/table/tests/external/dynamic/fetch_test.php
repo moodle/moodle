@@ -55,7 +55,21 @@ class fetch_test extends advanced_testcase {
         $this->resetAfterTest();
 
         $this->expectException(\invalid_parameter_exception::class);
-        fetch::execute("core-user", "participants", "", "email", "4", [], "1");
+        fetch::execute(
+            "core-user",
+            "participants",
+            "",
+            $this->get_sort_array(['email' => SORT_ASC]),
+            [],
+            (string) filter::JOINTYPE_ANY,
+            null,
+            null,
+            null,
+            null,
+            [],
+            null
+
+        );
     }
 
     /**
@@ -65,8 +79,20 @@ class fetch_test extends advanced_testcase {
         $this->resetAfterTest();
 
         $this->expectException(\UnexpectedValueException::class);
-        fetch::execute("core_users", "participants", "", "email", "4", [], (string)filter::JOINTYPE_ANY,
-            null, null, null, null, []);
+        fetch::execute(
+            "core_users",
+            "participants",
+            "",
+            $this->get_sort_array(['email' => SORT_ASC]),
+            [],
+            (string) filter::JOINTYPE_ANY,
+            null,
+            null,
+            null,
+            null,
+            [],
+            null
+        );
     }
 
     /**
@@ -80,8 +106,21 @@ class fetch_test extends advanced_testcase {
         $this->expectExceptionMessage("Table handler class {$handler} not found. Please make sure that your table handler class is under the \\core_user\\table namespace.");
 
         // Tests that invalid users_participants_table class gets an exception.
-        fetch::execute("core_user", "users_participants_table", "", "email", "4", [], (string)filter::JOINTYPE_ANY,
-            null, null, null, null, []);
+        fetch::execute(
+            "core_user",
+            "users_participants_table",
+            "",
+            $this->get_sort_array(['email' => SORT_ASC]),
+            [],
+            (string) filter::JOINTYPE_ANY,
+            null,
+            null,
+            null,
+            null,
+            [],
+            null
+
+        );
     }
 
     /**
@@ -97,15 +136,20 @@ class fetch_test extends advanced_testcase {
             [
                 'fullname' => 'courseid',
                 'jointype' => filter::JOINTYPE_ANY,
-                'values' => [(int)$course->id]
+                'values' => [(int) $course->id]
             ]
         ];
         $this->expectException(\invalid_parameter_exception::class);
         $this->expectExceptionMessage("Invalid parameter value detected (filters => Invalid parameter value detected " .
         "(Missing required key in single structure: name): Missing required key in single structure: name");
 
-        fetch::execute("core_user", "participants", "user-index-participants-{$course->id}",
-        "firstname", "4", $filter, (string)filter::JOINTYPE_ANY);
+        fetch::execute(
+            "core_user",
+            "participants", "user-index-participants-{$course->id}",
+            $this->get_sort_array(['firstname' => SORT_ASC]),
+            $filter,
+            (string) filter::JOINTYPE_ANY
+        );
     }
 
     /**
@@ -122,23 +166,54 @@ class fetch_test extends advanced_testcase {
 
         $this->setUser($teacher);
 
+        $this->get_sort_array(['email' => SORT_ASC]);
+
         $filter = [
             [
                 'name' => 'courseid',
                 'jointype' => filter::JOINTYPE_ANY,
-                'values' => [(int)$course->id]
+                'values' => [(int) $course->id]
             ]
         ];
 
-        $participantstable = fetch::execute("core_user", "participants",
-            "user-index-participants-{$course->id}", "firstname", "4", $filter, (string)filter::JOINTYPE_ANY,
-            null, null, null, null, []);
-
+        $participantstable = fetch::execute(
+            "core_user",
+            "participants",
+            "user-index-participants-{$course->id}",
+            $this->get_sort_array(['firstname' => SORT_ASC]),
+            $filter,
+            (string) filter::JOINTYPE_ANY,
+            null,
+            null,
+            null,
+            null,
+            [],
+            null
+        );
         $html = $participantstable['html'];
 
         $this->assertStringContainsString($user1->email, $html);
         $this->assertStringContainsString($user2->email, $html);
         $this->assertStringContainsString($teacher->email, $html);
         $this->assertStringNotContainsString($user3->email, $html);
+    }
+
+
+    /**
+     * Convert a traditional sort order into a sortorder for the web service.
+     *
+     * @param array $sortdata
+     * @return array
+     */
+    protected function get_sort_array(array $sortdata): array {
+        $newsortorder = [];
+        foreach ($sortdata as $sortby => $sortorder) {
+            $newsortorder[] = [
+                'sortby' => $sortby,
+                'sortorder' => $sortorder,
+            ];
+        }
+
+        return $newsortorder;
     }
 }
