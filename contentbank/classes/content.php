@@ -85,7 +85,6 @@ abstract class content {
         return $this->content->contenttype;
     }
 
-
     /**
      * Returns $this->content->timemodified.
      *

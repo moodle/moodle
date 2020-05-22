@@ -26,7 +26,6 @@ import selectors from 'core_contentbank/selectors';
 import {get_string as getString} from 'core/str';
 import Prefetch from 'core/prefetch';
 
-
 /**
  * Set up the contentbank views.
  *
@@ -38,7 +37,6 @@ export const init = () => {
         'lastmodified', 'size', 'type']);
     registerListenerEvents(contentBank);
 };
-
 
 /**
  * Register contentbank related event listeners.
@@ -187,7 +185,5 @@ const updateSortOrder = (fileArea, itemList, attribute, ascending) => {
             return aa < bb ? 1 : -1;
         }
     });
-    sortList.forEach(function (listItem) {
-        fileArea.appendChild(listItem);
-    });
+    sortList.forEach(listItem => fileArea.appendChild(listItem));
 };
