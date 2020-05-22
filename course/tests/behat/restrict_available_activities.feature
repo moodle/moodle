@@ -39,5 +39,5 @@ Feature: Restrict activities availability
     And I log out
     And I log in as "teacher1"
     When I am on "Course 1" course homepage with editing mode on
-    Then the "Add an activity to section 'Topic 1'" select box should not contain "Chat"
+    Then the "Add a resource to section 'Topic 1'" select box should not contain "Chat"
     Then the "Add an activity to section 'Topic 1'" select box should not contain "Glossary"
