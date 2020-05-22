@@ -212,6 +212,12 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addElement('hidden', 'urlmatchedtypeid', '', array('id' => 'id_urlmatchedtypeid'));
         $mform->setType('urlmatchedtypeid', PARAM_INT);
 
+        $mform->addElement('hidden', 'lineitemresourceid', '', array( 'id' => 'id_lineitemresourceid' ));
+        $mform->setType('lineitemresourceid', PARAM_TEXT);
+
+        $mform->addElement('hidden', 'lineitemtag', '', array( 'id' => 'id_lineitemtag'));
+        $mform->setType('lineitemtag', PARAM_TEXT);
+
         $launchoptions = array();
         $launchoptions[LTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'lti');
         $launchoptions[LTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'lti');
@@ -348,4 +354,18 @@ class mod_lti_mod_form extends moodleform_mod {
         $PAGE->requires->js_init_call('M.mod_lti.editor.init', array(json_encode($jsinfo)), true, $module);
     }
 
+    /**
+     * Sets the current values handled by services in case of update.
+     *
+     * @param object $defaultvalues default values to populate the form with.
+     */
+    public function set_data($defaultvalues) {
+        $services = lti_get_services();
+        if (is_object($defaultvalues)) {
+            foreach ($services as $service) {
+                $service->set_instance_form_values( $defaultvalues );
+            }
+        }
+        parent::set_data($defaultvalues);
+    }
 }

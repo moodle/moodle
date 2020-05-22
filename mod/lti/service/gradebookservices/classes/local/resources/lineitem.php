@@ -170,17 +170,14 @@ class lineitem extends resource_base {
             }
             $item->grademax = grade_floatval($json->scoreMaximum);
         }
-        $resourceid = (isset($json->resourceId)) ? $json->resourceId : '';
-        if ($item->idnumber !== $resourceid) {
-            $updategradeitem = true;
-        }
-        $item->idnumber = $resourceid;
         if ($gbs) {
-            $tag = (isset($json->tag)) ? $json->tag : null;
-            if ($gbs->tag !== $tag) {
+            $resourceid = (isset($json->resourceId)) ? $json->resourceId : '';
+            $tag = (isset($json->tag)) ? $json->tag : '';
+            if ($gbs->tag !== $tag || $gbs->resourceid !== $resourceid) {
                 $upgradegradebookservices = true;
             }
             $gbs->tag = $tag;
+            $gbs->resourceid = $resourceid;
         }
         $ltilinkid = null;
         if (isset($json->resourceLinkId)) {
@@ -259,6 +256,7 @@ class lineitem extends resource_base {
                     'typeid' => $typeid,
                     'baseurl' => $baseurl,
                     'ltilinkid' => $ltilinkid,
+                    'resourceid' => $resourceid,
                     'tag' => $gbs->tag
             ));
         }
