@@ -53,4 +53,13 @@ $functions = [
         'capabilities'  => 'mod/h5pactivity:view',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'mod_h5pactivity_get_results' => [
+        'classname'     => 'mod_h5pactivity\external\get_results',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Return the information needed to list a user attempt results.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/h5pactivity:view',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 ];

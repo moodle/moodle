@@ -417,7 +417,10 @@ class manager {
      */
     public function get_attempt(int $attemptid): ?attempt {
         global $DB;
-        $record = $DB->get_record('h5pactivity_attempts', ['id' => $attemptid]);
+        $record = $DB->get_record('h5pactivity_attempts', [
+            'id' => $attemptid,
+            'h5pactivityid' => $this->instance->id,
+        ]);
         if (!$record) {
             return null;
         }

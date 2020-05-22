@@ -95,4 +95,20 @@ class results implements report {
         $widget = new reportresults($attempt, $this->user, $cm->course);
         echo $OUTPUT->render($widget);
     }
+
+    /**
+     * Get the export data form this report.
+     *
+     * This method is used to render the report in mobile.
+     */
+    public function export_data_for_external(): stdClass {
+        global $PAGE;
+
+        $manager = $this->manager;
+        $attempt = $this->attempt;
+        $cm = $manager->get_coursemodule();
+
+        $widget = new reportresults($attempt, $this->user, $cm->course);
+        return $widget->export_for_template($PAGE->get_renderer('core'));
+    }
 }
