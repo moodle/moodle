@@ -106,8 +106,10 @@ export const init = participantsRegionId => {
      *
      * @param {HTMLElement} filterRow
      * @param {String} filterType
+     * @param {Array} initialFilterValues The initially selected values for the filter
+     * @returns {Filter}
      */
-    const addFilter = async(filterRow, filterType) => {
+    const addFilter = async(filterRow, filterType, initialFilterValues) => {
         // Name the filter on the filter row.
         filterRow.dataset.filterType = filterType;
 
@@ -118,14 +120,17 @@ export const init = participantsRegionId => {
         if (filterDataNode.dataset.filterTypeClass) {
             Filter = await import(filterDataNode.dataset.filterTypeClass);
         }
-        activeFilters[filterType] = new Filter(filterType, filterSet);
+        activeFilters[filterType] = new Filter(filterType, filterSet, initialFilterValues);
 
         // Disable the select.
         const typeField = filterRow.querySelector(Selectors.filter.fields.type);
+        typeField.value = filterType;
         typeField.disabled = 'disabled';
 
         // Update the list of available filter types.
         updateFiltersOptions();
+
+        return activeFilters[filterType];
     };
 
     /**
@@ -248,15 +253,28 @@ export const init = participantsRegionId => {
 
     /**
      * Remove all filters.
+     *
+     * @returns {Promise}
      */
-    const removeAllFilters = async() => {
+    const removeAllFilters = () => {
         const filters = getFilterRegion().querySelectorAll(Selectors.filter.region);
-        filters.forEach((filterRow) => {
-            removeOrReplaceFilterRow(filterRow);
-        });
+        filters.forEach(filterRow => removeOrReplaceFilterRow(filterRow));
 
         // Refresh the table.
-        updateTableFromFilter();
+        return updateTableFromFilter();
+    };
+
+    /**
+     * Remove any empty filters.
+     */
+    const removeEmptyFilters = () => {
+        const filters = getFilterRegion().querySelectorAll(Selectors.filter.region);
+        filters.forEach(filterRow => {
+            const filterType = filterRow.querySelector(Selectors.filter.fields.type);
+            if (!filterType.value) {
+                removeOrReplaceFilterRow(filterRow);
+            }
+        });
     };
 
     /**
@@ -296,6 +314,49 @@ export const init = participantsRegionId => {
         } else {
             filterSet.querySelector(Selectors.filterset.regions.filtermatch).classList.remove('hidden');
         }
+    };
+
+    /**
+     * Set the current filter options based on a provided configuration.
+     *
+     * @param {Object} config
+     * @param {Number} config.jointype
+     * @param {Object} config.filters
+     */
+    const setFilterFromConfig = config => {
+        const filterConfig = Object.entries(config.filters);
+
+        if (!filterConfig.length) {
+            // There are no filters to set from.
+            return;
+        }
+
+        // Set the main join type.
+        filterSet.querySelector(Selectors.filterset.fields.join).value = config.jointype;
+
+        const filterPromises = filterConfig.map(([filterType, filterData]) => {
+            if (filterType === 'courseid') {
+                // The courseid is a special case.
+                return Promise.resolve();
+            }
+
+            const filterValues = filterData.values;
+
+            if (!filterValues.length) {
+                // There are no values for this filter.
+                // Skip it.
+                return Promise.resolve();
+            }
+
+            return addFilterRow().then(([filterRow]) => addFilter(filterRow, filterType, filterValues));
+        });
+
+        Promise.all(filterPromises).then(() => {
+            return removeEmptyFilters();
+        })
+        .then(updateFiltersOptions)
+        .then(updateTableFromFilter)
+        .catch();
     };
 
     /**
@@ -383,4 +444,11 @@ export const init = participantsRegionId => {
     filterSet.querySelector(Selectors.filterset.fields.join).addEventListener('change', e => {
         filterSet.dataset.filterverb = e.target.value;
     });
+
+    const tableRoot = DynamicTable.getTableFromId(filterSet.dataset.tableRegion);
+    const initialFilters = DynamicTable.getFilters(tableRoot);
+    if (initialFilters) {
+        // Apply the initial filter configuration.
+        setFilterFromConfig(initialFilters);
+    }
 };
