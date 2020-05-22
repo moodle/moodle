@@ -102,50 +102,6 @@ class qtype_ddtoimage_base extends question_type {
         }
     }
 
-    public static function constrain_image_size_in_draft_area($draftitemid, $maxwidth, $maxheight) {
-        global $USER;
-        $usercontext = context_user::instance($USER->id);
-        $fs = get_file_storage();
-        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id');
-        if ($draftfiles) {
-            foreach ($draftfiles as $file) {
-                if ($file->is_directory()) {
-                    continue;
-                }
-                $imageinfo = $file->get_imageinfo();
-                $width    = $imageinfo['width'];
-                $height   = $imageinfo['height'];
-                $mimetype = $imageinfo['mimetype'];
-                switch ($mimetype) {
-                    case 'image/jpeg' :
-                        $quality = 80;
-                        break;
-                    case 'image/png' :
-                        $quality = 8;
-                        break;
-                    default :
-                        $quality = null;
-                }
-                $newwidth = min($maxwidth, $width);
-                $newheight = min($maxheight, $height);
-                if ($newwidth != $width || $newheight != $height) {
-                    $newimagefilename = $file->get_filename();
-                    $newimagefilename =
-                        preg_replace('!\.!', "_{$newwidth}x{$newheight}.", $newimagefilename, 1);
-                    $newrecord = new stdClass();
-                    $newrecord->contextid = $usercontext->id;
-                    $newrecord->component = 'user';
-                    $newrecord->filearea  = 'draft';
-                    $newrecord->itemid    = $draftitemid;
-                    $newrecord->filepath  = '/';
-                    $newrecord->filename  = $newimagefilename;
-                    $fs->convert_image($newrecord, $file, $newwidth, $newheight, true, $quality);
-                    $file->delete();
-                }
-            }
-        }
-    }
-
     /**
      * Convert files into text output in the given format.
      * This method is copied from qformat_default as a quick fix, as the method there is

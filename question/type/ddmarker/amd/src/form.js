@@ -355,11 +355,6 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
     var dragDropForm = {
 
         /**
-         * @var {object} with properties width and height.
-         */
-        maxSizes: null, // Object containing maximum sizes for the background image.
-
-        /**
          * @var {object} for interacting with the file pickers.
          */
         fp: null, // Object containing functions associated with the file picker.
@@ -376,11 +371,8 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
 
         /**
          * Initialise the form.
-         *
-         * @param {Object} maxBgimageSize object with two properties width and height.
          */
-        init: function(maxBgimageSize) {
-            dragDropForm.maxSizes = maxBgimageSize;
+        init: function() {
             dragDropForm.fp = dragDropForm.filePickers();
             dragDropForm.noDropZones = dragDropForm.form.getFormValue('nodropzone', []);
             dragDropForm.setupPreviewArea();
@@ -581,24 +573,10 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
          */
         afterPreviewImageLoaded: function() {
             var bgImg = $('fieldset#id_previewareaheader .dropbackground');
-            dragDropForm.constrainImageSize();
             // Place the dropzone area over the background image (adding one to account for the border).
             $('#ddm-dropzone').css('position', 'relative').css('top', (bgImg.height() + 1) * -1);
             $('#ddm-droparea').css('height', bgImg.height() + 20);
             dragDropForm.updateSvgDisplay();
-        },
-
-        /**
-         * Limits the background image display size.
-         */
-        constrainImageSize: function() {
-            var bgImg = $('fieldset#id_previewareaheader .dropbackground');
-            var reduceby = Math.max(bgImg.width() / dragDropForm.maxSizes.width,
-                bgImg.height() / dragDropForm.maxSizes.height);
-            if (reduceby > 1) {
-                bgImg.css('width', Math.floor(bgImg.width() / reduceby));
-            }
-            bgImg.addClass('constrained');
         },
 
         /**
