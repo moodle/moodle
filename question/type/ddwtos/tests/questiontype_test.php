@@ -117,6 +117,31 @@ class qtype_ddwtos_test extends question_testcase {
         $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
+    public function test_save_question() {
+        $this->resetAfterTest();
+
+        $syscontext = context_system::instance();
+        /** @var core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category(['contextid' => $syscontext->id]);
+
+        $fromform = test_question_maker::get_question_form_data('ddwtos', 'missingchoiceno');
+        $fromform->category = $category->id . ',' . $syscontext->id;
+
+        $question = new stdClass();
+        $question->category = $category->id;
+        $question->qtype = 'ddwtos';
+        $question->createdby = 0;
+
+        $this->qtype->save_question($question, $fromform);
+        $q = question_bank::load_question($question->id);
+        // We just want to verify that this does not cause errors,
+        // but also verify some of the outcome.
+        $this->assertEquals('The [[1]] sat on the [[2]].', $q->questiontext);
+        $this->assertEquals([1 => 1, 2 => 1], $q->places);
+        $this->assertEquals([1 => 1, 2 => 2], $q->rightchoices);
+    }
+
     public function test_initialise_question_instance() {
         $qdata = $this->get_test_question_data();
 
