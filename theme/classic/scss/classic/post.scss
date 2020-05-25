@@ -130,6 +130,14 @@
     @include page_layout(20%);
 }
 
+@media print {
+    #page-content .region-main, {
+        max-width: 100% !important; /* stylelint-disable-line declaration-no-important */
+        flex: 0 0 100% !important; /* stylelint-disable-line declaration-no-important */
+        padding: 0 1rem 0 !important; /* stylelint-disable-line declaration-no-important */
+    }
+}
+
 .block_myoverview,
 .block_recentlyaccesseditems {
     .dashboard-card-deck {
