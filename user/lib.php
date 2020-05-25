@@ -1537,41 +1537,68 @@ function user_get_participants($courseid, $groupid = 0, $accesssince, $roleid, $
 }
 
 /**
- * Returns SQL that can be used to limit a query to a period where the user last accessed a course.
+ * Returns SQL that can be used to limit a query to a period where the user last accessed / did not access a course.
  *
- * @param int $accesssince The time since last access
+ * @param int $accesssince The unix timestamp to compare to users' last access
  * @param string $tableprefix
+ * @param bool $haveaccessed Whether to match against users who HAVE accessed since $accesssince (optional)
  * @return string
  */
-function user_get_course_lastaccess_sql($accesssince = null, $tableprefix = 'ul') {
-    if (empty($accesssince)) {
-        return '';
-    }
-
-    if ($accesssince == -1) { // Never.
-        return $tableprefix . '.timeaccess = 0';
-    } else {
-        return $tableprefix . '.timeaccess != 0 AND ' . $tableprefix . '.timeaccess < ' . $accesssince;
-    }
+function user_get_course_lastaccess_sql($accesssince = null, $tableprefix = 'ul', $haveaccessed = false) {
+    return user_get_lastaccess_sql('timeaccess', $accesssince, $tableprefix, $haveaccessed);
 }
 
 /**
- * Returns SQL that can be used to limit a query to a period where the user last accessed the system.
+ * Returns SQL that can be used to limit a query to a period where the user last accessed / did not access the system.
  *
- * @param int $accesssince The time since last access
+ * @param int $accesssince The unix timestamp to compare to users' last access
  * @param string $tableprefix
+ * @param bool $haveaccessed Whether to match against users who HAVE accessed since $accesssince (optional)
  * @return string
  */
-function user_get_user_lastaccess_sql($accesssince = null, $tableprefix = 'u') {
+function user_get_user_lastaccess_sql($accesssince = null, $tableprefix = 'u', $haveaccessed = false) {
+    return user_get_lastaccess_sql('lastaccess', $accesssince, $tableprefix, $haveaccessed);
+}
+
+/**
+ * Returns SQL that can be used to limit a query to a period where the user last accessed or
+ * did not access something recorded by a given table.
+ *
+ * @param string $columnname The name of the access column to check against
+ * @param int $accesssince The unix timestamp to compare to users' last access
+ * @param string $tableprefix The query prefix of the table to check
+ * @param bool $haveaccessed Whether to match against users who HAVE accessed since $accesssince (optional)
+ * @return string
+ */
+function user_get_lastaccess_sql($columnname, $accesssince, $tableprefix, $haveaccessed = false) {
     if (empty($accesssince)) {
         return '';
     }
 
-    if ($accesssince == -1) { // Never.
-        return $tableprefix . '.lastaccess = 0';
+    // Only users who have accessed since $accesssince.
+    if ($haveaccessed) {
+        if ($accesssince == -1) {
+            // Include all users who have logged in at some point.
+            $sql = "({$tableprefix}.{$columnname} IS NOT NULL AND {$tableprefix}.{$columnname} != 0)";
+        } else {
+            // Users who have accessed since the specified time.
+            $sql = "{$tableprefix}.{$columnname} IS NOT NULL AND {$tableprefix}.{$columnname} != 0
+                AND {$tableprefix}.{$columnname} >= {$accesssince}";
+        }
     } else {
-        return $tableprefix . '.lastaccess != 0 AND ' . $tableprefix . '.lastaccess < ' . $accesssince;
+        // Only users who have not accessed since $accesssince.
+
+        if ($accesssince == -1) {
+            // Users who have never accessed.
+            $sql = "({$tableprefix}.{$columnname} IS NULL OR {$tableprefix}.{$columnname} = 0)";
+        } else {
+            // Users who have not accessed since the specified time.
+            $sql = "({$tableprefix}.{$columnname} IS NULL
+                    OR ({$tableprefix}.{$columnname} != 0 AND {$tableprefix}.{$columnname} < {$accesssince}))";
+        }
     }
+
+    return $sql;
 }
 
 /**

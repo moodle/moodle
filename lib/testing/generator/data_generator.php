@@ -1205,4 +1205,26 @@ EOD;
 
         return $user;
     }
+
+    /**
+     * Create a new last access record for a given user in a course.
+     *
+     * @param   \stdClass   $user The user
+     * @param   \stdClass   $course The course the user accessed
+     * @param   int         $timestamp The timestamp for when the user last accessed the course
+     * @return  \stdClass   The user_lastaccess record
+     */
+    public function create_user_course_lastaccess(\stdClass $user, \stdClass $course, int $timestamp): \stdClass {
+        global $DB;
+
+        $record = [
+            'userid' => $user->id,
+            'courseid' => $course->id,
+            'timeaccess' => $timestamp,
+        ];
+
+        $recordid = $DB->insert_record('user_lastaccess', $record);
+
+        return $DB->get_record('user_lastaccess', ['id' => $recordid], '*', MUST_EXIST);
+    }
 }
