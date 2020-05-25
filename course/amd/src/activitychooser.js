@@ -91,13 +91,23 @@ const registerListenerEvents = (courseId, chooserConfig) => {
     events.forEach((event) => {
         document.addEventListener(event, async(e) => {
             if (e.target.closest(selectors.elements.sectionmodchooser)) {
+                let caller;
                 // We need to know who called this.
                 // Standard courses use the ID in the main section info.
                 const sectionDiv = e.target.closest(selectors.elements.section);
                 // Front page courses need some special handling.
                 const button = e.target.closest(selectors.elements.sectionmodchooser);
+
                 // If we don't have a section ID use the fallback ID.
-                const caller = sectionDiv || button;
+                // We always want the sectionDiv caller first as it keeps track of section ID's after DnD changes.
+                // The button attribute is always just a fallback for us as the section div is not always available.
+                // A YUI change could be done maybe to only update the button attribute but we are going for minimal change here.
+                if (sectionDiv !== null && sectionDiv.hasAttribute('data-sectionid')) {
+                    // We check for attributes just in case of outdated contrib course formats.
+                    caller = sectionDiv;
+                } else {
+                    caller = button;
+                }
 
                 // We want to show the modal instantly but loading whilst waiting for our data.
                 let bodyPromiseResolver;
