@@ -634,9 +634,18 @@ class behat_core_generator extends behat_generator_base {
      * We start with test_question_maker::get_question_form_data($data['qtype'], $data['template'])
      * and then overlay the values from any other fields of $data that are set.
      *
+     * There is a special case that allows you to set qtype to 'missingtype'.
+     * This creates an example of broken question, such as you might get if you
+     * install a question type, create some questions of that type, and then
+     * uninstall the question type (which is prevented through the UI but can
+     * still happen). This special lets tests verify that these questions are
+     * handled OK.
+     *
      * @param array $data the row of data from the behat script.
      */
     protected function process_question($data) {
+        global $DB;
+
         if (array_key_exists('questiontext', $data)) {
             $data['questiontext'] = array(
                     'text'   => $data['questiontext'],
@@ -656,7 +665,18 @@ class behat_core_generator extends behat_generator_base {
             $which = $data['template'];
         }
 
-        $this->datagenerator->get_plugin_generator('core_question')->create_question($data['qtype'], $which, $data);
+        $missingtypespecialcase = false;
+        if ($data['qtype'] === 'missingtype') {
+            $data['qtype'] = 'essay'; // Actual type uses here does not matter. We just need any question.
+            $missingtypespecialcase = true;
+        }
+
+        $questiondata = $this->datagenerator->get_plugin_generator('core_question')
+            ->create_question($data['qtype'], $which, $data);
+
+        if ($missingtypespecialcase) {
+            $DB->set_field('question', 'qtype', 'unknownqtype', ['id' => $questiondata->id]);
+        }
     }
 
     /**
