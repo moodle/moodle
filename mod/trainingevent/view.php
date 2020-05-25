@@ -106,13 +106,12 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                   'user' => $USER,
                                                                                   'classroom' => $location,
                                                                                   'event' => $event));
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'User attending',
-                                   'view.php?id='.$event->id,
-                                   $event->name .' '.$USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                                   $cmidinfo->id,
-                                   $USER->id);
+                        // Fire an event for this.
+                        $moodleevent = \mod_trainingevent\event\user_attending::create(array('context' => context_module::instance($id),
+                                                                                             'userid' => $USER->id,
+                                                                                             'objectid' => $event->id,
+                                                                                             'courseid' => $event->course));
+                        $moodleevent->trigger();
                     }
                 }
             } else if ('no' == $attending) {
@@ -127,13 +126,13 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                  'user' => $USER,
                                                                                  'classroom' => $location,
                                                                                  'event' => $event));
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'User removed',
-                                   'view.php?id='.$event->id,
-                                   $event->name .' '.$USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                                   $cmidinfo->id,
-                                   $USER->id);
+                        // Fire an event for this.
+                        $moodleevent = \mod_trainingevent\event\user_removed::create(array('context' => context_module::instance($id),
+                                                                                           'userid' => $USER->id,
+                                                                                           'relateduserid' => $USER->id,
+                                                                                           'objectid' => $event->id,
+                                                                                           'courseid' => $event->course));
+                        $moodleevent->trigger();
                     }
                 }
             }
@@ -175,13 +174,12 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                'event' => $event,
                                                                                'classroom' => $location));
 
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'User seeking approved access',
-                                   'view.php?id='.$event->id,
-                                   $event->name .' '.$USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                                   $cmidinfo->id,
-                                   $USER->id);
+                        // Fire an event for this.
+                        $moodleevent = \mod_trainingevent\event\attendance_requested::create(array('context' => context_module::instance($id),
+                                                                                                   'userid' => $USER->id,
+                                                                                                   'objectid' => $event->id,
+                                                                                                   'courseid' => $event->course));
+                        $moodleevent->trigger();
                     }
                 } else {
                     $userbooking->tm_ok = 0;
@@ -209,25 +207,24 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                            'classroom' => $location,
                                                                            'event' => $event));
 
-                    add_to_log($event->course,
-                               'trainingevent',
-                               'User seeking approved access',
-                               'view.php?id='.$event->id,
-                               $event->name .' '.$USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                               $cmidinfo->id,
-                               $USER->id);
+                    // Fire an event for this.
+                    $moodleevent = \mod_trainingevent\event\attendance_requested::create(array('context' => context_module::instance($id),
+                                                                                               'userid' => $USER->id,
+                                                                                               'objectid' => $event->id,
+                                                                                               'courseid' => $event->course));
+                    $moodleevent->trigger();
                 }
             } else if ( 'no' == $booking) {
                 if ($dereq = (array) $DB->get_record('block_iomad_approve_access', array('activityid' => $event->id,
                                                                                          'userid' => $USER->id))) {
                     $DB->delete_records('block_iomad_approve_access', $dereq);
-                    add_to_log($event->course,
-                               'trainingevent',
-                               'User removed approved access',
-                               'view.php?id='.$event->id,
-                               $event->name .' '.$USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                               $cmidinfo->id,
-                               $USER->id);
+
+                    // Fire an event for this.
+                    $moodleevent = \mod_trainingevent\event\attendance_withdrawn::create(array('context' => context_module::instance($id),
+                                                                                               'userid' => $USER->id,
+                                                                                               'objectid' => $event->id,
+                                                                                               'courseid' => $event->course));
+                    $moodleevent->trigger();
                 }
             }
         }
@@ -273,14 +270,13 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                              'user' => $user,
                                                                              'classroom' => $location,
                                                                              'event' => $event));
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'User moved to another event',
-                                   'view.php?id='.$event->id,
-                                   $event->name .' '.$user->firstname .' '.$user->lastname.' (id='.$user->id.') by '.
-                                   $USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                                   $cmidinfo->id,
-                                   $USER->id);
+                        // Fire an event for this.
+                        $moodleevent = \mod_trainingevent\event\attendance_changed::create(array('context' => context_module::instance($id),
+                                                                                                 'userid' => $USER->id,
+                                                                                                 'relateduserid' => $user->id,
+                                                                                                 'objectid' => $event->id,
+                                                                                                 'courseid' => $event->course));
+                        $moodleevent->trigger();
                     } else if (($chosenevent->approvaltype == 3 || $chosenevent->approvaltype == 2)
                                && $myapprovallevel == "department") {
                         // More levels of approval are required.
@@ -308,15 +304,13 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                                'classroom' => $location));
                                     }
                                 }
-                                add_to_log($chosenevent->course,
-                                           'trainingevent',
-                                           'Department manager approved',
-                                           'view.php?id='.$event->id,
-                                           $event->name .' User -'.$user->firstname .' '.
-                                           $user->lastname.' (id='.$user->id.') by '.
-                                           $USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                                           $chosencmidinfo->id,
-                                           $USER->id);
+                                // Fire an event for this.
+                                $moodleevent = \block_iomad_approve_access\event\manager_approved::create(array('context' => context_module::instance($id),
+                                                                                                                'userid' => $USER->id,
+                                                                                                                'relateduserid' => $user->id,
+                                                                                                                'objectid' => $event->id,
+                                                                                                                'courseid' => $event->course));
+                                $moodleevent->trigger();
                             }
                         } else {
                             $userbooking->tm_ok = 0;
@@ -336,14 +330,14 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                            'event' => $chosenevent));
                                 }
                             }
-                            add_to_log($chosenevent->course,
-                                       'trainingevent',
-                                       'Department manager approved',
-                                       'view.php?id='.$event->id,
-                                       $event->name .' User -'.$user->firstname .' '.$user->lastname.' (id='.$user->id.') by '.
-                                       $USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                                       $chosencmidinfo->id,
-                                       $USER->id);
+
+                            // Fire an event for this.
+                            $moodleevent = \block_iomad_approve_access\event\manager_approved::create(array('context' => context_module::instance($id),
+                                                                                                            'userid' => $USER->id,
+                                                                                                            'relateduserid' => $user->id,
+                                                                                                            'objectid' => $event->id,
+                                                                                                            'courseid' => $event->course));
+                            $moodleevent->trigger();
                         }
                         // Remove from the current event.
                         $DB->delete_records('trainingevent_users', array('userid' => $userid, 'trainingeventid' => $event->id));
@@ -356,15 +350,14 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                              'user' => $user,
                                                                              'classroom' => $location,
                                                                              'event' => $event));
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'User moved to another event',
-                                   'view.php?id='.$event->id,
-                                   $event->name .' '.$user->firstname .' '.$user->lastname.' (id='.$user->id.') by '.
-                                   $USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                                   $cmidinfo->id,
-                                   $USER->id);
 
+                        // Fire an event for this.
+                        $moodleevent = \mod_trainingevent\event\attendance_changed::create(array('context' => context_module::instance($id),
+                                                                                                 'userid' => $USER->id,
+                                                                                                 'relateduserid' => $user->id,
+                                                                                                 'objectid' => $event->id,
+                                                                                                 'courseid' => $event->course));
+                        $moodleevent->trigger();
                     }
                 }
             }
@@ -380,13 +373,13 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                      'user' => $user,
                                                                      'classroom' => $location,
                                                                      'event' => $event));
-                add_to_log($event->course,
-                           'trainingevent',
-                           'User removed',
-                           'view.php?id='.$event->id,
-                           $event->name .' '.$USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                           $cmidinfo->id, $USER->id);
-
+                // Fire an event for this.
+                $moodleevent = \mod_trainingevent\event\user_removed::create(array('context' => context_module::instance($id),
+                                                                                   'userid' => $USER->id,
+                                                                                   'relateduserid' => $user->id,
+                                                                                   'objectid' => $event->id,
+                                                                                   'courseid' => $event->course));
+                $moodleevent->trigger();
             }
         }
         if ($action == 'add' && !empty($userid)) {
@@ -407,12 +400,14 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                               'user' => $user,
                                                                               'classroom' => $location,
                                                                               'event' => $event));
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'User added to event',
-                                   'view.php?id='.$event->id,
-                                   $event->name .' '.$USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                                   $cmidinfo->id, $USER->id);
+
+                        // Fire an event for this.
+                        $moodleevent = \mod_trainingevent\event\user_added::create(array('context' => context_module::instance($id),
+                                                                                         'userid' => $USER->id,
+                                                                                         'relateduserid' => $user->id,
+                                                                                         'objectid' => $event->id,
+                                                                                         'courseid' => $event->course));
+                        $moodleevent->trigger();
                     }
                 } else if (($event->approvaltype == 3 || $event->approvaltype == 2)&& $myapprovallevel == "department") {
                     // More levels of approval are required.
@@ -440,13 +435,13 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                            'classroom' => $location));
                                 }
                             }
-                            add_to_log($event->course,
-                                       'trainingevent',
-                                       'Department manager approved',
-                                       'view.php?id='.$event->id,
-                                       $event->name .' User -'.$user->firstname .' '.$user->lastname.' (id='.$user->id.') by '.
-                                       $USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                                       $cmidinfo->id, $USER->id);
+                            // Fire an event for this.
+                            $moodleevent = \block_iomad_approve_access\event\manager_approved::create(array('context' => context_module::instance($id),
+                                                                                                            'userid' => $USER->id,
+                                                                                                            'relateduserid' => $user->id,
+                                                                                                            'objectid' => $event->id,
+                                                                                                            'courseid' => $event->course));
+                            $moodleevent->trigger();
                         }
                     } else {
                         $userbooking->tm_ok = 0;
@@ -466,13 +461,13 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                        'event' => $event));
                             }
                         }
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'Department manager approved',
-                                   'view.php?id='.$event->id,
-                                   $event->name .' User -'.$user->firstname .' '.$user->lastname.' (id='.$user->id.') by '.
-                                   $USER->firstname .' '.$USER->lastname.' (id='.$USER->id.')',
-                                   $cmidinfo->id, $USER->id);
+                        // Fire an event for this.
+                        $moodleevent = \block_iomad_approve_access\event\manager_approved::create(array('context' => context_module::instance($id),
+                                                                                                        'userid' => $USER->id,
+                                                                                                        'relateduserid' => $user->id,
+                                                                                                        'objectid' => $event->id,
+                                                                                                        'courseid' => $event->course));
+                        $moodleevent->trigger();
                     }
                 }
             }

@@ -147,7 +147,7 @@ class EmailTemplate {
         $this->due = array_key_exists('due', $options) ? $options['due'] : time();
         $sender = array_key_exists('sender', $options) ? $options['sender'] : null;
         $approveuser = array_key_exists('approveuser', $options) ? $options['approveuser'] : null;
-        $event = array_key_exists('event',$options) ? $options['event'] : null;
+        $this->event = array_key_exists('event', $options) ? $options['event'] : null;
         $this->classroom = array_key_exists('classroom', $options) ? $options['classroom'] : null;
         $this->license = array_key_exists('license', $options) ? $options['license'] : null;
         $this->headers = array_key_exists('headers', $options) ? $options['headers'] : null;
@@ -204,7 +204,6 @@ class EmailTemplate {
         }
 
         $this->course = $this->get_course($course);
-        $this->event = $event;
 
         $this->templatename = $templatename;
         $this->template = $this->get_template($templatename);

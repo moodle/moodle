@@ -30,6 +30,7 @@ class EmailVars {
     protected $sender = null;
     protected $approveuser = null;
     protected $nugget = null;
+    protected $event = null;
 
     protected $blank = "[blank]";
 
@@ -39,7 +40,7 @@ class EmailVars {
      * Sets up and retrieves the API objects
      *
      **/
-    public function __construct($company, $user, $course, $invoice, $classroom, $license, $sender, $approveuser, $nugget) {
+    public function __construct($company, $user, $course, $invoice, $classroom, $license, $sender, $approveuser, $nugget, $event) {
         $this->company =& $company;
         $this->user =& $user;
         $this->invoice =& $invoice;
@@ -48,6 +49,7 @@ class EmailVars {
         $this->sender =& $sender;
         $this->approveuser =& $approveuser;
         $this->nugget =& $nugget;
+        $this->event =& $event;
 
         if (!isset($this->company)) {
             if (isset($user->id)) {

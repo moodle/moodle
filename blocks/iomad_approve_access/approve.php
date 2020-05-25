@@ -63,10 +63,9 @@ if (is_siteadmin($USER->id)) {
     }
 }
 
-// Display the page.
-echo $OUTPUT->header();
-
 if ($approvaltype == 'none') {
+    // Display the page.
+    echo $OUTPUT->header();
     echo get_string('noauthority', 'block_iomad_approve_access');
     $OUTPUT->footer();
     die;
@@ -108,13 +107,15 @@ if ($data = $callform->get_data()) {
                     if ($dataresult == 1) {
                         $result->manager_ok = 1;
                         $result->tm_ok = 0;
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'Department manager approved',
-                                   'manageclass.php?id='.$event->id,
-                                   $event->name.' User - '.$userinfo->firstname.' '.$userinfo->lastname.
-                                   ' (id='.$result->userid.') by '. $USER->firstname .' '.$USER->lastname.
-                                   ' (id='.$USER->id.')', $cmidinfo->id, $USER->id);
+
+                        // Fire an event for this.
+                        $moodleevent = \block_iomad_approve_access\event\manager_approved::create(array('context' => context_module::instance($cmidinfo->id),
+                                                                                                        'userid' => $USER->id,
+                                                                                                        'relateduserid' => $result->userid,
+                                                                                                        'objectid' => $event->id,
+                                                                                                        'courseid' => $event->course));
+                        $moodleevent->trigger();
+
                         if ($event->approvaltype == 3) {
                             // Get the company managers for this user.
                             $usercompany = company::get_company_byuserid($result->userid);
@@ -142,28 +143,28 @@ if ($data = $callform->get_data()) {
                         $result->manager_ok = 3;
                         $result->tm_ok = 3;
                         $senddenied = true;
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'Department manager denied',
-                                   'manageclass.php?id='.$event->id,
-                                   $event->name.' User - '.$userinfo->firstname.' '.$userinfo->lastname.
-                                   ' (id='.$result->userid.') by '. $USER->firstname .' '.$USER->lastname.
-                                   ' (id='.$USER->id.')', $cmidinfo->id, $USER->id);
 
+                        // Fire an event for this.
+                        $moodleevent = \block_iomad_approve_access\event\manager_denied::create(array('context' => context_module::instance($cmidinfo->id),
+                                                                                                      'userid' => $USER->id,
+                                                                                                      'relateduserid' => $result->userid,
+                                                                                                      'objectid' => $event->id,
+                                                                                                      'courseid' => $event->course));
+                        $moodleevent->trigger();
                     }
                 }
                 if ($approvaltype == 'both' || $approvaltype == 'company') {
                     if ($dataresult == 1) {
                         $result->tm_ok = 1;
                         $result->manager_ok = 1;
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'Company manager approved',
-                                   'manageclass.php?id='.$event->id,
-                                   $event->name.' User - '.$userinfo->firstname.' '.$userinfo->lastname.
-                                   ' (id='.$result->userid.') by '. $USER->firstname .' '.$USER->lastname.
-                                   ' (id='.$USER->id.')', $cmidinfo->id, $USER->id);
 
+                        // Fire an event for this.
+                        $moodleevent = \block_iomad_approve_access\event\manager_approved::create(array('context' => context_module::instance($cmidinfo->id),
+                                                                                                        'userid' => $USER->id,
+                                                                                                        'relateduserid' => $result->userid,
+                                                                                                        'objectid' => $event->id,
+                                                                                                        'courseid' => $event->course));
+                        $moodleevent->trigger();
                     } else {
                         $result->tm_ok = 3;
                         // If its an event which requires both approvals then pass it back to the department manager to argue.
@@ -219,13 +220,14 @@ if ($data = $callform->get_data()) {
                                 $senddenied = true;
                             }
                         }
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'Company manager denied',
-                                   'manageclass.php?id='.$event->id,
-                                   $event->name.' User - '.$userinfo->firstname.' '.$userinfo->lastname.
-                                   ' (id='.$result->userid.') by '. $USER->firstname .' '.$USER->lastname.
-                                   ' (id='.$USER->id.')', $cmidinfo->id, $USER->id);
+
+                        // Fire an event for this.
+                        $moodleevent = \block_iomad_approve_access\event\manager_denied::create(array('context' => context_module::instance($cmidinfo->id),
+                                                                                                      'userid' => $USER->id,
+                                                                                                      'relateduserid' => $result->userid,
+                                                                                                      'objectid' => $event->id,
+                                                                                                      'courseid' => $event->course));
+                        $moodleevent->trigger();
                     }
                 }
                 // Do we need to email them?
@@ -251,25 +253,27 @@ if ($data = $callform->get_data()) {
                                                                                'classroom' => $location));
                         //  Update the attendance at the event.
                         approve_enrol_register_user($approveuser, $event);
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'User added to event',
-                                   'manageclass.php?id='.$event->id,
-                                   $event->name.' User - '.$userinfo->firstname.' '.$userinfo->lastname.
-                                   ' (id='.$result->userid.') by '. $USER->firstname .' '.$USER->lastname.
-                                   ' (id='.$USER->id.')', $cmidinfo->id, $USER->id);
+
+                        // Fire an event for this.
+                        $moodleevent = \block_iomad_approve_access\event\request_granted::create(array('context' => context_module::instance($cmidinfo->id),
+                                                                                                       'userid' => $USER->id,
+                                                                                                       'relateduserid' => $result->userid,
+                                                                                                       'objectid' => $event->id,
+                                                                                                       'courseid' => $event->course));
+                        $moodleevent->trigger();
                     } else if ($senddenied) {
                         EmailTemplate::send('course_classroom_denied', array('course' => $approvecourse,
                                                                              'event' => $event,
                                                                              'user' => $approveuser,
                                                                              'classroom' => $location));
-                        add_to_log($event->course,
-                                   'trainingevent',
-                                   'User denied access',
-                                   'manageclass.php?id='.$event->id,
-                                   $event->name.' User - '.$userinfo->firstname.' '.$userinfo->lastname.
-                                   ' (id='.$result->userid.') by '. $USER->firstname .' '.$USER->lastname.
-                                   ' (id='.$USER->id.')', $cmidinfo->id, $USER->id);
+
+                        // Fire an event for this.
+                        $moodleevent = \block_iomad_approve_access\event\request_denied::create(array('context' => context_module::instance($cmidinfo->id),
+                                                                                                      'userid' => $USER->id,
+                                                                                                      'relateduserid' => $result->userid,
+                                                                                                      'objectid' => $event->id,
+                                                                                                      'courseid' => $event->course));
+                        $moodleevent->trigger();
                     }
                 }
             } else {
@@ -280,6 +284,9 @@ if ($data = $callform->get_data()) {
     // Send them on their way as the form will have changed.
     redirect(new moodle_url('approve.php'));
 }
+
+// Display the page.
+echo $OUTPUT->header();
 
 // Display the form.
 $callform->display();
