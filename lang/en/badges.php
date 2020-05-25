@@ -270,6 +270,7 @@ $string['defaultissuerpassword_help'] = 'An account is required on the backpack 
 $string['defaultissuername'] = 'Badge issuer name';
 $string['defaultissuername_desc'] = 'Name of the issuing agent or authority.';
 $string['delbadge'] = 'Would you like to delete badge \'{$a}\' and remove all existing issued badges?';
+$string['delexternalbackpack'] = 'Delete site backpack';
 $string['delexternalbackpackconfirm'] = 'Delete site backpack \'{$a}\'?';
 $string['delconfirm'] = 'Delete and remove existing issued badges';
 $string['deletehelp'] = '<p>Fully deleting a badge means that all its information and criteria records will be permanently removed. Users who have earned this badge will no longer be able to access it and display it on their profile pages.</p>
@@ -279,7 +280,6 @@ $string['delparamconfirm'] = 'Are you sure that you want to delete this paramete
 $string['description'] = 'Description';
 $string['disconnect'] = 'Disconnect';
 $string['donotaward'] = 'Currently, this badge is not active, so it cannot be awarded to users. If you would like to award this badge, please set its status to active.';
-$string['editsettings'] = 'Edit settings';
 $string['enablebadges'] = 'Enable badges';
 $string['endorsement'] = 'Endorsement';
 $string['error:backpackdatainvalid'] = 'The data return from the backpack was invalid.';
@@ -402,6 +402,7 @@ $string['month'] = 'Month(s)';
 $string['mybadges'] = 'My badges';
 $string['mybackpack'] = 'My backpack settings';
 $string['never'] = 'Never';
+$string['newbackpack'] = 'Add a new backpack';
 $string['newbadge'] = 'Add a new badge';
 $string['newimage'] = 'New image';
 $string['noalignment'] = 'This badge does not have any external skills or standards specified.';
@@ -513,6 +514,8 @@ $string['selecting'] = 'With selected badges...';
 $string['setup'] = 'Set up connection';
 $string['sitebackpack'] = 'Active external backpack';
 $string['sitebackpack_help'] = 'The external backpack that users can connect to from this site. Note that changing this setting after users have connected their backpacks will require each user to go to their backpack settings page and disconnect then reconnect.';
+$string['sitebackpackdeleted'] = 'The site backpack has been deleted.';
+$string['sitebackpacknotdeleted'] = 'This backpack couldn\'t be deleted because it\'s currently the site default.';
 $string['sitebackpackverify'] = 'Backpack connection';
 $string['sitebackpackwarning'] = 'Could not connect to backpack. <br/><br/>Check that the "Badge issuer email address" admin setting is the valid email for an account on the backpack website. <br/><br/>Check that the "Badge issuer password" on the <a href="{$a->url}">site backpack settings page</a>, is the correct password for the account on the backpack website. <br/><br/>The backpack returned: "{$a->warning}"';
 $string['sitebadges'] = 'Site badges';
@@ -572,3 +575,6 @@ $string['backpackbadges'] = 'You have {$a->totalbadges} badge(s) displayed from 
 $string['error:nogroups'] = '<p>There are no public collections of badges available in your backpack. </p> <p>Only public collections are shown. <a href="https://backpack.openbadges.org">Visit your backpack</a> to create some public collections.</p>';
 $string['nobackpackbadges'] = 'There are no badges in the collections you have selected. <a href="mybackpack.php">Add more collections</a>.';
 $string['nobackpackcollections'] = 'No badge collections have been selected. <a href="mybackpack.php">Add collections</a>.';
+
+// Deprecated since Moodle 3.9.
+$string['editsettings'] = 'Edit settings';

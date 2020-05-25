@@ -30,7 +30,13 @@
         "warning": "<span class='text-warning'>Could not login</span>"
     }
 }}
-<table class="generaltable fullwidth">
+
+<form action="{{baseurl}}" method="get" id="createbackpack">
+   <input type="hidden" name="action" value="edit"/>
+   <button type="submit" class="btn btn-secondary">{{#str}}newbackpack, core_badges{{/str}}</button>
+</form>
+
+<table class="generaltable fullwidth" id="backpacklist">
     <caption>{{#str}}listbackpacks, core_badges{{/str}}</caption>
     <thead>
         <tr>
@@ -41,15 +47,18 @@
     </thead>
     <tbody>
         {{#backpacks}}
-        <tr>
+        <tr data-backpackurl="{{{backpackweburl}}}">
             <td> {{{backpackweburl}}} </td>
             <td> {{#sitebackpack}}Yes{{/sitebackpack}} </td>
             <td>
             {{#canedit}}
-                <a href="{{baseurl}}?id={{id}}&action=edit">
-                    {{#str}}editsettings, core_badges{{/str}}
-                </a>
+                <a href="{{baseurl}}?id={{id}}&action=edit">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
             {{/canedit}}
+            {{^iscurrent}}
+                <a href="{{baseurl}}?id={{id}}&action=delete" role="button" data-action="deletebackpack">
+                    {{#pix}}t/delete, core,{{#str}}delete{{/str}}{{/pix}}
+                </a>
+            {{/iscurrent}}
             </td>
         </tr>
         {{/backpacks}}

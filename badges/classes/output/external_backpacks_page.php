@@ -56,6 +56,10 @@ class external_backpacks_page implements \renderable {
      * @return stdClass
      */
     public function export_for_template(\renderer_base $output) {
+        global $CFG, $PAGE;
+
+        $PAGE->requires->js_call_amd('core_badges/backpackactions', 'init');
+
         $data = new \stdClass();
         $data->baseurl = $this->url;
         $data->backpacks = array();
@@ -68,6 +72,8 @@ class external_backpacks_page implements \renderable {
             } else {
                 $backpack->canedit = false;
             }
+            $backpack->iscurrent = ($backpack->id == $CFG->badges_site_backpack);
+
             $data->backpacks[] = $backpack;
         }
         $data->warning = badges_verify_site_backpack();
