@@ -3856,6 +3856,9 @@ select.form-control:focus::-ms-value {
   background-color: transparent;
   border: solid transparent;
   border-width: 1px 0; }
+  @media (max-width: 1200px) {
+    .form-control-plaintext {
+      font-size: calc(0.90375rem + 0.045vw) ; } }
   .form-control-plaintext.form-control-sm, .form-control-plaintext.form-control-lg {
     padding-right: 0;
     padding-left: 0; }
