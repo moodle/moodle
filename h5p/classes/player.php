@@ -456,7 +456,7 @@ class player {
     }
 
     /**
-     * Return the export file for Mobile App.
+     * Return the info export file for Mobile App.
      *
      * @return array
      */
@@ -467,23 +467,8 @@ class player {
         $path = $exporturl->out_as_local_url();
         $parts = explode('/', $path);
         $filename = array_pop($parts);
-        // Get the the export file.
-        $systemcontext = \context_system::instance();
-        $fs = get_file_storage();
-        $fileh5p = $fs->get_file($systemcontext->id,
-            \core_h5p\file_storage::COMPONENT,
-            \core_h5p\file_storage::EXPORT_FILEAREA,
-            0,
-            '/',
-            $filename);
-        // Get the options that the Mobile App needs.
-        $file = [];
-        $file['filename'] = $fileh5p->get_filename();
-        $file['filepath'] = $fileh5p->get_filepath();
-        $file['mimetype'] = $fileh5p->get_mimetype();
-        $file['filesize'] = $fileh5p->get_filesize();
-        $file['timemodified'] = $fileh5p->get_timemodified();
-        $file['fileurl'] = $exporturl->out(false);
+        // Get the required info from the export file to be able to get the export file by third apps.
+        $file = helper::get_export_info($filename, $exporturl);
 
         return $file;
     }
