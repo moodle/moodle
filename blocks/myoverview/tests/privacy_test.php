@@ -72,6 +72,7 @@ class block_myoverview_privacy_testcase extends \core_privacy\tests\provider_tes
         return array(
             array('block_myoverview_user_sort_preference', 'lastaccessed', ''),
             array('block_myoverview_user_sort_preference', 'title', ''),
+            array('block_myoverview_user_sort_preference', 'shortname', ''),
             array('block_myoverview_user_grouping_preference', 'allincludinghidden', ''),
             array('block_myoverview_user_grouping_preference', 'all', ''),
             array('block_myoverview_user_grouping_preference', 'inprogress', ''),
