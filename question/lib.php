@@ -43,6 +43,7 @@ function core_question_output_fragment_tags_form($args) {
         $id = clean_param($args['id'], PARAM_INT);
         $editingcontext = $args['context'];
 
+        // Load the question and some related information.
         $question = $DB->get_record('question', ['id' => $id]);
 
         if ($coursecontext = $editingcontext->get_course_context(false)) {
@@ -52,14 +53,19 @@ function core_question_output_fragment_tags_form($args) {
             $filtercourses = null;
         }
 
-        // Load the question tags and filter the course tags by the current
-        // course.
-        get_question_options($question, true, $filtercourses);
-
-        $category = $question->categoryobject;
+        $category = $DB->get_record('question_categories', ['id' => $question->category]);
         $questioncontext = \context::instance_by_id($category->contextid);
         $contexts = new \question_edit_contexts($editingcontext);
 
+        // Load the question tags and filter the course tags by the current course.
+        if (core_tag_tag::is_enabled('core_question', 'question')) {
+            $tagobjectsbyquestion = core_tag_tag::get_items_tags('core_question', 'question', [$question->id]);
+            if (!empty($tagobjectsbyquestion[$question->id])) {
+                $tagobjects = $tagobjectsbyquestion[$question->id];
+                $sortedtagobjects = question_sort_tags($tagobjects,
+                        context::instance_by_id($category->contextid), $filtercourses);
+            }
+        }
         $formoptions = [
             'editingcontext' => $editingcontext,
             'questioncontext' => $questioncontext,
@@ -72,8 +78,8 @@ function core_question_output_fragment_tags_form($args) {
             'categoryid' => $category->id,
             'contextid' => $category->contextid,
             'context' => $questioncontext->get_context_name(),
-            'tags' => isset($question->tags) ? $question->tags : [],
-            'coursetags' => isset($question->coursetags) ? $question->coursetags : [],
+            'tags' => $sortedtagobjects->tags ?? [],
+            'coursetags' => $sortedtagobjects->coursetags ?? [],
         ];
 
         $cantag = question_has_capability_on($question, 'tag');

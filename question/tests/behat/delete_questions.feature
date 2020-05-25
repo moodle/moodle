@@ -56,3 +56,14 @@ Feature: A teacher can delete questions in the question bank
     And I follow "Test quiz"
     And I click on "Preview quiz now" "button"
     And I should see "Write about whatever you want"
+
+  @javascript
+  Scenario: A question can be deleted even if that question type is no longer installed
+    Given the following "questions" exist:
+      | questioncategory | qtype       | name            | questiontext    |
+      | Test questions   | missingtype | Broken question | Write something |
+    And I reload the page
+    When I choose "Delete" action for "Broken question" in the question bank
+    And I press "Delete"
+    And I click on "Also show old questions" "checkbox"
+    Then I should not see "Broken question"
