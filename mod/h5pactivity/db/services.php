@@ -67,8 +67,8 @@ $functions = [
         'methodname'    => 'execute',
         'classpath'     => '',
         'description'   => 'Returns a list of h5p activities in a list of
-        	provided courses, if no list is provided all h5p activities
-        	that the user can view will be returned.',
+            provided courses, if no list is provided all h5p activities
+            that the user can view will be returned.',
         'type'          => 'read',
         'capabilities'  => 'mod/h5pactivity:view',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
