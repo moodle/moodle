@@ -153,3 +153,19 @@ Feature: Select content bank files using the content bank files repository
     And I click on "Link" "button"
     When I click on "Browse repositories..." "button"
     Then I should not see "Content bank" in the ".fp-repo-area" "css_element"
+
+  Scenario: Both content name and file name are shown when a content is selected
+    Given the following "contentbank content" exist:
+      | contextlevel | reference | contenttype     | user  | contentname | filepath                       |
+      | Course       | mscC1     | contenttype_h5p | admin | My content  | /h5p/tests/fixtures/ipsums.h5p |
+    And I log in as "admin"
+    And I am on "MiscellaneousCourse1" course homepage
+    And I follow "Folder"
+    And I click on "Edit" "button"
+    And I click on "Add..." "button"
+    And I should see "Content bank" in the ".fp-repo-area" "css_element"
+    When I select "Content bank" repository in file picker
+    Then I should see "My content"
+    And I click on "My content" "link"
+    And I should see "Select My content"
+    And the field "Save as" matches value "ipsums.h5p"
