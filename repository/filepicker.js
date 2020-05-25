@@ -1085,7 +1085,7 @@ M.core_filepicker.init = function(Y, options) {
             }, false);
         },
         select_file: function(args) {
-            var argstitle = args.title;
+            var argstitle = args.shorttitle ? args.shorttitle : args.title;
             // Limit the string length so it fits nicely on mobile devices
             var titlelength = 30;
             if (argstitle.length > titlelength) {
