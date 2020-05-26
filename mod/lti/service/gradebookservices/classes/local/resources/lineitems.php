@@ -89,7 +89,7 @@ class lineitems extends resource_base {
             $typeid = $this->get_service()->get_type()->id;
             if (empty($contextid) || !($container ^ ($response->get_request_method() === self::HTTP_POST)) ||
                     (!empty($contenttype) && !in_array($contenttype, $this->formats))) {
-                    throw new \Exception('No context or unsupported content type', 400);
+                throw new \Exception('No context or unsupported content type', 400);
             }
             if (!($course = $DB->get_record('course', array('id' => $contextid), 'id', IGNORE_MISSING))) {
                 throw new \Exception("Not Found: Course {$contextid} doesn't exist", 404);
@@ -267,16 +267,8 @@ class lineitems extends resource_base {
             $baseurl = lti_get_type_type_config($typeid)->lti_toolurl;
         }
         $gradebookservices = new gradebookservices();
-        $id = $gradebookservices->add_standalone_lineitem($contextid,
-                                                         $json->label,
-                                                         $max,
-                                                         $baseurl,
-                                                         $ltilinkid,
-                                                         $resourceid,
-                                                         $tag,
-                                                         $typeid,
-                                                         $toolproxyid);
-
+        $id = $gradebookservices->add_standalone_lineitem($contextid, $json->label,
+            $max, $baseurl, $ltilinkid, $resourceid, $tag, $typeid, $toolproxyid);
         if (is_null($typeid)) {
             $json->id = parent::get_endpoint() . "/{$id}/lineitem";
         } else {

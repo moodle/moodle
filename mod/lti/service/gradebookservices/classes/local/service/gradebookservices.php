@@ -155,7 +155,7 @@ class gradebookservices extends service_base {
         // Only inject parameters if the service is enabled for this tool.
         if (isset($this->get_typeconfig()['ltiservice_gradesynchronization'])) {
             if ($this->get_typeconfig()['ltiservice_gradesynchronization'] == self::GRADEBOOKSERVICES_READ ||
-                $this->get_typeconfig()['ltiservice_gradesynchronization'] == self::GRADEBOOKSERVICES_FULL) {
+                    $this->get_typeconfig()['ltiservice_gradesynchronization'] == self::GRADEBOOKSERVICES_FULL) {
                 // Check for used in context is only needed because there is no explicit site tool - course relation.
                 if ($this->is_allowed_in_context($typeid, $courseid)) {
                     $id = null;
@@ -235,12 +235,10 @@ class gradebookservices extends service_base {
                             array_push($lineitemstoreturn, $lineitem);
                         }
                     }
-                } else if (($lineitem->itemtype == 'mod'
-                             && $lineitem->itemmodule == 'lti'
-                             && !isset($resourceid)
-                             && !isset($tag)
-                             && (!isset($ltilinkid) || (isset($ltilinkid)
-                             && $lineitem->iteminstance == $ltilinkid)))) {
+                } else if (($lineitem->itemtype == 'mod' && $lineitem->itemmodule == 'lti'
+                        && !isset($resourceid) && !isset($tag)
+                        && (!isset($ltilinkid) || (isset($ltilinkid)
+                        && $lineitem->iteminstance == $ltilinkid)))) {
                     // We will need to check if the activity related belongs to our tool proxy.
                     $ltiactivity = $DB->get_record('lti', array('id' => $lineitem->iteminstance));
                     if (($ltiactivity) && (isset($ltiactivity->typeid))) {
@@ -343,15 +341,9 @@ class gradebookservices extends service_base {
      *
      * @return int id of the created gradeitem
      */
-    public function add_standalone_lineitem(string $courseid,
-                                            string $label,
-                                            float $maximumscore,
-                                            string $baseurl,
-                                            ?int $ltilinkid,
-                                            ?string $resourceid,
-                                            ?string $tag,
-                                            int $typeid,
-                                            int $toolproxyid = null) : int {
+    public function add_standalone_lineitem(string $courseid, string $label, float $maximumscore,
+            string $baseurl, ?int $ltilinkid, ?string $resourceid, ?string $tag, int $typeid,
+            int $toolproxyid = null) : int {
         global $DB;
         $params = array();
         $params['itemname'] = $label;
@@ -428,7 +420,7 @@ class gradebookservices extends service_base {
         }
         $feedbackformat = FORMAT_MOODLE;
         $feedback = null;
-        if (isset($score->comment) && !empty($score->comment)) {
+        if (!empty($score->comment)) {
             $feedback = $score->comment;
             $feedbackformat = FORMAT_PLAIN;
         }
@@ -447,9 +439,8 @@ class gradebookservices extends service_base {
             $grade->feedback = $feedback;
             $grade->rawgrade = $finalgrade;
             $status = grade_update($source, $gradeitem->courseid,
-                         $gradeitem->itemtype, $gradeitem->itemmodule,
-                         $gradeitem->iteminstance, $gradeitem->itemnumber,
-                         $grade);
+                $gradeitem->itemtype, $gradeitem->itemmodule,
+                $gradeitem->iteminstance, $gradeitem->itemnumber, $grade);
 
             $result = ($status == GRADE_UPDATE_OK);
         }
@@ -621,9 +612,7 @@ class gradebookservices extends service_base {
      * @param string|null $tag The tag to apply to the lineitem. If empty string which will be stored as null.
      *
      */
-    public static function update_coupled_gradebookservices(object $ltiinstance,
-                                                            ?string $resourceid,
-                                                            ?string $tag) : void {
+    public static function update_coupled_gradebookservices(object $ltiinstance, ?string $resourceid, ?string $tag) : void {
         global $DB;
 
         if ($ltiinstance && $ltiinstance->typeid) {

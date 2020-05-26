@@ -613,9 +613,9 @@ function lti_get_launch_data($instance, $nonce = '') {
 
     $launchcontainer = lti_get_launch_container($instance, $typeconfig);
     $returnurlparams = array('course' => $course->id,
-                             'launch_container' => $launchcontainer,
-                             'instanceid' => $instance->id,
-                             'sesskey' => sesskey());
+        'launch_container' => $launchcontainer,
+        'instanceid' => $instance->id,
+        'sesskey' => sesskey());
 
     // Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns.
     $url = new \moodle_url('/mod/lti/return.php', $returnurlparams);
@@ -1185,7 +1185,7 @@ function lti_build_content_item_selection_request($id, $course, moodle_url $retu
         $services = lti_get_services();
         foreach ($services as $service) {
             $serviceparameters = $service->get_launch_parameters('ContentItemSelectionRequest',
-                    $course->id, $USER->id , $id);
+                $course->id, $USER->id , $id);
             foreach ($serviceparameters as $paramkey => $paramvalue) {
                 $requestparams['custom_' . $paramkey] = lti_parse_custom_parameter($toolproxy, $tool, $requestparams, $paramvalue,
                     $islti2);
