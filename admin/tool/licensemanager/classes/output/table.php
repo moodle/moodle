@@ -121,6 +121,7 @@ class table implements \renderable {
         $versioncell = new html_table_cell($license->version);
         $versioncell->attributes['class'] = 'license-version';
 
+        $deletelicense = '';
         if ($license->shortname == $CFG->sitedefaultlicense) {
             $hideshow = $output->pix_icon('t/locked', get_string('sitedefaultlicenselock', 'tool_licensemanager'));
         } else {
@@ -138,8 +139,6 @@ class table implements \renderable {
                 $deletelicense = html_writer::link('#', $output->pix_icon('i/trash',
                     get_string('deletelicensename', 'tool_licensemanager', $license->fullname)),
                     ['class' => 'delete-license', 'data-license' => $license->shortname]);
-            } else {
-                $deletelicense = '';
             }
         }
         $hideshowcell = new html_table_cell($hideshow);
