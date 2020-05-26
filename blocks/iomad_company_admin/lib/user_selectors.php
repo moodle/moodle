@@ -938,6 +938,7 @@ class potential_license_user_selector extends user_selector_base {
             } else {
                 $usersql = "SELECT userid,count(licensecourseid) AS coursecount FROM {companylicense_users}
                             WHERE timecompleted IS NULL
+                            $coursesql
                             GROUP BY userid
                             $countsql";
             }
