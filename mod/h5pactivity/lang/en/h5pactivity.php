@@ -53,6 +53,9 @@ $string['attempts_report'] = 'Attempts report';
 $string['attempts_none'] = 'This user has no attempts to display.';
 $string['choice'] = 'Choice';
 $string['completion'] = 'Completion';
+$string['contentbank'] = 'more information about the content bank';
+$string['contentbank_help'] = 'Within the content bank you can create and store contents using several authoring
+    tools which includes an integrated H5P packacge creator.';
 $string['correct_answer'] = 'Correct answer';
 $string['deleteallattempts'] = 'Delete all H5P attempts';
 $string['displayexport'] = 'Allow download';
@@ -130,5 +133,6 @@ $string['statement_received'] = 'xAPI statement received';
 $string['totalscore'] = 'Total score';
 $string['tracking_messages'] = 'Some H5P provide attempt tracking data for advanced reporting such as number of attempts, responses and grades. Note: Some H5P don\'t provide attempt tracking data. In such cases, the following settings will have no effect.';
 $string['true'] = 'True';
+$string['usecontentbank'] = 'Use the <a href="{$a}" target="_blank">content bank (opens in new window)</a> to manage your H5P files';
 $string['view'] = 'View';
 $string['view_report'] = 'View report';
