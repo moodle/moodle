@@ -796,7 +796,12 @@ class framework implements \H5PFrameworkInterface {
         }
 
         $content['disable'] = $content['disable'] ?? null;
-
+        // Add title to 'params' to use in the editor.
+        if (!empty($content['title'])) {
+            $params = json_decode($content['params']);
+            $params->title = $content['title'];
+            $content['params'] = json_encode($params);
+        }
         $data = [
             'jsoncontent' => $content['params'],
             'displayoptions' => $content['disable'],
@@ -1205,6 +1210,10 @@ class framework implements \H5PFrameworkInterface {
         $params = json_decode($data->jsoncontent);
         if (empty($params->metadata)) {
             $params->metadata = new \stdClass();
+        }
+        // Add title to metadata.
+        if (!empty($params->title) && empty($params->metadata->title)) {
+            $params->metadata->title = $params->title;
         }
         $content['metadata'] = $params->metadata;
         $content['params'] = json_encode($params->params ?? $params);
