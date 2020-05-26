@@ -7243,40 +7243,72 @@ class admin_setting_manageantiviruses extends admin_setting {
  * Special class for license administration.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 3.9 MDL-45184. Please use \tool_licensemanager\manager instead.
+ * @todo MDL-45184 This class will be deleted in Moodle 4.3.
  */
 class admin_setting_managelicenses extends admin_setting {
     /**
-     * Calls parent::__construct with specific arguments
+     * @deprecated since Moodle 3.9 MDL-45184. Please use \tool_licensemanager\manager instead.
+     * @todo MDL-45184 This class will be deleted in Moodle 4.3
      */
     public function __construct() {
-        $this->nosave = true;
-        parent::__construct('licensesui', get_string('licensesettings', 'admin'), '', '');
+        global $ADMIN;
+
+        debugging('admin_setting_managelicenses class is deprecated. Please use \tool_licensemanager\manager instead.',
+            DEBUG_DEVELOPER);
+
+        // Replace admin setting load with new external page load for tool_licensemanager, if not loaded already.
+        if (!is_null($ADMIN->locate('licensemanager'))) {
+            $temp = new admin_externalpage('licensemanager',
+                get_string('licensemanager', 'tool_licensemanager'),
+                \tool_licensemanager\helper::get_licensemanager_url());
+
+            $ADMIN->add('license', $temp);
+        }
     }
 
     /**
      * Always returns true, does nothing
      *
+     * @deprecated since Moodle 3.9 MDL-45184.
+     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     *
      * @return true
      */
     public function get_setting() {
+        debugging('admin_setting_managelicenses class is deprecated. Please use \tool_licensemanager\manager instead.',
+            DEBUG_DEVELOPER);
+
         return true;
     }
 
     /**
      * Always returns true, does nothing
      *
+     * @deprecated since Moodle 3.9 MDL-45184.
+     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     *
      * @return true
      */
     public function get_defaultsetting() {
+        debugging('admin_setting_managelicenses class is deprecated. Please use \tool_licensemanager\manager instead.',
+            DEBUG_DEVELOPER);
+
         return true;
     }
 
     /**
      * Always returns '', does not write anything
      *
+     * @deprecated since Moodle 3.9 MDL-45184.
+     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     *
      * @return string Always returns ''
      */
     public function write_setting($data) {
+        debugging('admin_setting_managelicenses class is deprecated. Please use \tool_licensemanager\manager instead.',
+            DEBUG_DEVELOPER);
+
         // do not write any setting
         return '';
     }
@@ -7284,53 +7316,18 @@ class admin_setting_managelicenses extends admin_setting {
     /**
      * Builds the XHTML to display the control
      *
+     * @deprecated since Moodle 3.9 MDL-45184. Please use \tool_licensemanager\manager instead.
+     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     *
      * @param string $data Unused
      * @param string $query
      * @return string
      */
     public function output_html($data, $query='') {
-        global $CFG, $OUTPUT;
-        require_once($CFG->libdir . '/licenselib.php');
-        $url = "licenses.php?sesskey=" . sesskey();
+        debugging('admin_setting_managelicenses class is deprecated. Please use \tool_licensemanager\manager instead.',
+            DEBUG_DEVELOPER);
 
-        // display strings
-        $txt = get_strings(array('administration', 'settings', 'name', 'enable', 'disable', 'none'));
-        $licenses = license_manager::get_licenses();
-
-        $return = $OUTPUT->heading(get_string('availablelicenses', 'admin'), 3, 'main', true);
-
-        $return .= $OUTPUT->box_start('generalbox editorsui');
-
-        $table = new html_table();
-        $table->head  = array($txt->name, $txt->enable);
-        $table->colclasses = array('leftalign', 'centeralign');
-        $table->id = 'availablelicenses';
-        $table->attributes['class'] = 'admintable generaltable';
-        $table->data  = array();
-
-        foreach ($licenses as $value) {
-            $displayname = html_writer::link($value->source, get_string($value->shortname, 'license'), array('target'=>'_blank'));
-
-            if ($value->enabled == 1) {
-                $hideshow = html_writer::link($url.'&action=disable&license='.$value->shortname,
-                    $OUTPUT->pix_icon('t/hide', get_string('disable')));
-            } else {
-                $hideshow = html_writer::link($url.'&action=enable&license='.$value->shortname,
-                    $OUTPUT->pix_icon('t/show', get_string('enable')));
-            }
-
-            if ($value->shortname == $CFG->sitedefaultlicense) {
-                $displayname .= ' '.$OUTPUT->pix_icon('t/locked', get_string('default'));
-                $hideshow = '';
-            }
-
-            $enabled = true;
-
-            $table->data[] =array($displayname, $hideshow);
-        }
-        $return .= html_writer::table($table);
-        $return .= $OUTPUT->box_end();
-        return highlight($query, $return);
+        redirect(\tool_licensemanager\helper::get_licensemanager_url());
     }
 }
 

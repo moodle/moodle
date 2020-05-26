@@ -3115,21 +3115,14 @@ final class repository_type_form extends moodleform {
  *          accepted_types
  */
 function initialise_filepicker($args) {
-    global $CFG, $USER, $PAGE, $OUTPUT;
+    global $CFG, $USER, $PAGE;
     static $templatesinitialized = array();
     require_once($CFG->libdir . '/licenselib.php');
 
     $return = new stdClass();
-    $licenses = array();
-    if (!empty($CFG->licenses)) {
-        $array = explode(',', $CFG->licenses);
-        foreach ($array as $license) {
-            $l = new stdClass();
-            $l->shortname = $license;
-            $l->fullname = get_string($license, 'license');
-            $licenses[] = $l;
-        }
-    }
+
+    $licenses = license_manager::get_licenses();
+
     if (!empty($CFG->sitedefaultlicense)) {
         $return->defaultlicense = $CFG->sitedefaultlicense;
     }
@@ -3172,6 +3165,8 @@ function initialise_filepicker($args) {
     } else {
         $return->externallink = true;
     }
+
+    $return->rememberuserlicensepref = (bool) get_config(null, 'rememberuserlicensepref');
 
     $return->userprefs = array();
     $return->userprefs['recentrepository'] = get_user_preferences('filepicker_recentrepository', '');

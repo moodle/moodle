@@ -142,3 +142,5 @@ pacific/ponape,core_timezones
 pacific/truk,core_timezones
 pacific/yap,core_timezones
 editsettings,core_badges
+availablelicenses,core_admin
+managelicenses,core_admin

@@ -60,6 +60,7 @@ $string['cachedef_groupdata'] = 'Course group information';
 $string['cachedef_h5p_content_type_translations'] = 'H5P content-type libraries translations';
 $string['cachedef_htmlpurifier'] = 'HTML Purifier - cleaned content';
 $string['cachedef_langmenu'] = 'List of available languages';
+$string['cachedef_license'] = 'List of licences';
 $string['cachedef_message_time_last_message_between_users'] = 'Time created for most recent message in a conversation';
 $string['cachedef_modelfirstanalyses'] = 'First analysis by model and analysable';
 $string['cachedef_locking'] = 'Locking';

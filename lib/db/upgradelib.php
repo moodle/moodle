@@ -628,3 +628,124 @@ function upgrade_analytics_fix_contextids_defaults() {
     $params = ['zero' => '0', 'null' => 'null'];
     $DB->execute("UPDATE {analytics_models} set contextids = null WHERE " . $select, $params);
 }
+
+/**
+ * Upgrade core licenses shipped with Moodle.
+ */
+function upgrade_core_licenses() {
+    global $CFG, $DB;
+
+    $corelicenses = [];
+
+    $license = new stdClass();
+    $license->shortname = 'unknown';
+    $license->fullname = 'Licence not specified';
+    $license->source = '';
+    $license->enabled = 1;
+    $license->version = '2010033100';
+    $license->custom = 0;
+    $corelicenses[] = $license;
+
+    $license = new stdClass();
+    $license->shortname = 'allrightsreserved';
+    $license->fullname = 'All rights reserved';
+    $license->source = 'https://en.wikipedia.org/wiki/All_rights_reserved';
+    $license->enabled = 1;
+    $license->version = '2010033100';
+    $license->custom = 0;
+    $corelicenses[] = $license;
+
+    $license = new stdClass();
+    $license->shortname = 'public';
+    $license->fullname = 'Public domain';
+    $license->source = 'https://en.wikipedia.org/wiki/Public_domain';
+    $license->enabled = 1;
+    $license->version = '2010033100';
+    $license->custom = 0;
+    $corelicenses[] = $license;
+
+    $license = new stdClass();
+    $license->shortname = 'cc';
+    $license->fullname = 'Creative Commons';
+    $license->source = 'https://creativecommons.org/licenses/by/3.0/';
+    $license->enabled = 1;
+    $license->version = '2010033100';
+    $license->custom = 0;
+    $corelicenses[] = $license;
+
+    $license = new stdClass();
+    $license->shortname = 'cc-nd';
+    $license->fullname = 'Creative Commons - NoDerivs';
+    $license->source = 'https://creativecommons.org/licenses/by-nd/3.0/';
+    $license->enabled = 1;
+    $license->version = '2010033100';
+    $license->custom = 0;
+    $corelicenses[] = $license;
+
+    $license = new stdClass();
+    $license->shortname = 'cc-nc-nd';
+    $license->fullname = 'Creative Commons - No Commercial NoDerivs';
+    $license->source = 'https://creativecommons.org/licenses/by-nc-nd/3.0/';
+    $license->enabled = 1;
+    $license->version = '2010033100';
+    $license->custom = 0;
+    $corelicenses[] = $license;
+
+    $license = new stdClass();
+    $license->shortname = 'cc-nc';
+    $license->fullname = 'Creative Commons - No Commercial';
+    $license->source = 'https://creativecommons.org/licenses/by-nc/3.0/';
+    $license->enabled = 1;
+    $license->version = '2010033100';
+    $license->custom = 0;
+    $corelicenses[] = $license;
+
+    $license = new stdClass();
+    $license->shortname = 'cc-nc-sa';
+    $license->fullname = 'Creative Commons - No Commercial ShareAlike';
+    $license->source = 'https://creativecommons.org/licenses/by-nc-sa/3.0/';
+    $license->enabled = 1;
+    $license->version = '2010033100';
+    $license->custom = 0;
+    $corelicenses[] = $license;
+
+    $license = new stdClass();
+    $license->shortname = 'cc-sa';
+    $license->fullname = 'Creative Commons - ShareAlike';
+    $license->source = 'https://creativecommons.org/licenses/by-sa/3.0/';
+    $license->enabled = 1;
+    $license->version = '2010033100';
+    $license->custom = 0;
+    $corelicenses[] = $license;
+
+    foreach ($corelicenses as $corelicense) {
+        // Check for current license to maintain idempotence.
+        $currentlicense = $DB->get_record('license', ['shortname' => $corelicense->shortname]);
+        if (!empty($currentlicense)) {
+            $corelicense->id = $currentlicense->id;
+            // Remember if the license was enabled before upgrade.
+            $corelicense->enabled = $currentlicense->enabled;
+            $DB->update_record('license', $corelicense);
+        } else if (!isset($CFG->upgraderunning) || during_initial_install()) {
+            // Only install missing core licenses if not upgrading or during initial install.
+            $DB->insert_record('license', $corelicense);
+        }
+    }
+
+    // Add sortorder to all licenses.
+    $licenses = $DB->get_records('license');
+    $sortorder = 1;
+    foreach ($licenses as $license) {
+        $license->sortorder = $sortorder++;
+        $DB->update_record('license', $license);
+    }
+
+    // Set the license config values, used by file repository for rendering licenses at front end.
+    $activelicenses = $DB->get_records_menu('license', ['enabled' => 1], 'id', 'id, shortname');
+    set_config('licenses', implode(',', $activelicenses));
+
+    $sitedefaultlicense = get_config('', 'sitedefaultlicense');
+    if (empty($sitedefaultlicense) || !in_array($sitedefaultlicense, $activelicenses)) {
+        set_config('sitedefaultlicense', reset($activelicenses));
+    }
+}
