@@ -16,23 +16,20 @@ Feature: License manager
     And I should see "Creative Commons - No Commercial" in the "cc-nc" "table_row"
     And I should see "Creative Commons - No Commercial ShareAlike" in the "cc-nc-sa" "table_row"
     And I should see "Creative Commons - ShareAlike" in the "cc-sa" "table_row"
-    And I log out
 
-  @javascript
   Scenario: I should be able to enable and disable licenses
     Given I log in as "admin"
     And I navigate to "Licence > Licence settings" in site administration
     When I set the field "Default site licence" to "Public domain"
     And I press "Save changes"
     And I navigate to "Licence > Licence manager" in site administration
-    Then "Default" "icon" should exist in the "public" "table_row"
-    And "Enable" "icon" should not exist in the "public" "table_row"
-    And "Default" "icon" should not exist in the "cc" "table_row"
-    When I navigate to "Licence > Licence settings" in site administration
+    Then "This is the site default license" "icon" should exist in the "public" "table_row"
+    And "Enable license" "icon" should not exist in the "public" "table_row"
+    And "This is the site default license" "icon" should not exist in the "cc" "table_row"
+    And I navigate to "Licence > Licence settings" in site administration
     And I set the field "Default site licence" to "Creative Commons"
     And I press "Save changes"
     And I navigate to "Licence > Licence manager" in site administration
-    Then "Default" "icon" should exist in the "cc" "table_row"
-    And "Enable" "icon" should not exist in the "cc" "table_row"
-    And "Default" "icon" should not exist in the "public" "table_row"
-    And I log out
+    And "This is the site default license" "icon" should exist in the "cc" "table_row"
+    And "Enable license" "icon" should not exist in the "cc" "table_row"
+    And "This is the site default license" "icon" should not exist in the "public" "table_row"

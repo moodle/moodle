@@ -18,11 +18,10 @@ Feature: Delete custom licenses
     | version[year]  | 2019                                |
     And I press "Save changes"
     And I click on "Delete" "icon" in the "MIT" "table_row"
-    And I click on "Save changes" "button" in the "Delete licence" "dialogue"
+    When I click on "Save changes" "button" in the "Delete licence" "dialogue"
     Then I should not see "MIT Licence" in the "manage-licenses" "table"
-    And I log out
 
-  Scenario: I cannot delete a standard Moodle license
+  Scenario: I cannot delete a standard license
     Given I log in as "admin"
     And I navigate to "Licence > Licence manager" in site administration
     Then I should see "Licence not specified" in the "unknown" "table_row"

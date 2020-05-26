@@ -15,11 +15,10 @@ Feature: Custom licences
       | version[day]   | 1                                   |
       | version[month] | January                             |
       | version[year]  | 2020                                |
-    And I press "Save changes"
+    When I press "Save changes"
     Then I should see "Licence manager"
     And I should see "MIT Licence" in the "MIT" "table_row"
     And I should see "https://opensource.org/licenses/MIT" in the "MIT" "table_row"
-    And I log out
 
   Scenario: I am only be able to make custom license with a valid url source (including scheme).
     Given I log in as "admin"
@@ -32,19 +31,18 @@ Feature: Custom licences
       | version[day]   | 1                                   |
       | version[month] | January                             |
       | version[year]  | 2020                                |
-    And I press "Save changes"
+    When I press "Save changes"
     Then I should see "Invalid source URL"
     And I set the following fields to these values:
       | source         | mailto:tomdickman@catalyst-au.net   |
     And I press "Save changes"
-    Then I should see "Invalid source URL"
+    And I should see "Invalid source URL"
     And I set the following fields to these values:
       | source         | https://opensource.org/licenses/MIT |
     And I press "Save changes"
-    Then I should see "Licence manager"
+    And I should see "Licence manager"
     And I should see "MIT Licence" in the "MIT" "table_row"
     And I should see "https://opensource.org/licenses/MIT" in the "MIT" "table_row"
-    And I log out
 
   Scenario: Custom license version format must be YYYYMMDD00
     Given I log in as "admin"
@@ -57,10 +55,9 @@ Feature: Custom licences
       | version[day]   | 1                                   |
       | version[month] | March                               |
       | version[year]  | 2019                                |
-    And I press "Save changes"
+    When I press "Save changes"
     Then I should see "Licence manager"
     And I should see "2019030100" in the "MIT" "table_row"
-    And I log out
 
   @javascript
   Scenario: Custom license short name should not be editable after first creation
@@ -77,7 +74,6 @@ Feature: Custom licences
     And I press "Save changes"
     And I should see "Licence manager"
     And I should see "MIT Licence" in the "MIT" "table_row"
-    And I click on "Edit" "icon" in the "MIT" "table_row"
+    When I click on "Edit" "icon" in the "MIT" "table_row"
     Then I should see "Edit licence"
     And the "shortname" "field" should be disabled
-    And I log out
