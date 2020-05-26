@@ -260,13 +260,18 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 // manually call dynload for parent elements in the tree so we can load other siblings
                 if (options.dynload) {
                     var root = scope.treeview.getRoot();
+                    // Whether search results are currently displayed in the active repository in the filepicker.
+                    // We do not want to load siblings of parent elements when displaying search tree results.
+                    var isSearchResult = typeof options.callbackcontext.active_repo !== 'undefined' &&
+                        options.callbackcontext.active_repo.issearchresult;
                     while (root && root.children && root.children.length) {
                         root = root.children[0];
                         if (root.path == mytreeel.path) {
                             root.origpath = options.filepath;
                             root.origlist = fileslist;
+                        } else if (!root.isLeaf && root.expanded && !isSearchResult) {
+                            Y.bind(options.treeview_dynload, options.callbackcontext)(root, null);
                         }
-                        // Removed bind as of MDL-62415 as it overwrites the search tree results
                     }
                 }
             } else {
