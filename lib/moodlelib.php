@@ -5273,7 +5273,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
                 foreach ($instances as $cm) {
                     if ($cm->id) {
                         // Delete activity context questions and question categories.
-                        question_delete_activity($cm,  $showfeedback);
+                        question_delete_activity($cm);
                         // Notify the competency subsystem.
                         \core_competency\api::hook_course_module_deleted($cm);
                     }
@@ -5335,7 +5335,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     }
 
     // Delete questions and question categories.
-    question_delete_course($course, $showfeedback);
+    question_delete_course($course);
     if ($showfeedback) {
         echo $OUTPUT->notification($strdeleted.get_string('questions', 'question'), 'notifysuccess');
     }

@@ -2025,7 +2025,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         if (!$cb->delete_contents($this->get_context())) {
             throw new moodle_exception('errordeletingcontentfromcategory', 'contentbank', '', $this->get_formatted_name());
         }
-        if (!question_delete_course_category($this, 0, $showfeedback)) {
+        if (!question_delete_course_category($this, null)) {
             throw new moodle_exception('cannotdeletecategoryquestions', '', '', $this->get_formatted_name());
         }
 
@@ -2214,7 +2214,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 );
             }
         }
-        if (!question_delete_course_category($this, $newparentcat, $showfeedback)) {
+        if (!question_delete_course_category($this, $newparentcat)) {
             if ($showfeedback) {
                 echo $OUTPUT->notification(get_string('errordeletingquestionsfromcategory', 'question', $catname), 'notifysuccess');
             }
