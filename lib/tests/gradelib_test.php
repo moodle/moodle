@@ -87,7 +87,7 @@ class core_gradelib_testcase extends advanced_testcase {
 
         $letters = $cache->get($context->id);
         $this->assertEquals(1, count($letters));
-        $this->assertEquals($letter->letter, $letters['100.00000']);
+        $this->assertTrue(in_array($letter->letter, $letters));
 
         remove_grade_letters($context, false);
 
@@ -249,7 +249,8 @@ class core_gradelib_testcase extends advanced_testcase {
     /**
      * Test the caching of grade letters.
      */
-    public function test_get_grade_letters(): void {
+    public function test_get_grade_letters() {
+
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -272,7 +273,7 @@ class core_gradelib_testcase extends advanced_testcase {
     /**
      * Test custom letters.
      */
-    public function test_get_grade_letters_custom(): void {
+    public function test_get_grade_letters_custom() {
         global $DB;
 
         $this->resetAfterTest();
