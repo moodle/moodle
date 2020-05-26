@@ -31,7 +31,7 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I follow "Edit settings"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration

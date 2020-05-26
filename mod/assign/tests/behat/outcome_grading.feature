@@ -65,7 +65,7 @@ Feature: Outcome grading
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -113,7 +113,7 @@ Feature: Outcome grading
       | Outcome Test: | Excellent |
       | Apply grades and feedback to entire group | Yes |
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -125,7 +125,7 @@ Feature: Outcome grading
       | Outcome Test: | Disappointing |
       | Apply grades and feedback to entire group | No |
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
