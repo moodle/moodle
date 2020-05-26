@@ -5208,6 +5208,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         echo $OUTPUT->notification($strdeleted.get_string('type_block_plural', 'plugin'), 'notifysuccess');
     }
 
+    $DB->set_field('course_modules', 'deletioninprogress', '1', ['course' => $courseid]);
+    rebuild_course_cache($courseid, true);
+
     // Get the list of all modules that are properly installed.
     $allmodules = $DB->get_records_menu('modules', array(), '', 'name, id');
 
@@ -5250,6 +5253,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
                         // Delete cm and its context - orphaned contexts are purged in cron in case of any race condition.
                         context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
                         $DB->delete_records('course_modules', array('id' => $cm->id));
+                        rebuild_course_cache($cm->course, true);
                     }
                 }
             }
@@ -5286,6 +5290,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         }
         context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
         $DB->delete_records('course_modules', array('id' => $cm->id));
+        rebuild_course_cache($cm->course, true);
     }
 
     if ($showfeedback) {
