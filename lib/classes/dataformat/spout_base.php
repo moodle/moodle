@@ -116,11 +116,11 @@ abstract class spout_base extends \core\dataformat\base {
     /**
      * Write a single record
      *
-     * @param object $record
+     * @param array $record
      * @param int $rownum
      */
     public function write_record($record, $rownum) {
-        $row = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createRowFromArray((array)$record);
+        $row = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createRowFromArray($this->format_record($record));
         $this->writer->addRow($row);
     }
 
