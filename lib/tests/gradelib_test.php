@@ -249,8 +249,7 @@ class core_gradelib_testcase extends advanced_testcase {
     /**
      * Test the caching of grade letters.
      */
-    public function test_get_grade_letters() {
-
+    public function test_get_grade_letters(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -273,7 +272,7 @@ class core_gradelib_testcase extends advanced_testcase {
     /**
      * Test custom letters.
      */
-    public function test_get_grade_letters_custom() {
+    public function test_get_grade_letters_custom(): void {
         global $DB;
 
         $this->resetAfterTest();
