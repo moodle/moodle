@@ -19029,6 +19029,7 @@ body {
   .blockcolumn,
   .region-main {
     flex: 0 0 100%;
+    max-width: 100%;
     padding: 0 1rem;
     margin-bottom: 1rem; } }
 
@@ -19212,9 +19213,10 @@ body {
     padding: 0 1rem;
     max-width: 20%; } }
 
-.block_myoverview .dashboard-card-deck .dashboard-card,
-.block_recentlyaccesseditems .dashboard-card-deck .dashboard-card {
-  width: calc(33.33% - 0.5rem); }
+@media (min-width: 576px) {
+  .block_myoverview .dashboard-card-deck .dashboard-card,
+  .block_recentlyaccesseditems .dashboard-card-deck .dashboard-card {
+    width: calc(33.33% - 0.5rem); } }
 
 @media (min-width: 768px) {
   .blockcolumn .dashboard-card-deck {
