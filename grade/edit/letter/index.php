@@ -229,8 +229,11 @@ if (!$edit) {
             }
         }
 
+        // Cache the changed letters.
         if (!empty($letters)) {
-            // Ensure that the letters are correctly sorted.
+
+            // For some reason, the cache saves it in the order in which they were entered
+            // but we really want to order them in descending order so we sort it here.
             krsort($letters);
             $cache->set($context->id, $letters);
         }
