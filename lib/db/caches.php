@@ -454,4 +454,12 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simpledata' => true,
     ],
+
+    // Cache the grade letters for faster retrival.
+    'grade_letters' => [
+        'mode'                   => cache_store::MODE_REQUEST,
+        'simplekeys'             => true,
+        'staticacceleration'     => true,
+        'staticaccelerationsize' => 100
+    ],
 );
