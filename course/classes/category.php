@@ -1600,7 +1600,10 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 }
                 // Prepare the list of core_course_list_element objects.
                 foreach ($ids as $id) {
-                    $courses[$id] = new core_course_list_element($records[$id]);
+                    // If a course is deleted after we got the cache entry it may not exist in the database anymore.
+                    if (!empty($records[$id])) {
+                        $courses[$id] = new core_course_list_element($records[$id]);
+                    }
                 }
             }
             return $courses;
@@ -1810,7 +1813,10 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 }
                 // Prepare the list of core_course_list_element objects.
                 foreach ($ids as $id) {
-                    $courses[$id] = new core_course_list_element($records[$id]);
+                    // If a course is deleted after we got the cache entry it may not exist in the database anymore.
+                    if (!empty($records[$id])) {
+                        $courses[$id] = new core_course_list_element($records[$id]);
+                    }
                 }
             }
             return $courses;
