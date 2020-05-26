@@ -21,7 +21,7 @@ Feature: Sort content in the content bank
     And I add the "Navigation" block if not present
     And I expand "Site pages" node
     And I click on "Content bank" "link"
-    When I click on "Display contentbank with file details" "button"
+    When I click on "Display content bank with file details" "button"
     And I click on "Sort by Content name ascending" "button"
     And "Dragon_santjordi.h5p" "text" should appear before "historybook.h5p" "text"
     And "historybook.h5p" "text" should appear before "mathsbook.h5p" "text"

@@ -751,7 +751,7 @@ class quizaccess_seb_rule__testcase extends advanced_testcase {
 
         // Test that the event data is as expected.
         $this->assertInstanceOf('\quizaccess_seb\event\access_prevented', $event);
-        $this->assertEquals('No SEB browser is being used', $event->other['reason']);
+        $this->assertEquals('No Safe Exam Browser is being used.', $event->other['reason']);
     }
 
     /**
