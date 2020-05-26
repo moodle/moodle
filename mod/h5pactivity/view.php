@@ -70,6 +70,11 @@ $PAGE->set_context($context);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($moduleinstance->name));
 
+$instance = $manager->get_instance();
+if (!empty($instance->intro)) {
+    echo $OUTPUT->box(format_module_intro('h5pactivity', $instance, $cm->id), 'generalbox', 'intro');
+}
+
 // Attempts review.
 if ($manager->can_view_all_attempts()) {
     $reviewurl = new moodle_url('report.php', ['a' => $cm->instance]);
