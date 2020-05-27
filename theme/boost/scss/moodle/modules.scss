@@ -1059,15 +1059,6 @@ div#dock {
 .usermenu {
     .login {
         line-height: 2.25rem;
-
-        a {
-            color: $link-color;
-            &:hover,
-            &:focus {
-                color: $link-hover-color;
-                text-decoration: underline;
-            }
-        }
     }
 }
 

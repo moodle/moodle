@@ -154,8 +154,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
         if ($calendartype->get_name() === 'gregorian') {
             $image = $OUTPUT->pix_icon('i/calendar', get_string('calendar', 'calendar'), 'moodle');
             $this->_elements[] = $this->createFormElement('link', 'calendar',
-                    null, '#', $image,
-                    array('class' => 'visibleifjs'));
+                    null, '#', $image);
         }
         // If optional we add a checkbox which the user can use to turn if on
         if ($this->_options['optional']) {

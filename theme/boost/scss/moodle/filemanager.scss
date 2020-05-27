@@ -184,6 +184,7 @@
 
 .fp-iconview .fp-filename-field {
     height: 33px;
+    margin-top: 3px;
     word-wrap: break-word;
     overflow: hidden;
     position: absolute;
@@ -736,10 +737,12 @@ a.ygtvspacer:hover {
 }
 
 .filemanager .fp-iconview .fp-folder.fp-hascontextmenu .fp-contextmenu {
-    display: block;
     position: absolute;
-    right: 7px;
-    bottom: 5px;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .filemanager .fp-treeview .fp-folder.fp-hascontextmenu .fp-contextmenu,

@@ -89,7 +89,7 @@ body:not(.editing)  .sitetopic ul.section {
             min-height: 2em;
 
             > a {
-                display: block;
+                display: inline-block;
                 text-indent: -31px;
                 padding-left: 31px;
             }
