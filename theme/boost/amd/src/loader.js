@@ -27,7 +27,6 @@
 import $ from 'jquery';
 import Aria from './aria';
 import Bootstrap from './bootstrap/index';
-import CustomEvents from 'core/custom_interaction_events';
 import Pending from 'core/pending';
 import Scroll from './scroll';
 import setupBootstrapPendingChecks from './pending';
@@ -56,16 +55,15 @@ const rememberTabs = () => {
  */
 const enablePopovers = () => {
     $('body').popover({
+        container: 'body',
         selector: '[data-toggle="popover"]',
-        trigger: 'focus hover',
-        placement: 'auto'
+        trigger: 'focus',
     });
 
-    CustomEvents.define($('body'), [
-        CustomEvents.events.escape,
-    ]);
-    $('body').on(CustomEvents.events.escape, '[data-toggle=popover]', function() {
-        $(this).trigger('blur');
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && e.target.closest('[data-toggle="popover"]')) {
+            $(e.target).popover('hide');
+        }
     });
 };
 
@@ -76,7 +74,7 @@ const enablePopovers = () => {
 const enableTooltips = () => {
     $('body').tooltip({
         container: 'body',
-        selector: '[data-toggle="tooltip"]'
+        selector: '[data-toggle="tooltip"]',
     });
 };
 
