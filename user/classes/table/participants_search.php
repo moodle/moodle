@@ -95,14 +95,26 @@ class participants_search {
         global $DB;
 
         [
-            'select' => $select,
-            'from' => $from,
-            'where' => $where,
+            'subqueryalias' => $subqueryalias,
+            'outerselect' => $outerselect,
+            'innerselect' => $innerselect,
+            'outerjoins' => $outerjoins,
+            'innerjoins' => $innerjoins,
+            'outerwhere' => $outerwhere,
+            'innerwhere' => $innerwhere,
             'params' => $params,
-            'groupby' => $groupby,
         ] = $this->get_participants_sql($additionalwhere, $additionalparams);
 
-        return $DB->get_recordset_sql("{$select} {$from} {$where} {$groupby} {$sort}", $params, $limitfrom, $limitnum);
+        $sql = "{$outerselect}
+                          FROM ({$innerselect}
+                                          FROM {$innerjoins}
+                                 {$innerwhere}
+                               ) {$subqueryalias}
+                 {$outerjoins}
+                 {$outerwhere}
+                       {$sort}";
+
+        return $DB->get_recordset_sql($sql, $params, $limitfrom, $limitnum);
     }
 
     /**
@@ -116,12 +128,24 @@ class participants_search {
         global $DB;
 
         [
-            'from' => $from,
-            'where' => $where,
+            'subqueryalias' => $subqueryalias,
+            'innerselect' => $innerselect,
+            'outerjoins' => $outerjoins,
+            'innerjoins' => $innerjoins,
+            'outerwhere' => $outerwhere,
+            'innerwhere' => $innerwhere,
             'params' => $params,
         ] = $this->get_participants_sql($additionalwhere, $additionalparams);
 
-        return $DB->count_records_sql("SELECT COUNT(DISTINCT(u.id)) {$from} {$where}", $params);
+        $sql = "SELECT COUNT(u.id)
+                  FROM ({$innerselect}
+                                  FROM {$innerjoins}
+                         {$innerwhere}
+                       ) {$subqueryalias}
+         {$outerjoins}
+         {$outerwhere}";
+
+        return $DB->count_records_sql($sql, $params);
     }
 
     /**
@@ -136,6 +160,19 @@ class participants_search {
         $accesssince = 0;
         // Whether to match on users who HAVE accessed since the given time (ie false is 'inactive for more than x').
         $matchaccesssince = false;
+
+        // The alias for the subquery that fetches all distinct course users.
+        $usersubqueryalias = 'targetusers';
+        // The alias for {user} within the distinct user subquery.
+        $inneruseralias = 'udistinct';
+        // Inner query that selects distinct users in a course who are not deleted.
+        // Note: This ensures the outer (filtering) query joins on distinct users, avoiding the need for GROUP BY.
+        $innerselect = "SELECT DISTINCT {$inneruseralias}.id";
+        $innerjoins = ["{user} {$inneruseralias}"];
+        $innerwhere = "WHERE {$inneruseralias}.deleted = 0";
+
+        $outerjoins = ["JOIN {user} u ON u.id = {$usersubqueryalias}.id"];
+        $wheres = [];
 
         if ($this->filterset->has_filter('accesssince')) {
             $accesssince = $this->filterset->get_filter('accesssince')->current();
@@ -155,53 +192,46 @@ class participants_search {
             'params' => $params,
         ] = $this->get_enrolled_sql();
 
-        $joins = ['FROM {user} u'];
-        $wheres = [];
-        // Set where statement(s) that must always be included (outside of filter wheres).
-        $forcedwhere = "u.deleted = 0";
-
         $userfieldssql = user_picture::fields('u', $this->userfields);
 
         // Include any compulsory enrolment SQL (eg capability related filtering that must be applied).
         if (!empty($esqlforced)) {
-            $joins[] = "JOIN ({$esqlforced}) fef ON fef.id = u.id";
+            $outerjoins[] = "JOIN ({$esqlforced}) fef ON fef.id = u.id";
         }
 
         // Include any enrolment related filtering.
         if (!empty($esql)) {
-            $joins[] = "LEFT JOIN ({$esql}) ef ON ef.id = u.id";
+            $outerjoins[] = "LEFT JOIN ({$esql}) ef ON ef.id = u.id";
             $wheres[] = 'ef.id IS NOT NULL';
         }
 
         if ($isfrontpage) {
-            $select = "SELECT {$userfieldssql}, u.lastaccess";
+            $outerselect = "SELECT {$userfieldssql}, u.lastaccess";
             if ($accesssince) {
                 $wheres[] = user_get_user_lastaccess_sql($accesssince, 'u', $matchaccesssince);
             }
-            $groupby = ' GROUP BY u.id, u.lastaccess, ctx.id';
         } else {
-            $select = "SELECT {$userfieldssql}, COALESCE(ul.timeaccess, 0) AS lastaccess";
+            $outerselect = "SELECT {$userfieldssql}, COALESCE(ul.timeaccess, 0) AS lastaccess";
             // Not everybody has accessed the course yet.
-            $joins[] = 'LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid2)';
+            $outerjoins[] = 'LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid2)';
             $params['courseid2'] = $this->course->id;
             if ($accesssince) {
                 $wheres[] = user_get_course_lastaccess_sql($accesssince, 'ul', $matchaccesssince);
             }
 
             // Make sure we only ever fetch users in the course (regardless of enrolment filters).
-            $joins[] = 'JOIN {user_enrolments} ue ON ue.userid = u.id';
-            $joins[] = 'JOIN {enrol} e ON e.id = ue.enrolid
+            $innerjoins[] = "JOIN {user_enrolments} ue ON ue.userid = {$inneruseralias}.id";
+            $innerjoins[] = 'JOIN {enrol} e ON e.id = ue.enrolid
                                       AND e.courseid = :courseid1';
             $params['courseid1'] = $this->course->id;
-            $groupby = ' GROUP BY u.id, ul.timeaccess, ctx.id';
         }
 
         // Performance hacks - we preload user contexts together with accounts.
         $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
         $ccjoin = 'LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)';
         $params['contextlevel'] = CONTEXT_USER;
-        $select .= $ccselect;
-        $joins[] = $ccjoin;
+        $outerselect .= $ccselect;
+        $outerjoins[] = $ccjoin;
 
         // Apply any role filtering.
         if ($this->filterset->has_filter('roles')) {
@@ -242,35 +272,39 @@ class participants_search {
         }
 
         // Prepare final values.
-        $from = implode("\n", $joins);
+        $outerjoinsstring = implode("\n", $outerjoins);
+        $innerjoinsstring = implode("\n", $innerjoins);
         if ($wheres) {
             switch ($this->filterset->get_join_type()) {
                 case $this->filterset::JOINTYPE_ALL:
-                    $firstjoin = ' AND ';
+                    $wherenot = '';
                     $wheresjoin = ' AND ';
                     break;
                 case $this->filterset::JOINTYPE_NONE:
-                    $firstjoin = ' AND NOT ';
+                    $wherenot = ' NOT ';
                     $wheresjoin = ' AND NOT ';
                     break;
                 default:
                     // Default to 'Any' jointype.
-                    $firstjoin = ' AND ';
+                    $wherenot = '';
                     $wheresjoin = ' OR ';
                     break;
             }
 
-            $where = "WHERE ({$forcedwhere}) {$firstjoin}" . implode($wheresjoin, $wheres);
+            $outerwhere = 'WHERE ' . $wherenot . implode($wheresjoin, $wheres);
         } else {
-            $where = '';
+            $outerwhere = '';
         }
 
         return [
-            'select' => $select,
-            'from' => $from,
-            'where' => $where,
+            'subqueryalias' => $usersubqueryalias,
+            'outerselect' => $outerselect,
+            'innerselect' => $innerselect,
+            'outerjoins' => $outerjoinsstring,
+            'innerjoins' => $innerjoinsstring,
+            'outerwhere' => $outerwhere,
+            'innerwhere' => $innerwhere,
             'params' => $params,
-            'groupby' => $groupby,
         ];
     }
 
