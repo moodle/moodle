@@ -47,13 +47,6 @@
 }
 
 /**
- * Stripped table.
- */
-.path-grade-report-grader .gradeparent tr:nth-of-type(even) .cell {
-    background-color: #f9f9f9;
-}
-
-/**
  * All the floating divs.
  */
 .path-grade-report-grader .gradeparent .floater {
@@ -73,13 +66,6 @@
     font-size: 14px;
     font-weight: normal;
     text-align: left;
-}
-
-/**
- * All the floating cells.
- */
-.path-grade-report-grader .gradeparent .floater .cell {
-    background-color: #f9f9f9;
 }
 
 /**
@@ -175,11 +161,6 @@
     color: red;
     font-size: 9px;
     float: left;
-}
-
-.path-grade-report .gradeparent .floater .controls.cell,
-.path-grade-report-grader .gradeparent .controls {
-    background-color: #f3ead8;
 }
 
 .path-grade-report-grader .gradeparent .category {

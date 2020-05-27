@@ -390,7 +390,8 @@
             @include border-radius($border-radius);
         }
 
-        tr .cell {
+        tr .cell,
+        .floater .cell {
             background-color: $pagination-bg;
         }
 
@@ -399,9 +400,11 @@
             border-color: $table-border-color;
         }
 
-        tr:nth-of-type(even) .cell,
-        .floater .cell,
-        .avg {
+        .userrow.odd .cell,
+        .floater .cell.odd,
+        .heading .cell,
+        .cell.category,
+        .avg .cell {
             background-color: $gray-lightest;
         }
 

@@ -17667,16 +17667,19 @@ p.arrow_button {
 /**
  * Grader report.
  */
-.path-grade-report-grader .gradeparent tr .cell {
+.path-grade-report-grader .gradeparent tr .cell,
+.path-grade-report-grader .gradeparent .floater .cell {
   background-color: #fff; }
 
 .path-grade-report-grader .gradeparent table,
 .path-grade-report-grader .gradeparent .cell {
   border-color: #dee2e6; }
 
-.path-grade-report-grader .gradeparent tr:nth-of-type(even) .cell,
-.path-grade-report-grader .gradeparent .floater .cell,
-.path-grade-report-grader .gradeparent .avg {
+.path-grade-report-grader .gradeparent .userrow.odd .cell,
+.path-grade-report-grader .gradeparent .floater .cell.odd,
+.path-grade-report-grader .gradeparent .heading .cell,
+.path-grade-report-grader .gradeparent .cell.category,
+.path-grade-report-grader .gradeparent .avg .cell {
   background-color: #f8f9fa; }
 
 .path-grade-report-grader .gradeparent table .clickable {
