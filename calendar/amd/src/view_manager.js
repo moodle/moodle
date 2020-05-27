@@ -162,7 +162,7 @@ export const refreshMonthContent = (root, year, month, courseId, categoryId, tar
             return Templates.replaceNode(target, html, js);
         })
         .then(() => {
-            document.querySelector('body').dispatchEvent(new Event(CalendarEvents.viewUpdated));
+            document.querySelector('body').dispatchEvent(new CustomEvent(CalendarEvents.viewUpdated));
             return;
         })
         .always(() => {
@@ -248,7 +248,7 @@ export const refreshDayContent = (root, year, month, day, courseId, categoryId, 
             return Templates.replaceNode(target, html, js);
         })
         .then(() => {
-            document.querySelector('body').dispatchEvent(new Event(CalendarEvents.viewUpdated));
+            document.querySelector('body').dispatchEvent(new CustomEvent(CalendarEvents.viewUpdated));
             return;
         })
         .always(() => {
@@ -355,7 +355,7 @@ export const reloadCurrentUpcoming = (root, courseId = 0, categoryId = 0, target
             return Templates.replaceNode(target, html, js);
         })
         .then(() => {
-            document.querySelector('body').dispatchEvent(new Event(CalendarEvents.viewUpdated));
+            document.querySelector('body').dispatchEvent(new CustomEvent(CalendarEvents.viewUpdated));
             return;
         })
         .always(function() {
