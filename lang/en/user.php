@@ -22,7 +22,19 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addcondition'] = 'Add condition';
+$string['adverbfor_and'] = 'and';
+$string['adverbfor_andnot'] = 'and';
+$string['adverbfor_or'] = 'or';
+$string['applyfilters'] = 'Apply filters';
+$string['clearfilterrow'] = 'Remove filter row';
+$string['clearfilters'] = 'Clear filters';
 $string['countparticipantsfound'] = '{$a} participants found';
+$string['filtersetmatchdescription'] = 'How multiple filters should be combined';
+$string['match'] = 'Match';
+$string['matchofthefollowing'] = 'of the following:';
+$string['placeholdertypeorselect'] = 'Type or select...';
+$string['placeholdertype'] = 'Type...';
 $string['privacy:courserequestpath'] = 'Requested courses';
 $string['privacy:descriptionpath'] = 'Profile description';
 $string['privacy:devicespath'] = 'User devices';
@@ -126,6 +138,8 @@ $string['privacy:passwordresetpath'] = 'Password resets';
 $string['privacy:profileimagespath'] = 'Profile images';
 $string['privacy:privatefilespath'] = 'Private files';
 $string['privacy:sessionpath'] = 'Session data';
+$string['filterbykeyword'] = 'Keyword';
+$string['selectfiltertype'] = 'Select';
 $string['target:upcomingactivitiesdue'] = 'Upcoming activities due';
 $string['target:upcomingactivitiesdue_help'] = 'This target generates reminders for upcoming activities due.';
 $string['target:upcomingactivitiesdueinfo'] = 'All upcoming activities due insights are listed here. These students have received these insights directly.';

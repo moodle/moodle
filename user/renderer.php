@@ -260,6 +260,20 @@ class core_user_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render the data required for the participants filter on the course participants page.
+     *
+     * @param context $context The context of the course being displayed
+     * @param string $tableregionid The table to be updated by this filter
+     * @return string
+     */
+    public function participants_filter(context $context, string $tableregionid): string {
+        $renderable = new \core_user\output\participants_filter($context, $tableregionid);
+        $templatecontext = $renderable->export_for_template($this->output);
+
+        return $this->output->render_from_template('core_user/participantsfilter', $templatecontext);
+    }
+
+    /**
      * Returns a formatted filter option.
      *
      * @param int $filtertype The filter type (e.g. status, role, group, enrolment, last access).

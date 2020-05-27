@@ -11859,6 +11859,9 @@ body.h5p-embed .h5pmessages {
   color: #343a40;
   height: 1.5rem; }
 
+.border-radius {
+  border-radius: 0.25rem; }
+
 .emoji-picker {
   width: 350px;
   height: 400px; }
@@ -16265,6 +16268,15 @@ body.path-question-type .mform fieldset.hidden {
 
 .user-enroller-panel {
   width: 600px; }
+
+[data-filterverbfor],
+[data-filterregion="filter"]:last-child [data-filterregion="joinadverb"] {
+  display: none; }
+
+[data-filterverb="0"] [data-filterverbfor="0"],
+[data-filterverb="1"] [data-filterverbfor="1"],
+[data-filterverb="2"] [data-filterverbfor="2"] {
+  display: block; }
 
 .search-results .result {
   margin-left: 0;

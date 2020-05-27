@@ -299,3 +299,14 @@
 .user-enroller-panel {
     width: 600px;
 }
+
+[data-filterverbfor],
+[data-filterregion="filter"]:last-child [data-filterregion="joinadverb"] {
+    display: none;
+}
+
+[data-filterverb="0"] [data-filterverbfor="0"],
+[data-filterverb="1"] [data-filterverbfor="1"],
+[data-filterverb="2"] [data-filterverbfor="2"] {
+    display: block;
+}

@@ -1503,7 +1503,7 @@ class flexible_table {
         $this->sortdata = [];
         foreach ($sortdata as $sortitem) {
             if (!array_key_exists($sortitem['sortby'], $this->sortdata)) {
-                $this->sortdata[$sortitem['sortby']] = $sortitem['sortorder'];
+                $this->sortdata[$sortitem['sortby']] = (int) $sortitem['sortorder'];
             }
         }
     }

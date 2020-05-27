@@ -36,13 +36,15 @@
     { "inputID": 1, "suggestionsId": 2, "selectionId": 3, "downArrowId": 4, "placeholder": "Select something" }
 }}
 {{#showSuggestions}}
-<div class="d-inline-block position-relative">
+<div class="d-md-inline-block mr-md-2 position-relative">
     <input type="text" id="{{inputId}}" class="form-control" list="{{suggestionsId}}" placeholder="{{placeholder}}" role="combobox" aria-expanded="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-autocomplete="list" aria-owns="{{suggestionsId}} {{selectionId}}" {{#tags}}data-tags="1"{{/tags}}/>
     <span class="form-autocomplete-downarrow position-absolute p-1" id="{{downArrowId}}">&#x25BC;</span>
 </div>
 {{/showSuggestions}}
 {{^showSuggestions}}
-<input type="text" id="{{inputId}}" placeholder="{{placeholder}}" role="textbox" aria-owns="{{selectionId}}" {{#tags}}data-tags="1"{{/tags}}/>
+<div class="d-md-inline-block mr-md-2">
+    <input type="text" id="{{inputId}}" class="form-control" placeholder="{{placeholder}}" role="textbox" aria-owns="{{selectionId}}" {{#tags}}data-tags="1"{{/tags}}/>
+</div>
 {{/showSuggestions}}
 
 {{#js}}
