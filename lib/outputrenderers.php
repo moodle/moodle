@@ -1425,8 +1425,7 @@ class core_renderer extends renderer_base {
         if (!empty($this->page->context->id)) {
             $this->page->requires->js_call_amd('core/notification', 'init', array(
                 $this->page->context->id,
-                \core\notification::fetch_as_array($this),
-                isloggedin()
+                \core\notification::fetch_as_array($this)
             ));
         }
         $footer = str_replace($this->unique_end_html_token, $this->page->requires->get_end_code(), $footer);

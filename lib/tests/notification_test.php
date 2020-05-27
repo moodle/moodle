@@ -86,7 +86,16 @@ class core_notification_testcase extends advanced_testcase {
 
         $PAGE->set_state(\moodle_page::STATE_DONE);
         \core\notification::add('Example after page', \core\notification::INFO);
-        $this->assertCount(3, $SESSION->notifications);
+        $this->assertCount(2, $SESSION->notifications);
+        $this->expectOutputRegex('/Example after page/');
+
+        \core\session\manager::write_close();
+        \core\notification::add('Example after write_close', \core\notification::INFO);
+        $this->assertCount(2, $SESSION->notifications);
+        $this->expectOutputRegex('/Example after write_close/');
+
+        // Simulate shutdown handler which calls fetch.
+        $this->assertCount(2, \core\notification::fetch());
     }
 
     /**
