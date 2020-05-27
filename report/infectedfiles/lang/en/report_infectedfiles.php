@@ -23,11 +23,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 $string['author'] = 'Author';
-$string['confirmdelete'] = 'Do you really want to delete this file';
-$string['confirmdeleteall'] = 'Do you really want to delete all files';
+$string['confirmdelete'] = 'Do you really wish to delete this file?';
+$string['confirmdeleteall'] = 'Do you really wish to delete all files?';
+$string['confirmdownload'] = 'Do you really wish to download this file?';
+$string['confirmdownloadall'] = 'Do you really wish to download all files?';
 $string['filename'] = 'File name';
-$string['infectedfiles'] = 'Infected files';
-$string['privacy:metadata'] = 'This plugin does not contain any personal data';
+$string['infectedfiles'] = 'Antivirus failures';
+$string['privacy:metadata:infected_files'] = 'This table stores information on antivirus failures detected by the system.';
+$string['privacy:metadata:infected_files:filename'] = 'The name of the infected file uploaded by the user.';
+$string['privacy:metadata:infected_files:timecreated'] = 'The timestamp of when a user uploaded an infected file.';
+$string['privacy:metadata:infected_files:userid'] = 'The userid of the user who uploaded an infected file.';
+$string['privacy:metadata:infected_files_subcontext'] = 'Antivirus failures';
 $string['pluginname'] = 'Infected files';
 $string['quarantinedfile'] = 'Quarantined file';
 $string['reason'] = 'Failure reason';

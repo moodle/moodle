@@ -22,7 +22,7 @@
  * @copyright  Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace report_infectedfiles\output;
+namespace report_infectedfiles\table;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -70,7 +70,6 @@ class infectedfiles_table extends \table_sql implements \renderable {
     protected function define_table_columns() {
         $cols = array(
             'filename' => get_string('filename', 'report_infectedfiles'),
-            'quarantinedfile' => get_string('quarantinedfile', 'report_infectedfiles'),
             'author' => get_string('author', 'report_infectedfiles'),
             'reason' => get_string('reason', 'report_infectedfiles'),
             'timecreated' => get_string('timecreated', 'report_infectedfiles'),
@@ -102,7 +101,7 @@ class infectedfiles_table extends \table_sql implements \renderable {
      * @param bool $count When true, return the count SQL.
      * @return array containing sql to use and an array of params.
      */
-    protected function get_sql_and_params($count = false) {
+    protected function get_sql_and_params($count = false) : array {
         if ($count) {
             $select = "COUNT(1)";
         } else {
@@ -144,47 +143,79 @@ class infectedfiles_table extends \table_sql implements \renderable {
     }
 
     /**
+     * Column to display the authors fullname from userid.
+     *
+     * @param \stdClass $row the row from sql.
+     * @return string the authors name.
+     */
+    protected function col_author($row) : string {
+        // Get user fullname from ID.
+        $user = \core_user::get_user($row->userid);
+        $url = new \moodle_url('/user/profile.php', ['id' => $row->userid]);
+        return \html_writer::link($url, fullname($user));
+    }
+
+    /**
+     * Column to display the failure reason.
+     *
+     * @param \stdClass $row the row from sql.
+     * @return string the formatted reason.
+     */
+    protected function col_reason($row) {
+        return format_text($row->reason);
+    }
+
+    /**
      * Custom actions column
      *
-     * @param \stdClass $row an incidence record
-     * @return string content of action column
+     * @param \stdClass $row an incident record.
+     * @return string content of action column.
      * @throws \coding_exception
      * @throws \moodle_exception
      */
-    protected function col_actions($row) {
+    protected function col_actions($row) : string {
         global $OUTPUT;
         $filename = $row->quarantinedfile;
-        $zipfile = \core\antivirus\quarantine::get_quarantine_folder() . $filename;
-        if (!file_exists($zipfile)) {
+        $fileid = $row->id;
+        // If the file isn't found, we can do nothing in this column.
+        // This shouldn't happen, unless the file is manually deleted from the server externally.
+        if (!\core\antivirus\quarantine::quarantined_file_exists($filename)) {
             return '';
         }
         $links = '';
-        $managefilepage = new \moodle_url('/report/infectedfiles/manage_infected_files.php');
+        $managefilepage = new \moodle_url('/report/infectedfiles/index.php');
 
         // Download.
-        $downloadparams = ['filename' => $filename, 'action' => 'download', 'sesskey' => sesskey()];
+        $downloadparams = ['file' => $fileid, 'action' => 'download', 'sesskey' => sesskey()];
         $downloadurl = new \moodle_url($managefilepage, $downloadparams);
-        $icon = $OUTPUT->pix_icon('t/download', get_string('download'));
-        $downloadlink = \html_writer::link($downloadurl, $icon);
-        $links .= ' ' . $downloadlink;
+
+        $downloadconfirm = new \confirm_action(get_string('confirmdownload', 'report_infectedfiles'));
+        $links .= $OUTPUT->action_icon(
+            $downloadurl,
+            new \pix_icon('t/download', get_string('download')),
+            $downloadconfirm
+        );
 
         // Delete.
-        $deleteparams = ['filename' => $filename, 'action' => 'confirmdelete', 'sesskey' => sesskey()];
+        $deleteparams = ['file' => $fileid, 'action' => 'delete', 'sesskey' => sesskey()];
         $deleteurl = new \moodle_url($managefilepage, $deleteparams);
-        $icon = $OUTPUT->pix_icon('t/delete', get_string('delete'));
-        $deletelink = \html_writer::link($deleteurl, $icon);
-        $links .= ' ' . $deletelink;
+        $deleteconfirm = new \confirm_action(get_string('confirmdelete', 'report_infectedfiles'));
+        $links .= $OUTPUT->action_icon(
+            $deleteurl,
+            new \pix_icon('t/delete', get_string('delete')),
+            $deleteconfirm
+        );
 
         return $links;
     }
 
     /**
-     * Custom time column
+     * Custom time column.
      *
-     * @param \stdClass $row an incidence record
-     * @return string time created in user-friendly format
+     * @param \stdClass $row an incident record.
+     * @return string time created in user-friendly format.
      */
-    protected function col_timecreated($row) {
+    protected function col_timecreated($row) : string {
         return userdate($row->timecreated);
     }
 
@@ -194,26 +225,36 @@ class infectedfiles_table extends \table_sql implements \renderable {
      * @param int $pagesize number or records perpage
      * @param bool $useinitialsbar use the bar or not
      * @param string $downloadhelpbutton help button
+     * @return void
      * @throws \coding_exception
      * @throws \moodle_exception
      */
     public function display($pagesize, $useinitialsbar, $downloadhelpbutton='') {
+        global $OUTPUT;
+        // Output the table, and then display buttons.
         $this->out($pagesize, $useinitialsbar, $downloadhelpbutton);
+        $managefilepage = new \moodle_url('/report/infectedfiles/index.php');
 
-        $managefilepage = new \moodle_url('/report/infectedfiles/manage_infected_files.php');
+        // If there are no rows, dont bother rendering extra buttons.
+        if (empty($this->rawdata)) {
+            return;
+        }
+
         // Delete All.
-        $button = \html_writer::tag('button', get_string('deleteall'), ['class' => 'btn btn-primary']);
-        $deleteallparams = ['action' => 'confirmdeleteall', 'sesskey' => sesskey()];
+        $deleteallparams = ['action' => 'deleteall', 'sesskey' => sesskey()];
         $deleteallurl = new \moodle_url($managefilepage, $deleteallparams);
-        echo \html_writer::link($deleteallurl, $button);
+        $deletebutton = new \single_button($deleteallurl, get_string('deleteall'), 'post', true);
+        $deletebutton->add_confirm_action(get_string('confirmdeleteall', 'report_infectedfiles'));
+        echo $OUTPUT->render($deletebutton);
 
         echo "&nbsp";
 
         // Download All.
-        $button = \html_writer::tag('button', get_string('downloadall'), ['class' => 'btn btn-primary']);
         $downloadallparams = ['action' => 'downloadall', 'sesskey' => sesskey()];
         $downloadallurl = new \moodle_url($managefilepage, $downloadallparams);
-        echo \html_writer::link($downloadallurl, $button);
+        $downloadbutton = new \single_button($downloadallurl, get_string('downloadall'), 'post', true);
+        $downloadbutton->add_confirm_action(get_string('confirmdownloadall', 'report_infectedfiles'));
+        echo $OUTPUT->render($downloadbutton);
     }
 
 }

@@ -172,22 +172,35 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_heading('antiviruscommonsettings', new lang_string('antiviruscommonsettings', 'antivirus'), ''));
 
     // Alert email.
-    $temp->add(new admin_setting_configtext('antivirus/notifyemail',
+    $temp->add(
+        new admin_setting_configtext(
+            'antivirus/notifyemail',
             new lang_string('notifyemail', 'antivirus'),
-            new lang_string('notifyemail_help', 'antivirus'), '', PARAM_EMAIL)
+            new lang_string('notifyemail_help', 'antivirus'),
+            '',
+            PARAM_EMAIL
+        )
     );
 
     // Enable quarantine.
-    $temp->add(new admin_setting_configcheckbox('antivirus/enablequarantine',
-        new lang_string('enablequarantine', 'antivirus'),
-        new lang_string('enablequarantine_help', 'antivirus',
-            \core\antivirus\quarantine::DEFAULT_QUARANTINE_FOLDER), 0));
+    $temp->add(
+        new admin_setting_configcheckbox(
+            'antivirus/enablequarantine',
+            new lang_string('enablequarantine', 'antivirus'),
+            new lang_string('enablequarantine_help', 'antivirus',
+            \core\antivirus\quarantine::DEFAULT_QUARANTINE_FOLDER),
+            0
+        )
+    );
 
     // Quarantine time.
-    $temp->add(new admin_setting_configduration('antivirus/quarantinetime',
+    $temp->add(
+        new admin_setting_configduration(
+            'antivirus/quarantinetime',
             new lang_string('quarantinetime', 'antivirus'),
             new lang_string('quarantinetime_desc', 'antivirus'),
-            \core\antivirus\quarantine::DEFAULT_QUARANTINE_TIME)
+            \core\antivirus\quarantine::DEFAULT_QUARANTINE_TIME
+        )
     );
 
     $ADMIN->add('antivirussettings', $temp);

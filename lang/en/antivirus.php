@@ -27,32 +27,35 @@ $string['antiviruses'] = 'Antivirus plugins';
 $string['antiviruscommonsettings'] = 'Common antivirus settings';
 $string['antivirussettings'] = 'Manage antivirus plugins';
 $string['configantivirusplugins'] = 'Please choose the antivirus plugins you wish to use and arrange them in order of being applied.';
-$string['confirmdelete'] = 'Do you really want to delete this file';
-$string['confirmdeleteall'] = 'Do you really want to delete all files';
 $string['datastream'] = 'Data';
-$string['datainfecteddesc'] = 'There is a virus infected data';
+$string['datainfecteddesc'] = 'Infected data was detected.';
 $string['datainfectedname'] = 'Data infected';
+$string['emailadditionalinfo'] = 'Additional details returned from the virus engine: ';
+$string['emailauthor'] = 'Uploaded by: ';
+$string['emailcontenthash'] = 'Content hash: ';
+$string['emailcontenttype'] = 'Content type: ';
+$string['emaildate'] = 'Date uploaded: ';
+$string['emailfilename'] = 'Filename: ';
+$string['emailfilesize'] = 'File size: ';
+$string['emailgeoinfo'] = 'Geolocation: ';
+$string['emailinfectedfiledetected'] = 'Infected file detected';
+$string['emailipaddress'] = 'IP Address: ';
+$string['emailreferer'] = 'Referer: ';
+$string['emailreport'] = 'Report: ';
+$string['emailscanner'] = 'Scanner: ';
+$string['emailscannererrordetected'] = 'A scanner error occured';
 $string['emailsubject'] = '{$a} :: Antivirus notification';
 $string['enablequarantine'] = 'Enable quarantine';
 $string['enablequarantine_help'] = 'When quarantine is enabled, any files which are detected as viruses will be kept in a quarantine folder for later inspection ([dataroot]/{$a}).
 The upload into Moodle will still fail.
 If you have any file system level virus scanning in place, the quarantine folder should be excluded from the antivirus check to avoid detecting the quarantined files.';
+$string['fileinfecteddesc'] = 'An infected file was detected.';
 $string['fileinfectedname'] = 'File infected';
-$string['incidencedetails'] = 'Infected file detected:
-Report: {$a->report}
-File name: {$a->filename}
-File size: {$a->filesize}
-File content hash: {$a->contenthash}
-File content type: {$a->contenttype}
-Uploaded by: {$a->author}
-IP: {$a->ipaddress}
-REFERER: {$a->referer}
-Date: {$a->date}
-{$a->notice}';
 $string['notifyemail'] = 'Antivirus alert email';
 $string['notifyemail_help'] = 'If set, then only the specified email will be notified when a virus is detected.
 If blank, then all site admins will be notified by email when a virus is detected.';
 $string['privacy:metadata'] = 'The Antivirus system does not store any personal data.';
+$string['quarantinedisabled'] = 'Quarantine disabled, file not stored.';
 $string['quarantinedfiles'] = 'Antivirus quarantined files';
 $string['quarantinetime'] = 'Maximum quarantine time';
 $string['quarantinetime_desc'] = 'Quarantined files older than specified period will be removed.';

@@ -47,27 +47,28 @@ class quarantine {
     /** Zip all infected file */
     const FILE_ZIP_ALL_INFECTED = '_all_infected_files.zip';
 
-    /** Incidence details file */
+    /** Incident details file */
     const FILE_HTML_DETAILS = '_details.html';
 
-    /** Incidence details file */
+    /** Incident details file */
     const DEFAULT_QUARANTINE_TIME = DAYSECS * 28;
 
     /** Date format in filename */
     const FILE_NAME_DATE_FORMAT = '%Y%m%d%H%M%S';
 
     /**
-     * Move the infected file to the quarantine folder
+     * Move the infected file to the quarantine folder.
      *
-     * @param string $file infected file
-     * @param string $filename infected file name
-     * @param string $incidencedetails incidence details
-     * @param string $notice notice details
+     * @param string $file infected file.
+     * @param string $filename infected file name.
+     * @param string $incidentdetails incident details.
+     * @param string $notice notice details.
+     * @return string|null the name of the newly created quarantined file.
      * @throws \dml_exception
      */
-    public static function quarantine_file($file, $filename, $incidencedetails, $notice) {
-        if (!self::is_allowed_quarantine()) {
-            return;
+    public static function quarantine_file(string $file, string $filename, string $incidentdetails, string $notice) : ?string {
+        if (!self::is_quarantine_enabled()) {
+            return null;
         }
         // Generate file names.
         $date = userdate(time(), self::FILE_NAME_DATE_FORMAT) . "_" . rand();
@@ -77,7 +78,7 @@ class quarantine {
         // Create Zip file.
         $ziparchive = new \zip_archive();
         if ($ziparchive->open($zipfilepath, \file_archive::CREATE)) {
-            $ziparchive->add_file_from_string($detailsfilename, format_text($incidencedetails, FORMAT_MOODLE));
+            $ziparchive->add_file_from_string($detailsfilename, format_text($incidentdetails, FORMAT_MOODLE));
             $ziparchive->add_file_from_pathname($filename, $file);
             $ziparchive->close();
         }
@@ -87,17 +88,18 @@ class quarantine {
     }
 
     /**
-     * Move the infected file to the quarantine folder
+     * Move the infected file to the quarantine folder.
      *
-     * @param string $data data which is infected
-     * @param string $filename infected file name
-     * @param string $incidencedetails incidence details
-     * @param string $notice notice details
+     * @param string $data data which is infected.
+     * @param string $filename infected file name.
+     * @param string $incidentdetails incident details.
+     * @param string $notice notice details.
+     * @return string|null the name of the newly created quarantined file.
      * @throws \dml_exception
      */
-    public static function quarantine_data($data, $filename, $incidencedetails, $notice) {
-        if (!self::is_allowed_quarantine()) {
-            return;
+    public static function quarantine_data(string $data, string $filename, string $incidentdetails, string $notice) : ?string {
+        if (!self::is_quarantine_enabled()) {
+            return null;
         }
         // Generate file names.
         $date = userdate(time(), self::FILE_NAME_DATE_FORMAT) . "_" . rand();
@@ -107,7 +109,7 @@ class quarantine {
         // Create Zip file.
         $ziparchive = new \zip_archive();
         if ($ziparchive->open($zipfilepath, \file_archive::CREATE)) {
-            $ziparchive->add_file_from_string($detailsfilename, format_text($incidencedetails, FORMAT_MOODLE));
+            $ziparchive->add_file_from_string($detailsfilename, format_text($incidentdetails, FORMAT_MOODLE));
             $ziparchive->add_file_from_string($filename, $data);
             $ziparchive->close();
         }
@@ -122,7 +124,7 @@ class quarantine {
      * @return bool
      * @throws \dml_exception
      */
-    public static function is_allowed_quarantine() {
+    public static function is_quarantine_enabled() : bool {
         return !empty(get_config("antivirus", "enablequarantine"));
     }
 
@@ -131,7 +133,7 @@ class quarantine {
      *
      * @return string path of quarantine folder
      */
-    public static function get_quarantine_folder() {
+    private static function get_quarantine_folder() : string {
         global $CFG;
         $quarantinefolder = $CFG->dataroot . DIRECTORY_SEPARATOR . self::DEFAULT_QUARANTINE_FOLDER;
         if (!file_exists($quarantinefolder)) {
@@ -141,43 +143,78 @@ class quarantine {
     }
 
     /**
-     * Download quarantined file
+     * Checks whether a file exists inside the antivirus quarantine folder.
      *
-     * @param string $filename name of file to be downloaded
+     * @param string $filename the filename to check.
+     * @return boolean whether file exists.
      */
-    public static function download_quarantined_file($filename) {
-        $file = self::get_quarantine_folder() . $filename;
-//        send_file($file, $filename);
+    public static function quarantined_file_exists(string $filename) : bool {
+        $folder = self::get_quarantine_folder();
+        return file_exists($folder . $filename);
     }
 
     /**
-     * Delete quarantined file
+     * Download quarantined file.
      *
-     * @param string $filename name of file to be deleted
+     * @param int $fileid the id of file to be downloaded.
      */
-    public static function delete_quarantined_file($filename) {
-        self::delete_infected_file_record($filename);
+    public static function download_quarantined_file(int $fileid) {
+        global $DB;
+
+        // Get the filename to be downloaded.
+        $filename = $DB->get_field('infected_files', 'quarantinedfile', ['id' => $fileid], IGNORE_MISSING);
+        // If file record isnt found, user might be doing something naughty in params, or a stale request.
+        if (empty($filename)) {
+            return;
+        }
+
+        $file = self::get_quarantine_folder() . $filename;
+        send_file($file, $filename);
+    }
+
+    /**
+     * Delete quarantined file.
+     *
+     * @param int $fileid id of file to be deleted.
+     */
+    public static function delete_quarantined_file(int $fileid) {
+        global $DB;
+
+        // Get the filename to be deleted.
+        $filename = $DB->get_field('infected_files', 'quarantinedfile', ['id' => $fileid], IGNORE_MISSING);
+        // If file record isnt found, user might be doing something naughty in params, or a stale request.
+        if (empty($filename)) {
+            return;
+        }
+
+        // Delete the file from the folder.
         $file = self::get_quarantine_folder() . $filename;
         if (file_exists($file)) {
-//            unlink($file);
+            unlink($file);
         }
+
+        // Now we are finished with the record, delete the quarantine information.
+        self::delete_infected_file_record($fileid);
     }
 
     /**
-     * Download all quarantined files
+     * Download all quarantined files.
      *
+     * @return void
      */
     public static function download_all_quarantined_files() {
         $files = new \DirectoryIterator(self::get_quarantine_folder());
-        // Add all infected file to a zip file.
+        // Add all infected files to a zip file.
         $date = userdate(time(), self::FILE_NAME_DATE_FORMAT);
         $zipfilename = $date . self::FILE_ZIP_ALL_INFECTED;
         $zipfilepath = self::get_quarantine_folder() . DIRECTORY_SEPARATOR . $zipfilename;
         $tempfilestocleanup = [];
+
         $ziparchive = new \zip_archive();
         if ($ziparchive->open($zipfilepath, \file_archive::CREATE)) {
             foreach ($files as $file) {
                 if (!$file->isDot()) {
+                    // Only send the actual files.
                     $filename = $file->getFilename();
                     $filepath = $file->getPathname();
                     $ziparchive->add_file_from_pathname($filename, $filepath);
@@ -185,29 +222,34 @@ class quarantine {
             }
             $ziparchive->close();
         }
+
         // Clean up temp files.
         foreach ($tempfilestocleanup as $tempfile) {
             if (file_exists($tempfile)) {
                 unlink($tempfile);
             }
         }
-//        send_temp_file($zipfilepath, $zipfilename);
+
+        send_temp_file($zipfilepath, $zipfilename);
     }
 
     /**
-     * Return array of quarantined files
+     * Return array of quarantined files.
      *
-     * @return array list of quarantined files
+     * @return array list of quarantined files.
      */
-    public static function get_quarantined_files() {
+    public static function get_quarantined_files() : array {
         $files = new \DirectoryIterator(self::get_quarantine_folder());
         $filestosort = [];
+
+        // Grab all files that match the naming structure.
         foreach ($files as $file) {
             $filename = $file->getFilename();
             if (!$file->isDot() && strpos($filename, self::FILE_ZIP_INFECTED) !== false) {
                 $filestosort[$filename] = $file->getPathname();
             }
         }
+
         krsort($filestosort, SORT_NATURAL);
         return $filestosort;
     }
@@ -217,19 +259,37 @@ class quarantine {
      *
      * @param int $timetocleanup time to clean up
      */
-    public static function clean_up_quarantine_folder($timetocleanup) {
+    public static function clean_up_quarantine_folder(int $timetocleanup) {
         $files = new \DirectoryIterator(self::get_quarantine_folder());
         // Clean up the folder.
         foreach ($files as $file) {
             $filename = $file->getFilename();
+
+            // Only delete files that match the correct name structure.
             if (!$file->isDot() && strpos($filename, self::FILE_ZIP_INFECTED) !== false) {
                 $modifiedtime = $file->getMTime();
+
                 if ($modifiedtime <= $timetocleanup) {
                     unlink($file->getPathname());
-                    self::delete_infected_file_record($filename);
                 }
             }
         }
+
+        // Lastly cleanup the infected files table as well.
+        self::clean_up_infected_records($timetocleanup);
+    }
+
+    /**
+     * This function removes any stale records from the infected files table.
+     *
+     * @param int $timetocleanup the time to cleanup from
+     * @return void
+     */
+    private static function clean_up_infected_records(int $timetocleanup) {
+        global $DB;
+
+        $select = "timecreated <= ?";
+        $DB->delete_records_select('infected_files', $select, [$timetocleanup]);
     }
 
     /**
@@ -240,25 +300,27 @@ class quarantine {
      * @param string $reason failure reason
      * @throws \dml_exception
      */
-    private static function create_infected_file_record($filename, $zipfile, $reason) {
+    private static function create_infected_file_record(string $filename, string $zipfile, string $reason) {
         global $DB, $USER;
+
         $record = new \stdClass();
         $record->filename = $filename;
         $record->quarantinedfile = $zipfile;
-        $record->author = fullname($USER);
+        $record->userid = $USER->id;
         $record->reason = $reason;
         $record->timecreated = time();
+
         $DB->insert_record('infected_files', $record);
     }
 
     /**
-     * Delete an infected_file_record
+     * Delete the database record for an infected file.
      *
-     * @param string $zipfile quarantined file name
+     * @param int $fileid quarantined file id
      * @throws \dml_exception
      */
-    private static function delete_infected_file_record($zipfile) {
+    private static function delete_infected_file_record(int $fileid) {
         global $DB;
-        $DB->delete_records('infected_files', ['quarantinedfile' => $zipfile]);
+        $DB->delete_records('infected_files', ['id' => $fileid]);
     }
 }

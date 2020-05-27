@@ -404,10 +404,10 @@ $tasks = array(
     array(
         'classname' => 'core\task\antivirus_cleanup_task',
         'blocking' => 0,
-        'minute' => '0',
+        'minute' => 'R',
         'hour' => '0',
         'day' => '*',
         'dayofweek' => '*',
-        'month' => '*'
+        'month' => '*',
     ),
 );

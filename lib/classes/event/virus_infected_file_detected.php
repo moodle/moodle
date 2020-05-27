@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class antivirus_file_infected extends \core\event\base {
+class virus_infected_file_detected extends \core\event\base {
     /**
      * Event data
      */
@@ -50,8 +50,11 @@ class antivirus_file_infected extends \core\event\base {
      * @throws \coding_exception
      */
     public function get_description() {
-        return isset($this->other['incidencedetails']) ?
-            format_text($this->other['incidencedetails'], FORMAT_MOODLE) : 'Infected file';
+        if (isset($this->other['incidentdetails'])) {
+            return format_text($this->other['incidentdetails'], FORMAT_MOODLE);
+        } else {
+            return get_string('fileinfecteddesc', 'antivirus');
+        }
     }
 
     /**

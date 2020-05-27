@@ -144,7 +144,7 @@ $messageproviders = array (
     ],
 
     // Infected files.
-    'infected' => array (
-        'capability'  => 'moodle/site:config'
+    'infected' => array(
+        'capability'  => 'moodle/site:config',
     ),
 );

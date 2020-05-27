@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class antivirus_cleanup_task extends \core\task\scheduled_task {
+class antivirus_cleanup_task extends scheduled_task {
 
     /**
      * Get a descriptive name for this task.
