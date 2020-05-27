@@ -882,6 +882,7 @@ class behat_core_generator extends behat_generator_base {
             $content = $contenttype->create_content($record);
 
             if (!empty($data['filepath'])) {
+                $filename = basename($data['filepath']);
                 $fs = get_file_storage();
                 $filerecord = array(
                     'component' => 'contentbank',
@@ -889,7 +890,7 @@ class behat_core_generator extends behat_generator_base {
                     'contextid' => $context->id,
                     'userid' => $data['userid'],
                     'itemid' => $content->get_id(),
-                    'filename' => $data['contentname'],
+                    'filename' => $filename,
                     'filepath' => '/'
                 );
                 $fs->create_file_from_pathname($filerecord, $CFG->dirroot . $data['filepath']);
