@@ -3267,7 +3267,7 @@ function repository_download_selected_files($context, string $component, string 
     $filestoarchive = [];
 
     foreach ($files as $selectedfile) {
-        $filename = clean_filename($selectedfile->filename); // Default to '.' for root.
+        $filename = $selectedfile->filename ? clean_filename($selectedfile->filename) : '.'; // Default to '.' for root.
         $filepath = clean_param($selectedfile->filepath, PARAM_PATH); // Default to '/' for downloadall.
         $filepath = file_correct_filepath($filepath);
         $area = file_get_draft_area_info($itemid, $filepath);
@@ -3279,7 +3279,9 @@ function repository_download_selected_files($context, string $component, string 
         // If it is empty we are downloading a directory.
         $archivefile = $storedfile->get_filename();
         if (!$filename || $filename == '.' ) {
-            $archivefile = $filepath;
+            $foldername = explode('/', trim($filepath, '/'));
+            $folder = trim(array_pop($foldername), '/');
+            $archivefile = $folder ?? '/';
         }
 
         $filestoarchive[$archivefile] = $storedfile;
