@@ -208,11 +208,12 @@ class grade extends tablelike implements selectable_items, filterable_items {
         $url = new moodle_url("/user/view.php", array('id' => $item->id, 'course' => $this->courseid));
         $iconstring = get_string('filtergrades', 'gradereport_singleview', $fullname);
         $grade->label = $fullname;
+        $userpic = $OUTPUT->user_picture($item, ['link' => false, 'visibletoscreenreaders' => false]);
 
         $line = array(
-            $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', $iconstring)),
-            $OUTPUT->user_picture($item, array('visibletoscreenreaders' => false)) .
-            html_writer::link($url, $fullname),
+            $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', ''), null,
+                    ['title' => $iconstring, 'aria-label' => $iconstring]),
+            html_writer::link($url, $userpic . $fullname),
             $this->item_range()
         );
         $lineclasses = array(
