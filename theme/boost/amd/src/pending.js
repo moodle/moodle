@@ -20,112 +20,114 @@
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery'], function($) {
-    var moduleTransitions = {
-        alert: [
-            // Alert.
-            {
-                start: 'close',
-                end: 'closed',
-            },
-        ],
 
-        carousel: [
-            {
-                start: 'slide',
-                end: 'slid',
-            },
-        ],
+import jQuery from 'jquery';
+const moduleTransitions = {
+    alert: [
+        // Alert.
+        {
+            start: 'close',
+            end: 'closed',
+        },
+    ],
 
-        collapse: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
+    carousel: [
+        {
+            start: 'slide',
+            end: 'slid',
+        },
+    ],
 
-        dropdown: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
+    collapse: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
 
-        modal: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
+    dropdown: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
 
-        popover: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
+    modal: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
 
-        tab: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
+    popover: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
 
-        toast: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
+    tab: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
 
-        tooltip: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
-    };
+    toast: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
 
-    Object.keys(moduleTransitions).forEach(function(key) {
-        moduleTransitions[key].forEach(function(pair) {
-            var eventStart = pair.start + '.bs.' + key;
-            var eventEnd = pair.end + '.bs.' + key;
-            $(document.body).on(eventStart, function() {
+    tooltip: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
+};
+
+export default () => {
+    Object.entries(moduleTransitions).forEach(([key, pairs]) => {
+        pairs.forEach(pair => {
+            const eventStart = `${pair.start}.bs.${key}`;
+            const eventEnd = `${pair.end}.bs.${key}`;
+            jQuery(document.body).on(eventStart, () => {
                 M.util.js_pending(eventEnd);
             });
 
-            $(document.body).on(eventEnd, function() {
+            jQuery(document.body).on(eventEnd, () => {
                 M.util.js_complete(eventEnd);
             });
         });
     });
-});
+};

@@ -26,38 +26,11 @@
 
 import $ from 'jquery';
 import Aria from './aria';
-import Scroll from './scroll';
 import Bootstrap from './bootstrap/index';
 import CustomEvents from 'core/custom_interaction_events';
-
-/**
- * Set up the search.
- *
- * @method init
- */
-export {
-    init,
-    Bootstrap
-};
-
-/**
- * Bootstrap init function
- */
-const init = () => {
-    rememberTabs();
-
-    enablePopovers();
-
-    enableTooltips();
-
-    const scroll = new Scroll();
-    scroll.init();
-
-    // Disables flipping the dropdowns up and getting hidden behind the navbar.
-    $.fn.dropdown.Constructor.Default.flip = false;
-
-    Aria.init();
-};
+import Pending from 'core/pending';
+import Scroll from './scroll';
+import setupBootstrapPendingChecks from './pending';
 
 /**
  * Rember the last visited tabs.
@@ -92,7 +65,6 @@ const enablePopovers = () => {
         CustomEvents.events.escape,
     ]);
     $('body').on(CustomEvents.events.escape, '[data-toggle=popover]', function() {
-
         $(this).trigger('blur');
     });
 };
@@ -106,4 +78,43 @@ const enableTooltips = () => {
         container: 'body',
         selector: '[data-toggle="tooltip"]'
     });
+};
+
+/**
+ * Bootstrap init function
+ */
+const init = () => {
+    const pendingPromise = new Pending('theme_boost/loader:init');
+
+    setupBootstrapPendingChecks();
+
+    // Remember the last visited tabs.
+    rememberTabs();
+
+    // Enable all popovers.
+    enablePopovers();
+
+    // Enable all tooltips.
+    enableTooltips();
+
+    // Add scroll handling.
+    (new Scroll()).init();
+
+    // Disables flipping the dropdowns up and getting hidden behind the navbar.
+    $.fn.dropdown.Constructor.Default.flip = false;
+
+    // Setup Aria helpers for Bootstrap features.
+    Aria.init();
+
+    pendingPromise.resolve();
+};
+
+/**
+ * Set up the search.
+ *
+ * @method init
+ */
+export {
+    init,
+    Bootstrap
 };
