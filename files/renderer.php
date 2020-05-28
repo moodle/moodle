@@ -539,10 +539,8 @@ class core_files_renderer extends plugin_renderer_base {
 
         $licenses = [];
         // Discard licenses without a name or source from enabled licenses.
-        foreach (license_manager::get_licenses(['enabled' => 1]) as $license) {
+        foreach (license_manager::get_active_licenses() as $license) {
             if (!empty($license->fullname) && !empty($license->source)) {
-                // Get license fullname strings using the shortname for internationalisation.
-                $license->fullname = get_string($license->shortname, 'license');
                 $licenses[] = $license;
             }
         }
