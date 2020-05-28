@@ -244,7 +244,7 @@ class helper {
         }
 
         // Delete.
-        if ($category->can_delete_full()) {
+        if (!empty($category->move_content_targets_list()) || $category->can_delete_full()) {
             $actions['delete'] = array(
                 'url' => new \moodle_url($baseurl, array('action' => 'deletecategory')),
                 'icon' => new \pix_icon('t/delete', new \lang_string('delete')),
