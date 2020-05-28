@@ -229,6 +229,8 @@ class license_manager {
                 // Interpret core license strings for internationalisation.
                 if ($license->custom == self::CORE_LICENSE) {
                     $license->fullname = get_string($license->shortname, 'license');
+                } else {
+                    $license->fullname = format_string($license->fullname);
                 }
                 $licenses[$license->shortname] = $license;
             }
@@ -352,10 +354,6 @@ class license_manager {
             $licenses = self::get_licenses();
             foreach ($licenses as $license) {
                 if (in_array($license->shortname, $activelicenses)) {
-                    // Interpret core license strings for internationalisation.
-                    if (isset($license->custom) && $license->custom == self::CORE_LICENSE) {
-                        $license->fullname = get_string($license->shortname, 'license');
-                    }
                     $result[$license->shortname] = $license;
                 }
             }
