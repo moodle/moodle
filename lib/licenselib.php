@@ -127,6 +127,8 @@ class license_manager {
 
         $DB->insert_record('license', $license);
         self::reset_license_cache();
+        // Update the config setting of active licenses.
+        self::set_active_licenses();
     }
 
     /**
@@ -202,6 +204,9 @@ class license_manager {
                         self::save($license);
                     }
                 }
+
+                // Update the config setting of active licenses as well.
+                self::set_active_licenses();
 
             } else {
                 throw new moodle_exception('cannotdeletecore', 'license');
