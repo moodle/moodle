@@ -13246,6 +13246,10 @@ table.calendartable caption {
 .content-bank-container.view-list .cb-btnsort.dir-desc .desc {
   display: block; }
 
+.cb-toolbar .dropdown-scrollable {
+  max-height: 190px;
+  overflow-y: auto; }
+
 /* course.less */
 /* COURSE CONTENT */
 .section_add_menus {

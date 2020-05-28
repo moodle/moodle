@@ -53,7 +53,7 @@ if ($PAGE->course) {
 $PAGE->set_url(new \moodle_url('/contentbank/view.php', ['id' => $id]));
 $PAGE->set_context($context);
 $PAGE->navbar->add($record->name);
-$PAGE->set_heading($title);
+$PAGE->set_heading($record->name);
 $title .= ": ".$record->name;
 $PAGE->set_title($title);
 $PAGE->set_pagetype('contenbank');
@@ -109,7 +109,6 @@ $PAGE->add_header_action(html_writer::div(
 ));
 
 echo $OUTPUT->header();
-echo $OUTPUT->box_start('generalbox');
 
 // If needed, display notifications.
 if ($errormsg !== '') {
@@ -118,8 +117,11 @@ if ($errormsg !== '') {
     echo $OUTPUT->notification($statusmsg, 'notifysuccess');
 }
 if ($contenttype->can_access()) {
-    echo $contenttype->get_view_content($content);
+    $viewcontent = new core_contentbank\output\viewcontent($contenttype, $content);
+    echo $OUTPUT->render($viewcontent);
+} else {
+    $message = get_string('contenttypenoaccess', 'core_contentbank', $record->contenttype);
+    echo $OUTPUT->notification($message, 'error');
 }
 
-echo $OUTPUT->box_end();
 echo $OUTPUT->footer();

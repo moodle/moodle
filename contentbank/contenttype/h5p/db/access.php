@@ -44,4 +44,14 @@ $capabilities = [
             'editingteacher' => CAP_ALLOW,
         ]
     ],
+    'contenttype/h5p:useeditor' => [
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        ]
+    ],
 ];

@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_contentbank/list
+    @template core_contentbank/bankcontent
 
     Example context (json):
     {
@@ -32,10 +32,36 @@
             },
             {
                 "name": "resume.pdf",
+                "title": "resume",
+                "timemodified": 1589792039,
+                "size": "699.3KB",
+                "bytes": 716126,
+                "type": "Archive (PDF)",
                 "icon": "http://something/theme/image.php/boost/core/1584597850/f/pdf-64"
             }
         ],
         "tools": [
+            {
+                "name": "Add",
+                "dropdown": true,
+                "link": "http://something/contentbank/edit.php?contextid=1",
+                "contenttypes": [
+                    {
+                        "name": "H5P Interactive Content",
+                        "baseurl": "http://something/contentbank/edit.php?contextid=1&plugin=h5p",
+                        "types": [
+                            {
+                                "typename": "H5P Interactive Content"
+                            },
+                            {
+                                "typename": "Accordion",
+                                "typeeditorparams": "library=Accordion-1.4",
+                                "typeicon": "http://something/pluginfile.php/1/core_h5p/libraries/13/H5P.Accordion-1.4/icon.svg"
+                            }
+                        ]
+                    }
+                ]
+            },
             {
                 "name": "Upload",
                 "link": "http://something/contentbank/contenttype/h5p/view.php?url=http://something/pluginfile.php/1/contentbank/public/accordion.h5p",

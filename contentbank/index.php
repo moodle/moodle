@@ -62,6 +62,19 @@ $foldercontents = $cb->search_contents($search, $contextid, $contenttypes);
 
 // Get the toolbar ready.
 $toolbar = array ();
+
+// Place the Add button in the toolbar.
+if (has_capability('moodle/contentbank:useeditor', $context)) {
+    // Get the content types for which the user can use an editor.
+    $editabletypes = $cb->get_contenttypes_with_capability_feature(\core_contentbank\contenttype::CAN_EDIT, $context);
+    if (!empty($editabletypes)) {
+        // Editor base URL.
+        $editbaseurl = new moodle_url('/contentbank/edit.php', ['contextid' => $contextid]);
+        $toolbar[] = ['name' => get_string('add'), 'link' => $editbaseurl, 'dropdown' => true, 'contenttypes' => $editabletypes];
+    }
+}
+
+// Place the Upload button in the toolbar.
 if (has_capability('moodle/contentbank:upload', $context)) {
     // Don' show upload button if there's no plugin to support any file extension.
     $accepted = $cb->get_supported_extensions_as_string($context);

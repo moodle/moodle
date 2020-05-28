@@ -25,7 +25,11 @@
 namespace contenttype_h5p;
 
 use core\event\contentbank_content_viewed;
-use html_writer;
+use stdClass;
+use core_h5p\editor_ajax;
+use core_h5p\file_storage;
+use core_h5p\local\library\autoloader;
+use H5PCore;
 
 /**
  * H5P content bank manager class
@@ -65,8 +69,7 @@ class contenttype extends \core_contentbank\contenttype {
         $event->trigger();
 
         $fileurl = $content->get_file_url();
-        $html = html_writer::tag('h2', $content->get_name());
-        $html .= \core_h5p\player::display($fileurl, new \stdClass(), true);
+        $html = \core_h5p\player::display($fileurl, new \stdClass(), true);
         return $html;
     }
 
@@ -107,7 +110,7 @@ class contenttype extends \core_contentbank\contenttype {
      * @return array
      */
     protected function get_implemented_features(): array {
-        return [self::CAN_UPLOAD];
+        return [self::CAN_UPLOAD, self::CAN_EDIT];
     }
 
     /**
@@ -126,5 +129,43 @@ class contenttype extends \core_contentbank\contenttype {
      */
     protected function is_access_allowed(): bool {
         return true;
+    }
+
+    /**
+     * Returns the list of different H5P content types the user can create.
+     *
+     * @return array An object for each H5P content type:
+     *     - string typename: descriptive name of the H5P content type.
+     *     - string typeeditorparams: params required by the H5P editor.
+     *     - url typeicon: H5P content type icon.
+     */
+    public function get_contenttype_types(): array {
+        // Get the H5P content types available.
+        autoloader::register();
+        $editorajax = new editor_ajax();
+        $h5pcontenttypes = $editorajax->getLatestLibraryVersions();
+
+        $types = [];
+        $h5pfilestorage = new file_storage();
+        foreach ($h5pcontenttypes as $h5pcontenttype) {
+            $library = [
+                'name' => $h5pcontenttype->machine_name,
+                'majorVersion' => $h5pcontenttype->major_version,
+                'minorVersion' => $h5pcontenttype->minor_version,
+            ];
+            $key = H5PCore::libraryToString($library);
+            $type = new stdClass();
+            $type->key = $key;
+            $type->typename = $h5pcontenttype->title;
+            $type->typeeditorparams = 'library=' . $key;
+            $type->typeicon = $h5pfilestorage->get_icon_url(
+                $h5pcontenttype->id,
+                $h5pcontenttype->machine_name,
+                $h5pcontenttype->major_version,
+                $h5pcontenttype->minor_version);
+            $types[] = $type;
+        }
+
+        return $types;
     }
 }
