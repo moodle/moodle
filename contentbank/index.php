@@ -70,7 +70,12 @@ if (has_capability('moodle/contentbank:useeditor', $context)) {
     if (!empty($editabletypes)) {
         // Editor base URL.
         $editbaseurl = new moodle_url('/contentbank/edit.php', ['contextid' => $contextid]);
-        $toolbar[] = ['name' => get_string('add'), 'link' => $editbaseurl, 'dropdown' => true, 'contenttypes' => $editabletypes];
+        $toolbar[] = [
+            'name' => get_string('add'),
+            'link' => $editbaseurl, 'dropdown' => true,
+            'contenttypes' => $editabletypes,
+            'action' => 'add'
+        ];
     }
 }
 
@@ -80,7 +85,12 @@ if (has_capability('moodle/contentbank:upload', $context)) {
     $accepted = $cb->get_supported_extensions_as_string($context);
     if (!empty($accepted)) {
         $importurl = new moodle_url('/contentbank/upload.php', ['contextid' => $contextid]);
-        $toolbar[] = array('name' => get_string('upload', 'contentbank'), 'link' => $importurl, 'icon' => 'i/upload');
+        $toolbar[] = [
+            'name' => get_string('upload', 'contentbank'),
+            'link' => $importurl,
+            'icon' => 'i/upload',
+            'action' => 'upload'
+        ];
     }
 }
 

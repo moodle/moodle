@@ -101,7 +101,7 @@ class bankcontent implements renderable, templatable {
         // The tools are displayed in the action bar on the index page.
         foreach ($this->toolbar as $tool) {
             // Customize the output of a tool, like dropdowns.
-            $method = 'export_tool_'.$tool['name'];
+            $method = 'export_tool_'.$tool['action'];
             if (method_exists($this, $method)) {
                 $this->$method($tool);
             }
