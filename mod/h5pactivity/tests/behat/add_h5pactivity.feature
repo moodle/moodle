@@ -24,12 +24,13 @@ Feature: Add H5P activity
   Scenario: Add a h5pactivity activity to a course
     When I add a "H5P" to section "1"
     And I set the following fields to these values:
-      | Name        | Awesome H5P package |
-      | Description | Description         |
+      | Name        | Awesome H5P package      |
+      | Description | H5P activity Description |
     And I upload "h5p/tests/fixtures/ipsums.h5p" file to "Package file" filemanager
     And I click on "Save and display" "button"
     And I wait until the page is ready
-    Then I switch to "h5p-player" class iframe
+    Then I should see "H5P activity Description"
+    And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I should see "Lorum ipsum"
     And I should not see "Reuse"
