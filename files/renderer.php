@@ -251,7 +251,9 @@ class core_files_renderer extends plugin_renderer_base {
      */
     protected function fm_js_template_fileselectlayout() {
         $context = [
-                'helpicon' => $this->help_icon('setmainfile', 'repository')
+                'helpicon' => $this->help_icon('setmainfile', 'repository'),
+                'licensehelpicon' => $this->create_license_help_icon_context(),
+                'columns' => true
         ];
         return $this->render_from_template('core/filemanager_fileselect', $context);
     }
@@ -404,7 +406,10 @@ class core_files_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function fp_js_template_selectlayout() {
-        return $this->render_from_template('core/filemanager_selectlayout', []);
+        $context = [
+            'licensehelpicon' => $this->create_license_help_icon_context()
+        ];
+        return $this->render_from_template('core/filemanager_selectlayout', $context);
     }
 
     /**
@@ -413,7 +418,10 @@ class core_files_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function fp_js_template_uploadform() {
-        return $this->render_from_template('core/filemanager_uploadform', []);
+        $context = [
+            'licensehelpicon' => $this->create_license_help_icon_context()
+        ];
+        return $this->render_from_template('core/filemanager_uploadform', $context);
     }
 
     /**
@@ -519,6 +527,34 @@ class core_files_renderer extends plugin_renderer_base {
      */
     public function repository_default_searchform() {
         return $this->render_from_template('core/filemanager_default_searchform', []);
+    }
+
+    /**
+     * Create the context for rendering help icon with license links displaying all licenses and sources.
+     *
+     * @return \stdClass $iconcontext the context for rendering license help info.
+     */
+    protected function create_license_help_icon_context() : stdClass {
+        $licensecontext = new stdClass();
+
+        $licenses = [];
+        // Discard licenses without a name or source from enabled licenses.
+        foreach (license_manager::get_licenses(['enabled' => 1]) as $license) {
+            if (!empty($license->fullname) && !empty($license->source)) {
+                // Get license fullname strings using the shortname for internationalisation.
+                $license->fullname = get_string($license->shortname, 'license');
+                $licenses[] = $license;
+            }
+        }
+
+        $licensecontext->licenses = $licenses;
+        $helptext = $this->render_from_template('core/filemanager_licenselinks', $licensecontext);
+
+        $iconcontext = new stdClass();
+        $iconcontext->text = $helptext;
+        $iconcontext->alt = get_string('helpprefix2', 'moodle', get_string('chooselicense', 'repository'));
+
+        return $iconcontext;
     }
 }
 
