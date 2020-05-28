@@ -318,6 +318,7 @@ function url_dndupload_handle($uploadinfo) {
     $data->introformat = FORMAT_HTML;
     $data->externalurl = clean_param($uploadinfo->content, PARAM_URL);
     $data->timemodified = time();
+    $data->coursemodule = $uploadinfo->coursemodule;
 
     // Set the display options to the site defaults.
     $config = get_config('url');
