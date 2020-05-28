@@ -78,41 +78,31 @@ const enableTooltips = () => {
     });
 };
 
-/**
- * Bootstrap init function
- */
-const init = () => {
-    const pendingPromise = new Pending('theme_boost/loader:init');
+const pendingPromise = new Pending('theme_boost/loader:init');
 
-    setupBootstrapPendingChecks();
+// Add pending promise event listeners to relevant Bootstrap custom events.
+setupBootstrapPendingChecks();
 
-    // Remember the last visited tabs.
-    rememberTabs();
+// Remember the last visited tabs.
+rememberTabs();
 
-    // Enable all popovers.
-    enablePopovers();
+// Enable all popovers.
+enablePopovers();
 
-    // Enable all tooltips.
-    enableTooltips();
+// Enable all tooltips.
+enableTooltips();
 
-    // Add scroll handling.
-    (new Scroll()).init();
+// Add scroll handling.
+(new Scroll()).init();
 
-    // Disables flipping the dropdowns up and getting hidden behind the navbar.
-    $.fn.dropdown.Constructor.Default.flip = false;
+// Disables flipping the dropdowns up and getting hidden behind the navbar.
+$.fn.dropdown.Constructor.Default.flip = false;
 
-    // Setup Aria helpers for Bootstrap features.
-    Aria.init();
+// Setup Aria helpers for Bootstrap features.
+Aria.init();
 
-    pendingPromise.resolve();
-};
+pendingPromise.resolve();
 
-/**
- * Set up the search.
- *
- * @method init
- */
 export {
-    init,
-    Bootstrap
+    Bootstrap,
 };
