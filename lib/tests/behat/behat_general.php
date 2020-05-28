@@ -1898,4 +1898,19 @@ EOF;
                     $this->getSession());
         }
     }
+
+    /**
+     * Manually press enter key.
+     *
+     * @When /^I press enter/
+     * @throws DriverException
+     */
+    public function i_manually_press_enter() {
+        if (!$this->running_javascript()) {
+            throw new DriverException('Enter press step is not available with Javascript disabled');
+        }
+
+        $value = [\WebDriver\Key::ENTER];
+        $this->getSession()->getDriver()->getWebDriverSession()->activeElement()->postValue(['value' => $value]);
+    }
 }

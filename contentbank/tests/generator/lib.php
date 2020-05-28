@@ -45,10 +45,12 @@ class core_contentbank_generator extends \component_generator_base {
      * @param context $context The context where the content will be created.
      * @param bool $convert2class Whether the class should return stdClass or plugin instance.
      * @param string $filepath The filepath of the file associated to the content to create.
+     * @param string $contentname The name of the content that will be created.
      * @return array An array with all the records added to the content bank.
      */
     public function generate_contentbank_data(?string $contenttype, int $itemstocreate = 1, int $userid = 0,
-            ?\context $context = null, bool $convert2class = true, string $filepath = 'contentfile.h5p'): array {
+            ?\context $context = null, bool $convert2class = true, string $filepath = 'contentfile.h5p',
+            string $contentname = 'Test content '): array {
         global $DB, $USER;
 
         $records = [];
@@ -67,7 +69,8 @@ class core_contentbank_generator extends \component_generator_base {
         for ($i = 0; $i < $itemstocreate; $i++) {
             // Create content.
             $record = new stdClass();
-            $record->name = 'Test content ' . $i;
+            // If only 1 item is being created, do not add a number suffix to the content name.
+            $record->name = ($itemstocreate === 1) ? $contentname : $contentname . $i;
             $record->configdata = '';
             $record->usercreated = $userid ?? $USER->id;
 
