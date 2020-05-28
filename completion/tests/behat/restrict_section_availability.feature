@@ -91,7 +91,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I set the following fields to these values:
       | Grade | 21 |
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I follow "Edit settings"
     And I log out
     And I log in as "student1"

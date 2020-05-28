@@ -62,7 +62,7 @@ Feature: In a group assignment, teacher can annotate PDF files for all users
     Given I set the field "applytoall" to "0"
     And I press "Save changes"
     And I should see "The changes to the grade and feedback were saved"
-    And I press "Ok"
+    And I press "OK"
     And I click on "Edit settings" "link"
     And I log out
     And I log in as "student1"
@@ -81,7 +81,7 @@ Feature: In a group assignment, teacher can annotate PDF files for all users
   @javascript
   Scenario: Submit a PDF file as a student and annotate the PDF as a teacher and all students in the group get a copy of the annotated PDF.
     Given I press "Save changes"
-    And I click on "Ok" "button"
+    And I click on "OK" "button"
     And I am on "Course 1" course homepage
     And I log out
     And I log in as "student1"

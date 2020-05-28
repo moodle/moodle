@@ -119,7 +119,7 @@ class quizaccess_seb_event_testcase extends advanced_testcase {
 
         // Test that the event data is as expected.
         $this->assertInstanceOf('\quizaccess_seb\event\template_created', $event);
-        $this->assertEquals('SEB Template was created', $event->get_name());
+        $this->assertEquals('SEB template was created', $event->get_name());
         $this->assertEquals(
             "The user with id '$user->id' has created a template with id '{$template->get('id')}'.",
             $event->get_description()
