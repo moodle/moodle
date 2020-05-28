@@ -106,6 +106,7 @@ class helper {
             'author' => $file->get_author(),
             'license' => $file->get_license(),
             'isref' => $file->is_external_file(),
+            'size' => $file->get_filesize(),
             'source' => $encodedpath,
             'icon' => $OUTPUT->image_url(file_file_icon($file, 24))->out(false),
             'thumbnail' => $OUTPUT->image_url(file_file_icon($file, 90))->out(false)
