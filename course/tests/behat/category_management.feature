@@ -197,7 +197,7 @@ Feature: Test category management actions
     And the "Move into" select box should contain "Miscellaneous"
     And I press "Cancel"
 
-@javascript
+  @javascript
   Scenario: Test deleting categories interface when course create permissions are restricted for some categories.
     Given the following "users" exist:
       | username  | firstname | lastname |
