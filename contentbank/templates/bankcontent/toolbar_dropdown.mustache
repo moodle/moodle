@@ -55,7 +55,12 @@
                 {{/typeeditorparams}}
                 {{#typeeditorparams}}
                     <a class="dropdown-item icon-size-4" href="{{{ baseurl }}}&{{{ typeeditorparams }}}">
-                        <img alt="" class="icon" src="{{{ typeicon }}}"> {{ typename }}
+                        {{#typeicon}}
+                            <img alt="" class="icon" src="{{{ typeicon }}}">
+                        {{/typeicon}}
+                        {{^typeicon}}
+                            {{#pix}} b/h5p_library, core {{/pix}}
+                        {{/typeicon}} {{ typename }}
                     </a>
                 {{/typeeditorparams}}
             {{/types}}
