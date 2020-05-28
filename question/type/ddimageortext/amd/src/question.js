@@ -508,6 +508,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                 break;
 
             case keys.escape:
+                questionManager.isKeyboardNavigation = false;
                 break;
 
             default:
