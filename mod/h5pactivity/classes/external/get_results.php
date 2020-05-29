@@ -150,7 +150,7 @@ class get_results extends external_api {
             'attempt' => $attemptdata->attempt,
             'rawscore' => $attemptdata->rawscore,
             'maxscore' => $attemptdata->maxscore,
-            'duration' => (empty($attemptdata->duration)) ? 0 : $attemptdata->duration,
+            'duration' => (empty($attemptdata->durationvalue)) ? 0 : $attemptdata->durationvalue,
             'scaled' => (empty($attemptdata->scaled)) ? 0 : $attemptdata->scaled,
             'results' => [],
         ];
@@ -257,7 +257,8 @@ class get_results extends external_api {
             'subcontent' => new external_value(PARAM_NOTAGS, 'Subcontent identifier'),
             'timecreated' => new external_value(PARAM_INT, 'Result creation'),
             'interactiontype' => new external_value(PARAM_NOTAGS, 'Interaction type'),
-            'description' => new external_value(PARAM_TEXT, 'Result description'),
+            'description' => new external_value(PARAM_RAW, 'Result description'),
+            'content' => new external_value(PARAM_RAW, 'Result extra content', VALUE_OPTIONAL),
             'rawscore' => new external_value(PARAM_INT, 'Result score value'),
             'maxscore' => new external_value(PARAM_INT, 'Result max score'),
             'duration' => new external_value(PARAM_INT, 'Result duration in seconds', VALUE_OPTIONAL, 0),
@@ -269,10 +270,10 @@ class get_results extends external_api {
             'track' => new external_value(PARAM_BOOL, 'If the result has valid track information', VALUE_OPTIONAL),
             'options' => new external_multiple_structure(
                 new external_single_structure([
-                    'description'    => new external_value(PARAM_TEXT, 'Option description'),
-                    'id' => new external_value(PARAM_INT, 'Option identifier'),
-                    'correctanswer' => self::get_answer_returns('The option correct answer'),
-                    'useranswer' => self::get_answer_returns('The option user answer'),
+                    'description'    => new external_value(PARAM_RAW, 'Option description', VALUE_OPTIONAL),
+                    'id' => new external_value(PARAM_TEXT, 'Option string identifier', VALUE_OPTIONAL),
+                    'correctanswer' => self::get_answer_returns('The option correct answer', VALUE_OPTIONAL),
+                    'useranswer' => self::get_answer_returns('The option user answer', VALUE_OPTIONAL),
                 ]),
                 'The statement options', VALUE_OPTIONAL
             ),
@@ -284,9 +285,10 @@ class get_results extends external_api {
      * Return the external structure of an answer or correctanswer
      *
      * @param string $description the return description
+     * @param int $required the return required value
      * @return external_single_structure
      */
-    private static function get_answer_returns(string $description): external_single_structure {
+    private static function get_answer_returns(string $description, int $required = VALUE_REQUIRED): external_single_structure {
 
         $result = new external_single_structure([
             'answer' => new external_value(PARAM_NOTAGS, 'Option text value', VALUE_OPTIONAL),
@@ -297,7 +299,7 @@ class get_results extends external_api {
             'unchecked' => new external_value(PARAM_BOOL, 'If has to be displayed as a unchecked option', VALUE_OPTIONAL),
             'pass' => new external_value(PARAM_BOOL, 'If has to be displayed as passed', VALUE_OPTIONAL),
             'fail' => new external_value(PARAM_BOOL, 'If has to be displayed as failed', VALUE_OPTIONAL),
-        ], $description);
+        ], $description, $required);
         return $result;
     }
 }

@@ -96,7 +96,8 @@ class attempt implements renderable, templatable {
             ]),
         ];
         if ($attempt->get_duration() !== null) {
-            $duration = $this->extract_duration($attempt->get_duration());
+            $data->durationvalue = $attempt->get_duration();
+            $duration = $this->extract_duration($data->durationvalue);
             $data->duration = $this->format_duration($duration);
             $data->durationcompact = $this->format_duration_short($duration);
         }
