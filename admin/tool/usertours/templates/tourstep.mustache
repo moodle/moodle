@@ -45,18 +45,20 @@
     }
 
 }}
-<div class="modal" data-role="flexitour-step">
+<div class="modal"  data-region="modal-container" data-role="flexitour-step">
+  <div class="modal" data-region="modal">
     <div data-role="arrow"></div>
-    <div class="modal-header">
+    <div class="modal-header" data-region="header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true" data-role="end">&times;</button>
-      <h3 data-placeholder="title"></h3>
+      <h3 data-region="title" data-placeholder="title"></h3>
     </div>
-    <div class="modal-body" data-placeholder="body"></div>
-    <div class="modal-footer">
+    <div class="modal-body" data-region="body" data-placeholder="body"></div>
+    <div class="modal-footer" data-region="footer">
         <div class="btn-group">
             <button href="#" class="btn" data-role="previous">{{# str }} previous, moodle {{/ str }}</button>
             <button href="#" class="btn btn-primary" data-role="next">{{# str }} next, moodle {{/ str }}</button>
         </div>
         <button class="btn" data-role="end"> {{# str }} endtour, tool_usertours {{/ str }} </button>
     </div>
+  </div>
 </div>
