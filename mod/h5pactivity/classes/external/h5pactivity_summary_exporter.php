@@ -201,7 +201,7 @@ class h5pactivity_summary_exporter extends exporter {
 
         $values['introfiles'] = external_util::get_area_files($context->id, 'mod_h5pactivity', 'intro', false, false);
 
-        $values['package'] = external_util::get_area_files($context->id, 'mod_h5pactivity', 'package', false, false);
+        $values['package'] = external_util::get_area_files($context->id, 'mod_h5pactivity', 'package', false, true);
 
         // Only if this H5P activity has been deployed, return the exported file.
         $fileh5p = api::get_export_info_from_context_id($context->id, $factory, 'mod_h5pactivity', 'package');
