@@ -21,7 +21,7 @@ Feature: Select file feature
     And I click on "Save and display" "button"
     And I follow "Dashboard" in the user menu
     And I follow "Manage private files"
-    And I click on "//label[contains(., 'Files')]/ancestor::div[contains(concat(' ', @class, ' '), ' fitem ')]//*[contains(@title, 'Add...')]" "xpath_element"
+    And I click on "Add..." "button" in the "Files" "form_row"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
     And I click on "Display folder with file icons" "link" in the ".file-picker" "css_element"
     And I click on "//a[contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')][normalize-space(.)='empty.txt']" "xpath_element"
@@ -42,7 +42,7 @@ Feature: Select file feature
     And I click on "Save and display" "button"
     And I follow "Dashboard" in the user menu
     And I follow "Manage private files"
-    And I click on "//label[contains(., 'Files')]/ancestor::div[contains(concat(' ', @class, ' '), ' fitem ')]//*[contains(@title, 'Add...')]" "xpath_element"
+    And I click on "Add..." "button" in the "Files" "form_row"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
     And I click on "Display folder with file details" "link" in the ".file-picker" "css_element"
     And I click on "//div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]/descendant::span[normalize-space(.)='empty.txt']/ancestor::a" "xpath_element"
@@ -63,7 +63,7 @@ Feature: Select file feature
     And I click on "Save and display" "button"
     And I follow "Dashboard" in the user menu
     And I follow "Manage private files"
-    And I click on "//label[contains(., 'Files')]/ancestor::div[contains(concat(' ', @class, ' '), ' fitem ')]//*[contains(@title, 'Add...')]" "xpath_element"
+    And I click on "Add..." "button" in the "Files" "form_row"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
     And I click on "Display folder as file tree" "link" in the ".file-picker" "css_element"
     And I click on "//div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]/descendant::span[normalize-space(.)='empty.txt']/ancestor::a" "xpath_element"
