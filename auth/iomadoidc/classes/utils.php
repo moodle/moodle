@@ -113,7 +113,17 @@ class utils {
      * @param string $message The debug message to log.
      */
     public static function debug($message, $where = '', $debugdata = null) {
-        $debugmode = (bool)get_config('auth_iomadoidc', 'debugmode');
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
+        $debugmode = (bool)get_config('auth_iomadoidc' . $postfix, 'debugmode');
         if ($debugmode === true) {
             $fullmessage = (!empty($where)) ? $where : 'Unknown function';
             $fullmessage .= ': '.$message;

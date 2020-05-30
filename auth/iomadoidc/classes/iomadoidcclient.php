@@ -56,13 +56,19 @@ class iomadoidcclient {
      *
      * @param string $id The registered client ID.
      * @param string $secret The registered client secret.
+     * @param string $scope The requested OID scope.
      * @param string $redirecturi The registered client redirect URI.
      */
-    public function setcreds($id, $secret, $redirecturi, $resource) {
+    public function setcreds($id, $secret, $redirecturi, $resource, $scope) {
         $this->clientid = $id;
         $this->clientsecret = $secret;
         $this->redirecturi = $redirecturi;
-        $this->resource = (!empty($resource)) ? $resource : 'https://graph.windows.net';
+        if (!empty($resource)) {
+            $this->resource = $resource;
+        } else {
+            $this->resource = (static::use_chinese_api() === true) ? 'https://microsoftgraph.chinacloudapi.cn' : 'https://graph.microsoft.com';
+        }
+        $this->scope = (!empty($scope)) ? $scope : 'openid profile email';
     }
 
     /**
@@ -102,6 +108,15 @@ class iomadoidcclient {
     }
 
     /**
+     * Get the set scope.
+     *
+     * @return string The set scope.
+     */
+    public function get_scope() {
+        return (isset($this->scope)) ? $this->scope : null;
+    }
+
+    /**
      * Set OIDC endpoints.
      *
      * @param array $endpoints Array of endpoints. Can have keys 'auth', and 'token'.
@@ -129,11 +144,12 @@ class iomadoidcclient {
      */
     protected function getauthrequestparams($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
         global $SESSION;
+
         $nonce = 'N'.uniqid();
         $params = [
             'response_type' => 'code',
             'client_id' => $this->clientid,
-            'scope' => 'openid profile email',
+            'scope' =>  $this->scope,
             'nonce' => $nonce,
             'response_mode' => 'form_post',
             'resource' => $this->resource,

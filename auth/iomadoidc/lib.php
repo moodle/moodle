@@ -23,7 +23,17 @@
 
 function auth_iomadoidc_initialize_customicon($filefullname) {
     global $CFG;
-    $file = get_config('auth_iomadoidc', 'customicon');
+
+    // IOMAD
+    require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+    $companyid = iomad::get_my_companyid(context_system::instance(), false);
+    if (!empty($companyid)) {
+        $postfix = "_$companyid";
+    } else {
+        $postfix = "";
+    }
+
+    $file = get_config('auth_iomadoidc' . $postfix, 'customicon');
     $systemcontext = \context_system::instance();
     $fullpath = "/{$systemcontext->id}/auth_iomadoidc/customicon/0{$file}";
 

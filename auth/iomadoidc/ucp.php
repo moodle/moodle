@@ -25,11 +25,20 @@ require_once(__DIR__.'/../../config.php');
 require_once(__DIR__.'/auth.php');
 require_once(__DIR__.'/lib.php');
 
+// IOMAD
+require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid)) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
+
 require_login();
 
 $action = optional_param('action', null, PARAM_TEXT);
 
-$iomadoidctoken = $DB->get_record('auth_iomadoidc_token', ['username' => $USER->username]);
+$iomadoidctoken = $DB->get_record('auth_iomadoidc_token', ['userid' => $USER->id]);
 $iomadoidcconnected = (!empty($iomadoidctoken)) ? true : false;
 
 $iomadoidcloginconnected = ($USER->auth === 'iomadoidc') ? true : false;
@@ -61,7 +70,8 @@ if (!empty($action)) {
     $PAGE->set_pagelayout('standard');
     $USER->editing = false;
     $authconfig = get_config('auth_iomadoidc');
-    $opname = (!empty($authconfig->opname)) ? $authconfig->opname : get_string('pluginname', 'auth_iomadoidc');
+    $confname = "opname$postfix";
+    $opname = (!empty($authconfig->$configname)) ? $authconfig->$configname : get_string('pluginname', 'auth_iomadoidc');
 
     $ucptitle = get_string('ucp_title', 'auth_iomadoidc', $opname);
     $PAGE->navbar->add($ucptitle, $PAGE->url);

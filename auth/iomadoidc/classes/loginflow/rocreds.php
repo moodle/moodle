@@ -58,6 +58,15 @@ class rocreds extends \auth_iomadoidc\loginflow\base {
     public function loginpage_hook(&$frm, &$user) {
         global $DB;
 
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
         if (empty($frm)) {
             $frm = data_submitted();
         }
@@ -81,7 +90,7 @@ class rocreds extends \auth_iomadoidc\loginflow\base {
             }
         }
 
-        $autoappend = get_config('auth_iomadoidc', 'autoappend');
+        $autoappend = get_config('auth_iomadoidc' . $postfix, 'autoappend');
         if (empty($autoappend)) {
             // If we're not doing autoappend, just let things flow naturally.
             return true;

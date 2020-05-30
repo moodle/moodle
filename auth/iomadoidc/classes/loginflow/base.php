@@ -38,6 +38,7 @@ class base {
             return;
         }
         $companyid = $SESSION->currenteditingcompany;
+
         $default = [
             'opname' => get_string('pluginname', 'auth_iomadoidc')
         ];
@@ -48,7 +49,9 @@ class base {
                              'authendpoint',
                              'tokenendpoint',
                              'iomadoidcresource',
+                             'scope',
                              'redirecturi',
+                             'forceredirect',
                              'autoappend',
                              'domainhint',
                              'loginflow',
@@ -62,15 +65,7 @@ class base {
                 $storedconfig[$configitem] = $siteconfig[$configitem . "_$companyid"];
             }
         }
-        if (empty($storedconfig['tokenendpoint'])) {
-            $storedconfig['tokenendpoint'] = 'https://login.microsoftonline.com/common/oauth2/token';
-        }
-        if (empty($storedconfig['authendpoint'])) {
-            $storedconfig['authendpoint'] = 'https://login.microsoftonline.com/common/oauth2/authorize';
-        }
-        if (empty($storedconfig['iomadoidcresource'])) {
-            $storedconfig['iomadoidcresource'] = 'https://graph.windows.net';
-        }
+
         $forcedconfig = [
             'field_updatelocal_idnumber' => 'oncreate',
             'field_lock_idnumber' => 'locked',
@@ -213,7 +208,7 @@ class base {
 
         if ($justremovetokens === true) {
             // Delete token data.
-            $DB->delete_records('auth_iomadoidc_token', ['username' => $userrec->username]);
+            $DB->delete_records('auth_iomadoidc_token', ['userid' => $userrec->id]);
             $eventdata = ['objectid' => $userrec->id, 'userid' => $userrec->id];
             $event = \auth_iomadoidc\event\user_disconnected::create($eventdata);
             $event->trigger();
@@ -246,7 +241,7 @@ class base {
             // Check to see if the user has a username created by OIDC, or a self-created username.
             // OIDC-created usernames are usually very verbose, so we'll allow them to choose a sensible one.
             // Otherwise, keep their existing username.
-            $iomadoidctoken = $DB->get_record('auth_iomadoidc_token', ['username' => $userrec->username]);
+            $iomadoidctoken = $DB->get_record('auth_iomadoidc_token', ['userid' => $userrec->id]);
             $ccun = (isset($iomadoidctoken->iomadoidcuniqid) && strtolower($iomadoidctoken->iomadoidcuniqid) === $userrec->username) ? true : false;
             $customdata = [
                 'canchooseusername' => $ccun,
@@ -312,7 +307,7 @@ class base {
 
                 // Delete token data.
                 if (empty($fromform->donotremovetokens)) {
-                    $DB->delete_records('auth_iomadoidc_token', ['username' => $origusername]);
+                    $DB->delete_records('auth_iomadoidc_token', ['userid' => $userrec->id]);
 
                     $eventdata = ['objectid' => $userrec->id, 'userid' => $userrec->id];
                     $event = \auth_iomadoidc\event\user_disconnected::create($eventdata);
@@ -368,9 +363,10 @@ class base {
         $redirecturi = (!empty($CFG->loginhttps)) ? str_replace('http://', 'https://', $CFG->wwwroot) : $CFG->wwwroot;
         $redirecturi .= '/auth/iomadoidc/';
         $resource = (isset($this->config->iomadoidcresource)) ? $this->config->iomadoidcresource : null;
+        $scope = (isset($this->config->iomadoidcscope)) ? $this->config->iomadoidcscope : null;
 
         $client = new \auth_iomadoidc\iomadoidcclient($this->httpclient);
-        $client->setcreds($clientid, $clientsecret, $redirecturi, $resource);
+        $client->setcreds($clientid, $clientsecret, $redirecturi, $resource, $scope);
 
         $client->setendpoints(['auth' => $this->config->authendpoint, 'token' => $this->config->tokenendpoint]);
         return $client;
@@ -471,7 +467,7 @@ class base {
      * @param \auth_iomadoidc\jwt $idtoken A JWT object representing the received id_token.
      * @return \stdClass The created token database record.
      */
-    protected function createtoken($iomadoidcuniqid, $username, $authparams, $tokenparams, \auth_iomadoidc\jwt $idtoken) {
+    protected function createtoken($iomadoidcuniqid, $username, $authparams, $tokenparams, \auth_iomadoidc\jwt $idtoken, $userid = 0) {
         global $DB;
 
         // Determine remote username. Use 'upn' if available (Azure-specific), or fall back to standard 'sub'.
@@ -488,9 +484,11 @@ class base {
         $tokenrec = new \stdClass;
         $tokenrec->iomadoidcuniqid = $iomadoidcuniqid;
         $tokenrec->username = $username;
+        $tokenrec->userid = $userid;
         $tokenrec->iomadoidcusername = $iomadoidcusername;
         $tokenrec->scope = !empty($tokenparams['scope']) ? $tokenparams['scope'] : 'openid profile email';
         $tokenrec->resource = !empty($tokenparams['resource']) ? $tokenparams['resource'] : $this->config->iomadoidcresource;
+        $tokenrec->scope = !empty($tokenparams['scope']) ? $tokenparams['scope'] : $this->config->iomadoidcscope;
         $tokenrec->authcode = $authparams['code'];
         $tokenrec->token = $tokenparams['access_token'];
         if (!empty($tokenparams['expires_on'])) {

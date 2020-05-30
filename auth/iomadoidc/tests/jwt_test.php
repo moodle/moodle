@@ -113,7 +113,8 @@ class auth_iomadoidc_jwt_testcase extends \advanced_testcase {
      */
     public function test_decode($encodedjwt, $expectedresult, $expectedexception) {
         if (!empty($expectedexception)) {
-            $this->setExpectedException($expectedexception[0], $expectedexception[1]);
+            $this->expectException($expectedexception[0]);
+            $this->expectExceptionMessage($expectedexception[1]);
         }
         $actualresult = \auth_iomadoidc\jwt::decode($encodedjwt);
         $this->assertEquals($expectedresult, $actualresult);

@@ -93,7 +93,7 @@ class iconselect extends \admin_setting {
         $selected = (!empty($data)) ? $data : $this->defaultsetting;
         foreach ($this->choices as $icon) {
             $id = $icon['component'].':'.$icon['pix'];
-            $iconhtml = $OUTPUT->pix_icon($icon['pix'], $icon['alt'], $icon['component']);
+            $iconhtml = $OUTPUT->image_icon($icon['pix'], $icon['alt'], $icon['component']);
             $inputattrs = [
                 'type' => 'radio',
                 'id' => $id,

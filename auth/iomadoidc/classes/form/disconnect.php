@@ -37,6 +37,15 @@ class disconnect extends \moodleform {
     protected function definition() {
         global $USER, $DB;
 
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
         if (!empty($this->_customdata['userid'])) {
             $userrec = $DB->get_record('user', ['id' => $this->_customdata['userid']]);
         } else {
@@ -44,7 +53,8 @@ class disconnect extends \moodleform {
         }
 
         $authconfig = get_config('auth_iomadoidc');
-        $opname = (!empty($authconfig->opname)) ? $authconfig->opname : get_string('pluginname', 'auth_iomadoidc');
+        $configname = "opname$postfix";
+        $opname = (!empty($authconfig->$configname)) ? $authconfig->$configname : get_string('pluginname', 'auth_iomadoidc');
 
         $mform =& $this->_form;
         $mform->addElement('html', \html_writer::tag('h4', get_string('ucp_disconnect_title', 'auth_iomadoidc', $opname)));

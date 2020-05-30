@@ -36,11 +36,24 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
     /** @var object Plugin config. */
     public $config;
 
+    /** @var object extending \auth_iomadoidc\loginflow\base */
+    public $loginflow;
+
     /**
      * Constructor.
      */
     public function __construct($forceloginflow = null) {
         global $STATEADDITIONALDATA;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
         $loginflow = 'authcode';
 
         if (!empty($STATEADDITIONALDATA) && isset($STATEADDITIONALDATA['forceflow'])) {
@@ -49,7 +62,7 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
             if (!empty($forceloginflow) && is_string($forceloginflow)) {
                 $loginflow = $forceloginflow;
             } else {
-                $configuredloginflow = get_config('auth_iomadoidc', 'loginflow');
+                $configuredloginflow = get_config('auth_iomadoidc' . $postfix, 'loginflow');
                 if (!empty($configuredloginflow)) {
                     $loginflow = $configuredloginflow;
                 }
@@ -93,7 +106,64 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
     public function loginpage_hook() {
         global $frm;  // can be used to override submitted login form
         global $user; // can be used to replace authenticate_user_login()
+        if ($this->should_login_redirect()) {
+            $this->loginflow->handleredirect();
+        }
         return $this->loginflow->loginpage_hook($frm, $user);
+    }
+
+    /**
+      * Determines if we will redirect to the redirecturi
+      *
+      * @return bool If this returns true then redirect
+      * @throws \coding_exception
+     */
+    public function should_login_redirect() {
+        global $SESSION;
+        $iomadoidc = optional_param('iomadoidc', null, PARAM_BOOL);
+        // Also support noredirect param - used by other auth plugins.
+        $noredirect = optional_param('noredirect', 0, PARAM_BOOL);
+        if (!empty($noredirect)) {
+            $iomadoidc = 0;
+        }
+        if (!$this->config->forceredirect) {
+            return false; // Never redirect if we haven't enabled the forceredirect setting
+        }
+        // Never redirect on POST.
+        if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST')) {
+            return false;
+        }
+
+        // Check whether we've skipped the login page already.
+        // This is here because loginpage_hook is called again during form
+        // submission (all of login.php is processed) and ?iomadoidc=off is not
+        // preserved forcing us to the IdP.
+        //
+        // This isn't needed when duallogin is on because $iomadoidc will default to 0
+        // and duallogin is not part of the request.
+        if ((isset($SESSION->iomadoidc) && $SESSION->iomadoidc == 0)) {
+            return false;
+        }
+
+        // Never redirect if requested so.
+        if ($iomadoidc === 0) {
+            $SESSION->iomadoidc = $iomadoidc;
+            return false;
+        }
+        // We are off to OIDC land so reset the force in SESSION.
+        if (isset($SESSION->iomadoidc)) {
+            unset($SESSION->iomadoidc);
+        }
+        return true;
+    }
+
+    /**
+     * Will check if we have to redirect before going to login page
+     */
+    public function pre_loginpage_hook() {
+        if ($this->should_login_redirect()) {
+            $this->loginflow->handleredirect();
+        }
     }
 
     /**
@@ -175,7 +245,32 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
      * @param string $password plain text password (with system magic quotes)
      */
     public function user_authenticated_hook(&$user, $username, $password) {
+        global $DB;
         if (!empty($user) && !empty($user->auth) && $user->auth === 'iomadoidc') {
+            $tokenrec = $DB->get_record('auth_iomadoidc_token', ['userid' => $user->id]);
+            if (!empty($tokenrec)) {
+                // If the token record username is out of sync (ie username changes), update it.
+                if ($tokenrec->username != $user->username) {
+                    $updatedtokenrec = new \stdClass;
+                    $updatedtokenrec->id = $tokenrec->id;
+                    $updatedtokenrec->username = $user->username;
+                    $DB->update_record('auth_iomadoidc_token', $updatedtokenrec);
+                    $tokenrec = $updatedtokenrec;
+                }
+            } else {
+                // There should always be a token record here, so a failure here means
+                // the user's token record doesn't yet contain their userid.
+                $tokenrec = $DB->get_record('auth_iomadoidc_token', ['username' => $username]);
+                if (!empty($tokenrec)) {
+                    $tokenrec->userid = $user->id;
+                    $updatedtokenrec = new \stdClass;
+                    $updatedtokenrec->id = $tokenrec->id;
+                    $updatedtokenrec->userid = $user->id;
+                    $DB->update_record('auth_iomadoidc_token', $updatedtokenrec);
+                    $tokenrec = $updatedtokenrec;
+                }
+            }
+
             $eventdata = [
                 'objectid' => $user->id,
                 'userid' => $user->id,

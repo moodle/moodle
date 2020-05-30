@@ -161,5 +161,23 @@ function xmldb_auth_iomadoidc_upgrade($oldversion) {
         upgrade_plugin_savepoint($result, '2015111905.01', 'auth', 'iomadoidc');
     }
 
+    if ($result && $oldversion < 2018051700.01) {
+        $table = new xmldb_table('auth_iomadoidc_token');
+        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'username');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $sql = 'SELECT tok.id, tok.username, u.username, u.id as userid
+                      FROM {auth_iomadoidc_token} tok
+                      JOIN {user} u ON u.username = tok.username';
+            $records = $DB->get_recordset_sql($sql);
+            foreach ($records as $record) {
+                $newrec = new \stdClass;
+                $newrec->id = $record->id;
+                $newrec->userid = $record->userid;
+                $DB->update_record('auth_iomadoidc_token', $newrec);
+            }
+        }
+        upgrade_plugin_savepoint($result, '2018051700.01', 'auth', 'iomadoidc');
+    }
     return $result;
 }
