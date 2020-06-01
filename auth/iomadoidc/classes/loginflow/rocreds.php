@@ -60,7 +60,7 @@ class rocreds extends \auth_iomadoidc\loginflow\base {
 
         // IOMAD
         require_once($CFG->dirroot . '/local/iomad/lib/company.php');
-        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        $companyid = \iomad::get_my_companyid(\context_system::instance(), false);
         if (!empty($companyid)) {
             $postfix = "_$companyid";
         } else {
