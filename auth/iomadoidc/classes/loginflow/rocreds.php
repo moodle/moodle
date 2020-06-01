@@ -56,7 +56,7 @@ class rocreds extends \auth_iomadoidc\loginflow\base {
      * @param object &$user User object.
      */
     public function loginpage_hook(&$frm, &$user) {
-        global $DB;
+        global $DB, $CFG;
 
         // IOMAD
         require_once($CFG->dirroot . '/local/iomad/lib/company.php');

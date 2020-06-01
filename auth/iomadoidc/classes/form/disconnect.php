@@ -35,7 +35,7 @@ class disconnect extends \moodleform {
      * Form definition.
      */
     protected function definition() {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
 
         // IOMAD
         require_once($CFG->dirroot . '/local/iomad/lib/company.php');

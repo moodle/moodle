@@ -113,6 +113,7 @@ class utils {
      * @param string $message The debug message to log.
      */
     public static function debug($message, $where = '', $debugdata = null) {
+        global $CFG;
 
         // IOMAD
         require_once($CFG->dirroot . '/local/iomad/lib/company.php');
