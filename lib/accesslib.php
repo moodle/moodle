@@ -2206,7 +2206,7 @@ function reset_role_capabilities($roleid) {
  * the database.
  *
  * @access private
- * @param string $component examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * @param string $component examples: 'moodle', 'mod_forum', 'block_quiz_results'
  * @return boolean true if success, exception in case of any problems
  */
 function update_capabilities($component = 'moodle') {
