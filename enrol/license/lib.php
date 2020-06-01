@@ -354,33 +354,10 @@ class enrol_license_plugin extends enrol_plugin {
                         }
                         $this->enrol_user($instance, $USER->id, $role->id, $timestart, $timeend);
                     }
-    
-                    // Get the userlicense record.
-                    $userlicense = $DB->get_record('companylicense_users', array('id' => $license->id));
-    
-                    // Add the user to the appropriate course group.
-                    if (!$DB->get_record('course', array('id' => $instance->courseid, 'groupmode' => 0))) {
-                        company::add_user_to_shared_course($instance->courseid, $USER->id, $license->companyid, $userlicense->groupid);
-                    }
-    
-                    // Update the userlicense record to mark it as in use.
-                    $DB->set_field('companylicense_users', 'isusing', 1, array('id' => $userlicense->id));
-    
-                    // Send welcome.
-                    if ($instance->customint4) {
-                        $this->email_welcome_message($instance, $USER);
-                    }
-
-                    $this->enrol_user($instance, $USER->id, $role->id, $timestart, $timeend);
                 }
 
                 // Get the userlicense record.
                 $userlicense = $DB->get_record('companylicense_users', array('id' => $license->id));
-
-                // Add the user to the appropriate course group.
-                if (!$DB->get_record('course', array('id' => $instance->courseid, 'groupmode' => 0))) {
-                    company::add_user_to_shared_course($instance->courseid, $USER->id, $license->companyid, $userlicense->groupid);
-                }
 
                 // Update the userlicense record to mark it as in use.
                 $DB->set_field('companylicense_users', 'isusing', 1, array('id' => $userlicense->id));

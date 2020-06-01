@@ -2780,9 +2780,14 @@ class company {
      *              $companyid = int;
      *
      **/
-    public static function add_user_to_shared_course($courseid, $userid, $companyid, $groupid = 0) {
+    public static function add_user_to_shared_course($courseid, $userid, $companyid, $groupid = 0, $clear = false) {
         global $DB, $CFG;
         require_once($CFG->dirroot.'/group/lib.php');
+
+        if (!empty($clear)) {
+            // Clear the user from all groups.
+            self::remove_user_from_shared_course($courseid, $userid, $companyid);
+        }
 
         // Adds a user to a shared course.
         if (empty($groupid)) {
@@ -3843,6 +3848,83 @@ class company {
     }
 
     /**
+     * Triggered via user_enrolment_created event.
+     *
+     * @param \core\event\user_enrolment_created $event
+     * @return bool true on success.
+     */
+    public static function user_enrolment_created(\core\event\user_enrolment_created $event) {
+        global $DB, $CFG;
+
+        $userid = $event->relateduserid;
+        $timestamp = $event->timecreated;
+        $courseid = $event->courseid;
+
+        // Is this a shared course?
+        if (!$DB->get_record('iomad_courses', array('courseid' => $courseid, 'shared' => 1))) {
+            // It's not - return.
+            return true;
+        }
+
+        // Does this course have groups?
+        if (!$DB->get_record('course', array('id' => $courseid, 'groupmode' => 1))) {
+            // It doesn't - return.
+            return true;
+        }
+
+        // Does the user have a company?
+        $companyrec = self::get_company_byuserid($userid);
+        if (empty($companyrec->id)) {
+            // It doesn't - return.
+            return true;
+        }
+
+        // Add the user to the appropriate course group.
+        self::add_user_to_shared_course($courseid, $userid, $companyrec->id);
+
+        return true;
+    }
+
+    /**
+     * Triggered via user_licensed_used event.
+     *
+     * @param \block_iomad_company_admin\event\user_license_used $event
+     * @return bool true on success.
+     */
+    public static function user_license_used(\block_iomad_company_admin\event\user_license_used $event) {
+        global $DB, $CFG;
+
+        $userid = $event->userid;
+        $timestamp = $event->timecreated;
+        $courseid = $event->courseid;
+        $licenserecordid = $event->objectid;
+        $licenseid = $event->other['licenseid'];
+
+        // Does this record exist?
+        if (!$userlicenserecord = $DB->get_record('companylicense_users', array('id' => $licenserecordid))) {
+            // It's not - return.
+            return true;
+        }
+
+        // Does this record exist?
+        if (!$licenserecord = $DB->get_record('companylicense', array('id' => $licenseid))) {
+            // It's not - return.
+            return true;
+        }
+
+        // Does this license allocation have a specified group?
+        if (empty($userlicenserecord->groupid)) {
+            // It doesn't - return.
+            return true;
+        }
+
+        // Add the user to the specific groupid.
+        self::add_user_to_shared_course($courseid, $userid, $licenserecord->companyid, $userlicenserecord->groupid, true);
+
+        return true;
+    }
+
+    /**
      * Triggered via user_deleted event.
      *
      * @param \core\event\user_deleted $event
@@ -4120,11 +4202,6 @@ class company {
 
                     // Get the userlicense record.
                     $userlicense = $DB->get_record('companylicense_users', array('id' => $userlicid));
-
-                    // Add the user to the appropriate course group.
-                    if (!empty($course->groupmode)) {
-                        self::add_user_to_shared_course($instance->courseid, $user->id, $licenserecord->companyid, $userlicense->groupid);
-                    }
 
                     // Update the userlicense record to mark it as in use.
                     $DB->set_field('companylicense_users', 'isusing', 1, array('id' => $userlicense->id));

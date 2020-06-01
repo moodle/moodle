@@ -134,6 +134,13 @@ $observers = array(
     ),
 
     array(
+        'eventname'   => '\core\event\user_enrolment_created',
+        'callback'    => 'local_iomad_observer::user_enrolment_created',
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
+    ),
+
+    array(
         'eventname'   => '\core\event\user_created',
         'callback'    => 'local_iomad_observer::user_created',
         'includefile' => '/local/iomad/classes/observer.php',
@@ -157,6 +164,13 @@ $observers = array(
     array(
         'eventname'   => '\block_iomad_company_admin\event\user_license_unassigned',
         'callback'    => 'local_iomad_observer::user_license_unassigned',
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
+    ),
+
+    array(
+        'eventname'   => '\block_iomad_company_admin\event\user_license_used',
+        'callback'    => 'local_iomad_observer::user_license_used',
         'includefile' => '/local/iomad/classes/observer.php',
         'internal'    => false,
     ),

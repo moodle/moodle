@@ -334,12 +334,6 @@ class company_user {
                 } else {
                     role_assign($rid, $user->id, context_course::instance($courseid));
                 }
-                if ($shared || $grouped) {
-                    if (!empty($companyid)) {
-                        company::add_user_to_shared_course($courseid, $user->id, $companyid);
-                    }
-                }
-
             }
         }
     }

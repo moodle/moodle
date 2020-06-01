@@ -195,6 +195,17 @@ class local_iomad_observer {
     }
 
     /**
+     * Triggered via user_enrolment_created event.
+     *
+     * @param \core\event\user_enrolment_created $event
+     * @return bool true on success.
+     */
+    public static function user_enrolment_created($event) {
+        company::user_enrolment_created($event);
+        return true;
+    }
+
+    /**
      * Triggered via user_created event.
      *
      * @param \core\event\user_created $event
@@ -246,6 +257,17 @@ class local_iomad_observer {
      */
     public static function user_license_unassigned($event) {
         company::user_license_unassigned($event);
+        return true;
+    }
+
+    /**
+     * Triggered via block_iomad_company_admin::user_license_used event.
+     *
+     * @param \block_iomad_company_admin\event\user_license_used $event
+     * @return bool true on success.
+     */
+    public static function user_license_used($event) {
+        company::user_license_used($event);
         return true;
     }
 
