@@ -31,7 +31,6 @@ use external_multiple_structure;
 use external_single_structure;
 use external_value;
 use external_warnings;
-use moodle_url;
 
 /**
  * Core table external functions.
@@ -41,7 +40,7 @@ use moodle_url;
  * @copyright  2020 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class fetch extends external_api {
+class get extends external_api {
 
     /**
      * Describes the parameters for fetching the table html.
@@ -140,7 +139,7 @@ class fetch extends external_api {
     }
 
     /**
-     * External function to fetch a table view.
+     * External function to get the table view content.
      *
      * @param string $component The component.
      * @param string $handler Dynamic table class name.
