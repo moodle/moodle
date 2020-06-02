@@ -12597,8 +12597,10 @@ input[disabled] {
   .dashboard-card-deck .dashboard-card .dashboard-card-footer {
     padding: 0.8rem; }
 
-.dashboard-card-deck.fixed-width-cards .dashboard-card {
-  width: 300px; }
+@media (min-width: 576px) {
+  .dashboard-card-deck.fixed-width-cards .dashboard-card {
+    width: 300px;
+    max-width: 100%; } }
 
 @media (min-width: 576px) {
   .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
