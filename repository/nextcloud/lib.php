@@ -637,7 +637,7 @@ class repository_nextcloud extends repository {
      * @throws required_capability_exception
      */
     public static function create($type, $userid, $context, $params, $readonly=0) {
-        require_capability('moodle/site:config', context_system::instance());
+        //require_capability('moodle/site:config', context_system::instance());
         return parent::create($type, $userid, $context, $params, $readonly);
     }
 
