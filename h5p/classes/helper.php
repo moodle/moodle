@@ -75,6 +75,10 @@ class helper {
             ];
             $options = ['disable' => self::get_display_options($core, $config)];
 
+            // Add the 'title' if exists from 'h5p.json' data to keep it for the editor.
+            if (!empty($h5pvalidator->h5pC->mainJsonData['title'])) {
+                $content['title'] = $h5pvalidator->h5pC->mainJsonData['title'];
+            }
             $h5pstorage->savePackage($content, null, $skipcontent, $options);
 
             return $h5pstorage->contentId;

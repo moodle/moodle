@@ -97,3 +97,21 @@ Feature: Content bank use editor feature
       | moodle/contentbank:useeditor     | Prohibit   | editingteacher | System       |           |
     And I reload the page
     Then "[data-action=Add-content]" "css_element" should not exist
+
+  Scenario: Users can edit content and save changes
+    Given the following "contentbank content" exist:
+      | contextlevel | reference | contenttype     | user  | contentname             | filepath                                    |
+      | System       |           | contenttype_h5p | admin | filltheblanks.h5p       | /h5p/tests/fixtures/filltheblanks.h5p       |
+    And I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Content bank" "link" in the "Navigation" "block"
+    And I click on "filltheblanks.h5p" "link"
+    And I click on "Edit" "link"
+    And I switch to "h5p-editor-iframe" class iframe
+    And the field "Title" matches value "Geography"
+    And I set the field "Title" to "New title"
+    And I switch to the main frame
+    When I click on "Save" "button"
+    And I should see "filltheblanks.h5p" in the "h1" "css_element"
+    And I click on "Edit" "link"
+    And I switch to "h5p-editor-iframe" class iframe
+    Then the field "Title" matches value "New title"

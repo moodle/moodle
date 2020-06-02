@@ -59,4 +59,5 @@ export const init = (elementId) => {
         inputname,
         cancelSubmitCallback
     );
+    document.querySelector('#' + elementId + ' iframe').setAttribute('name', 'h5p-editor');
 };
