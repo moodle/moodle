@@ -48,13 +48,7 @@ $gototop-bottom-position: 50px !default;
     opacity: 0;
     transition: opacity .7s ease 0s, visibility .1s ease .8s;
     display: block;
-    position: fixed; /* IE compatibility hack */
-    @supports (position: sticky) {
-        position: sticky;
-    }
-    @supports (-ms-ime-align:auto) {
-        position: fixed; /* Edge compatibility hack */
-    }
+    position: fixed;
     bottom: $gototop-bottom-position;
     right: 0;
     a {

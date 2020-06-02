@@ -9663,16 +9663,8 @@ input[disabled] {
   transition: opacity .7s ease 0s, visibility .1s ease .8s;
   display: block;
   position: fixed;
-  /* IE compatibility hack */
   bottom: 50px;
   right: 0; }
-  @supports (position: sticky) {
-    #goto-top-link {
-      position: sticky; } }
-  @supports (-ms-ime-align: auto) {
-    #goto-top-link {
-      position: fixed;
-      /* Edge compatibility hack */ } }
   #goto-top-link a {
     position: absolute;
     right: 0;
