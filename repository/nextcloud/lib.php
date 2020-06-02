@@ -650,11 +650,13 @@ class repository_nextcloud extends repository {
      * @throws dml_exception
      */
     public static function instance_config_form($mform) {
+        /*
         if (!has_capability('moodle/site:config', context_system::instance())) {
             $mform->addElement('static', null, '',  get_string('nopermissions', 'error', get_string('configplugin',
                 'repository_nextcloud')));
             return false;
         }
+        */
 
         // Load configured issuers.
         $issuers = core\oauth2\api::get_all_issuers();
