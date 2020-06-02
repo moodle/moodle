@@ -18792,6 +18792,7 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   .blockcolumn,
   .region-main {
     flex: 0 0 100%;
+    max-width: 100%;
     padding: 0 1rem;
     margin-bottom: 1rem; } }
 
@@ -18984,9 +18985,10 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     padding: 0 1rem 0 !important;
     /* stylelint-disable-line declaration-no-important */ } }
 
-.block_myoverview .dashboard-card-deck .dashboard-card,
-.block_recentlyaccesseditems .dashboard-card-deck .dashboard-card {
-  width: calc(33.33% - 0.5rem); }
+@media (min-width: 576px) {
+  .block_myoverview .dashboard-card-deck .dashboard-card,
+  .block_recentlyaccesseditems .dashboard-card-deck .dashboard-card {
+    width: calc(33.33% - 0.5rem); } }
 
 @media (min-width: 768px) {
   .blockcolumn .dashboard-card-deck {

@@ -112,6 +112,7 @@
     .blockcolumn,
     .region-main {
         flex: 0 0 100%;
+        max-width: 100%;
         padding: 0 1rem;
         margin-bottom: 1rem;
     }
@@ -138,11 +139,13 @@
     }
 }
 
-.block_myoverview,
-.block_recentlyaccesseditems {
-    .dashboard-card-deck {
-        .dashboard-card {
-            width: calc(33.33% - #{$card-gutter});
+@include media-breakpoint-up(sm) {
+    .block_myoverview,
+    .block_recentlyaccesseditems {
+        .dashboard-card-deck {
+            .dashboard-card {
+                width: calc(33.33% - #{$card-gutter});
+            }
         }
     }
 }
