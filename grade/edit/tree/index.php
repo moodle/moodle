@@ -86,6 +86,17 @@ if ($action == 'moveselect') {
 $grade_edit_tree = new grade_edit_tree($gtree, $movingeid, $gpr);
 
 switch ($action) {
+    case 'duplicate':
+        if ($eid and confirm_sesskey()) {
+            if (!$el = $gtree->locate_element($eid)) {
+                print_error('invalidelementid', '', $returnurl);
+            }
+
+            $object->duplicate();
+            redirect($returnurl);
+        }
+        break;
+
     case 'delete':
         if ($eid && confirm_sesskey()) {
             if (!$grade_edit_tree->element_deletable($element)) {

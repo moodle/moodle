@@ -163,6 +163,7 @@ $string['dropped'] = 'Dropped';
 $string['droplowestvalues'] = 'Drop {$a} lowest values';
 $string['dropxlowest'] = 'Drop X lowest';
 $string['dropxlowestwarning'] = 'Note: If you use drop x lowest the grading assumes that all items in the category have the same point value. If point values differ results will be unpredictable';
+$string['duplicatedgradeitem'] = '{$a} (copy)';
 $string['duplicatescale'] = 'Duplicate scale';
 $string['edit'] = 'Edit';
 $string['editcalculation'] = 'Edit calculation';
