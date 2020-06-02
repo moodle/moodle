@@ -357,6 +357,7 @@ $string['rows'] = 'rows';
 $string['rssglobaldisabled'] = 'Disabled. See site configuration variables.';
 $string['rsstemplate'] = 'RSS template';
 $string['rsstitletemplate'] = 'RSS title template';
+$string['rsstype'] = 'RSS feed for this activity';
 $string['save'] = 'Save';
 $string['saveandadd'] = 'Save and add another';
 $string['saveandview'] = 'Save and view';
