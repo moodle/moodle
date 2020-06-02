@@ -15,6 +15,9 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
   preference is set, or when the theme sets $THEME->enablecourseajaxtheme to false. Formats which directly access
   the '.section_add_menus' element or its children should be updated accordingly.
 
+* section_header() now needs to include 'data-sectionid' => $section->section in the .section li to ensure correct section
+  selection for the Activity Chooser.
+
 === 3.8 ===
 
 * The following functions have been finally deprecated and can not be used anymore:
