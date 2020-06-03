@@ -59,6 +59,7 @@ $string['privacy:metadata:content:usercreated'] = 'The user has created the cont
 $string['privacy:metadata:content:usermodified'] = 'The last user who modified the content.';
 $string['privacy:metadata:contentbankcontent'] = 'Stores the content of the content bank.';
 $string['privacy:metadata:userid'] = 'The ID of the user creating or modifying content bank content.';
+$string['privacy:request:preference:set'] = 'The value of the setting \'{$a->name}\' was \'{$a->value}\'';
 $string['rename'] = 'Rename';
 $string['renamecontent'] = 'Rename content';
 $string['searchcontentbankbyname'] = 'Search for content by name';

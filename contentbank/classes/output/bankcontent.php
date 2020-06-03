@@ -97,6 +97,7 @@ class bankcontent implements renderable, templatable {
                 'type' => $mimetype
             );
         }
+        $data->viewlist = get_user_preferences('core_contentbank_view_list');
         $data->contents = $contentdata;
         // The tools are displayed in the action bar on the index page.
         foreach ($this->toolbar as $tool) {

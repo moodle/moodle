@@ -74,7 +74,8 @@
     }
 
 }}
-<div class="content-bank-container view-grid" data-region="contentbank">
+<div class="content-bank-container {{#viewlist}}view-list{{/viewlist}} {{^viewlist}}view-grid{{/viewlist}}"
+data-region="contentbank">
     <div class="d-flex justify-content-between flex-column flex-sm-row">
         <div class="cb-search-container mb-2">
             {{>core_contentbank/bankcontent/search}}
