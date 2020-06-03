@@ -30,6 +30,7 @@ use core_contentbank\form\edit_content;
 use core_h5p\api;
 use core_h5p\editor as h5peditor;
 use core_h5p\factory;
+use core_h5p\helper;
 use stdClass;
 
 /**
@@ -53,6 +54,8 @@ class editor extends edit_content {
         global $DB;
 
         $mform = $this->_form;
+        $errors = [];
+        $notifications = [];
 
         // Id of the content to edit.
         $id = $this->_customdata['id'];
@@ -73,9 +76,22 @@ class editor extends edit_content {
             $file = $this->content->get_file();
 
             $h5p = api::get_content_from_pathnamehash($file->get_pathnamehash());
-            $mform->addElement('hidden', 'h5pid', $h5p->id);
-            $mform->setType('h5pid', PARAM_INT);
-            $this->h5peditor->set_content($h5p->id);
+            if (!$h5p) {
+                // H5P content has not been deployed yet. Let's check why.
+                $factory = new \core_h5p\factory();
+                $factory->get_framework()->set_file($file);
+
+                $h5pid = helper::save_h5p($factory, $file, new stdClass());
+                $errors = $factory->get_framework()->getMessages('error');
+                $notifications = $factory->get_framework()->getMessages('info');
+            } else {
+                $h5pid = $h5p->id;
+            }
+            if ($h5pid) {
+                $mform->addElement('hidden', 'h5pid', $h5pid);
+                $mform->setType('h5pid', PARAM_INT);
+                $this->h5peditor->set_content($h5pid);
+            }
         } else {
             // The H5P editor needs the H5P content type library name for a new content.
             $mform->addElement('hidden', 'library', $library);
@@ -86,11 +102,20 @@ class editor extends edit_content {
         $mformid = 'coolh5peditor';
         $mform->setAttributes(array('id' => $mformid) + $mform->getAttributes());
 
-        $this->add_action_buttons();
-
-        $this->h5peditor->add_editor_to_form($mform);
-
-        $this->add_action_buttons();
+        if ($errors || $notifications) {
+            // Show the error messages and a Cancel button.
+            foreach ($errors as $error) {
+                $mform->addElement('warning', $error->code, 'notify', $error->message);
+            }
+            foreach ($notifications as $key => $notification) {
+                $mform->addElement('warning', 'notification_'.$key, 'notify', $notification);
+            }
+            $mform->addElement('cancel', 'cancel', get_string('back'));
+        } else {
+            $this->add_action_buttons();
+            $this->h5peditor->add_editor_to_form($mform);
+            $this->add_action_buttons();
+        }
     }
 
     /**
