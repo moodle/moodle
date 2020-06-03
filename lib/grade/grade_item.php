@@ -450,6 +450,41 @@ class grade_item extends grade_object {
     }
 
     /**
+     * Duplicate grade item.
+     *
+     * @return grade_item The duplicate grade item
+     */
+    public function duplicate() {
+        // Convert current object to array.
+        $copy = (array) $this;
+
+        if (empty($copy["id"])) {
+            throw new moodle_exception('invalidgradeitemid');
+        }
+
+        // Remove fields that will be either unique or automatically filled.
+        $removekeys = array();
+        $removekeys[] = 'id';
+        $removekeys[] = 'idnumber';
+        $removekeys[] = 'timecreated';
+        $removekeys[] = 'sortorder';
+        foreach ($removekeys as $key) {
+            unset($copy[$key]);
+        }
+
+        // Addendum to name.
+        $copy["itemname"] = get_string('duplicatedgradeitem', 'grades', $copy["itemname"]);
+
+        // Create new grade item.
+        $gradeitem = new grade_item($copy);
+
+        // Insert grade item into database.
+        $gradeitem->insert();
+
+        return $gradeitem;
+    }
+
+    /**
      * In addition to perform parent::insert(), calls force_regrading() method too.
      *
      * @param string $source From where was the object inserted (mod/forum, manual, etc.)
