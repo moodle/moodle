@@ -126,6 +126,75 @@ class qtype_multichoice_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 new question_pattern_expectation('/class="r1"/'));
     }
 
+    /**
+     * Test for clear choice option.
+     */
+    public function test_deferredfeedback_feedback_multichoice_clearchoice() {
+
+        // Create a multichoice, single question.
+        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc->shuffleanswers = false;
+
+        $clearchoice = -1;
+        $rightchoice = 0;
+        $wrongchoice = 2;
+
+        $this->start_attempt_at_question($mc, 'deferredfeedback', 3);
+
+        // Let's first submit the wrong choice (2).
+        $this->process_submission(array('answer' => $wrongchoice));  // Wrong choice (2).
+
+        $this->check_current_mark(null);
+        // Clear choice radio should not be checked.
+        $this->check_current_output(
+            $this->get_contains_mc_radio_expectation($rightchoice, true, false), // Not checked.
+            $this->get_contains_mc_radio_expectation($rightchoice + 1, true, false), // Not checked.
+            $this->get_contains_mc_radio_expectation($rightchoice + 2, true, true), // Wrong choice (2) checked.
+            $this->get_contains_mc_radio_expectation($clearchoice, true, false), // Not checked.
+            $this->get_does_not_contain_correctness_expectation(),
+            $this->get_does_not_contain_feedback_expectation()
+        );
+
+        // Now, let's clear our previous choice.
+        $this->process_submission(array('answer' => $clearchoice)); // Clear choice (-1).
+        $this->check_current_mark(null);
+
+        // This time, the clear choice radio should be the only one checked.
+        $this->check_current_output(
+            $this->get_contains_mc_radio_expectation($rightchoice, true, false), // Not checked.
+            $this->get_contains_mc_radio_expectation($rightchoice + 1, true, false), // Not checked.
+            $this->get_contains_mc_radio_expectation($rightchoice + 2, true, false), // Not checked.
+            $this->get_contains_mc_radio_expectation($clearchoice, true, true), // Clear choice radio checked.
+            $this->get_does_not_contain_correctness_expectation(),
+            $this->get_does_not_contain_feedback_expectation()
+        );
+
+        // Finally, let's submit the right choice.
+        $this->process_submission(array('answer' => $rightchoice)); // Right choice (0).
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+            $this->get_contains_mc_radio_expectation($rightchoice, true, true),
+            $this->get_contains_mc_radio_expectation($rightchoice + 1, true, false),
+            $this->get_contains_mc_radio_expectation($rightchoice + 2, true, false),
+            $this->get_contains_mc_radio_expectation($clearchoice, true, false),
+            $this->get_does_not_contain_correctness_expectation(),
+            $this->get_does_not_contain_feedback_expectation()
+        );
+
+        // Finish the attempt.
+        $this->finish();
+
+        // Verify.
+        $this->check_current_state(question_state::$gradedright);
+        $this->check_current_mark(3);
+        $this->check_current_output(
+            $this->get_contains_mc_radio_expectation($rightchoice, false, true),
+            $this->get_contains_correct_expectation(),
+            new question_pattern_expectation('/class="r0 correct"/'),
+            new question_pattern_expectation('/class="r1"/'));
+    }
+
     public function test_deferredfeedback_feedback_multichoice_multi_showstandardunstruction_yes() {
 
         // Create a multichoice, multi question.
