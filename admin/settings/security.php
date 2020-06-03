@@ -160,6 +160,23 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configportlist('curlsecurityallowedport',
                new lang_string('curlsecurityallowedport', 'admin'),
                new lang_string('curlsecurityallowedportsyntax', 'admin'), ""));
+
+    // HTTP Header referrer policy settings.
+    $referreroptions = [
+        'default' => get_string('referrernone', 'admin'),
+        'no-referrer' => 'no-referrer',
+        'no-referrer-when-downgrade' => 'no-referrer-when-downgrade',
+        'origin' => 'origin',
+        'origin-when-cross-origin' => 'origin-when-cross-origin',
+        'same-origin' => 'same-origin',
+        'strict-origin' => 'strict-origin',
+        'strict-origin-when-cross-origin' => 'strict-origin-when-cross-origin',
+        'unsafe-url' => 'unsafe-url',
+    ];
+    $temp->add(new admin_setting_configselect('referrerpolicy',
+            new lang_string('referrerpolicy', 'admin'),
+            new lang_string('referrerpolicydesc', 'admin'), 'default', $referreroptions));
+
     $ADMIN->add('security', $temp);
 
     // "notifications" settingpage

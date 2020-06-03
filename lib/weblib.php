@@ -2285,6 +2285,11 @@ function send_headers($contenttype, $cacheable = true) {
     if (empty($CFG->allowframembedding) && !core_useragent::is_moodle_app()) {
         @header('X-Frame-Options: sameorigin');
     }
+
+    // If referrer policy is set, add a referrer header.
+    if (!empty($CFG->referrerpolicy) && ($CFG->referrerpolicy !== 'default')) {
+        @header('Referrer-Policy: ' . $CFG->referrerpolicy);
+    }
 }
 
 /**
