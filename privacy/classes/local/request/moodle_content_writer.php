@@ -286,7 +286,6 @@ class moodle_content_writer implements content_writer {
         // This weird code is to look for a subcontext that contains a number and append an '_' to the front.
         // This is because there seems to be some weird problem with array_merge_recursive used in finalise_content().
         $subcontext = array_map(function($data) {
-            $data = clean_param($data, PARAM_PATH);
             if (stripos($data, DIRECTORY_SEPARATOR) !== false) {
                 $newpath = explode(DIRECTORY_SEPARATOR, $data);
                 $newpath = array_map(function($value) {
@@ -295,11 +294,18 @@ class moodle_content_writer implements content_writer {
                     }
                     return $value;
                 }, $newpath);
-                return implode(DIRECTORY_SEPARATOR, $newpath);
+                $data = implode(DIRECTORY_SEPARATOR, $newpath);
             } else if (is_numeric($data)) {
                 $data = '_' . $data;
             }
-            return $data;
+            // Because clean_param() normalises separators to forward-slashes
+            // and because there is code DIRECTORY_SEPARATOR dependent after
+            // this array_map(), we ensure we get the original separator.
+            // Note that maybe we could leave the clean_param() alone, but
+            // surely that means that the DIRECTORY_SEPARATOR dependent
+            // code is not needed at all. So better keep existing behavior
+            // until this is revisited.
+            return str_replace('/', DIRECTORY_SEPARATOR, clean_param($data, PARAM_PATH));
         }, $subcontext);
 
         // Combine the context path, and the subcontext data.
