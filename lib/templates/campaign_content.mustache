@@ -1,0 +1,50 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/campaign_content
+
+    Moodle campaign content template.
+
+    The purpose of this template is to render an iframe that contains campaign content.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * lang User's language.
+
+    Example context (json):
+    { "lang": "en"}
+}}
+<div class="alert alert-secondary alert-block fade in alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <iframe id="campaign-content" class="w-100 border-0"></iframe>
+</div>
+{{#js}}
+(function() {
+    var iframe = document.getElementById('campaign-content');
+    iframe.src = 'https://campaign.moodle.org/current/lms/{{lang}}/';
+    window.addEventListener('message', function (event) {
+        if (event.origin === 'https://campaign.moodle.org') {
+            iframe.style.height = event.data + 'px';
+        }
+    });
+})();
+{{/js}}

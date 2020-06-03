@@ -899,6 +899,9 @@ if (empty($CFG->disabledevlibdirscheck) && (is_dir($CFG->dirroot.'/vendor') || i
 // Check if the site is being foced onto ssl.
 $overridetossl = !empty($CFG->overridetossl);
 
+// Check if moodle campaign content setting is enabled or not.
+$showcampaigncontent = !isset($CFG->showcampaigncontent) || $CFG->showcampaigncontent;
+
 admin_externalpage_setup('adminnotifications');
 
 $output = $PAGE->get_renderer('core', 'admin');
@@ -906,4 +909,5 @@ $output = $PAGE->get_renderer('core', 'admin');
 echo $output->admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed, $cronoverdue, $dbproblems,
                                        $maintenancemode, $availableupdates, $availableupdatesfetch, $buggyiconvnomb,
                                        $registered, $cachewarnings, $eventshandlers, $themedesignermode, $devlibdir,
-                                       $mobileconfigured, $overridetossl, $invalidforgottenpasswordurl, $croninfrequent);
+                                       $mobileconfigured, $overridetossl, $invalidforgottenpasswordurl, $croninfrequent,
+                                       $showcampaigncontent);
