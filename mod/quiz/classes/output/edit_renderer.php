@@ -64,15 +64,24 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= $this->quiz_state_warnings($structure);
 
         $output .= html_writer::start_div('mod_quiz-edit-top-controls');
-        $output .= $this->quiz_information($structure);
-        $output .= $this->maximum_grade_input($structure, $pageurl);
 
+        $output .= html_writer::start_div('d-flex justify-content-between flex-wrap mb-1');
+        $output .= html_writer::start_div('d-flex flex-column justify-content-around');
+        $output .= $this->quiz_information($structure);
+        $output .= html_writer::end_tag('div');
+        $output .= $this->maximum_grade_input($structure, $pageurl);
+        $output .= html_writer::end_tag('div');
+
+        $output .= html_writer::start_div('d-flex justify-content-between flex-wrap mb-1');
         $output .= html_writer::start_div('mod_quiz-edit-action-buttons btn-group edit-toolbar', ['role' => 'group']);
         $output .= $this->repaginate_button($structure, $pageurl);
         $output .= $this->selectmultiple_button($structure);
         $output .= html_writer::end_tag('div');
 
+        $output .= html_writer::start_div('d-flex flex-column justify-content-around');
         $output .= $this->total_marks($quizobj->get_quiz());
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('div');
 
         $output .= $this->selectmultiple_controls($structure);
         $output .= html_writer::end_tag('div');
@@ -204,7 +213,7 @@ class edit_renderer extends \plugin_renderer_base {
             'name'  => 'repaginate',
             'id'    => 'repaginatecommand',
             'value' => get_string('repaginatecommand', 'quiz'),
-            'class' => 'btn btn-secondary mb-1',
+            'class' => 'btn btn-secondary',
             'data-header' => $header,
             'data-form'   => $form,
         );
@@ -229,7 +238,7 @@ class edit_renderer extends \plugin_renderer_base {
             'name'  => 'selectmultiple',
             'id'    => 'selectmultiplecommand',
             'value' => get_string('selectmultipleitems', 'quiz'),
-            'class' => 'btn btn-secondary mb-1'
+            'class' => 'btn btn-secondary'
         );
         if (!$structure->can_be_edited()) {
             $buttonoptions['disabled'] = 'disabled';

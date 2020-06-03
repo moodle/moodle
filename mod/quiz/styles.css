@@ -617,10 +617,6 @@ table.quizreviewsummary td.cell {
 }
 
 /** Mod quiz edit **/
-#page-mod-quiz-edit .statusbar {
-    margin: 0.6em 0.4em;
-}
-
 #page-mod-quiz-edit .statusdisplay {
     background-color: #ffc;
     clear: both;
@@ -635,17 +631,15 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit .mod_quiz-edit-top-controls {
     position: relative;
 }
-#page-mod-quiz-edit .mod_quiz-edit-action-buttons {
-    display: block;
-    min-height: 2.85em;
-}
 
-#page-mod-quiz-edit .maxgrade,
-#page-mod-quiz-edit .totalpoints {
-    position: absolute;
-    right: 0;
-    margin: -2.85em 0 0;
-    padding: .2em;
+@media (max-width: 576px) {
+    #page-mod-quiz-edit .maxgrade {
+        margin-bottom: 0.6em;
+    }
+    #page-mod-quiz-edit .maxgrade .form-control {
+        display: inline-block;
+        vertical-align: middle;
+    }
 }
 
 #page-mod-quiz-edit .maxgrade label {
