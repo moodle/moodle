@@ -166,3 +166,32 @@ Feature: Add badges to the system
     And I click on "Site badges" "link" in the "Navigation" "block"
     Then I should see "Manage badges"
     And I should see "Add a new badge"
+
+  @javascript @_file_upload
+  Scenario: Edit a badge
+    Given I navigate to "Badges > Badges settings" in site administration
+    And I set the field "Badge issuer name" to "Test Badge Site"
+    And I set the field "Badge issuer email address" to "testuser@example.com"
+    And I press "Save changes"
+    And I navigate to "Badges > Add a new badge" in site administration
+    And I set the following fields to these values:
+      | Name | Test badge with 'apostrophe' and other friends (<>&@#) |
+      | Version | firstversion |
+      | Language | English |
+      | Description | Test badge description |
+      | Image author | http://author.example.com |
+      | Image caption | Test caption image |
+    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
+    And I press "Create badge"
+    When I follow "Edit details"
+    And I should see "Test badge with 'apostrophe' and other friends (&@#)"
+    And I should not see "Issuer details"
+    And I set the following fields to these values:
+      | Name | Test badge renamed |
+      | Version | secondversion |
+    And I press "Save changes"
+    And I follow "Overview"
+    Then I should not see "Test badge with 'apostrophe' and other friends (&@#)"
+    And I should not see "firstversion"
+    And I should see "Test badge renamed"
+    And I should see "secondversion"
