@@ -171,6 +171,16 @@ class company_license_table extends table_sql {
     }
 
     /**
+     * Generate the display of the company name
+     * @param object $license the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_companyname($row) {
+
+        return format_string($row->companyname);
+    }
+
+    /**
      * Generate the display of the ucourses has grade column.
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.

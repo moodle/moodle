@@ -132,6 +132,7 @@ $strlicenseshelflife = get_string('licenseexpires', 'block_iomad_company_admin')
 $strlicenseduration = get_string('licenseduration', 'block_iomad_company_admin');
 $strlicenseallocated = get_string('licenseallocated', 'block_iomad_company_admin');
 $strlicenseremaining = get_string('licenseremaining', 'block_iomad_company_admin');
+$strcompany = get_string('company', 'block_iomad_company_admin');
 
 // Set up the table
 $table = new company_license_table('company_licenses_table');
@@ -162,10 +163,11 @@ $tablecolumns = array('name',
                       'actions');
 
 if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context) && $childcompanies = $company->get_child_companies_recursive()) {
+    $tableheaders = array_merge(array($strcompany), $tableheaders);
+    $tablecolumns = array_merge(array('companyname'), $tablecolumns);
     $showcompanies = true;
     $gotchildren = true;
-    array_unshift($table->head, get_string('company', 'block_iomad_company_admin'));
-    $childsql = "OR companyid IN (" . join(',', array_keys($childcompanies)) . ")";
+    $childsql = "OR cl.companyid IN (" . join(',', array_keys($childcompanies)) . ")";
 } else {
     $showcompanies = false;
     $gotchildren = false;
@@ -174,7 +176,7 @@ if (iomad::has_capability('block/iomad_company_admin:company_add_child', $contex
 
 // Are we showing the expired licenses?
 if (empty($showexpired)) {
-    $expiredsql = " AND expirydate > :time ";
+    $expiredsql = " AND cl.expirydate > :time ";
 } else {
     $expiredsql = "";
 }
@@ -187,7 +189,7 @@ if ($childcompanies = $company->get_child_companies_recursive()) {
 }
 
 // Get the licenses.
-$table->set_sql("*", "{companylicense}", "companyid = :companyid $childsql $expiredsql", array('companyid' => $companyid, 'time' => time()));
+$table->set_sql("cl.*,c.name AS companyname", "{companylicense} cl JOIN {company} c ON (cl.companyid = c.id)", "cl.companyid = :companyid $childsql $expiredsql", array('companyid' => $companyid, 'time' => time()));
 
 $table->define_baseurl($baseurl);
 $table->define_columns($tablecolumns);
@@ -196,60 +198,6 @@ $table->sort_default_column = 'expirydate DESC';
 $table->no_sorting('coursesname');
 $table->no_sorting('used');
 $table->no_sorting('actions');
-
-
-
-/*$objectcount = $DB->count_records_sql("SELECT count(id) FROM {companylicense}
-                                    WHERE companyid = :companyid
-                                    $childsql
-                                    $expiredsql",
-                                    array('companyid' => $companyid, 'time' => time()));
-
-// Cycle through the results.
-foreach ($licenses as $license) {
-    // does the company the license is allocated to have any kids?
-    $licensecompany = new company($license->companyid);
-    if ($childcompanies = $licensecompany->get_child_companies_recursive()) {
-        $gotchildren = true;
-    } else {
-        $gotchildren = false;
-    }
-
-    // Deal with allocation numbers if a program.
-    if (!empty($license->instant)) {
-        $instantstring = get_string('yes');
-    } else {
-        $instantstring = get_string('no');
-    }
-
-    // Deal with valid length if a subscription.
-    if ($license->type == 1) {
-        $validlength = "-";
-    } else {
-        $validlength = $license->validlength;
-    }
-
-    // Create the table data.
-    $dataarray = array ($license->name,
-                       $license->reference,
-                       $licensetypes[$license->type],
-                       $programstring,
-                       $instantstring,
-                       $coursestring,
-                       date($CFG->iomad_date_format, $license->expirydate),
-                       $validlength,
-                       $allocation,
-                       $used,
-                       $editbutton . ' ' .
-                       $splitbutton . ' ' .
-                       $deletebutton . ' ' .
-                       $allocatebutton);
-    // Add in the company name if we have any.
-    if ($showcompanies) {
-        $liccompany = new company($license->companyid);
-        array_unshift($dataarray, $liccompany->get_name());
-    }
-    $table->data[] = $dataarray; */
 
 
 echo '<div class="buttons">';
