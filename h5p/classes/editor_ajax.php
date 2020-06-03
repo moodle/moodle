@@ -61,7 +61,7 @@ class editor_ajax implements H5PEditorAjaxInterface {
                             )
                  WHERE hl2.runnable = 1
                        AND hl1.majorversion is null
-              ORDER BY hl2.machinename";
+              ORDER BY hl2.title";
 
         return $DB->get_records_sql($sql);
     }
