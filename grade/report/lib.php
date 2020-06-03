@@ -417,8 +417,8 @@ abstract class grade_report {
         $matrix = array('up' => 'desc', 'down' => 'asc', 'move' => 'desc');
         $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
 
-        $arrow = $OUTPUT->pix_icon($pix[$direction], $strsort, '', array('class' => 'sorticon'));
-        return html_writer::link($sortlink, $arrow, array('title'=>$strsort));
+        $arrow = $OUTPUT->pix_icon($pix[$direction], '', '', ['class' => 'sorticon']);
+        return html_writer::link($sortlink, $arrow, ['title' => $strsort, 'aria-label' => $strsort]);
     }
 
     /**
