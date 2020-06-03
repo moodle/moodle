@@ -63,7 +63,7 @@ class sequencing extends result {
                 continue;
             }
             $option = (object)[
-                'id' => true,
+                'id' => 'true',
                 'description' => get_string('result_sequencing_position', 'mod_h5pactivity', $num),
                 'correctanswer' => $this->get_answer(parent::TEXT, $choices[$pattern]->description),
                 'correctanswerid' => 'item_'.$key,

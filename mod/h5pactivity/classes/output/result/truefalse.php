@@ -47,16 +47,18 @@ class truefalse extends result {
         // This interaction type have only one entry which is the correct option.
         $correctpattern = reset($this->correctpattern);
         $correctpattern = filter_var(reset($correctpattern), FILTER_VALIDATE_BOOLEAN);
+        $correctpattern = $correctpattern ? 'true' : 'false';
 
         $response = filter_var(reset($this->response), FILTER_VALIDATE_BOOLEAN);
+        $response = $response ? 'true' : 'false';
 
         $options = [
             (object)[
-                'id' => true,
+                'id' => 'true',
                 'description' => get_string('true', 'mod_h5pactivity'),
             ],
             (object)[
-                'id' => false,
+                'id' => 'false',
                 'description' => get_string('false', 'mod_h5pactivity'),
             ],
         ];
