@@ -25,6 +25,7 @@
 import CourseFilter from './local/participantsfilter/filtertypes/courseid';
 import * as DynamicTable from 'core_table/dynamic';
 import GenericFilter from './local/participantsfilter/filter';
+import {get_strings as getStrings} from 'core/str';
 import Notification from 'core/notification';
 import Selectors from './local/participantsfilter/selectors';
 import Templates from 'core/templates';
@@ -56,7 +57,8 @@ export const init = participantsRegionId => {
      * @return {Promise}
      */
     const addFilterRow = () => {
-        return Templates.renderForPromise('core_user/local/participantsfilter/filterrow', {})
+        const rownum = 1 + getFilterRegion().querySelectorAll(Selectors.filter.region).length;
+        return Templates.renderForPromise('core_user/local/participantsfilter/filterrow', {"rownumber": rownum})
         .then(({html, js}) => {
             const newContentNodes = Templates.appendNodeContents(getFilterRegion(), html, js);
 
@@ -104,8 +106,10 @@ export const init = participantsRegionId => {
      *
      * @param {HTMLElement} filterRow
      * @param {String} filterType
+     * @param {Array} initialFilterValues The initially selected values for the filter
+     * @returns {Filter}
      */
-    const addFilter = async(filterRow, filterType) => {
+    const addFilter = async(filterRow, filterType, initialFilterValues) => {
         // Name the filter on the filter row.
         filterRow.dataset.filterType = filterType;
 
@@ -116,14 +120,17 @@ export const init = participantsRegionId => {
         if (filterDataNode.dataset.filterTypeClass) {
             Filter = await import(filterDataNode.dataset.filterTypeClass);
         }
-        activeFilters[filterType] = new Filter(filterType, filterSet);
+        activeFilters[filterType] = new Filter(filterType, filterSet, initialFilterValues);
 
         // Disable the select.
         const typeField = filterRow.querySelector(Selectors.filter.fields.type);
+        typeField.value = filterType;
         typeField.disabled = 'disabled';
 
         // Update the list of available filter types.
         updateFiltersOptions();
+
+        return activeFilters[filterType];
     };
 
     /**
@@ -157,31 +164,40 @@ export const init = participantsRegionId => {
      *
      * @param {HTMLElement} filterRow
      */
-    const removeFilterRow = filterRow => {
+    const removeFilterRow = async filterRow => {
         // Remove the filter object.
         removeFilterObject(filterRow.dataset.filterType);
 
         // Remove the actual filter HTML.
         filterRow.remove();
 
+        // Update the list of available filter types.
+        updateFiltersOptions();
+
         // Refresh the table.
         updateTableFromFilter();
 
-        // Update the list of available filter types.
-        updateFiltersOptions();
+        // Update filter fieldset legends.
+        const filterLegends = await getAvailableFilterLegends();
+
+        getFilterRegion().querySelectorAll(Selectors.filter.region).forEach((filterRow, index) => {
+            filterRow.querySelector('legend').innerText = filterLegends[index];
+        });
+
     };
 
     /**
      * Replace the specified filter row with a new one.
      *
      * @param {HTMLElement} filterRow
+     * @param {Number} rowNum The number used to label the filter fieldset legend (eg Row 1). Defaults to 1 (the first filter).
      * @return {Promise}
      */
-    const replaceFilterRow = filterRow => {
+    const replaceFilterRow = (filterRow, rowNum = 1) => {
         // Remove the filter object.
         removeFilterObject(filterRow.dataset.filterType);
 
-        return Templates.renderForPromise('core_user/local/participantsfilter/filterrow', {})
+        return Templates.renderForPromise('core_user/local/participantsfilter/filterrow', {"rownumber": rowNum})
         .then(({html, js}) => {
             const newContentNodes = Templates.replaceNode(filterRow, html, js);
 
@@ -237,15 +253,28 @@ export const init = participantsRegionId => {
 
     /**
      * Remove all filters.
+     *
+     * @returns {Promise}
      */
-    const removeAllFilters = async() => {
+    const removeAllFilters = () => {
         const filters = getFilterRegion().querySelectorAll(Selectors.filter.region);
-        filters.forEach((filterRow) => {
-            removeOrReplaceFilterRow(filterRow);
-        });
+        filters.forEach(filterRow => removeOrReplaceFilterRow(filterRow));
 
         // Refresh the table.
-        updateTableFromFilter();
+        return updateTableFromFilter();
+    };
+
+    /**
+     * Remove any empty filters.
+     */
+    const removeEmptyFilters = () => {
+        const filters = getFilterRegion().querySelectorAll(Selectors.filter.region);
+        filters.forEach(filterRow => {
+            const filterType = filterRow.querySelector(Selectors.filter.fields.type);
+            if (!filterType.value) {
+                removeOrReplaceFilterRow(filterRow);
+            }
+        });
     };
 
     /**
@@ -288,6 +317,49 @@ export const init = participantsRegionId => {
     };
 
     /**
+     * Set the current filter options based on a provided configuration.
+     *
+     * @param {Object} config
+     * @param {Number} config.jointype
+     * @param {Object} config.filters
+     */
+    const setFilterFromConfig = config => {
+        const filterConfig = Object.entries(config.filters);
+
+        if (!filterConfig.length) {
+            // There are no filters to set from.
+            return;
+        }
+
+        // Set the main join type.
+        filterSet.querySelector(Selectors.filterset.fields.join).value = config.jointype;
+
+        const filterPromises = filterConfig.map(([filterType, filterData]) => {
+            if (filterType === 'courseid') {
+                // The courseid is a special case.
+                return Promise.resolve();
+            }
+
+            const filterValues = filterData.values;
+
+            if (!filterValues.length) {
+                // There are no values for this filter.
+                // Skip it.
+                return Promise.resolve();
+            }
+
+            return addFilterRow().then(([filterRow]) => addFilter(filterRow, filterType, filterValues));
+        });
+
+        Promise.all(filterPromises).then(() => {
+            return removeEmptyFilters();
+        })
+        .then(updateFiltersOptions)
+        .then(updateTableFromFilter)
+        .catch();
+    };
+
+    /**
      * Update the Dynamic table based upon the current filter.
      *
      * @return {Promise}
@@ -300,6 +372,33 @@ export const init = participantsRegionId => {
                 jointype: filterSet.querySelector(Selectors.filterset.fields.join).value,
             }
         );
+    };
+
+    /**
+     * Fetch the strings used to populate the fieldset legends for the maximum number of filters possible.
+     *
+     * @return {array}
+     */
+    const getAvailableFilterLegends = async() => {
+        const maxFilters = document.querySelector(Selectors.data.typeListSelect).length - 1;
+        let requests = [];
+
+        [...Array(maxFilters)].forEach((_, rowIndex) => {
+            requests.push({
+                "key": "filterrowlegend",
+                "component": "core_user",
+                // Add 1 since rows begin at 1 (index begins at zero).
+                "param": rowIndex + 1
+            });
+        });
+
+        const legendStrings = await getStrings(requests)
+        .then(fetchedStrings => {
+            return fetchedStrings;
+        })
+        .catch(Notification.exception);
+
+        return legendStrings;
     };
 
     // Add listeners for the main actions.
@@ -345,4 +444,11 @@ export const init = participantsRegionId => {
     filterSet.querySelector(Selectors.filterset.fields.join).addEventListener('change', e => {
         filterSet.dataset.filterverb = e.target.value;
     });
+
+    const tableRoot = DynamicTable.getTableFromId(filterSet.dataset.tableRegion);
+    const initialFilters = DynamicTable.getFilters(tableRoot);
+    if (initialFilters) {
+        // Apply the initial filter configuration.
+        setFilterFromConfig(initialFilters);
+    }
 };

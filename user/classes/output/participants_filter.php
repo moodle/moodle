@@ -210,7 +210,8 @@ class participants_filter implements renderable, templatable {
             $groups = groups_get_all_groups($this->course->id, $USER->id);
         }
 
-        if (empty($groups)) {
+        // Return no data if no groups found (which includes if the only value is 'No group').
+        if (empty($groups) || (count($groups) === 1 && array_key_exists(-1, $groups))) {
             return null;
         }
 
@@ -349,6 +350,7 @@ class participants_filter implements renderable, templatable {
             'tableregionid' => $this->tableregionid,
             'courseid' => $this->context->instanceid,
             'filtertypes' => $this->get_filtertypes(),
+            'rownumber' => 1,
         ];
 
         return $data;

@@ -1,5 +1,17 @@
 This files describes API changes for code that uses the user API.
 
+=== 3.9 ===
+
+* The unified filter has been replaced by the participants filter. The following have therefore been deprecated:
+  * Library functions:
+    * user_get_participants_sql
+    * user_get_total_participants
+    * user_get_participants
+  * Unified filter renderer (core_user_renderer::unified_filter)
+  * Unified filter renderable (\core_user\output\unified_filter)
+  * Unified filter JavaScript (core_user/unified_filter.js and core_user/unified_filter_datasource.js)
+  * Unified filter template (unified_filter.mustache)
+
 === 3.6 ===
 
 * The following functions have been finally deprecated and can not be used anymore:

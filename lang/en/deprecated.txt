@@ -144,3 +144,4 @@ pacific/yap,core_timezones
 editsettings,core_badges
 availablelicenses,core_admin
 managelicenses,core_admin
+userfilterplaceholder,core

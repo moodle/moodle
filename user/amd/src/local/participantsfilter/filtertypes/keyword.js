@@ -25,10 +25,6 @@ import Filter from '../filter';
 import {get_string as getString} from 'core/str';
 
 export default class extends Filter {
-    constructor(filterType, filterSet) {
-        super(filterType, filterSet);
-    }
-
     /**
      * For keywords the final value is an Array of strings.
      *

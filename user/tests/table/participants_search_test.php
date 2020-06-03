@@ -2009,6 +2009,407 @@ class participants_search_test extends advanced_testcase {
     }
 
     /**
+     * Ensure that the groups filter works as expected when separate groups mode is enabled, with the provided test cases.
+     *
+     * @param array $usersdata The list of users to create
+     * @param array $groupsavailable The names of groups that should be created in the course
+     * @param array $filtergroups The names of groups to filter by
+     * @param int $jointype The join type to use when combining filter values
+     * @param int $count The expected count
+     * @param array $expectedusers
+     * @param string $loginusername The user to login as for the tests
+     * @dataProvider groups_separate_provider
+     */
+    public function test_groups_filter_separate_groups(array $usersdata, array $groupsavailable, array $filtergroups, int $jointype,
+            int $count, array $expectedusers, string $loginusername): void {
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $users = [];
+
+        // Enable separate groups mode on the course.
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = true;
+        update_course($course);
+
+        // Prepare data for filtering by users in no groups.
+        $nogroupsdata = (object) [
+            'id' => USERSWITHOUTGROUP,
+        ];
+
+        // Map group names to group data.
+         $groupsdata = ['nogroups' => $nogroupsdata];
+        foreach ($groupsavailable as $groupname) {
+            $groupinfo = [
+                'courseid' => $course->id,
+                'name' => $groupname,
+            ];
+
+            $groupsdata[$groupname] = $this->getDataGenerator()->create_group($groupinfo);
+        }
+
+        foreach ($usersdata as $username => $userdata) {
+            $user = $this->getDataGenerator()->create_user(['username' => $username]);
+            $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+            if (array_key_exists('groups', $userdata)) {
+                foreach ($userdata['groups'] as $groupname) {
+                    $userinfo = [
+                        'userid' => $user->id,
+                        'groupid' => (int) $groupsdata[$groupname]->id,
+                    ];
+                    $this->getDataGenerator()->create_group_member($userinfo);
+                }
+            }
+
+            $users[$username] = $user;
+
+            if ($username == $loginusername) {
+                $loginuser = $user;
+            }
+        }
+
+        // Create a secondary course with users. We should not see these users.
+        $this->create_course_with_users(1, 1, 1, 1);
+
+        // Log in as the user to be tested.
+        $this->setUser($loginuser);
+
+        // Create the basic filter.
+        $filterset = new participants_filterset();
+        $filterset->add_filter(new integer_filter('courseid', null, [(int) $course->id]));
+
+        // Create the groups filter.
+        $groupsfilter = new integer_filter('groups');
+        $filterset->add_filter($groupsfilter);
+
+        // Configure the filter.
+        foreach ($filtergroups as $filtergroupname) {
+            $groupsfilter->add_filter_value((int) $groupsdata[$filtergroupname]->id);
+        }
+        $groupsfilter->set_join_type($jointype);
+
+        // Run the search.
+        $search = new participants_search($course, $coursecontext, $filterset);
+
+        // Tests on user in no groups should throw an exception as they are not supported (participants are not visible to them).
+        if (in_array('exception', $expectedusers)) {
+            $this->expectException(\coding_exception::class);
+            $rs = $search->get_participants();
+        } else {
+            // All other cases are tested as normal.
+            $rs = $search->get_participants();
+            $this->assertInstanceOf(moodle_recordset::class, $rs);
+            $records = $this->convert_recordset_to_array($rs);
+
+            $this->assertCount($count, $records);
+            $this->assertEquals($count, $search->get_total_participants_count());
+
+            foreach ($expectedusers as $expecteduser) {
+                $this->assertArrayHasKey($users[$expecteduser]->id, $records);
+            }
+        }
+    }
+
+    /**
+     * Data provider for groups filter tests.
+     *
+     * @return array
+     */
+    public function groups_separate_provider(): array {
+        $tests = [
+            'Users in different groups with separate groups mode enabled' => (object) [
+                'groupsavailable' => [
+                    'groupa',
+                    'groupb',
+                    'groupc',
+                ],
+                'users' => [
+                    'a' => [
+                        'groups' => ['groupa'],
+                    ],
+                    'b' => [
+                        'groups' => ['groupb'],
+                    ],
+                    'c' => [
+                        'groups' => ['groupa', 'groupb'],
+                    ],
+                    'd' => [
+                        'groups' => [],
+                    ],
+                ],
+                'expect' => [
+                    // Tests for jointype: ANY.
+                    'ANY: No filter, user in one group' => (object) [
+                        'loginuser' => 'a',
+                        'groups' => [],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                        ],
+                    ],
+                    'ANY: No filter, user in multiple groups' => (object) [
+                        'loginuser' => 'c',
+                        'groups' => [],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                        ],
+                    ],
+                    'ANY: No filter, user in no groups' => (object) [
+                        'loginuser' => 'd',
+                        'groups' => [],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 0,
+                        'expectedusers' => ['exception'],
+                    ],
+                    'ANY: Filter on a single group, user in one group' => (object) [
+                        'loginuser' => 'a',
+                        'groups' => ['groupa'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                        ],
+                    ],
+                    'ANY: Filter on a single group, user in multple groups' => (object) [
+                        'loginuser' => 'c',
+                        'groups' => ['groupa'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                        ],
+                    ],
+                    'ANY: Filter on a single group, user in no groups' => (object) [
+                        'loginuser' => 'd',
+                        'groups' => ['groupa'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 0,
+                        'expectedusers' => ['exception'],
+                    ],
+                    'ANY: Filter on multiple groups, user in one group (ignore invalid groups)' => (object) [
+                        'loginuser' => 'a',
+                        'groups' => ['groupa', 'groupb'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                        ],
+                    ],
+                    'ANY: Filter on multiple groups, user in multiple groups' => (object) [
+                        'loginuser' => 'c',
+                        'groups' => ['groupa', 'groupb'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                        ],
+                    ],
+                    'ANY: Filter on multiple groups or no groups, user in multiple groups (ignore no groups)' => (object) [
+                        'loginuser' => 'c',
+                        'groups' => ['groupa', 'groupb', 'nogroups'],
+                        'jointype' => filter::JOINTYPE_ANY,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                        ],
+                    ],
+
+                    // Tests for jointype: ALL.
+                    'ALL: No filter, user in one group' => (object) [
+                        'loginuser' => 'a',
+                        'groups' => [],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                        ],
+                    ],
+                    'ALL: No filter, user in multiple groups' => (object) [
+                        'loginuser' => 'c',
+                        'groups' => [],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                        ],
+                    ],
+                    'ALL: No filter, user in no groups' => (object) [
+                        'loginuser' => 'd',
+                        'groups' => [],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 0,
+                        'expectedusers' => ['exception'],
+                    ],
+                    'ALL: Filter on a single group, user in one group' => (object) [
+                        'loginuser' => 'a',
+                        'groups' => ['groupa'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                        ],
+                    ],
+                    'ALL: Filter on a single group, user in multple groups' => (object) [
+                        'loginuser' => 'c',
+                        'groups' => ['groupa'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                        ],
+                    ],
+                    'ALL: Filter on a single group, user in no groups' => (object) [
+                        'loginuser' => 'd',
+                        'groups' => ['groupa'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 0,
+                        'expectedusers' => ['exception'],
+                    ],
+                    'ALL: Filter on multiple groups, user in one group (ignore invalid groups)' => (object) [
+                        'loginuser' => 'a',
+                        'groups' => ['groupa', 'groupb'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                        ],
+                    ],
+                    'ALL: Filter on multiple groups, user in multiple groups' => (object) [
+                        'loginuser' => 'c',
+                        'groups' => ['groupa', 'groupb'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'c',
+                        ],
+                    ],
+                    'ALL: Filter on multiple groups or no groups, user in multiple groups (ignore no groups)' => (object) [
+                        'loginuser' => 'c',
+                        'groups' => ['groupa', 'groupb', 'nogroups'],
+                        'jointype' => filter::JOINTYPE_ALL,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'c',
+                        ],
+                    ],
+
+                    // Tests for jointype: NONE.
+                    'NONE: No filter, user in one group' => (object) [
+                        'loginuser' => 'a',
+                        'groups' => [],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 2,
+                        'expectedusers' => [
+                            'a',
+                            'c',
+                        ],
+                    ],
+                    'NONE: No filter, user in multiple groups' => (object) [
+                        'loginuser' => 'c',
+                        'groups' => [],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 3,
+                        'expectedusers' => [
+                            'a',
+                            'b',
+                            'c',
+                        ],
+                    ],
+                    'NONE: No filter, user in no groups' => (object) [
+                        'loginuser' => 'd',
+                        'groups' => [],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 0,
+                        'expectedusers' => ['exception'],
+                    ],
+                    'NONE: Filter on a single group, user in one group' => (object) [
+                        'loginuser' => 'a',
+                        'groups' => ['groupa'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                    'NONE: Filter on a single group, user in multple groups' => (object) [
+                        'loginuser' => 'c',
+                        'groups' => ['groupa'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 1,
+                        'expectedusers' => [
+                            'b',
+                        ],
+                    ],
+                    'NONE: Filter on a single group, user in no groups' => (object) [
+                        'loginuser' => 'd',
+                        'groups' => ['groupa'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 0,
+                        'expectedusers' => ['exception'],
+                    ],
+                    'NONE: Filter on multiple groups, user in one group (ignore invalid groups)' => (object) [
+                        'loginuser' => 'a',
+                        'groups' => ['groupa', 'groupb'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                    'NONE: Filter on multiple groups, user in multiple groups' => (object) [
+                        'loginuser' => 'c',
+                        'groups' => ['groupa', 'groupb'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                    'NONE: Filter on multiple groups or no groups, user in multiple groups (ignore no groups)' => (object) [
+                        'loginuser' => 'c',
+                        'groups' => ['groupa', 'groupb', 'nogroups'],
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'count' => 0,
+                        'expectedusers' => [],
+                    ],
+                ],
+            ],
+        ];
+
+        $finaltests = [];
+        foreach ($tests as $testname => $testdata) {
+            foreach ($testdata->expect as $expectname => $expectdata) {
+                $finaltests["{$testname} => {$expectname}"] = [
+                    'users' => $testdata->users,
+                    'groupsavailable' => $testdata->groupsavailable,
+                    'filtergroups' => $expectdata->groups,
+                    'jointype' => $expectdata->jointype,
+                    'count' => $expectdata->count,
+                    'expectedusers' => $expectdata->expectedusers,
+                    'loginusername' => $expectdata->loginuser,
+                ];
+            }
+        }
+
+        return $finaltests;
+    }
+
+
+    /**
      * Ensure that the last access filter works as expected with the provided test cases.
      *
      * @param array $usersdata The list of users to create

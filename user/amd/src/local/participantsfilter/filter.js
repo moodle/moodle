@@ -44,12 +44,13 @@ export default class {
      *
      * @param {String} filterType The type of filter that this relates to
      * @param {HTMLElement} rootNode The root node for the participants filterset
+     * @param {Array} initialValues The initial values for the selector
      */
-    constructor(filterType, rootNode) {
+    constructor(filterType, rootNode, initialValues) {
         this.filterType = filterType;
         this.rootNode = rootNode;
 
-        this.addValueSelector();
+        this.addValueSelector(initialValues);
     }
 
     /**
@@ -79,14 +80,31 @@ export default class {
 
     /**
      * Add the value selector to the filter row.
+     *
+     * @param {Array} initialValues
      */
-    async addValueSelector() {
+    async addValueSelector(initialValues = []) {
         const filterValueNode = this.getFilterValueNode();
 
         // Copy the data in place.
         filterValueNode.innerHTML = this.getSourceDataForFilter().outerHTML;
 
         const dataSource = filterValueNode.querySelector('select');
+
+        // If there are any initial values then attempt to apply them.
+        initialValues.forEach(filterValue => {
+            let selectedOption = dataSource.querySelector(`option[value="${filterValue}"]`);
+            if (selectedOption) {
+                selectedOption.selected = true;
+            } else if (!this.showSuggestions) {
+                selectedOption = document.createElement('option');
+                selectedOption.value = filterValue;
+                selectedOption.innerHTML = filterValue;
+                selectedOption.selected = true;
+
+                dataSource.append(selectedOption);
+            }
+        });
 
         Autocomplete.enhance(
             // The source select element.

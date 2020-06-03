@@ -110,6 +110,7 @@ class core_user_renderer extends plugin_renderer_base {
 
     /**
      * Renders the unified filter element for the course participants page.
+     * @deprecated since Moodle 3.9 MDL-68612 - Please use participants_filter() instead.
      *
      * @param stdClass $course The course object.
      * @param context $context The context object.
@@ -119,6 +120,8 @@ class core_user_renderer extends plugin_renderer_base {
      */
     public function unified_filter($course, $context, $filtersapplied, $baseurl = null) {
         global $CFG, $DB, $USER;
+
+        debugging('core_user_renderer->unified_filter() is deprecated. Please use participants_filter() instead.', DEBUG_DEVELOPER);
 
         require_once($CFG->dirroot . '/enrol/locallib.php');
         require_once($CFG->dirroot . '/lib/grouplib.php');

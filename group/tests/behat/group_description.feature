@@ -41,24 +41,32 @@ Feature: The description of a group can be viewed by students and teachers
     And I add "Student 2 (student2@example.com)" user to "Group B" group members
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I open the autocomplete suggestions list
-    And I click on "Group: Group A" item in the autocomplete list
+    And I click on "Student 1" "link" in the "participants" "table"
+    And I click on "Group A" "link"
     And I should see "Description for Group A"
     And ".groupinfobox" "css_element" should exist
-    And I should see "Description for Group A"
-    And I click on "Group: Group A" "autocomplete_selection"
-    And I open the autocomplete suggestions list
-    And I click on "Group: Group B" item in the autocomplete list
+    And I set the field "type" in the "Filter 1" "fieldset" to "Groups"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I click on "Group B" "list_item"
+    And I click on "Apply filters" "button"
+    And I click on "Student 2" "link" in the "participants" "table"
+    And I click on "Group B" "link"
+    And I should see "Student 2" in the "participants" "table"
     And ".groupinfobox" "css_element" should not exist
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
+    And I click on "Student 1" "link" in the "participants" "table"
+    And I click on "Group A" "link"
     Then I should see "Description for Group A"
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I navigate to course participants
+    And I click on "Student 2" "link" in the "participants" "table"
+    And I click on "Group B" "link"
+    And I should see "Student 2" in the "participants" "table"
     And ".groupinfobox" "css_element" should not exist
 
   @javascript
@@ -83,22 +91,31 @@ Feature: The description of a group can be viewed by students and teachers
     And I add "Student 2 (student2@example.com)" user to "Group B" group members
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I open the autocomplete suggestions list
-    And I click on "Group: Group A" item in the autocomplete list
+    And I click on "Student 1" "link" in the "participants" "table"
+    And I click on "Group A" "link"
     And I should see "Description for Group A"
     And ".groupinfobox" "css_element" should exist
-    And I click on "Group: Group A" "autocomplete_selection"
-    And I open the autocomplete suggestions list
-    And I click on "Group: Group B" item in the autocomplete list
+    And I set the field "type" in the "Filter 1" "fieldset" to "Groups"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I click on "Group B" "list_item"
+    And I click on "Apply filters" "button"
+    And I click on "Student 2" "link" in the "participants" "table"
+    And I click on "Group B" "link"
     And ".groupinfobox" "css_element" should not exist
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    Then I should not see "Description for Group A"
+    And I click on "Student 1" "link" in the "participants" "table"
+    And I click on "Group A" "link"
+    And I should see "Student 1" in the "participants" "table"
+    And I should not see "Description for Group A"
     And ".groupinfobox" "css_element" should not exist
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I navigate to course participants
+    And I click on "Student 2" "link" in the "participants" "table"
+    And I click on "Group B" "link"
+    And I should see "Student 2" in the "participants" "table"
     And ".groupinfobox" "css_element" should not exist

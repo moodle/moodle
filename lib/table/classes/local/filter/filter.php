@@ -41,11 +41,8 @@ use Iterator;
  */
 class filter implements Countable, Iterator, JsonSerializable {
 
-    /**
-     * @var in The default filter type (ALL)
-     * Note: This is for backwards compatibility with the old UI behaviour and will be set to JOINTYPE_ANY as part of MDL-68612.
-     */
-    const JOINTYPE_DEFAULT = 2;
+    /** @var in The default filter type (ANY) */
+    const JOINTYPE_DEFAULT = 1;
 
     /** @var int None of the following match */
     const JOINTYPE_NONE = 0;

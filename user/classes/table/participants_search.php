@@ -314,6 +314,8 @@ class participants_search {
      * @return array SQL query data in the format ['sql' => '', 'forcedsql' => '', 'params' => []].
      */
     protected function get_enrolled_sql(): array {
+        global $USER;
+
         $isfrontpage = ($this->context->instanceid == SITEID);
         $prefix = 'eu_';
         $filteruid = "{$prefix}u.id";
@@ -357,15 +359,43 @@ class participants_search {
             $params = array_merge($params, $methodparams, $statusparams);
         }
 
-        // Prepare any groups filtering.
         $groupids = [];
 
         if ($this->filterset->has_filter('groups')) {
             $groupids = $this->filterset->get_filter('groups')->get_filter_values();
         }
 
+        // Force additional groups filtering if required due to lack of capabilities.
+        // Note: This means results will always be limited to allowed groups, even if the user applies their own groups filtering.
+        $canaccessallgroups = has_capability('moodle/site:accessallgroups', $this->context);
+        $forcegroups = ($this->course->groupmode == SEPARATEGROUPS && !$canaccessallgroups);
+
+        if ($forcegroups) {
+            $allowedgroupids = array_keys(groups_get_all_groups($this->course->id, $USER->id));
+
+            // Users not in any group in a course with separate groups mode should not be able to access the participants filter.
+            if (empty($allowedgroupids)) {
+                // The UI does not support this, so it should not be reachable unless someone is trying to bypass the restriction.
+                throw new \coding_exception('User must be part of a group to filter by participants.');
+            }
+
+            $forceduid = "{$forcedprefix}u.id";
+            $forcedjointype = $this->get_groups_jointype(\core_table\local\filter\filter::JOINTYPE_ANY);
+            $forcedgroupjoin = groups_get_members_join($allowedgroupids, $forceduid, $this->context, $forcedjointype);
+
+            $forcedjoins[] = $forcedgroupjoin->joins;
+            $forcedwhere .= "AND ({$forcedgroupjoin->wheres})";
+
+            $params = array_merge($params, $forcedgroupjoin->params);
+
+            // Remove any filtered groups the user does not have access to.
+            $groupids = array_intersect($allowedgroupids, $groupids);
+        }
+
+        // Prepare any user defined groups filtering.
         if ($groupids) {
             $groupjoin = groups_get_members_join($groupids, $filteruid, $this->context, $this->get_groups_jointype());
+
             $joins[] = $groupjoin->joins;
             $params = array_merge($params, $groupjoin->params);
             if (!empty($groupjoin->wheres)) {
@@ -685,12 +715,28 @@ class participants_search {
      * Fetch the groups filter's grouplib jointype, based on its filterset jointype.
      * This mapping is to ensure compatibility between the two, should their values ever differ.
      *
+     * @param int|null $forcedjointype If set, specifies the join type to fetch mapping for (used when applying forced filtering).
+     *                            If null, then user defined filter join type is used.
      * @return int
      */
-    protected function get_groups_jointype(): int {
+    protected function get_groups_jointype(?int $forcedjointype = null): int {
+
+        // If applying forced groups filter and no manual groups filtering is applied, add an empty filter so we can map the join.
+        if (!is_null($forcedjointype) && !$this->filterset->has_filter('groups')) {
+            $this->filterset->add_filter(new \core_table\local\filter\integer_filter('groups'));
+        }
+
         $groupsfilter = $this->filterset->get_filter('groups');
 
-        switch ($groupsfilter->get_join_type()) {
+        if (is_null($forcedjointype)) {
+            // Fetch join type mapping for a user supplied groups filtering.
+            $filterjointype = $groupsfilter->get_join_type();
+        } else {
+            // Fetch join type mapping for forced groups filtering.
+            $filterjointype = $forcedjointype;
+        }
+
+        switch ($filterjointype) {
             case $groupsfilter::JOINTYPE_NONE:
                 $groupsjoin = GROUPS_JOIN_NONE;
                 break;

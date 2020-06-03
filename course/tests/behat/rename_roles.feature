@@ -30,10 +30,11 @@ Feature: Rename roles within a course
     Then "Tutor" "button" should exist
     And "Learner" "button" should exist
     And I navigate to course participants
-    And I open the autocomplete suggestions list
-    And I should see "Role: Tutor" in the ".form-autocomplete-suggestions" "css_element"
-    And I should see "Role: Learner" in the ".form-autocomplete-suggestions" "css_element"
-    And I should not see "Role: Student" in the ".form-autocomplete-suggestions" "css_element"
+    And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I should see "Tutor" in the ".form-autocomplete-suggestions" "css_element"
+    And I should see "Learner" in the ".form-autocomplete-suggestions" "css_element"
+    And I should not see "Student" in the ".form-autocomplete-suggestions" "css_element"
     And I am on "Course 1" course homepage
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
@@ -45,6 +46,7 @@ Feature: Rename roles within a course
     And "Student" "button" should exist
     And "Learner" "button" should not exist
     And I navigate to course participants
-    And I open the autocomplete suggestions list
-    And I should see "Role: Non-editing teacher" in the ".form-autocomplete-suggestions" "css_element"
-    And I should see "Role: Student" in the ".form-autocomplete-suggestions" "css_element"
+    And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I should see "Non-editing teacher" in the ".form-autocomplete-suggestions" "css_element"
+    And I should see "Student" in the ".form-autocomplete-suggestions" "css_element"
