@@ -391,6 +391,7 @@ class editor {
         $contentvalidator = $factory->get_content_validator();
 
         $editorajaxtoken = core::createToken(editor_ajax::EDITOR_AJAX_TOKEN);
+        $sesskey = sesskey();
         $settings['editor'] = [
             'filesPath' => $filespathbase . 'editor',
             'fileIcon' => [
@@ -398,7 +399,7 @@ class editor {
                 'width' => 50,
                 'height' => 50,
             ],
-            'ajaxPath' => $CFG->wwwroot . '/h5p/' . "ajax.php?contextId={$context->id}&token={$editorajaxtoken}&action=",
+            'ajaxPath' => $CFG->wwwroot . "/h5p/ajax.php?sesskey={$sesskey}&token={$editorajaxtoken}&action=",
             'libraryUrl' => $url,
             'copyrightSemantics' => $contentvalidator->getCopyrightSemantics(),
             'metadataSemantics' => $contentvalidator->getMetadataSemantics(),

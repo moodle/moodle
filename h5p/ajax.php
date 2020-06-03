@@ -24,24 +24,22 @@
 
 use core_h5p\factory;
 use core_h5p\framework;
+use core_h5p\local\library\autoloader;
 
 define('AJAX_SCRIPT', true);
 
 require(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/filelib.php');
 
-require_login();
-
-$action = required_param('action', PARAM_ALPHA);
-$contextid = required_param('contextId', PARAM_INT);
-
-$context = context::instance_by_id($contextid);
-
-if (!has_capability('moodle/h5p:updatelibraries', $context)) {
-    H5PCore::ajaxError(get_string('nopermissiontoedit', 'h5p'));
+if (!confirm_sesskey()) {
+    autoloader::register();
+    H5PCore::ajaxError(get_string('invalidsesskey', 'error'));
     header('HTTP/1.1 403 Forbidden');
     return;
 }
+require_login();
+
+$action = required_param('action', PARAM_ALPHA);
 
 $factory = new factory();
 $editor = $factory->get_editor();
@@ -71,27 +69,13 @@ switch ($action) {
         break;
 
     // Handle file upload through the editor.
+    // This endpoint needs a token that only users with H5P editor access could get.
+    // TODO: MDL-68907 to check capabilities.
     case 'files':
         $token = required_param('token', PARAM_RAW);
         $contentid = required_param('contentId', PARAM_INT);
 
         $editor->ajax->action(H5PEditorEndpoints::FILES, $token, $contentid);
-        break;
-
-    // Install libraries from H5P and retrieve content json.
-    case 'libraryinstall':
-        $token = required_param('token', PARAM_RAW);
-        $machinename = required_param('id', PARAM_TEXT);
-        $editor->ajax->action(H5PEditorEndpoints::LIBRARY_INSTALL, $token, $machinename);
-        break;
-
-    // Handle file upload through the editor.
-    case 'libraryupload':
-        $token = required_param('token', PARAM_RAW);
-
-        $uploadpath = $_FILES['h5p']['tmp_name'];
-        $contentid = optional_param('contentId', 0, PARAM_INT);
-        $editor->ajax->action(H5PEditorEndpoints::LIBRARY_UPLOAD, $token, $uploadpath, $contentid);
         break;
 
     // Get the $language libraries translations.
