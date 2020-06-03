@@ -26,38 +26,10 @@
 
 import $ from 'jquery';
 import Aria from './aria';
-import Scroll from './scroll';
 import Bootstrap from './bootstrap/index';
-import CustomEvents from 'core/custom_interaction_events';
-
-/**
- * Set up the search.
- *
- * @method init
- */
-export {
-    init,
-    Bootstrap
-};
-
-/**
- * Bootstrap init function
- */
-const init = () => {
-    rememberTabs();
-
-    enablePopovers();
-
-    enableTooltips();
-
-    const scroll = new Scroll();
-    scroll.init();
-
-    // Disables flipping the dropdowns up and getting hidden behind the navbar.
-    $.fn.dropdown.Constructor.Default.flip = false;
-
-    Aria.init();
-};
+import Pending from 'core/pending';
+import Scroll from './scroll';
+import setupBootstrapPendingChecks from './pending';
 
 /**
  * Rember the last visited tabs.
@@ -83,17 +55,15 @@ const rememberTabs = () => {
  */
 const enablePopovers = () => {
     $('body').popover({
+        container: 'body',
         selector: '[data-toggle="popover"]',
-        trigger: 'focus hover',
-        placement: 'auto'
+        trigger: 'focus',
     });
 
-    CustomEvents.define($('body'), [
-        CustomEvents.events.escape,
-    ]);
-    $('body').on(CustomEvents.events.escape, '[data-toggle=popover]', function() {
-
-        $(this).trigger('blur');
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && e.target.closest('[data-toggle="popover"]')) {
+            $(e.target).popover('hide');
+        }
     });
 };
 
@@ -104,6 +74,35 @@ const enablePopovers = () => {
 const enableTooltips = () => {
     $('body').tooltip({
         container: 'body',
-        selector: '[data-toggle="tooltip"]'
+        selector: '[data-toggle="tooltip"]',
     });
+};
+
+const pendingPromise = new Pending('theme_boost/loader:init');
+
+// Add pending promise event listeners to relevant Bootstrap custom events.
+setupBootstrapPendingChecks();
+
+// Remember the last visited tabs.
+rememberTabs();
+
+// Enable all popovers.
+enablePopovers();
+
+// Enable all tooltips.
+enableTooltips();
+
+// Add scroll handling.
+(new Scroll()).init();
+
+// Disables flipping the dropdowns up and getting hidden behind the navbar.
+$.fn.dropdown.Constructor.Default.flip = false;
+
+// Setup Aria helpers for Bootstrap features.
+Aria.init();
+
+pendingPromise.resolve();
+
+export {
+    Bootstrap,
 };
