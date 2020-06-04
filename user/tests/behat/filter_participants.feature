@@ -16,6 +16,7 @@ Feature: Course participants can be filtered
       | student2 | Student   | 2        | student2@example.com | SID2     | GB      | SCITY2 | 1           |
       | student3 | Student   | 3        | student3@example.com | SID3     | AU      | SCITY3 | 0           |
       | student4 | Student   | 4        | student4@example.com | SID4     | AT      | SCITY4 | 0           |
+      | student5 | Trendy    | Learnson | trendy@learnson.com  | SID5     | AU      | SCITY5 | 0           |
       | teacher1 | Teacher   | 1        | teacher1@example.com | TID1     | US      | TCITY1 | 0           |
     And the following "course enrolments" exist:
       | user     | course | role           | status | timeend       |
@@ -26,6 +27,7 @@ Feature: Course participants can be filtered
       | student1 | C2     | student        |    0   |               |
       | student2 | C2     | student        |    0   |               |
       | student3 | C2     | student        |    0   |               |
+      | student5 | C2     | student        |    0   |               |
       | student1 | C3     | student        |    0   |               |
       | student2 | C3     | student        |    0   |               |
       | student3 | C3     | student        |    0   |               |
@@ -279,3 +281,55 @@ Feature: Course participants can be filtered
     And I set the field "Filters" to "NOTHING"
     And I press key "13" in the field "Filters"
     And I should see "Nothing to display"
+
+  @javascript
+  Scenario: Filter users by first initial
+    Given I log in as "teacher1"
+    And I am on "Course 2" course homepage
+    And I navigate to course participants
+    And I should see "Student 1" in the "participants" "table"
+    And I should see "Student 2" in the "participants" "table"
+    And I should see "Student 3" in the "participants" "table"
+    And I should see "Trendy Learnson" in the "participants" "table"
+    And I should see "Teacher 1" in the "participants" "table"
+    When I click on "T" "link" in the ".firstinitial" "css_element"
+    Then I should see "Trendy Learnson" in the "participants" "table"
+    And I should see "Teacher 1" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
+    And I should not see "Student 3" in the "participants" "table"
+
+  @javascript
+  Scenario: Filter users by last initial
+    Given I log in as "teacher1"
+    And I am on "Course 2" course homepage
+    And I navigate to course participants
+    And I should see "Student 1" in the "participants" "table"
+    And I should see "Student 2" in the "participants" "table"
+    And I should see "Student 3" in the "participants" "table"
+    And I should see "Trendy Learnson" in the "participants" "table"
+    And I should see "Teacher 1" in the "participants" "table"
+    When I click on "L" "link" in the ".lastinitial" "css_element"
+    Then I should see "Trendy Learnson" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
+    And I should not see "Student 3" in the "participants" "table"
+    And I should not see "Teacher 1" in the "participants" "table"
+
+  @javascript
+  Scenario: Filter users by first and last initials
+    Given I log in as "teacher1"
+    And I am on "Course 2" course homepage
+    And I navigate to course participants
+    And I should see "Student 1" in the "participants" "table"
+    And I should see "Student 2" in the "participants" "table"
+    And I should see "Student 3" in the "participants" "table"
+    And I should see "Trendy Learnson" in the "participants" "table"
+    And I should see "Teacher 1" in the "participants" "table"
+    When I click on "T" "link" in the ".firstinitial" "css_element"
+    And I click on "L" "link" in the ".lastinitial" "css_element"
+    Then I should see "Trendy Learnson" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
+    And I should not see "Student 3" in the "participants" "table"
+    And I should not see "Teacher 1" in the "participants" "table"
