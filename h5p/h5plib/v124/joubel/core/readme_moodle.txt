@@ -52,3 +52,38 @@ A script for testing this part can be found in MDL-68068
 
 The point 2 from above won't be needed once the mbstring extension becomes mandatory in Moodle. A request has been
 sent to MDL-65809.
+
+5. Upgrade and patch JQuery library.
+Once https://github.com/h5p/h5p-php-library/issues/83 gets integrated in
+H5P PHP Library (upgrading the JQuery version), this change won't be needed.
+
+5.1. Prepare the patched JQuery 1.12.4 library following these steps:
+  a) Download the uncompressed JQuery Core 1.12.4 from https://code.jquery.com/jquery-1.12.4.js
+  b) Add the patch in https://snyk.io/vuln/SNYK-JS-JQUERY-174006 to the downloaded file.
+  You'll need to replace this code (line 212):
+
+        // Prevent never-ending loop
+        if ( target === copy ) {
+          continue;
+        }
+
+  to:
+        // Prevent Object.prototype pollution
+        // Prevent never-ending loop
+        if ( name === "__proto__" || target === copy ) {
+          continue;
+        }
+  c) Minify the patched jquery-1-12.4.js.
+
+5.2. Edit h5p/h5plib/v124/joubel/core/js/jquery.js and replace the JQuery piece of code
+(at the beginning of the file, above the comment "// Snap this specific version of jQuery into H5P. jQuery.noConflict will")
+with the previous patched and minified JQuery version.
+
+5.3. Remove the following comment in h5p/h5plib/v124/joubel/core/js/jquery.js:
+
+/**
+ * jQuery v1.9.1
+ *
+ * @member
+ */
+
