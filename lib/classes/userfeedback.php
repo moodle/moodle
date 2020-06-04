@@ -158,11 +158,11 @@ class core_userfeedback {
         $versioncast = $DB->sql_cast_char2real('version');
 
         // A time difference more than 3 months has to be a core upgrade.
+        // Also, passing IGNORE_MULTIPLE because we are only interested in the first field and LIMIT is not cross-DB.
         $time = $DB->get_field_sql("SELECT timemodified
                                      FROM {upgrade_log}
                                     WHERE plugin = 'core' AND $targetversioncast - $versioncast > 30000
-                                 ORDER BY timemodified DESC
-                                    LIMIT 1");
+                                 ORDER BY timemodified DESC", null, IGNORE_MULTIPLE);
 
         return (int)$time;
     }
