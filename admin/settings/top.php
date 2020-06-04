@@ -20,6 +20,9 @@ $moodleservices = new admin_settingpage('moodleservices', new lang_string('moodl
     'admin'));
 $ADMIN->add('root', $moodleservices);
 
+$userfeedback = new admin_settingpage('userfeedback', new lang_string('feedbacksettings', 'admin'));
+$ADMIN->add('root', $userfeedback);
+
 if ($hassiteconfig) {
     $optionalsubsystems = new admin_settingpage('optionalsubsystems', new lang_string('advancedfeatures', 'admin'));
     $ADMIN->add('root', $optionalsubsystems);

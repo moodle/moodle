@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/local/notification/cta
+
+    Moodle cta notification template.
+
+    The purpose of this template is to render a call to action notification.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * message A cleaned string (use clean_text()) to display.
+    * extraclasses Additional classes to apply to the notification.
+    * actions List of action links.
+    * icon An icon.pix and icon.componrnt for the icon to be displauyed as the icon of CTA notification.
+
+    Example context (json):
+    {
+        "message": "What do you think about Moodle?",
+        "actions": [
+            {
+                "title": "Give feedback",
+                "url": "#",
+                "data": [
+                    {"name": "action", "value": "give"},
+                    {"name": "contextid", "value": "3"}
+                ]
+            }
+        ]
+    }
+}}
+
+<div class="cta alert alert-primary alert-block fade in {{ extraclasses }}" {{# region }}data-region="{{ region }}"{{/ region}}>
+    <div class="media">
+        <div class="mr-2 icon-size-5">
+            {{# pix }} {{ icon.pix }}, {{ icon.component }} {{/ pix }}
+        </div>
+        <div class="media-body align-self-center">
+            {{{ message }}}<br>
+            {{# actions }}
+                <a href="{{ url }}" class="link-underline aalink"
+                    {{# data }}
+                   data-{{ name }}="{{ value }}"
+                    {{/ data }}
+                >{{ title }}</a>
+            {{/ actions }}
+        </div>
+    </div>
+</div>
