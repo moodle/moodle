@@ -12617,8 +12617,8 @@ body.h5p-embed .h5pmessages {
   margin-top: 0; }
 
 .block_recentlyaccesseditems img.icon {
-  height: auto;
-  width: auto;
+  height: 24px;
+  width: 24px;
   margin-right: 6px; }
 
 .block_myoverview .content {
