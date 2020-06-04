@@ -160,12 +160,8 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
      * @param string|null $resourceid resourceid the line item should have
      * @param string|null $tag tag the line item should have
      */
-    private function assert_lineitems(object $course,
-                                      int $typeid,
-                                      string $label,
-                                      ?object $ltiinstance,
-                                      ?string $resourceid,
-                                      ?string $tag) : void {
+    private function assert_lineitems(object $course, int $typeid,
+            string $label, ?object $ltiinstance, ?string $resourceid, ?string $tag) : void {
         $gbservice = new gradebookservices();
         $gradeitems = $gbservice->get_lineitems($course->id, null, null, null, null, null, $typeid);
 
@@ -211,11 +207,11 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
     private function create_graded_lti(int $typeid, object $course, ?string $resourceid, ?string $tag) : object {
 
         $lti = ['course' => $course->id,
-                'typeid' => $typeid,
-                'instructorchoiceacceptgrades' => LTI_SETTING_ALWAYS,
-                'grade' => 10,
-                'lineitemresourceid' => $resourceid,
-                'lineitemtag' => $tag];
+            'typeid' => $typeid,
+            'instructorchoiceacceptgrades' => LTI_SETTING_ALWAYS,
+            'grade' => 10,
+            'lineitemresourceid' => $resourceid,
+            'lineitemtag' => $tag];
 
         return $this->getDataGenerator()->create_module('lti', $lti, array());
     }
@@ -231,8 +227,8 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
     private function create_notgraded_lti(int $typeid, object $course) : object {
 
         $lti = ['course' => $course->id,
-                'typeid' => $typeid,
-                'instructorchoiceacceptgrades' => LTI_SETTING_NEVER];
+            'typeid' => $typeid,
+            'instructorchoiceacceptgrades' => LTI_SETTING_NEVER];
 
         return $this->getDataGenerator()->create_module('lti', $lti, array());
     }
@@ -247,11 +243,8 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
      * @param int|null $ltiinstanceid Id of the LTI instance the standalone line item will be related to.
      *
      */
-    private function create_standalone_lineitem(int $courseid,
-                                                int $typeid,
-                                                ?string $resourceid,
-                                                ?string $tag,
-                                                int $ltiinstanceid = null) : void {
+    private function create_standalone_lineitem(int $courseid, int $typeid, ?string $resourceid,
+            ?string $tag, int $ltiinstanceid = null) : void {
         $gbservice = new gradebookservices();
         $gbservice->add_standalone_lineitem($courseid,
             "manualtest",

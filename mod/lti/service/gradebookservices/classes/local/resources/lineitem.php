@@ -127,7 +127,7 @@ class lineitem extends resource_base {
 
         $response->set_content_type($this->formats[0]);
         $lineitem = gradebookservices::item_for_json($item, substr(parent::get_endpoint(),
-                0, strrpos(parent::get_endpoint(), "/", -10)), $typeid);
+            0, strrpos(parent::get_endpoint(), "/", -10)), $typeid);
         $response->set_body(json_encode($lineitem));
 
     }
