@@ -80,24 +80,6 @@ class editor_ajax_testcase extends \advanced_testcase {
     }
 
     /**
-     * Test that the method validateEditorToken validates an existing token.
-     */
-    public function test_validateEditorToken(): void {
-        // The action param is not used at all.
-        $token = core::createToken('editorajax');
-        $wrongaction = core::createToken('wrongaction');
-        $badtoken = 'xkadfpuealkdjsflkajsñf';
-
-        $validtoken = $this->editorajax->validateEditorToken($token);
-        $invalidaction = $this->editorajax->validateEditorToken($wrongaction);
-        $invalidtoken = $this->editorajax->validateEditorToken($badtoken);
-
-        $this->assertTrue($validtoken);
-        $this->assertTrue($invalidaction);
-        $this->assertFalse($invalidtoken);
-    }
-
-    /**
      * Test that the method getTranslations retrieves the translations of several libraries.
      *
      * @dataProvider  get_translations_provider
