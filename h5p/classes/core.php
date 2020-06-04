@@ -358,27 +358,6 @@ class core extends \H5PCore {
     }
 
     /**
-     * Use sesskey instead of the H5P security token.
-     *
-     * @param string $action Not used.
-     * @return string sesskey
-     */
-    public static function createToken($action) {
-        return sesskey();
-    }
-
-    /**
-     * Check if the token matches the sesskey.
-     *
-     * @param string $action Not used.
-     * @param string $token Token submitted.
-     * @return boolean valid token
-     */
-    public static function validToken($action, $token) {
-        return confirm_sesskey($token);
-    }
-
-    /**
      * Get the library string from a DB library record.
      *
      * @param  stdClass $record The DB library record.
