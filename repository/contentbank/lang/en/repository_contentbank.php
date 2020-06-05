@@ -30,5 +30,5 @@ $string['emptyfilelist'] = 'There are no files to show';
 $string['contentbank:view'] = 'View content bank repository';
 $string['contentbank:accesscoursecontent'] = 'Access course content bank files';
 $string['contentbank:accesscoursecategorycontent'] = 'Access course category content bank files';
-$string['contentbank:accessgeneralcontent'] = 'Access system content bank files and content bank files from course categories which have an accessible course';
+$string['contentbank:accessgeneralcontent'] = 'Access system content bank files';
 $string['privacy:metadata'] = 'The Content bank repository plugin does not store or transmit any personal data.';
