@@ -74,8 +74,10 @@ class mod_h5pactivity_mod_form extends moodleform_mod {
         $mform->addHelpButton('packagefile', 'package', 'mod_h5pactivity');
 
         // Add a link to the Content Bank if the user can access.
-        if (has_capability('moodle/contentbank:access', $this->context)) {
-            $url = new moodle_url('/contentbank/index.php', ['contextid' => $this->context->id]);
+        $course = $this->get_course();
+        $context = context_course::instance($course->id);
+        if (has_capability('moodle/contentbank:access', $context)) {
+            $url = new moodle_url('/contentbank/index.php', ['contextid' => $context->id]);
             $msg = get_string('usecontentbank', 'mod_h5pactivity', $url->out());
             $msg .= ' '.$OUTPUT->help_icon('contentbank', 'mod_h5pactivity');
             $mform->addElement('static', 'contentbank', '', $msg);
