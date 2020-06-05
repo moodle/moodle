@@ -98,13 +98,13 @@ class get extends external_api {
             ),
             'jointype' => new external_value(PARAM_INT, 'Type of join to join all filters together', VALUE_REQUIRED),
             'firstinitial' => new external_value(
-                PARAM_ALPHANUMEXT,
+                PARAM_RAW,
                 'The first initial to sort filter on',
                 VALUE_REQUIRED,
                 null
             ),
             'lastinitial' => new external_value(
-                PARAM_ALPHANUMEXT,
+                PARAM_RAW,
                 'The last initial to sort filter on',
                 VALUE_REQUIRED,
                 null
@@ -230,12 +230,13 @@ class get extends external_api {
         self::validate_context($instance->get_context());
 
         $instance->set_sortdata($sortdata);
+        $alphabet = get_string('alphabet', 'langconfig');
 
-        if ($firstinitial !== null) {
+        if ($firstinitial !== null && ($firstinitial === '' || strpos($alphabet, $firstinitial) !== false)) {
             $instance->set_first_initial($firstinitial);
         }
 
-        if ($lastinitial !== null) {
+        if ($lastinitial !== null && ($lastinitial === '' || strpos($alphabet, $lastinitial) !== false)) {
             $instance->set_last_initial($lastinitial);
         }
 

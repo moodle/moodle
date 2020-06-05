@@ -72,23 +72,23 @@ define('HOURMINS', 60);
 // or clean_param() should have a specified type of parameter.
 
 /**
- * PARAM_ALPHA - contains only english ascii letters a-zA-Z.
+ * PARAM_ALPHA - contains only English ascii letters [a-zA-Z].
  */
 define('PARAM_ALPHA',    'alpha');
 
 /**
- * PARAM_ALPHAEXT the same contents as PARAM_ALPHA plus the chars in quotes: "_-" allowed
+ * PARAM_ALPHAEXT the same contents as PARAM_ALPHA (English ascii letters [a-zA-Z]) plus the chars in quotes: "_-" allowed
  * NOTE: originally this allowed "/" too, please use PARAM_SAFEPATH if "/" needed
  */
 define('PARAM_ALPHAEXT', 'alphaext');
 
 /**
- * PARAM_ALPHANUM - expected numbers and letters only.
+ * PARAM_ALPHANUM - expected numbers 0-9 and English ascii letters [a-zA-Z] only.
  */
 define('PARAM_ALPHANUM', 'alphanum');
 
 /**
- * PARAM_ALPHANUMEXT - expected numbers, letters only and _-.
+ * PARAM_ALPHANUMEXT - expected numbers 0-9, letters (English ascii letters [a-zA-Z]) and _- only.
  */
 define('PARAM_ALPHANUMEXT', 'alphanumext');
 
