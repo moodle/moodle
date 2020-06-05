@@ -26,6 +26,7 @@ namespace core;
 
 use coding_exception;
 use core_php_time_limit;
+use stored_file;
 
 /**
  * Dataformat utility class
@@ -143,5 +144,26 @@ class dataformat {
         $format->close_output_to_file();
 
         return $filepath;
+    }
+
+    /**
+     * Writes a formatted data file to file storage
+     *
+     * @param array $filerecord File record for storage, 'filename' extension should be omitted as it's added by the dataformat
+     * @param string $dataformat
+     * @param array $columns
+     * @param Iterable $iterator Iterable set of records to write
+     * @param callable|null $callback Optional callback method to apply to each record prior to writing
+     * @return stored_file
+     */
+    public static function write_data_to_filearea(array $filerecord, string $dataformat, array $columns, Iterable $iterator,
+            callable $callback = null): stored_file {
+
+        $filepath = self::write_data($filerecord['filename'], $dataformat, $columns, $iterator, $callback);
+
+        // Update filename of returned file record.
+        $filerecord['filename'] = basename($filepath);
+
+        return get_file_storage()->create_file_from_pathname($filerecord, $filepath);
     }
 }
