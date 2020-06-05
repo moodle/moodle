@@ -132,6 +132,9 @@ class h5pactivity_summary_exporter extends exporter {
             'coursemodule' => [
                 'type' => PARAM_INT
             ],
+            'context' => [
+                'type' => PARAM_INT
+            ],
             'introfiles' => [
                 'type' => external_files::get_properties_for_exporter(),
                 'multiple' => true
@@ -197,6 +200,7 @@ class h5pactivity_summary_exporter extends exporter {
 
         $values = [
             'coursemodule' => $context->instanceid,
+            'context' => $context->id,
         ];
 
         $values['introfiles'] = external_util::get_area_files($context->id, 'mod_h5pactivity', 'intro', false, false);
