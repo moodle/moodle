@@ -11208,6 +11208,13 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   .modchooser .modal-body .carousel-item .loading-icon .icon {
     margin: 1em auto; }
 
+.modchooser .modal-footer {
+  height: 70px; }
+  .modchooser .modal-footer .moodlenet-logo .icon {
+    height: 2.5rem;
+    width: 6rem;
+    margin-bottom: .6rem; }
+
 .modchoosercontainer.noscroll {
   overflow-y: hidden; }
 
@@ -11245,7 +11252,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   background-color: #fff;
   overflow-x: hidden;
   overflow-y: auto;
-  min-height: 640px; }
+  height: 640px; }
   .modchooser .modal-body .optionsummary .content {
     overflow-y: auto; }
     .modchooser .modal-body .optionsummary .content .heading .icon {
@@ -11840,6 +11847,10 @@ body.h5p-embed .h5pmessages {
 
 .text-break {
   overflow-wrap: break-word !important;
+  /* stylelint-disable-line declaration-no-important */ }
+
+.z-index-0 {
+  z-index: 0 !important;
   /* stylelint-disable-line declaration-no-important */ }
 
 .z-index-1 {

@@ -78,3 +78,22 @@ export const unfavouriteModule = (modName, modID) => {
     };
     return ajax.call([request])[0];
 };
+
+/**
+ * Fetch all the information on modules we'll need in the activity chooser.
+ *
+ * @method fetchFooterData
+ * @param {Number} courseid What course to fetch the data for
+ * @param {Number} sectionid What section to fetch the data for
+ * @return {object} jQuery promise
+ */
+export const fetchFooterData = (courseid, sectionid) => {
+    const request = {
+        methodname: 'core_course_get_activity_chooser_footer',
+        args: {
+            courseid: courseid,
+            sectionid: sectionid,
+        },
+    };
+    return ajax.call([request])[0];
+};

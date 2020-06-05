@@ -44,12 +44,9 @@
             {{{help}}}
         </div>
     </div>
-    <div class="actions fixed-bottom w-100 d-flex justify-content-between position-absolute py-3 px-4" data-region="chooser-option-summary-actions-container">
-        <button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary" tabindex="0" data-modname="{{componentname}}_{{link}}">
-            {{#str}} back {{/str}}
-        </button>
-        <a href="{{link}}" title="{{#str}} addnew, moodle, {{title}} {{/str}}" data-action="add-chooser-option" class="addoption btn btn-primary" tabindex="0">
-            {{#str}} add {{/str}}
-        </a>
-    </div>
+    {{^showFooter}}
+        <div class="fixed-bottom position-absolute py-3 px-4 border-top">
+            {{>core_course/local/activitychooser/footer_partial}}
+        </div>
+    {{/showFooter}}
 </div>
