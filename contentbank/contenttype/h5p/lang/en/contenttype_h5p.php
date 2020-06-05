@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['description'] = 'H5P Interactive Content';
+$string['description'] = 'H5P interactive content';
 $string['pluginname'] = 'H5P';
 $string['pluginname_help'] = 'Content bank to upload and share H5P content';
 $string['privacy:metadata'] = 'The H5P content bank plugin does not store any personal data.';

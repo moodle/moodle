@@ -21,14 +21,14 @@
  * @copyright 2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$string['pluginname'] = 'License manager';
+$string['pluginname'] = 'Licence manager';
 $string['createlicense'] = 'Create custom licence';
 $string['createlicensebuttontext'] = 'Create licence';
 $string['deletelicense'] = 'Delete licence';
 $string['deletelicenseconfirmmessage'] = 'Are you sure you want to delete this licence?';
-$string['deletelicensename'] = 'Delete license \'{$a}\'';
+$string['deletelicensename'] = 'Delete licence \'{$a}\'';
 $string['disablelicensename'] = 'Disable licence \'{$a}\'';
-$string['duplicatelicenseshortname'] = 'Licence shortname must be unique, duplicate value found.';
+$string['duplicatelicenseshortname'] = 'The licence short name must be unique.';
 $string['editlicense'] = 'Edit licence';
 $string['editlicensename'] = 'Edit licence \'{$a}\'';
 $string['enablelicensename'] = 'Enable licence \'{$a}\'';
@@ -37,11 +37,11 @@ $string['fullnamerequirederror'] = 'You must enter a full name for the licence.'
 $string['invalidurl'] = 'Invalid source URL';
 $string['license'] = 'Licence';
 $string['licensemanager'] = 'Licence manager';
-$string['movelicensedownname'] = 'Move \'{$a}\' license down order';
-$string['movelicenseupname'] = 'Move \'{$a}\' license up order';
+$string['movelicensedownname'] = 'Move \'{$a}\' licence down';
+$string['movelicenseupname'] = 'Move \'{$a}\' licence up';
 $string['privacy:metadata'] = 'The tool_licensemanager plugin stores no personal data.';
 $string['shortname'] = 'Licence short name';
-$string['sitedefaultlicenselock'] = 'This is the site default license. It cannot be disabled.';
+$string['sitedefaultlicenselock'] = 'This is the site default licence. It cannot be disabled.';
 $string['shortnamerequirederror'] = 'You must enter a short name for the licence.';
 $string['source'] = 'Licence source';
 $string['source_help'] = 'The URL (with http:// or https:// prefix) where the licence terms and conditions can be found.';

@@ -1,8 +1,8 @@
 @tool @tool_licensemanager
-Feature: License manager
-  In order to manage licenses
+Feature: Licence manager
+  In order to manage licences
   As an admin
-  I need to be able to view and alter licence preferences in the license manager.
+  I need to be able to view and alter licence preferences in the licence manager.
 
   Scenario: I should be able to see the default Moodle licences.
     Given I log in as "admin"
@@ -17,19 +17,19 @@ Feature: License manager
     And I should see "Creative Commons - No Commercial ShareAlike" in the "cc-nc-sa" "table_row"
     And I should see "Creative Commons - ShareAlike" in the "cc-sa" "table_row"
 
-  Scenario: I should be able to enable and disable licenses
+  Scenario: I should be able to enable and disable licences
     Given I log in as "admin"
     And I navigate to "Licence > Licence settings" in site administration
     When I set the field "Default site licence" to "Public domain"
     And I press "Save changes"
     And I navigate to "Licence > Licence manager" in site administration
-    Then "This is the site default license" "icon" should exist in the "public" "table_row"
-    And "Enable license" "icon" should not exist in the "public" "table_row"
-    And "This is the site default license" "icon" should not exist in the "cc" "table_row"
+    Then "This is the site default licence" "icon" should exist in the "public" "table_row"
+    And "Enable licence" "icon" should not exist in the "public" "table_row"
+    And "This is the site default licence" "icon" should not exist in the "cc" "table_row"
     And I navigate to "Licence > Licence settings" in site administration
     And I set the field "Default site licence" to "Creative Commons"
     And I press "Save changes"
     And I navigate to "Licence > Licence manager" in site administration
-    And "This is the site default license" "icon" should exist in the "cc" "table_row"
-    And "Enable license" "icon" should not exist in the "cc" "table_row"
-    And "This is the site default license" "icon" should not exist in the "public" "table_row"
+    And "This is the site default licence" "icon" should exist in the "cc" "table_row"
+    And "Enable licence" "icon" should not exist in the "cc" "table_row"
+    And "This is the site default licence" "icon" should not exist in the "public" "table_row"
