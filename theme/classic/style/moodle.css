@@ -18801,7 +18801,8 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     display: flex; }
     #page-content .region-main {
       flex: 0 0 100%;
-      padding: 0 1rem; }
+      padding: 0 1rem;
+      max-width: 100%; }
     #page-content.blocks-pre .columnleft {
       flex: 0 0 32%;
       order: -1;
@@ -18861,7 +18862,8 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     display: flex; }
     #page-content .region-main {
       flex: 0 0 100%;
-      padding: 0 1rem; }
+      padding: 0 1rem;
+      max-width: 100%; }
     #page-content.blocks-pre .columnleft {
       flex: 0 0 25%;
       order: -1;
@@ -18921,7 +18923,8 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     display: flex; }
     #page-content .region-main {
       flex: 0 0 100%;
-      padding: 0 1rem; }
+      padding: 0 1rem;
+      max-width: 100%; }
     #page-content.blocks-pre .columnleft {
       flex: 0 0 20%;
       order: -1;
@@ -18986,8 +18989,28 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     /* stylelint-disable-line declaration-no-important */ } }
 
 @media (min-width: 576px) {
-  .block_myoverview .dashboard-card-deck .dashboard-card,
-  .block_recentlyaccesseditems .dashboard-card-deck .dashboard-card {
+  .dashboard-card-deck .dashboard-card {
+    width: calc(50% - 0.5rem); } }
+
+@media (min-width: 768px) {
+  .dashboard-card-deck .dashboard-card {
+    width: calc(50% - 0.5rem); }
+  .blocks-post .dashboard-card-deck .dashboard-card,
+  .blocks-pre .dashboard-card-deck .dashboard-card {
+    width: calc(100% - 0.5rem); } }
+
+@media (min-width: 992px) {
+  .dashboard-card-deck .dashboard-card {
+    width: calc(33.33% - 0.5rem); }
+  .blocks-post .dashboard-card-deck .dashboard-card,
+  .blocks-pre .dashboard-card-deck .dashboard-card {
+    width: calc(50% - 0.5rem); } }
+
+@media (min-width: 1200px) {
+  .dashboard-card-deck .dashboard-card {
+    width: calc(25% - 0.5rem); }
+  .blocks-post .dashboard-card-deck .dashboard-card,
+  .blocks-pre .dashboard-card-deck .dashboard-card {
     width: calc(33.33% - 0.5rem); } }
 
 @media (min-width: 768px) {
