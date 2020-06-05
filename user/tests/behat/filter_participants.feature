@@ -664,4 +664,3 @@ Feature: Course participants can be filtered
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
     And I should not see "Teacher 1" in the "participants" "table"
-
