@@ -1,0 +1,58 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_moodlenet/select_page
+
+    This template renders the course selection page for the MoodleNet tool.
+
+    Example context (json):
+    {
+        "name": "A cat picture",
+        "cancellink": "https://moodlesite/my"
+    }
+}}
+<div data-region="moodle-net-select">
+    <div class="alert alert-primary" role="alert">
+        {{#str}} notification, tool_moodlenet, {"name": {{#quote}}{{name}}{{/quote}}, "cancellink": {{#quote}}{{cancellink}}{{/quote}}, "type": {{#quote}}{{type}}{{/quote}}  } {{/str}}
+    </div>
+    <h3>{{#str}} selectacourse {{/str}}</h3>
+    <div class="searchbar input-group w-50" role="search">
+        <label for="searchinput">
+            <span class="sr-only">{{#str}} searchcourses, tool_moodlenet {{/str}}</span>
+        </label>
+        <input type="text"
+               data-region="search-input"
+               id="searchinput"
+               class="form-control form-control-lg searchinput border-right-0 px-3 py-2"
+               placeholder="{{#str}} search, core {{/str}}"
+               name="search"
+               autocomplete="off"
+        >
+        <div class="searchbar-append d-flex border border-secondary border-left-0 px-3 py-2">
+            <div data-region="search-icon">
+                {{#pix}} a/search, core {{/pix}}
+            </div>
+            <div class="clear d-none">
+                <button class="btn p-0" data-region="clear-icon">
+                    <span class="d-flex" aria-hidden="true">{{#pix}} e/cancel, core {{/pix}}</span>
+                    <span class="sr-only">{{#str}} clearsearch, tool_moodlenet {{/str}}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="my-4" data-region="mnet-courses" aria-live="polite"></div>
+</div>
