@@ -6,8 +6,9 @@
 
 .que.multichoice .answer div.r0,
 .que.multichoice .answer div.r1 {
-    padding: 0.3em 0 0.3em 25px;
-    text-indent: -25px;
+    display: flex;
+    margin: 0.25rem 0;
+    align-items: flex-start;
 }
 
 .que.multichoice .answer div.r0 label,
@@ -21,9 +22,7 @@
 
 .que.multichoice .answer div.r0 input,
 .que.multichoice .answer div.r1 input {
-    margin: 0 5px;
-    padding: 0;
-    width: 15px;
+    margin: 0.4rem 0.5rem;
 }
 
 /* Editing form. */
