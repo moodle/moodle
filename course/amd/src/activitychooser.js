@@ -85,6 +85,20 @@ const registerListenerEvents = (courseId, chooserConfig) => {
         };
     })();
 
+    const fetchFooterData = (() => {
+        let footerInnerPromise = null;
+
+        return (sectionId) => {
+            if (!footerInnerPromise) {
+                footerInnerPromise = new Promise((resolve) => {
+                    resolve(Repository.fetchFooterData(courseId, sectionId));
+                });
+            }
+
+            return footerInnerPromise;
+        };
+    })();
+
     CustomEvents.define(document, events);
 
     // Display module chooser event listeners.
@@ -115,7 +129,8 @@ const registerListenerEvents = (courseId, chooserConfig) => {
                     bodyPromiseResolver = resolve;
                 });
 
-                const sectionModal = buildModal(bodyPromise);
+                const footerData = await fetchFooterData(caller.dataset.sectionid);
+                const sectionModal = buildModal(bodyPromise, footerData);
 
                 // Now we have a modal we should start fetching data.
                 const data = await fetchModuleData();
@@ -127,6 +142,7 @@ const registerListenerEvents = (courseId, chooserConfig) => {
                     sectionModal,
                     builtModuleData,
                     partiallyAppliedFavouriteManager(data, caller.dataset.sectionid),
+                    footerData,
                 );
 
                 bodyPromiseResolver(await Templates.render(
@@ -221,13 +237,15 @@ const templateDataBuilder = (data, chooserConfig) => {
  *
  * @method buildModal
  * @param {Promise} bodyPromise
+ * @param {String|Boolean} footer Either a footer to add or nothing
  * @return {Object} The modal ready to display immediately and render body in later.
  */
-const buildModal = bodyPromise => {
+const buildModal = (bodyPromise, footer) => {
     return ModalFactory.create({
         type: ModalFactory.types.DEFAULT,
         title: getString('addresourceoractivity'),
         body: bodyPromise,
+        footer: footer.customfootertemplate,
         large: true,
         templateContext: {
             classes: 'modchooser'

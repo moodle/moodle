@@ -4336,4 +4336,74 @@ class core_course_external extends external_api {
             ]
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function get_activity_chooser_footer_parameters() {
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'ID of the course', VALUE_REQUIRED),
+            'sectionid' => new external_value(PARAM_INT, 'ID of the section', VALUE_REQUIRED),
+        ]);
+    }
+
+    /**
+     * Given a course ID we need to build up a footre for the chooser.
+     *
+     * @param int $courseid The course we want to fetch the modules for
+     * @param int $sectionid The section we want to fetch the modules for
+     * @return array
+     */
+    public static function get_activity_chooser_footer(int $courseid, int $sectionid) {
+        [
+            'courseid' => $courseid,
+            'sectionid' => $sectionid,
+        ] = self::validate_parameters(self::get_activity_chooser_footer_parameters(), [
+            'courseid' => $courseid,
+            'sectionid' => $sectionid,
+        ]);
+
+        $coursecontext = context_course::instance($courseid);
+        self::validate_context($coursecontext);
+
+        $pluginswithfunction = get_plugins_with_function('custom_chooser_footer', 'lib.php');
+        if ($pluginswithfunction) {
+            foreach ($pluginswithfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    $footerdata = $pluginfunction($courseid, $sectionid);
+                    break; // Only a single plugin can modify the footer.
+                }
+                break; // Only a single plugin can modify the footer.
+            }
+            return [
+                'footer' => true,
+                'customfooterjs' => $footerdata->get_footer_js_file(),
+                'customfootertemplate' => $footerdata->get_footer_template(),
+                'customcarouseltemplate' => $footerdata->get_carousel_template(),
+            ];
+        } else {
+            return [
+                'footer' => false,
+            ];
+        }
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     */
+    public static function get_activity_chooser_footer_returns() {
+        return new external_single_structure(
+            [
+                'footer' => new external_value(PARAM_BOOL, 'Is a footer being return by this request?', VALUE_REQUIRED),
+                'customfooterjs' => new external_value(PARAM_RAW, 'The path to the plugin JS file', VALUE_OPTIONAL),
+                'customfootertemplate' => new external_value(PARAM_RAW, 'The prerendered footer', VALUE_OPTIONAL),
+                'customcarouseltemplate' => new external_value(PARAM_RAW, 'Either "" or the prerendered carousel page',
+                    VALUE_OPTIONAL),
+            ]
+        );
+    }
 }

@@ -165,6 +165,12 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
         $tree->add_node($node);
     }
 
+    if (!isset($hiddenfields['moodlenetprofile']) && $user->moodlenetprofile) {
+        $node = new core_user\output\myprofile\node('contact', 'moodlenetprofile', get_string('moodlenetprofile', 'user'), null,
+                null, $user->moodlenetprofile);
+        $tree->add_node($node);
+    }
+
     if (!isset($hiddenfields['country']) && $user->country) {
         $node = new core_user\output\myprofile\node('contact', 'country', get_string('country'), null, null,
                 get_string($user->country, 'countries'));

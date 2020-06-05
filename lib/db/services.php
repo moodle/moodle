@@ -671,6 +671,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
+    'core_course_get_activity_chooser_footer' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'get_activity_chooser_footer',
+        'classpath' => 'course/externallib.php',
+        'description' => 'Fetch the data for the activity chooser footer.',
+        'type' => 'read',
+        'ajax' => true,
+    ),
     'core_course_toggle_activity_recommendation' => array(
         'classname' => 'core_course_external',
         'methodname' => 'toggle_activity_recommendation',

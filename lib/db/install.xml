@@ -872,6 +872,7 @@
         <FIELD NAME="firstnamephonetic" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="First name phonetic"/>
         <FIELD NAME="middlename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Middle name"/>
         <FIELD NAME="alternatename" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Alternate name - Useful for three-name countries."/>
+        <FIELD NAME="moodlenetprofile" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Moodle.net profile information"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
