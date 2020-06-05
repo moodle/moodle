@@ -124,14 +124,13 @@ class core_userfeedback {
      */
     public static function make_link(): moodle_url {
         global $CFG, $PAGE;
-        require_once($CFG->libdir . '/adminlib.php');
 
         $baseurl = $CFG->userfeedback_url ?? 'https://feedback.moodle.org/lms';
         $lang = clean_param(current_language(), PARAM_LANG); // Avoid breaking WS because of incorrect package langs.
         $moodleurl = $CFG->wwwroot;
         $moodleversion = $CFG->release;
         $theme = $PAGE->theme->name;
-        $themeversion = get_component_version('theme_' . $theme);
+        $themeversion = get_config('theme_'.$theme, 'version');
 
         $url = new moodle_url($baseurl, [
             'lang' => $lang,
