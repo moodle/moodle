@@ -228,10 +228,6 @@ class editor {
             throw new coding_exception('Missing H5P library.');
         }
 
-        if ($content->h5plibrary != $this->library) {
-            throw new coding_exception("Wrong H5P library.");
-        }
-
         $content->params = $content->h5pparams;
 
         if (!empty($this->oldcontent)) {
