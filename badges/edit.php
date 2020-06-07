@@ -100,9 +100,11 @@ if ($form->is_cancelled()) {
         $badge->imageauthorurl = $data->imageauthorurl;
         $badge->imagecaption = $data->imagecaption;
         $badge->usermodified = $USER->id;
-        $badge->issuername = $data->issuername;
-        $badge->issuerurl = $data->issuerurl;
-        $badge->issuercontact = $data->issuercontact;
+        if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
+            $badge->issuername = $data->issuername;
+            $badge->issuerurl = $data->issuerurl;
+            $badge->issuercontact = $data->issuercontact;
+        }
         $badge->expiredate = ($data->expiry == 1) ? $data->expiredate : null;
         $badge->expireperiod = ($data->expiry == 2) ? $data->expireperiod : null;
 

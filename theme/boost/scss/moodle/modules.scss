@@ -717,10 +717,6 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
         @include transition(margin-right .2s ease-in-out);
     }
 
-    .grader-grading-panel.hidden + .grader-module-content {
-        margin-right: 0;
-    }
-
     .drawer-button {
         position: relative;
 
@@ -1063,15 +1059,6 @@ div#dock {
 .usermenu {
     .login {
         line-height: 2.25rem;
-
-        a {
-            color: $link-color;
-            &:hover,
-            &:focus {
-                color: $link-hover-color;
-                text-decoration: underline;
-            }
-        }
     }
 }
 

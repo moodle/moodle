@@ -39,6 +39,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         this.places = places;
         this.allImagesLoaded = false;
         this.imageLoadingTimeoutId = null;
+        this.isPrinting = false;
         if (readOnly) {
             this.getRoot().addClass('qtype_ddimageortext-readonly');
         }
@@ -175,7 +176,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
             if (label === '') {
                 label = M.util.get_string('blank', 'qtype_ddimageortext');
             }
-            root.find('.dropzones').append('<div class="dropzone group' + place.group +
+            root.find('.dropzones').append('<div class="dropzone active group' + place.group +
                             ' place' + i + '" tabindex="0">' +
                     '<span class="accesshide">' + label + '</span>&nbsp;</div>');
             root.find('.dropzone.place' + i).width(maxWidth - 2).height(maxHeight - 2);
@@ -189,8 +190,14 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      */
     DragDropOntoImageQuestion.prototype.cloneDrags = function() {
         var thisQ = this;
-        this.getRoot().find('.ddarea .draghome').each(function(index, dragHome) {
-            thisQ.cloneDragsForOneChoice($(dragHome));
+        thisQ.getRoot().find('.draghome').each(function(index, dragHome) {
+            var drag = $(dragHome);
+            var placeHolder = drag.clone();
+            placeHolder.removeClass();
+            placeHolder.addClass('draghome choice' +
+                thisQ.getChoice(drag) + ' group' +
+                thisQ.getGroup(drag) + ' dragplaceholder');
+            drag.before(placeHolder);
         });
     };
 
@@ -229,25 +236,27 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
     DragDropOntoImageQuestion.prototype.positionDragsAndDrops = function() {
         var thisQ = this,
             root = this.getRoot(),
-            bgPosition = this.bgImage().offset();
+            bgRatio = this.bgRatio();
 
         // Move the drops into position.
         root.find('.ddarea .dropzone').each(function(i, dropNode) {
             var drop = $(dropNode),
                 place = thisQ.places[thisQ.getPlace(drop)];
             // The xy values come from PHP as strings, so we need parseInt to stop JS doing string concatenation.
-            drop.offset({
-                left: bgPosition.left + parseInt(place.xy[0]),
-                top: bgPosition.top + parseInt(place.xy[1])});
+            drop.css('left', parseInt(place.xy[0]) * bgRatio)
+                .css('top', parseInt(place.xy[1]) * bgRatio);
+            drop.data('originX', parseInt(place.xy[0]))
+                .data('originY', parseInt(place.xy[1]));
+            thisQ.handleElementScale(drop, 'left top');
         });
 
         // First move all items back home.
-        root.find('.ddarea .drag').each(function(i, dragNode) {
+        root.find('.draghome').not('.dragplaceholder').each(function(i, dragNode) {
             var drag = $(dragNode),
                 currentPlace = thisQ.getClassnameNumericSuffix(drag, 'inplace');
             drag.addClass('unplaced')
-                .removeClass('placed')
-                .offset(thisQ.getDragHome(thisQ.getGroup(drag), thisQ.getChoice(drag)).offset());
+                .removeClass('placed');
+            drag.removeAttr('tabindex');
             if (currentPlace !== null) {
                 drag.removeClass('inplace' + currentPlace);
             }
@@ -257,39 +266,37 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         root.find('input.placeinput').each(function(i, inputNode) {
             var input = $(inputNode),
                 choice = input.val();
-            if (choice === '0') {
+            if (choice.length === 0 || (choice.length > 0 && choice === '0')) {
                 // No item in this place.
                 return;
             }
 
             var place = thisQ.getPlace(input);
-            thisQ.getUnplacedChoice(thisQ.getGroup(input), choice)
-                .removeClass('unplaced')
-                .addClass('placed inplace' + place)
-                .offset(root.find('.dropzone.place' + place).offset());
+            // Get the unplaced drag.
+            var unplacedDrag = thisQ.getUnplacedChoice(thisQ.getGroup(input), choice);
+            // Get the clone of the drag.
+            var hiddenDrag = thisQ.getDragClone(unplacedDrag);
+            if (hiddenDrag.length) {
+                if (unplacedDrag.hasClass('infinite')) {
+                    var noOfDrags = thisQ.noOfDropsInGroup(thisQ.getGroup(unplacedDrag));
+                    var cloneDrags = thisQ.getInfiniteDragClones(unplacedDrag, false);
+                    if (cloneDrags.length < noOfDrags) {
+                        var cloneDrag = unplacedDrag.clone();
+                        cloneDrag.removeClass('beingdragged');
+                        cloneDrag.removeAttr('tabindex');
+                        hiddenDrag.after(cloneDrag);
+                    } else {
+                        hiddenDrag.addClass('active');
+                    }
+                } else {
+                    hiddenDrag.addClass('active');
+                }
+            }
+
+            // Send the drag to drop.
+            var drop = root.find('.dropzone.place' + place);
+            thisQ.sendDragToDrop(unplacedDrag, drop);
         });
-
-        this.bgImage().data('prev-top', bgPosition.top).data('prev-left', bgPosition.left);
-    };
-
-    /**
-     * Check to see if the background image has moved. If so, refresh the layout.
-     */
-    DragDropOntoImageQuestion.prototype.fixLayoutIfBackgroundMoved = function() {
-        var bgImage = this.bgImage(),
-            bgPosition = bgImage.offset(),
-            prevTop = bgImage.data('prev-top'),
-            prevLeft = bgImage.data('prev-left');
-        if (prevLeft === undefined || prevTop === undefined) {
-            // Question is not set up yet. Nothing to do.
-            return;
-        }
-        if (prevTop === bgPosition.top && prevLeft === bgPosition.left) {
-            // Things have not moved.
-            return;
-        }
-        // We need to reposition things.
-        this.positionDragsAndDrops();
     };
 
     /**
@@ -299,20 +306,48 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      */
     DragDropOntoImageQuestion.prototype.handleDragStart = function(e) {
         var thisQ = this,
-            drag = $(e.target).closest('.drag');
+            drag = $(e.target).closest('.draghome'),
+            currentIndex = this.calculateZIndex(),
+            newIndex = currentIndex + 2;
 
         var info = dragDrop.prepare(e);
         if (!info.start) {
             return;
         }
 
+        drag.addClass('beingdragged').css('transform', '').css('z-index', newIndex);
         var currentPlace = this.getClassnameNumericSuffix(drag, 'inplace');
         if (currentPlace !== null) {
             this.setInputValue(currentPlace, 0);
             drag.removeClass('inplace' + currentPlace);
+            var hiddenDrop = thisQ.getDrop(drag, currentPlace);
+            if (hiddenDrop.length) {
+                hiddenDrop.addClass('active');
+                drag.offset(hiddenDrop.offset());
+            }
+        } else {
+            var hiddenDrag = thisQ.getDragClone(drag);
+            if (hiddenDrag.length) {
+                if (drag.hasClass('infinite')) {
+                    var noOfDrags = this.noOfDropsInGroup(thisQ.getGroup(drag));
+                    var cloneDrags = this.getInfiniteDragClones(drag, false);
+                    if (cloneDrags.length < noOfDrags) {
+                        var cloneDrag = drag.clone();
+                        cloneDrag.removeClass('beingdragged');
+                        cloneDrag.removeAttr('tabindex');
+                        hiddenDrag.after(cloneDrag);
+                        drag.offset(cloneDrag.offset());
+                    } else {
+                        hiddenDrag.addClass('active');
+                        drag.offset(hiddenDrag.offset());
+                    }
+                } else {
+                    hiddenDrag.addClass('active');
+                    drag.offset(hiddenDrag.offset());
+                }
+            }
         }
 
-        drag.addClass('beingdragged');
         dragDrop.start(e, drag, function(x, y, drag) {
             thisQ.dragMove(x, y, drag);
         }, function(x, y, drag) {
@@ -330,6 +365,14 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
     DragDropOntoImageQuestion.prototype.dragMove = function(pageX, pageY, drag) {
         var thisQ = this;
         this.getRoot().find('.dropzone.group' + this.getGroup(drag)).each(function(i, dropNode) {
+            var drop = $(dropNode);
+            if (thisQ.isPointInDrop(pageX, pageY, drop)) {
+                drop.addClass('valid-drag-over-drop');
+            } else {
+                drop.removeClass('valid-drag-over-drop');
+            }
+        });
+        this.getRoot().find('.draghome.placed.group' + this.getGroup(drag)).not('.beingdragged').each(function(i, dropNode) {
             var drop = $(dropNode);
             if (thisQ.isPointInDrop(pageX, pageY, drop)) {
                 drop.addClass('valid-drag-over-drop');
@@ -364,6 +407,22 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
             return false; // Stop the each() here.
         });
 
+        root.find('.draghome.placed.group' + this.getGroup(drag)).not('.beingdragged').each(function(i, placedNode) {
+            var placedDrag = $(placedNode);
+            if (!thisQ.isPointInDrop(pageX, pageY, placedDrag)) {
+                // Not this placed drag.
+                return true;
+            }
+
+            // Now put this drag into the drop.
+            placedDrag.removeClass('valid-drag-over-drop');
+            var currentPlace = thisQ.getClassnameNumericSuffix(placedDrag, 'inplace');
+            var drop = thisQ.getDrop(drag, currentPlace);
+            thisQ.sendDragToDrop(drag, drop);
+            placed = true;
+            return false; // Stop the each() here.
+        });
+
         if (!placed) {
             this.sendDragHome(drag);
         }
@@ -379,15 +438,24 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         // Is there already a drag in this drop? if so, evict it.
         var oldDrag = this.getCurrentDragInPlace(this.getPlace(drop));
         if (oldDrag.length !== 0) {
+            oldDrag.addClass('beingdragged');
+            oldDrag.offset(oldDrag.offset());
+            var currentPlace = this.getClassnameNumericSuffix(oldDrag, 'inplace');
+            var hiddenDrop = this.getDrop(oldDrag, currentPlace);
+            hiddenDrop.addClass('active');
             this.sendDragHome(oldDrag);
         }
 
         if (drag.length === 0) {
             this.setInputValue(this.getPlace(drop), 0);
+            if (drop.data('isfocus')) {
+                drop.focus();
+            }
         } else {
             this.setInputValue(this.getPlace(drop), this.getChoice(drag));
             drag.removeClass('unplaced')
                 .addClass('placed inplace' + this.getPlace(drop));
+            drag.attr('tabindex', 0);
             this.animateTo(drag, drop);
         }
     };
@@ -398,11 +466,11 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      * @param {jQuery} drag the item being moved.
      */
     DragDropOntoImageQuestion.prototype.sendDragHome = function(drag) {
-        drag.removeClass('placed').addClass('unplaced');
         var currentPlace = this.getClassnameNumericSuffix(drag, 'inplace');
         if (currentPlace !== null) {
             drag.removeClass('inplace' + currentPlace);
         }
+        drag.data('unplaced', true);
 
         this.animateTo(drag, this.getDragHome(this.getGroup(drag), this.getChoice(drag)));
     };
@@ -416,8 +484,15 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      * @param {KeyboardEvent} e
      */
     DragDropOntoImageQuestion.prototype.handleKeyPress = function(e) {
-        var drop = $(e.target).closest('.dropzone'),
-            currentDrag = this.getCurrentDragInPlace(this.getPlace(drop)),
+        var drop = $(e.target).closest('.dropzone');
+        if (drop.length === 0) {
+            var placedDrag = $(e.target);
+            var currentPlace = this.getClassnameNumericSuffix(placedDrag, 'inplace');
+            if (currentPlace !== null) {
+                drop = this.getDrop(placedDrag, currentPlace);
+            }
+        }
+        var currentDrag = this.getCurrentDragInPlace(this.getPlace(drop)),
             nextDrag = $();
 
         switch (e.keyCode) {
@@ -433,10 +508,39 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                 break;
 
             case keys.escape:
+                questionManager.isKeyboardNavigation = false;
                 break;
 
             default:
+                questionManager.isKeyboardNavigation = false;
                 return; // To avoid the preventDefault below.
+        }
+
+        if (nextDrag.length) {
+            nextDrag.data('isfocus', true);
+            nextDrag.addClass('beingdragged');
+            var hiddenDrag = this.getDragClone(nextDrag);
+            if (hiddenDrag.length) {
+                if (nextDrag.hasClass('infinite')) {
+                    var noOfDrags = this.noOfDropsInGroup(this.getGroup(nextDrag));
+                    var cloneDrags = this.getInfiniteDragClones(nextDrag, false);
+                    if (cloneDrags.length < noOfDrags) {
+                        var cloneDrag = nextDrag.clone();
+                        cloneDrag.removeClass('beingdragged');
+                        cloneDrag.removeAttr('tabindex');
+                        hiddenDrag.after(cloneDrag);
+                        nextDrag.offset(cloneDrag.offset());
+                    } else {
+                        hiddenDrag.addClass('active');
+                        nextDrag.offset(hiddenDrag.offset());
+                    }
+                } else {
+                    hiddenDrag.addClass('active');
+                    nextDrag.offset(hiddenDrag.offset());
+                }
+            }
+        } else {
+            drop.data('isfocus', true);
         }
 
         e.preventDefault();
@@ -503,9 +607,10 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      */
     DragDropOntoImageQuestion.prototype.animateTo = function(drag, target) {
         var currentPos = drag.offset(),
-            targetPos = target.offset();
-        drag.addClass('beingdragged');
+            targetPos = target.offset(),
+            thisQ = this;
 
+        M.util.js_pending('qtype_ddimageortext-animate-' + thisQ.containerId);
         // Animate works in terms of CSS position, whereas locating an object
         // on the page works best with jQuery offset() function. So, to get
         // the right target position, we work out the required change in
@@ -518,10 +623,8 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
             {
                 duration: 'fast',
                 done: function() {
-                    drag.removeClass('beingdragged');
-                    // It seems that the animation sometimes leaves the drag
-                    // one pixel out of position. Put it in exactly the right place.
-                    drag.offset(targetPos);
+                    $('body').trigger('dragmoved', [drag, target, thisQ]);
+                    M.util.js_complete('qtype_ddimageortext-animate-' + thisQ.containerId);
                 }
             }
         );
@@ -537,6 +640,10 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      */
     DragDropOntoImageQuestion.prototype.isPointInDrop = function(pageX, pageY, drop) {
         var position = drop.offset();
+        if (drop.hasClass('draghome')) {
+            return pageX >= position.left && pageX < position.left + drop.outerWidth()
+                && pageY >= position.top && pageY < position.top + drop.outerHeight();
+        }
         return pageX >= position.left && pageX < position.left + drop.width()
             && pageY >= position.top && pageY < position.top + drop.height();
     };
@@ -576,7 +683,13 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      * @returns {jQuery} containing that div.
      */
     DragDropOntoImageQuestion.prototype.getDragHome = function(group, choice) {
-        return this.getRoot().find('.ddarea .draghome.group' + group + '.choice' + choice);
+        if (!this.getRoot().find('.draghome.dragplaceholder.group' + group + '.choice' + choice).is(':visible')) {
+            return this.getRoot().find('.dragitemgroup' + group +
+                ' .draghome.infinite' +
+                '.choice' + choice +
+                '.group' + group);
+        }
+        return this.getRoot().find('.draghome.dragplaceholder.group' + group + '.choice' + choice);
     };
 
     /**
@@ -587,7 +700,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      * @returns {jQuery} jQuery wrapping the unplaced choice. If there isn't one, the jQuery will be empty.
      */
     DragDropOntoImageQuestion.prototype.getUnplacedChoice = function(group, choice) {
-        return this.getRoot().find('.ddarea .drag.group' + group + '.choice' + choice + '.unplaced').slice(0, 1);
+        return this.getRoot().find('.ddarea .draghome.group' + group + '.choice' + choice + '.unplaced').slice(0, 1);
     };
 
     /**
@@ -597,7 +710,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      * @return {jQuery} the current drag (or an empty jQuery if none).
      */
     DragDropOntoImageQuestion.prototype.getCurrentDragInPlace = function(place) {
-        return this.getRoot().find('.ddarea .drag.inplace' + place);
+        return this.getRoot().find('.ddarea .draghome.inplace' + place);
     };
 
     /**
@@ -675,6 +788,134 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
     };
 
     /**
+     * Get drag clone for a given drag.
+     *
+     * @param {jQuery} drag the drag.
+     * @returns {jQuery} the drag's clone.
+     */
+    DragDropOntoImageQuestion.prototype.getDragClone = function(drag) {
+        return this.getRoot().find('.dragitemgroup' +
+            this.getGroup(drag) +
+            ' .draghome' +
+            '.choice' + this.getChoice(drag) +
+            '.group' + this.getGroup(drag) +
+            '.dragplaceholder');
+    };
+
+    /**
+     * Get infinite drag clones for given drag.
+     *
+     * @param {jQuery} drag the drag.
+     * @param {Boolean} inHome in the home area or not.
+     * @returns {jQuery} the drag's clones.
+     */
+    DragDropOntoImageQuestion.prototype.getInfiniteDragClones = function(drag, inHome) {
+        if (inHome) {
+            return this.getRoot().find('.dragitemgroup' +
+                this.getGroup(drag) +
+                ' .draghome' +
+                '.choice' + this.getChoice(drag) +
+                '.group' + this.getGroup(drag) +
+                '.infinite').not('.dragplaceholder');
+        }
+        return this.getRoot().find('.draghome' +
+            '.choice' + this.getChoice(drag) +
+            '.group' + this.getGroup(drag) +
+            '.infinite').not('.dragplaceholder');
+    };
+
+    /**
+     * Get drop for a given drag and place.
+     *
+     * @param {jQuery} drag the drag.
+     * @param {Integer} currentPlace the current place of drag.
+     * @returns {jQuery} the drop's clone.
+     */
+    DragDropOntoImageQuestion.prototype.getDrop = function(drag, currentPlace) {
+        return this.getRoot().find('.dropzone.group' + this.getGroup(drag) + '.place' + currentPlace);
+    };
+
+    /**
+     * Handle when the window is resized.
+     */
+    DragDropOntoImageQuestion.prototype.handleResize = function() {
+        var thisQ = this,
+            bgRatio = this.bgRatio();
+        if (this.isPrinting) {
+            bgRatio = 1;
+        }
+
+        this.getRoot().find('.ddarea .dropzone').each(function(i, dropNode) {
+            $(dropNode)
+                .css('left', parseInt($(dropNode).data('originX')) * parseFloat(bgRatio))
+                .css('top', parseInt($(dropNode).data('originY')) * parseFloat(bgRatio));
+            thisQ.handleElementScale(dropNode, 'left top');
+        });
+
+        this.getRoot().find('div.droparea .draghome').not('.beingdragged').each(function(key, drag) {
+            $(drag)
+                .css('left', parseFloat($(drag).data('originX')) * parseFloat(bgRatio))
+                .css('top', parseFloat($(drag).data('originY')) * parseFloat(bgRatio));
+            thisQ.handleElementScale(drag, 'left top');
+        });
+    };
+
+    /**
+     * Return the background ratio.
+     *
+     * @returns {number} Background ratio.
+     */
+    DragDropOntoImageQuestion.prototype.bgRatio = function() {
+        var bgImg = this.bgImage();
+        var bgImgNaturalWidth = bgImg.get(0).naturalWidth;
+        var bgImgClientWidth = bgImg.width();
+
+        return bgImgClientWidth / bgImgNaturalWidth;
+    };
+
+    /**
+     * Scale the drag if needed.
+     *
+     * @param {jQuery} element the item to place.
+     * @param {String} type scaling type
+     */
+    DragDropOntoImageQuestion.prototype.handleElementScale = function(element, type) {
+        var bgRatio = parseFloat(this.bgRatio());
+        if (this.isPrinting) {
+            bgRatio = 1;
+        }
+        $(element).css({
+            '-webkit-transform': 'scale(' + bgRatio + ')',
+            '-moz-transform': 'scale(' + bgRatio + ')',
+            '-ms-transform': 'scale(' + bgRatio + ')',
+            '-o-transform': 'scale(' + bgRatio + ')',
+            'transform': 'scale(' + bgRatio + ')',
+            'transform-origin': type
+        });
+    };
+
+    /**
+     * Calculate z-index value.
+     *
+     * @returns {number} z-index value
+     */
+    DragDropOntoImageQuestion.prototype.calculateZIndex = function() {
+        var zIndex = 0;
+        this.getRoot().find('.ddarea .dropzone, div.droparea .draghome').each(function(i, dropNode) {
+            dropNode = $(dropNode);
+            // Note that webkit browsers won't return the z-index value from the CSS stylesheet
+            // if the element doesn't have a position specified. Instead it'll return "auto".
+            var itemZIndex = dropNode.css('z-index') ? parseInt(dropNode.css('z-index')) : 0;
+
+            if (itemZIndex > zIndex) {
+                zIndex = itemZIndex;
+            }
+        });
+
+        return zIndex;
+    };
+
+    /**
      * Singleton object that handles all the DragDropOntoImageQuestions
      * on the page, and deals with event dispatching.
      * @type {Object}
@@ -685,6 +926,16 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
          * {boolean} ensures that the event handlers are only initialised once per page.
          */
         eventHandlersInitialised: false,
+
+        /**
+         * {boolean} is printing or not.
+         */
+        isPrinting: false,
+
+        /**
+         * {boolean} is keyboard navigation or not.
+         */
+        isKeyboardNavigation: false,
 
         /**
          * {Object} all the questions on this page, indexed by containerId (id on the .que div).
@@ -713,13 +964,29 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         setupEventHandlers: function() {
             $('body')
                 .on('mousedown touchstart',
-                    '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .dragitems .drag',
+                    '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .draghome',
                     questionManager.handleDragStart)
                 .on('keydown',
                     '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .dropzones .dropzone',
-                    questionManager.handleKeyPress);
-            $(window).on('resize', questionManager.handleWindowResize);
-            setTimeout(questionManager.fixLayoutIfThingsMoved, 100);
+                    questionManager.handleKeyPress)
+                .on('keydown',
+                    '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .draghome.placed:not(.beingdragged)',
+                    questionManager.handleKeyPress)
+                .on('dragmoved', questionManager.handleDragMoved);
+            $(window).on('resize', function() {
+                questionManager.handleWindowResize(false);
+            });
+            window.addEventListener('beforeprint', function() {
+                questionManager.isPrinting = true;
+                questionManager.handleWindowResize(questionManager.isPrinting);
+            });
+            window.addEventListener('afterprint', function() {
+                questionManager.isPrinting = false;
+                questionManager.handleWindowResize(questionManager.isPrinting);
+            });
+            setTimeout(function() {
+                questionManager.fixLayoutIfThingsMoved();
+            }, 100);
         },
 
         /**
@@ -739,6 +1006,10 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
          * @param {KeyboardEvent} e
          */
         handleKeyPress: function(e) {
+            if (questionManager.isKeyboardNavigation) {
+                return;
+            }
+            questionManager.isKeyboardNavigation = true;
             var question = questionManager.getQuestionForEvent(e);
             if (question) {
                 question.handleKeyPress(e);
@@ -747,11 +1018,13 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
 
         /**
          * Handle when the window is resized.
+         * @param {boolean} isPrinting
          */
-        handleWindowResize: function() {
+        handleWindowResize: function(isPrinting) {
             for (var containerId in questionManager.questions) {
                 if (questionManager.questions.hasOwnProperty(containerId)) {
-                    questionManager.questions[containerId].positionDragsAndDrops();
+                    questionManager.questions[containerId].isPrinting = isPrinting;
+                    questionManager.questions[containerId].handleResize();
                 }
             }
         },
@@ -762,16 +1035,52 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
          * Therefore, we need to periodically check everything is in the right position.
          */
         fixLayoutIfThingsMoved: function() {
-            for (var containerId in questionManager.questions) {
-                if (questionManager.questions.hasOwnProperty(containerId)) {
-                    questionManager.questions[containerId].fixLayoutIfBackgroundMoved();
-                }
-            }
-
+            this.handleWindowResize(questionManager.isPrinting);
             // We use setTimeout after finishing work, rather than setInterval,
             // in case positioning things is slow. We want 100 ms gap
             // between executions, not what setInterval does.
-            setTimeout(questionManager.fixLayoutIfThingsMoved, 100);
+            setTimeout(function() {
+                questionManager.fixLayoutIfThingsMoved(questionManager.isPrinting);
+            }, 100);
+        },
+
+        /**
+         * Handle when drag moved.
+         *
+         * @param {Event} e the event.
+         * @param {jQuery} drag the drag
+         * @param {jQuery} target the target
+         * @param {DragDropOntoImageQuestion} thisQ the question.
+         */
+        handleDragMoved: function(e, drag, target, thisQ) {
+            drag.removeClass('beingdragged').css('z-index', '');
+            drag.css('top', target.position().top).css('left', target.position().left);
+            target.after(drag);
+            target.removeClass('active');
+            if (typeof drag.data('unplaced') !== 'undefined' && drag.data('unplaced') === true) {
+                drag.removeClass('placed').addClass('unplaced');
+                drag.removeAttr('tabindex');
+                drag.removeData('unplaced');
+                drag.css('top', '')
+                    .css('left', '')
+                    .css('transform', '');
+                if (drag.hasClass('infinite') && thisQ.getInfiniteDragClones(drag, true).length > 1) {
+                    thisQ.getInfiniteDragClones(drag, true).first().remove();
+                }
+            } else {
+                drag.data('originX', target.data('originX')).data('originY', target.data('originY'));
+                thisQ.handleElementScale(drag, 'left top');
+            }
+            if (typeof drag.data('isfocus') !== 'undefined' && drag.data('isfocus') === true) {
+                drag.focus();
+                drag.removeData('isfocus');
+            }
+            if (typeof target.data('isfocus') !== 'undefined' && target.data('isfocus') === true) {
+                target.removeData('isfocus');
+            }
+            if (questionManager.isKeyboardNavigation) {
+                questionManager.isKeyboardNavigation = false;
+            }
         },
 
         /**

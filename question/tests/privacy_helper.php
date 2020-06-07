@@ -50,7 +50,7 @@ trait core_question_privacy_helper {
             $data
         ) {
         $attempt = $quba->get_question_attempt($slotno);
-        $question = $attempt->get_question();
+        $question = $attempt->get_question(false);
 
         // Check the question data exported.
         $this->assertEquals($data->name, $question->name);

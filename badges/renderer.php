@@ -87,6 +87,8 @@ class core_badges_renderer extends plugin_renderer_base {
                     if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
                         $action = new component_action('click', 'addtobackpack', array('assertion' => $assertion->out(false)));
                         $addurl = new moodle_url('#');
+                    } else if (badges_open_badges_backpack_api() == OPEN_BADGES_V2P1) {
+                        $addurl = new moodle_url('/badges/backpack-export.php', array('hash' => $badge->uniquehash));
                     } else {
                         $addurl = new moodle_url('/badges/backpack-add.php', array('hash' => $badge->uniquehash));
                     }
@@ -354,7 +356,11 @@ class core_badges_renderer extends plugin_renderer_base {
                     $this->output->add_action_handler($action, 'addbutton');
                     $output .= $tobackpack;
                 } else {
-                    $assertion = new moodle_url('/badges/backpack-add.php', array('hash' => $ibadge->hash));
+                    if (badges_open_badges_backpack_api() == OPEN_BADGES_V2P1) {
+                        $assertion = new moodle_url('/badges/backpack-export.php', array('hash' => $ibadge->hash));
+                    } else {
+                        $assertion = new moodle_url('/badges/backpack-add.php', array('hash' => $ibadge->hash));
+                    }
                     $attributes = ['class' => 'btn btn-secondary m-1', 'role' => 'button'];
                     $tobackpack = html_writer::link($assertion, get_string('addtobackpack', 'badges'), $attributes);
                     $output .= $tobackpack;

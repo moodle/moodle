@@ -9,7 +9,10 @@ information provided here is intended especially for developers.
   - message_mark_message_read
   - message_can_delete_message
   - message_delete_message
-  * mark_all_read_for_user()
+  - mark_all_read_for_user()
+* Message processors can implement the following methods which will be executed as part of the messaging cleanup task:
+  - cleanup_all_notifications
+  - cleanup_read_notifications
 
 === 3.8 ===
 

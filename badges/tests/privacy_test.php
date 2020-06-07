@@ -33,6 +33,7 @@ use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use core_badges\privacy\provider;
 use core_privacy\local\request\approved_userlist;
+use core_badges\helper;
 
 require_once($CFG->libdir . '/badgeslib.php');
 
@@ -142,7 +143,7 @@ class core_badges_privacy_testcase extends provider_testcase {
         $b1 = $this->create_badge();
         $b2 = $this->create_badge(['type' => BADGE_TYPE_COURSE, 'courseid' => $c1->id]);
 
-        $this->create_backpack(['userid' => $u1->id]);
+        helper::create_fake_backpack(['userid' => $u1->id]);
         $this->create_manual_award(['recipientid' => $u2->id, 'badgeid' => $b1->id]);
         $this->create_issued(['badgeid' => $b2->id, 'userid' => $u3->id]);
 
@@ -182,8 +183,8 @@ class core_badges_privacy_testcase extends provider_testcase {
         $b2 = $this->create_badge(['usercreated' => $u2->id, 'usermodified' => $u1->id,
             'type' => BADGE_TYPE_COURSE, 'courseid' => $c1->id]);
 
-        $this->create_backpack(['userid' => $u1->id]);
-        $this->create_backpack(['userid' => $u2->id]);
+        helper::create_fake_backpack(['userid' => $u1->id]);
+        helper::create_fake_backpack(['userid' => $u2->id]);
         $this->create_manual_award(['recipientid' => $u1->id, 'badgeid' => $b1->id]);
         $this->create_manual_award(['recipientid' => $u2->id, 'badgeid' => $b1->id, 'issuerid' => $u1->id]);
         $this->create_issued(['badgeid' => $b2->id, 'userid' => $u1->id]);
@@ -240,8 +241,8 @@ class core_badges_privacy_testcase extends provider_testcase {
         $b2 = $this->create_badge(['usercreated' => $u2->id, 'usermodified' => $u1->id,
             'type' => BADGE_TYPE_COURSE, 'courseid' => $c1->id]);
 
-        $this->create_backpack(['userid' => $u1->id]);
-        $this->create_backpack(['userid' => $u2->id]);
+        helper::create_fake_backpack(['userid' => $u1->id]);
+        helper::create_fake_backpack(['userid' => $u2->id]);
         $this->create_manual_award(['recipientid' => $u1->id, 'badgeid' => $b1->id]);
         $this->create_manual_award(['recipientid' => $u2->id, 'badgeid' => $b1->id, 'issuerid' => $u1->id]);
         $this->create_issued(['badgeid' => $b2->id, 'userid' => $u1->id]);
@@ -317,14 +318,14 @@ class core_badges_privacy_testcase extends provider_testcase {
 
         // Create things for user 2, to check it's not exported it.
         $this->create_issued(['badgeid' => $b4->id, 'userid' => $u2->id]);
-        $this->create_backpack(['userid' => $u2->id, 'email' => $u2->email]);
+        helper::create_fake_backpack(['userid' => $u2->id, 'email' => $u2->email]);
         $this->create_manual_award(['badgeid' => $b1->id, 'recipientid' => $u2->id, 'issuerid' => $u3->id]);
 
         // Create a set of stuff for u1.
         $this->create_issued(['badgeid' => $b1->id, 'userid' => $u1->id, 'uniquehash' => 'yoohoo']);
         $this->create_manual_award(['badgeid' => $b2->id, 'recipientid' => $u1->id, 'issuerid' => $u3->id]);
         $b3crit->mark_complete($u1->id);
-        $this->create_backpack(['userid' => $u1->id, 'email' => $u1->email]);
+        helper::create_fake_backpack(['userid' => $u1->id, 'email' => $u1->email]);
 
         // Check u1.
         writer::reset();
@@ -482,7 +483,7 @@ class core_badges_privacy_testcase extends provider_testcase {
         $this->create_manual_award(['recipientid' => $user3->id, 'issuerid' => $user2->id, 'badgeid' => $badge1->id]);
         $this->create_manual_award(['recipientid' => $user1->id, 'issuerid' => $user2->id, 'badgeid' => $badge2->id]);
 
-        $this->create_backpack(['userid' => $user2->id]);
+        helper::create_fake_backpack(['userid' => $user2->id]);
         $this->create_issued(['badgeid' => $badge2->id, 'userid' => $user3->id]);
 
         $crit = $this->create_criteria_manual($badge1->id);
@@ -538,7 +539,7 @@ class core_badges_privacy_testcase extends provider_testcase {
         $this->create_manual_award(['recipientid' => $user3->id, 'issuerid' => $user2->id, 'badgeid' => $badge1->id]);
         $this->create_manual_award(['recipientid' => $user1->id, 'issuerid' => $user2->id, 'badgeid' => $badge2->id]);
 
-        $this->create_backpack(['userid' => $user2->id]);
+        helper::create_fake_backpack(['userid' => $user2->id]);
         $this->create_issued(['badgeid' => $badge2->id, 'userid' => $user3->id]);
 
         $crit = $this->create_criteria_manual($badge1->id);
@@ -705,26 +706,6 @@ class core_badges_privacy_testcase extends provider_testcase {
         ], $params);
         $record->id = $DB->insert_record('badge_endorsement', $record);
 
-        return $record;
-    }
-
-    /**
-     * Create a backpack.
-     *
-     * @param array $params Parameters.
-     * @return object
-     */
-    protected function create_backpack(array $params = []) {
-        global $DB;
-        $record = (object) array_merge([
-            'userid' => null,
-            'email' => 'test@example.com',
-            'backpackurl' => "http://here.there.com",
-            'backpackuid' => "12345",
-            'autosync' => 0,
-            'password' => '',
-        ], $params);
-        $record->id = $DB->insert_record('badge_backpack', $record);
         return $record;
     }
 

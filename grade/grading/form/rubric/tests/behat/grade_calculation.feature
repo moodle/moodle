@@ -4,7 +4,7 @@ Feature: Converting rubric score to grades
   As a teacher
   I need to be able to use different grade settings
 
-  Scenario Outline:
+  Scenario Outline: Convert rubric scores to grades.
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |

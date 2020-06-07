@@ -1288,290 +1288,68 @@ function user_get_tagged_users($tag, $exclusivemode = false, $fromctx = 0, $ctx 
 }
 
 /**
- * Returns the SQL used by the participants table.
+ * Returns SQL that can be used to limit a query to a period where the user last accessed / did not access a course.
  *
- * @param int $courseid The course id
- * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
- * @param int $accesssince The time since last access, 0 means any time
- * @param int $roleid The role id, 0 means all roles and -1 no roles
- * @param int $enrolid The enrolment id, 0 means all enrolment methods will be returned.
- * @param int $statusid The user enrolment status, -1 means all enrolments regardless of the status will be returned, if allowed.
- * @param string|array $search The search that was performed, empty means perform no search
- * @param string $additionalwhere Any additional SQL to add to where
- * @param array $additionalparams The additional params
- * @return array
+ * @param int $accesssince The unix timestamp to compare to users' last access
+ * @param string $tableprefix
+ * @param bool $haveaccessed Whether to match against users who HAVE accessed since $accesssince (optional)
+ * @return string
  */
-function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $roleid = 0, $enrolid = 0, $statusid = -1,
-                                   $search = '', $additionalwhere = '', $additionalparams = array()) {
-    global $DB, $USER, $CFG;
+function user_get_course_lastaccess_sql($accesssince = null, $tableprefix = 'ul', $haveaccessed = false) {
+    return user_get_lastaccess_sql('timeaccess', $accesssince, $tableprefix, $haveaccessed);
+}
 
-    // Get the context.
-    $context = \context_course::instance($courseid, MUST_EXIST);
+/**
+ * Returns SQL that can be used to limit a query to a period where the user last accessed / did not access the system.
+ *
+ * @param int $accesssince The unix timestamp to compare to users' last access
+ * @param string $tableprefix
+ * @param bool $haveaccessed Whether to match against users who HAVE accessed since $accesssince (optional)
+ * @return string
+ */
+function user_get_user_lastaccess_sql($accesssince = null, $tableprefix = 'u', $haveaccessed = false) {
+    return user_get_lastaccess_sql('lastaccess', $accesssince, $tableprefix, $haveaccessed);
+}
 
-    $isfrontpage = ($courseid == SITEID);
-
-    // Default filter settings. We only show active by default, especially if the user has no capability to review enrolments.
-    $onlyactive = true;
-    $onlysuspended = false;
-    if (has_capability('moodle/course:enrolreview', $context) && (has_capability('moodle/course:viewsuspendedusers', $context))) {
-        switch ($statusid) {
-            case ENROL_USER_ACTIVE:
-                // Nothing to do here.
-                break;
-            case ENROL_USER_SUSPENDED:
-                $onlyactive = false;
-                $onlysuspended = true;
-                break;
-            default:
-                // If the user has capability to review user enrolments, but statusid is set to -1, set $onlyactive to false.
-                $onlyactive = false;
-                break;
-        }
+/**
+ * Returns SQL that can be used to limit a query to a period where the user last accessed or
+ * did not access something recorded by a given table.
+ *
+ * @param string $columnname The name of the access column to check against
+ * @param int $accesssince The unix timestamp to compare to users' last access
+ * @param string $tableprefix The query prefix of the table to check
+ * @param bool $haveaccessed Whether to match against users who HAVE accessed since $accesssince (optional)
+ * @return string
+ */
+function user_get_lastaccess_sql($columnname, $accesssince, $tableprefix, $haveaccessed = false) {
+    if (empty($accesssince)) {
+        return '';
     }
 
-    list($esql, $params) = get_enrolled_sql($context, null, $groupid, $onlyactive, $onlysuspended, $enrolid);
-
-    $joins = array('FROM {user} u');
-    $wheres = array();
-
-    $userfields = get_extra_user_fields($context);
-    $userfieldssql = user_picture::fields('u', $userfields);
-
-    if ($isfrontpage) {
-        $select = "SELECT $userfieldssql, u.lastaccess";
-        $joins[] = "JOIN ($esql) e ON e.id = u.id"; // Everybody on the frontpage usually.
-        if ($accesssince) {
-            $wheres[] = user_get_user_lastaccess_sql($accesssince);
-        }
-    } else {
-        $select = "SELECT $userfieldssql, COALESCE(ul.timeaccess, 0) AS lastaccess";
-        $joins[] = "JOIN ($esql) e ON e.id = u.id"; // Course enrolled users only.
-        // Not everybody has accessed the course yet.
-        $joins[] = 'LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid)';
-        $params['courseid'] = $courseid;
-        if ($accesssince) {
-            $wheres[] = user_get_course_lastaccess_sql($accesssince);
-        }
-    }
-
-    // Performance hacks - we preload user contexts together with accounts.
-    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
-    $ccjoin = 'LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)';
-    $params['contextlevel'] = CONTEXT_USER;
-    $select .= $ccselect;
-    $joins[] = $ccjoin;
-
-    // Limit list to users with some role only.
-    if ($roleid) {
-        // We want to query both the current context and parent contexts.
-        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true),
-            SQL_PARAMS_NAMED, 'relatedctx');
-
-        // Get users without any role.
-        if ($roleid == -1) {
-            $wheres[] = "u.id NOT IN (SELECT userid FROM {role_assignments} WHERE contextid $relatedctxsql)";
-            $params = array_merge($params, $relatedctxparams);
+    // Only users who have accessed since $accesssince.
+    if ($haveaccessed) {
+        if ($accesssince == -1) {
+            // Include all users who have logged in at some point.
+            $sql = "({$tableprefix}.{$columnname} IS NOT NULL AND {$tableprefix}.{$columnname} != 0)";
         } else {
-            $wheres[] = "u.id IN (SELECT userid FROM {role_assignments} WHERE roleid = :roleid AND contextid $relatedctxsql)";
-            $params = array_merge($params, array('roleid' => $roleid), $relatedctxparams);
+            // Users who have accessed since the specified time.
+            $sql = "{$tableprefix}.{$columnname} IS NOT NULL AND {$tableprefix}.{$columnname} != 0
+                AND {$tableprefix}.{$columnname} >= {$accesssince}";
+        }
+    } else {
+        // Only users who have not accessed since $accesssince.
+
+        if ($accesssince == -1) {
+            // Users who have never accessed.
+            $sql = "({$tableprefix}.{$columnname} IS NULL OR {$tableprefix}.{$columnname} = 0)";
+        } else {
+            // Users who have not accessed since the specified time.
+            $sql = "({$tableprefix}.{$columnname} IS NULL
+                    OR ({$tableprefix}.{$columnname} != 0 AND {$tableprefix}.{$columnname} < {$accesssince}))";
         }
     }
 
-    if (!empty($search)) {
-        if (!is_array($search)) {
-            $search = [$search];
-        }
-        foreach ($search as $index => $keyword) {
-            $searchkey1 = 'search' . $index . '1';
-            $searchkey2 = 'search' . $index . '2';
-            $searchkey3 = 'search' . $index . '3';
-            $searchkey4 = 'search' . $index . '4';
-            $searchkey5 = 'search' . $index . '5';
-            $searchkey6 = 'search' . $index . '6';
-            $searchkey7 = 'search' . $index . '7';
-
-            $conditions = array();
-            // Search by fullname.
-            $fullname = $DB->sql_fullname('u.firstname', 'u.lastname');
-            $conditions[] = $DB->sql_like($fullname, ':' . $searchkey1, false, false);
-
-            // Search by email.
-            $email = $DB->sql_like('email', ':' . $searchkey2, false, false);
-            if (!in_array('email', $userfields)) {
-                $maildisplay = 'maildisplay' . $index;
-                $userid1 = 'userid' . $index . '1';
-                // Prevent users who hide their email address from being found by others
-                // who aren't allowed to see hidden email addresses.
-                $email = "(". $email ." AND (" .
-                        "u.maildisplay <> :$maildisplay " .
-                        "OR u.id = :$userid1". // User can always find himself.
-                        "))";
-                $params[$maildisplay] = core_user::MAILDISPLAY_HIDE;
-                $params[$userid1] = $USER->id;
-            }
-            $conditions[] = $email;
-
-            // Search by idnumber.
-            $idnumber = $DB->sql_like('idnumber', ':' . $searchkey3, false, false);
-            if (!in_array('idnumber', $userfields)) {
-                $userid2 = 'userid' . $index . '2';
-                // Users who aren't allowed to see idnumbers should at most find themselves
-                // when searching for an idnumber.
-                $idnumber = "(". $idnumber . " AND u.id = :$userid2)";
-                $params[$userid2] = $USER->id;
-            }
-            $conditions[] = $idnumber;
-
-            if (!empty($CFG->showuseridentity)) {
-                // Search all user identify fields.
-                $extrasearchfields = explode(',', $CFG->showuseridentity);
-                foreach ($extrasearchfields as $extrasearchfield) {
-                    if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
-                        // Already covered above. Search by country not supported.
-                        continue;
-                    }
-                    $param = $searchkey3 . $extrasearchfield;
-                    $condition = $DB->sql_like($extrasearchfield, ':' . $param, false, false);
-                    $params[$param] = "%$keyword%";
-                    if (!in_array($extrasearchfield, $userfields)) {
-                        // User cannot see this field, but allow match if their own account.
-                        $userid3 = 'userid' . $index . '3' . $extrasearchfield;
-                        $condition = "(". $condition . " AND u.id = :$userid3)";
-                        $params[$userid3] = $USER->id;
-                    }
-                    $conditions[] = $condition;
-                }
-            }
-
-            // Search by middlename.
-            $middlename = $DB->sql_like('middlename', ':' . $searchkey4, false, false);
-            $conditions[] = $middlename;
-
-            // Search by alternatename.
-            $alternatename = $DB->sql_like('alternatename', ':' . $searchkey5, false, false);
-            $conditions[] = $alternatename;
-
-            // Search by firstnamephonetic.
-            $firstnamephonetic = $DB->sql_like('firstnamephonetic', ':' . $searchkey6, false, false);
-            $conditions[] = $firstnamephonetic;
-
-            // Search by lastnamephonetic.
-            $lastnamephonetic = $DB->sql_like('lastnamephonetic', ':' . $searchkey7, false, false);
-            $conditions[] = $lastnamephonetic;
-
-            $wheres[] = "(". implode(" OR ", $conditions) .") ";
-            $params[$searchkey1] = "%$keyword%";
-            $params[$searchkey2] = "%$keyword%";
-            $params[$searchkey3] = "%$keyword%";
-            $params[$searchkey4] = "%$keyword%";
-            $params[$searchkey5] = "%$keyword%";
-            $params[$searchkey6] = "%$keyword%";
-            $params[$searchkey7] = "%$keyword%";
-        }
-    }
-
-    if (!empty($additionalwhere)) {
-        $wheres[] = $additionalwhere;
-        $params = array_merge($params, $additionalparams);
-    }
-
-    $from = implode("\n", $joins);
-    if ($wheres) {
-        $where = 'WHERE ' . implode(' AND ', $wheres);
-    } else {
-        $where = '';
-    }
-
-    return array($select, $from, $where, $params);
-}
-
-/**
- * Returns the total number of participants for a given course.
- *
- * @param int $courseid The course id
- * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
- * @param int $accesssince The time since last access, 0 means any time
- * @param int $roleid The role id, 0 means all roles
- * @param int $enrolid The applied filter for the user enrolment ID.
- * @param int $status The applied filter for the user's enrolment status.
- * @param string|array $search The search that was performed, empty means perform no search
- * @param string $additionalwhere Any additional SQL to add to where
- * @param array $additionalparams The additional params
- * @return int
- */
-function user_get_total_participants($courseid, $groupid = 0, $accesssince = 0, $roleid = 0, $enrolid = 0, $statusid = -1,
-                                     $search = '', $additionalwhere = '', $additionalparams = array()) {
-    global $DB;
-
-    list($select, $from, $where, $params) = user_get_participants_sql($courseid, $groupid, $accesssince, $roleid, $enrolid,
-        $statusid, $search, $additionalwhere, $additionalparams);
-
-    return $DB->count_records_sql("SELECT COUNT(u.id) $from $where", $params);
-}
-
-/**
- * Returns the participants for a given course.
- *
- * @param int $courseid The course id
- * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
- * @param int $accesssince The time since last access
- * @param int $roleid The role id
- * @param int $enrolid The applied filter for the user enrolment ID.
- * @param int $status The applied filter for the user's enrolment status.
- * @param string $search The search that was performed
- * @param string $additionalwhere Any additional SQL to add to where
- * @param array $additionalparams The additional params
- * @param string $sort The SQL sort
- * @param int $limitfrom return a subset of records, starting at this point (optional).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return moodle_recordset
- */
-function user_get_participants($courseid, $groupid = 0, $accesssince, $roleid, $enrolid = 0, $statusid, $search,
-                               $additionalwhere = '', $additionalparams = array(), $sort = '', $limitfrom = 0, $limitnum = 0) {
-    global $DB;
-
-    list($select, $from, $where, $params) = user_get_participants_sql($courseid, $groupid, $accesssince, $roleid, $enrolid,
-        $statusid, $search, $additionalwhere, $additionalparams);
-
-    return $DB->get_recordset_sql("$select $from $where $sort", $params, $limitfrom, $limitnum);
-}
-
-/**
- * Returns SQL that can be used to limit a query to a period where the user last accessed a course.
- *
- * @param int $accesssince The time since last access
- * @param string $tableprefix
- * @return string
- */
-function user_get_course_lastaccess_sql($accesssince = null, $tableprefix = 'ul') {
-    if (empty($accesssince)) {
-        return '';
-    }
-
-    if ($accesssince == -1) { // Never.
-        return $tableprefix . '.timeaccess = 0';
-    } else {
-        return $tableprefix . '.timeaccess != 0 AND ' . $tableprefix . '.timeaccess < ' . $accesssince;
-    }
-}
-
-/**
- * Returns SQL that can be used to limit a query to a period where the user last accessed the system.
- *
- * @param int $accesssince The time since last access
- * @param string $tableprefix
- * @return string
- */
-function user_get_user_lastaccess_sql($accesssince = null, $tableprefix = 'u') {
-    if (empty($accesssince)) {
-        return '';
-    }
-
-    if ($accesssince == -1) { // Never.
-        return $tableprefix . '.lastaccess = 0';
-    } else {
-        return $tableprefix . '.lastaccess != 0 AND ' . $tableprefix . '.lastaccess < ' . $accesssince;
-    }
+    return $sql;
 }
 
 /**

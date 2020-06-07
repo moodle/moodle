@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+use mod_h5pactivity\local\manager;
 
 /**
  * Genarator tests class for mod_h5pactivity.
@@ -54,10 +54,16 @@ class mod_h5pactivity_generator_testcase extends advanced_testcase {
         $this->assertTrue(array_key_exists($activity->id, $records));
 
         // Create a second one with different name and dusplay options.
-        $params = ['course' => $course->id, 'name' => 'Another h5pactivity', 'displayoptions' => 6];
+        $params = [
+            'course' => $course->id, 'name' => 'Another h5pactivity', 'displayoptions' => 6,
+            'enabletracking' => 0, 'grademethod' => manager::GRADELASTATTEMPT,
+        ];
         $activity = $this->getDataGenerator()->create_module('h5pactivity', $params);
         $records = $DB->get_records('h5pactivity', ['course' => $course->id], 'id');
         $this->assertEquals(6, $activity->displayoptions);
+        $this->assertEquals(0, $activity->enabletracking);
+        $this->assertEquals(manager::GRADELASTATTEMPT, $activity->grademethod);
+        $this->assertEquals(manager::REVIEWCOMPLETION, $activity->reviewmode);
         $this->assertEquals(2, count($records));
         $this->assertEquals('Another h5pactivity', $records[$activity->id]->name);
 

@@ -68,18 +68,31 @@ class question_attempt {
 
     /**
      * @var string means first try at a question during an attempt by a user.
+     * Constant used when calling classify response.
      */
     const FIRST_TRY = 'firsttry';
 
     /**
      * @var string means last try at a question during an attempt by a user.
+     * Constant used when calling classify response.
      */
     const LAST_TRY = 'lasttry';
 
     /**
      * @var string means all tries at a question during an attempt by a user.
+     * Constant used when calling classify response.
      */
     const ALL_TRIES = 'alltries';
+
+    /**
+     * @var bool used to manage the lazy-initialisation of question objects.
+     */
+    const QUESTION_STATE_NOT_APPLIED = false;
+
+    /**
+     * @var bool used to manage the lazy-initialisation of question objects.
+     */
+    const QUESTION_STATE_APPLIED = true;
 
     /** @var integer if this attempts is stored in the question_attempts table, the id of that row. */
     protected $id = null;
@@ -98,6 +111,12 @@ class question_attempt {
 
     /** @var question_definition the question this is an attempt at. */
     protected $question;
+
+    /**
+     * @var bool tracks whether $question has had {@link question_definition::start_attempt()} or
+     * {@link question_definition::apply_attempt_state()} called.
+     */
+    protected $questioninitialised;
 
     /** @var int which variant of the question to use. */
     protected $variant;
@@ -184,6 +203,7 @@ class question_attempt {
     public function __construct(question_definition $question, $usageid,
             question_usage_observer $observer = null, $maxmark = null) {
         $this->question = $question;
+        $this->questioninitialised = self::QUESTION_STATE_NOT_APPLIED;
         $this->usageid = $usageid;
         if (is_null($observer)) {
             $observer = new question_usage_null_observer();
@@ -205,9 +225,27 @@ class question_attempt {
         return $this;
     }
 
-    /** @return question_definition the question this is an attempt at. */
-    public function get_question() {
+    /**
+     * Get the question that is being attempted.
+     *
+     * @param bool $requirequestioninitialised set this to false if you don't need
+     *      the behaviour initialised, which may improve performance.
+     * @return question_definition the question this is an attempt at.
+     */
+    public function get_question($requirequestioninitialised = true) {
+        if ($requirequestioninitialised && !empty($this->steps)) {
+            $this->ensure_question_initialised();
+        }
         return $this->question;
+    }
+
+    /**
+     * Get the id of the question being attempted.
+     *
+     * @return int question id.
+     */
+    public function get_question_id() {
+        return $this->question->id;
     }
 
     /**
@@ -279,9 +317,15 @@ class question_attempt {
 
     /**
      * For internal use only.
+     *
+     * @param bool $requirequestioninitialised set this to false if you don't need
+     *      the behaviour initialised, which may improve performance.
      * @return question_behaviour the behaviour that is controlling this attempt.
      */
-    public function get_behaviour() {
+    public function get_behaviour($requirequestioninitialised = true) {
+        if ($requirequestioninitialised && !empty($this->steps)) {
+            $this->ensure_question_initialised();
+        }
         return $this->behaviour;
     }
 
@@ -769,10 +813,11 @@ class question_attempt {
 
     /**
      * Produce a plain-text summary of what the user did during a step.
-     * @param question_attempt_step $step the step in quetsion.
+     * @param question_attempt_step $step the step in question.
      * @return string a summary of what was done during that step.
      */
     public function summarise_action(question_attempt_step $step) {
+        $this->ensure_question_initialised();
         return $this->behaviour->summarise_action($step);
     }
 
@@ -852,6 +897,7 @@ class question_attempt {
      * @return string HTML fragment representing the question.
      */
     public function render($options, $number, $page = null) {
+        $this->ensure_question_initialised();
         if (is_null($page)) {
             global $PAGE;
             $page = $PAGE;
@@ -867,6 +913,7 @@ class question_attempt {
      * @return string HTML fragment.
      */
     public function render_head_html($page = null) {
+        $this->ensure_question_initialised();
         if (is_null($page)) {
             global $PAGE;
             $page = $PAGE;
@@ -889,6 +936,7 @@ class question_attempt {
      * @return string HTML fragment representing the question.
      */
     public function render_at_step($seq, $options, $number, $preferredbehaviour) {
+        $this->ensure_question_initialised();
         $restrictedqa = new question_attempt_with_restricted_history($this, $seq, $preferredbehaviour);
         return $restrictedqa->render($options, $number);
     }
@@ -903,6 +951,7 @@ class question_attempt {
      * @return bool true if the user can access this file.
      */
     public function check_file_access($options, $component, $filearea, $args, $forcedownload) {
+        $this->ensure_question_initialised();
         return $this->behaviour->check_file_access($options, $component, $filearea, $args, $forcedownload);
     }
 
@@ -976,7 +1025,7 @@ class question_attempt {
      * {@link question_usage_by_activity::start_question()} instead.
      *
      * @param string|question_behaviour $preferredbehaviour the name of the
-     *      desired archetypal behaviour, or an actual model instance.
+     *      desired archetypal behaviour, or an actual behaviour instance.
      * @param int $variant the variant of the question to start. Between 1 and
      *      $this->get_question()->get_num_variants() inclusive.
      * @param array $submitteddata optional, used when re-starting to keep the same initial state.
@@ -1014,6 +1063,7 @@ class question_attempt {
         } else {
             $this->behaviour->init_first_step($firststep, $variant);
         }
+        $this->questioninitialised = self::QUESTION_STATE_APPLIED;
         $this->add_step($firststep);
 
         // Record questionline and correct answer.
@@ -1041,6 +1091,7 @@ class question_attempt {
      * @return array name => value pairs.
      */
     protected function get_resume_data() {
+        $this->ensure_question_initialised();
         $resumedata = $this->behaviour->get_resume_data();
         foreach ($resumedata as $name => $value) {
             if ($value instanceof question_file_loader) {
@@ -1195,6 +1246,8 @@ class question_attempt {
      * @return array name => value pairs that could be passed to {@link process_action()}.
      */
     public function get_submitted_data($postdata = null) {
+        $this->ensure_question_initialised();
+
         $submitteddata = $this->get_expected_data(
                 $this->behaviour->get_expected_data(), $postdata, '-');
 
@@ -1233,6 +1286,7 @@ class question_attempt {
      * @return array|null name => value pairs that could be passed to {@link process_action()}.
      */
     public function get_correct_response() {
+        $this->ensure_question_initialised();
         $response = $this->question->get_correct_response();
         if (is_null($response)) {
             return null;
@@ -1283,6 +1337,7 @@ class question_attempt {
      * @return boolean whether this attempt can finish naturally.
      */
     public function can_finish_during_attempt() {
+        $this->ensure_question_initialised();
         return $this->behaviour->can_finish_during_attempt();
     }
 
@@ -1294,6 +1349,7 @@ class question_attempt {
      * @param int $existingstepid used by the regrade code.
      */
     public function process_action($submitteddata, $timestamp = null, $userid = null, $existingstepid = null) {
+        $this->ensure_question_initialised();
         $pendingstep = new question_attempt_pending_step($submitteddata, $timestamp, $userid, $existingstepid);
         $this->discard_autosaved_step();
         if ($this->behaviour->process_action($pendingstep) == self::KEEP) {
@@ -1315,6 +1371,7 @@ class question_attempt {
      * @return bool whether anything was saved.
      */
     public function process_autosave($submitteddata, $timestamp = null, $userid = null) {
+        $this->ensure_question_initialised();
         $pendingstep = new question_attempt_pending_step($submitteddata, $timestamp, $userid);
         if ($this->behaviour->process_autosave($pendingstep) == self::KEEP) {
             $this->add_autosaved_step($pendingstep);
@@ -1333,6 +1390,7 @@ class question_attempt {
      * @param int $userid the user to attribute the aciton to. (If not given, use the current user.)
      */
     public function finish($timestamp = null, $userid = null) {
+        $this->ensure_question_initialised();
         $this->convert_autosaved_step_to_real_step();
         $this->process_action(array('-finish' => 1), $timestamp, $userid);
     }
@@ -1345,6 +1403,7 @@ class question_attempt {
      *      after the regrade, or whether it may still be in progress (default false).
      */
     public function regrade(question_attempt $oldqa, $finished) {
+        $oldqa->ensure_question_initialised();
         $first = true;
         foreach ($oldqa->get_step_iterator() as $step) {
             $this->observer->notify_step_deleted($step, $this);
@@ -1404,6 +1463,7 @@ class question_attempt {
      * @param int $userid the user to attribute the aciton to. (If not given, use the current user.)
      */
     public function manual_grade($comment, $mark, $commentformat = null, $timestamp = null, $userid = null) {
+        $this->ensure_question_initialised();
         $submitteddata = array('-comment' => $comment);
         if (is_null($commentformat)) {
             debugging('You should pass $commentformat to manual_grade.', DEBUG_DEVELOPER);
@@ -1476,6 +1536,7 @@ class question_attempt {
      *      and the second key is subpartid.
      */
     public function classify_response($whichtries = self::LAST_TRY) {
+        $this->ensure_question_initialised();
         return $this->behaviour->classify_response($whichtries);
     }
 
@@ -1541,7 +1602,8 @@ class question_attempt {
         $autosavedsequencenumber = null;
         while ($record && $record->questionattemptid == $questionattemptid && !is_null($record->attemptstepid)) {
             $sequencenumber = $record->sequencenumber;
-            $nextstep = question_attempt_step::load_from_records($records, $record->attemptstepid, $qa->get_question()->get_type_name());
+            $nextstep = question_attempt_step::load_from_records($records, $record->attemptstepid,
+                    $qa->get_question(false)->get_type_name());
 
             if ($sequencenumber < 0) {
                 if (!$autosavedstep) {
@@ -1553,9 +1615,6 @@ class question_attempt {
                 }
             } else {
                 $qa->steps[$i] = $nextstep;
-                if ($i == 0) {
-                    $question->apply_attempt_state($qa->steps[0]);
-                }
                 $i++;
             }
 
@@ -1576,6 +1635,26 @@ class question_attempt {
         }
 
         return $qa;
+    }
+
+    /**
+     * This method is part of the lazy-initialisation of question objects.
+     *
+     * Methods which require $this->question to be fully initialised
+     * (to have had init_first_step or apply_attempt_state called on it)
+     * should call this method before proceeding.
+     */
+    protected function ensure_question_initialised() {
+        if ($this->questioninitialised === self::QUESTION_STATE_APPLIED) {
+            return; // Already done.
+        }
+
+        if (empty($this->steps)) {
+            throw new coding_exception('You must call start() before doing anything to a question_attempt().');
+        }
+
+        $this->question->apply_attempt_state($this->steps[0]);
+        $this->questioninitialised = self::QUESTION_STATE_APPLIED;
     }
 
     /**

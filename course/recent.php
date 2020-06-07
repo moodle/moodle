@@ -208,13 +208,14 @@ if (!empty($activities)) {
 
         if (($activity->type == 'section') && ($param->sortby == 'default')) {
             if ($inbox) {
+                echo html_writer::end_tag('ul');
                 echo $OUTPUT->box_end();
-                echo $OUTPUT->spacer(array('height'=>30, 'br'=>true)); // should be done with CSS instead
             }
             echo $OUTPUT->box_start();
             if (strval($activity->name) !== '') {
-                echo html_writer::tag('h2', $activity->name);
+                echo html_writer::tag('h3', $activity->name, ['class' => 'h5']);
             }
+            echo html_writer::start_tag('ul', ['class' => 'list-unstyled']);
             $inbox = true;
 
         } else if ($activity->type == 'activity') {
@@ -233,7 +234,7 @@ if (!empty($activities)) {
                 $image = $OUTPUT->pix_icon('icon', $modfullname, $cm->modname, array('class' => 'icon smallicon'));
                 $link = html_writer::link(new moodle_url("/mod/$cm->modname/view.php",
                             array("id" => $cm->id)), $name, array('class' => $class));
-                echo html_writer::tag('h3', "$image $modfullname $link");
+                echo html_writer::tag('li', "$image $modfullname $link");
            }
 
         } else {
@@ -251,7 +252,9 @@ if (!empty($activities)) {
             $print_recent_mod_activity = $activity->type.'_print_recent_mod_activity';
 
             if (function_exists($print_recent_mod_activity)) {
+                echo html_writer::start_tag('li');
                 $print_recent_mod_activity($activity, $course->id, $detail, $modnames, $viewfullnames[$activity->cmid]);
+                echo html_writer::end_tag('li');
             }
         }
     }

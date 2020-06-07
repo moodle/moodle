@@ -22,9 +22,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_h5pactivity\local\manager;
+use core_h5p\factory;
+use core_h5p\player;
+use core_h5p\helper;
+
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
-require_once($CFG->libdir.'/completionlib.php');
 
 $id = required_param('id', PARAM_INT);
 
@@ -32,26 +36,19 @@ list ($course, $cm) = get_course_and_cm_from_cmid($id, 'h5pactivity');
 
 require_login($course, true, $cm);
 
-$moduleinstance = $DB->get_record('h5pactivity', ['id' => $cm->instance], '*', MUST_EXIST);
+$manager = manager::create_from_coursemodule($cm);
 
-$context = context_module::instance($cm->id);
+$moduleinstance = $manager->get_instance();
 
-$event = \mod_h5pactivity\event\course_module_viewed::create([
-    'objectid' => $moduleinstance->id,
-    'context' => $context
-]);
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('h5pactivity', $moduleinstance);
-$event->trigger();
+$context = $manager->get_context();
 
-// Completion.
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+// Trigger module viewed event and completion.
+$manager->set_module_viewed($course);
 
 // Convert display options to a valid object.
-$factory = new \core_h5p\factory();
+$factory = new factory();
 $core = $factory->get_core();
-$config = \core_h5p\helper::decode_display_options($core, $moduleinstance->displayoptions);
+$config = core_h5p\helper::decode_display_options($core, $moduleinstance->displayoptions);
 
 // Instantiate player.
 $fs = get_file_storage();
@@ -62,13 +59,43 @@ $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_co
                     $file->get_filename(), false);
 
 $PAGE->set_url('/mod/h5pactivity/view.php', ['id' => $cm->id]);
-$PAGE->set_title(format_string($moduleinstance->name));
+
+$shortname = format_string($course->shortname, true, ['context' => $context]);
+$pagetitle = strip_tags($shortname.': '.format_string($moduleinstance->name));
+$PAGE->set_title(format_string($pagetitle));
+
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($moduleinstance->name));
 
-// TODO: add component to enable xAPI traking.
-echo \core_h5p\player::display($fileurl, $config, true);
+$instance = $manager->get_instance();
+if (!empty($instance->intro)) {
+    echo $OUTPUT->box(format_module_intro('h5pactivity', $instance, $cm->id), 'generalbox', 'intro');
+}
+
+// Attempts review.
+if ($manager->can_view_all_attempts()) {
+    $reviewurl = new moodle_url('report.php', ['a' => $cm->instance]);
+    $reviewmessage = get_string('review_all_attempts', 'mod_h5pactivity', $manager->count_attempts());
+} else if ($manager->can_view_own_attempts() && $manager->count_attempts($USER->id)) {
+    $reviewurl = new moodle_url('report.php', ['a' => $cm->instance, 'userid' => $USER->id]);
+    $reviewmessage = get_string('review_my_attempts', 'mod_h5pactivity');
+}
+if (isset($reviewurl)) {
+    $widget = new mod_h5pactivity\output\reportlink($reviewurl, $reviewmessage);
+    echo $OUTPUT->render($widget);
+}
+
+if ($manager->is_tracking_enabled()) {
+    $trackcomponent = 'mod_h5pactivity';
+} else {
+    $trackcomponent = '';
+    $message = get_string('previewmode', 'mod_h5pactivity');
+    echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING);
+}
+
+echo player::display($fileurl, $config, true, $trackcomponent);
 
 echo $OUTPUT->footer();

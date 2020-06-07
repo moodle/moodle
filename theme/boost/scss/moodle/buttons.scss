@@ -60,3 +60,23 @@ p.arrow_button {
         }
     }
 }
+
+@mixin button-focus($background, $innershadow) {
+    &:focus,
+    &.focus {
+        outline: $btn-focus-width solid darken($background, 40%);
+        box-shadow: inset 0 0 0 2px $innershadow;
+    }
+}
+
+@each $color, $value in $theme-colors {
+    .btn-#{$color} {
+        @include button-focus($value, $white);
+    }
+}
+
+@each $color, $value in $theme-colors {
+    .btn-outline-#{$color} {
+        @include button-focus($value, $gray-800);
+    }
+}

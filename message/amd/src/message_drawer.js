@@ -57,6 +57,8 @@ function(
 ) {
 
     var SELECTORS = {
+        DRAWER: '[data-region="right-hand-drawer"]',
+        JUMPTO: '.popover-region [data-region="jumpto"]',
         PANEL_BODY_CONTAINER: '[data-region="panel-body-container"]',
         PANEL_HEADER_CONTAINER: '[data-region="panel-header-container"]',
         VIEW_CONTACT: '[data-region="view-contact"]',
@@ -71,6 +73,7 @@ function(
         HEADER_CONTAINER: '[data-region="header-container"]',
         BODY_CONTAINER: '[data-region="body-container"]',
         FOOTER_CONTAINER: '[data-region="footer-container"]',
+        CLOSE_BUTTON: '[data-action="closedrawer"]'
     };
 
     /**
@@ -169,6 +172,15 @@ function(
     };
 
     /**
+     * Set Jump from button
+     *
+     * @param {String} buttonid The originating button id
+     */
+    var setJumpFrom = function(buttonid) {
+        $(SELECTORS.DRAWER).attr('data-origin', buttonid);
+    };
+
+    /**
      * Listen to and handle events for routing, showing and hiding the message drawer.
      *
      * @param {string} namespace The route namespace.
@@ -241,6 +253,22 @@ function(
             });
         });
 
+        $(SELECTORS.JUMPTO).focus(function() {
+            var firstInput = $(SELECTORS.HEADER_CONTAINER).find('input:visible');
+            if (firstInput.length) {
+                firstInput.focus();
+            } else {
+                $(SELECTORS.HEADER_CONTAINER).find(SELECTORS.ROUTES_BACK).focus();
+            }
+        });
+
+        $(SELECTORS.DRAWER).focus(function() {
+            var button = $(this).attr('data-origin');
+            if (button) {
+                $('#' + button).focus();
+            }
+        });
+
         if (!alwaysVisible) {
             PubSub.subscribe(Events.SHOW, function() {
                 show(namespace, root);
@@ -250,23 +278,33 @@ function(
                 hide(root);
             });
 
-            PubSub.subscribe(Events.TOGGLE_VISIBILITY, function() {
+            PubSub.subscribe(Events.TOGGLE_VISIBILITY, function(buttonid) {
                 if (isVisible(root)) {
                     hide(root);
+                    $(SELECTORS.JUMPTO).attr('tabindex', -1);
                 } else {
                     show(namespace, root);
+                    setJumpFrom(buttonid);
+                    $(SELECTORS.JUMPTO).attr('tabindex', 0);
                 }
             });
         }
 
-        PubSub.subscribe(Events.SHOW_CONVERSATION, function(conversationId) {
+        PubSub.subscribe(Events.SHOW_CONVERSATION, function(args) {
+            setJumpFrom(args.buttonid);
             show(namespace, root);
-            Router.go(namespace, Routes.VIEW_CONVERSATION, conversationId);
+            Router.go(namespace, Routes.VIEW_CONVERSATION, args.conversationid);
         });
 
-        PubSub.subscribe(Events.CREATE_CONVERSATION_WITH_USER, function(userId) {
+        var closebutton = root.find(SELECTORS.CLOSE_BUTTON);
+        closebutton.on(CustomEvents.events.activate, function() {
+            PubSub.publish(Events.TOGGLE_VISIBILITY);
+        });
+
+        PubSub.subscribe(Events.CREATE_CONVERSATION_WITH_USER, function(args) {
+            setJumpFrom(args.buttonid);
             show(namespace, root);
-            Router.go(namespace, Routes.VIEW_CONVERSATION, null, 'create', userId);
+            Router.go(namespace, Routes.VIEW_CONVERSATION, null, 'create', args.userid);
         });
 
         PubSub.subscribe(Events.SHOW_SETTINGS, function() {

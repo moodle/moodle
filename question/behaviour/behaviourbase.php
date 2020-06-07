@@ -58,7 +58,7 @@ abstract class question_behaviour {
      */
     public function __construct(question_attempt $qa, $preferredbehaviour) {
         $this->qa = $qa;
-        $this->question = $qa->get_question();
+        $this->question = $qa->get_question(false);
         if (!$this->is_compatible_question($this->question)) {
             throw new coding_exception('This behaviour (' . $this->get_name() .
                     ') cannot work with this question (' . get_class($this->question) . ')');

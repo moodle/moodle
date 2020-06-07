@@ -78,5 +78,24 @@ $functions = array(
         'type'        => 'write',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-);
 
+    'tool_mobile_validate_subscription_key' => array(
+        'classname'   => 'tool_mobile\external',
+        'methodname'  => 'validate_subscription_key',
+        'description' => 'Check if the given site subscription key is valid.',
+        'type'        => 'write',
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax'          => true,
+        'loginrequired' => false,
+    ),
+
+    'tool_mobile_get_tokens_for_qr_login' => array(
+        'classname'   => 'tool_mobile\external',
+        'methodname'  => 'get_tokens_for_qr_login',
+        'description' => 'Returns a WebService token (and private token) for QR login.',
+        'type'        => 'read',
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax'          => true,
+        'loginrequired' => false,
+    ),
+);

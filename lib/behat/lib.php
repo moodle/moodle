@@ -517,7 +517,14 @@ function cli_execute_parallel($cmds, $cwd = null, $delay = 0) {
 
     // Create child process.
     foreach ($cmds as $name => $cmd) {
-        $process = new Symfony\Component\Process\Process($cmd);
+        if (method_exists('\\Symfony\\Component\\Process\\Process', 'fromShellCommandline')) {
+            // Process 4.2 and up.
+            $process = Symfony\Component\Process\Process::fromShellCommandline($cmd);
+        } else {
+            // Process 4.1 and older.
+            $process = new Symfony\Component\Process\Process(null);
+            $process->setCommandLine($cmd);
+        }
 
         $process->setWorkingDirectory($cwd);
         $process->setTimeout(null);

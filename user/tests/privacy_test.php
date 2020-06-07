@@ -151,7 +151,7 @@ class core_user_privacy_testcase extends provider_testcase {
             'institution' => 'test',
             'department' => 'Science',
             'city' => 'Perth',
-            'country' => 'au'
+            'country' => 'AU'
         ]);
         $user2 = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -222,7 +222,7 @@ class core_user_privacy_testcase extends provider_testcase {
             'institution' => 'test',
             'department' => 'Science',
             'city' => 'Perth',
-            'country' => 'au'
+            'country' => 'AU'
         ]);
         $user2 = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -328,7 +328,7 @@ class core_user_privacy_testcase extends provider_testcase {
             'institution' => 'test',
             'department' => 'Science',
             'city' => 'Perth',
-            'country' => 'au'
+            'country' => 'AU'
         ]);
         $usercontext1 = \context_user::instance($user1->id);
         $userlist1 = new \core_privacy\local\request\userlist($usercontext1, $component);
@@ -342,7 +342,7 @@ class core_user_privacy_testcase extends provider_testcase {
             'institution' => 'test',
             'department' => 'Science',
             'city' => 'Perth',
-            'country' => 'au'
+            'country' => 'AU'
         ]);
         $usercontext2 = \context_user::instance($user2->id);
         $userlist2 = new \core_privacy\local\request\userlist($usercontext2, $component);

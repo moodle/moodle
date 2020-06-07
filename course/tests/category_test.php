@@ -1080,4 +1080,26 @@ class core_course_category_testcase extends advanced_testcase {
         }
         return $draftid;
     }
+
+    /**
+     * This test ensures that is the list of courses in a category can be retrieved while a course is being deleted.
+     */
+    public function test_get_courses_during_delete() {
+        global $DB;
+        $category = self::getDataGenerator()->create_category();
+        $course = self::getDataGenerator()->create_course(['category' => $category->id]);
+        $othercourse = self::getDataGenerator()->create_course(['category' => $category->id]);
+        $coursecategory = core_course_category::get($category->id);
+        // Get a list of courses before deletion to populate the cache.
+        $originalcourses = $coursecategory->get_courses();
+        $this->assertCount(2, $originalcourses);
+        $this->assertArrayHasKey($course->id, $originalcourses);
+        $this->assertArrayHasKey($othercourse->id, $originalcourses);
+        // Simulate the course deletion process being part way though.
+        $DB->delete_records('course', ['id' => $course->id]);
+        // Get the list of courses while a deletion is in progress.
+        $courses = $coursecategory->get_courses();
+        $this->assertCount(1, $courses);
+        $this->assertArrayHasKey($othercourse->id, $courses);
+    }
 }

@@ -117,7 +117,7 @@ class qbehaviour_missing_test extends advanced_testcase {
         $this->assertEquals(array('-submit' => '1', 'choice0' => '1'), $step->get_all_data());
 
         $output = $qa->render(new question_display_options(), '1');
-        $this->assertRegExp('/' . preg_quote($qa->get_question()->questiontext, '/') . '/', $output);
+        $this->assertRegExp('/' . preg_quote($qa->get_question(false)->questiontext, '/') . '/', $output);
         $this->assertRegExp('/' . preg_quote(
                 get_string('questionusedunknownmodel', 'qbehaviour_missing'), '/') . '/', $output);
         $this->assertTag(array('tag'=>'div', 'attributes'=>array('class'=>'warning')), $output);

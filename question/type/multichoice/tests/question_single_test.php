@@ -123,6 +123,7 @@ class qtype_multichoice_single_question_test extends advanced_testcase {
         $mc->qtype = question_bank::get_qtype('multichoice');
 
         $mc->answernumbering = 'abc';
+        $mc->showstandardinstruction = 0;
 
         test_question_maker::set_standard_combined_feedback_fields($mc);
 

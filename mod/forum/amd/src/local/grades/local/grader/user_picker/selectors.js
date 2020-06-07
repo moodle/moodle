@@ -24,6 +24,7 @@
 
 export default {
     regions: {
+        currentUser: '[data-region="user_picker/current_user"]',
         userRegion: '[data-region="user_picker/user"]',
     },
     actions: {

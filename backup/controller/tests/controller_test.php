@@ -60,6 +60,20 @@ class core_backup_controller_testcase extends advanced_testcase {
         $CFG->backup_file_logger_level_extra = backup::LOG_NONE;
     }
 
+    /**
+     * Test set copy method.
+     */
+    public function test_base_controller_set_copy() {
+        $this->expectException(\backup_controller_exception::class);
+        $copy = new \stdClass();
+
+        // Set up controller as a non-copy operation.
+        $bc = new \backup_controller(backup::TYPE_1COURSE, $this->courseid, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_GENERAL, $this->userid, backup::RELEASESESSION_YES);
+
+        $bc->set_copy($copy);
+    }
+
     /*
      * test base_setting class
      */
@@ -101,6 +115,19 @@ class core_backup_controller_testcase extends advanced_testcase {
         $bc = new mock_backup_controller(backup::TYPE_1COURSE, $this->courseid, backup::FORMAT_MOODLE,
             backup::INTERACTIVE_NO, backup::MODE_IMPORT, $this->userid);
         $this->assertEquals($bc->get_include_files(), 0);
+    }
+
+    /**
+     * Test set kept roles method.
+     */
+    public function test_backup_controller_set_kept_roles() {
+        $this->expectException(\backup_controller_exception::class);
+
+        // Set up controller as a non-copy operation.
+        $bc = new \backup_controller(backup::TYPE_1COURSE, $this->courseid, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_GENERAL, $this->userid, backup::RELEASESESSION_YES);
+
+        $bc->set_kept_roles(array(1, 3, 5));
     }
 
     /**
@@ -148,6 +175,29 @@ class core_backup_controller_testcase extends advanced_testcase {
             }
         }
         $this->assertTrue($alltrue);
+    }
+
+    /**
+     * Test prepare copy method.
+     */
+    public function test_restore_controller_prepare_copy() {
+        $this->expectException(\restore_controller_exception::class);
+
+        global $CFG;
+
+        // Make a backup.
+        make_backup_temp_directory('');
+        $bc = new backup_controller(backup::TYPE_1ACTIVITY, $this->moduleid, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_IMPORT, $this->userid);
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        // Set up restore.
+        $rc = new restore_controller($backupid, $this->courseid,
+            backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $this->userid,
+            backup::TARGET_EXISTING_ADDING);
+        $rc->prepare_copy();
     }
 
     /**

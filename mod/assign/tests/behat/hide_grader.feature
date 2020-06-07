@@ -46,7 +46,7 @@ Feature: Hide grader identities identity from students
     And I set the field "Grade out of 100" to "50"
     And I set the field "Feedback comments" to "Catch for us the foxes."
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
     And I should see "Graded" in the "Student 1" "table_row"

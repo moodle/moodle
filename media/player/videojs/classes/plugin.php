@@ -115,6 +115,12 @@ class media_videojs_plugin extends core_media_player_native {
         if ($this->youtube) {
             $datasetup[] = '"techOrder": ["youtube"]';
             $datasetup[] = '"sources": [{"type": "video/youtube", "src":"' . $urls[0] . '"}]';
+
+            // Check if we have a time parameter.
+            if ($time = $urls[0]->get_param('t')) {
+                $datasetup[] = '"youtube": {"start": "' . self::get_start_time($time) . '"}';
+            }
+
             $sources = ''; // Do not specify <source> tags - it may confuse browser.
             $isaudio = false; // Just in case.
         } else if ($flashtech) {
@@ -201,7 +207,7 @@ class media_videojs_plugin extends core_media_player_native {
             }
         }
 
-        return html_writer::div($text, 'mediaplugin mediaplugin_videojs');
+        return html_writer::div($text, 'mediaplugin mediaplugin_videojs d-block');
     }
 
     /**
@@ -216,6 +222,30 @@ class media_videojs_plugin extends core_media_player_native {
             return;
         }
         parent::pick_video_size($width, $height);
+    }
+
+    /**
+     * Method to convert Youtube time parameter string, which can contain human readable time
+     * intervals such as '1h5m', '1m10s', etc or a numeric seconds value
+     *
+     * @param string $timestr
+     * @return int
+     */
+    protected static function get_start_time(string $timestr): int {
+        if (is_numeric($timestr)) {
+            // We can return the time string itself if it's already numeric.
+            return (int) $timestr;
+        }
+
+        try {
+            // Parse the time string as an ISO 8601 time interval.
+            $timeinterval = new DateInterval('PT' . core_text::strtoupper($timestr));
+
+            return ($timeinterval->h * HOURSECS) + ($timeinterval->i * MINSECS) + $timeinterval->s;
+        } catch (Exception $ex) {
+            // Invalid time interval.
+            return 0;
+        }
     }
 
     public function get_supported_extensions() {

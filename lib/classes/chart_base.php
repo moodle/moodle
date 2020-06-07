@@ -48,6 +48,8 @@ class chart_base implements JsonSerializable, renderable {
     protected $xaxes = [];
     /** @var chart_axis[] The Y axes. */
     protected $yaxes = [];
+    /** @var array Options for the chart legend. */
+    protected $legendoptions = [];
 
     /**
      * Constructor.
@@ -86,6 +88,7 @@ class chart_base implements JsonSerializable, renderable {
                 'x' => $this->xaxes,
                 'y' => $this->yaxes,
             ],
+            'legend_options' => !empty($this->legendoptions) ? $this->legendoptions : null,
             'config_colorset' => !empty($CFG->chart_colorset) ? $CFG->chart_colorset : null
         ];
     }
@@ -129,6 +132,15 @@ class chart_base implements JsonSerializable, renderable {
      */
     public function get_labels() {
         return $this->labels;
+    }
+
+    /**
+     * Get an array of options for the chart legend.
+     *
+     * @return array
+     */
+    public function get_legend_options() {
+        return $this->legendoptions;
     }
 
     /**
@@ -219,6 +231,20 @@ class chart_base implements JsonSerializable, renderable {
      */
     public function set_labels(array $labels) {
         $this->labels = $labels;
+    }
+
+    /**
+     * Set options for the chart legend.
+     * See https://www.chartjs.org/docs/2.7.0/configuration/legend.html for options.
+     *
+     * Note: Setting onClick and onHover events is not directly supported through
+     * this method. These config options must be set directly within Javascript
+     * on the page.
+     *
+     * @param array $legendoptions Whether or not to display the chart's legend.
+     */
+    public function set_legend_options(array $legendoptions) {
+        $this->legendoptions = $legendoptions;
     }
 
     /**

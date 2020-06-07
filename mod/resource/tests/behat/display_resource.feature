@@ -54,12 +54,12 @@ Feature: Teacher can specify different display options for the resource
     And I <seedate> see "Uploaded" in the ".activity.resource .resourcelinkdetails" "css_element"
     And I log out
 
-  Examples:
-    | showsize | showtype | showdate | seesize    | seetype    | seedate    |
-    | 1        | 0        | 0        | should     | should not | should not |
-    | 0        | 1        | 0        | should not | should     | should not |
-    | 0        | 0        | 1        | should not | should not | should     |
-    | 1        | 1        | 0        | should     | should     | should not |
-    | 1        | 0        | 1        | should     | should not | should     |
-    | 0        | 1        | 1        | should not | should     | should     |
-    | 1        | 1        | 1        | should     | should     | should     |
+    Examples:
+      | showsize | showtype | showdate | seesize    | seetype    | seedate    |
+      | 1        | 0        | 0        | should     | should not | should not |
+      | 0        | 1        | 0        | should not | should     | should not |
+      | 0        | 0        | 1        | should not | should not | should     |
+      | 1        | 1        | 0        | should     | should     | should not |
+      | 1        | 0        | 1        | should     | should not | should     |
+      | 0        | 1        | 1        | should not | should     | should     |
+      | 1        | 1        | 1        | should     | should     | should     |

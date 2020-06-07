@@ -46,6 +46,13 @@ class export_xml_action_column extends menu_action_column_base {
     }
 
     protected function get_url_icon_and_label(\stdClass $question): array {
+        if (!\question_bank::is_qtype_installed($question->qtype)) {
+            // It sometimes happens that people end up with junk questions
+            // in their question bank of a type that is no longer installed.
+            // We cannot do most actions on them, because that leads to errors.
+            return [null, null, null];
+        }
+
         if (!question_has_capability_on($question, 'view')) {
             return [null, null, null];
         }

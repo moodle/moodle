@@ -1653,11 +1653,8 @@ class core_course_courselib_testcase extends advanced_testcase {
             case 'quiz':
                 $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
                 $qcat = $qgen->create_question_category(array('contextid' => $modcontext->id));
-                $questions = array(
-                    $qgen->create_question('shortanswer', null, array('category' => $qcat->id)),
-                    $qgen->create_question('shortanswer', null, array('category' => $qcat->id)),
-                );
-                $this->expectOutputRegex('/'.get_string('unusedcategorydeleted', 'question').'/');
+                $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
+                $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
                 break;
             default:
                 break;

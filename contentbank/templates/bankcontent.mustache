@@ -1,0 +1,166 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_contentbank/bankcontent
+
+    Example context (json):
+    {
+        "contents": [
+            {
+                "name": "Accordion.h5p",
+                "title": "accordion.h5p",
+                "timemodified": 1589792272,
+                "size": "699.3KB",
+                "bytes": 716126,
+                "type": "Archive (H5P)",
+                "link": "http://something/contentbank/contenttype/h5p/view.php?url=http://something/pluginfile.php/1/contentbank/public/accordion.h5p",
+                "icon" : "http://something/theme/image.php/boost/core/1581597850/f/h5p-64"
+            },
+            {
+                "name": "resume.pdf",
+                "title": "resume",
+                "timemodified": 1589792039,
+                "size": "699.3KB",
+                "bytes": 716126,
+                "type": "Archive (PDF)",
+                "icon": "http://something/theme/image.php/boost/core/1584597850/f/pdf-64"
+            }
+        ],
+        "tools": [
+            {
+                "name": "Add",
+                "dropdown": true,
+                "link": "http://something/contentbank/edit.php?contextid=1",
+                "contenttypes": [
+                    {
+                        "name": "H5P Interactive Content",
+                        "baseurl": "http://something/contentbank/edit.php?contextid=1&plugin=h5p",
+                        "types": [
+                            {
+                                "typename": "H5P Interactive Content"
+                            },
+                            {
+                                "typename": "Accordion",
+                                "typeeditorparams": "library=Accordion-1.4",
+                                "typeicon": "http://something/pluginfile.php/1/core_h5p/libraries/13/H5P.Accordion-1.4/icon.svg"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Upload",
+                "link": "http://something/contentbank/contenttype/h5p/view.php?url=http://something/pluginfile.php/1/contentbank/public/accordion.h5p",
+                "icon" : "i/upload"
+            },
+            {
+                "icon": "i/export"
+            }
+        ]
+    }
+
+}}
+<div class="content-bank-container {{#viewlist}}view-list{{/viewlist}} {{^viewlist}}view-grid{{/viewlist}}"
+data-region="contentbank">
+    <div class="d-flex justify-content-between flex-column flex-sm-row">
+        <div class="cb-search-container mb-2">
+            {{>core_contentbank/bankcontent/search}}
+        </div>
+        <div class="cb-toolbar-container mb-2 d-flex">
+            {{>core_contentbank/bankcontent/toolbar}}
+        </div>
+    </div>
+    <div class="pb-3 border">
+        <div class="content-bank">
+            <div class="cb-navbar bg-light p-2 border-bottom">
+                <div class="cb-navbar-breadbrumb">
+                    {{#pix}} i/folder {{/pix}}
+                </div>
+                <div class="cb-navbar-totalsearch d-none">
+                </div>
+            </div>
+            <div class="cb-content-wrapper d-flex px-2" data-region="filearea">
+                <div class="cb-heading bg-white">
+                    <div class="cb-file cb-column d-flex">
+                        <div class="title">{{#str}} contentname, contentbank {{/str}}</div>
+                        <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="contentname" data-action="sortname"
+                            title="{{#str}} sortbyx, core, {{#str}} contentname, contentbank {{/str}} {{/str}}">
+                            <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
+                            <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
+                            <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                        </button>
+                    </div>
+                    <div class="cb-date cb-column d-flex">
+                        <div class="title">{{#str}} lastmodified, contentbank {{/str}}</div>
+                        <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="lastmodified" data-action="sortdate"
+                        title="{{#str}} sortbyx, core, {{#str}} lastmodified, contentbank {{/str}} {{/str}}">
+                            <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
+                            <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
+                            <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                        </button>
+                    </div>
+                    <div class="cb-size cb-column d-flex">
+                        <div class="title">{{#str}} size, contentbank {{/str}}</div>
+                        <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="size" data-action="sortsize"
+                        title="{{#str}} sortbyx, core, {{#str}} size, contentbank {{/str}} {{/str}}">
+                            <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
+                            <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
+                            <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                        </button>
+                    </div>
+                    <div class="cb-type cb-column d-flex last">
+                        <div class="title">{{#str}} type, contentbank {{/str}}</div>
+                        <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="type" data-action="sorttype"
+                        title="{{#str}} sortbyx, core, {{#str}} size, contentbank {{/str}} {{/str}}">
+                            <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
+                            <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
+                            <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                        </button>
+                    </div>
+                </div>
+            {{#contents}}
+                <div class="cb-listitem"
+                    data-file="{{{ title }}}"
+                    data-name="{{{ name }}}"
+                    data-bytes="{{ bytes }}"
+                    data-timemodified="{{ timemodified }}"
+                    data-type="{{{ type }}}">
+                    <div class="cb-file cb-column position-relative">
+                        <div class="cb-thumbnail" role="img" aria-label="{{{ name }}}"
+                        style="background-image: url('{{{ icon }}}');">
+                        </div>
+                        <a href="{{{ link }}}" class="cb-link stretched-link" title="{{{ name }}}">
+                            <span class="cb-name word-break-all clamp-2" data-region="cb-content-name">
+                                {{{ name }}}
+                            </span>
+                        </a>
+                    </div>
+                    <div class="cb-date cb-column small">
+                        {{#userdate}} {{ timemodified }}, {{#str}} strftimedatetimeshort, core_langconfig {{/str}} {{/userdate}}
+                    </div>
+                    <div class="cb-size cb-column small">
+                        {{ size }}
+                    </div>
+                    <div class="cb-type cb-column last small">
+                        {{{ type }}}
+                    </div>
+                </div>
+            {{/contents}}
+            </div>
+        </div>
+    </div>
+</div>

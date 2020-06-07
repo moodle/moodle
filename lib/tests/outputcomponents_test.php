@@ -140,11 +140,17 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $user2 = $this->getDataGenerator()->create_user(array('picture'=>0, 'email'=>'user2@example.com'));
         $context2 = context_user::instance($user2->id);
 
+        // User 3 is deleted.
         $user3 = $this->getDataGenerator()->create_user(array('picture'=>1, 'deleted'=>1, 'email'=>'user3@example.com'));
-        $context3 = context_user::instance($user3->id, IGNORE_MISSING);
+        $this->assertNotEmpty(context_user::instance($user3->id));
         $this->assertEquals(0, $user3->picture);
         $this->assertNotEquals('user3@example.com', $user3->email);
-        $this->assertFalse($context3);
+
+        // User 4 is incorrectly deleted with its context deleted as well (testing legacy code).
+        $user4 = $this->getDataGenerator()->create_user(['picture' => 1, 'deleted' => 1, 'email' => 'user4@example.com']);
+        context_helper::delete_instance(CONTEXT_USER, $user4->id);
+        $this->assertEquals(0, $user4->picture);
+        $this->assertNotEquals('user4@example.com', $user4->email);
 
         // Try legacy picture == 1.
         $user1->picture = 1;
@@ -186,13 +192,14 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $this->assertSame($CFG->wwwroot.'/theme/image.php/boost/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
         $this->assertEquals($reads, $DB->perf_get_reads());
 
-        // Try incorrectly deleted users (with valid email and pciture flag) - some DB reads expected.
-        $user3->email = 'user3@example.com';
-        $user3->picture = 1;
+        // Try incorrectly deleted users (with valid email and picture flag, but user context removed) - some DB reads expected.
+        unset($user4->deleted);
+        $user4->email = 'user4@example.com';
+        $user4->picture = 1;
         $reads = $DB->perf_get_reads();
-        $up3 = new user_picture($user3);
+        $up4 = new user_picture($user4);
         $this->assertEquals($reads, $DB->perf_get_reads());
-        $this->assertSame($CFG->wwwroot.'/theme/image.php/boost/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
+        $this->assertSame($CFG->wwwroot.'/theme/image.php/boost/core/1/u/f2', $up4->get_url($page, $renderer)->out(false));
         $this->assertGreaterThan($reads, $DB->perf_get_reads());
 
         // Test gravatar.
@@ -203,6 +210,10 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $user3->picture = 0;
         $up3 = new user_picture($user3);
         $this->assertSame($CFG->wwwroot.'/theme/image.php/boost/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
+        $user4->email = 'deleted';
+        $user4->picture = 0;
+        $up4 = new user_picture($user4);
+        $this->assertSame($CFG->wwwroot.'/theme/image.php/boost/core/1/u/f2', $up4->get_url($page, $renderer)->out(false));
 
         // Http version.
         $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
@@ -237,11 +248,14 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $up1 = new user_picture($user1);
         $this->assertSame($CFG->wwwroot.'/pluginfile.php/'.$context1->id.'/user/icon/boost/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
 
+        $up2 = new user_picture($user2);
+        $this->assertSame('https://secure.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=35&d=https%3A%2F%2Fwww.example.com%2Fmoodle%2Fpix%2Fu%2Ff2.png', $up2->get_url($page, $renderer)->out(false));
+
         $up3 = new user_picture($user3);
         $this->assertSame($CFG->wwwroot.'/theme/image.php/boost/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
 
-        $up2 = new user_picture($user2);
-        $this->assertSame('https://secure.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=35&d=https%3A%2F%2Fwww.example.com%2Fmoodle%2Fpix%2Fu%2Ff2.png', $up2->get_url($page, $renderer)->out(false));
+        $up4 = new user_picture($user4);
+        $this->assertSame($CFG->wwwroot.'/theme/image.php/boost/core/1/u/f2', $up4->get_url($page, $renderer)->out(false));
 
         // TODO MDL-44792 Rewrite those tests to use a fixture.
         // Now test gravatar with one theme having own images (afterburner).
@@ -321,7 +335,7 @@ EOF;
         $itemurl = $item->get_url();
         $this->assertTrue($itemurl instanceof moodle_url);
         $this->assertEquals('http://moodle.org', $itemurl->out());
-        $this->assertEquals($item->get_text(), $item->get_title()); // Implicit title.
+        $this->assertNull($item->get_title()); // Implicit title.
 
         /** @var custom_menu_item $item */
         $item = array_shift($firstlevel);

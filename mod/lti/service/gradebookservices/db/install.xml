@@ -13,6 +13,7 @@
         <FIELD NAME="typeid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ID of the LTI Type if not Proxy."/>
         <FIELD NAME="baseurl" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Lineitem URL that will be returned to the Tool provider"/>
         <FIELD NAME="ltilinkid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ID of the LTI element related with this lineitem."/>
+        <FIELD NAME="resourceid" TYPE="char" LENGTH="512" NOTNULL="false" SEQUENCE="false" COMMENT="Resource id for the line item"/>
         <FIELD NAME="tag" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Tag type specified for the line item"/>
       </FIELDS>
       <KEYS>

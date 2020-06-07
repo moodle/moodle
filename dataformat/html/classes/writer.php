@@ -93,12 +93,23 @@ table {
     }
 
     /**
+     * Method to define whether the dataformat supports export of HTML
+     *
+     * @return bool
+     */
+    public function supports_html(): bool {
+        return true;
+    }
+
+    /**
      * Write a single record
      *
      * @param array $record
      * @param int $rownum
      */
     public function write_record($record, $rownum) {
+        $record = $this->format_record($record);
+
         echo \html_writer::start_tag('tr');
         foreach ($record as $cell) {
             echo \html_writer::tag('td', $cell);

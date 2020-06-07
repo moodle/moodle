@@ -15,6 +15,7 @@
 
 /**
  * Datasource for the core_user/unified_filter.
+ * @deprecated since Moodle 3.9 MDL-68612 - user unified filter replaced by participants filter.
  *
  * This module is compatible with core/form-autocomplete.
  *

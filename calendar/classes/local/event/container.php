@@ -133,7 +133,8 @@ class container {
                         }
                     }
 
-                    // At present we only have a bail-out check for events in course modules.
+                    // For non-module events we assume that all checks were done in core_calendar_is_event_visible callback.
+                    // For module events we also check that the course module and course itself are visible to the user.
                     if (empty($dbrow->modulename)) {
                         return false;
                     }
@@ -279,7 +280,7 @@ class container {
         // of the event class.
         $mapper = self::$eventmapper;
         $action = null;
-        if ($event->get_course_module()) {
+        if ($event->get_component()) {
             $requestinguserid = self::get_requesting_user();
             $legacyevent = $mapper->from_event_to_legacy_event($event);
             // We know for a fact that the the requesting user might be different from the logged in user,
@@ -288,10 +289,9 @@ class container {
                 $legacyevent->userid = $requestinguserid;
             }
 
-            // TODO MDL-58866 Only activity modules currently support this callback.
             // Any other event will not be displayed on the dashboard.
             $action = component_callback(
-                'mod_' . $event->get_course_module()->get('modname'),
+                $event->get_component(),
                 'core_calendar_provide_event_action',
                 [
                     $legacyevent,
@@ -322,7 +322,7 @@ class container {
     public static function apply_component_is_event_visible(event_interface $event) {
         $mapper = self::$eventmapper;
         $eventvisible = null;
-        if ($event->get_course_module()) {
+        if ($event->get_component()) {
             $requestinguserid = self::get_requesting_user();
             $legacyevent = $mapper->from_event_to_legacy_event($event);
             // We know for a fact that the the requesting user might be different from the logged in user,
@@ -331,9 +331,8 @@ class container {
                 $legacyevent->userid = $requestinguserid;
             }
 
-            // TODO MDL-58866 Only activity modules currently support this callback.
             $eventvisible = component_callback(
-                'mod_' . $event->get_course_module()->get('modname'),
+                $event->get_component(),
                 'core_calendar_is_event_visible',
                 [
                     $legacyevent,

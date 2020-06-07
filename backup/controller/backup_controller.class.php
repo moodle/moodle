@@ -71,6 +71,12 @@ class backup_controller extends base_controller {
     protected $checksum; // Cache @checksumable results for lighter @is_checksum_correct() uses
 
     /**
+     * The role ids to keep in a copy operation.
+     * @var array
+     */
+    protected $keptroles = array();
+
+    /**
      * Constructor for the backup controller class.
      *
      * @param int $type Type of the backup; One of backup::TYPE_1COURSE, TYPE_1SECTION, TYPE_1ACTIVITY
@@ -97,7 +103,7 @@ class backup_controller extends base_controller {
         $this->checksum = '';
 
         // Set execution based on backup mode.
-        if ($mode == backup::MODE_ASYNC) {
+        if ($mode == backup::MODE_ASYNC || $mode == backup::MODE_COPY) {
             $this->execution = backup::EXECUTION_DELAYED;
         } else {
             $this->execution = backup::EXECUTION_INMEDIATE;
@@ -291,7 +297,7 @@ class backup_controller extends base_controller {
 
         // When a backup is intended for the same site, we don't need to include the files.
         // Note, this setting is only used for duplication of an entire course.
-        if ($this->get_mode() === backup::MODE_SAMESITE) {
+        if ($this->get_mode() === backup::MODE_SAMESITE || $this->get_mode() === backup::MODE_COPY) {
             $includefiles = false;
         }
 
@@ -353,6 +359,22 @@ class backup_controller extends base_controller {
     }
 
     /**
+     * Sets the user roles that should be kept in the destination course
+     * for a course copy operation.
+     *
+     * @param array $roleids
+     * @throws backup_controller_exception
+     */
+    public function set_kept_roles(array $roleids): void {
+        // Only allow of keeping user roles when controller is in copy mode.
+        if ($this->mode != backup::MODE_COPY) {
+            throw new backup_controller_exception('cannot_set_keep_roles_wrong_mode');
+        }
+
+        $this->keptroles = $roleids;
+    }
+
+    /**
      * Executes the backup
      * @return void Throws and exception of completes
      */
@@ -379,6 +401,12 @@ class backup_controller extends base_controller {
             $this->log('notifying plan about excluded activities by type', backup::LOG_DEBUG);
             $this->plan->set_excluding_activities();
         }
+
+        // Handle copy operation specific settings.
+        if ($this->mode == backup::MODE_COPY) {
+            $this->plan->set_kept_roles($this->keptroles);
+        }
+
         return $this->plan->execute();
     }
 

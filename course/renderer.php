@@ -158,7 +158,11 @@ class core_course_renderer extends plugin_renderer_base {
             return '';
         }
 
-        $this->page->requires->js_call_amd('core_course/activitychooser', 'init', [$courseid]);
+        // Build an object of config settings that we can then hook into in the Activity Chooser.
+        $chooserconfig = (object) [
+            'tabmode' => get_config('core', 'activitychoosertabmode'),
+        ];
+        $this->page->requires->js_call_amd('core_course/activitychooser', 'init', [$courseid, $chooserconfig]);
 
         return '';
     }
@@ -368,11 +372,11 @@ class core_course_renderer extends plugin_renderer_base {
             $ajaxcontrol .= html_writer::start_tag('div', array('class' => 'section-modchooser'));
             $icon = $this->output->pix_icon('t/add', '');
             $span = html_writer::tag('span', $straddeither, array('class' => 'section-modchooser-text'));
-            $ajaxcontrol .= html_writer::tag('button', $icon . $span, array(
+            $ajaxcontrol .= html_writer::tag('button', $icon . $span, [
                     'class' => 'section-modchooser-link btn btn-link',
                     'data-action' => 'open-chooser',
                     'data-sectionid' => $section,
-                )
+                ]
             );
             $ajaxcontrol .= html_writer::end_tag('div');
             $ajaxcontrol .= html_writer::end_tag('div');
@@ -705,7 +709,7 @@ class core_course_renderer extends plugin_renderer_base {
                 'class' => 'iconlarge activityicon', 'alt' => '', 'role' => 'presentation', 'aria-hidden' => 'true')) .
                 html_writer::tag('span', $instancename . $altname, array('class' => 'instancename'));
         if ($mod->uservisible) {
-            $output .= html_writer::link($url, $activitylink, array('class' => $linkclasses, 'onclick' => $onclick));
+            $output .= html_writer::link($url, $activitylink, array('class' => 'aalink' . $linkclasses, 'onclick' => $onclick));
         } else {
             // We may be displaying this just in order to show information
             // about visibility, without the actual link ($mod->is_visible_on_course_page()).
@@ -903,7 +907,7 @@ class core_course_renderer extends plugin_renderer_base {
             $output .= course_get_cm_move($mod, $sectionreturn);
         }
 
-        $output .= html_writer::start_tag('div', array('class' => 'mod-indent-outer'));
+        $output .= html_writer::start_tag('div', array('class' => 'mod-indent-outer w-100'));
 
         // This div is used to indent the content.
         $output .= html_writer::div('', $indentclasses);
@@ -1123,6 +1127,58 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Returns HTML to display course name.
+     *
+     * @param coursecat_helper $chelper
+     * @param core_course_list_element $course
+     * @return string
+     */
+    protected function course_name(coursecat_helper $chelper, core_course_list_element $course): string {
+        $content = '';
+        if ($chelper->get_show_courses() >= self::COURSECAT_SHOW_COURSES_EXPANDED) {
+            $nametag = 'h3';
+        } else {
+            $nametag = 'div';
+        }
+        $coursename = $chelper->get_course_formatted_name($course);
+        $coursenamelink = html_writer::link(new moodle_url('/course/view.php', ['id' => $course->id]),
+            $coursename, ['class' => $course->visible ? 'aalink' : 'aalink dimmed']);
+        $content .= html_writer::tag($nametag, $coursenamelink, ['class' => 'coursename']);
+        // If we display course in collapsed form but the course has summary or course contacts, display the link to the info page.
+        $content .= html_writer::start_tag('div', ['class' => 'moreinfo']);
+        if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
+            if ($course->has_summary() || $course->has_course_contacts() || $course->has_course_overviewfiles()
+                || $course->has_custom_fields()) {
+                $url = new moodle_url('/course/info.php', ['id' => $course->id]);
+                $image = $this->output->pix_icon('i/info', $this->strings->summary);
+                $content .= html_writer::link($url, $image, ['title' => $this->strings->summary]);
+                // Make sure JS file to expand course content is included.
+                $this->coursecat_include_js();
+            }
+        }
+        $content .= html_writer::end_tag('div');
+        return $content;
+    }
+
+    /**
+     * Returns HTML to display course enrolment icons.
+     *
+     * @param core_course_list_element $course
+     * @return string
+     */
+    protected function course_enrolment_icons(core_course_list_element $course): string {
+        $content = '';
+        if ($icons = enrol_get_course_info_icons($course)) {
+            $content .= html_writer::start_tag('div', ['class' => 'enrolmenticons']);
+            foreach ($icons as $icon) {
+                $content .= $this->render($icon);
+            }
+            $content .= html_writer::end_tag('div');
+        }
+        return $content;
+    }
+
+    /**
      * Displays one course in the list of courses.
      *
      * This is an internal function, to display an information about just one course
@@ -1146,11 +1202,8 @@ class core_course_renderer extends plugin_renderer_base {
         }
         $content = '';
         $classes = trim('coursebox clearfix '. $additionalclasses);
-        if ($chelper->get_show_courses() >= self::COURSECAT_SHOW_COURSES_EXPANDED) {
-            $nametag = 'h3';
-        } else {
+        if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
             $classes .= ' collapsed';
-            $nametag = 'div';
         }
 
         // .coursebox
@@ -1161,42 +1214,127 @@ class core_course_renderer extends plugin_renderer_base {
         ));
 
         $content .= html_writer::start_tag('div', array('class' => 'info'));
-
-        // course name
-        $coursename = $chelper->get_course_formatted_name($course);
-        $coursenamelink = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
-                                            $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-        $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename'));
-        // If we display course in collapsed form but the course has summary or course contacts, display the link to the info page.
-        $content .= html_writer::start_tag('div', array('class' => 'moreinfo'));
-        if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
-            if ($course->has_summary() || $course->has_course_contacts() || $course->has_course_overviewfiles()
-                    || $course->has_custom_fields()) {
-                $url = new moodle_url('/course/info.php', array('id' => $course->id));
-                $image = $this->output->pix_icon('i/info', $this->strings->summary);
-                $content .= html_writer::link($url, $image, array('title' => $this->strings->summary));
-                // Make sure JS file to expand course content is included.
-                $this->coursecat_include_js();
-            }
-        }
-        $content .= html_writer::end_tag('div'); // .moreinfo
-
-        // print enrolmenticons
-        if ($icons = enrol_get_course_info_icons($course)) {
-            $content .= html_writer::start_tag('div', array('class' => 'enrolmenticons'));
-            foreach ($icons as $pix_icon) {
-                $content .= $this->render($pix_icon);
-            }
-            $content .= html_writer::end_tag('div'); // .enrolmenticons
-        }
-
-        $content .= html_writer::end_tag('div'); // .info
+        $content .= $this->course_name($chelper, $course);
+        $content .= $this->course_enrolment_icons($course);
+        $content .= html_writer::end_tag('div');
 
         $content .= html_writer::start_tag('div', array('class' => 'content'));
         $content .= $this->coursecat_coursebox_content($chelper, $course);
-        $content .= html_writer::end_tag('div'); // .content
+        $content .= html_writer::end_tag('div');
 
         $content .= html_writer::end_tag('div'); // .coursebox
+        return $content;
+    }
+
+    /**
+     * Returns HTML to display course summary.
+     *
+     * @param coursecat_helper $chelper
+     * @param core_course_list_element $course
+     * @return string
+     */
+    protected function course_summary(coursecat_helper $chelper, core_course_list_element $course): string {
+        $content = '';
+        if ($course->has_summary()) {
+            $content .= html_writer::start_tag('div', ['class' => 'summary']);
+            $content .= $chelper->get_course_formatted_summary($course,
+                array('overflowdiv' => true, 'noclean' => true, 'para' => false));
+            $content .= html_writer::end_tag('div');
+        }
+        return $content;
+    }
+
+    /**
+     * Returns HTML to display course contacts.
+     *
+     * @param core_course_list_element $course
+     * @return string
+     */
+    protected function course_contacts(core_course_list_element $course) {
+        $content = '';
+        if ($course->has_course_contacts()) {
+            $content .= html_writer::start_tag('ul', ['class' => 'teachers']);
+            foreach ($course->get_course_contacts() as $coursecontact) {
+                $rolenames = array_map(function ($role) {
+                    return $role->displayname;
+                }, $coursecontact['roles']);
+                $name = implode(", ", $rolenames).': '.
+                    html_writer::link(new moodle_url('/user/view.php',
+                        ['id' => $coursecontact['user']->id, 'course' => SITEID]),
+                        $coursecontact['username']);
+                $content .= html_writer::tag('li', $name);
+            }
+            $content .= html_writer::end_tag('ul');
+        }
+        return $content;
+    }
+
+    /**
+     * Returns HTML to display course overview files.
+     *
+     * @param core_course_list_element $course
+     * @return string
+     */
+    protected function course_overview_files(core_course_list_element $course): string {
+        global $CFG;
+
+        $contentimages = $contentfiles = '';
+        foreach ($course->get_course_overviewfiles() as $file) {
+            $isimage = $file->is_valid_image();
+            $url = moodle_url::make_file_url("$CFG->wwwroot/pluginfile.php",
+                '/' . $file->get_contextid() . '/' . $file->get_component() . '/' .
+                $file->get_filearea() . $file->get_filepath() . $file->get_filename(), !$isimage);
+            if ($isimage) {
+                $contentimages .= html_writer::tag('div',
+                    html_writer::empty_tag('img', ['src' => $url]),
+                    ['class' => 'courseimage']);
+            } else {
+                $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
+                $filename = html_writer::tag('span', $image, ['class' => 'fp-icon']).
+                    html_writer::tag('span', $file->get_filename(), ['class' => 'fp-filename']);
+                $contentfiles .= html_writer::tag('span',
+                    html_writer::link($url, $filename),
+                    ['class' => 'coursefile fp-filename-icon']);
+            }
+        }
+        return $contentimages . $contentfiles;
+    }
+
+    /**
+     * Returns HTML to display course category name.
+     *
+     * @param coursecat_helper $chelper
+     * @param core_course_list_element $course
+     * @return string
+     */
+    protected function course_category_name(coursecat_helper $chelper, core_course_list_element $course): string {
+        $content = '';
+        // Display course category if necessary (for example in search results).
+        if ($chelper->get_show_courses() == self::COURSECAT_SHOW_COURSES_EXPANDED_WITH_CAT) {
+            if ($cat = core_course_category::get($course->category, IGNORE_MISSING)) {
+                $content .= html_writer::start_tag('div', ['class' => 'coursecat']);
+                $content .= get_string('category').': '.
+                    html_writer::link(new moodle_url('/course/index.php', ['categoryid' => $cat->id]),
+                        $cat->get_formatted_name(), ['class' => $cat->visible ? '' : 'dimmed']);
+                $content .= html_writer::end_tag('div');
+            }
+        }
+        return $content;
+    }
+
+    /**
+     * Returns HTML to display course custom fields.
+     *
+     * @param core_course_list_element $course
+     * @return string
+     */
+    protected function course_custom_fields(core_course_list_element $course): string {
+        $content = '';
+        if ($course->has_custom_fields()) {
+            $handler = core_course\customfield\course_handler::create();
+            $customfields = $handler->display_custom_fields_data($course->get_custom_fields());
+            $content .= \html_writer::tag('div', $customfields, ['class' => 'customfields-container']);
+        }
         return $content;
     }
 
@@ -1210,79 +1348,17 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function coursecat_coursebox_content(coursecat_helper $chelper, $course) {
-        global $CFG;
         if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
             return '';
         }
         if ($course instanceof stdClass) {
             $course = new core_course_list_element($course);
         }
-        $content = '';
-
-        // display course summary
-        if ($course->has_summary()) {
-            $content .= html_writer::start_tag('div', array('class' => 'summary'));
-            $content .= $chelper->get_course_formatted_summary($course,
-                    array('overflowdiv' => true, 'noclean' => true, 'para' => false));
-            $content .= html_writer::end_tag('div'); // .summary
-        }
-
-        // display course overview files
-        $contentimages = $contentfiles = '';
-        foreach ($course->get_course_overviewfiles() as $file) {
-            $isimage = $file->is_valid_image();
-            $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
-                    '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
-                    $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
-            if ($isimage) {
-                $contentimages .= html_writer::tag('div',
-                        html_writer::empty_tag('img', array('src' => $url)),
-                        array('class' => 'courseimage'));
-            } else {
-                $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
-                $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
-                        html_writer::tag('span', $file->get_filename(), array('class' => 'fp-filename'));
-                $contentfiles .= html_writer::tag('span',
-                        html_writer::link($url, $filename),
-                        array('class' => 'coursefile fp-filename-icon'));
-            }
-        }
-        $content .= $contentimages. $contentfiles;
-
-        // Display course contacts. See core_course_list_element::get_course_contacts().
-        if ($course->has_course_contacts()) {
-            $content .= html_writer::start_tag('ul', array('class' => 'teachers'));
-            foreach ($course->get_course_contacts() as $coursecontact) {
-                $rolenames = array_map(function ($role) {
-                    return $role->displayname;
-                }, $coursecontact['roles']);
-                $name = implode(", ", $rolenames).': '.
-                        html_writer::link(new moodle_url('/user/view.php',
-                                array('id' => $coursecontact['user']->id, 'course' => SITEID)),
-                            $coursecontact['username']);
-                $content .= html_writer::tag('li', $name);
-            }
-            $content .= html_writer::end_tag('ul'); // .teachers
-        }
-
-        // display course category if necessary (for example in search results)
-        if ($chelper->get_show_courses() == self::COURSECAT_SHOW_COURSES_EXPANDED_WITH_CAT) {
-            if ($cat = core_course_category::get($course->category, IGNORE_MISSING)) {
-                $content .= html_writer::start_tag('div', array('class' => 'coursecat'));
-                $content .= get_string('category').': '.
-                        html_writer::link(new moodle_url('/course/index.php', array('categoryid' => $cat->id)),
-                                $cat->get_formatted_name(), array('class' => $cat->visible ? '' : 'dimmed'));
-                $content .= html_writer::end_tag('div'); // .coursecat
-            }
-        }
-
-        // Display custom fields.
-        if ($course->has_custom_fields()) {
-            $handler = core_course\customfield\course_handler::create();
-            $customfields = $handler->display_custom_fields_data($course->get_custom_fields());
-            $content .= \html_writer::tag('div', $customfields, ['class' => 'customfields-container']);
-        }
-
+        $content = $this->course_summary($chelper, $course);
+        $content .= $this->course_overview_files($course);
+        $content .= $this->course_contacts($course);
+        $content .= $this->course_category_name($chelper, $course);
+        $content .= $this->course_custom_fields($course);
         return $content;
     }
 
@@ -1578,7 +1654,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
         $content .= html_writer::start_tag('div', array('class' => 'info'));
 
-        $content .= html_writer::tag(($depth > 1) ? 'h4' : 'h3', $categoryname, array('class' => 'categoryname'));
+        $content .= html_writer::tag(($depth > 1) ? 'h4' : 'h3', $categoryname, array('class' => 'categoryname aabtn'));
         $content .= html_writer::end_tag('div'); // .info
 
         // add category content to the output
@@ -1611,7 +1687,7 @@ class core_course_renderer extends plugin_renderer_base {
 
         if ($coursecat->get_children_count()) {
             $classes = array(
-                'collapseexpand',
+                'collapseexpand', 'aabtn'
             );
 
             // Check if the category content contains subcategories with children's content loaded.
@@ -2323,7 +2399,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
         $output = html_writer::link('#' . $skipdivid,
             get_string('skipa', 'access', core_text::strtolower(strip_tags($header))),
-            array('class' => 'skip-block skip'));
+            array('class' => 'skip-block skip aabtn'));
 
         // Wrap frontpage part in div container.
         $output .= html_writer::start_tag('div', array('id' => $contentsdivid));

@@ -498,8 +498,8 @@ class tool_monitor_eventobservers_testcase extends advanced_testcase {
 
         $modurl = new moodle_url('/mod/book/view.php', array('id' => $book->cmid));
 
-        $this->assertContains('<h2>'.$event->get_url()->out().'</h2>', $msg->fullmessagehtml);
-        $this->assertContains('<li>'.$modurl->out().'</li>', $msg->fullmessagehtml);
+        $this->assertRegExp('~<h2>.*' . preg_quote($event->get_url()->out(), '~') . '.*</h2>~', $msg->fullmessagehtml);
+        $this->assertRegExp('~<li>.*' . preg_quote($modurl->out(), '~') . '.*</li>~', $msg->fullmessagehtml);
         $this->assertContains('<li><strong>'.$rule->get_name($context).'</strong></li>', $msg->fullmessagehtml);
         $this->assertContains('<li>'.$rule->get_description($context).'</li>', $msg->fullmessagehtml);
         $this->assertContains('<li>'.$rule->get_event_name().'</li>', $msg->fullmessagehtml);

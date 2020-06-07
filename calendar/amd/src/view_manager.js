@@ -32,6 +32,7 @@ import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
 import SummaryModal from 'core_calendar/summary_modal';
 import CustomEvents from 'core/custom_interaction_events';
+import Pending from 'core/pending';
 
 /**
  * Register event listeners for the module.
@@ -46,6 +47,7 @@ const registerEventListeners = (root) => {
         const target = e.target;
         let eventLink = null;
         let eventId = null;
+        const pendingPromise = new Pending('core_calendar/view_manager:eventLink:click');
 
         if (target.matches(CalendarSelectors.actions.viewEvent)) {
             eventLink = target;
@@ -67,7 +69,11 @@ const registerEventListeners = (root) => {
             // and causing the day click handler to fire.
             e.stopPropagation();
 
-            renderEventSummaryModal(eventId);
+            renderEventSummaryModal(eventId)
+            .then(pendingPromise.resolve)
+            .catch();
+        } else {
+            pendingPromise.resolve();
         }
     });
 
@@ -156,7 +162,7 @@ export const refreshMonthContent = (root, year, month, courseId, categoryId, tar
             return Templates.replaceNode(target, html, js);
         })
         .then(() => {
-            document.querySelector('body').dispatchEvent(new Event(CalendarEvents.viewUpdated));
+            document.querySelector('body').dispatchEvent(new CustomEvent(CalendarEvents.viewUpdated));
             return;
         })
         .always(() => {
@@ -242,7 +248,7 @@ export const refreshDayContent = (root, year, month, day, courseId, categoryId, 
             return Templates.replaceNode(target, html, js);
         })
         .then(() => {
-            document.querySelector('body').dispatchEvent(new Event(CalendarEvents.viewUpdated));
+            document.querySelector('body').dispatchEvent(new CustomEvent(CalendarEvents.viewUpdated));
             return;
         })
         .always(() => {
@@ -349,7 +355,7 @@ export const reloadCurrentUpcoming = (root, courseId = 0, categoryId = 0, target
             return Templates.replaceNode(target, html, js);
         })
         .then(() => {
-            document.querySelector('body').dispatchEvent(new Event(CalendarEvents.viewUpdated));
+            document.querySelector('body').dispatchEvent(new CustomEvent(CalendarEvents.viewUpdated));
             return;
         })
         .always(function() {
@@ -372,20 +378,21 @@ const getEventTypeClassFromType = (eventType) => {
  * Render the event summary modal.
  *
  * @param {Number} eventId The calendar event id.
+ * @returns {Promise}
  */
 const renderEventSummaryModal = (eventId) => {
-    let typeClass = '';
+    const pendingPromise = new Pending('core_calendar/view_manager:renderEventSummaryModal');
 
     // Calendar repository promise.
-    CalendarRepository.getEventById(eventId).then((getEventResponse) => {
+    return CalendarRepository.getEventById(eventId)
+    .then((getEventResponse) => {
         if (!getEventResponse.event) {
             throw new Error('Error encountered while trying to fetch calendar event with ID: ' + eventId);
         }
-        const eventData = getEventResponse.event;
-        typeClass = getEventTypeClassFromType(eventData.normalisedeventtype);
 
-        return eventData;
-    }).then((eventData) => {
+        return getEventResponse.event;
+    })
+    .then(eventData => {
         // Build the modal parameters from the event data.
         const modalParams = {
             title: eventData.name,
@@ -394,16 +401,17 @@ const renderEventSummaryModal = (eventId) => {
             templateContext: {
                 canedit: eventData.canedit,
                 candelete: eventData.candelete,
-                headerclasses: typeClass,
+                headerclasses: getEventTypeClassFromType(eventData.normalisedeventtype),
                 isactionevent: eventData.isactionevent,
-                url: eventData.url
+                url: eventData.url,
+                action: eventData.action
             }
         };
 
         // Create the modal.
         return ModalFactory.create(modalParams);
-
-    }).done(function(modal) {
+    })
+    .then(modal => {
         // Handle hidden event.
         modal.getRoot().on(ModalEvents.hidden, function() {
             // Destroy when hidden.
@@ -413,7 +421,14 @@ const renderEventSummaryModal = (eventId) => {
         // Finally, render the modal!
         modal.show();
 
-    }).fail(Notification.exception);
+        return modal;
+    })
+    .then(modal => {
+        pendingPromise.resolve();
+
+        return modal;
+    })
+    .catch(Notification.exception);
 };
 
 export const init = (root, view) => {

@@ -222,10 +222,14 @@ abstract class testing_module_generator extends component_generator_base {
      *     cmid (corresponding id in course_modules table)
      */
     public function create_instance($record = null, array $options = null) {
-        global $CFG, $DB;
+        global $CFG, $DB, $PAGE;
         require_once($CFG->dirroot.'/course/modlib.php');
 
         $this->instancecount++;
+
+        // Creating an activity is a back end operation, which should not cause any output to happen.
+        // This will allow us to check that the theme was not initialised while creating the module instance.
+        $outputstartedbefore = $PAGE->get_where_theme_was_initialised();
 
         // Merge options into record and add default values.
         $record = $this->prepare_moduleinfo_record($record, $options);
@@ -269,6 +273,19 @@ abstract class testing_module_generator extends component_generator_base {
         // Prepare object to return with additional field cmid.
         $instance = $DB->get_record($this->get_modulename(), array('id' => $moduleinfo->instance), '*', MUST_EXIST);
         $instance->cmid = $moduleinfo->coursemodule;
+
+        // If the theme was initialised while creating the module instance, something somewhere called an output
+        // function. Rather than leaving this as a hard-to-debug situation, let's make it fail with a clear error.
+        $outputstartedafter = $PAGE->get_where_theme_was_initialised();
+
+        if ($outputstartedbefore === null && $outputstartedafter !== null) {
+            throw new coding_exception('Creating a mod_' . $this->get_modulename() . ' activity initialised the theme and output!',
+                'This should not happen. Creating an activity should be a pure back-end operation. Unnecessarily initialising ' .
+                'the output mechanism at the wrong time can cause subtle bugs and is a significant performance hit. There is ' .
+                'likely a call to an output function that caused it:' . PHP_EOL . PHP_EOL .
+                format_backtrace($outputstartedafter, true));
+        }
+
         return $instance;
     }
 

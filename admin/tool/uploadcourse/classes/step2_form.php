@@ -173,6 +173,10 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
             $mform->addHelpButton('defaults[enablecompletion]', 'enablecompletion', 'completion');
         }
 
+        // Add custom fields to the form.
+        $handler = \core_course\customfield\course_handler::create();
+        $handler->instance_form_definition($mform, 0, 'defaultvaluescustomfieldcategory', 'tool_uploadcourse');
+
         // Hidden fields.
         $mform->addElement('hidden', 'importid');
         $mform->setType('importid', PARAM_INT);
@@ -181,6 +185,10 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->setType('previewrows', PARAM_INT);
 
         $this->add_action_buttons(true, get_string('uploadcourses', 'tool_uploadcourse'));
+
+        // Prepare custom fields data.
+        $data = (object) $data;
+        $handler->instance_form_before_set_data($data);
 
         $this->set_data($data);
     }
@@ -219,6 +227,9 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
             $enddate = $format->get_default_course_enddate($mform, array('startdate' => 'defaults[startdate]'));
             $mform->setDefault('defaults[enddate]', $enddate);
         }
+
+        // Tweak the form with values provided by custom fields in use.
+        \core_course\customfield\course_handler::create()->instance_form_definition_after_data($mform);
     }
 
     /**
@@ -236,6 +247,9 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         if ($errorcode = course_validate_dates($data['defaults'])) {
             $errors['defaults[enddate]'] = get_string($errorcode, 'error');
         }
+
+        // Custom fields validation.
+        array_merge($errors, \core_course\customfield\course_handler::create()->instance_form_validation($data, $files));
 
         return $errors;
     }

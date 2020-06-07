@@ -36,13 +36,18 @@ class activity_list implements \renderable, \templatable {
     /** @var array $modules activities to display in the recommendations page. */
     protected $modules;
 
+    /** @var string $searchquery The search query. */
+    protected $searchquery;
+
     /**
      * Constructor method.
      *
      * @param array $modules Activities to display
+     * @param string $searchquery The search query if present
      */
-    public function __construct(array $modules) {
+    public function __construct(array $modules, string $searchquery) {
         $this->modules = $modules;
+        $this->searchquery = $searchquery;
     }
 
     /**
@@ -63,6 +68,18 @@ class activity_list implements \renderable, \templatable {
             ];
         }, $this->modules);
 
-        return ['categories' => ['categoryname' => get_string('activities'), 'categorydata' => $info]];
+        return [
+            'categories' => [
+                [
+                    'categoryname' => get_string('activities'),
+                    'hascategorydata' => !empty($info),
+                    'categorydata' => $info
+                ]
+            ],
+            'search' => [
+                'query' => $this->searchquery,
+                'searchresultsnumber' => count($this->modules)
+            ]
+        ];
     }
 }

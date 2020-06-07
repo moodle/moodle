@@ -251,7 +251,7 @@ class behat_form_field {
         // Defaults to label.
         if ($locatortype == 'label' || $locatortype == false) {
 
-            $labelnode = $this->session->getPage()->find('xpath', '//label[@for="' . $fieldid . '"]');
+            $labelnode = $this->session->getPage()->find('xpath', "//label[@for='$fieldid']|//p[@id='{$fieldid}_label']");
 
             // Exception only if $locatortype was specified.
             if (!$labelnode && $locatortype == 'label') {

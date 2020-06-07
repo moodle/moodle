@@ -685,7 +685,7 @@ function workshop_print_recent_activity($course, $viewfullnames, $timestart) {
 
     if (!empty($submissions)) {
         $shown = true;
-        echo $OUTPUT->heading(get_string('recentsubmissions', 'workshop'), 3);
+        echo $OUTPUT->heading(get_string('recentsubmissions', 'workshop') . ':', 6);
         foreach ($submissions as $id => $submission) {
             $link = new moodle_url('/mod/workshop/submission.php', array('id'=>$id, 'cmid'=>$submission->cmid));
             if ($submission->authornamevisible) {
@@ -699,7 +699,7 @@ function workshop_print_recent_activity($course, $viewfullnames, $timestart) {
 
     if (!empty($assessments)) {
         $shown = true;
-        echo $OUTPUT->heading(get_string('recentassessments', 'workshop'), 3);
+        echo $OUTPUT->heading(get_string('recentassessments', 'workshop') . ':', 6);
         core_collator::asort_objects_by_property($assessments, 'timemodified');
         foreach ($assessments as $id => $assessment) {
             $link = new moodle_url('/mod/workshop/assessment.php', array('asid' => $id));
@@ -1668,6 +1668,7 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
     // the common properties for all events
     $base = new stdClass();
     $base->description  = format_module_intro('workshop', $workshop, $cmid, false);
+    $base->format       = FORMAT_HTML;
     $base->courseid     = $workshop->course;
     $base->groupid      = 0;
     $base->userid       = 0;

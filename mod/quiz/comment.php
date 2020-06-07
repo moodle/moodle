@@ -87,7 +87,7 @@ if (data_submitted() && confirm_sesskey()) {
 
         // Log this action.
         $params = array(
-            'objectid' => $attemptobj->get_question_attempt($slot)->get_question()->id,
+            'objectid' => $attemptobj->get_question_attempt($slot)->get_question_id(),
             'courseid' => $attemptobj->get_courseid(),
             'context' => context_module::instance($attemptobj->get_cmid()),
             'other' => array(

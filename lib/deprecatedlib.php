@@ -3406,3 +3406,420 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
     core_collator::asort_objects_by_property($return, 'title');
     return $return;
 }
+
+/**
+ * Runs a single cron task. This function assumes it is displaying output in pseudo-CLI mode.
+ *
+ * The function will fail if the task is disabled.
+ *
+ * Warning: Because this function closes the browser session, it may not be safe to continue
+ * with other processing (other than displaying the rest of the page) after using this function!
+ *
+ * @deprecated since Moodle 3.9 MDL-63580. Please use the \core\task\manager::run_from_cli($task).
+ * @todo final deprecation. To be removed in Moodle 4.3 MDL-63594.
+ * @param \core\task\scheduled_task $task Task to run
+ * @return bool True if cron run successful
+ */
+function cron_run_single_task(\core\task\scheduled_task $task) {
+    debugging('cron_run_single_task() is deprecated. Please use \\core\task\manager::run_from_cli() instead.',
+        DEBUG_DEVELOPER);
+    return \core\task\manager::run_from_cli($task);
+}
+
+/**
+ * Executes cron functions for a specific type of plugin.
+ *
+ * @param string $plugintype Plugin type (e.g. 'report')
+ * @param string $description If specified, will display 'Starting (whatever)'
+ *   and 'Finished (whatever)' lines, otherwise does not display
+ *
+ * @deprecated since Moodle 3.9 MDL-52846. Please use new task API.
+ * @todo MDL-61165 This will be deleted in Moodle 4.3.
+ */
+function cron_execute_plugin_type($plugintype, $description = null) {
+    global $DB;
+
+    // Get list from plugin => function for all plugins.
+    $plugins = get_plugin_list_with_function($plugintype, 'cron');
+
+    // Modify list for backward compatibility (different files/names).
+    $plugins = cron_bc_hack_plugin_functions($plugintype, $plugins);
+
+    // Return if no plugins with cron function to process.
+    if (!$plugins) {
+        return;
+    }
+
+    if ($description) {
+        mtrace('Starting '.$description);
+    }
+
+    foreach ($plugins as $component => $cronfunction) {
+        $dir = core_component::get_component_directory($component);
+
+        // Get cron period if specified in version.php, otherwise assume every cron.
+        $cronperiod = 0;
+        if (file_exists("$dir/version.php")) {
+            $plugin = new stdClass();
+            include("$dir/version.php");
+            if (isset($plugin->cron)) {
+                $cronperiod = $plugin->cron;
+            }
+        }
+
+        // Using last cron and cron period, don't run if it already ran recently.
+        $lastcron = get_config($component, 'lastcron');
+        if ($cronperiod && $lastcron) {
+            if ($lastcron + $cronperiod > time()) {
+                // Do not execute cron yet.
+                continue;
+            }
+        }
+
+        mtrace('Processing cron function for ' . $component . '...');
+        debugging("Use of legacy cron is deprecated ($cronfunction). Please use scheduled tasks.", DEBUG_DEVELOPER);
+        cron_trace_time_and_memory();
+        $pre_dbqueries = $DB->perf_get_queries();
+        $pre_time = microtime(true);
+
+        $cronfunction();
+
+        mtrace("done. (" . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries, " .
+                round(microtime(true) - $pre_time, 2) . " seconds)");
+
+        set_config('lastcron', time(), $component);
+        core_php_time_limit::raise();
+    }
+
+    if ($description) {
+        mtrace('Finished ' . $description);
+    }
+}
+
+/**
+ * Used to add in old-style cron functions within plugins that have not been converted to the
+ * new standard API. (The standard API is frankenstyle_name_cron() in lib.php; some types used
+ * cron.php and some used a different name.)
+ *
+ * @param string $plugintype Plugin type e.g. 'report'
+ * @param array $plugins Array from plugin name (e.g. 'report_frog') to function name (e.g.
+ *   'report_frog_cron') for plugin cron functions that were already found using the new API
+ * @return array Revised version of $plugins that adds in any extra plugin functions found by
+ *   looking in the older location
+ *
+ * @deprecated since Moodle 3.9 MDL-52846. Please use new task API.
+ * @todo MDL-61165 This will be deleted in Moodle 4.3.
+ */
+function cron_bc_hack_plugin_functions($plugintype, $plugins) {
+    global $CFG; // Mandatory in case it is referenced by include()d PHP script.
+
+    if ($plugintype === 'report') {
+        // Admin reports only - not course report because course report was
+        // never implemented before, so doesn't need BC.
+        foreach (core_component::get_plugin_list($plugintype) as $pluginname => $dir) {
+            $component = $plugintype . '_' . $pluginname;
+            if (isset($plugins[$component])) {
+                // We already have detected the function using the new API.
+                continue;
+            }
+            if (!file_exists("$dir/cron.php")) {
+                // No old style cron file present.
+                continue;
+            }
+            include_once("$dir/cron.php");
+            $cronfunction = $component . '_cron';
+            if (function_exists($cronfunction)) {
+                $plugins[$component] = $cronfunction;
+            } else {
+                debugging("Invalid legacy cron.php detected in $component, " .
+                        "please use lib.php instead");
+            }
+        }
+    } else if (strpos($plugintype, 'grade') === 0) {
+        // Detect old style cron function names.
+        // Plugin gradeexport_frog used to use grade_export_frog_cron() instead of
+        // new standard API gradeexport_frog_cron(). Also applies to gradeimport, gradereport.
+        foreach (core_component::get_plugin_list($plugintype) as $pluginname => $dir) {
+            $component = $plugintype.'_'.$pluginname;
+            if (isset($plugins[$component])) {
+                // We already have detected the function using the new API.
+                continue;
+            }
+            if (!file_exists("$dir/lib.php")) {
+                continue;
+            }
+            include_once("$dir/lib.php");
+            $cronfunction = str_replace('grade', 'grade_', $plugintype) . '_' .
+                    $pluginname . '_cron';
+            if (function_exists($cronfunction)) {
+                $plugins[$component] = $cronfunction;
+            }
+        }
+    }
+
+    return $plugins;
+}
+
+/**
+ * Returns the SQL used by the participants table.
+ *
+ * @deprecated since Moodle 3.9 MDL-68612 - See \core_user\table\participants_search for an improved way to fetch participants.
+ * @param int $courseid The course id
+ * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
+ * @param int $accesssince The time since last access, 0 means any time
+ * @param int $roleid The role id, 0 means all roles and -1 no roles
+ * @param int $enrolid The enrolment id, 0 means all enrolment methods will be returned.
+ * @param int $statusid The user enrolment status, -1 means all enrolments regardless of the status will be returned, if allowed.
+ * @param string|array $search The search that was performed, empty means perform no search
+ * @param string $additionalwhere Any additional SQL to add to where
+ * @param array $additionalparams The additional params
+ * @return array
+ */
+function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $roleid = 0, $enrolid = 0, $statusid = -1,
+                                   $search = '', $additionalwhere = '', $additionalparams = array()) {
+    global $DB, $USER, $CFG;
+
+    $deprecatedtext = __FUNCTION__ . '() is deprecated. ' .
+                 'Please use \core\table\participants_search::class with table filtersets instead.';
+    debugging($deprecatedtext, DEBUG_DEVELOPER);
+
+    // Get the context.
+    $context = \context_course::instance($courseid, MUST_EXIST);
+
+    $isfrontpage = ($courseid == SITEID);
+
+    // Default filter settings. We only show active by default, especially if the user has no capability to review enrolments.
+    $onlyactive = true;
+    $onlysuspended = false;
+    if (has_capability('moodle/course:enrolreview', $context) && (has_capability('moodle/course:viewsuspendedusers', $context))) {
+        switch ($statusid) {
+            case ENROL_USER_ACTIVE:
+                // Nothing to do here.
+                break;
+            case ENROL_USER_SUSPENDED:
+                $onlyactive = false;
+                $onlysuspended = true;
+                break;
+            default:
+                // If the user has capability to review user enrolments, but statusid is set to -1, set $onlyactive to false.
+                $onlyactive = false;
+                break;
+        }
+    }
+
+    list($esql, $params) = get_enrolled_sql($context, null, $groupid, $onlyactive, $onlysuspended, $enrolid);
+
+    $joins = array('FROM {user} u');
+    $wheres = array();
+
+    $userfields = get_extra_user_fields($context);
+    $userfieldssql = user_picture::fields('u', $userfields);
+
+    if ($isfrontpage) {
+        $select = "SELECT $userfieldssql, u.lastaccess";
+        $joins[] = "JOIN ($esql) e ON e.id = u.id"; // Everybody on the frontpage usually.
+        if ($accesssince) {
+            $wheres[] = user_get_user_lastaccess_sql($accesssince);
+        }
+    } else {
+        $select = "SELECT $userfieldssql, COALESCE(ul.timeaccess, 0) AS lastaccess";
+        $joins[] = "JOIN ($esql) e ON e.id = u.id"; // Course enrolled users only.
+        // Not everybody has accessed the course yet.
+        $joins[] = 'LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid)';
+        $params['courseid'] = $courseid;
+        if ($accesssince) {
+            $wheres[] = user_get_course_lastaccess_sql($accesssince);
+        }
+    }
+
+    // Performance hacks - we preload user contexts together with accounts.
+    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+    $ccjoin = 'LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)';
+    $params['contextlevel'] = CONTEXT_USER;
+    $select .= $ccselect;
+    $joins[] = $ccjoin;
+
+    // Limit list to users with some role only.
+    if ($roleid) {
+        // We want to query both the current context and parent contexts.
+        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true),
+            SQL_PARAMS_NAMED, 'relatedctx');
+
+        // Get users without any role.
+        if ($roleid == -1) {
+            $wheres[] = "u.id NOT IN (SELECT userid FROM {role_assignments} WHERE contextid $relatedctxsql)";
+            $params = array_merge($params, $relatedctxparams);
+        } else {
+            $wheres[] = "u.id IN (SELECT userid FROM {role_assignments} WHERE roleid = :roleid AND contextid $relatedctxsql)";
+            $params = array_merge($params, array('roleid' => $roleid), $relatedctxparams);
+        }
+    }
+
+    if (!empty($search)) {
+        if (!is_array($search)) {
+            $search = [$search];
+        }
+        foreach ($search as $index => $keyword) {
+            $searchkey1 = 'search' . $index . '1';
+            $searchkey2 = 'search' . $index . '2';
+            $searchkey3 = 'search' . $index . '3';
+            $searchkey4 = 'search' . $index . '4';
+            $searchkey5 = 'search' . $index . '5';
+            $searchkey6 = 'search' . $index . '6';
+            $searchkey7 = 'search' . $index . '7';
+
+            $conditions = array();
+            // Search by fullname.
+            $fullname = $DB->sql_fullname('u.firstname', 'u.lastname');
+            $conditions[] = $DB->sql_like($fullname, ':' . $searchkey1, false, false);
+
+            // Search by email.
+            $email = $DB->sql_like('email', ':' . $searchkey2, false, false);
+            if (!in_array('email', $userfields)) {
+                $maildisplay = 'maildisplay' . $index;
+                $userid1 = 'userid' . $index . '1';
+                // Prevent users who hide their email address from being found by others
+                // who aren't allowed to see hidden email addresses.
+                $email = "(". $email ." AND (" .
+                        "u.maildisplay <> :$maildisplay " .
+                        "OR u.id = :$userid1". // User can always find himself.
+                        "))";
+                $params[$maildisplay] = core_user::MAILDISPLAY_HIDE;
+                $params[$userid1] = $USER->id;
+            }
+            $conditions[] = $email;
+
+            // Search by idnumber.
+            $idnumber = $DB->sql_like('idnumber', ':' . $searchkey3, false, false);
+            if (!in_array('idnumber', $userfields)) {
+                $userid2 = 'userid' . $index . '2';
+                // Users who aren't allowed to see idnumbers should at most find themselves
+                // when searching for an idnumber.
+                $idnumber = "(". $idnumber . " AND u.id = :$userid2)";
+                $params[$userid2] = $USER->id;
+            }
+            $conditions[] = $idnumber;
+
+            if (!empty($CFG->showuseridentity)) {
+                // Search all user identify fields.
+                $extrasearchfields = explode(',', $CFG->showuseridentity);
+                foreach ($extrasearchfields as $extrasearchfield) {
+                    if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
+                        // Already covered above. Search by country not supported.
+                        continue;
+                    }
+                    $param = $searchkey3 . $extrasearchfield;
+                    $condition = $DB->sql_like($extrasearchfield, ':' . $param, false, false);
+                    $params[$param] = "%$keyword%";
+                    if (!in_array($extrasearchfield, $userfields)) {
+                        // User cannot see this field, but allow match if their own account.
+                        $userid3 = 'userid' . $index . '3' . $extrasearchfield;
+                        $condition = "(". $condition . " AND u.id = :$userid3)";
+                        $params[$userid3] = $USER->id;
+                    }
+                    $conditions[] = $condition;
+                }
+            }
+
+            // Search by middlename.
+            $middlename = $DB->sql_like('middlename', ':' . $searchkey4, false, false);
+            $conditions[] = $middlename;
+
+            // Search by alternatename.
+            $alternatename = $DB->sql_like('alternatename', ':' . $searchkey5, false, false);
+            $conditions[] = $alternatename;
+
+            // Search by firstnamephonetic.
+            $firstnamephonetic = $DB->sql_like('firstnamephonetic', ':' . $searchkey6, false, false);
+            $conditions[] = $firstnamephonetic;
+
+            // Search by lastnamephonetic.
+            $lastnamephonetic = $DB->sql_like('lastnamephonetic', ':' . $searchkey7, false, false);
+            $conditions[] = $lastnamephonetic;
+
+            $wheres[] = "(". implode(" OR ", $conditions) .") ";
+            $params[$searchkey1] = "%$keyword%";
+            $params[$searchkey2] = "%$keyword%";
+            $params[$searchkey3] = "%$keyword%";
+            $params[$searchkey4] = "%$keyword%";
+            $params[$searchkey5] = "%$keyword%";
+            $params[$searchkey6] = "%$keyword%";
+            $params[$searchkey7] = "%$keyword%";
+        }
+    }
+
+    if (!empty($additionalwhere)) {
+        $wheres[] = $additionalwhere;
+        $params = array_merge($params, $additionalparams);
+    }
+
+    $from = implode("\n", $joins);
+    if ($wheres) {
+        $where = 'WHERE ' . implode(' AND ', $wheres);
+    } else {
+        $where = '';
+    }
+
+    return array($select, $from, $where, $params);
+}
+
+/**
+ * Returns the total number of participants for a given course.
+ *
+ * @deprecated since Moodle 3.9 MDL-68612 - See \core_user\table\participants_search for an improved way to fetch participants.
+ * @param int $courseid The course id
+ * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
+ * @param int $accesssince The time since last access, 0 means any time
+ * @param int $roleid The role id, 0 means all roles
+ * @param int $enrolid The applied filter for the user enrolment ID.
+ * @param int $status The applied filter for the user's enrolment status.
+ * @param string|array $search The search that was performed, empty means perform no search
+ * @param string $additionalwhere Any additional SQL to add to where
+ * @param array $additionalparams The additional params
+ * @return int
+ */
+function user_get_total_participants($courseid, $groupid = 0, $accesssince = 0, $roleid = 0, $enrolid = 0, $statusid = -1,
+                                     $search = '', $additionalwhere = '', $additionalparams = array()) {
+    global $DB;
+
+    $deprecatedtext = __FUNCTION__ . '() is deprecated. ' .
+                      'Please use \core\table\participants_search::class with table filtersets instead.';
+    debugging($deprecatedtext, DEBUG_DEVELOPER);
+
+    list($select, $from, $where, $params) = user_get_participants_sql($courseid, $groupid, $accesssince, $roleid, $enrolid,
+        $statusid, $search, $additionalwhere, $additionalparams);
+
+    return $DB->count_records_sql("SELECT COUNT(u.id) $from $where", $params);
+}
+
+/**
+ * Returns the participants for a given course.
+ *
+ * @deprecated since Moodle 3.9 MDL-68612 - See \core_user\table\participants_search for an improved way to fetch participants.
+ * @param int $courseid The course id
+ * @param int $groupid The groupid, 0 means all groups and USERSWITHOUTGROUP no group
+ * @param int $accesssince The time since last access
+ * @param int $roleid The role id
+ * @param int $enrolid The applied filter for the user enrolment ID.
+ * @param int $status The applied filter for the user's enrolment status.
+ * @param string $search The search that was performed
+ * @param string $additionalwhere Any additional SQL to add to where
+ * @param array $additionalparams The additional params
+ * @param string $sort The SQL sort
+ * @param int $limitfrom return a subset of records, starting at this point (optional).
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+ * @return moodle_recordset
+ */
+function user_get_participants($courseid, $groupid = 0, $accesssince, $roleid, $enrolid = 0, $statusid, $search,
+                               $additionalwhere = '', $additionalparams = array(), $sort = '', $limitfrom = 0, $limitnum = 0) {
+    global $DB;
+
+    $deprecatedtext = __FUNCTION__ . '() is deprecated. ' .
+                      'Please use \core\table\participants_search::class with table filtersets instead.';
+    debugging($deprecatedtext, DEBUG_DEVELOPER);
+
+    list($select, $from, $where, $params) = user_get_participants_sql($courseid, $groupid, $accesssince, $roleid, $enrolid,
+        $statusid, $search, $additionalwhere, $additionalparams);
+
+    return $DB->get_recordset_sql("$select $from $where $sort", $params, $limitfrom, $limitnum);
+}

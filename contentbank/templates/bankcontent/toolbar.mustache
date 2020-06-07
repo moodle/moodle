@@ -1,0 +1,76 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_contentbank/bankcontent/toolbar
+
+    Example context (json):
+    {
+        "tools": [
+            {
+                "name": "Add",
+                "dropdown": true,
+                "link": "http://something/contentbank/edit.php?contextid=1",
+                "contenttypes": [
+                    {
+                        "name": "h5p",
+                        "baseurl": "http://something/contentbank/edit.php?contextid=1&plugin=h5p",
+                        "types": [
+                            {
+                                "typename": "H5P Interactive Content"
+                            },
+                            {
+                                "typename": "Accordion",
+                                "typeeditorparams": "library=Accordion-1.4",
+                                "typeicon": "http://something/pluginfile.php/1/core_h5p/libraries/13/H5P.Accordion-1.4/icon.svg"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Upload",
+                "link": "http://something/contentbank/contenttype/h5p/view.php?url=http://something/pluginfile.php/1/contentbank/public/accordion.h5p",
+                "icon" : "i/upload"
+            },
+            {
+                "icon": "i/export"
+            }
+        ]
+    }
+
+}}
+
+{{#tools}}
+    {{#dropdown}}
+        {{>core_contentbank/bankcontent/toolbar_dropdown}}
+    {{/dropdown}}
+    {{^dropdown}}
+        <a href="{{{ link }}}" class="icon-no-margin btn btn-secondary" title="{{{ name }}}">
+            {{#pix}} {{{ icon }}} {{/pix}} {{{ name }}}
+        </a>
+    {{/dropdown}}
+{{/tools}}
+<button class="icon-no-margin btn btn-secondary {{^viewlist}}active{{/viewlist}} ml-2"
+title="{{#str}}  displayicons, contentbank  {{/str}}"
+data-action="viewgrid">
+    {{#pix}}a/view_icon_active, core, {{#str}} displayicons, contentbank {{/str}} {{/pix}}
+</button>
+<button class="icon-no-margin btn btn-secondary {{#viewlist}}active{{/viewlist}}"
+title="{{#str}} displaydetails, contentbank {{/str}}"
+data-action="viewlist">
+    {{#pix}}t/viewdetails, core, {{#str}} displaydetails, contentbank {{/str}} {{/pix}}
+</button>

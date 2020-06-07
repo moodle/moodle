@@ -111,11 +111,15 @@ class testing_repository_generator extends component_generator_base {
      * @return stdClass repository instance record
      */
     public function create_instance($record = null, array $options = null) {
-        global $CFG, $DB;
+        global $CFG, $DB, $PAGE;
         require_once($CFG->dirroot . '/repository/lib.php');
 
         $this->instancecount++;
         $record = (array) $record;
+
+        // Creating a repository is a back end operation, which should not cause any output to happen.
+        // This will allow us to check that the theme was not initialised while creating the repository instance.
+        $outputstartedbefore = $PAGE->get_where_theme_was_initialised();
 
         $typeid = $DB->get_field('repository', 'id', array('type' => $this->get_typename()), MUST_EXIST);
         $instanceoptions = repository::static_function($this->get_typename(), 'get_instance_option_names');
@@ -144,6 +148,18 @@ class testing_repository_generator extends component_generator_base {
             }
 
             $id = repository::static_function($this->get_typename(), 'create', $this->get_typename(), 0, $context, $record);
+        }
+
+        // If the theme was initialised while creating the repository instance, something somewhere called an output
+        // function. Rather than leaving this as a hard-to-debug situation, let's make it fail with a clear error.
+        $outputstartedafter = $PAGE->get_where_theme_was_initialised();
+
+        if ($outputstartedbefore === null && $outputstartedafter !== null) {
+            throw new coding_exception('Creating a repository_' . $this->get_typename() . ' initialised the theme and output!',
+                'This should not happen. Creating a repository should be a pure back-end operation. Unnecessarily initialising ' .
+                'the output mechanism at the wrong time can cause subtle bugs and is a significant performance hit. There is ' .
+                'likely a call to an output function that caused it:' . PHP_EOL . PHP_EOL .
+                format_backtrace($outputstartedafter, true));
         }
 
         return $DB->get_record('repository_instances', array('id' => $id), '*', MUST_EXIST);

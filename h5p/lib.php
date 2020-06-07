@@ -94,6 +94,7 @@ function core_h5p_pluginfile($course, $cm, $context, string $filearea, array $ar
             }
             $itemid = array_shift($args);
             break;
+        case \core_h5p\file_storage::EDITOR_FILEAREA:
         case \core_h5p\file_storage::CACHED_ASSETS_FILEAREA:
         case \core_h5p\file_storage::EXPORT_FILEAREA:
             $itemid = 0;

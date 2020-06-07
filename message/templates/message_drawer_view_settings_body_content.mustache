@@ -39,20 +39,23 @@
     <h3 class="h6 font-weight-bold">{{#str}} privacy, message {{/str}}</h3>
     <p>{{#str}} privacy_desc, message {{/str}}</p>
     <div data-preference="blocknoncontacts" class="mb-3">
-        {{#privacy}}
-            <div class="custom-control custom-radio mb-2">
-                <input
-                    type="radio"
-                    name="message_blocknoncontacts"
-                    class="custom-control-input"
-                    id="block-noncontacts-{{uniqid}}-{{value}}"
-                    value="{{value}}"
-                >
-                <label class="custom-control-label ml-2" for="block-noncontacts-{{uniqid}}-{{value}}">
-                    {{text}}
-                </label>
-            </div>
-        {{/privacy}}
+        <fieldset>
+            <legend class="sr-only">{{#str}} contactableprivacy, message {{/str}}</legend>
+            {{#privacy}}
+                <div class="custom-control custom-radio mb-2">
+                    <input
+                        type="radio"
+                        name="message_blocknoncontacts"
+                        class="custom-control-input"
+                        id="block-noncontacts-{{uniqid}}-{{value}}"
+                        value="{{value}}"
+                    >
+                    <label class="custom-control-label ml-2" for="block-noncontacts-{{uniqid}}-{{value}}">
+                        {{text}}
+                    </label>
+                </div>
+            {{/privacy}}
+        </fieldset>
     </div>
 
     <div class="hidden" data-region="notification-preference-container">

@@ -97,8 +97,8 @@ class core_weblib_format_text_testcase extends advanced_testcase {
     }
 
     public function test_format_text_overflowdiv() {
-        $this->assertEquals('<div class="no-overflow"><p>:-)</p></div>',
-                format_text('<p>:-)</p>', FORMAT_HTML, array('overflowdiv' => true)));
+        $this->assertEquals('<div class="no-overflow"><p>Hello world</p></div>',
+                format_text('<p>Hello world</p>', FORMAT_HTML, array('overflowdiv' => true)));
     }
 
     /**

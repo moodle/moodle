@@ -76,10 +76,28 @@ class core_gradelib_testcase extends advanced_testcase {
         $letter->contextid = $context->id;
         $DB->insert_record('grade_letters', $letter);
 
+        // Pre-warm the cache, ensure that that the letter is cached.
+        $cache = cache::make('core', 'grade_letters');
+
+        // Check that the cache is empty beforehand.
+        $letters = $cache->get($context->id);
+        $this->assertFalse($letters);
+
+        // Call the function.
+        grade_get_letters($context);
+
+        $letters = $cache->get($context->id);
+        $this->assertEquals(1, count($letters));
+        $this->assertTrue(in_array($letter->letter, $letters));
+
         remove_grade_letters($context, false);
 
         // Confirm grade letter was deleted.
         $this->assertEquals(0, $DB->count_records('grade_letters'));
+
+        // Confirm grade letter is also deleted from cache.
+        $letters = $cache->get($context->id);
+        $this->assertFalse($letters);
     }
 
     /**
@@ -227,5 +245,60 @@ class core_gradelib_testcase extends advanced_testcase {
                 $d1,
             ],
         ];
+    }
+
+    /**
+     * Test the caching of grade letters.
+     */
+    public function test_get_grade_letters() {
+
+        $this->resetAfterTest();
+
+        // Setup some basics.
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $cache = cache::make('core', 'grade_letters');
+        $letters = $cache->get($context->id);
+
+        // Make sure the cache is empty.
+        $this->assertFalse($letters);
+
+        // Now check to see if the letters get cached.
+        $actual = grade_get_letters($context);
+
+        $expected = $cache->get($context->id);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Test custom letters.
+     */
+    public function test_get_grade_letters_custom() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $cache = cache::make('core', 'grade_letters');
+        $letters = $cache->get($context->id);
+
+        // Make sure the cache is empty.
+        $this->assertFalse($letters);
+
+        // Add a grade letter to the course.
+        $letter = new stdClass();
+        $letter->letter = 'M';
+        $letter->lowerboundary = '100';
+        $letter->contextid = $context->id;
+        $DB->insert_record('grade_letters', $letter);
+
+        $actual = grade_get_letters($context);
+        $expected = $cache->get($context->id);
+
+        $this->assertEquals($expected, $actual);
     }
 }

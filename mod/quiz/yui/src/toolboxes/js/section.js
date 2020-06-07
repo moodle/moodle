@@ -1,5 +1,3 @@
-/* global TOOLBOX, BODY, SELECTOR */
-
 /**
  * Section toolbox class.
  *

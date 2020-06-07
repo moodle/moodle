@@ -53,6 +53,8 @@ abstract class action_column_base extends column_base {
 
     public function get_required_fields() {
         // Createdby is required for permission checks.
-        return array('q.id', 'q.createdby', 'qc.contextid');
+        // Qtype so we can easily avoid applying actions to question types that
+        // are no longer installed.
+        return ['q.id', 'q.qtype', 'q.createdby', 'qc.contextid'];
     }
 }

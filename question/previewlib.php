@@ -240,7 +240,7 @@ function question_preview_question_pluginfile($course, $context, $component,
 
     $quba = question_engine::load_questions_usage_by_activity($qubaid);
 
-    if (!question_has_capability_on($quba->get_question($slot), 'use')) {
+    if (!question_has_capability_on($quba->get_question($slot, false), 'use')) {
         send_file_not_found();
     }
 

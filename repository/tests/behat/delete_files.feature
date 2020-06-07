@@ -30,7 +30,7 @@ Feature: Delete files and folders from the file manager
     And I follow "Manage private files"
     And I click on "Display folder with file details" "link"
     And I set the field "Select file 'empty.txt'" to "1"
-    When I click on "Delete selected" "link"
+    When I click on "Delete" "link"
     Then I should see "Are you sure you want to delete the selected 1 file(s)?"
     When I click on "OK" "button" in the "Confirm" "dialogue"
     Then I should not see "empty.txt"
@@ -40,7 +40,7 @@ Feature: Delete files and folders from the file manager
     Then I should not see "empty.txt"
     But I should see "Delete me later"
     And I set the field "Select file 'Delete me later'" to "1"
-    And I click on "Delete selected" "link"
+    And I click on "Delete" "link"
     And I click on "OK" "button" in the "Confirm" "dialogue"
     Then I should not see "Delete me later"
     When I press "Save changes"
@@ -58,7 +58,7 @@ Feature: Delete files and folders from the file manager
     And I click on "Display folder with file details" "link"
     And I set the field "Select file 'empty.txt'" to "1"
     And I set the field "Select file 'Delete me'" to "1"
-    When I click on "Delete selected" "link"
+    When I click on "Delete" "link"
     Then I should see "Are you sure you want to delete the selected 2 file(s)?"
     When I click on "OK" "button" in the "Confirm" "dialogue"
     Then I should not see "Delete me"
@@ -84,7 +84,7 @@ Feature: Delete files and folders from the file manager
       | Select file 'empty.txt' | 1 |
       | Select file 'Delete me' | 1 |
       | Select file 'Delete me too' | 1 |
-    When I click on "Delete selected" "link"
+    When I click on "Delete" "link"
     Then I should see "Are you sure you want to delete the selected 3 file(s)?"
     When I click on "OK" "button" in the "Confirm" "dialogue"
     Then I should not see "Delete me"

@@ -32,7 +32,6 @@ function xmldb_message_airnotifier_install() {
 
     $provider = new stdClass();
     $provider->name = 'airnotifier';
-    $provider->enabled = 0;
     $DB->insert_record('message_processors', $provider);
 
     return $result;

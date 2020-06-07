@@ -2,6 +2,16 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.9 ===
+* Following function has been deprecated, please use \core\task\manager::run_from_cli().
+    - cron_run_single_task()
+* Following class has been deprecated, please use \core\task\manager.
+    - \tool_task\run_from_cli
+* Following CLI scripts has been deprecated:
+  - admin/tool/task/cli/schedule_task.php please use admin/cli/scheduled_task.php
+  - admin/tool/task/cli/adhoc_task.php please use admin/cli/adhoc_task.php
+* Old Safe Exam Browser quiz access rule (quizaccess_safebrowser) replaced by new Safe Exam Browser access rule (quizaccess_seb).
+  Experimental setting enablesafebrowserintegration was deleted.
+* New CFPropertyList library has been added to Moodle core in /lib/plist.
 * behat_data_generators::the_following_exist() has been removed, please use
   behat_data_generators::the_following_entities_exist() instead. See MDL-67691 for more info.
 * admin/tool/task/cli/adhoc_task.php now observers the concurrency limits.
@@ -38,6 +48,44 @@ information provided here is intended especially for developers.
 * H5P libraries have been moved from /lib/h5p to h5p/h5plib as an h5plib plugintype.
 * mdn-polyfills has been renamed to polyfills. The reason there is no polyfill from the MDN is
   because there is no example polyfills on the MDN for this functionality.
+* AJAX pages can be called without requiring a session lock if they set READ_ONLY_SESSION to true, eg.
+  define('READ_ONLY_SESSION', true); Note - this also requires $CFG->enable_read_only_sessions to be set to true.
+* External functions can be called without requiring a session lock if they define 'readonlysession' => true in
+  db/services.php. Note - this also requires $CFG->enable_read_only_sessions to be set to true.
+* database_manager::check_database_schema() now checks for missing and extra indexes.
+* Implement a more direct xsendfile_file() method for an alternative_file_system_class
+* A new `dynamic` table interface has been defined, which allows any `flexible_table` to be converted into a table which
+  is updatable via ajax calls. See MDL-68495 and `\core_table\dynamic` for further information.
+* The core/notification module has been updated to use AMD modals for its confirmation and alert dialogues.
+  The confirmation dialogue no longer has a configurable "No" button as per similar changes in MDL-59759.
+  This set of confirmation modals was unintentionally missed from that deprecation process.
+* The download_as_dataformat() method has been deprecated. Please use \core\dataformat::download_data() instead
+* The following functions have been updated to support passing in an array of group IDs (but still support passing in a single ID):
+  * groups_get_members_join()
+  * groups_get_members_ids_sql()
+* Additional parameters were added to core_get_user_dates:
+    - type: specifies the calendar type. Optional, defaults to Gregorian.
+    - fixday: Whether to remove leading zero for day. Optional, defaults to 1.
+    - fixhour: Whether to remove leading zero for hour. Optional, defaults to 1.
+* Legacy cron has been deprecated and will be removed in Moodle 4.3. This includes the functions:
+  - cron_execute_plugin_type()
+  - cron_bc_hack_plugin_functions()
+  Please, use the Task API instead: https://docs.moodle.org/dev/Task_API
+* Introduce new hooks for plugin developers:
+    - <component>_can_course_category_delete($category)
+    - <component>_can_course_category_delete_move($category, $newcategory)
+  These hooks allow plugin developers greater control over category deletion. Plugin can return false in those
+  functions if category deletion or deletion with content move to the new parent category is not permitted.
+  Both $category and $newcategory params are instances of core_course_category class.
+    - <component>_pre_course_category_delete_move($category, $newcategory)
+  This hook is expanding functionality of existing <component>_pre_course_category_delete hook and allow plugin developers
+  to execute code prior to category deletion when its content is moved to another category.
+  Both $category and $newcategory params are instances of core_course_category class.
+    - <component>_get_course_category_contents($category)
+  This hook allow plugin developers to add information that is displayed on category deletion form. Function should
+  return string, which will be added to the list of category contents shown on the form. $category param is an instance
+  of core_course_category class.
+* Data generator create_user in both unittests and behat now validates user fields and triggers user_created event
 
 === 3.8 ===
 * Add CLI option to notify all cron tasks to stop: admin/cli/cron.php --stop

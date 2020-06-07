@@ -17,7 +17,7 @@ Feature: Test importing questions from Aiken format.
     And I log in as "teacher"
     And I am on "Course 1" course homepage
 
-@javascript @_file_upload
+  @javascript @_file_upload
   Scenario: import some Aiken questions
     When I navigate to "Question bank > Import" in current page administration
     And I set the field "id_format_aiken" to "1"

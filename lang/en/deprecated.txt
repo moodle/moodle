@@ -13,6 +13,8 @@ sitemessage,core
 coursemessage,core
 addedrecip,core
 addedrecips,core
+messagecontactrequestsnotification,core_message
+messagecontactrequestsnotificationsubject,core_message
 messagingdisabled,core_message
 messagedselectedcountusersfailed,core
 backtoparticipants,core
@@ -139,3 +141,7 @@ europe/belfast,core_timezones
 pacific/ponape,core_timezones
 pacific/truk,core_timezones
 pacific/yap,core_timezones
+editsettings,core_badges
+availablelicenses,core_admin
+managelicenses,core_admin
+userfilterplaceholder,core

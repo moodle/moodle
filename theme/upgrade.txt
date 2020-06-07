@@ -4,6 +4,10 @@ information provided here is intended especially for theme designer.
 === 3.9 ===
 
 * Add class .d-print-block to #page, #page-wrapper and #page content to fix Firefox printing problems
+* A function to core_renderer has been added, secure_layout_login_info. This allows the boost and classic templates to
+  display the users full name in a secure layout.
+* Secure layout in themes boost and classic have been modified to allow language selection as they now call the
+  output.secure_layout_language_menu function.
 
 === 3.8 ===
 

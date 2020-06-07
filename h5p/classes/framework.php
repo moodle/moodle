@@ -795,6 +795,13 @@ class framework implements \H5PFrameworkInterface {
             $content['library']['libraryId'] = $mainlibrary->id;
         }
 
+        $content['disable'] = $content['disable'] ?? null;
+        // Add title to 'params' to use in the editor.
+        if (!empty($content['title'])) {
+            $params = json_decode($content['params']);
+            $params->title = $content['title'];
+            $content['params'] = json_encode($params);
+        }
         $data = [
             'jsoncontent' => $content['params'],
             'displayoptions' => $content['disable'],
@@ -1162,7 +1169,7 @@ class framework implements \H5PFrameworkInterface {
 
         $sql = "SELECT hc.id, hc.jsoncontent, hc.displayoptions, hl.id AS libraryid,
                        hl.machinename, hl.title, hl.majorversion, hl.minorversion, hl.fullscreen,
-                       hl.embedtypes, hl.semantics, hc.filtered
+                       hl.embedtypes, hl.semantics, hc.filtered, hc.pathnamehash
                   FROM {h5p} hc
                   JOIN {h5p_libraries} hl ON hl.id = hc.mainlibraryid
                  WHERE hc.id = :h5pid";
@@ -1196,8 +1203,20 @@ class framework implements \H5PFrameworkInterface {
             'libraryMinorVersion' => $data->minorversion,
             'libraryEmbedTypes' => $data->embedtypes,
             'libraryFullscreen' => $data->fullscreen,
-            'metadata' => ''
+            'metadata' => '',
+            'pathnamehash' => $data->pathnamehash
         );
+
+        $params = json_decode($data->jsoncontent);
+        if (empty($params->metadata)) {
+            $params->metadata = new \stdClass();
+        }
+        // Add title to metadata.
+        if (!empty($params->title) && empty($params->metadata->title)) {
+            $params->metadata->title = $params->title;
+        }
+        $content['metadata'] = $params->metadata;
+        $content['params'] = json_encode($params->params ?? $params);
 
         return $content;
     }
@@ -1255,6 +1274,10 @@ class framework implements \H5PFrameworkInterface {
      * Get stored setting.
      * Implements getOption.
      *
+     * To avoid updating the cache libraries when using the Hub selector,
+     * {@link \H5PEditorAjax::isContentTypeCacheUpdated}, the setting content_type_cache_updated_at
+     * always return the current time.
+     *
      * @param string $name Identifier for the setting
      * @param string $default Optional default value if settings is not set
      * @return mixed Return  Whatever has been stored as the setting
@@ -1265,6 +1288,11 @@ class framework implements \H5PFrameworkInterface {
             // defined in the displayoptions DB field.
             // This check should be removed if they are added as new H5P settings, to let admins to define the default value.
             return \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF;
+        }
+
+        // To avoid update the libraries cache using the Hub selector.
+        if ($name == 'content_type_cache_updated_at') {
+            return time();
         }
 
         $value = get_config('core_h5p', $name);

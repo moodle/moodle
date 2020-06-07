@@ -20,334 +20,343 @@
  * @copyright  2017 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/templates',
-        'jquery',
-        'core/str',
-        'core/config',
-        'core/notification',
-        'core/modal_factory',
-        'core/modal_events',
-        'core/fragment',
-        'core/ajax'
-    ],
-    function(Template, $, Str, Config, Notification, ModalFactory, ModalEvents, Fragment, Ajax) {
 
-        /**
-         * Action selectors.
-         *
-         * @access private
-         * @type {{EDIT_ENROLMENT: string, SHOW_DETAILS: string, UNENROL: string}}
-         */
-        var SELECTORS = {
-            EDIT_ENROLMENT: '[data-action="editenrolment"]',
-            SHOW_DETAILS: '[data-action="showdetails"]',
-            UNENROL: '[data-action="unenrol"]'
-        };
+import * as DynamicTable from 'core_table/dynamic';
+import * as Repository from './repository';
+import * as Str from 'core/str';
+import DynamicTableSelectors from 'core_table/local/dynamic/selectors';
+import Fragment from 'core/fragment';
+import ModalEvents from 'core/modal_events';
+import ModalFactory from 'core/modal_factory';
+import Notification from 'core/notification';
+import Templates from 'core/templates';
+import {add as notifyUser} from 'core/toast';
 
-        /**
-         * Constructor
-         *
-         * @param {Object} options Object containing options. The only valid option at this time is contextid.
-         * Each call to templates.render gets it's own instance of this class.
-         */
-        var StatusFieldActions = function(options) {
-            this.contextid = options.contextid;
-            this.courseid = options.courseid;
+const Selectors = {
+    editEnrolment: '[data-action="editenrolment"]',
+    showDetails: '[data-action="showdetails"]',
+    unenrol: '[data-action="unenrol"]',
+    statusElement: '[data-status]',
+};
 
-            // Bind click event to editenrol buttons.
-            this.bindEditEnrol();
+/**
+ * Get the dynamic table from the specified link.
+ *
+ * @param {HTMLElement} link
+ * @returns {HTMLElement}
+ */
+const getDynamicTableFromLink = link => link.closest(DynamicTableSelectors.main.region);
 
-            // Bind click event to unenrol buttons.
-            this.bindUnenrol();
+/**
+ * Get the status container from the specified link.
+ *
+ * @param {HTMLElement} link
+ * @returns {HTMLElement}
+ */
+const getStatusContainer = link => link.closest(Selectors.statusElement);
 
-            // Bind click event to status details buttons.
-            this.bindStatusDetails();
-        };
-        // Class variables and functions.
+/**
+ * Get user enrolment id from the specified link
+ *
+ * @param {HTMLElement} link
+ * @returns {Number}
+ */
+const getUserEnrolmentIdFromLink = link => link.getAttribute('rel');
 
-        /** @var {number} courseid The course ID. */
-        StatusFieldActions.prototype.courseid = 0;
+/**
+ * Register all event listeners for the status fields.
+ *
+ * @param {Number} contextId
+ * @param {Number} uniqueId
+ */
+const registerEventListeners = (contextId, uniqueId) => {
+    const getBodyFunction = (userEnrolmentId, formData) => getBody(contextId, userEnrolmentId, formData);
 
-        /**
-         * Private method
-         *
-         * @method initModal
-         * @private
-         */
-        StatusFieldActions.prototype.bindEditEnrol = function() {
-            var statusFieldInstsance = this;
+    document.addEventListener('click', e => {
+        const tableRoot = e.target.closest(DynamicTableSelectors.main.fromRegionId(uniqueId));
+        if (!tableRoot) {
+            return;
+        }
 
-            $(SELECTORS.EDIT_ENROLMENT).click(function(e) {
-                e.preventDefault();
+        const editLink = e.target.closest(Selectors.editEnrolment);
+        if (editLink) {
+            e.preventDefault();
 
-                // The particular edit button that was clicked.
-                var clickedEditTrigger = $(this);
-                // Get the parent container (it contains the data attributes associated with the status field).
-                var parentContainer = clickedEditTrigger.parent();
-                // Get the name of the user whose enrolment status is being edited.
-                var fullname = parentContainer.data('fullname');
-                // Get the user enrolment ID.
-                var ueid = clickedEditTrigger.attr('rel');
+            showEditDialogue(editLink, getBodyFunction);
+        }
 
-                $.when(Str.get_string('edituserenrolment', 'enrol', fullname)).then(function(modalTitle) {
-                    return ModalFactory.create({
-                        large: true,
-                        title: modalTitle,
-                        type: ModalFactory.types.SAVE_CANCEL
-                    });
-                }).done(function(modal) {
-                    // Handle save event.
-                    modal.getRoot().on(ModalEvents.save, function(e) {
-                        // Don't close the modal yet.
-                        e.preventDefault();
-                        // Submit form data.
-                        statusFieldInstsance.submitEditFormAjax(modal);
-                    });
+        const unenrolLink = e.target.closest(Selectors.unenrol);
+        if (unenrolLink) {
+            e.preventDefault();
 
-                    // Handle hidden event.
-                    modal.getRoot().on(ModalEvents.hidden, function() {
-                        // Destroy when hidden.
-                        modal.destroy();
-                    });
+            showUnenrolConfirmation(unenrolLink);
+        }
 
-                    // Set the modal body.
-                    modal.setBody(statusFieldInstsance.getBody(ueid));
+        const showDetailsLink = e.target.closest(Selectors.showDetails);
+        if (showDetailsLink) {
+            e.preventDefault();
 
-                    // Show the modal!
-                    modal.show();
-                }).fail(Notification.exception);
-            });
-        };
-
-        /**
-         * Private method
-         *
-         * @method bindUnenrol
-         * @private
-         */
-        StatusFieldActions.prototype.bindUnenrol = function() {
-            var statusFieldInstsance = this;
-
-            $(SELECTORS.UNENROL).click(function(e) {
-                e.preventDefault();
-                var unenrolLink = $(this);
-                var parentContainer = unenrolLink.parent();
-                var strings = [
-                    {
-                        key: 'unenrol',
-                        component: 'enrol'
-                    },
-                    {
-                        key: 'unenrolconfirm',
-                        component: 'enrol',
-                        param: {
-                            user: parentContainer.data('fullname'),
-                            course: parentContainer.data('coursename'),
-                            enrolinstancename: parentContainer.data('enrolinstancename')
-                        }
-                    }
-                ];
-
-                var deleteModalPromise = ModalFactory.create({
-                    type: ModalFactory.types.SAVE_CANCEL
-                });
-
-                $.when(Str.get_strings(strings), deleteModalPromise).done(function(results, modal) {
-                    var title = results[0];
-                    var confirmMessage = results[1];
-                    modal.setTitle(title);
-                    modal.setBody(confirmMessage);
-                    modal.setSaveButtonText(title);
-
-                    // Handle confirm event.
-                    modal.getRoot().on(ModalEvents.save, function() {
-                        // Build params.
-                        var unenrolParams = {
-                            'ueid': $(unenrolLink).attr('rel')
-                        };
-                        // Don't close the modal yet.
-                        e.preventDefault();
-                        // Submit data.
-                        statusFieldInstsance.submitUnenrolFormAjax(modal, unenrolParams);
-                    });
-
-                    // Handle hidden event.
-                    modal.getRoot().on(ModalEvents.hidden, function() {
-                        // Destroy when hidden.
-                        modal.destroy();
-                    });
-
-                    // Display the delete confirmation modal.
-                    modal.show();
-                }).fail(Notification.exception);
-            });
-        };
-
-        /**
-         * Private method
-         *
-         * @method bindStatusDetails
-         * @private
-         */
-        StatusFieldActions.prototype.bindStatusDetails = function() {
-            $(SELECTORS.SHOW_DETAILS).click(function(e) {
-                e.preventDefault();
-
-                var detailsButton = $(this);
-                var parentContainer = detailsButton.parent();
-                var context = {
-                    "fullname": parentContainer.data('fullname'),
-                    "coursename": parentContainer.data('coursename'),
-                    "enrolinstancename": parentContainer.data('enrolinstancename'),
-                    "status": parentContainer.data('status'),
-                    "statusclass": parentContainer.find('span').attr('class'),
-                    "timestart": parentContainer.data('timestart'),
-                    "timeend": parentContainer.data('timeend'),
-                    "timeenrolled": parentContainer.data('timeenrolled')
-                };
-
-                // Get default string for the modal and modal type.
-                var strings = [
-                    {
-                        key: 'enroldetails',
-                        component: 'enrol'
-                    }
-                ];
-
-                // Find the edit enrolment link.
-                var editEnrolLink = detailsButton.next(SELECTORS.EDIT_ENROLMENT);
-                if (editEnrolLink.length) {
-                    // If there's an edit enrolment link for this user, clone it into the context for the modal.
-                    context.editenrollink = $('<div>').append(editEnrolLink.clone()).html();
-                }
-
-                var modalStringsPromise = Str.get_strings(strings);
-                var modalPromise = ModalFactory.create({large: true, type: ModalFactory.types.CANCEL});
-                $.when(modalStringsPromise, modalPromise).done(function(strings, modal) {
-                    var modalBodyPromise = Template.render('core_user/status_details', context);
-                    modal.setTitle(strings[0]);
-                    modal.setBody(modalBodyPromise);
-
-                    if (editEnrolLink.length) {
-                        modal.getRoot().on('click', SELECTORS.EDIT_ENROLMENT, function(e) {
-                            e.preventDefault();
-                            modal.hide();
-                            // Trigger click event for the edit enrolment link to show the edit enrolment modal.
-                            $(editEnrolLink).trigger('click');
-                        });
-                    }
-
-                    modal.show();
-
-                    // Handle hidden event.
-                    modal.getRoot().on(ModalEvents.hidden, function() {
-                        // Destroy when hidden.
-                        modal.destroy();
-                    });
-                }).fail(Notification.exception);
-            });
-        };
-
-        /**
-         * Private method
-         *
-         * @method submitEditFormAjax
-         * @param {Object} modal The the AMD modal object containing the form.
-         * @private
-         */
-        StatusFieldActions.prototype.submitEditFormAjax = function(modal) {
-            var statusFieldInstsance = this;
-            var form = modal.getRoot().find('form');
-
-            // User enrolment ID.
-            var ueid = $(form).find('[name="ue"]').val();
-
-            var request = {
-                methodname: 'core_enrol_submit_user_enrolment_form',
-                args: {
-                    formdata: form.serialize()
-                }
-            };
-
-            Ajax.call([request])[0].done(function(data) {
-                if (data.result) {
-                    // Dismiss the modal.
-                    modal.hide();
-
-                    // Reload the page, don't show changed data warnings.
-                    if (typeof window.M.core_formchangechecker !== "undefined") {
-                        window.M.core_formchangechecker.reset_form_dirty_state();
-                    }
-                    window.location.reload();
-                } else {
-                    // Serialise the form data and reload the form fragment to show validation errors.
-                    var formData = JSON.stringify(form.serialize());
-                    modal.setBody(statusFieldInstsance.getBody(ueid, formData));
-                }
-            }).fail(Notification.exception);
-        };
-
-        /**
-         * Private method
-         *
-         * @method submitUnenrolFormAjax
-         * @param {Object} modal The the AMD modal object containing the form.
-         * @param {Object} unenrolParams The unenrol parameters.
-         * @private
-         */
-        StatusFieldActions.prototype.submitUnenrolFormAjax = function(modal, unenrolParams) {
-            var request = {
-                methodname: 'core_enrol_unenrol_user_enrolment',
-                args: unenrolParams
-            };
-
-            Ajax.call([request])[0].done(function(data) {
-                if (data.result) {
-                    // Dismiss the modal.
-                    modal.hide();
-
-                    // Reload the page, don't show changed data warnings.
-                    if (typeof window.M.core_formchangechecker !== "undefined") {
-                        window.M.core_formchangechecker.reset_form_dirty_state();
-                    }
-                    window.location.reload();
-                } else {
-                    // Display an alert containing the error message
-                    Notification.alert(data.errors[0].key, data.errors[0].message);
-                }
-            }).fail(Notification.exception);
-        };
-
-        /**
-         * Private method
-         *
-         * @method getBody
-         * @private
-         * @param {Number} ueid The user enrolment ID associated with the user.
-         * @param {string} formData Serialized string of the edit enrolment form data.
-         * @return {Promise}
-         */
-        StatusFieldActions.prototype.getBody = function(ueid, formData) {
-            var params = {
-                'ueid': ueid
-            };
-            if (typeof formData !== 'undefined') {
-                params.formdata = formData;
-            }
-            return Fragment.loadFragment('enrol', 'user_enrolment_form', this.contextid, params).fail(Notification.exception);
-        };
-
-        return /** @alias module:core_user/editenrolment */ {
-            // Public variables and functions.
-            /**
-             * Every call to init creates a new instance of the class with it's own event listeners etc.
-             *
-             * @method init
-             * @public
-             * @param {object} config - config variables for the module.
-             */
-            init: function(config) {
-                (new StatusFieldActions(config));
-            }
-        };
+            showStatusDetails(showDetailsLink);
+        }
     });
+};
+
+/**
+ * Show the edit dialogue.
+ *
+ * @param {HTMLElement} link
+ * @param {Function} getBody Function to get the body for the specified user enrolment
+ */
+const showEditDialogue = (link, getBody) => {
+    const container = getStatusContainer(link);
+    const userEnrolmentId = getUserEnrolmentIdFromLink(link);
+
+    ModalFactory.create({
+        large: true,
+        title: Str.get_string('edituserenrolment', 'enrol', container.dataset.fullname),
+        type: ModalFactory.types.SAVE_CANCEL,
+        body: getBody(userEnrolmentId)
+    })
+    .then(modal => {
+        // Handle save event.
+        modal.getRoot().on(ModalEvents.save, e => {
+            // Don't close the modal yet.
+            e.preventDefault();
+
+            // Submit form data.
+            submitEditFormAjax(link, getBody, modal, userEnrolmentId, container.dataset);
+        });
+
+        // Handle hidden event.
+        modal.getRoot().on(ModalEvents.hidden, () => {
+            // Destroy when hidden.
+            modal.destroy();
+        });
+
+        // Show the modal.
+        modal.show();
+
+        return modal;
+    })
+    .catch(Notification.exception);
+};
+
+/**
+ * Show and handle the unenrolment confirmation dialogue.
+ *
+ * @param {HTMLElement} link
+ */
+const showUnenrolConfirmation = link => {
+    const container = getStatusContainer(link);
+    const userEnrolmentId = getUserEnrolmentIdFromLink(link);
+
+    ModalFactory.create({
+        type: ModalFactory.types.SAVE_CANCEL,
+    })
+    .then(modal => {
+        // Handle confirm event.
+        modal.getRoot().on(ModalEvents.save, e => {
+            // Don't close the modal yet.
+            e.preventDefault();
+
+            // Submit data.
+            submitUnenrolFormAjax(
+                link,
+                modal,
+                {
+                    ueid: userEnrolmentId,
+                },
+                container.dataset
+            );
+        });
+
+        // Handle hidden event.
+        modal.getRoot().on(ModalEvents.hidden, () => {
+            // Destroy when hidden.
+            modal.destroy();
+        });
+
+        // Display the delete confirmation modal.
+        modal.show();
+
+        const stringData = [
+            {
+                key: 'unenrol',
+                component: 'enrol',
+            },
+            {
+                key: 'unenrolconfirm',
+                component: 'enrol',
+                param: {
+                    user: container.dataset.fullname,
+                    course: container.dataset.coursename,
+                    enrolinstancename: container.dataset.enrolinstancename,
+                }
+            }
+        ];
+
+        return Promise.all([Str.get_strings(stringData), modal]);
+    })
+    .then(([strings, modal]) => {
+        modal.setTitle(strings[0]);
+        modal.setSaveButtonText(strings[0]);
+        modal.setBody(strings[1]);
+
+        return modal;
+    })
+    .catch(Notification.exception);
+};
+
+/**
+ * Show the user details dialogue.
+ *
+ * @param {HTMLElement} link
+ */
+const showStatusDetails = link => {
+    const container = getStatusContainer(link);
+
+    const context = {
+        editenrollink: '',
+        statusclass: container.querySelector('span.badge').getAttribute('class'),
+        ...container.dataset,
+    };
+
+    // Find the edit enrolment link.
+    const editEnrolLink = container.querySelector(Selectors.editEnrolment);
+    if (editEnrolLink) {
+        // If there's an edit enrolment link for this user, clone it into the context for the modal.
+        context.editenrollink = editEnrolLink.outerHTML;
+    }
+
+    ModalFactory.create({
+        large: true,
+        type: ModalFactory.types.CANCEL,
+        title: Str.get_string('enroldetails', 'enrol'),
+        body: Templates.render('core_user/status_details', context),
+    })
+    .then(modal => {
+        if (editEnrolLink) {
+            modal.getRoot().on('click', Selectors.editEnrolment, e => {
+                e.preventDefault();
+                modal.hide();
+
+                // Trigger click event for the edit enrolment link to show the edit enrolment modal.
+                editEnrolLink.click();
+            });
+        }
+
+        modal.show();
+
+        // Handle hidden event.
+        modal.getRoot().on(ModalEvents.hidden, () => modal.destroy());
+
+        return modal;
+    })
+    .catch(Notification.exception);
+};
+
+/**
+ * Submit the edit dialogue.
+ *
+ * @param {HTMLElement} clickedLink
+ * @param {Function} getBody
+ * @param {Object} modal
+ * @param {Number} userEnrolmentId
+ * @param {Object} userData
+ */
+const submitEditFormAjax = (clickedLink, getBody, modal, userEnrolmentId, userData) => {
+    const form = modal.getRoot().find('form');
+
+    Repository.submitUserEnrolmentForm(form.serialize())
+    .then(data => {
+        if (!data.result) {
+            throw data.result;
+        }
+
+        // Dismiss the modal.
+        modal.hide();
+        modal.destroy();
+
+        return data;
+    })
+    .then(() => {
+        DynamicTable.refreshTableContent(getDynamicTableFromLink(clickedLink));
+
+        return Str.get_string('enrolmentupdatedforuser', 'core_enrol', userData);
+    })
+    .then(notificationString => {
+        notifyUser(notificationString);
+
+        return;
+    })
+    .catch(() => {
+        modal.setBody(getBody(userEnrolmentId, JSON.stringify(form.serialize())));
+
+        return modal;
+    });
+};
+
+/**
+ * Submit the unenrolment form.
+ *
+ * @param {HTMLElement} clickedLink
+ * @param {Object} modal
+ * @param {Object} args
+ * @param {Object} userData
+ */
+const submitUnenrolFormAjax = (clickedLink, modal, args, userData) => {
+    Repository.unenrolUser(args.ueid)
+    .then(data => {
+        if (!data.result) {
+            // Display an alert containing the error message
+            Notification.alert(data.errors[0].key, data.errors[0].message);
+
+            return data;
+        }
+
+        // Dismiss the modal.
+        modal.hide();
+        modal.destroy();
+
+        return data;
+    })
+    .then(() => {
+        DynamicTable.refreshTableContent(getDynamicTableFromLink(clickedLink));
+
+        return Str.get_string('unenrolleduser', 'core_enrol', userData);
+    })
+    .then(notificationString => {
+        notifyUser(notificationString);
+
+        return;
+    })
+    .catch(Notification.exception);
+};
+
+/**
+ * Get the body fragment.
+ *
+ * @param {Number} contextId
+ * @param {Number} ueid The user enrolment id
+ * @param {Object} formdata
+ * @returns {Promise}
+ */
+const getBody = (contextId, ueid, formdata = null) => Fragment.loadFragment(
+    'enrol',
+    'user_enrolment_form',
+    contextId,
+    {
+        ueid,
+        formdata,
+    }
+);
+
+/**
+ * Initialise the statu field handler.
+ *
+ * @param {Number} contextid
+ * @param {Number} uniqueid
+ */
+export const init = ({contextid, uniqueid}) => {
+    registerEventListeners(contextid, uniqueid);
+};

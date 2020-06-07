@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020012300;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2020020600;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2019111200;        // Requires this Moodle version
 $plugin->component = 'message_popup';  // Full name of the plugin (used for diagnostics)

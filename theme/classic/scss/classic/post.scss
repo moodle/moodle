@@ -112,6 +112,7 @@
     .blockcolumn,
     .region-main {
         flex: 0 0 100%;
+        max-width: 100%;
         padding: 0 1rem;
         margin-bottom: 1rem;
     }
@@ -130,11 +131,21 @@
     @include page_layout(20%);
 }
 
-.block_myoverview,
-.block_recentlyaccesseditems {
-    .dashboard-card-deck {
-        .dashboard-card {
-            width: calc(33.33% - #{$card-gutter});
+@media print {
+    #page-content .region-main, {
+        max-width: 100% !important; /* stylelint-disable-line declaration-no-important */
+        flex: 0 0 100% !important; /* stylelint-disable-line declaration-no-important */
+        padding: 0 1rem 0 !important; /* stylelint-disable-line declaration-no-important */
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .block_myoverview,
+    .block_recentlyaccesseditems {
+        .dashboard-card-deck {
+            .dashboard-card {
+                width: calc(33.33% - #{$card-gutter});
+            }
         }
     }
 }

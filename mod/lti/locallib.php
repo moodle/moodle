@@ -52,7 +52,8 @@ defined('MOODLE_INTERNAL') || die;
 
 // TODO: Switch to core oauthlib once implemented - MDL-30149.
 use moodle\mod\lti as lti;
-use Firebase\JWT\JWT as JWT;
+use Firebase\JWT\JWT;
+use Firebase\JWT\JWK;
 
 global $CFG;
 require_once($CFG->dirroot.'/mod/lti/OAuth.php');
@@ -90,6 +91,8 @@ define('LTI_COURSEVISIBLE_ACTIVITYCHOOSER', 2);
 define('LTI_VERSION_1', 'LTI-1p0');
 define('LTI_VERSION_2', 'LTI-2p0');
 define('LTI_VERSION_1P3', '1.3.0');
+define('LTI_RSA_KEY', 'RSA_KEY');
+define('LTI_JWK_KEYSET', 'JWK_KEYSET');
 
 define('LTI_DEFAULT_ORGID_SITEID', 'SITEID');
 define('LTI_DEFAULT_ORGID_SITEHOST', 'SITEHOST');
@@ -495,6 +498,23 @@ function lti_get_jwt_claim_mapping() {
 }
 
 /**
+ * Return the type of the instance, using domain matching if no explicit type is set.
+ *
+ * @param  object $instance the external tool activity settings
+ * @return object|null
+ * @since  Moodle 3.9
+ */
+function lti_get_instance_type(object $instance) : ?object {
+    if (empty($instance->typeid)) {
+        if (!$tool = lti_get_tool_by_url_match($instance->toolurl, $instance->course)) {
+            $tool = lti_get_tool_by_url_match($instance->securetoolurl,  $instance->course);
+        }
+        return $tool;
+    }
+    return lti_get_type($instance->typeid);
+}
+
+/**
  * Return the launch data required for opening the external tool.
  *
  * @param  stdClass $instance the external tool activity settings
@@ -505,25 +525,13 @@ function lti_get_jwt_claim_mapping() {
 function lti_get_launch_data($instance, $nonce = '') {
     global $PAGE, $CFG, $USER;
 
-    if (empty($instance->typeid)) {
-        $tool = lti_get_tool_by_url_match($instance->toolurl, $instance->course);
-        if ($tool) {
-            $typeid = $tool->id;
-            $ltiversion = $tool->ltiversion;
-        } else {
-            $tool = lti_get_tool_by_url_match($instance->securetoolurl,  $instance->course);
-            if ($tool) {
-                $typeid = $tool->id;
-                $ltiversion = $tool->ltiversion;
-            } else {
-                $typeid = null;
-                $ltiversion = LTI_VERSION_1;
-            }
-        }
-    } else {
-        $typeid = $instance->typeid;
-        $tool = lti_get_type($typeid);
+    $tool = lti_get_instance_type($instance);
+    if ($tool) {
+        $typeid = $tool->id;
         $ltiversion = $tool->ltiversion;
+    } else {
+        $typeid = null;
+        $ltiversion = LTI_VERSION_1;
     }
 
     if ($typeid) {
@@ -605,9 +613,9 @@ function lti_get_launch_data($instance, $nonce = '') {
 
     $launchcontainer = lti_get_launch_container($instance, $typeconfig);
     $returnurlparams = array('course' => $course->id,
-                             'launch_container' => $launchcontainer,
-                             'instanceid' => $instance->id,
-                             'sesskey' => sesskey());
+        'launch_container' => $launchcontainer,
+        'instanceid' => $instance->id,
+        'sesskey' => sesskey());
 
     // Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns.
     $url = new \moodle_url('/mod/lti/return.php', $returnurlparams);
@@ -1177,7 +1185,7 @@ function lti_build_content_item_selection_request($id, $course, moodle_url $retu
         $services = lti_get_services();
         foreach ($services as $service) {
             $serviceparameters = $service->get_launch_parameters('ContentItemSelectionRequest',
-                    $course->id, $USER->id , $id);
+                $course->id, $USER->id , $id);
             foreach ($serviceparameters as $paramkey => $paramvalue) {
                 $requestparams['custom_' . $paramkey] = lti_parse_custom_parameter($toolproxy, $tool, $requestparams, $paramvalue,
                     $islti2);
@@ -1320,6 +1328,45 @@ function lti_verify_oauth_signature($typeid, $consumerkey) {
 }
 
 /**
+ * Verifies the JWT signature using a JWK keyset.
+ *
+ * @param string $jwtparam JWT parameter value.
+ * @param string $keyseturl The tool keyseturl.
+ * @param string $clientid The tool client id.
+ *
+ * @return object The JWT's payload as a PHP object
+ * @throws moodle_exception
+ * @throws UnexpectedValueException     Provided JWT was invalid
+ * @throws SignatureInvalidException    Provided JWT was invalid because the signature verification failed
+ * @throws BeforeValidException         Provided JWT is trying to be used before it's eligible as defined by 'nbf'
+ * @throws BeforeValidException         Provided JWT is trying to be used before it's been created as defined by 'iat'
+ * @throws ExpiredException             Provided JWT has since expired, as defined by the 'exp' claim
+ */
+function lti_verify_with_keyset($jwtparam, $keyseturl, $clientid) {
+    // Attempts to retrieve cached keyset.
+    $cache = cache::make('mod_lti', 'keyset');
+    $keyset = $cache->get($clientid);
+
+    try {
+        if (empty($keyset)) {
+            throw new moodle_exception('errornocachedkeysetfound', 'mod_lti');
+        }
+        $keysetarr = json_decode($keyset, true);
+        $keys = JWK::parseKeySet($keysetarr);
+        $jwt = JWT::decode($jwtparam, $keys, ['RS256']);
+    } catch (Exception $e) {
+        // Something went wrong, so attempt to update cached keyset and then try again.
+        $keyset = file_get_contents($keyseturl);
+        $keysetarr = json_decode($keyset, true);
+        $keys = JWK::parseKeySet($keysetarr);
+        $jwt = JWT::decode($jwtparam, $keys, ['RS256']);
+        // If sucessful, updates the cached keyset.
+        $cache->set($clientid, $keyset);
+    }
+    return $jwt;
+}
+
+/**
  * Verifies the JWT signature of an incoming message.
  *
  * @param int $typeid The tool type ID.
@@ -1336,6 +1383,7 @@ function lti_verify_oauth_signature($typeid, $consumerkey) {
  */
 function lti_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
     $tool = lti_get_type($typeid);
+
     // Validate parameters.
     if (!$tool) {
         throw new moodle_exception('errortooltypenotfound', 'mod_lti');
@@ -1347,16 +1395,28 @@ function lti_verify_jwt_signature($typeid, $consumerkey, $jwtparam) {
     $typeconfig = lti_get_type_config($typeid);
 
     $key = $tool->clientid ?? '';
-    $publickey = $typeconfig['publickey'] ?? '';
 
     if ($consumerkey !== $key) {
         throw new moodle_exception('errorincorrectconsumerkey', 'mod_lti');
     }
-    if (empty($publickey)) {
-        throw new moodle_exception('No public key configured');
-    }
 
-    JWT::decode($jwtparam, $publickey, array('RS256'));
+    if (empty($typeconfig['keytype']) || $typeconfig['keytype'] === LTI_RSA_KEY) {
+        $publickey = $typeconfig['publickey'] ?? '';
+        if (empty($publickey)) {
+            throw new moodle_exception('No public key configured');
+        }
+        // Attemps to verify jwt with RSA key.
+        JWT::decode($jwtparam, $publickey, ['RS256']);
+    } else if ($typeconfig['keytype'] === LTI_JWK_KEYSET) {
+        $keyseturl = $typeconfig['publickeyset'] ?? '';
+        if (empty($keyseturl)) {
+            throw new moodle_exception('No public keyset configured');
+        }
+        // Attempts to verify jwt with jwk keyset.
+        lti_verify_with_keyset($jwtparam, $keyseturl, $tool->clientid);
+    } else {
+        throw new moodle_exception('Invalid public key type');
+    }
 
     return $tool;
 }
@@ -1460,8 +1520,13 @@ function lti_tool_configuration_from_content_item($typeid, $messagetype, $ltiver
                         }
                     }
                     $config->grade_modgrade_point = $maxscore;
+                    $config->lineitemresourceid = '';
+                    $config->lineitemtag = '';
                     if (isset($lineitem->assignedActivity) && isset($lineitem->assignedActivity->activityId)) {
-                        $config->cmidnumber = $lineitem->assignedActivity->activityId;
+                        $config->lineitemresourceid = $lineitem->assignedActivity->activityId ? : '';
+                    }
+                    if (isset($lineitem->tag)) {
+                        $config->lineitemtag = $lineitem->tag ? : '';
                     }
                 }
             }
@@ -1557,6 +1622,9 @@ function lti_convert_content_items($param) {
                     if (isset($item->lineItem->resourceId)) {
                         $newitem->lineItem->assignedActivity = new stdClass();
                         $newitem->lineItem->assignedActivity->activityId = $item->lineItem->resourceId;
+                    }
+                    if (isset($item->lineItem->tag)) {
+                        $newitem->lineItem->tag = $item->lineItem->tag;
                     }
                     if (isset($item->lineItem->scoreMaximum)) {
                         $newitem->lineItem->scoreConstraints = new stdClass();
@@ -2475,6 +2543,12 @@ function lti_get_type_type_config($id) {
     }
     if (isset($config['publickey'])) {
         $type->lti_publickey = $config['publickey'];
+    }
+    if (isset($config['publickeyset'])) {
+        $type->lti_publickeyset = $config['publickeyset'];
+    }
+    if (isset($config['keytype'])) {
+        $type->lti_keytype = $config['keytype'];
     }
     if (isset($config['initiatelogin'])) {
         $type->lti_initiatelogin = $config['initiatelogin'];

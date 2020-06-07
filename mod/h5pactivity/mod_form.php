@@ -22,8 +22,11 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_h5pactivity\local\manager;
+
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 /**
@@ -39,7 +42,7 @@ class mod_h5pactivity_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition(): void {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         $mform = $this->_form;
 
@@ -70,6 +73,16 @@ class mod_h5pactivity_mod_form extends moodleform_mod {
         $mform->addElement('filemanager', 'packagefile', get_string('package', 'mod_h5pactivity'), null, $options);
         $mform->addHelpButton('packagefile', 'package', 'mod_h5pactivity');
 
+        // Add a link to the Content Bank if the user can access.
+        $course = $this->get_course();
+        $context = context_course::instance($course->id);
+        if (has_capability('moodle/contentbank:access', $context)) {
+            $url = new moodle_url('/contentbank/index.php', ['contextid' => $context->id]);
+            $msg = get_string('usecontentbank', 'mod_h5pactivity', $url->out());
+            $msg .= ' '.$OUTPUT->help_icon('contentbank', 'mod_h5pactivity');
+            $mform->addElement('static', 'contentbank', '', $msg);
+        }
+
         // H5P displaying options.
         $factory = new \core_h5p\factory();
         $core = $factory->get_core();
@@ -84,6 +97,27 @@ class mod_h5pactivity_mod_form extends moodleform_mod {
 
         // Add standard grading elements.
         $this->standard_grading_coursemodule_elements();
+
+        // Attempt options.
+        $mform->addElement('header', 'h5pattempts', get_string('h5pattempts', 'mod_h5pactivity'));
+
+        $mform->addElement('static', 'trackingwarning', '', get_string('tracking_messages', 'mod_h5pactivity'));
+
+        $options = [1 => get_string('yes'), 0 => get_string('no')];
+        $mform->addElement('select', 'enabletracking', get_string('enabletracking', 'mod_h5pactivity'), $options);
+        $mform->setDefault('enabletracking', 1);
+
+        $options = manager::get_grading_methods();
+        $mform->addElement('select', 'grademethod', get_string('grade_grademethod', 'mod_h5pactivity'), $options);
+        $mform->setType('grademethod', PARAM_INT);
+        $mform->hideIf('grademethod', 'enabletracking', 'neq', 1);
+        $mform->disabledIf('grademethod', 'grade[modgrade_type]', 'neq', 'point');
+        $mform->addHelpButton('grademethod', 'grade_grademethod', 'mod_h5pactivity');
+
+        $options = manager::get_review_modes();
+        $mform->addElement('select', 'reviewmode', get_string('review_mode', 'mod_h5pactivity'), $options);
+        $mform->setType('reviewmode', PARAM_INT);
+        $mform->hideIf('reviewmode', 'enabletracking', 'notchecked');
 
         // Add standard elements.
         $this->standard_coursemodule_elements();
@@ -178,5 +212,9 @@ class mod_h5pactivity_mod_form extends moodleform_mod {
             $config = \core_h5p\helper::decode_display_options($core);
         }
         $data->displayoptions = \core_h5p\helper::get_display_options($core, $config);
+
+        if (!isset($data->enabletracking)) {
+            $data->enabletracking = 0;
+        }
     }
 }

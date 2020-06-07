@@ -217,6 +217,25 @@ class behat_core_generator extends behat_generator_base {
                 'required' => array('user', 'preference', 'value'),
                 'switchids' => array('user' => 'userid')
             ],
+            'contentbank content' => [
+                'datagenerator' => 'contentbank_content',
+                'required' => array('contextlevel', 'reference', 'contenttype', 'user', 'contentname'),
+                'switchids' => array('user' => 'userid')
+            ],
+            'badge external backpack' => [
+                'datagenerator' => 'badge_external_backpack',
+                'required' => ['backpackapiurl', 'backpackweburl', 'apiversion']
+            ],
+            'setup backpack connected' => [
+                'datagenerator' => 'setup_backpack_connected',
+                'required' => ['user', 'externalbackpack'],
+                'switchids' => ['user' => 'userid', 'externalbackpack' => 'externalbackpackid']
+            ],
+            'last access times' => [
+                'datagenerator' => 'last_access_times',
+                'required' => ['user', 'course', 'lastaccess'],
+                'switchids' => ['user' => 'userid', 'course' => 'courseid'],
+            ],
         ];
     }
 
@@ -634,9 +653,18 @@ class behat_core_generator extends behat_generator_base {
      * We start with test_question_maker::get_question_form_data($data['qtype'], $data['template'])
      * and then overlay the values from any other fields of $data that are set.
      *
+     * There is a special case that allows you to set qtype to 'missingtype'.
+     * This creates an example of broken question, such as you might get if you
+     * install a question type, create some questions of that type, and then
+     * uninstall the question type (which is prevented through the UI but can
+     * still happen). This special lets tests verify that these questions are
+     * handled OK.
+     *
      * @param array $data the row of data from the behat script.
      */
     protected function process_question($data) {
+        global $DB;
+
         if (array_key_exists('questiontext', $data)) {
             $data['questiontext'] = array(
                     'text'   => $data['questiontext'],
@@ -656,7 +684,18 @@ class behat_core_generator extends behat_generator_base {
             $which = $data['template'];
         }
 
-        $this->datagenerator->get_plugin_generator('core_question')->create_question($data['qtype'], $which, $data);
+        $missingtypespecialcase = false;
+        if ($data['qtype'] === 'missingtype') {
+            $data['qtype'] = 'essay'; // Actual type uses here does not matter. We just need any question.
+            $missingtypespecialcase = true;
+        }
+
+        $questiondata = $this->datagenerator->get_plugin_generator('core_question')
+            ->create_question($data['qtype'], $which, $data);
+
+        if ($missingtypespecialcase) {
+            $DB->set_field('question', 'qtype', 'unknownqtype', ['id' => $questiondata->id]);
+        }
     }
 
     /**
@@ -815,5 +854,202 @@ class behat_core_generator extends behat_generator_base {
      */
     protected function process_user_preferences(array $data) {
         set_user_preference($data['preference'], $data['value'], $data['userid']);
+    }
+
+    /**
+     * Create content in the given context's content bank.
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_contentbank_content(array $data) {
+        global $CFG;
+
+        if (empty($data['contextlevel'])) {
+            throw new Exception('contentbank_content requires the field contextlevel to be specified');
+        }
+
+        if (!isset($data['reference'])) {
+            throw new Exception('contentbank_content requires the field reference to be specified');
+        }
+
+        if (empty($data['contenttype'])) {
+            throw new Exception('contentbank_content requires the field contenttype to be specified');
+        }
+
+        $contenttypeclass = "\\".$data['contenttype']."\\contenttype";
+        if (class_exists($contenttypeclass)) {
+            $context = $this->get_context($data['contextlevel'], $data['reference']);
+            $contenttype = new $contenttypeclass($context);
+            $record = new stdClass();
+            $record->usercreated = $data['userid'];
+            $record->name = $data['contentname'];
+            $content = $contenttype->create_content($record);
+
+            if (!empty($data['filepath'])) {
+                $filename = basename($data['filepath']);
+                $fs = get_file_storage();
+                $filerecord = array(
+                    'component' => 'contentbank',
+                    'filearea' => 'public',
+                    'contextid' => $context->id,
+                    'userid' => $data['userid'],
+                    'itemid' => $content->get_id(),
+                    'filename' => $filename,
+                    'filepath' => '/'
+                );
+                $fs->create_file_from_pathname($filerecord, $CFG->dirroot . $data['filepath']);
+            }
+        } else {
+            throw new Exception('The specified "' . $data['contenttype'] . '" contenttype does not exist');
+        }
+    }
+
+    /**
+     * Create a exetrnal backpack.
+     *
+     * @param array $data
+     */
+    protected function process_badge_external_backpack(array $data) {
+        global $DB;
+        $DB->insert_record('badge_external_backpack', $data, true);
+    }
+
+    /**
+     * Setup a backpack connected for user.
+     *
+     * @param array $data
+     * @throws dml_exception
+     */
+    protected function process_setup_backpack_connected(array $data) {
+        global $DB;
+
+        if (empty($data['userid'])) {
+            throw new Exception('\'setup backpack connected\' requires the field \'user\' to be specified');
+        }
+        if (empty($data['externalbackpackid'])) {
+            throw new Exception('\'setup backpack connected\' requires the field \'externalbackpack\' to be specified');
+        }
+        // Dummy badge_backpack_oauth2 data.
+        $timenow = time();
+        $backpackoauth2 = new stdClass();
+        $backpackoauth2->usermodified = $data['userid'];
+        $backpackoauth2->timecreated = $timenow;
+        $backpackoauth2->timemodified = $timenow;
+        $backpackoauth2->userid = $data['userid'];
+        $backpackoauth2->issuerid = 1;
+        $backpackoauth2->externalbackpackid = $data['externalbackpackid'];
+        $backpackoauth2->token = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $backpackoauth2->refreshtoken = '0123456789abcdefghijk';
+        $backpackoauth2->expires = $timenow + 3600;
+        $backpackoauth2->scope = 'https://purl.imsglobal.org/spec/ob/v2p1/scope/assertion.create';
+        $backpackoauth2->scope .= ' https://purl.imsglobal.org/spec/ob/v2p1/scope/assertion.readonly offline_access';
+        $DB->insert_record('badge_backpack_oauth2', $backpackoauth2);
+
+        // Dummy badge_backpack data.
+        $backpack = new stdClass();
+        $backpack->userid = $data['userid'];
+        $backpack->email = 'student@behat.moodle';
+        $backpack->backpackuid = 0;
+        $backpack->autosync = 0;
+        $backpack->password = '';
+        $backpack->externalbackpackid = $data['externalbackpackid'];
+        $DB->insert_record('badge_backpack', $backpack);
+    }
+
+    /**
+     * Creates user last access data within given courses.
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_last_access_times(array $data) {
+        global $DB;
+
+        if (!isset($data['userid'])) {
+            throw new Exception('\'last acces times\' requires the field \'user\' to be specified');
+        }
+
+        if (!isset($data['courseid'])) {
+            throw new Exception('\'last acces times\' requires the field \'course\' to be specified');
+        }
+
+        if (!isset($data['lastaccess'])) {
+            throw new Exception('\'last acces times\' requires the field \'lastaccess\' to be specified');
+        }
+
+        $userdata = [];
+        $userdata['old'] = $DB->get_record('user', ['id' => $data['userid']], 'firstaccess, lastaccess, lastlogin, currentlogin');
+        $userdata['new'] = [
+            'firstaccess' => $userdata['old']->firstaccess,
+            'lastaccess' => $userdata['old']->lastaccess,
+            'lastlogin' => $userdata['old']->lastlogin,
+            'currentlogin' => $userdata['old']->currentlogin,
+        ];
+
+        // Check for lastaccess data for this course.
+        $lastaccessdata = [
+            'userid' => $data['userid'],
+            'courseid' => $data['courseid'],
+        ];
+
+        $lastaccessid = $DB->get_field('user_lastaccess', 'id', $lastaccessdata);
+
+        $dbdata = (object) $lastaccessdata;
+        $dbdata->timeaccess = $data['lastaccess'];
+
+        // Set the course last access time.
+        if ($lastaccessid) {
+            $dbdata->id = $lastaccessid;
+            $DB->update_record('user_lastaccess', $dbdata);
+        } else {
+            $DB->insert_record('user_lastaccess', $dbdata);
+        }
+
+        // Store changes to other user access times as needed.
+
+        // Update first access if this is the user's first login, or this access is earlier than their current first access.
+        if (empty($userdata['new']['firstaccess']) ||
+                $userdata['new']['firstaccess'] > $data['lastaccess']) {
+            $userdata['new']['firstaccess'] = $data['lastaccess'];
+        }
+
+        // Update last access if it is the user's most recent access.
+        if (empty($userdata['new']['lastaccess']) ||
+                $userdata['new']['lastaccess'] < $data['lastaccess']) {
+            $userdata['new']['lastaccess'] = $data['lastaccess'];
+        }
+
+        // Update last and current login if it is the user's most recent access.
+        if (empty($userdata['new']['lastlogin']) ||
+                $userdata['new']['lastlogin'] < $data['lastaccess']) {
+            $userdata['new']['lastlogin'] = $data['lastaccess'];
+            $userdata['new']['currentlogin'] = $data['lastaccess'];
+        }
+
+        $updatedata = [];
+
+        if ($userdata['new']['firstaccess'] != $userdata['old']->firstaccess) {
+            $updatedata['firstaccess'] = $userdata['new']['firstaccess'];
+        }
+
+        if ($userdata['new']['lastaccess'] != $userdata['old']->lastaccess) {
+            $updatedata['lastaccess'] = $userdata['new']['lastaccess'];
+        }
+
+        if ($userdata['new']['lastlogin'] != $userdata['old']->lastlogin) {
+            $updatedata['lastlogin'] = $userdata['new']['lastlogin'];
+        }
+
+        if ($userdata['new']['currentlogin'] != $userdata['old']->currentlogin) {
+            $updatedata['currentlogin'] = $userdata['new']['currentlogin'];
+        }
+
+        // Only update user access data if there have been any changes.
+        if (!empty($updatedata)) {
+            $updatedata['id'] = $data['userid'];
+            $updatedata = (object) $updatedata;
+            $DB->update_record('user', $updatedata);
+        }
     }
 }

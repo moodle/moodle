@@ -964,6 +964,34 @@ class moodle_content_writer_test extends advanced_testcase {
     }
 
     /**
+     * Test that exported related data name is properly cleaned
+     *
+     * @covers ::export_related_data
+     */
+    public function test_export_related_data_clean_name() {
+        $context = \context_system::instance();
+        $subcontext = [];
+        $data = (object) ['foo' => 'bar'];
+
+        $name = 'Bad/chars:>';
+
+        $writer = $this->get_writer_instance()
+            ->set_context($context)
+            ->export_related_data($subcontext, $name, $data);
+
+        $nameclean = clean_param($name, PARAM_FILE);
+
+        $contextpath = $this->get_context_path($context, $subcontext, "{$nameclean}.json");
+        $expectedpath = "System _.{$context->id}/Badchars.json";
+        $this->assertEquals($expectedpath, $contextpath);
+
+        $fileroot = $this->fetch_exported_content($writer);
+        $json = $fileroot->getChild($contextpath)->getContent();
+
+        $this->assertEquals($data, json_decode($json));
+    }
+
+    /**
      * Test that exported user preference is human readable.
      *
      * @dataProvider unescaped_unicode_export_provider
@@ -1000,6 +1028,30 @@ class moodle_content_writer_test extends advanced_testcase {
         return [
             'Unicode' => ['ةكءيٓ‌پچژکگیٹڈڑہھےâîûğŞAaÇÖáǽ你好!'],
         ];
+    }
+
+    /**
+     * Test that exported data subcontext is properly cleaned
+     *
+     * @covers ::export_data
+     */
+    public function test_export_data_clean_subcontext() {
+        $context = \context_system::instance();
+        $subcontext = ['Something/weird', 'More/bad:>', 'Bad&chars:>'];
+        $data = (object) ['foo' => 'bar'];
+
+        $writer = $this->get_writer_instance()
+            ->set_context($context)
+            ->export_data($subcontext, $data);
+
+        $contextpath = $this->get_context_path($context, $subcontext, 'data.json');
+        $expectedpath = "System _.{$context->id}/Something/weird/More/bad/Badchars/data.json";
+        $this->assertEquals($expectedpath, $contextpath);
+
+        $fileroot = $this->fetch_exported_content($writer);
+        $json = $fileroot->getChild($contextpath)->getContent();
+
+        $this->assertEquals($data, json_decode($json));
     }
 
     /**

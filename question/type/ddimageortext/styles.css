@@ -13,22 +13,51 @@ form.mform fieldset#id_previewareaheader div.ddarea {
     position: relative;
 }
 
+.que.ddimageortext div.droparea {
+    display: inline-block;
+}
+
+.que.ddimageortext div.droparea .draghome {
+    position: absolute;
+    cursor: move;
+    white-space: nowrap;
+}
+
+.que.ddimageortext div.droparea .dropzones {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 .que.ddimageortext .dropbackground,
 form.mform fieldset#id_previewareaheader .dropbackground {
     border: 1px solid #000;
-    max-width: none;
     margin: 0 auto;
 }
 
+form.mform fieldset#id_previewareaheader .dropbackground {
+    max-width: none;
+}
+
+.que.ddimageortext .dropbackground.img-responsive.img-fluid {
+    width: 100%;
+}
+
 .que.ddimageortext .dropzone {
+    display: none;
     position: absolute;
     opacity: 0.5;
     border: 1px solid black;
-    z-index: 1;
+}
+
+.que.ddimageortext .dropzone.active {
+    display: block;
 }
 
 .que.ddimageortext .dropzone:focus,
-.que.ddimageortext .dropzone.valid-drag-over-drop {
+.que.ddimageortext .droparea .draghome:focus,
+.que.ddimageortext .dropzone.valid-drag-over-drop,
+.que.ddimageortext .draghome.placed.valid-drag-over-drop {
     border-color: #0a0;
     box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
     outline: 0;
@@ -42,12 +71,26 @@ form.mform fieldset#id_previewareaheader .droppreview {
     font: 13px/1.231 arial, helvetica, clean, sans-serif;
 }
 
-.que.ddimageortext .draghome {
+.que.ddimageortext .draghomes .draghome {
     vertical-align: top;
     margin: 5px;
-    visibility: hidden;
     height: auto;
     width: auto;
+    cursor: move;
+}
+
+.que.ddimageortext .draghomes.readonly .draghome,
+.que.ddimageortext .droparea.readonly .draghome {
+    cursor: auto;
+}
+
+.que.ddimageortext .draghomes .draghome.dragplaceholder {
+    display: none;
+}
+
+.que.ddimageortext .draghomes .draghome.dragplaceholder.active {
+    visibility: hidden;
+    display: inline-block;
 }
 
 .que.ddimageortext .dragitems,
@@ -59,7 +102,6 @@ form.mform fieldset#id_previewareaheader .dragitems {
 form.mform fieldset#id_previewareaheader .droppreview {
     position: absolute;
     cursor: move;
-    z-index: 2;
 }
 
 .que.ddimageortext .dragitems.readonly .drag {
@@ -67,9 +109,15 @@ form.mform fieldset#id_previewareaheader .droppreview {
 }
 
 form.mform fieldset#id_previewareaheader .drag.beingdragged,
-.que.ddimageortext .drag.beingdragged {
-    z-index: 3;
+.que.ddimageortext .drag.beingdragged,
+.que.ddimageortext .draghomes .draghome.beingdragged,
+.que.ddimageortext .droparea .draghome.beingdragged {
     box-shadow: 3px 3px 4px #000;
+}
+
+.que.ddimageortext .draghomes .draghome.beingdragged,
+.que.ddimageortext .droparea .draghome.beingdragged {
+    position: absolute;
 }
 
 .que.ddimageortext .group1,

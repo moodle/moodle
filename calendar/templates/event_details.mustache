@@ -34,6 +34,7 @@
     {
         "formattedtime": "Wednesday, 17 April, 9:27 AM",
         "normalisedeventtype": "Group",
+        "normalisedeventtypetext": "Group event",
         "description": "An random event description",
         "location": "Moodle HQ",
         "isactionevent": "true",
@@ -77,29 +78,19 @@
         <div class="location-content col-11">{{{.}}}</div>
     </div>
 {{/location}}
-{{#isactionevent}}
-    <div class="row mt-1">
-        <div class="col-1">{{#pix}} i/courseevent, core, {{#str}} course {{/str}} {{/pix}}</div>
-        <div class="col-11"><a href="{{course.viewurl}}">{{{course.fullname}}}</a></div>
-    </div>
-{{/isactionevent}}
 {{#iscategoryevent}}
     <div class="row mt-1">
         <div class="col-1">{{#pix}} i/categoryevent, core, {{#str}} category {{/str}} {{/pix}}</div>
         <div class="col-11">{{{category.nestedname}}}</div>
     </div>
 {{/iscategoryevent}}
-{{#iscourseevent}}
+{{#course.viewurl}}
     <div class="row mt-1">
         <div class="col-1">{{#pix}} i/courseevent, core, {{#str}} course {{/str}} {{/pix}}</div>
-        <div class="col-11"><a href="{{url}}">{{{course.fullname}}}</a></div>
+        <div class="col-11"><a href="{{course.viewurl}}">{{{course.fullname}}}</a></div>
     </div>
-{{/iscourseevent}}
+{{/course.viewurl}}
 {{#groupname}}
-    <div class="row mt-1">
-        <div class="col-1">{{#pix}} i/courseevent, core, {{#str}} course {{/str}} {{/pix}}</div>
-        <div class="col-11"><a href="{{url}}">{{{course.fullname}}}</a></div>
-    </div>
     <div class="row mt-1">
         <div class="col-1">{{#pix}} i/groupevent, core, {{#str}} group {{/str}} {{/pix}}</div>
         <div class="col-11">{{{groupname}}}</div>

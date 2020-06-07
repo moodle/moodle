@@ -637,14 +637,17 @@ class behat_config_util {
             if (!isset($values['capabilities'])) {
                 $values['capabilities'] = [];
             }
-            if (!isset($values['capabilities']['chrome'])) {
-                $values['capabilities']['chrome'] = [];
+            if (!isset($values['capabilities']['extra_capabilities'])) {
+                $values['capabilities']['extra_capabilities'] = [];
             }
-            if (!isset($values['capabilities']['chrome']['switches'])) {
-                $values['capabilities']['chrome']['switches'] = [];
+            if (!isset($values['capabilities']['extra_capabilities']['chromeOptions'])) {
+                $values['capabilities']['extra_capabilities']['chromeOptions'] = [];
             }
-            $values['capabilities']['chrome']['switches'][] = '--unlimited-storage';
-            $values['capabilities']['chrome']['switches'][] = '--disable-web-security';
+            if (!isset($values['capabilities']['extra_capabilities']['chromeOptions']['args'])) {
+                $values['capabilities']['extra_capabilities']['chromeOptions']['args'] = [];
+            }
+            $values['capabilities']['extra_capabilities']['chromeOptions']['args'][] = '--unlimited-storage';
+            $values['capabilities']['extra_capabilities']['chromeOptions']['args'][] = '--disable-web-security';
 
             // If the mobile app is enabled, check its version and add appropriate tags.
             if ($mobiletags = $this->get_mobile_version_tags()) {

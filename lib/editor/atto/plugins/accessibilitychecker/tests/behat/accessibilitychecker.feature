@@ -22,7 +22,7 @@ Feature: Atto accessibility checker
     And I select the text in the "Description" Atto editor
     And I click on "Insert or edit image" "button"
     And I set the field "Describe this image for someone who cannot see it" to ""
-    And I set the field "Description not necessary" to "1"
+    And I set the field "This image is decorative only" to "1"
     And I press "Save image"
     And I press "Accessibility checker"
     And I should see "Congratulations, no accessibility problems found!"

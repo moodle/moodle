@@ -692,7 +692,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         if (!is_null($assessment->form)) {
             $o .= print_collapsible_region_start('assessment-form-wrapper', uniqid('workshop-assessment'),
-                    get_string('assessmentform', 'workshop'), '', false, true);
+                    get_string('assessmentform', 'workshop'), 'workshop-viewlet-assessmentform-collapsed', false, true);
             $o .= $this->output->container(self::moodleform($assessment->form), 'assessment-form');
             $o .= print_collapsible_region_end(true);
 
@@ -782,7 +782,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         $o = $this->output->box($o, 'overallfeedback');
         $o = print_collapsible_region($o, 'overall-feedback-wrapper', uniqid('workshop-overall-feedback'),
-            get_string('overallfeedback', 'workshop'), '', false, true);
+                get_string('overallfeedback', 'workshop'), 'workshop-viewlet-overallfeedback-collapsed', false, true);
 
         return $o;
     }

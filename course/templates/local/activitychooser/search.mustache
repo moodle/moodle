@@ -29,20 +29,22 @@
     <input type="text"
            data-action="search"
            id="searchinput"
-           class="form-control form-control-lg searchinput px-3 py-2"
+           class="form-control searchinput h-auto border-right-0 rounded-left px-3 py-2"
            placeholder="{{#str}} search, core {{/str}}"
            name="search"
            autocomplete="off"
     >
-    <div class="searchbar-append d-flex px-3">
-        <div class="search-icon">
-            {{#pix}} a/search, core {{/pix}}
-        </div>
-        <div class="clear d-none">
-            <button class="btn p-0" data-action="clearsearch">
-                <span class="d-flex" aria-hidden="true">{{#pix}} e/cancel_solid_circle, core {{/pix}}</span>
-                <span class="sr-only">{{#str}} clearsearch, core {{/str}}</span>
-            </button>
+    <div class="input-group-append">
+        <div class="input-group-text border-left-0 rounded-right bg-transparent px-3 py-2">
+            <div class="search-icon">
+                {{#pix}} a/search, core {{/pix}}
+            </div>
+            <div class="clear d-none">
+                <button class="btn p-0" data-action="clearsearch">
+                    <span class="d-flex" aria-hidden="true">{{#pix}} e/cancel_solid_circle, core {{/pix}}</span>
+                    <span class="sr-only">{{#str}} clearsearch, core {{/str}}</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>

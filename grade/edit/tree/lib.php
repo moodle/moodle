@@ -149,6 +149,18 @@ class grade_edit_tree {
                 $actionsmenu->add($icon);
             }
 
+            if ($this->element_duplicatable($element)) {
+                $duplicateparams = array();
+                $duplicateparams['id'] = $COURSE->id;
+                $duplicateparams['action'] = 'duplicate';
+                $duplicateparams['eid'] = $eid;
+                $duplicateparams['sesskey'] = sesskey();
+                $aurl = new moodle_url('index.php', $duplicateparams);
+                $duplicateicon = new pix_icon('t/copy', get_string('duplicate'));
+                $icon = new action_menu_link_secondary($aurl, $duplicateicon, get_string('duplicate'));
+                $actionsmenu->add($icon);
+            }
+
             $aurl = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'moveselect', 'eid' => $eid, 'sesskey' => sesskey()));
             $moveaction .= $OUTPUT->action_icon($aurl, new pix_icon('t/move', get_string('move')));
         }
@@ -457,6 +469,24 @@ class grade_edit_tree {
             return true;
         }
 
+        return false;
+    }
+
+    /**
+     * Given an element of the grade tree, returns whether it is duplicatable or not (only manual grade items are duplicatable)
+     *
+     * @param array $element
+     * @return bool
+     */
+    public function element_duplicatable($element) {
+        if ($element['type'] != 'item') {
+            return false;
+        }
+
+        $gradeitem = $element['object'];
+        if ($gradeitem->itemtype != 'mod') {
+            return true;
+        }
         return false;
     }
 

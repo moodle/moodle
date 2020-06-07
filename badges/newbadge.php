@@ -87,7 +87,7 @@ if ($form->is_cancelled()) {
     $fordb->usercreated = $USER->id;
     $fordb->usermodified = $USER->id;
 
-    if (badges_open_badges_backpack_api() != OPEN_BADGES_V2) {
+    if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
         $fordb->issuername = $data->issuername;
         $fordb->issuerurl = $data->issuerurl;
         $fordb->issuercontact = $data->issuercontact;

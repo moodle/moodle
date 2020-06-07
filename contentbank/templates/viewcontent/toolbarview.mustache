@@ -1,0 +1,50 @@
+{{!
+This file is part of Moodle - http://moodle.org/
+
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more comments.
+
+You should have received a copy of the GNU General Public License
+along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_contentbank/viewcontent/toolbarview
+
+    Contentbank view toolbar.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * contenthtml - string - content html.
+    * usercanedit - boolean - whether the user has permission to edit the content.
+    * editcontenturl - string - edit page URL.
+    * closeurl - string - close landing page.
+
+    Example context (json):
+    {
+        "usercanedit" : true,
+        "editcontenturl" : "http://something/contentbank/edit.php?contextid=1&plugin=h5p&id=1",
+        "closeurl" : "http://moodle.test/h5pcb/moodle/contentbank/index.php"
+    }
+}}
+{{#usercanedit}}
+<div class="cb-toolbar-container mb-2">
+    <a href="{{editcontenturl}}" class="btn btn-primary" data-action="edit-content">
+        {{#str}}edit{{/str}}
+    </a>
+    <a href="{{closeurl}}" class="btn btn-secondary" data-action="close-content">
+        {{#str}}close, core_contentbank{{/str}}
+    </a>
+</div>
+{{/usercanedit}}

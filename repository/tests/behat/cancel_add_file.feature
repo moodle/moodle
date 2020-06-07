@@ -19,7 +19,7 @@ Feature: A selected file can be cancelled
       | Name | Folder name |
       | Description | Folder description |
     And I upload "lib/tests/fixtures/upload_users.csv" file to "Files" filemanager
-    And I click on "//label[contains(., 'Files')]/ancestor::div[contains(concat(' ', @class, ' '), ' fitem ')]//*[contains(@title, 'Add...')]" "xpath_element"
+    And I click on "Add..." "button" in the "Files" "form_row"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
     And I click on "//a[contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')][normalize-space(.)='empty.txt']" "xpath_element"
     And I click on ".moodle-dialogue-focused .fp-select .fp-select-cancel" "css_element"

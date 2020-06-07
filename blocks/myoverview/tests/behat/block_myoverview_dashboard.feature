@@ -182,6 +182,20 @@ Feature: The my overview block allows users to easily access their courses
     Then I should see "Last accessed" in the "Course overview" "block"
     And "[data-sort='ul.timeaccess desc']" "css_element" in the "Course overview" "block" should be visible
 
+  Scenario: Short name sort persistence
+    Given I log in as "student1"
+    When I click on "sortingdropdown" "button" in the "Course overview" "block"
+    Then I should not see "Short name" in the "Course overview" "block"
+    When the following config values are set as admin:
+      | config               | value |
+      | courselistshortnames | 1     |
+    And I reload the page
+    And I click on "sortingdropdown" "button" in the "Course overview" "block"
+    And I click on "Short name" "link" in the "Course overview" "block"
+    And I reload the page
+    Then I should see "Short name" in the "Course overview" "block"
+    And "[data-sort='shortname']" "css_element" in the "Course overview" "block" should be visible
+
   Scenario: View inprogress courses with hide persistent functionality
     Given I log in as "student1"
     And I click on "All (except removed from view)" "button" in the "Course overview" "block"

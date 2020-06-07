@@ -4,8 +4,7 @@ Feature: Basic use of the Manual grading report
   As a teacher
   I need to use the manual grading report
 
-  @javascript
-  Scenario: Use the Manual grading report
+  Background:
     Given the following "users" exist:
       | username | firstname | lastname | email                | idnumber |
       | teacher1 | T1        | Teacher1 | teacher1@example.com | T1000    |
@@ -30,10 +29,10 @@ Feature: Basic use of the Manual grading report
       | question          | page |
       | Short answer 001  | 1    |
 
+  Scenario: Use the Manual grading report
+
     # Check report shows nothing when there are no attempts.
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Quiz 1"
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher1"
     And I navigate to "Results > Manual grading" in current page administration
     Then I should see "Manual grading"
     And I should see "Quiz 1"
@@ -44,7 +43,7 @@ Feature: Basic use of the Manual grading report
     # Use the manual grading report.
     And user "student1" has attempted "Quiz 1" with responses:
       | slot | response |
-      |   1  | Paris    |
+      | 1    | Paris    |
     And I reload the page
     And I should see "Short answer 001"
     And "Short answer 001" row "To grade" column of "questionstograde" table should contain "0"
@@ -65,3 +64,22 @@ Feature: Basic use of the Manual grading report
     And I should see "All selected attempts have been graded. Returning to the list of questions."
     And "Short answer 001" row "To grade" column of "questionstograde" table should contain "0"
     And "Short answer 001" row "Already graded" column of "questionstograde" table should contain "1"
+
+  Scenario: Manual grading settings are remembered as user preferences
+    Given user "student1" has attempted "Quiz 1" with responses:
+      | slot | response |
+      | 1    | Paris    |
+    When I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "teacher1"
+    And I follow "Also show questions that have been graded automatically"
+    And I click on "update grades" "link" in the "Short answer 001" "table_row"
+    And I set the following fields to these values:
+      | Questions per page | 42      |
+      | Order attempts     | By date |
+    And I press "Change options"
+    And I log out
+    And I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "teacher1"
+    And I follow "Also show questions that have been graded automatically"
+    And I click on "update grades" "link" in the "Short answer 001" "table_row"
+    Then the following fields match these values:
+      | Questions per page | 42      |
+      | Order attempts     | By date |

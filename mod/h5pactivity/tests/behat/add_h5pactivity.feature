@@ -20,17 +20,17 @@ Feature: Add H5P activity
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
 
-
   @javascript
   Scenario: Add a h5pactivity activity to a course
-    When I add a "H5P activity" to section "1"
+    When I add a "H5P" to section "1"
     And I set the following fields to these values:
-      | Name        | Awesome H5P package |
-      | Description | Description         |
+      | Name        | Awesome H5P package      |
+      | Description | H5P activity Description |
     And I upload "h5p/tests/fixtures/ipsums.h5p" file to "Package file" filemanager
     And I click on "Save and display" "button"
     And I wait until the page is ready
-    Then I switch to "h5p-player" class iframe
+    Then I should see "H5P activity Description"
+    And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I should see "Lorum ipsum"
     And I should not see "Reuse"
@@ -40,7 +40,7 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity with download
-    When I add a "H5P activity" to section "1"
+    When I add a "H5P" to section "1"
     And I set the following fields to these values:
       | Name                       | Awesome H5P package |
       | Description                | Description         |
@@ -57,7 +57,7 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity with embed
-    When I add a "H5P activity" to section "1"
+    When I add a "H5P" to section "1"
     And I set the following fields to these values:
       | Name              | Awesome H5P package |
       | Description       | Description         |
@@ -74,7 +74,7 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity with copyright
-    When I add a "H5P activity" to section "1"
+    When I add a "H5P" to section "1"
     And I set the following fields to these values:
       | Name                  | Awesome H5P package |
       | Description           | Description         |
@@ -91,7 +91,7 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity with copyright in a content without copyright
-    When I add a "H5P activity" to section "1"
+    When I add a "H5P" to section "1"
     And I set the following fields to these values:
       | Name                  | Awesome H5P package |
       | Description           | Description         |
@@ -108,7 +108,7 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity to a course with all display options enabled
-    When I add a "H5P activity" to section "1"
+    When I add a "H5P" to section "1"
     And I set the following fields to these values:
       | Name                       | Awesome H5P package |
       | Description                | Description         |

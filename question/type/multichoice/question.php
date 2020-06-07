@@ -44,6 +44,10 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
 
     public $shuffleanswers;
     public $answernumbering;
+    /**
+     * @var int standard instruction to be displayed if enabled.
+     */
+    public $showstandardinstruction = 0;
     public $layout = self::LAYOUT_VERTICAL;
 
     public $correctfeedback;

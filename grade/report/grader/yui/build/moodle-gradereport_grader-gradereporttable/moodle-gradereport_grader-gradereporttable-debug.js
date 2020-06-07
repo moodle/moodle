@@ -156,7 +156,6 @@ Y.namespace('M.gradereport_grader').init = function(config) {
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/* global SELECTORS */
 
 /**
  * @module moodle-gradereport_grader-gradereporttable

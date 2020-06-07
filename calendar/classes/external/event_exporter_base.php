@@ -89,6 +89,7 @@ class event_exporter_base extends exporter {
         $data->timesort = $event->get_times()->get_sort_time()->getTimestamp();
         $data->visible = $event->is_visible() ? 1 : 0;
         $data->timemodified = $event->get_times()->get_modified_time()->getTimestamp();
+        $data->component = $event->get_component();
 
         if ($repeats = $event->get_repeats()) {
             $data->repeatid = $repeats->get_id();
@@ -156,6 +157,12 @@ class event_exporter_base extends exporter {
             ],
             'eventcount' => [
                 'type' => PARAM_INT,
+                'optional' => true,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            ],
+            'component' => [
+                'type' => PARAM_COMPONENT,
                 'optional' => true,
                 'default' => null,
                 'null' => NULL_ALLOWED
@@ -242,6 +249,10 @@ class event_exporter_base extends exporter {
             'normalisedeventtypetext' => [
                 'type' => PARAM_TEXT
             ],
+            'action' => [
+                'type' => event_action_exporter::read_properties_definition(),
+                'optional' => true,
+            ],
         ];
     }
 
@@ -277,6 +288,10 @@ class event_exporter_base extends exporter {
         $iconexporter = new event_icon_exporter($event, ['context' => $context]);
         $identifier = 'type' . $values['normalisedeventtype'];
         $stringexists = get_string_manager()->string_exists($identifier, 'calendar');
+        if (!$stringexists) {
+            // Property normalisedeventtype is used to build the name of the CSS class for the events.
+            $values['normalisedeventtype'] = 'other';
+        }
         $values['normalisedeventtypetext'] = $stringexists ? get_string($identifier, 'calendar') : '';
 
         $values['icon'] = $iconexporter->export($output);
@@ -291,7 +306,7 @@ class event_exporter_base extends exporter {
             $values['category'] = $categorysummaryexporter->export($output);
         }
 
-        if ($course) {
+        if ($course && $course->id != SITEID) {
             $coursesummaryexporter = new course_summary_exporter($course, ['context' => $context]);
             $values['course'] = $coursesummaryexporter->export($output);
         }
@@ -317,6 +332,16 @@ class event_exporter_base extends exporter {
         if ($group = $event->get_group()) {
             $values['groupname'] = format_string($group->get('name'), true,
                 ['context' => \context_course::instance($event->get_course()->get('id'))]);
+        }
+
+        if ($event instanceof action_event_interface) {
+            // Export event action if applicable.
+            $actionrelated = [
+                'context' => $this->related['context'],
+                'event' => $event
+            ];
+            $actionexporter = new event_action_exporter($event->get_action(), $actionrelated);
+            $values['action'] = $actionexporter->export($output);
         }
 
         return $values;

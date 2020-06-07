@@ -378,33 +378,51 @@
     display: inline;
 }
 
-.jsenabled .admin_colourpicker {
-    display: block;
-    height: 102px;
-    width: 410px;
-    margin-bottom: 10px;
-    box-sizing: content-box;
+@include media-breakpoint-up(md) {
+    .jsenabled .admin_colourpicker {
+        display: block;
+        height: 102px;
+        width: 410px;
+        margin-bottom: 10px;
+        box-sizing: content-box;
+    }
+    .admin_colourpicker .colourdialogue {
+        float: left;
+        border: 1px solid $state-info-border;
+    }
+    .admin_colourpicker .previewcolour {
+        border: 1px solid $state-info-border;
+        margin-left: 301px;
+    }
+
+    .admin_colourpicker .currentcolour {
+        border: 1px solid $state-info-border;
+        margin-left: 301px;
+        border-top-width: 0;
+    }
 }
 
+@include media-breakpoint-down(sm) {
+    .jsenabled .admin_colourpicker {
+        height: 150px;
+        margin-bottom: 10px;
+        display: block;
+        position: relative;
+    }
+    .admin_colourpicker .previewcolour {
+        display: none;
+    }
+    .admin_colourpicker .currentcolour {
+        position: absolute;
+        border: 1px solid $border-color;
+        top: 100px;
+        left: 0;
+    }
+
+}
 .admin_colourpicker .loadingicon {
     vertical-align: middle;
     margin-left: auto;
-}
-
-.admin_colourpicker .colourdialogue {
-    float: left;
-    border: 1px solid $state-info-border;
-}
-
-.admin_colourpicker .previewcolour {
-    border: 1px solid $state-info-border;
-    margin-left: 301px;
-}
-
-.admin_colourpicker .currentcolour {
-    border: 1px solid $state-info-border;
-    margin-left: 301px;
-    border-top-width: 0;
 }
 
 #page-admin-index #notice .checkforupdates {
@@ -486,117 +504,13 @@
 
 // Plugins check page displayed during upgrade.
 #plugins-check-page {
-    .page-description {
-        color: $text-muted;
-    }
-
-    // Check for updates.
-    .checkforupdates {
-        .singlebutton {
-            margin: 5px 0;
-            padding: 0;
-
-            div,
-            input {
-                margin: 0 3px 0 0;
-            }
-        }
-    }
-
-    // Section before the plugins check table.
-    #plugins-check-info {
-        .actions {
-            > div {
-                display: inline-block;
-                margin-right: 1em;
-            }
-
-            .singlebutton {
-                margin: 5px 0;
-                padding: 0;
-
-                div,
-                input {
-                    margin: 0 3px 0 0;
-                }
-            }
-        }
-    }
 
     // Plugins check table.
     #plugins-check {
-        .requires-ok {
-            color: $text-muted;
-        }
-
         .status-missing,
         .status-downgrade {
             td {
                 background-color: $state-danger-bg;
-            }
-        }
-
-        .displayname {
-            .plugindir {
-                color: $text-muted;
-                font-size: $font-size-sm;
-            }
-        }
-
-        .requires ul {
-            margin-left: 13px; // To undo the default 25px, does not look that great inside a table cell;
-        }
-
-        .status {
-            .actionbutton {
-                margin: 5px 0;
-                padding: 0;
-
-                input {
-                    margin: 0;
-                }
-            }
-        }
-    }
-
-    .plugins-check-dependencies-actions {
-        > div {
-            display: inline-block;
-            margin-right: 1em;
-        }
-
-        .singlebutton {
-            margin: 5px 0;
-            padding: 0;
-
-            div,
-            input {
-                margin: 0 3px 0 0;
-            }
-        }
-    }
-
-    // List of available dependencies on the plugins check page.
-    #plugins-check-available-dependencies {
-        .displayname .component {
-            font-size: $font-size-sm;
-            color: $text-muted;
-        }
-
-        .info .actions {
-            > div {
-                display: inline-block;
-                margin-right: 1em;
-            }
-
-            .dependencyinstall {
-                display: block;
-                margin: 5px 0;
-                padding: 0;
-
-                input {
-                    margin: 0;
-                }
             }
         }
     }

@@ -101,7 +101,9 @@
         require_once("$CFG->libdir/odslib.class.php");
 
     /// Calculate file name
-        $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.ods';
+        $shortname = format_string($course->shortname, true, array('context' => $context));
+        $choicename = format_string($choice->name, true, array('context' => $context));
+        $filename = clean_filename("$shortname " . strip_tags($choicename)) . '.ods';
     /// Creating a workbook
         $workbook = new MoodleODSWorkbook("-");
     /// Send HTTP headers
@@ -160,7 +162,9 @@
         require_once("$CFG->libdir/excellib.class.php");
 
     /// Calculate file name
-        $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.xls';
+        $shortname = format_string($course->shortname, true, array('context' => $context));
+        $choicename = format_string($choice->name, true, array('context' => $context));
+        $filename = clean_filename("$shortname " . strip_tags($choicename)) . '.xls';
     /// Creating a workbook
         $workbook = new MoodleExcelWorkbook("-");
     /// Send HTTP headers
@@ -215,7 +219,9 @@
 
     // print text file
     if ($download == "txt" && has_capability('mod/choice:downloadresponses', $context)) {
-        $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.txt';
+        $shortname = format_string($course->shortname, true, array('context' => $context));
+        $choicename = format_string($choice->name, true, array('context' => $context));
+        $filename = clean_filename("$shortname " . strip_tags($choicename)) . '.txt';
 
         header("Content-Type: application/download\n");
         header("Content-Disposition: attachment; filename=\"$filename\"");

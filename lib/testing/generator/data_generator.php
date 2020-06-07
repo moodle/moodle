@@ -142,6 +142,7 @@ EOD;
      */
     public function create_user($record=null, array $options=null) {
         global $DB, $CFG;
+        require_once($CFG->dirroot.'/user/lib.php');
 
         $this->usercounter++;
         $i = $this->usercounter;
@@ -206,10 +207,6 @@ EOD;
 
         if (isset($record['password'])) {
             $record['password'] = hash_internal_user_password($record['password']);
-        } else {
-            // The auth plugin may not fully support this,
-            // but it is still better/faster than hashing random stuff.
-            $record['password'] = AUTH_PASSWORD_NOT_CACHED;
         }
 
         if (!isset($record['email'])) {
@@ -220,71 +217,41 @@ EOD;
             $record['confirmed'] = 1;
         }
 
-        if (!isset($record['lang'])) {
-            $record['lang'] = 'en';
-        }
-
-        if (!isset($record['maildisplay'])) {
-            $record['maildisplay'] = $CFG->defaultpreference_maildisplay;
-        }
-
-        if (!isset($record['mailformat'])) {
-            $record['mailformat'] = $CFG->defaultpreference_mailformat;
-        }
-
-        if (!isset($record['maildigest'])) {
-            $record['maildigest'] = $CFG->defaultpreference_maildigest;
-        }
-
-        if (!isset($record['autosubscribe'])) {
-            $record['autosubscribe'] = $CFG->defaultpreference_autosubscribe;
-        }
-
-        if (!isset($record['trackforums'])) {
-            $record['trackforums'] = $CFG->defaultpreference_trackforums;
-        }
-
-        if (!isset($record['deleted'])) {
-            $record['deleted'] = 0;
-        }
-
-        if (!isset($record['timecreated'])) {
-            $record['timecreated'] = time();
-        }
-
-        $record['timemodified'] = $record['timecreated'];
-
         if (!isset($record['lastip'])) {
             $record['lastip'] = '0.0.0.0';
         }
 
-        if ($record['deleted']) {
-            $delname = $record['email'].'.'.time();
-            while ($DB->record_exists('user', array('username'=>$delname))) {
-                $delname++;
-            }
-            $record['idnumber'] = '';
-            $record['email']    = md5($record['username']);
-            $record['username'] = $delname;
-            $record['picture']  = 0;
+        $tobedeleted = !empty($record['deleted']);
+        unset($record['deleted']);
+
+        $userid = user_create_user($record, false, false);
+
+        if ($extrafields = array_intersect_key($record, ['password' => 1, 'timecreated' => 1])) {
+            $DB->update_record('user', ['id' => $userid] + $extrafields);
         }
 
-        $userid = $DB->insert_record('user', $record);
-
-        if (!$record['deleted']) {
-            context_user::instance($userid);
-
+        if (!$tobedeleted) {
             // All new not deleted users must have a favourite self-conversation.
             $selfconversation = \core_message\api::create_conversation(
                 \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF,
                 [$userid]
             );
             \core_message\api::set_favourite_conversation($selfconversation->id, $userid);
+
+            // Save custom profile fields data.
+            $hasprofilefields = array_filter($record, function($key){
+                return strpos($key, 'profile_field_') === 0;
+            }, ARRAY_FILTER_USE_KEY);
+            if ($hasprofilefields) {
+                require_once($CFG->dirroot.'/user/profile/lib.php');
+                $usernew = (object)(['id' => $userid] + $record);
+                profile_save_data($usernew);
+            }
         }
 
         $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 
-        if (!$record['deleted'] && isset($record['interests'])) {
+        if (!$tobedeleted && isset($record['interests'])) {
             require_once($CFG->dirroot . '/user/editlib.php');
             if (!is_array($record['interests'])) {
                 $record['interests'] = preg_split('/\s*,\s*/', trim($record['interests']), -1, PREG_SPLIT_NO_EMPTY);
@@ -292,6 +259,12 @@ EOD;
             useredit_update_interests($user, $record['interests']);
         }
 
+        \core\event\user_created::create_from_userid($userid)->trigger();
+
+        if ($tobedeleted) {
+            delete_user($user);
+            $user = $DB->get_record('user', array('id' => $userid));
+        }
         return $user;
     }
 
@@ -1231,5 +1204,27 @@ EOD;
         $this->enrol_user($user->id, $course->id, $roleid, $enrol, $timestart, $timeend, $status);
 
         return $user;
+    }
+
+    /**
+     * Create a new last access record for a given user in a course.
+     *
+     * @param   \stdClass   $user The user
+     * @param   \stdClass   $course The course the user accessed
+     * @param   int         $timestamp The timestamp for when the user last accessed the course
+     * @return  \stdClass   The user_lastaccess record
+     */
+    public function create_user_course_lastaccess(\stdClass $user, \stdClass $course, int $timestamp): \stdClass {
+        global $DB;
+
+        $record = [
+            'userid' => $user->id,
+            'courseid' => $course->id,
+            'timeaccess' => $timestamp,
+        ];
+
+        $recordid = $DB->insert_record('user_lastaccess', $record);
+
+        return $DB->get_record('user_lastaccess', ['id' => $recordid], '*', MUST_EXIST);
     }
 }

@@ -54,9 +54,13 @@ export default {
         favouriteTabNav: getDataSelector('region', 'favourite-tab-nav'),
         recommendedTabNav: getDataSelector('region', 'recommended-tab-nav'),
         defaultTabNav: getDataSelector('region', 'default-tab-nav'),
+        activityTabNav: getDataSelector('region', 'activity-tab-nav'),
+        resourceTabNav: getDataSelector('region', 'resources-tab-nav'),
         favouriteTab: getDataSelector('region', 'favourites'),
         recommendedTab: getDataSelector('region', 'recommended'),
         defaultTab: getDataSelector('region', 'default'),
+        activityTab: getDataSelector('region', 'activity'),
+        resourceTab: getDataSelector('region', 'resources'),
         getModuleSelector: modname => `[role="menuitem"][data-modname="${modname}"]`,
         searchResults: getDataSelector('region', 'search-results-container'),
         searchResultItems: getDataSelector('region', 'search-result-items-container'),
@@ -83,7 +87,7 @@ export default {
         tab: 'a[data-toggle="tab"]',
         activetab: 'a[data-toggle="tab"][aria-selected="true"]',
         visibletabs: 'a[data-toggle="tab"]:not(.d-none)',
-        searchicon: '.searchbar-append .search-icon',
-        clearsearch: '.searchbar-append .clear'
+        searchicon: '.input-group-append .search-icon',
+        clearsearch: '.input-group-append .clear'
     },
 };

@@ -198,12 +198,13 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             }
         }
 
-        $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
-            'class' => 'section main clearfix'.$sectionstyle, 'role'=>'region',
-            'aria-label'=> get_section_name($course, $section)));
-
-        // Create a span that contains the section title to be used to create the keyboard section move menu.
-        $o .= html_writer::tag('span', get_section_name($course, $section), array('class' => 'hidden sectionname'));
+        $o .= html_writer::start_tag('li', [
+            'id' => 'section-'.$section->section,
+            'class' => 'section main clearfix'.$sectionstyle,
+            'role' => 'region',
+            'aria-labelledby' => "sectionid-{$section->id}-title",
+            'data-sectionid' => $section->section
+        ]);
 
         $leftcontent = $this->section_left_content($section, $course, $onsectionpage);
         $o.= html_writer::tag('div', $leftcontent, array('class' => 'left side'));
@@ -223,7 +224,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             $classes = '';
         }
         $sectionname = html_writer::tag('span', $this->section_title($section, $course));
-        $o.= $this->output->heading($sectionname, 3, 'sectionname' . $classes);
+        $o .= $this->output->heading($sectionname, 3, 'sectionname' . $classes, "sectionid-{$section->id}-title");
 
         $o .= $this->section_availability($section);
 
@@ -402,8 +403,13 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         $title = get_section_name($course, $section);
         $o = '';
-        $o .= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
-            'class' => $classattr, 'role'=>'region', 'aria-label'=> $title));
+        $o .= html_writer::start_tag('li', [
+            'id' => 'section-'.$section->section,
+            'class' => $classattr,
+            'role' => 'region',
+            'aria-label' => $title,
+            'data-sectionid' => $section->section
+        ]);
 
         $o .= html_writer::tag('div', '', array('class' => 'left side'));
         $o .= html_writer::tag('div', '', array('class' => 'right side'));
@@ -646,14 +652,22 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      */
     protected function stealth_section_header($sectionno) {
         $o = '';
-        $o.= html_writer::start_tag('li', array('id' => 'section-'.$sectionno, 'class' => 'section main clearfix orphaned hidden'));
-        $o.= html_writer::tag('div', '', array('class' => 'left side'));
+        $o .= html_writer::start_tag('li', [
+            'id' => 'section-'.$sectionno,
+            'class' => 'section main clearfix orphaned hidden',
+            'data-sectionid' => $sectionno
+        ]);
+        $o .= html_writer::tag('div', '', array('class' => 'left side'));
         $course = course_get_format($this->page->course)->get_course();
         $section = course_get_format($this->page->course)->get_section($sectionno);
         $rightcontent = $this->section_right_content($section, $course, false);
-        $o.= html_writer::tag('div', $rightcontent, array('class' => 'right side'));
-        $o.= html_writer::start_tag('div', array('class' => 'content'));
-        $o.= $this->output->heading(get_string('orphanedactivitiesinsectionno', '', $sectionno), 3, 'sectionname');
+        $o .= html_writer::tag('div', $rightcontent, array('class' => 'right side'));
+        $o .= html_writer::start_tag('div', array('class' => 'content'));
+        $o .= $this->output->heading(
+            get_string('orphanedactivitiesinsectionno', '', $sectionno),
+            3,
+            'sectionname'
+        );
         return $o;
     }
 
@@ -684,7 +698,11 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         }
 
         $o = '';
-        $o.= html_writer::start_tag('li', array('id' => 'section-'.$sectionno, 'class' => 'section main clearfix hidden'));
+        $o .= html_writer::start_tag('li', [
+            'id' => 'section-'.$sectionno,
+            'class' => 'section main clearfix hidden',
+            'data-sectionid' => $sectionno
+        ]);
         $o.= html_writer::tag('div', '', array('class' => 'left side'));
         $o.= html_writer::tag('div', '', array('class' => 'right side'));
         $o.= html_writer::start_tag('div', array('class' => 'content'));

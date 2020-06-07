@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/random/questiontype.php');
 
 
@@ -57,6 +58,50 @@ class qtype_random_test extends advanced_testcase {
 
     public function test_get_random_guess_score() {
         $this->assertNull($this->qtype->get_random_guess_score(null));
+    }
+
+    public function test_load_question() {
+        $this->resetAfterTest();
+
+        $syscontext = context_system::instance();
+        /** @var core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category(['contextid' => $syscontext->id]);
+
+        $fromform = test_question_maker::get_question_form_data('random');
+        $fromform->category = $category->id . ',' . $syscontext->id;
+
+        $question = new stdClass();
+        $question->category = $category->id;
+        $question->qtype = 'random';
+        $question->createdby = 0;
+
+        $this->qtype->save_question($question, $fromform);
+        $questiondata = question_bank::load_question_data($question->id);
+
+        $this->assertEquals(['id', 'category', 'parent', 'name', 'questiontext', 'questiontextformat',
+                'generalfeedback', 'generalfeedbackformat', 'defaultmark', 'penalty', 'qtype',
+                'length', 'stamp', 'version', 'hidden', 'timecreated', 'timemodified',
+                'createdby', 'modifiedby', 'idnumber', 'contextid', 'options', 'hints', 'categoryobject'],
+                array_keys(get_object_vars($questiondata)));
+        $this->assertEquals($category->id, $questiondata->category);
+
+        // Random questions are not real questions. This is signaled by parent
+        // being non-zero - and in fact equal to question id.
+        $this->assertEquals($questiondata->id, $questiondata->parent);
+        $this->assertEquals('Random (' . $category->name . ')', $questiondata->name);
+        $this->assertEquals(0, $questiondata->questiontext); // Used to store 'Select from subcategories'.
+        $this->assertEquals('random', $questiondata->qtype);
+        $this->assertEquals(1, $questiondata->length);
+        $this->assertEquals(0, $questiondata->hidden);
+        $this->assertEquals($category->contextid, $questiondata->contextid);
+
+        // Options - not used.
+        $this->assertEquals(['answers'], array_keys(get_object_vars($questiondata->options)));
+        $this->assertEquals([], $questiondata->options->answers);
+
+        // Hints - not used.
+        $this->assertEquals([], $questiondata->hints);
     }
 
     public function test_get_possible_responses() {

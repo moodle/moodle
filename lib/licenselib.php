@@ -29,8 +29,40 @@
 defined('MOODLE_INTERNAL') || die();
 
 class license_manager {
+
     /**
-     * Adding a new license type
+     * License is a core license and can not be updated or deleted.
+     */
+    const CORE_LICENSE = 0;
+
+    /**
+     * License is a custom license and can be updated and/or deleted.
+     */
+    const CUSTOM_LICENSE = 1;
+
+    /**
+     * Integer representation of boolean for a license that is enabled.
+     */
+    const LICENSE_ENABLED = 1;
+
+    /**
+     * Integer representation of boolean for a license that is disabled.
+     */
+    const LICENSE_DISABLED = 0;
+
+    /**
+     * Integer for moving a license up order.
+     */
+    const LICENSE_MOVE_UP = -1;
+
+    /**
+     * Integer for moving a license down order.
+     */
+    const LICENSE_MOVE_DOWN = 1;
+
+    /**
+     * Save a license record.
+     *
      * @param object $license {
      *            shortname => string a shortname of license, will be refered by files table[required]
      *            fullname  => string the fullname of the license [required]
@@ -39,52 +71,229 @@ class license_manager {
      *            version  => int a version number used by moodle [required]
      * }
      */
-    static public function add($license) {
-        global $DB;
-        if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
-            // record exists
-            if ($record->version < $license->version) {
-                // update license record
-                $license->enabled = $record->enabled;
-                $license->id = $record->id;
-                $DB->update_record('license', $license);
+    static public function save($license) {
+
+        $existinglicense = self::get_license_by_shortname($license->shortname);
+
+        if (!empty($existinglicense)) {
+            $id = $existinglicense->id;
+            if ($existinglicense->custom == self::CORE_LICENSE) {
+                // Can only update the enabled status and sortorder for core licenses.
+                $existinglicense->enabled = $license->enabled;
+                $existinglicense->sortorder = $license->sortorder;
+                $license = $existinglicense;
             }
+            $license->id = $id;
+            self::update($license);
         } else {
-            $DB->insert_record('license', $license);
+            self::create($license);
         }
+
         return true;
     }
 
     /**
-     * Get license records
-     * @param mixed $param
-     * @return array
+     * Adding a new license type
+     *
+     * @deprecated Since Moodle 3.9, MDL-45184.
+     * @todo MDL-67344 This will be deleted in Moodle 4.3.
+     * @see license_manager::save()
+     *
+     * @param object $license the license record to add.
+     *
+     * @return bool true on success.
      */
-    static public function get_licenses($param = null) {
+    public function add($license) : bool {
+        debugging('add() is deprecated. Please use license_manager::save() instead.', DEBUG_DEVELOPER);
+
+        return self::save($license);
+    }
+
+    /**
+     * Create a license record.
+     *
+     * @param object $license the license to create record for.
+     */
+    static protected function create($license) {
         global $DB;
-        if (empty($param) || !is_array($param)) {
-            $param = array();
+
+        $licensecount = count(self::get_licenses());
+        $license->sortorder = $licensecount + 1;
+        // Enable all created license by default.
+        $license->enabled = self::LICENSE_ENABLED;
+        // API can only create custom licenses, core licenses
+        // are directly created at install or upgrade.
+        $license->custom = self::CUSTOM_LICENSE;
+
+        $DB->insert_record('license', $license);
+        self::reset_license_cache();
+        // Update the config setting of active licenses.
+        self::set_active_licenses();
+    }
+
+    /**
+     * Read licens record(s) from database.
+     *
+     * @param array $params license parameters to return licenses for.
+     *
+     * @return array $filteredlicenses object[] of licenses.
+     */
+    static public function read(array $params = []) {
+        $licenses = self::get_licenses();
+
+        $filteredlicenses = [];
+
+        foreach ($licenses as $shortname => $license) {
+            $filtermatch = true;
+            foreach ($params as $key => $value) {
+                if ($license->$key != $value) {
+                    $filtermatch = false;
+                }
+            }
+            if ($filtermatch) {
+                $filteredlicenses[$shortname] = $license;
+            }
         }
-        // get licenses by conditions
-        if ($records = $DB->get_records('license', $param)) {
-            return $records;
+        return $filteredlicenses;
+
+    }
+
+    /**
+     * Update a license record.
+     *
+     * @param object $license the license to update record for.
+     *
+     * @throws \moodle_exception if attempting to update a core license.
+     */
+    static protected function update($license) {
+        global $DB;
+
+        $DB->update_record('license', $license);
+        self::reset_license_cache();
+    }
+
+    /**
+     * Delete a custom license.
+     *
+     * @param string $licenseshortname the shortname of license.
+     *
+     * @throws \moodle_exception when attempting to delete a license you are not allowed to.
+     */
+    static public function delete($licenseshortname) {
+        global $DB;
+
+        $licensetodelete = self::get_license_by_shortname($licenseshortname);
+
+        if (!empty($licensetodelete)) {
+            if ($licensetodelete->custom == self::CUSTOM_LICENSE) {
+                // Check that the license is not in use by any files, if so it cannot be deleted.
+                $countfilesusinglicense = $DB->count_records('files', ['license' => $licenseshortname]);
+                if ($countfilesusinglicense > 0) {
+                    throw new moodle_exception('cannotdeletelicenseinuse', 'license');
+                }
+                $deletedsortorder = $licensetodelete->sortorder;
+                $DB->delete_records('license', ['id' => $licensetodelete->id]);
+
+                // We've deleted a license, so update our list of licenses so we don't save the deleted license again.
+                self::reset_license_cache();
+                $licenses = self::get_licenses();
+
+                foreach ($licenses as $license) {
+                    if ($license->sortorder > $deletedsortorder) {
+                        $license->sortorder = $license->sortorder - 1;
+                        self::save($license);
+                    }
+                }
+
+                // Update the config setting of active licenses as well.
+                self::set_active_licenses();
+
+            } else {
+                throw new moodle_exception('cannotdeletecore', 'license');
+            }
         } else {
-            return array();
+            throw new moodle_exception('licensenotfoundshortname', 'license', $licenseshortname);
+        }
+    }
+
+    /**
+     * Get license records.
+     *
+     * @return array|false object[] of license records of false if none.
+     */
+    static public function get_licenses() {
+        global $DB;
+
+        $cache = \cache::make('core', 'license');
+        $licenses = $cache->get('licenses');
+
+        if (empty($licenses)) {
+            $licenses = [];
+            $records = $DB->get_records_select('license', null, null, 'sortorder ASC');
+            foreach ($records as $license) {
+                // Interpret core license strings for internationalisation.
+                if ($license->custom == self::CORE_LICENSE) {
+                    $license->fullname = get_string($license->shortname, 'license');
+                } else {
+                    $license->fullname = format_string($license->fullname);
+                }
+                $licenses[$license->shortname] = $license;
+            }
+            $cache->set('licenses', $licenses);
+        }
+
+        return $licenses;
+    }
+
+    /**
+     * Change the sort order of a license (and it's sibling license as a result).
+     *
+     * @param int $direction value to change sortorder of license by.
+     * @param string $licenseshortname the shortname of license to changes sortorder for.
+     *
+     * @throws \moodle_exception if attempting to use invalid direction value.
+     */
+    static public function change_license_sortorder(int $direction, string $licenseshortname) : void {
+
+        if ($direction != self::LICENSE_MOVE_UP && $direction != self::LICENSE_MOVE_DOWN) {
+            throw new coding_exception(
+                'Must use a valid licence API move direction constant (LICENSE_MOVE_UP or LICENSE_MOVE_DOWN)');
+        }
+
+        $licenses = self::get_licenses();
+        $licensetoupdate = $licenses[$licenseshortname];
+
+        $currentsortorder = $licensetoupdate->sortorder;
+        $targetsortorder = $currentsortorder + $direction;
+
+        if ($targetsortorder > 0 && $targetsortorder <= count($licenses) ) {
+            foreach ($licenses as $license) {
+                if ($license->sortorder == $targetsortorder) {
+                    $license->sortorder = $license->sortorder - $direction;
+                    self::update($license);
+                }
+            }
+            $licensetoupdate->sortorder = $targetsortorder;
+            self::update($licensetoupdate);
         }
     }
 
     /**
      * Get license record by shortname
-     * @param mixed $param the shortname of license, or an array
-     * @return object
+     *
+     * @param string $name the shortname of license
+     * @return object|null the license or null if no license found.
      */
-    static public function get_license_by_shortname($name) {
-        global $DB;
-        if ($record = $DB->get_record('license', array('shortname'=>$name))) {
-            return $record;
+    static public function get_license_by_shortname(string $name) {
+        $licenses = self::read(['shortname' => $name]);
+
+        if (!empty($licenses)) {
+            $license = reset($licenses);
         } else {
-            return null;
+            $license = null;
         }
+
+        return $license;
     }
 
     /**
@@ -93,12 +302,12 @@ class license_manager {
      * @return boolean
      */
     static public function enable($license) {
-        global $DB;
         if ($license = self::get_license_by_shortname($license)) {
-            $license->enabled = 1;
-            $DB->update_record('license', $license);
+            $license->enabled = self::LICENSE_ENABLED;
+            self::update($license);
         }
         self::set_active_licenses();
+
         return true;
     }
 
@@ -108,25 +317,25 @@ class license_manager {
      * @return boolean
      */
     static public function disable($license) {
-        global $DB, $CFG;
+        global $CFG;
         // Site default license cannot be disabled!
         if ($license == $CFG->sitedefaultlicense) {
             print_error('error');
         }
         if ($license = self::get_license_by_shortname($license)) {
-            $license->enabled = 0;
-            $DB->update_record('license', $license);
+            $license->enabled = self::LICENSE_DISABLED;
+            self::update($license);
         }
         self::set_active_licenses();
+
         return true;
     }
 
     /**
-     * Store active licenses in global $CFG
+     * Store active licenses in global config.
      */
-    static private function set_active_licenses() {
-        // set to global $CFG
-        $licenses = self::get_licenses(array('enabled'=>1));
+    static protected function set_active_licenses() {
+        $licenses = self::read(['enabled' => self::LICENSE_ENABLED]);
         $result = array();
         foreach ($licenses as $l) {
             $result[] = $l->shortname;
@@ -135,85 +344,61 @@ class license_manager {
     }
 
     /**
-     * Install moodle build-in licenses
+     * Get the globally configured active licenses.
+     *
+     * @return array of license objects.
+     * @throws \coding_exception
+     */
+    static public function get_active_licenses() {
+        global $CFG;
+
+        $result = [];
+
+        if (!empty($CFG->licenses)) {
+            $activelicenses = explode(',', $CFG->licenses);
+            $licenses = self::get_licenses();
+            foreach ($licenses as $license) {
+                if (in_array($license->shortname, $activelicenses)) {
+                    $result[$license->shortname] = $license;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the globally configured active licenses as an array.
+     *
+     * @return array $licenses an associative array of licenses shaped as ['shortname' => 'fullname']
+     */
+    static public function get_active_licenses_as_array() {
+        $activelicenses = self::get_active_licenses();
+
+        $licenses = [];
+        foreach ($activelicenses as $license) {
+            $licenses[$license->shortname] = $license->fullname;
+        }
+
+        return $licenses;
+    }
+
+    /**
+     * Install moodle built-in licenses.
      */
     static public function install_licenses() {
-        $active_licenses = array();
+        global $CFG;
 
-        $license = new stdClass();
+        require_once($CFG->libdir . '/db/upgradelib.php');
 
-        $license->shortname = 'unknown';
-        $license->fullname = 'Unknown license';
-        $license->source = '';
-        $license->enabled = 1;
-        $license->version = '2010033100';
-        $active_licenses[] = $license->shortname;
-        self::add($license);
+        upgrade_core_licenses();
+    }
 
-        $license->shortname = 'allrightsreserved';
-        $license->fullname = 'All rights reserved';
-        $license->source = 'http://en.wikipedia.org/wiki/All_rights_reserved';
-        $license->enabled = 1;
-        $license->version = '2010033100';
-        $active_licenses[] = $license->shortname;
-        self::add($license);
-
-        $license->shortname = 'public';
-        $license->fullname = 'Public Domain';
-        $license->source = 'http://creativecommons.org/licenses/publicdomain/';
-        $license->enabled = 1;
-        $license->version = '2010033100';
-        $active_licenses[] = $license->shortname;
-        self::add($license);
-
-        $license->shortname = 'cc';
-        $license->fullname = 'Creative Commons';
-        $license->source = 'http://creativecommons.org/licenses/by/3.0/';
-        $license->enabled = 1;
-        $license->version = '2010033100';
-        $active_licenses[] = $license->shortname;
-        self::add($license);
-
-        $license->shortname = 'cc-nd';
-        $license->fullname = 'Creative Commons - NoDerivs';
-        $license->source = 'http://creativecommons.org/licenses/by-nd/3.0/';
-        $license->enabled = 1;
-        $license->version = '2010033100';
-        $active_licenses[] = $license->shortname;
-        self::add($license);
-
-        $license->shortname = 'cc-nc-nd';
-        $license->fullname = 'Creative Commons - No Commercial NoDerivs';
-        $license->source = 'http://creativecommons.org/licenses/by-nc-nd/3.0/';
-        $license->enabled = 1;
-        $license->version = '2010033100';
-        $active_licenses[] = $license->shortname;
-        self::add($license);
-
-        $license->shortname = 'cc-nc';
-        $license->fullname = 'Creative Commons - No Commercial';
-        $license->source = 'http://creativecommons.org/licenses/by-nc/3.0/';
-        $license->enabled = 1;
-        $license->version = '2013051500';
-        $active_licenses[] = $license->shortname;
-        self::add($license);
-
-        $license->shortname = 'cc-nc-sa';
-        $license->fullname = 'Creative Commons - No Commercial ShareAlike';
-        $license->source = 'http://creativecommons.org/licenses/by-nc-sa/3.0/';
-        $license->enabled = 1;
-        $license->version = '2010033100';
-        $active_licenses[] = $license->shortname;
-        self::add($license);
-
-        $license->shortname = 'cc-sa';
-        $license->fullname = 'Creative Commons - ShareAlike';
-        $license->source = 'http://creativecommons.org/licenses/by-sa/3.0/';
-        $license->enabled = 1;
-        $license->version = '2010033100';
-        $active_licenses[] = $license->shortname;
-        self::add($license);
-
-        set_config('licenses', implode(',', $active_licenses));
+    /**
+     * Reset the license cache so it rebuilds next time licenses are fetched.
+     */
+    static public function reset_license_cache() {
+        $cache = \cache::make('core', 'license');
+        $cache->delete('licenses');
     }
 }

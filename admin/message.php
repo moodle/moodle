@@ -83,7 +83,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                 }
             } else {
                 $newsettings = array();
-                if (array_key_exists($componentprovidersetting, $form)) {
+                if (property_exists($form, $componentprovidersetting)) {
                     // We must be processing loggedin or loggedoff checkboxes.
                     // Store defained comma-separated processors as setting value.
                     // Using array_filter eliminates elements set to 0 above.

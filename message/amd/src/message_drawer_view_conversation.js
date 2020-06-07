@@ -507,6 +507,18 @@ function(
                 timeFrom
             )
             .then(function(result) {
+                // Prevent older requests from contaminating the current view.
+                if (result.id != viewState.id) {
+                    result.messages = [];
+                    // Purge old conversation cache to prevent messages lose.
+                    if (result.id in stateCache) {
+                        delete stateCache[result.id];
+                    }
+                }
+
+                return result;
+            })
+            .then(function(result) {
                 if (result.messages.length && ignoreList.length) {
                     result.messages = result.messages.filter(function(message) {
                         // Skip any messages in our ignore list.
@@ -1865,6 +1877,9 @@ function(
     var resetState = function(body, conversationId, loggedInUserProfile) {
         // Reset all of the states back to the beginning if we're loading a new
         // conversation.
+        if (newMessagesPollTimer) {
+            newMessagesPollTimer.stop();
+        }
         loadedAllMessages = false;
         messagesOffset = 0;
         newMessagesPollTimer = null;
@@ -1891,10 +1906,6 @@ function(
 
         if (!viewState) {
             viewState = initialState;
-        }
-
-        if (newMessagesPollTimer) {
-            newMessagesPollTimer.stop();
         }
 
         render(initialState);

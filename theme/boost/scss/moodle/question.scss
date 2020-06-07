@@ -423,7 +423,9 @@ body.jsenabled .questionflag input[type=checkbox] {
 
 #page-mod-quiz-edit ul.slots .activityinstance {
     > a {
-        display: inline;
+        display: flex;
+        max-width: 100%;
+        align-items: center;
         text-indent: 0;
         padding-left: 0;
     }

@@ -34,12 +34,11 @@ if ($ADMIN->fulltree) {
     $desc = new lang_string('toolbarconfig_desc', 'editor_atto');
     $default = 'collapse = collapse
 style1 = title, bold, italic
-list = unorderedlist, orderedlist
+list = unorderedlist, orderedlist, indent
 links = link
-files = image, media, recordrtc, managefiles, h5p
+files = emojipicker, image, media, recordrtc, managefiles, h5p
 style2 = underline, strike, subscript, superscript
 align = align
-indent = indent
 insert = equation, charmap, table, clear
 undo = undo
 accessibility = accessibilitychecker, accessibilityhelper

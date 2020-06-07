@@ -28,8 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 
 /** Default socket timeout */
 define('ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT', 10);
-/** Default socket data stream chunk size */
-define('ANTIVIRUS_CLAMAV_SOCKET_CHUNKSIZE', 1024);
+/** Default socket data stream chunk size (32Mb: 32 * 1024 * 1024) */
+define('ANTIVIRUS_CLAMAV_SOCKET_CHUNKSIZE', 33554432);
 
 /**
  * Class implementing ClamAV antivirus.

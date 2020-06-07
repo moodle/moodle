@@ -323,9 +323,9 @@ class question_type {
      *       is accurate any more.)
      */
     public function save_question($question, $form) {
-        global $USER, $DB, $OUTPUT;
+        global $USER, $DB;
 
-        // The actuall update/insert done with multiple DB access, so we do it in a transaction.
+        // The actual update/insert done with multiple DB access, so we do it in a transaction.
         $transaction = $DB->start_delegated_transaction ();
 
         list($question->category) = explode(',', $form->category);
@@ -461,7 +461,7 @@ class question_type {
             $event->trigger();
         }
 
-        $transaction->allow_commit ();
+        $transaction->allow_commit();
 
         return $question;
     }
@@ -1055,9 +1055,27 @@ class question_type {
     }
 
     /**
-     * @param object $question
+     * Calculate the score a monkey would get on a question by clicking randomly.
+     *
+     * Some question types have significant non-zero average expected score
+     * of the response is just selected randomly. For example 50% for a
+     * true-false question. It is useful to know what this is. For example
+     * it gets shown in the quiz statistics report.
+     *
+     * For almost any open-ended question type (E.g. shortanswer or numerical)
+     * this should be 0.
+     *
+     * For selective response question types (e.g. multiple choice), you can probably compute this.
+     *
+     * For particularly complicated question types the may be impossible or very
+     * difficult to compute. In this case return null. (Or, if the expected score
+     * is very tiny even though the exact value is unknown, it may appropriate
+     * to return 0.)
+     *
+     * @param stdClass $questiondata data defining a question, as returned by
+     *      question_bank::load_question_data().
      * @return number|null either a fraction estimating what the student would
-     * score by guessing, or null, if it is not possible to estimate.
+     *      score by guessing, or null, if it is not possible to estimate.
      */
     public function get_random_guess_score($questiondata) {
         return 0;

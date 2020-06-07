@@ -46,7 +46,8 @@ if ($data) {
     $emailuser->email = $data->recipient;
     $emailuser->id = -99;
 
-    $subject = get_string('testoutgoingmailconf_subject', 'admin', $SITE->fullname);
+    $subject = get_string('testoutgoingmailconf_subject', 'admin',
+        format_string($SITE->fullname, true, ['context' => context_system::instance()]));
     $messagetext = get_string('testoutgoingmailconf_message', 'admin');
 
     // Manage Moodle debugging options.

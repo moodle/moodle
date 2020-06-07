@@ -126,6 +126,11 @@ class restore_course_task extends restore_task {
         // Activity completion defaults.
         $this->add_step(new restore_completion_defaults_structure_step('course_completion_defaults', 'completiondefaults.xml'));
 
+        // Content bank content (conditionally).
+        if ($this->get_setting_value('contentbankcontent')) {
+            $this->add_step(new restore_contentbankcontent_structure_step('course_contentbank', 'contentbank.xml'));
+        }
+
         // At the end, mark it as built
         $this->built = true;
     }

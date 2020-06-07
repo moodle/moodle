@@ -158,5 +158,5 @@ Feature: Manage analytics models
   Scenario: Delete model
     When I open the action menu in "Students at risk of not meeting the course completion conditions" "table_row"
     And I choose "Delete" in the open action menu
-    And I click on "Delete" "button" in the "Confirm" "dialogue"
+    And I click on "Delete" "button" in the "Delete" "dialogue"
     Then I should not see "Students at risk of not meeting the course completion conditions"

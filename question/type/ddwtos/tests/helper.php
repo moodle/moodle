@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ddwtos_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('fox', 'maths', 'oddgroups');
+        return array('fox', 'maths', 'oddgroups', 'missingchoiceno');
     }
 
     /**
@@ -120,6 +120,31 @@ class qtype_ddwtos_test_helper extends question_test_helper {
             array('answer' => 'slow',      'choicegroup' => '5'),
             array('answer' => 'dog',       'choicegroup' => '7'),
             array('answer' => 'assiduous', 'choicegroup' => '3'),
+        );
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+        $fromform->shownumcorrect = 0;
+        $fromform->penalty = 0.3333333;
+
+        return $fromform;
+    }
+
+    /**
+     * Get data required to save a drag-drop into text question where the author
+     * missed out one of the group numbers.
+     *
+     * @return stdClass data to create a ddwtos question.
+     */
+    public function get_ddwtos_question_form_data_missingchoiceno() {
+        $fromform = new stdClass();
+
+        $fromform->name = 'Drag-drop into text question with one index missing';
+        $fromform->questiontext = ['text' => 'The [[1]] sat on the [[3]].', 'format' => FORMAT_HTML];
+        $fromform->defaultmark = 1.0;
+        $fromform->generalfeedback = array('text' => 'The right answer is: "The cat sat on the mat."', 'format' => FORMAT_HTML);
+        $fromform->choices = array(
+                array('answer' => 'cat', 'choicegroup' => '1'),
+                array('answer' => '',    'choicegroup' => '1'),
+                array('answer' => 'mat', 'choicegroup' => '1'),
         );
         test_question_maker::set_standard_combined_feedback_form_data($fromform);
         $fromform->shownumcorrect = 0;

@@ -145,4 +145,91 @@ class core_backup_async_helper_testcase extends \core_privacy\tests\provider_tes
         $this->assertEquals(1, count($result));
         $this->assertEquals('backup.mbz', $result[0][0]);
     }
+
+    /**
+     * Tests getting the backup record.
+     */
+    public function test_get_backup_record() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        // Create the initial backupcontoller.
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id, \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO, \backup::MODE_COPY, $USER->id, \backup::RELEASESESSION_YES);
+        $backupid = $bc->get_backupid();
+        $bc->destroy();
+        $copyrec = \async_helper::get_backup_record($backupid);
+
+        $this->assertEquals($backupid, $copyrec->backupid);
+
+    }
+
+    /**
+     * Tests is async pending conditions.
+     */
+    public function test_is_async_pending() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        set_config('enableasyncbackup', '0');
+        $ispending = async_helper::is_async_pending($course->id, 'course', 'backup');
+
+        // Should be false as there are no backups and async backup is false.
+        $this->assertFalse($ispending);
+
+        // Create the initial backupcontoller.
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id, \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO, \backup::MODE_ASYNC, $USER->id, \backup::RELEASESESSION_YES);
+        $bc->destroy();
+        $ispending = async_helper::is_async_pending($course->id, 'course', 'backup');
+
+        // Should be false as there as async backup is false.
+        $this->assertFalse($ispending);
+
+        set_config('enableasyncbackup', '1');
+        // Should be true as there as async backup is true and there is a pending backup.
+        $this->assertFalse($ispending);
+    }
+
+    /**
+     * Tests is async pending conditions for course copies.
+     */
+    public function test_is_async_pending_copy() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        set_config('enableasyncbackup', '0');
+        $ispending = async_helper::is_async_pending($course->id, 'course', 'backup');
+
+        // Should be false as there are no copies and async backup is false.
+        $this->assertFalse($ispending);
+
+        // Create the initial backupcontoller.
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id, \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO, \backup::MODE_COPY, $USER->id, \backup::RELEASESESSION_YES);
+        $bc->destroy();
+        $ispending = async_helper::is_async_pending($course->id, 'course', 'backup');
+
+        // Should be True as this a copy operation.
+        $this->assertTrue($ispending);
+
+        set_config('enableasyncbackup', '1');
+        $ispending = async_helper::is_async_pending($course->id, 'course', 'backup');
+
+        // Should be true as there as async backup is true and there is a pending copy.
+        $this->assertTrue($ispending);
+    }
+
 }

@@ -20,7 +20,7 @@ Feature: Atto editor with customised toolbar
   Scenario: Confirm that both editors have different toolbars but still function
     Then ".atto_link_button" "css_element" should exist in the ".normaldiv" "css_element"
     And ".atto_link_button" "css_element" should not exist in the ".specialdiv" "css_element"
-    And ".atto_bold_button_bold" "css_element" should exist in the ".normaldiv" "css_element"
-    And ".atto_italic_button_italic" "css_element" should exist in the ".normaldiv" "css_element"
-    And ".atto_bold_button_bold" "css_element" should exist in the ".specialdiv" "css_element"
-    And ".atto_italic_button_italic" "css_element" should exist in the ".specialdiv" "css_element"
+    And ".atto_bold_button" "css_element" should exist in the ".normaldiv" "css_element"
+    And ".atto_italic_button" "css_element" should exist in the ".normaldiv" "css_element"
+    And ".atto_bold_button" "css_element" should exist in the ".specialdiv" "css_element"
+    And ".atto_italic_button" "css_element" should exist in the ".specialdiv" "css_element"

@@ -1,5 +1,3 @@
-/* global DragDrop, Category, Course */
-
 /**
  * Provides drop down menus for list of action links.
  *
@@ -16,9 +14,9 @@
  * @constructor
  * @extends Base
  */
-function Console() {
+Console = function() {
     Console.superclass.constructor.apply(this, arguments);
-}
+};
 Console.NAME = 'moodle-course-management';
 Console.CSS_PREFIX = 'management';
 Console.ATTRS = {

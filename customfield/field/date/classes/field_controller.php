@@ -114,4 +114,17 @@ class field_controller extends \core_customfield\field_controller {
             $this->get_formatted_name());
         return $ret;
     }
+
+    /**
+     * Convert given value into appropriate timestamp
+     *
+     * @param string $value
+     * @return int
+     */
+    public function parse_value(string $value) {
+        $timestamp = strtotime($value);
+
+        // If we have a valid, positive timestamp then return it.
+        return $timestamp > 0 ? $timestamp : 0;
+    }
 }

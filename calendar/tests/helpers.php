@@ -137,7 +137,8 @@ class action_event_test_factory implements event_factory_interface {
             ),
             !empty($record->visible),
             $subscription,
-            $record->location
+            $record->location,
+            !empty($record->component) ? $record->component : null
         );
 
         $action = new action(

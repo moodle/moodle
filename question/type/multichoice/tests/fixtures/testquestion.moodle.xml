@@ -25,6 +25,7 @@
     <single>false</single>
     <shuffleanswers>true</shuffleanswers>
     <answernumbering>abc</answernumbering>
+    <showstandardinstruction>0</showstandardinstruction>
     <correctfeedback format="html">
       <text>Your answer is correct.</text>
     </correctfeedback>

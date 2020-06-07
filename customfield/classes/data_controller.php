@@ -122,7 +122,7 @@ abstract class data_controller {
      *
      * @return string
      */
-    protected function get_form_element_name() : string {
+    public function get_form_element_name() : string {
         return 'customfield_' . $this->get_field()->get('shortname');
     }
 

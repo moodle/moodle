@@ -92,7 +92,7 @@ class core_question_renderer extends plugin_renderer_base {
             'id' => $qa->get_outer_question_div_unique_id(),
             'class' => implode(' ', array(
                 'que',
-                $qa->get_question()->qtype->name(),
+                $qa->get_question(false)->get_type_name(),
                 $qa->get_behaviour_name(),
                 $qa->get_state_class($options->correctness && $qa->has_marks()),
             ))
@@ -355,7 +355,7 @@ class core_question_renderer extends plugin_renderer_base {
         if ($params['returnurl'] instanceof moodle_url) {
             $params['returnurl'] = $params['returnurl']->out_as_local_url(false);
         }
-        $params['id'] = $qa->get_question()->id;
+        $params['id'] = $qa->get_question_id();
         $editurl = new moodle_url('/question/question.php', $params);
 
         return html_writer::tag('div', html_writer::link(

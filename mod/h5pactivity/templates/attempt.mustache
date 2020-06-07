@@ -1,0 +1,96 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_h5pactivity/attempt
+
+    This template will render an attempt basic information inside a H5P activity results report.
+
+    Variables required for this template:
+    * timemodified - Full attempts list
+    * attempt - Full attempts list
+    * rawscore - Full attempts list
+    * maxscore - Full attempts list
+    * duration - Full attempts list
+    * completionicon - Full attempts list
+    * successicon - Full attempts list
+    * reporturl - Full attempts list
+
+    Variables optional for this template:
+    * user - optional user record
+    * scored - The scored attempt
+
+    Example context (json):
+    {
+        "id": 11,
+        "h5pactivityid": 1,
+        "userid": 3,
+        "timecreated": 1587655101,
+        "timemodified": 1587655101,
+        "attempt": 2,
+        "rawscore": 6,
+        "maxscore": 6,
+        "duration": "2 minutes 10 seconds",
+        "completion": 1,
+        "completionicon": "<i class=\"icon fa fa-check-circle fa-fw \"  title=\"Attempt completed\" aria-label=\"Attempt completed\"><\/i>",
+        "success": 1,
+        "successicon": "<i class=\"icon fa fa-check-circle fa-fw \"  title=\"Attempt completed successfully\" aria-label=\"Attempt completed successfully\"><\/i>",
+        "scaled": 1,
+        "reporturl": {},
+        "score": "6 out of 6",
+        "user": {
+            "id": "3",
+            "idnumber": "",
+            "firstname": "John",
+            "lastname": "Doe",
+            "email": "s1@example.com",
+            "institution": "Moodle HQ",
+            "department": "Business",
+            "address": "",
+            "city": "Barcelona",
+            "country": "Spain",
+            "lang": "en",
+            "picture": "[userpic]",
+            "fullname": "User Fullname"
+        }
+    }
+
+}}
+<h2 class="px-0 px-md-3">
+    {{#user}}
+      {{{picture}}}
+      {{#str}}attempt, mod_h5pactivity{{/str}} #{{attempt}}: {{fullname}}
+    {{/user}}
+    {{^user}}
+      {{#str}}attempt, mod_h5pactivity{{/str}} #{{attempt}}
+    {{/user}}
+</h2>
+<div class="container-fluid mt-4 mb-5 px-0 px-md-3">
+    <dl class="row">
+        <dt class="col-12">{{#str}} startdate, mod_h5pactivity {{/str}}</dt>
+        <dd class="col-12">{{#userdate}} {{timemodified}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}</dd>
+        <dt class="col-12">{{#str}} completion, mod_h5pactivity {{/str}}</dt>
+        <dd class="col-12">{{{completiontext}}}</dd>
+        <dt class="col-12 text-truncate">{{#str}} duration, mod_h5pactivity {{/str}}</dt>
+        <dd class="col-12">{{duration}}</dd>
+        <dt class="col-12">{{#str}} outcome, mod_h5pactivity {{/str}}</dt>
+        <dd class="col-12">{{{successtext}}}</dd>
+        {{#score}}
+            <dt class="col-12">{{#str}} totalscore, mod_h5pactivity {{/str}}</dt>
+            <dd class="col-12">{{score}}</dd>
+        {{/score}}
+    </dl>
+</div>

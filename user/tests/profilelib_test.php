@@ -210,4 +210,34 @@ class core_user_profilelib_testcase extends advanced_testcase {
         $this->assertTrue(user_not_fully_set_up($roaminghermione, true));
         $this->assertTrue(user_not_fully_set_up($roaminghermione, false));
     }
+
+    /**
+     * Test that user generator sets the custom profile fields
+     */
+    public function test_profile_fields_in_generator() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot.'/mnet/lib.php');
+
+        $this->resetAfterTest();
+
+        // Add a required, visible, unlocked custom field.
+        $DB->insert_record('user_info_field', ['shortname' => 'house', 'name' => 'House', 'required' => 1,
+            'visible' => 1, 'locked' => 0, 'categoryid' => 1, 'datatype' => 'text']);
+
+        // Create some student accounts.
+        $hermione = $this->getDataGenerator()->create_user(['profile_field_house' => 'Gryffindor']);
+        $harry = $this->getDataGenerator()->create_user();
+
+        // Only students with required fields filled should be considered as fully set up.
+        $this->assertFalse(user_not_fully_set_up($hermione));
+        $this->assertTrue(user_not_fully_set_up($harry));
+
+        // Test that the profile fields were actually set.
+        $profilefields1 = profile_user_record($hermione->id);
+        $this->assertEquals('Gryffindor', $profilefields1->house);
+
+        $profilefields2 = profile_user_record($harry->id);
+        $this->assertObjectHasAttribute('house', $profilefields2);
+        $this->assertNull($profilefields2->house);
+    }
 }

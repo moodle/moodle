@@ -456,6 +456,22 @@ $message-day-color: color-yiq($message-app-bg) !default;
         flex-shrink: 0;
     }
 
+    .overflow-y {
+        overflow-y: auto;
+    }
+
+    @media (max-height: 320px) {
+        .header-container [data-region="view-overview"]:not(.hidden) {
+            display: flex;
+            align-items: center;
+        }
+        .footer-container [data-region="view-overview"] {
+            display: none;
+        }
+        .overflow-y {
+            overflow-y: unset;
+        }
+    }
     .body-container {
         flex: 1;
         overflow: hidden;
@@ -466,6 +482,7 @@ $message-day-color: color-yiq($message-app-bg) !default;
             left: 0;
             top: 0;
             bottom: 0;
+            overflow: auto;
         }
     }
 
@@ -475,12 +492,6 @@ $message-day-color: color-yiq($message-app-bg) !default;
         textarea {
             direction: ltr;
         }
-    }
-
-    .matchtext {
-        background-color: lighten($primary, 40%);
-        color: $body-color;
-        height: 1.5rem;
     }
 
     .contact-status {
@@ -677,6 +688,14 @@ $message-day-color: color-yiq($message-app-bg) !default;
 
         @include media-breakpoint-down(xs) {
             right: -1 * map-get($spacers, 2);
+        }
+    }
+
+    @media (max-height: 495px) {
+        .emoji-picker-container {
+            position: fixed;
+            top: 0;
+            transform: none;
         }
     }
 

@@ -893,6 +893,7 @@ END;
         $qdata->options->single = 0;
         $qdata->options->shuffleanswers = 0;
         $qdata->options->answernumbering = 'abc';
+        $qdata->options->showstandardinstruction = 0;
         $qdata->options->correctfeedback = '<p>Your answer is correct.</p>';
         $qdata->options->correctfeedbackformat = FORMAT_HTML;
         $qdata->options->partiallycorrectfeedback = '<p>Your answer is partially correct.</p>';
@@ -934,6 +935,7 @@ END;
     <single>false</single>
     <shuffleanswers>false</shuffleanswers>
     <answernumbering>abc</answernumbering>
+    <showstandardinstruction>0</showstandardinstruction>
     <correctfeedback format="html">
       <text><![CDATA[<p>Your answer is correct.</p>]]></text>
     </correctfeedback>

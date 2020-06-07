@@ -51,7 +51,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I set the field "Feedback comments" to "Great job! Lol, not really."
     And I set the field "Notify students" to "0"
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -63,7 +63,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I set the field "Marking workflow state" to "Ready for release"
     And I set the field "Notify students" to "0"
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -71,7 +71,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I click on "Grade" "link" in the "I'm the student's first submission" "table_row"
     And I set the field "Marking workflow state" to "Released"
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -91,7 +91,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I set the field "Marking workflow state" to "Ready for release"
     And I set the field "Notify students" to "0"
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -101,7 +101,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Marking workflow state" to "Released"
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration

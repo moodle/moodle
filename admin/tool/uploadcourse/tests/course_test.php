@@ -1081,6 +1081,136 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals(strtotime('12th July 2013'), $enroldata['manual']->enrolenddate);
     }
 
+    /**
+     * Test upload processing of course custom fields
+     */
+    public function test_custom_fields_data() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course(['shortname' => 'C1']);
+
+        // Create our custom fields.
+        $category = $this->get_customfield_generator()->create_category();
+        $this->create_custom_field($category, 'date', 'mydatefield');
+        $this->create_custom_field($category, 'text', 'mytextfield');
+        $this->create_custom_field($category, 'textarea', 'mytextareafield');
+
+        // Perform upload.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $dataupload = [
+            'shortname' => $course->shortname,
+            'customfield_mydatefield' => '2020-04-01 16:00',
+            'customfield_mytextfield' => 'Hello',
+            'customfield_mytextareafield' => 'Is it me you\'re looking for?',
+        ];
+
+        $uploader = new tool_uploadcourse_course($mode, $updatemode, $dataupload);
+        $this->assertTrue($uploader->prepare());
+        $uploader->proceed();
+
+        // Confirm presence of course custom fields.
+        $data = \core_course\customfield\course_handler::create()->export_instance_data_object($course->id);
+        $this->assertEquals('Wednesday, 1 April 2020, 4:00 PM', $data->mydatefield, '', 0.0, 10, false, true);
+        $this->assertEquals($dataupload['customfield_mytextfield'], $data->mytextfield);
+        $this->assertContains($dataupload['customfield_mytextareafield'], $data->mytextareafield);
+    }
+
+    /**
+     * Test upload processing of course custom field that is required but empty
+     */
+    public function test_custom_fields_data_required() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course(['shortname' => 'C1']);
+
+        // Create our custom field.
+        $category = $this->get_customfield_generator()->create_category();
+        $this->create_custom_field($category, 'select', 'myselect', ['required' => true, 'options' => "Cat\nDog"]);
+
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $dataupload = [
+            'shortname' => $course->shortname,
+            'customfield_myselect' => null,
+        ];
+
+        $uploader = new tool_uploadcourse_course($mode, $updatemode, $dataupload);
+        $this->assertFalse($uploader->prepare());
+        $this->assertArrayHasKey('customfieldinvalid', $uploader->get_errors());
+
+        // Try again with a default value.
+        $defaults = [
+            'customfield_myselect' => 2, // Our second option: Dog.
+        ];
+
+        $uploader = new tool_uploadcourse_course($mode, $updatemode, $dataupload, $defaults);
+        $this->assertTrue($uploader->prepare());
+        $uploader->proceed();
+
+        // Confirm presence of course custom fields.
+        $data = \core_course\customfield\course_handler::create()->export_instance_data_object($course->id);
+        $this->assertEquals('Dog', $data->myselect);
+    }
+
+    /**
+     * Test upload processing of course custom field with an invalid select option
+     */
+    public function test_custom_fields_data_invalid_select_option() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course(['shortname' => 'C1']);
+
+        // Create our custom field.
+        $category = $this->get_customfield_generator()->create_category();
+        $this->create_custom_field($category, 'select', 'myselect',
+            ['required' => true, 'options' => "Cat\nDog", 'defaultvalue' => 'Cat']);
+
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $dataupload = [
+            'shortname' => $course->shortname,
+            'customfield_myselect' => 'Fish', // No, invalid.
+        ];
+
+        $uploader = new tool_uploadcourse_course($mode, $updatemode, $dataupload);
+        $this->assertTrue($uploader->prepare());
+        $uploader->proceed();
+
+        // Confirm presence of course custom fields.
+        $data = \core_course\customfield\course_handler::create()->export_instance_data_object($course->id);
+        $this->assertEquals('Cat', $data->myselect);
+    }
+
+    /**
+     * Test upload processing of course custom field with an out of range date
+     */
+    public function test_custom_fields_data_invalid_date() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course(['shortname' => 'C1']);
+
+        // Create our custom field.
+        $category = $this->get_customfield_generator()->create_category();
+        $this->create_custom_field($category, 'date', 'mydate',
+            ['mindate' => strtotime('2020-04-01'), 'maxdate' => '2020-04-30']);
+
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $dataupload = [
+            'shortname' => $course->shortname,
+            'customfield_mydate' => '2020-05-06', // Out of range.
+        ];
+
+        $uploader = new tool_uploadcourse_course($mode, $updatemode, $dataupload);
+        $this->assertFalse($uploader->prepare());
+        $this->assertArrayHasKey('customfieldinvalid', $uploader->get_errors());
+    }
+
     public function test_idnumber_problems() {
         $this->resetAfterTest(true);
 
@@ -1224,7 +1354,34 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
         $this->assertFalse($co->prepare());
         $this->assertArrayHasKey('cannotrenameshortnamealreadyinuse', $co->get_errors());
-
     }
 
+    /**
+     * Get custom field plugin generator
+     *
+     * @return core_customfield_generator
+     */
+    protected function get_customfield_generator() : core_customfield_generator {
+        return $this->getDataGenerator()->get_plugin_generator('core_customfield');
+    }
+
+    /**
+     * Helper method to create custom course field
+     *
+     * @param \core_customfield\category_controller $category
+     * @param string $type
+     * @param string $shortname
+     * @param array $configdata
+     * @return \core_customfield\field_controller
+     */
+    protected function create_custom_field(\core_customfield\category_controller $category, string $type, string $shortname,
+            array $configdata = []) : \core_customfield\field_controller {
+
+        return $this->get_customfield_generator()->create_field([
+            'categoryid' => $category->get('id'),
+            'type' => $type,
+            'shortname' => $shortname,
+            'configdata' => $configdata,
+        ]);
+    }
 }

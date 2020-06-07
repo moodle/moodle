@@ -1609,8 +1609,16 @@ class framework_testcase extends \advanced_testcase {
             'libraryMinorVersion' => $mainlibrary->minorversion,
             'libraryEmbedTypes' => $mainlibrary->embedtypes,
             'libraryFullscreen' => $mainlibrary->fullscreen,
-            'metadata' => ''
+            'metadata' => '',
+            'pathnamehash' => $h5p->pathnamehash
         );
+
+        $params = json_decode($h5p->jsoncontent);
+        if (empty($params->metadata)) {
+            $params->metadata = new \stdClass();
+        }
+        $expected['metadata'] = $params->metadata;
+        $expected['params'] = json_encode($params->params ?? $params);
 
         // The returned content should match the expected array.
         $this->assertEquals($expected, $content);

@@ -36,9 +36,25 @@
     {{$drawerid}}grading-drawer-{{uniqid}}{{/drawerid}}
     {{$drawerclasses}}grader-grading-panel flex-shrink-0{{/drawerclasses}}
     {{$drawercontent}}
-        <div class="h-100 w-100 bg-white d-flex flex-column">
+        <div class="h-100 w-100 bg-white d-flex flex-column" role="region" aria-label="{{#str}} forumgradingpanel, mod_forum {{/str}}">
             <div class="flex-shrink-0 d-flex flex-column">
                 <div class="header-container bg-light">
+                    <div class="info-container d-flex align-items-center" data-region="grading-info-container">
+                        <button
+                            class="btn btn-icon icon-size-3 icon-no-margin colour-inherit"
+                            data-action="collapse-grading-drawer"
+                            aria-controls="grading-drawer-{{uniqid}}"
+                            aria-expanded="true"
+                            title="{{#str}} closebuttontitle, core {{/str}}"
+                            aria-label="{{#str}} hidegraderpanel, mod_forum {{/str}}"
+                        >
+                            <span class="dir-ltr-hide">{{#pix}} t/left, core {{/pix}}</span>
+                            <span class="dir-rtl-hide">{{#pix}} t/right, core {{/pix}}</span>
+                        </button>
+                        <div class="ml-auto mr-auto text-center" data-region="status-container">
+                            {{> mod_forum/local/grades/local/grader/status_placeholder }}
+                        </div>
+                    </div>
                     <div
                         id="searchbox-{{uniqid}}"
                         class="user-search-container d-flex flex-grow-1 align-items-center collapsed"
@@ -62,30 +78,13 @@
                                 aria-controls="searchbox-{{uniqid}}"
                                 data-action="toggle-search"
                             >
-                                <div class="expanded-icon">
-                                    <span aria-hidden="true">{{#pix}} e/cancel, core, {{#str}} hideusersearch, mod_forum {{/str}} {{/pix}}</span>
-                                    <span class="sr-only">{{#str}} hideusersearch, mod_forum {{/str}}</span>
+                                <div class="expanded-icon" data-region="user-search-icon-hide">
+                                    <span>{{#pix}} e/cancel, core, {{#str}} hideusersearch, mod_forum {{/str}} {{/pix}}</span>
                                 </div>
-                                <div class="collapsed-icon">
-                                    <span aria-hidden="true">{{#pix}} i/search, core, {{#str}} showusersearch, mod_forum {{/str}} {{/pix}}</span>
-                                    <span class="sr-only">{{#str}} showusersearch, mod_forum {{/str}}</span>
+                                <div class="collapsed-icon" data-region="user-search-icon-show">
+                                    <span>{{#pix}} i/search, core, {{#str}} showusersearch, mod_forum {{/str}} {{/pix}}</span>
                                 </div>
                             </button>
-                        </div>
-                    </div>
-                    <div class="info-container d-flex align-items-center">
-                        <button
-                            class="btn btn-icon icon-size-3 icon-no-margin colour-inherit"
-                            data-action="collapse-grading-drawer"
-                            aria-controls="grading-drawer-{{uniqid}}"
-                            aria-expanded="true"
-                            title="{{#str}} closebuttontitle, core {{/str}}"
-                        >
-                            <span class="dir-ltr-hide">{{#pix}} t/left, core {{/pix}}</span>
-                            <span class="dir-rtl-hide">{{#pix}} t/right, core {{/pix}}</span>
-                        </button>
-                        <div class="ml-auto mr-auto text-center" data-region="status-container">
-                            {{> mod_forum/local/grades/local/grader/status_placeholder }}
                         </div>
                     </div>
                 </div>

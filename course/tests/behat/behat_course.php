@@ -250,7 +250,7 @@ class behat_course extends behat_base {
             // Clicks the selected activity if it exists.
             $activityxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' modchooser ')]" .
                     "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optioninfo ')]" .
-                    "/descendant::p[contains(concat(' ', normalize-space(@class), ' '), ' optionname ')]" .
+                    "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optionname ')]" .
                     "[normalize-space(.)=$activityliteral]" .
                     "/parent::a";
 
@@ -1883,7 +1883,8 @@ class behat_course extends behat_base {
 
         $exception = new ExpectationException('"' . $categoryname . '" category can not be found', $this->getSession());
         $categoryliteral = behat_context_helper::escape($categoryname);
-        $xpath = "//div[@class='info']/descendant::*[" . implode(' or ', $headingtags) . "][@class='categoryname'][./descendant::a[.=$categoryliteral]]";
+        $xpath = "//div[@class='info']/descendant::*[" . implode(' or ', $headingtags) .
+            "][contains(@class,'categoryname')][./descendant::a[.=$categoryliteral]]";
         $node = $this->find('xpath', $xpath, $exception);
         $node->click();
 
@@ -1925,6 +1926,56 @@ class behat_course extends behat_base {
     public function i_click_on_category_in_the_management_category_listing($name) {
         $node = $this->get_management_category_listing_node_by_name($name);
         $node->find('css', 'a.categoryname')->click();
+    }
+
+    /**
+     * Locates a category in the course category management interface and then opens action menu for it.
+     *
+     * @Given /^I open the action menu for "(?P<name_string>(?:[^"]|\\")*)" in management category listing$/
+     *
+     * @param string $name The name of the category as it is displayed in the management interface.
+     */
+    public function i_open_the_action_menu_for_item_in_management_category_listing($name) {
+        $node = $this->get_management_category_listing_node_by_name($name);
+        $node->find('xpath', "//*[contains(@class, 'category-item-actions')]//a[@data-toggle='dropdown']")->click();
+    }
+
+    /**
+     * Checks that the specified category actions menu contains an item.
+     *
+     * @Then /^"(?P<name_string>(?:[^"]|\\")*)" category actions menu should have "(?P<menu_item_string>(?:[^"]|\\")*)" item$/
+     *
+     * @param string $name
+     * @param string $menuitem
+     * @throws Behat\Mink\Exception\ExpectationException
+     */
+    public function category_actions_menu_should_have_item($name, $menuitem) {
+        $node = $this->get_management_category_listing_node_by_name($name);
+
+        $notfoundexception = new ExpectationException('"' . $name . '" doesn\'t have a "' .
+            $menuitem . '" item', $this->getSession());
+        $this->find('named_partial', ['link', $menuitem], $notfoundexception, $node);
+    }
+
+    /**
+     * Checks that the specified category actions menu does not contain an item.
+     *
+     * @Then /^"(?P<name_string>(?:[^"]|\\")*)" category actions menu should not have "(?P<menu_item_string>(?:[^"]|\\")*)" item$/
+     *
+     * @param string $name
+     * @param string $menuitem
+     * @throws Behat\Mink\Exception\ExpectationException
+     */
+    public function category_actions_menu_should_not_have_item($name, $menuitem) {
+        $node = $this->get_management_category_listing_node_by_name($name);
+
+        try {
+            $this->find('named_partial', ['link', $menuitem], false, $node);
+            throw new ExpectationException('"' . $name . '" has a "' . $menuitem .
+                '" item when it should not', $this->getSession());
+        } catch (ElementNotFoundException $e) {
+            // This is good, the menu item should not be there.
+        }
     }
 
     /**

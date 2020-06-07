@@ -46,6 +46,16 @@ abstract class backup_task extends base_task {
     public function is_excluding_activities() {
         return $this->plan->is_excluding_activities();
     }
+
+    /**
+     * Get the user roles that should be kept in the destination course
+     * for a course copy operation.
+     *
+     * @return array
+     */
+    public function get_kept_roles(): array {
+        return $this->plan->get_kept_roles();
+    }
 }
 
 /*

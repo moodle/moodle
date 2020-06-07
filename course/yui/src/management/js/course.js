@@ -1,5 +1,3 @@
-/* global Item */
-
 /**
  * A managed course.
  *
@@ -8,9 +6,9 @@
  * @constructor
  * @extends Item
  */
-function Course() {
+Course = function() {
     Course.superclass.constructor.apply(this, arguments);
-}
+};
 Course.NAME = 'moodle-course-management-course';
 Course.CSS_PREFIX = 'management-course';
 Course.ATTRS = {

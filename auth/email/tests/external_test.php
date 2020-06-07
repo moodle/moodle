@@ -76,9 +76,21 @@ class auth_email_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(print_password_policy(), $result['passwordpolicy']);
         $this->assertNotContains('recaptchachallengehash', $result);
         $this->assertNotContains('recaptchachallengeimage', $result);
-        $this->assertCount(2, $result['profilefields']);
-        $this->assertEquals('text', $result['profilefields'][0]['datatype']);
-        $this->assertEquals('textarea', $result['profilefields'][1]['datatype']);
+
+        // Whip up a array with named entries to easily check against.
+        $namedarray = array();
+        foreach ($result['profilefields'] as $key => $value) {
+            $namedarray[$value['shortname']] = array(
+                'datatype' => $value['datatype']
+            );
+        }
+
+        // Just check if we have the fields from this test. If a plugin adds fields we'll let it slide.
+        $this->assertArrayHasKey('frogname', $namedarray);
+        $this->assertArrayHasKey('sometext', $namedarray);
+
+        $this->assertEquals('text', $namedarray['frogname']['datatype']);
+        $this->assertEquals('textarea', $namedarray['sometext']['datatype']);
     }
 
     public function test_signup_user() {

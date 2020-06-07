@@ -213,6 +213,161 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertTrue(array_key_exists($student1->id, $users));
     }
 
+    public function test_groups_get_members_ids_sql_multiple_groups() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+
+        $course = $generator->create_course();
+        $student1 = $generator->create_user();
+        $student2 = $generator->create_user();
+        $plugin = enrol_get_plugin('manual');
+        $role = $DB->get_record('role', array('shortname' => 'student'));
+        $group1 = $generator->create_group(array('courseid' => $course->id));
+        $group2 = $generator->create_group(array('courseid' => $course->id));
+        $groupids = [
+            $group1->id,
+            $group2->id,
+        ];
+        $instance = $DB->get_record('enrol', array(
+                'courseid' => $course->id,
+                'enrol' => 'manual',
+        ));
+
+        $this->assertNotEquals($instance, false);
+
+        // Enrol users in the course.
+        $plugin->enrol_user($instance, $student1->id, $role->id);
+        $plugin->enrol_user($instance, $student2->id, $role->id);
+
+        list($sql, $params) = groups_get_members_ids_sql($groupids);
+
+        // Test an empty group.
+        $users = $DB->get_records_sql($sql, $params);
+        $this->assertFalse(array_key_exists($student1->id, $users));
+
+        // Test with a member of one of the two group.
+        groups_add_member($group1->id, $student1->id);
+        $users = $DB->get_records_sql($sql, $params);
+        $this->assertTrue(array_key_exists($student1->id, $users));
+
+        // Test with members of two groups.
+        groups_add_member($group2->id, $student2->id);
+        $users = $DB->get_records_sql($sql, $params);
+        $this->assertTrue(array_key_exists($student1->id, $users));
+        $this->assertTrue(array_key_exists($student2->id, $users));
+    }
+
+    public function test_groups_get_members_ids_sql_multiple_groups_join_types() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+
+        $course = $generator->create_course();
+        $student1 = $generator->create_user();
+        $student2 = $generator->create_user();
+        $student3 = $generator->create_user();
+        $student4 = $generator->create_user();
+        $student5 = $generator->create_user();
+        $student6 = $generator->create_user();
+        $plugin = enrol_get_plugin('manual');
+        $role = $DB->get_record('role', array('shortname' => 'student'));
+        $group1 = $generator->create_group(array('courseid' => $course->id));
+        $group2 = $generator->create_group(array('courseid' => $course->id));
+        $group3 = $generator->create_group(array('courseid' => $course->id));
+        // Only groups 1 and 2 specified in SQL (group 3 helps cover the None case).
+        $groupids = [
+            $group1->id,
+            $group2->id,
+        ];
+        $instance = $DB->get_record('enrol', array(
+                'courseid' => $course->id,
+                'enrol' => 'manual',
+        ));
+
+        $this->assertNotEquals($instance, false);
+
+        // Enrol users in the course.
+        $plugin->enrol_user($instance, $student1->id, $role->id);
+        $plugin->enrol_user($instance, $student2->id, $role->id);
+        $plugin->enrol_user($instance, $student3->id, $role->id);
+        $plugin->enrol_user($instance, $student4->id, $role->id);
+        $plugin->enrol_user($instance, $student5->id, $role->id);
+        $plugin->enrol_user($instance, $student6->id, $role->id);
+
+        // Generate SQL with the different groups join types for members of group1 and group2.
+        list($sqlany, $paramsany) = groups_get_members_ids_sql($groupids, null, GROUPS_JOIN_ANY);
+        list($sqlall, $paramsall) = groups_get_members_ids_sql($groupids, null, GROUPS_JOIN_ALL);
+        list($sqlnone, $paramsnone) = groups_get_members_ids_sql($groupids, null, GROUPS_JOIN_NONE);
+
+        // Any - Test empty groups, no matches.
+        $users = $DB->get_records_sql($sqlany, $paramsany);
+        $this->assertFalse(array_key_exists($student1->id, $users));
+        $this->assertFalse(array_key_exists($student2->id, $users));
+        $this->assertFalse(array_key_exists($student3->id, $users));
+        $this->assertFalse(array_key_exists($student4->id, $users));
+        $this->assertFalse(array_key_exists($student5->id, $users));
+        $this->assertFalse(array_key_exists($student6->id, $users));
+
+        // All - Test empty groups, no matches.
+        $users = $DB->get_records_sql($sqlall, $paramsall);
+        $this->assertFalse(array_key_exists($student1->id, $users));
+        $this->assertFalse(array_key_exists($student2->id, $users));
+        $this->assertFalse(array_key_exists($student3->id, $users));
+        $this->assertFalse(array_key_exists($student4->id, $users));
+        $this->assertFalse(array_key_exists($student5->id, $users));
+        $this->assertFalse(array_key_exists($student6->id, $users));
+
+        // None - Test empty groups, all match.
+        $users = $DB->get_records_sql($sqlnone, $paramsnone);
+        $this->assertTrue(array_key_exists($student1->id, $users));
+        $this->assertTrue(array_key_exists($student2->id, $users));
+        $this->assertTrue(array_key_exists($student3->id, $users));
+        $this->assertTrue(array_key_exists($student4->id, $users));
+        $this->assertTrue(array_key_exists($student5->id, $users));
+        $this->assertTrue(array_key_exists($student6->id, $users));
+
+        // Assign various group member combinations.
+        groups_add_member($group1->id, $student1->id);
+        groups_add_member($group1->id, $student2->id);
+        groups_add_member($group1->id, $student3->id);
+        groups_add_member($group2->id, $student2->id);
+        groups_add_member($group2->id, $student3->id);
+        groups_add_member($group2->id, $student4->id);
+        groups_add_member($group3->id, $student5->id);
+
+        // Any - Test students in one or both of groups 1 and 2 matched.
+        $users = $DB->get_records_sql($sqlany, $paramsany);
+        $this->assertTrue(array_key_exists($student1->id, $users));
+        $this->assertTrue(array_key_exists($student2->id, $users));
+        $this->assertTrue(array_key_exists($student3->id, $users));
+        $this->assertTrue(array_key_exists($student4->id, $users));
+        $this->assertFalse(array_key_exists($student5->id, $users));
+        $this->assertFalse(array_key_exists($student6->id, $users));
+
+        // All - Test only students in both groups 1 and 2 matched.
+        $users = $DB->get_records_sql($sqlall, $paramsall);
+        $this->assertTrue(array_key_exists($student2->id, $users));
+        $this->assertTrue(array_key_exists($student3->id, $users));
+        $this->assertFalse(array_key_exists($student1->id, $users));
+        $this->assertFalse(array_key_exists($student4->id, $users));
+        $this->assertFalse(array_key_exists($student5->id, $users));
+        $this->assertFalse(array_key_exists($student6->id, $users));
+
+        // None - Test only students not in group 1 or 2 matched.
+        $users = $DB->get_records_sql($sqlnone, $paramsnone);
+        $this->assertTrue(array_key_exists($student5->id, $users));
+        $this->assertTrue(array_key_exists($student6->id, $users));
+        $this->assertFalse(array_key_exists($student1->id, $users));
+        $this->assertFalse(array_key_exists($student2->id, $users));
+        $this->assertFalse(array_key_exists($student3->id, $users));
+        $this->assertFalse(array_key_exists($student4->id, $users));
+    }
+
     public function test_groups_get_members_ids_sql_valid_context() {
         global $DB;
 

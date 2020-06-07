@@ -35,6 +35,8 @@ import {debounce} from 'core/utils';
 import {fillInitialValues} from 'core_grades/grades/grader/gradingpanel/comparison';
 import * as Modal from 'core/modal_factory';
 import * as ModalEvents from 'core/modal_events';
+import {subscribe} from 'core/pubsub';
+import DrawerEvents from 'core/drawer_events';
 
 const templateNames = {
     grader: {
@@ -157,6 +159,16 @@ const showUserSearchInput = (toggleSearchButton, searchContainer, searchInput) =
     toggleSearchButton.setAttribute('aria-expanded', 'true');
     toggleSearchButton.classList.add('expand');
     toggleSearchButton.classList.remove('collapse');
+
+    // Hide the grading info container from screen reader.
+    const gradingInfoContainer = searchContainer.parentElement.querySelector(Selectors.regions.gradingInfoContainer);
+    gradingInfoContainer.setAttribute('aria-hidden', 'true');
+
+    // Hide the collapse grading drawer button from screen reader.
+    const collapseGradingDrawer = searchContainer.parentElement.querySelector(Selectors.buttons.collapseGradingDrawer);
+    collapseGradingDrawer.setAttribute('aria-hidden', 'true');
+    collapseGradingDrawer.setAttribute('tabindex', '-1');
+
     searchInput.focus();
 };
 
@@ -173,6 +185,16 @@ const hideUserSearchInput = (toggleSearchButton, searchContainer, searchInput) =
     toggleSearchButton.classList.add('collapse');
     toggleSearchButton.classList.remove('expand');
     toggleSearchButton.focus();
+
+    // Show the grading info container to screen reader.
+    const gradingInfoContainer = searchContainer.parentElement.querySelector(Selectors.regions.gradingInfoContainer);
+    gradingInfoContainer.removeAttribute('aria-hidden');
+
+    // Show the collapse grading drawer button from screen reader.
+    const collapseGradingDrawer = searchContainer.parentElement.querySelector(Selectors.buttons.collapseGradingDrawer);
+    collapseGradingDrawer.removeAttribute('aria-hidden');
+    collapseGradingDrawer.setAttribute('tabindex', '0');
+
     searchInput.value = '';
 };
 
@@ -278,6 +300,35 @@ const registerEventListeners = (graderLayout, userPicker, saveGradeFunction, use
         const users = searchForUsers(userList, searchInput.value);
         renderSearchResults(searchResultsContainer, users);
     }, 300));
+
+    // Remove the right margin of the content container when the grading panel is hidden so that it expands to full-width.
+    subscribe(DrawerEvents.DRAWER_HIDDEN, (drawerRoot) => {
+        const gradingPanel = drawerRoot[0];
+        if (gradingPanel.querySelector(Selectors.regions.gradingPanel)) {
+            setContentContainerMargin(graderContainer, 0);
+        }
+    });
+
+    // Bring back the right margin of the content container when the grading panel is shown to give space for the grading panel.
+    subscribe(DrawerEvents.DRAWER_SHOWN, (drawerRoot) => {
+        const gradingPanel = drawerRoot[0];
+        if (gradingPanel.querySelector(Selectors.regions.gradingPanel)) {
+            setContentContainerMargin(graderContainer, gradingPanel.offsetWidth);
+        }
+    });
+};
+
+/**
+ * Adjusts the right margin of the content container.
+ *
+ * @param {HTMLElement} graderContainer The container for the grader app.
+ * @param {Number} rightMargin The right margin value.
+ */
+const setContentContainerMargin = (graderContainer, rightMargin) => {
+    const contentContainer = graderContainer.querySelector(Selectors.regions.moduleContainer);
+    if (contentContainer) {
+        contentContainer.style.marginRight = `${rightMargin}px`;
+    }
 };
 
 /**

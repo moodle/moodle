@@ -9,7 +9,7 @@
     {{$element}}
         <fieldset class="w-100 m-0 p-0 border-0">
             <legend class="sr-only">{{label}}</legend>
-            <div class="d-flex flex-wrap">
+            <div class="d-flex flex-wrap align-items-center">
             {{#element.elements}}
                 {{{separator}}}
                 {{{html}}}
@@ -22,7 +22,10 @@
 require(['jquery'], function($) {
     $('#{{element.id}}_label').css('cursor', 'default');
     $('#{{element.id}}_label').click(function() {
-        $('#{{element.id}}').find('button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])').filter(':enabled').first().focus();
+        $('#{{element.id}}')
+            .find('button, a, input:not([type="hidden"]), select, textarea, [tabindex]')
+            .filter(':not([disabled]):not([tabindex="0"]):not([tabindex="-1"])')
+            .first().focus();
     });
 });
 {{/js}}

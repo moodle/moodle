@@ -210,7 +210,7 @@ These actions only affect your view.
 
 You can also choose to display the courses in a list, or with summary information, or the default \'card\' view.';
 $string['tour3_title_displayoptions'] = 'Display options';
-$string['tour3_content_displayoptions'] = 'Courses may be sorted by course name or by last access date.
+$string['tour3_content_displayoptions'] = 'Courses may be sorted by course name, course short name or last access date.
 
 You can also choose to display the courses in a list, with summary information, or the default \'card\' view.';
 

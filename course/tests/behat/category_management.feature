@@ -5,6 +5,7 @@ Feature: Test category management actions
   Test we can create a sub category
   Test we can edit a category
   Test we can delete a category
+  Test deleting categories interface when user permissions are restricted
   Test we can move a category
   Test we can assign roles within a category
   Test we can set permissions on a category
@@ -102,6 +103,136 @@ Feature: Test category management actions
     And I should not see "Cat 2" in the "#category-listing ul" "css_element"
     And I should not see "Cat 3" in the "#category-listing ul" "css_element"
     And I should see "Course 1" in the "#course-listing ul.course-list" "css_element"
+
+  Scenario: Test deleting categories action is not listed when permissions are restricted.
+    Given the following "users" exist:
+      | username  | firstname | lastname |
+      | manager   | Manager   | Manager  |
+    And the following "categories" exist:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+      | Cat 2 | 0 | CAT2 |
+    And the following "courses" exist:
+      | category | fullname | shortname |
+      | CAT1 | Course 1 | C1 |
+    And the following "system role assigns" exist:
+      | user | role | contextlevel |
+      | manager | manager | System |
+    And the following "permission overrides" exist:
+      | capability | permission | role | contextlevel | reference |
+      | moodle/course:delete | Prevent | manager | Course | C1 |
+      | moodle/course:create | Prevent | manager | System |    |
+
+    When I log in as "manager"
+    And I go to the courses management page
+    Then I should see the "Course categories and courses" management page
+    And I should see "Cat 1" in the "#category-listing ul" "css_element"
+    And I should see "Cat 2" in the "#category-listing ul" "css_element"
+    And I open the action menu for "Cat 1" in management category listing
+    And "Cat 1" category actions menu should not have "Delete" item
+
+  Scenario: Test deleting categories interface when course create permission is restricted in system.
+    Given the following "users" exist:
+      | username  | firstname | lastname |
+      | manager   | Manager   | Manager  |
+    And the following "categories" exist:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+      | Cat 2 | 0 | CAT2 |
+    And the following "courses" exist:
+      | category | fullname | shortname |
+      | CAT1 | Course 1 | C1 |
+    And the following "system role assigns" exist:
+      | user | role | contextlevel |
+      | manager | manager | System |
+    And the following "permission overrides" exist:
+      | capability | permission | role | contextlevel | reference |
+      | moodle/course:delete | Allow | manager | Course | C1 |
+      | moodle/course:create | Prevent | manager | System |    |
+
+    When I log in as "manager"
+    And I go to the courses management page
+    And I open the action menu for "Cat 1" in management category listing
+    Then "Cat 1" category actions menu should have "Delete" item
+    And I click on "delete" action for "Cat 1" in management category listing
+    # Redirect
+    And I should see "Delete category: Cat 1"
+    And I should see "Contents of Cat 1"
+    And I should see "Delete all - cannot be undone"
+    And "What to do" "select" should not exist
+    And "Move into" "select" should not exist
+    And I press "Cancel"
+
+  Scenario: Test deleting categories interface when course delete permission is restricted for category.
+    Given the following "users" exist:
+      | username  | firstname | lastname |
+      | manager   | Manager   | Manager  |
+    And the following "categories" exist:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+      | Cat 2 | 0 | CAT2 |
+    And the following "courses" exist:
+      | category | fullname | shortname |
+      | CAT1 | Course 1 | C1 |
+    And the following "system role assigns" exist:
+      | user | role | contextlevel |
+      | manager | manager | System |
+    And the following "permission overrides" exist:
+      | capability | permission | role | contextlevel | reference |
+      | moodle/course:delete | Prevent | manager | Course | C1 |
+      | moodle/course:create | Allow | manager | System |    |
+
+    When I log in as "manager"
+    And I go to the courses management page
+    And I open the action menu for "Cat 1" in management category listing
+    Then "Cat 1" category actions menu should have "Delete" item
+    And I click on "delete" action for "Cat 1" in management category listing
+    # Redirect
+    And I should see "Delete category: Cat 1"
+    And I should see "Contents of Cat 1"
+    And I should see "Move contents to another category"
+    And "What to do" "select" should not exist
+    And "Move into" "select" should exist
+    And the "Move into" select box should contain "Cat 2"
+    And the "Move into" select box should contain "Miscellaneous"
+    And I press "Cancel"
+
+  @javascript
+  Scenario: Test deleting categories interface when course create permissions are restricted for some categories.
+    Given the following "users" exist:
+      | username  | firstname | lastname |
+      | manager   | Manager   | Manager  |
+    And the following "categories" exist:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+      | Cat 2 | 0 | CAT2 |
+    And the following "courses" exist:
+      | category | fullname | shortname |
+      | CAT1 | Course 1 | C1 |
+    And the following "system role assigns" exist:
+      | user | role | contextlevel |
+      | manager | manager | System |
+    And the following "permission overrides" exist:
+      | capability | permission | role | contextlevel | reference |
+      | moodle/course:delete | Allow | manager | Course | C1 |
+      | moodle/course:create | Allow | manager | System |    |
+      | moodle/course:create | Prevent | manager | Category | CAT2  |
+
+    When I log in as "manager"
+    And I go to the courses management page
+    And I open the action menu for "Cat 1" in management category listing
+    Then "Cat 1" category actions menu should have "Delete" item
+    And I click on "delete" action for "Cat 1" in management category listing
+    # Redirect
+    And I should see "Delete category: Cat 1"
+    And I should see "Contents of Cat 1"
+    And "What to do" "select" should exist
+    And "Move into" "select" should exist
+    And the "Move into" select box should not contain "Cat 2"
+    And the "Move into" select box should contain "Miscellaneous"
+    And I set the field "What to do" to "Delete all - cannot be undone"
+    And "Move into" "select" should not be visible
+    And I press "Cancel"
 
   Scenario: Test I can assign roles for a category through the management interface.
     Given the following "categories" exist:

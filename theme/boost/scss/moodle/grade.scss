@@ -96,17 +96,6 @@
     }
 }
 
-.gradingform_rubric.editor {
-    .addlevel,
-    .addcriterion {
-        input {
-            // Fallback for IE8: we use Bootstrap 2's button styles normally, but
-            // IE8 ignores background-image: linear-gradient rules.
-            background: #fff none no-repeat top left;
-        }
-    }
-}
-
 #rubric-rubric {
     &.gradingform_rubric {
         #rubric-criteria {
@@ -185,12 +174,12 @@
                 }
 
                 .addlevel {
-                    vertical-align: middle;
+                    vertical-align: top;
+                    padding-top: 6px;
 
                     input {
-                        background-position: 0 0;
                         height: 30px;
-                        margin-right: 5px;
+                        line-height: 1rem;
                     }
                 }
             }
@@ -397,7 +386,8 @@
             @include border-radius($border-radius);
         }
 
-        tr .cell {
+        tr .cell,
+        .floater .cell {
             background-color: $pagination-bg;
         }
 
@@ -406,9 +396,11 @@
             border-color: $table-border-color;
         }
 
-        tr:nth-of-type(even) .cell,
-        .floater .cell,
-        .avg {
+        .userrow.odd .cell,
+        .floater .cell.odd,
+        .heading .cell,
+        .cell.category,
+        .avg .cell {
             background-color: $gray-lightest;
         }
 

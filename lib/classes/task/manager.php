@@ -568,8 +568,7 @@ class manager {
 
         $where = '(nextruntime IS NULL OR nextruntime < :timestart1)';
         $params = array('timestart1' => $timestart);
-        $records = $DB->get_records_select('task_adhoc', $where, $params, 'nextruntime ASC, id ASC');
-
+        $records = $DB->get_records_select('task_adhoc', $where, $params, 'nextruntime ASC, id ASC', '*', 0, 2000);
         $records = self::ensure_adhoc_task_qos($records);
 
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
@@ -910,5 +909,64 @@ class manager {
         }
 
         return null;
+    }
+
+    /**
+     * Find the path of PHP CLI binary.
+     *
+     * @return string|false The PHP CLI executable PATH
+     */
+    protected static function find_php_cli_path() {
+        global $CFG;
+
+        if (!empty($CFG->pathtophp) && is_executable(trim($CFG->pathtophp))) {
+            return $CFG->pathtophp;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns if Moodle have access to PHP CLI binary or not.
+     *
+     * @return bool
+     */
+    public static function is_runnable():bool {
+        return self::find_php_cli_path() !== false;
+    }
+
+    /**
+     * Executes a cron from web invocation using PHP CLI.
+     *
+     * @param \core\task\task_base $task Task that be executed via CLI.
+     * @return bool
+     * @throws \moodle_exception
+     */
+    public static function run_from_cli(\core\task\task_base $task):bool {
+        global $CFG;
+
+        if (!self::is_runnable()) {
+            $redirecturl = new \moodle_url('/admin/settings.php', ['section' => 'systempaths']);
+            throw new \moodle_exception('cannotfindthepathtothecli', 'core_task', $redirecturl->out());
+        } else {
+            // Shell-escaped path to the PHP binary.
+            $phpbinary = escapeshellarg(self::find_php_cli_path());
+
+            // Shell-escaped path CLI script.
+            $pathcomponents = [$CFG->dirroot, $CFG->admin, 'cli', 'scheduled_task.php'];
+            $scriptpath     = escapeshellarg(implode(DIRECTORY_SEPARATOR, $pathcomponents));
+
+            // Shell-escaped task name.
+            $classname = get_class($task);
+            $taskarg   = escapeshellarg("--execute={$classname}");
+
+            // Build the CLI command.
+            $command = "{$phpbinary} {$scriptpath} {$taskarg}";
+
+            // Execute it.
+            passthru($command);
+        }
+
+        return true;
     }
 }

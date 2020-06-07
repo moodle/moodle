@@ -378,8 +378,9 @@ abstract class grade_report {
                 $this->currentgroup = -2; // means can not access any groups at all
             }
             if ($this->currentgroup) {
-                $group = groups_get_group($this->currentgroup);
-                $this->currentgroupname     = $group->name;
+                if ($group = groups_get_group($this->currentgroup)) {
+                    $this->currentgroupname = $group->name;
+                }
                 $this->groupsql             = " JOIN {groups_members} gm ON gm.userid = u.id ";
                 $this->groupwheresql        = " AND gm.groupid = :gr_grpid ";
                 $this->groupwheresql_params = array('gr_grpid'=>$this->currentgroup);
@@ -416,8 +417,8 @@ abstract class grade_report {
         $matrix = array('up' => 'desc', 'down' => 'asc', 'move' => 'desc');
         $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
 
-        $arrow = $OUTPUT->pix_icon($pix[$direction], $strsort, '', array('class' => 'sorticon'));
-        return html_writer::link($sortlink, $arrow, array('title'=>$strsort));
+        $arrow = $OUTPUT->pix_icon($pix[$direction], '', '', ['class' => 'sorticon']);
+        return html_writer::link($sortlink, $arrow, ['title' => $strsort, 'aria-label' => $strsort]);
     }
 
     /**

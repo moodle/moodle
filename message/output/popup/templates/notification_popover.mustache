@@ -57,13 +57,15 @@
            href="#"
            title="{{#str}} markallread {{/str}}"
            data-action="mark-all-read"
-           role="button">
-            <span class="normal-icon">{{#pix}} t/markasread, core, {{#str}} markallread {{/str}} {{/pix}}</span>
+           role="button"
+           aria-label="{{#str}} markallread {{/str}}">
+            <span class="normal-icon">{{#pix}} t/markasread, core {{/pix}}</span>
             {{> core/loading }}
         </a>
         <a href="{{{urls.preferences}}}"
-           title="{{#str}} notificationpreferences, message {{/str}}">
-            {{#pix}} i/settings, core, {{#str}} notificationpreferences, message {{/str}} {{/pix}}
+           title="{{#str}} notificationpreferences, message {{/str}}"
+           aria-label="{{#str}} notificationpreferences, message {{/str}}">
+            {{#pix}} i/settings, core {{/pix}}
         </a>
     {{/headeractions}}
 

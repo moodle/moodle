@@ -371,9 +371,8 @@ class mod_forum_generator extends testing_module_generator {
     public function get_author_subheading_html(stdClass $exportedauthor, int $timecreated) : string {
         $fullname = $exportedauthor->fullname;
         $profileurl = $exportedauthor->urls['profile'] ?? null;
-        $formatteddate = userdate($timecreated, get_string('strftimedaydatetime', 'core_langconfig'));
         $name = $profileurl ? "<a href=\"{$profileurl}\">{$fullname}</a>" : $fullname;
-        $date = "<time>{$formatteddate}</time>";
+        $date = userdate_htmltime($timecreated, get_string('strftimedaydatetime', 'core_langconfig'));
         return get_string('bynameondate', 'mod_forum', ['name' => $name, 'date' => $date]);
     }
 }

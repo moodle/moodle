@@ -75,6 +75,7 @@ class event_mapper implements event_mapper_interface {
                 'groupid' => $coalesce('groupid'),
                 'userid' => $coalesce('userid'),
                 'repeatid' => $coalesce('repeatid'),
+                'component' => $coalesce('component'),
                 'modulename' => $coalesce('modulename'),
                 'instance' => $coalesce('instance'),
                 'eventtype' => $coalesce('eventtype'),
@@ -98,6 +99,7 @@ class event_mapper implements event_mapper_interface {
         $properties->categoryid = empty($properties->categoryid) ? 0 : $properties->categoryid;
         $properties->groupid = empty($properties->groupid) ? 0 : $properties->groupid;
         $properties->userid = empty($properties->userid) ? 0 : $properties->userid;
+        $properties->component = empty($properties->component) ? 0 : $properties->component;
         $properties->modulename = empty($properties->modulename) ? 0 : $properties->modulename;
         $properties->instance = empty($properties->instance) ? 0 : $properties->instance;
         $properties->repeatid = empty($properties->repeatid) ? 0 : $properties->repeatid;
@@ -127,6 +129,7 @@ class event_mapper implements event_mapper_interface {
             'groupid'          => $event->get_group() ? $event->get_group()->get('id') : null,
             'userid'           => $event->get_user() ? $event->get_user()->get('id') : null,
             'repeatid'         => $event->get_repeats() ? $event->get_repeats()->get_id() : null,
+            'component'        => $event->get_component(),
             'modulename'       => $event->get_course_module() ? $event->get_course_module()->get('modname') : null,
             'instance'         => $event->get_course_module() ? $event->get_course_module()->get('instance') : null,
             'eventtype'        => $event->get_type(),

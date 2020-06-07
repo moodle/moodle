@@ -120,7 +120,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_string() result value
      *
-     * @return string
+     * @return external_description
      * @since Moodle 2.4
      */
     public static function get_string_returns() {
@@ -189,7 +189,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_string() result value
      *
-     * @return array
+     * @return external_description
      * @since Moodle 2.4
      */
     public static function get_strings_returns() {
@@ -233,6 +233,9 @@ class core_external extends external_api {
                         [
                             'timestamp' => new external_value(PARAM_INT, 'unix timestamp'),
                             'format' => new external_value(PARAM_TEXT, 'format string'),
+                            'type' => new external_value(PARAM_PLUGIN, 'The calendar type', VALUE_DEFAULT),
+                            'fixday' => new external_value(PARAM_INT, 'Remove leading zero for day', VALUE_DEFAULT, 1),
+                            'fixhour' => new external_value(PARAM_INT, 'Remove leading zero for hour', VALUE_DEFAULT, 1),
                         ]
                     )
                 )
@@ -264,7 +267,12 @@ class core_external extends external_api {
         self::validate_context($context);
 
         $formatteddates = array_map(function($timestamp) {
-            return userdate($timestamp['timestamp'], $timestamp['format']);
+
+            $calendartype = $timestamp['type'];
+            $fixday = !empty($timestamp['fixday']);
+            $fixhour = !empty($timestamp['fixhour']);
+            $calendar  = \core_calendar\type_factory::get_calendar_instance($calendartype);
+            return $calendar->timestamp_to_date_string($timestamp['timestamp'], $timestamp['format'], 99, $fixday, $fixhour);
         }, $params['timestamps']);
 
         return ['dates' => $formatteddates];
@@ -273,7 +281,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_user_dates() result value
      *
-     * @return array
+     * @return external_description
      */
     public static function get_user_dates_returns() {
         return new external_single_structure(
@@ -333,7 +341,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_component_strings() result value
      *
-     * @return array
+     * @return external_description
      * @since Moodle 2.4
      */
     public static function get_component_strings_returns() {
@@ -421,7 +429,7 @@ class core_external extends external_api {
     /**
      * Returns description of get_fragment() result value
      *
-     * @return array
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_fragment_returns() {

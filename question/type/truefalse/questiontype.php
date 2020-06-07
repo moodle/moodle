@@ -113,6 +113,7 @@ class qtype_truefalse extends question_type {
      */
     public function get_question_options($question) {
         global $DB, $OUTPUT;
+        parent::get_question_options($question);
         // Get additional information from database
         // and attach it to the question object.
         if (!$question->options = $DB->get_record('question_truefalse',

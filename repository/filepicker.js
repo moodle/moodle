@@ -260,13 +260,18 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 // manually call dynload for parent elements in the tree so we can load other siblings
                 if (options.dynload) {
                     var root = scope.treeview.getRoot();
+                    // Whether search results are currently displayed in the active repository in the filepicker.
+                    // We do not want to load siblings of parent elements when displaying search tree results.
+                    var isSearchResult = typeof options.callbackcontext.active_repo !== 'undefined' &&
+                        options.callbackcontext.active_repo.issearchresult;
                     while (root && root.children && root.children.length) {
                         root = root.children[0];
                         if (root.path == mytreeel.path) {
                             root.origpath = options.filepath;
                             root.origlist = fileslist;
+                        } else if (!root.isLeaf && root.expanded && !isSearchResult) {
+                            Y.bind(options.treeview_dynload, options.callbackcontext)(root, null);
                         }
-                        // Removed bind as of MDL-62415 as it overwrites the search tree results
                     }
                 }
             } else {
@@ -390,9 +395,11 @@ YUI.add('moodle-core_filepicker', function(Y) {
             div.appendChild(checkboxLabel);
             div.appendChild(checkbox);
 
-
+            // Define the selector for the click event handler.
+            var clickEventSelector = 'tr';
             // Enable the selectable checkboxes
             if (options.disablecheckboxes != undefined && !options.disablecheckboxes) {
+                clickEventSelector = 'tr td:not(:first-child)';
                 cols.unshift({
                     key: "",
                     label: div.getContent(),
@@ -411,7 +418,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
                     }
                     Y.bind(callback, this)(e, record.getAttrs());
                 }
-            }, 'tr td:not(:first-child)', options.callbackcontext, scope.tableview);
+            }, clickEventSelector, options.callbackcontext, scope.tableview);
 
             if (options.rightclickcallback) {
                 scope.tableview.delegate('contextmenu', function (e, tableview) {
@@ -1147,7 +1154,7 @@ M.core_filepicker.init = function(Y, options) {
             }, false);
         },
         select_file: function(args) {
-            var argstitle = args.title;
+            var argstitle = args.shorttitle ? args.shorttitle : args.title;
             // Limit the string length so it fits nicely on mobile devices
             var titlelength = 30;
             if (argstitle.length > titlelength) {
@@ -1199,7 +1206,7 @@ M.core_filepicker.init = function(Y, options) {
 
             // TODO MDL-32532: attributes 'hasauthor' and 'haslicense' need to be obsolete,
             selectnode.one('.fp-setauthor input').set('value', args.author ? args.author : this.options.author);
-            this.set_selected_license(selectnode.one('.fp-setlicense'), args.license);
+            this.populateLicensesSelect(selectnode.one('.fp-setlicense select'), args);
             selectnode.one('form #filesource-'+client_id).set('value', args.source);
             selectnode.one('form #filesourcekey-'+client_id).set('value', args.sourcekey);
 
@@ -1237,7 +1244,6 @@ M.core_filepicker.init = function(Y, options) {
             selectnode.all('.fp-linktype-2,.fp-linktype-1,.fp-linktype-4,.fp-linktype-8').each(function (node) {
                 node.one('input').on('change', changelinktype, this);
             });
-            this.populate_licenses_select(selectnode.one('.fp-setlicense select'));
             // register event on clicking submit button
             getfile.on('click', function(e) {
                 e.preventDefault();
@@ -1255,7 +1261,9 @@ M.core_filepicker.init = function(Y, options) {
                     if (origlicense) {
                         origlicense = origlicense.getContent();
                     }
-                    this.set_preference('recentlicense', license.get('value'));
+                    if (this.options.rememberuserlicensepref) {
+                        this.set_preference('recentlicense', license.get('value'));
+                    }
                 }
                 params['author'] = selectnode.one('.fp-setauthor input').get('value');
 
@@ -1765,37 +1773,29 @@ M.core_filepicker.init = function(Y, options) {
                 callback: this.display_response
             }, true);
         },
-        populate_licenses_select: function(node) {
-            if (!node) {
+        populateLicensesSelect: function(licensenode, filenode) {
+            if (!licensenode) {
                 return;
             }
-            node.setContent('');
-            var licenses = this.options.licenses;
-            var recentlicense = this.get_preference('recentlicense');
-            if (recentlicense) {
-                this.options.defaultlicense=recentlicense;
+            licensenode.setContent('');
+            var selectedlicense = this.options.defaultlicense;
+            if (filenode) {
+                // File has a license already, use it.
+                selectedlicense = filenode.license;
+            } else if (this.options.rememberuserlicensepref) {
+                selectedlicense = this.get_preference('recentlicense');
             }
+            var licenses = this.options.licenses;
             for (var i in licenses) {
-                var option = Y.Node.create('<option/>').
-                    set('selected', (this.options.defaultlicense==licenses[i].shortname)).
+                // Include the file's current license, even if not enabled, to prevent displaying
+                // misleading information about which license the file currently has assigned to it.
+                if (licenses[i].enabled == true || (filenode !== undefined && licenses[i].shortname === filenode.license)) {
+                    var option = Y.Node.create('<option/>').
+                    set('selected', (licenses[i].shortname == selectedlicense)).
                     set('value', licenses[i].shortname).
                     setContent(Y.Escape.html(licenses[i].fullname));
-                node.appendChild(option)
-            }
-        },
-        set_selected_license: function(node, value) {
-            var licenseset = false;
-            node.all('option').each(function(el) {
-                if (el.get('value')==value || el.getContent()==value) {
-                    el.set('selected', true);
-                    licenseset = true;
+                    licensenode.appendChild(option);
                 }
-            });
-            if (!licenseset) {
-                // we did not find the value in the list
-                var recentlicense = this.get_preference('recentlicense');
-                node.all('option[selected]').set('selected', false);
-                node.all('option[value='+recentlicense+']').set('selected', true);
             }
         },
         create_object_container: function(data) {
@@ -1826,7 +1826,7 @@ M.core_filepicker.init = function(Y, options) {
             content.one('.fp-saveas input').set('name', 'title');
             content.one('.fp-setauthor input').setAttrs({name:'author', value:this.options.author});
             content.one('.fp-setlicense select').set('name', 'license');
-            this.populate_licenses_select(content.one('.fp-setlicense select'))
+            this.populateLicensesSelect(content.one('.fp-setlicense select'));
             // append hidden inputs to the upload form
             content.one('form').appendChild(Y.Node.create('<input/>').
                 setAttrs({type:'hidden',name:'itemid',value:this.options.itemid}));
@@ -1841,7 +1841,9 @@ M.core_filepicker.init = function(Y, options) {
                 e.preventDefault();
                 var license = content.one('.fp-setlicense select');
 
-                this.set_preference('recentlicense', license.get('value'));
+                if (this.options.rememberuserlicensepref) {
+                    this.set_preference('recentlicense', license.get('value'));
+                }
                 if (!content.one('.fp-file input').get('value')) {
                     scope.print_msg(M.util.get_string('nofilesattached', 'repository'), 'error');
                     return false;

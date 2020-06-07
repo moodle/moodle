@@ -105,10 +105,12 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             $radiobuttons[] = $hidden . html_writer::empty_tag('input', $inputattributes) .
                     html_writer::tag('label',
                         html_writer::span($this->number_in_style($value, $question->answernumbering), 'answernumber') .
-                        $question->make_html_inline($question->format_text(
-                                $ans->answer, $ans->answerformat,
-                                $qa, 'question', 'answer', $ansid)),
-                        array('for' => $inputattributes['id'], 'class' => 'ml-1'));
+                        html_writer::tag('div',
+                        $question->format_text(
+                                    $ans->answer, $ans->answerformat,
+                                    $qa, 'question', 'answer', $ansid),
+                        array('class' => 'flex-fill ml-1')),
+                        array('for' => $inputattributes['id'], 'class' => 'd-flex w-100'));
 
             // Param $options->suppresschoicefeedback is a hack specific to the
             // oumultiresponse question type. It would be good to refactor to
@@ -138,7 +140,9 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
                 array('class' => 'qtext'));
 
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
-        $result .= html_writer::tag('div', $this->prompt(), array('class' => 'prompt'));
+        if ($question->showstandardinstruction == 1) {
+            $result .= html_writer::tag('div', $this->prompt(), array('class' => 'prompt'));
+        }
 
         $result .= html_writer::start_tag('div', array('class' => 'answer'));
         foreach ($radiobuttons as $key => $radio) {

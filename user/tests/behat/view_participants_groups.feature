@@ -59,9 +59,10 @@ Feature: View course participants groups
     Then I should see "Group A"
     And I should see "Student 1x"
     And I should see "Student 2x"
-    And I open the autocomplete suggestions list
-    And I click on "Group: Group B" item in the autocomplete list
-    And I should see "Group B"
+    And I set the field "type" in the "Filter 1" "fieldset" to "Groups"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I click on "Group B" "list_item"
+    And I click on "Apply filters" "button"
     And I should see "Student 3x"
     And I should see "Student 4x"
 

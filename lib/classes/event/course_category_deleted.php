@@ -33,6 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - string name: category name.
+ *      - string contentmovedcategoryid: (optional) category id where content was moved on deletion
  * }
  *
  * @package    core
@@ -71,7 +72,11 @@ class course_category_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' deleted the course category with id '$this->objectid'.";
+        $descr = "The user with id '$this->userid' deleted the course category with id '$this->objectid'.";
+        if (!empty($this->other['contentmovedcategoryid'])) {
+            $descr .= " Its content has been moved to category with id '{$this->other['contentmovedcategoryid']}'.";
+        }
+        return $descr;
     }
 
     /**

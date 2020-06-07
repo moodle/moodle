@@ -65,7 +65,7 @@ class question_attempt_testcase extends advanced_testcase {
 
     public function test_constructor_sets_maxmark() {
         $qa = new question_attempt($this->question, $this->usageid);
-        $this->assertSame($this->question, $qa->get_question());
+        $this->assertSame($this->question, $qa->get_question(false));
         $this->assertEquals(3, $qa->get_max_mark());
     }
 

@@ -33,6 +33,7 @@
             <span class="d-sm-inline-block" data-active-item-text>
                 {{#title}}{{#str}} title, block_myoverview {{/str}}{{/title}}
                 {{#lastaccessed}}{{#str}} lastaccessed, block_myoverview {{/str}}{{/lastaccessed}}
+                {{#shortname}}{{#str}} shortname, block_myoverview {{/str}}{{/shortname}}
             </span>
         </button>
         <ul class="dropdown-menu" data-show-active-item aria-labelledby="sortingdropdown">
@@ -41,6 +42,13 @@
                     {{#str}} title, block_myoverview {{/str}}
                 </a>
             </li>
+            {{#showsortbyshortname}}
+            <li>
+                <a class="dropdown-item {{#shortname}}active{{/shortname}}" href="#" data-filter="sort" data-pref="shortname" data-value="shortname" aria-label="{{#str}} aria:shortname, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
+                    {{#str}} shortname, block_myoverview {{/str}}
+                </a>
+            </li>
+             {{/showsortbyshortname}}
             <li>
                 <a class="dropdown-item {{#lastaccessed}}active{{/lastaccessed}}" href="#" data-filter="sort" data-pref="lastaccessed" data-value="ul.timeaccess desc" aria-label="{{#str}} aria:lastaccessed, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}">
                     {{#str}} lastaccessed, block_myoverview {{/str}}

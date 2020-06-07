@@ -206,6 +206,7 @@ function uninstall_plugin($type, $name) {
 
     // delete calendar events
     $DB->delete_records('event', array('modulename' => $pluginname));
+    $DB->delete_records('event', ['component' => $component]);
 
     // Delete scheduled tasks.
     $DB->delete_records('task_scheduled', array('component' => $component));
@@ -1685,6 +1686,8 @@ abstract class admin_setting {
     private $forceltr = null;
     /** @var array list of other settings that may cause this setting to be hidden */
     private $dependenton = [];
+    /** @var bool Whether this setting uses a custom form control */
+    protected $customcontrol = false;
 
     /**
      * Constructor
@@ -2079,6 +2082,16 @@ abstract class admin_setting {
      */
     public function get_dependent_on() {
         return $this->dependenton;
+    }
+
+    /**
+     * Whether this setting uses a custom form control.
+     * This function is especially useful to decide if we should render a label element for this setting or not.
+     *
+     * @return bool
+     */
+    public function has_custom_form_control(): bool {
+        return $this->customcontrol;
     }
 }
 
@@ -7242,40 +7255,72 @@ class admin_setting_manageantiviruses extends admin_setting {
  * Special class for license administration.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 3.9 MDL-45184. Please use \tool_licensemanager\manager instead.
+ * @todo MDL-45184 This class will be deleted in Moodle 4.3.
  */
 class admin_setting_managelicenses extends admin_setting {
     /**
-     * Calls parent::__construct with specific arguments
+     * @deprecated since Moodle 3.9 MDL-45184. Please use \tool_licensemanager\manager instead.
+     * @todo MDL-45184 This class will be deleted in Moodle 4.3
      */
     public function __construct() {
-        $this->nosave = true;
-        parent::__construct('licensesui', get_string('licensesettings', 'admin'), '', '');
+        global $ADMIN;
+
+        debugging('admin_setting_managelicenses class is deprecated. Please use \tool_licensemanager\manager instead.',
+            DEBUG_DEVELOPER);
+
+        // Replace admin setting load with new external page load for tool_licensemanager, if not loaded already.
+        if (!is_null($ADMIN->locate('licensemanager'))) {
+            $temp = new admin_externalpage('licensemanager',
+                get_string('licensemanager', 'tool_licensemanager'),
+                \tool_licensemanager\helper::get_licensemanager_url());
+
+            $ADMIN->add('license', $temp);
+        }
     }
 
     /**
      * Always returns true, does nothing
      *
+     * @deprecated since Moodle 3.9 MDL-45184.
+     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     *
      * @return true
      */
     public function get_setting() {
+        debugging('admin_setting_managelicenses class is deprecated. Please use \tool_licensemanager\manager instead.',
+            DEBUG_DEVELOPER);
+
         return true;
     }
 
     /**
      * Always returns true, does nothing
      *
+     * @deprecated since Moodle 3.9 MDL-45184.
+     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     *
      * @return true
      */
     public function get_defaultsetting() {
+        debugging('admin_setting_managelicenses class is deprecated. Please use \tool_licensemanager\manager instead.',
+            DEBUG_DEVELOPER);
+
         return true;
     }
 
     /**
      * Always returns '', does not write anything
      *
+     * @deprecated since Moodle 3.9 MDL-45184.
+     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     *
      * @return string Always returns ''
      */
     public function write_setting($data) {
+        debugging('admin_setting_managelicenses class is deprecated. Please use \tool_licensemanager\manager instead.',
+            DEBUG_DEVELOPER);
+
         // do not write any setting
         return '';
     }
@@ -7283,53 +7328,18 @@ class admin_setting_managelicenses extends admin_setting {
     /**
      * Builds the XHTML to display the control
      *
+     * @deprecated since Moodle 3.9 MDL-45184. Please use \tool_licensemanager\manager instead.
+     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     *
      * @param string $data Unused
      * @param string $query
      * @return string
      */
     public function output_html($data, $query='') {
-        global $CFG, $OUTPUT;
-        require_once($CFG->libdir . '/licenselib.php');
-        $url = "licenses.php?sesskey=" . sesskey();
+        debugging('admin_setting_managelicenses class is deprecated. Please use \tool_licensemanager\manager instead.',
+            DEBUG_DEVELOPER);
 
-        // display strings
-        $txt = get_strings(array('administration', 'settings', 'name', 'enable', 'disable', 'none'));
-        $licenses = license_manager::get_licenses();
-
-        $return = $OUTPUT->heading(get_string('availablelicenses', 'admin'), 3, 'main', true);
-
-        $return .= $OUTPUT->box_start('generalbox editorsui');
-
-        $table = new html_table();
-        $table->head  = array($txt->name, $txt->enable);
-        $table->colclasses = array('leftalign', 'centeralign');
-        $table->id = 'availablelicenses';
-        $table->attributes['class'] = 'admintable generaltable';
-        $table->data  = array();
-
-        foreach ($licenses as $value) {
-            $displayname = html_writer::link($value->source, get_string($value->shortname, 'license'), array('target'=>'_blank'));
-
-            if ($value->enabled == 1) {
-                $hideshow = html_writer::link($url.'&action=disable&license='.$value->shortname,
-                    $OUTPUT->pix_icon('t/hide', get_string('disable')));
-            } else {
-                $hideshow = html_writer::link($url.'&action=enable&license='.$value->shortname,
-                    $OUTPUT->pix_icon('t/show', get_string('enable')));
-            }
-
-            if ($value->shortname == $CFG->sitedefaultlicense) {
-                $displayname .= ' '.$OUTPUT->pix_icon('t/locked', get_string('default'));
-                $hideshow = '';
-            }
-
-            $enabled = true;
-
-            $table->data[] =array($displayname, $hideshow);
-        }
-        $return .= html_writer::table($table);
-        $return .= $OUTPUT->box_end();
-        return highlight($query, $return);
+        redirect(\tool_licensemanager\helper::get_licensemanager_url());
     }
 }
 
@@ -8257,6 +8267,153 @@ class admin_setting_managemediaplayers extends admin_setting {
     }
 }
 
+
+/**
+ * Content bank content types manager. Allow reorder and to enable/disable content bank content types and jump to settings
+ *
+ * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_managecontentbankcontenttypes extends admin_setting {
+
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        $this->nosave = true;
+        parent::__construct('contentbank', new lang_string('managecontentbanktypes'), '', '');
+    }
+
+    /**
+     * Always returns true
+     *
+     * @return true
+     */
+    public function get_setting() {
+        return true;
+    }
+
+    /**
+     * Always returns true
+     *
+     * @return true
+     */
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    /**
+     * Always returns '' and doesn't write anything
+     *
+     * @param mixed $data string or array, must not be NULL
+     * @return string Always returns ''
+     */
+    public function write_setting($data) {
+        // Do not write any setting.
+        return '';
+    }
+
+    /**
+     * Search to find if Query is related to content bank plugin
+     *
+     * @param string $query The string to search for
+     * @return bool true for related false for not
+     */
+    public function is_related($query) {
+        if (parent::is_related($query)) {
+            return true;
+        }
+        $types = core_plugin_manager::instance()->get_plugins_of_type('contenttype');
+        foreach ($types as $type) {
+            if (strpos($type->component, $query) !== false ||
+                strpos(core_text::strtolower($type->displayname), $query) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return XHTML to display control
+     *
+     * @param mixed $data Unused
+     * @param string $query
+     * @return string highlight
+     */
+    public function output_html($data, $query='') {
+        global $CFG, $OUTPUT;
+        $return = '';
+
+        $types = core_plugin_manager::instance()->get_plugins_of_type('contenttype');
+        $txt = get_strings(array('settings', 'name', 'enable', 'disable', 'order', 'up', 'down', 'default'));
+        $txt->uninstall = get_string('uninstallplugin', 'core_admin');
+
+        $table = new html_table();
+        $table->head  = array($txt->name, $txt->enable, $txt->order, $txt->settings, $txt->uninstall);
+        $table->align = array('left', 'center', 'center', 'center', 'center');
+        $table->attributes['class'] = 'managecontentbanktable generaltable admintable';
+        $table->data  = array();
+        $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
+
+        $totalenabled = 0;
+        $count = 0;
+        foreach ($types as $type) {
+            if ($type->is_enabled() && $type->is_installed_and_upgraded()) {
+                $totalenabled++;
+            }
+        }
+
+        foreach ($types as $type) {
+            $url = new moodle_url('/admin/contentbank.php',
+                array('sesskey' => sesskey(), 'name' => $type->name));
+
+            $class = '';
+            $strtypename = $type->displayname;
+            if ($type->is_enabled()) {
+                $hideshow = html_writer::link($url->out(false, array('action' => 'disable')),
+                    $OUTPUT->pix_icon('t/hide', $txt->disable, 'moodle', array('class' => 'iconsmall')));
+            } else {
+                $class = 'dimmed_text';
+                $hideshow = html_writer::link($url->out(false, array('action' => 'enable')),
+                    $OUTPUT->pix_icon('t/show', $txt->enable, 'moodle', array('class' => 'iconsmall')));
+            }
+
+            $updown = '';
+            if ($count) {
+                $updown .= html_writer::link($url->out(false, array('action' => 'up')),
+                        $OUTPUT->pix_icon('t/up', $txt->up, 'moodle', array('class' => 'iconsmall'))). '';
+            } else {
+                $updown .= $spacer;
+            }
+            if ($count < count($types) - 1) {
+                $updown .= '&nbsp;'.html_writer::link($url->out(false, array('action' => 'down')),
+                        $OUTPUT->pix_icon('t/down', $txt->down, 'moodle', array('class' => 'iconsmall')));
+            } else {
+                $updown .= $spacer;
+            }
+
+            $settings = '';
+            if ($type->get_settings_url()) {
+                $settings = html_writer::link($type->get_settings_url(), $txt->settings);
+            }
+
+            $uninstall = '';
+            if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('contenttype_'.$type->name, 'manage')) {
+                $uninstall = html_writer::link($uninstallurl, $txt->uninstall);
+            }
+
+            $row = new html_table_row(array($strtypename, $hideshow, $updown, $settings, $uninstall));
+            if ($class) {
+                $row->attributes['class'] = $class;
+            }
+            $table->data[] = $row;
+            $count++;
+        }
+        $return .= html_writer::table($table);
+        return highlight($query, $return);
+    }
+}
+
 /**
  * Initialise admin page - this function does require login and permission
  * checks specified in page definition.
@@ -8780,6 +8937,7 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
     $context->description = highlight($query, markdown_to_html($description));
     $context->element = $form;
     $context->forceltr = $setting->get_force_ltr();
+    $context->customcontrol = $setting->has_custom_form_control();
 
     return $OUTPUT->render_from_template('core_admin/setting', $context);
 }
@@ -8813,6 +8971,40 @@ function any_new_admin_settings($node) {
 }
 
 /**
+ * Given a table and optionally a column name should replaces be done?
+ *
+ * @param string $table name
+ * @param string $column name
+ * @return bool success or fail
+ */
+function db_should_replace($table, $column = ''): bool {
+
+    // TODO: this is horrible hack, we should do whitelisting and each plugin should be responsible for proper replacing...
+    $skiptables = ['config', 'config_plugins', 'filter_config', 'sessions',
+        'events_queue', 'repository_instance_config', 'block_instances', 'files'];
+
+    // Don't process these.
+    if (in_array($table, $skiptables)) {
+        return false;
+    }
+
+    // To be safe never replace inside a table that looks related to logging.
+    if (preg_match('/(^|_)logs?($|_)/', $table)) {
+        return false;
+    }
+
+    // Do column based exclusions.
+    if (!empty($column)) {
+        // Don't touch anything that looks like a hash.
+        if (preg_match('/hash$/', $column)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
  * Moved from admin/replace.php so that we can use this in cron
  *
  * @param string $search string to look for
@@ -8822,11 +9014,6 @@ function any_new_admin_settings($node) {
 function db_replace($search, $replace) {
     global $DB, $CFG, $OUTPUT;
 
-    // TODO: this is horrible hack, we should do whitelisting and each plugin should be responsible for proper replacing...
-    $skiptables = array('config', 'config_plugins', 'config_log', 'upgrade_log', 'log',
-                        'filter_config', 'sessions', 'events_queue', 'repository_instance_config',
-                        'block_instances', '');
-
     // Turn off time limits, sometimes upgrades can be slow.
     core_php_time_limit::raise();
 
@@ -8835,13 +9022,16 @@ function db_replace($search, $replace) {
     }
     foreach ($tables as $table) {
 
-        if (in_array($table, $skiptables)) {      // Don't process these
+        if (!db_should_replace($table)) {
             continue;
         }
 
         if ($columns = $DB->get_columns($table)) {
             $DB->set_debug(true);
             foreach ($columns as $column) {
+                if (!db_should_replace($table, $column->name)) {
+                    continue;
+                }
                 $DB->replace_all_text($table, $column, $search, $replace);
             }
             $DB->set_debug(false);
@@ -10207,6 +10397,7 @@ class admin_setting_configstoredfile extends admin_setting {
         $this->filearea = $filearea;
         $this->itemid   = $itemid;
         $this->options  = (array)$options;
+        $this->customcontrol = true;
     }
 
     /**

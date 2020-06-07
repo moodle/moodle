@@ -52,6 +52,8 @@ class redis extends handler {
     protected $prefix = '';
     /** @var int $acquiretimeout how long to wait for session lock in seconds */
     protected $acquiretimeout = 120;
+    /** @var int $lockretry how long to wait between session lock attempts in ms */
+    protected $lockretry = 100;
     /** @var int $serializer The serializer to use */
     protected $serializer = \Redis::SERIALIZER_PHP;
     /**
@@ -97,6 +99,10 @@ class redis extends handler {
 
         if (isset($CFG->session_redis_acquire_lock_timeout)) {
             $this->acquiretimeout = (int)$CFG->session_redis_acquire_lock_timeout;
+        }
+
+        if (isset($CFG->session_redis_acquire_lock_retry)) {
+            $this->lockretry = (int)$CFG->session_redis_acquire_lock_retry;
         }
 
         if (!empty($CFG->session_redis_serializer_use_igbinary) && defined('\Redis::SERIALIZER_IGBINARY')) {
@@ -255,10 +261,14 @@ class redis extends handler {
      */
     public function handler_read($id) {
         try {
-            $this->lock_session($id);
+            if ($this->requires_write_lock()) {
+                $this->lock_session($id);
+            }
             $sessiondata = $this->connection->get($id);
             if ($sessiondata === false) {
-                $this->unlock_session($id);
+                if ($this->requires_write_lock()) {
+                    $this->unlock_session($id);
+                }
                 return '';
             }
             $this->connection->expire($id, $this->timeout);
@@ -337,7 +347,7 @@ class redis extends handler {
     }
 
     /**
-     * Obtain a session lock so we are the only one using it at the moent.
+     * Obtain a session lock so we are the only one using it at the moment.
      *
      * @param string $id The session id to lock.
      * @return bool true when session was locked, exception otherwise.
@@ -353,23 +363,57 @@ class redis extends handler {
          * on the session for the entire time it is open.  If another AJAX call, or page is using
          * the session then we just wait until it finishes before we can open the session.
          */
+
+        // Store the current host, process id and the request URI so it's easy to track who has the lock.
+        $hostname = gethostname();
+        if ($hostname === false) {
+            $hostname = 'UNKNOWN HOST';
+        }
+        $pid = getmypid();
+        if ($pid === false) {
+            $pid = 'UNKNOWN';
+        }
+        $uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'unknown uri';
+
+        $whoami = "[pid {$pid}] {$hostname}:$uri";
+
         while (!$haslock) {
-            $haslock = $this->connection->setnx($lockkey, '1');
-            if (!$haslock) {
-                usleep(rand(100000, 1000000));
-                if ($this->time() > $startlocktime + $this->acquiretimeout) {
-                    // This is a fatal error, better inform users.
-                    // It should not happen very often - all pages that need long time to execute
-                    // should close session immediately after access control checks.
-                    error_log('Cannot obtain session lock for sid: '.$id.' within '.$this->acquiretimeout.
-                            '. It is likely another page has a long session lock, or the session lock was never released.');
-                    throw new exception("Unable to obtain session lock");
-                }
-            } else {
+
+            $haslock = $this->connection->setnx($lockkey, $whoami);
+
+            if ($haslock) {
                 $this->locks[$id] = $this->time() + $this->lockexpire;
                 $this->connection->expire($lockkey, $this->lockexpire);
                 return true;
             }
+
+            if ($this->time() > $startlocktime + $this->acquiretimeout) {
+                // This is a fatal error, better inform users.
+                // It should not happen very often - all pages that need long time to execute
+                // should close session immediately after access control checks.
+                $whohaslock = $this->connection->get($lockkey);
+                // @codingStandardsIgnoreStart
+                error_log("Cannot obtain session lock for sid: $id within $this->acquiretimeout seconds. " .
+                    "It is likely another page ($whohaslock) has a long session lock, or the session lock was never released.");
+                // @codingStandardsIgnoreEnd
+                throw new exception("Unable to obtain session lock");
+            }
+
+            if ($this->time() < $startlocktime + 5) {
+                // We want a random delay to stagger the polling load. Ideally
+                // this delay should be a fraction of the average response
+                // time. If it is too small we will poll too much and if it is
+                // too large we will waste time waiting for no reason. 100ms is
+                // the default starting point.
+                $delay = rand($this->lockretry, $this->lockretry * 1.1);
+            } else {
+                // If we don't get a lock within 5 seconds then there must be a
+                // very long lived process holding the lock so throttle back to
+                // just polling roughly once a second.
+                $delay = rand(1000, 1100);
+            }
+
+            usleep($delay * 1000);
         }
     }
 

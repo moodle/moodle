@@ -16,4 +16,4 @@ Feature: Atto strike button
     And I set the field "Text editor" to "Plain text area"
     And I press "Save changes"
     And I click on "Edit profile" "link" in the "region-main" "region"
-    Then I should see "<strike>MUA</strike>"
+    Then I should see "<del>MUA</del>"

@@ -43,7 +43,7 @@ class core_message_send_email_task_testcase extends advanced_testcase {
      * Test sending email task.
      */
     public function test_sending_email_task() {
-        global $DB;
+        global $DB, $SITE;
 
         $this->preventResetByRollback(); // Messaging is not compatible with transactions.
 
@@ -122,7 +122,8 @@ class core_message_send_email_task_testcase extends advanced_testcase {
         // Confirm it contains the correct data.
         $emails = $sink->get_messages();
         $email = reset($emails);
-        $this->assertSame(get_string('emaildigestsubject', 'message_email'), $email->subject);
+        $sitename = format_string($SITE->fullname);
+        $this->assertSame(get_string('messagedigestemailsubject', 'message_email', $sitename), $email->subject);
         $this->assertSame($user2->email, $email->to);
         $this->assertNotEmpty($email->header);
         $emailbody = quoted_printable_decode($email->body);

@@ -52,5 +52,5 @@ Feature: Manage data storage purposes
     And I choose "Delete" in the open action menu
     And I should see "Delete purpose"
     And I should see "Are you sure you want to delete the purpose 'Purpose 1'?"
-    When I click on "Delete" "button" in the "Confirm" "dialogue"
+    When I click on "Delete" "button" in the "Delete purpose" "dialogue"
     Then I should not see "Purpose 1" in the "List of data purposes" "table"

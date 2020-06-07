@@ -30,6 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['admindirname'] = 'Adminmáhppa';
 $string['availablelangs'] = 'Giellapáhkat mat leat gávdnamis';
 $string['chooselanguagehead'] = 'Vállje giela';
 $string['chooselanguagesub'] = 'Vállje giela (dušše installašuvdnjii). Don sáhtát válljet neahttabáikki ja geavaheaddji giela šearbmagovas maŋŋelaš.';
@@ -38,3 +39,4 @@ $string['clialreadyinstalled'] = 'Fiila config.php gávdno jo. Geavat admin/cli/
 $string['databasename'] = 'Diehtovuođđonamma';
 $string['langdownloaderror'] = 'Dađibahábut ii installerejuvvon giellapáhkka "{$a}". Installašuvdnaproseassa joatká eaŋgalsgillii.';
 $string['phpextension'] = '{$a} PHP gilkor';
+$string['welcomep70'] = 'Coahkkal "Boahtte"-boalu joatkit<strong>Moodle</strong>-installašuvnnain';

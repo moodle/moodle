@@ -68,7 +68,7 @@ class behat_form_filemanager extends behat_form_field {
         $fieldlabel = $this->get_field_locator();
 
         // Get the name of the current directory elements.
-        $xpath = "//label[contains(., '" . $fieldlabel . "')]" .
+        $xpath = "//p[normalize-space(.)='$fieldlabel']" .
             "/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' fitem ')]" .
             "/descendant::div[@data-fieldtype = 'filemanager']" .
             "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-filename ')]";

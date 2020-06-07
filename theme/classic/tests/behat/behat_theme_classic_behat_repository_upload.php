@@ -59,11 +59,11 @@ class behat_theme_classic_behat_repository_upload extends behat_repository_uploa
                 $exception
             );
         } else {
-            // Gets the ffilemanager node specified by the locator which contains the filepicker container.
+            // Gets the filemanager node specified by the locator which contains the filepicker container.
             $filepickerelement = behat_context_helper::escape($filepickerelement);
             $filepickercontainer = $this->find(
                 'xpath',
-                "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
+                "//input[./@id = substring-before(//p[normalize-space(.)=$filepickerelement]/@id, '_label')]" .
                     "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' felement ')]",
                 $exception
             );

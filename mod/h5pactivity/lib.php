@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_h5pactivity\local\manager;
+use mod_h5pactivity\local\grader;
+
 /**
  * Checks if H5P activity supports a specific feature.
  *
@@ -80,6 +83,7 @@ function h5pactivity_add_instance(stdClass $data, mod_h5pactivity_mod_form $mfor
     global $DB;
 
     $data->timecreated = time();
+    $data->timemodified = $data->timecreated;
     $cmid = $data->coursemodule;
 
     $data->id = $DB->insert_record('h5pactivity', $data);
@@ -112,10 +116,15 @@ function h5pactivity_update_instance(stdClass $data, mod_h5pactivity_mod_form $m
 
     h5pactivity_set_mainfile($data);
 
-    // Extra fields required in grade related functions.
+    // Update gradings if grading method or tracking are modified.
     $data->cmid = $data->coursemodule;
-    h5pactivity_grade_item_update($data);
-    h5pactivity_update_grades($data);
+    $moduleinstance = $DB->get_record('h5pactivity', ['id' => $data->id]);
+    if (($moduleinstance->grademethod != $data->grademethod)
+            || $data->enabletracking != $moduleinstance->enabletracking) {
+        h5pactivity_update_grades($data);
+    } else {
+        h5pactivity_grade_item_update($data);
+    }
 
     return $DB->update_record('h5pactivity', $data);
 }
@@ -168,33 +177,10 @@ function h5pactivity_scale_used_anywhere(int $scaleid): bool {
  * @param mixed $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int int 0 if ok, error code otherwise
  */
-function h5pactivity_grade_item_update(stdClass $moduleinstance, $grades=null): int {
-    global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
-
-    $item = [];
-    $item['itemname'] = clean_param($moduleinstance->name, PARAM_NOTAGS);
-    $item['gradetype'] = GRADE_TYPE_VALUE;
-    if (isset($moduleinstance->cmidnumber)) {
-        $item['idnumber'] = $moduleinstance->cmidnumber;
-    }
-
-    if ($moduleinstance->grade > 0) {
-        $item['gradetype'] = GRADE_TYPE_VALUE;
-        $item['grademax']  = $moduleinstance->grade;
-        $item['grademin']  = 0;
-    } else if ($moduleinstance->grade < 0) {
-        $item['gradetype'] = GRADE_TYPE_SCALE;
-        $item['scaleid']   = -$moduleinstance->grade;
-    } else {
-        $item['gradetype'] = GRADE_TYPE_NONE;
-    }
-    if ($grades === 'reset') {
-        $params['reset'] = true;
-        $grades = null;
-    }
-    return grade_update('mod/h5pactivity', $moduleinstance->course, 'mod',
-            'h5pactivity', $moduleinstance->id, 0, null, $item);
+function h5pactivity_grade_item_update(stdClass $moduleinstance, $grades = null): int {
+    $idnumber = $moduleinstance->idnumber ?? '';
+    $grader = new grader($moduleinstance, $idnumber);
+    return $grader->grade_item_update($grades);
 }
 
 /**
@@ -204,11 +190,9 @@ function h5pactivity_grade_item_update(stdClass $moduleinstance, $grades=null): 
  * @return int Returns GRADE_UPDATE_OK, GRADE_UPDATE_FAILED, GRADE_UPDATE_MULTIPLE or GRADE_UPDATE_ITEM_LOCKED
  */
 function h5pactivity_grade_item_delete(stdClass $moduleinstance): ?int {
-    global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
-
-    return grade_update('mod/h5pactivity', $moduleinstance->course, 'mod', 'h5pactivity',
-            $moduleinstance->id, 0, null, ['deleted' => 1]);
+    $idnumber = $moduleinstance->idnumber ?? '';
+    $grader = new grader($moduleinstance, $idnumber);
+    return $grader->grade_item_delete();
 }
 
 /**
@@ -220,27 +204,90 @@ function h5pactivity_grade_item_delete(stdClass $moduleinstance): ?int {
  * @param int $userid Update grade of specific user only, 0 means all participants.
  */
 function h5pactivity_update_grades(stdClass $moduleinstance, int $userid = 0): void {
-    global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
-
-    // Populate array of grade objects indexed by userid.
-    $grades = [];
-    grade_update('mod/h5pactivity', $moduleinstance->course, 'mod',
-            'h5pactivity', $moduleinstance->id, 0, $grades);
+    $idnumber = $moduleinstance->idnumber ?? '';
+    $grader = new grader($moduleinstance, $idnumber);
+    $grader->update_grades($userid);
 }
 
 /**
+ * Rescale all grades for this activity and push the new grades to the gradebook.
+ *
+ * @param stdClass $course Course db record
+ * @param stdClass $cm Course module db record
+ * @param float $oldmin
+ * @param float $oldmax
+ * @param float $newmin
+ * @param float $newmax
+ * @return bool true if reescale is successful
+ */
+function h5pactivity_rescale_activity_grades(stdClass $course, stdClass $cm, float $oldmin,
+        float $oldmax, float $newmin, float $newmax): bool {
+
+    $manager = manager::create_from_coursemodule($cm);
+    $grader = $manager->get_grader();
+    $grader->update_grades();
+    return true;
+}
+
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the H5P activity.
+ *
+ * @param object $mform form passed by reference
+ */
+function h5pactivity_reset_course_form_definition(&$mform): void {
+    $mform->addElement('header', 'h5pactivityheader', get_string('modulenameplural', 'mod_h5pactivity'));
+    $mform->addElement('advcheckbox', 'reset_h5pactivity', get_string('deleteallattempts', 'mod_h5pactivity'));
+}
+
+/**
+ * Course reset form defaults.
+ *
+ * @param stdClass $course the course object
+ * @return array
+ */
+function h5pactivity_reset_course_form_defaults(stdClass $course): array {
+    return ['reset_h5pactivity' => 1];
+}
+
+
+/**
  * This function is used by the reset_course_userdata function in moodlelib.
- * This function will remove all assignment submissions and feedbacks in the database
+ *
+ * This function will remove all H5P attempts in the database
  * and clean up any related data.
  *
  * @param stdClass $data the data submitted from the reset course.
- * @return array
+ * @return array of reseting status
  */
-function h5pactivity_reset_userdata($data) {
+function h5pactivity_reset_userdata(stdClass $data): array {
     global $CFG, $DB;
-    // TODO: When attempts are created this function will remove them.
-    return [];
+    $componentstr = get_string('modulenameplural', 'mod_h5pactivity');
+    $status = [];
+    if (!empty($data->reset_h5pactivity)) {
+        $params = ['courseid' => $data->courseid];
+        $sql = "SELECT a.id FROM {h5pactivity} a WHERE a.course=:courseid";
+        if ($activities = $DB->get_records_sql($sql, $params)) {
+            foreach ($activities as $activity) {
+                $cm = get_coursemodule_from_instance('h5pactivity',
+                                                     $activity->id,
+                                                     $data->courseid,
+                                                     false,
+                                                     MUST_EXIST);
+                mod_h5pactivity\local\attempt::delete_all_attempts ($cm);
+            }
+        }
+        // Remove all grades from gradebook.
+        if (empty($data->reset_gradebook_grades)) {
+            h5pactivity_reset_gradebook($data->courseid, 'reset');
+        }
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('deleteallattempts', 'mod_h5pactivity'),
+            'error' => false,
+        ];
+    }
+    return $status;
 }
 
 /**
@@ -254,11 +301,11 @@ function h5pactivity_reset_gradebook(int $courseid, string $type=''): void {
 
     $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
               FROM {h5pactivity} a, {course_modules} cm, {modules} m
-             WHERE m.name='h5pactivity' AND m.id=cm.module AND cm.instance=s.id AND s.course=?";
+             WHERE m.name='h5pactivity' AND m.id=cm.module AND cm.instance=a.id AND a.course=?";
 
     if ($activities = $DB->get_records_sql($sql, [$courseid])) {
         foreach ($activities as $activity) {
-            h5pactivity_grade_item_update($activity, true);
+            h5pactivity_grade_item_update($activity, 'reset');
         }
     }
 }
@@ -287,7 +334,41 @@ function h5pactivity_page_type_list(string $pagetype, stdClass $parentcontext, s
  * @return stdClass an object with the different type of areas indicating if they were updated or not
  */
 function h5pactivity_check_updates_since(cm_info $cm, int $from, array $filter = []): stdClass {
+    global $DB, $USER;
+
     $updates = course_check_module_updates_since($cm, $from, ['package'], $filter);
+
+    $updates->tracks = (object) ['updated' => false];
+    $select = 'h5pactivityid = ? AND userid = ? AND timemodified > ?';
+    $params = [$cm->instance, $USER->id, $from];
+    $tracks = $DB->get_records_select('h5pactivity_attempts', $select, $params, '', 'id');
+    if (!empty($tracks)) {
+        $updates->tracks->updated = true;
+        $updates->tracks->itemids = array_keys($tracks);
+    }
+
+    // Now, teachers should see other students updates.
+    if (has_capability('mod/h5pactivity:reviewattempts', $cm->context)) {
+        $select = 'h5pactivityid = ? AND timemodified > ?';
+        $params = [$cm->instance, $from];
+
+        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+            $groupusers = array_keys(groups_get_activity_shared_group_members($cm));
+            if (empty($groupusers)) {
+                return $updates;
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($groupusers);
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
+
+        $updates->usertracks = (object) ['updated' => false];
+        $tracks = $DB->get_records_select('h5pactivity_attempts', $select, $params, '', 'id');
+        if (!empty($tracks)) {
+            $updates->usertracks->updated = true;
+            $updates->usertracks->itemids = array_keys($tracks);
+        }
+    }
     return $updates;
 }
 
@@ -317,14 +398,14 @@ function h5pactivity_get_file_areas(stdClass $course, stdClass $cm, stdClass $co
  * @param stdClass $cm
  * @param context $context
  * @param string $filearea
- * @param int $itemid
- * @param string $filepath
- * @param string $filename
+ * @param int|null $itemid
+ * @param string|null $filepath
+ * @param string|null $filename
  * @return file_info_stored|null file_info_stored instance or null if not found
  */
 function h5pactivity_get_file_info(file_browser $browser, array $areas, stdClass $course,
-            stdClass $cm, context $context, string $filearea, int $itemid,
-            string $filepath, string $filename): ?file_info_stored {
+            stdClass $cm, context $context, string $filearea, ?int $itemid = null,
+            ?string $filepath = null, ?string $filename = null): ?file_info_stored {
     global $CFG;
 
     if (!has_capability('moodle/course:managefiles', $context)) {

@@ -303,12 +303,22 @@ class behat_app extends behat_base {
         // Wait until the site login field appears OR the main page.
         $situation = $this->spin(
                 function($context, $args) {
-                    $input = $context->getSession()->getPage()->find('xpath', '//input[@name="url"]');
-                    if ($input) {
+                    $page = $context->getSession()->getPage();
+
+                    $element = $page->find('xpath', '//page-core-login-site//input[@name="url"]');
+                    if ($element) {
+                        // Wait for the onboarding modal to open, if any.
+                        $this->wait_for_pending_js();
+                        $element = $page->find('xpath', '//page-core-login-site-onboarding');
+                        if ($element) {
+                            $this->i_press_in_the_app('Skip');
+                        }
+
                         return 'login';
                     }
-                    $mainmenu = $context->getSession()->getPage()->find('xpath', '//page-core-mainmenu');
-                    if ($mainmenu) {
+
+                    $element = $page->find('xpath', '//page-core-mainmenu');
+                    if ($element) {
                         return 'mainpage';
                     }
                     throw new DriverException('Moodle app login URL prompt not found');
@@ -317,7 +327,7 @@ class behat_app extends behat_base {
         // If it's the login page, we automatically fill in the URL and leave it on the user/pass
         // page. If it's the main page, we just leave it there.
         if ($situation === 'login') {
-            $this->i_set_the_field_in_the_app('Site address', $CFG->wwwroot);
+            $this->i_set_the_field_in_the_app('campus.example.edu', $CFG->wwwroot);
             $this->i_press_in_the_app('Connect!');
         }
 

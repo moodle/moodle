@@ -11,46 +11,56 @@
     margin-bottom: 0.5em;
 }
 
-.que.ddwtos .drop {
+.que.ddwtos .drop.active {
     display: inline-block;
     text-align: center;
     border: 1px solid #000;
     margin-bottom: 2px;
 }
 
+.que.ddwtos .drop {
+    display: none;
+}
+
 .que.ddwtos .drags {
     height: 0;
 }
 
-.que.ddwtos .draghome,
-.que.ddwtos .drag {
+.que.ddwtos .draghome {
     display: inline-block;
     text-align: center;
     background: transparent;
     border: 1px solid #000;
-}
-
-.que.ddwtos .draghome {
-    visibility: hidden;
-}
-
-.que.ddwtos .drag {
-    position: absolute;
-    z-index: 2;
     cursor: move;
 }
 
-.que.ddwtos .readonly .drag {
+.que.ddwtos.qtype_ddwtos-readonly .draghome {
     cursor: default;
 }
 
-.que.ddwtos .drag.beingdragged {
+.que.ddwtos .draghome.beingdragged {
     z-index: 3;
     box-shadow: 3px 3px 4px #000;
+    position: absolute;
+}
+
+.que.ddwtos .draghome.dragplaceholder {
+    display: none;
+}
+
+.que.ddwtos .draghome.dragplaceholder.active {
+    visibility: hidden;
+    display: inline-block;
+}
+
+.que.ddwtos .draghome.placed {
+    margin-bottom: 2px;
 }
 
 .que.ddwtos .drop:focus,
-.que.ddwtos .drop.valid-drag-over-drop {
+.que.ddwtos .drop.valid-drag-over-drop,
+.que.ddwtos .draghome.placed:focus:not(.beingdragged),
+.que.ddwtos .draghome.placed.valid-drag-over-drop {
     border-color: #0a0;
     box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
 }

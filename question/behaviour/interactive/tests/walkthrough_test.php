@@ -183,6 +183,7 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
 
         // Create a multichoice single question.
         $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc->showstandardinstruction = true;
         $mc->hints = array(
             new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, false, false),
         );
@@ -338,6 +339,7 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
 
         // Create a multichoice multiple question.
         $mc = test_question_maker::make_a_multichoice_multi_question();
+        $mc->showstandardinstruction = true;
         $mc->hints = array(
             new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, true, true),
             new question_hint_with_parts(0, 'This is the second hint.', FORMAT_HTML, true, true),

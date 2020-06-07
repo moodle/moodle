@@ -338,7 +338,7 @@ function wiki_print_recent_activity($course, $viewfullnames, $timestart) {
     if (!$wikis) {
         return false;
     }
-    echo $OUTPUT->heading(get_string("updatedwikipages", 'wiki') . ':', 3);
+    echo $OUTPUT->heading(get_string("updatedwikipages", 'wiki') . ':', 6);
     foreach ($wikis as $wiki) {
         $cm = $modinfo->instances['wiki'][$wiki->wikiid];
         $link = $CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $wiki->id;

@@ -28,6 +28,7 @@
 require_once(__DIR__ . '/../../../lib/behat/core_behat_file_helper.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
+    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
     Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
@@ -307,4 +308,122 @@ class behat_filepicker extends behat_base {
 
     }
 
+    /**
+     * Selects a repository from the repository list in the file picker.
+     *
+     * @Then /^I select "(?P<repository_name_string>(?:[^"]|\\")*)" repository in file picker$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $repositoryname
+     */
+    public function i_select_filepicker_repository($repositoryname) {
+        $exception = new ExpectationException(
+            "The '{$repositoryname}' repository can not be found in the file picker", $this->getSession());
+        // We look for a repository that matches a certain name in the file picker repository list.
+        $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' filepicker ')]" .
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-repo-area ')]" .
+            "//span[contains(concat(' ', normalize-space(@class), ' '), ' fp-repo-name ')]" .
+            "[normalize-space(.)='{$repositoryname}']";
+
+        $repository = $this->find('xpath', $xpath, $exception);
+        // If the node exists, click on the node.
+        $repository->click();
+    }
+
+    /**
+     * Makes sure user can see the exact number of elements (files and folders) in the repository content area in
+     * the file picker.
+     *
+     * @Then /^I should see "(?P<elements_number>\d+)" elements in repository content area$/
+     * @throws ExpectationException Thrown by behat_base::find_all
+     * @param int $expectedcount
+     */
+    public function i_should_see_elements_in_filepicker_repository($expectedcount) {
+        // We look for all .fp-file elements inside the content area of the file picker repository.
+        $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-content ')]" .
+            "//a[contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')]";
+
+        try {
+            $elements = $this->find_all('xpath', $xpath);
+        } catch (ElementNotFoundException $e) {
+            $elements = [];
+        }
+
+        // Make sure the expected number is equal to the actual number of .fp-file elements.
+        if (count($elements) != $expectedcount) {
+            throw new ExpectationException("Found " . count($elements) .
+                " elements in filepicker repository. Expected {$expectedcount}", $this->getSession());
+        }
+    }
+
+    /**
+     * Returns a specific element (file or folder) in the repository content area in the file picker.
+     *
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $elementname The name of the element
+     * @param string $elementtype The type of the element ("file" or "folder")
+     * @return NodeElement
+     */
+    protected function get_element_in_filepicker_repository($elementname, $elementtype) {
+        // We look for a .fp-{type} element with a certain name inside the content area of the file picker repository.
+        $exception = new ExpectationException(
+            "The '{$elementname}' {$elementtype} can not be found in the repository content area",
+            $this->getSession());
+        $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-content ')]" .
+            "//a[contains(concat(' ', normalize-space(@class), ' '), ' fp-{$elementtype} ')]" .
+            "[normalize-space(.)='{$elementname}']";
+
+        return $this->find('xpath', $xpath, $exception);
+    }
+
+    /**
+     * Makes sure user can see a specific element (file or folder) in the repository content area in the file picker.
+     *
+     * @Then /^I should see "(?P<element_name_string>(?:[^"]|\\")*)" "(?P<element_type_string>(?:[^"]|\\")*)" in repository content area$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $elementname The name of the element
+     * @param string $elementtype The type of the element ("file" or "folder")
+     */
+    public function i_should_see_element_in_filepicker_repository($elementname, $elementtype) {
+        $this->get_element_in_filepicker_repository($elementname, $elementtype);
+    }
+
+    /**
+     * Clicks on a specific element (file or folder) in the repository content area in the file picker.
+     *
+     * @Then /^I click on "(?P<element_name_string>(?:[^"]|\\")*)" "(?P<element_type_string>(?:[^"]|\\")*)" in repository content area$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $elementname The name of the element
+     * @param string $elementtype The type of the element ("file" or "folder")
+     */
+    public function i_click_on_element_in_filepicker_repository($elementname, $elementtype) {
+        $element = $this->get_element_in_filepicker_repository($elementname, $elementtype);
+        $element->click();
+    }
+
+    /**
+     * Makes sure the user can see a specific breadcrumb navigation structure in the file picker repository.
+     *
+     * @Then /^I should see "(?P<breadcrumb_navigation_string>(?:[^"]|\\")*)" breadcrumb navigation in repository$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $breadcrumbs The breadcrumb navigation structure (ex. "System > Category > Course")
+     */
+    public function i_should_see_breadcrumb_navigation_in_filepicker_repository($breadcrumbs) {
+        $breadcrumbs = preg_split('/\s*>\s*/', trim($breadcrumbs));
+        foreach ($breadcrumbs as $breadcrumb) {
+            // We look for a .fp-path-folder element with a certain name inside the breadcrumb navigation area
+            // in the repository.
+            $exception = new ExpectationException(
+                "The '{$breadcrumb}' node can not be found in the breadcrumb navigation in the repository",
+                $this->getSession()
+            );
+            $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
+                "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-pathbar ')]" .
+                "//span[contains(concat(' ', normalize-space(@class), ' '), ' fp-path-folder ')]" .
+                "[normalize-space(.)='{$breadcrumb}']";
+
+            $this->find('xpath', $xpath, $exception);
+        }
+    }
 }

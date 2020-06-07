@@ -34,12 +34,14 @@ $warning-outline: #a6670e;
 
 // Options
 $enable-rounded: true !default;
+$enable-responsive-font-sizes: true !default;
 
 // Body
 $body-color:    $gray-800 !default;
 
 // Fonts
 $font-size-base: 0.9375rem !default;
+$rfs-base-font-size: 0.9rem !default;
 $headings-font-weight:   300 !default;
 
 // Navbar
@@ -59,6 +61,8 @@ $breadcrumb-divider-rtl: "/" !default;
 $alert-border-width:                0 !default;
 
 $card-group-margin: .25rem;
+
+$input-btn-focus-color: rgba($primary, .75) !default;
 
 // stylelint-disable
 $theme-colors: () !default;
@@ -80,6 +84,11 @@ $theme-colors: map-merge((
 
 // Import Core moodle CSS
 @import "moodle";
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 
 // Preset CSS
 .navbar {

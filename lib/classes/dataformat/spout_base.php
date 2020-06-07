@@ -67,6 +67,23 @@ abstract class spout_base extends \core\dataformat\base {
     }
 
     /**
+     * Set the dataformat to be output to current file
+     */
+    public function start_output_to_file(): void {
+        $this->writer = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createWriter($this->spouttype);
+        if (method_exists($this->writer, 'setTempFolder')) {
+            $this->writer->setTempFolder(make_request_directory());
+        }
+
+        $this->writer->openToFile($this->filepath);
+
+        // By default one sheet is always created, but we want to rename it when we call start_sheet().
+        $this->renamecurrentsheet = true;
+
+        $this->start_output();
+    }
+
+    /**
      * Set the title of the worksheet inside a spreadsheet
      *
      * For some formats this will be ignored.
@@ -99,11 +116,11 @@ abstract class spout_base extends \core\dataformat\base {
     /**
      * Write a single record
      *
-     * @param object $record
+     * @param array $record
      * @param int $rownum
      */
     public function write_record($record, $rownum) {
-        $row = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createRowFromArray((array)$record);
+        $row = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createRowFromArray($this->format_record($record));
         $this->writer->addRow($row);
     }
 
@@ -113,5 +130,16 @@ abstract class spout_base extends \core\dataformat\base {
     public function close_output() {
         $this->writer->close();
         $this->writer = null;
+    }
+
+    /**
+     * Write data to disk
+     *
+     * @return bool
+     */
+    public function close_output_to_file(): bool {
+        $this->close_output();
+
+        return true;
     }
 }

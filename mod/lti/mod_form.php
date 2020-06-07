@@ -63,10 +63,10 @@ class mod_lti_mod_form extends moodleform_mod {
         // Type ID parameter being passed when adding an preconfigured tool from activity chooser.
         $typeid = optional_param('typeid', false, PARAM_INT);
 
+        $showoptions = has_capability('mod/lti:addmanualinstance', $this->context);
         // Show configuration details only if not preset (when new) or user has the capabilities to do so (when editing).
         if ($this->_instance) {
             $showtypes = has_capability('mod/lti:addpreconfiguredinstance', $this->context);
-            $showoptions = has_capability('mod/lti:addmanualinstance', $this->context);
             if (!$showoptions && $this->current->typeid == 0) {
                 // If you cannot add a manual instance and this is already a manual instance, then
                 // remove the 'types' selector.
@@ -74,7 +74,6 @@ class mod_lti_mod_form extends moodleform_mod {
             }
         } else {
             $showtypes = !$typeid;
-            $showoptions = !$typeid && has_capability('mod/lti:addmanualinstance', $this->context);
         }
 
         $this->typeid = 0;
@@ -202,10 +201,22 @@ class mod_lti_mod_form extends moodleform_mod {
             $mform->setAdvanced('securetoolurl');
             $mform->addHelpButton('securetoolurl', 'secure_launch_url', 'lti');
             $mform->hideIf('securetoolurl', 'typeid', 'in', $noncontentitemtypes);
+        } else {
+            // We still need those on page to support deep linking return, but hidden to avoid instructor modification.
+            $mform->addElement('hidden', 'toolurl', '', array('id' => 'id_toolurl'));
+            $mform->setType('toolurl', PARAM_URL);
+            $mform->addElement('hidden', 'securetoolurl', '', array('id' => 'id_securetoolurl'));
+            $mform->setType('securetoolurl', PARAM_URL);
         }
 
-        $mform->addElement('hidden', 'urlmatchedtypeid', '', array( 'id' => 'id_urlmatchedtypeid' ));
+        $mform->addElement('hidden', 'urlmatchedtypeid', '', array('id' => 'id_urlmatchedtypeid'));
         $mform->setType('urlmatchedtypeid', PARAM_INT);
+
+        $mform->addElement('hidden', 'lineitemresourceid', '', array( 'id' => 'id_lineitemresourceid' ));
+        $mform->setType('lineitemresourceid', PARAM_TEXT);
+
+        $mform->addElement('hidden', 'lineitemtag', '', array( 'id' => 'id_lineitemtag'));
+        $mform->setType('lineitemtag', PARAM_TEXT);
 
         $launchoptions = array();
         $launchoptions[LTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'lti');
@@ -250,6 +261,18 @@ class mod_lti_mod_form extends moodleform_mod {
             $mform->setAdvanced('secureicon');
             $mform->addHelpButton('secureicon', 'secure_icon_url', 'lti');
             $mform->hideIf('secureicon', 'typeid', 'in', $noncontentitemtypes);
+        } else {
+            // Keep those in the form to allow deep linking.
+            $mform->addElement('hidden', 'resourcekey', '', array('id' => 'id_resourcekey'));
+            $mform->setType('resourcekey', PARAM_TEXT);
+            $mform->addElement('hidden', 'password', '', array('id' => 'id_password'));
+            $mform->setType('password', PARAM_TEXT);
+            $mform->addElement('hidden', 'instructorcustomparameters', '', array('id' => 'id_instructorcustomparameters'));
+            $mform->setType('instructorcustomparameters', PARAM_TEXT);
+            $mform->addElement('hidden', 'icon', '', array('id' => 'id_icon'));
+            $mform->setType('icon', PARAM_URL);
+            $mform->addElement('hidden', 'secureicon', '', array('id' => 'id_secureicon'));
+            $mform->setType('secureicon', PARAM_URL);
         }
 
         // Add privacy preferences fieldset where users choose whether to send their data.
@@ -331,4 +354,18 @@ class mod_lti_mod_form extends moodleform_mod {
         $PAGE->requires->js_init_call('M.mod_lti.editor.init', array(json_encode($jsinfo)), true, $module);
     }
 
+    /**
+     * Sets the current values handled by services in case of update.
+     *
+     * @param object $defaultvalues default values to populate the form with.
+     */
+    public function set_data($defaultvalues) {
+        $services = lti_get_services();
+        if (is_object($defaultvalues)) {
+            foreach ($services as $service) {
+                $service->set_instance_form_values( $defaultvalues );
+            }
+        }
+        parent::set_data($defaultvalues);
+    }
 }

@@ -208,17 +208,18 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
         $courseicon = $this->output->pix_icon('i/course', get_string('courses'));
         $bcatinput = array(
+                'id' => 'categorylistitem' . $category->id,
                 'type' => 'checkbox',
                 'name' => 'bcat[]',
                 'value' => $category->id,
-                'class' => 'bulk-action-checkbox',
-                'aria-label' => get_string('bulkactionselect', 'moodle', $text),
+                'class' => 'bulk-action-checkbox custom-control-input',
                 'data-action' => 'select'
         );
 
+        $checkboxclass = '';
         if (!$category->can_resort_subcategories() && !$category->has_manage_capability()) {
             // Very very hardcoded here.
-            $bcatinput['style'] = 'visibility:hidden';
+            $checkboxclass = 'd-none';
         }
 
         $viewcaturl = new moodle_url('/course/management.php', array('categoryid' => $category->id));
@@ -260,12 +261,18 @@ class core_course_management_renderer extends plugin_renderer_base {
 
         $html = html_writer::start_tag('li', $attributes);
         $html .= html_writer::start_div('clearfix');
-        $html .= html_writer::start_div('float-left ba-checkbox');
-        $html .= html_writer::empty_tag('input', $bcatinput).'&nbsp;';
+        $html .= html_writer::start_div('float-left ' . $checkboxclass);
+        $html .= html_writer::start_div('custom-control custom-checkbox mr-1 ');
+        $html .= html_writer::empty_tag('input', $bcatinput);
+        $html .= html_writer::tag('label', '', array(
+            'aria-label' => get_string('bulkactionselect', 'moodle', $text),
+            'class' => 'custom-control-label',
+            'for' => 'categorylistitem' . $category->id));
+        $html .= html_writer::end_div();
         $html .= html_writer::end_div();
         $html .= $icon;
         if ($hasactions) {
-            $textattributes = array('class' => 'float-left categoryname');
+            $textattributes = array('class' => 'float-left categoryname aalink');
         } else {
             $textattributes = array('class' => 'float-left categoryname without-actions');
         }
@@ -275,7 +282,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::link($viewcaturl, $text, $textattributes);
         $html .= html_writer::start_div('float-right d-flex');
         if ($category->idnumber) {
-            $html .= html_writer::tag('span', s($category->idnumber), array('class' => 'dimmed idnumber'));
+            $html .= html_writer::tag('span', s($category->idnumber), array('class' => 'text-muted idnumber'));
         }
         if ($hasactions) {
             $html .= $this->category_listitem_actions($category, $actions);
@@ -285,7 +292,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 html_writer::span($category->get_courses_count()) .
                 html_writer::span(get_string('courses'), 'accesshide', array('id' => $countid)) .
                 $courseicon,
-                'course-count dimmed',
+                'course-count text-muted',
                 array('aria-labelledby' => $countid)
         );
         $html .= html_writer::end_div();
@@ -572,7 +579,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 $a->total = $totalcourses;
                 $str = get_string('showingxofycourses', 'moodle', $a);
             }
-            $html .= html_writer::div($str, 'listing-pagination-totals dimmed');
+            $html .= html_writer::div($str, 'listing-pagination-totals text-muted');
         }
 
         if ($viewmode !== 'default') {
@@ -607,16 +614,18 @@ class core_course_management_renderer extends plugin_renderer_base {
         );
 
         $bulkcourseinput = array(
+                'id' => 'courselistitem' . $course->id,
                 'type' => 'checkbox',
                 'name' => 'bc[]',
                 'value' => $course->id,
-                'class' => 'bulk-action-checkbox',
-                'aria-label' => get_string('bulkactionselect', 'moodle', $text),
+                'class' => 'bulk-action-checkbox custom-control-input',
                 'data-action' => 'select'
         );
+
+        $checkboxclass = '';
         if (!$category->has_manage_capability()) {
             // Very very hardcoded here.
-            $bulkcourseinput['style'] = 'visibility:hidden';
+            $checkboxclass = 'd-none';
         }
 
         $viewcourseurl = new moodle_url($this->page->url, array('courseid' => $course->id));
@@ -629,13 +638,19 @@ class core_course_management_renderer extends plugin_renderer_base {
             $html .= html_writer::div($this->output->pix_icon('i/move_2d', get_string('dndcourse')), 'float-left drag-handle');
         }
 
-        $html .= html_writer::start_div('ba-checkbox float-left');
-        $html .= html_writer::empty_tag('input', $bulkcourseinput).'&nbsp;';
+        $html .= html_writer::start_div('float-left ' . $checkboxclass);
+        $html .= html_writer::start_div('custom-control custom-checkbox mr-1 ');
+        $html .= html_writer::empty_tag('input', $bulkcourseinput);
+        $html .= html_writer::tag('label', '', array(
+            'aria-label' => get_string('bulkactionselect', 'moodle', $text),
+            'class' => 'custom-control-label',
+            'for' => 'courselistitem' . $course->id));
         $html .= html_writer::end_div();
-        $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename'));
+        $html .= html_writer::end_div();
+        $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename aalink'));
         $html .= html_writer::start_div('float-right');
         if ($course->idnumber) {
-            $html .= html_writer::tag('span', s($course->idnumber), array('class' => 'dimmed idnumber'));
+            $html .= html_writer::tag('span', s($course->idnumber), array('class' => 'text-muted idnumber'));
         }
         $html .= $this->course_listitem_actions($category, $course);
         $html .= html_writer::end_div();
@@ -1121,7 +1136,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 $a->total = $totalcourses;
                 $str = get_string('showingxofycourses', 'moodle', $a);
             }
-            $html .= html_writer::div($str, 'listing-pagination-totals dimmed');
+            $html .= html_writer::div($str, 'listing-pagination-totals text-muted');
         }
 
         if ($totalcourses < $perpage) {
@@ -1184,10 +1199,10 @@ class core_course_management_renderer extends plugin_renderer_base {
         if (core_course_category::get($course->category)->can_move_courses_out_of()) {
             $bulkcourseinput = array(
                     'type' => 'checkbox',
+                    'id' => 'coursesearchlistitem' . $course->id,
                     'name' => 'bc[]',
                     'value' => $course->id,
-                    'class' => 'bulk-action-checkbox',
-                    'aria-label' => get_string('bulkactionselect', 'moodle', $text),
+                    'class' => 'bulk-action-checkbox custom-control-input',
                     'data-action' => 'select'
             );
         }
@@ -1198,14 +1213,20 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::start_div('clearfix');
         $html .= html_writer::start_div('float-left');
         if ($bulkcourseinput) {
-            $html .= html_writer::empty_tag('input', $bulkcourseinput).'&nbsp;';
+            $html .= html_writer::start_div('custom-control custom-checkbox mr-1');
+            $html .= html_writer::empty_tag('input', $bulkcourseinput);
+            $html .= html_writer::tag('label', '', array(
+                'aria-label' => get_string('bulkactionselect', 'moodle', $text),
+                'class' => 'custom-control-label',
+                'for' => 'coursesearchlistitem' . $course->id));
+            $html .= html_writer::end_div();
         }
         $html .= html_writer::end_div();
-        $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename'));
-        $html .= html_writer::tag('span', $categoryname, array('class' => 'float-left categoryname'));
+        $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename aalink'));
+        $html .= html_writer::tag('span', $categoryname, array('class' => 'float-left ml-3 text-muted'));
         $html .= html_writer::start_div('float-right');
         $html .= $this->search_listitem_actions($course);
-        $html .= html_writer::tag('span', s($course->idnumber), array('class' => 'dimmed idnumber'));
+        $html .= html_writer::tag('span', s($course->idnumber), array('class' => 'text-muted idnumber'));
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
         $html .= html_writer::end_tag('li');

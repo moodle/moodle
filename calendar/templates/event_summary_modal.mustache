@@ -21,7 +21,7 @@
 
     Example context (json):
     {
-        "title": "Assignment due 1",
+        "title": "Assignment due 1"
     }
 }}
 {{< core/modal }}
@@ -29,9 +29,15 @@
         {{#candelete}}
             <button type="button" class="btn btn-secondary" data-action="delete">{{#str}} delete {{/str}}</button>
         {{/candelete}}
-        {{#isactionevent}}
+        {{#action.actionable}}
+            <a href="{{action.url}}">{{{action.name}}}</a>
+        {{/action.actionable}}
+        {{^action.actionable}}
+            {{#isactionevent}}
             <a href="{{url}}">{{#str}} gotoactivity, core_calendar {{/str}}</a>
-        {{/isactionevent}}
+            {{/isactionevent}}
+        {{/action.actionable}}
+
         {{^isactionevent}}
             {{#canedit}}
                 <button type="button" class="btn btn-primary" data-action="edit">{{#str}} edit {{/str}}</button>

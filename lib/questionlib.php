@@ -402,17 +402,12 @@ function question_delete_question($questionid) {
 /**
  * All question categories and their questions are deleted for this context id.
  *
- * @param object $contextid The contextid to delete question categories from
- * @return array Feedback from deletes (if any)
+ * @param int $contextid The contextid to delete question categories from
+ * @return array only returns an empty array for backwards compatibility.
  */
 function question_delete_context($contextid) {
     global $DB;
 
-    //To store feedback to be showed at the end of the process
-    $feedbackdata   = array();
-
-    //Cache some strings
-    $strcatdeleted = get_string('unusedcategorydeleted', 'question');
     $fields = 'id, parent, name, contextid';
     if ($categories = $DB->get_records('question_categories', array('contextid' => $contextid), 'parent', $fields)) {
         //Sort categories following their tree (parent-child) relationships
@@ -421,32 +416,21 @@ function question_delete_context($contextid) {
 
         foreach ($categories as $category) {
             question_category_delete_safe($category);
-
-            //Fill feedback
-            $feedbackdata[] = array($category->name, $strcatdeleted);
         }
     }
-    return $feedbackdata;
+    return [];
 }
 
 /**
  * All question categories and their questions are deleted for this course.
  *
  * @param stdClass $course an object representing the activity
- * @param boolean $feedback to specify if the process must output a summary of its work
- * @return boolean
+ * @param bool $notused this argument is not used any more. Kept for backwards compatibility.
+ * @return bool always true.
  */
-function question_delete_course($course, $feedback=true) {
+function question_delete_course($course, $notused = false) {
     $coursecontext = context_course::instance($course->id);
-    $feedbackdata = question_delete_context($coursecontext->id, $feedback);
-
-    // Inform about changes performed if feedback is enabled.
-    if ($feedback && $feedbackdata) {
-        $table = new html_table();
-        $table->head = array(get_string('category', 'question'), get_string('action'));
-        $table->data = $feedbackdata;
-        echo html_writer::table($table);
-    }
+    question_delete_context($coursecontext->id);
     return true;
 }
 
@@ -455,26 +439,18 @@ function question_delete_course($course, $feedback=true) {
  * 1/ All question categories and their questions are deleted for this course category.
  * 2/ All questions are moved to new category
  *
- * @param object|core_course_category $category course category object
- * @param object|core_course_category $newcategory empty means everything deleted, otherwise id of
+ * @param stdClass|core_course_category $category course category object
+ * @param stdClass|core_course_category $newcategory empty means everything deleted, otherwise id of
  *      category where content moved
- * @param boolean $feedback to specify if the process must output a summary of its work
+ * @param bool $notused this argument is no longer used. Kept for backwards compatibility.
  * @return boolean
  */
-function question_delete_course_category($category, $newcategory, $feedback=true) {
-    global $DB, $OUTPUT;
+function question_delete_course_category($category, $newcategory, $notused=false) {
+    global $DB;
 
     $context = context_coursecat::instance($category->id);
     if (empty($newcategory)) {
-        $feedbackdata = question_delete_context($context->id, $feedback);
-
-        // Output feedback if requested.
-        if ($feedback && $feedbackdata) {
-            $table = new html_table();
-            $table->head = array(get_string('questioncategory', 'question'), get_string('action'));
-            $table->data = $feedbackdata;
-            echo html_writer::table($table);
-        }
+        question_delete_context($context->id);
 
     } else {
         // Move question categories to the new context.
@@ -490,14 +466,6 @@ function question_delete_course_category($category, $newcategory, $feedback=true
             $DB->set_field('question_categories', 'parent', $newtopcategory->id, array('parent' => $topcategory->id));
             // Now delete the top category.
             $DB->delete_records('question_categories', array('id' => $topcategory->id));
-        }
-
-        if ($feedback) {
-            $a = new stdClass();
-            $a->oldplace = $context->get_context_name();
-            $a->newplace = $newcontext->get_context_name();
-            echo $OUTPUT->notification(
-                    get_string('movedquestionsandcategories', 'question', $a), 'notifysuccess');
         }
     }
 
@@ -542,21 +510,14 @@ function question_save_from_deletion($questionids, $newcontextid, $oldplace,
  * All question categories and their questions are deleted for this activity.
  *
  * @param object $cm the course module object representing the activity
- * @param boolean $feedback to specify if the process must output a summary of its work
+ * @param bool $notused the argument is not used any more. Kept for backwards compatibility.
  * @return boolean
  */
-function question_delete_activity($cm, $feedback=true) {
+function question_delete_activity($cm, $notused = false) {
     global $DB;
 
     $modcontext = context_module::instance($cm->id);
-    $feedbackdata = question_delete_context($modcontext->id, $feedback);
-    // Inform about changes performed if feedback is enabled.
-    if ($feedback && $feedbackdata) {
-        $table = new html_table();
-        $table->head = array(get_string('category', 'question'), get_string('action'));
-        $table->data = $feedbackdata;
-        echo html_writer::table($table);
-    }
+    question_delete_context($modcontext->id);
     return true;
 }
 
@@ -599,7 +560,7 @@ function question_move_question_tags_to_new_context(array $questions, context $n
     $questionstagobjects = core_tag_tag::get_items_tags('core_question', 'question', $questionids);
 
     foreach ($questions as $question) {
-        $tagobjects = $questionstagobjects[$question->id];
+        $tagobjects = $questionstagobjects[$question->id] ?? [];
 
         foreach ($tagobjects as $tagobject) {
             $tagid = $tagobject->taginstanceid;
@@ -1721,8 +1682,11 @@ function question_has_capability_on($questionorid, $cap, $notused = -1) {
         try {
             $question = question_bank::load_question_data($questionid);
         } catch (Exception $e) {
-            // Let's log the exception for future debugging.
-            debugging($e->getMessage(), DEBUG_NORMAL, $e->getTrace());
+            // Let's log the exception for future debugging,
+            // but not during Behat, or we can't test these cases.
+            if (!defined('BEHAT_SITE_RUNNING')) {
+                debugging($e->getMessage(), DEBUG_NORMAL, $e->getTrace());
+            }
 
             // Well, at least we tried. Seems that we really have to read from DB.
             $question = $DB->get_record_sql('SELECT q.id, q.createdby, qc.contextid
@@ -2407,13 +2371,16 @@ function core_question_find_next_unused_idnumber(?string $oldidnumber, int $cate
             [$categoryid], '', 'idnumber, 1');
 
     // Find the next unused idnumber.
-    $newidnumber = $oldidnumber;
+    $numberbit = 'X' . $matches[0]; // Need a string here so PHP does not do '0001' + 1 = 2.
+    $stem = substr($oldidnumber, 0, -strlen($matches[0]));
     do {
+
         // If we have got to something9999, insert an extra digit before incrementing.
-        if (preg_match('~^(.*[^0-9])(9+)$~', $newidnumber, $matches)) {
-            $newidnumber = $matches[1] . '0' . $matches[2];
+        if (preg_match('~^(.*[^0-9])(9+)$~', $numberbit, $matches)) {
+            $numberbit = $matches[1] . '0' . $matches[2];
         }
-        $newidnumber++;
+        $numberbit++;
+        $newidnumber = $stem . substr($numberbit, 1);
     } while (isset($usedidnumbers[$newidnumber]));
 
     return (string) $newidnumber;

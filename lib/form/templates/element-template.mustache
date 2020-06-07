@@ -49,7 +49,7 @@
             {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">!</abbr>{{/advanced}}
             {{{helpbutton}}}
         </span>
-        {{$ label }}
+        {{# label}}{{$ label }}
             {{^element.staticlabel}}
                 <label class="col-form-label d-inline {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
                     {{{label}}}
@@ -60,7 +60,7 @@
                     {{{label}}}
                 </span>
             {{/element.staticlabel}}
-        {{/ label }}
+        {{/ label }}{{/ label}}
     </div>
     <div class="col-md-9 form-inline felement" data-fieldtype="{{element.type}}">
         {{$ element }}

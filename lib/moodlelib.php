@@ -72,23 +72,23 @@ define('HOURMINS', 60);
 // or clean_param() should have a specified type of parameter.
 
 /**
- * PARAM_ALPHA - contains only english ascii letters a-zA-Z.
+ * PARAM_ALPHA - contains only English ascii letters [a-zA-Z].
  */
 define('PARAM_ALPHA',    'alpha');
 
 /**
- * PARAM_ALPHAEXT the same contents as PARAM_ALPHA plus the chars in quotes: "_-" allowed
+ * PARAM_ALPHAEXT the same contents as PARAM_ALPHA (English ascii letters [a-zA-Z]) plus the chars in quotes: "_-" allowed
  * NOTE: originally this allowed "/" too, please use PARAM_SAFEPATH if "/" needed
  */
 define('PARAM_ALPHAEXT', 'alphaext');
 
 /**
- * PARAM_ALPHANUM - expected numbers and letters only.
+ * PARAM_ALPHANUM - expected numbers 0-9 and English ascii letters [a-zA-Z] only.
  */
 define('PARAM_ALPHANUM', 'alphanum');
 
 /**
- * PARAM_ALPHANUMEXT - expected numbers, letters only and _-.
+ * PARAM_ALPHANUMEXT - expected numbers 0-9, letters (English ascii letters [a-zA-Z]) and _- only.
  */
 define('PARAM_ALPHANUMEXT', 'alphanumext');
 
@@ -4302,7 +4302,13 @@ function delete_user(stdClass $user) {
 
     // Generate username from email address, or a fake email.
     $delemail = !empty($user->email) ? $user->email : $user->username . '.' . $user->id . '@unknownemail.invalid';
-    $delname = clean_param($delemail . "." . time(), PARAM_USERNAME);
+
+    $deltime = time();
+    $deltimelength = core_text::strlen((string) $deltime);
+
+    // Max username length is 100 chars. Select up to limit - (length of current time + 1 [period character]) from users email.
+    $delname = clean_param($delemail, PARAM_USERNAME);
+    $delname = core_text::substr($delname, 0, 100 - ($deltimelength + 1)) . ".{$deltime}";
 
     // Workaround for bulk deletes of users with the same email address.
     while ($DB->record_exists('user', array('username' => $delname))) { // No need to use mnethostid here.
@@ -4317,7 +4323,7 @@ function delete_user(stdClass $user) {
     $updateuser->email        = md5($user->username);// Store hash of username, useful importing/restoring users.
     $updateuser->idnumber     = '';                  // Clear this field to free it up.
     $updateuser->picture      = 0;
-    $updateuser->timemodified = time();
+    $updateuser->timemodified = $deltime;
 
     // Don't trigger update event, as user is being deleted.
     user_update_user($updateuser, false, false);
@@ -4424,10 +4430,15 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
     if (!\core\session\manager::validate_login_token($logintoken)) {
         $failurereason = AUTH_LOGIN_FAILED;
 
-        // Trigger login failed event.
-        $event = \core\event\user_login_failed::create(array('userid' => $user->id,
-                'other' => array('username' => $username, 'reason' => $failurereason)));
-        $event->trigger();
+        // Trigger login failed event (specifying the ID of the found user, if available).
+        \core\event\user_login_failed::create([
+            'userid' => ($user->id ?? 0),
+            'other' => [
+                'username' => $username,
+                'reason' => $failurereason,
+            ],
+        ])->trigger();
+
         error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Invalid Login Token:  $username  ".$_SERVER['HTTP_USER_AGENT']);
         return false;
     }
@@ -5247,6 +5258,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         echo $OUTPUT->notification($strdeleted.get_string('type_block_plural', 'plugin'), 'notifysuccess');
     }
 
+    $DB->set_field('course_modules', 'deletioninprogress', '1', ['course' => $courseid]);
+    rebuild_course_cache($courseid, true);
+
     // Get the list of all modules that are properly installed.
     $allmodules = $DB->get_records_menu('modules', array(), '', 'name, id');
 
@@ -5272,7 +5286,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
                 foreach ($instances as $cm) {
                     if ($cm->id) {
                         // Delete activity context questions and question categories.
-                        question_delete_activity($cm,  $showfeedback);
+                        question_delete_activity($cm);
                         // Notify the competency subsystem.
                         \core_competency\api::hook_course_module_deleted($cm);
                     }
@@ -5289,6 +5303,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
                         // Delete cm and its context - orphaned contexts are purged in cron in case of any race condition.
                         context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
                         $DB->delete_records('course_modules', array('id' => $cm->id));
+                        rebuild_course_cache($cm->course, true);
                     }
                 }
             }
@@ -5325,6 +5340,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         }
         context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
         $DB->delete_records('course_modules', array('id' => $cm->id));
+        rebuild_course_cache($cm->course, true);
     }
 
     if ($showfeedback) {
@@ -5332,9 +5348,16 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     }
 
     // Delete questions and question categories.
-    question_delete_course($course, $showfeedback);
+    question_delete_course($course);
     if ($showfeedback) {
         echo $OUTPUT->notification($strdeleted.get_string('questions', 'question'), 'notifysuccess');
+    }
+
+    // Delete content bank contents.
+    $cb = new \core_contentbank\contentbank();
+    $cbdeleted = $cb->delete_contents($coursecontext);
+    if ($showfeedback && $cbdeleted) {
+        echo $OUTPUT->notification($strdeleted.get_string('contentbank', 'contentbank'), 'notifysuccess');
     }
 
     // Make sure there are no subcontexts left - all valid blocks and modules should be already gone.
@@ -6009,7 +6032,8 @@ function generate_email_messageid($localpart = null) {
  * @param string $subject plain text subject line of the email
  * @param string $messagetext plain text version of the message
  * @param string $messagehtml complete html version of the message (optional)
- * @param string $attachment a file on the filesystem, either relative to $CFG->dataroot or a full path to a file in $CFG->tempdir
+ * @param string $attachment a file on the filesystem, either relative to $CFG->dataroot or a full path to a file in one of
+ *          the following directories: $CFG->cachedir, $CFG->dataroot, $CFG->dirroot, $CFG->localcachedir, $CFG->tempdir
  * @param string $attachname the name of the file (extension indicates MIME)
  * @param bool $usetrueaddress determines whether $from email address should
  *          be sent out. Will be overruled by user profile setting for maildisplay
@@ -6278,12 +6302,31 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
 
             // Before doing the comparison, make sure that the paths are correct (Windows uses slashes in the other direction).
             $attachpath = str_replace('\\', '/', $attachmentpath);
-            // Make sure both variables are normalised before comparing.
-            $temppath = str_replace('\\', '/', realpath($CFG->tempdir));
 
-            // If the attachment is a full path to a file in the tempdir, use it as is,
+            // Add allowed paths to an array (also check if it's not empty).
+            $allowedpaths = array_filter([
+                $CFG->cachedir,
+                $CFG->dataroot,
+                $CFG->dirroot,
+                $CFG->localcachedir,
+                $CFG->tempdir
+            ]);
+            // Set addpath to true.
+            $addpath = true;
+            // Check if attachment includes one of the allowed paths.
+            foreach ($allowedpaths as $tmpvar) {
+                // Make sure both variables are normalised before comparing.
+                $temppath = str_replace('\\', '/', realpath($tmpvar));
+                // Set addpath to false if the attachment includes one of the allowed paths.
+                if (strpos($attachpath, $temppath) === 0) {
+                    $addpath = false;
+                    break;
+                }
+            }
+
+            // If the attachment is a full path to a file in the multiple allowed paths, use it as is,
             // otherwise assume it is a relative path from the dataroot (for backwards compatibility reasons).
-            if (strpos($attachpath, $temppath) !== 0) {
+            if ($addpath == true) {
                 $attachmentpath = $CFG->dataroot . '/' . $attachmentpath;
             }
 
@@ -9440,7 +9483,7 @@ function get_performance_info() {
         // Attempt to avoid devs debugging peformance issues, when its caused by css building and so on.
         $info['html'] .= '<p><strong>Warning: Theme designer mode is enabled.</strong></p>';
     }
-    $info['html'] .= '<ul class="list-unstyled ml-1 row">';         // Holds userfriendly HTML representation.
+    $info['html'] .= '<ul class="list-unstyled row mx-md-0">';         // Holds userfriendly HTML representation.
 
     $info['realtime'] = microtime_diff($PERF->starttime, microtime());
 
@@ -9464,7 +9507,7 @@ function get_performance_info() {
         $info['txt']  .= 'memory_peak: '.$info['memory_peak'].'B (' . display_size($info['memory_peak']).') ';
     }
 
-    $info['html'] .= '</ul><ul class="list-unstyled ml-1 row">';
+    $info['html'] .= '</ul><ul class="list-unstyled row mx-md-0">';
     $inc = get_included_files();
     $info['includecount'] = count($inc);
     $info['html'] .= '<li class="included col-sm-4">Included '.$info['includecount'].' files</li> ';
@@ -9504,6 +9547,12 @@ function get_performance_info() {
     $info['dbqueries'] = $DB->perf_get_reads().'/'.($DB->perf_get_writes() - $PERF->logwrites);
     $info['html'] .= '<li class="dbqueries col-sm-4">DB reads/writes: '.$info['dbqueries'].'</li> ';
     $info['txt'] .= 'db reads/writes: '.$info['dbqueries'].' ';
+
+    if ($DB->want_read_slave()) {
+        $info['dbreads_slave'] = $DB->perf_get_reads_slave();
+        $info['html'] .= '<li class="dbqueries col-sm-4">DB reads from slave: '.$info['dbreads_slave'].'</li> ';
+        $info['txt'] .= 'db reads from slave: '.$info['dbreads_slave'].' ';
+    }
 
     $info['dbtime'] = round($DB->perf_get_queries_time(), 5);
     $info['html'] .= '<li class="dbtime col-sm-4">DB queries time: '.$info['dbtime'].' secs</li> ';
@@ -9548,57 +9597,185 @@ function get_performance_info() {
     }
 
     $info['html'] .= '</ul>';
+    $html = '';
     if ($stats = cache_helper::get_stats()) {
-        $html = '<ul class="cachesused list-unstyled ml-1 row">';
-        $html .= '<li class="cache-stats-heading font-weight-bold">Caches used (hits/misses/sets)</li>';
-        $html .= '</ul><ul class="cachesused list-unstyled ml-1">';
+
+        $table = new html_table();
+        $table->attributes['class'] = 'cachesused table table-dark table-sm w-auto table-bordered';
+        $table->head = ['Mode', 'Cache item', 'Static', 'H', 'M', get_string('mappingprimary', 'cache'), 'H', 'M', 'S'];
+        $table->data = [];
+        $table->align = ['left', 'left', 'left', 'right', 'right', 'left', 'right', 'right', 'right'];
+
         $text = 'Caches used (hits/misses/sets): ';
         $hits = 0;
         $misses = 0;
         $sets = 0;
+        $maxstores = 0;
+
+        // We want to align static caches into their own column.
+        $hasstatic = false;
+        foreach ($stats as $definition => $details) {
+            $numstores = count($details['stores']);
+            $first = key($details['stores']);
+            if ($first !== cache_store::STATIC_ACCEL) {
+                $numstores++; // Add a blank space for the missing static store.
+            }
+            $maxstores = max($maxstores, $numstores);
+        }
+
+        $storec = 0;
+
+        while ($storec++ < ($maxstores - 2)) {
+            if ($storec == ($maxstores - 2)) {
+                $table->head[] = get_string('mappingfinal', 'cache');
+            } else {
+                $table->head[] = "Store $storec";
+            }
+            $table->align[] = 'left';
+            $table->align[] = 'right';
+            $table->align[] = 'right';
+            $table->align[] = 'right';
+            $table->head[] = 'H';
+            $table->head[] = 'M';
+            $table->head[] = 'S';
+        }
+
+        ksort($stats);
+
         foreach ($stats as $definition => $details) {
             switch ($details['mode']) {
                 case cache_store::MODE_APPLICATION:
                     $modeclass = 'application';
-                    $mode = ' <span title="application cache">[a]</span>';
+                    $mode = ' <span title="application cache">App</span>';
                     break;
                 case cache_store::MODE_SESSION:
                     $modeclass = 'session';
-                    $mode = ' <span title="session cache">[s]</span>';
+                    $mode = ' <span title="session cache">Ses</span>';
                     break;
                 case cache_store::MODE_REQUEST:
                     $modeclass = 'request';
-                    $mode = ' <span title="request cache">[r]</span>';
+                    $mode = ' <span title="request cache">Req</span>';
                     break;
             }
-            $html .= '<li class="d-inline-flex"><ul class="cache-definition-stats list-unstyled ml-1 mb-1 cache-mode-'.$modeclass.' card d-inline-block">';
-            $html .= '<li class="cache-definition-stats-heading p-t-1 card-header bg-dark bg-inverse font-weight-bold">' .
-                $definition . $mode.'</li>';
+            $row = [$mode, $definition];
+
             $text .= "$definition {";
+
+            $storec = 0;
             foreach ($details['stores'] as $store => $data) {
-                $hits += $data['hits'];
+
+                if ($storec == 0 && $store !== cache_store::STATIC_ACCEL) {
+                    $row[] = '';
+                    $row[] = '';
+                    $row[] = '';
+                    $storec++;
+                }
+
+                $hits   += $data['hits'];
                 $misses += $data['misses'];
-                $sets += $data['sets'];
+                $sets   += $data['sets'];
                 if ($data['hits'] == 0 and $data['misses'] > 0) {
-                    $cachestoreclass = 'nohits text-danger';
+                    $cachestoreclass = 'nohits bg-danger';
                 } else if ($data['hits'] < $data['misses']) {
-                    $cachestoreclass = 'lowhits text-warning';
+                    $cachestoreclass = 'lowhits bg-warning text-dark';
                 } else {
-                    $cachestoreclass = 'hihits text-success';
+                    $cachestoreclass = 'hihits';
                 }
                 $text .= "$store($data[hits]/$data[misses]/$data[sets]) ";
-                $html .= "<li class=\"cache-store-stats $cachestoreclass p-x-1\">" .
-                    "$store: $data[hits] / $data[misses] / $data[sets]</li>";
-                // This makes boxes of same sizes.
-                if (count($details['stores']) == 1) {
-                    $html .= "<li class=\"cache-store-stats $cachestoreclass p-x-1\">&nbsp;</li>";
+                $cell = new html_table_cell($store);
+                $cell->attributes = ['class' => $cachestoreclass];
+                $row[] = $cell;
+                $cell = new html_table_cell($data['hits']);
+                $cell->attributes = ['class' => $cachestoreclass];
+                $row[] = $cell;
+                $cell = new html_table_cell($data['misses']);
+                $cell->attributes = ['class' => $cachestoreclass];
+                $row[] = $cell;
+
+                if ($store !== cache_store::STATIC_ACCEL) {
+                    // The static cache is never set.
+                    $cell = new html_table_cell($data['sets']);
+                    $cell->attributes = ['class' => $cachestoreclass];
+                    $row[] = $cell;
                 }
+                $storec++;
             }
-            $html .= '</ul></li>';
+            while ($storec++ < $maxstores) {
+                $row[] = '';
+                $row[] = '';
+                $row[] = '';
+                $row[] = '';
+            }
             $text .= '} ';
+
+            $table->data[] = $row;
         }
-        $html .= '</ul> ';
-        $html .= "<div class='cache-total-stats row'>Total: $hits / $misses / $sets</div>";
+
+        $html .= html_writer::table($table);
+
+        // Now lets also show sub totals for each cache store.
+        $storetotals = [];
+        $storetotal = ['hits' => 0, 'misses' => 0, 'sets' => 0];
+        foreach ($stats as $definition => $details) {
+            foreach ($details['stores'] as $store => $data) {
+                if (!array_key_exists($store, $storetotals)) {
+                    $storetotals[$store] = ['hits' => 0, 'misses' => 0, 'sets' => 0];
+                }
+                $storetotals[$store]['class']   = $data['class'];
+                $storetotals[$store]['hits']   += $data['hits'];
+                $storetotals[$store]['misses'] += $data['misses'];
+                $storetotals[$store]['sets']   += $data['sets'];
+                $storetotal['hits']   += $data['hits'];
+                $storetotal['misses'] += $data['misses'];
+                $storetotal['sets']   += $data['sets'];
+            }
+        }
+
+        $table = new html_table();
+        $table->attributes['class'] = 'cachesused table table-dark table-sm w-auto table-bordered';
+        $table->head = [get_string('storename', 'cache'), get_string('type_cachestore', 'plugin'), 'H', 'M', 'S'];
+        $table->data = [];
+        $table->align = ['left', 'left', 'right', 'right', 'right'];
+
+        ksort($storetotals);
+
+        foreach ($storetotals as $store => $data) {
+            $row = [];
+            if ($data['hits'] == 0 and $data['misses'] > 0) {
+                $cachestoreclass = 'nohits bg-danger';
+            } else if ($data['hits'] < $data['misses']) {
+                $cachestoreclass = 'lowhits bg-warning text-dark';
+            } else {
+                $cachestoreclass = 'hihits';
+            }
+            $cell = new html_table_cell($store);
+            $cell->attributes = ['class' => $cachestoreclass];
+            $row[] = $cell;
+            $cell = new html_table_cell($data['class']);
+            $cell->attributes = ['class' => $cachestoreclass];
+            $row[] = $cell;
+            $cell = new html_table_cell($data['hits']);
+            $cell->attributes = ['class' => $cachestoreclass];
+            $row[] = $cell;
+            $cell = new html_table_cell($data['misses']);
+            $cell->attributes = ['class' => $cachestoreclass];
+            $row[] = $cell;
+            $cell = new html_table_cell($data['sets']);
+            $cell->attributes = ['class' => $cachestoreclass];
+            $row[] = $cell;
+            $table->data[] = $row;
+        }
+        $row = [
+            get_string('total'),
+            '',
+            $storetotal['hits'],
+            $storetotal['misses'],
+            $storetotal['sets'],
+        ];
+        $table->data[] = $row;
+
+        $html .= html_writer::table($table);
+
         $info['cachesused'] = "$hits / $misses / $sets";
         $info['html'] .= $html;
         $info['txt'] .= $text.'. ';
@@ -9608,7 +9785,7 @@ function get_performance_info() {
         $info['txt'] .= 'Caches used (hits/misses/sets): 0/0/0 ';
     }
 
-    $info['html'] = '<div class="performanceinfo siteinfo container-fluid">'.$info['html'].'</div>';
+    $info['html'] = '<div class="performanceinfo siteinfo container-fluid px-md-0 overflow-auto mt-3">'.$info['html'].'</div>';
     return $info;
 }
 
@@ -10445,17 +10622,25 @@ function get_callable_name($callable) {
  * It just performs some simple checks, and mainly is used for places where we want to hide some options
  * such as site registration when $CFG->wwwroot is not publicly accessible.
  * Good thing is there is no false negative.
+ * Note that it's possible to force the result of this check by specifying $CFG->site_is_public in config.php
  *
  * @return bool
  */
 function site_is_public() {
     global $CFG;
 
+    // Return early if site admin has forced this setting.
+    if (isset($CFG->site_is_public)) {
+        return (bool)$CFG->site_is_public;
+    }
+
     $host = parse_url($CFG->wwwroot, PHP_URL_HOST);
 
     if ($host === 'localhost' || preg_match('|^127\.\d+\.\d+\.\d+$|', $host)) {
         $ispublic = false;
     } else if (\core\ip_utils::is_ip_address($host) && !ip_is_public($host)) {
+        $ispublic = false;
+    } else if (($address = \core\ip_utils::get_ip_address($host)) && !ip_is_public($address)) {
         $ispublic = false;
     } else {
         $ispublic = true;

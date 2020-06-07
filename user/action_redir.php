@@ -82,8 +82,6 @@ if ($formaction == 'bulkchange.php') {
             $plugins = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
             if (isset($plugins[$dataformat])) {
                 if ($plugins[$dataformat]->is_enabled()) {
-                    require_once($CFG->dirroot . '/lib/dataformatlib.php');
-
                     if (empty($userids)) {
                         redirect($returnurl, get_string('noselectedusers', 'bulkusers'));
                     }
@@ -111,7 +109,7 @@ if ($formaction == 'bulkchange.php') {
                              WHERE u.id $insql";
 
                     $rs = $DB->get_recordset_sql($sql, $inparams);
-                    download_as_dataformat('courseid_' . $course->id . '_participants', $dataformat, $columnnames, $rs);
+                    \core\dataformat::download_data('courseid_' . $course->id . '_participants', $dataformat, $columnnames, $rs);
                     $rs->close();
                 }
             }

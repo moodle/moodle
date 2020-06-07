@@ -2614,7 +2614,7 @@ class api {
      * @return \stdClass the request
      */
     public static function create_contact_request(int $userid, int $requesteduserid) : \stdClass {
-        global $DB, $PAGE;
+        global $DB, $PAGE, $SITE;
 
         $request = new \stdClass();
         $request->userid = $userid;
@@ -2627,10 +2627,16 @@ class api {
         $userfrom = \core_user::get_user($userid);
         $userfromfullname = fullname($userfrom);
         $userto = \core_user::get_user($requesteduserid);
-        $url = new \moodle_url('/message/pendingcontactrequests.php');
+        $url = new \moodle_url('/message/index.php', ['view' => 'contactrequests']);
 
-        $subject = get_string('messagecontactrequestsnotificationsubject', 'core_message', $userfromfullname);
-        $fullmessage = get_string('messagecontactrequestsnotification', 'core_message', $userfromfullname);
+        $subject = get_string('messagecontactrequestsubject', 'core_message', (object) [
+            'sitename' => format_string($SITE->fullname, true, ['context' => \context_system::instance()]),
+            'user' => $userfromfullname,
+        ]);
+        $fullmessage = get_string('messagecontactrequest', 'core_message', (object) [
+            'url' => $url->out(),
+            'user' => $userfromfullname,
+        ]);
 
         $message = new \core\message\message();
         $message->courseid = SITEID;

@@ -1,0 +1,92 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/time_element
+
+    Template to display an HTML time element.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * data-timestamp Number - The timestamp for the element.
+    * data-datetimeformat String - A valid format for the datetime attribute.
+
+    Context variables required for this template:
+    * timestamp Number - The timestamp for the element.
+    * userdateformat String - The user-facing date format
+    * datetimeformat String - A valid format for the datetime attribute. Defaults to the ISO-8601 format of '%Y-%m-%dT%H:%M%z'.
+    Example context (json):
+    {
+        "timestamp": 0,
+        "userdateformat": "%d %b %Y",
+        "datetimeformat": "%Y-%m-%dT%H:%M%z"
+    }
+}}
+<time id="time-{{$elementid}}{{uniqid}}{{/elementid}}" class="{{$elementclass}}{{timeclass}}{{/elementclass}}" datetime="{{$datetimeval}}{{datetime}}{{/datetimeval}}"
+      data-timestamp="{{$timestampval}}{{timestamp}}{{/timestampval}}"
+      data-datetimeformat="{{$datetimeformatval}}{{#datetimeformat}}{{.}}{{/datetimeformat}}{{^datetimeformat}}%Y-%m-%dT%H:%M%z{{/datetimeformat}}{{/datetimeformatval}}">
+    {{$datedisplay}}
+        {{#userdate}} {{$timestampval}}{{timestamp}}{{/timestampval}}, {{$userdateformatval}}{{userdateformat}}{{/userdateformatval}} {{/userdate}}
+    {{/datedisplay}}
+</time>
+{{#js}}
+    /** Fetches the formatted date/time for the time element's datetime attribute. */
+    require(['core/user_date'], function(UserDate) {
+        var root = document.getElementById('time-{{$elementid}}{{uniqid}}{{/elementid}}');
+        // Fetch value for the datetime attribute using core/user_date, if it's not available.
+        if (!root.getAttribute('datetime')) {
+            var dateTimeFormat = root.getAttribute('data-datetimeformat');
+            var timestamp = root.getAttribute('data-timestamp');
+
+            if (!dateTimeFormat.match(/%(?![YmdHMSzZ])./g)) {
+                var zeroPad = function(nNum, nPad) {
+                    return ((Math.pow(10, nPad) + nNum) + '').slice(1);
+                };
+
+                var date = new Date(timestamp * 1000);
+
+                var datetime = dateTimeFormat.replace(/%./g, function(sMatch) {
+                    return (({
+                        '%Y': date.getFullYear(),
+                        '%m': zeroPad(date.getMonth() + 1, 2),
+                        '%d': zeroPad(date.getDate(), 2),
+                        '%H': zeroPad(date.getHours(), 2),
+                        '%M': zeroPad(date.getMinutes(), 2),
+                        '%S': zeroPad(date.getSeconds(), 2),
+                        '%z': date.toTimeString().replace(/.+GMT([+-]\d+).+/, '$1'),
+                        '%Z': date.toTimeString().replace(/.+\((.+?)\)$/, '$1')
+                    }[sMatch] || '') + '') || sMatch;
+                });
+                root.setAttribute('datetime', datetime);
+            }  else {
+                // Otherwise, use core/user_date.
+                var timestamps = [{
+                    timestamp: timestamp,
+                    format: dateTimeFormat,
+                    type: 'gregorian',
+                    fixday: 0,
+                    fixhour: 0
+                }];
+                UserDate.get(timestamps).done(function(dates) {
+                    var datetime = dates.pop();
+                    root.setAttribute('datetime', datetime);
+                });
+            }
+        }
+    });
+{{/js}}

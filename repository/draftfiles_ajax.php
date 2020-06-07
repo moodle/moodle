@@ -175,6 +175,13 @@ switch ($action) {
     case 'downloadselected':
         $selected   = required_param('selected', PARAM_RAW);
         $selectedfiles = json_decode($selected);
+        if (!count($selectedfiles)) {
+            $filepath = required_param('filepath', PARAM_PATH);
+            $selectedfiles = [(object)[
+                'filename' => '',
+                'filepath' => $filepath
+            ]];
+        }
         $return = repository_download_selected_files($usercontext, 'user', 'draft', $draftid, $selectedfiles);
         echo (json_encode($return));
         die;

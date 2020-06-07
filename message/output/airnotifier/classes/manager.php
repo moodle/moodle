@@ -34,6 +34,9 @@ defined('MOODLE_INTERNAL') || die;
  */
 class message_airnotifier_manager {
 
+    /** @var string The Airnotifier public instance URL */
+    const AIRNOTIFIER_PUBLICURL = 'https://messages.moodle.net';
+
     /**
      * Include the relevant javascript and language strings for the device
      * toolbox YUI module

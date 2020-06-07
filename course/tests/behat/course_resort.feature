@@ -36,16 +36,16 @@ Feature: Test we can resort course in the management interface.
     And I should see course listing <course1> before <course2>
     And I should see course listing <course2> before <course3>
 
-  Examples:
-    | sortby | course1 | course2 | course3 |
-    | "Sort by Course full name ascending"     | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "Sort by Course full name descending"    | "Social studies"          | "Extended social studies" | "Applied sciences" |
-    | "Sort by Course short name ascending"    | "Extended social studies" | "Applied sciences"        | "Social studies" |
-    | "Sort by Course short name descending"   | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "Sort by Course ID number ascending"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
-    | "Sort by Course ID number descending"    | "Applied sciences"        | "Social studies"          | "Extended social studies" |
-    | "Sort by Course time created ascending"  | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "Sort by Course time created descending" | "Extended social studies" | "Applied sciences"        | "Social studies" |
+    Examples:
+      | sortby | course1 | course2 | course3 |
+      | "Sort by Course full name ascending"     | "Applied sciences"        | "Extended social studies" | "Social studies" |
+      | "Sort by Course full name descending"    | "Social studies"          | "Extended social studies" | "Applied sciences" |
+      | "Sort by Course short name ascending"    | "Extended social studies" | "Applied sciences"        | "Social studies" |
+      | "Sort by Course short name descending"   | "Social studies"          | "Applied sciences"        | "Extended social studies" |
+      | "Sort by Course ID number ascending"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
+      | "Sort by Course ID number descending"    | "Applied sciences"        | "Social studies"          | "Extended social studies" |
+      | "Sort by Course time created ascending"  | "Social studies"          | "Applied sciences"        | "Extended social studies" |
+      | "Sort by Course time created descending" | "Extended social studies" | "Applied sciences"        | "Social studies" |
 
   @javascript
   Scenario Outline: Resort courses with JavaScript enabled.
@@ -90,16 +90,16 @@ Feature: Test we can resort course in the management interface.
     And I should see course listing <course1> before <course2>
     And I should see course listing <course2> before <course3>
 
-  Examples:
-    | sortby | course1 | course2 | course3 |
-    | "Sort by Course full name ascending"     | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "Sort by Course full name descending"    | "Social studies"          | "Extended social studies" | "Applied sciences" |
-    | "Sort by Course short name ascending"    | "Extended social studies" | "Applied sciences"        | "Social studies" |
-    | "Sort by Course short name descending"   | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "Sort by Course ID number ascending"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
-    | "Sort by Course ID number descending"    | "Applied sciences"        | "Social studies"          | "Extended social studies" |
-    | "Sort by Course time created ascending"  | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "Sort by Course time created descending" | "Extended social studies" | "Applied sciences"        | "Social studies" |
+    Examples:
+      | sortby | course1 | course2 | course3 |
+      | "Sort by Course full name ascending"     | "Applied sciences"        | "Extended social studies" | "Social studies" |
+      | "Sort by Course full name descending"    | "Social studies"          | "Extended social studies" | "Applied sciences" |
+      | "Sort by Course short name ascending"    | "Extended social studies" | "Applied sciences"        | "Social studies" |
+      | "Sort by Course short name descending"   | "Social studies"          | "Applied sciences"        | "Extended social studies" |
+      | "Sort by Course ID number ascending"     | "Extended social studies" | "Social studies"          | "Applied sciences" |
+      | "Sort by Course ID number descending"    | "Applied sciences"        | "Social studies"          | "Extended social studies" |
+      | "Sort by Course time created ascending"  | "Social studies"          | "Applied sciences"        | "Extended social studies" |
+      | "Sort by Course time created descending" | "Extended social studies" | "Applied sciences"        | "Social studies" |
 
   Scenario: Test moving courses up and down by one.
     Given the following "categories" exist:

@@ -156,13 +156,13 @@ $string['cannotstartmissingquestion'] = 'Cannot start an attempt at this quiz. T
 $string['cannotstartnoquestions'] = 'Cannot start an attempt at this quiz. The quiz has not been set up yet. No questions have been added.';
 $string['cannotwrite'] = 'Cannot write to export file ({$a})';
 $string['canredoquestions'] = 'Allow redo within an attempt';
-$string['canredoquestions_desc'] = 'If enabled, when a student has finished attempting a question, they will see a Redo question button. This allows them to attempt another version of the same question, without having to submit the entire quiz attempt and start another attempt. This option is useful for practice quizzes.
+$string['canredoquestions_desc'] = 'If enabled, after finishing attempting a question, a \'Try another question like this one\' button is displayed. This allows for a similar question (selected randomly) to be attempted, or the same question again, without the entire quiz attempt having to be submitted and another attempt started. This option is useful for practice quizzes.
 
-This setting only affects questions and behaviours (such as immediate feedback or interactive with multiple tries) where it is possible for student to finish the question before the attempt is submitted.';
-$string['canredoquestions_help'] = 'If enabled, when a student has finished attempting a question, they will see a Redo question button. This allows them to attempt another version of the same question, without having to submit the entire quiz attempt and start another attempt. This option is useful for practice quizzes.
+This setting only affects questions and behaviours (such as immediate feedback or interactive with multiple tries) where it is possible to finish a question before the attempt is submitted.';
+$string['canredoquestions_help'] = 'If enabled, after finishing attempting a question, a \'Try another question like this one\' button is displayed. This allows for a similar question (selected randomly) to be attempted, or the same question again, without the entire quiz attempt having to be submitted and another attempt started. This option is useful for practice quizzes.
 
-This setting only affects questions and behaviours (such as immediate feedback or interactive with multiple tries) where it is possible for student to finish the question before the attempt is submitted.';
-$string['canredoquestionsyes'] = 'Students may redo another version of any finished question';
+This setting only affects questions and behaviours (such as immediate feedback or interactive with multiple tries) where it is possible to finish a question before the attempt is submitted.';
+$string['canredoquestionsyes'] = 'Yes, provide the option to try another question';
 $string['caseno'] = 'No, case is unimportant';
 $string['casesensitive'] = 'Case sensitivity';
 $string['caseyes'] = 'Yes, case must match';
@@ -432,7 +432,7 @@ $string['importingquestions'] = 'Importing {$a} questions from file';
 $string['importmaxerror'] = 'There is an error in the question. There are too many answers.';
 $string['importmax10error'] = 'There is an error in the question. You may not have more than ten answers';
 $string['importquestions'] = 'Import questions from file';
-$string['inactiveoverridehelp'] = '* User doesn\'t have the correct group or role to attempt the quiz, or the quiz is hidden.';
+$string['inactiveoverridehelp'] = '* This override is inactive because the user\'s access to the activity is restricted. This can be due to group or role assignments, other access restrictions, or the activity being hidden.';
 $string['incorrect'] = 'Incorrect';
 $string['indicator:cognitivedepth'] = 'Quiz cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a Quiz activity.';

@@ -33,8 +33,10 @@
     }
 }}
 <p class="mt-4 px-3 pb-1">{{#str}} resultsfound, core, {{searchresultsnumber}} {{/str}}</p>
-<div class="searchresultitemscontainer d-flex flex-wrap mw-100 position-relative p-1 mt-4" role="menubar" data-region="search-result-items-container">
+<div class="bg-light searchresultitemscontainer-wrapper border">
+<div class="searchresultitemscontainer d-flex flex-wrap mw-100 position-relative p-1" role="menubar" data-region="search-result-items-container">
     {{#searchresults}}
         {{>core_course/local/activitychooser/item}}
     {{/searchresults}}
+</div>
 </div>

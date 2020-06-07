@@ -108,17 +108,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
 
     public function js_call() {
         global $PAGE;
-
-        $maxbgimagesize = [
-                'width' => QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXWIDTH,
-                'height' => QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXHEIGHT
-        ];
-        $maxdragimagesize = [
-                'width' => QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXWIDTH,
-                'height' => QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXHEIGHT
-        ];
-        $PAGE->requires->js_call_amd('qtype_ddimageortext/form', 'init',
-                [$maxbgimagesize, $maxdragimagesize]);
+        $PAGE->requires->js_call_amd('qtype_ddimageortext/form', 'init');
     }
 
     // Drag items.

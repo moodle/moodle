@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_moodlenet/chooser_moodlenet
+
+    Chooser favourite template partial.
+
+    Example context (json):
+    {
+    }
+}}
+<div class="optionsummary" tabindex="-1" data-region="chooser-option-summary-container">
+    <div class="content text-left mb-5 px-5 py-4" data-region="chooser-option-summary-content-container">
+        <div data-region="moodle-net">
+            <div class="overlay-icon-container z-index-1 d-none" data-region="spinner"></div>
+            <img class="w-25 mb-4" aria-hidden="true" src="{{{img}}}">
+            <p>{{#str}} instancedescription, tool_moodlenet {{/str}}</p>
+            <p class="w-75 mx-auto mb-1 mt-5">{{#str}} connectandbrowse, tool_moodlenet {{/str}}</p>
+            <a class="btn btn-secondary d-block w-75 mx-auto mb-4"
+               data-action="browse"
+               href="{{{generic}}}"
+            >
+                {{{buttonName}}}
+            </a>
+            <div id="mnet-instance-form-{{uniqid}}" data-region="mnet-form">
+                <input type="hidden" name="sesskey" value="{{sesskey}}">
+                <div class="w-75 mx-auto my-3">
+                    <p class="text-left">{{#str}}inputhelp, tool_moodlenet{{/str}}</p>
+                    <div class="input-group">
+                        <input type="text"
+                               class="form-control"
+                               data-var="mnet-link"
+                               data-courseid="{{courseID}}"
+                               data-sectionid="{{sectionID}}"
+                               placeholder="{{#str}} instanceplaceholder, tool_moodlenet {{/str}}"
+                               aria-label="{{#str}} aria:enterprofile, tool_moodlenet {{/str}}"
+                               autocomplete="off"
+                        >
+                        <div class="input-group-append z-index-0">
+                            <button class="btn btn-secondary"
+                                    data-action="submit" id="button-addon2"
+                            >
+                                {{#str}} saveandgo, tool_moodlenet {{/str}}
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-left" aria-live="assertive" data-region="validation-area"></p>
+                    <p class="text-left">{{#str}} forminfo, tool_moodlenet {{/str}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -600,4 +600,192 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $expected = format_text($expected, $course->summaryformat, ['para' => false, 'filter' => true]);
         $this->assertEquals($expected, $data->courses[0]->summary);
     }
+
+    /*
+     * Test get_tokens_for_qr_login.
+     */
+    public function test_get_tokens_for_qr_login() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $qrloginkey = api::get_qrlogin_key();
+
+        // Generate new tokens, the ones we expect to receive.
+        $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
+        $token = external_generate_token_for_current_user($service);
+
+        // Fake the app.
+        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+                'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
+
+        $result = external::get_tokens_for_qr_login($qrloginkey, $USER->id);
+        $result = external_api::clean_returnvalue(external::get_tokens_for_qr_login_returns(), $result);
+
+        $this->assertEmpty($result['warnings']);
+        $this->assertEquals($token->token, $result['token']);
+        $this->assertEquals($token->privatetoken, $result['privatetoken']);
+
+        // Now, try with an invalid key.
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('invalidkey', 'error'));
+        $result = external::get_tokens_for_qr_login(random_string('64'), $user->id);
+    }
+
+    /**
+     * Test get_tokens_for_qr_login missing QR code enabled.
+     */
+    public function test_get_tokens_for_qr_login_missing_enableqr() {
+        global $CFG, $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        set_config('qrcodetype', tool_mobile\api::QR_CODE_DISABLED, 'tool_mobile');
+
+        $this->expectExceptionMessage(get_string('qrcodedisabled', 'tool_mobile'));
+        $result = external::get_tokens_for_qr_login('', $USER->id);
+    }
+
+    /**
+     * Test get_tokens_for_qr_login missing ws.
+     */
+    public function test_get_tokens_for_qr_login_missing_ws() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Fake the app.
+        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+            'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
+
+        // Need to disable webservices to verify that's checked.
+        $CFG->enablewebservices = 0;
+        $CFG->enablemobilewebservice = 0;
+
+        $this->setAdminUser();
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('enablewsdescription', 'webservice'));
+        $result = external::get_tokens_for_qr_login('', $user->id);
+    }
+
+    /**
+     * Test get_tokens_for_qr_login missing https.
+     */
+    public function test_get_tokens_for_qr_login_missing_https() {
+        global $CFG, $USER;
+
+        // Fake the app.
+        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+            'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
+
+        // Need to simulate a non HTTPS site here.
+        $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('httpsrequired', 'tool_mobile'));
+        $result = external::get_tokens_for_qr_login('', $USER->id);
+    }
+
+    /**
+     * Test get_tokens_for_qr_login missing admin.
+     */
+    public function test_get_tokens_for_qr_login_missing_admin() {
+        global $CFG, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Fake the app.
+        core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+            'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('autologinnotallowedtoadmins', 'tool_mobile'));
+        $result = external::get_tokens_for_qr_login('', $USER->id);
+    }
+
+    /**
+     * Test get_tokens_for_qr_login missing app_request.
+     */
+    public function test_get_tokens_for_qr_login_missing_app_request() {
+        global $CFG, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('apprequired', 'tool_mobile'));
+        $result = external::get_tokens_for_qr_login('', $USER->id);
+    }
+
+    /**
+     * Test validate subscription key.
+     */
+    public function test_validate_subscription_key_valid() {
+        $this->resetAfterTest(true);
+
+        $sitesubscriptionkey = ['validuntil' => time() + MINSECS, 'key' => complex_random_string(32)];
+        set_config('sitesubscriptionkey', json_encode($sitesubscriptionkey), 'tool_mobile');
+
+        $result = external::validate_subscription_key($sitesubscriptionkey['key']);
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+        $this->assertTrue($result['validated']);
+    }
+
+    /**
+     * Test validate subscription key invalid first and then a valid one.
+     */
+    public function test_validate_subscription_key_invalid_key_first() {
+        $this->resetAfterTest(true);
+
+        $sitesubscriptionkey = ['validuntil' => time() + MINSECS, 'key' => complex_random_string(32)];
+        set_config('sitesubscriptionkey', json_encode($sitesubscriptionkey), 'tool_mobile');
+
+        $result = external::validate_subscription_key('fakekey');
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+        $this->assertFalse($result['validated']);
+
+        // The valid one has been invalidated because the previous attempt.
+        $result = external::validate_subscription_key($sitesubscriptionkey['key']);
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+        $this->assertFalse($result['validated']);
+    }
+
+    /**
+     * Test validate subscription key invalid.
+     */
+    public function test_validate_subscription_key_invalid_key() {
+        $this->resetAfterTest(true);
+
+        $result = external::validate_subscription_key('fakekey');
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+        $this->assertFalse($result['validated']);
+    }
+
+    /**
+     * Test validate subscription key invalid.
+     */
+    public function test_validate_subscription_key_outdated() {
+        $this->resetAfterTest(true);
+
+        $sitesubscriptionkey = ['validuntil' => time() - MINSECS, 'key' => complex_random_string(32)];
+        set_config('sitesubscriptionkey', json_encode($sitesubscriptionkey), 'tool_mobile');
+
+        $result = external::validate_subscription_key($sitesubscriptionkey['key']);
+        $result = external_api::clean_returnvalue(external::validate_subscription_key_returns(), $result);
+        $this->assertEmpty($result['warnings']);
+        $this->assertFalse($result['validated']);
+    }
 }

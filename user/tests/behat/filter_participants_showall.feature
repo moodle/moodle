@@ -78,30 +78,43 @@ Feature: Course participants can be filtered to display all the users
       | student3 | G2    |
 
   @javascript
-  Scenario: Show all filtered users for a course
+  Scenario: Show all users in a course that match a single filter value
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    When I open the autocomplete suggestions list
-    And I click on "Role: Student" item in the autocomplete list
+    And I set the field "Match" in the "Filter 1" "fieldset" to "All"
+    And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I click on "Student" "list_item"
+    When I click on "Apply filters" "button"
+    Then I should see "24 participants found"
+    And I should see "Show all 24"
+    And I should not see "Show 20 per page"
+    And I should not see "of the following"
     And I click on "Show all 24" "link"
-    Then I should see "Role: Student"
-    And I should see "Number of participants: 24" in the "//div[@class='userlist']" "xpath_element"
     And I should see "Show 20 per page"
+    And I should not see "Show all 24"
 
   @javascript
-  Scenario: Apply more than one filter and show all users
+  Scenario: Apply one value for more than one filter and show all matching users
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    When I open the autocomplete suggestions list
-    And I click on "Role: Student" item in the autocomplete list
-    And I open the autocomplete suggestions list
-    And I click on "Status: Active" item in the autocomplete list
+    And I click on "Add condition" "button"
+    And I set the field "Match" to "All"
+    And I set the field "Match" in the "Filter 1" "fieldset" to "Any"
+    And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I click on "Student" "list_item"
+    And I set the field "Match" in the "Filter 2" "fieldset" to "Any"
+    And I set the field "type" in the "Filter 2" "fieldset" to "Status"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 2" "fieldset"
+    And I click on "Active" "list_item"
+    When I click on "Apply filters" "button"
     And I click on "Show all 23" "link"
-    Then I should see "Role: Student"
-    And I should see "Status: Active"
-    And I should see "Number of participants: 23" in the "//div[@class='userlist']" "xpath_element"
+    Then I should see "23 participants found"
+    And I should see "Show 20 per page"
+    And I should see "of the following"
     And I should see "Student 1"
     And I should not see "Student 24"
-    And I should see "Show 20 per page"
+    And I should not see "Show all 23"

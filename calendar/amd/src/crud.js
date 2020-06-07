@@ -35,6 +35,7 @@ define([
     'core_calendar/events',
     'core_calendar/modal_delete',
     'core_calendar/selectors',
+    'core/pending',
 ],
 function(
     $,
@@ -49,7 +50,8 @@ function(
     CalendarRepository,
     CalendarEvents,
     ModalDelete,
-    CalendarSelectors
+    CalendarSelectors,
+    Pending
 ) {
 
     /**
@@ -61,6 +63,7 @@ function(
      * @return {Promise}
      */
     function confirmDeletion(eventId, eventTitle, eventCount) {
+        var pendingPromise = new Pending('core_calendar/crud:confirmDeletion');
         var deleteStrings = [
             {
                 key: 'deleteevent',
@@ -94,51 +97,54 @@ function(
             });
 
 
-            deletePromise = ModalFactory.create(
-                {
-                    type: ModalFactory.types.SAVE_CANCEL
-                }
-            );
+            deletePromise = ModalFactory.create({
+                type: ModalFactory.types.SAVE_CANCEL,
+            });
         }
-
-        deletePromise.then(function(deleteModal) {
-            deleteModal.show();
-
-            return;
-        })
-        .fail(Notification.exception);
 
         var stringsPromise = Str.get_strings(deleteStrings);
 
         var finalPromise = $.when(stringsPromise, deletePromise)
         .then(function(strings, deleteModal) {
+            deleteModal.setRemoveOnClose(true);
             deleteModal.setTitle(strings[0]);
             deleteModal.setBody(strings[1]);
             if (!isRepeatedEvent) {
                 deleteModal.setSaveButtonText(strings[0]);
             }
 
+            deleteModal.show();
+
             deleteModal.getRoot().on(ModalEvents.save, function() {
+                var pendingPromise = new Pending('calendar/crud:initModal:deletedevent');
                 CalendarRepository.deleteEvent(eventId, false)
                     .then(function() {
                         $('body').trigger(CalendarEvents.deleted, [eventId, false]);
                         return;
                     })
+                    .then(pendingPromise.resolve)
                     .catch(Notification.exception);
             });
 
             deleteModal.getRoot().on(CalendarEvents.deleteAll, function() {
+                var pendingPromise = new Pending('calendar/crud:initModal:deletedallevent');
                 CalendarRepository.deleteEvent(eventId, true)
                     .then(function() {
                         $('body').trigger(CalendarEvents.deleted, [eventId, true]);
                         return;
                     })
+                    .then(pendingPromise.resolve)
                     .catch(Notification.exception);
             });
 
             return deleteModal;
         })
-        .fail(Notification.exception);
+        .then(function(modal) {
+            pendingPromise.resolve();
+
+            return modal;
+        })
+        .catch(Notification.exception);
 
         return finalPromise;
     }
@@ -233,7 +239,9 @@ function(
      * @returns {Promise}
      */
     function registerEditListeners(root, eventFormModalPromise) {
-        eventFormModalPromise
+        var pendingPromise = new Pending('core_calendar/crud:registerEditListeners');
+
+        return eventFormModalPromise
         .then(function(modal) {
             // When something within the calendar tells us the user wants
             // to edit an event then show the event form modal.
@@ -245,11 +253,14 @@ function(
 
                 e.stopImmediatePropagation();
             });
-            return;
+            return modal;
         })
-        .fail(Notification.exception);
+        .then(function(modal) {
+            pendingPromise.resolve();
 
-        return eventFormModalPromise;
+            return modal;
+        })
+        .catch(Notification.exception);
     }
 
     return {

@@ -1,1 +1,1 @@
-YUI.add("moodle-mod_quiz-util-base",function(e,t){e.namespace("Moodle.mod_quiz.util")},"@VERSION@");
+YUI.add("moodle-mod_quiz-util-base",function(o,d){o.namespace("Moodle.mod_quiz.util")},"@VERSION@");

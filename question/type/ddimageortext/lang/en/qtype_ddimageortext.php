@@ -58,7 +58,9 @@ $string['pluginname_help'] = 'Drag and drop onto image questions require the res
 $string['pluginname_link'] = 'question/type/ddimageortext';
 $string['pluginnameadding'] = 'Adding drag and drop onto image';
 $string['pluginnameediting'] = 'Editing drag and drop onto image';
-$string['pluginnamesummary'] = 'Images or text labels are dragged and dropped into drop zones on a background image.';
+$string['pluginnamesummary'] = 'Images or text labels are dragged and dropped into drop zones on a background image.
+
+Note: This question type is not accessible to users who are visually impaired.';
 $string['previewareaheader'] = 'Preview';
 $string['previewareamessage'] = 'Select a background image, specify draggable items and define drop zones on the background image into which they must be dragged.';
 $string['privacy:metadata'] = 'The Drag and drop onto image question type plugin does not store any personal data.';

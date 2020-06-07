@@ -3,29 +3,46 @@
     display: block;
 }
 
-.que.ddmarker .draghome img,
-.que.ddmarker .draghome span {
-    visibility: hidden;
+.que.ddmarker .droparea {
+    display: inline-block;
+    position: relative;
 }
 
-.que.ddmarker .dragitems .dragitem {
-    cursor: move;
+.que.ddmarker .droparea .dropzones,
+.que.ddmarker .droparea .markertexts {
     position: absolute;
-    z-index: 2;
+    top: 0;
+    left: 0;
 }
 
-.que.ddmarker .dragitems .draghome {
+.que.ddmarker .draghomes .marker,
+.que.ddmarker .droparea .marker {
+    vertical-align: top;
+    cursor: move;
+}
+
+.que.ddmarker .draghomes.readonly .marker,
+.que.ddmarker .droparea.readonly .marker {
+    cursor: auto;
+}
+
+.que.ddmarker .droparea .marker {
+    position: absolute;
+}
+
+.que.ddmarker .draghomes .marker {
+    position: relative;
     display: inline-block;
     margin: 10px;
-    vertical-align: top;
 }
 
-.que.ddmarker .dragitems {
-    margin-top: 10px;
+.que.ddmarker .draghomes .marker.dragplaceholder {
+    display: none;
 }
 
-.que.ddmarker .dragitems.readonly .dragitem {
-    cursor: auto;
+.que.ddmarker .draghomes .marker.dragplaceholder.active {
+    visibility: hidden;
+    display: inline-block;
 }
 
 .que.ddmarker div.ddarea,
@@ -41,7 +58,14 @@ form.mform fieldset#id_previewareaheader div.ddarea .markertexts {
 form.mform fieldset#id_previewareaheader .dropbackground {
     margin: 0 auto;
     border: 1px solid black;
+}
+
+form.mform fieldset#id_previewareaheader .dropbackground {
     max-width: none;
+}
+
+.que.ddmarker .dropbackground.img-responsive.img-fluid {
+    width: 100%;
 }
 
 .que.ddmarker div.dragitems div.draghome,
@@ -51,7 +75,8 @@ form.mform fieldset#id_previewareaheader div.drag {
     font: 13px/1.231 arial, helvetica, clean, sans-serif;
 }
 
-.que.ddmarker div.dragitems span.markertext,
+.que.ddmarker .droparea .marker span.markertext,
+.que.ddmarker .draghomes .marker span.markertext,
 .que.ddmarker div.markertexts span.markertext,
 form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
     margin: 0 5px;
@@ -66,11 +91,17 @@ form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
     opacity: 0.6;
 }
 
+.que.ddmarker .droparea .marker span.markertext,
+.que.ddmarker .draghomes .marker span.markertext {
+    white-space: nowrap;
+}
+
 .que.ddmarker div.markertexts span.markertext {
     z-index: 2;
     background-color: yellow;
     border: 2px solid khaki;
     position: absolute;
+    white-space: nowrap;
 }
 
 .que.ddmarker span.wrongpart {
@@ -78,13 +109,13 @@ form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
     border: 2px solid khaki;
     padding: 5px;
     border-radius: 10px;
-    filter: alpha(opacity=60);
     opacity: 0.6;
     margin: 5px;
     display: inline-block;
 }
 
-.que.ddmarker div.dragitems img.target {
+.que.ddmarker .droparea .marker img.target,
+.que.ddmarker .draghomes .marker img.target {
     position: absolute;
     left: -7px; /* This must be half the size of the target image, minus 0.5. */
     top: -7px;  /* In other words, this works for a 15x15 cross-hair. */
@@ -94,7 +125,11 @@ form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
     display: none;
 }
 
-.que.ddmarker .dragitem.beingdragged span.markertext {
+.que.ddmarker .marker.beingdragged {
+    position: absolute;
+}
+
+.que.ddmarker .marker.beingdragged span.markertext {
     z-index: 3;
     box-shadow: 3px 3px 4px #000;
 }
@@ -195,4 +230,8 @@ body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintclearwrong_] {
 
 body#page-question-type-ddmarker #fitem_id_penalty {
     margin-bottom: 2em;
+}
+
+body#page-question-type-ddmarker .ddarea.que.ddmarker {
+    overflow-y: scroll;
 }

@@ -36,7 +36,7 @@ class core_component_testcase extends advanced_testcase {
      * this is defined here to annoy devs that try to add more without any thinking,
      * always verify that it does not collide with any existing add-on modules and subplugins!!!
      */
-    const SUBSYSTEMCOUNT = 70;
+    const SUBSYSTEMCOUNT = 71;
 
     public function setUp() {
         $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
@@ -505,7 +505,7 @@ class core_component_testcase extends advanced_testcase {
         $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', 'output\\myprofile'));
 
         // Without namespace it returns classes/ classes.
-        $this->assertCount(3, core_component::get_component_classes_in_namespace('tool_mobile', ''));
+        $this->assertCount(5, core_component::get_component_classes_in_namespace('tool_mobile', ''));
         $this->assertCount(2, core_component::get_component_classes_in_namespace('tool_filetypes'));
 
         // When no component is specified, classes are returned for the namespace in all components.

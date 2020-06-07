@@ -135,6 +135,32 @@ class services_content_item_service_testcase extends \advanced_testcase {
     }
 
     /**
+     * Test confirming that content items which title match a certain pattern can be fetched irrespective of permissions.
+     */
+    public function test_get_content_items_by_name_pattern() {
+        $this->resetAfterTest();
+
+        // Create a user in a course.
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+
+        // Pattern that does exist.
+        $pattern1 = "assign";
+        // Pattern that does not exist.
+        $pattern2 = "random string";
+
+        $cis = new content_item_service(new content_item_readonly_repository());
+        $matchingcontentitems1 = $cis->get_content_items_by_name_pattern($user, $pattern1);
+        $matchingcontentitems2 = $cis->get_content_items_by_name_pattern($user, $pattern2);
+
+        // The pattern "assign" should return 1 content item ("Assignment").
+        $this->assertCount(1, $matchingcontentitems1);
+        $this->assertEquals("Assignment", $matchingcontentitems1[0]->title);
+        // The pattern "random string" should not return any content items.
+        $this->assertEmpty($matchingcontentitems2);
+    }
+
+    /**
      * Test confirming that a content item can be added to a user's favourites.
      */
     public function test_add_to_user_favourites() {

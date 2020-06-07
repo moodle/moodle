@@ -70,7 +70,7 @@ class MoodleQuickForm_course extends MoodleQuickForm_autocomplete {
      *                       'requiredcapabilities' - array of capabilities. Uses ANY to combine them.
      *                       'limittoenrolled' - boolean Limits to enrolled courses.
      *                       'includefrontpage' - boolean Enables the frontpage to be selected.
-     *                       'onlywithcompletion' - only courses where completion is enabled
+     *                       'onlywithcompletion' - boolean Limits to courses where completion is enabled.
      */
     public function __construct($elementname = null, $elementlabel = null, $attributes = array()) {
         if (!is_array($attributes)) {
@@ -105,8 +105,9 @@ class MoodleQuickForm_course extends MoodleQuickForm_autocomplete {
             $attributes['data-includefrontpage'] = SITEID;
             unset($attributes['includefrontpage']);
         }
-        if (!empty($options['onlywithcompletion'])) {
-            $validattributes['data-onlywithcompletion'] = 1;
+        if (!empty($attributes['onlywithcompletion'])) {
+            $attributes['data-onlywithcompletion'] = 1;
+            unset($attributes['onlywithcompletion']);
         }
 
         parent::__construct($elementname, $elementlabel, array(), $attributes);
@@ -124,7 +125,7 @@ class MoodleQuickForm_course extends MoodleQuickForm_autocomplete {
         $coursestofetch = array();
 
         foreach ($values as $onevalue) {
-            if ((!$this->optionExists($onevalue)) &&
+            if ($onevalue && !$this->optionExists($onevalue) &&
                     ($onevalue !== '_qf__force_multiselect_submission')) {
                 array_push($coursestofetch, $onevalue);
             }

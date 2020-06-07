@@ -24,8 +24,6 @@
 
 namespace core_h5p\local\library;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * H5P autoloader management class.
  *
@@ -41,23 +39,38 @@ class autoloader {
      */
     public static function get_all_handlers(): array {
         $handlers = [];
-        foreach (\core_component::get_plugin_types() as $ptype => $unused) {
-            $plugins = \core_component::get_plugin_list_with_class($ptype, 'local\library\handler') +
-                \core_component::get_plugin_list_with_class($ptype, 'local_library_handler');
-            // Allow plugins to have the class either with namespace or without (useful for unittest).
-            foreach ($plugins as $pname => $class) {
-                $handlers[$pname] = $class;
-            }
+        $plugins = \core_component::get_plugin_list_with_class('h5plib', 'local\library\handler') +
+            \core_component::get_plugin_list_with_class('h5plib', 'local_library_handler');
+        // Allow plugins to have the class either with namespace or without (useful for unittest).
+        foreach ($plugins as $pname => $class) {
+            $handlers[$pname] = $class;
         }
 
         return $handlers;
     }
 
     /**
-     * Returns the default H5P library handler.
+     * Returns the default H5P library handler class.
+     *
      * @return string|null H5P library handler class
      */
     public static function get_default_handler(): ?string {
+        $default = null;
+        $handlers = self::get_all_handlers();
+        if (!empty($handlers)) {
+            // The default handler will be the first value in the list.
+            $default = array_shift($handlers);
+        }
+
+        return $default;
+    }
+
+    /**
+     * Returns the default H5P library handler.
+     *
+     * @return string|null H5P library handler
+     */
+    public static function get_default_handler_library(): ?string {
         $default = null;
         $handlers = self::get_all_handlers();
         if (!empty($handlers)) {
@@ -85,7 +98,7 @@ class autoloader {
             }
         }
 
-        // If no handler has been defined or it doesn't exist, return the default one.
+        // If no handler has been defined, return the default one.
         $defaulthandler = self::get_default_handler();
         if (empty($defaulthandler)) {
             // If there is no default handler, throw an exception.
@@ -113,6 +126,38 @@ class autoloader {
      */
     public static function get_h5p_core_library_url(?string $filepath = null, ?array $params = null): ?\moodle_url {
         return component_class_callback(self::get_handler_classname(), 'get_h5p_core_library_url', [$filepath, $params]);
+    }
+
+    /**
+     * Get a URL for the current H5P Editor Library.
+     *
+     * @param string $filepath The path within the h5p root.
+     * @param array $params These params override current params or add new.
+     * @return null|\moodle_url The moodle_url instance to a file in the H5P Editor library.
+     */
+    public static function get_h5p_editor_library_url(?string $filepath = null, ?array $params = null): ?\moodle_url {
+        return component_class_callback(self::get_handler_classname(), 'get_h5p_editor_library_url', [$filepath, $params]);
+    }
+
+    /**
+     * Get the base path for the current H5P Editor Library.
+     *
+     * @param string $filepath The path within the h5p root.
+     * @return string  Path to a file in the H5P Editor library.
+     */
+    public static function get_h5p_editor_library_base(?string $filepath = null): string {
+        return component_class_callback(self::get_handler_classname(), 'get_h5p_editor_library_base', [$filepath]);
+    }
+
+    /**
+     * Returns a localized string, if it exists in the h5plib plugin and the value it's different from the English version.
+     *
+     * @param string $identifier The key identifier for the localized string
+     * @param string $language Language to get the localized string.
+     * @return string|null The localized string or null if it doesn't exist in this H5P library plugin.
+     */
+    public static function get_h5p_string(string $identifier, string $language): ?string {
+        return component_class_callback(self::get_handler_classname(), 'get_h5p_string', [$identifier, $language]);
     }
 
     /**

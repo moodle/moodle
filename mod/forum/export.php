@@ -25,7 +25,6 @@ define('NO_OUTPUT_BUFFERING', true);
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/dataformatlib.php');
 require_once($CFG->dirroot . '/calendar/externallib.php');
 
 $forumid = required_param('id', PARAM_INT);
@@ -121,20 +120,19 @@ if ($form->is_cancelled()) {
                 'messageformat', 'messagetrust', 'attachment', 'totalscore', 'mailnow', 'deleted', 'privatereplyto',
                 'privatereplytofullname', 'wordcount', 'charcount'];
 
-    $canviewfullname = has_capability('moodle/site:viewfullnames', $forum->get_context());
+    $canviewfullname = has_capability('moodle/site:viewfullnames', $context);
 
     $datamapper = $legacydatamapperfactory->get_post_data_mapper();
     $exportdata = new ArrayObject($datamapper->to_legacy_objects($posts));
     $iterator = $exportdata->getIterator();
 
-    require_once($CFG->libdir . '/dataformatlib.php');
     $filename = clean_filename('discussion');
-    download_as_dataformat(
+    \core\dataformat::download_data(
         $filename,
         $dataformat,
         $fields,
         $iterator,
-        function($exportdata) use ($fields, $striphtml, $humandates, $canviewfullname) {
+        function($exportdata) use ($fields, $striphtml, $humandates, $canviewfullname, $context) {
             $data = new stdClass();
 
             foreach ($fields as $field) {
@@ -151,6 +149,11 @@ if ($form->is_cancelled()) {
                     $data->privatereplytofullname = fullname($user, $canviewfullname);
                 }
 
+                if ($field == 'message') {
+                    $data->message = file_rewrite_pluginfile_urls($data->message, 'pluginfile.php', $context->id, 'mod_forum',
+                        'post', $data->id);
+                }
+
                 // Convert any boolean fields to their integer equivalent for output.
                 if (is_bool($data->$field)) {
                     $data->$field = (int) $data->$field;
@@ -158,11 +161,6 @@ if ($form->is_cancelled()) {
             }
 
             if ($striphtml) {
-                // The following call to html_to_text uses the option that strips out
-                // all URLs, but format_text complains if it finds @@PLUGINFILE@@ tokens.
-                // So, we need to replace @@PLUGINFILE@@ with a real URL, but it doesn't
-                // matter what. We use http://example.com/.
-                $data->message = str_replace('@@PLUGINFILE@@/', 'http://example.com/', $data->message);
                 $data->message = html_to_text(format_text($data->message, $data->messageformat), 0, false);
                 $data->messageformat = FORMAT_PLAIN;
             }

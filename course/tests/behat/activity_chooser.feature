@@ -14,6 +14,8 @@ Feature: Display and choose from the available activities in course
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher | C | editingteacher |
+    And the following config values are set as admin:
+      | enablemoodlenet | 0 | tool_moodlenet |
     And I log in as "teacher"
     And I am on "Course" course homepage with editing mode on
 
@@ -58,7 +60,7 @@ Feature: Display and choose from the available activities in course
     When I log out
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Courses > Recommended activities" in site administration
+    And I navigate to "Courses > Activity chooser > Recommended activities" in site administration
     And I click on ".activity-recommend-checkbox" "css_element" in the "Book" "table_row"
     # Setup done, lets check it works with a teacher.
     And I log out
@@ -72,7 +74,7 @@ Feature: Display and choose from the available activities in course
   Scenario: Favourite a module in the activity chooser
     Given I open the activity chooser
     And I should not see "Starred" in the "Add an activity or resource" "dialogue"
-    And I click on "Star Assignment module" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Star Assignment activity" "button" in the "Add an activity or resource" "dialogue"
     And I should see "Starred" in the "Add an activity or resource" "dialogue"
     When I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
     Then I should see "Assignment" in the "favourites" "core_course > Activity chooser tab"
@@ -81,8 +83,8 @@ Feature: Display and choose from the available activities in course
 
   Scenario: Add a favourite module and check it exists when reopening the chooser
     Given I open the activity chooser
-    And I click on "Star Assignment module" "button" in the "Add an activity or resource" "dialogue"
-    And I click on "Star Forum module" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Star Assignment activity" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Star Forum activity" "button" in the "Add an activity or resource" "dialogue"
     And I should see "Starred" in the "Add an activity or resource" "dialogue"
     And I click on "Close" "button" in the "Add an activity or resource" "dialogue"
     When I click on "Add an activity or resource" "button" in the "Topic 3" "section"
@@ -91,9 +93,9 @@ Feature: Display and choose from the available activities in course
 
   Scenario: Add a favourite and then remove it whilst checking the tabs work as expected
     Given I open the activity chooser
-    And I click on "Star Assignment module" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Star Assignment activity" "button" in the "Add an activity or resource" "dialogue"
     And I click on "Starred" "link" in the "Add an activity or resource" "dialogue"
-    And I click on "Star Assignment module" "button" in the "Add an activity or resource" "dialogue"
+    And I click on "Star Assignment activity" "button" in the "Add an activity or resource" "dialogue"
     Then I should not see "Starred" in the "Add an activity or resource" "dialogue"
 
   Scenario: The teacher can search for an activity by it's name
@@ -148,3 +150,40 @@ Feature: Display and choose from the available activities in course
     Then I should not see "Search query"
     And ".searchresultscontainer" "css_element" should not exist
     And ".optionscontainer" "css_element" should exist
+
+  Scenario: Teacher gets the base case for the Activity Chooser tab mode
+    Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    And I should see "Activities" in the "Add an activity or resource" "dialogue"
+    When I click on "Activities" "link" in the "Add an activity or resource" "dialogue"
+    Then I should not see "Book" in the "activity" "core_course > Activity chooser tab"
+    And I click on "Resources" "link" in the "Add an activity or resource" "dialogue"
+    And I should not see "Assignment" in the "resources" "core_course > Activity chooser tab"
+
+  Scenario: Teacher gets the simple case for the Activity Chooser tab mode
+    Given I log out
+    And I log in as "admin"
+    And I am on site homepage
+    When I navigate to "Courses > Activity chooser > Activity chooser settings" in site administration
+    And I select "Starred, All, Recommended" from the "Activity chooser tabs" singleselect
+    And I press "Save changes"
+    And I log out
+    And I log in as "teacher"
+    And I am on "Course" course homepage with editing mode on
+    And I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    Then I should not see "Activities" in the "Add an activity or resource" "dialogue"
+    And I should not see "Resources" in the "Add an activity or resource" "dialogue"
+
+  Scenario: Teacher gets the final case for the Activity Chooser tab mode
+    Given I log out
+    And I log in as "admin"
+    And I am on site homepage
+    When I navigate to "Courses > Activity chooser > Activity chooser settings" in site administration
+    And I select "Starred, Activities, Resources, Recommended" from the "Activity chooser tabs" singleselect
+    And I press "Save changes"
+    And I log out
+    And I log in as "teacher"
+    And I am on "Course" course homepage with editing mode on
+    And I click on "Add an activity or resource" "button" in the "Topic 1" "section"
+    Then I should not see "All" in the "Add an activity or resource" "dialogue"
+    And I should see "Activities" in the "Add an activity or resource" "dialogue"
+    And I should see "Resources" in the "Add an activity or resource" "dialogue"

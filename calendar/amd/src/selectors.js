@@ -30,6 +30,7 @@ define([], function() {
             course: "[data-eventtype-course]",
             group: "[data-eventtype-group]",
             user: "[data-eventtype-user]",
+            other: "[data-eventtype-other]",
         },
         popoverType: {
             site: "[data-popover-eventtype-site]",
@@ -37,6 +38,7 @@ define([], function() {
             course: "[data-popover-eventtype-course]",
             group: "[data-popover-eventtype-group]",
             user: "[data-popover-eventtype-user]",
+            other: "[data-popover-eventtype-other]",
         },
         calendarPeriods: {
             month: "[data-period='month']",

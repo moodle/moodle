@@ -23,6 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_h5pactivity\local\manager;
+
 require(__DIR__.'/../../config.php');
 
 // Course module ID.
@@ -34,9 +36,27 @@ $itemnumber = optional_param('itemnumber', 0, PARAM_INT);
 // Graded user ID (optional).
 $userid = optional_param('userid', 0, PARAM_INT);
 
-require_login();
+list ($course, $cm) = get_course_and_cm_from_cmid($id, 'h5pactivity');
 
-// TODO: in the near future this file will redirect to a specific user H5P attempts page.
+require_login($course, true, $cm);
 
-// In the simplest case just redirect to the view page.
-redirect('view.php?id='.$id);
+$manager = manager::create_from_coursemodule($cm);
+
+if (!$manager->can_view_all_attempts() && !$manager->can_view_own_attempts()) {
+    redirect(new moodle_url('/mod/h5pactivity/view.php', ['id' => $id]));
+}
+
+$moduleinstance = $manager->get_instance();
+
+$params = [
+    'a' => $moduleinstance->id,
+    'userid' => $userid,
+];
+
+$scores = $manager->get_users_scaled_score($userid);
+$score = $scores[$userid] ?? null;
+if (!empty($score->attemptid)) {
+    $params['attemptid'] = $score->attemptid;
+}
+
+redirect(new moodle_url('/mod/h5pactivity/report.php', $params));

@@ -52,8 +52,8 @@ class block_activity_modules extends block_list {
         $archetypes = array();
 
         foreach($modinfo->cms as $cm) {
-            // Exclude activities which are not visible or have no link (=label)
-            if (!$cm->uservisible or !$cm->has_view()) {
+            // Exclude activities that aren't visible or have no view link (e.g. label). Account for folder being displayed inline.
+            if (!$cm->uservisible || (!$cm->has_view() && strcmp($cm->modname, 'folder') !== 0)) {
                 continue;
             }
             if (array_key_exists($cm->modname, $modfullnames)) {

@@ -290,4 +290,93 @@ class helper_testcase extends \advanced_testcase {
         $candeploy = helper::can_update_library($file);
         $this->assertTrue($candeploy);
     }
+
+    /**
+     * Test the behaviour of get_messages().
+     */
+    public function test_get_messages(): void {
+        $this->resetAfterTest();
+
+        $factory = new \core_h5p\factory();
+        $messages = new \stdClass();
+
+        helper::get_messages($messages, $factory);
+        $this->assertTrue(empty($messages->error));
+        $this->assertTrue(empty($messages->info));
+
+        // Add an some messages manually and check they are still there.
+        $messages->error['error1'] = 'Testing ERROR message';
+        $messages->info['info1'] = 'Testing INFO message';
+        $messages->info['info2'] = 'Testing INFO message';
+        helper::get_messages($messages, $factory);
+        $this->assertCount(1, $messages->error);
+        $this->assertCount(2, $messages->info);
+
+        // When saving an invalid .h5p file, 6 errors should be raised.
+        $path = __DIR__ . '/fixtures/h5ptest.zip';
+        $file = helper::create_fake_stored_file_from_path($path);
+        $factory->get_framework()->set_file($file);
+        $config = (object)[
+            'frame' => 1,
+            'export' => 1,
+            'embed' => 0,
+            'copyright' => 0,
+        ];
+        $h5pid = helper::save_h5p($factory, $file, $config);
+        $this->assertFalse($h5pid);
+        helper::get_messages($messages, $factory);
+        $this->assertCount(7, $messages->error);
+        $this->assertCount(2, $messages->info);
+    }
+
+    /**
+     * Test the behaviour of get_export_info().
+     */
+    public function test_get_export_info(): void {
+         $this->resetAfterTest();
+
+        $filename = 'guess-the-answer.h5p';
+        $syscontext = \context_system::instance();
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        $deployedfile = $generator->create_export_file($filename,
+            $syscontext->id,
+            file_storage::COMPONENT,
+            file_storage::EXPORT_FILEAREA);
+
+        // Test scenario 1: Get export information from correct filename.
+        $helperfile = helper::get_export_info($deployedfile['filename']);
+        $this->assertEquals($deployedfile['filename'], $helperfile['filename']);
+        $this->assertEquals($deployedfile['filepath'], $helperfile['filepath']);
+        $this->assertEquals($deployedfile['filesize'], $helperfile['filesize']);
+        $this->assertEquals($deployedfile['timemodified'], $helperfile['timemodified']);
+        $this->assertEquals($deployedfile['fileurl'], $helperfile['fileurl']);
+
+        // Test scenario 2: Get export information from correct filename and url.
+        $url = \moodle_url::make_pluginfile_url(
+            $syscontext->id,
+            file_storage::COMPONENT,
+            'unittest',
+            0,
+            '/',
+            $deployedfile['filename'],
+            false,
+            true
+        );
+        $helperfile = helper::get_export_info($deployedfile['filename'], $url);
+        $this->assertEquals($url, $helperfile['fileurl']);
+
+        // Test scenario 3: Get export information from correct filename and factory.
+        $factory = new \core_h5p\factory();
+        $helperfile = helper::get_export_info($deployedfile['filename'], null, $factory);
+        $this->assertEquals($deployedfile['filename'], $helperfile['filename']);
+        $this->assertEquals($deployedfile['filepath'], $helperfile['filepath']);
+        $this->assertEquals($deployedfile['filesize'], $helperfile['filesize']);
+        $this->assertEquals($deployedfile['timemodified'], $helperfile['timemodified']);
+        $this->assertEquals($deployedfile['fileurl'], $helperfile['fileurl']);
+
+        // Test scenario 4: Get export information from wrong filename.
+        $helperfile = helper::get_export_info('nofileexist.h5p', $url);
+        $this->assertNull($helperfile);
+    }
 }

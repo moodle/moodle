@@ -16,8 +16,7 @@ Feature: Override permissions on a context
       | teacher1  | C1     | editingteacher |
 
   Scenario: Default system capabilities modification
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage
+    Given I am on the "C1" "Course" page logged in as "admin"
     And I navigate to "Users > Permissions" in current page administration
     When I click on "Allow" "icon" in the "mod/forum:addnews" "table_row"
     And I press "Student"

@@ -105,6 +105,14 @@ class provider implements
             'issuer' => 'privacy:metadata:external:backpacks:issuer',
         ], 'privacy:metadata:external:backpacks');
 
+        $collection->add_database_table('badge_backpack_oauth2', [
+            'userid' => 'privacy:metadata:backpackoauth2:userid',
+            'usermodified' => 'privacy:metadata:backpackoauth2:usermodified',
+            'token' => 'privacy:metadata:backpackoauth2:token',
+            'issuerid' => 'privacy:metadata:backpackoauth2:issuerid',
+            'scope' => 'privacy:metadata:backpackoauth2:scope',
+        ], 'privacy:metadata:backpackoauth2');
+
         return $collection;
     }
 

@@ -617,10 +617,6 @@ table.quizreviewsummary td.cell {
 }
 
 /** Mod quiz edit **/
-#page-mod-quiz-edit .statusbar {
-    margin: 0.6em 0.4em;
-}
-
 #page-mod-quiz-edit .statusdisplay {
     background-color: #ffc;
     clear: both;
@@ -640,14 +636,15 @@ table.quizreviewsummary td.cell {
     min-height: 2.85em;
 }
 
-#page-mod-quiz-edit .maxgrade,
-#page-mod-quiz-edit .totalpoints {
-    position: absolute;
-    right: 0;
-    margin: -2.85em 0 0;
-    padding: .2em;
+@media (max-width: 576px) {
+    #page-mod-quiz-edit .maxgrade {
+        margin-bottom: 0.6em;
+    }
+    #page-mod-quiz-edit .maxgrade .form-control {
+        display: inline-block;
+        vertical-align: middle;
+    }
 }
-
 #page-mod-quiz-edit .maxgrade label {
     display: inline;
 }
@@ -748,6 +745,7 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit ul.slots {
     margin: 0;
+    padding: 0;
 }
 
 #page-mod-quiz-edit ul.slots li.section {
@@ -769,6 +767,7 @@ table.quizreviewsummary td.cell {
     background: #e6e6e6;
     margin: 3px 0;
     padding: 0.2em;
+    position: relative;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity.page {
@@ -806,12 +805,8 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit ul.slots li.section li.activity .page_split_join_wrapper {
     position: absolute;
-}
-
-#page-mod-quiz-edit ul.slots li.section li.activity .page_split_join {
-    position: relative;
     left: -20px;
-    top: -7px;
+    bottom: -11px;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_0 {
@@ -880,15 +875,13 @@ table.quizreviewsummary td.cell {
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .activityinstance {
-    display: block;
+    display: flex;
+    flex: 1 1 auto;
     min-height: 1.7em;
-    position: absolute;
-    top: 0;
-    left: 5em;
-    width: 100%;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .mod-indent-outer {
+    display: flex;
     padding-left: 22px;
 }
 
@@ -905,7 +898,6 @@ table.quizreviewsummary td.cell {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    width: 70%;
     display: inline-block;
     height: 20px;
 }
@@ -918,6 +910,9 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit ul.slots li.activity div.activityinstance .questionname {
     font-weight: bold;
     color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #page-mod-quiz-edit ul.slots li.activity div.activityinstance .questiontext {
@@ -932,6 +927,10 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit ul.slots li.activity div.activityinstance .mod_quiz_random_qbank_link {
     font-size: 0.8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-left: 0.25rem;
 }
 
 #page-mod-quiz-edit ul.slots .activityinstance img.activityicon {
@@ -941,6 +940,7 @@ table.quizreviewsummary td.cell {
 }
 
 #page-mod-quiz-edit .section .activity .actions {
+    position: inherit;
     white-space: nowrap;
     background: #e6e6e6;
     padding: 0.1em 0;
@@ -1201,6 +1201,21 @@ table#categoryquestions {
 /* Base theme needs extra support. */
 #page-mod-quiz-edit ul.slots li.section ul.section {
     list-style: none;
+}
+
+@media (max-width: 576px) {
+    #page-mod-quiz-edit ul.slots li.section li.activity {
+        padding-top: 30px;
+    }
+    #page-mod-quiz-edit ul.slots li.section li.activity .activityinstance {
+        top: -30px;
+        left: 0;
+        padding-right: 0;
+        overflow: hidden;
+        align-items: center;
+        position: absolute;
+        width: 100%;
+    }
 }
 
 /** Print formatting for attempt and review pages **/

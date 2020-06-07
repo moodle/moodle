@@ -71,7 +71,8 @@ class completion_daily_task extends scheduled_task {
                 INNER JOIN {user_enrolments} ue ON ue.userid = u.id
                 INNER JOIN {enrol} e ON e.id = ue.enrolid
                 INNER JOIN {course} c ON c.id = e.courseid
-                INNER JOIN {role_assignments} ra ON ra.userid = u.id
+                INNER JOIN {context} con ON con.contextlevel = ? AND con.instanceid = c.id
+                INNER JOIN {role_assignments} ra ON ra.userid = u.id AND ra.contextid = con.id
                  LEFT JOIN {course_completions} crc ON crc.course = c.id AND crc.userid = u.id
                      WHERE c.enablecompletion = 1
                        AND crc.timeenrolled IS NULL
@@ -83,7 +84,7 @@ class completion_daily_task extends scheduled_task {
                        $sqlroles
                   ORDER BY course, userid";
             $now = time();
-            $rs = $DB->get_recordset_sql($sql, [$now, $now, $now, $now]);
+            $rs = $DB->get_recordset_sql($sql, [CONTEXT_COURSE, $now, $now]);
 
             // Check if result is empty.
             if (!$rs->valid()) {

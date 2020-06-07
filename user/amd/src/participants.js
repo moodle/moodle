@@ -22,308 +22,212 @@
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/templates', 'core/notification', 'core/ajax'],
-        function($, Str, ModalFactory, ModalEvents, Templates, Notification, Ajax) {
 
-    var SELECTORS = {
-        BULKACTIONSELECT: "#formactionid",
-        BULKUSERCHECKBOXES: "input.usercheckbox",
-        BULKUSERNOSCHECKBOXES: "input.usercheckbox[value='0']",
-        BULKUSERSELECTEDCHECKBOXES: "input.usercheckbox:checked",
-        BULKACTIONFORM: "#participantsform",
-        CHECKALLBUTTON: "#checkall",
-        CHECKALLNOSBUTTON: "#checkallnos"
-    };
+import * as DynamicTable from 'core_table/dynamic';
+import * as Str from 'core/str';
+import CheckboxToggleAll from 'core/checkbox-toggleall';
+import CustomEvents from 'core/custom_interaction_events';
+import DynamicTableSelectors from 'core_table/local/dynamic/selectors';
+import ModalEvents from 'core/modal_events';
+import Notification from 'core/notification';
+import Pending from 'core/pending';
+import jQuery from 'jquery';
+import {showAddNote, showSendMessage} from 'core_user/local/participants/bulkactions';
+
+const Selectors = {
+    bulkActionSelect: "#formactionid",
+    bulkUserSelectedCheckBoxes: "input[data-togglegroup='participants-table']:checked",
+    checkCountButton: "#checkall",
+    showCountText: '[data-region="participant-count"]',
+    showCountToggle: '[data-action="showcount"]',
+    stateHelpIcon: '[data-region="state-help-icon"]',
+    tableForm: uniqueId => `form[data-table-unique-id="${uniqueId}"]`,
+};
+
+export const init = ({
+    uniqueid,
+    noteStateNames = {},
+}) => {
+    const root = document.querySelector(Selectors.tableForm(uniqueid));
+    const getTableFromUniqueId = uniqueId => root.querySelector(DynamicTableSelectors.main.fromRegionId(uniqueId));
 
     /**
-     * Constructor
+     * Private method.
      *
-     * @param {Object} options Object containing options. Contextid is required.
-     * Each call to templates.render gets it's own instance of this class.
-     */
-    var Participants = function(options) {
-
-        this.courseId = options.courseid;
-        this.noteStateNames = options.noteStateNames;
-        this.stateHelpIcon = options.stateHelpIcon;
-
-        this.attachEventListeners();
-    };
-    // Class variables and functions.
-
-    /**
-     * @var {Modal} modal
+     * @method registerEventListeners
      * @private
      */
-    Participants.prototype.modal = null;
+    const registerEventListeners = () => {
+        CustomEvents.define(Selectors.bulkActionSelect, [CustomEvents.events.accessibleChange]);
+        jQuery(Selectors.bulkActionSelect).on(CustomEvents.events.accessibleChange, e => {
+            const bulkActionSelect = e.target.closest('select');
+            const action = bulkActionSelect.value;
+            const tableRoot = getTableFromUniqueId(uniqueid);
+            const checkboxes = tableRoot.querySelectorAll(Selectors.bulkUserSelectedCheckBoxes);
+            const pendingPromise = new Pending('core_user/participants:bulkActionSelect');
 
-    /**
-     * @var {int} courseId
-     * @private
-     */
-    Participants.prototype.courseId = -1;
-
-    /**
-     * @var {Object} noteStateNames
-     * @private
-     */
-    Participants.prototype.noteStateNames = {};
-
-    /**
-     * @var {String} stateHelpIcon
-     * @private
-     */
-    Participants.prototype.stateHelpIcon = "";
-
-    /**
-     * Private method
-     *
-     * @method attachEventListeners
-     * @private
-     */
-    Participants.prototype.attachEventListeners = function() {
-        $(SELECTORS.BULKACTIONSELECT).on('change', function(e) {
-            var action = $(e.target).val();
             if (action.indexOf('#') !== -1) {
                 e.preventDefault();
 
-                var ids = [];
-                $(SELECTORS.BULKUSERSELECTEDCHECKBOXES).each(function(index, ele) {
-                    var name = $(ele).attr('name');
-                    var id = name.replace('user', '');
-                    ids.push(id);
+                const ids = [];
+                checkboxes.forEach(checkbox => {
+                    ids.push(checkbox.getAttribute('name').replace('user', ''));
                 });
 
-                if (action == '#messageselect') {
-                    this.showSendMessage(ids).fail(Notification.exception);
-                } else if (action == '#addgroupnote') {
-                    this.showAddNote(ids).fail(Notification.exception);
+                let bulkAction;
+                if (action === '#messageselect') {
+                    bulkAction = showSendMessage(ids);
+                } else if (action === '#addgroupnote') {
+                    bulkAction = showAddNote(
+                        root.dataset.courseId,
+                        ids,
+                        noteStateNames,
+                        root.querySelector(Selectors.stateHelpIcon)
+                    );
                 }
-                $(SELECTORS.BULKACTIONSELECT + ' option[value=""]').prop('selected', 'selected');
-            } else if (action !== '') {
-                if ($(SELECTORS.BULKUSERSELECTEDCHECKBOXES).length > 0) {
-                    $(SELECTORS.BULKACTIONFORM).submit();
-                } else {
-                    $(SELECTORS.BULKACTIONSELECT + ' option[value=""]').prop('selected', 'selected');
-                }
-            }
-        }.bind(this));
 
-        $(SELECTORS.CHECKALLBUTTON).on('click', function() {
-            var showallink = $(this).data('showallink');
-            if (showallink) {
-                window.location = showallink;
+                if (bulkAction) {
+                    const pendingBulkAction = new Pending('core_user/participants:bulkActionSelected');
+                    bulkAction
+                    .then(modal => {
+                        modal.getRoot().on(ModalEvents.hidden, () => {
+                            // Focus on the action select when the dialog is closed.
+                            bulkActionSelect.focus();
+                        });
+
+                        pendingBulkAction.resolve();
+                        return modal;
+                    })
+                    .catch(Notification.exception);
+                }
+            } else if (action !== '' && checkboxes.length) {
+                bulkActionSelect.form.submit();
+            }
+
+            resetBulkAction(bulkActionSelect);
+            pendingPromise.resolve();
+        });
+
+        root.addEventListener('click', e => {
+            // Handle clicking of the "Show [all|count]" and "Select all" actions.
+            const showCountLink = root.querySelector(Selectors.showCountToggle);
+            const checkCountButton = root.querySelector(Selectors.checkCountButton);
+
+            const showCountLinkClicked = showCountLink && showCountLink.contains(e.target);
+            const checkCountButtonClicked = checkCountButton && checkCountButton.contains(e.target);
+
+            if (showCountLinkClicked || checkCountButtonClicked) {
+                e.preventDefault();
+
+                const tableRoot = getTableFromUniqueId(uniqueid);
+
+                DynamicTable.setPageSize(tableRoot, showCountLink.dataset.targetPageSize)
+                .then(tableRoot => {
+                    // Always update the toggle state.
+                    // This ensures that the bulk actions are disabled after changing the page size.
+                    CheckboxToggleAll.setGroupState(tableRoot, 'participants-table', checkCountButtonClicked);
+
+                    return tableRoot;
+                })
+                .catch(Notification.exception);
             }
         });
 
-        $(SELECTORS.CHECKALLNOSBUTTON).on('click', function() {
-            $(SELECTORS.BULKUSERNOSCHECKBOXES).prop('checked', true);
+        // When the content is refreshed, update the row counts in various places.
+        root.addEventListener(DynamicTable.Events.tableContentRefreshed, e => {
+            const showCountLink = root.querySelector(Selectors.showCountToggle);
+            const checkCountButton = root.querySelector(Selectors.checkCountButton);
+
+            const tableRoot = e.target;
+
+            const defaultPageSize = parseInt(root.dataset.tableDefaultPerPage, 10);
+            const currentPageSize = parseInt(tableRoot.dataset.tablePageSize, 10);
+            const totalRowCount = parseInt(tableRoot.dataset.tableTotalRows, 10);
+
+            CheckboxToggleAll.updateSlavesFromMasterState(tableRoot, 'participants-table');
+
+            const pageCountStrings = [
+                {
+                    key: 'countparticipantsfound',
+                    component: 'core_user',
+                    param: totalRowCount,
+                },
+            ];
+
+
+            if (totalRowCount <= defaultPageSize) {
+                // There are fewer than the default page count numbers of rows.
+                showCountLink.classList.add('hidden');
+
+                if (checkCountButton) {
+                    checkCountButton.classList.add('hidden');
+                }
+            } else if (totalRowCount <= currentPageSize) {
+                // The are fewer than the current page size.
+                pageCountStrings.push({
+                    key: 'showperpage',
+                    component: 'core',
+                    param: defaultPageSize,
+                });
+
+                pageCountStrings.push({
+                    key: 'selectalluserswithcount',
+                    component: 'core',
+                    param: defaultPageSize,
+                });
+
+                // Show the 'Show [x]' link.
+                showCountLink.classList.remove('hidden');
+                showCountLink.dataset.targetPageSize = defaultPageSize;
+
+                if (checkCountButton) {
+                    // The 'Check all [x]' button is only visible when there are values to set.
+                    checkCountButton.classList.add('hidden');
+                }
+            } else {
+                pageCountStrings.push({
+                    key: 'showall',
+                    component: 'core',
+                    param: totalRowCount,
+                });
+
+                pageCountStrings.push({
+                    key: 'selectalluserswithcount',
+                    component: 'core',
+                    param: totalRowCount,
+                });
+
+                // Show both the 'Show [x]' link, and the 'Check all [x]' button.
+                showCountLink.classList.remove('hidden');
+                showCountLink.dataset.targetPageSize = totalRowCount;
+
+                if (checkCountButton) {
+                    checkCountButton.classList.remove('hidden');
+                }
+            }
+
+            Str.get_strings(pageCountStrings)
+            .then(([showingParticipantCountString, showCountString, selectCountString]) => {
+                const showingParticipantCount = root.querySelector(Selectors.showCountText);
+                showingParticipantCount.innerHTML = showingParticipantCountString;
+
+                if (showCountString) {
+                    showCountLink.innerHTML = showCountString;
+                }
+
+                if (selectCountString && checkCountButton) {
+                    checkCountButton.value = selectCountString;
+                }
+
+                return;
+            })
+            .catch(Notification.exception);
         });
     };
 
-    /**
-     * Show the add note popup
-     *
-     * @method showAddNote
-     * @private
-     * @param {int[]} users
-     * @return {Promise}
-     */
-    Participants.prototype.showAddNote = function(users) {
-
-        if (users.length == 0) {
-            // Nothing to do.
-            return $.Deferred().resolve().promise();
-        }
-
-        var states = [];
-        for (var key in this.noteStateNames) {
-            switch (key) {
-                case 'draft':
-                    states.push({value: 'personal', label: this.noteStateNames[key]});
-                    break;
-                case 'public':
-                    states.push({value: 'course', label: this.noteStateNames[key], selected: 1});
-                    break;
-                case 'site':
-                    states.push({value: key, label: this.noteStateNames[key]});
-                    break;
-            }
-        }
-
-        var context = {stateNames: states, stateHelpIcon: this.stateHelpIcon};
-        var titlePromise = null;
-        if (users.length == 1) {
-            titlePromise = Str.get_string('addbulknotesingle', 'core_notes');
-        } else {
-            titlePromise = Str.get_string('addbulknote', 'core_notes', users.length);
-        }
-
-        return $.when(
-            ModalFactory.create({
-                type: ModalFactory.types.SAVE_CANCEL,
-                body: Templates.render('core_user/add_bulk_note', context)
-            }),
-            titlePromise
-        ).then(function(modal, title) {
-            // Keep a reference to the modal.
-            this.modal = modal;
-            this.modal.setTitle(title);
-            this.modal.setSaveButtonText(title);
-
-            // We want to focus on the action select when the dialog is closed.
-            this.modal.getRoot().on(ModalEvents.hidden, function() {
-                var notification = $('#user-notifications [role=alert]');
-                if (notification.length) {
-                    notification.focus();
-                } else {
-                    $(SELECTORS.BULKACTIONSELECT).focus();
-                }
-                this.modal.getRoot().remove();
-            }.bind(this));
-
-            this.modal.getRoot().on(ModalEvents.save, this.submitAddNote.bind(this, users));
-
-            this.modal.show();
-
-            return this.modal;
-        }.bind(this));
+    const resetBulkAction = bulkActionSelect => {
+        bulkActionSelect.value = '';
     };
 
-    /**
-     * Add a note to this list of users.
-     *
-     * @method submitAddNote
-     * @private
-     * @param {int[]} users
-     * @return {Promise}
-     */
-    Participants.prototype.submitAddNote = function(users) {
-        var noteText = this.modal.getRoot().find('form textarea').val();
-        var publishState = this.modal.getRoot().find('form select').val();
-        var notes = [],
-            i = 0;
-
-        for (i = 0; i < users.length; i++) {
-            notes.push({userid: users[i], text: noteText, courseid: this.courseId, publishstate: publishState});
-        }
-
-        return Ajax.call([{
-            methodname: 'core_notes_create_notes',
-            args: {notes: notes}
-        }])[0].then(function(noteIds) {
-            if (noteIds.length == 1) {
-                return Str.get_string('addbulknotedonesingle', 'core_notes');
-            } else {
-                return Str.get_string('addbulknotedone', 'core_notes', noteIds.length);
-            }
-        }).then(function(msg) {
-            Notification.addNotification({
-                message: msg,
-                type: "success"
-            });
-            return true;
-        }).catch(Notification.exception);
-    };
-
-    /**
-     * Show the send message popup.
-     *
-     * @method showSendMessage
-     * @private
-     * @param {int[]} users
-     * @return {Promise}
-     */
-    Participants.prototype.showSendMessage = function(users) {
-
-        if (users.length == 0) {
-            // Nothing to do.
-            return $.Deferred().resolve().promise();
-        }
-        var titlePromise = null;
-        if (users.length == 1) {
-            titlePromise = Str.get_string('sendbulkmessagesingle', 'core_message');
-        } else {
-            titlePromise = Str.get_string('sendbulkmessage', 'core_message', users.length);
-        }
-
-        return $.when(
-            ModalFactory.create({
-                type: ModalFactory.types.SAVE_CANCEL,
-                body: Templates.render('core_user/send_bulk_message', {})
-            }),
-            titlePromise
-        ).then(function(modal, title) {
-            // Keep a reference to the modal.
-            this.modal = modal;
-
-            this.modal.setTitle(title);
-            this.modal.setSaveButtonText(title);
-
-            // We want to focus on the action select when the dialog is closed.
-            this.modal.getRoot().on(ModalEvents.hidden, function() {
-                $(SELECTORS.BULKACTIONSELECT).focus();
-                this.modal.getRoot().remove();
-            }.bind(this));
-
-            this.modal.getRoot().on(ModalEvents.save, this.submitSendMessage.bind(this, users));
-
-            this.modal.show();
-
-            return this.modal;
-        }.bind(this));
-    };
-
-    /**
-     * Send a message to these users.
-     *
-     * @method submitSendMessage
-     * @private
-     * @param {int[]} users
-     * @param {Event} e Form submission event.
-     * @return {Promise}
-     */
-    Participants.prototype.submitSendMessage = function(users) {
-
-        var messageText = this.modal.getRoot().find('form textarea').val();
-
-        var messages = [],
-            i = 0;
-
-        for (i = 0; i < users.length; i++) {
-            messages.push({touserid: users[i], text: messageText});
-        }
-
-        return Ajax.call([{
-            methodname: 'core_message_send_instant_messages',
-            args: {messages: messages}
-        }])[0].then(function(messageIds) {
-            if (messageIds.length == 1) {
-                return Str.get_string('sendbulkmessagesentsingle', 'core_message');
-            } else {
-                return Str.get_string('sendbulkmessagesent', 'core_message', messageIds.length);
-            }
-        }).then(function(msg) {
-            Notification.addNotification({
-                message: msg,
-                type: "success"
-            });
-            return true;
-        }).catch(Notification.exception);
-    };
-
-    return /** @alias module:core_user/participants */ {
-        // Public variables and functions.
-
-        /**
-         * Initialise the unified user filter.
-         *
-         * @method init
-         * @param {Object} options - List of options.
-         * @return {Participants}
-         */
-        'init': function(options) {
-            return new Participants(options);
-        }
-    };
-});
+    registerEventListeners();
+};

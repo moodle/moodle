@@ -42,6 +42,7 @@
         <div class="count-container {{^unreadcount}}hidden{{/unreadcount}}" data-region="count-container"
         aria-label="{{#str}} unreadconversations, core_message, {{unreadcount}} {{/str}}">{{unreadcount}}</div>
     </a>
+    {{> core_message/message_jumpto }}
 </div>
 
 {{#js}}

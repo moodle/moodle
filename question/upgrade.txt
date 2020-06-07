@@ -2,12 +2,22 @@ This files describes API changes for code that uses the question API.
 
 === 3.9 ==
 
-For years, the ..._questions_in_use callback has been the right way for plugins to
-tell the core question system if questions are required. Previously this callback
-only worked in mods. Now it works in all plugins.
+1) For years, the ..._questions_in_use callback has been the right way for plugins to
+   tell the core question system if questions are required. Previously this callback
+   only worked in mods. Now it works in all plugins.
 
-At the same time, if you are still relying on the legacy ..._question_list_instances
-callback for this, you will now get a debugging warning telling you to upgrade.
+   At the same time, if you are still relying on the legacy ..._question_list_instances
+   callback for this, you will now get a debugging warning telling you to upgrade.
+
+2) Previously, the functions question_delete_activity, question_delete_course and
+   question_delete_course_category would echo output. This was not correct behaviour for
+   a low-level API function. Now, they no longer output. Related to this, the helper
+   function they use, question_delete_context, now always returns an empty array.
+
+   This probably won't acutally cause you any problems. However, you may previously
+   have had to add expectOutputRegex calls to your unit tests to avoid warnings about
+   risky tests. If you have done that, those tests will now fail until you delete that expectation.
+
 
 === 3.8 ===
 

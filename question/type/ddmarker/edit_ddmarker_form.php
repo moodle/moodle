@@ -53,10 +53,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
 
     public function js_call() {
         global $PAGE;
-        $maxsize = ['width' => QTYPE_DDMARKER_BGIMAGE_MAXWIDTH,
-            'height' => QTYPE_DDMARKER_BGIMAGE_MAXHEIGHT];
-
-        $PAGE->requires->js_call_amd('qtype_ddmarker/form', 'init', [$maxsize]);
+        $PAGE->requires->js_call_amd('qtype_ddmarker/form', 'init');
     }
 
 

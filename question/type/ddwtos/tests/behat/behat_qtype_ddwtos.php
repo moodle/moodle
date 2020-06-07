@@ -41,7 +41,8 @@ class behat_qtype_ddwtos extends behat_base {
      * @return string the xpath expression.
      */
     protected function drag_xpath($dragitem) {
-        return '//span[contains(@class, " drag ") and contains(., "' . $this->escape($dragitem) . '")]';
+        return '//span[contains(@class, "draghome") and contains(., "' . $this->escape($dragitem) .
+                '") and not(contains(@class, "dragplaceholder"))]';
     }
 
     /**
@@ -82,6 +83,7 @@ class behat_qtype_ddwtos extends behat_base {
             $node->keyDown($key);
             $node->keyPress($key);
             $node->keyUp($key);
+            $this->wait_for_pending_js();
         }
     }
 }

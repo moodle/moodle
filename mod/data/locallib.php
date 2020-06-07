@@ -607,7 +607,8 @@ function data_set_events($data) {
         if ($data->timeavailablefrom > 0) {
             // Calendar event exists so update it.
             $event->name         = get_string('calendarstart', 'data', $data->name);
-            $event->description  = format_module_intro('data', $data, $data->coursemodule);
+            $event->description  = format_module_intro('data', $data, $data->coursemodule, false);
+            $event->format       = FORMAT_HTML;
             $event->timestart    = $data->timeavailablefrom;
             $event->timesort     = $data->timeavailablefrom;
             $event->visible      = instance_is_visible('data', $data);
@@ -623,7 +624,8 @@ function data_set_events($data) {
         // Event doesn't exist so create one.
         if (isset($data->timeavailablefrom) && $data->timeavailablefrom > 0) {
             $event->name         = get_string('calendarstart', 'data', $data->name);
-            $event->description  = format_module_intro('data', $data, $data->coursemodule);
+            $event->description  = format_module_intro('data', $data, $data->coursemodule, false);
+            $event->format       = FORMAT_HTML;
             $event->courseid     = $data->course;
             $event->groupid      = 0;
             $event->userid       = 0;
@@ -646,7 +648,8 @@ function data_set_events($data) {
         if ($data->timeavailableto > 0) {
             // Calendar event exists so update it.
             $event->name         = get_string('calendarend', 'data', $data->name);
-            $event->description  = format_module_intro('data', $data, $data->coursemodule);
+            $event->description  = format_module_intro('data', $data, $data->coursemodule, false);
+            $event->format       = FORMAT_HTML;
             $event->timestart    = $data->timeavailableto;
             $event->timesort     = $data->timeavailableto;
             $event->visible      = instance_is_visible('data', $data);
@@ -662,7 +665,8 @@ function data_set_events($data) {
         // Event doesn't exist so create one.
         if (isset($data->timeavailableto) && $data->timeavailableto > 0) {
             $event->name         = get_string('calendarend', 'data', $data->name);
-            $event->description  = format_module_intro('data', $data, $data->coursemodule);
+            $event->description  = format_module_intro('data', $data, $data->coursemodule, false);
+            $event->format       = FORMAT_HTML;
             $event->courseid     = $data->course;
             $event->groupid      = 0;
             $event->userid       = 0;

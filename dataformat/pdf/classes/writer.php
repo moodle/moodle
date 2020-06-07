@@ -72,6 +72,13 @@ class writer extends \core\dataformat\base {
     public function send_http_headers() {
     }
 
+    /**
+     * Start output to file, note that the actual writing of the file is done in {@see close_output_to_file()}
+     */
+    public function start_output_to_file(): void {
+        $this->start_output();
+    }
+
     public function start_output() {
         $this->pdf->AddPage('L');
     }
@@ -86,16 +93,52 @@ class writer extends \core\dataformat\base {
         $this->print_heading();
     }
 
+    /**
+     * Method to define whether the dataformat supports export of HTML
+     *
+     * @return bool
+     */
+    public function supports_html(): bool {
+        return true;
+    }
+
+    /**
+     * When exporting images, we need to return their Base64 encoded content. Otherwise TCPDF will create a HTTP
+     * request for them, which will lead to the login page (i.e. not the image it expects) and throw an exception
+     *
+     * Note: ideally we would copy the file to a temp location and return it's path, but a bug in TCPDF currently
+     * prevents that
+     *
+     * @param \stored_file $file
+     * @return string|null
+     */
+    protected function export_html_image_source(\stored_file $file): ?string {
+        // Set upper dimensions for embedded images.
+        $resizedimage = $file->resize_image(400, 300);
+
+        return '@' . base64_encode($resizedimage);
+    }
+
+    /**
+     * Write a single record
+     *
+     * @param array $record
+     * @param int $rownum
+     */
     public function write_record($record, $rownum) {
         $rowheight = 0;
 
-        // If $record is an object convert it to an array.
-        if (is_object($record)) {
-            $record = (array)$record;
-        }
-
+        $record = $this->format_record($record);
         foreach ($record as $cell) {
-            $rowheight = max($rowheight, $this->pdf->getStringHeight($this->colwidth, $cell, false, true, '', 1));
+            // We need to calculate the row height (accounting for any content). Unfortunately TCPDF doesn't provide an easy
+            // method to do that, so we create a second PDF inside a transaction, add cell content and use the largest cell by
+            // height. Solution similar to that at https://stackoverflow.com/a/1943096.
+            $pdf2 = clone $this->pdf;
+            $pdf2->startTransaction();
+            $pdf2->AddPage('L');
+            $pdf2->writeHTMLCell($this->colwidth, 0, '', '', $cell, 1, 1, false, true, 'L');
+            $rowheight = max($rowheight, $pdf2->getY() - $pdf2->getMargins()['top']);
+            $pdf2->rollbackTransaction();
         }
 
         $margins = $this->pdf->getMargins();
@@ -116,7 +159,7 @@ class writer extends \core\dataformat\base {
             // Determine whether we're at the last element of the record.
             $nextposition = ($lastkey === $key) ? 1 : 0;
             // Write the element.
-            $this->pdf->Multicell($this->colwidth, $rowheight, $cell, 1, 'L', false, $nextposition);
+            $this->pdf->writeHTMLCell($this->colwidth, $rowheight, '', '', $cell, 1, $nextposition, false, true, 'L');
         }
     }
 
@@ -124,6 +167,17 @@ class writer extends \core\dataformat\base {
         $filename = $this->filename . $this->get_extension();
 
         $this->pdf->Output($filename, 'D');
+    }
+
+    /**
+     * Write data to disk
+     *
+     * @return bool
+     */
+    public function close_output_to_file(): bool {
+        $this->pdf->Output($this->filepath, 'F');
+
+        return true;
     }
 
     /**

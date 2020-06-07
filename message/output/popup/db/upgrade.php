@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion The version that we are upgrading from
  */
 function xmldb_message_popup_upgrade($oldversion) {
-    global $CFG;
+    global $DB;
 
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
@@ -43,6 +43,14 @@ function xmldb_message_popup_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.8.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2020020600) {
+        // Clean up orphaned popup notification records.
+        $DB->delete_records_select('message_popup_notifications', 'notificationid NOT IN (SELECT id FROM {notifications})');
+
+        // Reportbuilder savepoint reached.
+        upgrade_plugin_savepoint(true, 2020020600, 'message', 'popup');
+    }
 
     return true;
 }

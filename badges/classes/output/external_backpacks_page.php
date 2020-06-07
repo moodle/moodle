@@ -56,6 +56,10 @@ class external_backpacks_page implements \renderable {
      * @return stdClass
      */
     public function export_for_template(\renderer_base $output) {
+        global $CFG, $PAGE;
+
+        $PAGE->requires->js_call_amd('core_badges/backpackactions', 'init');
+
         $data = new \stdClass();
         $data->baseurl = $this->url;
         $data->backpacks = array();
@@ -63,11 +67,13 @@ class external_backpacks_page implements \renderable {
         foreach ($this->backpacks as $backpack) {
             $exporter = new backpack_exporter($backpack);
             $backpack = $exporter->export($output);
-            if ($backpack->apiversion == OPEN_BADGES_V2) {
+            if ($backpack->apiversion == OPEN_BADGES_V2 || $backpack->apiversion == OPEN_BADGES_V2P1) {
                 $backpack->canedit = true;
             } else {
                 $backpack->canedit = false;
             }
+            $backpack->iscurrent = ($backpack->id == $CFG->badges_site_backpack);
+
             $data->backpacks[] = $backpack;
         }
         $data->warning = badges_verify_site_backpack();

@@ -299,7 +299,7 @@
     <location>php-jwt</location>
     <name>A simple library to encode and decode JSON Web Tokens (JWT) in PHP, conforming to RFC 7519</name>
     <license>BSD</license>
-    <version>5.0.0</version>
+    <version>5.2.0</version>
     <licenseversion>3-Clause</licenseversion>
   </library>
   <library>
@@ -325,5 +325,11 @@
     <name>url-polyfill</name>
     <license>MIT</license>
     <version>1.1.8</version>
+  </library>
+  <library>
+    <location>plist</location>
+    <name>plist</name>
+    <license>MIT</license>
+    <version>2.0.1</version>
   </library>
 </libraries>

@@ -394,6 +394,13 @@ class validator {
         }
         $this->add_message(self::INFO, 'componentmatch', $this->versionphp['component']);
 
+        // Ensure the version we are uploading is higher than the version currently installed.
+        $plugininfo = $this->get_plugin_manager()->get_plugin_info($this->versionphp['component']);
+        if (!is_null($plugininfo) && $this->versionphp['version'] < $plugininfo->versiondb) {
+            $this->add_message(self::ERROR, 'pluginversiontoolow', $plugininfo->versiondb);
+            return false;
+        }
+
         if (isset($info['plugin->maturity'])) {
             $this->versionphp['maturity'] = $info['plugin->maturity'];
             if ($this->versionphp['maturity'] === 'MATURITY_STABLE') {

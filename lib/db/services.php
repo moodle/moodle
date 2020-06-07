@@ -101,6 +101,24 @@ $functions = array(
         'ajax'          => true,
         'loginrequired' => true,
     ),
+    'core_backup_get_copy_progress' => array(
+        'classname'   => 'core_backup_external',
+        'classpath' => 'backup/externallib.php',
+        'methodname'  => 'get_copy_progress',
+        'description' => 'Gets the progress of course copy operations.',
+        'type'        => 'read',
+        'ajax'          => true,
+        'loginrequired' => true,
+    ),
+    'core_backup_submit_copy_form' => array(
+        'classname'   => 'core_backup_external',
+        'classpath' => 'backup/externallib.php',
+        'methodname'  => 'submit_copy_form',
+        'description' => 'Handles ajax submission of course copy form.',
+        'type'        => 'read',
+        'ajax'          => true,
+        'loginrequired' => true,
+    ),
     'core_badges_get_user_badges' => array(
         'classname'     => 'core_badges_external',
         'methodname'    => 'get_user_badges',
@@ -653,6 +671,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
+    'core_course_get_activity_chooser_footer' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'get_activity_chooser_footer',
+        'classpath' => 'course/externallib.php',
+        'description' => 'Fetch the data for the activity chooser footer.',
+        'type' => 'read',
+        'ajax' => true,
+    ),
     'core_course_toggle_activity_recommendation' => array(
         'classname' => 'core_course_external',
         'methodname' => 'toggle_activity_recommendation',
@@ -748,6 +774,7 @@ $functions = array(
         'type' => 'read',
         'loginrequired' => false,
         'ajax' => true,
+        'readonlysession' => false, // Fetching removes from stack.
     ),
     'core_session_touch' => array(
         'classname' => 'core\session\external',
@@ -1374,6 +1401,7 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'readonlysession' => true, // We don't modify the session.
     ),
     'core_message_mark_all_notifications_as_read' => array(
         'classname' => 'core_message_external',
@@ -2744,10 +2772,10 @@ $functions = array(
         'capabilities'  => '',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
-    'core_table_dynamic_fetch' => [
-        'classname' => 'core_table\external\dynamic\fetch',
+    'core_table_get_dynamic_table_content' => [
+        'classname' => 'core_table\external\dynamic\get',
         'methodname' => 'execute',
-        'description' => 'Fetch a dynamic table view raw html',
+        'description' => 'Get the dynamic table content raw html',
         'type' => 'read',
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
@@ -2761,6 +2789,43 @@ $functions = array(
         'ajax'          => 'true',
         'capabilities'  => '',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_contentbank_delete_content' => [
+        'classname'     => 'core_contentbank\external\delete_content',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Delete a content from the content bank.',
+        'type'          => 'write',
+        'ajax'          => 'true',
+        'capabilities'  => 'moodle/contentbank:deleteanycontent',
+    ],
+    'core_contentbank_rename_content' => [
+        'classname'     => 'core_contentbank\external\rename_content',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Rename a content in the content bank.',
+        'type'          => 'write',
+        'ajax'          => 'true',
+        'capabilities'  => 'moodle/contentbank:manageowncontent',
+    ],
+    'core_create_userfeedback_action_record' => [
+        'classname'     => 'core\external\userfeedback\record_action',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Record the action that the user takes in the user feedback notification for future use.',
+        'type'          => 'write',
+        'ajax'          => 'true',
+        'capabilities'  => '',
+    ],
+    'core_get_userfeedback_url' => [
+        'classname'     => 'core\external\userfeedback\generate_url',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Generate a dynamic URL for the external user feedback site.' .
+                           ' The URL includes some parameters to pre-fill the user feedback form.',
+        'type'          => 'read',
+        'ajax'          => 'true',
+        'capabilities'  => '',
     ],
 );
 

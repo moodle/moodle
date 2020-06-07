@@ -17,6 +17,9 @@
 /**
  * Task executor for adhoc tasks.
  *
+ * @deprecated since Moodle 3.9 MDL-63580. Please use the admin/cli/adhoc_task.php.
+ * @todo final deprecation. To be removed in Moodle 4.3 MDL-63594.
+ *
  * @package    tool_task
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -43,6 +46,8 @@ list($options, $unrecognized) = cli_get_params(
         'i' => 'ignorelimits',
     ]
 );
+
+debugging('admin/tool/task/cli/adhoc_task.php is deprecated. Please use admin/cli/adhoc_task.php instead.', DEBUG_DEVELOPER);
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);

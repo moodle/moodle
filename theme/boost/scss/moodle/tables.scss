@@ -46,3 +46,14 @@ table {
         caption-side: top;
     }
 }
+
+.table-dynamic .loading-icon {
+    position: absolute;
+    left: calc(50% - 1.5rem);
+    top: 200px;
+    .icon {
+        height: 3rem;
+        width: 3rem;
+        font-size: 3rem;
+    }
+}

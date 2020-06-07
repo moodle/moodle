@@ -3,6 +3,7 @@
     "builds": {
         "moodle-form-dateselector": {
             "jsfiles": [
+                "shared.js",
                 "dateselector.js",
                 "moodlecalendar.js",
                 "calendar.js"

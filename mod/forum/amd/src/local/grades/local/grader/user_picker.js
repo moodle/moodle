@@ -24,6 +24,7 @@
 
 import Templates from 'core/templates';
 import Selectors from './user_picker/selectors';
+import {get_string as getString} from 'core/str';
 
 const templatePath = 'mod_forum/local/grades/local/grader';
 
@@ -111,6 +112,10 @@ class UserPicker {
         const [{html, js}] = await Promise.all([this.renderUserChange(user), this.showUserCallback(user)]);
         const userRegion = this.root.querySelector(Selectors.regions.userRegion);
         Templates.replaceNodeContents(userRegion, html, js);
+
+        // Update the hidden now-grading region so screen readers can announce the user that's currently being graded.
+        const currentUserRegion = this.root.querySelector(Selectors.regions.currentUser);
+        currentUserRegion.textContent = await getString('nowgradinguser', 'mod_forum', user.fullname);
     }
 
     /**

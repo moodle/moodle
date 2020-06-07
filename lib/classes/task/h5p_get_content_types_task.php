@@ -59,6 +59,10 @@ class h5p_get_content_types_task extends scheduled_task {
      * Execute the task.
      */
     public function execute() {
+        // MDL-68579, avoid execute the task through behat tests.
+        if (defined('BEHAT_SITE_RUNNING')) {
+            return true;
+        }
 
         $core = $this->get_core();
 

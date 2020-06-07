@@ -1,8 +1,8 @@
 {{#haspages}}
     <nav aria-label="{{label}}" class="pagination pagination-centered justify-content-center">
-        <ul class="mt-1 pagination ">
+        <ul class="mt-1 pagination " data-page-size="{{pagesize}}">
             {{#previous}}
-                <li class="page-item">
+                <li class="page-item" data-page-number="{{page}}">
                     <a href="{{url}}" class="page-link" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                         <span class="sr-only">{{#str}}previous{{/str}}</span>
@@ -10,15 +10,15 @@
                 </li>
             {{/previous}}
             {{#first}}
-                <li class="page-item">
+                <li class="page-item" data-page-number="{{page}}">
                     <a href="{{url}}" class="page-link">{{page}}</a>
                 </li>
-                <li class="page-item disabled">
+                <li class="page-item disabled" data-page-number="{{page}}">
                     <span class="page-link">&hellip;</a>
                 </li>
             {{/first}}
             {{#pages}}
-                <li class="page-item {{#active}}active{{/active}}">
+                <li class="page-item {{#active}}active{{/active}}" data-page-number="{{page}}">
                     <a href="{{#url}}{{.}}{{/url}}{{^url}}#{{/url}}" class="page-link">
                         {{page}}
                         {{#active}}
@@ -28,15 +28,15 @@
                 </li>
             {{/pages}}
             {{#last}}
-                <li class="page-item disabled">
+                <li class="page-item disabled" data-page-number="{{page}}">
                     <span class="page-link">&hellip;</a>
                 </li>
-                <li class="page-item">
+                <li class="page-item" data-page-number="{{page}}">
                     <a href="{{url}}" class="page-link">{{page}}</a>
                 </li>
             {{/last}}
             {{#next}}
-                <li class="page-item">
+                <li class="page-item" data-page-number="{{page}}">
                     <a href="{{url}}" class="page-link" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                         <span class="sr-only">{{#str}}next{{/str}}</span>

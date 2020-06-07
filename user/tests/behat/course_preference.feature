@@ -31,4 +31,3 @@ Feature: As a user, "Course preferences" allows me to set my course preference(s
     And I should not see "Add a resource..." in the "Topic 1" "section"
     And I turn editing mode on
     Then I should see "Add a resource..." in the "Topic 1" "section"
-    And I should not see "Add an activity or resource" in the "Topic 1" "section"

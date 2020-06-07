@@ -86,6 +86,7 @@ class core_component {
     protected static $psr0namespaces = array(
         'Horde' => 'lib/horde/framework/Horde',
         'Mustache' => 'lib/mustache/src/Mustache',
+        'CFPropertyList' => 'lib/plist/classes/CFPropertyList',
     );
     /** @var array associative array of PRS-4 namespaces and corresponding paths. */
     protected static $psr4namespaces = array(

@@ -49,8 +49,11 @@
     margin-bottom: $spacer / 2;
     border-bottom: $border-width solid $table-border-color;
 }
-.mform > .form-group {
-    margin-left: $spacer * 1.5;
+
+@include media-breakpoint-up(sm) {
+    .mform > .form-group {
+        margin-left: $spacer * 1.5;
+    }
 }
 
 .editor_atto_content.form-control {

@@ -33,7 +33,7 @@
     }
 }}
 <div class="optionsummary" tabindex="-1" data-region="chooser-option-summary-container" aria-labelledby="optionsummary_label" aria-describedby="optionsumary_desc">
-    <div class="content text-left mb-5 px-5 py-4" data-region="chooser-option-summary-content-container">
+    <div class="content text-left mb-5 p-2 px-sm-5 py-sm-4" data-region="chooser-option-summary-content-container">
         <div class="heading mb-4">
             <h5 id="optionsummary_label-{{uniqid}}" data-region="summary-header" tabindex="0">
                 {{{icon}}}
@@ -44,12 +44,9 @@
             {{{help}}}
         </div>
     </div>
-    <div class="actions fixed-bottom w-100 d-flex justify-content-between position-absolute py-3 px-4" data-region="chooser-option-summary-actions-container">
-        <button data-action="close-chooser-option-summary" class="closeoptionsummary btn btn-secondary" tabindex="0" data-modname="{{componentname}}_{{link}}">
-            {{#str}} back {{/str}}
-        </button>
-        <a href="{{link}}" title="{{#str}} addnew, moodle, {{title}} {{/str}}" data-action="add-chooser-option" class="addoption btn btn-primary" tabindex="0">
-            {{#str}} add {{/str}}
-        </a>
-    </div>
+    {{^showFooter}}
+        <div class="fixed-bottom position-absolute py-3 px-4 border-top modal-footer">
+            {{>core_course/local/activitychooser/footer_partial}}
+        </div>
+    {{/showFooter}}
 </div>

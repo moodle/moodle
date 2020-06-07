@@ -172,4 +172,25 @@ class h5p_core_testcase extends \advanced_testcase {
         $siteuuid2 = $this->core->get_site_uuid();
         $this->assertEquals( $siteuuid, $siteuuid2);
     }
+
+    /**
+     * Test if no handler has been defined.
+     */
+    public function test_get_default_handler() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        // Emtpy the h5plibraryhandler setting.
+        $CFG->h5plibraryhandler = '';
+
+        // Get the default habdler library to use in the settings h5p page.
+        // For instance, h5plib_v124.
+        $handlerlib = autoloader::get_default_handler_library();
+        $this->assertNotNull($handlerlib);
+        $this->assertStringNotContainsString($handlerlib, '\local\library\handler');
+        // Get the default handler class.
+        // For instance, \h5plib_v124\local\library\handler.
+        $handlerclass = autoloader::get_default_handler();
+        $this->assertStringEndsWith('\local\library\handler', $handlerclass);
+    }
 }

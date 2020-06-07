@@ -163,14 +163,44 @@ class content_item_service {
      * @return array the array of exported content items.
      */
     public function get_all_content_items(\stdClass $user): array {
-        global $PAGE;
         $allcontentitems = $this->repository->find_all();
+
+        return $this->export_content_items($user, $allcontentitems);
+    }
+
+    /**
+     * Get content items which name matches a certain pattern and may be added to courses,
+     * irrespective of course caps, for site admin views, etc.
+     *
+     * @param \stdClass $user The user object.
+     * @param string $pattern The search pattern.
+     * @return array The array of exported content items.
+     */
+    public function get_content_items_by_name_pattern(\stdClass $user, string $pattern): array {
+        $allcontentitems = $this->repository->find_all();
+
+        $filteredcontentitems = array_filter($allcontentitems, function($contentitem) use ($pattern) {
+            return preg_match("/$pattern/i", $contentitem->get_title()->get_value());
+        });
+
+        return $this->export_content_items($user, $filteredcontentitems);
+    }
+
+    /**
+     * Export content items.
+     *
+     * @param \stdClass $user The user object.
+     * @param array $contentitems The content items array.
+     * @return array The array of exported content items.
+     */
+    private function export_content_items(\stdClass $user, $contentitems) {
+        global $PAGE;
 
         // Export the objects to get the formatted objects for transfer/display.
         $favourites = $this->get_favourite_content_items_for_user($user);
         $recommendations = $this->get_recommendations();
         $ciexporter = new course_content_items_exporter(
-            $allcontentitems,
+            $contentitems,
             [
                 'context' => \context_system::instance(),
                 'favouriteitems' => $favourites,

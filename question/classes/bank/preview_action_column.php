@@ -49,6 +49,14 @@ class preview_action_column extends action_column_base implements menuable_actio
 
     protected function display_content($question, $rowclasses) {
         global $PAGE;
+
+        if (!\question_bank::is_qtype_installed($question->qtype)) {
+            // It sometimes happens that people end up with junk questions
+            // in their question bank of a type that is no longer installed.
+            // We cannot do most actions on them, because that leads to errors.
+            return;
+        }
+
         if (question_has_capability_on($question, 'use')) {
             echo $PAGE->get_renderer('core_question')->question_preview_link(
                     $question->id, $this->qbank->get_most_specific_context(), false);
@@ -56,6 +64,13 @@ class preview_action_column extends action_column_base implements menuable_actio
     }
 
     public function get_action_menu_link(\stdClass $question): ?\action_menu_link {
+        if (!\question_bank::is_qtype_installed($question->qtype)) {
+            // It sometimes happens that people end up with junk questions
+            // in their question bank of a type that is no longer installed.
+            // We cannot do most actions on them, because that leads to errors.
+            return null;
+        }
+
         if (!question_has_capability_on($question, 'use')) {
             return null;
         }

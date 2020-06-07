@@ -67,6 +67,84 @@ class qtype_calculated_test extends advanced_testcase {
         $this->assertEquals(0.1, $this->qtype->get_random_guess_score($q));
     }
 
+    public function test_load_question() {
+        $this->resetAfterTest();
+
+        $syscontext = context_system::instance();
+        /** @var core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category(['contextid' => $syscontext->id]);
+
+        $fromform = test_question_maker::get_question_form_data('calculated');
+        $fromform->category = $category->id . ',' . $syscontext->id;
+
+        $question = new stdClass();
+        $question->category = $category->id;
+        $question->qtype = 'calculated';
+        $question->createdby = 0;
+
+        $this->qtype->save_question($question, $fromform);
+        $questiondata = question_bank::load_question_data($question->id);
+
+        $this->assertEquals(['id', 'category', 'parent', 'name', 'questiontext', 'questiontextformat',
+                'generalfeedback', 'generalfeedbackformat', 'defaultmark', 'penalty', 'qtype',
+                'length', 'stamp', 'version', 'hidden', 'timecreated', 'timemodified',
+                'createdby', 'modifiedby', 'idnumber', 'contextid', 'options', 'hints', 'categoryobject'],
+                array_keys(get_object_vars($questiondata)));
+        $this->assertEquals($category->id, $questiondata->category);
+        $this->assertEquals(0, $questiondata->parent);
+        $this->assertEquals($fromform->name, $questiondata->name);
+        $this->assertEquals($fromform->questiontext, $questiondata->questiontext);
+        $this->assertEquals($fromform->questiontextformat, $questiondata->questiontextformat);
+        $this->assertEquals('', $questiondata->generalfeedback);
+        $this->assertEquals(0, $questiondata->generalfeedbackformat);
+        $this->assertEquals($fromform->defaultmark, $questiondata->defaultmark);
+        $this->assertEquals(0, $questiondata->penalty);
+        $this->assertEquals('calculated', $questiondata->qtype);
+        $this->assertEquals(1, $questiondata->length);
+        $this->assertEquals(0, $questiondata->hidden);
+        $this->assertEquals($question->createdby, $questiondata->createdby);
+        $this->assertEquals($question->createdby, $questiondata->modifiedby);
+        $this->assertEquals('', $questiondata->idnumber);
+        $this->assertEquals($syscontext->id, $questiondata->contextid);
+        $this->assertEquals([], $questiondata->hints);
+
+        // Options.
+        $this->assertEquals($questiondata->id, $questiondata->options->question);
+        $this->assertEquals([], $questiondata->options->units);
+        $this->assertEquals(qtype_numerical::UNITNONE, $questiondata->options->showunits);
+        $this->assertEquals(0, $questiondata->options->unitgradingtype); // Unit role is none, so this is 0.
+        $this->assertEquals($fromform->unitpenalty, $questiondata->options->unitpenalty);
+        $this->assertEquals($fromform->unitsleft, $questiondata->options->unitsleft);
+
+        // Build the expected answer base.
+        $answerbase = [
+            'question' => $questiondata->id,
+            'answerformat' => 0,
+        ];
+        $expectedanswers = [];
+        foreach ($fromform->answer as $key => $value) {
+            $answer = $answerbase + [
+                'answer' => $fromform->answer[$key],
+                'fraction' => (float)$fromform->fraction[$key],
+                'tolerance' => $fromform->tolerance[$key],
+                'tolerancetype' => $fromform->tolerancetype[$key],
+                'correctanswerlength' => $fromform->correctanswerlength[$key],
+                'correctanswerformat' => $fromform->correctanswerformat[$key],
+                'feedback' => $fromform->feedback[$key]['text'],
+                'feedbackformat' => $fromform->feedback[$key]['format'],
+            ];
+            $expectedanswers[] = (object)$answer;
+        }
+        // Need to get rid of ids.
+        $gotanswers = array_map(function($answer) {
+                unset($answer->id);
+                return $answer;
+        }, $questiondata->options->answers);
+        // Compare answers.
+        $this->assertEquals($expectedanswers, array_values($gotanswers));
+    }
+
     protected function get_possible_response($ans, $tolerance, $type) {
         $a = new stdClass();
         $a->answer = $ans;

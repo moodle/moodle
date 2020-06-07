@@ -2,14 +2,14 @@
 # process (which uses our internal CI system) this file is here for the benefit
 # of community developers git clones - see MDL-51458.
 
-sudo: required
-
 # We currently disable Travis notifications entirely until https://github.com/travis-ci/travis-ci/issues/4976
 # is fixed.
 notifications:
   email: false
 
 language: php
+
+os: linux
 
 dist: xenial
 
@@ -18,7 +18,7 @@ services:
 
 php:
     # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
-    - 7.3
+    - 7.4
     - 7.2
 
 addons:
@@ -41,18 +41,18 @@ env:
     # Perform an upgrade test too.
     - DB=pgsql    TASK=UPGRADE
 
-matrix:
+jobs:
     # Enable fast finish.
     # This will fail the build if a single job fails (except those in allow_failures).
     # It will not stop the jobs from running.
     fast_finish: true
 
     include:
-          # Run mysql only on 7.3 - it's just too slow
-        - php: 7.3
+          # Run mysql only on highest - it's just too slow
+        - php: 7.4
           env: DB=mysqli   TASK=PHPUNIT
-          # Run grunt/npm install on highest version ('node' is an alias for the latest node.js version.)
-        - php: 7.2
+          # Run grunt/npm install on highest version too ('node' is an alias for the latest node.js version.)
+        - php: 7.4
           env: DB=none     TASK=GRUNT   NVM_VERSION='lts/carbon'
 
 cache:

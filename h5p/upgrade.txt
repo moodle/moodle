@@ -6,3 +6,4 @@ information provided here is intended especially for developers.
 than one H5P library version.
 * H5P third-party libraries have been moved from /lib/h5p to h5p/h5plib/v124,
 as an h5plib plugintype.
+* H5P Editor PHP library added to h5plib v124 plugin.

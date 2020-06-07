@@ -189,11 +189,11 @@ Feature: Group assignment submissions
       | Grade out of 100 | 50.0 |
       | Apply grades and feedback to entire group | 1 |
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I set the following fields to these values:
       | Allow another attempt | 1 |
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     When I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration

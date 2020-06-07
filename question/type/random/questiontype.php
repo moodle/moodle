@@ -116,6 +116,7 @@ class qtype_random extends question_type {
     }
 
     public function get_question_options($question) {
+        parent::get_question_options($question);
         return true;
     }
 
@@ -165,7 +166,7 @@ class qtype_random extends question_type {
             if ($categoryname) {
                 $a->category = $categoryname;
             }
-            $a->tags = implode(',', array_map(function($tagname) {
+            $a->tags = implode(', ', array_map(function($tagname) {
                 return explode(',', $tagname)[1];
             }, $tagnames));
         } else {

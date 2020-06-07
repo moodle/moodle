@@ -1,0 +1,17 @@
+@mixin button-background($background, $highlight) {
+  background: $background;
+  background-image:
+    linear-gradient($highlight 50%, transparent 50%, transparent);
+}
+
+@mixin field-margin($margin) {
+  margin: $margin 0;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}

@@ -74,7 +74,7 @@ trait core_behat_file_helper {
             $filepickerelement = behat_context_helper::escape($filepickerelement);
             $filepickercontainer = $this->find(
                     'xpath',
-                    "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
+                    "//input[./@id = substring-before(//p[normalize-space(.)=$filepickerelement]/@id, '_label')]" .
                     "//ancestor::*[@data-fieldtype = 'filemanager' or @data-fieldtype = 'filepicker']",
                     $exception
             );

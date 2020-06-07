@@ -257,7 +257,11 @@
                                         <div class="author-info align-middle">
                                             <div class="mb-1 line-height-3 text-truncate">{{fullname}}</div>
                                             <div class="line-height-3">
-                                                {{#userdate}}{{discussion.times.created}}, {{#str}}strftimedatemonthabbr, langconfig{{/str}}{{/userdate}}
+                                                {{< core/time_element }}
+                                                    {{$elementid}}created-{{discussion.id}}{{/elementid}}
+                                                    {{$timestampval}}{{discussion.times.created}}{{/timestampval}}
+                                                    {{$userdateformatval}}{{#str}}strftimedatemonthabbr, langconfig{{/str}}{{/userdateformatval}}
+                                                {{/core/time_element}}
                                             </div>
                                         </div>
                                     </div>
@@ -277,7 +281,11 @@
                                             <div class="line-height-3">
                                                 {{#latestpostid}}
                                                     <a href="{{{discussion.urls.viewlatest}}}" title="{{#userdate}}{{discussion.times.modified}},{{#str}}strftimerecentfull{{/str}}{{/userdate}}">
-                                                        {{#userdate}}{{discussion.times.modified}}, {{#str}}strftimedatemonthabbr, langconfig{{/str}}{{/userdate}}
+                                                        {{< core/time_element }}
+                                                            {{$elementid}}modified-{{discussion.id}}{{/elementid}}
+                                                            {{$timestampval}}{{discussion.times.modified}}{{/timestampval}}
+                                                            {{$userdateformatval}}{{#str}}strftimedatemonthabbr, langconfig{{/str}}{{/userdateformatval}}
+                                                        {{/ core/time_element }}
                                                     </a>
                                                 {{/latestpostid}}
                                             </div>

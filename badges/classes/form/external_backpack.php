@@ -48,33 +48,31 @@ class external_backpack extends \moodleform {
 
         if (isset($this->_customdata['externalbackpack'])) {
             $backpack = $this->_customdata['externalbackpack'];
-        } else {
-            throw new \coding_exception('backpack is required.');
         }
-
-        $url = $backpack->backpackapiurl;
-
-        $mform->addElement('static', 'backpackapiurlinfo', get_string('backpackapiurl', 'core_badges'), $url);
-
-        $mform->addElement('hidden', 'backpackapiurl', $url);
-        $mform->setType('backpackapiurl', PARAM_URL);
-
-        $url = $backpack->backpackweburl;
-        $mform->addElement('static', 'backpackweburlinfo', get_string('backpackweburl', 'core_badges'), $url);
-        $mform->addElement('hidden', 'backpackweburl', $url);
-        $mform->setType('backpackweburl', PARAM_URL);
-
-        $options = badges_get_badge_api_versions();
-        $label = $options[$backpack->apiversion];
-        $mform->addElement('static', 'apiversioninfo', get_string('apiversion', 'core_badges'), $label);
-        $mform->addElement('hidden', 'apiversion', $backpack->apiversion);
-        $mform->setType('apiversion', PARAM_INTEGER);
-
-        $mform->addElement('hidden', 'id', $backpack->id);
-        $mform->setType('id', PARAM_INTEGER);
 
         $mform->addElement('hidden', 'action', 'edit');
         $mform->setType('action', PARAM_ALPHA);
+
+        if ($backpack) {
+            $mform->addElement('hidden', 'id', $backpack->id);
+            $mform->setType('id', PARAM_INTEGER);
+        }
+
+        $mform->addElement('text', 'backpackapiurl',  get_string('backpackapiurl', 'core_badges'));
+        $mform->setType('backpackapiurl', PARAM_URL);
+        $mform->addRule('backpackapiurl', null, 'required', null, 'client');
+        $mform->addRule('backpackapiurl', get_string('maximumchars', '', 255), 'maxlength', 50, 'client');
+
+        $mform->addElement('text', 'backpackweburl', get_string('backpackweburl', 'core_badges'));
+        $mform->setType('backpackweburl', PARAM_URL);
+        $mform->addRule('backpackweburl', null, 'required', null, 'client');
+        $mform->addRule('backpackweburl', get_string('maximumchars', '', 255), 'maxlength', 50, 'client');
+
+        $apiversions = badges_get_badge_api_versions();
+        $mform->addElement('select', 'apiversion', get_string('apiversion', 'core_badges'), $apiversions);
+        $mform->setType('apiversion', PARAM_RAW);
+        $mform->setDefault('apiversion', OPEN_BADGES_V2P1);
+        $mform->addRule('apiversion', null, 'required', null, 'client');
 
         $issuername = $CFG->badges_defaultissuername;
         $mform->addElement('static', 'issuerinfo', get_string('defaultissuername', 'core_badges'), $issuername);
@@ -82,12 +80,19 @@ class external_backpack extends \moodleform {
         $issuercontact = $CFG->badges_defaultissuercontact;
         $mform->addElement('static', 'issuerinfo', get_string('defaultissuercontact', 'core_badges'), $issuercontact);
 
-        $mform->addElement('passwordunmask', 'password', get_string('defaultissuerpassword', 'core_badges'));
-        $mform->setType('password', PARAM_RAW);
-        $mform->addHelpButton('password', 'defaultissuerpassword', 'badges');
-        $mform->hideIf('password', 'apiversion', 'eq', 1);
-
-        $this->set_data($backpack);
+        if ($backpack && $backpack->apiversion != OPEN_BADGES_V2P1) {
+            $mform->addElement('passwordunmask', 'password', get_string('defaultissuerpassword', 'core_badges'));
+            $mform->setType('password', PARAM_RAW);
+            $mform->addHelpButton('password', 'defaultissuerpassword', 'badges');
+            $mform->hideIf('password', 'apiversion', 'eq', 1);
+        } else {
+            $oauth2options = badges_get_oauth2_service_options();
+            $mform->addElement('select', 'oauth2_issuerid', get_string('oauth2issuer', 'core_badges'), $oauth2options);
+            $mform->setType('oauth2_issuerid', PARAM_INT);
+        }
+        if ($backpack) {
+            $this->set_data($backpack);
+        }
 
         // Disable short forms.
         $mform->setDisableShortforms();
@@ -95,4 +100,24 @@ class external_backpack extends \moodleform {
         $this->add_action_buttons();
     }
 
+    /**
+     * Validate the data from the form.
+     *
+     * @param  array $data form data
+     * @param  array $files form files
+     * @return array An array of error messages.
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        // Ensure backpackapiurl and  are valid URLs.
+        if (!empty($data['backpackapiurl']) && !preg_match('@^https?://.+@', $data['backpackapiurl'])) {
+            $errors['backpackapiurl'] = get_string('invalidurl', 'badges');
+        }
+        if (!empty($data['backpackweburl']) && !preg_match('@^https?://.+@', $data['backpackweburl'])) {
+            $errors['backpackweburl'] = get_string('invalidurl', 'badges');
+        }
+
+        return $errors;
+    }
 }

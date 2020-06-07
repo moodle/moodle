@@ -126,10 +126,11 @@ define(function() {
      * Update the shape from the string representation.
      *
      * @param {String} coordinates in the form returned by getCoordinates.
+     * @param {number} ratio Ratio to scale.
      * @return {boolean} true if the string could be parsed and the shape updated, else false.
      */
-    Shape.prototype.parse = function(coordinates) {
-        void (coordinates);
+    Shape.prototype.parse = function(coordinates, ratio) {
+        void (coordinates, ratio);
         throw new Error('Not implemented.');
     };
 
@@ -264,14 +265,16 @@ define(function() {
         svgEl.childNodes[1].textContent = this.label;
     };
 
-    Circle.prototype.parse = function(coordinates) {
-        if (!coordinates.match(/^\d+,\d+;\d+$/)) {
+    Circle.prototype.parse = function(coordinates, ratio) {
+        if (!coordinates.match(/^\d+(\.\d+)?,\d+(\.\d+)?;\d+(\.\d+)?$/)) {
             return false;
         }
 
         var bits = coordinates.split(';');
         this.centre = Point.parse(bits[0]);
-        this.radius = Math.round(bits[1]);
+        this.centre.x = this.centre.x * parseFloat(ratio);
+        this.centre.y = this.centre.y * parseFloat(ratio);
+        this.radius = Math.round(bits[1]) * parseFloat(ratio);
         return true;
     };
 
@@ -384,16 +387,18 @@ define(function() {
         svgEl.childNodes[1].textContent = this.label;
     };
 
-    Rectangle.prototype.parse = function(coordinates) {
-        if (!coordinates.match(/^\d+,\d+;\d+,\d+$/)) {
+    Rectangle.prototype.parse = function(coordinates, ratio) {
+        if (!coordinates.match(/^\d+(\.\d+)?,\d+(\.\d+)?;\d+(\.\d+)?,\d+(\.\d+)?$/)) {
             return false;
         }
 
         var bits = coordinates.split(';');
         this.centre = Point.parse(bits[0]);
+        this.centre.x = this.centre.x * parseFloat(ratio);
+        this.centre.y = this.centre.y * parseFloat(ratio);
         var size = Point.parse(bits[1]);
-        this.width = size.x;
-        this.height = size.y;
+        this.width = size.x * parseFloat(ratio);
+        this.height = size.y * parseFloat(ratio);
         return true;
     };
 
@@ -479,6 +484,7 @@ define(function() {
         Shape.call(this, label, 0, 0);
         this.points = points ? points.slice() : [new Point(10, 10), new Point(40, 10), new Point(10, 40)];
         this.normalizeShape();
+        this.ratio = 1;
     }
     Polygon.prototype = new Shape();
 
@@ -502,13 +508,14 @@ define(function() {
 
     Polygon.prototype.updateSvg = function(svgEl) {
         svgEl.childNodes[0].setAttribute('points', this.getCoordinates().replace(/[,;]/g, ' '));
+        svgEl.childNodes[0].setAttribute('transform', 'scale(' + parseFloat(this.ratio) + ')');
         svgEl.childNodes[1].setAttribute('x', this.centre.x);
         svgEl.childNodes[1].setAttribute('y', this.centre.y + 15);
         svgEl.childNodes[1].textContent = this.label;
     };
 
-    Polygon.prototype.parse = function(coordinates) {
-        if (!coordinates.match(/^\d+,\d+(?:;\d+,\d+)*$/)) {
+    Polygon.prototype.parse = function(coordinates, ratio) {
+        if (!coordinates.match(/^\d+(\.\d+)?,\d+(\.\d+)?(?:;\d+(\.\d+)?,\d+(\.\d+)?)*$/)) {
             return false;
         }
 
@@ -521,6 +528,7 @@ define(function() {
         this.points = points;
         this.centre.x = 0;
         this.centre.y = 0;
+        this.ratio = ratio;
         this.normalizeShape();
 
         return true;
@@ -635,6 +643,9 @@ define(function() {
         for (var i = 0; i < this.points.length; i++) {
             editHandles.push(this.points[i].offset(this.centre.x, this.centre.y));
         }
+
+        this.centre.x = this.centre.x * parseFloat(this.ratio);
+        this.centre.y = this.centre.y * parseFloat(this.ratio);
 
         return {
             moveHandle: this.centre,

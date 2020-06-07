@@ -49,14 +49,17 @@ Feature: Organize students into groups
     And the "members" select box should not contain "Student 0 (student0@example.com)"
     And the "members" select box should not contain "Student 1 (student1@example.com)"
     And I navigate to course participants
-    And I open the autocomplete suggestions list
-    And I click on "Group: Group 1" item in the autocomplete list
+    And I set the field "type" in the "Filter 1" "fieldset" to "Groups"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I click on "Group 1" "list_item"
+    And I click on "Apply filters" "button"
     And I should see "Student 0"
     And I should see "Student 1"
     And I should not see "Student 2"
-    And I click on "Group: Group 1" "text" in the ".form-autocomplete-selection" "css_element"
-    And I open the autocomplete suggestions list
-    And I click on "Group: Group 2" item in the autocomplete list
+    And I click on "Remove \"Group 1\" from filter" "button" in the "Filter 1" "fieldset"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I click on "Group 2" "list_item"
+    And I click on "Apply filters" "button"
     And I should see "Student 2"
     And I should see "Student 3"
     And I should not see "Student 0"

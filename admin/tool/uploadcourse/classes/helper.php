@@ -338,6 +338,103 @@ class tool_uploadcourse_helper {
     }
 
     /**
+     * Return array of all custom course fields indexed by their shortname
+     *
+     * @return \core_customfield\field_controller[]
+     */
+    public static function get_custom_course_fields(): array {
+        $result = [];
+
+        $fields = \core_course\customfield\course_handler::create()->get_fields();
+        foreach ($fields as $field) {
+            $result[$field->get('shortname')] = $field;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Return array of custom field element names
+     *
+     * @return string[]
+     */
+    public static function get_custom_course_field_names(): array {
+        $result = [];
+
+        $fields = self::get_custom_course_fields();
+        foreach ($fields as $field) {
+            $controller = \core_customfield\data_controller::create(0, null, $field);
+            $result[] = $controller->get_form_element_name();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Return any elements from passed $data whose key matches one of the custom course fields defined for the site
+     *
+     * @param array $data
+     * @param array $defaults
+     * @param context $context
+     * @param array $errors Will be populated with any errors
+     * @return array
+     */
+    public static function get_custom_course_field_data(array $data, array $defaults, context $context,
+            array &$errors = []): array {
+
+        $fields = self::get_custom_course_fields();
+        $result = [];
+
+        $canchangelockedfields = guess_if_creator_will_have_course_capability('moodle/course:changelockedcustomfields', $context);
+
+        foreach ($data as $name => $originalvalue) {
+            if (preg_match('/^customfield_(?<name>.*)?$/', $name, $matches)
+                    && isset($fields[$matches['name']])) {
+
+                $fieldname = $matches['name'];
+                $field = $fields[$fieldname];
+
+                // Skip field if it's locked and user doesn't have capability to change locked fields.
+                if ($field->get_configdata_property('locked') && !$canchangelockedfields) {
+                    continue;
+                }
+
+                // Create field data controller.
+                $controller = \core_customfield\data_controller::create(0, null, $field);
+                $controller->set('id', 1);
+
+                $defaultvalue = $defaults["customfield_{$fieldname}"] ?? $controller->get_default_value();
+                $value = (empty($originalvalue) ? $defaultvalue : $field->parse_value($originalvalue));
+
+                // If we initially had a value, but now don't, then reset it to the default.
+                if (!empty($originalvalue) && empty($value)) {
+                    $value = $defaultvalue;
+                }
+
+                // Validate data with controller.
+                $fieldformdata = [$controller->get_form_element_name() => $value];
+                $validationerrors = $controller->instance_form_validation($fieldformdata, []);
+                if (count($validationerrors) > 0) {
+                    $errors['customfieldinvalid'] = new lang_string('customfieldinvalid', 'tool_uploadcourse',
+                        $field->get_formatted_name());
+
+                    continue;
+                }
+
+                $controller->set($controller->datafield(), $value);
+
+                // Pass an empty object to the data controller, which will transform it to a correct name/value pair.
+                $instance = new stdClass();
+                $controller->instance_form_before_set_data($instance);
+
+                $result = array_merge($result, (array) $instance);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Helper to increment an ID number.
      *
      * This first checks if the ID number is in use.
@@ -493,5 +590,4 @@ class tool_uploadcourse_helper {
         }
         return $id;
     }
-
 }

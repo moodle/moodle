@@ -1,0 +1,69 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_contentbank/bankcontent/toolbar_dropdown
+
+    Example context (json):
+        {
+            "name": "Add",
+            "dropdown": true,
+            "link": "http://something/contentbank/edit.php?contextid=1",
+            "contenttypes": [
+                {
+                    "name": "h5p",
+                    "baseurl": "http://something/contentbank/edit.php?contextid=1&plugin=h5p",
+                    "types": [
+                        {
+                            "typename": "H5P Interactive Content"
+                        },
+                        {
+                            "typename": "Accordion",
+                            "typeeditorparams": "library=Accordion-1.4",
+                            "typeicon": "http://something/pluginfile.php/1/core_h5p/libraries/13/H5P.Accordion-1.4/icon.svg"
+                        }
+                    ]
+                }
+            ]
+        }
+
+}}
+<div class="btn-group mr-1" role="group">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" data-action="{{name}}-content"
+            aria-haspopup="true" aria-expanded="false" {{^contenttypes}}title="{{#str}}nocontenttypes, core_contentbank{{/str}}"
+            disabled{{/contenttypes}}>
+        {{#name}} {{name}} {{/name}}
+    </button>
+    <div class="dropdown-menu dropdown-scrollable dropdown-menu-right">
+        {{#contenttypes}}
+            {{#types}}
+                {{^typeeditorparams}}
+                    <h6 class="dropdown-header">{{ typename }}</h6>
+                {{/typeeditorparams}}
+                {{#typeeditorparams}}
+                    <a class="dropdown-item icon-size-4" href="{{{ baseurl }}}&{{{ typeeditorparams }}}">
+                        {{#typeicon}}
+                            <img alt="" class="icon" src="{{{ typeicon }}}">
+                        {{/typeicon}}
+                        {{^typeicon}}
+                            {{#pix}} b/h5p_library, core {{/pix}}
+                        {{/typeicon}} {{ typename }}
+                    </a>
+                {{/typeeditorparams}}
+            {{/types}}
+        {{/contenttypes}}
+    </div>
+</div>

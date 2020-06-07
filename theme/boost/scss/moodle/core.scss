@@ -8,22 +8,37 @@ $bg-inverse-link-color: #fff !default;
 #region-main {
     overflow-x: auto;
     overflow-y: visible;
-    border: $card-border-width solid $card-border-color;
-    @if $enable-rounded {
-        @include border-radius($card-border-radius);
-    }
-    padding: $card-spacer-x;
     background-color: $body-bg;
 }
 
-.context-header-settings-menu,
-.region-main-settings-menu {
-    float: right;
-    width: auto;
-    max-width: 4em;
-    height: 2em;
-    display: block;
-    margin-top: 4px;
+@include media-breakpoint-up(sm) {
+    #region-main {
+        border: $card-border-width solid $card-border-color;
+        @if $enable-rounded {
+            @include border-radius($card-border-radius);
+        }
+        padding: $card-spacer-x;
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .context-header-settings-menu,
+    .region-main-settings-menu {
+        float: right;
+        width: auto;
+        max-width: 4em;
+        height: 2em;
+        display: block;
+        margin-top: 4px;
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .context-header-settings-menu,
+    .region-main-settings-menu {
+        display: flex;
+        justify-content: flex-end;
+    }
 }
 
 $gototop-bottom-position: 50px !default;
@@ -33,19 +48,19 @@ $gototop-bottom-position: 50px !default;
     opacity: 0;
     transition: opacity .7s ease 0s, visibility .1s ease .8s;
     display: block;
-    position: fixed; /* IE compatibility hack */
-    @supports (position: sticky) {
-        position: sticky;
-    }
-    @supports (-ms-ime-align:auto) {
-        position: fixed; /* Edge compatibility hack */
-    }
+    position: fixed;
     bottom: $gototop-bottom-position;
     right: 0;
     a {
         position: absolute;
         right: 0;
         transform: translateY(-100%);
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    #goto-top-link {
+        bottom: 0;
     }
 }
 
@@ -117,6 +132,66 @@ a.dimmed_text:visited,
     color: $text-muted;
 }
 
+// Accessible focus styling for links, add .aalink to links with custom css classes to get
+// accessible focus styles.
+.aalink,
+#page-footer a:not([class]),
+.arrow_link,
+a:not([class]),
+.activityinstance > a {
+    &.focus,
+    &:focus {
+        outline: $btn-focus-width solid transparent;
+        color: $gray-900;
+        background-color: lighten($primary, 50%);
+        box-shadow: 0 -#{$btn-focus-width} lighten($primary, 50%), 0 $btn-focus-width $gray-800;
+    }
+    &:focus:hover {
+        text-decoration: none;
+    }
+}
+
+// Accessible focus styling for buttons like elements that do not use the .btn class. Add
+// .aabtn to you element if you need the same focus styles.
+.aabtn,
+.btn-link,
+.nav-link,
+.atto_link_button,
+[role="button"],
+.list-group-item-action,
+input[type="checkbox"],
+input[type="radio"],
+input[type="file"],
+input[type="image"],
+.sr-only-focusable,
+a.dropdown-item,
+a.dropdown-toggle,
+.modal-dialog[tabindex="0"],
+.moodle-dialogue-base .closebutton,
+button.close {
+    &.focus,
+    &:focus {
+        outline: 0;
+        box-shadow: $input-btn-focus-box-shadow;
+    }
+    &:focus:hover {
+        text-decoration: none;
+    }
+}
+
+.usermenu,
+div.dropdown-item {
+    a,
+    a[role="button"] {
+        outline: 0;
+        box-shadow: none;
+    }
+    &:focus-within {
+        outline: 0;
+        box-shadow: $input-btn-focus-box-shadow;
+    }
+}
+
 .unlist,
 .unlist li,
 .inline-list,
@@ -185,6 +260,16 @@ a.autolink.glossary:hover {
     padding: 0;
     background-color: transparent;
     margin-top: -1px;
+}
+
+@include media-breakpoint-down(sm) {
+    .pagelayout-mydashboard,
+    .pagelayout-login {
+        #region-main-box {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
 }
 
 .collapsibleregioncaption img {
@@ -1046,19 +1131,22 @@ tr.flagged-tag a {
     float: left;
     padding-top: 20px;
 }
-$mod-indent-size: 30px;
-/* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
 
-@for $i from 1 through 16 {
-    $width: ($i * $mod-indent-size);
+@include media-breakpoint-up(sm) {
+    $mod-indent-size: 30px;
+    /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
 
-    .mod-indent-#{$i} {
-        width: $width;
+    @for $i from 1 through 16 {
+        $width: ($i * $mod-indent-size);
+
+        .mod-indent-#{$i} {
+            width: $width;
+        }
     }
-}
 
-.mod-indent-huge {
-    width: (16 * $mod-indent-size);
+    .mod-indent-huge {
+        width: (16 * $mod-indent-size);
+    }
 }
 
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
@@ -1511,8 +1599,23 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
  */
 .modchooser .modal-body {
     padding: 0;
-    height: 640px;
     overflow-y: auto;
+    min-height: 640px;
+    display: flex;
+    flex-direction: column;
+
+    .searchresultitemscontainer-wrapper {
+        min-height: 495px;
+    }
+
+    .carousel-item.active {
+        display: flex;
+    }
+    .chooser-container {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+    }
 
     .loading-icon {
         opacity: 1;
@@ -1521,7 +1624,21 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
             font-size: 3em;
             height: 1em;
             width: 1em;
-            margin: 5em auto;
+        }
+    }
+    .carousel-item .loading-icon .icon {
+        margin: 1em auto;
+    }
+}
+
+.modchooser .modal-footer {
+    height: 70px;
+    background: $modal-content-bg;
+    .moodlenet-logo {
+        .icon {
+            height: 2.5rem;
+            width: 6rem;
+            margin-bottom: .6rem;
         }
     }
 }
@@ -1530,44 +1647,16 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     overflow-y: hidden;
 }
 
-.modchooser .searchcontainer .searchbar {
+.modchooser .searchcontainer .searchbar .input-group-append {
+    align-items: center;
 
-    .searchinput {
-        font-size: inherit;
-        border: 1px solid #dee2e6;
-        border-top-left-radius: .3rem;
-        border-bottom-left-radius: .3rem;
-        border-right: none;
-    }
-
-    .searchbar-append {
-        align-items: center;
-        border: 1px solid #dee2e6;
-        border-left: none;
-        border-top-right-radius: .3rem;
-        border-bottom-right-radius: .3rem;
-
-        i {
-            color: #868e96;
-            margin: 0;
-            vertical-align: middle;
-        }
-
-        .clear {
-            i {
-                height: 23px;
-                width: 23px;
-                font-size: 23px;
-                pointer-events: none;
-            }
-        }
-        .search-icon {
-            i {
-                height: 20px;
-                width: 20px;
-                font-size: 20px;
-            }
-        }
+    i {
+        color: #868e96;
+        margin: 0;
+        vertical-align: middle;
+        font-size: 20px;
+        height: 20px;
+        width: 20px;
     }
 }
 
@@ -1575,8 +1664,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .modchoosercontainer .searchresultitemscontainer {
     overflow-x: hidden;
     .option {
-        // Six items per line.
-        flex-basis: 16.66%;
+        // 2 items per line.
+        flex-basis: calc(50% - 0.5rem);
         .optionactions {
             .optionaction {
                 cursor: pointer;
@@ -1591,15 +1680,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
                 color: $gray-700;
                 &:hover {
                     text-decoration: none;
-                }
-                .optionicon {
-                    .icon {
-                        margin: 0;
-                        padding: 0;
-                        width: 32px;
-                        height: 32px;
-                        font-size: 32px;
-                    }
                 }
             }
         }
@@ -1630,14 +1710,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     }
 }
 
-@include media-breakpoint-down(lg) {
-    .modchoosercontainer .optionscontainer .option,
-    .modchoosercontainer .searchresultitemscontainer .option {
-        // Five items per line.
-        flex-basis: 20%;
-    }
-}
-
 @include media-breakpoint-down(xs) {
     .path-course-view .modal-dialog.modal-lg,
     .path-course-view .modal-content,
@@ -1649,15 +1721,31 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     .modchoosercontainer,
     .optionscontainer,
     .searchresultitemscontainer {
+        min-height: auto;
         height: 100%;
+        overflow-y: auto;
     }
     .path-course-view .modal-dialog.modal-lg {
         margin: 0;
     }
+    .modchooser .modal-body .searchresultitemscontainer-wrapper {
+        min-height: auto;
+    }
+}
+
+@include media-breakpoint-up(sm) {
     .modchoosercontainer .optionscontainer .option,
     .modchoosercontainer .searchresultitemscontainer .option {
-        // Four items per line.
-        flex-basis: 25%;
+        // Three items per line.
+        flex-basis: calc(33.33% - 0.5rem);
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .modchoosercontainer .optionscontainer .option,
+    .modchoosercontainer .searchresultitemscontainer .option {
+        // Six items per line.
+        flex-basis: calc(16.66% - 0.5rem);
     }
 }
 
@@ -1948,6 +2036,7 @@ nav.navbar .logo img {
 
     // Do not remove these rules.
     overflow: hidden;
+    padding: 0.25rem;
 
     .page-header-image,
     .page-header-headings {
@@ -1959,6 +2048,9 @@ nav.navbar .logo img {
     .page-header-image {
         margin-right: 1em;
         margin-bottom: 1em;
+        & > a {
+            display: inline-block;
+        }
     }
 
     .page-header-headings,
@@ -1971,13 +2063,6 @@ nav.navbar .logo img {
     .header-button-group {
         display: block;
         float: left;
-
-        a {
-            position: relative;
-
-            // Don't touch it unless you know exactly what you are doing.
-            top: -0.4em;
-        }
     }
 }
 
@@ -2039,11 +2124,12 @@ dd:after {
             right: auto;
             white-space: nowrap;
         }
-
-        input {
-            width: 330px;
-            vertical-align: text-bottom;
-            margin-bottom: 0;
+        @include media-breakpoint-up(sm) {
+            input {
+                width: 330px;
+                vertical-align: text-bottom;
+                margin-bottom: 0;
+            }
         }
 
         select {
@@ -2209,6 +2295,9 @@ $footer-link-color: $bg-inverse-link-color !default;
     .icon {
         color: $footer-link-color;
     }
+    &:focus .icon {
+        color: $body-color;
+    }
 }
 
 .bg-inverse a {
@@ -2364,6 +2453,10 @@ body.h5p-embed {
     overflow-wrap: break-word !important; /* stylelint-disable-line declaration-no-important */
 }
 
+.z-index-0 {
+    z-index: 0 !important; /* stylelint-disable-line declaration-no-important */
+}
+
 .z-index-1 {
     z-index: 1 !important; /* stylelint-disable-line declaration-no-important */
 }
@@ -2374,6 +2467,29 @@ body.h5p-embed {
 }
 .float-right {
     float: right !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.word-break-all {
+    word-break: break-all;
+}
+
+.matchtext {
+    background-color: lighten($primary, 40%);
+    color: $body-color;
+    height: 1.5rem;
+}
+
+.border-radius {
+    @if $enable-rounded {
+        @include border-radius($card-border-radius);
+    }
 }
 
 // Emoji picker.
@@ -2474,5 +2590,95 @@ $picker-emojis-per-row: 7 !default;
 @each $color, $value in $theme-colors {
     .alert-#{$color} a {
         color: darken(theme-color-level($color, $alert-color-level), 10%);
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    #page-navbar {
+        width: 100%;
+    }
+
+    .breadcrumb:not(:empty) {
+        width: 100%;
+        border: ($border-width * 2) solid $gray-200;
+        padding: $spacer / 4;
+        margin-bottom: $spacer / 2;
+        .breadcrumb-item {
+            padding-top: $spacer / 3;
+            padding-bottom: $spacer / 3;
+            display: inline-block;
+        }
+    }
+
+    .mform {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .custom-select {
+        max-width: 100%;
+    }
+    .card .card-body {
+        padding: $card-spacer-x / 2;
+    }
+    #page-header {
+        .card {
+            border: 0;
+            .card-body {
+                padding: 0;
+            }
+        }
+    }
+    .nav-tabs,
+    .nav-pills {
+        margin: 0;
+        border: 0;
+        padding: $spacer / 8;
+        background-color: $gray-200;
+        .nav-item {
+            flex: 1 1 auto;
+            text-align: center;
+        }
+        .nav-link {
+            background: $white;
+            border: 0;
+            margin: $spacer / 8;
+            &.active {
+                @include button-outline-variant($gray-600);
+                border-color: $gray-600;
+            }
+        }
+    }
+}
+
+@media (max-width: map-get($grid-breakpoints, "sm")) and (max-height: 320px) {
+    div#page {
+        margin-top: 0;
+    }
+    .navbar.fixed-top {
+        position: relative;
+        z-index: inherit;
+    }
+}
+
+.link-underline {
+    text-decoration: underline;
+    &:focus {
+        text-decoration: none;
+    }
+}
+
+.alert.cta {
+    .icon {
+        padding: 0.3rem;
+        &.fa {
+            border-radius: 50%;
+            border-style: solid;
+            border-width: 0.125rem;
+        }
     }
 }

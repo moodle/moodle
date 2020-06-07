@@ -49,7 +49,35 @@ abstract class qtype_gapselect_base extends question_type {
     public function save_question_options($question) {
         global $DB;
         $context = $question->context;
-        $result = new stdClass();
+
+        // This question type needs the choices to be consecutively numbered, but
+        // there is no reason why the question author should have done that,
+        // so renumber if necessary.
+        // Insert all the new answers.
+        $nonblankchoices = [];
+        $questiontext = $question->questiontext;
+        $newkey = 0;
+        foreach ($question->choices as $key => $choice) {
+            if (trim($choice['answer']) == '') {
+                continue;
+            }
+
+            $nonblankchoices[] = $choice;
+            if ($newkey != $key) {
+                // Safe to do this in this order, because we will always be replacing
+                // a bigger number with a smaller number that is not present.
+                // Numbers in the question text always one bigger than the array index.
+                $questiontext = str_replace('[[' . ($key + 1) . ']]', '[[' . ($newkey + 1) . ']]',
+                        $questiontext);
+            }
+            $newkey += 1;
+        }
+        $question->choices = $nonblankchoices;
+        if ($questiontext !== $question->questiontext) {
+            $DB->set_field('question', 'questiontext', $questiontext,
+                    ['id' => $question->id]);
+            $question->questiontext = $questiontext;
+        }
 
         $oldanswers = $DB->get_records('question_answers',
                 array('question' => $question->id), 'id ASC');
@@ -57,14 +85,12 @@ abstract class qtype_gapselect_base extends question_type {
         // Insert all the new answers.
         foreach ($question->choices as $key => $choice) {
 
-            if (trim($choice['answer']) == '') {
-                continue;
-            }
+            // Answer guaranteed to be non-blank. See above.
 
             $feedback = $this->choice_options_to_feedback($choice);
 
             if ($answer = array_shift($oldanswers)) {
-                $answer->answer = $choice['answer'];
+                $answer->answer = trim($choice['answer']);
                 $answer->feedback = $feedback;
                 $DB->update_record('question_answers', $answer);
 

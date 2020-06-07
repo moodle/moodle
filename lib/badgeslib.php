@@ -115,6 +115,7 @@ define('BADGE_BACKPACKWEBURL', 'https://backpack.openbadges.org');
  */
 define('OPEN_BADGES_V1', 1);
 define('OPEN_BADGES_V2', 2);
+define('OPEN_BADGES_V2P1', 2.1);
 
 /*
  * Only use for Open Badges 2.0 specification
@@ -800,10 +801,52 @@ function badges_update_site_backpack($id, $data) {
         $backpack->apiversion = $data->apiversion;
         $backpack->backpackweburl = $data->backpackweburl;
         $backpack->backpackapiurl = $data->backpackapiurl;
-        $backpack->password = $data->password;
+        $backpack->password = !empty($data->password) ? $data->password : '';
+        $backpack->oauth2_issuerid = !empty($data->oauth2_issuerid) ? $data->oauth2_issuerid : '';
         $DB->update_record('badge_external_backpack', $backpack);
         return true;
     }
+    return false;
+}
+
+
+/**
+ * Delete the backpack with this id.
+ *
+ * @param integer $id The backpack to delete.
+ * @return boolean
+ */
+function badges_delete_site_backpack($id) {
+    global $DB, $CFG;
+
+    $context = context_system::instance();
+    require_capability('moodle/badges:manageglobalsettings', $context);
+
+    // Only remove site backpack if it's not the default one.
+    if ($CFG->badges_site_backpack != $id && $DB->record_exists('badge_external_backpack', ['id' => $id])) {
+        $transaction = $DB->start_delegated_transaction();
+
+        // Remove connections for users to this backpack.
+        $sql = "SELECT DISTINCT bb.id
+                  FROM {badge_backpack} bb
+                 WHERE bb.externalbackpackid = :backpackid";
+        $params = ['backpackid' => $id];
+        $userbackpacks = $DB->get_fieldset_sql($sql, $params);
+        if ($userbackpacks) {
+            // Delete user external collections references to this backpack.
+            list($insql, $params) = $DB->get_in_or_equal($userbackpacks);
+            $DB->delete_records_select('badge_external', "backpackid $insql", $params);
+        }
+        $DB->delete_records('badge_backpack', ['externalbackpackid' => $id]);
+
+        // Delete backpack entry.
+        $result = $DB->delete_records('badge_external_backpack', ['id' => $id]);
+
+        $transaction->allow_commit();
+
+        return $result;
+    }
+
     return false;
 }
 
@@ -815,7 +858,6 @@ function badges_open_badges_backpack_api() {
     global $CFG;
 
     $backpack = badges_get_site_backpack($CFG->badges_site_backpack);
-
     if (empty($backpack->apiversion)) {
         return OPEN_BADGES_V2;
     }
@@ -861,8 +903,9 @@ function badges_get_site_backpacks() {
  */
 function badges_get_badge_api_versions() {
     return [
-        OPEN_BADGES_V1 => get_string('openbadgesv1', 'badges'),
-        OPEN_BADGES_V2 => get_string('openbadgesv2', 'badges')
+        (string)OPEN_BADGES_V1 => get_string('openbadgesv1', 'badges'),
+        (string)OPEN_BADGES_V2 => get_string('openbadgesv2', 'badges'),
+        (string)OPEN_BADGES_V2P1 => get_string('openbadgesv2p1', 'badges')
     ];
 }
 
@@ -1179,4 +1222,22 @@ function badges_verify_site_backpack() {
         }
     }
     return '';
+}
+
+/**
+ * Get OAuth2 services for the external backpack.
+ *
+ * @return array
+ * @throws coding_exception
+ */
+function badges_get_oauth2_service_options() {
+    global $DB;
+
+    $issuers = core\oauth2\api::get_all_issuers();
+    $options = ['' => 'None'];
+    foreach ($issuers as $issuer) {
+        $options[$issuer->get('id')] = $issuer->get('name');
+    }
+
+    return $options;
 }

@@ -55,7 +55,7 @@ class core_event_profile_field_testcase extends advanced_testcase {
         // Create a new profile category.
         $cat1 = new stdClass();
         $cat1->name = 'Example category';
-        $cat1->sortorder = 1;
+        $cat1->sortorder = $DB->count_records('user_info_category') + 1;
         $cat1->id = $DB->insert_record('user_info_category', $cat1);
 
         // Trigger the event.
@@ -83,12 +83,12 @@ class core_event_profile_field_testcase extends advanced_testcase {
         // Create new profile categories.
         $cat1 = new stdClass();
         $cat1->name = 'Example category';
-        $cat1->sortorder = 1;
+        $cat1->sortorder = $DB->count_records('user_info_category') + 1;
         $cat1->id = $DB->insert_record('user_info_category', $cat1);
 
         $cat2 = new stdClass();
         $cat2->name = 'Example category 2';
-        $cat2->sortorder = 2;
+        $cat2->sortorder = $DB->count_records('user_info_category') + 1;
         $cat2->id = $DB->insert_record('user_info_category', $cat2);
 
         // Trigger the events.
@@ -121,12 +121,12 @@ class core_event_profile_field_testcase extends advanced_testcase {
         // Create new profile categories.
         $cat1 = new stdClass();
         $cat1->name = 'Example category';
-        $cat1->sortorder = 1;
+        $cat1->sortorder = $DB->count_records('user_info_category') + 1;
         $cat1->id = $DB->insert_record('user_info_category', $cat1);
 
         $cat2 = new stdClass();
         $cat2->name = 'Example category 2';
-        $cat2->sortorder = 2;
+        $cat2->sortorder = $DB->count_records('user_info_category') + 1;
         $cat2->id = $DB->insert_record('user_info_category', $cat2);
 
         // Trigger the event.
@@ -154,7 +154,7 @@ class core_event_profile_field_testcase extends advanced_testcase {
         // Create a new profile category.
         $cat1 = new stdClass();
         $cat1->name = 'Example category';
-        $cat1->sortorder = 1;
+        $cat1->sortorder = $DB->count_records('user_info_category') + 1;
         $cat1->id = $DB->insert_record('user_info_category', $cat1);
 
         // Create a new profile field.
@@ -201,7 +201,7 @@ class core_event_profile_field_testcase extends advanced_testcase {
         // Create a new profile category.
         $cat1 = new stdClass();
         $cat1->name = 'Example category';
-        $cat1->sortorder = 1;
+        $cat1->sortorder = $DB->count_records('user_info_category') + 1;
         $cat1->id = $DB->insert_record('user_info_category', $cat1);
 
         // Create a new profile field.
@@ -246,7 +246,7 @@ class core_event_profile_field_testcase extends advanced_testcase {
         // Create a new profile category.
         $cat1 = new stdClass();
         $cat1->name = 'Example category';
-        $cat1->sortorder = 1;
+        $cat1->sortorder = $DB->count_records('user_info_category') + 1;
         $cat1->id = $DB->insert_record('user_info_category', $cat1);
 
         // Create a new profile field.
@@ -261,7 +261,7 @@ class core_event_profile_field_testcase extends advanced_testcase {
         $field1->signup = false;
         $field1->visible = '0';
         $field1->categoryid = $cat1->id;
-        $field1->sortorder = 1;
+        $field1->sortorder = $DB->count_records('user_info_field') + 1;
         $field1->id = $DB->insert_record('user_info_field', $field1);
 
         // Create another that we will be moving.
@@ -269,7 +269,7 @@ class core_event_profile_field_testcase extends advanced_testcase {
         $field2->datatype = 'text';
         $field2->shortname = 'example2';
         $field2->name = 'Example field 2';
-        $field2->sortorder = 2;
+        $field2->sortorder = $DB->count_records('user_info_field') + 1;
         $field2->id = $DB->insert_record('user_info_field', $field2);
 
         // Trigger the events.
@@ -307,12 +307,12 @@ class core_event_profile_field_testcase extends advanced_testcase {
         // Create a new profile category.
         $cat1 = new stdClass();
         $cat1->name = 'Example category';
-        $cat1->sortorder = 1;
+        $cat1->sortorder = $DB->count_records('user_info_category') + 1;
         $cat1->id = $DB->insert_record('user_info_category', $cat1);
 
         $cat2 = new stdClass();
         $cat2->name = 'Example category';
-        $cat2->sortorder = 1;
+        $cat2->sortorder = $DB->count_records('user_info_category') + 1;
         $cat2->id = $DB->insert_record('user_info_category', $cat2);
 
         // Create a new profile field.
@@ -356,7 +356,7 @@ class core_event_profile_field_testcase extends advanced_testcase {
         // Create a new profile category.
         $cat1 = new stdClass();
         $cat1->name = 'Example category';
-        $cat1->sortorder = 1;
+        $cat1->sortorder = $DB->count_records('user_info_category') + 1;
         $cat1->id = $DB->insert_record('user_info_category', $cat1);
 
         // Create a new profile field.

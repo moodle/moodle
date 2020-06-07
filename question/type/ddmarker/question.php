@@ -46,7 +46,7 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
             $validfilearea = false;
         }
         if ($component == 'qtype_ddmarker' && $validfilearea) {
-            $question = $qa->get_question();
+            $question = $qa->get_question(false);
             $itemid = reset($args);
             return $itemid == $question->id;
         } else {

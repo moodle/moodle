@@ -62,6 +62,7 @@ class qtype_multichoice_test_helper extends question_test_helper {
         $qdata->options = new stdClass();
         $qdata->options->shuffleanswers = 1;
         $qdata->options->answernumbering = '123';
+        $qdata->options->showstandardinstruction = 0;
         $qdata->options->layout = 0;
         $qdata->options->single = 0;
         $qdata->options->correctfeedback =
@@ -146,6 +147,7 @@ class qtype_multichoice_test_helper extends question_test_helper {
 
         $qdata->shuffleanswers = 1;
         $qdata->answernumbering = '123';
+        $qdata->showstandardinstruction = 0;
         $qdata->single = '0';
         $qdata->correctfeedback = array('text' => test_question_maker::STANDARD_OVERALL_CORRECT_FEEDBACK,
                                                  'format' => FORMAT_HTML);
@@ -243,6 +245,7 @@ class qtype_multichoice_test_helper extends question_test_helper {
         $qdata->options = new stdClass();
         $qdata->options->shuffleanswers = 1;
         $qdata->options->answernumbering = '123';
+        $qdata->options->showstandardinstruction = 0;
         $qdata->options->layout = 0;
         $qdata->options->single = 1;
         $qdata->options->correctfeedback =
@@ -327,6 +330,7 @@ class qtype_multichoice_test_helper extends question_test_helper {
 
         $qdata->shuffleanswers = 1;
         $qdata->answernumbering = '123';
+        $qdata->showstandardinstruction = 0;
         $qdata->single = '1';
         $qdata->correctfeedback = array('text' => test_question_maker::STANDARD_OVERALL_CORRECT_FEEDBACK,
                                         'format' => FORMAT_HTML);

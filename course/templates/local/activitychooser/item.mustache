@@ -29,15 +29,15 @@
         "icon": "<img class='icon' src='http://urltooptionicon'>"
     }
 }}
-<div role="menuitem" tabindex="-1" aria-label="{{title}}" class="option d-block text-center py-1 mb-1" data-region="chooser-option-container" data-internal="{{name}}" data-modname="{{componentname}}_{{link}}">
-    <div class="optioninfo w-100" data-region="chooser-option-info-container">
-        <a class="d-block" href="{{link}}" title="{{#str}} addnew, moodle, {{title}} {{/str}}" tabindex="-1" data-action="add-chooser-option">
-            <span class="optionicon d-block">
+<div role="menuitem" tabindex="-1" aria-label="{{title}}" class="option border-0 card m-1 bg-white" data-region="chooser-option-container" data-internal="{{name}}" data-modname="{{componentname}}_{{link}}">
+    <div class="optioninfo card-body d-flex flex-column text-center p-1" data-region="chooser-option-info-container">
+        <a class="d-flex flex-column justify-content-between flex-fill" href="{{link}}" title="{{#str}} addnew, moodle, {{title}} {{/str}}" tabindex="-1" data-action="add-chooser-option">
+            <div class="optionicon mt-2 mb-1 icon-size-5 icon-no-margin">
                 {{{icon}}}
-            </span>
-            <p class="optionname d-block mt-2 mb-0"> {{#shortentext}}20, {{title}}{{/shortentext}}</p>
+            </div>
+            <div class="optionname clamp-2">{{title}}</div>
         </a>
-        <div class="optionactions btn-group" role="group" data-region="chooser-option-actions-container">
+        <div class="optionactions d-flex justify-content-center" role="group" data-region="chooser-option-actions-container">
             {{^legacyitem}}
                 <button class="btn btn-icon icon-no-margin icon-size-3 m-0 optionaction {{#favourite}}text-primary{{/favourite}}{{^favourite}}text-muted{{/favourite}}"
                         data-action="manage-module-favourite"

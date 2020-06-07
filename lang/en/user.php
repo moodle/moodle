@@ -22,6 +22,22 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addcondition'] = 'Add condition';
+$string['adverbfor_and'] = 'and';
+$string['adverbfor_andnot'] = 'and';
+$string['adverbfor_or'] = 'or';
+$string['applyfilters'] = 'Apply filters';
+$string['clearfilterrow'] = 'Remove filter row';
+$string['clearfilters'] = 'Clear filters';
+$string['clearfilterselection'] = 'Remove "{$a}" from filter';
+$string['countparticipantsfound'] = '{$a} participants found';
+$string['filterrowlegend'] = 'Filter {$a}';
+$string['filtersetmatchdescription'] = 'How multiple filters should be combined';
+$string['match'] = 'Match';
+$string['matchofthefollowing'] = 'of the following:';
+$string['moodlenetprofile'] = 'MoodleNet profile';
+$string['placeholdertypeorselect'] = 'Type or select...';
+$string['placeholdertype'] = 'Type...';
 $string['privacy:courserequestpath'] = 'Requested courses';
 $string['privacy:descriptionpath'] = 'Profile description';
 $string['privacy:devicespath'] = 'User devices';
@@ -74,6 +90,7 @@ $string['privacy:metadata:maildisplay'] = 'A preference for the user about displ
 $string['privacy:metadata:middlename'] = 'The middle name of the user';
 $string['privacy:metadata:mnethostid'] = 'An identifier for the MNet host if used';
 $string['privacy:metadata:model'] = 'The device name, occam or iPhone etc..';
+$string['privacy:metadata:moodlenetprofile'] = 'The MoodleNet profile for the user';
 $string['privacy:metadata:msn'] = 'The MSN identifier of the user';
 $string['privacy:metadata:my_pages'] = 'User pages - dashboard and profile. This table does not contain personal data and only used to link dashboard blocks to users';
 $string['privacy:metadata:my_pages:name'] = 'Page name';
@@ -125,6 +142,8 @@ $string['privacy:passwordresetpath'] = 'Password resets';
 $string['privacy:profileimagespath'] = 'Profile images';
 $string['privacy:privatefilespath'] = 'Private files';
 $string['privacy:sessionpath'] = 'Session data';
+$string['filterbykeyword'] = 'Keyword';
+$string['selectfiltertype'] = 'Select';
 $string['target:upcomingactivitiesdue'] = 'Upcoming activities due';
 $string['target:upcomingactivitiesdue_help'] = 'This target generates reminders for upcoming activities due.';
 $string['target:upcomingactivitiesdueinfo'] = 'All upcoming activities due insights are listed here. These students have received these insights directly.';

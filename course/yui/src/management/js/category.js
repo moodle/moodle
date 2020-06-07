@@ -1,5 +1,3 @@
-/* global Item */
-
 /**
  * A managed category.
  *
@@ -8,9 +6,9 @@
  * @constructor
  * @extends Item
  */
-function Category() {
+Category = function() {
     Category.superclass.constructor.apply(this, arguments);
-}
+};
 Category.NAME = 'moodle-course-management-category';
 Category.CSS_PREFIX = 'management-category';
 Category.ATTRS = {

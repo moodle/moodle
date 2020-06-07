@@ -440,6 +440,21 @@ abstract class file_system {
      * Please make sure that all headers are already sent and the all
      * access control checks passed.
      *
+     * This alternate method to xsendfile() allows an alternate file system
+     * to use the full file metadata and avoid extra lookups.
+     *
+     * @param stored_file $file The file to send
+     * @return bool success
+     */
+    public function xsendfile_file(stored_file $file): bool {
+        return $this->xsendfile($file->get_contenthash());
+    }
+
+    /**
+     * Serve file content using X-Sendfile header.
+     * Please make sure that all headers are already sent and the all
+     * access control checks passed.
+     *
      * @param string $contenthash The content hash of the file to be served
      * @return bool success
      */

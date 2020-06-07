@@ -4,4 +4,4 @@ slot,type,which,cat,mark,overrides.hint.0.text,overrides.hint.0.format,overrides
 ,numerical,,rand,1,"Hint 1",0,"Hint 2",0,"Hint 3",0,"Hint 4",0,0
 2,calculatedsimple,sumwithvariants,maincat,1,"Hint 1",0,"Hint 2",0,"Hint 3",0,"Hint 4",0,0
 3,match,,maincat,1,"Hint 1",0,"Hint 2",0,"Hint 3",0,"Hint 4",0,0
-4,truefalse,,maincat,1,"Hint 1",0,"Hint 2",0,"Hint 3",0,"Hint 4",0,0
+4,truefalse,,maincat,1,"",0,"",0,"",0,"",0,0

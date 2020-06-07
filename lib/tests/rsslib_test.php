@@ -118,11 +118,15 @@ EOD;
         $oldproxy = $CFG->proxyhost;
         $CFG->proxyhost = 'xxxxxxxxxxxxxxx.moodle.org';
 
+        $oldproxybypass = $CFG->proxybypass; // Ensure we don't get locally served extests bypassing the proxy.
+        $CFG->proxybypass = '';
+
         $feed = new moodle_simplepie($this->getExternalTestFileUrl('/rsstest.xml'));
 
         $this->assertNotEmpty($feed->error());
         $this->assertEmpty($feed->get_title());
         $CFG->proxyhost = $oldproxy;
+        $CFG->proxybypass = $oldproxybypass;
     }
 
     /*

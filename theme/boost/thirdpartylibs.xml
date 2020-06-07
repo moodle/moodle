@@ -4,112 +4,105 @@
     <location>scss/bootstrap</location>
     <name>Twitter Bootstrap</name>
     <license>MIT</license>
-    <version>4.3.1</version>
+    <version>4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/alert.js</location>
+    <location>amd/src/bootstrap/alert.js</location>
     <name>bootstrap-alert</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/button.js</location>
+    <location>amd/src/bootstrap/button.js</location>
     <name>bootstrap-button</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/carousel.js</location>
+    <location>amd/src/bootstrap/carousel.js</location>
     <name>bootstrap-carousel</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/collapse.js</location>
+    <location>amd/src/bootstrap/collapse.js</location>
     <name>bootstrap-collapse</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/dropdown.js</location>
+    <location>amd/src/bootstrap/dropdown.js</location>
     <name>bootstrap-dropdown</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
     <library>
-    <location>amd/src/index.js</location>
+    <location>amd/src/bootstrap/index.js</location>
     <name>bootstrap-util</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/modal.js</location>
+    <location>amd/src/bootstrap/modal.js</location>
     <name>bootstrap-modal</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/popover.js</location>
+    <location>amd/src/bootstrap/popover.js</location>
     <name>bootstrap-popover</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/sanitizer.js</location>
+    <location>amd/src/bootstrap/tools/sanitizer.js</location>
     <name>bootstrap-sanitizer</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/scrollspy.js</location>
+    <location>amd/src/bootstrap/scrollspy.js</location>
     <name>bootstrap-scrollspy</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/tab.js</location>
-    <name>bootstrap-alert</name>
+    <location>amd/src/bootstrap/tab.js</location>
+    <name>bootstrap-tab</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/tab.js</location>
-    <name>bootstrap-alert</name>
-    <license>(MIT)</license>
-    <version>v4.3.1</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
-    <location>amd/src/toast.js</location>
+    <location>amd/src/bootstrap/toast.js</location>
     <name>bootstrap-toast</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/tooltip.js</location>
+    <location>amd/src/bootstrap/tooltip.js</location>
     <name>bootstrap-tooltip</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/util.js</location>
+    <location>amd/src/bootstrap/util.js</location>
     <name>bootstrap-util</name>
     <license>(MIT)</license>
-    <version>v4.3.1</version>
+    <version>v4.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>

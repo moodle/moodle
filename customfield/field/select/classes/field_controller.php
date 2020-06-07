@@ -119,4 +119,14 @@ class field_controller extends \core_customfield\field_controller {
             $this->get_formatted_name());
         return $ret;
     }
+
+    /**
+     * Locate the value parameter in the field options array, and return it's index
+     *
+     * @param string $value
+     * @return int
+     */
+    public function parse_value(string $value) {
+        return (int) array_search($value, self::get_options_array($this));
+    }
 }

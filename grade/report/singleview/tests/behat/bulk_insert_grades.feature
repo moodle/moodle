@@ -38,7 +38,7 @@ Feature: We can bulk insert grades for students in a course
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I follow "Single view for Test assignment one"
@@ -79,7 +79,7 @@ Feature: We can bulk insert grades for students in a course
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
     And I press "Save changes"
-    And I press "Ok"
+    And I press "OK"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     # And I click on "input[title='Dock Navigation block']" "css_element"

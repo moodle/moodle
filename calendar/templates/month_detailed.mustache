@@ -72,7 +72,7 @@
                         data-new-event-timestamp="{{neweventtimestamp}}">
                         <div class="d-none d-md-block hidden-phone text-xs-center">
                             {{#hasevents}}
-                                <a data-action="view-day-link" href="#" class="day" aria-label="{{viewdaylinktitle}}"
+                                <a data-action="view-day-link" href="#" class="aalink day" aria-label="{{viewdaylinktitle}}"
                                     data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"
                                     data-courseid="{{courseid}}" data-categoryid="{{categoryid}}"
                                     data-timestamp="{{timestamp}}">{{mday}}</a>
@@ -89,6 +89,8 @@
                                         {{/underway}}
                                         {{^underway}}
                                             <li data-region="event-item"
+                                                dava-event-component="{{component}}"
+                                                data-event-eventtype="{{eventtype}}"
                                                 data-eventtype-{{normalisedeventtype}}="1"
                                                 {{#draggable}}
                                                     draggable="true"
@@ -123,7 +125,7 @@
                         </div>
                         <div class="d-md-none hidden-desktop hidden-tablet">
                             {{#hasevents}}
-                                <a data-action="view-day-link" href="#" class="day" aria-label="{{viewdaylinktitle}}"
+                                <a data-action="view-day-link" href="#" class="day aalink" aria-label="{{viewdaylinktitle}}"
                                     data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"
                                     data-courseid="{{courseid}}" data-categoryid="{{categoryid}}"
                                     data-timestamp="{{timestamp}}">{{mday}}</a>

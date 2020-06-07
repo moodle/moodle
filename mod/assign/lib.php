@@ -297,7 +297,8 @@ function assign_update_events($assign, $override = null) {
 
         $event = new stdClass();
         $event->type = CALENDAR_EVENT_TYPE_ACTION;
-        $event->description = format_module_intro('assign', $assigninstance, $cmid);
+        $event->description = format_module_intro('assign', $assigninstance, $cmid, false);
+        $event->format = FORMAT_HTML;
         // Events module won't show user events when the courseid is nonzero.
         $event->courseid    = ($userid) ? 0 : $assigninstance->course;
         $event->groupid     = $groupid;
@@ -664,7 +665,7 @@ function assign_print_recent_activity($course, $viewfullnames, $timestart) {
         return false;
     }
 
-    echo $OUTPUT->heading(get_string('newsubmissions', 'assign').':', 3);
+    echo $OUTPUT->heading(get_string('newsubmissions', 'assign') . ':', 6);
 
     foreach ($show as $submission) {
         $cm = $modinfo->get_cm($submission->cmid);

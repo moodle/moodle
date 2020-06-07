@@ -356,4 +356,19 @@ class core extends \H5PCore {
         }
         return true;
     }
+
+    /**
+     * Get the library string from a DB library record.
+     *
+     * @param  stdClass $record The DB library record.
+     * @param  bool $foldername If true, use hyphen instead of space in returned string.
+     * @return string The string name on the form {machineName} {majorVersion}.{minorVersion}.
+     */
+    public static function record_to_string(stdClass $record, bool $foldername = false): string {
+        return static::libraryToString([
+            'machineName' => $record->machinename,
+            'majorVersion' => $record->majorversion,
+            'minorVersion' => $record->minorversion,
+        ], $foldername);
+    }
 }
