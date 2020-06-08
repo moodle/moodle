@@ -10,6 +10,7 @@
         .region-main {
             flex: 0 0 100%;
             padding: 0 1rem;
+            max-width: 100%;
         }
 
         &.blocks-pre {
@@ -140,12 +141,43 @@
 }
 
 @include media-breakpoint-up(sm) {
-    .block_myoverview,
-    .block_recentlyaccesseditems {
-        .dashboard-card-deck {
-            .dashboard-card {
-                width: calc(33.33% - #{$card-gutter});
-            }
+    .dashboard-card-deck .dashboard-card {
+        width: calc(50% - #{$card-gutter});
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .dashboard-card-deck .dashboard-card {
+        width: calc(50% - #{$card-gutter});
+    }
+    .blocks-post,
+    .blocks-pre {
+        .dashboard-card-deck .dashboard-card {
+            width: calc(100% - #{$card-gutter});
+        }
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .dashboard-card-deck .dashboard-card {
+        width: calc(33.33% - #{$card-gutter});
+    }
+    .blocks-post,
+    .blocks-pre {
+        .dashboard-card-deck .dashboard-card {
+            width: calc(50% - #{$card-gutter});
+        }
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    .dashboard-card-deck .dashboard-card {
+        width: calc(25% - #{$card-gutter});
+    }
+    .blocks-post,
+    .blocks-pre {
+        .dashboard-card-deck .dashboard-card {
+            width: calc(33.33% - #{$card-gutter});
         }
     }
 }
