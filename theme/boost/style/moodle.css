@@ -9807,6 +9807,11 @@ a.dropdown-toggle:focus:hover,
 button.close:focus:hover {
   text-decoration: none; }
 
+.safari input[type="checkbox"].focus, .safari input[type="checkbox"]:focus,
+.safari input[type="radio"].focus,
+.safari input[type="radio"]:focus {
+  outline: auto; }
+
 .usermenu a,
 .usermenu a[role="button"],
 div.dropdown-item a,
