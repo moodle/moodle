@@ -165,9 +165,15 @@ const submitFormAjax = (dynamicTable, modal) => {
             throw new Error(response.error);
         }
 
-        DynamicTable.refreshTableContent(dynamicTable);
-        return Str.get_string('totalenrolledusers', 'enrol', response.count);
+        return response.count;
     })
+    .then(count => {
+        return Promise.all([
+            Str.get_string('totalenrolledusers', 'enrol', count),
+            DynamicTable.refreshTableContent(dynamicTable),
+        ]);
+    })
+    .then(([notificationBody]) => notificationBody)
     .then(notificationBody => Toast.add(notificationBody))
     .catch(error => {
         Notification.addNotification({

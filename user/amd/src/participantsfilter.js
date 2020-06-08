@@ -371,7 +371,8 @@ export const init = participantsRegionId => {
                 filters: Object.values(activeFilters).map(filter => filter.filterValue),
                 jointype: filterSet.querySelector(Selectors.filterset.fields.join).value,
             }
-        );
+        )
+        .catch(Notification.exception);
     };
 
     /**
