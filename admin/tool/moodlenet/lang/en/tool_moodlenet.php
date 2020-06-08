@@ -36,9 +36,9 @@ $string['defaultmoodlenet_desc'] = "The URL to either Moodle HQ's MoodleNet inst
 $string['defaultmoodlenetname'] = "MoodleNet instance name";
 $string['defaultmoodlenetname_desc'] = 'The name of either Moodle HQ\'s MoodleNet instance or your preferred MoodleNet instance to browse on.';
 $string['enablemoodlenet'] = 'Enable MoodleNet integration';
-$string['enablemoodlenet_desc'] = 'Enabling the integration allows users with the \'xx\' capability to browse MoodleNet from the
-activity chooser and import MoodleNet resources into their course. It also allows users to push backups from MoodleNet into Moodle.
-';
+$string['enablemoodlenet_desc'] = 'Enabling the integration allows users with the capability to create and manage activities to
+browse MoodleNet from the activity chooser and import MoodleNet resources into their course. It also allows users with the
+capability to restore backups, to push backup files from MoodleNet into Moodle.';
 $string['errorduringdownload'] = 'An error occurred while downloading the file: {$a}';
 $string['forminfo'] = "It will be automatically saved on your moodle profile.";
 $string['footermessage'] = "Or browse for content on";
