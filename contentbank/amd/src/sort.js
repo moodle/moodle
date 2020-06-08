@@ -35,8 +35,8 @@ import Notification from 'core/notification';
  */
 export const init = () => {
     const contentBank = document.querySelector(selectors.regions.contentbank);
-    Prefetch.prefetchStrings('contentbank', ['sortbyx', 'sortbyxreverse', 'contentname',
-        'lastmodified', 'size', 'type']);
+    Prefetch.prefetchStrings('contentbank', ['contentname', 'lastmodified', 'size', 'type']);
+    Prefetch.prefetchStrings('moodle', ['sortbyx', 'sortbyxreverse']);
     registerListenerEvents(contentBank);
 };
 
