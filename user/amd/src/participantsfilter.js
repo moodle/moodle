@@ -365,11 +365,16 @@ export const init = participantsRegionId => {
      * @return {Promise}
      */
     const updateTableFromFilter = () => {
+        const filters = {};
+        Object.values(activeFilters).forEach(filter => {
+            filters[filter.filterValue.name] = filter.filterValue;
+        });
+
         return DynamicTable.setFilters(
             DynamicTable.getTableFromId(filterSet.dataset.tableRegion),
             {
-                filters: Object.values(activeFilters).map(filter => filter.filterValue),
-                jointype: filterSet.querySelector(Selectors.filterset.fields.join).value,
+                jointype: parseInt(filterSet.querySelector(Selectors.filterset.fields.join).value, 10),
+                filters,
             }
         )
         .catch(Notification.exception);
