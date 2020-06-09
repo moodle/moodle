@@ -1799,7 +1799,8 @@ function quiz_attempt_submitted_handler($event) {
 
     // Update completion state.
     $completion = new completion_info($course);
-    if ($completion->is_enabled($cm) && ($quiz->completionattemptsexhausted || $quiz->completionpass)) {
+    if ($completion->is_enabled($cm) &&
+        ($quiz->completionattemptsexhausted || $quiz->completionpass || $quiz->completionminattempts)) {
         $completion->update_state($cm, COMPLETION_COMPLETE, $event->userid);
     }
     return quiz_send_notification_messages($course, $quiz, $attempt,
