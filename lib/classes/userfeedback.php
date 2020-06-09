@@ -96,7 +96,7 @@ class core_userfeedback {
     public static function should_display_reminder(): bool {
         global $CFG;
 
-        if ($CFG->enableuserfeedback && isloggedin() && !isguestuser()) {
+        if (static::can_give_feedback()) {
             $give = get_user_preferences('core_userfeedback_give');
             $remind = get_user_preferences('core_userfeedback_remind');
 
@@ -143,6 +143,17 @@ class core_userfeedback {
         ]);
 
         return $url;
+    }
+
+    /**
+     * Whether the current can give feedback.
+     *
+     * @return bool
+     */
+    public static function can_give_feedback(): bool {
+        global $CFG;
+
+        return $CFG->enableuserfeedback && isloggedin() && !isguestuser();
     }
 
     /**
