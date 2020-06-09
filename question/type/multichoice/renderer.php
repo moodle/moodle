@@ -298,14 +298,16 @@ class qtype_multichoice_single_renderer extends qtype_multichoice_renderer_base 
 
         $cssclass = 'qtype_multichoice_clearchoice';
         // When no choice selected during rendering, then hide the clear choice option.
+        $linktabindex = 0;
         if (!$hascheckedchoice && $response == -1) {
             $cssclass .= ' sr-only';
             $clearchoiceradioattrs['checked'] = 'checked';
+            $linktabindex = -1;
         }
         // Adds an hidden radio that will be checked to give the impression the choice has been cleared.
         $clearchoiceradio = html_writer::empty_tag('input', $clearchoiceradioattrs);
         $clearchoiceradio .= html_writer::link('', get_string('clearchoice', 'qtype_multichoice'),
-            ['for' => $clearchoiceid, 'role' => 'button']);
+            ['for' => $clearchoiceid, 'role' => 'button', 'tabindex' => $linktabindex]);
 
         // Now wrap the radio and label inside a div.
         $result = html_writer::tag('div', $clearchoiceradio, ['id' => $clearchoicefieldname, 'class' => $cssclass]);
