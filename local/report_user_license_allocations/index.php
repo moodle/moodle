@@ -379,7 +379,7 @@ if (!empty($licenseid) && $licenseid != 1) {
 }
 
 // Set up the initial SQL for the form.
-$selectsql = "DISTINCT concat(u.id, concat('-', concat(urla.licenseid, concat('-', urla.courseid)))) AS cindex,u.id,u.firstname,u.lastname,d.name AS department,u.email, c.id AS courseid, c.fullname AS coursename, urla.licenseid, cl.name as licensename";
+$selectsql = "DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", $DB->sql_concat("urla.licenseid", $DB->sql_concat("'-'", "urla.courseid")))) . " AS cindex,u.id,u.firstname,u.lastname,d.name AS department,u.email, c.id AS courseid, c.fullname AS coursename, urla.licenseid, cl.name as licensename";
 $fromsql = " {local_report_user_lic_allocs} urla JOIN {user} u ON (urla.userid = u.id) JOIN {company_users} cu ON (u.id = cu.userid) JOIN {department} d ON (cu.departmentid = d.id and cu.companyid = d.company) JOIN {course} c ON (urla.courseid = c.id) LEFT JOIN {companylicense} cl ON (urla.licenseid = cl.id)";
 $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $licensesql $coursesql";
 $sqlparams = array('companyid' => $companyid) + $searchinfo->searchparams;
