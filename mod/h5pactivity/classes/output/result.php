@@ -150,7 +150,7 @@ class result implements renderable, templatable {
             'subcontent' => $result->subcontent,
             'timecreated' => $result->timecreated,
             'interactiontype' => $result->interactiontype,
-            'description' => format_string($result->description),
+            'description' => strip_tags($result->description),
             'rawscore' => $result->rawscore,
             'maxscore' => $result->maxscore,
             'duration' => $result->duration,

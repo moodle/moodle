@@ -46,8 +46,13 @@ class longfillin extends result {
      */
     public function export_for_template(renderer_base $output): stdClass {
         $data = parent::export_for_template($output);
-        $data->content = reset($this->response);
+        $userresponse = reset($this->response);
+        $data->content = format_text($userresponse, FORMAT_PLAIN);
         $data->track = true;
+        // Long fill-in is used for Essay type exercices. H5P adds
+        // extra characters to the description in all fill-in interactions
+        // but in the essay questions is unnecesary.
+        $data->description = preg_replace('/__________$/', '', $data->description);
         return $data;
     }
 }

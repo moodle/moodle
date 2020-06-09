@@ -39,19 +39,6 @@ use stdClass;
 class fillin extends result {
 
     /**
-     * Export this data so it can be used as the context for a mustache template.
-     *
-     * @param renderer_base $output
-     * @return stdClass
-     */
-    public function export_for_template(renderer_base $output): stdClass {
-        $data = parent::export_for_template($output);
-        $data->content = $this->result->description;
-        $data->description = get_string('result_fill-in', 'mod_h5pactivity');
-        return $data;
-    }
-
-    /**
      * Return the options data structure.
      *
      * @return array of options
