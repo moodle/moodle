@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qformat_missingword';
-$plugin->version   = 2019111800;
+$plugin->version   = 2020061500;
 
-$plugin->requires  = 2019111200;
+$plugin->requires  = 2020060900;
 
 $plugin->maturity  = MATURITY_STABLE;
