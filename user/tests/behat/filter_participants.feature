@@ -664,3 +664,25 @@ Feature: Course participants can be filtered
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
     And I should not see "Teacher 1" in the "participants" "table"
+
+  @javascript
+  Scenario: Initials filtering is always applied in addition to any other filtering
+    Given I log in as "teacher1"
+    And I am on "Course 2" course homepage
+    And I navigate to course participants
+    And I should see "Student 1" in the "participants" "table"
+    And I should see "Student 2" in the "participants" "table"
+    And I should see "Student 3" in the "participants" "table"
+    And I should see "Trendy Learnson" in the "participants" "table"
+    And I should see "Teacher 1" in the "participants" "table"
+    When I set the field "Match" in the "Filter 1" "fieldset" to "Any"
+    And I set the field "type" in the "Filter 1" "fieldset" to "Role"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I click on "Student" "list_item"
+    And I click on "Apply filters" "button"
+    When I click on "T" "link" in the ".firstinitial" "css_element"
+    Then I should see "Trendy Learnson" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
+    And I should not see "Student 3" in the "participants" "table"
+    And I should not see "Teacher 1" in the "participants" "table"
