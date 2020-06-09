@@ -134,6 +134,10 @@ abstract class handler {
         $value = null;
         $h5pversion = static::get_h5p_version();
         $component = 'h5plib_v' . $h5pversion;
+        // Composed code languages, such as 'Spanish, Mexican' are different in H5P and Moodle:
+        // - In H5P, they use '-' to separate language from the country. For instance: es-mx.
+        // - However, in Moodle, they have '_' instead of '-'. For instance: es_mx.
+        $language = str_replace('-', '_', $language);
         if (get_string_manager()->string_exists($identifier, $component)) {
             $defaultmoodlelang = 'en';
             // In Moodle, all the English strings always will exist because they have to be declared in order to let users
