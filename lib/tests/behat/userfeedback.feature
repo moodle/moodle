@@ -34,3 +34,17 @@ Feature: Gathering user feedback
     And I reload the page
     Then I should not see "Give feedback" in the "region-main" "region"
     And I should not see "Remind me later" in the "region-main" "region"
+
+  @javascript
+  Scenario: Users should not see the notification after they click on the give feedback link
+    Given the following config values are set as admin:
+      | enableuserfeedback        | 1   |
+      | userfeedback_nextreminder | 2   |
+      | userfeedback_remindafter  | 90  |
+    When I log in as "admin"
+    And I follow "Dashboard" in the user menu
+    And I click on "Give feedback" "link"
+    And I close all opened windows
+    And I reload the page
+    Then I should not see "Give feedback" in the "region-main" "region"
+    And I should not see "Remind me later" in the "region-main" "region"
