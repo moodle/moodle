@@ -296,13 +296,15 @@ class repository_flickr_public extends repository {
         $text = !empty($SESSION->{$this->sess_text}) ? $SESSION->{$this->sess_text} : null;
         $nsid = !empty($this->nsid) ? $this->nsid : null;
 
-        $photos = $this->flickr->photos_search(array(
-            'tags'=>$tag,
-            'page'=>$page,
-            'per_page'=>24,
-            'user_id'=>$nsid,
-            'license'=>$licenses,
-            'text'=>$text
+        $photos = $this->flickr->photos_search(
+            array(
+                'tags' => $tag,
+                'page' => $page,
+                'per_page' => 24,
+                'user_id' => $nsid,
+                'license' => $licenses,
+                'text' => $text,
+                'media' => 'photos'
             )
         );
         $ret['total'] = $photos['total'];
