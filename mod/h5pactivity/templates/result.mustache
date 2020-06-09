@@ -26,7 +26,7 @@
     Variables optional for this template:
     * hasoptions - If an option table must be present
     * optionslabel - The right label for available options on this result type
-    * options - An array of mod_h5pactivity/result/options compatible array
+    * options - An array of mod_h5pactivity/local/result/options compatible array
     * content - Extra content in HTML
     * track - Indicate if the result has displayable tracking
 
@@ -105,10 +105,10 @@
 
 <div class="container-fluid w-100 my-0 p-0">
     <div class="row w-100 py-3 px-1 m-0 p-md-3">
-        {{>mod_h5pactivity/result/header}}
+        {{>mod_h5pactivity/local/result/header}}
         {{{content}}}
         {{#hasoptions}}
-            {{>mod_h5pactivity/result/options}}
+            {{>mod_h5pactivity/local/result/options}}
         {{/hasoptions}}
         {{^track}}
             <div class="alert alert-warning w-100" role="alert">
