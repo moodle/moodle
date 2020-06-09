@@ -265,9 +265,9 @@ class participants_search {
             }
         }
 
-        // Add any supplied additional WHERE clauses.
+        // Add any supplied additional forced WHERE clauses.
         if (!empty($additionalwhere)) {
-            $wheres[] = $additionalwhere;
+            $innerwhere .= " AND ({$additionalwhere})";
             $params = array_merge($params, $additionalparams);
         }
 
