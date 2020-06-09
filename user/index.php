@@ -111,14 +111,25 @@ $canaccessallgroups = has_capability('moodle/site:accessallgroups', $context);
 $filtergroupids = $urlgroupid ? [$urlgroupid] : [];
 
 // Force group filtering if user should only see a subset of groups' users.
-if ($course->groupmode == SEPARATEGROUPS && !$canaccessallgroups) {
-    $filtergroupids = array_keys(groups_get_all_groups($course->id, $USER->id));
+if ($course->groupmode != NOGROUPS && !$canaccessallgroups) {
+    if ($filtergroupids) {
+        $filtergroupids = array_intersect(
+            $filtergroupids,
+            array_keys(groups_get_all_groups($course->id, $USER->id))
+        );
+    } else {
+        $filtergroupids = array_keys(groups_get_all_groups($course->id, $USER->id));
+    }
 
     if (empty($filtergroupids)) {
-        // The user is not in a group so show message and exit.
-        echo $OUTPUT->notification(get_string('notingroup'));
-        echo $OUTPUT->footer();
-        exit();
+        if ($course->groupmode == SEPARATEGROUPS) {
+            // The user is not in a group so show message and exit.
+            echo $OUTPUT->notification(get_string('notingroup'));
+            echo $OUTPUT->footer();
+            exit();
+        } else {
+            $filtergroupids = [(int) groups_get_course_group($course, true)];
+        }
     }
 }
 
