@@ -144,6 +144,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $pagegroup = array();
         $pagegroup[] = $mform->createElement('select', 'questionsperpage',
                 get_string('newpage', 'quiz'), quiz_questions_per_page_options(), array('id' => 'id_questionsperpage'));
+        $mform->setDefault('questionsperpage', $quizconfig->questionsperpage);
 
         if (!empty($this->_cm)) {
             $pagegroup[] = $mform->createElement('checkbox', 'repaginatenow', '',
@@ -153,6 +154,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addGroup($pagegroup, 'questionsperpagegrp',
                 get_string('newpage', 'quiz'), null, false);
         $mform->addHelpButton('questionsperpagegrp', 'newpage', 'quiz');
+        $mform->setAdvanced('questionsperpagegrp', $quizconfig->questionsperpage_adv);
 
         // Navigation method.
         $mform->addElement('select', 'navmethod', get_string('navmethod', 'quiz'),
