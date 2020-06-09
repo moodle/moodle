@@ -234,7 +234,7 @@ class local_report_user_license_allocations_table extends table_sql {
         global $DB;
         if (!$this->is_downloading()) {
             if ($this->countsql === NULL) {
-                $this->countsql = "SELECT count(DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", $DB->sql_concat("urla.licenseid", $DB->sql_concat("'-'", "urla.courseid")))) . " ) FROM " . $this->sql->from.' WHERE '.$this->sql->where;
+                $this->countsql = "SELECT DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", $DB->sql_concat("urla.licenseid", $DB->sql_concat("'-'", "urla.courseid")))) . " AS caindex FROM " . $this->sql->from.' WHERE '.$this->sql->where;
                 $this->countparams = $this->sql->params;
             }
             $subgrandtotal = $DB->get_records_sql($this->countsql, $this->countparams);
