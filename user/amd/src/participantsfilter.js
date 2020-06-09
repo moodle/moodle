@@ -156,14 +156,15 @@ export const init = participantsRegionId => {
      * that it is replaced instead of being removed.
      *
      * @param {HTMLElement} filterRow
+     * @param {Bool} refreshContent Whether to refresh the table content when removing
      */
-    const removeOrReplaceFilterRow = filterRow => {
+    const removeOrReplaceFilterRow = (filterRow, refreshContent) => {
         const filterCount = getFilterRegion().querySelectorAll(Selectors.filter.region).length;
 
         if (filterCount === 1) {
-            replaceFilterRow(filterRow);
+            replaceFilterRow(filterRow, refreshContent);
         } else {
-            removeFilterRow(filterRow);
+            removeFilterRow(filterRow, refreshContent);
         }
     };
 
@@ -171,8 +172,9 @@ export const init = participantsRegionId => {
      * Remove the specified filter row and associated class.
      *
      * @param {HTMLElement} filterRow
+     * @param {Bool} refreshContent Whether to refresh the table content when removing
      */
-    const removeFilterRow = async filterRow => {
+    const removeFilterRow = async(filterRow, refreshContent = true) => {
         const filterType = filterRow.querySelector(Selectors.filter.fields.type);
         const hasFilterValue = !!filterType.value;
 
@@ -185,7 +187,7 @@ export const init = participantsRegionId => {
         // Update the list of available filter types.
         updateFiltersOptions();
 
-        if (hasFilterValue) {
+        if (hasFilterValue && refreshContent) {
             // Refresh the table if there was any content in this row.
             updateTableFromFilter();
         }
@@ -203,10 +205,11 @@ export const init = participantsRegionId => {
      * Replace the specified filter row with a new one.
      *
      * @param {HTMLElement} filterRow
+     * @param {Bool} refreshContent Whether to refresh the table content when removing
      * @param {Number} rowNum The number used to label the filter fieldset legend (eg Row 1). Defaults to 1 (the first filter).
      * @return {Promise}
      */
-    const replaceFilterRow = (filterRow, rowNum = 1) => {
+    const replaceFilterRow = (filterRow, refreshContent = true, rowNum = 1) => {
         // Remove the filter object.
         removeFilterObject(filterRow.dataset.filterType);
 
@@ -240,9 +243,11 @@ export const init = participantsRegionId => {
         })
         .then(filterRow => {
             // Refresh the table.
-            updateTableFromFilter();
-
-            return filterRow;
+            if (refreshContent) {
+                return updateTableFromFilter();
+            } else {
+                return filterRow;
+            }
         })
         .catch(Notification.exception);
     };
@@ -273,7 +278,7 @@ export const init = participantsRegionId => {
         const pendingPromise = new Pending('core_user/participantsfilter:setFilterFromConfig');
 
         const filters = getFilterRegion().querySelectorAll(Selectors.filter.region);
-        filters.forEach(filterRow => removeOrReplaceFilterRow(filterRow));
+        filters.forEach(filterRow => removeOrReplaceFilterRow(filterRow, false));
 
         // Refresh the table.
         return updateTableFromFilter()
@@ -292,7 +297,7 @@ export const init = participantsRegionId => {
         filters.forEach(filterRow => {
             const filterType = filterRow.querySelector(Selectors.filter.fields.type);
             if (!filterType.value) {
-                removeOrReplaceFilterRow(filterRow);
+                removeOrReplaceFilterRow(filterRow, false);
             }
         });
     };
@@ -464,7 +469,7 @@ export const init = participantsRegionId => {
         if (e.target.closest(Selectors.filter.actions.remove)) {
             e.preventDefault();
 
-            removeOrReplaceFilterRow(e.target.closest(Selectors.filter.region));
+            removeOrReplaceFilterRow(e.target.closest(Selectors.filter.region), true);
         }
     });
 
