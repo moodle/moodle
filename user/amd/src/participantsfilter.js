@@ -165,6 +165,9 @@ export const init = participantsRegionId => {
      * @param {HTMLElement} filterRow
      */
     const removeFilterRow = async filterRow => {
+        const filterType = filterRow.querySelector(Selectors.filter.fields.type);
+        const hasFilterValue = !!filterType.value;
+
         // Remove the filter object.
         removeFilterObject(filterRow.dataset.filterType);
 
@@ -174,8 +177,10 @@ export const init = participantsRegionId => {
         // Update the list of available filter types.
         updateFiltersOptions();
 
-        // Refresh the table.
-        updateTableFromFilter();
+        if (hasFilterValue) {
+            // Refresh the table if there was any content in this row.
+            updateTableFromFilter();
+        }
 
         // Update filter fieldset legends.
         const filterLegends = await getAvailableFilterLegends();
@@ -337,7 +342,7 @@ export const init = participantsRegionId => {
         const filterPromises = filterConfig.map(([filterType, filterData]) => {
             if (filterType === 'courseid') {
                 // The courseid is a special case.
-                return Promise.resolve();
+                return false;
             }
 
             const filterValues = filterData.values;
@@ -345,11 +350,15 @@ export const init = participantsRegionId => {
             if (!filterValues.length) {
                 // There are no values for this filter.
                 // Skip it.
-                return Promise.resolve();
+                return false;
             }
 
             return addFilterRow().then(([filterRow]) => addFilter(filterRow, filterType, filterValues));
-        });
+        }).filter(promise => promise);
+
+        if (!filterPromises.length) {
+            return;
+        }
 
         Promise.all(filterPromises).then(() => {
             return removeEmptyFilters();
