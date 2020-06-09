@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * External functions test for record_action.
+ * External functions test for record_feedback_action.
  *
  * @package    core
  * @category   test
@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core\external\userfeedback;
+namespace core\external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,20 +35,20 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
- * Class record_action_testcase
+ * Class record_userfeedback_action_testcase
  *
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass record_action
+ * @coversDefaultClass record_userfeedback_action
  */
-class record_action_testcase extends externallib_advanced_testcase {
+class record_userfeedback_action_testcase extends externallib_advanced_testcase {
 
     /**
-     * Data provider for test_record_action.
+     * Data provider for test_record_userfeedback_action.
      *
      * @return  array
      */
-    public function record_action_provider() {
+    public function record_userfeedback_action_provider() {
         return [
             'give action' => ['give'],
             'remind action' => ['remind'],
@@ -56,14 +56,14 @@ class record_action_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test the behaviour of record_action().
+     * Test the behaviour of record_userfeedback_action().
      *
-     * @dataProvider record_action_provider
+     * @dataProvider record_userfeedback_action_provider
      * @param string $action The action taken by the user
      *
      * @covers ::execute
      */
-    public function test_record_action(string $action) {
+    public function test_record_userfeedback_action(string $action) {
         $this->resetAfterTest();
 
         $context = context_system::instance();
@@ -74,7 +74,7 @@ class record_action_testcase extends externallib_advanced_testcase {
         $now = time();
 
         // Call the WS and check the action is recorded as expected.
-        $result = record_action::execute($action, $context->id);
+        $result = record_userfeedback_action::execute($action, $context->id);
         $this->assertNull($result);
 
         $preference = get_user_preferences('core_userfeedback_' . $action);
