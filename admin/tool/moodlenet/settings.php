@@ -37,7 +37,7 @@ if ($hassiteconfig) {
 
     $temp = new admin_setting_configtext('tool_moodlenet/defaultmoodlenetname',
         get_string('defaultmoodlenetname', 'tool_moodlenet'), new lang_string('defaultmoodlenetname_desc', 'tool_moodlenet'),
-        'Moodle HQ MoodleNet');
+        new lang_string('defaultmoodlenetnamevalue', 'tool_moodlenet'));
     $settings->add($temp);
 
     $temp = new admin_setting_configtext('tool_moodlenet/defaultmoodlenet', get_string('defaultmoodlenet', 'tool_moodlenet'),
