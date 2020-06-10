@@ -60,6 +60,7 @@ $string['deleteallattempts'] = 'Delete all H5P attempts';
 $string['displayexport'] = 'Allow download';
 $string['displayembed'] = 'Embed button';
 $string['displaycopyright'] = 'Copyright button';
+$string['dnduploadh5pactivity'] = 'Add an H5P activity';
 $string['duration'] = 'Duration';
 $string['enabletracking'] = 'Enable attempt tracking';
 $string['false'] = 'False';
