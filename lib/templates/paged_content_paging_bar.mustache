@@ -22,7 +22,12 @@
 
     Example context (json):
     {
-        "itemsperpage": 2,
+        "showitemsperpageselector": true,
+        "itemsperpage": [
+            { "value": 5, "active": false },
+            { "value": 10, "active": true },
+            { "value": 15, "active": false }
+        ],
         "previous": true,
         "next": true,
         "first": true,
@@ -89,7 +94,8 @@
                         <a
                             class="dropdown-item {{#active}}active{{/active}}"
                             href="#"
-                            data-limit={{value}}
+                            data-limit="{{value}}"
+                            role="menuitem"
                             {{#active}}aria-current="true"{{/active}}
                         >
                             {{#value}}{{.}}{{/value}}
@@ -149,6 +155,7 @@
         <ul class="pagination mb-0">
             {{#previous}}
                 {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{#str}}previouspage{{/str}}"{{/linkattributes}}
                     {{$item-content}}
                         <span class="icon-no-margin dir-rtl-hide" aria-hidden="true">{{#pix}} i/previous, core {{/pix}}</span>
                         <span class="icon-no-margin dir-ltr-hide" aria-hidden="true">{{#pix}} i/next, core {{/pix}}</span>
@@ -158,16 +165,18 @@
             {{/previous}}
             {{#first}}
                 {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{#str}}firstpage{{/str}}"{{/linkattributes}}
                     {{$item-content}}
-                        <span aria-hidden="true">{{#str}}first{{/str}}</span>
+                        {{#str}}first{{/str}}
                     {{/item-content}}
                     {{$attributes}}data-control="first"{{/attributes}}
                 {{/ core/paged_content_paging_bar_item }}
             {{/first}}
             {{#barsize}}
                 {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-hidden="true"{{/linkattributes}}
                     {{$item-content}}
-                        <span aria-hidden="true">&hellip;</span>
+                        &hellip;
                     {{/item-content}}
                     {{$attributes}}data-dots="beginning"{{/attributes}}
                 {{/ core/paged_content_paging_bar_item }}
@@ -179,22 +188,25 @@
             {{/pages}}
             {{#barsize}}
                 {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-hidden="true"{{/linkattributes}}
                     {{$item-content}}
-                        <span aria-hidden="true">&hellip;</span>
+                        &hellip;
                     {{/item-content}}
                     {{$attributes}}data-dots="ending"{{/attributes}}
                 {{/ core/paged_content_paging_bar_item }}
             {{/barsize}}
             {{#last}}
                 {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{#str}}lastpage{{/str}}"{{/linkattributes}}
                     {{$item-content}}
-                        <span aria-hidden="true">{{#str}}last{{/str}}</span>
+                        {{#str}}last{{/str}}
                     {{/item-content}}
                     {{$attributes}}data-control="last"{{/attributes}}
                 {{/ core/paged_content_paging_bar_item }}
             {{/last}}
             {{#next}}
                 {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{#str}}nextpage{{/str}}"{{/linkattributes}}
                     {{$item-content}}
                         <span class="icon-no-margin dir-rtl-hide" aria-hidden="true">{{#pix}} i/next, core {{/pix}}</span>
                         <span class="icon-no-margin dir-ltr-hide" aria-hidden="true">{{#pix}} i/previous, core {{/pix}}</span>
