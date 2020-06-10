@@ -31,17 +31,15 @@ $string['aria:footermessage'] = "Browse for content on MoodleNet";
 $string['browsecontentmoodlenet'] = "Or browse for content on MoodleNet";
 $string['clearsearch'] = "Clear search";
 $string['connectandbrowse'] = "Connect to and browse:";
-$string['defaultmoodlenet'] = "Default MoodleNet URL";
+$string['defaultmoodlenet'] = 'MoodleNet URL';
 $string['defaultmoodlenet_desc'] = "The URL to either Moodle HQ's MoodleNet instance, or your preferred instance.";
 $string['defaultmoodlenetname'] = "MoodleNet instance name";
 $string['defaultmoodlenetnamevalue'] = 'MoodleNet Home';
-$string['defaultmoodlenetname_desc'] = 'The name of either Moodle HQ\'s MoodleNet instance or your preferred MoodleNet instance to browse on.';
+$string['defaultmoodlenetname_desc'] = 'The name of the MoodleNet instance available via the activity chooser.';
 $string['enablemoodlenet'] = 'Enable MoodleNet integration';
-$string['enablemoodlenet_desc'] = 'Enabling the integration allows users with the capability to create and manage activities to
-browse MoodleNet from the activity chooser and import MoodleNet resources into their course. It also allows users with the
-capability to restore backups, to push backup files from MoodleNet into Moodle.';
+$string['enablemoodlenet_desc'] = 'If enabled, a user with the capability to create and manage activities can browse MoodleNet via the activity chooser and import MoodleNet resources into their course. In addition, a user with the capability to restore backups can select a backup file on MoodleNet and restore it into Moodle.';
 $string['errorduringdownload'] = 'An error occurred while downloading the file: {$a}';
-$string['forminfo'] = "It will be automatically saved on your moodle profile.";
+$string['forminfo'] = 'Your MoodleNet profile will be automatically saved in your profile on this site.';
 $string['footermessage'] = "Or browse for content on";
 $string['instancedescription'] = "MoodleNet is an open social media platform for educators, with a focus on the collaborative curation of collections of open resources. ";
 $string['instanceplaceholder'] = '@yourprofile@moodle.net';
@@ -49,15 +47,14 @@ $string['inputhelp'] = 'Or if you have a MoodleNet account already, enter your M
 $string['invalidmoodlenetprofile'] = '$userprofile is not correctly formatted';
 $string['importconfirm'] = 'You are about to import the content "{$a->resourcename} ({$a->resourcetype})" into the course "{$a->coursename}". Are you sure you want to continue?';
 $string['importconfirmnocourse'] = 'You are about to import the content "{$a->resourcename} ({$a->resourcetype})" into your site. Are you sure you want to continue?';
-$string['importformatselectguidingtext'] = 'In which format would you like this content "{$a->name} ({$a->type})" to be added to your course?';
+$string['importformatselectguidingtext'] = 'In which format would you like the content "{$a->name} ({$a->type})" to be added to your course?';
 $string['importformatselectheader'] = 'Choose the content display format';
 $string['missinginvalidpostdata'] = 'The resource information from MoodleNet is either missing, or is in an incorrect format.
 If this happens repeatedly, please contact the site administrator.';
 $string['mnetprofile'] = 'MoodleNet profile';
-$string['mnetprofiledesc'] = '<p>Enter in your MoodleNet profile details here to be redirected to your profile while visiting MoodleNet.</p>';
+$string['mnetprofiledesc'] = '<p>Enter your MoodleNet profile details here to be redirected to your profile while visiting MoodleNet.</p>';
 $string['moodlenetsettings'] = 'MoodleNet settings';
-$string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled before resource imports can be processed.
-To enable this feature, see the \'enablemoodlenet\' setting.';
+$string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled in Site administration / MoodleNet before resource imports can be processed.';
 $string['notification'] = 'You are about to import the content "{$a->name} ({$a->type})" into your site. Select the course in which it should be added, or <a href="{$a->cancellink}">cancel</a>.';
 $string['searchcourses'] = "Search courses";
 $string['selectpagetitle'] = 'Select page';

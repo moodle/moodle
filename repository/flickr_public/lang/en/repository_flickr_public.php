@@ -41,7 +41,7 @@ $string['flickr_public:view'] = 'Use Flickr public repository in file picker';
 $string['fulltext'] = 'Full text';
 $string['information'] = '<div>Get a <a href="http://www.flickr.com/services/api/keys/">Flickr API Key</a> for your Moodle site. </div>';
 $string['invalidemail'] = 'Invalid email account for flickr';
-$string['license'] = 'License';
+$string['license'] = 'Licence';
 $string['modification'] = 'I want to be able to modify the images';
 $string['notitle'] = 'notitle';
 $string['nullphotolist'] = 'There are no photos in this account';
