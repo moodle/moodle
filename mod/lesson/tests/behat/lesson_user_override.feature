@@ -248,7 +248,7 @@ Feature: Lesson user override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test lesson"
-    Then  I should see "This lesson will be open on Tuesday, 1 January 2030, 8:00"
+    Then I should see "This lesson will be open on Tuesday, 1 January 2030, 8:00"
     And I should not see "Cat is an amphibian"
     And I log out
     And I log in as "student1"
@@ -383,3 +383,23 @@ Feature: Lesson user override
     And I navigate to "User overrides" in current page administration
     Then I should see "Student1" in the ".generaltable" "css_element"
     And I should not see "Student2" in the ".generaltable" "css_element"
+
+  @javascript
+  Scenario: Create a user override when the lesson is not available to the student
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test lesson name"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Availability" to "Hide from students"
+    And I click on "Save and display" "button"
+    When I navigate to "User overrides" in current page administration
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user              | Student1 |
+      | Maximum number of attempts | 2 |
+    And I press "Save"
+    Then I should see "This override is inactive"
+    And "Edit" "icon" should exist in the "Sam1 Student1" "table_row"
+    And "copy" "icon" should exist in the "Sam1 Student1" "table_row"
+    And "Delete" "icon" should exist in the "Sam1 Student1" "table_row"
