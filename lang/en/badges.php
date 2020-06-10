@@ -516,7 +516,6 @@ $string['sitebackpack'] = 'Active external backpack';
 $string['sitebackpack_help'] = 'The external backpack that users can connect to from this site. Note that changing this setting after users have connected their backpacks will require each user to go to their backpack settings page and disconnect then reconnect.';
 $string['sitebackpackdeleted'] = 'The site backpack has been deleted.';
 $string['sitebackpacknotdeleted'] = 'This backpack couldn\'t be deleted because it\'s currently the site default.';
-$string['sitebackpackverify'] = 'Backpack connection';
 $string['sitebackpackwarning'] = 'Could not connect to backpack. <br/><br/>Check that the "Badge issuer email address" admin setting is the valid email for an account on the backpack website. <br/><br/>Check that the "Badge issuer password" on the <a href="{$a->url}">site backpack settings page</a>, is the correct password for the account on the backpack website. <br/><br/>The backpack returned: "{$a->warning}"';
 $string['sitebadges'] = 'Site badges';
 $string['sitebadges_help'] = 'Site badges can only be awarded to users for site-related activities. These include completing a set of courses or parts of user profiles. Site badges can also be issued manually by one user to another.
@@ -578,3 +577,4 @@ $string['nobackpackcollections'] = 'No badge collections have been selected. <a 
 
 // Deprecated since Moodle 3.9.
 $string['editsettings'] = 'Edit settings';
+$string['sitebackpackverify'] = 'Backpack connection';
