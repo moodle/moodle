@@ -1147,14 +1147,28 @@ function badge_assemble_notification(stdClass $badge) {
  * @return string
  */
 function badges_verify_site_backpack() {
+    global $CFG;
+
+    return badges_verify_backpack($CFG->badges_site_backpack);
+}
+
+/**
+ * Attempt to authenticate with a backpack credentials and return an error
+ * if the authentication fails.
+ * If external backpacks are not enabled or the backpack version is different
+ * from OBv2, this will not perform any test.
+ *
+ * @param int $backpackid Backpack identifier to verify.
+ * @return string The result of the verification process.
+ */
+function badges_verify_backpack(int $backpackid) {
     global $OUTPUT, $CFG;
 
     if (empty($CFG->badges_allowexternalbackpack)) {
         return '';
     }
 
-    $backpack = badges_get_site_backpack($CFG->badges_site_backpack);
-
+    $backpack = badges_get_site_backpack($backpackid);
     if (empty($backpack->apiversion) || ($backpack->apiversion == OPEN_BADGES_V2)) {
         $backpackapi = new \core_badges\backpack_api($backpack);
 
@@ -1174,5 +1188,6 @@ function badges_verify_site_backpack() {
             return $OUTPUT->container($icon . $message, 'text-error');
         }
     }
+
     return '';
 }
