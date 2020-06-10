@@ -24,31 +24,81 @@
 define(['jquery', 'core/custom_interaction_events'], function($, CustomEvents) {
 
     var SELECTORS = {
-        ANSWER_RADIOS: '.answer input',
-        CLEARRESULTS_LINK: 'a[data-action="clearresults"]'
+        CHOICE_ELEMENT: '.answer input',
+        LINK: 'a',
+        RADIO: 'input[type="radio"]'
     };
 
-    var CSSHIDDEN = 'd-none';
+    /**
+     * Mark clear choice radio as enabled and checked.
+     *
+     * @param {Object} clearChoiceContainer The clear choice option container.
+     */
+    var checkClearChoiceRadio = function(clearChoiceContainer) {
+        clearChoiceContainer.find(SELECTORS.RADIO).prop('disabled', false).prop('checked', true);
+    };
+
+    /**
+     * Get the clear choice div container.
+     *
+     * @param {Object} root The question root element.
+     * @param {string} fieldPrefix The question outer div prefix.
+     * @returns {Object} The clear choice div container.
+     */
+    var getClearChoiceElement = function(root, fieldPrefix) {
+        return root.find('div[id="' + fieldPrefix + '"]');
+    };
+
+    /**
+     * Hide clear choice option.
+     *
+     * @param {Object} clearChoiceContainer The clear choice option container.
+     */
+    var hideClearChoiceOption = function(clearChoiceContainer) {
+        clearChoiceContainer.addClass('sr-only');
+        clearChoiceContainer.find(SELECTORS.LINK).attr('tabindex', -1);
+    };
+
+    /**
+     * Shows clear choice option.
+     *
+     * @param {Object} clearChoiceContainer The clear choice option container.
+     */
+    var showClearChoiceOption = function(clearChoiceContainer) {
+        clearChoiceContainer.removeClass('sr-only');
+        clearChoiceContainer.find(SELECTORS.LINK).attr('tabindex', 0);
+        clearChoiceContainer.find(SELECTORS.RADIO).prop('disabled', true);
+    };
 
     /**
      * Register event listeners for the clear choice module.
      *
      * @param {Object} root The question outer div prefix.
+     * @param {string} fieldPrefix The "Clear choice" div prefix.
      */
-    var registerEventListeners = function(root) {
+    var registerEventListeners = function(root, fieldPrefix) {
+        var clearChoiceContainer = getClearChoiceElement(root, fieldPrefix);
 
-        var clearChoiceButton = root.find(SELECTORS.CLEARRESULTS_LINK);
+        clearChoiceContainer.on(CustomEvents.events.activate, SELECTORS.LINK, function(e, data) {
 
-        root.on(CustomEvents.events.activate, SELECTORS.CLEARRESULTS_LINK, function(e, data) {
-            root.find(SELECTORS.ANSWER_RADIOS).each(function() {
-                $(this).prop('checked', false);
-            });
-            $(e.target).addClass(CSSHIDDEN);
-            data.originalEvent.preventDefault();
+                // Mark the clear choice radio element as checked.
+                checkClearChoiceRadio(clearChoiceContainer);
+                // Now that the hidden radio has been checked, hide the clear choice option.
+                hideClearChoiceOption(clearChoiceContainer);
+
+                data.originalEvent.preventDefault();
         });
 
-        root.on(CustomEvents.events.activate, SELECTORS.ANSWER_RADIOS, function() {
-            clearChoiceButton.removeClass(CSSHIDDEN);
+        root.on(CustomEvents.events.activate, SELECTORS.CHOICE_ELEMENT, function() {
+            // If the event has been triggered by any other choice, show the clear choice option.
+            showClearChoiceOption(clearChoiceContainer);
+        });
+
+        // If the clear choice radio receives focus from using the tab key, return the focus
+        // to the first answer option.
+        clearChoiceContainer.find(SELECTORS.RADIO).focus(function() {
+            var firstChoice = root.find(SELECTORS.CHOICE_ELEMENT).first();
+            firstChoice.focus();
         });
     };
 
@@ -56,10 +106,11 @@ define(['jquery', 'core/custom_interaction_events'], function($, CustomEvents) {
      * Initialise clear choice module.
 
      * @param {string} root The question outer div prefix.
+     * @param {string} fieldPrefix The "Clear choice" div prefix.
      */
-    var init = function(root) {
+    var init = function(root, fieldPrefix) {
         root = $('#' + root);
-        registerEventListeners(root);
+        registerEventListeners(root, fieldPrefix);
     };
 
     return {
