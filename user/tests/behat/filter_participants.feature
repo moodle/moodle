@@ -251,7 +251,7 @@ Feature: Course participants can be filtered
     And I should not see "Teacher 1" in the "participants" "table"
 
   @javascript
-  Scenario: Multiple filters applied
+  Scenario: Multiple filters applied (All filterset match type)
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
@@ -313,6 +313,105 @@ Feature: Course participants can be filtered
     And I should see "Nothing to display"
 
   @javascript
+  Scenario: Multiple filters applied (Any filterset match type)
+    Given I log in as "teacher1"
+    #Avoid 'Teacher' list item collisions with profile dropdown.
+    And I open my profile in edit mode
+    And I set the field "First name" to "Patricia"
+    And I press "Update profile"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I set the field "Match" in the "Filter 1" "fieldset" to "All"
+    And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I click on "Teacher" "list_item"
+    And I click on "Add condition" "button"
+    # Set filterset to match any.
+    And I set the field "Match" to "Any"
+    And I set the field "Match" in the "Filter 2" "fieldset" to "Any"
+    And I set the field "type" in the "Filter 2" "fieldset" to "Status"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 2" "fieldset"
+    And I click on "Active" "list_item"
+    When I click on "Apply filters" "button"
+    Then I should see "Student 1" in the "participants" "table"
+    And I should see "Patricia 1" in the "participants" "table"
+    And I should see "Student 3" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
+    And I should not see "Student 4" in the "participants" "table"
+    And I set the field "Match" in the "Filter 2" "fieldset" to "None"
+    And I click on "Apply filters" "button"
+    And I should see "Student 2" in the "participants" "table"
+    And I should see "Student 4" in the "participants" "table"
+    And I should see "Patricia 1" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Student 3" in the "participants" "table"
+    # Add a keyword filter.
+    And I click on "Add condition" "button"
+    And I set the field "Match" in the "Filter 3" "fieldset" to "Any"
+    And I set the field "type" in the "Filter 3" "fieldset" to "Keyword"
+    And I set the field "Type..." to "teacher1"
+    And I press key "13" in the field "Type..."
+    And I click on "Apply filters" "button"
+    And I should see "Student 2" in the "participants" "table"
+    And I should see "Student 4" in the "participants" "table"
+    And I should see "Patricia 1" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Student 3" in the "participants" "table"
+
+  @javascript
+  Scenario: Multiple filters applied (None filterset match type)
+    Given I log in as "teacher1"
+    #Avoid 'Teacher' list item collisions with profile dropdown.
+    And I open my profile in edit mode
+    And I set the field "First name" to "Patricia"
+    And I press "Update profile"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I set the field "Match" in the "Filter 1" "fieldset" to "All"
+    And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I click on "Teacher" "list_item"
+    And I click on "Add condition" "button"
+    # Set filterset to match none.
+    And I set the field "Match" to "None"
+    And I set the field "Match" in the "Filter 2" "fieldset" to "Any"
+    And I set the field "type" in the "Filter 2" "fieldset" to "Status"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 2" "fieldset"
+    And I click on "Active" "list_item"
+    When I click on "Apply filters" "button"
+    Then I should see "Student 2" in the "participants" "table"
+    And I should see "Student 4" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Student 3" in the "participants" "table"
+    And I should not see "Patricia 1" in the "participants" "table"
+    And I set the field "Match" in the "Filter 2" "fieldset" to "None"
+    And I click on "Apply filters" "button"
+    And I should see "Student 1" in the "participants" "table"
+    And I should see "Student 3" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
+    And I should not see "Student 4" in the "participants" "table"
+    And I should not see "Patricia 1" in the "participants" "table"
+    # Add a keyword filter.
+    And I click on "Add condition" "button"
+    And I set the field "Match" in the "Filter 3" "fieldset" to "Any"
+    And I set the field "type" in the "Filter 3" "fieldset" to "Keyword"
+    And I set the field "Type..." to "3@"
+    And I press key "13" in the field "Type..."
+    And I click on "Apply filters" "button"
+    And I should see "Student 1" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
+    And I should not see "Student 3" in the "participants" "table"
+    And I should not see "Student 4" in the "participants" "table"
+    And I should not see "Patricia 1" in the "participants" "table"
+    And I set the field "Match" in the "Filter 3" "fieldset" to "None"
+    And I click on "Apply filters" "button"
+    And I should see "Student 3" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
+    And I should not see "Student 4" in the "participants" "table"
+    And I should not see "Patricia 1" in the "participants" "table"
+
+  @javascript
   Scenario: Filter match by one or more keywords and modified match types
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -327,6 +426,13 @@ Feature: Course participants can be filtered
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
+    And I set the field "Match" in the "Filter 1" "fieldset" to "None"
+    And I click on "Apply filters" "button"
+    And I should see "Student 2" in the "participants" "table"
+    And I should see "Student 3" in the "participants" "table"
+    And I should see "Student 4" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Teacher 1" in the "participants" "table"
     And I set the field "Match" in the "Filter 1" "fieldset" to "All"
     And I click on "Apply filters" "button"
     And I should see "Student 1" in the "participants" "table"
