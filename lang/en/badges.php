@@ -81,6 +81,8 @@ $string['awardedtoyou'] = 'Issued to me';
 $string['awardoncron'] = 'Access to the badges was successfully enabled. Too many users can instantly earn this badge. To ensure site performance, this action will take some time to process.';
 $string['awards'] = 'Recipients';
 $string['backpackavailability'] = 'External badge verification';
+$string['backpackconnectionok'] = 'Backpack connection successfully established';
+$string['backpackconnectionnottested'] = 'Connection can not be tested for this backpack because only OBv2.0 backpacks support it.';
 $string['backpackneedsupdate'] = 'The backpack connected to this profile does not match the backpack for the site. You need to disconnect and reconnect the backpack.';
 $string['backpackavailability_help'] = 'For badge recipients to be able to prove they earned their badges from you, an external backpack service should be able to access your site and verify badges issued from it. Your site does not currently appear to be accessible, which means that badges you have already issued or will issue in the future cannot be verified.
 
@@ -549,6 +551,7 @@ $string['targetframework'] = 'Framework';
 $string['targetframework_help'] = 'The name of the external skill or standard framework.';
 $string['targetcode'] = 'Code';
 $string['targetcode_help'] = 'A unique string identifier for referencing the external skill or standard within its framework.';
+$string['testbackpack'] = 'Test backpack \'{$a}\'';
 $string['type'] = 'Type';
 $string['variablesubstitution'] = 'Variable substitution in messages.';
 $string['variablesubstitution_help'] = 'In a badge message, certain variables can be inserted into the subject and/or body of a message so that they will be replaced with real values when the message is sent. The variables should be inserted into the text exactly as they are shown below. The following variables can be used:

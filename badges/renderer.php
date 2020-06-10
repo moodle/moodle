@@ -1368,4 +1368,35 @@ class core_badges_renderer extends plugin_renderer_base {
         $data = $page->export_for_template($this);
         return parent::render_from_template('core_badges/external_backpacks_page', $data);
     }
+
+    /**
+     * Get the result of a backpack validation with its settings. It returns:
+     * - A informative message if the backpack version is different from OBv2.
+     * - A warning with the error if it's not possible to connect to this backpack.
+     * - A successful message if the connection has worked.
+     *
+     * @param  int    $backpackid The backpack identifier.
+     * @return string A message with the validation result.
+     */
+    public function render_test_backpack_result(int $backpackid): string {
+        // Get the backpack.
+        $backpack = badges_get_site_backpack($backpackid);
+
+        // Add the header to the result.
+        $result = $this->heading(get_string('testbackpack', 'badges', $backpack->backpackweburl));
+
+        if ($backpack->apiversion != OPEN_BADGES_V2) {
+            // Only OBv2 supports this validation.
+            $result .= get_string('backpackconnectionnottested', 'badges');
+        } else {
+            $message = badges_verify_backpack($backpackid);
+            if (empty($message)) {
+                $result .= get_string('backpackconnectionok', 'badges');
+            } else {
+                $result .= $message;
+            }
+        }
+
+        return $result;
+    }
 }
