@@ -24,13 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019111800;
-$plugin->requires  = 2019111200;
+$plugin->version   = 2020061500;
+$plugin->requires  = 2020060900;
 
 $plugin->component = 'qtype_ddmarker';
 $plugin->maturity  = MATURITY_STABLE;
 
 $plugin->dependencies = array(
-    'qtype_gapselect'     => 2019111200,
-    'qtype_ddimageortext' => 2019111200,
+    'qtype_gapselect'     => 2020060900,
+    'qtype_ddimageortext' => 2020060900,
 );
