@@ -902,6 +902,9 @@ $overridetossl = !empty($CFG->overridetossl);
 // Check if moodle campaign content setting is enabled or not.
 $showcampaigncontent = !isset($CFG->showcampaigncontent) || $CFG->showcampaigncontent;
 
+// Encourage admins to enable the user feedback feature if it is not enabled already.
+$showfeedbackencouragement = empty($CFG->enableuserfeedback);
+
 admin_externalpage_setup('adminnotifications');
 
 $output = $PAGE->get_renderer('core', 'admin');
@@ -910,4 +913,4 @@ echo $output->admin_notifications_page($maturity, $insecuredataroot, $errorsdisp
                                        $maintenancemode, $availableupdates, $availableupdatesfetch, $buggyiconvnomb,
                                        $registered, $cachewarnings, $eventshandlers, $themedesignermode, $devlibdir,
                                        $mobileconfigured, $overridetossl, $invalidforgottenpasswordurl, $croninfrequent,
-                                       $showcampaigncontent);
+                                       $showcampaigncontent, $showfeedbackencouragement);
