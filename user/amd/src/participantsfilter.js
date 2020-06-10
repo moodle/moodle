@@ -336,6 +336,7 @@ export const init = participantsRegionId => {
         if (filters.length === 1) {
             filterSet.querySelector(Selectors.filterset.regions.filtermatch).classList.add('hidden');
             filterSet.querySelector(Selectors.filterset.fields.join).value = 1;
+            filterSet.dataset.filterverb = 1;
         } else {
             filterSet.querySelector(Selectors.filterset.regions.filtermatch).classList.remove('hidden');
         }
