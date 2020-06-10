@@ -41,6 +41,6 @@ if ($hassiteconfig) {
     $settings->add($temp);
 
     $temp = new admin_setting_configtext('tool_moodlenet/defaultmoodlenet', get_string('defaultmoodlenet', 'tool_moodlenet'),
-        new lang_string('defaultmoodlenet_desc', 'tool_moodlenet'), 'https://home.moodle.net');
+        new lang_string('defaultmoodlenet_desc', 'tool_moodlenet'), 'https://moodle.net');
     $settings->add($temp);
 }
