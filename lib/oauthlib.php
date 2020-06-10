@@ -108,7 +108,11 @@ class oauth_helper {
             $this->access_token_secret = $args['access_token_secret'];
         }
         $this->http = new curl(array('debug'=>false));
-        $this->http_options = array();
+        if (!empty($args['http_options'])) {
+            $this->http_options = $args['http_options'];
+        } else {
+            $this->http_options = array();
+        }
     }
 
     /**
