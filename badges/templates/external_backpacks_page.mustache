@@ -25,9 +25,8 @@
     Example context (json):
     {
         "backpacks": [
-            {"backpackweburl": "http://localhost/", "sitebackpack": true, "canedit": false}
-        ],
-        "warning": "<span class='text-warning'>Could not login</span>"
+            {"backpackweburl": "http://localhost/", "sitebackpack": true, "canedit": false, "cantest": true}
+        ]
     }
 }}
 <table class="generaltable fullwidth">
@@ -46,13 +45,15 @@
             <td> {{#sitebackpack}}Yes{{/sitebackpack}} </td>
             <td>
             {{#canedit}}
-                <a href="{{baseurl}}?id={{id}}&action=edit">
-                    {{#str}}editsettings, core_badges{{/str}}
-                </a>
+                <a href="{{baseurl}}?id={{id}}&action=edit">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
             {{/canedit}}
+            {{#cantest}}
+                <a href="{{baseurl}}?id={{id}}&action=test">
+                    {{#pix}}t/check, core,{{#str}}testsettings, core_badges{{/str}}{{/pix}}
+                </a>
+            {{/cantest}}
             </td>
         </tr>
         {{/backpacks}}
     </tbody>
 </table>
-{{{warning}}}
