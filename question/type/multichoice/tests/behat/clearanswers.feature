@@ -19,7 +19,7 @@ Feature: Clear my answers
       | Course       | C1        | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name             | template    | questiontext    |
-      | Test questions   | multichoice | Multi-choice-001 | one_of_four | Question One  |
+      | Test questions   | multichoice | Multi-choice-001 | one_of_four | Question One    |
     And the following "activities" exist:
       | activity   | name   | intro              | course | idnumber | preferredbehaviour | canredoquestions |
       | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | immediatefeedback  | 1                |
@@ -40,3 +40,18 @@ Feature: Clear my answers
     Then I should not see "Clear my choice"
     And I click on "Check" "button" in the "Question One" "question"
     And I should see "Please select an answer" in the "Question One" "question"
+
+  @javascript
+  Scenario: Attempt a quiz and revisit a cleared answer.
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Quiz 1"
+    And I press "Attempt quiz now"
+    And I should see "Question One"
+    And I click on "Four" "radio" in the "Question One" "question"
+    And I follow "Finish attempt ..."
+    And I click on "Return to attempt" "button"
+    And I click on "Clear my choice" "button" in the "Question One" "question"
+    And I follow "Finish attempt ..."
+    And I click on "Return to attempt" "button"
+    Then I should not see "Clear my choice"
