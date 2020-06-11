@@ -210,6 +210,7 @@ Feature: Lesson user override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test lesson"
+    And I wait until the page is ready
     Then I should see "This lesson closed on Saturday, 1 January 2000, 8:00"
     And I should not see "Cat is an amphibian"
     And I log out
@@ -248,6 +249,7 @@ Feature: Lesson user override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test lesson"
+    And I wait until the page is ready
     Then I should see "This lesson will be open on Tuesday, 1 January 2030, 8:00"
     And I should not see "Cat is an amphibian"
     And I log out
