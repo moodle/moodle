@@ -77,5 +77,12 @@ function xmldb_tool_moodlenet_upgrade(int $oldversion) {
         upgrade_plugin_savepoint(true, 2020060500, 'tool', 'moodlenet');
     }
 
+    if ($oldversion < 2020060500.02) {
+        // Disable the MoodleNet integration by default till further notice.
+        set_config('enablemoodlenet', 0, 'tool_moodlenet');
+
+        upgrade_plugin_savepoint(true, 2020060500.02, 'tool', 'moodlenet');
+    }
+
     return true;
 }
