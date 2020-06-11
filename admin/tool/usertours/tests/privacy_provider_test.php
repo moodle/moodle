@@ -40,6 +40,15 @@ use \tool_usertours\privacy\provider;
  */
 class tool_usertours_privacy_testcase extends \core_privacy\tests\provider_testcase {
 
+    protected function create_test_tour(): tour {
+        return (new tour())
+            ->set_name('test_tour')
+            ->set_description('Test tour')
+            ->set_enabled(true)
+            ->set_pathmatch('/')
+            ->persist();
+    }
+
     /**
      * Ensure that get_metadata exports valid content.
      */
@@ -71,11 +80,9 @@ class tool_usertours_privacy_testcase extends \core_privacy\tests\provider_testc
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $alltours = $DB->get_records('tool_usertours_tours');
-        $tourdata = reset($alltours);
+        $tour = $this->create_test_tour();
 
         $user = \core_user::get_user_by_username('admin');
-        $tour = tour::instance($tourdata->id);
         $tour->mark_user_completed();
         provider::export_user_preferences($user->id);
 
@@ -96,11 +103,9 @@ class tool_usertours_privacy_testcase extends \core_privacy\tests\provider_testc
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $alltours = $DB->get_records('tool_usertours_tours');
-        $tourdata = reset($alltours);
+        $tour = $this->create_test_tour();
 
         $user = \core_user::get_user_by_username('admin');
-        $tour = tour::instance($tourdata->id);
         $tour->mark_user_completed();
         $tour->request_user_reset();
         provider::export_user_preferences($user->id);
@@ -122,14 +127,15 @@ class tool_usertours_privacy_testcase extends \core_privacy\tests\provider_testc
         $this->resetAfterTest();
         $this->setAdminUser();
 
+        $tour1 = $this->create_test_tour();
+        $tour2 = $this->create_test_tour();
+
         $user = \core_user::get_user_by_username('admin');
 
         $alltours = $DB->get_records('tool_usertours_tours');
 
-        $tour1 = tour::instance(array_shift($alltours)->id);
         $tour1->mark_user_completed();
 
-        $tour2 = tour::instance(array_shift($alltours)->id);
         $tour2->mark_user_completed();
         $tour2->remove();
 
