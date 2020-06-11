@@ -1725,6 +1725,7 @@ class core_plugin_manager {
             'block' => array('course_overview', 'messages', 'community', 'participants'),
             'cachestore' => array('memcache'),
             'enrol' => array('authorize'),
+            'quizaccess' => array('safebrowser'),
             'report' => array('search'),
             'repository' => array('alfresco'),
             'tinymce' => array('dragmath'),
