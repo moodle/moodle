@@ -2427,3 +2427,8 @@ $picker-emojis-per-row: 7 !default;
         color: darken(theme-color-level($color, $alert-color-level), 10%);
     }
 }
+
+.alert a {
+    font-weight: $font-weight-bold;
+}
+

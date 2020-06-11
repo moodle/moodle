@@ -11511,6 +11511,9 @@ body.h5p-embed .h5pmessages {
 .alert-dark a {
   color: #040505; }
 
+.alert a, #page-admin-index .releasenoteslink a, #page-admin-index .adminwarning a, #page-admin-index .adminerror a, .que .formulation a, .que .outcome a, .que .comment a, .assignfeedback_editpdf_widget .label a {
+  font-weight: 700; }
+
 .icon {
   font-size: 16px;
   width: 16px;
