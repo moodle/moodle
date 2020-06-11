@@ -11960,6 +11960,9 @@ body.h5p-embed .h5pmessages {
 .alert-dark a {
   color: #040505; }
 
+.alert a {
+  font-weight: 700; }
+
 @media (max-width: 767.98px) {
   #page-navbar {
     width: 100%; }
