@@ -3203,12 +3203,33 @@ class participants_search_test extends advanced_testcase {
                             'accesssince' => [
                                 'values' => ['-6 months'],
                                 'jointype' => filter::JOINTYPE_ALL,
-                                ],
+                            ],
                         ],
                         'jointype' => filter::JOINTYPE_NONE,
                         'count' => 1,
                         'expectedusers' => [
                             'barbara.bennett',
+                        ],
+                    ],
+                    'NONE: Filterset combining several filter types and a double-negative on keyword' => (object) [
+                        'jointype' => filter::JOINTYPE_NONE,
+                        'filterdata' => [
+                            // Note: This is a jointype NONE on the parent jointype NONE.
+                            // The result therefore negated in this instance.
+                            // Include Adam and Anthony.
+                            'keywords' => [
+                                'values' => ['ant'],
+                                'jointype' => filter::JOINTYPE_NONE,
+                            ],
+                            // Excludes Tony.
+                            'status' => [
+                                'values' => [ENROL_USER_SUSPENDED],
+                                'jointype' => filter::JOINTYPE_ALL,
+                            ],
+                        ],
+                        'count' => 1,
+                        'expectedusers' => [
+                            'adam.ant',
                         ],
                     ],
                 ],

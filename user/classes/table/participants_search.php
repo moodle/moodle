@@ -283,6 +283,14 @@ class participants_search {
                 case $this->filterset::JOINTYPE_NONE:
                     $wherenot = ' NOT ';
                     $wheresjoin = ' AND NOT ';
+
+                    // Some of the $where conditions may begin with `NOT` which results in `AND NOT NOT ...`.
+                    // To prevent this from breaking on Oracle the inner WHERE clause is wrapped in brackets, making it
+                    // `AND NOT (NOT ...)` which is valid in all DBs.
+                    $wheres = array_map(function($where) {
+                        return "({$where})";
+                    }, $wheres);
+
                     break;
                 default:
                     // Default to 'Any' jointype.
