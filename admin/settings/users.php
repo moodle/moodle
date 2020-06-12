@@ -261,10 +261,28 @@ if ($hassiteconfig) {
     $temp->add($setting);
 
     // See {@link https://gdpr-info.eu/art-8-gdpr/}.
+    // See {@link https://www.betterinternetforkids.eu/web/portal/practice/awareness/detail?articleId=3017751}.
     $ageofdigitalconsentmap = implode(PHP_EOL, [
         '*, 16',
         'AT, 14',
+        'BE, 13',
+        'BG, 14',
+        'CY, 14',
+        'CZ, 15',
+        'DK, 13',
+        'EE, 13',
         'ES, 14',
+        'FI, 13',
+        'FR, 15',
+        'GB, 13',
+        'GR, 15',
+        'IT, 14',
+        'LT, 14',
+        'LV, 13',
+        'MT, 13',
+        'NO, 13',
+        'PT, 13',
+        'SE, 13',
         'US, 13'
     ]);
     $setting = new admin_setting_agedigitalconsentmap('agedigitalconsentmap',
