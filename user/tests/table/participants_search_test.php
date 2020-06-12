@@ -1253,8 +1253,8 @@ class participants_search_test extends advanced_testcase {
         foreach ($usersdata as $username => $userdata) {
             $user = $this->getDataGenerator()->create_user(['username' => $username]);
 
-            if (array_key_exists('statuses', $userdata)) {
-                foreach ($userdata['statuses'] as $enrolmethod => $status) {
+            if (array_key_exists('status', $userdata)) {
+                foreach ($userdata['status'] as $enrolmethod => $status) {
                     $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student', $enrolmethod, 0, 0, $status);
                 }
             }
@@ -1304,27 +1304,27 @@ class participants_search_test extends advanced_testcase {
             'Users with different enrolment statuses' => (object) [
                 'users' => [
                     'a' => [
-                        'statuses' => [
+                        'status' => [
                             'manual' => ENROL_USER_ACTIVE,
                         ]
                     ],
                     'b' => [
-                        'statuses' => [
+                        'status' => [
                             'self' => ENROL_USER_ACTIVE,
                         ]
                     ],
                     'c' => [
-                        'statuses' => [
+                        'status' => [
                             'manual' => ENROL_USER_SUSPENDED,
                         ]
                     ],
                     'd' => [
-                        'statuses' => [
+                        'status' => [
                             'self' => ENROL_USER_SUSPENDED,
                         ]
                     ],
                     'e' => [
-                        'statuses' => [
+                        'status' => [
                             'manual' => ENROL_USER_ACTIVE,
                             'self' => ENROL_USER_SUSPENDED,
                         ]
@@ -1333,7 +1333,7 @@ class participants_search_test extends advanced_testcase {
                 'expect' => [
                     // Tests for jointype: ANY.
                     'ANY: No filter' => (object) [
-                        'statuses' => [],
+                        'status' => [],
                         'jointype' => filter::JOINTYPE_ANY,
                         'count' => 5,
                         'expectedusers' => [
@@ -1345,7 +1345,7 @@ class participants_search_test extends advanced_testcase {
                         ],
                     ],
                     'ANY: Filter on active only' => (object) [
-                        'statuses' => [ENROL_USER_ACTIVE],
+                        'status' => [ENROL_USER_ACTIVE],
                         'jointype' => filter::JOINTYPE_ANY,
                         'count' => 3,
                         'expectedusers' => [
@@ -1355,7 +1355,7 @@ class participants_search_test extends advanced_testcase {
                         ],
                     ],
                     'ANY: Filter on suspended only' => (object) [
-                        'statuses' => [ENROL_USER_SUSPENDED],
+                        'status' => [ENROL_USER_SUSPENDED],
                         'jointype' => filter::JOINTYPE_ANY,
                         'count' => 3,
                         'expectedusers' => [
@@ -1365,7 +1365,7 @@ class participants_search_test extends advanced_testcase {
                         ],
                     ],
                     'ANY: Filter on multiple statuses' => (object) [
-                        'statuses' => [ENROL_USER_ACTIVE, ENROL_USER_SUSPENDED],
+                        'status' => [ENROL_USER_ACTIVE, ENROL_USER_SUSPENDED],
                         'jointype' => filter::JOINTYPE_ANY,
                         'count' => 5,
                         'expectedusers' => [
@@ -1379,7 +1379,7 @@ class participants_search_test extends advanced_testcase {
 
                     // Tests for jointype: ALL.
                     'ALL: No filter' => (object) [
-                       'statuses' => [],
+                       'status' => [],
                         'jointype' => filter::JOINTYPE_ALL,
                         'count' => 5,
                         'expectedusers' => [
@@ -1391,7 +1391,7 @@ class participants_search_test extends advanced_testcase {
                         ],
                     ],
                     'ALL: Filter on active only' => (object) [
-                        'statuses' => [ENROL_USER_ACTIVE],
+                        'status' => [ENROL_USER_ACTIVE],
                         'jointype' => filter::JOINTYPE_ALL,
                         'count' => 3,
                         'expectedusers' => [
@@ -1401,7 +1401,7 @@ class participants_search_test extends advanced_testcase {
                         ],
                     ],
                     'ALL: Filter on suspended only' => (object) [
-                        'statuses' => [ENROL_USER_SUSPENDED],
+                        'status' => [ENROL_USER_SUSPENDED],
                         'jointype' => filter::JOINTYPE_ALL,
                         'count' => 3,
                         'expectedusers' => [
@@ -1411,7 +1411,7 @@ class participants_search_test extends advanced_testcase {
                         ],
                     ],
                     'ALL: Filter on multiple statuses' => (object) [
-                        'statuses' => [ENROL_USER_ACTIVE, ENROL_USER_SUSPENDED],
+                        'status' => [ENROL_USER_ACTIVE, ENROL_USER_SUSPENDED],
                         'jointype' => filter::JOINTYPE_ALL,
                         'count' => 1,
                         'expectedusers' => [
@@ -1421,7 +1421,7 @@ class participants_search_test extends advanced_testcase {
 
                     // Tests for jointype: NONE.
                     'NONE: No filter' => (object) [
-                       'statuses' => [],
+                       'status' => [],
                         'jointype' => filter::JOINTYPE_NONE,
                         'count' => 5,
                         'expectedusers' => [
@@ -1433,7 +1433,7 @@ class participants_search_test extends advanced_testcase {
                         ],
                     ],
                     'NONE: Filter on active only' => (object) [
-                        'statuses' => [ENROL_USER_ACTIVE],
+                        'status' => [ENROL_USER_ACTIVE],
                         'jointype' => filter::JOINTYPE_NONE,
                         'count' => 3,
                         'expectedusers' => [
@@ -1443,7 +1443,7 @@ class participants_search_test extends advanced_testcase {
                         ],
                     ],
                     'NONE: Filter on suspended only' => (object) [
-                        'statuses' => [ENROL_USER_SUSPENDED],
+                        'status' => [ENROL_USER_SUSPENDED],
                         'jointype' => filter::JOINTYPE_NONE,
                         'count' => 3,
                         'expectedusers' => [
@@ -1453,7 +1453,7 @@ class participants_search_test extends advanced_testcase {
                         ],
                     ],
                     'NONE: Filter on multiple statuses' => (object) [
-                        'statuses' => [ENROL_USER_ACTIVE, ENROL_USER_SUSPENDED],
+                        'status' => [ENROL_USER_ACTIVE, ENROL_USER_SUSPENDED],
                         'jointype' => filter::JOINTYPE_NONE,
                         'count' => 0,
                         'expectedusers' => [],
@@ -1467,7 +1467,7 @@ class participants_search_test extends advanced_testcase {
             foreach ($testdata->expect as $expectname => $expectdata) {
                 $finaltests["{$testname} => {$expectname}"] = [
                     'users' => $testdata->users,
-                    'statuses' => $expectdata->statuses,
+                    'status' => $expectdata->status,
                     'jointype' => $expectdata->jointype,
                     'count' => $expectdata->count,
                     'expectedusers' => $expectdata->expectedusers,
@@ -3044,8 +3044,8 @@ class participants_search_test extends advanced_testcase {
                                 'jointype' => filter::JOINTYPE_ALL,
                             ],
                             // Match Sarah only.
-                            'statuses' => [
-                                'values' => ['active', 'suspended'],
+                            'status' => [
+                                'values' => [ENROL_USER_ACTIVE, ENROL_USER_SUSPENDED],
                                 'jointype' => filter::JOINTYPE_ALL,
                             ],
                             // Match Colin only.
@@ -3119,8 +3119,8 @@ class participants_search_test extends advanced_testcase {
                                 'jointype' => filter::JOINTYPE_NONE,
                             ],
                             // Exclude Colin and Tony.
-                            'statuses' => [
-                                'values' => ['active'],
+                            'status' => [
+                                'values' => [ENROL_USER_ACTIVE],
                                 'jointype' => filter::JOINTYPE_ALL,
                             ],
                             // Exclude Barbara.
@@ -3190,8 +3190,8 @@ class participants_search_test extends advanced_testcase {
                                 'jointype' => filter::JOINTYPE_NONE,
                             ],
                             // Excludes Colin, Tony and Sarah.
-                            'statuses' => [
-                                'values' => ['suspended'],
+                            'status' => [
+                                'values' => [ENROL_USER_SUSPENDED],
                                 'jointype' => filter::JOINTYPE_ALL,
                             ],
                             // Excludes Adam, Colin, Tony, Sarah, Morgan and Jonathan.
