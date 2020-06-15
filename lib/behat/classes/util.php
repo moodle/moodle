@@ -409,6 +409,37 @@ class behat_util extends testing_util {
     }
 
     /**
+     * Restore theme CSS stored during behat setup.
+     */
+    public static function restore_saved_themes() {
+        global $CFG;
+
+        $themerev = theme_get_revision();
+
+        $framework = self::get_framework();
+        $storageroot = self::get_dataroot() . "/{$framework}/themedata";
+        $themenames = array_keys(\core_component::get_plugin_list('theme'));
+        $directions = ['ltr', 'rtl'];
+
+        $themeconfigs = array_map(function($themename) {
+            return \theme_config::load($themename);
+        }, $themenames);
+
+        foreach ($themeconfigs as $themeconfig) {
+            $themename = $themeconfig->name;
+            $themesubrev = theme_get_sub_revision_for_theme($themename);
+
+            $dirname = "{$storageroot}/{$themename}";
+            foreach ($directions as $direction) {
+                $cssfile = "{$dirname}/{$direction}.css";
+                if (file_exists($cssfile)) {
+                    $themeconfig->set_css_content_cache(file_get_contents($cssfile));
+                }
+            }
+        }
+    }
+
+    /**
      * Pause execution immediately.
      *
      * @param Session $session

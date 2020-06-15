@@ -360,6 +360,16 @@ class behat_hooks extends behat_base {
         behat_util::reset_all_data();
         error_reporting($errorlevel);
 
+        if ($this->running_javascript()) {
+            // Fetch the user agent.
+            // This isused to choose between the SVG/Non-SVG versions of themes.
+            $useragent = $this->getSession()->evaluateScript('return navigator.userAgent;');
+            \core_useragent::instance(true, $useragent);
+
+            // Restore the saved themes.
+            behat_util::restore_saved_themes();
+        }
+
         // Assign valid data to admin user (some generator-related code needs a valid user).
         $user = $DB->get_record('user', array('username' => 'admin'));
         \core\session\manager::set_user($user);
