@@ -78,5 +78,8 @@ function xmldb_block_myoverview_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2019111801, 'myoverview', false);
     }
 
+    // Automatically generated Moodle v3.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

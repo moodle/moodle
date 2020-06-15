@@ -107,5 +107,8 @@ function xmldb_ltiservice_gradebookservices_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020042403, 'ltiservice', 'gradebookservices');
     }
 
+    // Automatically generated Moodle v3.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
