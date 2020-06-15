@@ -44,7 +44,7 @@ $PAGE->set_url('/contentbank/index.php');
 $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->set_pagetype('contenbank');
+$PAGE->set_pagetype('contentbank');
 
 // Get all contents managed by active plugins where the user has permission to render them.
 $cb = new \core_contentbank\contentbank();
