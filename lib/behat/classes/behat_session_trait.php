@@ -30,6 +30,9 @@ use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\NoSuchWindowException;
 use Behat\Mink\Session;
+use Facebook\WebDriver\Exception\ScriptTimeoutException;
+use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\WebDriverElement;
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
@@ -1077,15 +1080,60 @@ EOF;
         if (!$this->running_javascript()) {
             $node->click();
         }
-        $this->ensure_node_is_visible($node); // Ensures hidden elements can't be clicked.
-        $xpath = $node->getXpath();
         $driver = $this->getSession()->getDriver();
-        if ($driver instanceof \Moodle\BehatExtension\Driver\MoodleSelenium2Driver) {
-            $script = "Syn.click({{ELEMENT}})";
-            $driver->triggerSynScript($xpath, $script);
+        if ($driver instanceof \Moodle\BehatExtension\Driver\WebDriver) {
+            $this->execute_js_on_node($node, '{{ELEMENT}}.click();');
         } else {
-            $driver->click($xpath);
+            $this->ensure_node_is_visible($node); // Ensures hidden elements can't be clicked.
+            $driver->click($node->getXpath());
         }
+    }
+
+    /**
+     * Execute JS on the specified NodeElement.
+     *
+     * @param NodeElement $node
+     * @param string $script
+     * @param bool $async
+     */
+    protected function execute_js_on_node(NodeElement $node, string $script, bool $async = false): void {
+        $driver = $this->getSession()->getDriver();
+        if (!($driver instanceof \Moodle\BehatExtension\Driver\WebDriver)) {
+            throw new \coding_exception('Unknown driver');
+        }
+
+        if (preg_match('/^function[\s\(]/', $script)) {
+            $script = preg_replace('/;$/', '', $script);
+            $script = '(' . $script . ')';
+        }
+
+        $script = str_replace('{{ELEMENT}}', 'arguments[0]', $script);
+
+        $webdriver = $driver->getWebDriver();
+
+        $element = $this->get_webdriver_element_from_node_element($node);
+        if ($async) {
+            try {
+                $webdriver->executeAsyncScript($script, [$element]);
+            } catch (ScriptTimeoutException $e) {
+                throw new DriverException($e->getMessage(), $e->getCode(), $e);
+            }
+        } else {
+            $webdriver->executeScript($script, [$element]);
+        }
+    }
+
+    /**
+     * Translate a Mink NodeElement into a WebDriver Element.
+     *
+     * @param NodeElement $node
+     * @return WebDriverElement
+     */
+    protected function get_webdriver_element_from_node_element(NodeElement $node): WebDriverElement {
+        return $this->getSession()
+            ->getDriver()
+            ->getWebDriver()
+            ->findElement(WebDriverBy::xpath($node->getXpath()));
     }
 
     /**
