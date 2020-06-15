@@ -693,8 +693,6 @@ class behat_forms extends behat_base {
         $xpathtarget = "//ul[@class='form-autocomplete-suggestions']//*[contains(concat('|', string(.), '|'),'|" . $item . "|')]";
 
         $this->execute('behat_general::i_click_on', [$xpathtarget, 'xpath_element']);
-
-        $this->execute('behat_general::i_press_key_in_element', ['13', 'body', 'xpath_element']);
     }
 
     /**
