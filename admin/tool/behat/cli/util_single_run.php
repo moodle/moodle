@@ -164,6 +164,8 @@ if ($options['install']) {
         mtrace("Acceptance tests site installed");
     }
 
+    // Note: Do not build the themes here. This is done during the 'enable' stage.
+
 } else if ($options['drop']) {
     // Ensure no tests are running.
     test_lock::acquire('behat');
@@ -181,6 +183,10 @@ if ($options['install']) {
 
     // Enable test mode.
     behat_util::start_test_mode($options['add-core-features-to-theme'], $options['optimize-runs'], $parallel, $run);
+
+    // Themes are only built in the 'enable' command.
+    behat_util::build_themes();
+    mtrace("Testing environment themes built");
 
     // This is only displayed once for parallel install.
     if (empty($run)) {
