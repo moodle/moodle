@@ -2283,22 +2283,6 @@ $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
 $string['deprecatedeventname'] = '{$a} (no longer in use)';
 
-// Deprecated since Moodle 3.6.
-$string['addedrecip'] = 'Added {$a} new recipient';
-$string['addedrecips'] = 'Added {$a} new recipients';
-$string['allfieldsrequired'] = 'All fields are required';
-$string['backtoparticipants'] = 'Back to participants list';
-$string['currentlyselectedusers'] = 'Currently selected users';
-$string['coursemessage'] = 'Message course users';
-$string['emaildisplayhidden'] = 'Email hidden';
-$string['emailuserhasnone'] = 'There is no email address for the user.';
-$string['formattexttype'] = 'Formatting';
-$string['keepsearching'] = 'Keep searching';
-$string['messagedselectedcountusersfailed'] = 'A problem occurred and {$a} messages have not been sent.';
-$string['messagedselecteduserfailed'] = 'The message was not sent to user {$a->fullname}.';
-$string['previewhtml'] = 'HTML format preview';
-$string['sitemessage'] = 'Message users';
-
 // Deprecated since Moodle 3.9.
 $string['participantscount'] = 'Number of participants: {$a}';
 $string['userfilterplaceholder'] = 'Search keyword or select filter';
