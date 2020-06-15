@@ -475,12 +475,12 @@ class behat_config_util {
             $parallelruns = $this->get_number_of_parallel_run();
         }
 
-        $selenium2wdhost = array('wd_host' => 'http://localhost:4444/wd/hub');
+        $webdriverwdhost = array('wd_host' => 'http://localhost:4444/wd/hub');
         // If parallel run, then set wd_host if specified.
         if (!empty($currentrun) && !empty($parallelruns)) {
-            // Set proper selenium2 wd_host if defined.
+            // Set proper webdriver wd_host if defined.
             if (!empty($CFG->behat_parallel_run[$currentrun - 1]['wd_host'])) {
-                $selenium2wdhost = array('wd_host' => $CFG->behat_parallel_run[$currentrun - 1]['wd_host']);
+                $webdriverwdhost = array('wd_host' => $CFG->behat_parallel_run[$currentrun - 1]['wd_host']);
             }
         }
 
@@ -525,7 +525,7 @@ class behat_config_util {
                     'Behat\MinkExtension' => array(
                         'base_url' => $CFG->behat_wwwroot,
                         'goutte' => null,
-                        'selenium2' => $selenium2wdhost
+                        'webdriver' => $webdriverwdhost
                     ),
                     'Moodle\BehatExtension' => array(
                         'moodledirroot' => $CFG->dirroot,
@@ -688,7 +688,7 @@ class behat_config_util {
             $behatprofileextension = array(
                 'extensions' => array(
                     'Behat\MinkExtension' => array(
-                        'selenium2' => $seleniumconfig,
+                        'webdriver' => $seleniumconfig,
                     )
                 )
             );
@@ -948,11 +948,11 @@ class behat_config_util {
         $oldconfigvalues = array();
         if (isset($values['extensions']['Behat\MinkExtension\Extension'])) {
             $extensionvalues = $values['extensions']['Behat\MinkExtension\Extension'];
-            if (isset($extensionvalues['selenium2']['browser'])) {
-                $oldconfigvalues['browser'] = $extensionvalues['selenium2']['browser'];
+            if (isset($extensionvalues['webdriver']['browser'])) {
+                $oldconfigvalues['browser'] = $extensionvalues['webdriver']['browser'];
             }
-            if (isset($extensionvalues['selenium2']['wd_host'])) {
-                $oldconfigvalues['wd_host'] = $extensionvalues['selenium2']['wd_host'];
+            if (isset($extensionvalues['webdriver']['wd_host'])) {
+                $oldconfigvalues['wd_host'] = $extensionvalues['webdriver']['wd_host'];
             }
             if (isset($extensionvalues['capabilities'])) {
                 $oldconfigvalues['capabilities'] = $extensionvalues['capabilities'];
