@@ -376,6 +376,7 @@ class core_course_renderer extends plugin_renderer_base {
                     'class' => 'section-modchooser-link btn btn-link',
                     'data-action' => 'open-chooser',
                     'data-sectionid' => $section,
+                    'data-sectionreturnid' => $sectionreturn,
                 ]
             );
             $ajaxcontrol .= html_writer::end_tag('div');
