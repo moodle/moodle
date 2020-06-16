@@ -292,6 +292,7 @@ class core_message_external extends external_api {
      * Create contacts.
      *
      * @deprecated since Moodle 3.6
+     * TODO: MDL-63261
      * @param array $userids array of user IDs.
      * @param int $userid The id of the user we are creating the contacts for
      * @return external_description
@@ -323,7 +324,7 @@ class core_message_external extends external_api {
 
         $warnings = array();
         foreach ($params['userids'] as $id) {
-            if (!\core_message\api::create_contact_request($id, $params['userid'])) {
+            if (!\core_message\api::create_contact_request($params['userid'], $id)) {
                 $warnings[] = array(
                     'item' => 'user',
                     'itemid' => $id,
@@ -682,6 +683,7 @@ class core_message_external extends external_api {
      * Block contacts.
      *
      * @deprecated since Moodle 3.6
+     * TODO: MDL-63261
      * @param array $userids array of user IDs.
      * @param int $userid The id of the user we are blocking the contacts for
      * @return external_description
@@ -713,7 +715,7 @@ class core_message_external extends external_api {
 
         $warnings = array();
         foreach ($params['userids'] as $id) {
-            if (!\core_message\api::block_user($id, $params['userid'])) {
+            if (!\core_message\api::block_user($params['userid'], $id)) {
                 $warnings[] = array(
                     'item' => 'user',
                     'itemid' => $id,
@@ -798,7 +800,7 @@ class core_message_external extends external_api {
         }
 
         foreach ($params['userids'] as $id) {
-            core_message\api::unblock_user($id, $params['userid']);
+            core_message\api::unblock_user($params['userid'], $id);
         }
 
         return null;
