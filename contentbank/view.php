@@ -35,8 +35,8 @@ $record = $DB->get_record('contentbank_content', ['id' => $id], '*', MUST_EXIST)
 $context = context::instance_by_id($record->contextid, MUST_EXIST);
 require_capability('moodle/contentbank:access', $context);
 
-$statusmsg = optional_param('statusmsg', '', PARAM_RAW);
-$errormsg = optional_param('errormsg', '', PARAM_RAW);
+$statusmsg = optional_param('statusmsg', '', PARAM_ALPHANUMEXT);
+$errormsg = optional_param('errormsg', '', PARAM_ALPHANUMEXT);
 
 $returnurl = new \moodle_url('/contentbank/index.php', ['contextid' => $context->id]);
 $plugin = core_plugin_manager::instance()->get_plugin_info($record->contenttype);
@@ -111,9 +111,11 @@ $PAGE->add_header_action(html_writer::div(
 echo $OUTPUT->header();
 
 // If needed, display notifications.
-if ($errormsg !== '') {
+if ($errormsg !== '' && get_string_manager()->string_exists($errormsg, 'core_contentbank')) {
+    $errormsg = get_string($errormsg, 'core_contentbank');
     echo $OUTPUT->notification($errormsg);
-} else if ($statusmsg !== '') {
+} else if ($statusmsg !== '' && get_string_manager()->string_exists($statusmsg, 'core_contentbank')) {
+    $statusmsg = get_string($statusmsg, 'core_contentbank');
     echo $OUTPUT->notification($statusmsg, 'notifysuccess');
 }
 if ($contenttype->can_access()) {

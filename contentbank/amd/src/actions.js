@@ -176,10 +176,10 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
         var requestType = 'success';
         Ajax.call([request])[0].then(function(data) {
             if (data.result) {
-                return Str.get_string('contentdeleted', 'core_contentbank');
+                return 'contentdeleted';
             }
             requestType = 'error';
-            return Str.get_string('contentnotdeleted', 'core_contentbank');
+            return 'contentnotdeleted';
 
         }).done(function(message) {
             var params = {
@@ -212,10 +212,10 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
         var requestType = 'success';
         Ajax.call([request])[0].then(function(data) {
             if (data) {
-                return Str.get_string('contentrenamed', 'core_contentbank');
+                return 'contentrenamed';
             }
             requestType = 'error';
-            return Str.get_string('contentnotrenamed', 'core_contentbank');
+            return 'contentnotrenamed';
 
         }).then(function(message) {
             var params = null;
