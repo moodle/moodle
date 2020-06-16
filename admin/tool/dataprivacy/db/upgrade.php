@@ -319,5 +319,28 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
     // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2019052001) {
+
+        // Define field commentsformat to be added to tool_dataprivacy_request.
+        $table = new xmldb_table('tool_dataprivacy_request');
+        $field = new xmldb_field('commentsformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'comments');
+
+        // Conditionally launch add field commentsformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field dpocommentformat to be added to tool_dataprivacy_request.
+        $field = new xmldb_field('dpocommentformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'dpocomment');
+
+        // Conditionally launch add field dpocommentformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Dataprivacy savepoint reached.
+        upgrade_plugin_savepoint(true, 2019052001, 'tool', 'dataprivacy');
+    }
+
     return true;
 }
