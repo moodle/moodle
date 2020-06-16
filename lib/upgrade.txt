@@ -8,6 +8,22 @@ information provided here is intended especially for developers.
   of 'scrollable' is true.
 * The `$CFG->behat_retart_browser_after` configuration setting has been removed.
   The browser session is now restarted between all tests.
+* The following functions have been finally deprecated and can not be used anymore:
+  - print_textarea
+  - calendar_get_all_allowed_types
+  - groups_get_all_groups_for_courses
+  - events_get_cached
+  - events_uninstall
+  - events_cleanup
+  - events_dequeue
+  - events_get_handlers
+  - get_roles_on_exact_context
+  - get_roles_with_assignment_on_context
+  - message_add_contact
+  - message_remove_contact
+  - message_unblock_contact
+  - message_block_contact
+  - message_get_contact
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
