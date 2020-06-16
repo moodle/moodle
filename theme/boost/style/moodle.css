@@ -12993,11 +12993,16 @@ span.editinstructions {
   margin-left: 30px;
   font-size: 0.8203125rem;
   padding: .1em .4em;
-  background-color: #def2f8;
-  color: #5bc0de;
   text-decoration: none;
   z-index: 9999;
-  border: 1px solid #d1edf6; }
+  border: 0 solid transparent;
+  color: #2f6473;
+  background-color: #def2f8;
+  border-color: #d1edf6; }
+  span.editinstructions hr {
+    border-top-color: #bce5f2; }
+  span.editinstructions .alert-link {
+    color: #20454f; }
 
 /* Course drag and drop upload styles */
 #dndupload-status {
@@ -13006,11 +13011,16 @@ span.editinstructions {
   width: 40%;
   margin: 0 30%;
   padding: 6px;
-  border: 1px solid #d1edf6;
   text-align: center;
-  background: #def2f8;
-  color: #5bc0de;
-  z-index: 1; }
+  z-index: 1;
+  border: 0 solid transparent;
+  color: #2f6473;
+  background-color: #def2f8;
+  border-color: #d1edf6; }
+  #dndupload-status hr {
+    border-top-color: #bce5f2; }
+  #dndupload-status .alert-link {
+    color: #20454f; }
 
 .dndupload-preview {
   color: #909090;
