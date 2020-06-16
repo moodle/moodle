@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.9.1 ===
+* The `$CFG->behat_retart_browser_after` configuration setting has been removed.
+  The browser session is now restarted between all tests.
+
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
     - cron_run_single_task()
