@@ -365,6 +365,10 @@ define('PAGE_COURSE_VIEW', 'course-view');
 define('GETREMOTEADDR_SKIP_HTTP_CLIENT_IP', '1');
 /** Get remote addr constant */
 define('GETREMOTEADDR_SKIP_HTTP_X_FORWARDED_FOR', '2');
+/**
+ * GETREMOTEADDR_SKIP_DEFAULT defines the default behavior remote IP address validation.
+ */
+define('GETREMOTEADDR_SKIP_DEFAULT', GETREMOTEADDR_SKIP_HTTP_X_FORWARDED_FOR|GETREMOTEADDR_SKIP_HTTP_CLIENT_IP);
 
 // Blog access level constant declaration.
 define ('BLOG_USER_LEVEL', 1);
@@ -9243,7 +9247,7 @@ function getremoteaddr($default='0.0.0.0') {
     if (empty($CFG->getremoteaddrconf)) {
         // This will happen, for example, before just after the upgrade, as the
         // user is redirected to the admin screen.
-        $variablestoskip = 0;
+        $variablestoskip = GETREMOTEADDR_SKIP_DEFAULT;
     } else {
         $variablestoskip = $CFG->getremoteaddrconf;
     }
