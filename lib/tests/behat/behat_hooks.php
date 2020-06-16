@@ -64,11 +64,6 @@ use Behat\Testwork\Hook\Scope\BeforeSuiteScope,
 class behat_hooks extends behat_base {
 
     /**
-     * @var Last browser session start time.
-     */
-    protected static $lastbrowsersessionstart = 0;
-
-    /**
      * @var For actions that should only run once.
      */
     protected static $initprocessesfinished = false;
@@ -195,12 +190,6 @@ class behat_hooks extends behat_base {
         }
         // Avoid parallel tests execution, it continues when the previous lock is released.
         test_lock::acquire('behat');
-
-        // Store the browser reset time if reset after N seconds is specified in config.php.
-        if (!empty($CFG->behat_restart_browser_after)) {
-            // Store the initial browser session opening.
-            self::$lastbrowsersessionstart = time();
-        }
 
         if (!empty($CFG->behat_faildump_path) && !is_writable($CFG->behat_faildump_path)) {
             throw new behat_stop_exception('You set $CFG->behat_faildump_path to a non-writable directory');
@@ -380,15 +369,6 @@ class behat_hooks extends behat_base {
         // Assign valid data to admin user (some generator-related code needs a valid user).
         $user = $DB->get_record('user', array('username' => 'admin'));
         \core\session\manager::set_user($user);
-
-        // Reset the browser if specified in config.php.
-        if (!empty($CFG->behat_restart_browser_after) && $this->running_javascript()) {
-            $now = time();
-            if (self::$lastbrowsersessionstart + $CFG->behat_restart_browser_after < $now) {
-                $session->restart();
-                self::$lastbrowsersessionstart = $now;
-            }
-        }
 
         // Set the theme if not default.
         if ($suitename !== "default") {
