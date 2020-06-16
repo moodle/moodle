@@ -323,7 +323,7 @@ class core_message_external extends external_api {
 
         $warnings = array();
         foreach ($params['userids'] as $id) {
-            if (!message_add_contact($id, 0, $params['userid'])) {
+            if (!\core_message\api::create_contact_request($id, $params['userid'])) {
                 $warnings[] = array(
                     'item' => 'user',
                     'itemid' => $id,
@@ -713,7 +713,7 @@ class core_message_external extends external_api {
 
         $warnings = array();
         foreach ($params['userids'] as $id) {
-            if (!message_block_contact($id, $params['userid'])) {
+            if (!\core_message\api::block_user($id, $params['userid'])) {
                 $warnings[] = array(
                     'item' => 'user',
                     'itemid' => $id,
@@ -798,7 +798,7 @@ class core_message_external extends external_api {
         }
 
         foreach ($params['userids'] as $id) {
-            message_unblock_contact($id, $params['userid']);
+            core_message\api::unblock_user($id, $params['userid']);
         }
 
         return null;

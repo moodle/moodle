@@ -596,7 +596,7 @@ class core_event_testcase extends advanced_testcase {
         events_update_definition('unittest');
 
         $DB->delete_records_select('events_handlers', "component <> 'unittest'");
-        events_get_handlers('reset');
+
         $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
         $this->assertEquals(3, $DB->count_records('events_handlers'));
         set_config('loglifetime', 60*60*24*5);
