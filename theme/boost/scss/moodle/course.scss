@@ -537,13 +537,15 @@ span.editinstructions {
     margin-left: 30px;
     font-size: $font-size-sm;
     padding: .1em .4em;
-    background-color: $state-info-bg;
-    color: $info;
     text-decoration: none;
     z-index: 9999;
+    border: $alert-border-width solid transparent;
 
-    @include box-shadow(2px 2px 5px 1px #ccc);
-    border: 1px solid $state-info-border;
+    @include alert-variant(
+        theme-color-level('info', $alert-bg-level),
+        theme-color-level('info', $alert-border-level),
+        theme-color-level('info', $alert-color-level)
+    );
 }
 
 /* Course drag and drop upload styles */
@@ -553,14 +555,15 @@ span.editinstructions {
     width: 40%;
     margin: 0 30%;
     padding: 6px;
-    border: 1px solid $state-info-border;
     text-align: center;
-    background: $state-info-bg;
-    color: $info;
     z-index: 1; // Required in order to have this above relatively positioned course content@mixin
+    border: $alert-border-width solid transparent;
 
-    @include box-shadow(2px 2px 5px 1px #ccc);
-    @include border-radius(8px);
+    @include alert-variant(
+        theme-color-level('info', $alert-bg-level),
+        theme-color-level('info', $alert-border-level),
+        theme-color-level('info', $alert-color-level)
+    );
 }
 
 .dndupload-preview {
