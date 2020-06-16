@@ -9,9 +9,14 @@ Feature: Random glossary entry block linking to global glossary
       | fullname | shortname |
       | Course 1 | C1        |
       | Course 2 | C2        |
-    And the following "activities" exist:
-      | activity   | name             | intro                          | course               | idnumber  | globalglossary | defaultapproval |
-      | glossary   | Tips and Tricks  | Frontpage glossary description | C2 | glossary0 | 1              | 1               |
+    And the following "activity" exists:
+      | activity        | glossary                       |
+      | name            | Tips and Tricks                |
+      | intro           | Frontpage glossary description |
+      | course          | C2                             |
+      | idnumber        | glossary0                      |
+      | globalglossary  | 1                              |
+      | defaultapproval | 1                              |
     And the following "users" exist:
       | username | firstname | lastname | email             |
       | student1 | Sam1      | Student1 | student1@example.com |
