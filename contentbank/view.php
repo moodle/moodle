@@ -56,7 +56,7 @@ $PAGE->navbar->add($record->name);
 $PAGE->set_heading($record->name);
 $title .= ": ".$record->name;
 $PAGE->set_title($title);
-$PAGE->set_pagetype('contenbank');
+$PAGE->set_pagetype('contentbank');
 
 $contenttypeclass = "\\$record->contenttype\\contenttype";
 $contentclass = "\\$record->contenttype\\content";

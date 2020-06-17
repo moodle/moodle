@@ -645,14 +645,14 @@ if ($hassiteconfig) {
 
 // Content bank content types.
 if ($hassiteconfig) {
-    $ADMIN->add('modules', new admin_category('contenbanksettings', new lang_string('contentbank')));
+    $ADMIN->add('modules', new admin_category('contentbanksettings', new lang_string('contentbank')));
     $temp = new admin_settingpage('managecontentbanktypes', new lang_string('managecontentbanktypes'));
     $temp->add(new admin_setting_managecontentbankcontenttypes());
-    $ADMIN->add('contenbanksettings', $temp);
+    $ADMIN->add('contentbanksettings', $temp);
     $plugins = core_plugin_manager::instance()->get_plugins_of_type('contenttype');
     foreach ($plugins as $plugin) {
         /** @var \core\plugininfo\contentbank $plugin */
-        $plugin->load_settings($ADMIN, 'contenbanksettings', $hassiteconfig);
+        $plugin->load_settings($ADMIN, 'contentbanksettings', $hassiteconfig);
     }
 }
 
