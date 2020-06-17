@@ -59,9 +59,7 @@ Feature: Add cohorts of users
   @javascript
   Scenario: Edit cohort name in-place
     When I follow "Cohorts"
-    And I click on "Edit cohort name" "link" in the "Test cohort name" "table_row"
-    And I set the field "New name for cohort Test cohort name" to "Students cohort"
-    And I press the enter key
+    And I set the field "Edit cohort name" to "Students cohort"
     Then I should not see "Test cohort name"
     And I should see "Students cohort"
     And I follow "Cohorts"

@@ -12,16 +12,16 @@ Feature: Edited book chapters handle tags correctly
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
+    And the following "activity" exists:
+      | activity    | book                |
+      | course      | C1                  |
+      | idnumber    | book1               |
+      | name        | Test book           |
+      | description | A book about dreams |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Book" to section "1" and I fill the form with:
-      | Name | Test book |
-      | Description | A book about dreams! |
-    And I log out
 
   Scenario: Book chapter edition of custom tags works as expected
     Given I log in as "teacher1"

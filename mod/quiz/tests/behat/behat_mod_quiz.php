@@ -390,7 +390,8 @@ class behat_mod_quiz extends behat_question_base {
 
         $this->execute('behat_general::assert_page_contains_text', $this->escape(get_string('edittitleinstructions')));
 
-        $this->execute('behat_forms::i_set_the_field_to', array('maxmark', $this->escape($newmark) . chr(10)));
+        $this->execute('behat_general::i_type', [$newmark]);
+        $this->execute('behat_general::i_press_named_key', ['', 'enter']);
     }
 
     /**
@@ -646,7 +647,9 @@ class behat_mod_quiz extends behat_question_base {
 
         $this->execute('behat_general::assert_page_contains_text', $this->escape(get_string('edittitleinstructions')));
 
-        $this->execute('behat_forms::i_set_the_field_to', array('section', $this->escape($sectionheading) . chr(10)));
+        $this->execute('behat_general::i_press_named_key', ['', 'backspace']);
+        $this->execute('behat_general::i_type', [$sectionheading]);
+        $this->execute('behat_general::i_press_named_key', ['', 'enter']);
     }
 
     /**
