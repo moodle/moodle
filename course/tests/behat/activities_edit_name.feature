@@ -15,15 +15,16 @@ Feature: Edit activity name in-place
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activity" exists:
+      | course      | C1                     |
+      | activity    | forum                  |
+      | name        | Test forum name        |
+      | description | Test forum description |
+      | idnumber    | forum1                 |
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
     # Rename activity
-    And I click on "Edit title" "link" in the "//div[contains(@class,'activityinstance') and contains(.,'Test forum name')]" "xpath_element"
-    And I set the field "New name for activity Test forum name" to "Good news"
-    And I press the enter key
+    And I set the field "Edit title" in the "Test forum name" "activity" to "Good news"
     Then I should not see "Test forum name" in the ".course-content" "css_element"
     And "New name for activity Test forum name" "field" should not exist
     And I should see "Good news"
@@ -32,7 +33,7 @@ Feature: Edit activity name in-place
     And I should not see "Test forum name"
     # Cancel renaming
     And I click on "Edit title" "link" in the "//div[contains(@class,'activityinstance') and contains(.,'Good news')]" "xpath_element"
-    And I set the field "New name for activity Good news" to "Terrible news"
+    And I type "Terrible news"
     And I press the escape key
     And "New name for activity Good news" "field" should not exist
     And I should see "Good news"
