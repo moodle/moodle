@@ -38,6 +38,10 @@ use Behat\Mink\Session;
 require_once(__DIR__ . '/classes/component_named_selector.php');
 require_once(__DIR__ . '/classes/component_named_replacement.php');
 
+// Alias the WebDriver\Key  class to behat_keys to make future transition to a different WebDriver implementation
+// easier.
+class_alias('WebDriver\\Key', 'behat_keys');
+
 /**
  * Steps definitions base class.
  *
@@ -262,6 +266,44 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             'locator' => $locator,
             'container' => $container,
         ];
+    }
+
+    /**
+     * Send key presses straight to the currently active element.
+     *
+     * The `$keys` array contains a list of key values to send to the session as defined in the WebDriver and JsonWire
+     * specifications:
+     * - JsonWire: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidkeys
+     * - W3C WebDriver: https://www.w3.org/TR/webdriver/#keyboard-actions
+     *
+     * This may be a combination of typable characters, modifier keys, and other supported keypoints.
+     *
+     * The NULL_KEY should be used to release modifier keys. If the NULL_KEY is not used then modifier keys will remain
+     * in the pressed state.
+     *
+     * Example usage:
+     *
+     *      behat_base::type_keys($this->getSession(), [behat_keys::SHIFT, behat_keys::TAB, behat_keys::NULL_KEY]);
+     *      behat_base::type_keys($this->getSession(), [behat_keys::ENTER, behat_keys::NULL_KEY]);
+     *      behat_base::type_keys($this->getSession(), [behat_keys::ESCAPE, behat_keys::NULL_KEY]);
+     *
+     * It can also be used to send text input, for example:
+     *
+     *      behat_base::type_keys(
+     *          $this->getSession(),
+     *          ['D', 'o', ' ', 'y', 'o', 'u', ' ', 'p', 'l', 'a' 'y', ' ', 'G', 'o', '?', behat_base::NULL_KEY]
+     *      );
+     *
+     *
+     * Please note: This function does not use the element/sendKeys variants but sends keys straight to the browser.
+     *
+     * @param Session $session
+     * @param string[] $keys
+     */
+    public static function type_keys(Session $session, array $keys): void {
+        $session->getDriver()->getWebDriverSession()->keys([
+            'value' => $keys,
+        ]);
     }
 
     /**
