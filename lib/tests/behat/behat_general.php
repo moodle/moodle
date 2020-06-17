@@ -27,12 +27,12 @@
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
-use Behat\Mink\Exception\ExpectationException as ExpectationException,
-    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
-    Behat\Mink\Exception\DriverException as DriverException,
-    WebDriver\Exception\NoSuchElement as NoSuchElement,
-    WebDriver\Exception\StaleElementReference as StaleElementReference,
-    Behat\Gherkin\Node\TableNode as TableNode;
+use Behat\Gherkin\Node\TableNode as TableNode;
+use Behat\Mink\Exception\DriverException as DriverException;
+use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+use Behat\Mink\Exception\ExpectationException as ExpectationException;
+use WebDriver\Exception\NoSuchElement as NoSuchElement;
+use WebDriver\Exception\StaleElementReference as StaleElementReference;
 
 /**
  * Cross component steps definitions.
@@ -1708,6 +1708,143 @@ EOF;
         } else {
             throw new ExpectationException('Unknown browser button.', $session);
         }
+    }
+
+    /**
+     * Send key presses to the browser without first changing focusing, or applying the key presses to a specific
+     * element.
+     *
+     * Example usage of this step:
+     *     When I type "Penguin"
+     *
+     * @When    I type :keys
+     * @param   string $keys The key, or list of keys, to type
+     */
+    public function i_type(string $keys): void {
+        behat_base::type_keys($this->getSession(), str_split($keys));
+    }
+
+    /**
+     * Press a named key with an optional set of modifiers.
+     *
+     * Supported named keys are:
+     * - up
+     * - down
+     * - left
+     * - right
+     * - pageup|page_up
+     * - pagedown|page_down
+     * - home
+     * - end
+     * - insert
+     * - delete
+     * - backspace
+     * - escape
+     * - enter
+     * - tab
+     *
+     * Supported moderators are:
+     * - shift
+     * - ctrl
+     * - alt
+     * - meta
+     *
+     * Example usage of this new step:
+     *     When I press the up key
+     *     When I press the space key
+     *     When I press the shift tab key
+     *
+     * Multiple moderator keys can be combined using the '+' operator, for example:
+     *     When I press the ctrl+shift enter key
+     *     When I press the ctrl + shift enter key
+     *
+     * @When    /^I press the (?P<modifiers_string>.* )?(?P<key_string>.*) key$/
+     * @param   string $modifiers A list of keyboard modifiers, separated by the `+` character
+     * @param   string $key The name of the key to press
+     */
+    public function i_press_named_key(string $modifiers, string $key): void {
+        behat_base::require_javascript_in_session($this->getSession());
+
+        $keys = [];
+
+        foreach (explode('+', $modifiers) as $modifier) {
+            switch (strtoupper(trim($modifier))) {
+                case '':
+                    break;
+                case 'SHIFT':
+                    $keys[] = behat_keys::SHIFT;
+                    break;
+                case 'CTRL':
+                    $keys[] = behat_keys::CONTROL;
+                    break;
+                case 'ALT':
+                    $keys[] = behat_keys::ALT;
+                    break;
+                case 'META':
+                    $keys[] = behat_keys::META;
+                    break;
+                default:
+                    throw new \coding_exception("Unknown modifier key '$modifier'}");
+            }
+        }
+
+        $modifier = trim($key);
+        switch (strtoupper($key)) {
+            case 'UP':
+                $keys[] = behat_keys::UP_ARROW;
+                break;
+            case 'DOWN':
+                $keys[] = behat_keys::DOWN_ARROW;
+                break;
+            case 'LEFT':
+                $keys[] = behat_keys::LEFT_ARROW;
+                break;
+            case 'RIGHT':
+                $keys[] = behat_keys::RIGHT_ARROW;
+                break;
+            case 'HOME':
+                $keys[] = behat_keys::HOME;
+                break;
+            case 'END':
+                $keys[] = behat_keys::END;
+                break;
+            case 'INSERT':
+                $keys[] = behat_keys::INSERT;
+                break;
+            case 'BACKSPACE':
+                $keys[] = behat_keys::BACKSPACE;
+                break;
+            case 'DELETE':
+                $keys[] = behat_keys::DELETE;
+                break;
+            case 'PAGEUP':
+            case 'PAGE_UP':
+                $keys[] = behat_keys::PAGE_UP;
+                break;
+            case 'PAGEDOWN':
+            case 'PAGE_DOWN':
+                $keys[] = behat_keys::PAGE_DOWN;
+                break;
+            case 'ESCAPE':
+                $keys[] = behat_keys::ESCAPE;
+                break;
+            case 'ENTER':
+                $keys[] = behat_keys::ENTER;
+                break;
+            case 'TAB':
+                $keys[] = behat_keys::TAB;
+                break;
+            case 'SPACE':
+                $keys[] = behat_keys::SPACE;
+                break;
+            default:
+                throw new \coding_exception("Unknown key '$key'}");
+        }
+
+        // Always send the NULL key as the last key.
+        $keys[] = behat_keys::NULL_KEY;
+
+        behat_base::type_keys($this->getSession(), $keys);
     }
 
     /**
