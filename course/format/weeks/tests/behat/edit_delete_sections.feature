@@ -54,9 +54,7 @@ Feature: Sections can be edited and deleted in weeks format
 
   @javascript
   Scenario: Inline edit section name in weeks format
-    When I click on "Edit week name" "link" in the "li#section-1" "css_element"
-    And I set the field "New name for week 1 May - 7 May" to "Midterm evaluation"
-    And I press the enter key
+    When I set the field "Edit week name" in the "li#section-1" "css_element" to "Midterm evaluation"
     Then I should not see "1 May - 7 May" in the "region-main" "region"
     And "New name for week" "field" should not exist
     And I should see "Midterm evaluation" in the "li#section-1" "css_element"
