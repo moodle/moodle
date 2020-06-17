@@ -1,5 +1,10 @@
 This files describes API changes for question import/export format plugins.
 
+=== 3.11.7 ===
+
+* The new validate_file() method in question/format.php can be overwritten
+  to implement more expensive or detailed file integrity checks. It is called on imported files.
+
 === 3.6 ===
 
 * Saving question category descriptions (info) is now supported in Moodle XML import/export format.

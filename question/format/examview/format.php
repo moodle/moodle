@@ -62,6 +62,18 @@ class qformat_examview extends qformat_based_on_xml {
     }
 
     /**
+     * Validate the given file.
+     *
+     * For more expensive or detailed integrity checks.
+     *
+     * @param stored_file $file the file to check
+     * @return string the error message that occurred while validating the given file
+     */
+    public function validate_file(stored_file $file): string {
+        return $this->validate_is_utf8_file($file);
+    }
+
+    /**
      * unxmlise reconstructs part of the xml data structure in order
      * to identify the actual data therein
      * @param array $xml section of the xml data structure
