@@ -323,8 +323,10 @@ class assign_submission_file extends assign_submission_plugin {
                                $submission->id);
 
         $currentsubmission = $this->get_file_submission($submission->id);
-        $currentsubmission->numfiles = 0;
-        $DB->update_record('assignsubmission_file', $currentsubmission);
+        if ($currentsubmission) {
+            $currentsubmission->numfiles = 0;
+            $DB->update_record('assignsubmission_file', $currentsubmission);
+        }
 
         return true;
     }
