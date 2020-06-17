@@ -852,22 +852,12 @@ class behat_course extends behat_base {
      * @param string $newactivityname
      */
     public function i_change_activity_name_to($activityname, $newactivityname) {
-
-        if (!$this->running_javascript()) {
-            throw new DriverException('Change activity name step is not available with Javascript disabled');
-        }
-
-        $activity = $this->escape($activityname);
-
-        $this->execute('behat_course::i_click_on_in_the_activity',
-            array(get_string('edittitle'), "link", $activity)
-        );
-
-        // Adding chr(10) to save changes.
-        $this->execute('behat_forms::i_set_the_field_to',
-            array('title', $this->escape($newactivityname) . chr(10))
-        );
-
+        $this->execute('behat_forms::i_set_the_field_in_container_to', [
+            get_string('edittitle'),
+            $activityname,
+            'activity',
+            $newactivityname
+        ]);
     }
 
     /**

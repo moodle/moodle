@@ -24,9 +24,7 @@ Feature: Edit activities in social activities block
     And I set the field "Add an activity to section 'section 0'" to "Forum"
     And I set the field "Forum name" to "My forum name"
     And I press "Save and return to course"
-    And I click on "Edit title" "link" in the "My forum name" activity in social activities block
-    And I set the field "New name for activity My forum name" to "New forum name"
-    And I press the enter key
+    When I set the field "Edit title" in the "My forum name" "block_social_activities > Activity" to "New forum name"
     Then I should not see "My forum name" in the "Social activities" "block"
     And I should see "New forum name"
     And I follow "New forum name"
@@ -82,4 +80,3 @@ Feature: Edit activities in social activities block
     And I should not see "My forum name" in the "Social activities" "block"
     And I click on "My forum name" "link" in the "Recent activity" "block"
     And I should see "My forum name" in the ".breadcrumb" "css_element"
-    And I log out
