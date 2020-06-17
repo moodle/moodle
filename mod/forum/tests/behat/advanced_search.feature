@@ -130,8 +130,7 @@ Feature: The forum search allows users to perform advanced searches for forum po
     And I press "Search forums"
     And I should see "Advanced search"
     And I set the field "Is tagged with" to "SearchedTag"
-    And I click on "[data-value='SearchedTag']" "css_element"
-    And I press the escape key
+    And I press the enter key
     When I press "Search forums"
     Then I should see "My subject"
     And I should not see "Your subjective"
