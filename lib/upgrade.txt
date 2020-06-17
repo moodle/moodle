@@ -8,6 +8,9 @@ information provided here is intended especially for developers.
   of 'scrollable' is true.
 * The `$CFG->behat_retart_browser_after` configuration setting has been removed.
   The browser session is now restarted between all tests.
+* The following renamed classes have been completely removed:
+    - course_in_list (now: core_course_list_element)
+    - coursecat (now: core_course_category)
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
