@@ -21,8 +21,3 @@
 .block_activity_results table.grades .grade {
     text-align: right;
 }
-
-.block_activity_results table.grades caption {
-    font-weight: bold;
-    font-size: 18px;
-}
