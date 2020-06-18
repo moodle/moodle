@@ -357,6 +357,17 @@ class quiz_overview_report extends quiz_attempts_report {
 
         if (!$dryrun) {
             question_engine::save_questions_usage_by_activity($quba);
+
+            $params = array(
+              'objectid' => $attempt->id,
+              'relateduserid' => $attempt->userid,
+              'context' => $this->context,
+              'other' => array(
+                'quizid' => $attempt->quiz
+              )
+            );
+            $event = \mod_quiz\event\attempt_regraded::create($params);
+            $event->trigger();
         }
 
         $transaction->allow_commit();
