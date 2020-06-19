@@ -33,7 +33,7 @@
 
     <a href="{{#url}}{{.}}{{/url}}{{^url}}#{{/url}}"
        class="page-link"
-       data-region="page-link">
+       data-region="page-link" {{$linkattributes}}aria-label="{{#str}}pagea, moodle, {{page}}{{/str}}"{{/linkattributes}}>
         {{$item-content}}
             {{{page}}}
         {{/item-content}}
