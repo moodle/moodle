@@ -3646,7 +3646,9 @@ class company {
         $data = $event->get_data();
         $userid = $data['relateduserid'];
         $courseid = $data['courseid'];
-        $timecompleted = $data['timecreated'];
+
+        // Get the completion record.
+        $completionrec = $DB->get_record('course_completions', array('userid' => $userid, 'course' => $courseid));
 
         // Get the enrolment record as the completion record isn't fully formed at this point.
         $enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
@@ -3659,14 +3661,15 @@ class company {
 
         // Do not send if this is already recorded.
         if (!empty($enrolrec->timestart) &&
-            $DB->get_record_sql("SELECT id FROM {local_iomad_track}
-                                 WHERE userid=:userid
-                                 AND courseid = :courseid
-                                 AND timeenrolled = :timeenrolled
-                                 AND timecompleted IS NOT NULL",
-                                 array('userid' => $userid,
-                                       'courseid' => $courseid,
-                                       'timeenrolled' => $enrolrec->timestart))) {
+            !$DB->get_record_sql("SELECT id FROM {local_iomad_track}
+                                  WHERE userid=:userid
+                                  AND courseid = :courseid
+                                  AND timeenrolled = :timeenrolled
+                                  AND timecompleted != :timecompleted",
+                                  array('userid' => $userid,
+                                        'courseid' => $courseid,
+                                        'timecompleted' => $completionrec->timecompleted,
+                                        'timeenrolled' => $enrolrec->timestart))) {
             return true;
         }
 
