@@ -112,6 +112,9 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
             $data->teamsubmissiongroupingid = 0;
         }
 
+        if (!isset($data->timelimit)) {
+            $data->timelimit = 0;
+        }
         if (!isset($data->cutoffdate)) {
             $data->cutoffdate = 0;
         }

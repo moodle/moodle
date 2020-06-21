@@ -47,6 +47,8 @@ class assign_header implements \renderable {
     public $postfix;
     /** @var \moodle_url|null $subpageurl link for the sub page */
     public $subpageurl;
+    /** @var bool $activity optional show activity text. */
+    public $activity;
 
     /**
      * Constructor
@@ -59,6 +61,7 @@ class assign_header implements \renderable {
      * @param string           $preface         An optional preface to show before the heading.
      * @param string           $postfix         An optional postfix to show after the intro.
      * @param \moodle_url|null $subpageurl      An optional sub page URL link for the subpage.
+     * @param bool             $activity        Optional show activity text if true.
      */
     public function __construct(
         \stdClass $assign,
@@ -68,7 +71,8 @@ class assign_header implements \renderable {
         $subpage = '',
         $preface = '',
         $postfix = '',
-        \moodle_url $subpageurl = null
+        \moodle_url $subpageurl = null,
+        bool $activity = false
     ) {
         $this->assign = $assign;
         $this->context = $context;
@@ -78,5 +82,6 @@ class assign_header implements \renderable {
         $this->preface = $preface;
         $this->postfix = $postfix;
         $this->subpageurl = $subpageurl;
+        $this->activity = $activity;
     }
 }

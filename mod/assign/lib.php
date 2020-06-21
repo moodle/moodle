@@ -164,7 +164,7 @@ function assign_prepare_update_events($assign, $course = null, $cm = null) {
     $assignment->update_calendar($cm->id);
     // Refresh the calendar events also for the assignment overrides.
     $overrides = $DB->get_records('assign_overrides', ['assignid' => $assign->id], '',
-                                  'id, groupid, userid, duedate, sortorder');
+                                  'id, groupid, userid, duedate, sortorder, timelimit');
     foreach ($overrides as $override) {
         if (empty($override->userid)) {
             unset($override->userid);
@@ -293,6 +293,7 @@ function assign_update_events($assign, $override = null) {
         $groupid   = isset($current->groupid) ? $current->groupid : 0;
         $userid    = isset($current->userid) ? $current->userid : 0;
         $duedate = isset($current->duedate) ? $current->duedate : $assigninstance->duedate;
+        $timelimit = isset($current->timelimit) ? $current->timelimit : 0;
 
         // Only add 'due' events for an override if they differ from the assign default.
         $addclose = empty($current->id) || !empty($current->duedate);
@@ -308,7 +309,7 @@ function assign_update_events($assign, $override = null) {
         $event->modulename  = 'assign';
         $event->instance    = $assigninstance->id;
         $event->timestart   = $duedate;
-        $event->timeduration = 0;
+        $event->timeduration = $timelimit;
         $event->timesort    = $event->timestart + $event->timeduration;
         $event->visible     = instance_is_visible('assign', $assigninstance);
         $event->eventtype   = ASSIGN_EVENT_TYPE_DUE;
@@ -1161,7 +1162,10 @@ function assign_get_file_areas($course, $cm, $context) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
-    $areas = array(ASSIGN_INTROATTACHMENT_FILEAREA => get_string('introattachments', 'mod_assign'));
+    $areas = array(
+        ASSIGN_INTROATTACHMENT_FILEAREA => get_string('introattachments', 'mod_assign'),
+        ASSIGN_ACTIVITYATTACHMENT_FILEAREA => get_string('activityattachments', 'mod_assign'),
+    );
 
     $assignment = new assign($context, $cm, $course);
     foreach ($assignment->get_submission_plugins() as $plugin) {
@@ -1223,7 +1227,7 @@ function assign_get_file_info($browser,
 
     // Need to find where this belongs to.
     $assignment = new assign($context, $cm, $course);
-    if ($filearea === ASSIGN_INTROATTACHMENT_FILEAREA) {
+    if ($filearea === ASSIGN_INTROATTACHMENT_FILEAREA || $filearea === ASSIGN_ACTIVITYATTACHMENT_FILEAREA) {
         if (!has_capability('moodle/course:managefiles', $context)) {
             // Students can not peak here!
             return null;
@@ -1412,7 +1416,7 @@ function assign_pluginfile($course,
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
     $assign = new assign($context, $cm, $course);
 
-    if ($filearea !== ASSIGN_INTROATTACHMENT_FILEAREA) {
+    if ($filearea !== ASSIGN_INTROATTACHMENT_FILEAREA && $filearea !== ASSIGN_ACTIVITYATTACHMENT_FILEAREA) {
         return false;
     }
     if (!$assign->show_intro()) {

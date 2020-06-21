@@ -3660,7 +3660,8 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
                 'sortorder' => 1,
                 'allowsubmissionsfromdate' => 1,
                 'duedate' => 2,
-                'cutoffdate' => 3
+                'cutoffdate' => 3,
+                'timelimit' => null
             ],
             (object) [
                 // Override for group 2, lower priority (numerically higher sortorder).
@@ -3670,7 +3671,8 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
                 'sortorder' => 2,
                 'allowsubmissionsfromdate' => 5,
                 'duedate' => 6,
-                'cutoffdate' => 6
+                'cutoffdate' => 6,
+                'timelimit' => null
             ],
             (object) [
                 // User override.
@@ -3680,7 +3682,8 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
                 'sortorder' => null,
                 'allowsubmissionsfromdate' => 7,
                 'duedate' => 8,
-                'cutoffdate' => 9
+                'cutoffdate' => 9,
+                'timelimit' => null
             ],
         ];
 

@@ -96,6 +96,8 @@ class assign_submission_status implements \renderable {
     public $preventsubmissionnotingroup = 0;
     /** @var array usergroups */
     public $usergroups = array();
+    /** @var int The time limit for the assignment */
+    public $timelimit = 0;
 
     /**
      * Constructor
@@ -130,6 +132,7 @@ class assign_submission_status implements \renderable {
      * @param string $gradingstatus The submission status (ie. Graded, Not Released etc).
      * @param bool $preventsubmissionnotingroup Prevent submission if user is not in a group.
      * @param array $usergroups Array containing all groups the user is assigned to.
+     * @param int $timelimit The time limit for the assignment.
      */
     public function __construct(
         $allowsubmissionsfromdate,
@@ -161,7 +164,8 @@ class assign_submission_status implements \renderable {
         $maxattempts,
         $gradingstatus,
         $preventsubmissionnotingroup,
-        $usergroups
+        $usergroups,
+        $timelimit
     ) {
         $this->allowsubmissionsfromdate = $allowsubmissionsfromdate;
         $this->alwaysshowdescription = $alwaysshowdescription;
@@ -193,5 +197,6 @@ class assign_submission_status implements \renderable {
         $this->gradingstatus = $gradingstatus;
         $this->preventsubmissionnotingroup = $preventsubmissionnotingroup;
         $this->usergroups = $usergroups;
+        $this->timelimit = $timelimit;
     }
 }

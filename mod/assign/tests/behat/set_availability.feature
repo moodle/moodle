@@ -120,6 +120,65 @@ Feature: Set availability dates for an assignment
     And I should see "Submitted for grading" in the "Student 1" "table_row"
     And I should see "2 days 5 hours late" in the "Student 1" "table_row"
 
+  @_file_upload
+  Scenario: Student can submit an assignment before the time limit runs out
+    Given I log in as "admin"
+    And I change the window size to "large"
+    And I set the following administration settings values:
+      | Enable timed assignments | 1  |
+    And I log out
+    And I am on the "Assignment name" Activity page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    And I follow "Expand all"
+    # Set 'Time limit' to 20 seconds.
+    And I set the field "timelimit[enabled]" to "1"
+    And I set the field "timelimit[number]" to "20"
+    And I set the field "timelimit[timeunit]" to "seconds"
+    And I press "Save and return to course"
+    And I log out
+
+    When I am on the "Assignment name" Activity page logged in as student1
+    And I should see "20 secs" in the "Time limit" "table_row"
+    And "Begin assignment" "link" should exist
+    And I follow "Begin assignment"
+    And I wait "1" seconds
+    And "Begin assignment" "button" should exist
+    And I press "Begin assignment"
+    And I upload "lib/tests/fixtures/empty.txt" file to "File submissions" filemanager
+    When I press "Save changes"
+    Then I should see "Submitted for grading" in the "Submission status" "table_row"
+    And I should see "secs under the time limit" in the "Time remaining" "table_row"
+
+  @_file_upload
+  Scenario: Assignment with time limit and due date shows how late assignment is submitted relative to due date
+    Given I log in as "admin"
+    And I change the window size to "large"
+    And I set the following administration settings values:
+      | Enable timed assignments | 1  |
+    And I log out
+    And I am on the "Assignment name" Activity page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    And I follow "Expand all"
+    # Set 'Time limit' to 5 seconds.
+    And I set the field "timelimit[enabled]" to "1"
+    And I set the field "timelimit[number]" to "5"
+    And I set the field "timelimit[timeunit]" to "seconds"
+    # Set 'Due date' to 2 days 5 hours 30 minutes ago.
+    And I set the field "Due date" to "##2 days 5 hours 30 minutes ago##"
+    And I press "Save and return to course"
+    And I log out
+
+    When I am on the "Assignment name" Activity page logged in as student1
+    And "Begin assignment" "link" should exist
+    And I follow "Begin assignment"
+    And I wait "1" seconds
+    And "Begin assignment" "button" should exist
+    And I press "Begin assignment"
+    And I wait "5" seconds
+    And I upload "lib/tests/fixtures/empty.txt" file to "File submissions" filemanager
+    When I press "Save changes"
+    Then I should see "Assignment was submitted 2 days 5 hours late" in the "Time remaining" "table_row"
+
   Scenario: Student cannot submit an assignment after the cut-off date
     Given I am on the "Assignment name" Activity page logged in as teacher1
     And I navigate to "Settings" in current page administration
