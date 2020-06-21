@@ -42,3 +42,6 @@ $string['cannotsavemd5file'] = 'Md5 ఫైల్ను సేవ్ చేయల
 $string['cannotsavezipfile'] = 'జిప్ ఫైల్ను సేవ్ చేయడం సాధ్యపడదు';
 $string['cannotunzipfile'] = 'ఫైల్ అన్జిప్ చేయలేరు';
 $string['componentisuptodate'] = 'కాంపొనెంటు తాజాగా ఉంది';
+$string['dmlexceptiononinstall'] = '<p>A డేటాబేస్ లోపం ఏర్పడింది [{$ a-> errorcode}]. <br /> {$a->debuginfo} </p>';
+$string['downloadedfilecheckfailed'] = 'డౌన్లోడ్ చేసిన ఫైల్ తనిఖీ విఫలమైంది';
+$string['invalidmd5'] = 'చెక్ వేరియబుల్ తప్పు. - మళ్ళీ ప్రయత్నించండి';
