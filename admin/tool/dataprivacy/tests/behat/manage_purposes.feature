@@ -10,16 +10,12 @@ Feature: Manage data storage purposes
     And I open the action menu in "region-main" "region"
     And I choose "Purposes" in the open action menu
     And I press "Add purpose"
-    And I set the field "Name" to "Purpose 1"
-    And I set the field "Description" to "Purpose 1 description"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Lawful bases" "form_row"
-    And I click on "Contract (GDPR Art. 6.1(b))" "list_item"
-    And I click on "Legal obligation (GDPR Art 6.1(c))" "list_item"
-    And I press the escape key
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Sensitive personal data processing reasons" "form_row"
-    And I click on "Explicit consent (GDPR Art. 9.2(a))" "list_item"
-    And I press the escape key
-    And I set the field "retentionperiodnumber" to "2"
+    And I set the following fields to these values:
+      | Name                                       | Purpose 1                                                      |
+      | Description                                | Purpose 1 description                                          |
+      | Lawful bases                               | Contract (GDPR Art. 6.1(b)),Legal obligation (GDPR Art 6.1(c)) |
+      | Sensitive personal data processing reasons | Explicit consent (GDPR Art. 9.2(a))                            |
+      | retentionperiodnumber                      | 2                                                              |
     When I press "Save"
     Then I should see "Purpose 1" in the "List of data purposes" "table"
     And I should see "Contract (GDPR Art. 6.1(b))" in the "Purpose 1" "table_row"
@@ -31,14 +27,13 @@ Feature: Manage data storage purposes
   Scenario: Update a data storage purpose
     Given I open the action menu in "Purpose 1" "table_row"
     And I choose "Edit" in the open action menu
-    And I set the field "Name" to "Purpose 1 edited"
-    And I set the field "Description" to "Purpose 1 description edited"
-    And I click on "Legal obligation (GDPR Art 6.1(c))" "text" in the ".form-autocomplete-selection" "css_element"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Lawful bases" "form_row"
-    And I click on "Vital interests (GDPR Art. 6.1(d))" "list_item"
-    And I press the escape key
-    And I set the field "retentionperiodnumber" to "3"
-    And I click on "protected" "checkbox"
+    And I set the following fields to these values:
+      | Name                                       | Purpose 1 edited                                                |
+      | Description                                | Purpose 1 description edited                                    |
+      | Lawful bases                               | Contract (GDPR Art. 6.1(b)), Vital interests (GDPR Art. 6.1(d)) |
+      | Sensitive personal data processing reasons | Explicit consent (GDPR Art. 9.2(a))                             |
+      | retentionperiodnumber                      | 3                                                               |
+      | protected                                  | 1                                                               |
     When I press "Save changes"
     Then I should see "Purpose 1 edited" in the "List of data purposes" "table"
     And I should see "Purpose 1 description edited" in the "Purpose 1 edited" "table_row"
