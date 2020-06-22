@@ -31,7 +31,7 @@ Feature: Rename roles within a course
     And "Learner" "button" should exist
     And I navigate to course participants
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I open the autocomplete suggestions list in the "Filter 1" "fieldset"
     And I should see "Tutor" in the ".form-autocomplete-suggestions" "css_element"
     And I should see "Learner" in the ".form-autocomplete-suggestions" "css_element"
     And I should not see "Student" in the ".form-autocomplete-suggestions" "css_element"
@@ -47,6 +47,6 @@ Feature: Rename roles within a course
     And "Learner" "button" should not exist
     And I navigate to course participants
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I open the autocomplete suggestions list in the "Filter 1" "fieldset"
     And I should see "Non-editing teacher" in the ".form-autocomplete-suggestions" "css_element"
     And I should see "Student" in the ".form-autocomplete-suggestions" "css_element"
