@@ -238,7 +238,7 @@ Feature: Course participants can be filtered
     And I navigate to course participants
     And I click on "Student 1's role assignments" "link"
     And I click on ".form-autocomplete-selection [aria-selected=true]" "css_element"
-    And I press key "27" in the field "Student 1's role assignments"
+    And I press the escape key
     And I click on "Save changes" "link"
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
@@ -350,7 +350,7 @@ Feature: Course participants can be filtered
     And I set the field "Match" in the "Filter 3" "fieldset" to "Any"
     And I set the field "type" in the "Filter 3" "fieldset" to "Keyword"
     And I set the field "Type..." to "teacher1"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 4" in the "participants" "table"
@@ -396,7 +396,7 @@ Feature: Course participants can be filtered
     And I set the field "Match" in the "Filter 3" "fieldset" to "Any"
     And I set the field "type" in the "Filter 3" "fieldset" to "Keyword"
     And I set the field "Type..." to "3@"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Student 1" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
@@ -419,7 +419,7 @@ Feature: Course participants can be filtered
     And I set the field "Match" in the "Filter 1" "fieldset" to "Any"
     And I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
     And I set the field "Type..." to "1@example"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     When I click on "Apply filters" "button"
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Teacher 1" in the "participants" "table"
@@ -449,7 +449,7 @@ Feature: Course participants can be filtered
     And I should not see "Teacher 1" in the "participants" "table"
     # Add a second keyword filter value
     And I set the field "Type..." to "moodle"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
@@ -534,7 +534,7 @@ Feature: Course participants can be filtered
     And I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
     # Search by email (only).
     And I set the field "Type..." to "student1@example.com"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     When I click on "Apply filters" "button"
     Then I should see "Student 1" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
@@ -542,7 +542,7 @@ Feature: Course participants can be filtered
     # Search by idnumber (only).
     And I click on "student1@example.com" "autocomplete_selection"
     And I set the field "Type..." to "SID"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
@@ -552,7 +552,7 @@ Feature: Course participants can be filtered
     # Search by city (only).
     And I click on "SID" "autocomplete_selection"
     And I set the field "Type..." to "SCITY"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
@@ -562,13 +562,13 @@ Feature: Course participants can be filtered
     # Search by country text (only) - should not match.
     And I click on "SCITY" "autocomplete_selection"
     And I set the field "Type..." to "GB"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Nothing to display"
     # Check no match.
     And I click on "GB" "autocomplete_selection"
     And I set the field "Type..." to "NOTHING"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Nothing to display"
 
@@ -586,7 +586,7 @@ Feature: Course participants can be filtered
     # Search by email (only) - should only see visible email + own.
     And I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
     And I set the field "Type..." to "@example."
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     When I click on "Apply filters" "button"
     Then I should not see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
@@ -596,25 +596,25 @@ Feature: Course participants can be filtered
     # Search for other fields - should only see own results.
     And I click on "@example." "autocomplete_selection"
     And I set the field "Type..." to "SID"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Nothing to display"
     And I click on "SID" "autocomplete_selection"
     And I set the field "Type..." to "TID"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Teacher 1" in the "participants" "table"
     And I should not see "Student 1" in the "participants" "table"
     And I click on "TID" "autocomplete_selection"
     And I set the field "Type..." to "CITY"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Teacher 1" in the "participants" "table"
     And I should not see "Student 1" in the "participants" "table"
     # Check no match.
     And I click on "CITY" "autocomplete_selection"
     And I set the field "Type..." to "NOTHING"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Nothing to display"
 
@@ -633,7 +633,7 @@ Feature: Course participants can be filtered
     And I set the field "Match" in the "Filter 2" "fieldset" to "Any"
     And I set the field "type" in the "Filter 2" "fieldset" to "Keyword"
     And I set the field "Type..." to "@example"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
@@ -662,7 +662,7 @@ Feature: Course participants can be filtered
     And I set the field "Match" in the "Filter 2" "fieldset" to "Any"
     And I set the field "type" in the "Filter 2" "fieldset" to "Keyword"
     And I set the field "Type..." to "@example"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Apply filters" "button"
     And I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
@@ -684,7 +684,7 @@ Feature: Course participants can be filtered
     And I set the field "Match" in the "Filter 1" "fieldset" to "Any"
     And I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
     And I set the field "Type..." to "@example.com"
-    And I press key "13" in the field "Type..."
+    And I press the enter key
     And I click on "Add condition" "button"
     # Set filterset to match none.
     And I set the field "Match" to "None"

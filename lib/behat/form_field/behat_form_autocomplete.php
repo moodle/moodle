@@ -78,14 +78,12 @@ class behat_form_autocomplete extends behat_form_text {
                 $suggestion->click();
             } else {
                 // Press the return key to create a new tag.
-                // Note: We cannot use $this->key_press() because the keyPress action, in combination with the keyDown
-                // submits the form.
-                $this->field->keyDown(13);
-                $this->field->keyUp(13);
+                behat_base::type_keys($this->session, [behat_keys::ENTER]);
             }
-
             $this->wait_for_pending_js();
-            $this->key_press(27);
+
+            // Press the escape to close the autocomplete suggestions list.
+            behat_base::type_keys($this->session, [behat_keys::ESCAPE]);
             $this->wait_for_pending_js();
         }
     }
