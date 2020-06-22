@@ -1898,12 +1898,8 @@ EOF;
         }
         // Gets the node based on the requested selector type and locator.
         $node = $this->get_selected_node($selectortype, $element);
-        $driver = $this->getSession()->getDriver();
-        if ($driver instanceof \Moodle\BehatExtension\Driver\MoodleSelenium2Driver) {
-            $driver->post_key("\xEE\x80\x84", $node->getXpath());
-        } else {
-            $driver->keyDown($node->getXpath(), "\t");
-        }
+        $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
+        $this->execute('behat_general::i_press_named_key', ['', 'tab']);
     }
 
     /**
@@ -2000,12 +1996,11 @@ EOF;
      * @throws DriverException
      */
     public function i_manually_press_tab($shift = '') {
-        if (!$this->running_javascript()) {
-            throw new DriverException($shift . ' Tab press step is not available with Javascript disabled');
+        if (empty($shift)) {
+            $this->execute('behat_general::i_press_named_key', ['', 'tab']);
+        } else {
+            $this->execute('behat_general::i_press_named_key', ['shift', 'tab']);
         }
-
-        $value = ($shift == ' shift') ? [\WebDriver\Key::SHIFT . \WebDriver\Key::TAB] : [\WebDriver\Key::TAB];
-        $this->getSession()->getDriver()->getWebDriverSession()->activeElement()->postValue(['value' => $value]);
     }
 
     /**
@@ -2067,12 +2062,7 @@ EOF;
      * @throws DriverException
      */
     public function i_manually_press_enter() {
-        if (!$this->running_javascript()) {
-            throw new DriverException('Enter press step is not available with Javascript disabled');
-        }
-
-        $value = [\WebDriver\Key::ENTER];
-        $this->getSession()->getDriver()->getWebDriverSession()->activeElement()->postValue(['value' => $value]);
+        $this->execute('behat_general::i_press_named_key', ['', 'enter']);
     }
 
     /**
