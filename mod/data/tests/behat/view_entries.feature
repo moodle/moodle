@@ -92,7 +92,6 @@ Feature: Users can view and search database entries
       | Test field name   | Student original entry tagged   |
       | Test field 2 name | Student original entry tagged 2 |
     And I set the field with xpath "//div[@class='datatagcontrol']//input[@type='text']" to "Tag1"
-    And I click on "[data-value='Tag1']" "css_element"
     And I press "Save and view"
     And I should see "Student original entry"
     And I should see "Tag1" in the "div.tag_list" "css_element"
