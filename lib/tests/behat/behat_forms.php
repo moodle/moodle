@@ -698,11 +698,16 @@ class behat_forms extends behat_base {
     /**
      * Open the auto-complete suggestions list (Assuming there is only one on the page.).
      *
-     * @Given /^I open the autocomplete suggestions list$/
+     * @Given I open the autocomplete suggestions list
+     * @Given I open the autocomplete suggestions list in the :container :containertype
      */
-    public function i_open_the_autocomplete_suggestions_list() {
+    public function i_open_the_autocomplete_suggestions_list($container = null, $containertype = null) {
         $csstarget = ".form-autocomplete-downarrow";
-        $this->execute('behat_general::i_click_on', [$csstarget, 'css_element']);
+        if ($container && $containertype) {
+            $this->execute('behat_general::i_click_on', [$csstarget, 'css_element', $container, $containertype]);
+        } else {
+            $this->execute('behat_general::i_click_on', [$csstarget, 'css_element']);
+        }
     }
 
     /**

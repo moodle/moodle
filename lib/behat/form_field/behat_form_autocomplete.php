@@ -51,7 +51,7 @@ class behat_form_autocomplete extends behat_form_text {
         // Clear all current selections.
         $rootnode = $this->field->getParent()->getParent();
         $selections = $rootnode->findAll('css', '.form-autocomplete-selection [role=option]');
-        foreach ($selections as $selection) {
+        foreach (array_reverse($selections) as $selection) {
             $selection->click();
             $this->wait_for_pending_js();
         }

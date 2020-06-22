@@ -25,9 +25,8 @@ Feature: Edit user roles
     And I am on "Course 1" course homepage
     And I navigate to course participants
     And I click on "Student 1's role assignments" "link"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "student1" "table_row"
-    And I click on "Non-editing teacher" item in the autocomplete list
-    And I press the escape key
+    And I type "Non-editing teacher"
+    And I press the enter key
     When I click on "Save changes" "link"
     Then I should see "Student, Non-editing teacher" in the "Student 1" "table_row"
 
@@ -37,7 +36,6 @@ Feature: Edit user roles
     And I am on "Course 1" course homepage
     And I navigate to course participants
     And I click on "Student 1's role assignments" "link"
-    And I click on ".form-autocomplete-selection [aria-selected=true]" "css_element"
-    And I press the escape key
+    And I click on "Student" "autocomplete_selection"
     When I click on "Save changes" "link"
     Then I should see "No roles" in the "Student 1" "table_row"
