@@ -15,10 +15,10 @@ Feature: Manage data storage purposes
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Lawful bases" "form_row"
     And I click on "Contract (GDPR Art. 6.1(b))" "list_item"
     And I click on "Legal obligation (GDPR Art 6.1(c))" "list_item"
-    And I press key "27" in the field "Lawful bases"
+    And I press the escape key
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Sensitive personal data processing reasons" "form_row"
     And I click on "Explicit consent (GDPR Art. 9.2(a))" "list_item"
-    And I press key "27" in the field "Sensitive personal data processing reasons"
+    And I press the escape key
     And I set the field "retentionperiodnumber" to "2"
     When I press "Save"
     Then I should see "Purpose 1" in the "List of data purposes" "table"
@@ -36,7 +36,7 @@ Feature: Manage data storage purposes
     And I click on "Legal obligation (GDPR Art 6.1(c))" "text" in the ".form-autocomplete-selection" "css_element"
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Lawful bases" "form_row"
     And I click on "Vital interests (GDPR Art. 6.1(d))" "list_item"
-    And I press key "27" in the field "Lawful bases"
+    And I press the escape key
     And I set the field "retentionperiodnumber" to "3"
     And I click on "protected" "checkbox"
     When I press "Save changes"
