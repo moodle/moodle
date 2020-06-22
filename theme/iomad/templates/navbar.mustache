@@ -15,28 +15,13 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template theme_iomad/navbar
-
-    This template renders the top navbar.
-
-    Example context (json):
-    {
-        "output": {
-            "should_display_navbar_logo": true,
-            "get_compact_logo_url": "http://example.com/image.png",
-            "custom_menu": "<li>..</li>",
-            "page_heading_menu": "<li>..</li>",
-            "search_box": "<div><input type='text'></div>",
-            "navbar_plugin_output": "<div class='dropdown'>Messaging</div>",
-            "user_menu": "<div class='dropdown'>John Doe</div>"
-        },
-        "config": {
-            "wwwroot": "#"
-        },
-        "sitename": "Moodle Site"
-    }
+    Page navbar.
 }}
-<nav class="fixed-top navbar navbar-bootswatch navbar-expand moodle-has-zindex">
+<nav class="fixed-top navbar navbar-light bg-white navbar-expand moodle-has-zindex" aria-label="{{#str}}sitemenubar, admin{{/str}}">
+
+        <div data-region="drawer-toggle" class="d-inline-block mr-3">
+            <button aria-expanded="{{#navdraweropen}}true{{/navdraweropen}}{{^navdraweropen}}false{{/navdraweropen}}" aria-controls="nav-drawer" type="button" class="btn nav-link float-sm-left mr-1 btn-light bg-gray" data-action="toggle-drawer" data-side="left" data-preference="drawer-open-nav">{{#pix}}i/menubars{{/pix}}<span class="sr-only">{{#str}}sidepanel, core{{/str}}</span></button>
+        </div>
 
         <a href="{{{ config.wwwroot }}}" class="navbar-brand {{# output.should_display_navbar_logo }}has-logo{{/ output.should_display_navbar_logo }}
             {{^ output.should_display_navbar_logo }}
@@ -58,12 +43,12 @@
             {{{ output.page_heading_menu }}}
         </ul>
         <ul class="nav navbar-nav ml-auto">
-            <div class="d-none d-lg-block">
-            {{{ output.search_box }}}
-        </div>
+            <li class="d-none d-lg-block">
+                {{{ output.search_box }}}
+            </li>
             <!-- navbar_plugin_output -->
             <li class="nav-item">
-            {{{ output.navbar_plugin_output }}}
+                {{{ output.navbar_plugin_output }}}
             </li>
             <!-- user_menu -->
             <li class="nav-item d-flex align-items-center">

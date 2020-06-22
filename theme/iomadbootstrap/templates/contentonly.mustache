@@ -17,7 +17,7 @@
 {{!
     @template theme_iomadbootstrap/contentonly
 
-    Iomad Bootstrap 1 column layout template.
+    IomadBootstrap 1 column layout template.
 
     Context variables required for this template:
     * sitename - The name of the site
@@ -68,5 +68,8 @@
 </body>
 </html>
 {{#js}}
-require(['theme_boost/loader']);
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() {
+  M.util.js_complete('theme_boost/loader');
+});
 {{/js}}

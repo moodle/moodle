@@ -1,17 +1,21 @@
 This file describes API changes in /theme/iomadboost
 information provided here is intended especially for theme designers.
 
-=== 3.6.2 ===
+=== 3.7 ===
+
+* Templates and renderers moved to core.
+
+* Behat override steps moved to core.
 
 Form element template
 ---------------------
 A 'wrapperid' has been added to 'templates/core_form/element-template.mustache' to restore unique ids
-on Boost form element wrappers. This restores the same unique element ids seen on elements in BS2
-themes, which were mistakenly dropped when introducing the Boost theme.
+on IomadBoost form element wrappers. This restores the same unique element ids seen on elements in BS2
+themes, which were mistakenly dropped when introducing the IomadBoost theme.
 
 === 3.5 ===
 
-The Boost theme now uses Bootstrap 4 Stable (BS4S).
+The IomadBoost theme now uses Bootstrap 4 Stable (BS4S).
 
 We are trying to use as much BS4S classes in MDL Templates to reduce the amount of Moodle CSS.
 
@@ -35,7 +39,7 @@ m-t-3 is now mt-5
 
 Grid and Flexbox
 ----------------
-The Boostrap grid uses CSS's flexbox grid to build layouts.
+The IomadBoostrap grid uses CSS's flexbox grid to build layouts.
 
 New breakpoints for grids have been added:
 .col-*  <576px
@@ -50,8 +54,8 @@ All usage of '*-xs-*' have been dropped. So what used to be col-xs-6 should now 
 
 Typography
 ----------
-Boostrap 4 uses a native font stack that selects the best font-family for each OS and device. For font sizing the browser default root font-size (typically 16px) is used. this variable can be changed using the variable '$font-size-base'.
-In the default Boost preset we use: "0.9375rem" which computes to 15px on most browser.
+IomadBoostrap 4 uses a native font stack that selects the best font-family for each OS and device. For font sizing the browser default root font-size (typically 16px) is used. this variable can be changed using the variable '$font-size-base'.
+In the default IomadBoost preset we use: "0.9375rem" which computes to 15px on most browser.
 
 Presets
 -------

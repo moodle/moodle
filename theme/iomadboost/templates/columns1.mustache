@@ -17,7 +17,7 @@
 {{!
     @template theme_iomadboost/columns1
 
-    Boost 1 column layout template.
+    IomadBoost 1 column layout template.
 
     Context variables required for this template:
     * sitename - The name of the site
@@ -39,15 +39,16 @@
 {{> theme_iomadboost/head }}
 
 <body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
 
-<div id="page-wrapper">
+<div id="page-wrapper" class="d-print-block">
 
     {{{ output.standard_top_of_body_html }}}
 
-    <div id="page" class="container-fluid">
-        <div id="page-content" class="row pb-3">
+    <div id="page" class="container-fluid d-print-block">
+        <div id="page-content" class="row pb-3 d-print-block">
             <div id="region-main-box" class="col-12">
-                <section id="region-main">
+                <section id="region-main" aria-label="{{#str}}content{{/str}}">
                     {{{ output.course_content_header }}}
                     {{{ output.main_content }}}
                     {{{ output.activity_navigation }}}
@@ -64,5 +65,8 @@
 </body>
 </html>
 {{#js}}
-require(['theme_iomadboost/loader']);
+M.util.js_pending('theme_iomadboost/loader');
+require(['theme_iomadboost/loader'], function() {
+  M.util.js_complete('theme_iomadboost/loader');
+});
 {{/js}}

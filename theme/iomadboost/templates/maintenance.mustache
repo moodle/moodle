@@ -17,7 +17,7 @@
 {{!
     @template theme_iomadboost/maintenance
 
-    Boost maintenance layout template.
+    IomadBoost maintenance layout template.
 
     Context variables required for this template:
     * output - The core renderer for the page
@@ -42,6 +42,7 @@
 </head>
 
 <body {{{ output.body_attributes }}}>
+{{> core/local/toast/wrapper}}
 
 <div id="page-wrapper">
 
@@ -56,7 +57,7 @@
         </div>
 
         <div id="page-content" class="row">
-            <section id="region-main" class="col-12">
+            <section id="region-main" class="col-12" aria-label="{{#str}}content{{/str}}">
                 {{{ output.main_content }}}
             </section>
         </div>
@@ -73,5 +74,8 @@
 </body>
 </html>
 {{#js}}
-require(['theme_iomadboost/loader']);
+M.util.js_pending('theme_iomadboost/loader');
+require(['theme_iomadboost/loader'], function() {
+  M.util.js_complete('theme_iomadboost/loader');
+});
 {{/js}}

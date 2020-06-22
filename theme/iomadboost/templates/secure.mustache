@@ -17,7 +17,7 @@
 {{!
     @template theme_iomadboost/secure
 
-    Boost secure layout template.
+    IomadBoost secure layout template.
 
     Context variables required for this template:
     * sitename - The name of the site
@@ -37,6 +37,7 @@
 {{> theme_iomadboost/head }}
 
 <body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
 
 <div id="page-wrapper">
 
@@ -59,7 +60,7 @@
 
         <div id="page-content" class="row">
             <div id="region-main-box" class="col-12">
-                <section id="region-main" {{#hasblocks}}class="has-blocks"{{/hasblocks}}>
+                <section id="region-main" {{#hasblocks}}class="has-blocks"{{/hasblocks}} aria-label="{{#str}}content{{/str}}">
 
                     {{{ output.course_content_header }}}
                     {{{ output.main_content }}}
@@ -67,7 +68,7 @@
 
                 </section>
                 {{#hasblocks}}
-                <section data-region="blocks-column">
+                <section data-region="blocks-column" aria-label="{{#str}}blocks{{/str}}">
                     {{{ sidepreblocks }}}
                 </section>
                 {{/hasblocks}}
@@ -87,5 +88,8 @@
 </body>
 </html>
 {{#js}}
-require(['theme_iomadboost/loader']);
+M.util.js_pending('theme_iomadboost/loader');
+require(['theme_iomadboost/loader'], function() {
+  M.util.js_complete('theme_iomadboost/loader');
+});
 {{/js}}

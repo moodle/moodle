@@ -19,7 +19,7 @@
 
     Admin time setting template.
 
-    Iomad Bootstrap 1-3 column layout template.
+    IomadBootstrap 1-3 column layout template.
 
     Context variables required for this template:
     * sitename - The name of the site
@@ -50,16 +50,16 @@
 
 <body {{{ bodyattributes }}}>
 
-<div id="page-wrapper">
+<div id="page-wrapper" class="d-print-block">
 
     {{{ output.standard_top_of_body_html }}}
 
     {{>theme_iomadbootstrap/navbar}}
 
-    <div id="page" class="container-fluid">
+    <div id="page" class="container-fluid d-print-block">
         {{{ output.full_header }}}
 
-        <div id="page-content" class="row {{#haspreblocks}} blocks-pre {{/haspreblocks}} {{#haspostblocks}} blocks-post {{/haspostblocks}}">
+        <div id="page-content" class="row {{#haspreblocks}} blocks-pre {{/haspreblocks}} {{#haspostblocks}} blocks-post {{/haspostblocks}} d-print-block">
             <div id="region-main-box" class="region-main">
                 {{#hasregionmainsettingsmenu}}
                 <div id="region-main-settings-menu" class="d-print-none {{#hasblocks}}has-blocks{{/hasblocks}}">
@@ -77,13 +77,13 @@
                 </section>
             </div>
             <div class="columnleft blockcolumn {{#haspreblocks}} has-blocks {{/haspreblocks}}">
-                <section data-region="blocks-column" class="hidden-print" aria-label="{{#str}}blocks{{/str}}">
+                <section data-region="blocks-column" class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
                     {{{ sidepreblocks }}}
                 </section>
             </div>
 
             <div class="columnright blockcolumn {{#haspostblocks}} has-blocks {{/haspostblocks}}">
-                <section data-region="blocks-column" class="hidden-print" aria-label="{{#str}}blocks{{/str}}">
+                <section data-region="blocks-column" class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
                     {{{ sidepostblocks }}}
                 </section>
             </div>
@@ -96,6 +96,8 @@
 </body>
 </html>
 {{#js}}
-require(['theme_boost/loader']);
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() {
+  M.util.js_complete('theme_boost/loader');
+});
 {{/js}}
-

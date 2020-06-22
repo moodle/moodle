@@ -15,17 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Iomad theme.
+ * Iomad.
  *
  * @package    theme_iomad
- * @copyright  2018 Bas Brands
+ * @copyright  2016 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// This line protects the file from being accessed by a URL directly.
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2019052000;
-$plugin->requires = 2019051100;
+$plugin->version   = 2019111800;
+$plugin->requires  = 2019111200;
 $plugin->component = 'theme_iomad';
-$plugin->dependencies = array('theme_boost' => 2019051100);

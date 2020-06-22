@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Boost config.
+ * IomadBoost config.
  *
  * @package   theme_iomadboost
  * @copyright 2016 Frédéric Massart
