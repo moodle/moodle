@@ -9,6 +9,9 @@ $bg-inverse-link-color: #fff !default;
     overflow-x: auto;
     overflow-y: visible;
     border: $card-border-width solid $card-border-color;
+    @if $enable-rounded {
+        @include border-radius($card-border-radius);
+    }
     padding: $card-spacer-x;
     background-color: $body-bg;
 }
@@ -1394,6 +1397,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     text-transform: uppercase;
     padding-top: 1.2em;
     padding-bottom: 0.4em;
+    margin-bottom: 0.5rem;
+    font-size: 100%;
 }
 
 .choosercontainer #chooseform .option .typename,
@@ -2155,22 +2160,28 @@ div.editor_atto_toolbar button .icon {
     }
 }
 
-$switch-height: ($input-height-inner * .8) !default;
+$switch-height: 1.25rem !default;
 $switch-height-half: ($switch-height / 2) !default;
+$switch-width: ($switch-height * 2) !default;
 $switch-border-radius: $switch-height !default;
-$switch-bg: $custom-control-indicator-bg !default;
-$switch-checked-bg: map-get($theme-colors, 'primary') !default;
-$switch-disabled-bg: $custom-control-indicator-disabled-bg !default;
-$switch-disabled-color: $custom-control-label-disabled-color !default;
+$switch-bg: $gray-300 !default;
+$switch-bg-height: 1rem !default;
+$switch-bg-height-half: ($switch-bg-height / 2) !default;
+$switch-checked-bg: rgba(map-get($theme-colors, 'primary'), .4) !default;
+$switch-checked-thumb-bg: map-get($theme-colors, 'primary') !default;
+$switch-disabled-bg: $gray-200 !default;
+$switch-disabled-color: $gray-600 !default;
+$switch-disabled-thumb-bg: $gray-600 !default;
 $switch-thumb-bg: $white !default;
 $switch-thumb-border-radius: 50% !default;
-$switch-thumb-padding: 2px !default;
-$switch-thumb-padding-double: ($switch-thumb-padding * 2) !default;
-$switch-focus-box-shadow: 0 0 0 $input-btn-focus-width rgba(map-get($theme-colors, 'primary'), .25);
+$switch-thumb-size: $switch-height !default;
+$switch-thumb-size-half: $switch-height-half !default;
+$switch-focus-box-shadow: 0 0 0 ($input-btn-focus-width * 2) rgba(map-get($theme-colors, 'primary'), .25);
 $switch-transition: .2s all !default;
 
-.switch {
+body:not(.behat-site) .switch {
     position: relative;
+    display: inline-block;
 
     input {
         float: left;
@@ -2179,48 +2190,52 @@ $switch-transition: .2s all !default;
         padding: 0;
         margin: 0;
         opacity: 0;
+        line-height: $switch-height;
 
         + label {
             position: relative;
             min-height: $switch-height;
-            min-width: $switch-height * 2;
+            min-width: $switch-width;
             line-height: $switch-height;
             border-radius: $switch-border-radius;
             display: inline-block;
             cursor: pointer;
             outline: none;
             user-select: none;
-            vertical-align: middle;
-            padding-left: (($switch-height * 2) + .5rem);
+            padding-left: ($switch-width + .5rem);
         }
 
         + label::before,
         + label::after {
             content: '';
             position: absolute;
-            top: calc(50% - #{$switch-height-half});
             left: 0;
-            width: ($switch-height * 2);
-            height: $switch-height;
             bottom: 0;
             display: block;
         }
 
         + label::before {
             right: 0;
+            height: $switch-bg-height;
+            width: $switch-width;
+            top: calc(50% - #{$switch-bg-height-half});
             background-color: $switch-bg;
             border-radius: $switch-border-radius;
             transition: $switch-transition;
         }
 
         + label::after {
-            margin-top: $switch-thumb-padding;
-            left: $switch-thumb-padding;
-            width: calc(#{$switch-height} - #{$switch-thumb-padding-double});
-            height: calc(#{$switch-height} - #{$switch-thumb-padding-double});
+            left: 0;
+            width: $switch-thumb-size;
+            height: $switch-thumb-size;
+            top: calc(50% - #{$switch-thumb-size-half});
             border-radius: $switch-thumb-border-radius;
             background-color: $switch-thumb-bg;
             transition: $switch-transition;
+            box-shadow:
+                0 1px 3px 0 rgba(0, 0, 0, 0.2),
+                0 1px 1px 0 rgba(0, 0, 0, 0.14),
+                0 2px 1px -1px rgba(0, 0, 0, 0.12);
         }
 
         &:checked + label::before {
@@ -2229,9 +2244,14 @@ $switch-transition: .2s all !default;
 
         &:checked + label::after {
             margin-left: $switch-height;
+            background-color: $switch-checked-thumb-bg;
         }
 
         &:focus + label::before {
+            outline: none;
+        }
+
+        &:focus + label::after {
             outline: none;
             box-shadow: $switch-focus-box-shadow;
         }
@@ -2244,6 +2264,18 @@ $switch-transition: .2s all !default;
         &:disabled + label::before {
             background-color: $switch-disabled-bg;
         }
+
+        &:disabled + label::after {
+            background-color: $switch-disabled-thumb-bg;
+        }
+    }
+
+    &.sr-only-label {
+        input + label {
+            text-indent: -9999px;
+            margin-bottom: 0;
+            padding-left: 0;
+        }
     }
 }
 
@@ -2251,14 +2283,147 @@ $switch-transition: .2s all !default;
     min-height: 3.125rem;
 }
 
+body.h5p-embed {
+    #page-content {
+        display: inherit;
+    }
+    #maincontent {
+        display: none;
+    }
+    .h5pmessages {
+        min-height: 230px; // This should be the same height as default core_h5p iframes.
+    }
+}
+
 .text-decoration-none {
     text-decoration: none !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.colour-inherit {
+    color: inherit !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .position-right {
     right: 0 !important; /* stylelint-disable-line declaration-no-important */
 }
 
+.overflow-hidden {
+    overflow: hidden !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.text-break {
+    overflow-wrap: break-word !important; /* stylelint-disable-line declaration-no-important */
+}
+
 .z-index-1 {
     z-index: 1 !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// These floats are deprecated in Bootstrap 4.3.1. It is still okay to use them in Moodle.
+.float-left {
+    float: left !important; /* stylelint-disable-line declaration-no-important */
+}
+.float-right {
+    float: right !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// Emoji picker.
+$picker-width: 350px !default;
+$picker-width-xs: 320px !default;
+$picker-height: 400px !default;
+$picker-row-height: 40px !default;
+$picker-emoji-button-size: 40px !default;
+$picker-emoji-button-font-size: 24px !default;
+$picker-emoji-category-count: 9 !default;
+$picker-emojis-per-row: 7 !default;
+
+.emoji-picker {
+    width: $picker-width;
+    height: $picker-height;
+
+    .category-button {
+        padding: .375rem 0;
+        height: 100%;
+        width: $picker-width / $picker-emoji-category-count;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-bottom: 2px solid transparent;
+
+        &.selected {
+            border-bottom: 2px solid map-get($theme-colors, 'primary');
+        }
+    }
+
+    .emojis-container,
+    .search-results-container {
+        min-width: $picker-emojis-per-row * $picker-emoji-button-size;
+    }
+
+    .picker-row {
+        height: $picker-row-height;
+
+        .category-name {
+            line-height: $picker-row-height;
+        }
+
+        .emoji-button {
+            height: $picker-emoji-button-size;
+            width: $picker-emoji-button-size;
+            line-height: $picker-emoji-button-size;
+            font-size: $picker-emoji-button-font-size;
+            overflow: hidden;
+
+            @include hover-focus {
+                color: inherit;
+                text-decoration: none;
+            }
+        }
+    }
+
+    .emoji-preview {
+        height: $picker-row-height;
+        font-size: $picker-row-height;
+        line-height: $picker-row-height;
+    }
+
+    .emoji-short-name {
+        line-height: $picker-row-height / 2;
+    }
+
+    @include media-breakpoint-down(xs) {
+        width: $picker-width-xs;
+    }
+}
+
+.emoji-auto-complete {
+    height: $picker-row-height;
+
+    .btn.btn-link.btn-icon.emoji-button {
+        height: $picker-emoji-button-size;
+        width: $picker-emoji-button-size;
+        line-height: $picker-emoji-button-size;
+        font-size: $picker-emoji-button-font-size;
+
+        &.active {
+            background-color: $gray-200;
+        }
+    }
+}
+
+.toast-wrapper {
+    max-width: $toast-max-width;
+    max-height: 0;
+    // Place these above any modals and other elements.
+    z-index: 1051;
+
+    > :first-child {
+        margin-top: $spacer;
+    }
+}
+
+@each $color, $value in $theme-colors {
+    .alert-#{$color} a {
+        color: darken(theme-color-level($color, $alert-color-level), 10%);
+    }
 }

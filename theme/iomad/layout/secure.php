@@ -18,28 +18,22 @@
  * A secure layout for the iomad theme.
  *
  * @package   theme_iomad
- * @copyright 2018 Bas Brands
+ * @copyright 2016 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+$blockshtml = $OUTPUT->blocks('side-pre');
+$hasblocks = strpos($blockshtml, 'data-block=') !== false;
 $bodyattributes = $OUTPUT->body_attributes();
-
-$blockspre = $OUTPUT->blocks('side-pre');
-$blockspost = $OUTPUT->blocks('side-post');
-
-$hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
-$hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     'output' => $OUTPUT,
-    'sidepreblocks' => $blockspre,
-    'sidepostblocks' => $blockspost,
-    'haspreblocks' => $hassidepre,
-    'haspostblocks' => $hassidepost,
-    'bodyattributes' => $bodyattributes
+    'bodyattributes' => $bodyattributes,
+    'sidepreblocks' => $blockshtml,
+    'hasblocks' => $hasblocks
 ];
 
 echo $OUTPUT->render_from_template('theme_iomad/secure', $templatecontext);

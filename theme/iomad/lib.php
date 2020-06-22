@@ -15,72 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Iomad theme callbacks.
+ * Theme functions.
  *
  * @package    theme_iomad
- * @copyright  2018 Bas Brands
+ * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// This line protects the file from being accessed by a URL directly.
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Returns the main SCSS content.
+ * Post process the CSS tree.
  *
+ * @param string $tree The CSS tree.
  * @param theme_config $theme The theme config object.
- * @return string
  */
-function theme_iomad_get_main_scss_content($theme) {
-    global $CFG;
-
-    $scss = '';
-    $filename = !empty($theme->settings->preset) ? $theme->settings->preset : null;
-    $fs = get_file_storage();
-
-    $context = context_system::instance();
-    $scss .= file_get_contents($CFG->dirroot . '/theme/iomad/scss/iomad/pre.scss');
-    if ($filename && ($presetfile = $fs->get_file($context->id, 'theme_iomad', 'preset', 0, '/', $filename))) {
-        $scss .= $presetfile->get_content();
-    } else {
-        // Safety fallback - maybe new installs etc.
-        $scss .= file_get_contents($CFG->dirroot . '/theme/iomad/scss/preset/default.scss');
-    }
-    $scss .= file_get_contents($CFG->dirroot . '/theme/iomad/scss/iomad/post.scss');
-
-    return $scss;
-}
-
-/**
- * Get SCSS to prepend.
- *
- * @param theme_config $theme The theme config object.
- * @return array
- */
-function theme_iomad_get_pre_scss($theme) {
-    $scss = '';
-    $configurable = [
-        // Config key => [variableName, ...].
-        'brandcolor' => ['primary'],
-    ];
-
-    // Prepend variables first.
-    foreach ($configurable as $configkey => $targets) {
-        $value = isset($theme->settings->{$configkey}) ? $theme->settings->{$configkey} : null;
-        if (empty($value)) {
-            continue;
-        }
-        array_map(function($target) use (&$scss, $value) {
-            $scss .= '$' . $target . ': ' . $value . ";\n";
-        }, (array) $targets);
-    }
-
-    // Prepend pre-scss.
-    if (!empty($theme->settings->scsspre)) {
-        $scss .= $theme->settings->scsspre;
-    }
-
-    return $scss;
+function theme_iomad_css_tree_post_processor($tree, $theme) {
+    $prefixer = new theme_iomad\autoprefixer($tree);
+    $prefixer->prefix();
 }
 
 /**
@@ -90,38 +42,18 @@ function theme_iomad_get_pre_scss($theme) {
  * @return string
  */
 function theme_iomad_get_extra_scss($theme) {
-    global $CFG;
     $content = '';
-
-    // Set the page background image.
     $imageurl = $theme->setting_file_url('backgroundimage', 'backgroundimage');
+
+    // Sets the background image, and its settings.
     if (!empty($imageurl)) {
-        $content .= '$imageurl: "' . $imageurl . '";';
-        $content .= file_get_contents($CFG->dirroot .
-            '/theme/iomad/scss/iomad/body-background.scss');
+        $content .= 'body { ';
+        $content .= "background-image: url('$imageurl'); background-size: cover;";
+        $content .= ' }';
     }
 
-    if (!empty($theme->settings->navbardark)) {
-        $content .= file_get_contents($CFG->dirroot .
-            '/theme/iomad/scss/iomad/navbar-dark.scss');
-    } else {
-        $content .= file_get_contents($CFG->dirroot .
-            '/theme/iomad/scss/iomad/navbar-light.scss');
-    }
-    if (!empty($theme->settings->scss)) {
-        $content .= $theme->settings->scss;
-    }
-    return $content;
-}
-
-/**
- * Get compiled css.
- *
- * @return string compiled css
- */
-function theme_iomad_get_precompiled_css() {
-    global $CFG;
-    return file_get_contents($CFG->dirroot . '/theme/iomad/style/moodle.css');
+    // Always return the background image with the scss when we have it.
+    return !empty($theme->settings->scss) ? $theme->settings->scss . ' ' . $content : $content;
 }
 
 /**
@@ -151,4 +83,80 @@ function theme_iomad_pluginfile($course, $cm, $context, $filearea, $args, $force
     }
 
     send_stored_file($file, 0, 0, $forcedownload);
+}
+
+/**
+ * Returns the main SCSS content.
+ *
+ * @param theme_config $theme The theme config object.
+ * @return string
+ */
+function theme_iomad_get_main_scss_content($theme) {
+    global $CFG;
+
+    $scss = '';
+    $filename = !empty($theme->settings->preset) ? $theme->settings->preset : null;
+    $fs = get_file_storage();
+
+    $context = context_system::instance();
+    if ($filename == 'default.scss') {
+        $scss .= file_get_contents($CFG->dirroot . '/theme/iomad/scss/preset/default.scss');
+    } else if ($filename == 'plain.scss') {
+        $scss .= file_get_contents($CFG->dirroot . '/theme/iomad/scss/preset/plain.scss');
+    } else if ($filename && ($presetfile = $fs->get_file($context->id, 'theme_iomad', 'preset', 0, '/', $filename))) {
+        $scss .= $presetfile->get_content();
+    } else {
+        // Safety fallback - maybe new installs etc.
+        $scss .= file_get_contents($CFG->dirroot . '/theme/iomad/scss/preset/default.scss');
+    }
+
+    return $scss;
+}
+
+/**
+ * Get compiled css.
+ *
+ * @return string compiled css
+ */
+function theme_iomad_get_precompiled_css() {
+    global $CFG;
+    return file_get_contents($CFG->dirroot . '/theme/iomad/style/moodle.css');
+}
+
+/**
+ * Get SCSS to prepend.
+ *
+ * @param theme_config $theme The theme config object.
+ * @return array
+ */
+function theme_iomad_get_pre_scss($theme) {
+    global $CFG;
+
+    $scss = '';
+    $configurable = [
+        // Config key => [variableName, ...].
+        'brandcolor' => ['primary'],
+    ];
+
+    // Prepend variables first.
+    foreach ($configurable as $configkey => $targets) {
+        $value = isset($theme->settings->{$configkey}) ? $theme->settings->{$configkey} : null;
+        if (empty($value)) {
+            continue;
+        }
+        array_map(function($target) use (&$scss, $value) {
+            $scss .= '$' . $target . ': ' . $value . ";\n";
+        }, (array) $targets);
+    }
+
+    // Prepend pre-scss.
+    if (!empty($theme->settings->scsspre)) {
+        $scss .= $theme->settings->scsspre;
+    }
+
+    if (!empty($theme->settings->fontsize)) {
+        $scss .= '$font-size-base: ' . (1 / 100 * $theme->settings->fontsize) . "rem !default;\n";
+    }
+
+    return $scss;
 }

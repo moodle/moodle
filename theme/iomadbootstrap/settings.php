@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Iomad Bootstrap theme settings file.
+ * IomadBootstrap theme settings file.
  *
  * @package    theme_iomadbootstrap
  * @copyright  2018 Bas Brands

@@ -1,14 +1,13 @@
 // Bootstrap variables
-
 $white:    #fff !default;
 $gray-100: #f8f9fa !default;
 $gray-200: #e9ecef !default;
 $gray-300: #dee2e6 !default;
 $gray-400: #ced4da !default;
 $gray-500: #adb5bd !default;
-$gray-600: #868e96 !default;
+$gray-600: #6c757d !default;
 $gray-700: #495057 !default;
-$gray-800: #373a3c !default;
+$gray-800: #343a40 !default;
 $gray-900: #212529 !default;
 $black:    #000 !default;
 
@@ -16,21 +15,22 @@ $blue:    #1177d1 !default;
 $indigo:  #6610f2 !default;
 $purple:  #613d7c !default;
 $pink:    #e83e8c !default;
-$red:     #d9534f !default;
+$red:     #d43f3a !default;
 $orange:  #f0ad4e !default;
 $yellow:  #ff7518 !default;
-$green:   #5cb85c !default;
+$green:   #398439 !default;
 $teal:    #20c997 !default;
 $cyan:    #5bc0de !default;
 
 $primary:       $blue !default;
-$secondary:     $gray-800 !default;
 $success:       $green !default;
 $info:          $cyan !default;
-$warning:       $yellow !default;
+$warning:       $orange !default;
 $danger:        $red !default;
-$light:         $gray-100 !default;
-$dark:          $gray-800 !default;
+$secondary:     $gray-400 !default;
+
+$info-outline:    #1f7e9a;
+$warning-outline: #a6670e;
 
 // Options
 $enable-rounded: false !default;
@@ -64,13 +64,11 @@ $card-group-margin: .25rem;
 $theme-colors: () !default;
 $theme-colors: map-merge((
     primary: $primary,
-    secondary: $gray-400,
+    secondary: $secondary,
     success: $success,
     info: $info,
-    warning: $orange,
+    warning: $warning,
     danger: $danger,
-    light: $gray-100,
-    dark: $gray-800
 ), $theme-colors);
 // stylelint-enable
 
@@ -108,7 +106,15 @@ body {
 // for an outline button.
 .btn-outline-secondary {
     @include button-outline-variant($gray-600);
-    border-color: $border-color;
+    border-color: $gray-600;
+}
+
+.btn-outline-info {
+    @include button-outline-variant($info-outline);
+}
+
+.btn-outline-warning {
+    @include button-outline-variant($warning-outline);
 }
 
 @include bg-variant(".bg-gray", $gray-200);

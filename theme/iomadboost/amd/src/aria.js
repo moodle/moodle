@@ -186,15 +186,14 @@ define(['jquery', 'core/pending'], function($, Pending) {
             });
 
             // After page load, focus on any element with special autofocus attribute.
-            $(function() {
-                window.setTimeout(function(pendingPromise) {
-                    var alerts = $('[role="alert"][data-aria-autofocus="true"]');
-                    if (alerts.length > 0) {
-                        $(alerts[0]).attr('tabindex', '0');
-                        $(alerts[0]).focus();
-                    }
-                    pendingPromise.resolve();
-                }, 300, new Pending('core/aria:delayed-focus'));
+            window.addEventListener("load", () => {
+                const alerts = document.querySelectorAll('[data-aria-autofocus="true"][role="alert"]');
+                Array.prototype.forEach.call(alerts, autofocusElement => {
+                    // According to the specification an role="alert" region is only read out on change to the content
+                    // of that region.
+                    autofocusElement.innerHTML += ' ';
+                    autofocusElement.removeAttribute('data-aria-autofocus');
+                });
             });
         }
     };

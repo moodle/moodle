@@ -18,8 +18,7 @@
  * This file contains the unittests for iomad's scss compilation.
  *
  * @package   theme_iomad
- * @category  test
- * @copyright 2019 Michael Hawkins
+ * @copyright 2018 Cameron Ball <cameron@cameron1729.xyz>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,8 +28,7 @@ defined('MOODLE_INTERNAL') || die();
  * Unit tests for scss compilation.
  *
  * @package   theme_iomad
- * @category  test
- * @copyright 2019 Michael Hawkins
+ * @copyright 2016 onwards Ankit Agarwal
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class theme_iomad_scss_testcase extends advanced_testcase {

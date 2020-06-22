@@ -70,7 +70,7 @@ if ($ADMIN->fulltree) {
     $name = 'theme_iomadboost/brandcolor';
     $title = get_string('brandcolor', 'theme_iomadboost');
     $description = get_string('brandcolor_desc', 'theme_iomadboost');
-    $setting = new admin_setting_configcolourpicker($name, $title, $description, '#666');
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, '');
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 

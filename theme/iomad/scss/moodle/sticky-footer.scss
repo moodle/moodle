@@ -1,0 +1,25 @@
+/**
+ * This file contains the styles required to make the footer sticky.
+ */
+
+html,
+body {
+    height: 100%;
+}
+
+#page-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    #page {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        #page-content {
+            flex: 1 0 auto;
+        }
+    }
+    #page-footer {
+        flex-shrink: 0;
+    }
+}

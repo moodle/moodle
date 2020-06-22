@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Boost.
+ * IomadBoost.
  *
  * @package    theme_iomadboost
  * @copyright  2016 Frédéric Massart
@@ -24,7 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018120300;
-$plugin->requires  = 2019052000;
-$plugin->release  = '3.8.3 (Build: 20200511)'; // Human-friendly version name
+$plugin->version   = 2019111800;
+$plugin->requires  = 2019111200;
 $plugin->component = 'theme_iomadboost';

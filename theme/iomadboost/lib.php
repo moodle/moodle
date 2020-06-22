@@ -69,16 +69,20 @@ function theme_iomadboost_get_extra_scss($theme) {
  * @return bool
  */
 function theme_iomadboost_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    if ($context->contextlevel == CONTEXT_SYSTEM && ($filearea === 'logo' || $filearea === 'backgroundimage')) {
-        $theme = theme_config::load('iomadboost');
-        // By default, theme files must be cache-able by both browsers and proxies.
-        if (!array_key_exists('cacheability', $options)) {
-            $options['cacheability'] = 'public';
-        }
-        return $theme->setting_file_serve($filearea, $args, $forcedownload, $options);
-    } else {
+
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $filename = $args[1];
+    $itemid = $args[0];
+    if ($filearea == 'logo') {
+        $itemid = 0;
+    }
+
+    if (!$file = $fs->get_file($context->id, 'theme_iomadboost', $filearea, $itemid, '/', $filename) or $file->is_directory()) {
         send_file_not_found();
     }
+
+    send_stored_file($file, 0, 0, $forcedownload);
 }
 
 /**

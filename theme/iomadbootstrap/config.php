@@ -156,3 +156,4 @@ $THEME->scss = function($theme) {
     return theme_iomadbootstrap_get_main_scss_content($theme);
 };
 $THEME->usefallback = true;
+$THEME->iconsystem = '\\theme_iomadbootstrap\\output\\icon_system_fontawesome';

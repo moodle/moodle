@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Iomad Bootstrap theme.
+ * IomadBootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @copyright  2018 Bas Brands
@@ -25,7 +25,7 @@
 // This line protects the file from being accessed by a URL directly.
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2019052000;
-$plugin->requires = 2019051100;
+$plugin->version = 2019111800;
+$plugin->requires = 2019111200;
 $plugin->component = 'theme_iomadbootstrap';
-$plugin->dependencies = array('theme_boost' => 2019051100);
+$plugin->dependencies = array('theme_boost' => 2019111200);

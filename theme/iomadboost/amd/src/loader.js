@@ -23,10 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
  */
-define(['jquery', './tether', 'core/event'], function(jQuery, Tether, Event) {
+define(['jquery', './tether', 'core/event', 'core/custom_interaction_events'], function(jQuery, Tether, Event, customEvents) {
 
     window.jQuery = jQuery;
     window.Tether = Tether;
+    M.util.js_pending('theme_iomadboost/loader:children');
 
     require(['theme_iomadboost/aria',
             'theme_iomadboost/pending',
@@ -46,7 +47,17 @@ define(['jquery', './tether', 'core/event'], function(jQuery, Tether, Event) {
         // We do twice because: https://github.com/twbs/bootstrap/issues/10547
         jQuery('body').popover({
             trigger: 'focus',
-            selector: "[data-toggle=popover][data-trigger!=hover]"
+            selector: "[data-toggle=popover][data-trigger!=hover]",
+            placement: 'auto'
+        });
+
+        // Popovers must close on Escape for accessibility reasons.
+        customEvents.define(jQuery('body'), [
+            customEvents.events.escape,
+        ]);
+        jQuery('body').on(customEvents.events.escape, '[data-toggle=popover]', function() {
+            // Use "blur" instead of "popover('hide')" to prevent issue that the same tooltip can't be opened again.
+            jQuery(this).trigger('blur');
         });
 
         jQuery("html").popover({
@@ -57,6 +68,27 @@ define(['jquery', './tether', 'core/event'], function(jQuery, Tether, Event) {
                 hide: 500
             }
         });
+
+        jQuery("html").tooltip({
+            selector: '[data-toggle="tooltip"]'
+        });
+
+        // Disables flipping the dropdowns up and getting hidden behind the navbar.
+        jQuery.fn.dropdown.Constructor.Default.flip = false;
+
+        jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+            var hash = jQuery(e.target).attr('href');
+            if (history.replaceState) {
+                history.replaceState(null, null, hash);
+            } else {
+                location.hash = hash;
+            }
+        });
+
+        var hash = window.location.hash;
+        if (hash) {
+           jQuery('.nav-link[href="' + hash + '"]').tab('show');
+        }
 
         // We need to call popover automatically if nodes are added to the page later.
         Event.getLegacyEvents().done(function(events) {
@@ -70,6 +102,7 @@ define(['jquery', './tether', 'core/event'], function(jQuery, Tether, Event) {
         });
 
         Aria.init();
+        M.util.js_complete('theme_iomadboost/loader:children');
     });
 
 
