@@ -1849,6 +1849,8 @@ function question_get_question_capabilities() {
         'moodle/question:useall',
         'moodle/question:movemine',
         'moodle/question:moveall',
+        'moodle/question:tagmine',
+        'moodle/question:tagall',
     );
 }
 
