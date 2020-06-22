@@ -32,8 +32,8 @@ $context = context::instance_by_id($contextid, MUST_EXIST);
 
 require_capability('moodle/contentbank:access', $context);
 
-$statusmsg = optional_param('statusmsg', '', PARAM_RAW);
-$errormsg = optional_param('errormsg', '', PARAM_RAW);
+$statusmsg = optional_param('statusmsg', '', PARAM_ALPHANUMEXT);
+$errormsg = optional_param('errormsg', '', PARAM_ALPHANUMEXT);
 
 $title = get_string('contentbank');
 \core_contentbank\helper::get_page_ready($context, $title);
@@ -98,9 +98,11 @@ echo $OUTPUT->header();
 echo $OUTPUT->box_start('generalbox');
 
 // If needed, display notifications.
-if ($errormsg !== '') {
+if ($errormsg !== '' && get_string_manager()->string_exists($errormsg, 'core_contentbank')) {
+    $errormsg = get_string($errormsg, 'core_contentbank');
     echo $OUTPUT->notification($errormsg);
-} else if ($statusmsg !== '') {
+} else if ($statusmsg !== '' && get_string_manager()->string_exists($statusmsg, 'core_contentbank')) {
+    $statusmsg = get_string($statusmsg, 'core_contentbank');
     echo $OUTPUT->notification($statusmsg, 'notifysuccess');
 }
 
