@@ -140,7 +140,7 @@ Feature: Course participants can be filtered
     And I navigate to course participants
     # Note: This is the literal string "student", not the Role student.
     When I set the field "Filters" to "student"
-    And I press key "13" in the field "Filters"
+    And I press the enter key
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
