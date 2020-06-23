@@ -159,49 +159,30 @@ class behat_general extends behat_base {
      * Switches to the specified iframe.
      *
      * @Given /^I switch to "(?P<iframe_name_string>(?:[^"]|\\")*)" iframe$/
-     * @param string $iframename
-     */
-    public function switch_to_iframe($iframename) {
-
-        // We spin to give time to the iframe to be loaded.
-        // Using extended timeout as we don't know about which
-        // kind of iframe will be loaded.
-        $this->spin(
-            function($context, $iframename) {
-                $context->getSession()->switchToIFrame($iframename);
-
-                // If no exception we are done.
-                return true;
-            },
-            $iframename,
-            behat_base::get_extended_timeout()
-        );
-    }
-
-    /**
-     * Switches to the iframe containing specified class.
-     *
      * @Given /^I switch to "(?P<iframe_name_string>(?:[^"]|\\")*)" class iframe$/
-     * @param string $classname
+     * @param string $name The name of the iframe
      */
-    public function switch_to_class_iframe($classname) {
+    public function switch_to_iframe($name) {
         // We spin to give time to the iframe to be loaded.
         // Using extended timeout as we don't know about which
         // kind of iframe will be loaded.
         $this->spin(
-            function($context, $classname) {
-                $iframe = $this->find('iframe', $classname);
-                if (!empty($iframe->getAttribute('id'))) {
-                    $iframename = $iframe->getAttribute('id');
-                } else {
+            function($context) use ($name){
+                $iframe = $context->find('iframe', $name);
+                if ($iframe->hasAttribute('name')) {
                     $iframename = $iframe->getAttribute('name');
+                } else {
+                    if (!$this->running_javascript()) {
+                        throw new \coding_exception('iframe must have a name attribute to use the switchTo command.');
+                    }
+                    $iframename = uniqid();
+                    $this->execute_js_on_node($iframe, "{{ELEMENT}}.name = '{$iframename}';");
                 }
                 $context->getSession()->switchToIFrame($iframename);
 
                 // If no exception we are done.
                 return true;
             },
-            $classname,
             behat_base::get_extended_timeout()
         );
     }
