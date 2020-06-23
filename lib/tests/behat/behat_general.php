@@ -1228,6 +1228,39 @@ EOF;
     }
 
     /**
+     * Checks whether there the specified attribute is set or not.
+     *
+     * @Then the :attribute attribute of :element :selectortype should be set
+     * @Then the :attribute attribute of :element :selectortype should :not be set
+     *
+     * @throws ExpectationException
+     * @param string $attribute Name of attribute
+     * @param string $element The locator of the specified selector
+     * @param string $selectortype The selector type
+     * @param string $not
+     */
+    public function the_attribute_of_should_be_set($attribute, $element, $selectortype, $not = null) {
+        // Get the container node (exception if it doesn't exist).
+        $containernode = $this->get_selected_node($selectortype, $element);
+        $hasattribute = $containernode->hasAttribute($attribute);
+
+        if ($not && $hasattribute) {
+            $value = $containernode->getAttribute($attribute);
+            // Should not be set but is.
+            throw new ExpectationException(
+                "The attribute \"{$attribute}\" should not be set but has a value of '{$value}'",
+                $this->getSession()
+            );
+        } else if (!$not && !$hasattribute) {
+            // Should be set but is not.
+            throw new ExpectationException(
+                "The attribute \"{$attribute}\" should be set but is not",
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
      * Checks whether there is an attribute on the given element that contains the specified text.
      *
      * @Then /^the "(?P<attribute_string>[^"]*)" attribute of "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should contain "(?P<text_string>(?:[^"]|\\")*)"$/
