@@ -212,6 +212,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                         var cloneDrag = drag.clone();
                         cloneDrag.removeClass('beingdragged');
                         hiddenDrag.after(cloneDrag);
+                        questionManager.addEventHandlersToDrag(cloneDrag);
                         drag.offset(cloneDrag.offset());
                     } else {
                         hiddenDrag.addClass('active');
@@ -404,6 +405,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                         cloneDrag.removeClass('beingdragged');
                         cloneDrag.removeAttr('tabindex');
                         hiddenDrag.after(cloneDrag);
+                        questionManager.addEventHandlersToDrag(cloneDrag);
                         nextDrag.offset(cloneDrag.offset());
                     } else {
                         hiddenDrag.addClass('active');
@@ -498,7 +500,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
             {
                 duration: 'fast',
                 done: function() {
-                    $('body').trigger('dragmoved', [drag, target, thisQ]);
+                    $('body').trigger('qtype_ddwtos-dragmoved', [drag, target, thisQ]);
                     M.util.js_complete('qtype_ddwtos-animate-' + thisQ.containerId);
                 }
             }
@@ -738,16 +740,25 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
          * Set up the event handlers that make this question type work. (Done once per page.)
          */
         setupEventHandlers: function() {
-            $('body').on('mousedown touchstart',
-                '.que.ddwtos:not(.qtype_ddwtos-readonly) span.draghome',
-                questionManager.handleDragStart)
+            // We do not use the body event here to prevent the other event on Mobile device, such as scroll event.
+            questionManager.addEventHandlersToDrag($('.que.ddwtos:not(.qtype_ddwtos-readonly) span.draghome'));
+            $('body')
                 .on('keydown',
                     '.que.ddwtos:not(.qtype_ddwtos-readonly) span.drop',
                     questionManager.handleKeyPress)
                 .on('keydown',
                     '.que.ddwtos:not(.qtype_ddwtos-readonly) span.draghome.placed:not(.beingdragged)',
                     questionManager.handleKeyPress)
-                .on('dragmoved', questionManager.handleDragMoved);
+                .on('qtype_ddwtos-dragmoved', questionManager.handleDragMoved);
+        },
+
+        /**
+         * Binding the drag/touch event again for newly created element.
+         *
+         * @param {jQuery} element Element to bind the event
+         */
+        addEventHandlersToDrag: function(element) {
+            element.on('mousedown touchstart', questionManager.handleDragStart);
         },
 
         /**
