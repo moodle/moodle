@@ -35,7 +35,7 @@ Feature: View activity completion in the quiz activity
       | completion                   | 2              |
       | completionview               | 1              |
       | completionusegrade           | 1              |
-      | completionpass               | 1              |
+      | completionpassgrade          | 1              |
       | completionattemptsexhausted  | 1              |
       | completionminattemptsenabled | 1              |
       | completionminattempts        | 1              |
@@ -50,6 +50,7 @@ Feature: View activity completion in the quiz activity
     And the "View" completion condition of "Test quiz name" is displayed as "done"
     And the "Make attempts: 1" completion condition of "Test quiz name" is displayed as "todo"
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "todo"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "todo"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
     And user "student1" has attempted "Test quiz name" with responses:
       | slot | response |
@@ -58,7 +59,8 @@ Feature: View activity completion in the quiz activity
     And I follow "Test quiz name"
     And the "View" completion condition of "Test quiz name" is displayed as "done"
     And the "Make attempts: 1" completion condition of "Test quiz name" is displayed as "done"
-    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "failed"
+    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
     And I press "Re-attempt quiz"
     And I set the field "True" to "1"
@@ -68,4 +70,5 @@ Feature: View activity completion in the quiz activity
     And the "View" completion condition of "Test quiz name" is displayed as "done"
     And the "Make attempts: 1" completion condition of "Test quiz name" is displayed as "done"
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "done"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "done"

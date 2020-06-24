@@ -292,6 +292,12 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
             $DB->insert_record('quizaccess_seb_quizsettings', $sebsettings);
         }
+
+        // If we are dealing with a backup from < 4.0 then we need to move completionpass to core.
+        if (!empty($data->completionpass)) {
+            $params = ['id' => $this->task->get_moduleid()];
+            $DB->set_field('course_modules', 'completionpassgrade', $data->completionpass, $params);
+        }
     }
 
     protected function process_quiz_question_instance($data) {

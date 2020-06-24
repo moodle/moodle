@@ -40,7 +40,7 @@ function quiz_completion_check_passing_grade_or_all_attempts($course, $cm, $user
 
     debugging('quiz_completion_check_passing_grade_or_all_attempts has been deprecated.', DEBUG_DEVELOPER);
 
-    if (!$quiz->completionpass) {
+    if (!$cm->completionpassgrade) {
         return true;
     }
 
@@ -118,7 +118,7 @@ function quiz_get_completion_state($course, $cm, $userid, $type) {
     // No need to call debugging here. Deprecation debugging notice already being called in \completion_info::internal_get_state().
 
     $quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
-    if (!$quiz->completionattemptsexhausted && !$quiz->completionpass && !$quiz->completionminattempts) {
+    if (!$quiz->completionattemptsexhausted && !$cm->completionpassgrade && !$quiz->completionminattempts) {
         return $type;
     }
 
