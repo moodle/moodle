@@ -2486,5 +2486,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020061500.02);
     }
 
+    if ($oldversion < 2020062600.01) {
+        // Add index to the token field in the external_tokens table.
+        $table = new xmldb_table('external_tokens');
+        $index = new xmldb_index('token', XMLDB_INDEX_NOTUNIQUE, ['token']);
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2020062600.01);
+    }
+
     return true;
 }
