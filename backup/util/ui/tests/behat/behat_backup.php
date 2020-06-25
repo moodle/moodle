@@ -56,7 +56,7 @@ class behat_backup extends behat_base {
         // table elements are used, and we need to catch exceptions contantly.
 
         // Go to homepage.
-        $this->getSession()->visit($this->locate_path('/?redirect=0'));
+        $this->execute('behat_general::i_visit', ['/?redirect=0']);
         $this->execute("behat_general::wait_until_the_page_is_ready");
 
         // Click the course link.
@@ -98,7 +98,7 @@ class behat_backup extends behat_base {
         // table elements are used, and we need to catch exceptions contantly.
 
         // Go to homepage.
-        $this->getSession()->visit($this->locate_path('/?redirect=0'));
+        $this->execute('behat_general::i_visit', ['/?redirect=0']);
 
         // Click the course link.
         $this->execute("behat_general::click_link", $backupcourse);
@@ -134,7 +134,7 @@ class behat_backup extends behat_base {
         // table elements are used, and we need to catch exceptions contantly.
 
         // Go to homepage.
-        $this->getSession()->visit($this->locate_path('/?redirect=0'));
+        $this->execute('behat_general::i_visit', ['/?redirect=0']);
         $this->execute("behat_general::wait_until_the_page_is_ready");
 
         // Click the course link.
