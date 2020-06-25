@@ -283,7 +283,7 @@ class behat_app extends behat_base {
         global $CFG;
 
         // Visit the Ionic URL and wait for it to load.
-        $this->getSession()->visit($url);
+        $this->execute('behat_general::i_visit', [$url]);
         $this->spin(
                 function($context, $args) {
                     $title = $context->getSession()->getPage()->find('xpath', '//title');

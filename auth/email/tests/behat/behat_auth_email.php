@@ -49,6 +49,6 @@ class behat_auth_email extends behat_base {
         $confirmationpath = $confirmationurl->out_as_local_url(false);
         $url = $confirmationpath .  '?' . 'data='. $secret .'/'. $username;
 
-        $this->getSession()->visit($this->locate_path($url));
+        $this->execute('behat_general::i_visit', [$url]);
     }
 }
