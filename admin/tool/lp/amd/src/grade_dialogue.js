@@ -102,6 +102,7 @@ define(['jquery',
      * @return {Promise}
      */
     Grade.prototype.display = function() {
+        M.util.js_pending('tool_lp/grade_dialogue:display');
         return $.when(
             Str.get_string('rate', 'tool_lp'),
             this._render()
@@ -110,7 +111,10 @@ define(['jquery',
             this._popup = new Dialogue(
                 title,
                 templateResult[0],
-                this._afterRender.bind(this)
+                function() {
+                    this._afterRender();
+                    M.util.js_complete('tool_lp/grade_dialogue:display');
+                }.bind(this)
             );
 
             return this._popup;
