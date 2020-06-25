@@ -123,6 +123,7 @@ $string['licenseV3'] = 'Version 3';
 $string['licensee'] = 'Licensee';
 $string['licenseextras'] = 'Licence extras';
 $string['licenseversion'] = 'Licence version';
+$string['lockh5pdeploy'] = 'This H5P content cannot be accessed because it is being deployed. Please try again later.';
 $string['missingcontentfolder'] = 'A valid content folder is missing';
 $string['missingcoreversion'] = 'The system was unable to install the {$a->%component} component from the package, as it requires a newer version of the H5P plugin. This site is currently running version {$a->%current}, whereas the required version is {$a->%required} or higher. Please upgrade and then try again.';
 $string['missingdependency'] = 'Missing dependency {$a->@dep} required by {$a->@lib}.';
