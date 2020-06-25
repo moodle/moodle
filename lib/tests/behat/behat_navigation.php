@@ -193,7 +193,7 @@ class behat_navigation extends behat_base {
             // We just want to expand the node, we don't want to follow it.
             $node = $node->getParent();
         }
-        $node->click();
+        $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
     }
 
     /**
@@ -217,7 +217,7 @@ class behat_navigation extends behat_base {
             // We just want to expand the node, we don't want to follow it.
             $node = $node->getParent();
         }
-        $node->click();
+        $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
     }
 
     /**
@@ -267,7 +267,7 @@ class behat_navigation extends behat_base {
                 // don't wait, it is non-JS and we already waited for the DOM.
                 $siteadminlink = $this->getSession()->getPage()->find('named_exact', array('link', "'" . $siteadminstr . "'"));
                 if ($siteadminlink) {
-                    $siteadminlink->click();
+                    $this->execute('behat_general::i_click_on', [$siteadminlink, 'NodeElement']);
                 }
             }
         }
@@ -325,7 +325,7 @@ class behat_navigation extends behat_base {
                 implode($parentnodes, ' > ') . '"', $this->getSession());
         }
 
-        $nodetoclick->click();
+        $this->execute('behat_general::i_click_on', [$nodetoclick, 'NodeElement']);
     }
 
     /**
