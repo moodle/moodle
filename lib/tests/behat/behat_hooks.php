@@ -496,7 +496,7 @@ EOF;
             // Again, this would be better in the BeforeSuite hook, but that does not have access to the selectors in
             // order to perform the necessary searches.
             $session = $this->getSession();
-            $session->visit($this->locate_path('/'));
+            $this->execute('behat_general::i_visit', ['/']);
 
             // Checking that the root path is a Moodle test site.
             if (self::is_first_scenario()) {
