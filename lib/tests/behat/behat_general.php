@@ -1833,4 +1833,16 @@ EOF;
         $node = $this->get_selected_node($selectortype, $element);
         $this->js_trigger_click($node);
     }
+
+    /**
+     * Visit a local URL relative to the behat root.
+     *
+     * @When I visit :localurl
+     *
+     * @param string|moodle_url $localurl The URL relative to the behat_wwwroot to visit.
+     */
+    public function i_visit($localurl): void {
+        $localurl = new moodle_url($localurl);
+        $this->getSession()->visit($this->locate_path($localurl->out_as_local_url(false)));
+    }
 }
