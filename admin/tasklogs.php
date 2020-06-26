@@ -67,7 +67,7 @@ $renderer = $PAGE->get_renderer('tool_task');
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('core_admin/tasklogs', (object) [
     'action' => $pageurl->out(),
-    'filter' => $filter,
+    'filter' => htmlentities($filter),
     'resultfilteroptions' => [
         (object) [
             'value' => -1,
