@@ -66,7 +66,7 @@ class behat_enrol extends behat_base {
 
         // Ensure we get button in focus, before pressing button.
         if ($this->running_javascript()) {
-            $this->execute("behat_general::i_take_focus_off_field", array(get_string('addinstance', 'enrol'), "button"));
+            $this->execute('behat_general::i_press_named_key', ['', 'tab']);
         }
 
         // Save changes.
