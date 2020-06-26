@@ -54,6 +54,9 @@ if (!isset($columns[$sort])) {
     $sort = 'lastname';
 }
 
+// Sort direction can only be ASC or DESC. Fall back to default (DESC) for invalid values.
+$dir = $dir != 'ASC' ? 'DESC' : 'ASC';
+
 foreach ($columns as $column=>$strcolumn) {
     if ($sort != $column) {
         $columnicon = '';
