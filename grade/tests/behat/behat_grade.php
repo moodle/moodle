@@ -203,7 +203,7 @@ class behat_grade extends behat_base {
             $inputxpath = "//input[@class='idnumber'][" .
                     "parent::li[@class='item'][text()='" . $gradeitem . "']" .
                     " | " .
-                    "parent::li[@class='categoryitem' | @class='courseitem']" .
+                    "parent::li[@class='categoryitem' or @class='courseitem']" .
                     "/parent::ul/parent::li[starts-with(text(),'" . $gradeitem . "')]" .
                     "]";
             $this->execute('behat_forms::i_set_the_field_with_xpath_to', array($inputxpath, $idnumber));
