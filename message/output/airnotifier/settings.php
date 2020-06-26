@@ -26,7 +26,8 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
 
     $notify = new \core\output\notification(
-        get_string('moodleappsportallimitswarning', 'message_airnotifier'),
+        get_string('moodleappsportallimitswarning', 'message_airnotifier',
+            (new moodle_url('https://apps.moodle.com'))->out()),
         \core\output\notification::NOTIFY_WARNING);
     $settings->add(new admin_setting_heading('tool_mobile/moodleappsportalfeaturesappearance', '', $OUTPUT->render($notify)));
 
