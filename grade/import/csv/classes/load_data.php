@@ -399,10 +399,7 @@ class gradeimport_csv_load_data {
             case 'useridnumber':
             case 'useremail':
             case 'username':
-                // Skip invalid row with blank user field.
-                if (!empty($value)) {
-                    $this->studentid = $this->check_user_exists($value, $userfields[$mappingidentifier]);
-                }
+                $this->studentid = $this->check_user_exists($value, $userfields[$mappingidentifier]);
             break;
             case 'new':
                 $this->import_new_grade_item($header, $key, $value);
