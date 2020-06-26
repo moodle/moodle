@@ -66,7 +66,7 @@ echo $OUTPUT->header();
 // Output the search form.
 echo $OUTPUT->render_from_template('core_admin/tasklogs', (object) [
     'action' => $pageurl->out(),
-    'filter' => $filter,
+    'filter' => htmlentities($filter),
     'resultfilteroptions' => [
         (object) [
             'value' => -1,
