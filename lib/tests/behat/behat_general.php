@@ -346,9 +346,9 @@ class behat_general extends behat_base {
      * @param string $selectortype The type of what we look for
      */
     public function i_hover($element, $selectortype) {
-
         // Gets the node based on the requested selector type and locator.
         $node = $this->get_selected_node($selectortype, $element);
+        $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
         $node->mouseOver();
     }
 
