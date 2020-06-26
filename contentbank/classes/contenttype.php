@@ -27,6 +27,8 @@ namespace core_contentbank;
 use core\event\contentbank_content_created;
 use core\event\contentbank_content_deleted;
 use core\event\contentbank_content_viewed;
+use stored_file;
+use file_exception;
 use moodle_url;
 
 /**
@@ -62,10 +64,11 @@ abstract class contenttype {
     /**
      * Fills content_bank table with appropiate information.
      *
+     * @throws dml_exception A DML specific exception is thrown for any creation error.
      * @param \stdClass $record An optional content record compatible object (default null)
      * @return content  Object with content bank information.
      */
-    public function create_content(\stdClass $record = null): ?content {
+    public function create_content(\stdClass $record = null): content {
         global $USER, $DB;
 
         $entry = new \stdClass();
@@ -79,15 +82,37 @@ abstract class contenttype {
         $entry->configdata = $record->configdata ?? '';
         $entry->instanceid = $record->instanceid ?? 0;
         $entry->id = $DB->insert_record('contentbank_content', $entry);
-        if ($entry->id) {
-            $classname = '\\'.$entry->contenttype.'\\content';
-            $content = new $classname($entry);
-            // Trigger an event for creating the content.
-            $event = contentbank_content_created::create_from_record($content->get_content());
-            $event->trigger();
-            return $content;
+        $classname = '\\'.$entry->contenttype.'\\content';
+        $content = new $classname($entry);
+        // Trigger an event for creating the content.
+        $event = contentbank_content_created::create_from_record($content->get_content());
+        $event->trigger();
+        return $content;
+    }
+
+    /**
+     * Create a new content from an uploaded file.
+     *
+     * @throws file_exception If file operations fail
+     * @throws dml_exception if the content creation fails
+     * @param stored_file $file the uploaded file
+     * @param \stdClass|null $record an optional content record
+     * @return content  Object with content bank information.
+     */
+    public function upload_content(stored_file $file, \stdClass $record = null): content {
+        if (empty($record)) {
+            $record = new \stdClass();
+            $record->name = $file->get_filename();
         }
-        return null;
+        $content = $this->create_content($record);
+        try {
+            $content->import_file($file);
+        } catch (file_exception $e) {
+            $this->delete_content($content);
+            throw $e;
+        }
+
+        return $content;
     }
 
     /**

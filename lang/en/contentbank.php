@@ -39,6 +39,7 @@ $string['eventcontentupdated'] = 'Content updated';
 $string['eventcontentuploaded'] = 'Content uploaded';
 $string['eventcontentviewed'] = 'Content viewed';
 $string['errordeletingcontentfromcategory'] = 'Error deleting content from category {$a}.';
+$string['errornofile'] = 'A compatible file is needed to create a content';
 $string['deletecontent'] = 'Delete content';
 $string['deletecontentconfirm'] = 'Are you sure you want to delete the content <em>\'{$a->name}\'</em> and all associated files? This action cannot be undone.';
 $string['displaydetails'] = 'Display content bank with file details';
