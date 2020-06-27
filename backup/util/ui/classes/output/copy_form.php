@@ -158,6 +158,7 @@ class copy_form extends \moodleform {
         $mform->setType('idnumber', PARAM_RAW);
         if (!empty($course->id) and !has_capability('moodle/course:changeidnumber', $coursecontext)) {
             $mform->hardFreeze('idnumber');
+            $mform->setDefault('idnumber', '');
             $mform->setConstants('idnumber', $course->idnumber);
         }
 
