@@ -1394,7 +1394,9 @@ class company {
      *
      **/
     public function unassign_user_from_company($userid, $ws = false) {
-        global $DB;
+        global $CFG, $DB;
+
+        $timestamp = time();
 
         // Moving a user.
         if (!$userrecord = $DB->get_record('company_users', array('companyid' => $this->id,
@@ -1404,6 +1406,134 @@ class company {
             } else {
                 print_error(get_string('cantassignusersdb', 'block_iomad_company_admin'));
             }
+        }
+
+        // Deal with company courses
+        if ($companycourses = $this->get_menu_courses(true, false, false, false)) {
+            foreach ($companycourses as $courseid => $name) {
+                $coursecontext = \context_course::instance($courseid);
+                if (is_enrolled($coursecontext, $userid, '', true)) {
+                    // Clear down the user from the course.
+                    company_user::delete_user_course($userid, $courseid, 'autodelete');
+                }
+            }
+        }
+
+        // Get licenses which are reusable and can be removed.
+        if ($reusablelicenses = $DB->get_records_sql("SELECT clu.*
+                                                      FROM {companylicense_users} clu
+                                                      JOIN {companylicense} cl ON (clu.licenseid = cl.id)
+                                                      WHERE cl.companyid = :companyid 
+                                                      AND (cl.type = 1 OR cl.type = 3)
+                                                      AND cl.expirydate > :timestamp
+                                                      AND clu.userid = :userid",
+                                                      array('timestamp' => $timestamp,
+                                                            'userid' => $userid,
+                                                            'companyid' => $this->id))) {
+            foreach ($reusablelicenses as $reusablelicense) {
+                $DB->delete_records('companylicense_users', array('id' => $reusablelicense->id));
+
+                // Fire the license deleted event.
+                $eventother = array('licenseid' => $reusablelicense->licenseid,
+                                    'duedate' => 0);
+                $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($reusablelicense->licensecourseid),
+                                                                                                'objectid' => $reusablelicense->licenseid,
+                                                                                                'courseid' => $reusablelicense->licensecourseid,
+                                                                                                'userid' => $reusablelicense->userid,
+                                                                                                'other' => $eventother));
+                $event->trigger();
+
+                // Update the license usage.
+                self::update_license_usage($reusablelicense->licenseid);
+            }
+        }
+
+        // Get licenses which are unused, non-program and can be removed.
+        if ($nonprogramlicenses = $DB->get_records_sql("SELECT clu.*
+                                                        FROM {companylicense_users} clu
+                                                        JOIN {companylicense} cl ON (clu.licenseid = cl.id)
+                                                        WHERE cl.companyid = :companyid
+                                                        AND (cl.type = 0 OR cl.type = 2)
+                                                        AND cl.program = 0
+                                                        AND clu.isusing = 0
+                                                        AND cl.expirydate > :timestamp
+                                                        AND clu.userid = :userid",
+                                                        array('timestamp' => $timestamp,
+                                                              'userid' => $userid,
+                                                              'companyid' => $this->id))) {
+            foreach ($nonprogramlicenses as $nonprogramlicense) {
+                $DB->delete_records('companylicense_users', array('id' => $nonprogramlicense->id));
+
+                // Fire the license deleted event.
+                $eventother = array('licenseid' => $nonprogramlicense->licenseid,
+                                    'duedate' => 0);
+                $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($nonprogramlicense->licensecourseid),
+                                                                                                'objectid' => $nonprogramlicense->licenseid,
+                                                                                                'courseid' => $nonprogramlicense->licensecourseid,
+                                                                                                'userid' => $nonprogramlicense->userid,
+                                                                                                'other' => $eventother));
+                $event->trigger();
+
+                // Update the license usage.
+                self::update_license_usage($nonprogramlicense->licenseid);
+            }
+        }
+
+        // Deal with program licenses.
+        if ($programlicenses = $DB->get_records_sql("SELECT cl.*
+                                                     FROM {companylicense} cl
+                                                     JOIN {companylicense_users} clu ON (cl.id = clu.licenseid)
+                                                     WHERE cl.companyid = :companyid
+                                                     AND cl.program = 1
+                                                     AND clu.userid = :userid
+                                                     AND cl.expirydate > :timestamp
+                                                     GROUP BY cl.id",
+                                                     array('timestamp' => $timestamp,
+                                                           'userid' => $userid,
+                                                           'companyid' => $this->id))) {
+
+            foreach ($programlicenses as $programlicense) {
+                // Check if there is a used course here
+                if ($DB->get_records('companylicense_users', array('userid' => $userid, 'licenseid' => $programlicense->id, 'isusing' => 1))) {
+                    continue;
+                } else {
+                    $licenserecords = $DB->get_records('companylicense_users', array('userid' => $userid, 'licenseid' => $programlicense->id));
+
+                    foreach ($licenserecords as $licenserecord) {
+                        // Fire the license deleted event.
+                        $eventother = array('licenseid' => $licenserecord->licenseid,
+                                            'duedate' => 0);
+                        $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($licenserecord->licensecourseid),
+                                                                                                        'objectid' => $licenserecord->licenseid,
+                                                                                                        'courseid' => $licenserecord->licensecourseid,
+                                                                                                        'userid' => $licenserecord->userid,
+                                                                                                        'other' => $eventother));
+                        $event->trigger();
+                    }
+
+                    // Update the license usage.
+                    self::update_license_usage($programlicense->id);
+                }
+            }
+        }
+
+        // Deal with any course reminders.
+        $DB->set_field('local_iomad_track', 'notstartedstop', true, array('userid' => $userid, 'companyid' => $this->id));
+        $DB->set_field('local_iomad_track', 'completedstop', true, array('userid' => $userid, 'companyid' => $this->id));
+        $DB->set_field('local_iomad_track', 'expiredstop', true, array('userid' => $userid, 'companyid' => $this->id));
+        $DB->set_field('local_iomad_track', 'modifiedtime', time(), array('userid' => $userid, 'companyid' => $this->id));
+
+        // Are they something other than an ordinary user?
+        if ($userrecord->managertype > 0) {
+            // Deal with that.
+            self::upsert_company_user($userid, $this->id, $userrecord->departmentid, 0, 0, $ws);
+        }
+
+        if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
+            // Fire off the payload to the external site.
+            require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
+            $user = $DB->get_record('user', array('id' => $userid));
+            iomad_commerce::delete_user($user->username, $this->id);
         }
 
         // Delete the record.
@@ -3939,114 +4069,18 @@ class company {
         $userid = $event->objectid;
         $timestamp = time();
 
-        // Get licenses which are reusable and can be removed.
-        if ($reusablelicenses = $DB->get_records_sql("SELECT clu.*
-                                                      FROM {companylicense_users} clu
-                                                      JOIN {companylicense} cl ON (clu.licenseid = cl.id)
-                                                      WHERE cl.type = 1
-                                                      AND cl.expirydate > :timestamp
-                                                      AND clu.userid = :userid",
-                                                      array('timestamp' => $timestamp,
-                                                            'userid' => $userid))) {
-            foreach ($reusablelicenses as $reusablelicense) {
-                $DB->delete_records('companylicense_users', array('id' => $reusablelicense->id));
 
-                // Fire the license deleted event.
-                $eventother = array('licenseid' => $reusablelicense->licenseid,
-                                    'duedate' => 0);
-                $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($reusablelicense->licensecourseid),
-                                                                                                'objectid' => $reusablelicense->licenseid,
-                                                                                                'courseid' => $reusablelicense->licensecourseid,
-                                                                                                'userid' => $reusablelicense->userid,
-                                                                                                'other' => $eventother));
-                $event->trigger();
+        $usercompanies = $DB->get_records('company_users', array('userid' => $userid));
 
-                // Update the license usage.
-                self::update_license_usage($reusablelicense->licenseid);
-            }
-        }
+        foreach ($usercompanies as $usercompany) {
+            $company = new company($usercompany->companyid);
+            $company->unassign_user_from_company($userid);
 
-        // Get licenses which are unused, non-program and can be removed.
-        if ($nonprogramlicenses = $DB->get_records_sql("SELECT clu.*
-                                                        FROM {companylicense_users} clu
-                                                        JOIN {companylicense} cl ON (clu.licenseid = cl.id)
-                                                        WHERE cl.type = 0
-                                                        AND cl.program = 0
-                                                        AND clu.isusing = 0
-                                                        AND cl.expirydate > :timestamp
-                                                        AND clu.userid = :userid",
-                                                        array('timestamp' => $timestamp,
-                                                              'userid' => $userid))) {
-            foreach ($nonprogramlicenses as $nonprogramlicense) {
-                $DB->delete_records('companylicense_users', array('id' => $nonprogramlicense->id));
-
-                // Fire the license deleted event.
-                $eventother = array('licenseid' => $nonprogramlicense->licenseid,
-                                    'duedate' => 0);
-                $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($nonprogramlicense->licensecourseid),
-                                                                                                'objectid' => $nonprogramlicense->licenseid,
-                                                                                                'courseid' => $nonprogramlicense->licensecourseid,
-                                                                                                'userid' => $nonprogramlicense->userid,
-                                                                                                'other' => $eventother));
-                $event->trigger();
-
-                // Update the license usage.
-                self::update_license_usage($nonprogramlicense->licenseid);
-            }
-        }
-
-        // Deal with program licenses.
-        if ($programlicenses = $DB->get_records_sql("SELECT cl.*
-                                                     FROM {companylicense} cl
-                                                     JOIN {companylicense_users} clu ON (cl.id = clu.licenseid)
-                                                     WHERE clu.userid = :userid
-                                                     AND cl.expirydate > :timestamp
-                                                     GROUP BY cl.id",
-                                                     array('timestamp' => $timestamp,
-                                                           'userid' => $userid))) {
-
-            foreach ($programlicenses as $programlicense) {
-                // Check if there is a used course here
-                if ($DB->get_records('companylicense_users', array('userid' => $userid, 'licenseid' => $programlicense->id, 'isusing' => 1))) {
-                    continue;
-                } else {
-                    $licenserecords = $DB->get_records('companylicense_users', array('userid' => $userid, 'licenseid' => $programlicense->id));
-
-                    foreach ($licenserecords as $licenserecord) {
-                        // Fire the license deleted event.
-                        $eventother = array('licenseid' => $licenserecord->licenseid,
-                                            'duedate' => 0);
-                        $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => context_course::instance($licenserecord->licensecourseid),
-                                                                                                        'objectid' => $licenserecord->licenseid,
-                                                                                                        'courseid' => $licenserecord->licensecourseid,
-                                                                                                        'userid' => $licenserecord->userid,
-                                                                                                        'other' => $eventother));
-                        $event->trigger();
-                    }
-
-                    // Update the license usage.
-                    self::update_license_usage($programlicense->id);
-                }
-            }
-        }
-
-        $usercompany = self::by_userid($userid);
-        $usercompanyrec = $DB->get_record('company_users', array('userid' => $userid, 'companyid' => $usercompany->id));
-
-        if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
-            // Fire off the payload to the external site.
-            require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
             $user = $DB->get_record('user', array('id' => $userid));
-            iomad_commerce::delete_user($user->username, $usercompany->id);
+            EmailTemplate::send('user_deleted',
+                                 array('company' => $usercompany,
+                                       'user' => $user));
         }
-
-        $user = $DB->get_record('user', array('id' => $userid));
-        EmailTemplate::send('user_deleted',
-                             array('company' => $usercompany,
-                                   'user' => $user));
-
-        // Remove the user from any company.
-        $DB->delete_records('company_users', array('userid' => $userid));
 
         return true;
     }
