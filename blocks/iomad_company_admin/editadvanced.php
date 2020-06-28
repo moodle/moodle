@@ -223,6 +223,10 @@ if ($usernew = $userform->get_data()) {
 
     // Update preferences.
     useredit_update_user_preference($usernew);
+    if (empty($usernew->preference_auth_forcepasswordchange)) {
+        $usernew->preference_auth_forcepasswordchange = 0;
+    }
+    set_user_preference('auth_forcepasswordchange', $usernew->preference_auth_forcepasswordchange, $usernew->id);
 
     // Update tags.
     if (!empty($CFG->usetags)) {
