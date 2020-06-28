@@ -87,7 +87,7 @@ class company_users_form extends moodleform {
     }
 
     public function process() {
-        global $DB, $USER;
+        global $DB, $USER, $OUTPUT;
 
         if ($this->selectedcompany) {
             $company = new company($this->selectedcompany);
@@ -141,22 +141,14 @@ class company_users_form extends moodleform {
 
             // Process incoming unassignments.
             if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
+                $company = new company($this->selectedcompany);
                 $userstounassign = $this->currentusers->get_selected_users();
                 if (!empty($userstounassign)) {
                     foreach ($userstounassign as $removeuser) {
-                        // Check if the user was a company manager.
-                        if ($DB->get_records('company_users', array('userid' => $removeuser->id, 'managertype' => 1))) {
-                            $companymanagerrole = $DB->get_record('role', array('shortname' => 'companymanager'));
-                            role_unassign($companymanagerrole->id, $removeuser->id, $this->context->id);
-                        }
-                        if ($DB->get_records('company_users', array('userid' => $removeuser->id, 'managertype' => 2))) {
-                            $departmentmanagerrole = $DB->get_record('role', array('shortname' => 'departmentmanager'));
-                            role_unassign($departmentmanagerrole->id, $removeuser->id, $this->context->id);
-                        }
-                        $DB->delete_records('company_users', array('userid' => $removeuser->id));
-                        // Deal with the company theme.
-                        $DB->set_field('user', 'theme', '', array('id' => $removeuser->id));
+                        // Remove the user from the company.
+                        $company->unassign_user_from_company($removeuser->id);
 
+                        // Fire the user updated event.
                         \core\event\user_updated::create_from_userid($removeuser->id)->trigger();
 
                         // Fire an event for this.
@@ -166,7 +158,7 @@ class company_users_form extends moodleform {
                                             'usertypename' => '',
                                             'oldcompany' => json_encode($company));
 
-                        $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => context_system::instance(),
+                        $event = \block_iomad_company_admin\event\company_user_unassigned::create(array('context' => context_system::instance(),
                                                                                                       'userid' => $USER->id,
                                                                                                       'objectid' => 0,
                                                                                                       'relateduserid' => $removeuser->id,
