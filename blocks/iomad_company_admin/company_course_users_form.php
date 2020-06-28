@@ -384,7 +384,7 @@ $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 $courses = optional_param_array('courses', array(), PARAM_INTEGER);
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
-$selectedcourses = optional_param_array('selectedcourses', array('a'), PARAM_INTEGER);
+$selectedcourses = optional_param_array('selectedcourses', array('-1'), PARAM_INTEGER);
 $groupid = optional_param('groupid', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
@@ -408,7 +408,6 @@ if (!empty($selectedcourses)) {
     foreach ($selectedcourses as $a => $b)
     $urlparams["selectedcourses[$a]"] = $b;
 }
-
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('company_course_users_title', 'block_iomad_company_admin');
@@ -468,6 +467,8 @@ $coursesform->set_data(array('selectedcourses' => $selectedcourses, 'courses' =>
 $usersform = new company_course_users_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourses);
 echo $output->header();
 
+echo "<pre>";print_r($selectedcourses);echo "</pre>";
+
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
     print_error('invaliddepartment', 'block_iomad_company_admin');
@@ -492,7 +493,8 @@ if ($coursesform->is_cancelled() || $usersform->is_cancelled() ||
     if ($companyid > 0) {
         $coursesform->set_data($params);
         echo $coursesform->display();
-        if (!in_array('a', $selectedcourses, true)) {
+echo "A</br>";
+        if (!in_array('-1', $selectedcourses, true)) {
             if ($data = $coursesform->get_data() || empty($selectedcourses)) {
                  if (count($courses) > 0) {
                     $usersform->set_course(array($courses));
