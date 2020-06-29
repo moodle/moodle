@@ -63,20 +63,19 @@ class behat_workshopallocation_manual extends behat_base {
             $selectnode = $this->find('xpath', $xpathselect);
         }
 
-        $selectformfield = behat_field_manager::get_form_field($selectnode, $this->getSession());
-        $selectformfield->set_value($reviewername);
+        $this->execute('behat_forms::set_field_node_value', [
+            $selectnode,
+            $reviewername,
+        ]);
 
         if (!$this->running_javascript()) {
             // Without Javascript we need to press the "Go" button.
             $go = behat_context_helper::escape(get_string('go'));
             $this->find('xpath', $xpathtd."/descendant::input[@value=$go]")->click();
-        } else {
-            // With Javascript we just wait for the page to reload.
-            $this->getSession()->wait(behat_base::get_extended_timeout(), self::PAGE_READY_JS);
         }
+
         // Check the success string to appear.
-        $allocatedtext = behat_context_helper::escape(
-            get_string('allocationadded', 'workshopallocation_manual'));
+        $allocatedtext = behat_context_helper::escape(get_string('allocationadded', 'workshopallocation_manual'));
         $this->find('xpath', "//*[contains(.,$allocatedtext)]");
     }
 
@@ -88,8 +87,7 @@ class behat_workshopallocation_manual extends behat_base {
      * @param TableNode $table should have one column with title 'Reviewer' and another with title 'Participant' (or 'Reviewee')
      */
     public function i_allocate_submissions_in_workshop_as($workshopname, TableNode $table) {
-
-        $this->find_link($workshopname)->click();
+        $this->execute('behat_general::i_click_on', [$workshopname, 'link']);
         $this->execute('behat_navigation::i_navigate_to_in_current_page_administration', get_string('allocate', 'workshop'));
         $rows = $table->getRows();
         $reviewer = $participant = null;
@@ -108,8 +106,15 @@ class behat_workshopallocation_manual extends behat_base {
         if ($participant === null) {
             throw new ElementTextException('Neither "Participant" nor "Reviewee" column could be located', $this->getSession());
         }
+
         for ($i = 1; $i < count($rows); $i++) {
-            $this->i_add_a_reviewer_for_workshop_participant($rows[$i][$reviewer], $rows[$i][$participant]);
+            $this->execute(
+                'behat_workshopallocation_manual::i_add_a_reviewer_for_workshop_participant',
+                [
+                    $rows[$i][$reviewer],
+                    $rows[$i][$participant],
+                ]
+            );
         }
     }
 }
