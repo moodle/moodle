@@ -827,6 +827,7 @@ function initialise_fullme() {
 
     // IOMAD - Set the theme if the server hostname matches one of ours.
     if(!CLI_SCRIPT && !during_initial_install()){
+        $CFG->wwwrootdefault = $CFG->wwwroot;
         if ($company = $DB->get_record('company', array('hostname' => $_SERVER['SERVER_NAME']))) {
             $CFG->wwwroot   = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER["SERVER_NAME"];
 
