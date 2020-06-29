@@ -28,10 +28,9 @@
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 require_once(__DIR__ . '/../../../lib/behat/behat_field_manager.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode,
-    Behat\Gherkin\Node\PyStringNode as PyStringNode,
-    Behat\Mink\Exception\ExpectationException as ExpectationException,
-    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+use Behat\Gherkin\Node\{TableNode, PyStringNode};
+use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Exception\{ElementNotFoundException, ExpectationException};
 
 /**
  * Forms-related steps definitions.
@@ -286,10 +285,7 @@ class behat_forms extends behat_base {
      * @return void
      */
     public function i_set_the_field_with_xpath_to($fieldxpath, $value) {
-        $fieldnode = $this->find('xpath', $fieldxpath);
-        $this->ensure_node_is_visible($fieldnode);
-        $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
-        $field->set_value($value);
+        $this->set_field_node_value($this->find('xpath', $fieldxpath), $value);
     }
 
     /**
@@ -627,10 +623,21 @@ class behat_forms extends behat_base {
      * @return void
      */
     protected function set_field_value($fieldlocator, $value) {
-
         // We delegate to behat_form_field class, it will
         // guess the type properly as it is a select tag.
         $field = behat_field_manager::get_form_field_from_label($fieldlocator, $this);
+        $field->set_value($value);
+    }
+
+    /**
+     * Generic field setter to be used by chainable steps.
+     *
+     * @param NodeElement $fieldnode
+     * @param string $value
+     */
+    public function set_field_node_value(NodeElement $fieldnode, string $value): void {
+        $this->ensure_node_is_visible($fieldnode);
+        $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
         $field->set_value($value);
     }
 
@@ -646,12 +653,8 @@ class behat_forms extends behat_base {
      * @param string $containerelement Element we look in
      */
     protected function set_field_value_in_container($fieldlocator, $value, $containerselectortype, $containerelement) {
-
         $node = $this->get_node_in_container('field', $fieldlocator, $containerselectortype, $containerelement);
-        // We delegate to behat_form_field class, it will
-        // guess the type properly as it is a select tag.
-        $field = behat_field_manager::get_form_field($node, $this->getSession());
-        $field->set_value($value);
+        $this->set_field_node_value($node, $value);
     }
 
     /**
