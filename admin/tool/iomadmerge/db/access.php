@@ -7,8 +7,8 @@ $capabilities = array(
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'manager' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' => 'moodle/user:delete'
     ),
  );
 
