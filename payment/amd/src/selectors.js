@@ -25,6 +25,7 @@
 export default {
     regions: {
         gatewaysContainer: '[data-region="gateways-container"]',
+        costContainer: '[data-region="fee-breakdown-container"]',
     },
     values: {
         gateway: '[data-region="gateways-container"] input[type="radio"]:checked',
