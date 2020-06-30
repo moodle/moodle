@@ -26,6 +26,8 @@ namespace core_h5p;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\lock\lock_config;
+
 /**
  * H5P player class, for displaying any local H5P content.
  *
@@ -299,7 +301,20 @@ class player {
             $onlyupdatelibs = !helper::can_update_library($file);
 
             // Validate and store the H5P content before displaying it.
-            $h5pid = helper::save_h5p($this->factory, $file, $config, $onlyupdatelibs, false);
+            // Start lock to prevent synchronous access to save the same h5p.
+            $lockfactory = lock_config::get_lock_factory('core_h5p');
+            $lockkey = 'core_h5p_' . $pathnamehash;
+            if ($lock = $lockfactory->get_lock($lockkey, 10)) {
+                try {
+                    // Validate and store the H5P content before displaying it.
+                    $h5pid = helper::save_h5p($this->factory, $file, $config, $onlyupdatelibs, false);
+                } finally {
+                    $lock->release();
+                }
+            } else {
+                $this->core->h5pF->setErrorMessage(get_string('lockh5pdeploy', 'core_h5p'));
+                return false;
+            };
             if (!$h5pid && $file->get_userid() != $USER->id && has_capability('moodle/h5p:updatelibraries', $this->context)) {
                 // The user has permission to update libraries but the package has been uploaded by a different
                 // user without this permission. Check if there is some missing required library error.
