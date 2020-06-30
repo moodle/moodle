@@ -238,7 +238,7 @@ class block_iomad_company_admin extends block_base {
                 'selected' => false,
                 'label' => get_string('threads', 'block_iomad_microlearning')
             ];
-            $panes[7] = ['category' => 'MicrolearningAdmin', 'items' => [], 'selected' => false];
+            $panes[7] = ['category' => 'MicrolearningAdmin', 'items' => [], 'selected' => $selected];
             $selected = false;
         }
         if (iomad::has_capability('block/iomad_reports:view', $context)) {
@@ -248,7 +248,7 @@ class block_iomad_company_admin extends block_base {
                 'selected' => $selected,
                 'label' => get_string('reports', 'block_iomad_company_admin')
             ];
-            $panes[8] = ['category' => 'Reports', 'items' => [], 'selected' => false];
+            $panes[8] = ['category' => 'Reports', 'items' => [], 'selected' => $selected];
             $selected = false;
         }
 
