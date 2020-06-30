@@ -41,4 +41,6 @@ if ($ADMIN->fulltree) {
     ];
     $settings->add(new admin_setting_configselect('pg_paypal/environment', get_string('environment', 'pg_paypal'),
             get_string('environment_desc', 'pg_paypal'), 'live', $options));
+
+    \core_payment\helper::add_common_gateway_settings($settings, 'pg_paypal');
 }

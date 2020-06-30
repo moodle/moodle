@@ -72,7 +72,8 @@ const show = async(rootNode, {
         body: await Templates.render('core_payment/gateways_modal', {}),
     });
 
-    addToastRegion(modal.getRoot()[0]);
+    const rootElement = modal.getRoot()[0];
+    addToastRegion(rootElement);
 
     modal.show();
 
@@ -87,14 +88,17 @@ const show = async(rootNode, {
     });
 
     modal.getRoot().on(PaymentEvents.proceed, (e) => {
-        const root = modal.getRoot()[0];
-        const gateway = (root.querySelector(Selectors.values.gateway) || {value: ''}).value;
+        const gateway = (rootElement.querySelector(Selectors.values.gateway) || {value: ''}).value;
 
         if (gateway) {
             processPayment(
                 gateway,
-                rootNode.dataset.amount,
-                rootNode.dataset.currency,
+                {
+                    value: parseFloat(rootNode.dataset.amount),
+                    currency: rootNode.dataset.currency,
+                    surcharge: parseInt((rootElement.querySelector(Selectors.values.gateway) || {dataset: {surcharge: 0}})
+                        .dataset.surcharge),
+                },
                 rootNode.dataset.component,
                 rootNode.dataset.componentid,
                 rootNode.dataset.description,
@@ -121,6 +125,13 @@ const show = async(rootNode, {
         e.preventDefault();
     });
 
+    // Re-calculate the cost when gateway is changed.
+    rootElement.addEventListener('change', e => {
+        if (e.target.matches(Selectors.elements.gateways)) {
+            updateCostRegion(rootElement, parseFloat(rootNode.dataset.amount), rootNode.dataset.currency);
+        }
+    });
+
     const currency = rootNode.dataset.currency;
     const gateways = await getGatewaysSupportingCurrency(currency);
     const context = {
@@ -128,9 +139,8 @@ const show = async(rootNode, {
     };
 
     const {html, js} = await Templates.renderForPromise('core_payment/gateways', context);
-    const root = modal.getRoot()[0];
-    Templates.replaceNodeContents(root.querySelector(Selectors.regions.gatewaysContainer), html, js);
-    updateCostRegion(root, parseFloat(rootNode.dataset.amount), rootNode.dataset.currency);
+    Templates.replaceNodeContents(rootElement.querySelector(Selectors.regions.gatewaysContainer), html, js);
+    await updateCostRegion(rootElement, parseFloat(rootNode.dataset.amount), rootNode.dataset.currency);
 };
 
 /**
@@ -143,9 +153,11 @@ const show = async(rootNode, {
  */
 const updateCostRegion = async(root, amount, currency) => {
     const locale = await updateCostRegion.locale; // This only takes a bit the first time.
+    const surcharge = parseInt((root.querySelector(Selectors.values.gateway) || {dataset: {surcharge: 0}}).dataset.surcharge);
+    amount += amount * surcharge / 100;
     const localisedCost = amount.toLocaleString(locale, {style: "currency", currency: currency});
 
-    const {html, js} = await Templates.renderForPromise('core_payment/fee_breakdown', {fee: localisedCost});
+    const {html, js} = await Templates.renderForPromise('core_payment/fee_breakdown', {fee: localisedCost, surcharge});
     Templates.replaceNodeContents(root.querySelector(Selectors.regions.costContainer), html, js);
 };
 updateCostRegion.locale = getString("localecldr", "langconfig");
@@ -154,18 +166,21 @@ updateCostRegion.locale = getString("localecldr", "langconfig");
  * Process payment using the selected gateway.
  *
  * @param {string} gateway The gateway to be used for payment
- * @param {number} amount Amount of payment
- * @param {string} currency The currency in the three-character ISO-4217 format
+ * @param {Object} amount - Amount of payment
+ * @param {number} amount.value The numerical part of the amount
+ * @param {string} amount.currency The currency part of the amount in the three-character ISO-4217 format
+ * @param {number} amount.surcharge The surcharge percentage that should be added to the amount
  * @param {string} component Name of the component that the componentid belongs to
  * @param {number} componentid An internal identifier that is used by the component
  * @param {string} description Description of the payment
  * @param {processPaymentCallback} callback The callback function to call when processing is finished
  * @returns {Promise<void>}
  */
-const processPayment = async(gateway, amount, currency, component, componentid, description, callback) => {
+const processPayment = async(gateway, {value, currency, surcharge = 0}, component, componentid, description, callback) => {
     const paymentMethod = await import(`pg_${gateway}/gateways_modal`);
 
-    paymentMethod.process(amount, currency, component, componentid, description, callback);
+    value += value * surcharge / 100;
+    paymentMethod.process(value, currency, component, componentid, description, callback);
 };
 
 /**
