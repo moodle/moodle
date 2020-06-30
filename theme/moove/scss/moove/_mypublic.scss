@@ -1,0 +1,30 @@
+#page-user-profile .titulo {
+  min-height: initial;
+  margin-bottom: 1rem;
+}
+
+.user-card {
+  .card-body {
+    text-align: center;
+  }
+  .profilepic {
+    width: 140px;
+    margin: 0 auto;
+
+    img {
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      border-radius: 50%;
+    }
+  }
+}
+
+#mypublic-tab {
+  .courseimage {
+    img {
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      border-radius: 4px;
+    }
+  }
+}

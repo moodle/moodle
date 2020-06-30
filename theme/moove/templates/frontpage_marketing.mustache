@@ -1,0 +1,74 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_moove/frontpage_marketing
+
+    Blocks drawer template
+
+    Example context (json): {
+        "shoulddisplaymarketing": true,
+        "marketing1icon": "https://iconurl...",
+        "marketing1heading": "The head title",
+        "marketing1subheading": "The subhead title",
+        "marketing1content": "The content",
+        "marketing1url": "https://marketingurl..."
+    }
+}}
+{{#shoulddisplaymarketing}}
+    <div class="frontpage-marketing">
+        <div class="container">
+            <div class="card-deck">
+                <div class="card">
+                    <div class="card-body">
+                        <img src="{{{ marketing1icon }}}" />
+                        <h2>{{{ marketing1heading }}}</h2>
+                        <h3>{{{ marketing1subheading }}}</h3>
+                        <p>{{{ marketing1content }}}</p>
+                        {{#marketing1url}}<a class="btn btn-primary" href="{{{ marketing1url }}}">{{#str}}readmore, theme_moove{{/str}}</a>{{/marketing1url}}
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <img src="{{{ marketing2icon }}}" />
+                        <h2>{{{ marketing2heading }}}</h2>
+                        <h3>{{{ marketing2subheading }}}</h3>
+                        <p>{{{ marketing2content }}}</p>
+                        {{#marketing2url}}<a class="btn btn-primary" href="{{{ marketing2url }}}">{{#str}}readmore, theme_moove{{/str}}</a>{{/marketing2url}}
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <img src="{{{ marketing3icon }}}" />
+                        <h2>{{{ marketing3heading }}}</h2>
+                        <h3>{{{ marketing3subheading }}}</h3>
+                        <p>{{{ marketing3content }}}</p>
+                        {{#marketing3url}}<a class="btn btn-primary" href="{{{ marketing3url }}}">{{#str}}readmore, theme_moove{{/str}}</a>{{/marketing3url}}
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <img src="{{{ marketing4icon }}}" />
+                        <h2>{{{ marketing4heading }}}</h2>
+                        <h3>{{{ marketing4subheading }}}</h3>
+                        <p>{{{ marketing4content }}}</p>
+                        {{#marketing4url}}<a class="btn btn-primary" href="{{{ marketing4url }}}">{{#str}}readmore, theme_moove{{/str}}</a>{{/marketing4url}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{/shoulddisplaymarketing}}

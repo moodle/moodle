@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_moove/themesettings_modal
+
+    Blocks drawer template
+
+    Example context (json): {}
+}}
+<div class="modal moodle-has-zindex" data-region="modal-container" aria-hidden="true" role="dialog">
+    <div class="modal-dialog {{$classes}}{{/classes}}" role="document" data-region="modal" aria-labelledby="{{uniqid}}-modal-title" tabindex="0">
+        <div class="modal-content">
+            <div class="modal-header {{$headerclasses}}{{headerclasses}}{{/headerclasses}}" data-region="header">
+                <h5 id="{{uniqid}}-modal-title" class="modal-title" data-region="title">{{#str}}themesettingstitle, theme_moove{{/str}}</h5>
+
+                <button type="button" class="close" data-action="hide" aria-label={{#quote}}{{#str}}closebuttontitle{{/str}}{{/quote}}>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" data-region="body">
+                <div class="container">
+                    <form autocomplete="off" accept-charset="utf-8" class="mform">
+                        <div class="form-group">
+                            <label for="fonttype">{{#str}}themesettingsfonttype, theme_moove{{/str}}</label>
+                            <select id="fonttype" name="fonttype" class="form-control" required>
+                                <option value="default">{{#str}}themesettingsdefaultfont, theme_moove{{/str}}</option>
+                                <option value="odafont">{{#str}}themesettingsdyslexicfont, theme_moove{{/str}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="enableaccessibilitytoolbar" name="enableaccessibilitytoolbar">
+                                <label class="form-check-label" for="enableaccessibilitytoolbar">{{#str}}themesettingsenableaccessibilitytoolbar, theme_moove{{/str}}</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" data-region="footer">
+                <button type="button" class="btn btn-primary" data-action="save">{{#str}}save{{/str}}</button>
+                <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}}cancel{{/str}}</button>
+            </div>
+        </div>
+    </div>
+</div>

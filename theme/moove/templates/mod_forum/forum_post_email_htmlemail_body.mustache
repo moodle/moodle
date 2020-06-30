@@ -1,0 +1,259 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/forum_post_emaildigestfull_htmlemail_body
+
+    Template which defines the body component of a forum post for sending in a single-post HTML email.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * enabletemplate
+    * courselink
+    * coursename
+    * forumindexlink
+    * forumviewlink
+    * forumname
+    * discussionlink
+    * discussionname
+    * showdiscussionname
+    * firstpost
+    * subject
+    * authorlink
+    * authorpicture
+    * authorfullname
+    * postdate
+    * grouppicture
+    * attachments
+    * messageheader
+    * message
+    * messagefooter
+    * parentpostlink
+    * canreply
+    * replylink
+    * permalink
+    * unsubscribeforumlink
+    * unsubscribediscussionlink
+
+    Example context (json):
+    {
+        "enabletemplate": 1,
+        "courselink": "https://example.com/course/view.php?id=2",
+        "coursename": "Example course",
+        "forumindexlink": "https://example.com/mod/forum/index.php?id=2",
+        "forumviewlink": "https://example.com/mod/forum/view.php?f=2",
+        "forumname": "Lorem ipsum dolor",
+        "discussionlink": "https://example.com/mod/forum/discuss.php?d=70",
+        "discussionname": "Is Lorem ipsum Latin?",
+        "showdiscussionname": 1,
+        "firstpost": 1,
+        "subject": "Is Lorem ipsum Latin?",
+        "authorlink": "https://example.com/user/view.php?id=2&course=2",
+        "authorpicture": "<a href=\"https://example.com/user/view.php?id=2&amp;course=6\"><img src=\"https://example.com/theme/image.php?theme=clean&amp;component=core&amp;image=u%2Ff2&amp;svg=0\" alt=\"Picture of Admin User\" title=\"Picture of Admin User\" class=\"userpicture defaultuserpic\" width=\"35\" height=\"35\" /></a>",
+        "authorfullname": "Lucius Caecilius lucundus",
+        "postdate": "Sunday, 13 September 2015, 2:22 pm",
+        "grouppicture": "",
+        "attachments": "",
+        "measageheader": "<h1>Message header</h1>",
+        "message": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum et auctor libero. Quisque porta egestas neque, et bibendum libero dignissim at. Nulla facilisi. Morbi eget accumsan felis. Nunc et vulputate odio, vel venenatis nisl. Nunc maximus ipsum sed tincidunt mollis. Integer nunc erat, luctus sit amet arcu tincidunt, volutpat dignissim mi. Sed ut magna quam.  Mauris accumsan porta turpis sed aliquam. Etiam at justo tristique, imperdiet augue quis, consectetur sapien. Ut nec erat malesuada sem suscipit lobortis. Vivamus posuere nibh eu ipsum porta fringilla.  Sed vitae dapibus ipsum, ac condimentum enim. Sed dignissim ante at elit mollis, ac tempor lacus iaculis. Etiam nec lectus vitae nibh vulputate volutpat. Nulla quis tellus aliquam, commodo nisi et, dictum est.</p><p><br /></p>",
+        "messagefooter": "<p>Message footer</p>",
+        "parentpostlink": "",
+        "canreply": 1,
+        "replylink": "https://example.com/mod/forum/post.php?reply=2",
+        "permalink": "https://example.com/mod/forum/discuss.php?d=2#2",
+        "unsubscribeforumlink": "https://example.com/mod/forum/subscribe.php?id=2",
+        "unsubscribediscussionlink": "https://example.com/mod/discussion/subscribe.php?id=2&d=2"
+    }
+}}
+
+{{# enabletemplate}}
+    <style>
+        @media only screen {
+            body {
+                margin: 0;
+                -webkit-font-smoothing: antialiased;
+                width:100% !important;
+                background: #f6f6f6;
+                -webkit-text-size-adjust:none;
+            }
+        }
+    </style>
+
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f6f6f6" style="font-family: Arial, sans-serif;">
+        <tbody>
+        <tr>
+            <td></td>
+            <td style="display: block !important;max-width: 600px !important;margin: 0 auto !important;clear: both !important;" width="600">
+                <div style="max-width: 600px;margin: 0 auto;display: block;padding:20px;">
+                    {{# messageheader }}
+                        <div style="width: 100%;clear: both;">
+                            <table width="100%">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        {{{ messageheader }}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    {{/ messageheader }}
+                    <table class="main" width="100%" cellpadding="0" cellspacing="0" style="background: #fff;border: 1px solid #e9e9e9;border-radius: 3px;">
+                        <tr>
+                            <td style="font-size: 18px; color: #fff; font-weight: 500; padding: 20px; text-align: center; border-radius: 3px 3px 0 0; background: #265876;">
+                                {{{ subject }}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 16px; color: #999; font-weight: 500; padding: 20px;">
+                                {{{ message }}}
+                            </td>
+                        </tr>
+                        {{# attachments }}
+                            <tr>
+                                <td style="color: #999; padding: 5px 20px; border-top: 1px solid #e9e9e9;">
+                                    {{# grouppicture }}<span style="margin-right: 20px;">{{{ grouppicture }}}</span>{{/ grouppicture }}
+                                    {{{ attachments }}}
+                                </td>
+                            </tr>
+                        {{/ attachments }}
+                        {{# canreply }}
+                            <tr>
+                                <td style="padding: 10px 20px; border-top: 1px solid #e9e9e9;">
+                                    {{^ firstpost }}
+                                        <a target="_blank" href="{{{ parentpostlink }}}"> {{# str }} parent, forum {{/ str }}</a>
+                                        {{# canreply }} | {{/ canreply }}
+                                    {{/ firstpost }}
+
+                                    <a target="_blank" href="{{{ replylink }}}">{{# str }} reply, forum {{/ str }}</a>
+                                </td>
+                            </tr>
+                        {{/ canreply }}
+                        <tr>
+                            <td style="color: #000; background-color: #ebebeb; font-size: 12px; padding: 5px 20px; border-top: 1px solid #e9e9e9;">
+                                {{# str }} bynameondate, forum, { "name": {{# quote }}<a target='_blank' href='{{{ authorlink }}}'>{{ authorfullname }}</a>{{/ quote }}, "date": {{# quote }}{{ postdate }}{{/ quote }} } {{/ str }} <br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="color: #000; background-color: #ebebeb; font-size: 12px; padding: 5px 20px;">
+                                <a target="_blank" href="{{{ permalink }}}"> {{# str }} postincontext, forum {{/ str }} </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="color: #000; background-color: #ebebeb; font-size: 12px; padding: 5px 20px;">
+                                <a target="_blank" href="{{{ courselink }}}">{{{ coursename }}}</a>
+                                &raquo;
+                                <a target="_blank" href="{{{ forumindexlink }}}">{{# str }} forums, forum {{/ str }}</a>
+                                &raquo;
+                                <a target="_blank" href="{{{ forumviewlink }}}">{{{ forumname }}}</a>
+                                {{# showdiscussionname }}
+                                    &raquo;
+                                    <a target="_blank" href="{{{ discussionlink }}}">{{{ discussionname }}}</a>
+                                {{/ showdiscussionname }}
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div style="width: 100%;clear: both; padding: 20px 0;">
+                        <table width="100%">
+                            <tbody>
+                            <tr>
+                                <td style="font-size: 16px; color: #999; font-weight: bold; text-align: center; padding: 0 0 20px;">{{{sitename}}}</td>
+                            </tr>
+                            {{# messagefooter }}
+                                <tr>
+                                    <td>
+                                        {{{ messagefooter }}}
+                                    </td>
+                                </tr>
+                            {{/ messagefooter }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+{{/ enabletemplate}}
+{{^ enabletemplate}}
+    <table border="0" cellpadding="3" cellspacing="0" class="forumpost">
+        <tr class="header">
+            <td width="35" valign="top" class="picture left">
+                {{{ authorpicture }}}
+            </td>
+            <td class="topic {{# firstpost }}starter{{/ firstpost }}">
+                <div class="subject">
+                    {{{ subject }}}
+                </div>
+                <div class="author">
+                    {{# str }} bynameondate, forum, {
+                        "name": {{# quote }}<a target='_blank' href='{{{ authorlink }}}'>{{ authorfullname }}</a>{{/ quote }},
+                        "date": {{# quote }}{{ postdate }}{{/ quote }}
+                        } {{/ str }}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="left side" valign="top">
+                {{# grouppicture }}
+                    {{{ grouppicture }}}
+                {{/ grouppicture }}
+                {{^ grouppicture }}
+                    &nbsp;
+                {{/ grouppicture }}
+            </td>
+            <td class="content">
+                {{# attachments }}
+                    <div class="attachments">
+                        {{{ attachments }}}
+                    </div>
+                {{/ attachments }}
+                {{# messageheader }}{{{ messageheader }}}{{/ messageheader }}
+                {{{ message }}}
+                {{# messagefooter }}{{{ messagefooter }}}{{/ messagefooter }}
+
+                <div class="commands">
+                    {{^ firstpost }}
+                        <a target="_blank" href="{{{ parentpostlink }}}">
+                            {{# str }} parent, forum {{/ str }}
+                        </a>
+                        {{# canreply }}
+                            |
+                        {{/ canreply }}
+                    {{/ firstpost }}
+                    {{# canreply }}
+                        <a target="_blank" href="{{{ replylink }}}">
+                            {{# str }} reply, forum {{/ str }}
+                        </a>
+                    {{/ canreply }}
+                </div>
+
+                <div class="link">
+                    <a target="_blank" href="{{{ permalink }}}">
+                        {{# str }} postincontext, forum {{/ str }}
+                    </a>
+                </div>
+            </td>
+        </tr>
+    </table>
+{{/ enabletemplate}}

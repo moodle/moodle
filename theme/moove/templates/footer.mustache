@@ -1,0 +1,125 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_moove/footer
+
+    Footer template
+
+    Example context (json): {}
+}}
+<div id="top-footer">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-7 contact">
+            <h3>{{#str}}stayintouch, theme_moove{{/str}}</h3>
+            <h4>{{{getintouchcontent}}}</h4>
+            <ul>
+                {{#website}}
+                    <li>
+                        <i class="slicon-globe"></i>
+                        <a href="{{{website}}}" target="_blank">{{{website}}}</a>
+                    </li>
+                {{/website}}
+                {{#mobile}}
+                    <li>
+                        <i class="slicon-phone"></i>
+                        <a href="tel:{{{mobile}}}" target="_blank">{{{mobile}}}</a>
+                    </li>
+                {{/mobile}}
+                {{#mail}}
+                    <li>
+                        <i class="slicon-envelope"></i>
+                        <a href="mailto:{{{mail}}}" target="_blank">{{{mail}}}</a>
+                    </li>
+                {{/mail}}
+            </ul>
+        </div>
+        <div class="col-md-5 social">
+          <ul>
+              {{#facebook}}
+                <li>
+                  <a href="{{{facebook}}}" target="_blank" class="facebook btn">
+                    <i class="slicon-social-facebook"></i>
+                  </a>
+                </li>
+              {{/facebook}}
+
+              {{#twitter}}
+                <li>
+                  <a href="{{{twitter}}}" target="_blank" class="twitter btn">
+                    <i class="slicon-social-twitter"></i>
+                  </a>
+                </li>
+              {{/twitter}}
+
+              {{#linkedin}}
+                <li>
+                  <a href="{{{linkedin}}}" target="_blank" class="linkedin btn">
+                    <i class="slicon-social-linkedin"></i>
+                  </a>
+                </li>
+              {{/linkedin}}
+
+              {{#youtube}}
+                <li>
+                  <a href="{{{youtube}}}" target="_blank" class="youtube btn">
+                    <i class="slicon-social-youtube"></i>
+                  </a>
+                </li>
+              {{/youtube}}
+
+              {{#instagram}}
+                <li>
+                  <a href="{{{instagram}}}" target="_blank" class="instagram btn">
+                    <i class="slicon-social-instagram"></i>
+                  </a>
+                </li>
+              {{/instagram}}
+
+              {{#whatsapp}}
+                  <li>
+                      <a href="https://api.whatsapp.com/send?phone={{{whatsapp}}}" target="_blank" class="whatsapp btn">
+                          <i class="fa fa-whatsapp"></i>
+                      </a>
+                  </li>
+              {{/whatsapp}}
+          </ul>
+
+          {{{ output.standard_footer_html }}}
+        </div>
+    </div>
+  </div>
+</div>
+
+{{^disablebottomfooter}}
+  <footer id="page-footer" class="p-y-1">
+      <div class="container-fluid">
+          <div id="course-footer">{{{ output.course_footer }}}</div>
+
+          <div class="madewithmoodle">
+              <p>{{#str}}madewitmoodle, theme_moove{{/str}}</p>
+              <a href="https://moodle.org"><img src="{{output.get_pix_image_url_base}}/moodle-logo-white.png" alt="Moodle logo"></a>
+          </div>
+
+          <div class="madeby">
+              <p>{{#str}}madeby, theme_moove{{/str}} <i class="text-danger fa fa-heart"></i> {{#str}}by, theme_moove{{/str}} <a href="http://conecti.me">conecti.me</a></p>
+          </div>
+      </div>
+  </footer>
+{{/disablebottomfooter}}
+
+{{{ output.standard_end_of_body_html }}}

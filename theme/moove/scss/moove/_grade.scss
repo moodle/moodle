@@ -1,0 +1,27 @@
+.path-grade-report-grader {
+    #region-main {
+        display: initial;
+        min-width: 100%;
+        width: auto;
+
+        & > .card {
+            width: auto;
+            overflow-x: initial;
+        }
+    }
+
+    [data-region="blocks-column"] {
+        width: 280px;
+        clear: both;
+    }
+
+    .gradeparent {
+        table {
+           width: 100%;
+        }
+
+        .user.cell {
+            width: 100%;
+        }
+    }
+}

@@ -1,0 +1,36 @@
+// Accessiblity font size shortcut
+@mixin accessibilityfontsize($basesize) {
+    .dropdown-menu {
+        font-size: $basesize;
+    }
+
+    #nav-drawer, #page, #top-footer {
+        font-size: $basesize;
+    }
+
+    h1,
+    #page #page-header h1,
+    #page #region-main h1 {
+        font-size: $basesize * 2.5;
+    }
+
+    h2 {
+        font-size: $basesize * 2;
+    }
+
+    h3 {
+        font-size: $basesize * 1.75;
+    }
+
+    h4 {
+        font-size: $basesize * 1.5;
+    }
+
+    h5 {
+        font-size: $basesize * 1.25;
+    }
+
+    h6 {
+        font-size: $basesize;
+    }
+}

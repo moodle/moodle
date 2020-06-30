@@ -1,0 +1,34 @@
+{{!
+    @template core/signup_form_layout
+
+    Example context (json):
+    {
+        "logourl": "https://moodle.org/logo/moodle-logo.svg",
+        "sitename": "Site name",
+        "formhtml": "<p>(Form html would go here)</p>"
+    }
+}}
+<div class="container-fluid">
+    <div class="row row justify-content-center">
+        <div class="col-8">
+
+            <div class="text-center">
+                {{#logourl}}
+                    <h2><img src="{{logourl}}" title="{{sitename}}" alt="{{sitename}}"/></h2>
+                {{/logourl}}
+                {{^logourl}}
+                    <h2>{{sitename}}</h2>
+                {{/logourl}}
+            </div>
+
+            <div class="card my-4">
+                <div class="card-block">
+                    <div class="card-title">
+                        <h3>{{#str}}newaccount{{/str}}</h3>
+                    </div>
+                    {{{formhtml}}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,94 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_moove/frontpage_guest
+
+    Guest frontpage template.
+
+    Moove frontpage guest layout template.
+
+    Context variables required for this template:
+    * sitename - The name of the site
+    * output - The core renderer for the page
+    * bodyattributes - attributes for the body tag as a string of html attributes
+
+    Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "Test page",
+            "favicon": "favicon.ico",
+            "main_content": "<h1>Headings make html validators happier</h1>"
+         },
+        "bodyattributes":"",
+        "cansignup": true,
+        "bannerheading": "Content string banner heading",
+        "bannercontent": "Content string banner content",
+        "shoulddisplaymarketing": true
+    }
+}}
+    {{>theme_moove/inc_start}}
+
+    <div id="page" class="container-fluid">
+        <div id="page-header" class="frontpage-guest-header">
+
+            {{#sliderenabled}}
+                {{#sliderfrontpage}}
+                    {{>theme_moove/slideshow}}
+
+                    {{^disablefrontpageloginbox}}
+                        <div id="loginbox" class="d-none d-lg-block">
+                            <div class="card" id="boxForm">
+                                {{>theme_moove/frontpage_login}}
+                            </div>
+                        </div>
+                    {{/disablefrontpageloginbox}}
+                {{/sliderfrontpage}}
+            {{/sliderenabled}}
+
+            {{^sliderenabled}}
+                <div class="row" id="loginbox">
+                    <div class="col-sm-12 hidden-sm-down {{#disablefrontpageloginbox}}col-md-12{{/disablefrontpageloginbox}}{{^disablefrontpageloginbox}}col-md-7{{/disablefrontpageloginbox}}" id="intro">
+                        {{#bannerheading}}
+                            <h1>{{{ bannerheading }}}</h1>
+                        {{/bannerheading}}
+                        {{#bannercontent}}
+                            <h2>{{{ bannercontent }}}</h2>
+                        {{/bannercontent}}
+                    </div>
+                    {{^disablefrontpageloginbox}}
+                        <div class="col-12 col-sm-12 col-md-5 card d-none d-lg-block" id="boxForm">
+                            {{>theme_moove/frontpage_login}}
+                        </div><!-- end of .card-body -->
+                    {{/disablefrontpageloginbox}}
+                </div> <!-- end of #boxForm -->
+            {{/sliderenabled}}
+        </div>
+
+        {{>theme_moove/frontpage_marketing}}
+
+        <div class="container frontpage-maincontent">
+          {{{ output.main_content }}}
+        </div>
+
+        {{>theme_moove/frontpage_numbers}}
+
+        {{>theme_moove/frontpage_sponsorsclients}}
+    </div>
+
+{{>theme_moove/inc_end}}

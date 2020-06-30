@@ -1,0 +1,297 @@
+$fontsize-dec-1: $font-size-base - 0.1rem;
+$fontsize-dec-2: $font-size-base - 0.2rem;
+$fontsize-dec-3: $font-size-base - 0.3rem;
+$fontsize-dec-4: $font-size-base - 0.4rem;
+$fontsize-dec-5: $font-size-base - 0.5rem;
+$fontsize-dec-6: $font-size-base - 0.6rem;
+
+$fontsize-inc-1: $font-size-base + 0.1rem;
+$fontsize-inc-2: $font-size-base + 0.2rem;
+$fontsize-inc-3: $font-size-base + 0.3rem;
+$fontsize-inc-4: $font-size-base + 0.4rem;
+$fontsize-inc-5: $font-size-base + 0.5rem;
+$fontsize-inc-6: $font-size-base + 0.6rem;
+
+$accessibility-sizes: () !default;
+// stylelint-disable-next-line scss/dollar-variable-default
+$accessibility-sizes: map-merge(
+                (
+                        "fontsize-dec-1":  $fontsize-dec-1,
+                        "fontsize-dec-2":  $fontsize-dec-2,
+                        "fontsize-dec-3":  $fontsize-dec-3,
+                        "fontsize-dec-4":  $fontsize-dec-4,
+                        "fontsize-dec-5":  $fontsize-dec-5,
+                        "fontsize-dec-6":  $fontsize-dec-6,
+                        "fontsize-inc-1":  $fontsize-inc-1,
+                        "fontsize-inc-2":  $fontsize-inc-2,
+                        "fontsize-inc-3":  $fontsize-inc-3,
+                        "fontsize-inc-4":  $fontsize-inc-4,
+                        "fontsize-inc-5":  $fontsize-inc-5,
+                        "fontsize-inc-6":  $fontsize-inc-6
+                ),
+                $accessibility-sizes
+);
+
+@each $classname, $basesize in $accessibility-sizes {
+    body {
+        &.#{$classname} {
+            @include accessibilityfontsize($basesize);
+        }
+    }
+}
+
+#accessibilitybar .bars {
+    font-size: $font-size-base;
+}
+
+body {
+    &.pagelayout-incourse {
+        #region-main a:not(.btn),
+        .section-navigation > a:not(.btn) {
+            text-decoration: underline;
+        }
+    }
+
+    &.pagelayout-course #region-main .modtype_label a:not(.btn) {
+        text-decoration: underline;
+    }
+
+    &.sitecolor-color-2,
+    &.sitecolor-color-3,
+    &.sitecolor-color-4 {
+        a:not(.btn) {
+            text-decoration: underline;
+        }
+
+        nav.navbar {
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+        #page {
+            margin-top: 52px;
+        }
+
+        nav.navbar ul.navbar-nav .lang-menu .nav-link,
+        nav.navbar ul.navbar-nav .popover-region .popover-region-toggle {
+            background-color: initial !important;
+        }
+
+        #frontpage-available-course-list h2 {
+            &:before,
+            &:after {
+                display: none !important;
+            }
+        }
+    }
+
+    &.sitecolor-color-2 {
+        background-color: #ffffcc;
+
+        .forumpost .topic {
+            background-image: none !important;
+        }
+
+        *:not([class*="mce"]):not([id*="mce"]):not([id*="editor"]) {
+            /* it works well only with * selector but mce editor gets unusable */
+            background-color: #ffffcc !important;
+            background-image: none !important;
+            text-shadow:none !important;
+        }
+
+        *:not([class*="mce"]):not([id*="mce"]):not([id*="editor"]){
+            /* it works well only with * selector but mce editor gets unusable */
+            color: #000 !important;
+        }
+
+        .contentwithoutlink .labelbar.primary {
+            border-top-color: #eef5f9;
+        }
+
+        .btn {
+            border-color: #d7dfe3;
+        }
+
+        #sitecolor_color2 {
+            background-color:#ffffcc !important;
+        }
+
+        #sitecolor_color3 {
+            background-color:#99ccff !important;;
+            color: #000 !important;
+        }
+
+        #sitecolor_color4 {
+            color:#ffff00 !important;
+            background-color:#000000 !important;;
+        }
+
+        #accessibilitybar,
+        #nav-drawer {
+            border: 1px solid #d7dfe3 !important;
+        }
+
+        #nav-drawer-footer {
+            border: 1px solid #d7dfe3 !important;
+            border-top: none !important;
+        }
+
+        #nav-drawer .list-group+.list-group {
+            border-top: 1px solid #d7dfe3;
+        }
+
+        nav.navbar,
+        #nav-drawer-footer,
+        #nav-drawer-footer #themesettings-control {
+            background-color: initial !important;
+        }
+    }
+
+    &.sitecolor-color-3 {
+        background-color: #99ccff;
+
+        .forumpost .topic {
+            background-image: none !important;
+        }
+
+        *:not([class*="mce"]):not([id*="mce"]):not([id*="editor"]){
+            /* it works well only with * selector but mce editor gets unusable */
+            background-color: #99ccff !important;
+            background-image: none !important;
+            text-shadow:none !important;
+        }
+
+        *:not([class*="mce"]):not([id*="mce"]):not([id*="editor"]){
+            /* it works well only with * selector but mce editor gets unusable */
+            color: #000 !important;
+        }
+
+        .btn {
+            border-color: #d7dfe3;
+        }
+
+        .contentwithoutlink .labelbar.primary {
+            border-top-color: #fff;
+        }
+
+        #sitecolor_color2 {
+            background-color: #ffffcc !important;
+            color: #000 !important;
+        }
+
+        #sitecolor_color3 {
+            background-color: #99ccff;
+        }
+
+        #sitecolor_color4 {
+            color: #ffff00 !important;
+            background-color: #000 !important;
+        }
+
+        #accessibilitybar,
+        #nav-drawer {
+            border: 1px solid #d7dfe3 !important;
+        }
+
+        #nav-drawer-footer {
+            border: 1px solid #d7dfe3 !important;
+            border-top: none !important;
+        }
+
+        #nav-drawer .list-group+.list-group {
+            border-top: 1px solid #d7dfe3;
+        }
+
+        nav.navbar,
+        #nav-drawer-footer,
+        #nav-drawer-footer #themesettings-control {
+            background-color: initial !important;
+        }
+    }
+
+    &.sitecolor-color-4 {
+        background-color: #000000;
+
+        .forumpost .topic {
+            background-image: none !important;
+        }
+
+        *:not([class*="mce"]):not([id*="mce"]):not([id*="editor"]){
+            /* it works well only with * selector but mce editor gets unusable */
+            background-color: #000000 !important;
+            background-image: none !important;
+            text-shadow:none !important;
+        }
+
+        .btn {
+            border-color: #fff;
+        }
+
+        #nav-drawer,
+        #accessibilitybar,
+        .block_accessibility .outer,
+        .course-content .section .sectionname,
+        .course-content .single-section .sectionname {
+            background-color: #000000 !important;
+        }
+
+        *:not([class*="mce"]):not([id*="mce"]):not([id*="editor"]){
+            /* it works well only with * selector but mce editor gets unusable */
+            color: #ffff00 !important;
+        }
+
+        #content a, .tabrow0 span {
+            color: #ffff00 !important;
+        }
+
+        .tabrow0 span:hover {
+            text-decoration: underline;
+        }
+
+        #accessibilitybar,
+        #nav-drawer {
+            border: 1px solid #fff !important;
+        }
+
+        #nav-drawer-footer {
+            border: 1px solid #fff !important;
+            border-top: none !important;
+        }
+
+        #nav-drawer .list-group+.list-group {
+            border-top: 1px solid #fff;
+        }
+
+        #nav-drawer-footer #themesettings-control i {
+            background-color: initial !important;
+        }
+
+        #sidepreopen-control {
+            background-color: #fff !important;
+            color: #000 !important;
+        }
+
+        .contentwithoutlink .labelbar.primary {
+            border-top-color: #fff;
+        }
+
+        nav.navbar,
+        #nav-drawer-footer,
+        #nav-drawer-footer #themesettings-control {
+            background-color: initial !important;
+        }
+
+        #sitecolor_color2 {
+            background-color:#ffffcc !important;
+            color: #000 !important;
+        }
+
+        #sitecolor_color3 {
+            background-color:#99ccff !important;
+        }
+
+        #sitecolor_color4{
+            color:#ffff00 !important;
+        }
+    }
+}

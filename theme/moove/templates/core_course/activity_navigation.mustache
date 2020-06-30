@@ -1,0 +1,97 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/activity_navigation
+
+    Displays the activity navigation
+
+    Context variables required for this template:
+    * prevlink Object - The action link data for the previous activity link. Corresponds with the core/action_link context.
+    * nextlink Object - The action link data for the next activity link. Corresponds with the core/action_link context.
+    * activitylist Object - The data for the activity selector menu. Corresponds with the core/url_select context.
+
+    Example context (json):
+    {
+        "prevlink": {
+            "disabled": false,
+            "url": "#",
+            "id": "test-id-1",
+            "classes": "btn btn-link",
+            "attributes": [
+                {
+                    "name": "title",
+                    "value": "Activity A"
+                }
+            ],
+            "text": "◄ Activity A"
+        },
+        "nextlink": {
+            "disabled": false,
+            "url": "#",
+            "id": "test-id-2",
+            "classes": "btn btn-link",
+            "attributes": [
+                {
+                    "name": "title",
+                    "value": "Activity C"
+                }
+            ],
+            "text": "Activity C ►"
+        },
+        "activitylist": {
+            "id": "url_select_test",
+            "action": "#",
+            "options": [
+                {"name": "Jump to...", "value": "#0"},
+                {"name": "Activity A", "value": "#1"},
+                {"name": "Activity B", "value": "#2"},
+                {"name": "Activity C", "value": "#3"}
+            ]
+        }
+    }
+}}
+<div class="card activity-navigation">
+    <div class="card-body">
+        {{< core/columns-1to1to1}}
+            {{$column1}}
+                <div id="prev-activity" class="float-left">
+                    {{#prevlink}}
+                        <span class="nav-guide">
+                            {{#str}}prev_activity, theme_moove{{/str}}
+                        </span>
+                        {{> core/action_link }}
+                    {{/prevlink}}
+                </div>
+            {{/column1}}
+            {{$column2}}
+                <div class="mdl-align">
+                    {{#activitylist}}{{> core/url_select }}{{/activitylist}}
+                </div>
+            {{/column2}}
+            {{$column3}}
+                <div id="next-activity" class="float-right">
+                    {{#nextlink}}
+                        <span class="nav-guide">
+                            {{#str}}next_activity, theme_moove{{/str}}
+                        </span>
+                        {{> core/action_link }}
+                    {{/nextlink}}
+                </div>
+            {{/column3}}
+        {{/ core/columns-1to1to1}}
+    </div>
+</div>
