@@ -77,6 +77,11 @@ class transaction_complete extends external_api {
             'currency' => $currency
         ] = payment_helper::get_cost($component, $componentid);
 
+        // Add surcharge if there is any.
+        if ($config->surcharge) {
+            $amount += $amount * $config->surcharge / 100;
+        }
+
         $paypalhelper = new paypal_helper($config->clientid, $config->secret, $sandbox);
         $orderdetails = $paypalhelper->get_order_details($orderid);
 

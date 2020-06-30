@@ -77,6 +77,16 @@ class helper {
     }
 
     /**
+     * Returns the percentage of surcharge that is applied when using a gateway
+     *
+     * @param string $gateway Name of the gateway
+     * @return int
+     */
+    public static function get_gateway_surcharge(string $gateway): int {
+        return get_config('pg_' . $gateway, 'surcharge') ?: 0;
+    }
+
+    /**
      * Returns the attributes to place on a pay button.
      *
      * @param float $amount Amount of payment
@@ -163,5 +173,17 @@ class helper {
         $id = $DB->insert_record('payments', $record);
 
         return $id;
+    }
+
+    /**
+     * This functions adds the settings that are common for all payment gateways.
+     *
+     * @param \admin_settingpage $settings The settings object
+     * @param string $gateway The gateway name prefic with pg_
+     */
+    public static function add_common_gateway_settings(\admin_settingpage $settings, string $gateway): void {
+        $settings->add(new \admin_setting_configtext($gateway . '/surcharge', get_string('surcharge', 'core_payment'),
+                get_string('surcharge_desc', 'core_payment'), 0, PARAM_INT));
+
     }
 }

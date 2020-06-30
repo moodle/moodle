@@ -67,6 +67,7 @@ class get_gateways_for_currency extends external_api {
                 'shortname' => $gateway,
                 'name' => get_string('gatewayname', 'pg_' . $gateway),
                 'description' => get_string('gatewaydescription', 'pg_' . $gateway),
+                'surcharge' => \core_payment\helper::get_gateway_surcharge($gateway),
             ];
         }
 
@@ -84,6 +85,7 @@ class get_gateways_for_currency extends external_api {
                     'shortname' => new external_value(PARAM_PLUGIN, 'Name of the plugin'),
                     'name' => new external_value(PARAM_TEXT, 'Human readable name of the gateway'),
                     'description' => new external_value(PARAM_TEXT, 'description of the gateway'),
+                    'surcharge' => new external_value(PARAM_INT, 'percentage of surcharge when using the gateway'),
                 ])
         );
     }

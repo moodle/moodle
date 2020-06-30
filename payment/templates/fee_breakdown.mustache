@@ -31,8 +31,19 @@
 
 }}
 <div class="core_payment_fee_breakdown">
-    {{# str }} labelvalue, core, {
-        "label": {{# quote }}{{# str }} cost {{/ str }}{{/ quote }},
-        "value": "{{fee}}"
-        } {{/ str }}
+    {{#surcharge}}
+        {{# str }} labelvalue, core, {
+            "label": {{# quote }}{{# str }} cost {{/ str }}{{/ quote }},
+            "value": {{# quote }}{{# str }} feeincludesurcharge, core_payment, {
+                "fee": "{{fee}}",
+                "surcharge": {{surcharge}}
+                } {{/ str }}{{/ quote }}
+            } {{/ str }}
+    {{/surcharge}}
+    {{^surcharge}}
+        {{# str }} labelvalue, core, {
+            "label": {{# quote }}{{# str }} cost {{/ str }}{{/ quote }},
+            "value": "{{fee}}"
+            } {{/ str }}
+    {{/surcharge}}
 </div>

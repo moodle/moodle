@@ -23,6 +23,9 @@
  */
 
 export default {
+    elements: {
+        gateways: '[data-region="gateways-container"] input[type="radio"]',
+    },
     regions: {
         gatewaysContainer: '[data-region="gateways-container"]',
         costContainer: '[data-region="fee-breakdown-container"]',

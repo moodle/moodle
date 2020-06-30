@@ -29,6 +29,7 @@
     * shortname
     * name
     * description
+    * surcharge
     * image
 
     Example context (json):
@@ -36,11 +37,12 @@
         "shortname": "paypal",
         "name": "PayPal",
         "description": "A description for PayPal.",
+        "surcharge": "3"
     }
 
 }}
 <div class="custom-control custom-radio {{shortname}}">
-    <input class="custom-control-input" type="radio" name="payby" id="id-payby-{{uniqid}}-{{shortname}}"  value="{{shortname}}" {{#checked}} checked="checked" {{/checked}} />
+    <input class="custom-control-input" type="radio" name="payby" id="id-payby-{{uniqid}}-{{shortname}}" data-surcharge="{{surcharge}}" value="{{shortname}}" {{#checked}} checked="checked" {{/checked}} />
     <label class="custom-control-label bg-light border p-3 my-3" for="id-payby-{{uniqid}}-{{shortname}}">
         <p class="h3">{{name}}</p>
         <p class="content mb-2">{{description}}</p>
