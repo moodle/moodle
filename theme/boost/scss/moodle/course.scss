@@ -870,7 +870,7 @@ span.editinstructions {
     .listitem {
 
         &[data-selected='1'] {
-            border-left: calc(#{$list-group-border-width} + 5px) solid map-get($theme-colors, 'info');
+            border-left: calc(#{$list-group-border-width} + 5px) solid map-get($theme-colors, 'primary');
             padding-left: calc(#{$list-group-item-padding-x} - 5px);
         }
     }
