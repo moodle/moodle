@@ -489,6 +489,7 @@ class api {
                 '$mmSideMenuDelegate_mmaFiles' => new lang_string('files'),
                 '$mmSideMenuDelegate_website' => new lang_string('webpage'),
                 '$mmSideMenuDelegate_help' => new lang_string('help'),
+                'CoreMainMenuDelegate_QrReader' => new lang_string('scanqrcode', 'tool_mobile'),
             ),
             "$course" => array(
                 'NoDelegate_CourseBlocks' => new lang_string('blocks'),
@@ -525,6 +526,12 @@ class api {
 
         if (!empty($remoteaddonslist)) {
             $features["$remoteaddons"] = $remoteaddonslist;
+        }
+
+        if (!empty($availablemods['lti'])) {
+            $ltidisplayname = $availablemods['lti']->displayname;
+            $features["$ltidisplayname"]['CoreCourseModuleDelegate_AddonModLti:openInAppBrowser'] =
+                new lang_string('openusingembeddedbrowser', 'tool_mobile');
         }
 
         // Display OAuth 2 identity providers.
