@@ -383,6 +383,7 @@ class iomad {
 
         if (empty($userid)) {
             $user = $USER;
+            $user->company = company::get_company_byuserid($USER->id);
         } else {
             $user = $DB->get_record('user', array('id' => $userid));
             $user->company = company::get_company_byuserid($userid);
@@ -401,7 +402,16 @@ class iomad {
                     }
                 }
             } else {
-                $iomadcategories[ $id ] = $category;
+                // Is this a sub category?
+                $categoryrec = $DB->get_record('course_categories', array('id' => $id));
+                if ($categoryrec->parent == 0) {
+                    $iomadcategories[ $id ] = $category;
+                } else {
+                    // Is this company category in the path?
+                    if (true === strpos($categoryrec->path, "/".$user->company->category."/")) {
+                        $iomadcategories[ $id ] = $category;
+                    }
+                }
             }
         }
 
