@@ -15,9 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_payment/gateways_modal
-
-    This template will render the gateway selector modal.
+    @template core_payment/fee_breakdown_placeholder
 
     Classes required for JS:
     * none
@@ -32,11 +30,9 @@
     {}
 
 }}
-<div class="core_payment_gateways_modal">
-    <div data-region="gateways-container">
-        {{> core_payment/gateways_placeholder }}
-    </div>
-    <div data-region="fee-breakdown-container">
-        <div class="bg-pulse-grey" style="height: 22px; width: 90px"></div>
-    </div>
+<div class="core_payment_fee_breakdown">
+    {{# str }} labelvalue, core, {
+        "label": {{# quote }}{{# str }} cost {{/ str }}{{/ quote }},
+        "value": "{{fee}}"
+        } {{/ str }}
 </div>

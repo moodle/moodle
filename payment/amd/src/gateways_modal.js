@@ -128,8 +128,27 @@ const show = async(rootNode, {
     };
 
     const {html, js} = await Templates.renderForPromise('core_payment/gateways', context);
-    Templates.replaceNodeContents(modal.getRoot().find(Selectors.regions.gatewaysContainer), html, js);
+    const root = modal.getRoot()[0];
+    Templates.replaceNodeContents(root.querySelector(Selectors.regions.gatewaysContainer), html, js);
+    updateCostRegion(root, parseFloat(rootNode.dataset.amount), rootNode.dataset.currency);
 };
+
+/**
+ * Shows the cost of the item the user is purchasing in the cost region.
+ *
+ * @param {HTMLElement} root An HTMLElement that contains the cost region
+ * @param {number} amount The amount part of cost
+ * @param {string} currency The currency part of cost in the 3-letter ISO-4217 format
+ * @returns {Promise<void>}
+ */
+const updateCostRegion = async(root, amount, currency) => {
+    const locale = await updateCostRegion.locale; // This only takes a bit the first time.
+    const localisedCost = amount.toLocaleString(locale, {style: "currency", currency: currency});
+
+    const {html, js} = await Templates.renderForPromise('core_payment/fee_breakdown', {fee: localisedCost});
+    Templates.replaceNodeContents(root.querySelector(Selectors.regions.costContainer), html, js);
+};
+updateCostRegion.locale = getString("localecldr", "langconfig");
 
 /**
  * Process payment using the selected gateway.
