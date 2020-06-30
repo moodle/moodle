@@ -182,12 +182,14 @@ class local_report_user_completion_table extends table_sql {
                         $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
                     }
                 } else {
-                    if (!empty($row->timecompleted)) {
+                    if ($DB->get_record('companylicense_users', array('userid' => $row->userid, 'licensecourseid' => $row->courseid, 'licenseid' => $row->licenseid, 'issuedate' => $row->licenseallocated, 'isusing' => 1))) {
+                        if (has_capability('local/report_users:deleteentries', context_system::instance())) {
+                            $delaction .= '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete') . '</a>';
+                        }
+                    } else if ($DB->get_record('course_completions', array('course' => $row->courseid, 'userid' => $row->userid, 'timecompleted' => $row->timecompleted))) {
                         if (has_capability('local/report_users:clearentries', context_system::instance())) {
                             $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
                         }
-                    } else if ($DB->get_record('companylicense_users', array('userid' => $row->userid, 'licensecourseid' => $row->courseid, 'licenseid' => $row->licenseid, 'issuedate' => $row->licenseallocated, 'isusing' => 1))) {
-                        $delaction .= '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete') . '</a>';
                     } else if (has_capability('local/report_users:deleteentriesfull', context_system::instance())) {
                         $delaction .= '<a class="btn btn-danger" href="'.$trackonlylink.'">' . get_string('delete', 'local_report_users') . '</a>';
                     }
@@ -265,7 +267,8 @@ class local_report_user_completion_table extends table_sql {
                 }
             }
         } else {
-            if (!empty($row->licenseid) &&
+            if ($progress < 100 &&
+                !empty($row->licenseid) &&
                 !$DB->get_record('companylicense_users',
                                 array('licenseid' => $row->licenseid,
                                       'userid' => $row->userid,
