@@ -100,6 +100,13 @@ switch ($action) {
 
         if (empty($roleid)) {
             $roleid = null;
+        } else {
+            if (!has_capability('moodle/role:assign', $context)) {
+                throw new enrol_ajax_exception('assignnotpermitted');
+            }
+            if (!array_key_exists($roleid, get_assignable_roles($context, ROLENAME_ALIAS, false))) {
+                throw new enrol_ajax_exception('invalidrole');
+            }
         }
 
         if (empty($startdate)) {
