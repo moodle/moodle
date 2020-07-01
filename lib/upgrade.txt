@@ -6,6 +6,8 @@ information provided here is intended especially for developers.
   when the modal's height exceeds the browser's height. This is also supported in core/modal_factory through the
   'scrollable' config parameter which can be set to either true or false. If not explicitly defined, the default value
   of 'scrollable' is true.
+* The `$CFG->behat_retart_browser_after` configuration setting has been removed.
+  The browser session is now restarted between all tests.
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
