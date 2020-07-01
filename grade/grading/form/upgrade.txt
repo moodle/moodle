@@ -1,6 +1,14 @@
 This files describes API changes in /grade/grading/form/* - Advanced grading methods
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+
+* Removed gradingform_provider.
+* Removed the following deprecated functions:
+    get_gradingform_export_data
+    delete_gradingform_for_context
+    delete_gradingform_for_userid
+
 === 3.6 ===
 
 * The privacy interface gradingform_provider has been deprecated. Please use
