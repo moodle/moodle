@@ -1,0 +1,72 @@
+#page-login-signup {
+    .card {
+        -webkit-border-radius: $m-login-padding;
+        -moz-border-radius: $m-login-padding;
+        border-radius: $m-login-padding;
+    }
+
+    .mform fieldset.collapsible {
+        border: 1px solid #d7dfe3;
+        padding: .5rem;
+        margin: 0;
+
+        .form-control,
+        .custom-select {
+            width: 100%;
+        }
+
+        legend a.fheader {
+            background: none;
+            font-size: 1.2rem;
+            margin: 0;
+            padding: 0 0 0 .5rem;
+            position: relative;
+
+            &:after {
+                font-family: 'FontAwesome';
+                content: "\f0d7";
+                color: $brand-primary;
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                right: -24px;
+                top: 0;
+                text-align: center;
+            }
+        }
+    }
+
+    #fgroup_id_buttonar {
+        .form-inline {
+            justify-content: flex-end;
+
+            .form-group {
+                margin: .5rem 0;
+            }
+
+            .btn-cancel {
+                margin-left: .25rem;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-down(md) {
+    #page-login-signup {
+        #page-wrapper {
+            #page {
+                padding: 1.5rem 0 0 0;
+                overflow: hidden;
+            }
+
+            .col-8 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+
+        .mform fieldset.collapsible legend a.fheader::after {
+            display: none;
+        }
+    }
+}

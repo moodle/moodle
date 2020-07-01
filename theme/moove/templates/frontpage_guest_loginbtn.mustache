@@ -1,0 +1,50 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_moove/frontpage_guest_loginbtn
+
+    Guest frontpage template.
+
+    Moove frontpage guest layout template.
+
+    Context variables required for this template:
+    * loginurl - The login token
+    * logintoken - The csrf token
+
+    Example context (json):
+    {
+        "loginurl": "siteurl/login.php",
+        "logintoken":"abcde123"
+    }
+}}
+
+<li class="usermenu d-none d-lg-block">
+    <div class="dropdown">
+        <a class="btn btn-login-top dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{#str}}login{{/str}}
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right" id="loginbox">
+            <div class="card">
+                {{>theme_moove/frontpage_login}}
+            </div>
+        </div>
+    </div>
+</li>
+<li class="usermenu d-lg-none">
+    <a class="btn btn-login-top" href="{{{loginurl}}}">{{#str}}login{{/str}}</a>
+</li>

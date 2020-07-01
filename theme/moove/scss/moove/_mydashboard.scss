@@ -1,0 +1,90 @@
+#page-my-index {
+    .admininfos {
+        padding-bottom: 0;
+
+        .breadcrumb-button {
+            margin-right: 0 !important;
+        }
+    }
+
+    .bg-1 {
+        background-color: #1e88e5;
+    }
+
+    .bg-2 {
+        background-color: #7460ee;
+    }
+
+    .bg-3 {
+        background-color: #26c6da;
+    }
+
+    .bg-4 {
+        background-color: #2f3d4a;
+    }
+
+    .small-box {
+        border-radius: $card-border-radius;
+        position: relative;
+        display: block;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
+
+    .small-box > .inner {
+        padding: 10px;
+    }
+
+    .small-box h3,
+    .small-box p {
+        z-index: 5;
+        color: #fff;
+    }
+
+    .small-box h3 {
+        margin: 0 0 10px 0;
+        white-space: nowrap;
+        padding: 0;
+    }
+
+    .small-box .icon {
+        -webkit-transition: all .3s linear;
+        -o-transition: all .3s linear;
+        transition: all .3s linear;
+        position: absolute;
+        top: 0;
+        right: 40px;
+        z-index: 0;
+        font-size: 48px;
+        color: rgba(0, 0, 0, 0.15);
+    }
+
+    .progress-chart-container .no-progress {
+        background-color: $brand-primary;
+
+        .fa {
+            color: #fff;
+            font-size: 42px;
+            padding: 14px 8px;
+        }
+    }
+
+    #region-main-box #region-main {
+        .card:not([class*="dashboard-card"]) {
+            border-top: solid 2px $brand-primary;
+        }
+
+        .card.mymaincontent {
+            border: none;
+            background-color: initial;
+
+            > .card-body {
+                padding: 0;
+            }
+        }
+
+        .block .block-cards .progress {
+            margin-left: 0;
+        }
+    }
+}

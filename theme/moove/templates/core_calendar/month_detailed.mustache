@@ -1,0 +1,180 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template calendar/month_detailed
+
+    Calendar month view.
+
+    The purpose of this template is to render the month view.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+<div{{!
+    }} class="calendarwrapper"{{!
+    }}{{#courseid}} data-courseid="{{courseid}}"{{/courseid}}{{!
+    }}{{#categoryid}} data-categoryid="{{categoryid}}"{{/categoryid}}{{!
+    }} data-context-id="{{defaulteventcontext}}"{{!
+    }} data-month="{{date.mon}}"{{!
+    }} data-year="{{date.year}}"{{!
+    }} data-view="month"{{!
+    }}>
+    {{> core_calendar/month_navigation }}
+    {{> core/overlay_loading}}
+    <table id="month-detailed-{{uniqid}}" class="calendarmonth calendartable m-b-0">
+        <thead>
+        <tr>
+            {{# daynames }}
+                <th class="header text-xs-center">
+                    {{shortname}}
+                </th>
+            {{/ daynames }}
+        </tr>
+        </thead>
+        <tbody>
+        {{#weeks}}
+            <tr data-region="month-view-week">
+                {{#prepadding}}
+                    <td class="dayblank">&nbsp;</td>
+                {{/prepadding}}
+                {{#days}}
+                    <td class="day text-sm-center text-md-left{{!
+                            }}{{#istoday}} today{{/istoday}}{{!
+                            }}{{#isweekend}} weekend{{/isweekend}}{{!
+                            }}{{#durationevents.0}} duration{{/durationevents.0}}{{!
+                            }}{{#durationevents}} duration_{{.}}{{/durationevents}}{{!
+                            }}{{#defaulteventcontext}} clickable{{/defaulteventcontext}}{{!
+                        }}"
+                        data-day-timestamp="{{timestamp}}"
+                        data-drop-zone="month-view-day"
+                        data-region="day"
+                        data-new-event-timestamp="{{neweventtimestamp}}">
+                        <div class="d-none d-md-block hidden-phone text-xs-center">
+                            {{#hasevents}}
+                                <a data-action="view-day-link" href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
+                            {{/hasevents}}
+                            {{^hasevents}}
+                                {{mday}}
+                            {{/hasevents}}
+                            {{#hasevents}}
+                                <div data-region="day-content">
+                                    <ul>
+                                        {{#events}}
+                                            {{#underway}}
+                                                <li class="events-underway">[{{name}}]</li>
+                                            {{/underway}}
+                                            {{^underway}}
+                                                <li data-region="event-item"
+                                                    data-eventtype-{{normalisedeventtype}}="1"
+                                                    class="calendar_event_{{normalisedeventtype}}"
+                                                    {{#draggable}}
+                                                    draggable="true"
+                                                    data-drag-type="move"
+                                                        {{#mindaytimestamp}}
+                                                    data-min-day-timestamp="{{.}}"
+                                                        {{/mindaytimestamp}}
+                                                        {{#mindayerror}}
+                                                    data-min-day-error="{{.}}"
+                                                        {{/mindayerror}}
+                                                        {{#maxdaytimestamp}}
+                                                    data-max-day-timestamp="{{.}}"
+                                                        {{/maxdaytimestamp}}
+                                                        {{#maxdayerror}}
+                                                    data-max-day-error="{{.}}"
+                                                        {{/maxdayerror}}
+                                                    {{/draggable}}>
+
+                                                    <a data-action="view-event" data-event-id="{{id}}" href="{{url}}" title="{{name}}">
+                                                        {{> core_calendar/event_icon}}
+                                                        {{name}}
+                                                    </a>
+                                                </li>
+                                            {{/underway}}
+                                        {{/events}}
+                                    </ul>
+                                </div>
+                            {{/hasevents}}
+                        </div>
+                        <div class="d-md-none hidden-desktop hidden-tablet">
+                            {{#hasevents}}
+                                <a data-action="view-day-link" href="{{viewdaylink}}" class="day" title="{{viewdaylinktitle}}">{{mday}}</a>
+                            {{/hasevents}}
+                            {{^hasevents}}
+                                <div data-region="day-content">
+                                    {{mday}}
+                                </div>
+                            {{/hasevents}}
+                        </div>
+                    </td>
+                {{/days}}
+                {{#postpadding}}
+                    <td class="dayblank">&nbsp;</td>
+                {{/postpadding}}
+            </tr>
+        {{/weeks}}
+        </tbody>
+    </table>
+</div>
+{{#js}}
+    require([
+    'jquery',
+    'core_calendar/month_view_drag_drop',
+    'core_calendar/selectors',
+    'core_calendar/events',
+    ], function(
+    $,
+    DragDrop,
+    CalendarSelectors,
+    CalendarEvents
+    ) {
+    var root = $('#month-detailed-{{uniqid}}');
+    DragDrop.init(root);
+
+    $('body').on(CalendarEvents.filterChanged, function(e, data) {
+    M.util.js_pending("month-detailed-{{uniqid}}-filterChanged");
+    // A filter value has been changed.
+    // Find all matching cells in the popover data, and hide them.
+    var target = $("#month-detailed-{{uniqid}}").find(CalendarSelectors.eventType[data.type]);
+
+    var transitionPromise = $.Deferred();
+    if (data.hidden) {
+    transitionPromise.then(function() {
+    return target.slideUp('fast').promise();
+    });
+    } else {
+    transitionPromise.then(function() {
+    return target.slideDown('fast').promise();
+    });
+    }
+
+    transitionPromise.then(function() {
+    M.util.js_complete("month-detailed-{{uniqid}}-filterChanged");
+
+    return;
+    });
+
+    transitionPromise.resolve();
+    });
+    });
+{{/js}}

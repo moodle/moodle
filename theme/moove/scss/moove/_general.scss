@@ -1,0 +1,156 @@
+/*******************
+Bodys
+*******************/
+body#page-enrol-index {
+    #region-main {
+        .generalbox {
+            float: left;
+            width: 30%;
+        }
+        .generalbox:last-of-type {
+            width: 70%;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+    }
+}
+
+body.pagelayout-popup {
+    margin-left: 0;
+}
+
+/*******************
+Headings
+*******************/
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
+    color: $headings-color;
+    font-family: "Poppins", sans-serif;
+    font-weight: $headings-font-weight;
+}
+
+body.odafont {
+    h1,
+    .h1,
+    h2,
+    .h2,
+    h3,
+    .h3,
+    h4,
+    .h4,
+    h5,
+    .h5,
+    h6,
+    .h6 {
+        font-family: oda, comic sans ms, clfallback, Verdana;
+    }
+}
+/*******************
+Pages
+*******************/
+#page {
+    margin-top: 40px;
+
+    &.container-fluid {
+        padding: 2rem;
+    }
+}
+
+#page-wrapper {
+    height: auto;
+}
+
+#region-main {
+    padding: 0;
+}
+
+#page-admin-index.pagelayout-maintenance {
+    margin-left: 0;
+
+    #region-main {
+        border: 0;
+        background-color: initial;
+        padding: 1.25rem;
+    }
+
+    #page-wrapper::after {
+        min-height: inherit;
+    }
+}
+
+.pagelayout-mypublic,
+.pagelayout-mydashboard,
+.pagelayout-frontpage,
+.pagelayout-standard,
+.pagelayout-admin,
+.pagelayout-course,
+.pagelayout-incourse,
+.pagelayout-report {
+    #region-main {
+        padding: 0;
+        border: 0;
+    }
+}
+
+/*******************
+Card
+*******************/
+.card {
+    border-color: $card-border-color;
+    border-radius: $card-border-radius;
+
+    &.card-block,
+    .card-block,
+    .card-body {
+        padding: $m-card-padding;
+    }
+}
+
+/* Third party plugins compatibility. */
+/* Course format grid */
+#gridshadebox_content {
+    top: 80px !important;
+}
+
+.popover .arrow {
+    bottom: -8px;
+}
+
+
+/*******************
+Progress
+*******************/
+.progress {
+    height: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    background-color: $body-bg;
+    margin-left: 12px;
+    width: inherit;
+
+    .progress-bar {
+        float: left;
+        width: 0;
+        height: 100%;
+        font-size: 12px;
+        line-height: 20px;
+        color: #fff;
+        text-align: center;
+        background-color: $brand-primary;
+        overflow: hidden;
+    }
+}
+
+.region_main_settings_menu_proxy {
+    background-color: initial;
+}

@@ -1,0 +1,43 @@
+body#page-enrol-index {
+    #region-main .generalbox.info .card-footer{
+        display: none;
+    }
+}
+
+@include media-breakpoint-down(md) {
+    body#page-enrol-index {
+        #page-header {
+            display: none;
+        }
+
+        #page-content {
+            padding-top: 1rem;
+        }
+
+        #region-main {
+            .generalbox {
+                display: block;
+                width: 100%;
+
+                &:last-of-type {
+                    width: 100%;
+                    padding: 0;
+                }
+
+                #fitem_id_submitbutton {
+                    margin-left: 1.5rem;
+
+                    .form-inline {
+                        padding: 0;
+                    }
+                }
+
+                &:not(.info) {
+                    margin: .5rem 0;
+                    padding: 0 1rem;
+                    background-color: #eef5f9;
+                }
+            }
+        }
+    }
+}

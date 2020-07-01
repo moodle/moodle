@@ -1,0 +1,188 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_moove/columns2
+
+    Admin time setting template.
+
+    Moove 2 column layout template.
+
+    Context variables required for this template:
+    * sitename - The name of the site
+    * output - The core renderer for the page
+    * bodyattributes - attributes for the body tag as a string of html attributes
+    * sidepreblocks - HTML for the blocks
+    * hasblocks - true if there are blocks on this page
+    * navdraweropen - true if the nav drawer should be open on page load
+    * regionmainsettingsmenu - HTML for the region main settings menu
+    * hasregionmainsettingsmenu - There is a region main settings menu on this page.
+
+    Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "Test page",
+            "favicon": "favicon.ico",
+         "main_content": "<h1>Headings make html validators happier</h1>"
+        },
+        "bodyattributes":"",
+        "sidepreblocks": "<h2>Blocks html goes here</h2>",
+        "hasblocks":true,
+        "navdraweropen":true,
+        "sidepreopen":true,
+        "regionmainsettingsmenu": "",
+        "hasregionmainsettingsmenu": false
+    }
+}}
+{{>theme_moove/inc_start}}
+
+<div id="page" class="container-fluid">
+    <div id="page-content" class="row">
+        <div id="region-main-box" class="col-12">
+            {{#hasregionmainsettingsmenu}}
+            <div id="region-main-settings-menu" class="d-print-none">
+                <div> {{{ output.region_main_settings_menu }}} </div>
+            </div>
+            {{/hasregionmainsettingsmenu}}
+
+            {{{ output.breadcrumb_header }}}
+
+            <section id="region-main">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3">
+                                <div class="card user-card">
+                                    <div class="card-body">
+                                        {{#user}}
+                                            <div class="d-flex">
+                                                <div class="mr-auto"></div>
+                                                {{{ output.context_header_settings_menu }}}
+                                            </div>
+
+                                            <div class="profilepic">
+                                                <img src="{{profilepicture}}" alt="{{{firstname}}} {{{lastname}}}">
+                                            </div>
+
+                                            <h3>{{{firstname}}} {{{lastname}}}</h3>
+                                        {{/user}}
+                                    </div>
+                                    <div class="card-footer">
+                                        {{#headerbuttons}}
+                                            <a
+                                                role="button"
+                                                href="{{{url}}}"
+                                                class="{{{class}}}"
+                                                {{#linkattributes}}
+                                                id="{{{id}}}"
+                                                data-userid="{{{data-userid}}}"
+                                                data-is-contact="{{{data-is-contact}}}"
+                                                {{/linkattributes}}
+                                            >
+                                                <span>
+                                                    <i class="{{{icon}}}" aria-hidden="true" title="{{{title}}}" aria-label="{{{title}}}"></i>
+                                                    <span class="header-button-title">{{{title}}}</span>
+                                                </span>
+                                            </a>
+                                        {{/headerbuttons}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-9">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            {{# hascourses }}
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" id="courses-tab" data-toggle="tab" href="#cursos" role="tab" aria-controls="cursos" aria-selected="true">{{#str}}courses{{/str}}</a>
+                                                </li>
+                                            {{/ hascourses }}
+                                            {{# hascompetencyplans }}
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="competencyplans-tab" data-toggle="tab" href="#planos" role="tab" aria-controls="planos" aria-selected="false">{{#str}}competencyplans, theme_moove{{/str}}</a>
+                                                </li>
+                                            {{/ hascompetencyplans }}
+                                            <li class="nav-item">
+                                                <a class="nav-link {{^hascourses}}active{{/hascourses}}" id="details-tab" data-toggle="tab" href="#details" role="tab" aria-controls="details" aria-selected="{{^hascourses}}true{{/hascourses}}{{#hascourses}}false{{/hascourses}}">{{#str}}details, theme_moove{{/str}}</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content" id="mypublic-tab">
+                                            {{# hascourses }}
+                                                <div class="tab-pane fade show active" id="cursos" role="tabpanel" aria-labelledby="courses-tab">
+                                                    {{# courses }}
+                                                        <div id="course-{{ id }}" class="card mt-1">
+                                                            <div class="card-body row">
+                                                                <div class="col-md-3 col-sm-6 courseimage">
+                                                                    {{{ courseimage }}}
+                                                                </div>
+
+                                                                <div class="media-body col-md-9 col-sm-6">
+                                                                    <a href="{{ link }}"><h5 class="mt-0">{{{ fullname }}}</h5></a>
+                                                                    {{# startdate }}<small>{{#str}}startedon, theme_moove{{/str}}: {{#userdate}} {{startdate}}, %A, %d %B %Y {{/userdate}}</small>{{/ startdate }}
+
+                                                                    <div class="mt-1">
+                                                                        {{{ summary }}}
+                                                                    </div>
+                                                                </div>
+                                                                {{# enablecompletion }}
+                                                                    <div class="col-md-3 d-none d-md-block d-lg-block d-xl-block text-right">
+                                                                        <div class="progress-circle" data-progress="{{ progress }}"></div>
+                                                                    </div>
+                                                                {{/ enablecompletion }}
+                                                            </div>
+                                                        </div>
+                                                    {{/ courses }}
+                                                </div>
+                                            {{/ hascourses }}
+                                            {{# hascompetencyplans }}
+                                                <div class="tab-pane fade" id="planos" role="tabpanel" aria-labelledby="competencyplans-tab">
+                                                    {{#competencyplans}}
+                                                    <div class="card card-shadow mt-1">
+                                                        <div class="card-body">
+                                                            <a href="{{config.wwwroot}}/admin/tool/lp/plan.php?id={{{id}}}"><h4>{{{name}}}</h4></a>
+                                                            <div class="progress">
+                                                                <div class="progress-bar progress-bar-striped {{{progressclass}}}" role="progressbar" style="width: {{{proficientcompetencypercentage}}}%" aria-valuenow="{{{proficientcompetencypercentage}}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {{/competencyplans}}
+                                                </div>
+                                            {{/ hascompetencyplans }}
+                                            <div class="tab-pane fade pt-1 {{^hascourses}}active show{{/hascourses}}" id="details" role="tabpanel" aria-labelledby="details-tab">
+                                                {{#hasregionmainsettingsmenu}}
+                                                    <div class="region_main_settings_menu_proxy"></div>
+                                                {{/hasregionmainsettingsmenu}}
+
+                                                {{{ output.course_content_header }}}
+                                                {{{ output.main_content }}}
+                                                {{{ output.activity_navigation }}}
+                                                {{{ output.course_content_footer }}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+{{>theme_moove/inc_end}}
