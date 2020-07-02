@@ -32,7 +32,7 @@ $string['categoryseparator'] = 'Category separator character';
 $string['categoryseparator_desc'] = 'Required when "Category idnumber" is enabled. Character to separate the category name and idnumber.';
 $string['coursesettings'] = 'Course data options';
 $string['createnewcategories'] = 'Create new (hidden) course categories if not found in Moodle';
-$string['createnewcategories_desc'] = 'If the <org><orgunit> element is present in a course\'s incoming data, its content will be used to specify a category if the course is to be created from scratch. The plugin will NOT re-categorise existing courses.
+$string['createnewcategories_desc'] = 'If the &lt;org&gt;&lt;orgunit&gt; element is present in a course\'s incoming data, its content will be used to specify a category if the course is to be created from scratch. The plugin will NOT re-categorise existing courses.
 
 If no category exists with the desired name, then a hidden category will be created.';
 $string['createnewcourses'] = 'Create new (hidden) courses if not found in Moodle';
