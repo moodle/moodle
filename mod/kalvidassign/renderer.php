@@ -538,9 +538,10 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'source', 'name' => 'source', 'value' => 0));
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'metadata', 'name' => 'metadata', 'value' => 0));
 
-        $html .= html_writer::start_tag('center');
+        $html .= html_writer::start_tag('center', ['class' => 'm-t-2 m-b-1']);
 
         $attr = array(
+            'class' => 'btn btn-primary mr-2',
             'type' => 'button',
             'id' => 'id_add_video',
             'name' => 'add_video',
@@ -553,9 +554,8 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
 
         $html .= html_writer::empty_tag('input', $attr);
 
-        $html .= '&nbsp;';
-
         $attr = array(
+            'class' => 'btn btn-secondary',
             'type' => 'submit',
             'name' => 'submit_video',
             'id' => 'submit_video',
@@ -622,10 +622,11 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'source', 'name' => 'source', 'value' => 0));
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'metadata', 'name' => 'metadata', 'value' => 0));
 
-        $html .= html_writer::start_tag('center');
+        $html .= html_writer::start_tag('center', ['class' => 'm-t-2 m-b-1']);
 
         // Add submit and review buttons.
         $attr = array(
+            'class' => 'btn btn-primary mr-2',
             'type' => 'button',
             'name' => 'add_video',
             'id' => 'id_add_video',
@@ -638,9 +639,8 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
 
         $html .= html_writer::empty_tag('input', $attr);
 
-        $html .= '&nbsp;&nbsp;';
-
         $attr = array(
+            'class' => 'btn btn-secondary',
             'type' => 'submit',
             'id'   => 'submit_video',
             'name' => 'submit_video',
@@ -689,7 +689,8 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
                      'value' => $cm->id);
         $html .= html_writer::empty_tag('input', $attr);
 
-        $attr = array('type' => 'submit',
+        $attr = array('class' => 'btn btn-secondary',
+                     'type' => 'submit',
                      'name' => 'grade_submissions',
                      'value' => get_string('gradesubmission', 'kalvidassign'),
                      'class' => 'btn btn-secondary');
