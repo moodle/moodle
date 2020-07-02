@@ -64,6 +64,8 @@ echo $OUTPUT->header();
 
 $renderer = $PAGE->get_renderer('mod_kalvidassign');
 
+echo $OUTPUT->heading($kalvidassign->name);
+
 echo $OUTPUT->box_start('generalbox');
 
 echo $renderer->display_mod_info($kalvidassign, $context);
