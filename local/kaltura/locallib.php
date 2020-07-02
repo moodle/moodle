@@ -390,7 +390,10 @@ function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $edit
     $requestparams['custom_publishdata'] = local_kaltura_get_kaf_publishing_data();
     $requestparams['custom_publishdata_encoded'] = '1';
     $requestparams['custom_moodle_plugin_version'] = local_kaltura_get_config()->version;
-    $requestparams['assignment'] = $ltirequest['submission'];
+
+    if (isset($ltirequest['submission'])) {
+        $requestparams['assignment'] = $ltirequest['submission'];
+    }
 
     // Specific settings for video presentation requests.
     if (isset($ltirequest['custom_disable_add_new'])) {
