@@ -717,7 +717,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
      */
     public function display_submissions_table($cm, $groupfilter = 0, $filter = 'all', $perpage, $quickgrade = false, $tifirst = '', $tilast = '', $page = 0) {
 
-        global $DB, $OUTPUT, $COURSE, $USER;
+        global $DB, $COURSE, $USER;
 
         // Get a list of users who have submissions and retrieve grade data for those users.
         $users = kalvidassign_get_submissions($cm->instance, $filter);
@@ -923,7 +923,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
      * @param object $course The course odject.
      */
     public function display_kalvidassignments_table($course) {
-        global $CFG, $DB, $PAGE, $OUTPUT, $USER;
+        global $CFG, $DB, $USER;
 
         echo html_writer::start_tag('center');
 
@@ -931,7 +931,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
 
         if (!$cms = get_coursemodules_in_course('kalvidassign', $course->id, 'm.timedue')) {
             echo get_string('noassignments', 'mod_kalvidassign');
-            echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$course->id);
+            echo $this->output->continue_button($CFG->wwwroot.'/course/view.php?id='.$course->id);
         }
 
         $strsectionname  = get_string('sectionname', 'format_'.$course->format);
@@ -984,7 +984,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         }
 
         if ($assignmentcount > 0) {
-            $pagerenderer = $PAGE->get_renderer('mod_kalvidassign');
+            $pagerenderer = $this->page->get_renderer('mod_kalvidassign');
             echo $pagerenderer->render($courseindexsummary);
         }
 
@@ -1066,7 +1066,7 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
      * TODO: correct documentation for this function
      */
     public function display_grade_feedback($kalvidassign, $context) {
-        global $USER, $CFG, $DB, $OUTPUT;
+        global $USER, $CFG, $DB;
 
         require_once($CFG->libdir.'/gradelib.php');
 
@@ -1101,14 +1101,14 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         }
 
         // Print the feedback
-        echo $OUTPUT->heading(get_string('feedbackfromteacher', 'kalvidassign', fullname($teacher)));
+        echo $this->output->heading(get_string('feedbackfromteacher', 'kalvidassign', fullname($teacher)));
 
         echo '<table cellspacing="0" class="feedback">';
 
         echo '<tr>';
         echo '<td class="left picture">';
         if ($teacher) {
-            echo $OUTPUT->user_picture($teacher);
+            echo $this->output->user_picture($teacher);
         }
         echo '</td>';
         echo '<td class="topic">';

@@ -37,8 +37,6 @@ class local_mymedia_renderer extends plugin_renderer_base {
      * @return HTML markup
      */
     public function create_vidoes_table($video_list = array()) {
-        global $OUTPUT;
-
         $output      = '';
         $max_columns = 3;
 
