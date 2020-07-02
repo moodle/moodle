@@ -46,7 +46,8 @@ function kalvidassign_add_instance($kalvidassign) {
     if ($kalvidassign->timedue) {
         $event = new stdClass();
         $event->name        = $kalvidassign->name;
-        $event->description = format_module_intro('kalvidassign', $kalvidassign, $kalvidassign->coursemodule);
+        $event->description = format_module_intro('kalvidassign', $kalvidassign, $kalvidassign->coursemodule, false);
+        $event->format      = FORMAT_HTML;
         $event->courseid    = $kalvidassign->course;
         $event->groupid     = 0;
         $event->userid      = 0;
@@ -86,7 +87,8 @@ function kalvidassign_update_instance($kalvidassign) {
         if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'kalvidassign', 'instance' => $kalvidassign->id))) {
 
             $event->name        = $kalvidassign->name;
-            $event->description = format_module_intro('kalvidassign', $kalvidassign, $kalvidassign->coursemodule);
+            $event->description = format_module_intro('kalvidassign', $kalvidassign, $kalvidassign->coursemodule, false);
+            $event->format      = FORMAT_HTML;
             $event->timestart   = $kalvidassign->timedue;
 
             $calendarevent = calendar_event::load($event->id);
@@ -94,7 +96,8 @@ function kalvidassign_update_instance($kalvidassign) {
         } else {
             $event = new stdClass();
             $event->name        = $kalvidassign->name;
-            $event->description = format_module_intro('kalvidassign', $kalvidassign, $kalvidassign->coursemodule);
+            $event->description = format_module_intro('kalvidassign', $kalvidassign, $kalvidassign->coursemodule, false);
+            $event->format      = FORMAT_HTML;
             $event->courseid    = $kalvidassign->course;
             $event->groupid     = 0;
             $event->userid      = 0;
