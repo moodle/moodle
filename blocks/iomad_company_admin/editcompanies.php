@@ -386,7 +386,7 @@ if ($companies) {
 $editcompanies = new block_iomad_company_admin\output\editcompanies([
     'form' => $mform->render(),
     'table' => empty($table) ? null : html_writer::table($table),
-    'pagingbar' => $output->paging_bar($companycount, $page, $perpage, $baseurl),
+    'pagingbar' => $output->paging_bar($companycount, $page, $perpage, $linkurl),
     'companycount' => $companycount,
     'companycountplural' => $companycount != 1,
 ]);
