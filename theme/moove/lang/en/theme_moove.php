@@ -36,6 +36,7 @@ $string['next_section'] = 'Next section';
 $string['search_site'] = 'Search on site';
 $string['search_forums'] = 'Search on course forums';
 $string['platform_access'] = 'Access to the platform';
+$string['platform_access_subtext'] = 'You can use your <a target="_blank" class="text-bold" href="https://earn.sparkpoint.io"><span class="text-srk-primary">Spark</span><span class="text-srk-secondary">Earn</span></a> account to sign in';
 $string['readmore'] = 'Read More';
 $string['stayintouch'] = 'Stay in touch';
 $string['madewitmoodle'] = 'Proudly made with';

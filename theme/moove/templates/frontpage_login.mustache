@@ -27,19 +27,17 @@
 }}
 <div class="card-body">
     <h3>{{#str}}platform_access, theme_moove{{/str}}</h3>
+    <h5>{{#str}}platform_access_subtext, theme_moove{{/str}}</h5>
     <form class="signup-form" action="{{{ config.wwwroot }}}/login/index.php" method="POST" role="form">
         <input type="hidden" name="logintoken" value="{{logintoken}}">
         <label for="username">
             {{^canloginbyemail}}
-                {{#str}}username{{/str}}
-            {{/canloginbyemail}}
-            {{#canloginbyemail}}
                 {{#str}}usernameemail{{/str}}
             {{/canloginbyemail}}
         </label>
         <div class="input-group">
             <div class="input-group-addon"><i class="fa fa-envelope add-on"></i></div>
-            <input type="text" class="form-control" id="username" name="username" placeholder="{{#str}}username{{/str}}" required />
+            <input type="text" class="form-control" id="username" name="username" placeholder="{{#str}}usernameemail{{/str}}" required />
         </div>
 
         <label for="password">{{#str}}password{{/str}}</label>
