@@ -2296,10 +2296,9 @@ class block_iomad_company_admin_external extends external_api {
         }
 
         $companysql = " AND companyid IN (" . join(',', array_keys($companies)) . ") ";
-        $users = $DB->get_records_sql("SELECT distinct userid from {company_users}
-                                       WHERE userid NOT IN (
-                                         SELECT id FROM {user} where deleted = 1
-                                       )
+        $users = $DB->get_records_sql("SELECT distinct cu.userid from {company_users} cu
+                                       JOIN {user} u ON (cu.userid = u.id)
+                                       WHERE u.deleted = 0
                                        $companysql");
         foreach ($users as $user) {
             \core\event\user_updated::create_from_userid($user->userid)->trigger();
