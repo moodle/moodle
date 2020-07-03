@@ -154,7 +154,7 @@ function cli_get_params(array $longoptions, array $shortmapping=null) {
  * @param string $suffix process suffix
  */
 function cli_set_process_title_suffix(string $suffix) {
-    if (defined('CLI_SCRIPT') && isset($_SERVER['argv'])) {
+    if (CLI_SCRIPT && isset($_SERVER['argv'])) {
         $command = join(' ', $_SERVER['argv']);
         @cli_set_process_title("php $command ($suffix)");
     }

@@ -383,7 +383,7 @@ function cron_run_inner_adhoc_task(\core\task\adhoc_task $task) {
  */
 function cron_set_process_title(string $title) {
     global $CFG;
-    if (defined('CLI_SCRIPT')) {
+    if (CLI_SCRIPT) {
         require_once($CFG->libdir . '/clilib.php');
         $datetime = userdate(time(), '%b %d, %H:%M:%S');
         cli_set_process_title_suffix("$datetime $title");
