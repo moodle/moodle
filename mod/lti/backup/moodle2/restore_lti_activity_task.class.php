@@ -129,13 +129,4 @@ class restore_lti_activity_task extends restore_activity_task {
 
         return $rules;
     }
-
-    /**
-     * Getter for ltisource plugins.
-     *
-     * @return int
-     */
-    public function get_old_moduleid() {
-        return $this->oldmoduleid;
-    }
 }
