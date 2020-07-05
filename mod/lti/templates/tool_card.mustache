@@ -27,14 +27,16 @@
     * none
 
     Context variables required for this template:
+    * id
     * hascapabilitygroups
     * state
     ** pending|configured|rejected|unknown
     ** text
     * courseid
     * urls
-    ** course
+    ** course - optional, required if courseid > 0
     ** icon
+    ** edit
     ** publickeyset
     ** accesstoken
     ** authrequest
@@ -44,6 +46,33 @@
     * clientid
     * deploymentid
     * instancecount
+
+    Example context (json):
+    {
+        "id": 1,
+        "name": "Example Tool",
+        "description": "This is an example tool",
+        "platformid": "https:\/\/moodle.example.com",
+        "courseid": 0,
+        "hascapabilitygroups": false,
+        "state": {
+            "text": "Active",
+            "pending": false,
+            "configured": true,
+            "rejected": false,
+            "unknown": false
+        },
+        "urls": {
+            "icon": "https://www.example.com/icon1.png",
+            "edit": "https://www.example.com/mod/lti/typessettings.php",
+            "publickeyset": "https:\/\/moodle.example.com\/mod\/lti\/certs.php",
+            "accesstoken": "https:\/\/moodle.example.com\/mod\/lti\/token.php",
+            "authrequest": "https:\/\/moodle.example.com\/mod\/lti\/auth.php"
+        },
+        "clientid": null,
+        "deploymentid": 1,
+        "instancecount": 0
+    }
 
 }}
 <div class="tool-card" data-type-id="{{id}}" data-uniqid="{{uniqid}}"
@@ -88,7 +117,7 @@
                     <a class="delete" href="#" title="{{#str}} delete {{/str}}">{{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}</a>
                 </div>
             </div>
-            <img class="tool-card-icon" src="{{{urls.icon}}}" alt="{{name}}"></img>
+            <img class="tool-card-icon" src="{{{urls.icon}}}" alt="{{name}}">
             <div class="contenteditable-container">
                 <h4 class="name" contenteditable="true">{{name}}</h4>
                 <div class="overlay-container">{{> mod_lti/loader }}</div>
