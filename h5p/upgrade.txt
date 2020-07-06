@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+* Added a new cache for h5p_library_files (MDL-69207)
+
 === 3.9 ===
 * A new plugintype has been created, h5plib, for having installed more
 than one H5P library version.
