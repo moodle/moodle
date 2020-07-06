@@ -107,6 +107,11 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @return NodeElement
      */
     protected function find($selector, $locator, $exception = false, $node = false, $timeout = false) {
+        if ($selector === 'NodeElement' && is_a($locator, NodeElement::class)) {
+            // Support a NodeElement being passed in for use in step chaining.
+            return $locator;
+        }
+
         // Returns the first match.
         $items = $this->find_all($selector, $locator, $exception, $node, $timeout);
         return count($items) ? reset($items) : null;
