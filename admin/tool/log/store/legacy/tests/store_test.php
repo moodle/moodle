@@ -34,11 +34,9 @@ class logstore_legacy_store_testcase extends advanced_testcase {
 
         $this->setAdminUser();
         $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $module1 = $this->getDataGenerator()->create_module('resource', array('course' => $course1));
         $course2 = $this->getDataGenerator()->create_course();
-        $module2 = $this->getDataGenerator()->create_module('resource', array('course' => $course2));
 
         // Enable legacy logging plugin.
         set_config('enabled_stores', 'logstore_legacy', 'tool_log');
@@ -68,15 +66,8 @@ class logstore_legacy_store_testcase extends advanced_testcase {
             array('context' => context_course::instance($course2->id), 'other' => array('sample' => 6, 'xx' => 11)));
         $event2->trigger();
 
-        $this->setUser($user2);
-        add_to_log($course1->id, 'xxxx', 'yyyy', '', '7', 0, 0);
-        $this->assertDebuggingCalled();
-
-        add_to_log($course2->id, 'aaa', 'bbb', 'info.php', '666', $module2->cmid, $user1->id);
-        $this->assertDebuggingCalled();
-
         $logs = $DB->get_records('log', array(), 'id ASC');
-        $this->assertCount(4, $logs);
+        $this->assertCount(2, $logs);
 
         $log = array_shift($logs);
         $this->assertNotEmpty($log->id);
@@ -104,34 +95,6 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         $this->assertSame('unittest.php?id=6', $log->url);
         $this->assertSame('bbb', $log->info);
 
-        $oldlogid = $log->id;
-        $log = array_shift($logs);
-        $this->assertGreaterThan($oldlogid, $log->id);
-        $this->assertNotEmpty($log->id);
-        $this->assertTimeCurrent($log->time);
-        $this->assertEquals($user2->id, $log->userid);
-        $this->assertSame('0.0.0.0', $log->ip);
-        $this->assertEquals($course1->id, $log->course);
-        $this->assertSame('xxxx', $log->module);
-        $this->assertEquals(0, $log->cmid);
-        $this->assertSame('yyyy', $log->action);
-        $this->assertSame('', $log->url);
-        $this->assertSame('7', $log->info);
-
-        $oldlogid = $log->id;
-        $log = array_shift($logs);
-        $this->assertGreaterThan($oldlogid, $log->id);
-        $this->assertNotEmpty($log->id);
-        $this->assertTimeCurrent($log->time);
-        $this->assertEquals($user1->id, $log->userid);
-        $this->assertSame('0.0.0.0', $log->ip);
-        $this->assertEquals($course2->id, $log->course);
-        $this->assertSame('aaa', $log->module);
-        $this->assertEquals($module2->cmid, $log->cmid);
-        $this->assertSame('bbb', $log->action);
-        $this->assertSame('info.php', $log->url);
-        $this->assertSame('666', $log->info);
-
         // Test if disabling works.
         set_config('enabled_stores', 'logstore_legacy', 'tool_log');
         set_config('loglegacy', 0, 'logstore_legacy');
@@ -142,9 +105,7 @@ class logstore_legacy_store_testcase extends advanced_testcase {
 
         \logstore_legacy\event\unittest_executed::create(
             array('context' => \context_system::instance(), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
-        add_to_log($course1->id, 'xxxx', 'yyyy', '', '7', 0, 0);
-        $this->assertDebuggingCalled();
-        $this->assertEquals(4, $DB->count_records('log'));
+        $this->assertEquals(2, $DB->count_records('log'));
 
         // Another way to disable legacy completely.
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
@@ -153,9 +114,7 @@ class logstore_legacy_store_testcase extends advanced_testcase {
 
         \logstore_legacy\event\unittest_executed::create(
             array('context' => \context_system::instance(), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
-        add_to_log($course1->id, 'xxxx', 'yyyy', '', '7', 0, 0);
-        $this->assertDebuggingCalled();
-        $this->assertEquals(4, $DB->count_records('log'));
+        $this->assertEquals(2, $DB->count_records('log'));
         // Set everything back.
         set_config('enabled_stores', '', 'tool_log');
         set_config('loglegacy', 0, 'logstore_legacy');
