@@ -248,6 +248,11 @@ class enrol_self_plugin extends enrol_plugin {
             return get_string('canntenrol', 'enrol_self');
         }
 
+        // Check if user has the capability to enrol in this context.
+        if (!has_capability('enrol/self:enrolself', context_course::instance($instance->courseid))) {
+            return get_string('canntenrol', 'enrol_self');
+        }
+
         if ($instance->enrolstartdate != 0 and $instance->enrolstartdate > time()) {
             return get_string('canntenrolearly', 'enrol_self', userdate($instance->enrolstartdate));
         }
