@@ -32,6 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = '语言';
 $string['moodlelogo'] = 'Moodle图标';
-$string['next'] = '向后';
-$string['previous'] = '向前';
+$string['next'] = '下一个';
+$string['previous'] = '上一个';
 $string['reload'] = '重新载入';
