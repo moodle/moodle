@@ -42,59 +42,6 @@ use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
 class behat_deprecated extends behat_base {
 
     /**
-     * Click link in navigation tree that matches the text in parentnode/s (seperated using greater-than character if more than one)
-     *
-     * @throws ExpectationException
-     * @param string $nodetext navigation node to click.
-     * @param string $parentnodes comma seperated list of parent nodes.
-     * @return void
-     * @deprecated since Moodle 3.6 MDL-57281 - please do not use this definition step any more.
-     * @todo MDL-63004 This will be deleted in Moodle 4.0.
-     */
-    public function i_navigate_to_node_in($nodetext, $parentnodes) {
-        $alternative[] = 'I navigate to "PATH" in current page administration';
-        $alternative[] = 'I navigate to "PATH" in site administration';
-        $alternative[] = 'I navigate to "TAB1 > TAB2" in the course gradebook';
-        $alternative[] = 'I navigate to course participants';
-        $alternative[] = 'If some items are not available without Navigation block at all, one can use combination of:
-                              I add the "Navigation" block if not present
-                              I click on "LINK" "link" in the "Navigation" "block"';
-
-        $this->deprecated_message($alternative);
-
-        $parentnodes = array_map('trim', explode('>', $parentnodes));
-        $nodelist = array_merge($parentnodes, [$nodetext]);
-        $firstnode = array_shift($nodelist);
-
-        if ($firstnode === get_string('administrationsite')) {
-            $this->execute('behat_theme_boost_behat_navigation::i_select_from_flat_navigation_drawer',
-                    array(get_string('administrationsite')));
-            $this->execute('behat_theme_boost_behat_navigation::select_on_administration_page', array($nodelist));
-            return;
-        }
-
-        if ($firstnode === get_string('sitepages')) {
-            if ($nodetext === get_string('calendar', 'calendar')) {
-                $this->execute('behat_theme_boost_behat_navigation::i_select_from_flat_navigation_drawer',
-                        array(($nodetext)));
-            } else {
-                // TODO MDL-57120 other links under "Site pages" are not accessible without navigation block.
-                $this->execute('behat_theme_boost_behat_navigation::select_node_in_navigation',
-                        array($nodetext, $parentnodes));
-            }
-            return;
-        }
-
-        if ($firstnode === get_string('courseadministration')) {
-            // Administration menu is available only on the main course page where settings in Administration
-            // block (original purpose of the step) are available on every course page.
-            $this->execute('behat_theme_boost_behat_navigation::go_to_main_course_page', array());
-        }
-
-        $this->execute('behat_theme_boost_behat_navigation::select_from_administration_menu', array($nodelist));
-    }
-
-    /**
      * Docks a block. Editing mode should be previously enabled.
      * @throws ExpectationException
      * @param string $blockname
