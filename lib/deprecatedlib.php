@@ -3351,3 +3351,19 @@ function user_get_participants($courseid, $groupid = 0, $accesssince, $roleid, $
 
     return $DB->get_recordset_sql("$select $from $where $sort", $params, $limitfrom, $limitnum);
 }
+
+/**
+ * Returns the list of full course categories to be used in html_writer::select()
+ *
+ * Calls {@see core_course_category::make_categories_list()} to build the list.
+ *
+ * @deprecated since Moodle 4.0
+ * @todo This will be finally removed for Moodle 4.4 as part of MDL-69124.
+ * @return array array mapping course category id to the display name
+ */
+function make_categories_options() {
+    $deprecatedtext = __FUNCTION__ . '() is deprecated. Please use \core_course_category::make_categories_list() instead.';
+    debugging($deprecatedtext, DEBUG_DEVELOPER);
+
+    return core_course_category::make_categories_list('', 0, ' / ');
+}
