@@ -2539,5 +2539,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020072300.01);
     }
 
+    if ($oldversion < 2020073000.01) {
+
+        // Define field timecreated to be added to task_adhoc.
+        $table = new xmldb_table('task_adhoc');
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'blocking');
+
+        // Conditionally launch add field timecreated.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020073000.01);
+    }
+
     return true;
 }
