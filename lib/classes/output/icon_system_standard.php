@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class icon_system_standard {
+class icon_system_standard extends icon_system {
 
     public function render_pix_icon(renderer_base $output, pix_icon $icon) {
         $data = $icon->export_for_template($output);
