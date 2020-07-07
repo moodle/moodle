@@ -79,7 +79,7 @@ class core_setuplib_testcase extends advanced_testcase {
         global $CFG;
 
         // This doesn't test them all possible ones, but these are set for unit tests.
-        $cfgnames = array('dataroot', 'dirroot', 'tempdir', 'cachedir', 'localcachedir');
+        $cfgnames = array('dataroot', 'dirroot', 'tempdir', 'backuptempdir', 'cachedir', 'localcachedir');
 
         $fixture  = '';
         $expected = '';
