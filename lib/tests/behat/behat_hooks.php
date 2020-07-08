@@ -200,6 +200,25 @@ class behat_hooks extends behat_base {
     }
 
     /**
+     * Run final tests before running the suite.
+     *
+     * @BeforeSuite
+     * @param BeforeSuiteScope $scope scope passed by event fired before suite.
+     */
+    public static function before_suite_final_checks(BeforeSuiteScope $scope) {
+        $happy = defined('BEHAT_TEST');
+        $happy = $happy && defined('BEHAT_SITE_RUNNING');
+        $happy = $happy && php_sapi_name() == 'cli';
+        $happy = $happy && behat_util::is_test_mode_enabled();
+        $happy = $happy && behat_util::is_test_site();
+
+        if (!$happy) {
+            error_log('Behat only can modify the test database and the test dataroot!');
+            exit(1);
+        }
+    }
+
+    /**
      * Gives access to moodle codebase, to keep track of feature start time.
      *
      * @param BeforeFeatureScope $scope scope passed by event fired before feature.
@@ -277,15 +296,6 @@ class behat_hooks extends behat_base {
      */
     public function before_scenario(BeforeScenarioScope $scope) {
         global $DB, $CFG;
-
-        // As many checks as we can.
-        if (!defined('BEHAT_TEST') ||
-               !defined('BEHAT_SITE_RUNNING') ||
-               php_sapi_name() != 'cli' ||
-               !behat_util::is_test_mode_enabled() ||
-               !behat_util::is_test_site()) {
-            throw new behat_stop_exception('Behat only can modify the test database and the test dataroot!');
-        }
 
         $moreinfo = 'More info in ' . behat_command::DOCS_URL;
         $driverexceptionmsg = 'Selenium server is not running, you need to start it to run tests that involve Javascript. ' . $moreinfo;
