@@ -156,6 +156,12 @@ class behat_core_generator extends behat_generator_base {
                 'datagenerator' => 'role',
                 'required' => ['shortname'],
             ],
+            'role capabilities' => [
+                'singular' => 'role capability',
+                'datagenerator' => 'role_capability',
+                'required' => ['role'],
+                'switchids' => ['role' => 'roleid'],
+            ],
             'grade categories' => [
                 'singular' => 'grade category',
                 'datagenerator' => 'grade_category',
@@ -722,6 +728,23 @@ class behat_core_generator extends behat_generator_base {
         }
 
         $this->datagenerator->create_role($data);
+    }
+
+    /**
+     * Assign capabilities to a role.
+     *
+     * @param array $data
+     */
+    protected function process_role_capability($data): void {
+        // We require the user to fill the role shortname.
+        if (empty($data['roleid'])) {
+            throw new Exception('\'role capability\' requires the field \'roleid\' to be specified');
+        }
+
+        $roleid = $data['roleid'];
+        unset($data['roleid']);
+
+        $this->datagenerator->create_role_capability($roleid, $data, \context_system::instance());
     }
 
     /**
