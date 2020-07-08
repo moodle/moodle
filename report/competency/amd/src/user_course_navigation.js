@@ -46,6 +46,8 @@ define(['jquery'], function($) {
      * @param {Event} e the event
      */
     UserCourseNavigation.prototype._userChanged = function(e) {
+        // Note: This change causes a page reload and is intentionally not paired with a js_complete call.
+        M.util.js_pending('report_competency/user_course_navigation:_userChanged');
         var newUserId = $(e.target).val();
         var queryStr = '?user=' + newUserId + '&id=' + this._courseId;
         document.location = this._baseUrl + queryStr;
