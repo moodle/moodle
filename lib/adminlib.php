@@ -628,7 +628,7 @@ function is_dataroot_insecure($fetchtest=false) {
  * Enables CLI maintenance mode by creating new dataroot/climaintenance.html file.
  */
 function enable_cli_maintenance_mode() {
-    global $CFG;
+    global $CFG, $SITE;
 
     if (file_exists("$CFG->dataroot/climaintenance.html")) {
         unlink("$CFG->dataroot/climaintenance.html");
@@ -645,7 +645,7 @@ function enable_cli_maintenance_mode() {
     } else {
         $data = get_string('sitemaintenance', 'admin');
         $data = bootstrap_renderer::early_error_content($data, null, null, null);
-        $data = bootstrap_renderer::plain_page(get_string('sitemaintenance', 'admin'), $data);
+        $data = bootstrap_renderer::plain_page(get_string('sitemaintenancetitle', 'admin', $SITE->fullname), $data);
     }
 
     file_put_contents("$CFG->dataroot/climaintenance.html", $data);

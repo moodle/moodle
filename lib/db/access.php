@@ -119,6 +119,15 @@ $capabilities = array(
         )
     ),
 
+    'moodle/site:senderrormessage' => [
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        )
+    ],
+
     'moodle/site:deleteownmessage' => array(
 
         'captype' => 'write',
