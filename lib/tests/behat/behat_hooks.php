@@ -304,12 +304,23 @@ class behat_hooks extends behat_base {
         } catch (CurlExec $e) {
             // Exception thrown by WebDriver, so only @javascript tests will be caugth; in
             // behat_util::check_server_status() we already checked that the server is running.
-            throw new behat_stop_exception($driverexceptionmsg);
+            throw new behat_stop_exception(
+                $driverexceptionmsg . '. ' .
+                $e->getMessage() . "\n\n" .
+                format_backtrace($e->getTrace(), true)
+            );
         } catch (DriverException $e) {
-            throw new behat_stop_exception($driverexceptionmsg);
+            throw new behat_stop_exception(
+                $driverexceptionmsg . '. ' .
+                $e->getMessage() . "\n\n" .
+                format_backtrace($e->getTrace(), true)
+            );
         } catch (UnknownError $e) {
             // Generic 'I have no idea' Selenium error. Custom exception to provide more feedback about possible solutions.
-            throw new behat_stop_exception($e->getMessage());
+            throw new behat_stop_exception(
+                $e->getMessage() . "\n\n" .
+                format_backtrace($e->getTrace(), true)
+            );
         }
 
         $suitename = $scope->getSuite()->getName();
