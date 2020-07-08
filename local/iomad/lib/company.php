@@ -3781,17 +3781,21 @@ class company {
         $completionrec = $DB->get_record('course_completions', array('userid' => $userid, 'course' => $courseid));
 
         // Get the enrolment record as the completion record isn't fully formed at this point.
-        $enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+        if (!$enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
                                          JOIN {enrol} e ON (ue.enrolid = e.id)
                                          WHERE ue.userid = :userid
                                          AND e.courseid = :courseid
                                          AND e.status = 0",
                                          array('userid' => $userid,
-                                               'courseid' => $courseid));
+                                               'courseid' => $courseid))) {
+            // User isn't enrolled. Not sure why we got this.
+            return true;
+        }
+
 
         // Do not send if this is already recorded.
         if (!empty($enrolrec->timestart) &&
-            !$DB->get_record_sql("SELECT id FROM {local_iomad_track}
+            $DB->get_record_sql("SELECT id FROM {local_iomad_track}
                                   WHERE userid=:userid
                                   AND courseid = :courseid
                                   AND timeenrolled = :timeenrolled
@@ -3802,9 +3806,6 @@ class company {
                                         'timeenrolled' => $enrolrec->timestart))) {
             return true;
         }
-
-        // Need to make sure any certificate is created.
-        sleep(9);
 
         $course = $DB->get_record('course', array('id' => $courseid));
         $user = $DB->get_record('user', array('id' => $userid));
