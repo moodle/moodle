@@ -72,22 +72,22 @@ abstract class icon_system {
     /**
      * Factory method
      *
-     * @param $type Either a specific type, or null to get the default type.
+     * @param string $type Either a specific type, or null to get the default type.
      * @return \core\output\icon_system
      */
     public final static function instance($type = null) {
         global $PAGE;
 
-        if ($type == null) {
-            if (!empty(self::$instance)) {
-                return self::$instance;
-            }
-            $type = $PAGE->theme->get_icon_system();
-            self::$instance = new $type();
-            // Default one is a singleton.
+        if (empty(self::$instance)) {
+            $icontype = $PAGE->theme->get_icon_system();
+            self::$instance = new $icontype();
+        }
+
+        // If $type is specified we need to make sure that the theme icon system supports this type,
+        // if not, we will return a generic new instance of the $type.
+        if ($type === null || is_a(self::$instance, $type)) {
             return self::$instance;
         } else {
-            // Not a singleton.
             return new $type();
         }
     }
