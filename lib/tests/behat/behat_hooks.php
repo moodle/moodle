@@ -289,6 +289,21 @@ class behat_hooks extends behat_base {
     }
 
     /**
+     * Helper function to restart the Mink session.
+     */
+    protected function restart_session() {
+        $session = $this->getSession();
+        if ($session->isStarted()) {
+            $session->restart();
+        } else {
+            $session->start();
+        }
+        if ($this->running_javascript() && $this->getSession()->getDriver()->getWebDriverSessionId() === 'session') {
+            throw new DriverException('Unable to create valid session');
+        }
+    }
+
+    /**
      * Resets the test environment.
      *
      * @param BeforeScenarioScope $scope scope passed by event fired before scenario.
@@ -297,30 +312,35 @@ class behat_hooks extends behat_base {
     public function before_scenario(BeforeScenarioScope $scope) {
         global $DB, $CFG;
 
-        $moreinfo = 'More info in ' . behat_command::DOCS_URL;
-        $driverexceptionmsg = 'Selenium server is not running, you need to start it to run tests that involve Javascript. ' . $moreinfo;
-        try {
-            $session = $this->getSession();
-        } catch (CurlExec $e) {
-            // Exception thrown by WebDriver, so only @javascript tests will be caugth; in
-            // behat_util::check_server_status() we already checked that the server is running.
-            throw new behat_stop_exception(
-                $driverexceptionmsg . '. ' .
-                $e->getMessage() . "\n\n" .
-                format_backtrace($e->getTrace(), true)
-            );
-        } catch (DriverException $e) {
-            throw new behat_stop_exception(
-                $driverexceptionmsg . '. ' .
-                $e->getMessage() . "\n\n" .
-                format_backtrace($e->getTrace(), true)
-            );
-        } catch (UnknownError $e) {
-            // Generic 'I have no idea' Selenium error. Custom exception to provide more feedback about possible solutions.
-            throw new behat_stop_exception(
-                $e->getMessage() . "\n\n" .
-                format_backtrace($e->getTrace(), true)
-            );
+        if (self::$initprocessesfinished) {
+            $this->restart_session();
+        } else {
+            $moreinfo = 'More info in ' . behat_command::DOCS_URL;
+            $driverexceptionmsg = 'Selenium server is not running, you need to start it to run tests that involve Javascript. ' . $moreinfo;
+
+            try {
+                $this->restart_session();
+            } catch (CurlExec $e) {
+                // Exception thrown by WebDriver, so only @javascript tests will be caugth; in
+                // behat_util::check_server_status() we already checked that the server is running.
+                throw new behat_stop_exception(
+                    $driverexceptionmsg . '. ' .
+                    $e->getMessage() . "\n\n" .
+                    format_backtrace($e->getTrace(), true)
+                );
+            } catch (DriverException $e) {
+                throw new behat_stop_exception(
+                    $driverexceptionmsg . '. ' .
+                    $e->getMessage() . "\n\n" .
+                    format_backtrace($e->getTrace(), true)
+                );
+            } catch (UnknownError $e) {
+                // Generic 'I have no idea' Selenium error. Custom exception to provide more feedback about possible solutions.
+                throw new behat_stop_exception(
+                    $e->getMessage() . "\n\n" .
+                    format_backtrace($e->getTrace(), true)
+                );
+            }
         }
 
         $suitename = $scope->getSuite()->getName();
@@ -356,9 +376,6 @@ class behat_hooks extends behat_base {
                 }
             }
         }
-
-        // Reset mink session between the scenarios.
-        $session->reset();
 
         // Reset $SESSION.
         \core\session\manager::init_empty_session();
