@@ -568,6 +568,7 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
             this.getDragClone(drag)
                 .removeClass('active')
                 .after(dragclone);
+            questionManager.addEventHandlersToMarker(dragclone);
         }
     };
 
@@ -678,31 +679,9 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
          * Set up the event handlers that make this question type work. (Done once per page.)
          */
         setupEventHandlers: function() {
-            $('body')
-                .on('mousedown touchstart',
-                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.draghomes .marker', questionManager.handleDragStart)
-                .on('mousedown touchstart',
-                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.droparea .marker', questionManager.handleDragStart)
-                .on('keydown keypress',
-                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.draghomes .marker', questionManager.handleKeyPress)
-                .on('keydown keypress',
-                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.droparea .marker', questionManager.handleKeyPress)
-                .on('focusin',
-                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.draghomes .marker', function(e) {
-                        questionManager.handleKeyboardFocus(e, true);
-                    })
-                .on('focusin',
-                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.droparea .marker', function(e) {
-                        questionManager.handleKeyboardFocus(e, true);
-                    })
-                .on('focusout',
-                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.draghomes .marker', function(e) {
-                        questionManager.handleKeyboardFocus(e, false);
-                    })
-                .on('focusout',
-                    '.que.ddmarker:not(.qtype_ddmarker-readonly) div.droparea .marker', function(e) {
-                        questionManager.handleKeyboardFocus(e, false);
-                    });
+            // We do not use the body event here to prevent the other event on Mobile device, such as scroll event.
+            questionManager.addEventHandlersToMarker($('.que.ddmarker:not(.qtype_ddmarker-readonly) div.draghomes .marker'));
+            questionManager.addEventHandlersToMarker($('.que.ddmarker:not(.qtype_ddmarker-readonly) div.droparea .marker'));
             $(window).on('resize', function() {
                 questionManager.handleWindowResize(false);
             });
@@ -717,6 +696,23 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
             setTimeout(function() {
                 questionManager.fixLayoutIfThingsMoved();
             }, 100);
+        },
+
+        /**
+         * Binding the event again for newly created element.
+         *
+         * @param {jQuery} element Element to bind the event
+         */
+        addEventHandlersToMarker: function(element) {
+            element
+                .on('mousedown touchstart', questionManager.handleDragStart)
+                .on('keydown keypress', questionManager.handleKeyPress)
+                .focusin(function(e) {
+                    questionManager.handleKeyboardFocus(e, true);
+                })
+                .focusout(function(e) {
+                    questionManager.handleKeyboardFocus(e, false);
+                });
         },
 
         /**
