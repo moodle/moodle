@@ -67,7 +67,7 @@ class report extends \mod_scorm\report {
                        st.attempt AS attempt,
                        st.scoid AS scoid
                   FROM {scorm_scoes_track} st
-                 WHERE st.userid IN ({$allowedlistsql}) AND st.scoid = :scoid";
+                 WHERE st.userid IN ({$allowedlist}) AND st.scoid = :scoid";
         $attempts = $DB->get_records_sql($sql, $params);
 
         $usergrades = [];
