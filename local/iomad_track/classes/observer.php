@@ -193,13 +193,16 @@ class observer {
         }
 
         // Get the enrolment record as sometime the completion record isn't fully formed after a completion reset.
-        $enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+        if (!$enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
                                          JOIN {enrol} e ON (ue.enrolid = e.id)
                                          WHERE ue.userid = :userid
                                          AND e.courseid = :courseid
                                          AND e.status = 0",
                                          array('userid' => $userid,
-                                               'courseid' => $courseid));
+                                               'courseid' => $courseid))) {
+            // User isn't enrolled. Not sure why we got this.
+            return true;
+        }
 
         // Is this a duplicate event?
         if (!empty($enrolrec->timestart) &&
@@ -226,25 +229,25 @@ class observer {
             $finalgrade = 0;
         }
 
+        // Is the record broken?
+        $broken = false;
+        if (empty($comprec->timeenrolled)) {
+            $broken = true;
+            $comprec->timeenrolled = $enrolrec->timestart;
+        }
+
+        if (empty($comprec->timestarted)) {
+            $broken = true;
+            $comprec->timestarted = $enrolrec->timestart;
+        }
+
+        if ($broken) {
+            // Update the completion record.
+            $DB->update_record('course_completions', $comprec);
+        }
+
         if (!$current = $DB->get_record('local_iomad_track', array('courseid' => $courseid, 'userid' => $userid, 'timecompleted' => null))) {
             // For some reason we don't already have a record.
-            // Is the record broken?
-            $broken = false;
-            if (empty($comprec->timeenrolled)) {
-                $broken = true;
-                $comprec->timeenrolled = $enrolrec->timestart;
-            }
-
-            if (empty($comprec->timestarted)) {
-                $broken = true;
-                $comprec->timestarted = $enrolrec->timestart;
-            }
-
-            if ($broken) {
-                // Update the completion record.
-                $DB->update_record('course_completions', $comprec);
-            }
-
             // Get the rest of the data.
             $usercompany = \company::by_userid($userid);
             $companyrec = $DB->get_record('company', array('id' => $usercompany->id));
