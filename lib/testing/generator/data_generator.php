@@ -789,7 +789,20 @@ EOD;
         // If no archetype was specified we allow it to be added to all contexts,
         // otherwise we allow it in the archetype contexts.
         if (!$record['archetype']) {
-            $contextlevels = array_keys(context_helper::get_all_levels());
+            $contextlevels = [];
+            $usefallback = true;
+            foreach (context_helper::get_all_levels() as $level => $title) {
+                if (array_key_exists($title, $record)) {
+                    $usefallback = false;
+                    if (!empty($record[$title])) {
+                        $contextlevels[] = $level;
+                    }
+                }
+            }
+
+            if ($usefallback) {
+                $contextlevels = array_keys(context_helper::get_all_levels());
+            }
         } else {
             // Copying from the archetype default rol.
             $archetyperoleid = $DB->get_field(
@@ -802,7 +815,6 @@ EOD;
         set_role_contextlevels($newroleid, $contextlevels);
 
         if ($record['archetype']) {
-
             // We copy all the roles the archetype can assign, override, switch to and view.
             if ($record['archetype']) {
                 $types = array('assign', 'override', 'switch', 'view');
@@ -818,6 +830,31 @@ EOD;
             // Copying the archetype capabilities.
             $sourcerole = $DB->get_record('role', array('id' => $archetyperoleid));
             role_cap_duplicate($sourcerole, $newroleid);
+        }
+
+        $allcapabilities = get_all_capabilities();
+        $foundcapabilities = array_intersect(array_keys($allcapabilities), array_keys($record));
+        $systemcontext = \context_system::instance();
+
+        $allpermissions = [
+            'inherit' => CAP_INHERIT,
+            'allow' => CAP_ALLOW,
+            'prevent' => CAP_PREVENT,
+            'prohibit' => CAP_PROHIBIT,
+        ];
+
+        foreach ($foundcapabilities as $capability) {
+            $permission = $record[$capability];
+            if (!array_key_exists($permission, $allpermissions)) {
+                throw new \coding_exception("Unknown capability permissions '{$permission}'");
+            }
+            assign_capability(
+                $capability,
+                $allpermissions[$permission],
+                $newroleid,
+                $systemcontext->id,
+                true
+            );
         }
 
         return $newroleid;
