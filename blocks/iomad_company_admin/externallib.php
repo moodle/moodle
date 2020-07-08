@@ -2295,7 +2295,7 @@ class block_iomad_company_admin_external extends external_api {
             return true;
         }
 
-        $companysql = " AND companyid IN (" . join(',', array_keys($companies)) . ") ";
+        $companysql = " AND cu.companyid IN (" . join(',', array_keys($companies)) . ") ";
         $users = $DB->get_records_sql("SELECT distinct cu.userid from {company_users} cu
                                        JOIN {user} u ON (cu.userid = u.id)
                                        WHERE u.deleted = 0
