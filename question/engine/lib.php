@@ -791,6 +791,16 @@ class question_out_of_sequence_exception extends moodle_exception {
  */
 abstract class question_utils {
     /**
+     * @var float tolerance to use when comparing question mark/fraction values.
+     *
+     * When comparing floating point numbers in a computer, the representation is not
+     * necessarily exact. Therefore, we need to allow a tolerance.
+     * Question marks are stored in the database as decimal numbers with 7 decimal places.
+     * Therefore, this is the appropriate tolerance to use.
+     */
+    const MARK_TOLERANCE = 0.00000005;
+
+    /**
      * Tests to see whether two arrays have the same keys, with the same values
      * (as compared by ===) for each key. However, the order of the arrays does
      * not have to be the same.
