@@ -170,19 +170,45 @@ class question_attempt_with_steps_test extends advanced_testcase {
         $qa->get_max_fraction();
     }
 
-    public function test_validate_manual_mark() {
-        $this->qa->set_min_fraction(0);
-        $this->qa->set_max_fraction(1);
-        $this->assertSame('', $this->qa->validate_manual_mark(null));
-        $this->assertSame('', $this->qa->validate_manual_mark(''));
-        $this->assertSame('', $this->qa->validate_manual_mark('0'));
-        $this->assertSame('', $this->qa->validate_manual_mark('0.0'));
-        $this->assertSame('', $this->qa->validate_manual_mark('2,0'));
-        $this->assertSame(get_string('manualgradeinvalidformat', 'question'),
-                $this->qa->validate_manual_mark('frog'));
-        $this->assertSame(get_string('manualgradeoutofrange', 'question'),
-                $this->qa->validate_manual_mark('2.1'));
-        $this->assertSame(get_string('manualgradeoutofrange', 'question'),
-                $this->qa->validate_manual_mark('-0,01'));
+    /**
+     * Test cases for {@see test_validate_manual_mark()}.
+     *
+     * @return array test cases
+     */
+    public function validate_manual_mark_cases(): array {
+        // Recall, the DB schema stores question grade information to 7 decimal places.
+        return [
+            [0, 1, 2, null, ''],
+            [0, 1, 2, '', ''],
+            [0, 1, 2, '0', ''],
+            [0, 1, 2, '0.0', ''],
+            [0, 1, 2, '2,0', ''],
+            [0, 1, 2, 'frog', get_string('manualgradeinvalidformat', 'question')],
+            [0, 1, 2, '2.1', get_string('manualgradeoutofrange', 'question')],
+            [0, 1, 2, '-0,01', get_string('manualgradeoutofrange', 'question')],
+            [-0.3333333, 1, 0.75, '0.75', ''],
+            [-0.3333333, 1, 0.75, '0.7500001', get_string('manualgradeoutofrange', 'question')],
+            [-0.3333333, 1, 0.75, '-0.25', ''],
+            [-0.3333333, 1, 0.75, '-0.2500001', get_string('manualgradeoutofrange', 'question')],
+        ];
+    }
+
+    /**
+     * Test validate_manual_mark.
+     *
+     * @dataProvider validate_manual_mark_cases
+     *
+     * @param float $minfraction minimum fraction for the question being attempted.
+     * @param float $maxfraction maximum fraction for the question being attempted.
+     * @param float $maxmark marks for the question attempt.
+     * @param string|null $currentmark submitted mark.
+     * @param string $expectederror expected error, if any.
+     */
+    public function test_validate_manual_mark(float $minfraction, float $maxfraction,
+            float $maxmark, ?string $currentmark, string $expectederror) {
+        $this->qa->set_min_fraction($minfraction);
+        $this->qa->set_max_fraction($maxfraction);
+        $this->qa->set_max_mark($maxmark);
+        $this->assertSame($expectederror, $this->qa->validate_manual_mark($currentmark));
     }
 }
