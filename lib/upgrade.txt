@@ -28,6 +28,7 @@ information provided here is intended especially for developers.
 * The following renamed classes have been completely removed:
     - course_in_list (now: core_course_list_element)
     - coursecat (now: core_course_category)
+* The form element 'htmleditor', which was deprecated in 3.6, has been removed.
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
