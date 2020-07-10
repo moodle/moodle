@@ -10,11 +10,10 @@ Feature: Reset all personalised pages to default
       | student1 | Student | 1 | student1@example.com |
       | student2 | Student | 2 | student2@example.com |
       | student3 | Student | 3 | student3@example.com |
-    And I log in as "admin"
-    And I set the following system permissions of "Authenticated user" role:
-      | block/myprofile:addinstance | Allow |
-      | moodle/block:edit | Allow |
-    And I log out
+    And the following "role capability" exists:
+      | role                        | user  |
+      | moodle/block:edit           | allow |
+      | block/myprofile:addinstance | allow |
 
     And I log in as "student1"
     And I follow "Dashboard"
