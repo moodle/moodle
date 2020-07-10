@@ -23,9 +23,8 @@ Feature: Users can edit tags to add description or rename
 
   @javascript
   Scenario: User with tag editing capability can change tag description
-    Given I log in as "admin"
-    And I set the following system permissions of "Tag editor" role:
-      | capability                   | permission |
+    Given the following "role capability" exists:
+      | role                         | Tag editor |
       | moodle/tag:edit              | Allow      |
       | moodle/site:viewparticipants | Allow      |
       | moodle/user:viewdetails      | Allow      |
