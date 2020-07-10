@@ -21,9 +21,8 @@ Feature: Viewing the list of cohorts to enrol in a course
       | name        | Test cohort name        |
       | idnumber    | 1337                    |
       | description | Test cohort description |
-    And I log in as "admin"
-    And I set the following system permissions of "Teacher" role:
-      | capability           | permission |
+    And the following "role capability" exists:
+      | role                 | Teacher  |
       | moodle/cohort:manage | Prohibit |
       | moodle/cohort:view   | Prohibit |
     And I log out
