@@ -467,8 +467,6 @@ $coursesform->set_data(array('selectedcourses' => $selectedcourses, 'courses' =>
 $usersform = new company_course_users_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourses);
 echo $output->header();
 
-echo "<pre>";print_r($selectedcourses);echo "</pre>";
-
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
     print_error('invaliddepartment', 'block_iomad_company_admin');
@@ -493,7 +491,6 @@ if ($coursesform->is_cancelled() || $usersform->is_cancelled() ||
     if ($companyid > 0) {
         $coursesform->set_data($params);
         echo $coursesform->display();
-echo "A</br>";
         if (!in_array('-1', $selectedcourses, true)) {
             if ($data = $coursesform->get_data() || empty($selectedcourses)) {
                  if (count($courses) > 0) {
