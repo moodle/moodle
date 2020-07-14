@@ -3221,6 +3221,32 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test email with custom headers
+     */
+    public function test_send_email_with_custom_header() {
+        global $DB, $CFG;
+        $this->preventResetByRollback();
+        $this->resetAfterTest();
+
+        $touser = $this->getDataGenerator()->create_user();
+        $fromuser = $this->getDataGenerator()->create_user();
+        $fromuser->customheaders = 'X-Custom-Header: foo';
+
+        set_config('allowedemaildomains', 'example.com');
+        set_config('emailheaders', 'X-Fixed-Header: bar');
+
+        $sink = $this->redirectEmails();
+        email_to_user($touser, $fromuser, 'subject', 'message');
+
+        $emails = $sink->get_messages();
+        $this->assertCount(1, $emails);
+        $email = reset($emails);
+        $this->assertContains('X-Custom-Header: foo', $email->header);
+        $this->assertContains("X-Fixed-Header: bar", $email->header);
+        $sink->clear();
+    }
+
+    /**
      * A data provider for testing email diversion
      */
     public function diverted_emails_provider() {
