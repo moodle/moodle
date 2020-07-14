@@ -1298,6 +1298,148 @@ class search_solr_engine_testcase extends advanced_testcase {
     }
 
     /**
+     * Specific test of the add_document_batch function (also used in many other tests).
+     */
+    public function test_add_document_batch() {
+        // Get a default document.
+        $area = new core_mocksearch\search\mock_search_area();
+        $record = $this->generator->create_record();
+        $doc = $area->get_document($record);
+        $originalid = $doc->get('id');
+
+        // Now create 5 similar documents.
+        $docs = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $doc = $area->get_document($record);
+            $doc->set('id', $originalid . '-' . $i);
+            $doc->set('title', 'Batch ' . $i);
+            $docs[$i] = $doc;
+        }
+
+        // Document 3 has a file attached.
+        $fs = get_file_storage();
+        $filerecord = new \stdClass();
+        $filerecord->content = 'Some FileContents';
+        $file = $this->generator->create_file($filerecord);
+        $docs[3]->add_stored_file($file);
+
+        // Add all these documents to the search engine.
+        $this->assertEquals([5, 0, 1], $this->engine->add_document_batch($docs, true));
+        $this->engine->area_index_complete($area->get_area_id());
+
+        // Check all documents were indexed.
+        $querydata = new stdClass();
+        $querydata->q = 'Batch';
+        $results = $this->search->search($querydata);
+        $this->assertCount(5, $results);
+
+        // Check it also finds based on the file.
+        $querydata->q = 'FileContents';
+        $results = $this->search->search($querydata);
+        $this->assertCount(1, $results);
+    }
+
+    /**
+     * Tests the batching logic, specifically the limit to 100 documents per
+     * batch, and not batching very large documents.
+     */
+    public function test_batching() {
+        $area = new core_mocksearch\search\mock_search_area();
+        $record = $this->generator->create_record();
+        $doc = $area->get_document($record);
+        $originalid = $doc->get('id');
+
+        // Up to 100 documents in 1 batch.
+        $docs = [];
+        for ($i = 1; $i <= 100; $i++) {
+            $doc = $area->get_document($record);
+            $doc->set('id', $originalid . '-' . $i);
+            $docs[$i] = $doc;
+        }
+        [, , , , , $batches] = $this->engine->add_documents(
+                new ArrayIterator($docs), $area, ['indexfiles' => true]);
+        $this->assertEquals(1, $batches);
+
+        // More than 100 needs 2 batches.
+        $docs = [];
+        for ($i = 1; $i <= 101; $i++) {
+            $doc = $area->get_document($record);
+            $doc->set('id', $originalid . '-' . $i);
+            $docs[$i] = $doc;
+        }
+        [, , , , , $batches] = $this->engine->add_documents(
+                new ArrayIterator($docs), $area, ['indexfiles' => true]);
+        $this->assertEquals(2, $batches);
+
+        // Small number but with some large documents that aren't batched.
+        $docs = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $doc = $area->get_document($record);
+            $doc->set('id', $originalid . '-' . $i);
+            $docs[$i] = $doc;
+        }
+        // This one is just small enough to fit.
+        $docs[3]->set('content', str_pad('xyzzy ', 1024 * 1024, 'x'));
+        // These two don't fit.
+        $docs[5]->set('content', str_pad('xyzzy ', 1024 * 1024 + 1, 'x'));
+        $docs[6]->set('content', str_pad('xyzzy ', 1024 * 1024 + 1, 'x'));
+        [, , , , , $batches] = $this->engine->add_documents(
+                new ArrayIterator($docs), $area, ['indexfiles' => true]);
+        $this->assertEquals(3, $batches);
+
+        // Check that all 3 of the large documents (added as batch or not) show up in results.
+        $this->engine->area_index_complete($area->get_area_id());
+        $querydata = new stdClass();
+        $querydata->q = 'xyzzy';
+        $results = $this->search->search($querydata);
+        $this->assertCount(3, $results);
+    }
+
+    /**
+     * Tests with large documents. The point of this test is that we stop batching
+     * documents if they are bigger than 1MB, and the maximum batch count is 100,
+     * so the maximum size batch will be about 100 1MB documents.
+     */
+    public function test_add_document_batch_large() {
+        // This test is a bit slow and not that important to run every time...
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
+
+        // Get a default document.
+        $area = new core_mocksearch\search\mock_search_area();
+        $record = $this->generator->create_record();
+        $doc = $area->get_document($record);
+        $originalid = $doc->get('id');
+
+        // Now create 100 large documents.
+        $size = 1024 * 1024;
+        $docs = [];
+        for ($i = 1; $i <= 100; $i++) {
+            $doc = $area->get_document($record);
+            $doc->set('id', $originalid . '-' . $i);
+            $doc->set('title', 'Batch ' . $i);
+            $doc->set('content', str_pad('', $size, 'Long text ' . $i . '. ', STR_PAD_RIGHT) . ' xyzzy');
+            $docs[$i] = $doc;
+        }
+
+        // Add all these documents to the search engine.
+        $this->engine->add_document_batch($docs, true);
+        $this->engine->area_index_complete($area->get_area_id());
+
+        // Check all documents were indexed, searching for text at end.
+        $querydata = new stdClass();
+        $querydata->q = 'xyzzy';
+        $results = $this->search->search($querydata);
+        $this->assertCount(100, $results);
+
+        // Search for specific text that's only in one.
+        $querydata->q = '42';
+        $results = $this->search->search($querydata);
+        $this->assertCount(1, $results);
+    }
+
+    /**
      * Carries out a raw Solr query using the Solr basic query syntax.
      *
      * This is used to test data contained in the index without going through Moodle processing.
