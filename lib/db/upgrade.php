@@ -3916,5 +3916,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019111803.14);
     }
 
+    if ($oldversion < 2019111804.01) {
+        // Clean up completion criteria records referring to NULL course prerequisites.
+        $select = 'criteriatype = :type AND courseinstance IS NULL';
+        $params = ['type' => 8]; // COMPLETION_CRITERIA_TYPE_COURSE.
+
+        $DB->delete_records_select('course_completion_criteria', $select, $params);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2019111804.01);
+    }
+
     return true;
 }
