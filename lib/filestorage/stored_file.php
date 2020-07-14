@@ -497,6 +497,27 @@ class stored_file {
     }
 
     /**
+     * Returns the total size (in bytes) of the contents of an archive.
+     *
+     * @param file_packer $packer file packer instance
+     * @return int|null total size in bytes
+     */
+    public function get_total_content_size(file_packer $packer): ?int {
+        // Fetch the contents of the archive.
+        $files = $this->list_files($packer);
+
+        // Early return if the value of $files is not of type array.
+        // This can happen when the utility class is unable to open or read the contents of the archive.
+        if (!is_array($files)) {
+            return null;
+        }
+
+        return array_reduce($files, function ($contentsize, $file) {
+            return $contentsize + $file->size;
+        }, 0);
+    }
+
+    /**
      * Extract file to given file path (real OS filesystem), existing files are overwritten.
      *
      * @param file_packer $packer file packer instance
