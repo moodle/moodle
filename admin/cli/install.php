@@ -267,6 +267,7 @@ list($options, $unrecognized) = cli_get_params(
 );
 
 $interactive = empty($options['non-interactive']);
+$skipdatabase = $options['skip-database'];
 
 // set up language
 $lang = clean_param($options['lang'], PARAM_SAFEDIR);
@@ -638,94 +639,98 @@ do {
     }
 } while ($hintdatabase !== '');
 
-// ask for fullname
-if ($interactive) {
-    cli_separator();
-    cli_heading(get_string('fullsitename', 'moodle'));
+// If --skip-database option is provided, we do not need to ask for site fullname, shortname, adminuser, adminpass, adminemail.
+// These fields will be requested during the database install part.
+if (!$skipdatabase) {
+    // Ask for fullname.
+    if ($interactive) {
+        cli_separator();
+        cli_heading(get_string('fullsitename', 'moodle'));
 
-    if ($options['fullname'] !== '') {
-        $prompt = get_string('clitypevaluedefault', 'admin', $options['fullname']);
+        if ($options['fullname'] !== '') {
+            $prompt = get_string('clitypevaluedefault', 'admin', $options['fullname']);
+        } else {
+            $prompt = get_string('clitypevalue', 'admin');
+        }
+
+        do {
+            $options['fullname'] = cli_input($prompt, $options['fullname']);
+        } while (empty($options['fullname']));
     } else {
-        $prompt = get_string('clitypevalue', 'admin');
+        if (empty($options['fullname'])) {
+            $a = (object)['option' => 'fullname', 'value' => $options['fullname']];
+            cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
+        }
     }
 
-    do {
-        $options['fullname'] = cli_input($prompt, $options['fullname']);
-    } while (empty($options['fullname']));
-} else {
-    if (empty($options['fullname'])) {
-        $a = (object)array('option'=>'fullname', 'value'=>$options['fullname']);
-        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
-    }
-}
+    // Ask for shortname.
+    if ($interactive) {
+        cli_separator();
+        cli_heading(get_string('shortsitename', 'moodle'));
 
-// ask for shortname
-if ($interactive) {
-    cli_separator();
-    cli_heading(get_string('shortsitename', 'moodle'));
+        if ($options['shortname'] !== '') {
+            $prompt = get_string('clitypevaluedefault', 'admin', $options['shortname']);
+        } else {
+            $prompt = get_string('clitypevalue', 'admin');
+        }
 
-    if ($options['shortname'] !== '') {
-        $prompt = get_string('clitypevaluedefault', 'admin', $options['shortname']);
+        do {
+            $options['shortname'] = cli_input($prompt, $options['shortname']);
+        } while (empty($options['shortname']));
     } else {
-        $prompt = get_string('clitypevalue', 'admin');
+        if (empty($options['shortname'])) {
+            $a = (object)['option' => 'shortname', 'value' => $options['shortname']];
+            cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
+        }
     }
 
-    do {
-        $options['shortname'] = cli_input($prompt, $options['shortname']);
-    } while (empty($options['shortname']));
-} else {
-    if (empty($options['shortname'])) {
-        $a = (object)array('option'=>'shortname', 'value'=>$options['shortname']);
-        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
-    }
-}
-
-// ask for admin user name
-if ($interactive) {
-    cli_separator();
-    cli_heading(get_string('cliadminusername', 'install'));
-    if (!empty($options['adminuser'])) {
-        $prompt = get_string('clitypevaluedefault', 'admin', $options['adminuser']);
+    // Ask for admin user name.
+    if ($interactive) {
+        cli_separator();
+        cli_heading(get_string('cliadminusername', 'install'));
+        if (!empty($options['adminuser'])) {
+            $prompt = get_string('clitypevaluedefault', 'admin', $options['adminuser']);
+        } else {
+            $prompt = get_string('clitypevalue', 'admin');
+        }
+        do {
+            $options['adminuser'] = cli_input($prompt, $options['adminuser']);
+        } while (empty($options['adminuser']) or $options['adminuser'] === 'guest');
     } else {
+        if ((empty($options['adminuser']) || $options['adminuser'] === 'guest')) {
+            $a = (object)['option' => 'adminuser', 'value' => $options['adminuser']];
+            cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
+        }
+    }
+
+    // Ask for admin user password.
+    if ($interactive) {
+        cli_separator();
+        cli_heading(get_string('cliadminpassword', 'install'));
         $prompt = get_string('clitypevalue', 'admin');
+        do {
+            $options['adminpass'] = cli_input($prompt);
+        } while (empty($options['adminpass']) or $options['adminpass'] === 'admin');
+    } else {
+        if ((empty($options['adminpass']) or $options['adminpass'] === 'admin')) {
+            $a = (object)['option' => 'adminpass', 'value' => $options['adminpass']];
+            cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
+        }
     }
-    do {
-        $options['adminuser'] = cli_input($prompt, $options['adminuser']);
-    } while (empty($options['adminuser']) or $options['adminuser'] === 'guest');
-} else {
-    if (empty($options['adminuser']) or $options['adminuser'] === 'guest') {
-        $a = (object)array('option'=>'adminuser', 'value'=>$options['adminuser']);
+
+    // Ask for the admin email address.
+    if ($interactive) {
+        cli_separator();
+        cli_heading(get_string('cliadminemail', 'install'));
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['adminemail']);
+        $options['adminemail'] = cli_input($prompt, $options['adminemail']);
+    }
+
+    // Validate that the address provided was an e-mail address.
+    if (!empty($options['adminemail']) && !validate_email($options['adminemail'])) {
+        $a = (object)['option' => 'adminemail', 'value' => $options['adminemail']];
         cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
     }
-}
-
-// ask for admin user password
-if ($interactive) {
-    cli_separator();
-    cli_heading(get_string('cliadminpassword', 'install'));
-    $prompt = get_string('clitypevalue', 'admin');
-    do {
-        $options['adminpass'] = cli_input($prompt);
-    } while (empty($options['adminpass']) or $options['adminpass'] === 'admin');
-} else {
-    if (empty($options['adminpass']) or $options['adminpass'] === 'admin') {
-        $a = (object)array('option'=>'adminpass', 'value'=>$options['adminpass']);
-        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
-    }
-}
-
-// Ask for the admin email address.
-if ($interactive) {
-    cli_separator();
-    cli_heading(get_string('cliadminemail', 'install'));
-    $prompt = get_string('clitypevaluedefault', 'admin', $options['adminemail']);
-    $options['adminemail'] = cli_input($prompt, $options['adminemail']);
-}
-
-// Validate that the address provided was an e-mail address.
-if (!empty($options['adminemail']) && !validate_email($options['adminemail'])) {
-    $a = (object) array('option' => 'adminemail', 'value' => $options['adminemail']);
-    cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
 }
 
 // Ask for the upgrade key.
@@ -746,22 +751,26 @@ if ($options['upgradekey'] !== '') {
     $CFG->upgradekey = $options['upgradekey'];
 }
 
-if ($interactive) {
-    if (!$options['agree-license']) {
-        cli_separator();
-        cli_heading(get_string('copyrightnotice'));
-        echo "Moodle  - Modular Object-Oriented Dynamic Learning Environment\n";
-        echo get_string('gpl3')."\n\n";
-        echo get_string('doyouagree')."\n";
-        $prompt = get_string('cliyesnoprompt', 'admin');
-        $input = cli_input($prompt, '', array(get_string('clianswerno', 'admin'), get_string('cliansweryes', 'admin')));
-        if ($input == get_string('clianswerno', 'admin')) {
-            exit(1);
+// The user does not also need to pass agree-license when --skip-database is provided as the user will need to accept
+// the license again in the database install part.
+if (!$skipdatabase) {
+    if ($interactive) {
+        if (!$options['agree-license']) {
+            cli_separator();
+            cli_heading(get_string('copyrightnotice'));
+            echo "Moodle  - Modular Object-Oriented Dynamic Learning Environment\n";
+            echo get_string('gpl3')."\n\n";
+            echo get_string('doyouagree')."\n";
+            $prompt = get_string('cliyesnoprompt', 'admin');
+            $input = cli_input($prompt, '', array(get_string('clianswerno', 'admin'), get_string('cliansweryes', 'admin')));
+            if ($input == get_string('clianswerno', 'admin')) {
+                exit(1);
+            }
         }
-    }
-} else {
-    if (!$options['agree-license']) {
-        cli_error(get_string('climustagreelicense', 'install'));
+    } else {
+        if (!$options['agree-license'] && !$skipdatabase) {
+            cli_error(get_string('climustagreelicense', 'install'));
+        }
     }
 }
 
@@ -810,7 +819,7 @@ if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed)) {
     cli_error(get_string('pluginschecktodo', 'admin'));
 }
 
-if (!$options['skip-database']) {
+if (!$skipdatabase) {
     install_cli_database($options, $interactive);
     // This needs to happen at the end to ensure it occurs after all caches
     // have been purged for the last time.
