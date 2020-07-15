@@ -153,9 +153,12 @@ class services_content_item_service_testcase extends \advanced_testcase {
         $matchingcontentitems1 = $cis->get_content_items_by_name_pattern($user, $pattern1);
         $matchingcontentitems2 = $cis->get_content_items_by_name_pattern($user, $pattern2);
 
-        // The pattern "assign" should return 1 content item ("Assignment").
-        $this->assertCount(1, $matchingcontentitems1);
-        $this->assertEquals("Assignment", $matchingcontentitems1[0]->title);
+        // The pattern "assign" should return at least 1 content item (ex. "Assignment").
+        $this->assertGreaterThanOrEqual(1, count($matchingcontentitems1));
+        // Verify the pattern "assign" can be found in the title of each returned content item.
+        foreach ($matchingcontentitems1 as $contentitem) {
+            $this->assertEquals(1, preg_match("/$pattern1/i", $contentitem->title));
+        }
         // The pattern "random string" should not return any content items.
         $this->assertEmpty($matchingcontentitems2);
     }

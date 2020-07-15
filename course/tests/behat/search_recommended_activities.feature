@@ -8,7 +8,7 @@ Feature: Search recommended activities
     And I navigate to "Courses > Activity chooser > Recommended activities" in site administration
     When I set the field "search" to "assign"
     And I click on "Submit search" "button"
-    Then I should see "Search results: 1"
+    Then I should see "Search results"
     And "Assignment" "table_row" should exist
     And "Book" "table_row" should not exist
 
