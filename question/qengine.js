@@ -127,10 +127,15 @@ M.core_question_engine.questionformalreadysubmitted = false;
  * @param slot the number of the question_attempt within the usage.
  */
 M.core_question_engine.init_submit_button = function(Y, button, slot) {
+    var totalQuestionsInPage = document.querySelectorAll('div.que').length;
     var buttonel = document.getElementById(button);
+    var outeruniqueid = buttonel.closest('.que').id;
     Y.on('click', function(e) {
         M.core_scroll_manager.save_scroll_pos(Y, button);
-        buttonel.form.action = buttonel.form.action + '#q' + slot;
+        if (totalQuestionsInPage > 1) {
+            // Only change the form action if the page have more than one question.
+            buttonel.form.action = buttonel.form.action + '#' + outeruniqueid;
+        }
     }, buttonel);
 }
 
