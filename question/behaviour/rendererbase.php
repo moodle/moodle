@@ -243,7 +243,7 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
         $output = html_writer::empty_tag('input', $attributes);
         if (!$options->readonly) {
             $this->page->requires->js_init_call('M.core_question_engine.init_submit_button',
-                    array($attributes['id'], $qa->get_slot()));
+                    array($attributes['id']));
         }
         return $output;
     }
