@@ -2659,8 +2659,10 @@ class api {
         $userto = \core_user::get_user($requesteduserid);
         $url = new \moodle_url('/message/pendingcontactrequests.php');
 
-        $subject = get_string('messagecontactrequestsnotificationsubject', 'core_message', $userfromfullname);
-        $fullmessage = get_string('messagecontactrequestsnotification', 'core_message', $userfromfullname);
+        $subject = get_string_manager()->get_string('messagecontactrequestsnotificationsubject', 'core_message', $userfromfullname,
+            $userto->lang);
+        $fullmessage = get_string_manager()->get_string('messagecontactrequestsnotification', 'core_message', $userfromfullname,
+            $userto->lang);
 
         $message = new \core\message\message();
         $message->courseid = SITEID;
