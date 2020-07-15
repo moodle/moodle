@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/db" VERSION="20180719" COMMENT="XMLDB file for Moodle mod/quiz"
+<XMLDB PATH="mod/quiz/db" VERSION="20200615" COMMENT="XMLDB file for Moodle mod/quiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -46,6 +46,7 @@
         <FIELD NAME="showblocks" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether blocks should be shown on the attempt.php and review.php pages."/>
         <FIELD NAME="completionattemptsexhausted" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="completionpass" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="completionminattempts" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="allowofflineattempts" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Whether to allow the quiz to be attempted offline in the mobile app"/>
       </FIELDS>
       <KEYS>
