@@ -794,7 +794,11 @@ class mod_assign_external extends external_api {
                         'gradingstatus' => $assign->get_grading_status($submissionrecord->userid)
                     );
 
-                    if ($assign->can_view_submission($submissionrecord->userid)) {
+                    if (($assign->get_instance()->teamsubmission
+                        && $assign->can_view_group_submission($submissionrecord->groupid))
+                        || (!$assign->get_instance()->teamsubmission
+                        && $assign->can_view_submission($submissionrecord->userid))
+                    ) {
                         $submissions[] = $submission;
                     }
                 }
