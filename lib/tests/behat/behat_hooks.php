@@ -87,6 +87,17 @@ class behat_hooks extends behat_base {
     protected static $currentstepexception = null;
 
     /**
+     * If an Exception is thrown in the BeforeScenario hook it will cause the Scenario to be skipped, and the exit code
+     * to be non-zero triggering a potential rerun.
+     *
+     * To combat this the exception is stored and re-thrown when looking for exceptions.
+     * This allows the test to instead be failed and re-run correctly.
+     *
+     * @var null|Exception
+     */
+    protected static $currentscenarioexception = null;
+
+    /**
      * If we are saving any kind of dump on failure we should use the same parent dir during a run.
      *
      * @var The parent dir name
@@ -362,8 +373,13 @@ EOF;
             // The `before_first_scenario_start_session` function will have started the session instead.
             return;
         }
+        self::$currentscenarioexception = null;
 
-        $this->restart_session();
+        try {
+            $this->restart_session();
+        } catch (Exception $e) {
+            self::$currentscenarioexception = $e;
+        }
     }
 
     /**
@@ -374,6 +390,12 @@ EOF;
      */
     public function before_scenario_hook(BeforeScenarioScope $scope) {
         global $DB;
+        if (self::$currentscenarioexception) {
+            // A BeforeScenario hook triggered an exception and marked this test as failed.
+            // Skip this hook as it will likely fail.
+            return;
+        }
+
         $suitename = $scope->getSuite()->getName();
 
         // Register behat selectors for theme, if suite is changed. We do it for every suite change.
@@ -526,6 +548,12 @@ EOF;
      * @BeforeStep
      */
     public function before_step_javascript(BeforeStepScope $scope) {
+        if (self::$currentscenarioexception) {
+            // A BeforeScenario hook triggered an exception and marked this test as failed.
+            // Skip this hook as it will likely fail.
+            return;
+        }
+
         self::$currentstepexception = null;
 
         // Only run if JS.
@@ -742,6 +770,11 @@ EOF;
      * @see Moodle\BehatExtension\EventDispatcher\Tester\ChainedStepTester
      */
     public function i_look_for_exceptions() {
+        // If the scenario already failed in a hook throw the exception.
+        if (!is_null(self::$currentscenarioexception)) {
+            throw self::$currentscenarioexception;
+        }
+
         // If the step already failed in a hook throw the exception.
         if (!is_null(self::$currentstepexception)) {
             throw self::$currentstepexception;
