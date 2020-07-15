@@ -2592,8 +2592,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * moving categories, where you do not want to allow people to move a category
      * to be the child of itself.
      *
-     * See also {@link make_categories_options()}
-     *
      * @param string/array $requiredcapability if given, only categories where the current
      *      user has this capability will be returned. Can also be an array of capabilities,
      *      in which case they are all required.

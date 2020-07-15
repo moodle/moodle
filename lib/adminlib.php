@@ -4980,7 +4980,7 @@ class admin_settings_coursecat_select extends admin_setting_configselect {
         if (is_array($this->choices)) {
             return true;
         }
-        $this->choices = make_categories_options();
+        $this->choices = core_course_category::make_categories_list('', 0, ' / ');
         return true;
     }
 }

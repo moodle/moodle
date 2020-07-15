@@ -1,6 +1,10 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+
+* The function make_categories_options() has now been deprecated. Please use \core_course_category::make_categories_list() instead.
+
 === 3.9 ===
 
 * The function get_module_metadata is now deprecated. Please use \core_course\local\service\content_item_service instead.
