@@ -115,3 +115,47 @@ Feature: Content bank use editor feature
     And I click on "Edit" "link"
     And I switch to "h5p-editor-iframe" class iframe
     Then the field "Title" matches value "New title"
+
+  Scenario: Teachers can edit their own content in the content bank
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 1 | C1        | 0        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+    And the following "contentbank content" exist:
+      | contextlevel | reference | contenttype     | user     | contentname       | filepath                              |
+      | Course       | C1        | contenttype_h5p | admin    | filltheblanks.h5p | /h5p/tests/fixtures/filltheblanks.h5p |
+      | Course       | C1        | contenttype_h5p | teacher1 | ipsums.h5p        | /h5p/tests/fixtures/ipsums.h5p        |
+    When I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I expand "Site pages" node
+    And I click on "Content bank" "link"
+    And I follow "ipsums.h5p"
+    Then "Edit" "link" should exist in the "region-main" "region"
+
+  Scenario: Teachers can't edit content created by other users in the content bank
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 1 | C1        | 0        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+    And the following "contentbank content" exist:
+      | contextlevel | reference | contenttype     | user     | contentname       | filepath                              |
+      | Course       | C1        | contenttype_h5p | admin    | filltheblanks.h5p | /h5p/tests/fixtures/filltheblanks.h5p |
+      | Course       | C1        | contenttype_h5p | teacher1 | ipsums.h5p        | /h5p/tests/fixtures/ipsums.h5p        |
+    When I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I expand "Site pages" node
+    And I click on "Content bank" "link"
+    And I follow "filltheblanks.h5p"
+    Then "Edit" "link" should not exist in the "region-main" "region"

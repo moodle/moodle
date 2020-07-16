@@ -48,6 +48,7 @@ class tool_task_renderer extends plugin_renderer_base {
         $showloglink = \core\task\logmanager::has_log_report();
 
         $table = new html_table();
+        $table->caption = get_string('scheduledtasks', 'tool_task');
         $table->head = [
             get_string('name'),
             get_string('component', 'tool_task'),
@@ -180,7 +181,7 @@ class tool_task_renderer extends plugin_renderer_base {
         $plugininfo->init_display_name();
 
         $componentname = $plugininfo->displayname;
-        if (!$plugininfo->is_enabled()) {
+        if ($plugininfo->is_enabled() === false) {
             $componentname .= ' ' . html_writer::span(
                             get_string('disabled', 'tool_task'), 'badge badge-secondary');
         }

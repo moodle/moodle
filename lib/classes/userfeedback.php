@@ -57,9 +57,9 @@ class core_userfeedback {
         $actions = [
             [
                 'title' => get_string('calltofeedback_give'),
-                'url' => '#',
+                'url' => static::make_link()->out(false),
                 'data' => [
-                        'action' => 'give',
+                    'action' => 'give',
                     'record' => 1,
                     'hide' => 1,
                 ],
@@ -96,20 +96,20 @@ class core_userfeedback {
     public static function should_display_reminder(): bool {
         global $CFG;
 
-        if ($CFG->enableuserfeedback && isloggedin() && !isguestuser()) {
+        if (static::can_give_feedback()) {
             $give = get_user_preferences('core_userfeedback_give');
             $remind = get_user_preferences('core_userfeedback_remind');
 
             $lastactiontime = max($give ?: 0, $remind ?: 0);
 
             switch ($CFG->userfeedback_nextreminder) {
-                case self::REMIND_AFTER_UPGRADE:
-                    $lastupgrade = self::last_major_upgrade_time();
+                case static::REMIND_AFTER_UPGRADE:
+                    $lastupgrade = static::last_major_upgrade_time();
                     if ($lastupgrade >= $lastactiontime) {
                         return $lastupgrade + ($CFG->userfeedback_remindafter * DAYSECS) < time();
                     }
                     break;
-                case self::REMIND_PERIODICALLY:
+                case static::REMIND_PERIODICALLY:
                     return $lastactiontime + ($CFG->userfeedback_remindafter * DAYSECS) < time();
                     break;
             }
@@ -143,6 +143,17 @@ class core_userfeedback {
         ]);
 
         return $url;
+    }
+
+    /**
+     * Whether the current can give feedback.
+     *
+     * @return bool
+     */
+    public static function can_give_feedback(): bool {
+        global $CFG;
+
+        return !empty($CFG->enableuserfeedback) && isloggedin() && !isguestuser();
     }
 
     /**

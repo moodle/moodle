@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20200504" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20200625" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2795,6 +2795,9 @@
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
         <KEY NAME="creatorid" TYPE="foreign" FIELDS="creatorid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="token" UNIQUE="false" FIELDS="token" COMMENT="This index will be used anytime a token is validated."/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="blog_association" COMMENT="Associations of blog entries with courses and module instances">
       <FIELDS>

@@ -228,10 +228,6 @@ class editor {
             throw new coding_exception('Missing H5P library.');
         }
 
-        if ($content->h5plibrary != $this->library) {
-            throw new coding_exception("Wrong H5P library.");
-        }
-
         $content->params = $content->h5pparams;
 
         if (!empty($this->oldcontent)) {
@@ -310,15 +306,16 @@ class editor {
         if ($file) {
             $fields['contenthash'] = $file->get_contenthash();
 
-            // Delete old file if any.
-            if (!empty($this->oldfile)) {
-                $this->oldfile->delete();
-            }
-            // Create new file.
+            // Create or update H5P file.
             if (empty($this->filearea['filename'])) {
                 $this->filearea['filename'] = $contentarray['slug'] . '.h5p';
             }
-            $newfile = $fs->create_file_from_storedfile($this->filearea, $file);
+            if (!empty($this->oldfile)) {
+                $this->oldfile->replace_file_with($file);
+                $newfile = $this->oldfile;
+            } else {
+                $newfile = $fs->create_file_from_storedfile($this->filearea, $file);
+            }
             if (empty($this->oldcontent)) {
                 $pathnamehash = $newfile->get_pathnamehash();
             } else {

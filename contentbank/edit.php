@@ -45,6 +45,7 @@ if (!empty($id)) {
 } else {
     $contenttypename = "contenttype_$pluginname";
     $heading = get_string('addinganew', 'moodle', get_string('description', $contenttypename));
+    $content = null;
 }
 
 // Check plugin is enabled.
@@ -61,9 +62,9 @@ if (class_exists($contenttypeclass)) {
     print_error('unsupported', 'core_contentbank', $returnurl);
 }
 
-// Checks the user can edit this content type.
-if (!$contenttype->can_edit()) {
-    print_error('contenttypenoedit', 'core_contentbank', $returnurl, $contenttype->get_plugin_name());
+// Checks the user can edit this content and content type.
+if (!$contenttype->can_edit($content)) {
+    print_error('contenttypenoedit', 'core_contentbank', $returnurl);
 }
 
 $values = [

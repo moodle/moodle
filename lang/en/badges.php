@@ -81,6 +81,8 @@ $string['awardedtoyou'] = 'Issued to me';
 $string['awardoncron'] = 'Access to the badges was successfully enabled. Too many users can instantly earn this badge. To ensure site performance, this action will take some time to process.';
 $string['awards'] = 'Recipients';
 $string['backpackavailability'] = 'External badge verification';
+$string['backpackconnectionok'] = 'Backpack connection successfully established';
+$string['backpackconnectionnottested'] = 'The connection cannot be tested for this backpack because only Open Badges v2.0 backpacks support it.';
 $string['backpackneedsupdate'] = 'The backpack connected to this profile does not match the backpack for the site. You need to disconnect and reconnect the backpack.';
 $string['backpackavailability_help'] = 'For badge recipients to be able to prove they earned their badges from you, an external backpack service should be able to access your site and verify badges issued from it. Your site does not currently appear to be accessible, which means that badges you have already issued or will issue in the future cannot be verified.
 
@@ -516,7 +518,6 @@ $string['sitebackpack'] = 'Active external backpack';
 $string['sitebackpack_help'] = 'The external backpack that users can connect to from this site. Note that changing this setting after users have connected their backpacks will require each user to go to their backpack settings page and disconnect then reconnect.';
 $string['sitebackpackdeleted'] = 'The site backpack has been deleted.';
 $string['sitebackpacknotdeleted'] = 'This backpack couldn\'t be deleted because it\'s currently the site default.';
-$string['sitebackpackverify'] = 'Backpack connection';
 $string['sitebackpackwarning'] = 'Could not connect to backpack. <br/><br/>Check that the "Badge issuer email address" admin setting is the valid email for an account on the backpack website. <br/><br/>Check that the "Badge issuer password" on the <a href="{$a->url}">site backpack settings page</a>, is the correct password for the account on the backpack website. <br/><br/>The backpack returned: "{$a->warning}"';
 $string['sitebadges'] = 'Site badges';
 $string['sitebadges_help'] = 'Site badges can only be awarded to users for site-related activities. These include completing a set of courses or parts of user profiles. Site badges can also be issued manually by one user to another.
@@ -550,6 +551,8 @@ $string['targetframework'] = 'Framework';
 $string['targetframework_help'] = 'The name of the external skill or standard framework.';
 $string['targetcode'] = 'Code';
 $string['targetcode_help'] = 'A unique string identifier for referencing the external skill or standard within its framework.';
+$string['testbackpack'] = 'Test backpack \'{$a}\'';
+$string['testsettings'] = 'Test settings';
 $string['type'] = 'Type';
 $string['variablesubstitution'] = 'Variable substitution in messages.';
 $string['variablesubstitution_help'] = 'In a badge message, certain variables can be inserted into the subject and/or body of a message so that they will be replaced with real values when the message is sent. The variables should be inserted into the text exactly as they are shown below. The following variables can be used:
@@ -578,3 +581,4 @@ $string['nobackpackcollections'] = 'No badge collections have been selected. <a 
 
 // Deprecated since Moodle 3.9.
 $string['editsettings'] = 'Edit settings';
+$string['sitebackpackverify'] = 'Backpack connection';

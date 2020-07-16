@@ -118,11 +118,15 @@ class postgres_lock_factory implements lock_factory {
     }
 
     /**
-     * Multiple locks for the same resource can be held by a single process.
-     * @return boolean - Defer to the DB driver.
+     * Multiple locks for the same resource can NOT be held by a single process.
+     *
+     * @deprecated since Moodle 4.0.
+     * @return boolean - false.
      */
     public function supports_recursion() {
-        return true;
+        debugging('The function supports_recursion() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
+        return false;
     }
 
     /**
@@ -145,6 +149,7 @@ class postgres_lock_factory implements lock_factory {
 
     /**
      * Create and get a lock
+     *
      * @param string $resource - The identifier for the lock. Should use frankenstyle prefix.
      * @param int $timeout - The number of seconds to wait for a lock before giving up.
      * @param int $maxlifetime - Unused by this lock type.
@@ -155,8 +160,14 @@ class postgres_lock_factory implements lock_factory {
 
         $token = $this->get_index_from_key($this->type . '_' . $resource);
 
-        $params = array('locktype' => $this->dblockid,
-                        'token' => $token);
+        if (isset($this->openlocks[$token])) {
+            return false;
+        }
+
+        $params = [
+            'locktype' => $this->dblockid,
+            'token' => $token
+        ];
 
         $locked = false;
 
@@ -194,11 +205,15 @@ class postgres_lock_factory implements lock_factory {
 
     /**
      * Extend a lock that was previously obtained with @lock.
+     *
+     * @deprecated since Moodle 4.0.
      * @param lock $lock - a lock obtained from this factory.
      * @param int $maxlifetime - the new lifetime for the lock (in seconds).
      * @return boolean - true if the lock was extended.
      */
     public function extend_lock(lock $lock, $maxlifetime = 86400) {
+        debugging('The function extend_lock() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
         // Not supported by this factory.
         return false;
     }

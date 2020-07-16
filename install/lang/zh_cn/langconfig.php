@@ -31,5 +31,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['parentlanguage'] = '';
-$string['thisdirection'] = '符号(ltr)';
+$string['thisdirection'] = '';
 $string['thislanguage'] = '简体中文';

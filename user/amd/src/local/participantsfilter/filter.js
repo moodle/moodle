@@ -184,7 +184,7 @@ export default class {
      * @returns {Number}
      */
     get jointype() {
-        return this.filterRoot.querySelector(Selectors.filter.fields.join).value;
+        return parseInt(this.filterRoot.querySelector(Selectors.filter.fields.join).value, 10);
     }
 
     /**

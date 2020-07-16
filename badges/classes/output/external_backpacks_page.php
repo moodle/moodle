@@ -72,11 +72,11 @@ class external_backpacks_page implements \renderable {
             } else {
                 $backpack->canedit = false;
             }
+            $backpack->cantest = ($backpack->apiversion == OPEN_BADGES_V2);
             $backpack->iscurrent = ($backpack->id == $CFG->badges_site_backpack);
 
             $data->backpacks[] = $backpack;
         }
-        $data->warning = badges_verify_site_backpack();
 
         return $data;
     }

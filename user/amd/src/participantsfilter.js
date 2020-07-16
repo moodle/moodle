@@ -27,6 +27,7 @@ import * as DynamicTable from 'core_table/dynamic';
 import GenericFilter from './local/participantsfilter/filter';
 import {get_strings as getStrings} from 'core/str';
 import Notification from 'core/notification';
+import Pending from 'core/pending';
 import Selectors from './local/participantsfilter/selectors';
 import Templates from 'core/templates';
 
@@ -57,6 +58,8 @@ export const init = participantsRegionId => {
      * @return {Promise}
      */
     const addFilterRow = () => {
+        const pendingPromise = new Pending('core_user/participantsfilter:addFilterRow');
+
         const rownum = 1 + getFilterRegion().querySelectorAll(Selectors.filter.region).length;
         return Templates.renderForPromise('core_user/local/participantsfilter/filterrow', {"rownumber": rownum})
         .then(({html, js}) => {
@@ -85,6 +88,11 @@ export const init = participantsRegionId => {
             updateFiltersOptions();
 
             return filterRow;
+        })
+        .then(result => {
+            pendingPromise.resolve();
+
+            return result;
         })
         .catch(Notification.exception);
     };
@@ -148,14 +156,15 @@ export const init = participantsRegionId => {
      * that it is replaced instead of being removed.
      *
      * @param {HTMLElement} filterRow
+     * @param {Bool} refreshContent Whether to refresh the table content when removing
      */
-    const removeOrReplaceFilterRow = filterRow => {
+    const removeOrReplaceFilterRow = (filterRow, refreshContent) => {
         const filterCount = getFilterRegion().querySelectorAll(Selectors.filter.region).length;
 
         if (filterCount === 1) {
-            replaceFilterRow(filterRow);
+            replaceFilterRow(filterRow, refreshContent);
         } else {
-            removeFilterRow(filterRow);
+            removeFilterRow(filterRow, refreshContent);
         }
     };
 
@@ -163,8 +172,12 @@ export const init = participantsRegionId => {
      * Remove the specified filter row and associated class.
      *
      * @param {HTMLElement} filterRow
+     * @param {Bool} refreshContent Whether to refresh the table content when removing
      */
-    const removeFilterRow = async filterRow => {
+    const removeFilterRow = async(filterRow, refreshContent = true) => {
+        const filterType = filterRow.querySelector(Selectors.filter.fields.type);
+        const hasFilterValue = !!filterType.value;
+
         // Remove the filter object.
         removeFilterObject(filterRow.dataset.filterType);
 
@@ -174,8 +187,10 @@ export const init = participantsRegionId => {
         // Update the list of available filter types.
         updateFiltersOptions();
 
-        // Refresh the table.
-        updateTableFromFilter();
+        if (hasFilterValue && refreshContent) {
+            // Refresh the table if there was any content in this row.
+            updateTableFromFilter();
+        }
 
         // Update filter fieldset legends.
         const filterLegends = await getAvailableFilterLegends();
@@ -190,10 +205,11 @@ export const init = participantsRegionId => {
      * Replace the specified filter row with a new one.
      *
      * @param {HTMLElement} filterRow
+     * @param {Bool} refreshContent Whether to refresh the table content when removing
      * @param {Number} rowNum The number used to label the filter fieldset legend (eg Row 1). Defaults to 1 (the first filter).
      * @return {Promise}
      */
-    const replaceFilterRow = (filterRow, rowNum = 1) => {
+    const replaceFilterRow = (filterRow, refreshContent = true, rowNum = 1) => {
         // Remove the filter object.
         removeFilterObject(filterRow.dataset.filterType);
 
@@ -227,9 +243,11 @@ export const init = participantsRegionId => {
         })
         .then(filterRow => {
             // Refresh the table.
-            updateTableFromFilter();
-
-            return filterRow;
+            if (refreshContent) {
+                return updateTableFromFilter();
+            } else {
+                return filterRow;
+            }
         })
         .catch(Notification.exception);
     };
@@ -257,11 +275,18 @@ export const init = participantsRegionId => {
      * @returns {Promise}
      */
     const removeAllFilters = () => {
+        const pendingPromise = new Pending('core_user/participantsfilter:setFilterFromConfig');
+
         const filters = getFilterRegion().querySelectorAll(Selectors.filter.region);
-        filters.forEach(filterRow => removeOrReplaceFilterRow(filterRow));
+        filters.forEach(filterRow => removeOrReplaceFilterRow(filterRow, false));
 
         // Refresh the table.
-        return updateTableFromFilter();
+        return updateTableFromFilter()
+        .then(result => {
+            pendingPromise.resolve();
+
+            return result;
+        });
     };
 
     /**
@@ -272,7 +297,7 @@ export const init = participantsRegionId => {
         filters.forEach(filterRow => {
             const filterType = filterRow.querySelector(Selectors.filter.fields.type);
             if (!filterType.value) {
-                removeOrReplaceFilterRow(filterRow);
+                removeOrReplaceFilterRow(filterRow, false);
             }
         });
     };
@@ -311,6 +336,7 @@ export const init = participantsRegionId => {
         if (filters.length === 1) {
             filterSet.querySelector(Selectors.filterset.regions.filtermatch).classList.add('hidden');
             filterSet.querySelector(Selectors.filterset.fields.join).value = 1;
+            filterSet.dataset.filterverb = 1;
         } else {
             filterSet.querySelector(Selectors.filterset.regions.filtermatch).classList.remove('hidden');
         }
@@ -322,13 +348,14 @@ export const init = participantsRegionId => {
      * @param {Object} config
      * @param {Number} config.jointype
      * @param {Object} config.filters
+     * @returns {Promise}
      */
     const setFilterFromConfig = config => {
         const filterConfig = Object.entries(config.filters);
 
         if (!filterConfig.length) {
             // There are no filters to set from.
-            return;
+            return Promise.resolve();
         }
 
         // Set the main join type.
@@ -337,7 +364,7 @@ export const init = participantsRegionId => {
         const filterPromises = filterConfig.map(([filterType, filterData]) => {
             if (filterType === 'courseid') {
                 // The courseid is a special case.
-                return Promise.resolve();
+                return false;
             }
 
             const filterValues = filterData.values;
@@ -345,18 +372,21 @@ export const init = participantsRegionId => {
             if (!filterValues.length) {
                 // There are no values for this filter.
                 // Skip it.
-                return Promise.resolve();
+                return false;
             }
 
             return addFilterRow().then(([filterRow]) => addFilter(filterRow, filterType, filterValues));
-        });
+        }).filter(promise => promise);
 
-        Promise.all(filterPromises).then(() => {
+        if (!filterPromises.length) {
+            return Promise.resolve();
+        }
+
+        return Promise.all(filterPromises).then(() => {
             return removeEmptyFilters();
         })
         .then(updateFiltersOptions)
-        .then(updateTableFromFilter)
-        .catch();
+        .then(updateTableFromFilter);
     };
 
     /**
@@ -365,13 +395,26 @@ export const init = participantsRegionId => {
      * @return {Promise}
      */
     const updateTableFromFilter = () => {
+        const pendingPromise = new Pending('core_user/participantsfilter:updateTableFromFilter');
+
+        const filters = {};
+        Object.values(activeFilters).forEach(filter => {
+            filters[filter.filterValue.name] = filter.filterValue;
+        });
+
         return DynamicTable.setFilters(
             DynamicTable.getTableFromId(filterSet.dataset.tableRegion),
             {
-                filters: Object.values(activeFilters).map(filter => filter.filterValue),
-                jointype: filterSet.querySelector(Selectors.filterset.fields.join).value,
+                jointype: parseInt(filterSet.querySelector(Selectors.filterset.fields.join).value, 10),
+                filters,
             }
-        );
+        )
+        .then(result => {
+            pendingPromise.resolve();
+
+            return result;
+        })
+        .catch(Notification.exception);
     };
 
     /**
@@ -427,7 +470,7 @@ export const init = participantsRegionId => {
         if (e.target.closest(Selectors.filter.actions.remove)) {
             e.preventDefault();
 
-            removeOrReplaceFilterRow(e.target.closest(Selectors.filter.region));
+            removeOrReplaceFilterRow(e.target.closest(Selectors.filter.region), true);
         }
     });
 
@@ -448,7 +491,10 @@ export const init = participantsRegionId => {
     const tableRoot = DynamicTable.getTableFromId(filterSet.dataset.tableRegion);
     const initialFilters = DynamicTable.getFilters(tableRoot);
     if (initialFilters) {
+        const initialFilterPromise = new Pending('core_user/participantsfilter:setFilterFromConfig');
         // Apply the initial filter configuration.
-        setFilterFromConfig(initialFilters);
+        setFilterFromConfig(initialFilters)
+        .then(() => initialFilterPromise.resolve())
+        .catch();
     }
 };

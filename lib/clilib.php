@@ -146,6 +146,21 @@ function cli_get_params(array $longoptions, array $shortmapping=null) {
 }
 
 /**
+ * This sets the cli process title suffix
+ *
+ * An example is appending current Task API info so a sysadmin can immediately
+ * see what task a cron process is running at any given moment.
+ *
+ * @param string $suffix process suffix
+ */
+function cli_set_process_title_suffix(string $suffix) {
+    if (CLI_SCRIPT && function_exists('cli_set_process_title') && isset($_SERVER['argv'])) {
+        $command = join(' ', $_SERVER['argv']);
+        @cli_set_process_title("php $command ($suffix)");
+    }
+}
+
+/**
  * Print or return section separator string
  * @param bool $return false means print, true return as string
  * @return mixed void or string

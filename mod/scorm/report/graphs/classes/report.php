@@ -50,18 +50,15 @@ class report extends \mod_scorm\report {
      * Get the data for the report.
      *
      * @param int $scoid The sco ID.
-     * @param array $allowedlist The list of user IDs allowed to be displayed.
+     * @param array $allowedlist The SQL and params to get the userlist.
      * @return array of data indexed per bar.
      */
-    protected function get_data($scoid, $allowedlist = []) {
+    protected function get_data($scoid, $allowedlistsql) {
         global $DB;
         $data = array_fill(0, self::BANDS, 0);
-        if (empty($allowedlist)) {
-            return $data;
-        }
 
-        list($usql, $params) = $DB->get_in_or_equal($allowedlist);
-        $params[] = $scoid;
+        list($allowedlist, $params) = $allowedlistsql;
+        $params = array_merge($params, ['scoid' => $scoid]);
 
         // Construct the SQL.
         $sql = "SELECT DISTINCT " . $DB->sql_concat('st.userid', '\'#\'', 'COALESCE(st.attempt, 0)') . " AS uniqueid,
@@ -70,7 +67,7 @@ class report extends \mod_scorm\report {
                        st.attempt AS attempt,
                        st.scoid AS scoid
                   FROM {scorm_scoes_track} st
-                 WHERE st.userid $usql AND st.scoid = ?";
+                 WHERE st.userid IN ({$allowedlist}) AND st.scoid = :scoid";
         $attempts = $DB->get_records_sql($sql, $params);
 
         $usergrades = [];
@@ -144,15 +141,7 @@ class report extends \mod_scorm\report {
 
         // Find out current restriction.
         $group = groups_get_activity_group($cm, true);
-        if (empty($group)) {
-            // All users who can attempt scoes.
-            $students = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', 'u.id' , '', '', '', '', '', false);
-            $allowedlist = empty($students) ? array() : array_keys($students);
-        } else {
-            // All users who can attempt scoes and who are in the currently selected group.
-            $groupstudents = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', 'u.id', '', '', '', $group, '', false);
-            $allowedlist = empty($groupstudents) ? array() : array_keys($groupstudents);
-        }
+        $allowedlistsql = get_enrolled_sql($contextmodule, 'mod/scorm:savetrack', (int) $group);
 
         // Labels.
         $labels = [get_string('invaliddata', 'scormreport_graphs')];
@@ -164,7 +153,7 @@ class report extends \mod_scorm\report {
             foreach ($scoes as $sco) {
                 if ($sco->launch != '') {
 
-                    $data = $this->get_data($sco->id, $allowedlist);
+                    $data = $this->get_data($sco->id, $allowedlistsql);
                     $series = new chart_series($sco->title, $data);
 
                     $chart = new chart_bar();

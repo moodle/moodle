@@ -487,3 +487,57 @@ function h5pactivity_set_mainfile(stdClass $data): void {
             0, ['subdirs' => 0, 'maxfiles' => 1]);
     }
 }
+
+/**
+ * Register the ability to handle drag and drop file uploads
+ * @return array containing details of the files / types the mod can handle
+ */
+function h5pactivity_dndupload_register(): array {
+    return [
+        'files' => [
+            [
+                'extension' => 'h5p',
+                'message' => get_string('dnduploadh5pactivity', 'h5pactivity')
+            ]
+        ]
+    ];
+}
+
+/**
+ * Handle a file that has been uploaded
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function h5pactivity_dndupload_handle($uploadinfo): int {
+    global $CFG;
+
+    $context = context_module::instance($uploadinfo->coursemodule);
+    file_save_draft_area_files($uploadinfo->draftitemid, $context->id, 'mod_h5pactivity', 'package', 0);
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'mod_h5pactivity', 'package', 0, 'sortorder, itemid, filepath, filename', false);
+    $file = reset($files);
+
+    // Create a default h5pactivity object to pass to h5pactivity_add_instance()!
+    $h5p = get_config('h5pactivity');
+    $h5p->intro = '';
+    $h5p->introformat = FORMAT_HTML;
+    $h5p->course = $uploadinfo->course->id;
+    $h5p->coursemodule = $uploadinfo->coursemodule;
+    $h5p->grade = $CFG->gradepointdefault;
+
+    // Add some special handling for the H5P options checkboxes.
+    $factory = new \core_h5p\factory();
+    $core = $factory->get_core();
+    if (isset($uploadinfo->displayopt)) {
+        $config = (object) $uploadinfo->displayopt;
+    } else {
+        $config = \core_h5p\helper::decode_display_options($core);
+    }
+    $h5p->displayoptions = \core_h5p\helper::get_display_options($core, $config);
+
+    $h5p->cmidnumber = '';
+    $h5p->name = $uploadinfo->displayname;
+    $h5p->reference = $file->get_filename();
+
+    return h5pactivity_add_instance($h5p, null);
+}

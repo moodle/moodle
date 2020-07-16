@@ -330,10 +330,13 @@ abstract class contenttype {
 
     /**
      * Returns whether or not the user has permission to use the editor.
+     * This function will be called with the content to be edited as parameter,
+     * or null when is checking permission to create a new content using the editor.
      *
+     * @param  content $content The content to be edited or null when creating a new content.
      * @return bool     True if the user can edit content. False otherwise.
      */
-    final public function can_edit(): bool {
+    final public function can_edit(?content $content = null): bool {
         if (!$this->is_feature_supported(self::CAN_EDIT)) {
             return false;
         }
@@ -342,19 +345,24 @@ abstract class contenttype {
             return false;
         }
 
+        if (!is_null($content) && !$this->can_manage($content)) {
+            return false;
+        }
+
         $classname = 'contenttype/'.$this->get_plugin_name();
 
         $editioncap = $classname.':useeditor';
         $hascapabilities = has_all_capabilities(['moodle/contentbank:useeditor', $editioncap], $this->context);
-        return $hascapabilities && $this->is_edit_allowed();
+        return $hascapabilities && $this->is_edit_allowed($content);
     }
 
     /**
      * Returns plugin allows edition.
      *
+     * @param  content $content The content to be edited.
      * @return bool     True if plugin allows edition. False otherwise.
      */
-    protected function is_edit_allowed(): bool {
+    protected function is_edit_allowed(?content $content): bool {
         // Plugins can overwrite this function to add any check they need.
         return true;
     }

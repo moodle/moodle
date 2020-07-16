@@ -283,6 +283,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param bool $invalidforgottenpasswordurl Whether the forgotten password URL does not link to a valid URL.
      * @param bool $croninfrequent If true, warn that cron hasn't run in the past few minutes
      * @param bool $showcampaigncontent Whether the campaign content should be visible or not.
+     * @param bool $showfeedbackencouragement Whether the feedback encouragement content should be displayed or not.
      *
      * @return string HTML to output.
      */
@@ -291,7 +292,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0,
             $themedesignermode = false, $devlibdir = false, $mobileconfigured = false,
             $overridetossl = false, $invalidforgottenpasswordurl = false, $croninfrequent = false,
-            $showcampaigncontent = false) {
+            $showcampaigncontent = false, bool $showfeedbackencouragement = false) {
 
         global $CFG;
         $output = '';
@@ -315,6 +316,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->registration_warning($registered);
         $output .= $this->mobile_configuration_warning($mobileconfigured);
         $output .= $this->forgotten_password_url_warning($invalidforgottenpasswordurl);
+        $output .= $this->userfeedback_encouragement($showfeedbackencouragement);
         $output .= $this->campaign_content($showcampaigncontent);
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2177,5 +2179,22 @@ class core_admin_renderer extends plugin_renderer_base {
         );
 
         return $this->output->box($out);
+    }
+
+    /**
+     * Display message about benefits of enabling the user feedback feature.
+     *
+     * @param bool $showfeedbackencouragement Whether the encouragement content should be displayed or not
+     * @return string
+     */
+    protected function userfeedback_encouragement(bool $showfeedbackencouragement): string {
+        $output = '';
+
+        if ($showfeedbackencouragement) {
+            $settingslink = new moodle_url('/admin/settings.php', ['section' => 'userfeedback']);
+            $output .= $this->warning(get_string('userfeedbackencouragement', 'admin', $settingslink->out()), 'info');
+        }
+
+        return $output;
     }
 }

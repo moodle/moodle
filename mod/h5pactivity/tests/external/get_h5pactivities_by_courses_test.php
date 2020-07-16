@@ -65,16 +65,21 @@ class get_h5pactivities_by_courses_testcase extends externallib_advanced_testcas
             'introformat' => 1
         ];
         $activities[] = $this->getDataGenerator()->create_module('h5pactivity', $params);
-        // Add filename to make easier the asserts.
+        // Add filename and contextid to make easier the asserts.
         $activities[0]->filename = 'filltheblanks.h5p';
+        $context = context_module::instance($activities[0]->cmid);
+        $activities[0]->contextid = $context->id;
+
         $params = [
             'course' => $course1->id,
             'packagefilepath' => $CFG->dirroot.'/h5p/tests/fixtures/greeting-card-887.h5p',
             'introformat' => 1
         ];
         $activities[] = $this->getDataGenerator()->create_module('h5pactivity', $params);
-        // Add filename to make easier the asserts.
+        // Add filename and contextid to make easier the asserts.
         $activities[1]->filename = 'greeting-card-887.h5p';
+        $context = context_module::instance($activities[1]->cmid);
+        $activities[1]->contextid = $context->id;
 
         $course2 = $this->getDataGenerator()->create_course();
         $params = [
@@ -84,8 +89,9 @@ class get_h5pactivities_by_courses_testcase extends externallib_advanced_testcas
         ];
         $activities[] = $this->getDataGenerator()->create_module('h5pactivity', $params);
         $activities[2]->filename = 'guess-the-answer.h5p';
-
         $context = context_module::instance($activities[2]->cmid);
+        $activities[2]->contextid = $context->id;
+
         // Create a fake deploy H5P file.
         $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
         $deployedfile = $generator->create_export_file($activities[2]->filename, $context->id, 'mod_h5pactivity', 'package');
@@ -176,6 +182,7 @@ class get_h5pactivities_by_courses_testcase extends externallib_advanced_testcas
             $this->assertEquals($activities[$i]->enabletracking, $result['h5pactivities'][$i]['enabletracking']);
             $this->assertEquals($activities[$i]->grademethod, $result['h5pactivities'][$i]['grademethod']);
             $this->assertEquals($activities[$i]->cmid, $result['h5pactivities'][$i]['coursemodule']);
+            $this->assertEquals($activities[$i]->contextid, $result['h5pactivities'][$i]['context']);
             $this->assertEquals($activities[$i]->filename, $result['h5pactivities'][$i]['package'][0]['filename']);
         }
     }

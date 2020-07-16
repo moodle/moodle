@@ -280,7 +280,8 @@ const submitEditFormAjax = (clickedLink, getBody, modal, userEnrolmentId, userDa
         return data;
     })
     .then(() => {
-        DynamicTable.refreshTableContent(getDynamicTableFromLink(clickedLink));
+        DynamicTable.refreshTableContent(getDynamicTableFromLink(clickedLink))
+        .catch(Notification.exception);
 
         return Str.get_string('enrolmentupdatedforuser', 'core_enrol', userData);
     })
@@ -321,7 +322,8 @@ const submitUnenrolFormAjax = (clickedLink, modal, args, userData) => {
         return data;
     })
     .then(() => {
-        DynamicTable.refreshTableContent(getDynamicTableFromLink(clickedLink));
+        DynamicTable.refreshTableContent(getDynamicTableFromLink(clickedLink))
+        .catch(Notification.exception);
 
         return Str.get_string('unenrolleduser', 'core_enrol', userData);
     })

@@ -85,7 +85,8 @@ class participants extends table_sql implements report {
         // Set query SQL.
         $capjoin = get_enrolled_with_capabilities_join($this->manager->get_context(), '', 'mod/h5pactivity:submit');
         $this->set_sql(
-            'u.*',
+            'DISTINCT u.id, u.picture, u.firstname, u.lastname, u.firstnamephonetic, u.lastnamephonetic,
+            u.middlename, u.alternatename, u.imagealt, u.email',
             "{user} u $capjoin->joins",
             $capjoin->wheres,
             $capjoin->params);

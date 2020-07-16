@@ -106,9 +106,12 @@ class mysql_lock_factory implements lock_factory {
      * Hard coded to false and workaround inconsistent support in different
      * versions of MySQL / MariaDB.
      *
+     * @deprecated since Moodle 4.0.
      * @return boolean - false
      */
     public function supports_recursion() {
+        debugging('The function supports_recursion() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
         return false;
     }
 
@@ -165,11 +168,15 @@ class mysql_lock_factory implements lock_factory {
 
     /**
      * Extend a lock that was previously obtained with @lock.
+     *
+     * @deprecated since Moodle 4.0.
      * @param lock $lock - a lock obtained from this factory.
      * @param int $maxlifetime - the new lifetime for the lock (in seconds).
      * @return boolean - true if the lock was extended.
      */
     public function extend_lock(lock $lock, $maxlifetime = 86400) {
+        debugging('The function extend_lock() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
         // Not supported by this factory.
         return false;
     }

@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_h5pactivity/result/options
+    @template mod_h5pactivity/local/result/options
 
     This template will render a choices table inside a H5P activity results report.
 
@@ -99,8 +99,8 @@
     {{#options}}
     <tr>
         <td>{{description}}</td>
-        <td>{{#correctanswer}}{{>mod_h5pactivity/result/answer}}{{/correctanswer}}</td>
-        <td>{{#useranswer}}{{>mod_h5pactivity/result/answer}}{{/useranswer}}</td>
+        <td>{{#correctanswer}}{{>mod_h5pactivity/local/result/answer}}{{/correctanswer}}</td>
+        <td>{{#useranswer}}{{>mod_h5pactivity/local/result/answer}}{{/useranswer}}</td>
     </tr>
     {{/options}}
     {{#score}}

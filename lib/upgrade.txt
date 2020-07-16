@@ -1,6 +1,35 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+* Added function setScrollable in core/modal. This function can be used to set the modal's body to be scrollable or not
+  when the modal's height exceeds the browser's height. This is also supported in core/modal_factory through the
+  'scrollable' config parameter which can be set to either true or false. If not explicitly defined, the default value
+  of 'scrollable' is true.
+* The `$CFG->behat_retart_browser_after` configuration setting has been removed.
+  The browser session is now restarted between all tests.
+* add_to_log() has been through final deprecation, please rewrite your code to the new events API.
+* The following functions have been finally deprecated and can not be used anymore:
+  - print_textarea
+  - calendar_get_all_allowed_types
+  - groups_get_all_groups_for_courses
+  - events_get_cached
+  - events_uninstall
+  - events_cleanup
+  - events_dequeue
+  - events_get_handlers
+  - get_roles_on_exact_context
+  - get_roles_with_assignment_on_context
+  - message_add_contact
+  - message_remove_contact
+  - message_unblock_contact
+  - message_block_contact
+  - message_get_contact
+* The following renamed classes have been completely removed:
+    - course_in_list (now: core_course_list_element)
+    - coursecat (now: core_course_category)
+* The form element 'htmleditor', which was deprecated in 3.6, has been removed.
+
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
     - cron_run_single_task()

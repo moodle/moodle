@@ -203,7 +203,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             'class' => 'section main clearfix'.$sectionstyle,
             'role' => 'region',
             'aria-labelledby' => "sectionid-{$section->id}-title",
-            'data-sectionid' => $section->section
+            'data-sectionid' => $section->section,
+            'data-sectionreturnid' => $sectionreturn
         ]);
 
         $leftcontent = $this->section_left_content($section, $course, $onsectionpage);

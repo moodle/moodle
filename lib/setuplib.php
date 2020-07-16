@@ -551,7 +551,7 @@ function get_exception_info($ex) {
     // Remove some absolute paths from message and debugging info.
     $searches = array();
     $replaces = array();
-    $cfgnames = array('tempdir', 'cachedir', 'localcachedir', 'themedir', 'dataroot', 'dirroot');
+    $cfgnames = array('backuptempdir', 'tempdir', 'cachedir', 'localcachedir', 'themedir', 'dataroot', 'dirroot');
     foreach ($cfgnames as $cfgname) {
         if (property_exists($CFG, $cfgname)) {
             $searches[] = $CFG->$cfgname;
@@ -1981,11 +1981,7 @@ class bootstrap_renderer {
     public static function early_error_content($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
         global $CFG;
 
-        $content = '<div style="margin-top: 6em; margin-left:auto; margin-right:auto; color:#990000; text-align:center; font-size:large; border-width:1px;
-border-color:black; background-color:#ffffee; border-style:solid; border-radius: 20px; border-collapse: collapse;
-width: 80%; -moz-border-radius: 20px; padding: 15px">
-' . $message . '
-</div>';
+        $content = "<div class='alert-danger'>$message</div>";
         // Check whether debug is set.
         $debug = (!empty($CFG->debug) && $CFG->debug >= DEBUG_DEVELOPER);
         // Also check we have it set in the config file. This occurs if the method to read the config table from the
@@ -2130,6 +2126,8 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
      * @return string html page
      */
     public static function plain_page($title, $content, $meta = '') {
+        global $CFG;
+
         if (function_exists('get_string') && function_exists('get_html_lang')) {
             $htmllang = get_html_lang();
         } else {
@@ -2144,12 +2142,11 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
             }
         }
 
-        return '<!DOCTYPE html>
-<html ' . $htmllang . '>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-'.$meta.'
-<title>' . $title . '</title>
-</head><body>' . $content . $footer . '</body></html>';
+        ob_start();
+        include($CFG->dirroot . '/error/plainpage.php');
+        $html = ob_get_contents();
+        ob_end_clean();
+
+        return $html;
     }
 }

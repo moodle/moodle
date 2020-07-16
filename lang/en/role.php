@@ -428,6 +428,7 @@ $string['site:mnetloginfromremote'] = 'Login from a remote application via MNet'
 $string['site:mnetlogintoremote'] = 'Roam to a remote application via MNet';
 $string['site:readallmessages'] = 'Read all messages on site';
 $string['site:restore'] = 'Restore courses';
+$string['site:senderrormessage'] = 'Send a message to the support user from the error page';
 $string['site:sendmessage'] = 'Send messages to any user';
 $string['site:trustcontent'] = 'Trust submitted content';
 $string['site:uploadusers'] = 'Upload new users from file';
