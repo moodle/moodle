@@ -72,6 +72,10 @@ class behat_accessibility extends behat_base {
      * @param   array $extratags The list of tags, in addition to the standard tags, to run
      */
     protected function run_axe_for_tags(array $standardtags = [], array $extratags = []): void {
+        if (!behat_config_manager::get_behat_run_config_value('axe')) {
+            return;
+        }
+
         if (!$this->has_tag('accessibility')) {
             throw new DriverException(
                 'Accessibility tests using Axe must have the @accessibility tag on either the scenario or feature.'
