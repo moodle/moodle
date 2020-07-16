@@ -79,15 +79,24 @@ abstract class icon_system {
         global $PAGE;
 
         if (empty(self::$instance)) {
-            $icontype = $PAGE->theme->get_icon_system();
-            self::$instance = new $icontype();
+            $iconsystem = $PAGE->theme->get_icon_system();
+            self::$instance = new $iconsystem();
         }
 
-        // If $type is specified we need to make sure that the theme icon system supports this type,
-        // if not, we will return a generic new instance of the $type.
-        if ($type === null || is_a(self::$instance, $type)) {
+        if ($type === null) {
+            // No type specified. Return the icon system for the current theme.
+            return self::$instance;
+        }
+
+        if (!static::is_valid_system($type)) {
+            throw new \coding_exception("Invalid icon system requested '{$type}'");
+        }
+
+        if (is_a(self::$instance, $type) && is_a($type, get_class(self::$instance), true)) {
+            // The requested type is an exact match for the current icon system.
             return self::$instance;
         } else {
+            // Return the requested icon system.
             return new $type();
         }
     }
@@ -99,7 +108,7 @@ abstract class icon_system {
      * @return boolean
      */
     public final static function is_valid_system($system) {
-        return class_exists($system) && is_subclass_of($system, self::class);
+        return class_exists($system) && is_a($system, static::class, true);
     }
 
     /**
@@ -153,4 +162,3 @@ abstract class icon_system {
         self::$instance = null;
     }
 }
-
