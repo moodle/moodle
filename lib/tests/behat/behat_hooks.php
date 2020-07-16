@@ -184,7 +184,7 @@ class behat_hooks extends behat_base {
             $message = <<<EOF
 Your behat test site is outdated, please run the following command from your Moodle dirroot to drop, and reinstall the Behat test site.
 
-    {$comandpath}
+    {$commandpath}
 
 EOF;
             self::log_and_stop($message);
