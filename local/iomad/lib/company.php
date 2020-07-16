@@ -3995,7 +3995,7 @@ class company {
         $courseid = $event->courseid;
 
         // Is this a shared course?
-        if (!$DB->get_record('iomad_courses', array('courseid' => $courseid, 'shared' => 1))) {
+        if ($DB->get_record('iomad_courses', array('courseid' => $courseid, 'shared' => 0))) {
             // It's not - return.
             return true;
         }
