@@ -25,7 +25,7 @@ define(['jquery', 'core/custom_interaction_events'], function($, CustomEvents) {
 
     var SELECTORS = {
         CHOICE_ELEMENT: '.answer input',
-        LINK: 'a',
+        LINK: 'label',
         RADIO: 'input[type="radio"]'
     };
 
