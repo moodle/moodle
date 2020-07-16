@@ -179,6 +179,17 @@ button.close {
     }
 }
 
+// Safari does not allow custom styling of checkboxes.
+.safari {
+    input[type="checkbox"],
+    input[type="radio"] {
+        &.focus,
+        &:focus {
+            outline: auto;
+        }
+    }
+}
+
 .usermenu,
 div.dropdown-item {
     a,
@@ -2591,6 +2602,9 @@ $picker-emojis-per-row: 7 !default;
     .alert-#{$color} a {
         color: darken(theme-color-level($color, $alert-color-level), 10%);
     }
+}
+.alert a {
+    font-weight: $font-weight-bold;
 }
 
 @include media-breakpoint-down(sm) {

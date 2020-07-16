@@ -342,6 +342,7 @@ $string['eventoverrideupdated'] = 'Quiz override updated';
 $string['eventquestionmanuallygraded'] = 'Question manually graded';
 $string['eventquizattemptabandoned'] = 'Quiz attempt abandoned';
 $string['eventquizattempttimelimitexceeded'] = 'Quiz attempt time limit exceeded';
+$string['eventquizattemptregraded'] = 'Quiz attempt regraded';
 $string['eventquizattemptstarted'] = 'Quiz attempt started';
 $string['eventquizattemptsubmitted'] = 'Quiz attempt submitted';
 $string['eventreportviewed'] = 'Quiz report viewed';

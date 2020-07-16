@@ -433,6 +433,7 @@ $string['cronremotepassword'] = 'Cron password for remote access';
 $string['cronwarning'] = 'The <a href="{$a->url}">admin/cron.php script</a> has not been run for {$a->actual} and should run every {$a->expected}.';
 $string['cronwarningcli'] = 'The <code>admin/cli/cron.php</code> script has not been run for {$a->actual} and should run every {$a->expected}.';
 $string['cronwarningnever'] = 'The <code>admin/cli/cron.php</code> script has never been run and should run every {$a->expected}.';
+$string['cronwarningneverweb'] = 'The <a href="{$a->url}">admin/cron.php script</a> has never been run and should run every {$a->expected}.';
 $string['ctyperequired'] = 'The ctype PHP extension is now required by Moodle, in order to improve site performance and to offer multilingual compatibility.';
 $string['curlsecurityallowedport'] = 'cURL allowed ports list';
 $string['curlsecurityallowedportsyntax'] = 'List of port numbers that cURL can connect to. Valid entries are integer numbers only. Put each entry on a new line. If left empty, then all ports are allowed. If set, in almost all cases, both 443 and 80 should be specified for cURL to connect to standard HTTPS and HTTP ports.';
@@ -544,8 +545,8 @@ $string['enablerssfeeds'] = 'Enable RSS feeds';
 $string['enablesearchareas'] = 'Enable search areas';
 $string['enablestats'] = 'Enable statistics';
 $string['enabletrusttext'] = 'Enable trusted content';
-$string['enableuserfeedback'] = 'Enable feedback about Moodle';
-$string['enableuserfeedback_desc'] = 'If enabled, a \'Give feedback\' link is displayed in a Dashboard alert and in the footer for users to give feedback about the Moodle LMS to Moodle HQ. The Dashboard alert also has a \'Remind me later\' option.';
+$string['enableuserfeedback'] = 'Enable feedback about this software';
+$string['enableuserfeedback_desc'] = 'If enabled, a \'Give feedback about this software\' link is displayed in the footer for users to give feedback about the Moodle software to Moodle HQ. If the \'Next feedback reminder\' option is set, the user is also shown a reminder on the Dashboard at the specified interval. Setting \'Next feedback reminder\' to \'Never\' disables the Dashboard reminder, while leaving the \'Give feedback about this software\' link in the footer.';
 $string['enablewebservices'] = 'Enable web services';
 $string['enablewsdocumentation'] = 'Web services documentation';
 $string['enrolinstancedefaults'] = 'Enrolment instance defaults';
@@ -1415,6 +1416,9 @@ $string['user'] = 'User';
 $string['userbulk'] = 'Bulk user actions';
 $string['userbulkdownload'] = 'Export users as';
 $string['userfeedbackafterupgrade'] = 'After every major upgrade';
+$string['userfeedbackencouragement'] = '<p>Moodle 3.9 includes a new feature that gives users the option to provide feedback about the Moodle software to Moodle HQ via an external survey site hosted by Moodle HQ. No user-identifying information is forwarded to the survey site.</p>
+<p>Moodle HQ strives to be open and transparent about its data collection practices. Thus, we want to make sure that you are aware and in control of this functionality.</p>
+<p>Feedback from users will greatly assist Moodle HQ in improving the Moodle software. To enable this feature, please go to <a href="{$a}">Feedback settings</a>.</p>';
 $string['userfeedbacknextreminder'] = 'Next feedback reminder';
 $string['userfeedbacknextreminder_desc'] = 'When should we ask the user to give feedback again?';
 $string['userfeedbackperiodically'] = 'Periodically';

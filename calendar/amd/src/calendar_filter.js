@@ -64,6 +64,7 @@ function(
         // Toggle the hidden. We need to render the template before we change the value.
         data.hidden = !data.hidden;
 
+        M.util.js_pending("core_calendar/calendar_filter:toggleFilter");
         return Str.get_string('eventtype' + data.eventtype, 'calendar')
         .then(function(nameStr) {
             data.name = nameStr;
@@ -81,6 +82,7 @@ function(
         })
         .then(function() {
             fireFilterChangedEvent(data);
+            M.util.js_complete("core_calendar/calendar_filter:toggleFilter");
             return;
         });
     };

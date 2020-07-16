@@ -336,6 +336,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                         cloneDrag.removeClass('beingdragged');
                         cloneDrag.removeAttr('tabindex');
                         hiddenDrag.after(cloneDrag);
+                        questionManager.addEventHandlersToDrag(cloneDrag);
                         drag.offset(cloneDrag.offset());
                     } else {
                         hiddenDrag.addClass('active');
@@ -529,6 +530,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                         cloneDrag.removeClass('beingdragged');
                         cloneDrag.removeAttr('tabindex');
                         hiddenDrag.after(cloneDrag);
+                        questionManager.addEventHandlersToDrag(cloneDrag);
                         nextDrag.offset(cloneDrag.offset());
                     } else {
                         hiddenDrag.addClass('active');
@@ -623,7 +625,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
             {
                 duration: 'fast',
                 done: function() {
-                    $('body').trigger('dragmoved', [drag, target, thisQ]);
+                    $('body').trigger('qtype_ddimageortext-dragmoved', [drag, target, thisQ]);
                     M.util.js_complete('qtype_ddimageortext-animate-' + thisQ.containerId);
                 }
             }
@@ -962,17 +964,16 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
          * Set up the event handlers that make this question type work. (Done once per page.)
          */
         setupEventHandlers: function() {
+            // We do not use the body event here to prevent the other event on Mobile device, such as scroll event.
+            questionManager.addEventHandlersToDrag($('.que.ddimageortext:not(.qtype_ddimageortext-readonly) .draghome'));
             $('body')
-                .on('mousedown touchstart',
-                    '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .draghome',
-                    questionManager.handleDragStart)
                 .on('keydown',
                     '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .dropzones .dropzone',
                     questionManager.handleKeyPress)
                 .on('keydown',
                     '.que.ddimageortext:not(.qtype_ddimageortext-readonly) .draghome.placed:not(.beingdragged)',
                     questionManager.handleKeyPress)
-                .on('dragmoved', questionManager.handleDragMoved);
+                .on('qtype_ddimageortext-dragmoved', questionManager.handleDragMoved);
             $(window).on('resize', function() {
                 questionManager.handleWindowResize(false);
             });
@@ -987,6 +988,15 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
             setTimeout(function() {
                 questionManager.fixLayoutIfThingsMoved();
             }, 100);
+        },
+
+        /**
+         * Binding the drag/touch event again for newly created element.
+         *
+         * @param {jQuery} element Element to bind the event
+         */
+        addEventHandlersToDrag: function(element) {
+            element.on('mousedown touchstart', questionManager.handleDragStart);
         },
 
         /**

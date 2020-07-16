@@ -2194,6 +2194,34 @@ class core_cache_testcase extends advanced_testcase {
                              $startstats[$requestid]['stores']['default_request']['hits']);
         $this->assertEquals(0, $endstats[$requestid]['stores']['default_request']['sets'] -
                              $startstats[$requestid]['stores']['default_request']['sets']);
+
+        $startstats = cache_helper::get_stats();
+
+        // Check that stores register through set_many.
+        $this->assertEquals(2, $application->set_many(['setMe1' => 1, 'setMe2' => 2]));
+        $this->assertEquals(3, $session->set_many(['setMe1' => 1, 'setMe2' => 2, 'setMe3' => 3]));
+        $this->assertEquals(4, $request->set_many(['setMe1' => 1, 'setMe2' => 2, 'setMe3' => 3, 'setMe4' => 4]));
+
+        $endstats = cache_helper::get_stats();
+
+        $this->assertEquals(0, $endstats[$applicationid]['stores']['default_application']['misses'] -
+            $startstats[$applicationid]['stores']['default_application']['misses']);
+        $this->assertEquals(0, $endstats[$applicationid]['stores']['default_application']['hits'] -
+            $startstats[$applicationid]['stores']['default_application']['hits']);
+        $this->assertEquals(2, $endstats[$applicationid]['stores']['default_application']['sets'] -
+            $startstats[$applicationid]['stores']['default_application']['sets']);
+        $this->assertEquals(0, $endstats[$sessionid]['stores']['default_session']['misses'] -
+            $startstats[$sessionid]['stores']['default_session']['misses']);
+        $this->assertEquals(0, $endstats[$sessionid]['stores']['default_session']['hits'] -
+            $startstats[$sessionid]['stores']['default_session']['hits']);
+        $this->assertEquals(3, $endstats[$sessionid]['stores']['default_session']['sets'] -
+            $startstats[$sessionid]['stores']['default_session']['sets']);
+        $this->assertEquals(0, $endstats[$requestid]['stores']['default_request']['misses'] -
+            $startstats[$requestid]['stores']['default_request']['misses']);
+        $this->assertEquals(0, $endstats[$requestid]['stores']['default_request']['hits'] -
+            $startstats[$requestid]['stores']['default_request']['hits']);
+        $this->assertEquals(4, $endstats[$requestid]['stores']['default_request']['sets'] -
+            $startstats[$requestid]['stores']['default_request']['sets']);
     }
 
     public function test_static_cache() {

@@ -81,9 +81,17 @@ class cronrunning extends check {
             }
 
             if (empty($lastcron)) {
-                $summary = get_string('cronwarningnever', 'admin', [
-                    'expected' => $formatexpected,
-                ]);
+                if (empty($CFG->cronclionly)) {
+                    $url = new \moodle_url('/admin/cron.php');
+                    $summary = get_string('cronwarningneverweb', 'admin', [
+                        'url' => $url->out(),
+                        'expected' => $formatexpected,
+                    ]);
+                } else {
+                    $summary = get_string('cronwarningnever', 'admin', [
+                        'expected' => $formatexpected,
+                    ]);
+                }
             } else if (empty($CFG->cronclionly)) {
                 $url = new \moodle_url('/admin/cron.php');
                 $summary = get_string('cronwarning', 'admin', [

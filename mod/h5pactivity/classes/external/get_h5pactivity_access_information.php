@@ -35,6 +35,7 @@ use external_value;
 use external_single_structure;
 use external_warnings;
 use context_module;
+use mod_h5pactivity\local\manager;
 
 /**
  * This is the external method for getting access information for a h5p activity.
@@ -81,10 +82,16 @@ class get_h5pactivity_access_information extends external_api {
 
         $result = [];
         // Return all the available capabilities.
+        $manager = manager::create_from_coursemodule($cm);
         $capabilities = load_capability_def('mod_h5pactivity');
         foreach ($capabilities as $capname => $capdata) {
             $field = 'can' . str_replace('mod/h5pactivity:', '', $capname);
-            $result[$field] = has_capability($capname, $context);
+            // For mod/h5pactivity:submit we need to check if tracking is enabled in the h5pactivity for the current user.
+            if ($field == 'cansubmit') {
+                $result[$field] = $manager->is_tracking_enabled();
+            } else {
+                $result[$field] = has_capability($capname, $context);
+            }
         }
 
         $result['warnings'] = [];

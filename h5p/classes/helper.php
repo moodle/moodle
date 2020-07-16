@@ -359,7 +359,7 @@ class helper {
             'crossorigin' => null,
             'libraryConfig' => $core->h5pF->getLibraryConfig(),
             'pluginCacheBuster' => self::get_cache_buster(),
-            'libraryUrl' => autoloader::get_h5p_core_library_url('core/js')
+            'libraryUrl' => autoloader::get_h5p_core_library_url('js')->out(),
         );
 
         return $settings;

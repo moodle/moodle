@@ -53,14 +53,14 @@ $string['attempts_report'] = 'Attempts report';
 $string['attempts_none'] = 'This user has no attempts to display.';
 $string['choice'] = 'Choice';
 $string['completion'] = 'Completion';
-$string['contentbank'] = 'more information about the content bank';
-$string['contentbank_help'] = 'Within the content bank you can create and store contents using several authoring
-    tools which includes an integrated H5P packacge creator.';
+$string['contentbank'] = 'More information about the content bank';
+$string['contentbank_help'] = 'In the content bank you can create and store content using several authoring tools, including an integrated H5P creator.';
 $string['correct_answer'] = 'Correct answer';
 $string['deleteallattempts'] = 'Delete all H5P attempts';
 $string['displayexport'] = 'Allow download';
 $string['displayembed'] = 'Embed button';
 $string['displaycopyright'] = 'Copyright button';
+$string['dnduploadh5pactivity'] = 'Add an H5P activity';
 $string['duration'] = 'Duration';
 $string['enabletracking'] = 'Enable attempt tracking';
 $string['false'] = 'False';

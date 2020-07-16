@@ -194,7 +194,7 @@ class behat_navigation extends behat_base {
             // We just want to expand the node, we don't want to follow it.
             $node = $node->getParent();
         }
-        $node->click();
+        $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
     }
 
     /**
@@ -218,7 +218,7 @@ class behat_navigation extends behat_base {
             // We just want to expand the node, we don't want to follow it.
             $node = $node->getParent();
         }
-        $node->click();
+        $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
     }
 
     /**
@@ -245,7 +245,7 @@ class behat_navigation extends behat_base {
                 // don't wait, it is non-JS and we already waited for the DOM.
                 $siteadminlink = $this->getSession()->getPage()->find('named_exact', array('link', "'" . $siteadminstr . "'"));
                 if ($siteadminlink) {
-                    $siteadminlink->click();
+                    $this->execute('behat_general::i_click_on', [$siteadminlink, 'NodeElement']);
                 }
             }
         }
@@ -302,7 +302,7 @@ class behat_navigation extends behat_base {
             throw new ExpectationException('Navigation node "' . $nodetext . '" not found under "' .
                 implode(' > ', $parentnodes) . '"', $this->getSession());
         }
-        $nodetoclick->click();
+        $this->execute('behat_general::i_click_on', [$nodetoclick, 'NodeElement']);
     }
 
     /**
@@ -791,9 +791,8 @@ class behat_navigation extends behat_base {
         $node = $this->find('xpath', $xpath);
         $expanded = $node->getAttribute('aria-expanded');
         if ($expanded === 'false') {
-            $node->click();
+            $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
             $this->ensure_node_attribute_is_set($node, 'aria-expanded', 'true');
-            $this->wait_for_pending_js();
         }
     }
 
@@ -812,8 +811,7 @@ class behat_navigation extends behat_base {
         $node = $this->find('xpath', $xpath);
         $expanded = $node->getAttribute('aria-expanded');
         if ($expanded === 'true') {
-            $node->click();
-            $this->wait_for_pending_js();
+            $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
         }
     }
 
@@ -835,8 +833,8 @@ class behat_navigation extends behat_base {
     protected function go_to_main_course_page() {
         $url = $this->getSession()->getCurrentUrl();
         if (!preg_match('|/course/view.php\?id=[\d]+$|', $url)) {
-            $this->find('xpath', '//header//div[@id=\'page-navbar\']//a[contains(@href,\'/course/view.php?id=\')]')->click();
-            $this->execute('behat_general::wait_until_the_page_is_ready');
+            $node = $this->find('xpath', '//header//div[@id=\'page-navbar\']//a[contains(@href,\'/course/view.php?id=\')]');
+            $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
         }
     }
 
@@ -856,8 +854,8 @@ class behat_navigation extends behat_base {
             $tabxpath = '//ul[@role=\'tablist\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
             if ($node = $this->getSession()->getPage()->find('xpath', $tabxpath)) {
                 if ($this->running_javascript()) {
+                    $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
                     // Click on the tab and add 'active' tab to the xpath.
-                    $node->click();
                     $xpath .= '//div[contains(@class,\'active\')]';
                 } else {
                     // Add the tab content selector to the xpath.
@@ -881,8 +879,7 @@ class behat_navigation extends behat_base {
         if (!$node = $this->getSession()->getPage()->find('xpath', $xpath)) {
             throw new ElementNotFoundException($this->getSession(), 'Link "' . join(' > ', $nodelist) . '"');
         }
-        $node->click();
-        $this->wait_for_pending_js();
+        $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
     }
 
     /**
@@ -929,8 +926,8 @@ class behat_navigation extends behat_base {
             $menuxpath = $this->find_header_administration_menu() ?: $this->find_page_administration_menu();
         }
         if ($menuxpath && $this->running_javascript()) {
-            $this->find('xpath', $menuxpath . '//a[@data-toggle=\'dropdown\']')->click();
-            $this->wait_for_pending_js();
+            $node = $this->find('xpath', $menuxpath . '//a[@data-toggle=\'dropdown\']');
+            $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
         }
     }
 
@@ -952,15 +949,14 @@ class behat_navigation extends behat_base {
             $isheader = false;
         }
 
-        $this->toggle_page_administration_menu($menuxpath);
+        $this->execute('behat_navigation::toggle_page_administration_menu', [$menuxpath]);
 
         if (!$isheader || count($nodelist) == 1) {
             $lastnode = end($nodelist);
             $linkname = behat_context_helper::escape($lastnode);
             $link = $this->getSession()->getPage()->find('xpath', $menuxpath . '//a[contains(normalize-space(.), ' . $linkname . ')]');
             if ($link) {
-                $link->click();
-                $this->wait_for_pending_js();
+                $this->execute('behat_general::i_click_on', [$link, 'NodeElement']);
                 return;
             }
         }
@@ -970,8 +966,7 @@ class behat_navigation extends behat_base {
             $linkname = behat_context_helper::escape(get_string('morenavigationlinks'));
             $link = $this->getSession()->getPage()->find('xpath', $menuxpath . '//a[contains(normalize-space(.), ' . $linkname . ')]');
             if ($link) {
-                $link->click();
-                $this->execute('behat_general::wait_until_the_page_is_ready');
+                $this->execute('behat_general::i_click_on', [$link, 'NodeElement']);
                 $this->select_on_administration_page($nodelist);
                 return;
             }

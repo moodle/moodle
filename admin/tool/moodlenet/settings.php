@@ -32,15 +32,15 @@ if ($hassiteconfig) {
     $ADMIN->add('moodlenet', $settings);
 
     $temp = new admin_setting_configcheckbox('tool_moodlenet/enablemoodlenet', get_string('enablemoodlenet', 'tool_moodlenet'),
-        new lang_string('enablemoodlenet_desc', 'tool_moodlenet'), 1, 1, 0);
+        new lang_string('enablemoodlenet_desc', 'tool_moodlenet'), 0, 1, 0);
     $settings->add($temp);
 
     $temp = new admin_setting_configtext('tool_moodlenet/defaultmoodlenetname',
         get_string('defaultmoodlenetname', 'tool_moodlenet'), new lang_string('defaultmoodlenetname_desc', 'tool_moodlenet'),
-        'Moodle HQ MoodleNet');
+        new lang_string('defaultmoodlenetnamevalue', 'tool_moodlenet'));
     $settings->add($temp);
 
     $temp = new admin_setting_configtext('tool_moodlenet/defaultmoodlenet', get_string('defaultmoodlenet', 'tool_moodlenet'),
-        new lang_string('defaultmoodlenet_desc', 'tool_moodlenet'), 'https://home.moodle.net');
+        new lang_string('defaultmoodlenet_desc', 'tool_moodlenet'), 'https://moodle.net');
     $settings->add($temp);
 }

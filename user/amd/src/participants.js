@@ -36,7 +36,7 @@ import {showAddNote, showSendMessage} from 'core_user/local/participants/bulkact
 
 const Selectors = {
     bulkActionSelect: "#formactionid",
-    bulkUserSelectedCheckBoxes: "input[data-togglegroup='participants-table']:checked",
+    bulkUserSelectedCheckBoxes: "input[data-togglegroup='participants-table'][data-toggle='slave']:checked",
     checkCountButton: "#checkall",
     showCountText: '[data-region="participant-count"]',
     showCountToggle: '[data-action="showcount"]',

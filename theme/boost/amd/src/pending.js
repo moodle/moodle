@@ -121,13 +121,13 @@ export default () => {
         pairs.forEach(pair => {
             const eventStart = `${pair.start}.bs.${key}`;
             const eventEnd = `${pair.end}.bs.${key}`;
-            jQuery(document.body).on(eventStart, () => {
+            jQuery(document.body).on(eventStart, e => {
                 M.util.js_pending(eventEnd);
+                jQuery(e.target).one(eventEnd, () => {
+                    M.util.js_complete(eventEnd);
+                });
             });
 
-            jQuery(document.body).on(eventEnd, () => {
-                M.util.js_complete(eventEnd);
-            });
         });
     });
 };

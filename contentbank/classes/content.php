@@ -59,7 +59,7 @@ abstract class content {
         if (!class_exists($typeclass)) {
             throw new coding_exception(get_string('contenttypenotfound', 'error', $record->contenttype));
         }
-        // A record with the id must exist in 'contenbank_content' table.
+        // A record with the id must exist in 'contentbank_content' table.
         // To improve performance, we are only checking the id is set, but no querying the database.
         if (!isset($record->id)) {
             throw new coding_exception(get_string('invalidcontentid', 'error'));
@@ -103,7 +103,7 @@ abstract class content {
     public function update_content(): bool {
         global $USER, $DB;
 
-        // A record with the id must exist in 'contenbank_content' table.
+        // A record with the id must exist in 'contentbank_content' table.
         // To improve performance, we are only checking the id is set, but no querying the database.
         if (!isset($this->content->id)) {
             throw new coding_exception(get_string('invalidcontentid', 'error'));

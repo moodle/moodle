@@ -44,7 +44,7 @@ $PAGE->set_context($context);
 $PAGE->navbar->add(get_string('upload', 'contentbank'));
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->set_pagetype('contenbank');
+$PAGE->set_pagetype('contentbank');
 
 $maxbytes = $CFG->userquota;
 $maxareabytes = $CFG->userquota;

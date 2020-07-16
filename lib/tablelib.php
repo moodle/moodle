@@ -1306,8 +1306,7 @@ class flexible_table {
 
             if (array_key_exists($sortby, $sortdata)) {
                 // This key already exists somewhere. Change its sortorder and bring it to the top.
-                //$sortorder = $sortdata[$sortby] = $sortorder;
-                unset($sortdata['sortby'][$sortby]);
+                unset($sortdata[$sortby]);
             }
             $sortdata = array_merge([$sortby => $sortorder], $sortdata);
         }

@@ -1,4 +1,5 @@
 @core @core_user
+
 Feature: Course participants can be filtered to display all the users
   In order to filter the list of course participants
   As a user
@@ -6,9 +7,9 @@ Feature: Course participants can be filtered to display all the users
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | groupmode |
-      | Course 1 | C1        |     1     |
-      | Course 2 | C2        |     0     |
+      | fullname | shortname |
+      | Course 1 | C1        |
+      | Course 2 | C2        |
     And the following "users" exist:
       | username  | firstname | lastname | email                 |
       | student1  | Student   | 1        | student1@example.com  |
@@ -67,15 +68,6 @@ Feature: Course participants can be filtered to display all the users
       | student3  | C2     | student        |    0   |               |
       | teacher1  | C1     | editingteacher |    0   |               |
       | teacher1  | C2     | editingteacher |    0   |               |
-    And the following "groups" exist:
-      | name    | course | idnumber |
-      | Group 1 | C1     | G1       |
-      | Group 2 | C1     | G2       |
-    And the following "group members" exist:
-      | user     | group |
-      | student2 | G1    |
-      | student2 | G2    |
-      | student3 | G2    |
 
   @javascript
   Scenario: Show all users in a course that match a single filter value
@@ -91,6 +83,23 @@ Feature: Course participants can be filtered to display all the users
     And I should see "Show all 24"
     And I should not see "Show 20 per page"
     And I should not see "of the following"
+    And I click on "Show all 24" "link"
+    And I should see "Show 20 per page"
+    And I should not see "Show all 24"
+
+  @javascript
+  Scenario: Show all users as a student
+    Given I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I set the field "Match" in the "Filter 1" "fieldset" to "All"
+    And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
+    And I click on "Student" "list_item"
+    When I click on "Apply filters" "button"
+    Then I should see "24 participants found"
+    And I should see "Show all 24"
+    And I should not see "Show 20 per page"
     And I click on "Show all 24" "link"
     And I should see "Show 20 per page"
     And I should not see "Show all 24"

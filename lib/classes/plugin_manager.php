@@ -1725,6 +1725,7 @@ class core_plugin_manager {
             'block' => array('course_overview', 'messages', 'community', 'participants'),
             'cachestore' => array('memcache'),
             'enrol' => array('authorize'),
+            'quizaccess' => array('safebrowser'),
             'report' => array('search'),
             'repository' => array('alfresco'),
             'tinymce' => array('dragmath'),
@@ -2000,7 +2001,7 @@ class core_plugin_manager {
                 'analytics', 'availabilityconditions', 'behat', 'capability', 'cohortroles', 'customlang',
                 'dataprivacy', 'dbtransfer', 'filetypes', 'generator', 'health', 'httpsreplace', 'innodb',
                 'installaddon', 'langimport', 'licensemanager', 'log', 'lp', 'lpimportcsv', 'lpmigrate', 'messageinbound',
-                'mobile', 'multilangupgrade', 'monitor', 'oauth2', 'phpunit', 'policy', 'profiling', 'recyclebin',
+                'mobile', 'moodlenet', 'multilangupgrade', 'monitor', 'oauth2', 'phpunit', 'policy', 'profiling', 'recyclebin',
                 'replace', 'spamcleaner', 'task', 'templatelibrary', 'uploadcourse', 'uploaduser', 'unsuproles',
                 'usertours', 'xmldb'
             ),

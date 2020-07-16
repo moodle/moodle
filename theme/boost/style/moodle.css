@@ -9807,6 +9807,11 @@ a.dropdown-toggle:focus:hover,
 button.close:focus:hover {
   text-decoration: none; }
 
+.safari input[type="checkbox"].focus, .safari input[type="checkbox"]:focus,
+.safari input[type="radio"].focus,
+.safari input[type="radio"]:focus {
+  outline: auto; }
+
 .usermenu a,
 .usermenu a[role="button"],
 div.dropdown-item a,
@@ -11740,6 +11745,9 @@ body.h5p-embed .h5pmessages {
 
 .alert-dark a {
   color: #040505; }
+
+.alert a {
+  font-weight: 700; }
 
 @media (max-width: 767.98px) {
   #page-navbar {

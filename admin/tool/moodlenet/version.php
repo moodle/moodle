@@ -25,6 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component  = 'tool_moodlenet';
-$plugin->version    = 2020060500;
-$plugin->requires   = 2020022800.01;
+$plugin->version    = 2020061502;
+$plugin->requires   = 2020060900;
 $plugin->maturity   = MATURITY_ALPHA;

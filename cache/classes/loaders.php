@@ -2097,7 +2097,7 @@ class cache_session extends cache {
         }
         $successfullyset = $this->get_store()->set_many($data);
         if ($this->perfdebug && $successfullyset) {
-            cache_helper::record_cache_set($this->store, $this->get_definition(), $successfullyset);
+            cache_helper::record_cache_set($this->get_store(), $this->get_definition(), $successfullyset);
         }
         return $successfullyset;
     }

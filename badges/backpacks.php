@@ -80,6 +80,14 @@ if ($action == 'edit') {
     echo $output->heading(get_string('managebackpacks', 'badges'));
 
     $form->display();
+} else if ($action == 'test') {
+    // If no backpack has been selected, there isn't anything to test.
+    if (empty($id)) {
+        redirect($url);
+    }
+
+    echo $OUTPUT->header();
+    echo $output->render_test_backpack_result($id);
 } else {
     echo $OUTPUT->header();
     echo $output->heading(get_string('managebackpacks', 'badges'));

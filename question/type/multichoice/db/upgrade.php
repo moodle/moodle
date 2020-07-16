@@ -63,5 +63,8 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
         // Multichoice savepoint reached.
         upgrade_plugin_savepoint(true, $newversion, 'qtype', 'multichoice');
     }
+    // Automatically generated Moodle v3.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

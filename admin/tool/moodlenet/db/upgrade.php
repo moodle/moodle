@@ -77,5 +77,33 @@ function xmldb_tool_moodlenet_upgrade(int $oldversion) {
         upgrade_plugin_savepoint(true, 2020060500, 'tool', 'moodlenet');
     }
 
+    if ($oldversion < 2020061501) {
+        // Change the domain.
+        $defaultmoodlenet = get_config('tool_moodlenet', 'defaultmoodlenet');
+
+        if ($defaultmoodlenet === 'https://home.moodle.net') {
+            set_config('defaultmoodlenet', 'https://moodle.net', 'tool_moodlenet');
+        }
+
+        // Change the name.
+        $defaultmoodlenetname = get_config('tool_moodlenet', 'defaultmoodlenetname');
+
+        if ($defaultmoodlenetname === 'Moodle HQ MoodleNet') {
+            set_config('defaultmoodlenetname', 'MoodleNet Central', 'tool_moodlenet');
+        }
+
+        upgrade_plugin_savepoint(true, 2020061501, 'tool', 'moodlenet');
+    }
+
+    if ($oldversion < 2020061502) {
+        // Disable the MoodleNet integration by default till further notice.
+        set_config('enablemoodlenet', 0, 'tool_moodlenet');
+
+        upgrade_plugin_savepoint(true, 2020061502, 'tool', 'moodlenet');
+    }
+
+    // Automatically generated Moodle v3.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

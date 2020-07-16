@@ -46,25 +46,36 @@ class get_h5pactivity_access_information_testcase extends externallib_advanced_t
 
     /**
      * Test the behaviour of get_h5pactivity_access_information().
+     *
+     * @dataProvider get_h5pactivity_access_information_data
+     * @param string $role user role in course
+     * @param int $enabletracking if tracking is enabled
+     * @param array $enabledcaps capabilities enabled
      */
-    public function test_get_h5pactivity_access_information() {
+    public function test_get_h5pactivity_access_information(string $role, int $enabletracking, array $enabledcaps) {
         $this->resetAfterTest();
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();
-        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
-        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $activity = $this->getDataGenerator()->create_module('h5pactivity',
+            [
+                'course' => $course,
+                'enabletracking' => $enabletracking
+            ]
+        );
 
-        // Check the access information for a student.
-        $this->setUser($student);
+        if ($role) {
+            $user = $this->getDataGenerator()->create_and_enrol($course, $role);
+            $this->setUser($user);
+        }
+
+        // Check the access information.
         $result = get_h5pactivity_access_information::execute($activity->id);
         $result = external_api::clean_returnvalue(get_h5pactivity_access_information::execute_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         unset($result['warnings']);
 
-        // Check default values for capabilities for student.
-        $enabledcaps = ['canview', 'cansubmit'];
+        // Check the values for capabilities.
         foreach ($result as $capname => $capvalue) {
             if (in_array($capname, $enabledcaps)) {
                 $this->assertTrue($capvalue);
@@ -72,26 +83,55 @@ class get_h5pactivity_access_information_testcase extends externallib_advanced_t
                 $this->assertFalse($capvalue);
             }
         }
+    }
 
-        // Check the access information for a teacher.
-        $this->setUser($teacher);
-        $result = get_h5pactivity_access_information::execute($activity->id);
-        $result = external_api::clean_returnvalue(get_h5pactivity_access_information::execute_returns(), $result);
-        $this->assertCount(0, $result['warnings']);
-        unset($result['warnings']);
+    /**
+     * Data provider for get_h5pactivity_access_information.
+     *
+     * @return array
+     */
+    public function get_h5pactivity_access_information_data(): array {
+        return [
+            'Admin, tracking enabled' => [
+                '', 1, ['canview', 'canreviewattempts', 'canaddinstance']
+            ],
+            'Admin, tracking disabled' => [
+                '', 0, ['canview', 'canreviewattempts', 'canaddinstance']
+            ],
+            'Student, tracking enabled' => [
+                'student', 1, ['canview', 'cansubmit']
+            ],
+            'Student, tracking disabled' => [
+                'student', 0, ['canview']
+            ],
+            'Teacher, tracking enabled' => [
+                'editingteacher', 1, [
+                    'canview',
+                    'canreviewattempts',
+                    'canaddinstance'
+                ]
+            ],
+            'Teacher, tracking disabled' => [
+                'editingteacher', 0, [
+                    'canview',
+                    'canreviewattempts',
+                    'canaddinstance'
+                ]
+            ],
+        ];
+    }
 
-        // Check default values for capabilities for teacher.
-        $enabledcaps = ['canview', 'canaddinstance', 'canreviewattempts'];
-        foreach ($result as $capname => $capvalue) {
-            if (in_array($capname, $enabledcaps)) {
-                $this->assertTrue($capvalue);
-            } else {
-                $this->assertFalse($capvalue);
-            }
-        }
+    /**
+     * Test dml_missing_record_exception in get_h5pactivity_access_information.
+     */
+    public function test_dml_missing_record_exception() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
 
         // Call the WS using an unexisting h5pactivityid.
         $this->expectException(dml_missing_record_exception::class);
-        $result = get_h5pactivity_access_information::execute($activity->id + 1);
+        $result = get_h5pactivity_access_information::execute(1);
     }
 }

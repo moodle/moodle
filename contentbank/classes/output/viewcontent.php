@@ -75,7 +75,7 @@ class viewcontent implements renderable, templatable {
         $data->contenthtml = $contenthtml;
 
         // Check if the user can edit this content type.
-        if ($this->contenttype->can_edit()) {
+        if ($this->contenttype->can_edit($this->content)) {
             $data->usercanedit = true;
             $urlparams = [
                 'contextid' => $this->content->get_contextid(),

@@ -835,7 +835,7 @@ class core_renderer extends renderer_base {
             }
         }
 
-        if (isloggedin() && !isguestuser()) {
+        if (core_userfeedback::can_give_feedback()) {
             $output .= html_writer::div(
                 $this->render_from_template('core/userfeedback_footer_link', ['url' => core_userfeedback::make_link()->out(false)])
             );

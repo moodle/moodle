@@ -52,5 +52,8 @@ function xmldb_message_popup_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020020600, 'message', 'popup');
     }
 
+    // Automatically generated Moodle v3.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

@@ -15,14 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * External API to generate and return the URL of the feedback site.
+ * External API to record users action on the feedback notification.
  *
  * @package    core
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core\external\userfeedback;
+namespace core\external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,16 +31,14 @@ require_once("$CFG->libdir/externallib.php");
 use external_api;
 use external_function_parameters;
 use external_value;
-use external_single_structure;
-use external_multiple_structure;
 
 /**
- * The external API to generate and return the feedback url.
+ * The external API to record users action on the feedback notification.
  *
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generate_url extends external_api {
+class record_userfeedback_action extends external_api {
     /**
      * Returns description of parameters.
      *
@@ -48,34 +46,50 @@ class generate_url extends external_api {
      */
     public static function execute_parameters() {
         return new external_function_parameters([
+            'action' => new external_value(PARAM_ALPHA, 'The action taken by user'),
             'contextid' => new external_value(PARAM_INT, 'The context id of the page the user is in'),
         ]);
     }
 
     /**
-     * Prepare and return the URL of the feedback site
+     * Record users action to the feedback CTA
      *
+     * @param string $action The action the user took
      * @param int $contextid The context id
-     * @return \stdClass
+     * @throws \invalid_parameter_exception
      */
-    public static function execute(int $contextid) {
-        global $PAGE;
-
-        external_api::validate_parameters(self::execute_parameters(), ['contextid' => $contextid]);
+    public static function execute(string $action, int $contextid) {
+        external_api::validate_parameters(self::execute_parameters(), [
+            'action' => $action,
+            'contextid' => $contextid,
+        ]);
 
         $context = \context::instance_by_id($contextid);
         self::validate_context($context);
-        $PAGE->set_context($context);
 
-        return \core_userfeedback::make_link()->out(false);
+        switch ($action) {
+            case 'give':
+                set_user_preference('core_userfeedback_give', time());
+                $event = \core\event\userfeedback_give::create(['context' => $context]);
+                $event->trigger();
+                break;
+            case 'remind':
+                set_user_preference('core_userfeedback_remind', time());
+                $event = \core\event\userfeedback_remind::create(['context' => $context]);
+                $event->trigger();
+                break;
+            default:
+                throw new \invalid_parameter_exception('Invalid value for action parameter (value: ' . $action . '),' .
+                        'allowed values are: give,remind');
+        }
     }
 
     /**
      * Returns description of method result value
      *
-     * @return external_value
+     * @return null
      */
     public static function execute_returns() {
-        return new external_value(PARAM_URL, 'Feedback site\'s URL');
+        return null;
     }
 }

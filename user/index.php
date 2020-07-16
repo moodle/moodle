@@ -111,14 +111,25 @@ $canaccessallgroups = has_capability('moodle/site:accessallgroups', $context);
 $filtergroupids = $urlgroupid ? [$urlgroupid] : [];
 
 // Force group filtering if user should only see a subset of groups' users.
-if ($course->groupmode == SEPARATEGROUPS && !$canaccessallgroups) {
-    $filtergroupids = array_keys(groups_get_all_groups($course->id, $USER->id));
+if ($course->groupmode != NOGROUPS && !$canaccessallgroups) {
+    if ($filtergroupids) {
+        $filtergroupids = array_intersect(
+            $filtergroupids,
+            array_keys(groups_get_all_groups($course->id, $USER->id))
+        );
+    } else {
+        $filtergroupids = array_keys(groups_get_all_groups($course->id, $USER->id));
+    }
 
     if (empty($filtergroupids)) {
-        // The user is not in a group so show message and exit.
-        echo $OUTPUT->notification(get_string('notingroup'));
-        echo $OUTPUT->footer();
-        exit();
+        if ($course->groupmode == SEPARATEGROUPS) {
+            // The user is not in a group so show message and exit.
+            echo $OUTPUT->notification(get_string('notingroup'));
+            echo $OUTPUT->footer();
+            exit();
+        } else {
+            $filtergroupids = [(int) groups_get_course_group($course, true)];
+        }
     }
 }
 
@@ -171,19 +182,17 @@ $participanttable->out($perpage, true);
 $participanttablehtml = ob_get_contents();
 ob_end_clean();
 
-if ($bulkoperations) {
-    echo html_writer::start_tag('form', [
-        'action' => 'action_redir.php',
-        'method' => 'post',
-        'id' => 'participantsform',
-        'data-course-id' => $course->id,
-        'data-table-unique-id' => $participanttable->uniqueid,
-        'data-table-default-per-page' => ($perpage < DEFAULT_PAGE_SIZE) ? $perpage : DEFAULT_PAGE_SIZE,
-    ]);
-    echo '<div>';
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
-}
+echo html_writer::start_tag('form', [
+    'action' => 'action_redir.php',
+    'method' => 'post',
+    'id' => 'participantsform',
+    'data-course-id' => $course->id,
+    'data-table-unique-id' => $participanttable->uniqueid,
+    'data-table-default-per-page' => ($perpage < DEFAULT_PAGE_SIZE) ? $perpage : DEFAULT_PAGE_SIZE,
+]);
+echo '<div>';
+echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
 
 echo html_writer::tag(
     'p',
@@ -228,6 +237,10 @@ echo $OUTPUT->container(html_writer::link(
         'class' => $perpageclasses,
     ]
 ), [], 'showall');
+
+$bulkoptions = (object) [
+    'uniqueid' => $participanttable->uniqueid,
+];
 
 if ($bulkoperations) {
     echo '<br /><div class="buttons"><div class="form-inline">';
@@ -310,15 +323,12 @@ if ($bulkoperations) {
     echo '<input type="hidden" name="id" value="' . $course->id . '" />';
     echo '<div class="d-none" data-region="state-help-icon">' . $OUTPUT->help_icon('publishstate', 'notes') . '</div>';
     echo '</div></div></div>';
-    echo '</form>';
 
-    $options = (object) [
-        'uniqueid' => $participanttable->uniqueid,
-        'noteStateNames' => note_get_state_names(),
-    ];
-    $PAGE->requires->js_call_amd('core_user/participants', 'init', [$options]);
+    $bulkoptions->noteStateNames = note_get_state_names();
 }
+echo '</form>';
 
+$PAGE->requires->js_call_amd('core_user/participants', 'init', [$bulkoptions]);
 echo '</div>';  // Userlist.
 
 $enrolrenderer = $PAGE->get_renderer('core_enrol');
