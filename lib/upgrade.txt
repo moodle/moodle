@@ -4,6 +4,8 @@ information provided here is intended especially for developers.
 === 3.8.5 ===
 * The `$CFG->behat_retart_browser_after` configuration setting has been removed.
   The browser session is now restarted between all tests.
+* A new web service `core_output_load_fontawesome_icon_system_map` has been created.
+  This replaces the existing `core_output_load_fontawesome_icon_map` web service, which will be deprecated in Moodle 3.10.
 
 === 3.8.4 ===
 * Additional parameters were added to core_get_user_dates:

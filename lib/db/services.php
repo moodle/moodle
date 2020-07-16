@@ -1586,6 +1586,14 @@ $functions = array(
         'loginrequired' => false,
         'ajax' => true,
     ),
+    'core_output_load_fontawesome_icon_system_map' => array(
+        'classname' => 'core\external\output\icon_system\load_fontawesome_map',
+        'methodname' => 'execute',
+        'description' => 'Load the mapping of moodle pix names to fontawesome icon names',
+        'type' => 'read',
+        'loginrequired' => false,
+        'ajax' => true,
+    ),
     // Question related functions.
     'core_question_update_flag' => array(
         'classname'     => 'core_question_external',
