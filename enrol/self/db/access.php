@@ -73,4 +73,13 @@ $capabilities = array(
         )
     ),
 
+    /* Ability to enrol self in courses. */
+    'enrol/self:enrolself' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'user' => CAP_ALLOW,
+        )
+    ),
+
 );
