@@ -182,6 +182,7 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
 
         // Call for the second course we unenrolled the user from, expected warning.
         $result = mod_lti_external::get_ltis_by_courses(array($course2->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
         $this->assertCount(1, $result['warnings']);
         $this->assertEquals('1', $result['warnings'][0]['warningcode']);
         $this->assertEquals($course2->id, $result['warnings'][0]['itemid']);
@@ -290,6 +291,8 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
     public function test_mod_lti_create_tool_proxy() {
         $capabilities = ['AA', 'BB'];
         $proxy = mod_lti_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), $capabilities, []);
+        $proxy = (object) external_api::clean_returnvalue(mod_lti_external::create_tool_proxy_returns(), $proxy);
+
         $this->assertEquals('Test proxy', $proxy->name);
         $this->assertEquals($this->getExternalTestFileUrl('/test.html'), $proxy->regurl);
         $this->assertEquals(LTI_TOOL_PROXY_STATE_PENDING, $proxy->state);
@@ -319,9 +322,12 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
      */
     public function test_mod_lti_delete_tool_proxy() {
         $proxy = mod_lti_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), array(), array());
+        $proxy = (object) external_api::clean_returnvalue(mod_lti_external::create_tool_proxy_returns(), $proxy);
         $this->assertNotEmpty(lti_get_tool_proxy($proxy->id));
 
         $proxy = mod_lti_external::delete_tool_proxy($proxy->id);
+        $proxy = (object) external_api::clean_returnvalue(mod_lti_external::delete_tool_proxy_returns(), $proxy);
+
         $this->assertEquals('Test proxy', $proxy->name);
         $this->assertEquals($this->getExternalTestFileUrl('/test.html'), $proxy->regurl);
         $this->assertEquals(LTI_TOOL_PROXY_STATE_PENDING, $proxy->state);
@@ -333,7 +339,12 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
      */
     public function test_mod_lti_get_tool_proxy_registration_request() {
         $proxy = mod_lti_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), array(), array());
+        $proxy = (object) external_api::clean_returnvalue(mod_lti_external::create_tool_proxy_returns(), $proxy);
+
         $request = mod_lti_external::get_tool_proxy_registration_request($proxy->id);
+        $request = external_api::clean_returnvalue(mod_lti_external::get_tool_proxy_registration_request_returns(),
+            $request);
+
         $this->assertEquals('ToolProxyRegistrationRequest', $request['lti_message_type']);
         $this->assertEquals('LTI-2p0', $request['lti_version']);
     }
@@ -344,6 +355,7 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
     public function test_mod_lti_get_tool_types() {
         // Create a tool proxy.
         $proxy = mod_lti_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), array(), array());
+        $proxy = (object) external_api::clean_returnvalue(mod_lti_external::create_tool_proxy_returns(), $proxy);
 
         // Create a tool type, associated with that proxy.
         $type = new stdClass();
@@ -356,6 +368,8 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $typeid = lti_add_type($type, $data);
 
         $types = mod_lti_external::get_tool_types($proxy->id);
+        $types = external_api::clean_returnvalue(mod_lti_external::get_tool_types_returns(), $types);
+
         $this->assertEquals(1, count($types));
         $type = $types[0];
         $this->assertEquals('Test tool', $type['name']);
@@ -367,6 +381,8 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
      */
     public function test_mod_lti_create_tool_type() {
         $type = mod_lti_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
+        $type = external_api::clean_returnvalue(mod_lti_external::create_tool_type_returns(), $type);
+
         $this->assertEquals('Example tool', $type['name']);
         $this->assertEquals('Example tool description', $type['description']);
         $this->assertEquals('https://download.moodle.org/unittest/test.jpg', $type['urls']['icon']);
@@ -409,7 +425,11 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
      */
     public function test_mod_lti_update_tool_type() {
         $type = mod_lti_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
+        $type = external_api::clean_returnvalue(mod_lti_external::create_tool_type_returns(), $type);
+
         $type = mod_lti_external::update_tool_type($type['id'], 'New name', 'New description', LTI_TOOL_STATE_PENDING);
+        $type = external_api::clean_returnvalue(mod_lti_external::update_tool_type_returns(), $type);
+
         $this->assertEquals('New name', $type['name']);
         $this->assertEquals('New description', $type['description']);
         $this->assertEquals('Pending', $type['state']['text']);
@@ -420,8 +440,11 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
      */
     public function test_mod_lti_delete_tool_type() {
         $type = mod_lti_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
+        $type = external_api::clean_returnvalue(mod_lti_external::create_tool_type_returns(), $type);
         $this->assertNotEmpty(lti_get_type($type['id']));
+
         $type = mod_lti_external::delete_tool_type($type['id']);
+        $type = external_api::clean_returnvalue(mod_lti_external::delete_tool_type_returns(), $type);
         $this->assertEmpty(lti_get_type($type['id']));
     }
 
@@ -430,6 +453,7 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
      */
     public function test_mod_lti_delete_tool_type_without_capability() {
         $type = mod_lti_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
+        $type = external_api::clean_returnvalue(mod_lti_external::create_tool_type_returns(), $type);
         $this->assertNotEmpty(lti_get_type($type['id']));
         $this->expectException('required_capability_exception');
         self::setUser($this->teacher);
@@ -441,8 +465,11 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
      */
     public function test_mod_lti_is_cartridge() {
         $result = mod_lti_external::is_cartridge($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'));
+        $result = external_api::clean_returnvalue(mod_lti_external::is_cartridge_returns(), $result);
         $this->assertTrue($result['iscartridge']);
+
         $result = mod_lti_external::is_cartridge($this->getExternalTestFileUrl('/test.html'));
+        $result = external_api::clean_returnvalue(mod_lti_external::is_cartridge_returns(), $result);
         $this->assertFalse($result['iscartridge']);
     }
 }
