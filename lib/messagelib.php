@@ -65,9 +65,11 @@ function message_send(\core\message\message $eventdata) {
     $preferencebase = $eventdata->component.'_'.$eventdata->name;
 
     // If the message provider is disabled via preferences, then don't send the message.
-    if (!empty($defaultpreferences->{$preferencebase.'_disable'})) {
-        return $messageid;
-    }
+	if ($preferencebase != 'moodle_instantmessage') {
+        if (!empty($defaultpreferences->{$preferencebase.'_disable'})) {
+            return $messageid;
+        }
+	}
 
     // By default a message is a notification. Only personal/private messages aren't notifications.
     if (!isset($eventdata->notification)) {
