@@ -81,7 +81,9 @@ class core_contenttype_content_testcase extends \advanced_testcase {
             'Name with symbols' => ['Follow us: @moodle', 'Follow us: @moodle'],
             'Name with tags' => ['This is <b>bold</b>', 'This is bold'],
             'Long name' => [str_repeat('a', 100), str_repeat('a', 100)],
-            'Too long name' => [str_repeat('a', 300), str_repeat('a', 255)]
+            'Too long name' => [str_repeat('a', 300), str_repeat('a', 255)],
+            'Empty name' => ['', 'Old name'],
+            'Blanks only' => ['  ', 'Old name'],
         ];
     }
 
