@@ -624,9 +624,25 @@ class manager {
                         LEFT JOIN {context} ctx ON ap.contextid = ctx.id
                             WHERE ctx.id IS NULL)");
 
-        $contextsql = "SELECT id FROM {context} ctx";
-        $DB->delete_records_select('analytics_predictions', "contextid NOT IN ($contextsql)");
-        $DB->delete_records_select('analytics_indicator_calc', "contextid NOT IN ($contextsql)");
+        // Cleanup analaytics predictions/calcs with MySQL friendly sub-select.
+        $DB->execute("DELETE FROM {analytics_predictions} WHERE id IN (
+                        SELECT oldpredictions.id
+                        FROM (
+                            SELECT p.id
+                            FROM {analytics_predictions} p
+                            LEFT JOIN {context} ctx ON p.contextid = ctx.id
+                            WHERE ctx.id IS NULL
+                        ) oldpredictions
+                    )");
+
+        $DB->execute("DELETE FROM {analytics_indicator_calc} WHERE id IN (
+                        SELECT oldcalcs.id FROM (
+                            SELECT c.id
+                            FROM {analytics_indicator_calc} c
+                            LEFT JOIN {context} ctx ON c.contextid = ctx.id
+                            WHERE ctx.id IS NULL
+                        ) oldcalcs
+                    )");
 
         // Clean up stuff that depends on analysable ids that do not exist anymore.
 
