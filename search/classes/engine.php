@@ -394,6 +394,8 @@ abstract class engine {
      */
     public function optimize() {
         // Nothing by default.
+        mtrace('The ' . get_string('pluginname', $this->get_plugin_name()) .
+                ' search engine does not require automatic optimization.');
     }
 
     /**

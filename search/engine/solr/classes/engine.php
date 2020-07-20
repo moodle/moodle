@@ -1204,15 +1204,6 @@ class engine extends \core_search\engine {
     }
 
     /**
-     * Defragments the index.
-     *
-     * @return void
-     */
-    public function optimize() {
-        $this->get_search_client()->optimize(1, true, false);
-    }
-
-    /**
      * Deletes the specified document.
      *
      * @param string $id The document id to delete
