@@ -93,6 +93,17 @@ class check_defaults extends XMLDBCheckAction {
                     $physicaldefault = null;
                 }
 
+                // For number fields there are issues with type differences, so let's convert
+                // everything to a float.
+                if ($xmldbfield->getType() === XMLDB_TYPE_NUMBER) {
+                    if ($physicaldefault !== null) {
+                        $physicaldefault = (float) $physicaldefault;
+                    }
+                    if ($xmldbdefault !== null) {
+                        $xmldbdefault = (float) $xmldbdefault;
+                    }
+                }
+
                 // There *is* a default and it's wrong.
                 if ($physicaldefault !== $xmldbdefault) {
                     $xmldbtext = self::display_default($xmldbdefault);
