@@ -458,8 +458,8 @@ class core_message_events_testcase extends core_message_messagelib_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        \core_message\api::delete_conversation($user1->id, $user2->id);
-        $this->assertDebuggingCalled();
+        $conversationid = \core_message\api::get_conversation_between_users([$user1->id, $user2->id]);
+        \core_message\api::delete_conversation_by_id($user1->id, $conversationid);
         $events = $sink->get_events();
 
         // Get the user actions for the messages deleted by that user.
