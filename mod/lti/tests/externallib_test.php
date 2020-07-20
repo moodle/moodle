@@ -256,7 +256,54 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test view_lti
+     * Test view_lti with an invalid instance id.
+     */
+    public function test_view_lti_invalid_instanceid() {
+        $this->expectException(moodle_exception::class);
+        mod_lti_external::view_lti(0);
+    }
+
+    /**
+     * Test view_lti as a user who is not enrolled in the course.
+     */
+    public function test_view_lti_no_enrolment() {
+        [
+            'lti' => $lti
+        ] = $this->setup_test_data();
+
+        // Test not-enrolled user.
+        $usernotenrolled = self::getDataGenerator()->create_user();
+        $this->setUser($usernotenrolled);
+
+        $this->expectException(moodle_exception::class);
+        mod_lti_external::view_lti($lti->id);
+    }
+
+    /**
+     * Test view_lti for a user without the mod/lti:view capability.
+     */
+    public function test_view_lti_no_capability() {
+        [
+            'lti' => $lti,
+            'student' => $student,
+            'studentrole' => $studentrole,
+            'context' => $context,
+        ] = $this->setup_test_data();
+
+        $this->setUser($student);
+
+        // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
+        assign_capability('mod/lti:view', CAP_PROHIBIT, $studentrole->id, $context->id);
+        // Empty all the caches that may be affected by this change.
+        accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
+
+        $this->expectException(moodle_exception::class);
+        mod_lti_external::view_lti($lti->id);
+    }
+
+    /**
+     * Test view_lti for a user with the mod/lti:view capability in the course.
      */
     public function test_view_lti() {
         [
@@ -264,26 +311,7 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
             'context' => $context,
             'cm' => $cm,
             'student' => $student,
-            'studentrole' => $studentrole,
         ] = $this->setup_test_data();
-
-        // Test invalid instance id.
-        try {
-            mod_lti_external::view_lti(0);
-            $this->fail('Exception expected due to invalid mod_lti instance id.');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('invalidrecord', $e->errorcode);
-        }
-
-        // Test not-enrolled user.
-        $usernotenrolled = self::getDataGenerator()->create_user();
-        $this->setUser($usernotenrolled);
-        try {
-            mod_lti_external::view_lti($lti->id);
-            $this->fail('Exception expected due to not enrolled user.');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('requireloginerror', $e->errorcode);
-        }
 
         // Test user with full capabilities.
         $this->setUser($student);
@@ -306,21 +334,6 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($moodlelti, $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
-
-        // Test user with no capabilities.
-        // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
-        assign_capability('mod/lti:view', CAP_PROHIBIT, $studentrole->id, $context->id);
-        // Empty all the caches that may be affected by this change.
-        accesslib_clear_all_caches_for_unit_testing();
-        course_modinfo::clear_instance_cache();
-
-        try {
-            mod_lti_external::view_lti($lti->id);
-            $this->fail('Exception expected due to missing capability.');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('requireloginerror', $e->errorcode);
-        }
-
     }
 
     /*
