@@ -89,7 +89,7 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test view_lti
+     * Test get_tool_launch_data.
      */
     public function test_get_tool_launch_data() {
         global $USER;
@@ -120,11 +120,10 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         self::assertEquals($USER->username, $parameters['ext_user_username']);
         self::assertEquals("phpunit", $parameters['tool_consumer_instance_name']);
         self::assertEquals("PHPUnit test site", $parameters['tool_consumer_instance_description']);
-
     }
 
-    /*
-     * Test get ltis by courses
+    /**
+     * Test get_ltis_by_courses.
      */
     public function test_mod_lti_get_ltis_by_courses() {
         $td  = $this->setup_test_data();
@@ -159,8 +158,8 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
 
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
-        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'launchcontainer',
-                                'showtitlelaunch', 'showdescriptionlaunch', 'icon', 'secureicon');
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles',
+            'launchcontainer', 'showtitlelaunch', 'showdescriptionlaunch', 'icon', 'secureicon');
 
         // Add expected coursemodule and data.
         $lti1 = $lti;
@@ -181,8 +180,8 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $lti2->introfiles = [];
 
         foreach ($expectedfields as $field) {
-                $expected1[$field] = $lti1->{$field};
-                $expected2[$field] = $lti2->{$field};
+            $expected1[$field] = $lti1->{$field};
+            $expected2[$field] = $lti2->{$field};
         }
 
         $expectedltis = array($expected2, $expected1);
@@ -220,12 +219,12 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         self::setUser($teacher);
 
         $additionalfields = array('timecreated', 'timemodified', 'typeid', 'toolurl', 'securetoolurl',
-                        'instructorchoicesendname', 'instructorchoicesendemailaddr', 'instructorchoiceallowroster',
-                        'instructorchoiceallowsetting', 'instructorcustomparameters', 'instructorchoiceacceptgrades', 'grade',
-                        'resourcekey', 'password', 'debuglaunch', 'servicesalt', 'visible', 'groupmode', 'groupingid');
+            'instructorchoicesendname', 'instructorchoicesendemailaddr', 'instructorchoiceallowroster',
+            'instructorchoiceallowsetting', 'instructorcustomparameters', 'instructorchoiceacceptgrades', 'grade',
+            'resourcekey', 'password', 'debuglaunch', 'servicesalt', 'visible', 'groupmode', 'groupingid');
 
         foreach ($additionalfields as $field) {
-                $expectedltis[0][$field] = $lti1->{$field};
+            $expectedltis[0][$field] = $lti1->{$field};
         }
 
         $result = mod_lti_external::get_ltis_by_courses();
@@ -325,14 +324,14 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_lti\event\course_module_viewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $moodlelti = new \moodle_url('/mod/lti/view.php', array('id' => $cm->id));
+        $moodlelti = new moodle_url('/mod/lti/view.php', array('id' => $cm->id));
         $this->assertEquals($moodlelti, $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
     }
 
-    /*
-     * Test create tool proxy
+    /**
+     * Test create_tool_proxy.
      */
     public function test_mod_lti_create_tool_proxy() {
         $this->setAdminUser();
@@ -346,29 +345,30 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(implode("\n", $capabilities), $proxy->capabilityoffered);
     }
 
-    /*
-     * Test create tool proxy with duplicate url
+    /**
+     * Test create_tool_proxy with a duplicate url.
      */
     public function test_mod_lti_create_tool_proxy_duplicateurl() {
         $this->setAdminUser();
-        $this->expectException('moodle_exception');
         mod_lti_external::create_tool_proxy('Test proxy 1', $this->getExternalTestFileUrl('/test.html'), array(), array());
+
+        $this->expectException(moodle_exception::class);
         mod_lti_external::create_tool_proxy('Test proxy 2', $this->getExternalTestFileUrl('/test.html'), array(), array());
     }
 
-    /*
-     * Test create tool proxy without sufficient capability
+    /**
+     * Test create_tool_proxy for a user without the required capability.
      */
     public function test_mod_lti_create_tool_proxy_without_capability() {
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $this->setUser($teacher);
-        $this->expectException('required_capability_exception');
+        $this->expectException(required_capability_exception::class);
         mod_lti_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), array(), array());
     }
 
-    /*
-     * Test delete tool proxy
+    /**
+     * Test delete_tool_proxy.
      */
     public function test_mod_lti_delete_tool_proxy() {
         $this->setAdminUser();
@@ -385,8 +385,8 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $this->assertEmpty(lti_get_tool_proxy($proxy->id));
     }
 
-    /*
-     * Test get tool proxy registration request
+    /**
+     * Test get_tool_proxy_registration_request.
      */
     public function test_mod_lti_get_tool_proxy_registration_request() {
         $this->setAdminUser();
@@ -401,8 +401,8 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('LTI-2p0', $request['lti_version']);
     }
 
-    /*
-     * Test get tool types
+    /**
+     * Test get_tool_types.
      */
     public function test_mod_lti_get_tool_types() {
         // Create a tool proxy.
@@ -423,14 +423,14 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $types = mod_lti_external::get_tool_types($proxy->id);
         $types = external_api::clean_returnvalue(mod_lti_external::get_tool_types_returns(), $types);
 
-        $this->assertEquals(1, count($types));
+        $this->assertCount(1, $types);
         $type = $types[0];
         $this->assertEquals('Test tool', $type['name']);
         $this->assertEquals('Example description', $type['description']);
     }
 
-    /*
-     * Test create tool type
+    /**
+     * Test create_tool_type.
      */
     public function test_mod_lti_create_tool_type() {
         $this->setAdminUser();
@@ -449,35 +449,35 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $this->assertTrue(isset($config['forcessl']));
     }
 
-    /*
-     * Test create tool type failure from non existant file
+    /**
+     * Test create_tool_type failure from non existent file.
      */
     public function test_mod_lti_create_tool_type_nonexistant_file() {
-        $this->expectException('moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_lti_external::create_tool_type($this->getExternalTestFileUrl('/doesntexist.xml'), '', '');
     }
 
-    /*
-     * Test create tool type failure from xml that is not a cartridge
+    /**
+     * Test create_tool_type failure from xml that is not a cartridge.
      */
     public function test_mod_lti_create_tool_type_bad_file() {
-        $this->expectException('moodle_exception');
+        $this->expectException(moodle_exception::class);
         mod_lti_external::create_tool_type($this->getExternalTestFileUrl('/rsstest.xml'), '', '');
     }
 
-    /*
-     * Test creating of tool types without sufficient capability
+    /**
+     * Test create_tool_type as a user without the required capability.
      */
     public function test_mod_lti_create_tool_type_without_capability() {
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $this->setUser($teacher);
-        $this->expectException('required_capability_exception');
+        $this->expectException(required_capability_exception::class);
         mod_lti_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
     }
 
-    /*
-     * Test update tool type
+    /**
+     * Test update_tool_type.
      */
     public function test_mod_lti_update_tool_type() {
         $this->setAdminUser();
@@ -492,8 +492,8 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('Pending', $type['state']['text']);
     }
 
-    /*
-     * Test delete tool type
+    /**
+     * Test delete_tool_type for a user with the required capability.
      */
     public function test_mod_lti_delete_tool_type() {
         $this->setAdminUser();
@@ -506,23 +506,24 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $this->assertEmpty(lti_get_type($type['id']));
     }
 
-    /*
-     * Test delete tool type without sufficient capability
+    /**
+     * Test delete_tool_type for a user without the required capability.
      */
     public function test_mod_lti_delete_tool_type_without_capability() {
         $this->setAdminUser();
         $type = mod_lti_external::create_tool_type($this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml'), '', '');
         $type = external_api::clean_returnvalue(mod_lti_external::create_tool_type_returns(), $type);
         $this->assertNotEmpty(lti_get_type($type['id']));
-        $this->expectException('required_capability_exception');
+
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $this->setUser($teacher);
+        $this->expectException(required_capability_exception::class);
         mod_lti_external::delete_tool_type($type['id']);
     }
 
-    /*
-     * Test is cartridge
+    /**
+     * Test is_cartridge.
      */
     public function test_mod_lti_is_cartridge() {
         $this->setAdminUser();
