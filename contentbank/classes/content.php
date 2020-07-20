@@ -127,6 +127,7 @@ abstract class content {
      * @throws \coding_exception if not loaded.
      */
     public function set_name(string $name): bool {
+        $name = trim($name);
         if (empty($name)) {
             return false;
         }
