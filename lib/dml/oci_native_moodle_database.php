@@ -345,14 +345,16 @@ class oci_native_moodle_database extends moodle_database {
 
     /**
      * Prepare the statement for execution
-     * @throws dml_connection_exception
+     *
      * @param string $sql
      * @return resource
+     *
+     * @throws dml_exception
      */
     protected function parse_query($sql) {
         $stmt = oci_parse($this->oci, $sql);
         if ($stmt == false) {
-            throw new dml_connection_exception('Can not parse sql query'); //TODO: maybe add better info
+            throw new dml_exception('dmlparseexception', null, $this->get_last_error());
         }
         return $stmt;
     }
