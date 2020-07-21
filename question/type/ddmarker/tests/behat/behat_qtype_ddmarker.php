@@ -71,8 +71,7 @@ class behat_qtype_ddmarker extends behat_base {
         // DOM node so that its centre is over the centre of anothe DOM node.
         // Therefore to make it drag to the specified place, we have to add
         // a target div.
-        $session = $this->getSession();
-        $session->executeScript("
+        $this->execute_script("
                 (function() {
                     if (document.getElementById('target-{$x}-{$y}')) {
                         return;
@@ -90,7 +89,8 @@ class behat_qtype_ddmarker extends behat_base {
                     target.style.setProperty('top', yadjusted + 'px');
                     target.style.setProperty('width', '1px');
                     target.style.setProperty('height', '1px');
-                }())");
+                }())"
+        );
 
         $generalcontext = behat_context_helper::get('behat_general');
         $generalcontext->i_drag_and_i_drop_it_in($this->marker_xpath($marker, $item),
