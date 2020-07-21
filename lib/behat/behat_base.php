@@ -468,12 +468,45 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
-     * Returns whether the scenario is running in a browser that can run Javascript or not.
+     * Whether Javascript is available in the current Session.
      *
      * @return boolean
      */
     protected function running_javascript() {
-        return get_class($this->getSession()->getDriver()) !== 'Behat\Mink\Driver\GoutteDriver';
+        return self::running_javascript_in_session($this->getSession());
+    }
+
+    /**
+     * Require that javascript be available in the current Session.
+     *
+     * @throws DriverException
+     */
+    protected function require_javascript() {
+        return self::require_javascript_in_session($this->getSession());
+    }
+
+    /**
+     * Whether Javascript is available in the specified Session.
+     *
+     * @param Session $session
+     * @return boolean
+     */
+    protected static function running_javascript_in_session(Session $session): bool {
+        return get_class($session->getDriver()) !== 'Behat\Mink\Driver\GoutteDriver';
+    }
+
+    /**
+     * Require that javascript be available for the specified Session.
+     *
+     * @param Session $session
+     * @throws DriverException
+     */
+    protected static function require_javascript_in_session(Session $session): void {
+        if (self::running_javascript_in_session($session)) {
+            return;
+        }
+
+        throw new DriverException('Javascript is required');
     }
 
     /**
@@ -697,14 +730,18 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             // The window inner height will be as specified, which means the available viewport will
             // actually be smaller if there is a horizontal scrollbar. We assume that horizontal
             // scrollbars are rare so this doesn't matter.
-            $offset = $this->getSession()->getDriver()->evaluateScript(
-                    'return (function() { var before = document.body.style.overflowY;' .
-                    'document.body.style.overflowY = "scroll";' .
-                    'var result = {};' .
-                    'result.x = window.outerWidth - document.body.offsetWidth;' .
-                    'result.y = window.outerHeight - window.innerHeight;' .
-                    'document.body.style.overflowY = before;' .
-                    'return result; })();');
+            $js = <<<EOF
+return (function() {
+    var before = document.body.style.overflowY;
+    document.body.style.overflowY = "scroll";
+    var result = {};
+    result.x = window.outerWidth - document.body.offsetWidth;
+    result.y = window.outerHeight - window.innerHeight;
+    document.body.style.overflowY = before;
+    return result;
+})();
+EOF;
+            $offset = $this->evaluate_script($js);
             $width += $offset['x'];
             $height += $offset['y'];
         }
@@ -753,8 +790,8 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                         } else {
                             return "incomplete"
                         }
-                    }());'));
-                $pending = $session->evaluateScript($jscode);
+                    })()'));
+                $pending = self::evaluate_script_in_session($session, $jscode);
             } catch (NoSuchWindow $nsw) {
                 // We catch an exception here, in case we just closed the window we were interacting with.
                 // No javascript is running if there is no window right?
@@ -1136,5 +1173,71 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      */
     public static function get_named_replacements(): array {
         return [];
+    }
+
+    /**
+     * Evaluate the supplied script in the current session, returning the result.
+     *
+     * @param string $script
+     * @return mixed
+     */
+    public function evaluate_script(string $script) {
+        return self::evaluate_script_in_session($this->getSession(), $script);
+    }
+
+    /**
+     * Evaluate the supplied script in the specified session, returning the result.
+     *
+     * @param Session $session
+     * @param string $script
+     * @return mixed
+     */
+    public static function evaluate_script_in_session(Session $session, string $script) {
+        self::require_javascript_in_session($session);
+
+        return $session->evaluateScript($script);
+    }
+
+    /**
+     * Execute the supplied script in the current session.
+     *
+     * No result will be returned.
+     *
+     * @param string $script
+     */
+    public function execute_script(string $script): void {
+        self::execute_script_in_session($this->getSession(), $script);
+    }
+
+    /**
+     * Excecute the supplied script in the specified session.
+     *
+     * No result will be returned.
+     *
+     * @param Session $session
+     * @param string $script
+     */
+    public static function execute_script_in_session(Session $session, string $script): void {
+        self::require_javascript_in_session($session);
+
+        $session->executeScript($script);
+    }
+
+    /**
+     * Get the session key for the current session via Javascript.
+     *
+     * @return string
+     */
+    public function get_sesskey(): string {
+        $script = <<<EOF
+return (function() {
+if (M && M.cfg && M.cfg.sesskey) {
+    return M.cfg.sesskey;
+}
+return '';
+})()
+EOF;
+
+        return $this->evaluate_script($script);
     }
 }
