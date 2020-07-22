@@ -501,7 +501,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @param Session $session
      * @throws DriverException
      */
-    protected static function require_javascript_in_session(Session $session): void {
+    protected static function require_javascript_in_session(Session $session) {
         if (self::running_javascript_in_session($session)) {
             return;
         }
@@ -1205,7 +1205,7 @@ EOF;
      *
      * @param string $script
      */
-    public function execute_script(string $script): void {
+    public function execute_script(string $script) {
         self::execute_script_in_session($this->getSession(), $script);
     }
 
@@ -1217,7 +1217,7 @@ EOF;
      * @param Session $session
      * @param string $script
      */
-    public static function execute_script_in_session(Session $session, string $script): void {
+    public static function execute_script_in_session(Session $session, string $script) {
         self::require_javascript_in_session($session);
 
         $session->executeScript($script);
