@@ -438,6 +438,55 @@ class core_dml_testcase extends database_driver_testcase {
         $this->assertSame(array_values($params), array_values($inparams));
     }
 
+    /**
+     * Test the database debugging as SQL comment.
+     */
+    public function test_add_sql_debugging() {
+        global $CFG;
+        $DB = $this->tdb;
+
+        require_once($CFG->dirroot . '/lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php');
+        $fixture = new test_dml_sql_debugging_fixture($this);
+
+        $sql = "SELECT * FROM {users}";
+
+        $out = $fixture->four($sql);
+
+        $CFG->debugsqltrace = 0;
+        $this->assertEquals("SELECT * FROM {users}", $out);
+
+        $CFG->debugsqltrace = 1;
+        $out = $fixture->four($sql);
+        $expected = <<<EOD
+SELECT * FROM {users}
+-- line 65 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
+EOD;
+        $this->assertEquals($expected, $out);
+
+        $CFG->debugsqltrace = 2;
+        $out = $fixture->four($sql);
+        $expected = <<<EOD
+SELECT * FROM {users}
+-- line 65 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
+-- line 74 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
+EOD;
+        $this->assertEquals($expected, $out);
+
+        $CFG->debugsqltrace = 5;
+        $out = $fixture->four($sql);
+        $expected = <<<EOD
+SELECT * FROM {users}
+-- line 65 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
+-- line 74 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
+-- line 83 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->two()
+-- line 92 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->three()
+-- line 476 of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four()
+EOD;
+        $this->assertEquals($expected, $out);
+
+        $CFG->debugsqltrace = 0;
+    }
+
     public function test_strtok() {
         // Strtok was previously used by bound emulation, make sure it is not used any more.
         $DB = $this->tdb;

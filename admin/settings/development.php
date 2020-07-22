@@ -41,6 +41,13 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('debugdisplay', new lang_string('debugdisplay', 'admin'), new lang_string('configdebugdisplay', 'admin'), ini_get_bool('display_errors')));
     $temp->add(new admin_setting_configcheckbox('perfdebug', new lang_string('perfdebug', 'admin'), new lang_string('configperfdebug', 'admin'), '7', '15', '7'));
     $temp->add(new admin_setting_configcheckbox('debugstringids', new lang_string('debugstringids', 'admin'), new lang_string('debugstringids_desc', 'admin'), 0));
+    $temp->add(new admin_setting_configselect('debugsqltrace',
+            new lang_string('debugsqltrace', 'admin'),
+            new lang_string('debugsqltrace_desc', 'admin'), 0, array(
+               0 => new lang_string('disabled', 'admin'),
+               1 => new lang_string('debugsqltrace1', 'admin'),
+               2 => new lang_string('debugsqltrace2', 'admin'),
+             100 => new lang_string('debugsqltrace100', 'admin'))));
     $temp->add(new admin_setting_configcheckbox('debugvalidators', new lang_string('debugvalidators', 'admin'), new lang_string('configdebugvalidators', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('debugpageinfo', new lang_string('debugpageinfo', 'admin'), new lang_string('configdebugpageinfo', 'admin'), 0));
     $ADMIN->add('development', $temp);
