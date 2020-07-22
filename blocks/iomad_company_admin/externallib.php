@@ -1250,9 +1250,9 @@ class block_iomad_company_admin_external extends external_api {
 
         // Get course records
         if (empty($courseids)) {
-            $courses = $DB->get_records('iomad_course');
+            $courses = $DB->get_records('iomad_courses');
         } else {
-            $courses = $DB->get_records_list('iomad_course', 'id', $params['courseids']);
+            $courses = $DB->get_records_list('iomad_courses', 'id', $params['courseids']);
         }
 
         // convert to suitable format (I think)
