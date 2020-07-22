@@ -567,7 +567,7 @@ class behat_navigation extends behat_base {
 
                 }
             }
-            $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
+            $this->execute('behat_general::i_visit', [$url]);
         }
 
         // Restore global user variable.
@@ -590,8 +590,7 @@ class behat_navigation extends behat_base {
      * @throws Exception if the specified page cannot be determined.
      */
     public function i_am_on_page(string $page) {
-        $this->getSession()->visit($this->locate_path(
-                $this->resolve_page_helper($page)->out_as_local_url()));
+        $this->execute('behat_general::i_visit', [$this->resolve_page_helper($page)]);
     }
 
     /**
@@ -670,8 +669,7 @@ class behat_navigation extends behat_base {
      * @throws Exception if the specified page cannot be determined.
      */
     public function i_am_on_page_instance(string $identifier, string $type) {
-        $this->getSession()->visit($this->locate_path(
-                $this->resolve_page_instance_helper($identifier, $type)->out_as_local_url()));
+        $this->execute('behat_general::i_visit', [$this->resolve_page_instance_helper($identifier, $type)]);
     }
 
     /**
@@ -776,7 +774,7 @@ class behat_navigation extends behat_base {
         global $DB;
         $course = $DB->get_record("course", array("fullname" => $coursefullname), 'id', MUST_EXIST);
         $url = new moodle_url('/course/view.php', ['id' => $course->id]);
-        $this->getSession()->visit($this->locate_path($url->out_as_local_url(false)));
+        $this->execute('behat_general::i_visit', [$url]);
     }
 
     /**
@@ -797,13 +795,13 @@ class behat_navigation extends behat_base {
             // Javascript is running so it is possible to grab the session ket and jump straight to editing mode.
             $url->param('edit', 1);
             $url->param('sesskey', $sesskey);
-            $this->getSession()->visit($this->locate_path($url->out_as_local_url(false)));
+            $this->execute('behat_general::i_visit', [$url]);
 
             return;
         }
 
         // Visit the course page.
-        $this->getSession()->visit($this->locate_path($url->out_as_local_url(false)));
+        $this->execute('behat_general::i_visit', [$url]);
 
         try {
             $this->execute("behat_forms::press_button", get_string('turneditingon'));

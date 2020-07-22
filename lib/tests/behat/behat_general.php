@@ -74,7 +74,7 @@ class behat_general extends behat_base {
      * @Given /^I am on homepage$/
      */
     public function i_am_on_homepage() {
-        $this->getSession()->visit($this->locate_path('/'));
+        $this->execute('behat_general::i_visit', ['/']);
     }
 
     /**
@@ -83,7 +83,7 @@ class behat_general extends behat_base {
      * @Given /^I am on site homepage$/
      */
     public function i_am_on_site_homepage() {
-        $this->getSession()->visit($this->locate_path('/?redirect=0'));
+        $this->execute('behat_general::i_visit', ['/?redirect=0']);
     }
 
     /**
@@ -92,7 +92,7 @@ class behat_general extends behat_base {
      * @Given /^I am on course index$/
      */
     public function i_am_on_course_index() {
-        $this->getSession()->visit($this->locate_path('/course/index.php'));
+        $this->execute('behat_general::i_visit', ['/course/index.php']);
     }
 
     /**
@@ -1005,7 +1005,7 @@ EOF;
      * @Given /^I trigger cron$/
      */
     public function i_trigger_cron() {
-        $this->getSession()->visit($this->locate_path('/admin/cron.php'));
+        $this->execute('behat_general::i_visit', ['/admin/cron.php']);
     }
 
     /**
@@ -1777,5 +1777,17 @@ EOF;
 
         $value = ($shift == ' shift') ? [\WebDriver\Key::SHIFT . \WebDriver\Key::TAB] : [\WebDriver\Key::TAB];
         $this->getSession()->getDriver()->getWebDriverSession()->activeElement()->postValue(['value' => $value]);
+    }
+
+    /**
+     * Visit a local URL relative to the behat root.
+     *
+     * @When I visit :localurl
+     *
+     * @param string|moodle_url $localurl The URL relative to the behat_wwwroot to visit.
+     */
+    public function i_visit($localurl) {
+        $localurl = new moodle_url($localurl);
+        $this->getSession()->visit($this->locate_path($localurl->out_as_local_url(false)));
     }
 }
