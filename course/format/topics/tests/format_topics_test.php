@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * format_topics related unit tests
+ * Topics course format related unit tests.
  *
  * @package    format_topics
  * @copyright  2015 Marina Glancy
@@ -28,7 +28,7 @@ global $CFG;
 require_once($CFG->dirroot . '/course/lib.php');
 
 /**
- * format_topics related unit tests
+ * Topics course format related unit tests.
  *
  * @package    format_topics
  * @copyright  2015 Marina Glancy
@@ -38,6 +38,8 @@ class format_topics_testcase extends advanced_testcase {
 
     /**
      * Tests for format_topics::get_section_name method with default section names.
+     *
+     * @return void
      */
     public function test_get_section_name() {
         global $DB;
@@ -46,11 +48,11 @@ class format_topics_testcase extends advanced_testcase {
         // Generate a course with 5 sections.
         $generator = $this->getDataGenerator();
         $numsections = 5;
-        $course = $generator->create_course(array('numsections' => $numsections, 'format' => 'topics'),
-            array('createsections' => true));
+        $course = $generator->create_course(['numsections' => $numsections, 'format' => 'topics'],
+            ['createsections' => true]);
 
         // Get section names for course.
-        $coursesections = $DB->get_records('course_sections', array('course' => $course->id));
+        $coursesections = $DB->get_records('course_sections', ['course' => $course->id]);
 
         // Test get_section_name with default section names.
         $courseformat = course_get_format($course);
@@ -62,6 +64,8 @@ class format_topics_testcase extends advanced_testcase {
 
     /**
      * Tests for format_topics::get_section_name method with modified section names.
+     *
+     * @return void
      */
     public function test_get_section_name_customised() {
         global $DB;
@@ -70,11 +74,11 @@ class format_topics_testcase extends advanced_testcase {
         // Generate a course with 5 sections.
         $generator = $this->getDataGenerator();
         $numsections = 5;
-        $course = $generator->create_course(array('numsections' => $numsections, 'format' => 'topics'),
-            array('createsections' => true));
+        $course = $generator->create_course(['numsections' => $numsections, 'format' => 'topics'],
+            ['createsections' => true]);
 
         // Get section names for course.
-        $coursesections = $DB->get_records('course_sections', array('course' => $course->id));
+        $coursesections = $DB->get_records('course_sections', ['course' => $course->id]);
 
         // Modify section names.
         $customname = "Custom Section";
@@ -84,7 +88,7 @@ class format_topics_testcase extends advanced_testcase {
         }
 
         // Requery updated section names then test get_section_name.
-        $coursesections = $DB->get_records('course_sections', array('course' => $course->id));
+        $coursesections = $DB->get_records('course_sections', ['course' => $course->id]);
         $courseformat = course_get_format($course);
         foreach ($coursesections as $section) {
             // Assert that with modified section names, get_section_name returns the modified section name.
@@ -94,6 +98,8 @@ class format_topics_testcase extends advanced_testcase {
 
     /**
      * Tests for format_topics::get_default_section_name.
+     *
+     * @return void
      */
     public function test_get_default_section_name() {
         global $DB;
@@ -102,11 +108,11 @@ class format_topics_testcase extends advanced_testcase {
         // Generate a course with 5 sections.
         $generator = $this->getDataGenerator();
         $numsections = 5;
-        $course = $generator->create_course(array('numsections' => $numsections, 'format' => 'topics'),
-            array('createsections' => true));
+        $course = $generator->create_course(['numsections' => $numsections, 'format' => 'topics'],
+            ['createsections' => true]);
 
         // Get section names for course.
-        $coursesections = $DB->get_records('course_sections', array('course' => $course->id));
+        $coursesections = $DB->get_records('course_sections', ['course' => $course->id]);
 
         // Test get_default_section_name with default section names.
         $courseformat = course_get_format($course);
@@ -122,7 +128,9 @@ class format_topics_testcase extends advanced_testcase {
     }
 
     /**
-     * Test web service updating section name
+     * Test web service updating section name.
+     *
+     * @return void
      */
     public function test_update_inplace_editable() {
         global $CFG, $DB, $PAGE;
@@ -131,9 +139,9 @@ class format_topics_testcase extends advanced_testcase {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
-        $course = $this->getDataGenerator()->create_course(array('numsections' => 5, 'format' => 'topics'),
-            array('createsections' => true));
-        $section = $DB->get_record('course_sections', array('course' => $course->id, 'section' => 2));
+        $course = $this->getDataGenerator()->create_course(['numsections' => 5, 'format' => 'topics'],
+            ['createsections' => true]);
+        $section = $DB->get_record('course_sections', ['course' => $course->id, 'section' => 2]);
 
         // Call webservice without necessary permissions.
         try {
@@ -145,41 +153,43 @@ class format_topics_testcase extends advanced_testcase {
         }
 
         // Change to teacher and make sure that section name can be updated using web service update_inplace_editable().
-        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id);
 
         $res = core_external::update_inplace_editable('format_topics', 'sectionname', $section->id, 'New section name');
         $res = external_api::clean_returnvalue(core_external::update_inplace_editable_returns(), $res);
         $this->assertEquals('New section name', $res['value']);
-        $this->assertEquals('New section name', $DB->get_field('course_sections', 'name', array('id' => $section->id)));
+        $this->assertEquals('New section name', $DB->get_field('course_sections', 'name', ['id' => $section->id]));
     }
 
     /**
-     * Test callback updating section name
+     * Test callback updating section name.
+     *
+     * @return void
      */
     public function test_inplace_editable() {
         global $DB, $PAGE;
 
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
-        $course = $this->getDataGenerator()->create_course(array('numsections' => 5, 'format' => 'topics'),
-            array('createsections' => true));
-        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $course = $this->getDataGenerator()->create_course(['numsections' => 5, 'format' => 'topics'],
+            ['createsections' => true]);
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id);
         $this->setUser($user);
 
-        $section = $DB->get_record('course_sections', array('course' => $course->id, 'section' => 2));
+        $section = $DB->get_record('course_sections', ['course' => $course->id, 'section' => 2]);
 
         // Call callback format_topics_inplace_editable() directly.
-        $tmpl = component_callback('format_topics', 'inplace_editable', array('sectionname', $section->id, 'Rename me again'));
+        $tmpl = component_callback('format_topics', 'inplace_editable', ['sectionname', $section->id, 'Rename me again']);
         $this->assertInstanceOf('core\output\inplace_editable', $tmpl);
         $res = $tmpl->export_for_template($PAGE->get_renderer('core'));
         $this->assertEquals('Rename me again', $res['value']);
-        $this->assertEquals('Rename me again', $DB->get_field('course_sections', 'name', array('id' => $section->id)));
+        $this->assertEquals('Rename me again', $DB->get_field('course_sections', 'name', ['id' => $section->id]));
 
         // Try updating using callback from mismatching course format.
         try {
-            $tmpl = component_callback('format_weeks', 'inplace_editable', array('sectionname', $section->id, 'New name'));
+            component_callback('format_weeks', 'inplace_editable', ['sectionname', $section->id, 'New name']);
             $this->fail('Exception expected');
         } catch (moodle_exception $e) {
             $this->assertEquals(1, preg_match('/^Can\'t find data record in database/', $e->getMessage()));
@@ -200,9 +210,9 @@ class format_topics_testcase extends advanced_testcase {
 
         $this->setTimezone('UTC');
 
-        $params = array('format' => 'topics', 'numsections' => 5, 'startdate' => 1445644800);
+        $params = ['format' => 'topics', 'numsections' => 5, 'startdate' => 1445644800];
         $course = $this->getDataGenerator()->create_course($params);
-        $category = $DB->get_record('course_categories', array('id' => $course->category));
+        $category = $DB->get_record('course_categories', ['id' => $course->category]);
 
         $args = [
             'course' => $course,
@@ -226,7 +236,9 @@ class format_topics_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for get_view_url() to ensure that the url is only given for the correct cases
+     * Test for get_view_url() to ensure that the url is only given for the correct cases.
+     *
+     * @return void
      */
     public function test_get_view_url() {
         global $CFG;
@@ -236,8 +248,8 @@ class format_topics_testcase extends advanced_testcase {
 
         // Generate a course with two sections (0 and 1) and two modules.
         $generator = $this->getDataGenerator();
-        $course1 = $generator->create_course(array('format' => 'topics'));
-        course_create_sections_if_missing($course1, array(0, 1));
+        $course1 = $generator->create_course(['format' => 'topics']);
+        course_create_sections_if_missing($course1, [0, 1]);
 
         $data = (object)['id' => $course1->id];
         $format = course_get_format($course1);
