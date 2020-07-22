@@ -194,7 +194,11 @@ class mod_feedback_responses_table extends table_sql {
         if (preg_match('/^val(\d+)$/', $column, $matches)) {
             $items = $this->feedbackstructure->get_items();
             $itemobj = feedback_get_item_class($items[$matches[1]]->typ);
-            return trim($itemobj->get_printval($items[$matches[1]], (object) ['value' => $row->$column] ));
+            $printval = $itemobj->get_printval($items[$matches[1]], (object) ['value' => $row->$column]);
+            if ($this->is_downloading()) {
+                $printval = html_entity_decode($printval, ENT_QUOTES);
+            }
+            return trim($printval);
         }
         return $row->$column;
     }
