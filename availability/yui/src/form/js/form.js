@@ -408,7 +408,7 @@ M.core_availability.List = function(json, root, parentRoot) {
         noneNode.appendChild(deleteIcon.span);
 
         // Also if it's not the root, none is actually invalid, so add a label.
-        noneNode.appendChild(Y.Node.create('<span class="mt-1 label label-warning">' +
+        noneNode.appendChild(Y.Node.create('<span class="mt-1 badge badge-warning">' +
                 M.util.get_string('invalid', 'availability') + '</span>'));
     }
 
@@ -922,7 +922,7 @@ M.core_availability.Item = function(json, root) {
 
     // Add the invalid marker (empty).
     this.node.appendChild(document.createTextNode(' '));
-    this.node.appendChild(Y.Node.create('<span class="label label-warning"/>'));
+    this.node.appendChild(Y.Node.create('<span class="badge badge-warning"/>'));
 };
 
 /**
@@ -958,7 +958,7 @@ M.core_availability.Item.prototype.fillErrors = function(errors) {
         errors.push('core_availability:item_unknowntype');
     }
     // If any errors were added, add the marker to this item.
-    var errorLabel = this.node.one('> .label-warning');
+    var errorLabel = this.node.one('> .badge-warning');
     if (errors.length !== before && !errorLabel.get('firstChild')) {
         errorLabel.appendChild(document.createTextNode(M.util.get_string('invalid', 'availability')));
     } else if (errors.length === before && errorLabel.get('firstChild')) {
