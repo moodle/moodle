@@ -5338,10 +5338,20 @@ class assign {
                     $gradefordisplay = $this->display_grade($gradebookgrade->grade, false);
                 }
                 $gradeddate = $gradebookgrade->dategraded;
-                if (isset($grade->grader) && $grade->grader > 0) {
-                    $grader = $DB->get_record('user', array('id' => $grade->grader));
-                } else if (isset($gradebookgrade->usermodified) && $gradebookgrade->usermodified > 0) {
-                    $grader = $DB->get_record('user', array('id' => $gradebookgrade->usermodified));
+
+                // Only display the grader if it is in the right state.
+                if (in_array($gradingstatus, [ASSIGN_GRADING_STATUS_GRADED, ASSIGN_MARKING_WORKFLOW_STATE_RELEASED])){
+                    if (isset($grade->grader) && $grade->grader > 0) {
+                        $grader = $DB->get_record('user', array('id' => $grade->grader));
+                    } else if (isset($gradebookgrade->usermodified)
+                        && $gradebookgrade->usermodified > 0
+                        && has_capability('mod/assign:grade', $this->get_context(), $gradebookgrade->usermodified)) {
+                        // Grader not provided. Check that usermodified is a user who can grade.
+                        // Case 1: When an assignment is reopened an empty assign_grade is created so the feedback
+                        // plugin can know which attempt it's referring to. In this case, usermodifed is a student.
+                        // Case 2: When an assignment's grade is overrided via the gradebook, usermodified is a grader
+                        $grader = $DB->get_record('user', array('id' => $gradebookgrade->usermodified));
+                    }
                 }
             }
 
