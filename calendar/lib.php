@@ -178,6 +178,7 @@ define('CALENDAR_EVENT_TYPE_ACTION', 1);
  * @property string $eventtype The event type
  * @property int $timestart The start time as a timestamp
  * @property int $timeduration The duration of the event in seconds
+ * @property int $timeusermidnight User midnight for the event
  * @property int $visible 1 if the event is visible
  * @property int $uuid ?
  * @property int $sequence ?

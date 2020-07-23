@@ -98,7 +98,8 @@ class core_calendar_event_testcase extends advanced_testcase {
                         (new \DateTimeImmutable())->setTimestamp(-386380800),
                         (new \DateTimeImmutable())->setTimestamp(115776000),
                         (new \DateTimeImmutable())->setTimestamp(115776000),
-                        (new \DateTimeImmutable())->setTimestamp(time())
+                        (new \DateTimeImmutable())->setTimestamp(time()),
+                        (new \DateTimeImmutable())->setTimestamp(115776000)
                     ),
                     'visible' => true,
                     'subscription' => new std_proxy(1, $lamecallable),

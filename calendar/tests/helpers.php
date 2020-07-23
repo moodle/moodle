@@ -133,7 +133,8 @@ class action_event_test_factory implements event_factory_interface {
                 (new \DateTimeImmutable())->setTimestamp($record->timestart),
                 (new \DateTimeImmutable())->setTimestamp($record->timestart + $record->timeduration),
                 (new \DateTimeImmutable())->setTimestamp($record->timesort ? $record->timesort : $record->timestart),
-                (new \DateTimeImmutable())->setTimestamp($record->timemodified)
+                (new \DateTimeImmutable())->setTimestamp($record->timemodified),
+                (new \DateTimeImmutable())->setTimestamp(usergetmidnight($record->timesort))
             ),
             !empty($record->visible),
             $subscription,

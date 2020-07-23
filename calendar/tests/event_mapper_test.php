@@ -367,7 +367,8 @@ class event_mapper_test_event implements event_interface {
             (new \DateTimeImmutable())->setTimestamp(-386380800),
             (new \DateTimeImmutable())->setTimestamp(115776000),
             (new \DateTimeImmutable())->setTimestamp(115776000),
-            (new \DateTimeImmutable())->setTimestamp(time())
+            (new \DateTimeImmutable())->setTimestamp(time()),
+            (new \DateTimeImmutable())->setTimestamp(115776000)
         );
     }
 

@@ -136,6 +136,7 @@ class event_mapper implements event_mapper_interface {
             'timestart'        => $event->get_times()->get_start_time()->getTimestamp(),
             'timeduration'     => $timeduration,
             'timesort'         => $event->get_times()->get_sort_time()->getTimestamp(),
+            'timeusermidnight' => $event->get_times()->get_usermidnight_time()->getTimestamp(),
             'visible'          => $event->is_visible() ? 1 : 0,
             'timemodified'     => $event->get_times()->get_modified_time()->getTimestamp(),
             'subscriptionid'   => $event->get_subscription() ? $event->get_subscription()->get('id') : null,

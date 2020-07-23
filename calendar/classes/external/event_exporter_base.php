@@ -87,6 +87,7 @@ class event_exporter_base extends exporter {
         $data->timestart = $starttimestamp;
         $data->timeduration = $endtimestamp - $starttimestamp;
         $data->timesort = $event->get_times()->get_sort_time()->getTimestamp();
+        $data->timeusermidnight = $event->get_times()->get_usermidnight_time()->getTimestamp();
         $data->visible = $event->is_visible() ? 1 : 0;
         $data->timemodified = $event->get_times()->get_modified_time()->getTimestamp();
         $data->component = $event->get_component();
@@ -183,6 +184,7 @@ class event_exporter_base extends exporter {
             'timestart' => ['type' => PARAM_INT],
             'timeduration' => ['type' => PARAM_INT],
             'timesort' => ['type' => PARAM_INT],
+            'timeusermidnight' => ['type' => PARAM_INT],
             'visible' => ['type' => PARAM_INT],
             'timemodified' => ['type' => PARAM_INT],
         ];
