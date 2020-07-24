@@ -2497,5 +2497,35 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020061501.01);
     }
 
+    if ($oldversion < 2020061501.04) {
+        // Restore and set the guest user if it has been previously removed via GDPR, or set to an nonexistent
+        // user account.
+        $currentguestuser = $DB->get_record('user', array('id' => $CFG->siteguest));
+
+        if (!$currentguestuser) {
+            if (!$guest = $DB->get_record('user', array('username' => 'guest', 'mnethostid' => $CFG->mnet_localhost_id))) {
+                // Create a guest user account.
+                $guest = new stdClass();
+                $guest->auth        = 'manual';
+                $guest->username    = 'guest';
+                $guest->password    = hash_internal_user_password('guest');
+                $guest->firstname   = get_string('guestuser');
+                $guest->lastname    = ' ';
+                $guest->email       = 'root@localhost';
+                $guest->description = get_string('guestuserinfo');
+                $guest->mnethostid  = $CFG->mnet_localhost_id;
+                $guest->confirmed   = 1;
+                $guest->lang        = $CFG->lang;
+                $guest->timemodified= time();
+                $guest->id = $DB->insert_record('user', $guest);
+            }
+            // Set the guest user.
+            set_config('siteguest', $guest->id);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020061501.04);
+    }
+
     return true;
 }
