@@ -79,16 +79,19 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $o['ou']          = 'users';
         ldap_add($connection, 'ou='.$o['ou'].','.$topdn, $o);
 
+        $createdusers = array();
         for ($i=1; $i<=5; $i++) {
             $this->create_ldap_user($connection, $topdn, $i);
+            $createdusers[] = 'username' . $i;
         }
 
         // Set up creators group.
+        $assignedroles = array('username1', 'username2');
         $o = array();
         $o['objectClass'] = array('posixGroup');
         $o['cn']          = 'creators';
         $o['gidNumber']   = 1;
-        $o['memberUid']   = array('username1', 'username2');
+        $o['memberUid']   = $assignedroles;
         ldap_add($connection, 'cn='.$o['cn'].','.$topdn, $o);
 
         $creatorrole = $DB->get_record('role', array('shortname'=>'coursecreator'));
@@ -145,15 +148,23 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         // Check events, 5 users created with 2 users having roles.
         $this->assertCount(7, $events);
         foreach ($events as $index => $event) {
-            $usercreatedindex = array(0, 2, 4, 5, 6);
-            $roleassignedindex = array (1, 3);
-            if (in_array($index, $usercreatedindex)) {
-                $this->assertInstanceOf('\core\event\user_created', $event);
-            }
-            if (in_array($index, $roleassignedindex)) {
-                $this->assertInstanceOf('\core\event\role_assigned', $event);
+            $username = $DB->get_field('user', 'username', array('id' => $event->relateduserid)); // Get username.
+
+            if ($event->eventname === '\core\event\user_created') {
+                $this->assertContains($username, $createdusers);
+                unset($events[$index]); // Remove matching event.
+
+            } else if ($event->eventname === '\core\event\role_assigned') {
+                $this->assertContains($username, $assignedroles);
+                unset($events[$index]); // Remove matching event.
+
+            } else {
+                $this->fail('Unexpected event found: ' . $event->eventname);
             }
         }
+        // If all the user_created and role_assigned events have matched
+        // then the $events array should be now empty.
+        $this->assertCount(0, $events);
 
         $this->assertEquals(5, $DB->count_records('user', array('auth'=>'ldap')));
         $this->assertEquals(2, $DB->count_records('role_assignments'));
