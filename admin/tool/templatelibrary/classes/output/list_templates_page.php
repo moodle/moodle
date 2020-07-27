@@ -27,6 +27,8 @@ use renderable;
 use templatable;
 use renderer_base;
 use stdClass;
+use core_collator;
+use core_component;
 use core_plugin_manager;
 use tool_templatelibrary\api;
 
@@ -44,29 +46,47 @@ class list_templates_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        $data = new stdClass();
-        $data->allcomponents = array();
         $fulltemplatenames = api::list_templates();
         $pluginmanager = core_plugin_manager::instance();
-        $components = array();
+        $components = [];
 
         foreach ($fulltemplatenames as $templatename) {
-            list($component, $templatename) = explode('/', $templatename, 2);
-            $components[$component] = 1;
-        }
+            [$component, ] = explode('/', $templatename, 2);
+            [$type, ] = core_component::normalize_component($component);
 
-        $components = array_keys($components);
-        foreach ($components as $component) {
-            $info = new stdClass();
-            $info->component = $component;
-            if (strpos($component, 'core') === 0) {
-                $info->name = get_string('coresubsystem', 'tool_templatelibrary', $component);
-            } else {
-                $info->name = $pluginmanager->plugin_name($component);
+            // Core sub-systems are grouped together and are denoted by a distinct lang string.
+            $coresubsystem = (strpos($component, 'core') === 0);
+
+            if (!array_key_exists($type, $components)) {
+                $typename = $coresubsystem
+                    ? get_string('core', 'tool_templatelibrary')
+                    : $pluginmanager->plugintype_name_plural($type);
+
+                $components[$type] = (object) [
+                    'type' => $typename,
+                    'plugins' => [],
+                ];
             }
-            $data->allcomponents[] = $info;
+
+            $pluginname = $coresubsystem
+                ? get_string('coresubsystem', 'tool_templatelibrary', $component)
+                : $pluginmanager->plugin_name($component);
+
+            $components[$type]->plugins[$component] = (object) [
+                'name' => $pluginname,
+                'component' => $component,
+            ];
         }
 
-        return $data;
+        // Sort returned components according to their type, followed by name.
+        core_collator::asort_objects_by_property($components, 'type');
+        array_walk($components, function(stdClass $component) {
+            core_collator::asort_objects_by_property($component->plugins, 'name');
+            $component->plugins = array_values($component->plugins);
+        });
+
+        return (object) [
+            'allcomponents' => array_values($components),
+        ];
     }
 }
