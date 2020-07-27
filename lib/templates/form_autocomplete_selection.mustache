@@ -37,7 +37,12 @@
         { "label": "Another item label with <strong>tags</strong>", "value": "4" }
     ], "noSelectionString": "No selection" }
 }}
-<div class="form-autocomplete-selection w-100 {{#multiple}}form-autocomplete-multiple{{/multiple}}" id="{{selectionId}}" role="list" aria-atomic="true" {{#multiple}}tabindex="0" aria-multiselectable="true"{{/multiple}}>
+<div{{!
+    }} class="form-autocomplete-selection w-100 {{#multiple}}form-autocomplete-multiple{{/multiple}}"{{!
+    }} id="{{selectionId}}"{{!
+    }} role="listbox"{{!
+    }} aria-atomic="true"{{!
+    }} {{#multiple}}tabindex="0" aria-multiselectable="true"{{/multiple}}>
 <span class="accesshide">{{#str}}selecteditems, form{{/str}}</span>
     {{> core/form_autocomplete_selection_items }}
 </div>
