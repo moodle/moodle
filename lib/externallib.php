@@ -1217,6 +1217,9 @@ class external_settings {
     /** @var string The session lang */
     private $lang = '';
 
+    /** @var string The timezone to use during this WS request */
+    private $timezone = '';
+
     /**
      * Constructor - protected - can not be instanciated
      */
@@ -1336,6 +1339,24 @@ class external_settings {
      */
     public function get_lang() {
         return $this->lang;
+    }
+
+    /**
+     * Set timezone
+     *
+     * @param string $timezone
+     */
+    public function set_timezone($timezone) {
+        $this->timezone = $timezone;
+    }
+
+    /**
+     * Get timezone
+     *
+     * @return string
+     */
+    public function get_timezone() {
+        return $this->timezone;
     }
 }
 
