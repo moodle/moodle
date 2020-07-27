@@ -56,7 +56,7 @@ Feature: Organize students into groups
     And I should see "Student 0"
     And I should see "Student 1"
     And I should not see "Student 2"
-    And I click on "Remove \"Group 1\" from filter" "button" in the "Filter 1" "fieldset"
+    And I click on "Group 1" "autocomplete_selection"
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
     And I click on "Group 2" "list_item"
     And I click on "Apply filters" "button"
