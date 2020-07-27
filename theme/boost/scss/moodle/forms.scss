@@ -291,8 +291,8 @@ fieldset.coursesearchbox label {
     min-width: 206px;
     max-height: 20em;
     overflow: auto;
-    padding: 0;
-    margin: 2px 0 0 0;
+    margin: $dropdown-spacer 0 0;
+    padding: $dropdown-padding-y 0;
     z-index: 1;
 }
 
@@ -307,6 +307,9 @@ fieldset.coursesearchbox label {
     &[aria-selected="true"] {
         background-color: $dropdown-link-active-bg;
         color: $dropdown-link-active-color;
+    }
+    &::before {
+        content: "\200B";
     }
 }
 
@@ -323,10 +326,6 @@ fieldset.coursesearchbox label {
     }
 }
 
-.form-autocomplete-selection:focus {
-    outline: 0;
-    box-shadow: $input-btn-focus-box-shadow;
-}
 /** Undo some bootstrap things */
 .form-autocomplete-selection + input.form-control {
     width: auto;
