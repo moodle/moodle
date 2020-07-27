@@ -16748,7 +16748,7 @@ fieldset.coursesearchbox label {
   margin: 0.25rem;
   min-height: 2.375rem; }
 
-.form-autocomplete-selection [role=listitem] {
+.form-autocomplete-selection [role=option] {
   cursor: pointer;
   white-space: inherit;
   word-break: break-word;

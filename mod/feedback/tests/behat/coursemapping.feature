@@ -111,7 +111,7 @@ Feature: Mapping courses in a feedback
     And I follow "Course feedback"
 
     And I navigate to "Analysis" in current page administration
-    And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
+    And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=option]" "css_element"
     And I show chart data for the "multichoicerated" feedback
     And I should see "1 (33.33 %)" in the "option a" "table_row"
     And I should see "1 (33.33 %)" in the "option b" "table_row"
@@ -123,7 +123,7 @@ Feature: Mapping courses in a feedback
     And I click on "Back" "link" in the "region-main" "region"
     And I set the field "Filter by course" to "Course 1"
     And I press "Filter"
-    And I should see "Course 1" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
+    And I should see "Course 1" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=option]" "css_element"
     And I show chart data for the "multichoicerated" feedback
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (50.00 %)" in the "option b" "table_row"
@@ -193,7 +193,7 @@ Feature: Mapping courses in a feedback
     And I am on site homepage
     And I follow "Course feedback"
     And I navigate to "Analysis" in current page administration
-    And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
+    And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=option]" "css_element"
     And I show chart data for the "multichoicerated" feedback
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (33.33 %)" in the "option b" "table_row"
