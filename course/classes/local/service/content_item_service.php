@@ -105,6 +105,11 @@ class content_item_service {
             return $favmods;
         }
 
+        // Make sure the guest user exists in the database.
+        if (!\core_user::get_user($CFG->siteguest)) {
+            throw new \coding_exception('The guest user does not exist in the database.');
+        }
+
         $favourites = $this->get_content_favourites(self::RECOMMENDATION_PREFIX, \context_user::instance($CFG->siteguest));
 
         $recommendationcache->set($CFG->siteguest, $favourites);
