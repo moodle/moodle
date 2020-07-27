@@ -40,9 +40,9 @@
 <div{{!
     }} class="form-autocomplete-selection d-inline-block my-0{{#multiple}} form-autocomplete-multiple h5{{/multiple}}"{{!
     }} id="{{selectionId}}"{{!
-    }} role="list"{{!
+    }} role="listbox"{{!
     }} aria-atomic="true"{{!
-    }}{{#multiple}} tabindex="0" {{/multiple}}{{!
+    }}{{#multiple}} tabindex="0" aria-multiselectable="true"{{/multiple}}{{!
     }}>
 <span class="accesshide">{{#str}}selecteditems, form{{/str}}</span>
     {{> core/form_autocomplete_selection_items }}
