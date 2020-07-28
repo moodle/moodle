@@ -112,14 +112,14 @@ class core_contentbank_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $cb = new contentbank();
-        $expectedsupporters = [$extension => $expected];
 
         $systemcontext = context_system::instance();
 
         // All contexts allowed for admins.
         $this->setAdminUser();
         $contextsupporters = $cb->load_context_supported_extensions($systemcontext);
-        $this->assertEquals($expectedsupporters, $contextsupporters);
+        $this->assertArrayHasKey($extension, $contextsupporters);
+        $this->assertEquals($expected, $contextsupporters[$extension]);
     }
 
     /**
@@ -161,7 +161,6 @@ class core_contentbank_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $cb = new contentbank();
-        $expectedsupporters = [$extension => $expected];
 
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
@@ -170,7 +169,8 @@ class core_contentbank_testcase extends advanced_testcase {
 
         // Teachers has permission in their context to upload supported by H5P content type.
         $contextsupporters = $cb->load_context_supported_extensions($coursecontext);
-        $this->assertEquals($expectedsupporters, $contextsupporters);
+        $this->assertArrayHasKey($extension, $contextsupporters);
+        $this->assertEquals($expected, $contextsupporters[$extension]);
     }
 
     /**
