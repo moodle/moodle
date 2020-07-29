@@ -32,6 +32,7 @@ define(
         'core/templates',
         'core_course/events',
         'core_course/repository',
+        'core/aria',
     ],
     function(
         $,
@@ -41,7 +42,8 @@ define(
         PagedContentPagingBar,
         Templates,
         CourseEvents,
-        CoursesRepository
+        CoursesRepository,
+        Aria
     ) {
 
         // Constants.
@@ -96,7 +98,7 @@ define(
             var pagingBar = root.find(SELECTORS.PAGING_BAR);
             pagingBar.css('opacity', 1);
             pagingBar.css('visibility', 'visible');
-            pagingBar.attr('aria-hidden', 'false');
+            Aria.unhide(pagingBar);
         };
 
         /**
@@ -108,7 +110,7 @@ define(
             var pagingBar = root.find(SELECTORS.PAGING_BAR);
             pagingBar.css('opacity', 0);
             pagingBar.css('visibility', 'hidden');
-            pagingBar.attr('aria-hidden', 'true');
+            Aria.hide(pagingBar);
         };
 
         /**

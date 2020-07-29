@@ -594,7 +594,7 @@ export default class Tour {
             });
         }
 
-        this.listeners.forEach(function (listener) {
+        this.listeners.forEach(function(listener) {
             listener.node.on.apply(listener.node, listener.args);
         });
 

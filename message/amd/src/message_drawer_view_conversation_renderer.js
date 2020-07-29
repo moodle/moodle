@@ -33,7 +33,8 @@ define(
     'core/str',
     'core/templates',
     'core/user_date',
-    'core_message/message_drawer_view_conversation_constants'
+    'core_message/message_drawer_view_conversation_constants',
+    'core/aria',
 ],
 function(
     $,
@@ -41,7 +42,8 @@ function(
     Str,
     Templates,
     UserDate,
-    Constants
+    Constants,
+    Aria
 ) {
     var SELECTORS = Constants.SELECTORS;
     var TEMPLATES = Constants.TEMPLATES;
@@ -510,8 +512,7 @@ function(
     var showConfirmDialogueContainer = function(root) {
         var container = getConfirmDialogueContainer(root);
         var siblings = container.siblings(':not(.hidden)');
-        siblings.attr('aria-hidden', true);
-        siblings.attr('tabindex', -1);
+        Aria.hide(siblings.get());
         siblings.attr('data-confirm-dialogue-hidden', true);
 
         container.removeClass('hidden');
@@ -525,8 +526,7 @@ function(
     var hideConfirmDialogueContainer = function(root) {
         var container = getConfirmDialogueContainer(root);
         var siblings = container.siblings('[data-confirm-dialogue-hidden="true"]');
-        siblings.removeAttr('aria-hidden');
-        siblings.removeAttr('tabindex');
+        Aria.unhide(siblings.get());
         siblings.removeAttr('data-confirm-dialogue-hidden');
 
         container.addClass('hidden');
@@ -669,26 +669,29 @@ function(
                 var retry = element.find(SELECTORS.RETRY_SEND);
 
                 loading.addClass('hidden');
-                loading.attr('aria-hidden', 'true');
+                Aria.hide(loading.get());
+
                 time.addClass('hidden');
-                time.attr('aria-hidden', 'true');
+                Aria.hide(time.get());
+
                 retry.addClass('hidden');
-                retry.attr('aria-hidden', 'true');
+                Aria.hide(retry.get());
+
                 element.removeClass('border border-danger');
 
                 switch (after.sendState) {
                     case 'pending':
                         loading.removeClass('hidden');
-                        loading.attr('aria-hidden', 'false');
+                        Aria.unhide(loading.get());
                         break;
                     case 'error':
                         retry.removeClass('hidden');
-                        retry.attr('aria-hidden', 'false');
+                        Aria.unhide(retry.get());
                         element.addClass('border border-danger');
                         break;
                     case 'sent':
                         time.removeClass('hidden');
-                        time.attr('aria-hidden', 'false');
+                        Aria.unhide(time.get());
                         break;
                 }
             }
@@ -703,11 +706,11 @@ function(
 
                 if (after.errorMessage) {
                     messageContainer.removeClass('hidden');
-                    messageContainer.attr('aria-hidden', 'false');
+                    Aria.unhide(messageContainer.get());
                     message.text(after.errorMessage);
                 } else {
                     messageContainer.addClass('hidden');
-                    messageContainer.attr('aria-hidden', 'true');
+                    Aria.unhide(messageContainer.get());
                     message.text('');
                 }
             }
@@ -1003,11 +1006,11 @@ function(
 
         if (show) {
             container.removeClass('hidden');
-            container.attr('aria-hidden', false);
+            Aria.unhide(container.get());
             container.find(SELECTORS.EMOJI_PICKER_SEARCH_INPUT).focus();
         } else {
             container.addClass('hidden');
-            container.attr('aria-hidden', true);
+            Aria.hide(container.get());
         }
     };
 
@@ -1024,10 +1027,10 @@ function(
 
         if (show) {
             container.removeClass('hidden');
-            container.attr('aria-hidden', false);
+            Aria.unhide(container.get());
         } else {
             container.addClass('hidden');
-            container.attr('aria-hidden', true);
+            Aria.hide(container.get());
         }
     };
 
