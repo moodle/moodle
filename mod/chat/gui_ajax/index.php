@@ -19,7 +19,7 @@ require_once('../lib.php');
 
 $id      = required_param('id', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT); // Only for teachers.
-$theme   = optional_param('theme', 'course_theme', PARAM_SAFEDIR); // The value course_theme == the current theme.
+$theme   = optional_param('chat_theme', 'course_theme', PARAM_SAFEDIR); // The value course_theme == the current theme.
 
 $url = new moodle_url('/mod/chat/gui_ajax/index.php', array('id' => $id));
 if ($groupid !== 0) {
