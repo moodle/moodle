@@ -1201,7 +1201,7 @@ class admin_externalpage implements part_of_admin_tree {
     /** @var string The external URL that we should link to when someone requests this external page. */
     public $url;
 
-    /** @var string The role capability/permission a user must have to access this external page. */
+    /** @var array The role capability/permission a user must have to access this external page. */
     public $req_capability;
 
     /** @var object The context in which capability/permission should be checked, default is site context. */
@@ -1425,7 +1425,7 @@ class admin_settingpage implements part_of_admin_tree {
     /** @var admin_settingdependency[] list of settings to hide when certain conditions are met */
     protected $dependencies = [];
 
-    /** @var string The role capability/permission a user must have to access this external page. */
+    /** @var array The role capability/permission a user must have to access this external page. */
     public $req_capability;
 
     /** @var object The context in which capability/permission should be checked, default is site context. */
