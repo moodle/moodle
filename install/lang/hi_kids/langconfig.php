@@ -30,7 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'भाषा';
-$string['moodlelogo'] = 'Moodle लोगो';
-$string['next'] = 'अगला';
-$string['reload'] = 'सीमा से अधिक लादना';
+$string['parentlanguage'] = 'hi';
+$string['thislanguage'] = 'बच्चों के लिए हिंदी';

@@ -41,7 +41,7 @@ $string['cannotunzipfile'] = 'មិនអាចពន្លាឯកសារ�
 $string['componentisuptodate'] = 'សមាសភាគគឺទាន់សម័យ ។';
 $string['downloadedfilecheckfailed'] = 'បានបរាជ័យក្នុងការពិនិត្យឯកសារដែលបានទាញយក ។';
 $string['invalidmd5'] = 'md5 មិនត្រឹមត្រូវ';
-$string['missingrequiredfield'] = 'បាត់វាលដែលត្រូវការមួយចំនួន';
+$string['missingrequiredfield'] = 'បាត់ប្រអប់ទិន្នន័យដែលត្រូវទាមទារមួយចំនួន';
 $string['remotedownloaderror'] = 'បរាជ័យក្នុងការទាញយកសមាសភាគទៅម៉ាស៊ីនបម្រើរបស់អ្នក សូមផ្ទៀងផ្ទាត់ប្រូកស៊ី ផ្នែកបន្ថែម PHP cURL ត្រូវបានផ្ដល់អនុសាសន៍ ។<br /><br />អ្នកត្រូវតែទាញយកឯកសារ <a href="{$a->url}">{$a->url}</a> ដោយដៃ ចម្លងវាទៅ "{$a->dest}" ក្នុងម៉ាស៊ីនបម្រើរបស់អ្នក និងពន្លាវានៅទីនោះ ។';
 $string['wrongdestpath'] = 'ផ្លូវទិសដៅមិនត្រឹមត្រូវ ។';
 $string['wrongsourcebase'] = 'មូលដ្ឋាន URL ប្រភពមិនត្រឹមត្រូវ ។';
