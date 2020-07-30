@@ -43,6 +43,7 @@ $string['creategrouping'] = 'Create grouping';
 $string['creategroupinselectedgrouping'] = 'Create group in grouping';
 $string['createingrouping'] = 'Grouping of auto-created groups';
 $string['createorphangroup'] = 'Create orphan group';
+$string['csvdelimiter'] = 'CSV delimiter';
 $string['databaseupgradegroups'] = 'Groups version is now {$a}';
 $string['defaultgrouping'] = 'Default grouping';
 $string['defaultgroupingname'] = 'Grouping';
@@ -59,6 +60,7 @@ $string['editgroupsettings'] = 'Edit group settings';
 $string['editusersgroupsa'] = 'Edit groups for "{$a}"';
 $string['enablemessaging'] = 'Group messaging';
 $string['enablemessaging_help'] = 'If enabled, group members can send messages to the others in their group via the messaging drawer.';
+$string['encoding'] = 'Encoding';
 $string['enrolmentkey'] = 'Enrolment key';
 $string['enrolmentkey_help'] = 'An enrolment key enables access to the course to be restricted to only those who know the key. If a group enrolment key is specified, then not only will entering that key let the user into the course, but it will also automatically make them a member of this group.
 
