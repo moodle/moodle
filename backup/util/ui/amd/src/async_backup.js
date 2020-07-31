@@ -524,7 +524,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
      */
     function getAllCopyProgress() {
         var copyids = [];
-        var progressbars = $('.progress').find('.progress-bar').not('.complete');
+        var progressbars = $('.progress').find('.progress-bar[data-operation][data-backupid][data-restoreid]').not('.complete');
 
         progressbars.each(function() {
             let progressvars = {
