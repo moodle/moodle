@@ -59,33 +59,53 @@ class assignfeedback_file_zip_importer {
             return false;
         }
 
-        $info = explode('_', $fileinfo->get_filepath() . $fileinfo->get_filename(), 5);
+        // Break the full path-name into path parts.
+        $pathparts = explode('/', $fileinfo->get_filepath() . $fileinfo->get_filename());
 
-        if (count($info) < 5) {
-            return false;
+        while (!empty($pathparts)) {
+            // Get the next path part and break it up by underscores.
+            $pathpart = array_shift($pathparts);
+            $info = explode('_', $pathpart, 5);
+
+            if (count($info) < 5) {
+                continue;
+            }
+
+            // Check the participant id.
+            $participantid = $info[1];
+
+            if (!is_numeric($participantid)) {
+                continue;
+            }
+
+            // Convert to int.
+            $participantid += 0;
+
+            if (empty($participants[$participantid])) {
+                continue;
+            }
+
+            // Set user, which is by reference, so is used by the calling script.
+            $user = $participants[$participantid];
+
+            // Set the plugin. This by reference, and is used by the calling script.
+            $plugin = $assignment->get_plugin_by_type($info[2], $info[3]);
+
+            if (!$plugin) {
+                continue;
+            }
+
+            // Take any remaining text in this part and put it back in the path parts array.
+            array_unshift($pathparts, $info[4]);
+
+            // Combine the remaining parts and set it as the filename.
+            // Note that filename is a 'by reference' variable, so we need to set it before returning.
+            $filename = implode('/', $pathparts);
+
+            return true;
         }
 
-        $participantid = $info[1];
-        $filename = $info[4];
-        $plugin = $assignment->get_plugin_by_type($info[2], $info[3]);
-
-        if (!is_numeric($participantid)) {
-            return false;
-        }
-
-        if (!$plugin) {
-            return false;
-        }
-
-        // Convert to int.
-        $participantid += 0;
-
-        if (empty($participants[$participantid])) {
-            return false;
-        }
-
-        $user = $participants[$participantid];
-        return true;
+        return false;
     }
 
     /**
