@@ -33,7 +33,6 @@ require_once(__DIR__.'/classes/phpmailer_sink.php');
 require_once(__DIR__.'/classes/base_testcase.php');
 require_once(__DIR__.'/classes/basic_testcase.php');
 require_once(__DIR__.'/classes/database_driver_testcase.php');
-require_once(__DIR__.'/classes/arraydataset.php');
 require_once(__DIR__.'/classes/advanced_testcase.php');
 require_once(__DIR__.'/classes/hint_resultprinter.php'); // Loaded here because phpunit.xml does not support relative links for printerFile.
 require_once(__DIR__.'/classes/constraint_object_is_equal_with_exceptions.php');
