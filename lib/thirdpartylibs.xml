@@ -257,6 +257,13 @@
     <licenseversion>2.0</licenseversion>
   </library>
   <library>
+    <location>lti1p3</location>
+    <name>LTI 1.3 Tool Library</name>
+    <license>Apache</license>
+    <version>5.1.0</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+  <library>
     <location>amd/src/truncate.js</location>
     <name>Truncate.js</name>
     <license>MIT</license>
