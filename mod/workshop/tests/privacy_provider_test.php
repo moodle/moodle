@@ -120,7 +120,7 @@ class mod_workshop_privacy_provider_testcase extends advanced_testcase {
      *
      *  etc.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();

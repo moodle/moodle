@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  */
 class core_message_helper_testcase extends advanced_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
     }
 

@@ -38,7 +38,7 @@ class dataset_manager_testcase extends advanced_testcase {
      *
      * @return null
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
 
         $this->sharedtoprows = array(

@@ -38,7 +38,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
     /**
      * Tests set up
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
     }
 

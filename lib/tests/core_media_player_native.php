@@ -40,7 +40,7 @@ class core_media_player_native_testcase extends advanced_testcase {
     /**
      * Pre-test setup.
      */
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
     }

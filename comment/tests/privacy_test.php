@@ -38,7 +38,7 @@ use \core_privacy\tests\provider_testcase;
  */
 class core_comment_privacy_testcase extends provider_testcase {
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
     }
 

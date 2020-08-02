@@ -41,7 +41,7 @@ class contentbank_content_uploaded_testcase extends \advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
      */
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass(): void {
         global $CFG;
 
         require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.php');

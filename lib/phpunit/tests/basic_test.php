@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
 class core_phpunit_basic_testcase extends basic_testcase {
     protected $testassertexecuted = false;
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         if ($this->getName() === 'test_setup_assert') {
             $this->assertTrue(true);

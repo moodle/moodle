@@ -46,7 +46,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
      * Then we create 2 courses, and in each 1 CM.
      * Then we attach some competencies from the first framework to courses and CM.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');

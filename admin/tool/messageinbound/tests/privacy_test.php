@@ -46,7 +46,7 @@ use tool_messageinbound\privacy\provider;
  */
 class tool_messageinbound_privacy_testcase extends provider_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
         $this->resetAfterTest();
 

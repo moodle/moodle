@@ -38,7 +38,7 @@ class core_backup_controller_testcase extends advanced_testcase {
     protected $courseid;  // course id used for testing
     protected $userid;    // user used if for testing
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);

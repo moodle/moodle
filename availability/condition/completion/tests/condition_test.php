@@ -52,7 +52,7 @@ class availability_completion_condition_testcase extends advanced_testcase {
     /**
      * Load required classes.
      */
-    public function setUp() {
+    public function setUp(): void {
         availability_completion\condition::wipe_static_cache();
     }
 

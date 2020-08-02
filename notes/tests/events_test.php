@@ -41,7 +41,7 @@ class core_notes_events_testcase extends advanced_testcase {
     /** @var stdClass A complete record from post table */
     private $noterecord;
 
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
 
         $this->resetAfterTest();

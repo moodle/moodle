@@ -46,7 +46,7 @@ require_once($CFG->libdir . '/gradelib.php');
  */
 class core_grades_privacy_testcase extends provider_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         global $PAGE;
         $this->resetAfterTest();
         $PAGE->get_renderer('core');

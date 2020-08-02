@@ -34,7 +34,7 @@ class tool_monitor_subscription_testcase extends advanced_testcase {
     /**
      * Test set up.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
 
         // Create the mock subscription.

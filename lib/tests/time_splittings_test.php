@@ -44,7 +44,7 @@ class core_analytics_time_splittings_testcase extends advanced_testcase {
      *
      * @return void
      */
-    public function setUp() {
+    public function setUp(): void {
 
         $this->resetAfterTest(true);
 

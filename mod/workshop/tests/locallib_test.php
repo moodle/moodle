@@ -42,7 +42,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     protected $workshop;
 
     /** setup testing environment */
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         $this->setAdminUser();
         $this->course = $this->getDataGenerator()->create_course();
@@ -51,7 +51,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $this->workshop = new testable_workshop($workshop, $cm, $this->course);
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->workshop = null;
         parent::tearDown();
     }

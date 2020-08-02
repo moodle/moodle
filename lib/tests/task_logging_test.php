@@ -43,7 +43,7 @@ class core_task_logmanager extends advanced_testcase {
     /**
      * Relevant tearDown for logging tests.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         global $DB;
 
         // Ensure that any logging is always ended.

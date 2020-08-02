@@ -42,7 +42,7 @@ class auth_oauth2_privacy_testcase extends provider_testcase {
     /**
      * Set up method.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
     }

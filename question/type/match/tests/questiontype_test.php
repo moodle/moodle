@@ -42,11 +42,11 @@ class qtype_match_test extends advanced_testcase {
     /** @var qtype_match instance of the question type class to test. */
     protected $qtype;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->qtype = new qtype_match();
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->qtype = null;
     }
 

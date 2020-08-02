@@ -101,7 +101,7 @@ class mod_data_search_test extends advanced_testcase {
      * Set up function. In this instance we are setting up database
      * records to be used in the unit tests.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB, $CFG;
         parent::setUp();
 

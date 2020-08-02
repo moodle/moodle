@@ -52,7 +52,7 @@ class report_usersessions_lib_testcase extends advanced_testcase {
      */
     private $tree;
 
-    public function setUp() {
+    public function setUp(): void {
         $this->user = $this->getDataGenerator()->create_user();
         $this->course = $this->getDataGenerator()->create_course();
         $this->tree = new \core_user\output\myprofile\tree();

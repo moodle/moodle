@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class core_iplookup_geoplugin_testcase extends advanced_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
         require_once("$CFG->libdir/filelib.php");
         require_once("$CFG->dirroot/iplookup/lib.php");

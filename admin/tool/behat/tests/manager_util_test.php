@@ -87,7 +87,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     /**
      * Setup test.
      */
-    public function setup() {
+    public function setUp(): void {
         global $CFG;
 
         $this->resetAfterTest();

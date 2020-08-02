@@ -63,7 +63,7 @@ class enrol_flatfile_privacy_testcase extends provider_testcase {
     /**
      * Called before every test.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
     }
 

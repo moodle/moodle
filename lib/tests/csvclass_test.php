@@ -36,7 +36,7 @@ class core_csvclass_testcase extends advanced_testcase {
     protected $teststring3 = '';
     protected $teststring4 = '';
 
-    protected function setUp() {
+    protected function setUp(): void {
 
         $this->resetAfterTest();
 

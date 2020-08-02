@@ -54,7 +54,7 @@ class core_course_enrolment_manager_testcase extends advanced_testcase {
     /**
      * Tests set up
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG;
         require_once($CFG->dirroot . '/enrol/locallib.php');
         $this->setAdminUser();

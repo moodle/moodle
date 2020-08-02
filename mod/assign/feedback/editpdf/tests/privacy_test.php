@@ -39,7 +39,7 @@ use \mod_assign\privacy\assign_plugin_request_data;
  */
 class assignfeedback_editpdf_privacy_testcase extends \mod_assign\tests\mod_assign_privacy_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         // Skip this test if ghostscript is not supported.
         $result = \assignfeedback_editpdf\pdf::test_gs_path(false);
         if ($result->status !== \assignfeedback_editpdf\pdf::GSPATH_OK) {

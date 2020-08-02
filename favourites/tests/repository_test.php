@@ -36,7 +36,7 @@ use \core_favourites\local\entity\favourite;
  */
 class favourite_repository_testcase extends advanced_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 

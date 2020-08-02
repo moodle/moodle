@@ -42,7 +42,7 @@ class quizaccess_seb_rule__testcase extends advanced_testcase {
     /**
      * Called before every test.
      */
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
 
         $this->resetAfterTest();
@@ -84,7 +84,7 @@ class quizaccess_seb_rule__testcase extends advanced_testcase {
      */
     public function valid_form_data_provider() : array {
         return [
-            'valid seb_requiresafeexambrowser' => ['seb_requiresafeexambrowser', 0],
+            'valid seb_requiresafeexambrowser' => ['seb_requiresafeexambrowser', '0'],
             'valid seb_linkquitseb0' => ['seb_linkquitseb', 'http://safeexambrowser.org/macosx'],
             'valid seb_linkquitseb1' => ['seb_linkquitseb', 'safeexambrowser.org/macosx'],
             'valid seb_linkquitseb2' => ['seb_linkquitseb', 'www.safeexambrowser.org/macosx'],

@@ -34,7 +34,7 @@ class core_user_testcase extends advanced_testcase {
     /**
      * Setup test data.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest(true);
     }
 

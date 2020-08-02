@@ -42,7 +42,7 @@ class qbehaviour_immediatefeedback_type_test extends basic_testcase {
     /** @var qbehaviour_immediatefeedback_type */
     protected $behaviourtype;
 
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
         $this->behaviourtype = question_engine::get_behaviour_type('immediatefeedback');
     }

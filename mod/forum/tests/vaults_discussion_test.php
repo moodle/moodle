@@ -43,7 +43,7 @@ class mod_forum_vaults_discussion_testcase extends advanced_testcase {
     /**
      * Set up function for tests.
      */
-    public function setUp() {
+    public function setUp(): void {
         $vaultfactory = \mod_forum\local\container::get_vault_factory();
         $this->vault = $vaultfactory->get_discussion_vault();
     }

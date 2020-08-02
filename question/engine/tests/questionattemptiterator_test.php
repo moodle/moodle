@@ -42,7 +42,7 @@ class question_attempt_iterator_test extends advanced_testcase {
     private $qas = array();
     private $iterator;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->quba = question_engine::make_questions_usage_by_activity('unit_test',
                 context_system::instance());
         $this->quba->set_preferred_behaviour('deferredfeedback');
@@ -56,7 +56,7 @@ class question_attempt_iterator_test extends advanced_testcase {
         $this->iterator = $this->quba->get_attempt_iterator();
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->quba = null;
         $this->iterator = null;
     }

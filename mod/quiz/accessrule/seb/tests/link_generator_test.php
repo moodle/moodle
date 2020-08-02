@@ -38,7 +38,7 @@ class quizaccess_seb_link_generator_testcase extends advanced_testcase {
     /**
      * Called before every test.
      */
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
     }

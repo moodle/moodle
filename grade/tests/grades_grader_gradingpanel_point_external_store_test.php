@@ -279,7 +279,7 @@ class store_test extends advanced_testcase {
      * @param int $maxvalue The max value of the forum
      * @param int $suppliedvalue The value that was submitted
      */
-    public function test_execute_store_out_of__range(int $maxvalue, int $suppliedvalue): void {
+    public function test_execute_store_out_of__range(int $maxvalue, float $suppliedvalue): void {
         $this->resetAfterTest();
 
         $forum = $this->get_forum_instance([

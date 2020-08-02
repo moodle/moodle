@@ -47,7 +47,7 @@ require_once($CFG->dirroot . '/comment/lib.php');
  */
 class core_blog_privacy_testcase extends provider_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 

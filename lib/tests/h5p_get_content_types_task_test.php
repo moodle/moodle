@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class h5p_get_content_types_task_testcase extends advanced_testcase {
 
-    protected function setup() {
+    protected function setup(): void {
         global $CFG;
         parent::setUp();
 

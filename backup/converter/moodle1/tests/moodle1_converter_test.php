@@ -41,7 +41,7 @@ class core_backup_moodle1_converter_testcase extends advanced_testcase {
     /** @var string saved hash of an icon file used during testing */
     protected $iconhash;
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG;
 
         $this->tempdir = convert_helper::generate_id('unittest');
@@ -75,7 +75,7 @@ class core_backup_moodle1_converter_testcase extends advanced_testcase {
         );
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         global $CFG;
         if (empty($CFG->keeptempdirectoriesonbackup)) {
             fulldelete($this->tempdirpath);

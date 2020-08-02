@@ -41,7 +41,7 @@ class question_attempt_step_iterator_test extends advanced_testcase {
     private $qa;
     private $iterator;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $question = test_question_maker::make_question('description');
         $this->qa = new testable_question_attempt($question, 0);
         for ($i = 0; $i < 3; $i++) {
@@ -51,7 +51,7 @@ class question_attempt_step_iterator_test extends advanced_testcase {
         $this->iterator = $this->qa->get_step_iterator();
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->qa = null;
         $this->iterator = null;
     }

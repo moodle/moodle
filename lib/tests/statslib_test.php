@@ -52,7 +52,7 @@ class core_statslib_testcase extends advanced_testcase {
      * Setup function
      *   - Allow changes to CFG->debug for testing purposes.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG, $DB;
         parent::setUp();
 

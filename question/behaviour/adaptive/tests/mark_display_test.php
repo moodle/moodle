@@ -44,7 +44,7 @@ class qbehaviour_adaptive_mark_display_test extends basic_testcase {
     /** @var question_display_options display options to use when rendering. */
     protected $options;
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $PAGE;
         parent::setUp();
         $this->renderer = $PAGE->get_renderer('qbehaviour_adaptive');

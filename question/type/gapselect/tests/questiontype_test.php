@@ -39,11 +39,11 @@ class qtype_gapselect_test extends question_testcase {
     /** @var qtype_gapselect instance of the question type class to test. */
     protected $qtype;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->qtype = question_bank::get_qtype('gapselect');
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->qtype = null;
     }
 

@@ -79,7 +79,7 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
     /** @var stdClass A test course with 2 enrolments for student2 and student12. */
     protected $course3;
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB;
 
         $this->resetAfterTest();

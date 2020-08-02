@@ -39,7 +39,7 @@ class core_blocklib_testcase extends advanced_testcase {
     protected $blockmanager;
     protected $isediting = null;
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         $this->testpage = new moodle_page();
         $this->testpage->set_context(context_system::instance());
@@ -47,7 +47,7 @@ class core_blocklib_testcase extends advanced_testcase {
         $this->blockmanager = new testable_block_manager($this->testpage);
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->testpage = null;
         $this->blockmanager = null;
         parent::tearDown();
