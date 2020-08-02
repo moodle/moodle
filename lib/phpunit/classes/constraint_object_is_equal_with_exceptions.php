@@ -32,7 +32,7 @@
  * @copyright  2015 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class phpunit_constraint_object_is_equal_with_exceptions extends PHPUnit\Framework\Constraint\IsEqual {
+class phpunit_constraint_object_is_equal_with_exceptions extends PHPUnit\Framework\Constraint\Constraint {
 
     /**
      * @var array $keys The list of exceptions.
@@ -45,11 +45,16 @@ class phpunit_constraint_object_is_equal_with_exceptions extends PHPUnit\Framewo
     protected $capturedvalue;
 
     /**
+     * @var \PHPUnit\Framework\Constraint\IsEqual $isequal original constraint to be used internally.
+     */
+    protected $isequal;
+
+    /**
      * Override constructor to capture value
      */
     public function __construct($value, float $delta = 0.0, int $maxDepth = 10, bool $canonicalize = false,
                                 bool $ignoreCase = false) {
-        parent::__construct($value, $delta, $maxDepth, $canonicalize, $ignoreCase);
+        $this->isequal = new \PHPUnit\Framework\Constraint\IsEqual($value, $delta, $maxDepth, $canonicalize, $ignoreCase);
         $this->capturedvalue = $value;
     }
 
@@ -93,8 +98,13 @@ class phpunit_constraint_object_is_equal_with_exceptions extends PHPUnit\Framewo
             }
         }
 
-        // Run the parent evaluation (isEqual).
-        return parent::evaluate($other, $description, $shouldreturnesult);
+        // Run the IsEqual evaluation.
+        return $this->isequal->evaluate($other, $description, $shouldreturnesult);
+    }
+
+    // \PHPUnit\Framework\Constraint\IsEqual wrapping.
+    public function toString(): string {
+        return $this->isequal->toString();
     }
 
 }
