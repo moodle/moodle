@@ -2225,12 +2225,10 @@ class core_moodlelib_testcase extends advanced_testcase {
         $COURSE->lang = $originallang;
     }
 
-    /**
-     * @expectedException PHPUnit\Framework\Error\Warning
-     */
     public function test_get_string_limitation() {
         // This is one of the limitations to the lang_string class. It can't be
         // used as a key.
+        $this->expectException(\PHPUnit\Framework\Error\Warning::class);
         $array = array(get_string('yes', null, null, true) => 'yes');
     }
 

@@ -66,8 +66,6 @@ class tool_analytics_external_testcase extends externallib_advanced_testcase {
 
     /**
      * test_potential_contexts description
-     *
-     * @expectedException required_capability_exception
      */
     public function test_potential_contexts_no_manager() {
         $this->resetAfterTest();
@@ -75,6 +73,7 @@ class tool_analytics_external_testcase extends externallib_advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
+        $this->expectException(required_capability_exception::class);
         $this->assertCount(2, \tool_analytics\external::potential_contexts());
     }
 }

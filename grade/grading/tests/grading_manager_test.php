@@ -67,8 +67,6 @@ class core_grade_grading_manager_testcase extends advanced_testcase {
 
     /**
      * Unit test to set and get grading areas
-     *
-     * @expectedException moodle_exception
      */
     public function test_set_and_get_grading_area() {
         global $DB;
@@ -105,6 +103,7 @@ class core_grade_grading_manager_testcase extends advanced_testcase {
         $this->assertEquals('rubric', $gradingman->get_active_method());
 
         // attempting to set an invalid method
+        $this->expectException(moodle_exception::class);
         $gradingman->set_active_method('no_one_should_ever_try_to_implement_a_method_with_this_silly_name');
     }
 

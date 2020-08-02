@@ -98,22 +98,21 @@ class core_exporter_testcase extends advanced_testcase {
         $this->assertArrayNotHasKey('otherstrings', $structure->keys);
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_invalid_data() {
         global $PAGE;
         $exporter = new core_testable_exporter($this->invaliddata, $this->validrelated);
         $output = $PAGE->get_renderer('core');
 
+        $this->expectException(coding_exception::class);
         $result = $exporter->export($output);
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_invalid_related() {
         global $PAGE;
+        // TODO: MDL-69700 - Analyse if the throw exception is happening
+        // in the correct place and decide what happens with the trailing
+        // code that is never executed.
+        $this->expectException(coding_exception::class);
         $exporter = new core_testable_exporter($this->validdata, $this->invalidrelated);
         $output = $PAGE->get_renderer('core');
 

@@ -596,7 +596,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $course['categoryid'] = $this->getDataGenerator()->create_category()->id;
 
         $this->expectException(moodle_exception::class);
-        $this->expectExceptionMessageRegExp("/{$expectedemptyfield}/");
+        $this->expectExceptionMessageMatches("/{$expectedemptyfield}/");
         core_course_external::create_courses([$course]);
     }
 

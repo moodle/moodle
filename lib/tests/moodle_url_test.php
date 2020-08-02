@@ -121,11 +121,10 @@ class core_moodle_url_testcase extends advanced_testcase {
 
     /**
      * Test set bad scheme on Moodle URL objects.
-     *
-     * @expectedException coding_exception
      */
     public function test_moodle_url_set_bad_scheme() {
         $url = new moodle_url('http://moodle.org/foo/bar');
+        $this->expectException(coding_exception::class);
         $url->set_scheme('not a valid $ scheme');
     }
 
@@ -200,36 +199,30 @@ class core_moodle_url_testcase extends advanced_testcase {
         $this->assertSame('/', $url3->out_as_local_url());
     }
 
-    /**
-     * @expectedException coding_exception
-     * @return void
-     */
     public function test_out_as_local_url_error() {
         $url2 = new moodle_url('http://www.google.com/lib/tests/weblib_test.php');
+        $this->expectException(coding_exception::class);
         $url2->out_as_local_url();
     }
 
     /**
      * You should get error with modified url
-     *
-     * @expectedException coding_exception
-     * @return void
      */
     public function test_modified_url_out_as_local_url_error() {
         global $CFG;
 
         $modifiedurl = $CFG->wwwroot.'1';
         $url3 = new moodle_url($modifiedurl.'/login/profile.php');
+        $this->expectException(coding_exception::class);
         $url3->out_as_local_url();
     }
 
     /**
      * Try get local url from external https url and you should get error
-     *
-     * @expectedException coding_exception
      */
     public function test_https_out_as_local_url_error() {
         $url4 = new moodle_url('https://www.google.com/lib/tests/weblib_test.php');
+        $this->expectException(coding_exception::class);
         $url4->out_as_local_url();
     }
 
