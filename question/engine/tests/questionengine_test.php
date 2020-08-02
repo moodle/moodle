@@ -45,11 +45,9 @@ class question_engine_test extends advanced_testcase {
         $this->assertTrue(class_exists('qbehaviour_deferredfeedback'));
     }
 
-    /**
-     * @expectedException moodle_exception
-     */
     public function test_load_behaviour_class_missing() {
         // Exercise SUT
+        $this->expectException(moodle_exception::class);
         question_engine::load_behaviour_class('nonexistantbehaviour');
     }
 

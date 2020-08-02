@@ -370,11 +370,10 @@ class core_plugin_manager_testcase extends advanced_testcase {
 
     /**
      * The combination of ANY_VERSION + $exactmatch is illegal.
-     *
-     * @expectedException moodle_exception
      */
     public function test_get_remote_plugin_info_exception() {
         $pluginman = testable_core_plugin_manager::instance();
+        $this->expectException(moodle_exception::class);
         $pluginman->get_remote_plugin_info('any_thing', ANY_VERSION, true);
     }
 

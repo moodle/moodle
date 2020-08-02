@@ -114,9 +114,6 @@ class workshopallocation_random_testcase extends advanced_testcase {
         ), $submissions);
     }
 
-    /**
-     * @expectedException moodle_exception
-     */
     public function test_index_submissions_by_authors_duplicate_author() {
         // fixture setup
         $submissions = array(
@@ -124,6 +121,7 @@ class workshopallocation_random_testcase extends advanced_testcase {
             87 => (object)array('id' => 121, 'authorid' => 3),
         );
         // exercise SUT
+        $this->expectException(moodle_exception::class);
         $submissions = $this->allocator->index_submissions_by_authors($submissions);
     }
 

@@ -153,7 +153,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
 
         // This should generate an exception.
         $this->expectException('file_exception');
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/Can not create local file pool directories, please verify permissions in dataroot./');
 
         new file_system_filedir();
@@ -177,7 +177,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
 
         // This should generate an exception.
         $this->expectException('file_exception');
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/Can not create local file pool directories, please verify permissions in dataroot./');
 
         new file_system_filedir();
@@ -735,7 +735,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
         $vfileroot = $this->setup_vfile_root();
 
         $this->expectException('file_exception');
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/Cannot read file\. Either the file does not exist or there is a permission problem\./');
 
         $fs = new file_system_filedir();
@@ -834,7 +834,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
             ->chown(\org\bovigo\vfs\vfsStream::OWNER_USER_2);
 
         $this->expectException('file_exception');
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             "/Can not create local file pool directories, please verify permissions in dataroot./");
 
         // Attempt to add the file to the file pool.
@@ -892,7 +892,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
             ->chown(\org\bovigo\vfs\vfsStream::OWNER_USER_2);
 
         $this->expectException('file_exception');
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             "/Can not create local file pool directories, please verify permissions in dataroot./");
 
         // Attempt to add the file to the file pool.

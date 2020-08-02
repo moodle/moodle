@@ -92,17 +92,12 @@ class core_backup_moodle1_converter_testcase extends advanced_testcase {
         $this->assertInstanceOf('moodle1_converter', $converter);
     }
 
-    /**
-     * @expectedException moodle1_convert_storage_exception
-     */
     public function test_stash_storage_not_created() {
         $converter = convert_factory::get_converter('moodle1', $this->tempdir);
+        $this->expectException(moodle1_convert_storage_exception::class);
         $converter->set_stash('tempinfo', 12);
     }
 
-    /**
-     * @expectedException moodle1_convert_empty_storage_exception
-     */
     public function test_stash_requiring_empty_stash() {
         $this->resetAfterTest(true);
         $converter = convert_factory::get_converter('moodle1', $this->tempdir);
@@ -113,6 +108,7 @@ class core_backup_moodle1_converter_testcase extends advanced_testcase {
 
         } catch (moodle1_convert_empty_storage_exception $e) {
             // we must drop the storage here so we are able to re-create it in the next test
+            $this->expectException(moodle1_convert_empty_storage_exception::class);
             $converter->drop_stash_storage();
             throw new moodle1_convert_empty_storage_exception('rethrowing');
         }
@@ -440,9 +436,6 @@ class core_backup_moodle1_converter_testcase extends advanced_testcase {
         $this->assertSame(null, $data['nothing']);
     }
 
-    /**
-     * @expectedException convert_path_exception
-     */
     public function test_grouped_data_on_nongrouped_convert_path() {
         // prepare some grouped data
         $data = array(
@@ -468,12 +461,10 @@ class core_backup_moodle1_converter_testcase extends advanced_testcase {
         $path = new convert_path('beer_style', '/ROOT/BEER_STYLES/BEER_STYLE');
 
         // an attempt to apply recipes throws exception because we do not expect grouped data
+        $this->expectException(convert_path_exception::class);
         $data = $path->apply_recipes($data);
     }
 
-    /**
-     * @expectedException convert_path_exception
-     */
     public function test_grouped_convert_path_with_recipes() {
         // prepare some grouped data
         $data = array(
@@ -501,6 +492,7 @@ class core_backup_moodle1_converter_testcase extends advanced_testcase {
         $this->assertEquals('Heineken', $data['beers'][1]['beer']['name']);
 
         // an attempt to provide explicit recipes on grouped elements throws exception
+        $this->expectException(convert_path_exception::class);
         $path = new convert_path(
             'beer_style', '/ROOT/BEER_STYLES/BEER_STYLE',
             array(

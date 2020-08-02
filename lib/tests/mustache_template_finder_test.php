@@ -102,11 +102,10 @@ class core_output_mustache_template_finder_testcase extends advanced_testcase {
 
     /**
      * Tests for get_template_directories_for_component when dealing with an invalid component.
-     *
-     * @expectedException coding_exception
      */
     public function test_invalid_component_get_template_directories_for_component() {
         // Test something invalid.
+        $this->expectException(coding_exception::class);
         mustache_template_finder::get_template_directories_for_component('octopus', 'classic');
     }
 
@@ -191,10 +190,9 @@ class core_output_mustache_template_finder_testcase extends advanced_testcase {
 
     /**
      * Tests for get_template_filepath when dealing with an invalid component.
-     *
-     * @expectedException moodle_exception
      */
     public function test_invalid_component_get_template_filepath() {
+        $this->expectException(moodle_exception::class);
         mustache_template_finder::get_template_filepath('core/octopus', 'classic');
     }
 }

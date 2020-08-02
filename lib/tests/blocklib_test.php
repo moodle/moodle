@@ -109,13 +109,11 @@ class core_blocklib_testcase extends advanced_testcase {
         $this->assertEquals(array('a-region-name', 'another-region'), $this->blockmanager->get_regions(), '', 0, 10, true);
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_cannot_add_region_after_loaded() {
         // Set up fixture.
         $this->blockmanager->mark_loaded();
         // Exercise SUT.
+        $this->expectException(coding_exception::class);
         $this->blockmanager->add_region('too-late', false);
     }
 
@@ -167,12 +165,12 @@ class core_blocklib_testcase extends advanced_testcase {
 
     /**
      * Test to ensure that we cannot add a region after the blocks have been loaded.
-     * @expectedException coding_exception
      */
     public function test_cannot_add_custom_region_after_loaded() {
         // Set up fixture.
         $this->blockmanager->mark_loaded();
         // Exercise SUT.
+        $this->expectException(coding_exception::class);
         $this->blockmanager->add_region('too-late');
     }
 
@@ -185,21 +183,17 @@ class core_blocklib_testcase extends advanced_testcase {
         $this->assertEquals('a-region-name', $this->blockmanager->get_default_region());
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_cannot_set_unknown_region_as_default() {
         // Exercise SUT.
+        $this->expectException(coding_exception::class);
         $this->blockmanager->set_default_region('a-region-name');
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_cannot_change_default_region_after_loaded() {
         // Set up fixture.
         $this->blockmanager->mark_loaded();
         // Exercise SUT.
+        $this->expectException(coding_exception::class);
         $this->blockmanager->set_default_region('too-late');
     }
 

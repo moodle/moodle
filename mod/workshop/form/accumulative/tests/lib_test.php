@@ -78,14 +78,12 @@ class workshop_accumulative_strategy_testcase extends advanced_testcase {
         $this->assertEquals(grade_floatval(5/20 * 100), $suggested);
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_calculate_peer_grade_negative_weight() {
         // fixture set-up
         $this->strategy->dimensions[1003] = (object)array('grade' => '20', 'weight' => '-1');
         $grades[] = (object)array('dimensionid' => 1003, 'grade' => '20');
         // exercise SUT
+        $this->expectException(coding_exception::class);
         $suggested = $this->strategy->calculate_peer_grade($grades);
     }
 
@@ -178,9 +176,6 @@ class workshop_accumulative_strategy_testcase extends advanced_testcase {
         $this->assertEquals(grade_floatval((1/2*2 + 4/6*3)/5 * 100), $suggested);
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_calculate_peer_grade_scale_exception() {
         $this->resetAfterTest(true);
         // fixture set-up
@@ -189,6 +184,7 @@ class workshop_accumulative_strategy_testcase extends advanced_testcase {
         $grades[] = (object)array('dimensionid' => 1012, 'grade' => '4.00000'); // exceeds the number of scale items
 
         // Exercise SUT.
+        $this->expectException(coding_exception::class);
         $suggested = $this->strategy->calculate_peer_grade($grades);
     }
 }
