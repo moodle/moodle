@@ -43,7 +43,7 @@ class auth_email_external_testcase extends externallib_advanced_testcase {
     /**
      * Set up for every test
      */
-    public function setUp() {
+    public function setUp(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest(true);

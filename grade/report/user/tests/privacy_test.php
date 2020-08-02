@@ -40,7 +40,7 @@ class gradereport_user_privacy_testcase extends \core_privacy\tests\provider_tes
     /**
      * Basic setup for these tests.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
     }
 

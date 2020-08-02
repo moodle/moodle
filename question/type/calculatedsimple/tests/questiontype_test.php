@@ -48,11 +48,11 @@ class qtype_calculatedsimple_test extends advanced_testcase {
 
     protected $qtype;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->qtype = new qtype_calculatedsimple();
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->qtype = null;
     }
 

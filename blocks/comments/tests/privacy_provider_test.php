@@ -51,7 +51,7 @@ class block_comments_privacy_provider_testcase extends \core_privacy\tests\provi
     /** @var stdClass A test course. */
     protected $course2;
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB;
 
         $this->resetAfterTest();

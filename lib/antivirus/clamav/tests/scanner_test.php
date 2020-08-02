@@ -29,7 +29,7 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
     /** @var string temporary file used in testing */
     protected $tempfile;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
 
         // Create tempfile.
@@ -38,7 +38,7 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
         touch($this->tempfile);
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         @unlink($this->tempfile);
     }
 

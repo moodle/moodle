@@ -38,7 +38,7 @@ class tool_monitor_eventobservers_testcase extends advanced_testcase {
     /**
      * Set up method.
      */
-    public function setUp() {
+    public function setUp(): void {
         // Enable monitor.
         set_config('enablemonitor', 1, 'tool_monitor');
     }

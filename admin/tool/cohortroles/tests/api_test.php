@@ -49,7 +49,7 @@ class tool_cohortroles_api_testcase extends advanced_testcase {
     /**
      * Setup function- we will create a course and add an assign instance to it.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest(true);
 
         // Create some users.

@@ -38,7 +38,7 @@ class core_completion_progress_testcase extends advanced_testcase {
     /**
      * Test setup.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
 
         $CFG->enablecompletion = true;

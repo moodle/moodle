@@ -60,7 +60,7 @@ class h5p_file_storage_testcase extends \advanced_testcase {
     /** @var int $libraryid an id for the library. */
     protected $libraryid = 1;
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest(true);
 

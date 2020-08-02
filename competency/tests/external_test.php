@@ -96,7 +96,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
     /**
      * Setup function- we will create a course and add an assign instance to it.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);

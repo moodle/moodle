@@ -47,7 +47,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
     /** @var stdClass store course module object */
     protected $eventcm;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->setAdminUser();
         $this->eventcourse = $this->getDataGenerator()->create_course();
         $this->eventuser = $this->getDataGenerator()->create_user();

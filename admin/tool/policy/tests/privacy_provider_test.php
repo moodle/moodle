@@ -51,7 +51,7 @@ class tool_policy_privacy_provider_testcase extends \core_privacy\tests\provider
     /**
      * Setup function. Will create a user.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
 
         $generator = $this->getDataGenerator();

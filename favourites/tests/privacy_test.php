@@ -37,7 +37,7 @@ use \core_privacy\local\request\transform;
  */
 class privacy_test extends provider_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
     }
 

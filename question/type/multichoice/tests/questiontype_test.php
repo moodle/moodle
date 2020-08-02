@@ -40,11 +40,11 @@ require_once($CFG->dirroot . '/question/type/multichoice/edit_multichoice_form.p
 class qtype_multichoice_test extends advanced_testcase {
     protected $qtype;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->qtype = new qtype_multichoice();
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->qtype = null;
     }
 

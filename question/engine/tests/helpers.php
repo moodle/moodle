@@ -796,7 +796,7 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
      */
     protected $currentoutput = '';
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest(true);
 
@@ -805,7 +805,7 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
             context_system::instance());
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->displayoptions = null;
         $this->quba = null;
         parent::tearDown();

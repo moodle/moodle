@@ -71,7 +71,7 @@ class mod_wiki_privacy_testcase extends provider_testcase {
      *   In the export data they have paths:
      *   $this->pagepaths[1][1], $this->pagepaths[1][2], $this->pagepaths[1][3]
      */
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
         $this->resetAfterTest();
 

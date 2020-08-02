@@ -41,7 +41,7 @@ require_once(__DIR__ . '/fixtures/test_analysis.php');
  */
 class analytics_model_testcase extends advanced_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
 
         $this->setAdminUser();
 

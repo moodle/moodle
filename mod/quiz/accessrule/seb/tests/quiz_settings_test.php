@@ -48,7 +48,7 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
     /**
      * Called before every test.
      */
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
 
         $this->resetAfterTest();

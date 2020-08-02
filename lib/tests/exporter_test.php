@@ -39,7 +39,7 @@ class core_exporter_testcase extends advanced_testcase {
     protected $validdata = null;
     protected $invaliddata = null;
 
-    public function setUp() {
+    public function setUp(): void {
         $s = new stdClass();
         $this->validrelated = array(
             'simplestdClass' => $s,

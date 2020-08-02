@@ -44,7 +44,7 @@ class backup_external_testcase extends externallib_advanced_testcase {
     /**
      * Set up tasks for all tests.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG;
 
         $this->resetAfterTest(true);

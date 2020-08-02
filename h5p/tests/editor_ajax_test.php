@@ -46,7 +46,7 @@ class editor_ajax_testcase extends \advanced_testcase {
     /**
      * Set up function for tests.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
 
         autoloader::register();

@@ -41,7 +41,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
      * Set up message and mail sinks, and set up other requirements for the
      * cron to be tested here.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
 
         // Messaging is not compatible with transactions...
@@ -78,7 +78,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
     /**
      * Clear the message sinks set up in this test.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         $this->messagesink->clear();
         $this->messagesink->close();
 

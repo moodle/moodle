@@ -35,7 +35,7 @@ require_once("{$CFG->dirroot}/iplookup/lib.php");
  * GeoIp data file parsing test.
  */
 class core_iplookup_geoip_testcase extends advanced_testcase {
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 

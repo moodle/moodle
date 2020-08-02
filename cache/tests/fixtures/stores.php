@@ -46,7 +46,7 @@ abstract class cachestore_tests extends advanced_testcase {
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
-    public function setUp() {
+    public function setUp(): void {
         $class = $this->get_class_name();
         if (!class_exists($class) || !$class::are_requirements_met()) {
             $this->markTestSkipped('Could not test '.$class.'. Requirements are not met.');

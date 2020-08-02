@@ -37,7 +37,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
      */
     protected $progress;
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->testfile = __DIR__.'/fixtures/test.txt';

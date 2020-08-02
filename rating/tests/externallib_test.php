@@ -43,7 +43,7 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
     /*
      * Set up for every test
      */
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
         $this->resetAfterTest();
 

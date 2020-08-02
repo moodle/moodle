@@ -47,7 +47,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
     /** @var testable_question_engine_unit_of_work the unit of work we are testing. */
     protected $observer;
 
-    protected function setUp() {
+    protected function setUp(): void {
         // Create a usage in an initial state, with one shortanswer question added,
         // and attempted in interactive mode submitted responses 'toad' then 'frog'.
         // Then set it to use a new unit of work for any subsequent changes.
@@ -64,7 +64,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         $this->setup_initial_test_state($this->get_test_data());
      }
 
-    public function tearDown() {
+    public function tearDown(): void {
         question_bank::end_unit_test();
     }
 

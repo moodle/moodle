@@ -35,7 +35,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
     /**
      * Tests set up
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG;
 
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
@@ -45,7 +45,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         require_once($CFG->dirroot . '/mod/forum/externallib.php');
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();

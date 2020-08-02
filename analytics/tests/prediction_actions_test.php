@@ -39,7 +39,7 @@ class analytics_prediction_actions_testcase extends advanced_testcase {
     /**
      * Common startup tasks
      */
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
 
         $this->setAdminUser();

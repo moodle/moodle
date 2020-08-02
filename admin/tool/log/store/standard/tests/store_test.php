@@ -540,7 +540,7 @@ class logstore_standard_store_testcase extends advanced_testcase {
     /**
      * Reset any garbage collector changes to the previous state at the end of the test.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         if ($this->wedisabledgc) {
             gc_enable();
         }

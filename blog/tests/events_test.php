@@ -58,7 +58,7 @@ class core_blog_events_testcase extends advanced_testcase {
     /**
      * Setup the tests.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB;
         parent::setUp();
 

@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tree_testcase extends \advanced_testcase {
-    public function setUp() {
+    public function setUp(): void {
         // Load the mock classes so they can be used.
         require_once(__DIR__ . '/fixtures/mock_condition.php');
         require_once(__DIR__ . '/fixtures/mock_info.php');

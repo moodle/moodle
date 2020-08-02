@@ -59,7 +59,7 @@ class file_browser_testcase extends advanced_testcase {
     /**
      * Set up
      */
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
         $this->resetAfterTest();
 

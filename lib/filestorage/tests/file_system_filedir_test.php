@@ -43,7 +43,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
     /**
      * Shared test setUp.
      */
-    public function setUp() {
+    public function setUp(): void {
         // Reset the file storage so that subsequent fetches to get_file_storage are called after
         // configuration is prepared.
         get_file_storage(true);
@@ -52,7 +52,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
     /**
      * Shared teset tearDown.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         // Reset the file storage so that subsequent tests will use the standard file storage.
         get_file_storage(true);
     }
