@@ -467,7 +467,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertGreaterThanOrEqual($mid1, $mid2);
 
         $messages = $sink->get_messages();
-        $this->assertInternalType('array', $messages);
+        $this->assertIsArray($messages);
         $this->assertCount(2, $messages);
         $this->assertEquals($mid1, $messages[0]->id);
         $this->assertEquals($message1->userto->id, $messages[0]->useridto);
@@ -481,18 +481,18 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         // Test resetting.
         $sink->clear();
         $messages = $sink->get_messages();
-        $this->assertInternalType('array', $messages);
+        $this->assertIsArray($messages);
         $this->assertCount(0, $messages);
 
         message_send($message1);
         $messages = $sink->get_messages();
-        $this->assertInternalType('array', $messages);
+        $this->assertIsArray($messages);
         $this->assertCount(1, $messages);
 
         // Test closing.
         $sink->close();
         $messages = $sink->get_messages();
-        $this->assertInternalType('array', $messages);
+        $this->assertIsArray($messages);
         $this->assertCount(1, $messages, 'Messages in sink are supposed to stay there after close');
 
         // Test debugging is enabled again.

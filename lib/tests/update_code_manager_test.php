@@ -77,7 +77,7 @@ class core_update_code_manager_testcase extends advanced_testcase {
 
         $files = $codeman->unzip_plugin_file($zipfilepath, $targetdir);
 
-        $this->assertInternalType('array', $files);
+        $this->assertIsArray($files);
         $this->assertCount(4, $files);
         $this->assertSame(true, $files['invalid-root/']);
         $this->assertSame(true, $files['invalid-root/lang/']);
@@ -93,7 +93,7 @@ class core_update_code_manager_testcase extends advanced_testcase {
 
         $files = $codeman->unzip_plugin_file($zipfilepath, $targetdir, 'fixed_root');
 
-        $this->assertInternalType('array', $files);
+        $this->assertIsArray($files);
         $this->assertCount(4, $files);
         $this->assertSame(true, $files['fixed_root/']);
         $this->assertSame(true, $files['fixed_root/lang/']);
@@ -139,7 +139,7 @@ class core_update_code_manager_testcase extends advanced_testcase {
         $fixtures = __DIR__.'/fixtures/update_validator/plugindir';
         $codeman = new \core\update\testable_code_manager();
         $files = $codeman->list_plugin_folder_files($fixtures.'/foobar');
-        $this->assertInternalType('array', $files);
+        $this->assertIsArray($files);
         $this->assertEquals(6, count($files));
         $fixtures = str_replace(DIRECTORY_SEPARATOR, '/', $fixtures);
         $this->assertEquals($files['foobar/'], $fixtures.'/foobar');

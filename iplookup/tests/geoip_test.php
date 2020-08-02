@@ -62,14 +62,14 @@ class core_iplookup_geoip_testcase extends advanced_testcase {
 
         $result = iplookup_find_location($ip);
 
-        $this->assertInternalType('array', $result);
-        $this->assertInternalType('float', $result['latitude']);
-        $this->assertInternalType('float', $result['longitude']);
-        $this->assertInternalType('string', $result['city']);
-        $this->assertInternalType('string', $result['country']);
-        $this->assertInternalType('array', $result['title']);
-        $this->assertInternalType('string', $result['title'][0]);
-        $this->assertInternalType('string', $result['title'][1]);
+        $this->assertIsArray($result);
+        $this->assertIsFloat($result['latitude']);
+        $this->assertIsFloat($result['longitude']);
+        $this->assertIsString($result['city']);
+        $this->assertIsString($result['country']);
+        $this->assertIsArray($result['title']);
+        $this->assertIsString($result['title'][0]);
+        $this->assertIsString($result['title'][1]);
         $this->assertNull($result['error']);
     }
 

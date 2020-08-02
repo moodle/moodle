@@ -248,7 +248,7 @@ class cache_testcase extends advanced_testcase {
         $tour = $this->helper_create_tour((object)['enabled' => false]);
 
         $data = \tool_usertours\cache::get_stepdata($tour->get_id());
-        $this->assertInternalType('array', $data);
+        $this->assertIsArray($data);
         $this->assertEmpty($data);
     }
 
@@ -265,11 +265,11 @@ class cache_testcase extends advanced_testcase {
         $tour2 = $this->helper_create_tour((object)['enabled' => false]);
 
         $data = \tool_usertours\cache::get_stepdata($tour1->get_id());
-        $this->assertInternalType('array', $data);
+        $this->assertIsArray($data);
         $this->assertCount(3, $data);
 
         $data = \tool_usertours\cache::get_stepdata($tour2->get_id());
-        $this->assertInternalType('array', $data);
+        $this->assertIsArray($data);
         $this->assertEmpty($data);
     }
 
@@ -292,7 +292,7 @@ class cache_testcase extends advanced_testcase {
         $steps[0]->set_sortorder(10)->persist();
 
         $data = \tool_usertours\cache::get_stepdata($tour->get_id());
-        $this->assertInternalType('array', $data);
+        $this->assertIsArray($data);
         $this->assertCount(4, $data);
 
         // Re-order the steps.

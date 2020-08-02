@@ -131,16 +131,16 @@ abstract class cachestore_tests extends advanced_testcase {
 
         // Test get with an int.
         $this->assertSame(1, $instance->get('test1'));
-        $this->assertInternalType('int', $instance->get('test1'));
+        $this->assertIsInt($instance->get('test1'));
         $this->assertSame(2, $instance->get('test2'));
-        $this->assertInternalType('int', $instance->get('test2'));
+        $this->assertIsInt($instance->get('test2'));
 
         // Test set with a bool.
         $this->assertTrue($instance->set('test1', true));
 
         // Test get with an bool.
         $this->assertSame(true, $instance->get('test1'));
-        $this->assertInternalType('boolean', $instance->get('test1'));
+        $this->assertIsBool($instance->get('test1'));
 
         // Test with an object.
         $this->assertTrue($instance->set('obj', $object));
@@ -177,7 +177,7 @@ abstract class cachestore_tests extends advanced_testcase {
 
         // Test get_many.
         $result = $instance->get_many(array('many1', 'many3', 'many5', 'many6'));
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertCount(4, $result);
         $this->assertSame(array(
             'many1' => 'many1',

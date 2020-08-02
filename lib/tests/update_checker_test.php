@@ -148,7 +148,7 @@ class core_update_checker_testcase extends advanced_testcase {
         $old = array();
         $new = array();
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertInternalType('array', $cmp);
+        $this->assertIsArray($cmp);
         $this->assertEmpty($cmp);
     }
 
@@ -165,7 +165,7 @@ class core_update_checker_testcase extends advanced_testcase {
             )
         );
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertInternalType('array', $cmp);
+        $this->assertIsArray($cmp);
         $this->assertNotEmpty($cmp);
         $this->assertTrue(isset($cmp['core'][0]['version']));
         $this->assertEquals(2012060103, $cmp['core'][0]['version']);
@@ -191,7 +191,7 @@ class core_update_checker_testcase extends advanced_testcase {
             )
         );
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertInternalType('array', $cmp);
+        $this->assertIsArray($cmp);
         $this->assertEmpty($cmp);
     }
 
@@ -224,7 +224,7 @@ class core_update_checker_testcase extends advanced_testcase {
             )
         );
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertInternalType('array', $cmp);
+        $this->assertIsArray($cmp);
         $this->assertNotEmpty($cmp);
         $this->assertCount(1, $cmp);
         $this->assertCount(1, $cmp['core']);
@@ -252,7 +252,7 @@ class core_update_checker_testcase extends advanced_testcase {
             )
         );
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertInternalType('array', $cmp);
+        $this->assertIsArray($cmp);
         $this->assertNotEmpty($cmp);
         $this->assertCount(1, $cmp);
         $this->assertCount(1, $cmp['mod_foo']);

@@ -85,9 +85,9 @@ class provider_testcase extends advanced_testcase {
      */
     public function test_null_provider($component, $classname) {
         $reason = $classname::get_reason();
-        $this->assertInternalType('string', $reason);
+        $this->assertIsString($reason);
 
-        $this->assertInternalType('string', get_string($reason, $component));
+        $this->assertIsString(get_string($reason, $component));
         $this->assertDebuggingNotCalled();
     }
 
@@ -124,7 +124,7 @@ class provider_testcase extends advanced_testcase {
         foreach ($metadata->get_collection() as $item) {
             // All items must have a valid string name.
             // Note: This is not a string identifier.
-            $this->assertInternalType('string', $item->get_name());
+            $this->assertIsString($item->get_name());
 
             if ($item instanceof database_table) {
                 // Check that the table is valid.
@@ -145,21 +145,21 @@ class provider_testcase extends advanced_testcase {
 
             if ($summary = $item->get_summary()) {
                 // Summary is optional, but when provided must be a valid string identifier.
-                $this->assertInternalType('string', $summary);
+                $this->assertIsString($summary);
 
                 // Check that the string is also correctly defined.
-                $this->assertInternalType('string', get_string($summary, $component));
+                $this->assertIsString(get_string($summary, $component));
                 $this->assertDebuggingNotCalled();
             }
 
             if ($fields = $item->get_privacy_fields()) {
                 // Privacy fields are optional, but when provided must be a valid string identifier.
                 foreach ($fields as $field => $identifier) {
-                    $this->assertInternalType('string', $field);
-                    $this->assertInternalType('string', $identifier);
+                    $this->assertIsString($field);
+                    $this->assertIsString($identifier);
 
                     // Check that the string is also correctly defined.
-                    $this->assertInternalType('string', get_string($identifier, $component));
+                    $this->assertIsString(get_string($identifier, $component));
                     $this->assertDebuggingNotCalled();
                 }
             }

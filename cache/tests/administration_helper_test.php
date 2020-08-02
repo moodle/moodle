@@ -74,7 +74,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         )));
 
         $storesummaries = core_cache\administration_helper::get_store_instance_summaries();
-        $this->assertInternalType('array', $storesummaries);
+        $this->assertIsArray($storesummaries);
         $this->assertArrayHasKey('summariesstore', $storesummaries);
         $summary = $storesummaries['summariesstore'];
         // Check the keys
@@ -100,7 +100,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $this->assertEquals($mappingcount, $summary['mappings']);
 
         $definitionsummaries = core_cache\administration_helper::get_definition_summaries();
-        $this->assertInternalType('array', $definitionsummaries);
+        $this->assertIsArray($definitionsummaries);
         $this->assertArrayHasKey('core/eventinvalidation', $definitionsummaries);
         $summary = $definitionsummaries['core/eventinvalidation'];
         // Check the keys
@@ -116,11 +116,11 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $this->assertEquals(cache_store::MODE_APPLICATION, $summary['mode']);
         $this->assertEquals('core', $summary['component']);
         $this->assertEquals('eventinvalidation', $summary['area']);
-        $this->assertInternalType('array', $summary['mappings']);
+        $this->assertIsArray($summary['mappings']);
         $this->assertContains('summariesstore', $summary['mappings']);
 
         $pluginsummaries = core_cache\administration_helper::get_store_plugin_summaries();
-        $this->assertInternalType('array', $pluginsummaries);
+        $this->assertIsArray($pluginsummaries);
         $this->assertArrayHasKey('file', $pluginsummaries);
         $summary = $pluginsummaries['file'];
         // Check the keys
@@ -132,18 +132,18 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $this->assertArrayHasKey('canaddinstance', $summary);
 
         $locksummaries = core_cache\administration_helper::get_lock_summaries();
-        $this->assertInternalType('array', $locksummaries);
+        $this->assertIsArray($locksummaries);
         $this->assertTrue(count($locksummaries) > 0);
 
         $mappings = core_cache\administration_helper::get_default_mode_stores();
-        $this->assertInternalType('array', $mappings);
+        $this->assertIsArray($mappings);
         $this->assertCount(3, $mappings);
         $this->assertArrayHasKey(cache_store::MODE_APPLICATION, $mappings);
-        $this->assertInternalType('array', $mappings[cache_store::MODE_APPLICATION]);
+        $this->assertIsArray($mappings[cache_store::MODE_APPLICATION]);
         $this->assertContains('summariesstore', $mappings[cache_store::MODE_APPLICATION]);
 
         $potentials = core_cache\administration_helper::get_definition_store_options('core', 'eventinvalidation');
-        $this->assertInternalType('array', $potentials); // Currently used, suitable, default
+        $this->assertIsArray($potentials); // Currently used, suitable, default
         $this->assertCount(3, $potentials);
         $this->assertArrayHasKey('summariesstore', $potentials[0]);
         $this->assertArrayHasKey('summariesstore', $potentials[1]);

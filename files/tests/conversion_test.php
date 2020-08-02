@@ -342,7 +342,7 @@ class core_files_conversion_testcase extends advanced_testcase {
             'status' => (string) 1,
         ]);
 
-        $this->assertInternalType('integer', $conversion->get('status'));
+        $this->assertIsInt($conversion->get('status'));
     }
 
     /**

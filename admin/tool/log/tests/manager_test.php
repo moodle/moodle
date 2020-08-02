@@ -33,7 +33,7 @@ class tool_log_manager_testcase extends advanced_testcase {
         $this->assertInstanceOf('core\log\manager', $manager);
 
         $stores = $manager->get_readers();
-        $this->assertInternalType('array', $stores);
+        $this->assertIsArray($stores);
         $this->assertCount(0, $stores);
 
         $this->assertFileExists("$CFG->dirroot/$CFG->admin/tool/log/store/standard/version.php");
@@ -44,27 +44,27 @@ class tool_log_manager_testcase extends advanced_testcase {
         $this->assertInstanceOf('core\log\manager', $manager);
 
         $stores = $manager->get_readers();
-        $this->assertInternalType('array', $stores);
+        $this->assertIsArray($stores);
         $this->assertCount(2, $stores);
         foreach ($stores as $key => $store) {
-            $this->assertInternalType('string', $key);
+            $this->assertIsString($key);
             $this->assertInstanceOf('core\log\sql_reader', $store);
         }
 
         $stores = $manager->get_readers('core\log\sql_internal_table_reader');
-        $this->assertInternalType('array', $stores);
+        $this->assertIsArray($stores);
         $this->assertCount(1, $stores);
         foreach ($stores as $key => $store) {
-            $this->assertInternalType('string', $key);
+            $this->assertIsString($key);
             $this->assertSame('logstore_standard', $key);
             $this->assertInstanceOf('core\log\sql_internal_table_reader', $store);
         }
 
         $stores = $manager->get_readers('core\log\sql_reader');
-        $this->assertInternalType('array', $stores);
+        $this->assertIsArray($stores);
         $this->assertCount(2, $stores);
         foreach ($stores as $key => $store) {
-            $this->assertInternalType('string', $key);
+            $this->assertIsString($key);
             $this->assertInstanceOf('core\log\sql_reader', $store);
         }
     }

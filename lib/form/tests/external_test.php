@@ -51,7 +51,7 @@ class external_testcase extends advanced_testcase {
 
         // The actual data are tested in filetypes_util_test.php, here we just
         // make sure that the external function wrapper seems to work.
-        $this->assertInternalType('object', $data);
-        $this->assertInternalType('array', $data->groups);
+        $this->assertIsObject($data);
+        $this->assertIsArray($data->groups);
     }
 }
