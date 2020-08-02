@@ -393,7 +393,7 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
 
         // Enrol the user in the forum.
         // If a subscription was added, we get the record ID.
-        $this->assertInternalType('int', \mod_forum\subscriptions::subscribe_user($author->id, $forum));
+        $this->assertIsInt(\mod_forum\subscriptions::subscribe_user($author->id, $forum));
 
         // If we already have a subscription when subscribing the user, we get a boolean (true).
         $this->assertTrue(\mod_forum\subscriptions::subscribe_user($author->id, $forum));
@@ -652,7 +652,7 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
 
         // And should have reset the discussion cache value.
         $result = \mod_forum\subscriptions::fetch_discussion_subscription($forum->id, $author->id);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertFalse(isset($result[$discussion->id]));
     }
 
@@ -1107,7 +1107,7 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // the cache and not perform additional queries.
         foreach ($users as $user) {
             $result = \mod_forum\subscriptions::fetch_discussion_subscription($forum->id, $user->id);
-            $this->assertInternalType('array', $result);
+            $this->assertIsArray($result);
         }
         $finalcount = $DB->perf_get_reads();
         $this->assertEquals(0, $finalcount - $postfillcount);
@@ -1165,7 +1165,7 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         // the cache and not perform additional queries.
         foreach ($users as $user) {
             $result = \mod_forum\subscriptions::fetch_discussion_subscription($forum->id, $user->id);
-            $this->assertInternalType('array', $result);
+            $this->assertIsArray($result);
         }
         $finalcount = $DB->perf_get_reads();
         $this->assertNotEquals($finalcount, $startcount);

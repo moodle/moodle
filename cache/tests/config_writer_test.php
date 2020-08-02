@@ -270,7 +270,7 @@ class core_cache_config_writer_testcase extends advanced_testcase {
 
         $config = cache_config_writer::instance();
         $this->assertTrue($config->add_store_instance('setdefinitiontest', 'file'));
-        $this->assertInternalType('array', $config->get_definition_by_id('phpunit/testdefinition'));
+        $this->assertIsArray($config->get_definition_by_id('phpunit/testdefinition'));
         $config->set_definition_mappings('phpunit/testdefinition', array('setdefinitiontest', 'default_application'));
 
         try {

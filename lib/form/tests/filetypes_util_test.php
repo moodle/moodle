@@ -100,8 +100,8 @@ class filetypes_util_testcase extends advanced_testcase {
 
         $audio = $util->is_filetype_group('audio');
         $this->assertNotFalse($audio);
-        $this->assertInternalType('array', $audio->extensions);
-        $this->assertInternalType('array', $audio->mimetypes);
+        $this->assertIsArray($audio->extensions);
+        $this->assertIsArray($audio->mimetypes);
 
         $this->assertFalse($util->is_filetype_group('.gif'));
         $this->assertFalse($util->is_filetype_group('somethingveryunlikelytoeverexist'));

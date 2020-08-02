@@ -63,7 +63,7 @@ class request_transform_test extends advanced_testcase {
         $datestr = transform::datetime($time);
 
         // Assert it is a string.
-        $this->assertInternalType('string', $datestr);
+        $this->assertIsString($datestr);
 
         // To prevent failures on MAC where we are returned with a lower-case 'am' we want to convert this to 'AM'.
         $datestr = str_replace('am', 'AM', $datestr);
@@ -85,7 +85,7 @@ class request_transform_test extends advanced_testcase {
         $datestr = transform::date($time);
 
         // Assert it is a string.
-        $this->assertInternalType('string', $datestr);
+        $this->assertIsString($datestr);
 
         // Assert the formatted date is correct.
         $dateobj = new DateTime();

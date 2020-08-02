@@ -81,7 +81,7 @@ class core_plugin_manager_testcase extends advanced_testcase {
     public function test_get_plugin_types() {
         // Make sure there are no warnings or errors.
         $types = core_plugin_manager::instance()->get_plugin_types();
-        $this->assertInternalType('array', $types);
+        $this->assertIsArray($types);
         foreach ($types as $type => $fulldir) {
             $this->assertFileExists($fulldir);
         }
@@ -120,7 +120,7 @@ class core_plugin_manager_testcase extends advanced_testcase {
             if (is_array($present)) {
                 foreach ($present as $plugin => $version) {
                     $this->assertRegExp('/^[a-z]+[a-z0-9_]*$/', $plugin, 'All plugins are supposed to have version.php file.');
-                    $this->assertInternalType('object', $version);
+                    $this->assertIsObject($version);
                     $this->assertTrue(is_numeric($version->version), 'All plugins should have a version, plugin '.$type.'_'.$plugin.' does not have version info.');
                 }
             } else {
@@ -189,7 +189,7 @@ class core_plugin_manager_testcase extends advanced_testcase {
     public function test_get_subplugins() {
         // Tested already indirectly from test_get_subplugins_of_plugin().
         $subplugins = core_plugin_manager::instance()->get_subplugins();
-        $this->assertInternalType('array', $subplugins);
+        $this->assertIsArray($subplugins);
     }
 
     public function test_get_parent_of_subplugin() {
