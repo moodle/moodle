@@ -863,18 +863,12 @@ if ($mform->is_cancelled()) {
                 if (!$isinternalauth) {
                     $user->password = 'not cached';
                     $upt->track('password', 'not cached');
-                } else {
-                    if (isset($user->password) ) {
-                        $user->password = hash_internal_user_password($user->password);
-                    }
                 }
 
                 // Merge user with company user defaults.
                 if (!empty($companyid)) {
                     $company = new company($companyid);
-                    $defaults = $company->get_user_defaults();
-
-                    $user = (object) array_merge((array) $defaults, (array) $user);
+                    $user->companyid = $companyid;
                 }
 
                 // Is the company department valid?
@@ -899,54 +893,45 @@ if ($mform->is_cancelled()) {
                         $erroredusers[] = $line;
                         continue;
                     }
+                } else {
+                    if (!$department = $DB->get_record('department', array('company' => $company->id,
+                                                                           'id' => $formdata->userdepartment))) {
+                        $upt->track('department', get_string('invaliddepartment', 'block_iomad_company_admin'), 'error');
+                        $upt->track('status', $strusernotaddederror, 'error');
+                        $line[] = get_string('invaliddepartment', 'block_iomad_company_admin');
+                        $errornum++;
+                        $userserrors++;
+                        $erroredusers[] = $line;
+                        continue;
+                    }
+                    // Make sure the user can manage this department.
+                    if (!company::can_manage_department($department->id)) {
+                        $upt->track('department', get_string('invaliddepartment', 'block_iomad_company_admin'), 'error');
+                        $upt->track('status', $strusernotaddederror, 'error');
+                        $line[] = get_string('invaliddepartment', 'block_iomad_company_admin');
+                        $errornum++;
+                        $userserrors++;
+                        $erroredusers[] = $line;
+                        continue;
+                    }
                 }
+                $user->departmentid = $department->id;
+                $user->newpassword = $user->password;
+                unset($user->password);
+                $user->sendnewpasswordemails = $formdata->sendnewpasswordemails;
+                $user->due = $today;
+                if (empty($user->newpassword) || $formdata->sendnewpasswordemails) {
+                    $user->preference_auth_forcepasswordchange = true;
+                } else {
+                    $user->preference_auth_forcepasswordchange = false;
+                }
+                $user->id = company_user::create($user);
 
-                $user->id = $DB->insert_record('user', $user);
+
                 $info = ': ' . $user->username .' (ID = ' . $user->id . ')';
                 $upt->track('status', $struseradded);
                 $upt->track('id', $user->id, 'normal', false);
                 $usersnew++;
-                if ($createpasswords && $isinternalauth) {
-                    if (empty($user->password) || $forcechangepassword) {
-                        // Passwords will be created and sent out on cron.
-                        set_user_preference('create_password', 1, $user->id);
-                        set_user_preference('auth_forcepasswordchange', 1, $user->id);
-                        $upt->track('password', get_string('new'));
-                    } else {
-                        set_user_preference('auth_forcepasswordchange', 1, $user->id);
-                    }
-                }
-                // Save custom profile fields data.
-                profile_save_data($user);
-
-                // Make sure user context exists.
-                context_user::instance($user->id);
-
-                // Add the user to the company
-                $company->assign_user_to_company($user->id);
-
-                // Do we have a department in the file?
-                if (!empty($user->department)) {
-                    // we have already validated this.  Assign the user.
-                    company::assign_user_to_department($department->id, $user->id);
-                } else {
-                    company::assign_user_to_department($formdata->userdepartment, $user->id);
-                }
-
-                \core\event\user_created::create_from_userid($user->id)->trigger();
-
-                $companyrec = $DB->get_record('company', array('id' => $company->id));
-                if ($companyrec->managernotify == 0) {
-                    $headers = null;
-                } else {
-                    $headers = serialize(array("Cc:".$USER->email));
-                }
-
-                if ($bulk == 1 or $bulk == 3) {
-                    if (!in_array($user->id, $SESSION->bulk_users)) {
-                        $SESSION->bulk_users[] = $user->id;
-                    }
-                }
             }
 
             // Find course enrolments, groups, roles/types and enrol periods.
