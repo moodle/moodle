@@ -255,11 +255,22 @@ if (!empty($companyrecords)) {
 }
 if (!empty($companylist)) {
     $companies = iomad::get_companies_listing($sort, $dir, $page * $perpage, $perpage, '', '', '', $companylist);
+    // Check to make sure if the first company is a child.
+    foreach ($companies as $companycheck) {
+        if ($companycheck->parentid != 0) {
+            $parentcompany = $DB->get_records_sql("SELECT *, 0 as depth
+                                                   FROM {company}
+                                                   WHERE id = :parentid",
+                                                   array('parentid' => $companycheck->parentid));
+            $companies = $parentcompany + $companies;
+        }
+        break;
+    }
+
     if (empty($params['name']) && empty($params['city']) && empty($params['countey'])) {
         $companies = block_iomad_company_admin\iomad_company_admin::order_companies_by_parent($companies);
     }
     $allmycompanies = iomad::get_companies_listing($sort, $dir, 0, 0, '', '', '', $companylist);
-    $allmycompanies = block_iomad_company_admin\iomad_company_admin::order_companies_by_parent($allmycompanies);
     $companycount = count($allmycompanies);
 } else {
     $companies = array();
