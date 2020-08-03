@@ -30,11 +30,12 @@ class course_edit_form extends moodleform {
     protected $context = null;
 
     public function __construct($actionurl, $companyid, $editoroptions) {
-        global $CFG;
+        global $CFG, $DB;
 
         $this->selectedcompany = $companyid;
         $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
         $this->editoroptions = $editoroptions;
+        $this->companyrec = $DB->get_record('company', array('id' => $companyid));
 
         parent::__construct($actionurl);
     }
@@ -59,6 +60,11 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('shortname', 'shortnamecourse');
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_MULTILANG);
+
+        // Add custom fields to the form.
+        $handler = core_course\customfield\course_handler::create();
+        $handler->set_parent_context(context_coursecat::instance($this->companyrec->category)); // For course handler only.
+        $handler->instance_form_definition($mform, 0);
 
         // Create course as self enrolable.
         if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
