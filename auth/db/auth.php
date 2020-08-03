@@ -603,9 +603,12 @@ class auth_plugin_db extends auth_plugin_base {
             }
         }
         if (!empty($update)) {
-            $authdb->Execute("UPDATE {$this->config->table}
-                                 SET ".implode(',', $update)."
-                               WHERE {$this->config->fielduser}='".$this->ext_addslashes($extusername)."'");
+            $sql = "UPDATE {$this->config->table}
+                       SET ".implode(',', $update)."
+                     WHERE {$this->config->fielduser} = ?";
+            if (!$authdb->Execute($sql, array($this->ext_addslashes($extusername)))) {
+                print_error('auth_dbupdateerror', 'auth_db');
+            }
         }
         $authdb->Close();
         return true;
