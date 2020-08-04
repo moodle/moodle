@@ -640,15 +640,25 @@ $message-day-color: color-yiq($message-app-bg) !default;
         overflow-y: auto;
     }
 }
-#page-message-index #region-main {
-    height: 100%;
-    div[role="main"] {
+#page-message-index {
+    #page-header {
+        display: none;
+    }
+    #region-main {
         height: 100%;
-        #maincontent {
-            margin-top: -1px;
+        margin-top: 0;
+        .conversationcontainer {
+            max-height: calc(100vh - 50px);
+            overflow: auto;
         }
-        .message-app.main {
+        div[role="main"] {
             height: 100%;
+            #maincontent {
+                margin-top: -1px;
+            }
+            .message-app.main {
+                height: 100%;
+            }
         }
     }
 }

@@ -14777,8 +14777,15 @@ a.ygtvspacer:hover {
   .message-app .lazy-load-list {
     overflow-y: auto; }
 
+#page-message-index #page-header {
+  display: none; }
+
 #page-message-index #region-main {
-  height: 100%; }
+  height: 100%;
+  margin-top: 0; }
+  #page-message-index #region-main .conversationcontainer {
+    max-height: calc(100vh - 50px);
+    overflow: auto; }
   #page-message-index #region-main div[role="main"] {
     height: 100%; }
     #page-message-index #region-main div[role="main"] #maincontent {
