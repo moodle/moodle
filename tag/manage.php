@@ -211,7 +211,7 @@ print('<form class="tag-filter-form" method="get" action="'.$CFG->wwwroot.'/tag/
 print('<div class="tag-management-form generalbox"><label class="accesshide" for="id_tagfilter">'. get_string('search') .'</label>'.
     '<input type="hidden" name="tc" value="'.$tagcollid.'" />'.
     '<input type="hidden" name="perpage" value="'.$perpage.'" />'.
-    '<input id="id_tagfilter" name="filter" type="text" value=' . s($filter) . '>'.
+    '<input id="id_tagfilter" name="filter" type="text" value="' . s($filter) . '">'.
     '<input value="'. s(get_string('search')) .'" type="submit" class="btn btn-secondary"> '.
     ($filter !== '' ? html_writer::link(new moodle_url($PAGE->url, array('filter' => null)),
         get_string('resetfilter', 'tag'), array('class' => 'resetfilterlink')) : '').
