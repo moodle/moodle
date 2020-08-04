@@ -174,25 +174,30 @@ function testing_error($errorcode, $text = '') {
 }
 
 /**
- * Updates the composer installer and the dependencies.
+ * Perform necessary steps to install and/or upgrade composer and its dependencies.
  *
- * @return void exit() if something goes wrong
+ * Installation is mandatory, but upgrade is optional.
+ *
+ * Note: This function does not return, but will call `exit()` on error.
+ *
+ * @param   bool $selfupdate Perform a composer self-update to update the composer.phar utility
+ * @param   bool $updatedependencies Upgrade dependencies
  */
-function testing_update_composer_dependencies() {
+function testing_update_composer_dependencies(bool $selfupdate = true, bool $updatedependencies = true): void {
     // To restore the value after finishing.
     $cwd = getcwd();
 
     // Set some paths.
     $dirroot = dirname(dirname(__DIR__));
-    $composerpath = $dirroot . DIRECTORY_SEPARATOR . 'composer.phar';
-    $composerurl = 'https://getcomposer.org/composer.phar';
 
     // Switch to Moodle's dirroot for easier path handling.
     chdir($dirroot);
 
     // Download or update composer.phar. Unfortunately we can't use the curl
     // class in filelib.php as we're running within one of the test platforms.
+    $composerpath = $dirroot . DIRECTORY_SEPARATOR . 'composer.phar';
     if (!file_exists($composerpath)) {
+        $composerurl = 'https://getcomposer.org/composer.phar';
         $file = @fopen($composerpath, 'w');
         if ($file === false) {
             $errordetails = error_get_last();
@@ -226,17 +231,30 @@ function testing_update_composer_dependencies() {
                                 "404 http status code fetching $composerurl");
             testing_error(TESTING_EXITCODE_COMPOSER, $error);
         }
-    } else {
+
+        // Do not self-update after installation.
+        $selfupdate = false;
+    }
+
+    if ($selfupdate) {
         passthru("php composer.phar self-update", $code);
         if ($code != 0) {
             exit($code);
         }
     }
 
-    // Update composer dependencies.
-    passthru("php composer.phar install", $code);
-    if ($code != 0) {
-        exit($code);
+    // If the vendor directory does not exist, force the installation of dependencies.
+    $vendorpath = $dirroot . DIRECTORY_SEPARATOR . 'vendor';
+    if (!file_exists($vendorpath)) {
+        $updatedependencies = true;
+    }
+
+    if ($updatedependencies) {
+        // Update composer dependencies.
+        passthru("php composer.phar install", $code);
+        if ($code != 0) {
+            exit($code);
+        }
     }
 
     // Return to our original location.
