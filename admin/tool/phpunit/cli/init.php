@@ -38,8 +38,57 @@ require_once(__DIR__.'/../../../../lib/clilib.php');
 require_once(__DIR__.'/../../../../lib/phpunit/bootstraplib.php');
 require_once(__DIR__.'/../../../../lib/testing/lib.php');
 
+list($options, $unrecognized) = cli_get_params(
+    [
+        'help'                 => false,
+        'disable-composer'     => false,
+        'composer-upgrade'     => true,
+        'composer-self-update' => true,
+    ],
+    [
+        'h' => 'help',
+    ]
+);
+
+$help = "
+Utilities to initialise the PHPUnit test site.
+
+Usage:
+  php init.php [--no-composer-self-update] [--no-composer-upgrade]
+               [--help]
+
+--no-composer-self-update
+                    Prevent upgrade of the composer utility using its self-update command
+
+--no-composer-upgrade
+                    Prevent update development dependencies using composer
+
+--disable-composer
+                    A shortcut to disable composer self-update and dependency update
+                    Note: Installation of composer and/or dependencies will still happen as required
+
+-h, --help          Print out this help
+
+Example from Moodle root directory:
+\$ php admin/tool/phpunit/cli/init.php
+";
+
+if (!empty($options['help'])) {
+    echo $help;
+    exit(0);
+}
+
 echo "Initialising Moodle PHPUnit test environment...\n";
-testing_update_composer_dependencies();
+
+if ($options['disable-composer']) {
+    // Disable self-update and upgrade easily.
+    // Note: Installation will still occur regardless of this setting.
+    $options['composer-self-update'] = false;
+    $options['composer-upgrade'] = false;
+}
+
+// Install and update composer and dependencies as required.
+testing_update_composer_dependencies($options['composer-self-update'], $options['composer-upgrade']);
 
 $output = null;
 exec('php --version', $output, $code);
