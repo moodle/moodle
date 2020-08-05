@@ -491,4 +491,23 @@ class behat_util extends testing_util {
         $linecount = count(explode("\n", $formattedmessage));
         fwrite(STDOUT, str_repeat(cli_ansi_format("<cursor:down>"), $linecount - 1));
     }
+
+    /**
+     * Gets a text-based site version description.
+     *
+     * @return string The site info
+     */
+    public static function get_site_info() {
+        $siteinfo = parent::get_site_info();
+
+        $accessibility = empty(behat_config_manager::get_behat_run_config_value('axe')) ? 'No' : 'Yes';
+
+        $siteinfo .= <<<EOF
+Run optional tests:
+- Accessibility: {$accessibility}
+
+EOF;
+
+        return $siteinfo;
+    }
 }

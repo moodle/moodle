@@ -8,6 +8,13 @@
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
+    <location>behat/axe</location>
+    <name>axe-core</name>
+    <license>MPL</license>
+    <version>3.5.5</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+  <library>
     <location>bennu</location>
     <name>Bennu</name>
     <license>LGPL</license>

@@ -49,6 +49,7 @@ list($options, $unrecognized) = cli_get_params(
         'torun'    => 0,
         'optimize-runs' => '',
         'add-core-features-to-theme' => false,
+        'axe'      => false,
     ),
     array(
         'j' => 'parallel',
@@ -71,6 +72,7 @@ Options:
 -m, --maxruns    Max parallel processes to be executed at one time.
 --fromrun        Execute run starting from (Used for parallel runs on different vms)
 --torun          Execute run till (Used for parallel runs on different vms)
+--axe            Include axe accessibility tests
 
 -o, --optimize-runs Split features with specified tags in all parallel runs.
 -a, --add-core-features-to-theme Add all core features to specified theme's
@@ -102,7 +104,10 @@ if ($options['parallel'] && $options['parallel'] > 1) {
     }
 } else {
     // Only sanitize options for single run.
-    $cmdoptionsforsinglerun = array('add-core-features-to-theme');
+    $cmdoptionsforsinglerun = [
+        'add-core-features-to-theme',
+        'axe',
+    ];
 
     foreach ($cmdoptionsforsinglerun as $option) {
         if (!empty($options[$option])) {
