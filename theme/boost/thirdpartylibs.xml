@@ -106,13 +106,6 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>amd/src/tether.js</location>
-    <name>tether</name>
-    <license>(MIT)</license>
-    <version>1.3.3</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>scss/fontawesome</location>
     <name>Font Awesome by Dave Gandy - http://fontawesome.io</name>
     <license>(MIT)</license>
