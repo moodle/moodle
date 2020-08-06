@@ -295,7 +295,7 @@ class pgsql_native_moodle_database extends moodle_database {
         }
 
         // ... a nuisance - temptables use this.
-        if (preg_match('/\bpg_constraint/', $sql) && $this->temptables->get_temptables()) {
+        if (preg_match('/\bpg_catalog/', $sql) && $this->temptables->get_temptables()) {
             return false;
         }
 

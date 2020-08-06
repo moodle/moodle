@@ -117,20 +117,58 @@ class core_dml_pgsql_read_slave_testcase extends base_testcase {
      * @return void
      */
     public function test_temp_table() : void {
-        $DB = new read_slave_moodle_database_mock_pgsql();
+        global $DB;
 
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        if ($DB->get_dbfamily() != 'postgres') {
+            $this->markTestSkipped("Not postgres");
+        }
 
-        $dbman = $DB->get_manager();
+        // Open second connection.
+        $cfg = $DB->export_dbconfig();
+        if (!isset($cfg->dboptions)) {
+            $cfg->dboptions = [];
+        }
+        if (!isset($cfg->dboptions['readonly'])) {
+            $cfg->dboptions['readonly'] = [
+                'instance' => [$cfg->dbhost]
+            ];
+        }
+
+        // Get a separate disposable db connection handle with guaranteed 'readonly' config.
+        $db2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
+        $db2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
+
+        $dbman = $db2->get_manager();
+
         $table = new xmldb_table('silly_test_table');
         $table->add_field('id', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         $table->add_field('msg', XMLDB_TYPE_CHAR, 255);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         $dbman->create_temp_table($table);
 
-        $DB->get_columns('silly_test_table');
-        $DB->get_records('silly_test_table');
-        $this->assertEquals(0, $DB->perf_get_reads_slave());
+        // We need to go through the creation proces twice.
+        // create_temp_table() performs some reads before the temp table is created.
+        // First time around those reads should go to ro ...
+        $reads = $db2->perf_get_reads_slave();
+
+        $db2->get_columns('silly_test_table');
+        $db2->get_records('silly_test_table');
+        $this->assertEquals($reads, $db2->perf_get_reads_slave());
+
+        $table2 = new xmldb_table('silly_test_table2');
+        $table2->add_field('id', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table2->add_field('msg', XMLDB_TYPE_CHAR, 255);
+        $table2->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $dbman->create_temp_table($table2);
+
+        // ... but once the first temp table is created no more ro reads should occur.
+        $db2->get_columns('silly_test_table2');
+        $db2->get_records('silly_test_table2');
+        $this->assertEquals($reads, $db2->perf_get_reads_slave());
+
+        // Make database driver happy.
+        $dbman->drop_table($table2);
+        $dbman->drop_table($table);
     }
 
     /**
