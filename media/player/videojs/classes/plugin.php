@@ -423,7 +423,7 @@ class media_videojs_plugin extends core_media_player_native {
         // when video is present on the page or added later to it in AJAX.
         $path = new moodle_url('/media/player/videojs/videojs/video-js.swf');
         $contents = 'videojs.options.flash.swf = "' . $path . '";' . "\n";
-        $contents .= $this->find_language(current_language());
+        $contents .= $this->find_language();
         $page->requires->js_amd_inline(<<<EOT
 require(["media_videojs/loader"], function(loader) {
     loader.setUp(function(videojs) {
