@@ -576,7 +576,9 @@ EOD;
             }
         }
 
-        if (empty($pages)) {
+        $totalpagesforattempt = self::page_number_for_attempt($assignment, $userid, $attemptnumber, false);
+        // Here we are comparing the total number of images against the total number of pages from the combined PDF.
+        if (empty($pages) || count($pages) != $totalpagesforattempt) {
             if ($readonly) {
                 // This should never happen, there should be a version of the pages available
                 // whenever we are requesting the readonly version.
