@@ -2548,5 +2548,46 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020061501.09);
     }
 
+    if ($oldversion < 2020061501.11) {
+
+        // Define field metadatasettings to be added to h5p_libraries.
+        $table = new xmldb_table('h5p_libraries');
+        $field = new xmldb_field('metadatasettings', XMLDB_TYPE_TEXT, null, null, null, null, null, 'coreminor');
+
+        // Conditionally launch add field metadatasettings.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Get installed library files that have no metadata settings value.
+        $params = [
+            'component' => 'core_h5p',
+            'filearea' => 'libraries',
+            'filename' => 'library.json',
+        ];
+        $sql = "SELECT l.id, f.id as fileid
+                  FROM {files} f
+             LEFT JOIN {h5p_libraries} l ON f.itemid = l.id
+                 WHERE f.component = :component
+                       AND f.filearea = :filearea
+                       AND f.filename = :filename";
+        $libraries = $DB->get_records_sql($sql, $params);
+
+        // Update metadatasettings field when the attribute is present in the library.json file.
+        $fs = get_file_storage();
+        foreach ($libraries as $library) {
+            $jsonfile = $fs->get_file_by_id($library->fileid);
+            $jsoncontent = json_decode($jsonfile->get_content());
+            if (isset($jsoncontent->metadataSettings)) {
+                unset($library->fileid);
+                $library->metadatasettings = json_encode($jsoncontent->metadataSettings);
+                $DB->update_record('h5p_libraries', $library);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020061501.11);
+    }
+
     return true;
 }
