@@ -18,10 +18,8 @@
  * Class containing utility methods for dataformats
  *
  * @package     core
- * @copyright   2020 Moodle Pty Ltd <support@moodle.com>
- * @author      2020 Paul Holden <paulh@moodle.com>
+ * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @license     Moodle Workplace License, distribution is restricted, contact support@moodle.com
  */
 
 namespace core;
@@ -33,15 +31,13 @@ use core_php_time_limit;
  * Dataformat utility class
  *
  * @package     core
- * @copyright   2020 Moodle Pty Ltd <support@moodle.com>
- * @author      2020 Paul Holden <paulh@moodle.com>
+ * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @license     Moodle Workplace License, distribution is restricted, contact support@moodle.com
  */
 class dataformat {
 
     /**
-     * Return an instead of a dataformat writer from given dataformat type
+     * Return an instance of a dataformat writer from given dataformat type
      *
      * @param string $dataformat
      * @return dataformat\base
