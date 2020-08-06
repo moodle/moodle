@@ -17186,17 +17186,19 @@ select {
   max-height: none;
   z-index: 1; }
 
-.path-mod-forum .unified-grader .body-container.hidden {
-  display: none !important;
-  /* stylelint-disable-line declaration-no-important */ }
+.path-mod-forum .unified-grader .body-container {
+  overflow: auto; }
+  .path-mod-forum .unified-grader .body-container.hidden {
+    display: none !important;
+    /* stylelint-disable-line declaration-no-important */ }
 
 .path-mod-forum .unified-grader .userpicture {
   height: 60px;
   width: 60px; }
 
 .path-mod-forum .unified-grader .grader-grading-panel {
-  position: absolute;
   top: 0;
+  position: absolute;
   height: 100%;
   z-index: 0;
   width: 430px; }
@@ -17447,7 +17449,13 @@ select {
 
 @media (max-width: 575.98px) {
   .path-mod-forum .unified-grader .grader-grading-panel {
-    width: 100%; } }
+    width: 100%;
+    position: fixed;
+    height: calc(100vh - 50px);
+    overflow: scroll;
+    top: 50px; }
+  .path-mod-forum .unified-grader .body-container {
+    overflow: visible; } }
 
 .maincalendar .calendarmonth td,
 .maincalendar .calendarmonth th {
