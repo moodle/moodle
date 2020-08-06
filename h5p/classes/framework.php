@@ -685,6 +685,9 @@ class framework implements \H5PFrameworkInterface {
      *                           - dropLibraryCss(optional): list of associative arrays containing:
      *                             - machineName: machine name for the librarys that are to drop their css
      *                           - semantics(optional): Json describing the content structure for the library
+     *                           - metadataSettings(optional): object containing:
+     *                             - disable: 1 if metadata is disabled completely
+     *                             - disableExtraTitleField: 1 if the title field is hidden in the form
      * @param bool $new Whether it is a new or existing library.
      */
     public function saveLibraryData(&$librarydata, $new = true) {
@@ -722,6 +725,7 @@ class framework implements \H5PFrameworkInterface {
             'addto' => isset($librarydata['addTo']) ? json_encode($librarydata['addTo']) : null,
             'coremajor' => isset($librarydata['coreApi']['majorVersion']) ? $librarydata['coreApi']['majorVersion'] : null,
             'coreminor' => isset($librarydata['coreApi']['majorVersion']) ? $librarydata['coreApi']['minorVersion'] : null,
+            'metadatasettings' => isset($librarydata['metadataSettings']) ? $librarydata['metadataSettings'] : null,
         );
 
         if ($new) {
