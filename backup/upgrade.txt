@@ -1,6 +1,10 @@
 This files describes API changes in /backup/*,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+ * Local plugins can now hook into a backup and restore process of grade items by
+   using define_grade_item_plugin_structure method (See MDL-69418).
+
 === 3.1 ===
 
 * New close() method added to loggers so they can close any open resource. Previously
