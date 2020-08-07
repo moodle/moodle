@@ -68,6 +68,9 @@ define('COURSE_DB_QUERY_LIMIT', 1000);
 /** Searching for all courses that have no value for the specified custom field. */
 define('COURSE_CUSTOMFIELD_EMPTY', -1);
 
+// Course activity chooser footer default display option.
+define('COURSE_CHOOSER_FOOTER_NONE', 'hidden');
+
 function make_log_url($module, $url) {
     switch ($module) {
         case 'course':

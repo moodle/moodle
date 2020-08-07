@@ -25,6 +25,9 @@
 $string['activitychoosercategory'] = 'Activity chooser';
 $string['activitychooserrecommendations'] = 'Recommended activities';
 $string['activitychoosersettings'] = 'Activity chooser settings';
+$string['activitychooseractivefooter'] = 'Activity chooser footer';
+$string['activitychooseractivefooter_desc'] = 'The activity chooser can support plugins that add items to the footer.';
+$string['activitychooserhidefooter'] = 'No footer';
 $string['activitychoosertabmode'] = 'Activity chooser tabs';
 $string['activitychoosertabmode_desc'] = "The activity chooser enables a teacher to easily select activities and resources to add to their course. This setting determines which tabs should be displayed in it. Note that the starred tab is only displayed for a user if they have starred one or more activities and the recommended tab is only displayed if a site administrator has specified some recommended activities.";
 $string['activitychoosertabmodeone'] = 'Starred, All, Activities, Resources, Recommended';
