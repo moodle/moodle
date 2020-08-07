@@ -184,6 +184,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     // Add a category for the Activity Chooser.
     $ADMIN->add('courses', new admin_category('activitychooser', new lang_string('activitychoosercategory', 'course')));
     $temp = new admin_settingpage('activitychoosersettings', new lang_string('activitychoosersettings', 'course'));
+    // Tab mode for the activity chooser.
     $temp->add(
         new admin_setting_configselect(
             'activitychoosertabmode',
@@ -197,6 +198,31 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
             ]
         )
     );
+
+    // Build a list of plugins that use the footer callback.
+    $pluginswithfunction = get_plugins_with_function('custom_chooser_footer', 'lib.php');
+    $pluginsoptions = [];
+    $pluginsoptions[COURSE_CHOOSER_FOOTER_NONE] = get_string('activitychooserhidefooter', 'course');
+    if ($pluginswithfunction) {
+        foreach ($pluginswithfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginname => $pluginfunction) {
+                $plugin = $plugintype.'_'.$pluginname;
+                $pluginsoptions[$plugin] = get_string('pluginname', $plugin);
+            }
+        }
+    }
+
+    // Select what plugin to show in the footer.
+    $temp->add(
+        new admin_setting_configselect(
+            'activitychooseractivefooter',
+            new lang_string('activitychooseractivefooter', 'course'),
+            new lang_string('activitychooseractivefooter_desc', 'course'),
+            COURSE_CHOOSER_FOOTER_NONE,
+            $pluginsoptions
+        )
+    );
+
     $ADMIN->add('activitychooser', $temp);
     $ADMIN->add('activitychooser',
         new admin_externalpage('activitychooserrecommended', new lang_string('activitychooserrecommendations', 'course'),
