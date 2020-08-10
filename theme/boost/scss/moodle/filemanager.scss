@@ -36,9 +36,13 @@
     min-height: 520px;
 }
 .file-picker .fp-navbar {
-    border-bottom: 1px solid #e5e5e5;
     min-height: 40px;
     padding: 4px;
+}
+
+.fp-navbar {
+    border-color: $input-border-color;
+    border-bottom: 0;
 }
 
 .file-picker .fp-content {
@@ -597,7 +601,7 @@ a.ygtvspacer:hover {
 .filepicker-filelist,
 .filemanager-container {
     min-height: 140px;
-    border-top: 0;
+    border: 1px solid $input-border-color;
 }
 
 .filemanager .fp-content {
