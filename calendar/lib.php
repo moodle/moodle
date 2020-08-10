@@ -1274,6 +1274,9 @@ class calendar_information {
      * @param string|null $view preference view options (eg: day, month, upcoming)
      */
     public function add_sidecalendar_blocks(core_calendar_renderer $renderer, $showfilters=false, $view=null) {
+        if (!has_capability('moodle/block:view', $this->context) ) {
+            return;
+        }
         if ($showfilters) {
             $filters = new block_contents();
             $filters->content = $renderer->event_filter();
