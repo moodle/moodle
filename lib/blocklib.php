@@ -1260,6 +1260,12 @@ class block_manager {
      */
     public function ensure_content_created($region, $output) {
         $this->ensure_instances_exist($region);
+
+        if (!has_capability('moodle/block:view', $this->page->context) ) {
+            $this->visibleblockcontent[$region] = [];
+            return;
+        }
+
         if (!array_key_exists($region, $this->visibleblockcontent)) {
             $contents = array();
             if (array_key_exists($region, $this->extracontent)) {
