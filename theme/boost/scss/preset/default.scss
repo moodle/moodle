@@ -4,7 +4,7 @@ $gray-100: #f8f9fa !default;
 $gray-200: #e9ecef !default;
 $gray-300: #dee2e6 !default;
 $gray-400: #ced4da !default;
-$gray-500: #adb5bd !default;
+$gray-500: #8f959e !default;
 $gray-600: #6c757d !default;
 $gray-700: #495057 !default;
 $gray-800: #343a40 !default;
@@ -69,6 +69,8 @@ $card-group-margin: .25rem;
 $custom-control-indicator-size: 1.25rem;
 
 $input-btn-focus-color: rgba($primary, .75) !default;
+
+$input-border-color: $gray-500 !default;
 
 // stylelint-disable
 $theme-colors: () !default;
