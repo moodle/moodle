@@ -105,5 +105,23 @@ function xmldb_tool_moodlenet_upgrade(int $oldversion) {
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2020090700) {
+
+        // Find out if there are users with MoodleNet profiles set.
+        $sql = "SELECT u.*
+                  FROM {user} u
+                 WHERE u.moodlenetprofile IS NOT NULL";
+
+        $records = $DB->get_records_sql($sql);
+
+        foreach ($records as $record) {
+            // Force clean user value just incase there is something malicious.
+            $record->moodlenetprofile = clean_text($record->moodlenetprofile, PARAM_NOTAGS);
+            $DB->update_record('user', $record);
+        }
+
+        upgrade_plugin_savepoint(true, 2020090700, 'tool', 'moodlenet');
+    }
+
     return true;
 }
