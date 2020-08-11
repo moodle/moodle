@@ -302,10 +302,10 @@ class filetypes_util_testcase extends advanced_testcase {
         // All these three files are in both "image" and also "web_image"
         // groups. We display both groups.
         $data = $util->data_for_browser('jpg png gif', true, '.gif');
-        $this->assertEquals(2, count($data));
+        $this->assertEquals(3, count($data));
         $this->assertTrue($data[0]->key !== $data[1]->key);
         foreach ($data as $group) {
-            $this->assertTrue(($group->key === 'image' || $group->key === 'web_image'));
+            $this->assertTrue(($group->key === 'image' || $group->key === 'web_image' || $group->key === 'optimised_image'));
             $this->assertEquals(3, count($group->types));
             $this->assertFalse($group->selectable);
             foreach ($group->types as $ext) {
@@ -317,11 +317,11 @@ class filetypes_util_testcase extends advanced_testcase {
             }
         }
 
-        // There is a group web_image which is a subset of the group image. The
-        // file extensions that fall into both groups will be displayed twice.
+        // The groups web_image and optimised_image are a subset of the group image. The
+        // file extensions that fall into these groups will be displayed thrice.
         $data = $util->data_for_browser('web_image');
         foreach ($data as $group) {
-            $this->assertTrue(($group->key === 'image' || $group->key === 'web_image'));
+            $this->assertTrue(($group->key === 'image' || $group->key === 'web_image' || $group->key === 'optimised_image'));
         }
 
         // Check that "All file types" are displayed first.
