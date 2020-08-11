@@ -116,10 +116,11 @@ class engine extends \core_search\engine {
     /**
      * Initialises the search engine configuration.
      *
+     * @param bool $alternateconfiguration If true, use alternate configuration settings
      * @return void
      */
-    public function __construct() {
-        parent::__construct();
+    public function __construct(bool $alternateconfiguration = false) {
+        parent::__construct($alternateconfiguration);
 
         $curlversion = curl_version();
         if (isset($curlversion['version']) && stripos($curlversion['version'], '7.35.') === 0) {
@@ -1256,7 +1257,7 @@ class engine extends \core_search\engine {
 
         // Check that the schema is already set up.
         try {
-            $schema = new \search_solr\schema();
+            $schema = new schema($this);
             $schema->validate_setup();
         } catch (\moodle_exception $e) {
             return $e->getMessage();
@@ -1466,7 +1467,7 @@ class engine extends \core_search\engine {
 
     protected function update_schema($oldversion, $newversion) {
         // Construct schema.
-        $schema = new schema();
+        $schema = new schema($this);
         $cansetup = $schema->can_setup_server();
         if ($cansetup !== true) {
             return $cansetup;
@@ -1563,5 +1564,16 @@ class engine extends \core_search\engine {
         } catch (\Exception $e) {
             throw new \core_search\engine_exception('error_solr', 'search_solr', '', $e->getMessage());
         }
+    }
+
+    /**
+     * Checks if an alternate configuration has been defined.
+     *
+     * @return bool True if alternate configuration is available
+     */
+    public function has_alternate_configuration(): bool {
+        return !empty($this->config->alternateserver_hostname) &&
+                !empty($this->config->alternateindexname) &&
+                !empty($this->config->alternateserver_port);
     }
 }

@@ -132,7 +132,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->search->delete_index();
 
         // Add moodle fields if they don't exist.
-        $schema = new \search_solr\schema();
+        $schema = new \search_solr\schema($this->engine);
         $schema->setup(false);
     }
 
@@ -157,6 +157,45 @@ class search_solr_engine_testcase extends advanced_testcase {
 
     public function test_connection() {
         $this->assertTrue($this->engine->is_server_ready());
+    }
+
+    /**
+     * Tests that the alternate settings are used when configured.
+     */
+    public function test_alternate_settings() {
+        // Index a couple of things.
+        $this->generator->create_record();
+        $this->generator->create_record();
+        $this->search->index();
+
+        // By default settings, alternates are not set.
+        $this->assertFalse($this->engine->has_alternate_configuration());
+
+        // Set up all the config the same as normal.
+        foreach (['server_hostname', 'indexname', 'secure', 'server_port',
+                'server_username', 'server_password'] as $setting) {
+            set_config('alternate' . $setting, get_config('search_solr', $setting), 'search_solr');
+        }
+        // Also mess up the normal config.
+        set_config('indexname', 'not_the_right_index_name', 'search_solr');
+
+        // Construct a new engine using normal settings.
+        $engine = new search_solr\engine();
+
+        // Now alternates are available.
+        $this->assertTrue($engine->has_alternate_configuration());
+
+        // But it won't actually work because of the bogus index name.
+        $this->assertFalse($engine->is_server_ready() === true);
+        $this->assertDebuggingCalled();
+
+        // But if we construct one using alternate settings, it will work as normal.
+        $engine = new search_solr\engine(true);
+        $this->assertTrue($engine->is_server_ready());
+
+        // Including finding the search results.
+        $this->assertCount(2, $engine->execute_query(
+                (object)['q' => 'message'], (object)['everything' => true]));
     }
 
     /**

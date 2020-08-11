@@ -3232,14 +3232,22 @@ class admin_setting_configselect extends admin_setting {
     public $choices;
     /** @var array Array of choices grouped using optgroups */
     public $optgroups;
+    /** @var callable|null Loader function for choices */
+    protected $choiceloader = null;
+    /** @var callable|null Validation function */
+    protected $validatefunction = null;
 
     /**
-     * Constructor
+     * Constructor.
+     *
+     * If you want to lazy-load the choices, pass a callback function that returns a choice
+     * array for the $choices parameter.
+     *
      * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param string|int $defaultsetting
-     * @param array $choices array of $value=>$label for each selection
+     * @param array|callable|null $choices array of $value=>$label for each selection, or callback
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
         // Look for optgroup and single options.
@@ -3254,8 +3262,24 @@ class admin_setting_configselect extends admin_setting {
                 }
             }
         }
+        if (is_callable($choices)) {
+            $this->choiceloader = $choices;
+        }
 
         parent::__construct($name, $visiblename, $description, $defaultsetting);
+    }
+
+    /**
+     * Sets a validate function.
+     *
+     * The callback will be passed one parameter, the new setting value, and should return either
+     * an empty string '' if the value is OK, or an error message if not.
+     *
+     * @param callable|null $validatefunction Validate function or null to clear
+     * @since Moodle 4.0
+     */
+    public function set_validate_function(?callable $validatefunction = null) {
+        $this->validatefunction = $validatefunction;
     }
 
     /**
@@ -3267,12 +3291,12 @@ class admin_setting_configselect extends admin_setting {
      * @return bool true if loaded, false if error
      */
     public function load_choices() {
-        /*
-        if (is_array($this->choices)) {
+        if ($this->choiceloader) {
+            if (!is_array($this->choices)) {
+                $this->choices = call_user_func($this->choiceloader);
+            }
             return true;
         }
-        .... load choices here
-        */
         return true;
     }
 
@@ -3323,7 +3347,30 @@ class admin_setting_configselect extends admin_setting {
             return ''; // ignore it
         }
 
+        // Validate the new setting.
+        $error = $this->validate_setting($data);
+        if ($error) {
+            return $error;
+        }
+
         return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
+    }
+
+    /**
+     * Validate the setting. This uses the callback function if provided; subclasses could override
+     * to carry out validation directly in the class.
+     *
+     * @param string $data New value being set
+     * @return string Empty string if valid, or error message text
+     * @since Moodle 4.0
+     */
+    protected function validate_setting(string $data): string {
+        // If validation function is specified, call it now.
+        if ($this->validatefunction) {
+            return call_user_func($this->validatefunction, $data);
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -3422,7 +3469,6 @@ class admin_setting_configselect extends admin_setting {
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, $warning, $defaultinfo, $query);
     }
 }
-
 
 /**
  * Select multiple items from list
