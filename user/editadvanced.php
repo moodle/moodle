@@ -145,7 +145,7 @@ $filemanagercontext = $editoroptions['context'];
 $filemanageroptions = array('maxbytes'       => $CFG->maxbytes,
                              'subdirs'        => 0,
                              'maxfiles'       => 1,
-                             'accepted_types' => 'web_image');
+                             'accepted_types' => 'optimised_image');
 file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'user', 'newicon', 0, $filemanageroptions);
 $user->imagefile = $draftitemid;
 // Create form.
