@@ -74,6 +74,7 @@ $string['group:html_track'] = 'HTML track files';
 $string['group:html_video'] = 'Video files natively supported by browsers';
 $string['group:image'] = 'Image files';
 $string['group:media_source'] = 'Streaming media';
+$string['group:optimised_image'] = 'Image files to be optimised, such as badges';
 $string['group:presentation'] = 'Presentation files';
 $string['group:sourcecode'] = 'Source code';
 $string['group:spreadsheet'] = 'Spreadsheet files';
