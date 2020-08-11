@@ -70,7 +70,7 @@ class badge extends moodleform {
         $mform->addRule('description', null, 'required');
 
         $str = $action == 'new' ? get_string('badgeimage', 'badges') : get_string('newimage', 'badges');
-        $imageoptions = array('maxbytes' => 262144, 'accepted_types' => array('web_image'));
+        $imageoptions = array('maxbytes' => 262144, 'accepted_types' => array('optimised_image'));
         $mform->addElement('filepicker', 'image', $str, null, $imageoptions);
 
         if ($action == 'new') {
