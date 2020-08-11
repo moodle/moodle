@@ -2,10 +2,9 @@
 # process (which uses our internal CI system) this file is here for the benefit
 # of community developers git clones - see MDL-51458.
 
-# We currently disable Travis notifications entirely until https://github.com/travis-ci/travis-ci/issues/4976
-# is fixed.
 notifications:
-  email: false
+  email:
+    if: env(MOODLE_EMAIL) != no
 
 language: php
 
