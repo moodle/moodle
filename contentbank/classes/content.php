@@ -238,6 +238,42 @@ abstract class content {
     }
 
     /**
+     * Import a file as a valid content.
+     *
+     * By default, all content has a public file area to interact with the content bank
+     * repository. This method should be overridden by contentypes which does not simply
+     * upload to the public file area.
+     *
+     * If any, the method will return the final stored_file. This way it can be invoked
+     * as parent::import_file in case any plugin want to store the file in the public area
+     * and also parse it.
+     *
+     * @throws file_exception If file operations fail
+     * @param stored_file $file File to store in the content file area.
+     * @return stored_file|null the stored content file or null if the file is discarted.
+     */
+    public function import_file(stored_file $file): ?stored_file {
+        $originalfile = $this->get_file();
+        if ($originalfile) {
+            $originalfile->replace_file_with($file);
+            return $originalfile;
+        } else {
+            $itemid = $this->get_id();
+            $fs = get_file_storage();
+            $filerecord = [
+                'contextid' => $this->get_contextid(),
+                'component' => 'contentbank',
+                'filearea' => 'public',
+                'itemid' => $this->get_id(),
+                'filepath' => '/',
+                'filename' => $file->get_filename(),
+                'timecreated' => time(),
+            ];
+            return $fs->create_file_from_storedfile($filerecord, $file);
+        }
+    }
+
+    /**
      * Returns the $file related to this content.
      *
      * @return stored_file  File stored in content bank area related to the given itemid.

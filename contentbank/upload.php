@@ -25,6 +25,8 @@
 require('../config.php');
 require_once("$CFG->dirroot/contentbank/files_form.php");
 
+use core\output\notification;
+
 require_login();
 
 $contextid = optional_param('contextid', \context_system::instance()->id, PARAM_INT);
@@ -68,6 +70,8 @@ file_prepare_standard_filemanager($data, 'files', $options, $context, 'contentba
 
 $mform = new contentbank_files_form(null, ['contextid' => $contextid, 'data' => $data, 'options' => $options]);
 
+$error = '';
+
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($formdata = $mform->get_data()) {
@@ -79,15 +83,19 @@ if ($mform->is_cancelled()) {
     if (!empty($files)) {
         $file = reset($files);
         $content = $cb->create_content_from_file($context, $USER->id, $file);
-        file_save_draft_area_files($formdata->file, $contextid, 'contentbank', 'public', $content->get_id());
         $viewurl = new \moodle_url('/contentbank/view.php', ['id' => $content->get_id(), 'contextid' => $contextid]);
         redirect($viewurl);
+    } else {
+        $error = get_string('errornofile', 'contentbank');
     }
-    redirect($returnurl);
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->box_start('generalbox');
+
+if (!empty($error)) {
+    echo $OUTPUT->notification($error, notification::NOTIFY_ERROR);
+}
 
 $mform->display();
 
