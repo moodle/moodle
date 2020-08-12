@@ -6221,6 +6221,15 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         $mail->addCustomHeader('X-Moodle-Originating-Script: ' . $originheader);
     }
 
+    if (!empty($CFG->emailheaders)) {
+        $headers = array_map('trim', explode("\n", $CFG->emailheaders));
+        foreach ($headers as $header) {
+            if (!empty($header)) {
+                $mail->addCustomHeader($header);
+            }
+        }
+    }
+
     if (!empty($from->priority)) {
         $mail->Priority = $from->priority;
     }
