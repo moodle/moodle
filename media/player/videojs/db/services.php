@@ -15,15 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * VideoJS player external functions and service definitions.
  *
- * @package   media_videojs
- * @copyright 2016 Marina Glancy
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    media_videojs
+ * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2021052501;         // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2021052500;         // Requires this Moodle version
-$plugin->component = 'media_videojs'; // Full name of the plugin (used for diagnostics).
+$functions = [
+    'media_videojs_get_language' => [
+        'classname'     => 'media_videojs\external\get_language',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'get language.',
+        'type'          => 'read',
+        'ajax'          => 'true',
+        'capabilities'  => '',
+    ]
+];
