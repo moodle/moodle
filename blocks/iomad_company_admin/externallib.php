@@ -973,13 +973,10 @@ class block_iomad_company_admin_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
         require_capability('block/iomad_company_admin:editusers', $context);
+        $departmentinfo= array();
 
-        // Get course records
-        if (empty($params['departmentids'])) {
-            $departmentinfo= array();
-        } else {
+        if (!empty($params['departmentids']))  {
 
-             $departmentinfo = array();
             foreach ($departmentids as $departmentid) {
                 $departmentusers = $DB->get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email, cu.companyid, cu.departmentid
                                                          FROM {user} u
