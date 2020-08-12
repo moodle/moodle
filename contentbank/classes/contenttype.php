@@ -28,7 +28,7 @@ use core\event\contentbank_content_created;
 use core\event\contentbank_content_deleted;
 use core\event\contentbank_content_viewed;
 use stored_file;
-use file_exception;
+use Exception;
 use moodle_url;
 
 /**
@@ -107,7 +107,7 @@ abstract class contenttype {
         $content = $this->create_content($record);
         try {
             $content->import_file($file);
-        } catch (file_exception $e) {
+        } catch (Exception $e) {
             $this->delete_content($content);
             throw $e;
         }

@@ -28,7 +28,7 @@ namespace core_contentbank;
 use stdClass;
 use context_system;
 use context_user;
-use file_exception;
+use Exception;
 use contenttype_testable\contenttype as contenttype;
 /**
  * Test for content bank contenttype class.
@@ -283,7 +283,7 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
         try {
             $content = $contenttype->upload_content($dummyfile);
             $this->assertTrue(false);
-        } catch (file_exception $e) {
+        } catch (Exception $e) {
             $this->assertTrue(true);
         }
         $this->assertEquals($cbcontents, $DB->count_records('contentbank_content'));
