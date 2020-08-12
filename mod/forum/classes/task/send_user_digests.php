@@ -506,7 +506,7 @@ class send_user_digests extends \core\task\adhoc_task {
             $this->log("Adding post {$post->id} in format {$maildigest} without HTML", 2);
         }
 
-        if ($maildigest == 1 && $CFG->forum_usermarksread) {
+        if ($maildigest == 1 && !$CFG->forum_usermarksread) {
             // Create an array of postid's for this user to mark as read.
             $this->markpostsasread[] = $post->id;
         }

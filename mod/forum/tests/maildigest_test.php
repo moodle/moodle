@@ -694,4 +694,118 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $digesttime = usergetmidnight(time(), \core_date::get_server_timezone()) + ($CFG->digestmailtime * 3600);
         $this->assertLessThanOrEqual($digesttime, $task->nextruntime);
     }
+
+    /**
+     * The sending of a digest marks posts as read if automatic message read marking is set.
+     */
+    public function test_cron_digest_marks_posts_read() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Disable the 'Manual message read marking' option.
+        $CFG->forum_usermarksread = false;
+
+        // Set up a basic user enrolled in a course.
+        $userhelper = $this->helper_setup_user_in_course();
+        $user = $userhelper->user;
+        $course1 = $userhelper->courses->course1;
+        $forum1 = $userhelper->forums->forum1;
+        $posts = [];
+
+        // Set the tested user's default maildigest, trackforums, read tracking settings.
+        $DB->set_field('user', 'maildigest', 1, ['id' => $user->id]);
+        $DB->set_field('user', 'trackforums', 1, ['id' => $user->id]);
+        set_user_preference('forum_markasreadonnotification', 1, $user->id);
+
+        // Set the maildigest preference for forum1 to default.
+        forum_set_user_maildigest($forum1, -1, $user);
+
+        // Add 5 discussions to forum 1.
+        for ($i = 0; $i < 5; $i++) {
+            list($discussion, $post) = $this->helper_post_to_forum($forum1, $user, ['mailnow' => 1]);
+            $posts[] = $post;
+        }
+
+        // There should be unread posts for the forum.
+        $expectedposts = [
+            $forum1->id => (object) [
+                'id' => $forum1->id,
+                'unread' => count($posts),
+            ],
+        ];
+        $this->assertEquals($expectedposts, forum_tp_get_course_unread_posts($user->id, $course1->id));
+
+        // One digest mail should be sent and no other messages.
+        $expect = [
+            (object) [
+                'userid' => $user->id,
+                'messages' => 0,
+                'digests' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_digests_and_assert($user, $posts);
+
+        // Verify that there are no unread posts for any forums.
+        $this->assertEmpty(forum_tp_get_course_unread_posts($user->id, $course1->id));
+    }
+
+    /**
+     * The sending of a digest does not mark posts as read when manual message read marking is set.
+     */
+    public function test_cron_digest_leaves_posts_unread() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Enable the 'Manual message read marking' option.
+        $CFG->forum_usermarksread = true;
+
+        // Set up a basic user enrolled in a course.
+        $userhelper = $this->helper_setup_user_in_course();
+        $user = $userhelper->user;
+        $course1 = $userhelper->courses->course1;
+        $forum1 = $userhelper->forums->forum1;
+        $posts = [];
+
+        // Set the tested user's default maildigest, trackforums, read tracking settings.
+        $DB->set_field('user', 'maildigest', 1, ['id' => $user->id]);
+        $DB->set_field('user', 'trackforums', 1, ['id' => $user->id]);
+        set_user_preference('forum_markasreadonnotification', 1, $user->id);
+
+        // Set the maildigest preference for forum1 to default.
+        forum_set_user_maildigest($forum1, -1, $user);
+
+        // Add 5 discussions to forum 1.
+        for ($i = 0; $i < 5; $i++) {
+            list($discussion, $post) = $this->helper_post_to_forum($forum1, $user, ['mailnow' => 1]);
+            $posts[] = $post;
+        }
+
+        // There should be unread posts for the forum.
+        $expectedposts = [
+            $forum1->id => (object) [
+                'id' => $forum1->id,
+                'unread' => count($posts),
+            ],
+        ];
+        $this->assertEquals($expectedposts, forum_tp_get_course_unread_posts($user->id, $course1->id));
+
+        // One digest mail should be sent and no other messages.
+        $expect = [
+            (object) [
+                'userid' => $user->id,
+                'messages' => 0,
+                'digests' => 1,
+            ],
+        ];
+        $this->queue_tasks_and_assert($expect);
+
+        $this->send_digests_and_assert($user, $posts);
+
+        // Verify that there are still the same unread posts for the forum.
+        $this->assertEquals($expectedposts, forum_tp_get_course_unread_posts($user->id, $course1->id));
+    }
 }
