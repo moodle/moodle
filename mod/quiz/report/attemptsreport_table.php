@@ -385,8 +385,13 @@ abstract class quiz_attempts_report_table extends table_sql {
 
     /**
      * Get any fields that might be needed when sorting on date for a particular slot.
+     *
+     * Note: these values are only used for sorting. The values displayed are taken
+     * from $this->lateststeps loaded in load_extra_data().
+     *
      * @param int $slot the slot for the column we want.
      * @param string $alias the table alias for latest state information relating to that slot.
+     * @return string definitions of extra fields to add to the SELECT list of the query.
      */
     protected function get_required_latest_state_fields($slot, $alias) {
         return '';
