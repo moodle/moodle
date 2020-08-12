@@ -552,6 +552,80 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Data provider for testing empty fields produce expected exceptions
+     *
+     * @see test_create_courses_empty_field
+     * @see test_update_courses_empty_field
+     *
+     * @return array
+     */
+    public function course_empty_field_provider(): array {
+        return [
+            [[
+                'fullname' => '',
+                'shortname' => 'ws101',
+            ], 'fullname'],
+            [[
+                'fullname' => ' ',
+                'shortname' => 'ws101',
+            ], 'fullname'],
+            [[
+                'fullname' => 'Web Services',
+                'shortname' => '',
+            ], 'shortname'],
+            [[
+                'fullname' => 'Web Services',
+                'shortname' => ' ',
+            ], 'shortname'],
+        ];
+    }
+
+    /**
+     * Test creating courses with empty fields throws an exception
+     *
+     * @param array $course
+     * @param string $expectedemptyfield
+     *
+     * @dataProvider course_empty_field_provider
+     */
+    public function test_create_courses_empty_field(array $course, string $expectedemptyfield): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a category for the new course.
+        $course['categoryid'] = $this->getDataGenerator()->create_category()->id;
+
+        $this->expectException(moodle_exception::class);
+        $this->expectExceptionMessageRegExp("/{$expectedemptyfield}/");
+        core_course_external::create_courses([$course]);
+    }
+
+    /**
+     * Test updating courses with empty fields returns warnings
+     *
+     * @param array $course
+     * @param string $expectedemptyfield
+     *
+     * @dataProvider course_empty_field_provider
+     */
+    public function test_update_courses_empty_field(array $course, string $expectedemptyfield): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course to update.
+        $course['id'] = $this->getDataGenerator()->create_course()->id;
+
+        $result = core_course_external::update_courses([$course]);
+        $result = core_course_external::clean_returnvalue(core_course_external::update_courses_returns(), $result);
+
+        $this->assertCount(1, $result['warnings']);
+
+        $warning = reset($result['warnings']);
+        $this->assertEquals('errorinvalidparam', $warning['warningcode']);
+        $this->assertContains($expectedemptyfield, $warning['message']);
+    }
+
+    /**
      * Test delete_courses
      */
     public function test_delete_courses() {
