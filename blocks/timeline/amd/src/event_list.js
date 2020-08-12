@@ -132,7 +132,7 @@ function(
         };
 
         calendarEvents.forEach(function(calendarEvent) {
-            var dayTimestamp = UserDate.getUserMidnightForTimestamp(calendarEvent.timesort, midnight);
+            var dayTimestamp = calendarEvent.timeusermidnight;
             if (eventsByDay[dayTimestamp]) {
                 eventsByDay[dayTimestamp].push(calendarEvent);
             } else {

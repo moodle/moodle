@@ -44,7 +44,8 @@ class core_calendar_event_times_testcase extends advanced_testcase {
             $constructorparams['start_time'],
             $constructorparams['end_time'],
             $constructorparams['sort_time'],
-            $constructorparams['modified_time']
+            $constructorparams['modified_time'],
+            $constructorparams['usermidnight_time']
         );
 
         foreach ($constructorparams as $name => $value) {
@@ -64,7 +65,8 @@ class core_calendar_event_times_testcase extends advanced_testcase {
                     'start_time' => (new \DateTimeImmutable())->setTimestamp(-386380800),
                     'end_time' => (new \DateTimeImmutable())->setTimestamp(115776000),
                     'sort_time' => (new \DateTimeImmutable())->setTimestamp(115776000),
-                    'modified_time' => (new \DateTimeImmutable())->setTimestamp(time())
+                    'modified_time' => (new \DateTimeImmutable())->setTimestamp(time()),
+                    'usermidnight_time' => (new \DateTimeImmutable())->setTimestamp(115776000),
                 ]
             ],
             'Dataset 2' => [
@@ -72,7 +74,8 @@ class core_calendar_event_times_testcase extends advanced_testcase {
                     'start_time' => (new \DateTimeImmutable())->setTimestamp(123456),
                     'end_time' => (new \DateTimeImmutable())->setTimestamp(12345678),
                     'sort_time' => (new \DateTimeImmutable())->setTimestamp(1111),
-                    'modified_time' => (new \DateTimeImmutable())->setTimestamp(time())
+                    'modified_time' => (new \DateTimeImmutable())->setTimestamp(time()),
+                    'usermidnight_time' => (new \DateTimeImmutable())->setTimestamp(1111),
                 ]
             ]
         ];
