@@ -53,6 +53,7 @@ Feature: Users' names are displayed across the site according to the user policy
     When I follow "Profile" in the user menu
     Then I should see "Gronya,Beecham" in the ".usermenu" "css_element"
     And I should see "Gronya,Beecham" in the ".page-context-header" "css_element"
+    And I should see "You are logged in as Gronya,Beecham" in the "page-footer" "region"
     And I log out
 
   Scenario: As an admin, 'fullnamedisplay' should be used when using the 'log in as' function
@@ -60,7 +61,9 @@ Feature: Users' names are displayed across the site according to the user policy
     When I navigate to "Users > Accounts > Browse list of users" in site administration
     And I follow "Jane, Nina, Niamh, Cholmondely"
     And I follow "Log in as"
-    Then I should see "You are logged in as Nee,Chumlee"
+    Then I should see "You are logged in as Nee,Chumlee" in the ".usermenu" "css_element"
+    And I should see "You are logged in as Jane, Nina, Niamh, Cholmondely" in the "region-main" "region"
+    And I should see "You are logged in as Nee,Chumlee" in the "page-footer" "region"
     And I log out
 
   Scenario: As an admin, 'fullnamedisplay' should be used when viewing another user's site profile
