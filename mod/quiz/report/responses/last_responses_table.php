@@ -114,14 +114,7 @@ class quiz_last_responses_table extends quiz_attempts_report_table {
         if (!isset($this->lateststeps[$attempt->usageid][$slot])) {
             return '-';
         }
-        $stepdata = $this->lateststeps[$attempt->usageid][$slot];
-
-        if (property_exists($stepdata, $field . 'full')) {
-            $value = $stepdata->{$field . 'full'};
-        } else {
-            $value = $stepdata->$field;
-        }
-        return $value;
+        return $this->lateststeps[$attempt->usageid][$slot]->$field;
     }
 
     public function other_cols($colname, $attempt) {
@@ -158,20 +151,8 @@ class quiz_last_responses_table extends quiz_attempts_report_table {
      */
     protected function get_required_latest_state_fields($slot, $alias) {
         global $DB;
-        $sortableresponse = $DB->sql_order_by_text("{$alias}.questionsummary");
-        if ($sortableresponse === "{$alias}.questionsummary") {
-            // Can just order by text columns. No complexity needed.
-            return "{$alias}.questionsummary AS question{$slot},
-                    {$alias}.rightanswer AS right{$slot},
-                    {$alias}.responsesummary AS response{$slot}";
-        } else {
-            // Work-around required.
-            return $DB->sql_order_by_text("{$alias}.questionsummary") . " AS question{$slot},
-                    {$alias}.questionsummary AS question{$slot}full,
-                    " . $DB->sql_order_by_text("{$alias}.rightanswer") . " AS right{$slot},
-                    {$alias}.rightanswer AS right{$slot}full,
-                    " . $DB->sql_order_by_text("{$alias}.responsesummary") . " AS response{$slot},
-                    {$alias}.responsesummary AS response{$slot}full";
-        }
+        return $DB->sql_order_by_text("{$alias}.questionsummary") . " AS question{$slot},
+                " . $DB->sql_order_by_text("{$alias}.rightanswer") . " AS right{$slot},
+                " . $DB->sql_order_by_text("{$alias}.responsesummary") . " AS response{$slot}";
     }
 }
