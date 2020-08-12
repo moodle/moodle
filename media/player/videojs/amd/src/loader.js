@@ -24,22 +24,32 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import Config from 'core/config';
 import Event from 'core/event';
 import jQuery from 'jquery';
+import Ajax from 'core/ajax';
+import LocalStorage from 'core/localstorage';
+import Notification from 'core/notification';
 
 /**
- * Stores the method we need to execute on the first load of videojs module.
+ * Whether this is the first load of videojs module.
  */
-let onload;
+let firstLoad;
+
+/**
+ * The language that is used in the player
+ */
+let language;
 
 /**
  * Set-up.
  *
  * Adds the listener for the event to then notify video.js.
- * @param {Function} executeonload function to execute when media_videojs/video is loaded
+ * @param {string} lang Language to be used in the player
  */
-export const setUp = (executeonload) => {
-    onload = executeonload;
+export const setUp = (lang) => {
+    language = lang;
+    firstLoad = true;
     // Notify Video.js about the nodes already present on the page.
     notifyVideoJS(null, jQuery('body'));
     // We need to call popover automatically if nodes are added to the page later.
@@ -56,6 +66,7 @@ export const setUp = (executeonload) => {
  */
 const notifyVideoJS = (e, nodes) => {
     const selector = '.mediaplugin_videojs';
+    const langStrings = getLanguageJson();
 
     // Find the descendants matching the expected parent of the audio and video
     // tags. Then also addBack the nodes matching the same selector. Finally,
@@ -76,13 +87,42 @@ const notifyVideoJS = (e, nodes) => {
                 // Add Flash to the list of modules we require.
                 modulePromises.push(import('media_videojs/videojs-flash-lazy'));
             }
-            Promise.all(modulePromises).then(([videojs]) => {
-                if (onload) {
-                    onload(videojs);
-                    onload = null;
+            Promise.all([langStrings, ...modulePromises])
+            .then(([langJson, videojs]) => {
+                if (firstLoad) {
+                    videojs.options.flash.swf = `${Config.wwwroot}/media/player/videojs/videojs/video-js.swf`;
+                    videojs.addLanguage(language, langJson);
+
+                    firstLoad = false;
                 }
                 videojs(id, config);
                 return;
-            }).catch(Notification.exception);
+            })
+            .catch(Notification.exception);
         });
+};
+
+/**
+ * Returns the json object of the language strings to be used in the player.
+ *
+ * @returns {Promise}
+ */
+const getLanguageJson = () => {
+    const cached = JSON.parse(LocalStorage.get('media_videojs') || '{}');
+    if (language in cached) {
+        return Promise.resolve(cached[language]);
+    }
+
+    const request = {
+        methodname: 'media_videojs_get_language',
+        args: {
+            lang: language
+        },
+    };
+    return Ajax.call([request])[0].then(result => {
+        cached[language] = JSON.parse(result);
+        LocalStorage.set('media_videojs', JSON.stringify(cached));
+
+        return cached[language];
+    });
 };
