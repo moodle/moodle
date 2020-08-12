@@ -369,6 +369,19 @@ class media_videojs_plugin extends core_media_player_native {
         return "";
     }
 
+    /**
+     * Returns the requested language pack in the json format.
+     *
+     * @param string $lang The language code
+     * @return false|string The read data or false on failure
+     */
+    public static function get_language_content(string $lang) {
+        global $CFG;
+        $langfile = "{$CFG->dirroot}/media/player/videojs/videojs/lang/{$lang}.json";
+
+        return file_exists($langfile) ? file_get_contents($langfile) : '';
+    }
+
     public function supports($usedextensions = []) {
         $supports = parent::supports($usedextensions);
         if (get_config('media_videojs', 'youtube')) {
