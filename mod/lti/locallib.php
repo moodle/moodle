@@ -2388,12 +2388,12 @@ function lti_get_shared_secrets_by_key($key) {
     // Look up the shared secret for the specified key in both the types_config table (for configured tools)
     // And in the lti resource table for ad-hoc tools.
     $lti13 = LTI_VERSION_1P3;
-    $query = "SELECT t2.value
+    $query = "SELECT " . $DB->sql_compare_text('t2.value', 256) . " AS value
                 FROM {lti_types_config} t1
                 JOIN {lti_types_config} t2 ON t1.typeid = t2.typeid
                 JOIN {lti_types} type ON t2.typeid = type.id
               WHERE t1.name = 'resourcekey'
-                AND t1.value = :key1
+                AND " . $DB->sql_compare_text('t1.value', 256) . " = :key1
                 AND t2.name = 'password'
                 AND type.state = :configured1
                 AND type.ltiversion <> :ltiversion
