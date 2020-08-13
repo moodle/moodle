@@ -2565,4 +2565,15 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
         )
     ],
+
+    // Allow users to download content.
+    'moodle/contentbank:downloadcontent' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        ]
+    ],
 );
