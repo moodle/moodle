@@ -31,6 +31,7 @@ use advanced_testcase;
 use context_course;
 use context_coursecat;
 use context_system;
+use Exception;
 
 global $CFG;
 require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.php');
@@ -602,5 +603,32 @@ class core_contentbank_testcase extends advanced_testcase {
 
         $actual = $cb->get_contenttypes_with_capability_feature('test2', null, $enabled);
         $this->assertEquals($contenttypescanfeature, array_values($actual));
+    }
+
+    /**
+     * Test the behaviour of get_content_from_id()
+     *
+     * @covers  ::get_content_from_id
+     */
+    public function test_get_content_from_id() {
+
+        $this->resetAfterTest();
+        $cb = new \core_contentbank\contentbank();
+
+        // Create a category and two courses.
+        $systemcontext = context_system::instance();
+
+        // Add some content to the content bank.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $contents = $generator->generate_contentbank_data(null, 3, 0, $systemcontext);
+        $content = reset($contents);
+
+        // Get the content instance form id.
+        $newinstance = $cb->get_content_from_id($content->get_id());
+        $this->assertEquals($content->get_id(), $newinstance->get_id());
+
+        // Now produce and exception with an innexistent id.
+        $this->expectException(Exception::class);
+        $cb->get_content_from_id(0);
     }
 }

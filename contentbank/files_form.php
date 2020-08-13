@@ -44,6 +44,11 @@ class contentbank_files_form extends moodleform {
         $mform->addElement('hidden', 'contextid', $this->_customdata['contextid']);
         $mform->setType('contextid', PARAM_INT);
 
+        if (!empty($this->_customdata['id'])) {
+            $mform->addElement('hidden', 'id', $this->_customdata['id']);
+            $mform->setType('id', PARAM_INT);
+        }
+
         $options = $this->_customdata['options'];
         $mform->addElement('filepicker', 'file', get_string('file', 'core_contentbank'), null, $options);
         $mform->addHelpButton('file', 'file', 'core_contentbank');

@@ -28,6 +28,7 @@ use core_text;
 use stored_file;
 use stdClass;
 use coding_exception;
+use context;
 use moodle_url;
 use core\event\contentbank_content_updated;
 
@@ -83,6 +84,17 @@ abstract class content {
      */
     public function get_content_type(): string {
         return $this->content->contenttype;
+    }
+
+    /**
+     * Return the contenttype instance of this content.
+     *
+     * @return contenttype The content type instance
+     */
+    public function get_content_type_instance(): contenttype {
+        $context = context::instance_by_id($this->content->contextid);
+        $contenttypeclass = "\\{$this->content->contenttype}\\contenttype";
+        return new $contenttypeclass($context);
     }
 
     /**
