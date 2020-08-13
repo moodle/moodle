@@ -1979,13 +1979,16 @@ function lti_parse_custom_parameter($toolproxy, $tool, $params, $value, $islti2)
                     }
                 } else {
                     $val = $value;
-                    $services = lti_get_services();
-                    foreach ($services as $service) {
-                        $service->set_tool_proxy($toolproxy);
-                        $service->set_type($tool);
-                        $value = $service->parse_value($val);
-                        if ($val != $value) {
-                            break;
+                    $value = format_string(lti_calculate_custom_parameter($value));
+                    if ($value == null) {
+                        $services = lticustom_get_services();
+                        foreach ($services as $service) {
+                            $service->set_tool_proxy($toolproxy);
+                            $service->set_type($tool);
+                            $value = $service->parse_value($val);
+                            if ($val != $value) {
+                                break;
+                            }
                         }
                     }
                 }
@@ -2008,7 +2011,20 @@ function lti_calculate_custom_parameter($value) {
     switch ($value) {
         case 'Moodle.Person.userGroupIds':
             return implode(",", groups_get_user_groups($COURSE->id, $USER->id)[0]);
+            break;
+        default:
+            $valueinfo = explode('.', str_replace('$', '', $value));
+            $property = $valueinfo[1];
+            if (property_exists($USER, $property)) {
+                return $USER->{$property} == "" ? null : $USER->{$property};
+            }
+            $PROFILE = profile_user_record($USER->id);
+            if (property_exists((object)$PROFILE, $property)) {
+                return $PROFILE->{$property} == "" ? null : $PROFILE->{$property};
+            }
+            break;
     }
+
     return null;
 }
 
