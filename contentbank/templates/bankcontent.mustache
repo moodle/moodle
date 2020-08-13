@@ -27,6 +27,7 @@
                 "size": "699.3KB",
                 "bytes": 716126,
                 "type": "Archive (H5P)",
+                "author": "Admin user",
                 "link": "http://something/contentbank/contenttype/h5p/view.php?url=http://something/pluginfile.php/1/contentbank/public/accordion.h5p",
                 "icon" : "http://something/theme/image.php/boost/core/1581597850/f/h5p-64"
             },
@@ -37,6 +38,7 @@
                 "size": "699.3KB",
                 "bytes": 716126,
                 "type": "Archive (PDF)",
+                "author": "Admin user",
                 "icon": "http://something/theme/image.php/boost/core/1584597850/f/pdf-64"
             }
         ],
@@ -122,10 +124,19 @@ data-region="contentbank">
                             <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
                         </button>
                     </div>
-                    <div class="cb-type cb-column d-flex last">
+                    <div class="cb-type cb-column d-flex">
                         <div class="title">{{#str}} type, contentbank {{/str}}</div>
                         <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="type" data-action="sorttype"
                         title="{{#str}} sortbyx, core, {{#str}} size, contentbank {{/str}} {{/str}}">
+                            <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
+                            <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
+                            <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                        </button>
+                    </div>
+                    <div class="cb-author cb-column d-flex last">
+                        <div class="title">{{#str}} author, contentbank {{/str}}</div>
+                        <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="author" data-action="sortauthor"
+                        title="{{#str}} sortbyx, core, {{#str}} author, contentbank {{/str}} {{/str}}">
                             <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
                             <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
                             <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
@@ -138,7 +149,8 @@ data-region="contentbank">
                     data-name="{{{ name }}}"
                     data-bytes="{{ bytes }}"
                     data-timemodified="{{ timemodified }}"
-                    data-type="{{{ type }}}">
+                    data-type="{{{ type }}}"
+                    data-author="{{{ author }}}">
                     <div class="cb-file cb-column position-relative">
                         <div class="cb-thumbnail" role="img" aria-label="{{{ name }}}"
                         style="background-image: url('{{{ icon }}}');">
@@ -155,8 +167,11 @@ data-region="contentbank">
                     <div class="cb-size cb-column small">
                         {{ size }}
                     </div>
-                    <div class="cb-type cb-column last small">
+                    <div class="cb-type cb-column small">
                         {{{ type }}}
+                    </div>
+                    <div class="cb-type cb-column last small">
+                        {{{ author }}}
                     </div>
                 </div>
             {{/contents}}

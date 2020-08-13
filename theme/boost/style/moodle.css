@@ -13028,7 +13028,8 @@ table.calendartable caption {
 .content-bank-container.view-grid .cb-heading,
 .content-bank-container.view-grid .cb-date,
 .content-bank-container.view-grid .cb-size,
-.content-bank-container.view-grid .cb-type {
+.content-bank-container.view-grid .cb-type,
+.content-bank-container.view-grid .cb-author {
   display: none; }
 
 .content-bank-container.view-list .cb-content-wrapper {
@@ -13063,12 +13064,13 @@ table.calendartable caption {
     position: sticky;
     top: 0;
     z-index: 1; }
-  .content-bank-container.view-list .cb-file,
-  .content-bank-container.view-list .cb-date {
-    flex: 0 0 35%;
-    max-width: 35%; }
+  .content-bank-container.view-list .cb-file {
+    flex: 0 0 40%;
+    max-width: 40%; }
+  .content-bank-container.view-list .cb-date,
   .content-bank-container.view-list .cb-size,
-  .content-bank-container.view-list .cb-type {
+  .content-bank-container.view-list .cb-type,
+  .content-bank-container.view-list .cb-author {
     flex: 0 0 15%;
     max-width: 15%; }
   .content-bank-container.view-list .cb-column.last {
