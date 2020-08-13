@@ -15,31 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Scheduled tasks.
+ * Running task admin page.
  *
  * @package    tool_task
- * @copyright  2014 Damyon Wiese
+ * @copyright  2019 The Open University
+ * @copyright  2020 Mikhail Golenkov <golenkovm@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+require_once(__DIR__ . '/../../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir.'/tablelib.php');
 
-if ($hassiteconfig) {
-    $ADMIN->add(
-        'taskconfig',
-        new admin_externalpage(
-            'scheduledtasks',
-            new lang_string('scheduledtasks', 'tool_task'),
-            "$CFG->wwwroot/$CFG->admin/tool/task/scheduledtasks.php"
-        )
-    );
+$pageurl = new \moodle_url('/admin/tool/task/runningtasks.php');
+$heading = get_string('runningtasks', 'tool_task');
+$PAGE->set_url($pageurl);
+$PAGE->set_context(context_system::instance());
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($heading);
+$PAGE->set_heading($heading);
 
-    $ADMIN->add(
-        'taskconfig',
-        new admin_externalpage(
-            'runningtasks',
-            new lang_string('runningtasks', 'tool_task'),
-            "$CFG->wwwroot/$CFG->admin/tool/task/runningtasks.php"
-        )
-    );
-}
+admin_externalpage_setup('runningtasks');
+
+echo $OUTPUT->header();
+
+$table = new \tool_task\running_tasks_table();
+$table->baseurl = $pageurl;
+$table->out(100, false);
+
+echo $OUTPUT->footer();
