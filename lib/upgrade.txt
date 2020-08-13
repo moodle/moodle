@@ -36,6 +36,9 @@ information provided here is intended especially for developers.
   a callback function instead of an array of options.
 * Admin setting admin_setting_configselect now supports validating the selection by supplying a
   callback function.
+* The task system has new functions adhoc_task_starting() and scheduled_task_starting() which must
+  be called before executing a task, and a new function \core\task\manager::get_running_tasks()
+  returns information about currently-running tasks.
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
