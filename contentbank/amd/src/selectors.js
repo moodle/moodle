@@ -48,7 +48,8 @@ export default {
         sortname: getDataSelector('action', 'sortname'),
         sortdate: getDataSelector('action', 'sortdate'),
         sortsize: getDataSelector('action', 'sortsize'),
-        sorttype: getDataSelector('action', 'sorttype')
+        sorttype: getDataSelector('action', 'sorttype'),
+        sortauthor: getDataSelector('action', 'sortauthor'),
     },
     elements: {
         listitem: '.cb-listitem',
