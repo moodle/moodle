@@ -51,7 +51,7 @@ class book_chapter_edit_form extends moodleform {
         if (isset($chapter->currentchaptertitle)) {
             $mform->addElement('static', 'details',
                 get_string('previouschapter', 'mod_book'),
-                $chapter->currentchaptertitle
+                trim(format_string($chapter->currentchaptertitle, true))
             );
         }
 
