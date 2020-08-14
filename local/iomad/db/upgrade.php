@@ -2159,5 +2159,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019030109, 'local', 'iomad');
     }
 
+    if ($oldversion < 2019030111) {
+
+        // Define field code to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('code', XMLDB_TYPE_CHAR, '25', null, null, null, null, 'shortname');
+
+        // Conditionally launch add field code.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019030111, 'local', 'iomad');
+    }
+
     return $result;
 }
