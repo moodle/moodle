@@ -555,7 +555,7 @@ if ($hassiteconfig) {
         global $CFG;
 
         // Check nobody's setting the indexing and query-only server to the same one.
-        if ($CFG->searchenginequeryonly === $value) {
+        if (isset($CFG->searchenginequeryonly) && $CFG->searchenginequeryonly === $value) {
             return get_string('searchenginequeryonlysame', 'admin');
         } else {
             return '';
@@ -625,7 +625,7 @@ if ($hassiteconfig) {
         global $CFG;
 
         // Check nobody's setting the indexing and query-only server to the same one.
-        if ($CFG->searchengine === $value) {
+        if (isset($CFG->searchengine) && $CFG->searchengine === $value) {
             return get_string('searchenginequeryonlysame', 'admin');
         } else {
             return '';
