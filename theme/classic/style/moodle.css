@@ -12601,19 +12601,29 @@ body.h5p-embed .h5pmessages {
 
 /* calendar.less */
 .calendar_event_category {
-  background-color: #d8bfd8; }
+  background-color: #e0cbe0; }
+  .calendar_event_category .commands a {
+    color: #0d5ca1; }
 
 .calendar_event_course {
   background-color: #ffd3bd; }
+  .calendar_event_course .commands a {
+    color: #0d5ca1; }
 
 .calendar_event_site {
   background-color: #d6f8cd; }
+  .calendar_event_site .commands a {
+    color: #0d5ca1; }
 
 .calendar_event_group {
   background-color: #fee7ae; }
+  .calendar_event_group .commands a {
+    color: #0d5ca1; }
 
 .calendar_event_user {
   background-color: #dce7ec; }
+  .calendar_event_user .commands a {
+    color: #0d5ca1; }
 
 .path-calendar .calendartable {
   width: 100%;
@@ -12690,15 +12700,20 @@ body.h5p-embed .h5pmessages {
           border-radius: 6px;
           vertical-align: middle; }
           .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_category {
-            background-color: #d8bfd8; }
+            background-color: #e0cbe0;
+            border: 2px solid #9e619f; }
           .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_course {
-            background-color: #ffd3bd; }
+            background-color: #ffd3bd;
+            border: 2px solid #d34600; }
           .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_site {
-            background-color: #d6f8cd; }
+            background-color: #d6f8cd;
+            border: 2px solid #2b8713; }
           .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_group {
-            background-color: #fee7ae; }
+            background-color: #fee7ae;
+            border: 2px solid #9a6e02; }
           .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_user {
-            background-color: #dce7ec; }
+            background-color: #dce7ec;
+            border: 2px solid #4e7c91; }
     .path-calendar .maincalendar .calendarmonth td {
       height: 5em; }
     .path-calendar .maincalendar .calendarmonth .clickable:hover {
@@ -12719,7 +12734,7 @@ body.h5p-embed .h5pmessages {
     color: #0b4f8a;
     text-decoration: underline; }
   .path-calendar .maincalendar .calendar_event_category {
-    border-color: #d8bfd8; }
+    border-color: #e0cbe0; }
   .path-calendar .maincalendar .calendar_event_course {
     border-color: #ffd3bd; }
   .path-calendar .maincalendar .calendar_event_site {
@@ -12758,17 +12773,18 @@ body.h5p-embed .h5pmessages {
   .block .minicalendar td a {
     width: 100%;
     height: 100%;
-    display: block; }
+    display: block;
+    color: #0d5ca1; }
   .block .minicalendar td.duration_global {
     border-top: 1px solid #d6f8cd;
     border-bottom: 1px solid #d6f8cd; }
     .block .minicalendar td.duration_global.duration_finish {
       background-color: #d6f8cd; }
   .block .minicalendar td.duration_category {
-    border-top: 1px solid #d8bfd8;
-    border-bottom: 1px solid #d8bfd8; }
+    border-top: 1px solid #e0cbe0;
+    border-bottom: 1px solid #e0cbe0; }
     .block .minicalendar td.duration_category.duration_finish {
-      background-color: #d8bfd8; }
+      background-color: #e0cbe0; }
   .block .minicalendar td.duration_course {
     border-top: 1px solid #ffd3bd;
     border-bottom: 1px solid #ffd3bd; }
@@ -12815,6 +12831,18 @@ body.h5p-embed .h5pmessages {
 
 .block .calendar_filters li {
   margin-bottom: 0.2em; }
+  .block .calendar_filters li span.calendar_event_category i {
+    color: #0d5ca1; }
+  .block .calendar_filters li span.calendar_event_course i {
+    color: #0d5ca1; }
+  .block .calendar_filters li span.calendar_event_site i {
+    color: #0d5ca1; }
+  .block .calendar_filters li span.calendar_event_group i {
+    color: #0d5ca1; }
+  .block .calendar_filters li span.calendar_event_user i {
+    color: #0d5ca1; }
+  .block .calendar_filters li span.calendar_event_other i {
+    color: #0d5ca1; }
   .block .calendar_filters li span img {
     padding: 0 0.2em;
     margin: 0; }
