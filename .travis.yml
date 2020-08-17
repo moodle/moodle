@@ -174,7 +174,9 @@ before_script:
         # Enable test external resources
         sed -i \
           -e "/require_once/i \\define('TEST_EXTERNAL_FILES_HTTP_URL', 'http://127.0.0.1:8080');" \
+          -e "/require_once/i \\define('TEST_EXTERNAL_FILES_HTTPS_URL', 'http://127.0.0.1:8080');" \
           config.php ;
+
         # Redis cache store tests
         sed -i \
           -e "/require_once/i \\define('TEST_CACHESTORE_REDIS_TESTSERVERS', '127.0.0.1');" \
