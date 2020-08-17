@@ -75,5 +75,13 @@ function xmldb_auth_ldap_upgrade($oldversion) {
     // Automatically generated Moodle v3.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2019111801) {
+        // Normalize the memberattribute_isdn plugin config.
+        set_config('memberattribute_isdn',
+            !empty(get_config('auth_ldap', 'memberattribute_isdn')), 'auth_ldap');
+
+        upgrade_plugin_savepoint(true, 2019111801, 'auth', 'ldap');
+    }
+
     return true;
 }
