@@ -154,7 +154,7 @@ foreach($cohorts['cohorts'] as $cohort) {
         $cohortmanager = has_capability('moodle/cohort:manage', $cohortcontext);
         $cohortcanassign = has_capability('moodle/cohort:assign', $cohortcontext);
 
-        $urlparams = array('id' => $cohort->id, 'returnurl' => $baseurl->out_as_local_url());
+        $urlparams = array('id' => $cohort->id, 'returnurl' => $baseurl->out_as_local_url(false));
         $showhideurl = new moodle_url('/cohort/edit.php', $urlparams + array('sesskey' => sesskey()));
         if ($cohortmanager) {
             if ($cohort->visible) {
