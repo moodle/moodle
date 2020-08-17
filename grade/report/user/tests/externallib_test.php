@@ -52,7 +52,7 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $course = $this->getDataGenerator()->create_course(array('groupmode' => SEPARATEGROUPS, 'groupmodeforce' => 1));
 
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-        $student1 = $this->getDataGenerator()->create_user();
+        $student1 = $this->getDataGenerator()->create_user(array('idnumber' => 'testidnumber'));
         $this->getDataGenerator()->enrol_user($student1->id, $course->id, $studentrole->id);
 
         $student2 = $this->getDataGenerator()->create_user();
@@ -76,8 +76,8 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $modcontext = get_coursemodule_from_instance('assign', $assignment->id, $course->id);
         $assignment->cmidnumber = $modcontext->id;
 
-        $student1grade = array('userid' => $student1->id, 'rawgrade' => $s1grade);
-        $student2grade = array('userid' => $student2->id, 'rawgrade' => $s2grade);
+        $student1grade = array('userid' => $student1->id, 'rawgrade' => $s1grade, 'idnumber' => 'testidnumber1');
+        $student2grade = array('userid' => $student2->id, 'rawgrade' => $s2grade, 'idnumber' => 'testidnumber2');
         $studentgrades = array($student1->id => $student1grade, $student2->id => $student2grade);
         assign_grade_item_update($assignment, $studentgrades);
 
@@ -347,6 +347,7 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
 
         $this->assertEquals($course->id, $studentgrades['usergrades'][0]['courseid']);
         $this->assertEquals($student1->id, $studentgrades['usergrades'][0]['userid']);
+        $this->assertEquals($student1->idnumber, $studentgrades['usergrades'][0]['useridnumber']);
         $this->assertEquals($assignment->name, $studentgrades['usergrades'][0]['gradeitems'][0]['itemname']);
         $this->assertEquals('mod', $studentgrades['usergrades'][0]['gradeitems'][0]['itemtype']);
         $this->assertEquals('assign', $studentgrades['usergrades'][0]['gradeitems'][0]['itemmodule']);
@@ -372,6 +373,10 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $this->assertEquals(1, $studentgrades['usergrades'][0]['gradeitems'][0]['rank']);
         $this->assertEquals(2, $studentgrades['usergrades'][0]['gradeitems'][0]['numusers']);
         $this->assertEquals(70, $studentgrades['usergrades'][0]['gradeitems'][0]['averageformatted']);
+
+        // Check that the idnumber for assignment grades is equal to the cmid.
+        $this->assertEquals((string) $studentgrades['usergrades'][0]['gradeitems'][0]['cmid'],
+            $studentgrades['usergrades'][0]['gradeitems'][0]['idnumber']);
 
         // Hide one grade for the user.
         $gradegrade = new grade_grade(array('userid' => $student1->id,
