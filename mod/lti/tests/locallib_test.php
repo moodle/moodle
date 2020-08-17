@@ -1740,6 +1740,29 @@ MwIDAQAB
         $this->assertEquals(get_course_history($course), [38903]);
     }
 
+    public function test_user_dynamic_custom_parameters() {
+        $this->resetAfterTest();
+
+        $tool = new stdClass();
+        $tool->enabledcapability = '';
+        $tool->parameter = '';
+        $tool->ltiversion = 'LTI-1p0';
+        // Test custom parameter that returns $USER property.
+        $user = $this->getDataGenerator()->create_user(array('middlename' => 'SOMETHING',
+            'skype' => 'test@hotmail.com',
+            'icq' => '11223344',
+            'country' => 'MX',
+            'msn' => 'test@hotmail.com'));
+        $this->setUser($user);
+        $this->assertEquals(array('custom_x' => '1',
+            'custom_y' => 'test@hotmail.com',
+            'custom_z' => '11223344', 'custom_aa' => 'MX',
+            'custom_ab' => 'test@hotmail.com'),
+            lti_split_custom_parameters(null, $tool,
+                array(), "x=1\ny=\$User.skype\nz=\$User.icq\naa=\$User.country\nab=\$User.msn",
+                false));
+    }
+
     /**
      * Create an LTI Tool.
      *
