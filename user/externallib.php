@@ -564,106 +564,136 @@ class core_user_external extends external_api {
                 'maxfiles'       => 1,
                 'accepted_types' => 'optimised_image');
 
-        $transaction = $DB->start_delegated_transaction();
-
+        $warnings = array();
         foreach ($params['users'] as $user) {
-            // First check the user exists.
-            if (!$existinguser = core_user::get_user($user['id'])) {
-                continue;
-            }
-            // Check if we are trying to update an admin.
-            if ($existinguser->id != $USER->id and is_siteadmin($existinguser) and !is_siteadmin($USER)) {
-                continue;
-            }
-            // Other checks (deleted, remote or guest users).
-            if ($existinguser->deleted or is_mnet_remote_user($existinguser) or isguestuser($existinguser->id)) {
-                continue;
-            }
-            // Check duplicated emails.
-            if (isset($user['email']) && $user['email'] !== $existinguser->email) {
-                if (!validate_email($user['email'])) {
-                    continue;
-                } else if (empty($CFG->allowaccountssameemail)) {
-                    // Make a case-insensitive query for the given email address and make sure to exclude the user being updated.
-                    $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid AND id <> :userid';
-                    $params = array(
-                        'email' => $user['email'],
-                        'mnethostid' => $CFG->mnet_localhost_id,
-                        'userid' => $user['id']
-                    );
-                    // Skip if there are other user(s) that already have the same email.
-                    if ($DB->record_exists_select('user', $select, $params)) {
-                        continue;
+            // Catch any exception while updating a user and return it as a warning.
+            try {
+                $transaction = $DB->start_delegated_transaction();
+
+                // First check the user exists.
+                if (!$existinguser = core_user::get_user($user['id'])) {
+                    throw new moodle_exception('invaliduserid');
+                }
+                // Check if we are trying to update an admin.
+                if ($existinguser->id != $USER->id and is_siteadmin($existinguser) and !is_siteadmin($USER)) {
+                    throw new moodle_exception('usernotupdatedadmin');
+                }
+                // Other checks (deleted, remote or guest users).
+                if ($existinguser->deleted) {
+                    throw new moodle_exception('usernotupdateddeleted');
+                }
+                if (is_mnet_remote_user($existinguser)) {
+                    throw new moodle_exception('usernotupdatedremote');
+                }
+                if (isguestuser($existinguser->id)) {
+                    throw new moodle_exception('usernotupdatedguest');
+                }
+                // Check duplicated emails.
+                if (isset($user['email']) && $user['email'] !== $existinguser->email) {
+                    if (!validate_email($user['email'])) {
+                        throw new moodle_exception('useremailinvalid');
+                    } else if (empty($CFG->allowaccountssameemail)) {
+                        // Make a case-insensitive query for the given email address
+                        // and make sure to exclude the user being updated.
+                        $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid AND id <> :userid';
+                        $params = array(
+                            'email' => $user['email'],
+                            'mnethostid' => $CFG->mnet_localhost_id,
+                            'userid' => $user['id']
+                        );
+                        // Skip if there are other user(s) that already have the same email.
+                        if ($DB->record_exists_select('user', $select, $params)) {
+                            throw new moodle_exception('useremailduplicate');
+                        }
                     }
                 }
-            }
 
-            user_update_user($user, true, false);
+                user_update_user($user, true, false);
 
-            $userobject = (object)$user;
+                $userobject = (object)$user;
 
-            // Update user picture if it was specified for this user.
-            if (empty($CFG->disableuserimages) && isset($user['userpicture'])) {
-                $userobject->deletepicture = null;
+                // Update user picture if it was specified for this user.
+                if (empty($CFG->disableuserimages) && isset($user['userpicture'])) {
+                    $userobject->deletepicture = null;
 
-                if ($user['userpicture'] == 0) {
-                    $userobject->deletepicture = true;
-                } else {
-                    $userobject->imagefile = $user['userpicture'];
+                    if ($user['userpicture'] == 0) {
+                        $userobject->deletepicture = true;
+                    } else {
+                        $userobject->imagefile = $user['userpicture'];
+                    }
+
+                    core_user::update_picture($userobject, $filemanageroptions);
                 }
 
-                core_user::update_picture($userobject, $filemanageroptions);
-            }
-
-            // Update user interests.
-            if (!empty($user['interests'])) {
-                $trimmedinterests = array_map('trim', explode(',', $user['interests']));
-                $interests = array_filter($trimmedinterests, function($value) {
-                    return !empty($value);
-                });
-                useredit_update_interests($userobject, $interests);
-            }
-
-            // Update user custom fields.
-            if (!empty($user['customfields'])) {
-
-                foreach ($user['customfields'] as $customfield) {
-                    // Profile_save_data() saves profile file it's expecting a user with the correct id,
-                    // and custom field to be named profile_field_"shortname".
-                    $user["profile_field_".$customfield['type']] = $customfield['value'];
+                // Update user interests.
+                if (!empty($user['interests'])) {
+                    $trimmedinterests = array_map('trim', explode(',', $user['interests']));
+                    $interests = array_filter($trimmedinterests, function($value) {
+                        return !empty($value);
+                    });
+                    useredit_update_interests($userobject, $interests);
                 }
-                profile_save_data((object) $user);
-            }
 
-            // Trigger event.
-            \core\event\user_updated::create_from_userid($user['id'])->trigger();
+                // Update user custom fields.
+                if (!empty($user['customfields'])) {
 
-            // Preferences.
-            if (!empty($user['preferences'])) {
-                $userpref = clone($existinguser);
-                foreach ($user['preferences'] as $preference) {
-                    $userpref->{'preference_'.$preference['type']} = $preference['value'];
+                    foreach ($user['customfields'] as $customfield) {
+                        // Profile_save_data() saves profile file it's expecting a user with the correct id,
+                        // and custom field to be named profile_field_"shortname".
+                        $user["profile_field_".$customfield['type']] = $customfield['value'];
+                    }
+                    profile_save_data((object) $user);
                 }
-                useredit_update_user_preference($userpref);
-            }
-            if (isset($user['suspended']) and $user['suspended']) {
-                \core\session\manager::kill_user_sessions($user['id']);
+
+                // Trigger event.
+                \core\event\user_updated::create_from_userid($user['id'])->trigger();
+
+                // Preferences.
+                if (!empty($user['preferences'])) {
+                    $userpref = clone($existinguser);
+                    foreach ($user['preferences'] as $preference) {
+                        $userpref->{'preference_'.$preference['type']} = $preference['value'];
+                    }
+                    useredit_update_user_preference($userpref);
+                }
+                if (isset($user['suspended']) and $user['suspended']) {
+                    \core\session\manager::kill_user_sessions($user['id']);
+                }
+
+                $transaction->allow_commit();
+            } catch (Exception $e) {
+                try {
+                    $transaction->rollback($e);
+                } catch (Exception $e) {
+                    $warning = [];
+                    $warning['item'] = 'user';
+                    $warning['itemid'] = $user['id'];
+                    if ($e instanceof moodle_exception) {
+                        $warning['warningcode'] = $e->errorcode;
+                    } else {
+                        $warning['warningcode'] = $e->getCode();
+                    }
+                    $warning['message'] = $e->getMessage();
+                    $warnings[] = $warning;
+                }
             }
         }
 
-        $transaction->allow_commit();
-
-        return null;
+        return ['warnings' => $warnings];
     }
 
     /**
      * Returns description of method result value
      *
-     * @return null
+     * @return external_description
      * @since Moodle 2.2
      */
     public static function update_users_returns() {
-        return null;
+        return new external_single_structure(
+            array(
+                'warnings' => new external_warnings()
+            )
+        );
     }
 
     /**
