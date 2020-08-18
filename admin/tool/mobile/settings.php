@@ -94,11 +94,17 @@ if ($hassiteconfig) {
     $options = [
         tool_mobile\api::QR_CODE_DISABLED => new lang_string('qrcodedisabled', 'tool_mobile'),
         tool_mobile\api::QR_CODE_URL => new lang_string('qrcodetypeurl', 'tool_mobile'),
-        tool_mobile\api::QR_CODE_LOGIN => new lang_string('qrcodetypelogin', 'tool_mobile'),
     ];
+    $qrcodetypedefault = tool_mobile\api::QR_CODE_URL;
+
+    if (is_https()) {   // Allow QR login for https sites.
+        $options[tool_mobile\api::QR_CODE_LOGIN] = new lang_string('qrcodetypelogin', 'tool_mobile');
+        $qrcodetypedefault = tool_mobile\api::QR_CODE_LOGIN;
+    }
+
     $temp->add(new admin_setting_configselect('tool_mobile/qrcodetype',
                 new lang_string('qrcodetype', 'tool_mobile'),
-                new lang_string('qrcodetype_desc', 'tool_mobile'), tool_mobile\api::QR_CODE_LOGIN, $options));
+                new lang_string('qrcodetype_desc', 'tool_mobile'), $qrcodetypedefault, $options));
 
     $temp->add(new admin_setting_configtext('tool_mobile/forcedurlscheme',
                 new lang_string('forcedurlscheme_key', 'tool_mobile'),
