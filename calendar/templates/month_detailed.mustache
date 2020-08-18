@@ -46,8 +46,9 @@
         <thead>
             <tr>
                 {{# daynames }}
-                <th class="header text-xs-center" aria-label="{{fullname}}">
-                    {{shortname}}
+                <th class="header text-xs-center">
+                    <span class="sr-only">{{fullname}}</span>
+                    <span aria-hidden="true">{{shortname}}</span>
                 </th>
                 {{/ daynames }}
             </tr>
@@ -71,6 +72,7 @@
                         data-region="day"
                         data-new-event-timestamp="{{neweventtimestamp}}">
                         <div class="d-none d-md-block hidden-phone text-xs-center">
+                            <span class="sr-only">{{daytitle}}</span>
                             {{#hasevents}}
                                 <a data-action="view-day-link" href="#" class="day" aria-label="{{viewdaylinktitle}}"
                                     data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"
@@ -78,7 +80,7 @@
                                     data-timestamp="{{timestamp}}">{{mday}}</a>
                             {{/hasevents}}
                             {{^hasevents}}
-                                {{mday}}
+                                <span aria-hidden="true">{{mday}}</span>
                             {{/hasevents}}
                             {{#hasevents}}
                                 <div data-region="day-content">
@@ -122,6 +124,7 @@
                             {{/hasevents}}
                         </div>
                         <div class="d-md-none hidden-desktop hidden-tablet">
+                            <span class="sr-only">{{daytitle}}</span>
                             {{#hasevents}}
                                 <a data-action="view-day-link" href="#" class="day" aria-label="{{viewdaylinktitle}}"
                                     data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"
@@ -129,7 +132,7 @@
                                     data-timestamp="{{timestamp}}">{{mday}}</a>
                             {{/hasevents}}
                             {{^hasevents}}
-                                    {{mday}}
+                                <span aria-hidden="true">{{mday}}</span>
                             {{/hasevents}}
                         </div>
                     </td>
