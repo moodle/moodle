@@ -74,5 +74,6 @@ $string['auth_dbcannotconnect'] = 'Cannot connect to external database.';
 $string['auth_dbcannotreadtable'] = 'Cannot read external table.';
 $string['auth_dbtableempty'] = 'External table is empty.';
 $string['auth_dbcolumnlist'] = 'External table contains the following columns:<br />{$a}';
+$string['auth_dbupdateerror'] = 'Error updating external database.';
 $string['pluginname'] = 'External database';
 $string['privacy:metadata'] = 'The External database authentication plugin does not store any personal data.';
