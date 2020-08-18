@@ -78,8 +78,9 @@
         <thead>
           <tr>
                 {{# daynames }}
-                <th class="header text-xs-center" scope="col" aria-label="{{fullname}}">
-                    {{shortname}}
+                <th class="header text-xs-center">
+                    <span class="sr-only">{{fullname}}</span>
+                    <span aria-hidden="true">{{shortname}}</span>
                 </th>
                 {{/ daynames }}
             </tr>
@@ -128,7 +129,8 @@
                         This is the timestamp for this month.
                         }} data-day-timestamp="{{timestamp}}"{{!
                     }}>{{!
-                        }}{{#popovertitle}}
+                        }}<span class="sr-only">{{daytitle}}</span>
+                        {{#popovertitle}}
                             {{< core_calendar/minicalendar_day_link }}
                                 {{$day}}{{mday}}{{/day}}
                                 {{$url}}{{viewdaylink}}{{/url}}
@@ -145,7 +147,7 @@
                             {{/ core_calendar/minicalendar_day_link }}
                         {{/popovertitle}}{{!
                         }}{{^popovertitle}}
-                            {{mday}}
+                            <span aria-hidden="true">{{mday}}</span>
                         {{/popovertitle}}{{!
                     }}</td>
                 {{/days}}
