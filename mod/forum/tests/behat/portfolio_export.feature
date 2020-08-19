@@ -13,7 +13,7 @@ Feature: Ensure only users with appropriate permissions can export forum discuss
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-  @javascript
+
   Scenario: A teacher can export discussions to a portfolio.
     Given the following "activities" exist:
       | activity   | name                   | intro             | course | idnumber     | groupmode |
@@ -25,7 +25,7 @@ Feature: Ensure only users with appropriate permissions can export forum discuss
     And I set portfolio instance "File download" to "Enabled and visible"
     And I click on "Save" "button"
     And I log out
-    And I log in as "student1"
+    When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum 1"
     And I add a new discussion to "Test forum 1" forum with:
@@ -33,12 +33,12 @@ Feature: Ensure only users with appropriate permissions can export forum discuss
       | Message | Test post message |
     And I reload the page
     And I follow "Discussion 1"
-    And the button "Export whole discussion to portfolio" does not exist
+    Then "Export whole discussion to portfolio" "button" should not exist
     And I log out
-    And I log in as "admin"
+    And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test forum 1"
     And I follow "Discussion 1"
-    And the button "Export whole discussion to portfolio" exists
+    And "Export whole discussion to portfolio" "button" should exist
     And I press "Export whole discussion to portfolio"
-    Then I should see "Exporting to portfolio"
+    And I should see "Exporting to portfolio"
