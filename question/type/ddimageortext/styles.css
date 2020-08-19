@@ -40,10 +40,6 @@ form.mform fieldset#id_previewareaheader .dropbackground {
     max-width: none;
 }
 
-.que.ddimageortext .dropbackground.img-responsive.img-fluid {
-    width: 100%;
-}
-
 .que.ddimageortext .dropzone {
     display: none;
     position: absolute;

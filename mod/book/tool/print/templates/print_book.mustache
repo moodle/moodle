@@ -63,15 +63,15 @@
 }}
 <div class="book p-4">
     <div class="text-right">{{{ printdialoglink }}}</div>
-    <div class="text-center p-b-1 book_title">{{{ booktitle }}}</div>
-    <div class="book_info w-100 p-t-3 d-inline-block">
+    <div class="text-center pb-3 book_title">{{{ booktitle }}}</div>
+    <div class="book_info w-100 pt-6 d-inline-block">
         <div class="w-50 float-left">
             <table>
                 <tr>
                     <td>
                         {{# str }} site {{/ str }}:
                     </td>
-                    <td class="p-l-1">
+                    <td class="pl-3">
                         {{{ sitelink }}}
                     </td>
                 </tr>
@@ -79,7 +79,7 @@
                     <td>
                         {{# str }} course {{/ str }}:
                     </td>
-                    <td class="p-l-1">
+                    <td class="pl-3">
                         {{{ coursename }}}
                     </td>
                 </tr>
@@ -87,7 +87,7 @@
                     <td>
                         {{# str }} modulename, mod_book {{/ str }}:
                     </td>
-                    <td class="p-l-1">
+                    <td class="pl-3">
                         {{{ modulename }}}
                     </td>
                 </tr>
@@ -99,7 +99,7 @@
                     <td>
                         {{# str }} printedby, booktool_print {{/ str }}:
                     </td>
-                    <td class="p-l-1">
+                    <td class="pl-3">
                         {{{ username }}}
                     </td>
                 </tr>
@@ -107,7 +107,7 @@
                     <td>
                         {{# str }} printdate, booktool_print {{/ str }}:
                     </td>
-                    <td class="p-l-1">
+                    <td class="pl-3">
                         {{{ printdate }}}
                     </td>
                 </tr>
@@ -116,19 +116,19 @@
     </div>
     {{#bookintro}}
     <div class="w-100 book_description">
-        <div class="p-b-2 p-t-2">
-            <h2 class="text-center p-b-2">{{#str}} description {{/str}}</h2>
+        <div class="py-5">
+            <h2 class="text-center pb-5">{{#str}} description {{/str}}</h2>
              <p class="book_summary">{{{ bookintro }}}</p>
         </div>
     </div>
     {{/bookintro}}
     <div class="w-100">
-        <div class="p-b-2 p-t-2">{{{ toc }}}</div>
+        <div class="py-5">{{{ toc }}}</div>
     </div>
     <div class="w-100">
      {{#chapters}}
         {{#visible }}
-            <div class="p-b-2">
+            <div class="pb-5">
             {{{ content }}}
             </div>
         {{/visible}}

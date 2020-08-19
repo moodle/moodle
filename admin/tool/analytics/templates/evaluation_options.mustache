@@ -57,10 +57,10 @@
 {{/trainedexternally}}
 
 {{! Hidden by default if #trainedexternally as the default option is trainedmodel in this case.}}
-<div id="id-evaluation-timesplitting-container" class="m-t-1 {{#trainedexternally}}hidden{{/trainedexternally}}">
+<div id="id-evaluation-timesplitting-container" class="mt-3 {{#trainedexternally}}hidden{{/trainedexternally}}">
     {{#str}} selecttimesplittingforevaluation, tool_analytics {{/str}}
     <div>
-        <select id="id-evaluation-timesplitting" name="timesplitting" class="custom-select m-t-1">
+        <select id="id-evaluation-timesplitting" name="timesplitting" class="custom-select mt-3">
             {{#timesplittingmethods}}
                 <option value="{{id}}">{{text}}</option>
             {{/timesplittingmethods}}

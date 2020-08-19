@@ -64,7 +64,7 @@ class models_list implements \renderable, \templatable {
         $data = new \stdClass();
 
         $newmodelmenu = new \action_menu();
-        $newmodelmenu->set_menu_trigger(get_string('newmodel', 'tool_analytics'), 'btn btn-default');
+        $newmodelmenu->set_menu_trigger(get_string('newmodel', 'tool_analytics'), 'btn btn-secondary');
         $newmodelmenu->set_alignment(\action_menu::TL, \action_menu::BL);
 
         $newmodelmenu->add(new \action_menu_link(

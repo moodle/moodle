@@ -626,7 +626,7 @@ class core_badges_renderer extends plugin_renderer_base {
                     get_string('downloadall'), 'POST', array('class' => 'activatebadge'));
         $downloadall = $this->output->box('', 'col-md-3');
         $downloadall .= $this->output->box($actionhtml, 'col-md-9');
-        $downloadall = $this->output->box($downloadall, 'row m-l-2');
+        $downloadall = $this->output->box($downloadall, 'row ml-5');
 
         // Local badges.
         $localhtml = html_writer::start_tag('div', array('id' => 'issued-badge-table', 'class' => 'generalbox'));
@@ -674,7 +674,7 @@ class core_badges_renderer extends plugin_renderer_base {
             $backpacksettings = html_writer::link(new moodle_url('/badges/mybackpack.php'), $label, $attr);
             $actionshtml = $this->output->box('', 'col-md-3');
             $actionshtml .= $this->output->box($backpacksettings, 'col-md-9');
-            $actionshtml = $this->output->box($actionshtml, 'row m-l-2');
+            $actionshtml = $this->output->box($actionshtml, 'row ml-5');
             $externalhtml .= $actionshtml;
         }
 

@@ -1,6 +1,28 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 4.0 ===
+* The Bootstrap legacy css utilities from Bootstrap 2 and 4alpha have been removed. 
+The syntax for the new Bootstrap 4.5 utility classes is {property}{sides}-{breakpoint}-{size} for sm, md, lg, and xl.
+The size values are:
+1: 0.25rem
+2: 0.5rem
+3: 1rem
+4: 1.5rem
+5: 2rem
+6: 3rem
+
+In Bootstrap 4alpa a spacing utility class '.m-l-1' would mean margin-left 1rem. With the new spacing classes it should now be '.ml-3'
+
+These class names have changed:
+.row-fluid is now .row
+.text-error is now .text-danger
+
+These classes should no longer be used:
+.label .label-{type}, use .badge .badge-{type} instead
+.tag .tag-{type}, use .badge .badge-{type} instead
+.well, just set a border with .border and a background with .bg-light
+
 === 3.9 ===
 
 * Add class .d-print-block to #page, #page-wrapper and #page content to fix Firefox printing problems

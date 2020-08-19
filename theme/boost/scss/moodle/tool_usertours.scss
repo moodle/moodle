@@ -46,7 +46,7 @@ span[data-flexitour="container"] {
     }
 
     div[data-role="arrow"] {
-        border-width: #{$popover-arrow-outer-width};
+        border-width: $popover-arrow-width;
     }
 
     div[data-role="arrow"],
@@ -87,9 +87,9 @@ span[data-flexitour="container"] {
         &[x-placement="#{$direction}-start"] {
             margin-#{$opposite}: #{$popover-arrow-width};
             div[data-role="arrow"] {
-                #{$opposite}: -#{$popover-arrow-outer-width};
+                #{$opposite}: -$popover-arrow-width;
                 #{$side}: 50%;
-                margin-#{$side}: -#{$popover-arrow-outer-width};
+                margin-#{$side}: -$popover-arrow-width;
                 border-#{$opposite}-width: 0;
                 border-#{$direction}-color: #{$popover-arrow-outer-color};
             }

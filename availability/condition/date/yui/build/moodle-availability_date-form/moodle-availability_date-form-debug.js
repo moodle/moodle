@@ -29,7 +29,7 @@ M.availability_date.form.initInner = function(html, defaultTime) {
 };
 
 M.availability_date.form.getNode = function(json) {
-    var html = '<span class="col-form-label p-r-1">' +
+    var html = '<span class="col-form-label pr-3">' +
                     M.util.get_string('direction_before', 'availability_date') + '</span> <span class="availability-group">' +
             '<label><span class="accesshide">' + M.util.get_string('direction_label', 'availability_date') + ' </span>' +
             '<select name="direction" class="custom-select">' +

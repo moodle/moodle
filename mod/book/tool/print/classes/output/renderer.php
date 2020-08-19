@@ -123,7 +123,7 @@ class renderer extends plugin_renderer_base {
 
         $toc .= html_writer::tag('a', '', array('name' => 'toc')); // Representation of toc (HTML).
 
-        $toc .= html_writer::tag('h2', get_string('toc', 'mod_book'), ['class' => 'text-center p-b-2']);
+        $toc .= html_writer::tag('h2', get_string('toc', 'mod_book'), ['class' => 'text-center pb-5']);
         $toc .= html_writer::start_tag('ul');
         foreach ($chapters as $ch) {
             if (!$ch->hidden) {
@@ -189,12 +189,12 @@ class renderer extends plugin_renderer_base {
         $chaptervisible = $chapter->hidden ? false : true;
 
         $bookchapter = '';
-        $bookchapter .= html_writer::start_div('book_chapter p-t-1', ['id' => 'ch' . $chapter->id]);
+        $bookchapter .= html_writer::start_div('book_chapter pt-3', ['id' => 'ch' . $chapter->id]);
         if (!$book->customtitles) {
             if (!$chapter->subchapter) {
-                $bookchapter .= $this->output->heading($title, 2, 'text-center p-b-2');
+                $bookchapter .= $this->output->heading($title, 2, 'text-center pb-5');
             } else {
-                $bookchapter .= $this->output->heading($title, 3, 'text-center p-b-2');
+                $bookchapter .= $this->output->heading($title, 3, 'text-center pb-5');
             }
         }
 

@@ -70,7 +70,7 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
         $output .= html_writer::start_div('ddarea');
         $output .= html_writer::start_div($dropareaclass);
         $output .= html_writer::img(self::get_url_for_image($qa, 'bgimage'), get_string('dropbackground', 'qtype_ddmarker'),
-                ['class' => 'dropbackground img-responsive img-fluid']);
+                ['class' => 'dropbackground img-fluid w-100']);
 
         $output .= html_writer::div('', 'dropzones');
         $output .= html_writer::end_div();
