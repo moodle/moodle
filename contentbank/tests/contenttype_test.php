@@ -375,12 +375,14 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
      */
     public function rename_content_provider() {
         return [
-            'Standard name' => ['New name', 'New name'],
-            'Name with digits' => ['Today is 17/04/2017', 'Today is 17/04/2017'],
-            'Name with symbols' => ['Follow us: @moodle', 'Follow us: @moodle'],
-            'Name with tags' => ['This is <b>bold</b>', 'This is bold'],
-            'Long name' => [str_repeat('a', 100), str_repeat('a', 100)],
-            'Too long name' => [str_repeat('a', 300), str_repeat('a', 255)]
+            'Standard name' => ['New name', 'New name', true],
+            'Name with digits' => ['Today is 17/04/2017', 'Today is 17/04/2017', true],
+            'Name with symbols' => ['Follow us: @moodle', 'Follow us: @moodle', true],
+            'Name with tags' => ['This is <b>bold</b>', 'This is bold', true],
+            'Long name' => [str_repeat('a', 100), str_repeat('a', 100), true],
+            'Too long name' => [str_repeat('a', 300), str_repeat('a', 255), true],
+            'Empty name' => ['', 'Test content ', false],
+            'Blanks only' => ['  ', 'Test content ', false],
         ];
     }
 
@@ -390,10 +392,11 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
      * @dataProvider    rename_content_provider
      * @param   string  $newname    The name to set
      * @param   string   $expected   The name result
+     * @param   bool   $result   The bolean result expected when renaming
      *
      * @covers ::rename_content
      */
-    public function test_rename_content(string $newname, string $expected) {
+    public function test_rename_content(string $newname, string $expected, bool $result) {
         global $DB;
 
         $this->resetAfterTest();
@@ -414,9 +417,8 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
 
         // Check the content is renamed as expected by a user with permission.
         $renamed = $contenttype->rename_content($content, $newname);
-        $this->assertTrue($renamed);
+        $this->assertEquals($result, $renamed);
         $record = $DB->get_record('contentbank_content', ['id' => $content->get_id()]);
-        $this->assertNotEquals($oldname, $record->name);
         $this->assertEquals($expected, $record->name);
     }
 
