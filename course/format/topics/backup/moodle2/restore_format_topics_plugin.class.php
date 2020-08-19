@@ -48,8 +48,8 @@ class restore_format_topics_plugin extends restore_format_plugin {
      */
     protected function need_restore_numsections() {
         $backupinfo = $this->step->get_task()->get_info();
-        $backuprelease = $backupinfo->backup_release;
-        return version_compare($backuprelease, '3.3', 'lt');
+        $backuprelease = $backupinfo->backup_release; // The major version: 2.9, 3.0, 3.10...
+        return version_compare($backuprelease, '3.3', '<');
     }
 
     /**
