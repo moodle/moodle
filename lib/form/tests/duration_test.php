@@ -145,6 +145,8 @@ class core_form_duration_testcase extends basic_testcase {
     public function export_value_cases(): array {
         return [
             [10, '10', 1],
+            [9, '9.3', 1],
+            [10, '9.5', 1],
             [180, '3', MINSECS],
             [90, '1.5', MINSECS],
             [7200, '2', HOURSECS],
