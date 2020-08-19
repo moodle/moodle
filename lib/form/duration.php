@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/form/text.php');
  * Duration element
  *
  * HTML class for a length of time. For example, 30 minutes of 4 days. The
- * values returned to PHP is the duration in seconds.
+ * values returned to PHP is the duration in seconds (an int rounded to the nearest second).
  *
  * @package   core_form
  * @category  form
@@ -300,6 +300,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
         if ($this->_options['optional'] && empty($valuearray['enabled'])) {
             return $this->_prepareValue(0, $assoc);
         }
-        return $this->_prepareValue($valuearray['number'] * $valuearray['timeunit'], $assoc);
+        return $this->_prepareValue(
+                (int) round($valuearray['number'] * $valuearray['timeunit']), $assoc);
     }
 }
