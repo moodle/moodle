@@ -27,6 +27,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/csvlib.class.php');
 
 /**
  * Groups import form class
@@ -56,6 +57,19 @@ class groups_import_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
+        $choices = csv_import_reader::get_delimiter_list();
+        $mform->addElement('select', 'delimiter_name', get_string('csvdelimiter', 'group'), $choices);
+        if (array_key_exists('cfg', $choices)) {
+            $mform->setDefault('delimiter_name', 'cfg');
+        } else if (get_string('listsep', 'langconfig') == ';') {
+            $mform->setDefault('delimiter_name', 'semicolon');
+        } else {
+            $mform->setDefault('delimiter_name', 'comma');
+        }
+
+        $choices = core_text::get_encodings();
+        $mform->addElement('select', 'encoding', get_string('encoding', 'group'), $choices);
+        $mform->setDefault('encoding', 'UTF-8');
         $this->add_action_buttons(true, get_string('importgroups', 'core_group'));
 
         $this->set_data($data);

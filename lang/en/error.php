@@ -194,10 +194,12 @@ $string['coursemisconf'] = 'Course is misconfigured';
 $string['courserequestdisabled'] = 'Sorry, but course requests have been disabled by the administrator.';
 $string['csvcolumnduplicates'] = 'Duplicate columns detected';
 $string['csvemptyfile'] = 'The CSV file is empty';
+$string['csvfileerror'] = 'There is something wrong with the format of the CSV file. Please check the number of headings and columns match, and that the delimiter and file encoding are correct: {$a}';
 $string['csvfewcolumns'] = 'Not enough columns, please verify the delimiter setting';
 $string['csvinvalidcols'] = '<b>Invalid CSV file:</b> First line must include "Header Fields" and the file must be type of <br />"Expanded Fields/Comma Separated"<br />or<br /> "Expanded Fields with CAVV Result Code/Comma Separated"';
 $string['csvinvalidcolsnum'] = 'Invalid CSV file - each line must include 49 or 70 fields';
 $string['csvloaderror'] = 'An error occurred while loading the CSV file: {$a}';
+$string['csvnodata'] = 'Invalid CSV file - The CSV file has headers but does not contain any data.';
 $string['csvweirdcolumns'] = 'Invalid CSV file format - number of columns is not constant!';
 $string['dbconnectionfailed'] = '<p>Error: Database connection failed</p>
 <p>It is possible that the database is overloaded or otherwise not running properly.</p>
