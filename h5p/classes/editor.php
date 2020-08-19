@@ -382,7 +382,7 @@ class editor {
 
         // Add JavaScript settings.
         $root = $CFG->wwwroot;
-        $filespathbase = "{$root}/pluginfile.php/{$context->id}/core_h5p/";
+        $filespathbase = \moodle_url::make_draftfile_url(0, '', '');
 
         $factory = new factory();
         $contentvalidator = $factory->get_content_validator();
@@ -390,7 +390,7 @@ class editor {
         $editorajaxtoken = core::createToken(editor_ajax::EDITOR_AJAX_TOKEN);
         $sesskey = sesskey();
         $settings['editor'] = [
-            'filesPath' => $filespathbase . 'editor',
+            'filesPath' => $filespathbase->out(),
             'fileIcon' => [
                 'path' => $url . 'images/binary-file.png',
                 'width' => 50,
