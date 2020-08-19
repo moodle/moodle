@@ -911,6 +911,13 @@ $functions = array(
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'core_grades_create_gradecategory' => array (
+        'classname' => 'core_grades_external',
+        'methodname' => 'create_gradecategory',
+        'description' => 'Create a grade category inside a course gradebook.',
+        'type' => 'write',
+        'capabilities' => 'moodle/grade:manage',
+    ),
     'core_grading_get_definitions' => array(
         'classname' => 'core_grading_external',
         'methodname' => 'get_definitions',

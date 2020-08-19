@@ -565,6 +565,141 @@ class grade_edit_tree {
 
         return $deepest_level;
     }
+
+    /**
+     * Updates the provided gradecategory item with the provided data.
+     *
+     * @param grade_category $gradecategory The category to update.
+     * @param stdClass $data the data to update the category with.
+     * @return void
+     */
+    public static function update_gradecategory(grade_category $gradecategory, stdClass $data) {
+        // If no fullname is entered for a course category, put ? in the DB.
+        if (!isset($data->fullname) || $data->fullname == '') {
+            $data->fullname = '?';
+        }
+
+        if (!isset($data->aggregateonlygraded)) {
+            $data->aggregateonlygraded = 0;
+        }
+        if (!isset($data->aggregateoutcomes)) {
+            $data->aggregateoutcomes = 0;
+        }
+        grade_category::set_properties($gradecategory, $data);
+
+        // CATEGORY.
+        if (empty($gradecategory->id)) {
+            $gradecategory->insert();
+
+        } else {
+            $gradecategory->update();
+        }
+
+        // GRADE ITEM.
+        // Grade item data saved with prefix "grade_item_".
+        $itemdata = new stdClass();
+        foreach ($data as $k => $v) {
+            if (preg_match('/grade_item_(.*)/', $k, $matches)) {
+                $itemdata->{$matches[1]} = $v;
+            }
+        }
+
+        if (!isset($itemdata->aggregationcoef)) {
+            $itemdata->aggregationcoef = 0;
+        }
+
+        if (!isset($itemdata->gradepass) || $itemdata->gradepass == '') {
+            $itemdata->gradepass = 0;
+        }
+
+        if (!isset($itemdata->grademax) || $itemdata->grademax == '') {
+            $itemdata->grademax = 0;
+        }
+
+        if (!isset($itemdata->grademin) || $itemdata->grademin == '') {
+            $itemdata->grademin = 0;
+        }
+
+        $hidden      = empty($itemdata->hidden) ? 0 : $itemdata->hidden;
+        $hiddenuntil = empty($itemdata->hiddenuntil) ? 0 : $itemdata->hiddenuntil;
+        unset($itemdata->hidden);
+        unset($itemdata->hiddenuntil);
+
+        $locked   = empty($itemdata->locked) ? 0 : $itemdata->locked;
+        $locktime = empty($itemdata->locktime) ? 0 : $itemdata->locktime;
+        unset($itemdata->locked);
+        unset($itemdata->locktime);
+
+        $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'aggregationcoef2');
+        foreach ($convert as $param) {
+            if (property_exists($itemdata, $param)) {
+                $itemdata->$param = unformat_float($itemdata->$param);
+            }
+        }
+        if (isset($itemdata->aggregationcoef2)) {
+            $itemdata->aggregationcoef2 = $itemdata->aggregationcoef2 / 100.0;
+        }
+
+        // When creating a new category, a number of grade item fields are filled out automatically, and are required.
+        // If the user leaves these fields empty during creation of a category, we let the default values take effect.
+        // Otherwise, we let the user-entered grade item values take effect.
+        $gradeitem = $gradecategory->load_grade_item();
+        $gradeitemcopy = fullclone($gradeitem);
+        grade_item::set_properties($gradeitem, $itemdata);
+
+        if (empty($gradeitem->id)) {
+            $gradeitem->id = $gradeitemcopy->id;
+        }
+        if (empty($gradeitem->grademax) && $gradeitem->grademax != '0') {
+            $gradeitem->grademax = $gradeitemcopy->grademax;
+        }
+        if (empty($gradeitem->grademin) && $gradeitem->grademin != '0') {
+            $gradeitem->grademin = $gradeitemcopy->grademin;
+        }
+        if (empty($gradeitem->gradepass) && $gradeitem->gradepass != '0') {
+            $gradeitem->gradepass = $gradeitemcopy->gradepass;
+        }
+        if (empty($gradeitem->aggregationcoef) && $gradeitem->aggregationcoef != '0') {
+            $gradeitem->aggregationcoef = $gradeitemcopy->aggregationcoef;
+        }
+
+        // Handle null decimals value - must be done before update!
+        if (!property_exists($itemdata, 'decimals') or $itemdata->decimals < 0) {
+            $gradeitem->decimals = null;
+        }
+
+        // Change weightoverride flag. Check if the value is set, because it is not when the checkbox is not ticked.
+        $itemdata->weightoverride = isset($itemdata->weightoverride) ? $itemdata->weightoverride : 0;
+        if ($gradeitem->weightoverride != $itemdata->weightoverride && $gradecategory->aggregation == GRADE_AGGREGATE_SUM) {
+            // If we are using natural weight and the weight has been un-overriden, force parent category to recalculate weights.
+            $gradecategory->force_regrading();
+        }
+        $gradeitem->weightoverride = $itemdata->weightoverride;
+
+        $gradeitem->outcomeid = null;
+
+        if (!empty($data->grade_item_rescalegrades) && $data->grade_item_rescalegrades == 'yes') {
+            $gradeitem->rescale_grades_keep_percentage($gradeitemcopy->grademin, $gradeitemcopy->grademax,
+                $gradeitem->grademin, $gradeitem->grademax, 'gradebook');
+        }
+
+        // Update hiding flag.
+        if ($hiddenuntil) {
+            $gradeitem->set_hidden($hiddenuntil, false);
+        } else {
+            $gradeitem->set_hidden($hidden, false);
+        }
+
+        $gradeitem->set_locktime($locktime); // Locktime first - it might be removed when unlocking.
+        $gradeitem->set_locked($locked, false, true);
+
+        $gradeitem->update(); // We don't need to insert it, it's already created when the category is created.
+
+        // Set parent if needed.
+        if (isset($data->parentcategory)) {
+            $gradecategory->set_parent($data->parentcategory, 'gradebook');
+        }
+    }
 }
 
 /**
@@ -952,4 +1087,3 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         return $togglegroup;
     }
 }
-
