@@ -3830,8 +3830,11 @@ function xmldb_main_upgrade($oldversion) {
             $DB->delete_records('competency_userevidencecomp', ['userevidenceid' => $userevidence->id]);
             $DB->delete_records('competency_userevidence', ['id' => $userevidence->id]);
 
-            $context = context_user::instance($userevidence->userid);
-            $fs->delete_area_files($context->id, 'core_competency', 'userevidence', $userevidence->id);
+            if ($record = $DB->get_record('context', ['contextlevel' => CONTEXT_USER, 'instanceid' => $userevidence->userid],
+                    '*', IGNORE_MISSING)) {
+                // Delete all orphaned user evidences files.
+                $fs->delete_area_files($record->id, 'core_competency', 'userevidence', $userevidence->userid);
+            }
         }
 
         $sql = "SELECT cp.id
@@ -3925,6 +3928,25 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2019111804.01);
+    }
+
+    if ($oldversion < 2019111804.07) {
+        // Delete all user evidence files from users that have been deleted.
+        $sql = "SELECT DISTINCT f.*
+                  FROM {files} f
+             LEFT JOIN {context} c ON f.contextid = c.id
+             LEFT JOIN {user} u ON c.instanceid = u.id
+                 WHERE f.component = :component
+                   AND f.filearea = :filearea
+                   AND u.deleted = 1";
+        $stalefiles = $DB->get_records_sql($sql, ['component' => 'core_competency', 'filearea' => 'userevidence']);
+
+        $fs = get_file_storage();
+        foreach ($stalefiles as $stalefile) {
+            $fs->get_file_instance($stalefile)->delete();
+        }
+
+        upgrade_main_savepoint(true, 2019111804.07);
     }
 
     return true;
