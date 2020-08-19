@@ -47,7 +47,7 @@ class core_form_duration_testcase extends basic_testcase {
      *
      * @return MoodleQuickForm
      */
-    protected function get_test_form() {
+    protected function get_test_form(): MoodleQuickForm {
         $form = new temp_form_duration();
         return $form->getform();
     }
@@ -57,27 +57,26 @@ class core_form_duration_testcase extends basic_testcase {
      *
      * @return array with two elements, a MoodleQuickForm and a MoodleQuickForm_duration.
      */
-    protected function get_test_form_and_element() {
+    protected function get_test_form_and_element(): array {
         $mform = $this->get_test_form();
         $element = $mform->addElement('duration', 'duration');
         return [$mform, $element];
     }
 
     /**
-     * Testcase for testing contructor.
-     *
-     * @expectedException coding_exception
+     * Test the constructor error handling.
      */
-    public function test_constructor() {
+    public function test_constructor_rejects_invalid_unit(): void {
         // Test trying to create with an invalid unit.
         $mform = $this->get_test_form();
+        $this->expectException('coding_exception');
         $mform->addElement('duration', 'testel', null, ['defaultunit' => 123, 'optional' => false]);
     }
 
     /**
-     * Test contructor only some units.
+     * Test constructor only some units.
      */
-    public function test_constructor_limited_units() {
+    public function test_constructor_limited_units(): void {
         $mform = $this->get_test_form();
         $mform->addElement('duration', 'testel', null, ['units' => [MINSECS, 1], 'optional' => false]);
         $html = $mform->toHtml();
@@ -90,7 +89,7 @@ class core_form_duration_testcase extends basic_testcase {
     /**
      * Testcase for testing units (seconds, minutes, hours and days)
      */
-    public function test_get_units() {
+    public function test_get_units(): void {
         [$mform, $element] = $this->get_test_form_and_element();
         $units = $element->get_units();
         $this->assertEquals($units, [1 => get_string('seconds'), 60 => get_string('minutes'),
@@ -98,66 +97,93 @@ class core_form_duration_testcase extends basic_testcase {
     }
 
     /**
-     * Testcase for testing conversion of seconds to the best possible unit
+     * Data provider for {@see test_seconds_to_unit()}.
+     *
+     * @return array test cases.
      */
-    public function test_seconds_to_unit() {
-        [$mform, $element] = $this->get_test_form_and_element();
-        $this->assertEquals([0, MINSECS], $element->seconds_to_unit(0)); // Zero minutes, for a nice default unit.
-        $this->assertEquals([1, 1], $element->seconds_to_unit(1));
-        $this->assertEquals([3601, 1], $element->seconds_to_unit(3601));
-        $this->assertEquals([1, MINSECS], $element->seconds_to_unit(60));
-        $this->assertEquals([3, MINSECS], $element->seconds_to_unit(180));
-        $this->assertEquals([1, HOURSECS], $element->seconds_to_unit(3600));
-        $this->assertEquals([2, HOURSECS], $element->seconds_to_unit(7200));
-        $this->assertEquals([1, DAYSECS], $element->seconds_to_unit(86400));
-        $this->assertEquals([25, HOURSECS], $element->seconds_to_unit(90000));
+    public function seconds_to_unit_cases(): array {
+        return [
+            [[0, MINSECS], 0], // Zero minutes, for a nice default unit.
+            [[1, 1], 1],
+            [[3601, 1], 3601],
+            [[1, MINSECS], 60],
+            [[3, MINSECS], 180],
+            [[1, HOURSECS], 3600],
+            [[2, HOURSECS], 7200],
+            [[1, DAYSECS], 86400],
+            [[25, HOURSECS], 90000],
+        ];
+    }
 
+    /**
+     * Testcase for testing conversion of seconds to the best possible unit.
+     *
+     * @dataProvider seconds_to_unit_cases
+     * @param array $expected expected return value from seconds_to_unit
+     * @param int $seconds value to pass to seconds_to_unit
+     */
+    public function test_seconds_to_unit(array $expected, int $seconds): void {
+        [, $element] = $this->get_test_form_and_element();
+        $this->assertEquals($expected, $element->seconds_to_unit($seconds));
+    }
+
+    /**
+     * Testcase for testing conversion of seconds to the best possible unit with a non-default default unit.
+     */
+    public function test_seconds_to_unit_different_default_unit() {
+        $mform = $this->get_test_form();
         $element = $mform->addElement('duration', 'testel', null,
                 ['defaultunit' => DAYSECS, 'optional' => false]);
-        $this->assertEquals([0, DAYSECS], $element->seconds_to_unit(0)); // Zero minutes, for a nice default unit.
+        $this->assertEquals([0, DAYSECS], $element->seconds_to_unit(0));
+    }
+
+    /**
+     * Data provider for {@see test_export_value()}.
+     *
+     * @return array test cases.
+     */
+    public function export_value_cases(): array {
+        return [
+            [10, '10', 1],
+            [180, '3', MINSECS],
+            [90, '1.5', MINSECS],
+            [7200, '2', HOURSECS],
+            [86400, '1', DAYSECS],
+            [0, '0', HOURSECS],
+            [0, '10', 1, 0, true],
+            [20, '20', 1, 1, true],
+            [0, '10', 1, 0, true, ''],
+            [20, '20', 1, 1, true, ''],
+        ];
     }
 
     /**
      * Testcase to check generated timestamp
+     *
+     * @dataProvider export_value_cases
+     * @param int $expected Expected value returned by the element.
+     * @param string $number Number entered into the element.
+     * @param int $unit Unit selected in the element.
+     * @param int $enabled Whether the enabled checkbox on the form was selected. (Only used if $optional is true.)
+     * @param bool $optional Whether the element has the optional option on.
+     * @param string|null $label The element's label.
      */
-    public function test_exportValue() {
+    public function test_export_value(int $expected, string $number, int $unit, int $enabled = 0,
+            bool $optional = false, ?string $label = null): void {
+
+        // Create the test element.
         $mform = $this->get_test_form();
-        $el = $mform->addElement('duration', 'testel');
-        $values = ['testel' => ['number' => 10, 'timeunit' => 1]];
-        $this->assertEquals(['testel' => 10], $el->exportValue($values, true));
-        $this->assertEquals(10, $el->exportValue($values));
-        $values = ['testel' => ['number' => 3, 'timeunit' => MINSECS]];
-        $this->assertEquals(['testel' => 180], $el->exportValue($values, true));
-        $this->assertEquals(180, $el->exportValue($values));
-        $values = ['testel' => ['number' => 1.5, 'timeunit' => MINSECS]];
-        $this->assertEquals(['testel' => 90], $el->exportValue($values, true));
-        $this->assertEquals(90, $el->exportValue($values));
-        $values = ['testel' => ['number' => 2, 'timeunit' => HOURSECS]];
-        $this->assertEquals(['testel' => 7200], $el->exportValue($values, true));
-        $this->assertEquals(7200, $el->exportValue($values));
-        $values = ['testel' => ['number' => 1, 'timeunit' => DAYSECS]];
-        $this->assertEquals(['testel' => 86400], $el->exportValue($values, true));
-        $this->assertEquals(86400, $el->exportValue($values));
-        $values = ['testel' => ['number' => 0, 'timeunit' => HOURSECS]];
-        $this->assertEquals(['testel' => 0], $el->exportValue($values, true));
-        $this->assertEquals(0, $el->exportValue($values));
+        $el = $mform->addElement('duration', 'testel', $label, $optional ? ['optional' => true] : []);
 
-        $el = $mform->addElement('duration', 'testel', null, ['optional' => true]);
-        $values = ['testel' => ['number' => 10, 'timeunit' => 1]];
-        $this->assertEquals(['testel' => 0], $el->exportValue($values, true));
-        $this->assertEquals(0, $el->exportValue($values));
-        $values = ['testel' => ['number' => 20, 'timeunit' => 1, 'enabled' => 1]];
-        $this->assertEquals(['testel' => 20], $el->exportValue($values, true));
-        $this->assertEquals(20, $el->exportValue($values));
+        // Prepare the submitted values.
+        $values = ['testel' => ['number' => $number, 'timeunit' => $unit]];
+        if ($optional) {
+            $values['testel']['enabled'] = $enabled;
+        }
 
-        // Optional element.
-        $el2 = $mform->addElement('duration', 'testel', '', ['optional' => true]);
-        $values = ['testel' => ['number' => 10, 'timeunit' => 1, 'enabled' => 1]];
-        $this->assertEquals(['testel' => 10], $el2->exportValue($values, true));
-        $this->assertEquals(10, $el2->exportValue($values));
-        $values = ['testel' => ['number' => 10, 'timeunit' => 1, 'enabled' => 0]];
-        $this->assertEquals(['testel' => 0], $el2->exportValue($values, true));
-        $this->assertEquals(null, $el2->exportValue($values));
+        // Test.
+        $this->assertEquals(['testel' => $expected], $el->exportValue($values, true));
+        $this->assertEquals($expected, $el->exportValue($values));
     }
 }
 
