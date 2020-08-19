@@ -261,6 +261,6 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
         if ($this->_options['optional'] && empty($valuearray['enabled'])) {
             return $this->_prepareValue(0, $assoc);
         }
-        return $this->_prepareValue($valuearray['number'] * $valuearray['timeunit'], $assoc);
+        return $this->_prepareValue((int) round($valuearray['number'] * $valuearray['timeunit']), $assoc);
     }
 }

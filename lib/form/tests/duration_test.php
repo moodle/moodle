@@ -113,18 +113,31 @@ class core_form_duration_testcase extends basic_testcase {
         $values = array('testel' => array('number' => 10, 'timeunit' => 1));
         $this->assertEquals(array('testel' => 10), $el->exportValue($values, true));
         $this->assertEquals(10, $el->exportValue($values));
+
+        $values = array('testel' => array('number' => 9.3, 'timeunit' => 1));
+        $this->assertEquals(array('testel' => 9), $el->exportValue($values, true));
+        $this->assertEquals(9, $el->exportValue($values));
+
+        $values = array('testel' => array('number' => 9.5, 'timeunit' => 1));
+        $this->assertEquals(array('testel' => 10), $el->exportValue($values, true));
+        $this->assertEquals(10, $el->exportValue($values));
+
         $values = array('testel' => array('number' => 3, 'timeunit' => 60));
         $this->assertEquals(array('testel' => 180), $el->exportValue($values, true));
         $this->assertEquals(180, $el->exportValue($values));
+
         $values = array('testel' => array('number' => 1.5, 'timeunit' => 60));
         $this->assertEquals(array('testel' => 90), $el->exportValue($values, true));
         $this->assertEquals(90, $el->exportValue($values));
+
         $values = array('testel' => array('number' => 2, 'timeunit' => 3600));
         $this->assertEquals(array('testel' => 7200), $el->exportValue($values, true));
         $this->assertEquals(7200, $el->exportValue($values));
+
         $values = array('testel' => array('number' => 1, 'timeunit' => 86400));
         $this->assertEquals(array('testel' => 86400), $el->exportValue($values, true));
         $this->assertEquals(86400, $el->exportValue($values));
+
         $values = array('testel' => array('number' => 0, 'timeunit' => 3600));
         $this->assertEquals(array('testel' => 0), $el->exportValue($values, true));
         $this->assertEquals(0, $el->exportValue($values));
