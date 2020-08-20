@@ -27,12 +27,15 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
 
-    //--- heading ---
-    $settings->add(new admin_setting_heading('enrol_ldap_settings', '', get_string('pluginname_desc', 'enrol_ldap')));
-
     if (!function_exists('ldap_connect')) {
-        $settings->add(new admin_setting_heading('enrol_phpldap_noextension', '', get_string('phpldap_noextension', 'enrol_ldap')));
+        $notify = new \core\output\notification(get_string('phpldap_noextension', 'enrol_ldap'),
+            \core\output\notification::NOTIFY_WARNING);
+        $settings->add(new admin_setting_heading('enrol_phpldap_noextension', '', $OUTPUT->render($notify)));
+        $settings->add(new admin_setting_heading('enrol_ldap_settings', '', get_string('pluginname_desc', 'enrol_ldap')));
     } else {
+
+        $settings->add(new admin_setting_heading('enrol_ldap_settings', '', get_string('pluginname_desc', 'enrol_ldap')));
+
         require_once($CFG->dirroot.'/enrol/ldap/settingslib.php');
         require_once($CFG->libdir.'/ldaplib.php');
 
