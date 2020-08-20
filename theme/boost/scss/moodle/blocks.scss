@@ -170,10 +170,12 @@ $card-gutter : $card-deck-margin * 2;
             padding: 0.8rem;
         }
     }
-
-    &.fixed-width-cards {
-        .dashboard-card {
-            width: 300px;
+    @include media-breakpoint-up(sm) {
+        &.fixed-width-cards {
+            .dashboard-card {
+                width: 300px;
+                max-width: 100%;
+            }
         }
     }
 }
