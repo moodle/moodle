@@ -1,7 +1,7 @@
 This files describes API changes in /search/*,
 information provided here is intended especially for developers.
 
-=== 4.0 ===
+=== 3.10 ===
 
 * Search indexing now supports sending multiple documents to the server in a batch. This is implemented
   for the Solr search engine, where it significantly increases performance. For this to work, engines

@@ -1,7 +1,7 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
-=== 4.0 ===
+=== 3.10 ===
 
 * The function make_categories_options() has now been deprecated. Please use \core_course_category::make_categories_list() instead.
 
