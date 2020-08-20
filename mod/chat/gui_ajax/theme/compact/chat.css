@@ -97,5 +97,6 @@
 }
 
 #button-send + a > i.text-info {
+    /* stylelint-disable-next-line declaration-no-important */
     color: black !important;
 }
