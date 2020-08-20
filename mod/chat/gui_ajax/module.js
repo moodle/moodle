@@ -126,6 +126,12 @@ M.mod_chat_ajax.init = function(Y, cfg) {
                 this.moveTo((e.pageX - 20), (e.pageY - 20));
                 this.show();
             }, this.thememenu);
+
+            // Set the data-placement for the help-icon to display all the content.
+            this.helpicon = Y.one('#button-send + a');
+            this.dataset = this.helpicon.get('dataset');
+            this.dataset.placement = 'top';
+            this.helpicon.set('dataset', this.dataset);
         },
 
         append_message : function(key, message, row) {
