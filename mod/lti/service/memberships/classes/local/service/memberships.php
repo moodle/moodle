@@ -466,7 +466,7 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
             if (!is_null($lti)) {
                 $nextpage .= "&rlid={$lti->id}";
             }
-            $response->add_additional_header("Link: {$nextpage};rel=next");
+            $response->add_additional_header("Link: <{$nextpage}>; rel=\"next\"");
         }
 
         $response->set_content_type('application/vnd.ims.lti-nrps.v2.membershipcontainer+json');
