@@ -208,6 +208,11 @@ define(
                 start = start >= 0 ? start : 0;
             }
 
+            // At least show one card.
+            if (availableVisibleCards === 0) {
+                availableVisibleCards = 1;
+            }
+
             var coursesToShow = allCourses.slice(start, start + availableVisibleCards);
             // Create an id for the list of courses we expect to be displayed.
             var newVisibleCoursesId = coursesToShow.reduce(function(carry, course) {
