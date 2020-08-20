@@ -275,6 +275,7 @@ class manager {
         $record->faildelay = $task->get_fail_delay();
         $record->customdata = $task->get_custom_data_as_string();
         $record->userid = $task->get_userid();
+        $record->timecreated = time();
 
         return $record;
     }
