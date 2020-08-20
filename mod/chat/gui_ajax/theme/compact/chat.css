@@ -95,3 +95,7 @@
     background: #e3e8f0;
     height: 100%;
 }
+
+#button-send + a > i.text-info {
+    color: black !important;
+}
