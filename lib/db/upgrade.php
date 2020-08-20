@@ -2542,7 +2542,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020072300.01);
     }
 
-    if ($oldversion < 2020081400.02) {
+    if ($oldversion < 2020081400.01) {
         // Delete all user evidence files from users that have been deleted.
         $sql = "SELECT DISTINCT f.*
                   FROM {files} f
@@ -2560,7 +2560,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020081400.02);
     }
 
-    if ($oldversion < 2020081400.02) {
+    if ($oldversion < 2020081400.01) {
 
         // Define field timecreated to be added to task_adhoc.
         $table = new xmldb_table('task_adhoc');
