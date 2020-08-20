@@ -86,6 +86,7 @@ class bankcontent implements renderable, templatable {
             $contenttypeclass = $content->get_content_type().'\\contenttype';
             $contenttype = new $contenttypeclass($this->context);
             $name = $content->get_name();
+            $author = \core_user::get_user($content->get_content()->usercreated);
             $contentdata[] = array(
                 'name' => $name,
                 'title' => strtolower($name),
@@ -94,7 +95,8 @@ class bankcontent implements renderable, templatable {
                 'timemodified' => $content->get_timemodified(),
                 'bytes' => $filesize,
                 'size' => display_size($filesize),
-                'type' => $mimetype
+                'type' => $mimetype,
+                'author' => fullname($author),
             );
         }
         $data->viewlist = get_user_preferences('core_contentbank_view_list');
