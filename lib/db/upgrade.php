@@ -2542,25 +2542,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020072300.01);
     }
 
-    if ($oldversion < 2020081400.01) {
-        // Delete all user evidence files from users that have been deleted.
-        $sql = "SELECT DISTINCT f.*
-                  FROM {files} f
-             LEFT JOIN {context} c ON f.contextid = c.id
-             LEFT JOIN {user} u ON c.instanceid = u.id
-                 WHERE f.component = :component
-                   AND f.filearea = :filearea
-                   AND u.deleted = 1";
-        $stalefiles = $DB->get_records_sql($sql, ['component' => 'core_competency', 'filearea' => 'userevidence']);
-
-        $fs = get_file_storage();
-        foreach ($stalefiles as $stalefile) {
-            $fs->get_file_instance($stalefile)->delete();
-        }
-
-        upgrade_main_savepoint(true, 2020081400.01);
-    }
-
     if ($oldversion < 2021052500.01) {
 
         // Define field timecreated to be added to task_adhoc.
@@ -2574,6 +2555,24 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2021052500.01);
+    }
+
+    if ($oldversion < 2021052500.02) {
+        // Delete all user evidence files from users that have been deleted.
+        $sql = "SELECT DISTINCT f.*
+                  FROM {files} f
+             LEFT JOIN {context} c ON f.contextid = c.id
+                 WHERE f.component = :component
+                   AND f.filearea = :filearea
+                   AND c.id IS NULL";
+        $stalefiles = $DB->get_records_sql($sql, ['component' => 'core_competency', 'filearea' => 'userevidence']);
+
+        $fs = get_file_storage();
+        foreach ($stalefiles as $stalefile) {
+            $fs->get_file_instance($stalefile)->delete();
+        }
+
+        upgrade_main_savepoint(true, 2021052500.02);
     }
 
     return true;
