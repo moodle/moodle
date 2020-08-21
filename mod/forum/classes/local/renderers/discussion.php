@@ -215,7 +215,7 @@ class discussion {
                 'movediscussion' => null,
                 'pindiscussion' => null,
                 'neighbourlinks' => $this->get_neighbour_links_html(),
-                'exportdiscussion' => !empty($CFG->enableportfolios) ? $this->get_export_discussion_html() : null
+                'exportdiscussion' => !empty($CFG->enableportfolios) ? $this->get_export_discussion_html($user) : null
             ]
         ]);
 
@@ -357,24 +357,18 @@ class discussion {
     /**
      * Get the HTML to render the export discussion button.
      *
-     * @return string|null
+     * @param   stdClass $user The user viewing the discussion
+     * @return  string|null
      */
-    private function get_export_discussion_html() : ?string {
+    private function get_export_discussion_html(stdClass $user) : ?string {
         global $CFG;
 
-        require_once($CFG->libdir . '/portfoliolib.php');
-        $discussion = $this->discussion;
-
-        // We use the portfolio caller to work out if user should be allowed to see this button.
-        $caller = new forum_portfolio_caller(['discussionid' => $discussion->get_id()]);
-        $caller->set_formats_from_button([]);
-        $caller->load_data();
-        if (!$caller->check_permissions()) {
+        if (!$this->capabilitymanager->can_export_discussions($user)) {
             return null;
         }
 
         $button = new \portfolio_add_button();
-        $button->set_callback_options('forum_portfolio_caller', ['discussionid' => $discussion->get_id()], 'mod_forum');
+        $button->set_callback_options('forum_portfolio_caller', ['discussionid' => $this->discussion->get_id()], 'mod_forum');
         $button = $button->to_html(PORTFOLIO_ADD_FULL_FORM, get_string('exportdiscussion', 'mod_forum'));
         return $button ?: null;
     }
