@@ -12,8 +12,8 @@ Feature: See the competencies for an activity on the course competencies page.
       | Test-Comp1 | ID-FW1 |
       | Test-Comp2 | ID-FW1 |
     Given the following "courses" exist:
-      | shortname | fullname   |
-      | C1        | Course 1 |
+      | shortname | fullname   | enablecompletion |
+      | C1        | Course 1   | 1                |
     And the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@example.com |
@@ -21,9 +21,9 @@ Feature: See the competencies for an activity on the course competencies page.
       | user | course | role |
       | student1 | C1 | student |
     And the following "activities" exist:
-      | activity | name       | intro      | course | idnumber |
-      | page     | PageName1  | PageDesc1  | C1     | PAGE1    |
-      | page     | PageName2  | PageDesc2  | C1     | PAGE2    |
+      | activity | name       | intro      | course | idnumber | completion | completionview |
+      | page     | PageName1  | PageDesc1  | C1     | PAGE1    | 1          | 1              |
+      | page     | PageName2  | PageDesc2  | C1     | PAGE2    | 1          | 1              |
     And I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
@@ -61,3 +61,15 @@ Feature: See the competencies for an activity on the course competencies page.
     And I should not see "Test-Comp1"
     And I should not see "Test-Comp2"
     And I should see "No competencies have been linked to this activity or resource."
+
+  @javascript
+  Scenario: None course competencies page.
+    When I log in as "student1"
+    And I am on site homepage
+    And I follow "Course 1"
+    And I follow "PageName1"
+    Then I should see "Test page content"
+    And I am on site homepage
+    And I follow "Course 1"
+    And I follow "PageName1"
+    Then I should see "Test page content"
