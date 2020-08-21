@@ -2557,10 +2557,10 @@ function xmldb_main_upgrade($oldversion) {
             $fs->get_file_instance($stalefile)->delete();
         }
 
-        upgrade_main_savepoint(true, 2020081400.02);
+        upgrade_main_savepoint(true, 2020081400.01);
     }
 
-    if ($oldversion < 2020081400.01) {
+    if ($oldversion < 2020081400.02) {
 
         // Define field timecreated to be added to task_adhoc.
         $table = new xmldb_table('task_adhoc');
