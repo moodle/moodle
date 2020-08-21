@@ -4660,6 +4660,9 @@ class api {
                 $recommend = false;
                 $strdesc = 'evidence_coursemodulecompleted';
 
+                if ($outcome == course_module_competency::OUTCOME_NONE) {
+                    continue;
+                }
                 if ($outcome == course_module_competency::OUTCOME_EVIDENCE) {
                     $action = evidence::ACTION_LOG;
 
@@ -4720,6 +4723,9 @@ class api {
             $recommend = false;
             $strdesc = 'evidence_coursecompleted';
 
+            if ($outcome == course_module_competency::OUTCOME_NONE) {
+                continue;
+            }
             if ($outcome == course_competency::OUTCOME_EVIDENCE) {
                 $action = evidence::ACTION_LOG;
 
