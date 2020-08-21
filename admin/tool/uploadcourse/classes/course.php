@@ -838,36 +838,31 @@ class tool_uploadcourse_course {
             unset($method['delete']);
             unset($method['disable']);
 
-            if (!empty($instance) && $todelete) {
+            if ($todelete) {
                 // Remove the enrolment method.
-                foreach ($instances as $instance) {
-                    if ($instance->enrol == $enrolmethod) {
-                        $plugin = $enrolmentplugins[$instance->enrol];
-                        $plugin->delete_instance($instance);
-                        break;
-                    }
+                if ($instance) {
+                    $plugin = $enrolmentplugins[$instance->enrol];
+                    $plugin->delete_instance($instance);
                 }
             } else if (!empty($instance) && $todisable) {
                 // Disable the enrolment.
-                foreach ($instances as $instance) {
-                    if ($instance->enrol == $enrolmethod) {
-                        $plugin = $enrolmentplugins[$instance->enrol];
-                        $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
-                        $enrol_updated = true;
-                        break;
-                    }
-                }
+                $plugin = $enrolmentplugins[$instance->enrol];
+                $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
+                $enrol_updated = true;
             } else {
                 $plugin = null;
+
+                $status = ($todisable) ? ENROL_INSTANCE_DISABLED : ENROL_INSTANCE_ENABLED;
+
                 if (empty($instance)) {
                     $plugin = $enrolmentplugins[$enrolmethod];
-                    $instance = new stdClass();
-                    $instance->id = $plugin->add_default_instance($course);
+                    $instanceid = $plugin->add_default_instance($course);
+                    $instance = $DB->get_record('enrol', ['id' => $instanceid]);
                     $instance->roleid = $plugin->get_config('roleid');
-                    $instance->status = ENROL_INSTANCE_ENABLED;
+                    $plugin->update_status($instance, $status);
                 } else {
                     $plugin = $enrolmentplugins[$instance->enrol];
-                    $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
+                    $plugin->update_status($instance, $status);
                 }
 
                 // Now update values.
