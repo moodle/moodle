@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20200707" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20200804" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -4188,6 +4188,7 @@
         <FIELD NAME="addto" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Plugin configuration data"/>
         <FIELD NAME="coremajor" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="H5P core API major version required"/>
         <FIELD NAME="coreminor" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="H5P core API minor version required"/>
+        <FIELD NAME="metadatasettings" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Library metadata settings"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
