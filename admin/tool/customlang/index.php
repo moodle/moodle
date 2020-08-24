@@ -35,6 +35,7 @@ require_capability('tool/customlang:view', context_system::instance());
 $action  = optional_param('action', '', PARAM_ALPHA);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 $lng     = optional_param('lng', '', PARAM_LANG);
+$next     = optional_param('next', 'edit', PARAM_ALPHA);
 
 admin_externalpage_setup('toolcustomlang');
 $langs = get_string_manager()->get_list_of_translations();
@@ -59,11 +60,10 @@ if ($action === 'checkout') {
     raise_memory_limit(MEMORY_EXTRA);
     tool_customlang_utils::checkout($lng, $progressbar);
 
-    echo $output->continue_button(new moodle_url('/admin/tool/customlang/edit.php', array('lng' => $lng)), 'get');
+    echo $output->continue_button(new moodle_url("/admin/tool/customlang/{$next}.php", array('lng' => $lng)), 'get');
     echo $output->footer();
     exit;
 }
-
 if ($action === 'checkin') {
     require_sesskey();
     require_capability('tool/customlang:edit', context_system::instance());
@@ -131,6 +131,16 @@ if (has_capability('tool/customlang:edit', context_system::instance())) {
             'url'       => new moodle_url($PAGE->url, array('action' => 'checkin', 'lng' => $lng)),
             'method'    => 'post',
         );
+    }
+}
+if (has_capability('tool/customlang:export', context_system::instance())) {
+    $langdir = tool_customlang_utils::get_localpack_location($lng);
+    if (check_dir_exists(dirname($langdir)) && count(glob("$langdir/*"))) {
+        $menu['export'] = [
+            'title'     => get_string('export', 'tool_customlang'),
+            'url'       => new moodle_url("/admin/tool/customlang/export.php", ['lng' => $lng]),
+            'method'    => 'post',
+        ];
     }
 }
 echo $output->render(new tool_customlang_menu($menu));
