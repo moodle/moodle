@@ -2008,8 +2008,28 @@ function lti_calculate_custom_parameter($value) {
     switch ($value) {
         case 'Moodle.Person.userGroupIds':
             return implode(",", groups_get_user_groups($COURSE->id, $USER->id)[0]);
+        case 'Context.id.history':
+            return implode(",", get_course_history($COURSE));
     }
     return null;
+}
+
+/**
+ * Build the history chain for this course using the course originalcourseid.
+ *
+ * @param object $course course for which the history is returned.
+ *
+ * @return array ids of the source course in ancestry order, immediate parent 1st.
+ */
+function get_course_history($course) {
+    global $DB;
+    $history = [];
+    $parentid = $course->originalcourseid;
+    while (!empty($parentid) && !in_array($parentid, $history)) {
+        $history[] = $parentid;
+        $parentid = $DB->get_field('course', 'originalcourseid', array('id' => $parentid));
+    }
+    return $history;
 }
 
 /**
@@ -3641,6 +3661,7 @@ function lti_get_capabilities() {
        'Context.id' => 'context_id',
        'Context.title' => 'context_title',
        'Context.label' => 'context_label',
+       'Context.id.history' => null,
        'Context.sourcedId' => 'lis_course_section_sourcedid',
        'Context.longDescription' => '$COURSE->summary',
        'Context.timeFrame.begin' => '$COURSE->startdate',

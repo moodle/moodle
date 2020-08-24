@@ -1881,6 +1881,11 @@ class restore_course_structure_step extends restore_structure_step {
             $data->idnumber = '';
         }
 
+        // If we restore a course from this site, let's capture the original course id.
+        if ($isnewcourse && $this->get_task()->is_samesite()) {
+            $data->originalcourseid = $this->get_task()->get_old_courseid();
+        }
+
         // Any empty value for course->hiddensections will lead to 0 (default, show collapsed).
         // It has been reported that some old 1.9 courses may have it null leading to DB error. MDL-31532
         if (empty($data->hiddensections)) {
