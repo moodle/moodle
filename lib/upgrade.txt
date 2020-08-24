@@ -19,6 +19,7 @@ information provided here is intended especially for developers.
   that are also members of these groups.
 * The options for `format_string()`, and `format_text()` are now checked for incorrectly passed context objects.
   Please note that this was never an accepted value but previously failed silently.
+* Login can now utilise new param 'loginredirect' to indicate when to use value set for $CFG->alternateloginurl.
 
 === 4.3 ===
 
