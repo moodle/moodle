@@ -150,6 +150,12 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             $licensedata['cutoffdate'] = $data->cutoffdate;
         }
 
+        if (empty($data->clearonexpire)) {
+            $licensedata['clearonexpire'] = 0;
+        } else {
+            $licensedata['clearonexpire'] = $data->clearonexpire;
+        }
+
         if ( !empty($licenseid) && $currlicensedata = $DB->get_record('companylicense', array('id' => $licenseid))) {
             $new = false;
             // Already in the table update it.

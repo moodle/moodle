@@ -199,7 +199,7 @@ class EmailTemplate {
             $this->company = new company($SESSION->currenteditingcompany);
             // Otherwise use the creating users company.
         } else if (empty($this->company)) {
-            $companyid = iomad::get_my_companyid(context_system::instance());
+            $companyid = iomad::get_my_companyid(context_system::instance(), false);
             $this->company = new company($companyid);
         }
 

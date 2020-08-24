@@ -36,7 +36,6 @@ class cron_task extends \core\task\scheduled_task {
             // Get all of the companies.
             $companies = $DB->get_records('company', array(), '', 'id,shortname');
             foreach ($users as $user) {
-mtrace("setting user id " . $user->id . " institution to " .  $companies[$user->companyid]->shortname);
                 $user->institution = $companies[$user->companyid]->shortname;
                 $DB->update_record('user', $user);
             }
@@ -58,7 +57,6 @@ mtrace("setting user id " . $user->id . " institution to " .  $companies[$user->
             // Get all of the companies.
             $departments = $DB->get_records('department', array(), '', 'id,name');
             foreach ($users as $user) {
-mtrace("setting user id " . $user->id . " department to " .  $departments[$user->departmentid]->name);
                 $user->department = $departments[$user->departmentid]->name;
                 $DB->update_record('user', $user);
             }
@@ -67,6 +65,7 @@ mtrace("setting user id " . $user->id . " department to " .  $departments[$user-
         }
 
         // Suspend any companies which need it.
+        mtrace("suspending any companies which need it");
         if ($suspendcompanies = $DB->get_records_sql("SELECT * FROM {company}
                                                       WHERE suspended = 0
                                                       AND validto IS NOT NULL
@@ -79,6 +78,7 @@ mtrace("setting user id " . $user->id . " department to " .  $departments[$user-
         }
 
         // Terminate any companies which need it.
+        mtrace("Terminating any companies which need it");
         if ($terminatecompanies = $DB->get_records_sql("SELECT * FROM {company}
                                                         WHERE companyterminated = 0
                                                         AND validto IS NOT NULL
@@ -87,6 +87,34 @@ mtrace("setting user id " . $user->id . " department to " .  $departments[$user-
             foreach ($suspendcompanies as $suspendcompany) {
                 $target = new \company($suspendcompany->id);
                 $target->terminate();
+            }
+        }
+
+        // Clear users from courses where the license has expired and the option is chosen
+        mtrace ("Clear users from courses where the license has expired and the option is chosen");
+        if ($userlicenses = $DB->get_records_sql("SELECT clu.* FROM {companylicense_users} clu
+                                                  JOIN {companylicense} cl on (clu.licenseid = cl.id)
+                                                  WHERE cl.clearonexpire = 1
+                                                  AND cl.cutoffdate < :time
+                                                  AND clu.timecompleted IS NULL",
+                                                  array('time' => $runtime))) {
+            foreach ($userlicenses as $userlicense) {
+                mtrace("Clearing userid $userlicense->userid from courseid $userlicense->licensecourseid");
+                if ($userlicense->isusing == 1) {
+                    \company_user::delete_user_course($userlicense->userid, $userlicense->licensecourseid, 'autodelete');
+                } else {
+                    $DB->delete_records('companylicense_users', array('id' => $userlicense->id));
+
+                    // Create an event.
+                    $eventother = array('licenseid' => $userlicense->licenseid,
+                                        'duedate' => 0);
+                    $event = \block_iomad_company_admin\event\user_license_unassigned::create(array('context' => \context_course::instance($userlicense->licensecourseid),
+                                                                                                    'objectid' => $userlicense->licenseid,
+                                                                                                    'courseid' => $userlicense->licensecourseid,
+                                                                                                    'userid' => $userlicense->userid,
+                                                                                                    'other' => $eventother));
+                    $event->trigger();
+                }
             }
         }
     }

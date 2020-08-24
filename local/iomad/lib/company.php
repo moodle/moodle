@@ -2163,17 +2163,23 @@ class company {
 
         // Get the users department.
         $usercompanyinfo = $DB->get_record('company_users', array('userid' => $userid));
-        // Get the list of parent departments.
-        $userdepartment = self::get_departmentbyid($usercompanyinfo->departmentid);
-        $departmentlist = self::get_parentdepartments($userdepartment);
-        self::get_parents_list($departmentlist, $departments);
 
-        // Get the managers in that list of departments.
-        $managers = $DB->get_records_sql("SELECT userid FROM {company_users}
-                                          WHERE managertype = :managertype
-                                          AND userid != :userid
-                                          AND departmentid IN (".implode(',', array_keys($departments)).")",
-                                          array('managertype' => $managertype, 'userid' => $USER->id));
+        // Set the initial return array.
+
+        $managers = array();
+        // Get the list of parent departments.
+        if ($userdepartment = self::get_departmentbyid($usercompanyinfo->departmentid)) {
+            $departmentlist = self::get_parentdepartments($userdepartment);
+            self::get_parents_list($departmentlist, $departments);
+
+            // Get the managers in that list of departments.
+            $managers = $DB->get_records_sql("SELECT userid FROM {company_users}
+                                              WHERE managertype = :managertype
+                                              AND userid != :userid
+                                              AND departmentid IN (".implode(',', array_keys($departments)).")",
+                                              array('managertype' => $managertype, 'userid' => $USER->id));
+        }
+
         //  return them.
         return $managers;
     }
@@ -4267,6 +4273,8 @@ class company {
      */
     public static function user_license_unassigned(\block_iomad_company_admin\event\user_license_unassigned $event) {
         global $DB, $CFG, $PAGE;
+
+        require_once($CFG->dirroot . '/enrol/locallib.php');
 
         $userid = $event->userid;
         $licenseid = $event->other['licenseid'];
