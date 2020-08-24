@@ -243,7 +243,7 @@ class tool_customlang_utils {
      * @param string $lang language code
      * @return string full path
      */
-    protected static function get_localpack_location($lang) {
+    public static function get_localpack_location($lang) {
         global $CFG;
 
         return $CFG->langlocalroot.'/'.$lang.'_local';
