@@ -1528,6 +1528,25 @@ MwIDAQAB
         $this->assertEquals($launchdata[1]['tool_consumer_instance_guid'], 'overridden!');
     }
 
+    public function test_get_course_history() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $parentparentcourse = $this->getDataGenerator()->create_course();
+        $parentcourse = $this->getDataGenerator()->create_course();
+        $parentcourse->originalcourseid = $parentparentcourse->id;
+        $DB->update_record('course', $parentcourse);
+        $course = $this->getDataGenerator()->create_course();
+        $course->originalcourseid = $parentcourse->id;
+        $DB->update_record('course', $course);
+        $this->assertEquals(get_course_history($parentparentcourse), []);
+        $this->assertEquals(get_course_history($parentcourse), [$parentparentcourse->id]);
+        $this->assertEquals(get_course_history($course), [$parentcourse->id, $parentparentcourse->id]);
+        $course->originalcourseid = 38903;
+        $DB->update_record('course', $course);
+        $this->assertEquals(get_course_history($course), [38903]);
+    }
+
     /**
      * Create an LTI Tool.
      *
