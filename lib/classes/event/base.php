@@ -266,6 +266,15 @@ abstract class base implements \IteratorAggregate {
             if ($expectedcourseid != $event->data['courseid']) {
                 debugging("Inconsistent courseid - context combination detected.", DEBUG_DEVELOPER);
             }
+
+            if (method_exists($event, 'get_legacy_logdata') ||
+                method_exists($event, 'set_legacy_logdata') ||
+                method_exists($event, 'get_legacy_eventname') ||
+                method_exists($event, 'get_legacy_eventdata')
+            ) {
+                debugging("Invalid event functions defined in " . $event->data['eventname'], DEBUG_DEVELOPER);
+            }
+
         }
 
         // Let developers validate their custom data (such as $this->data['other'], contextlevel, etc.).
