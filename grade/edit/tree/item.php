@@ -133,8 +133,11 @@ if ($mform->is_cancelled()) {
         $data->grademin = 0;
     }
 
-    $hidden      = empty($data->hidden) ? 0: $data->hidden;
-    $hiddenuntil = empty($data->hiddenuntil) ? 0: $data->hiddenuntil;
+    $hide = empty($data->hiddenuntil) ? 0 : $data->hiddenuntil;
+    if (!$hide) {
+        $hide = empty($data->hidden) ? 0 : $data->hidden;
+    }
+
     unset($data->hidden);
     unset($data->hiddenuntil);
 
@@ -185,11 +188,9 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    // update hiding flag
-    if ($hiddenuntil) {
-        $grade_item->set_hidden($hiddenuntil, false);
-    } else {
-        $grade_item->set_hidden($hidden, false);
+    if ($item->cancontrolvisibility) {
+        // Update hiding flag.
+        $grade_item->set_hidden($hide, false);
     }
 
     $grade_item->set_locktime($locktime); // locktime first - it might be removed when unlocking
