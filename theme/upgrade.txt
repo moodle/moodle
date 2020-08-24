@@ -1,7 +1,7 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
-=== 4.0 ===
+=== 3.10 ===
 * The Bootstrap legacy css utilities from Bootstrap 2 and 4alpha have been removed.
 The syntax for the new Bootstrap 4.5 utility classes is {property}{sides}-{breakpoint}-{size} for sm, md, lg, and xl.
 The size values are:
