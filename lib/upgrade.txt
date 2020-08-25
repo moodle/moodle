@@ -42,6 +42,7 @@ information provided here is intended especially for developers.
   be called before executing a task, and a new function \core\task\manager::get_running_tasks()
   returns information about currently-running tasks.
 * New library function rename_to_unused_name() to rename a file within its current location.
+* The ZipStream-PHP library has been added to Moodle core in /lib/zipstream.
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
