@@ -315,7 +315,7 @@ class core_moodle_page_testcase extends advanced_testcase {
         // By default formatting is applied and tags are removed.
         $this->testpage->set_heading('a heading <a href="#">edit</a><p>');
         $this->assertSame('a heading edit', $this->testpage->heading);
-        
+
         // Without formatting the tags are preserved but cleaned.
         $this->testpage->set_heading('a heading <a href="#">edit</a><p>', false);
         $this->assertSame('a heading <a href="#">edit</a><p></p>', $this->testpage->heading);
