@@ -121,6 +121,8 @@ if ($execute = $options['execute']) {
         exit(1);
     }
 
+    \core\task\manager::scheduled_task_starting($task);
+
     // Increase memory limit.
     raise_memory_limit(MEMORY_EXTRA);
 
