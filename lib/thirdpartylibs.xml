@@ -339,4 +339,10 @@
     <license>MIT</license>
     <version>2.0.1</version>
   </library>
+  <library>
+    <location>zipstream</location>
+    <name>ZipStream-PHP</name>
+    <license>MIT</license>
+    <version>2.1.0</version>
+  </library>
 </libraries>
