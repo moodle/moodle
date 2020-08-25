@@ -132,6 +132,11 @@ if (has_capability('tool/customlang:edit', context_system::instance())) {
             'method'    => 'post',
         );
     }
+    $menu['import'] = array(
+        'title'     => get_string('import', 'tool_customlang'),
+        'url'       => new moodle_url($PAGE->url, ['action' => 'checkout', 'lng' => $lng, 'next' => 'import']),
+        'method'    => 'post',
+    );
 }
 if (has_capability('tool/customlang:export', context_system::instance())) {
     $langdir = tool_customlang_utils::get_localpack_location($lng);
