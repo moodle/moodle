@@ -271,6 +271,16 @@ function theme_reset_all_caches() {
 }
 
 /**
+ * Reset static caches.
+ *
+ * This method indicates that all running cron processes should exit at the
+ * next opportunity.
+ */
+function theme_reset_static_caches() {
+    \core\task\manager::clear_static_caches();
+}
+
+/**
  * Enable or disable theme designer mode.
  *
  * @param bool $state
