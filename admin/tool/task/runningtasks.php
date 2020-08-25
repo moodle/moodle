@@ -39,6 +39,11 @@ admin_externalpage_setup('runningtasks');
 
 echo $OUTPUT->header();
 
+if (!get_config('core', 'cron_enabled')) {
+    $renderer = $PAGE->get_renderer('tool_task');
+    echo $renderer->cron_disabled();
+}
+
 $table = new \tool_task\running_tasks_table();
 $table->baseurl = $pageurl;
 $table->out(100, false);

@@ -39,6 +39,7 @@ $string['classname'] = 'Class name';
 $string['clearfaildelay_confirm'] = 'Are you sure you want to clear the fail delay for task \'{$a}\'? After clearing the delay, the task will run according to its normal schedule.';
 $string['component'] = 'Component';
 $string['corecomponent'] = 'Core';
+$string['crondisabled'] = 'Cron is disabled. No new tasks will be started. The system will not operate properly until it is enabled again.';
 $string['cronok'] = 'Cron is running frequently';
 $string['default'] = 'Default';
 $string['defaultx'] = 'Default: {$a}';
