@@ -351,4 +351,10 @@
     <license>MIT</license>
     <version>1.7.6</version>
   </library>
+  <library>
+    <location>http-message</location>
+    <name>http-message</name>
+    <license>MIT</license>
+    <version>1.0.1</version>
+  </library>
 </libraries>
