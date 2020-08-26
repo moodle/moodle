@@ -2392,7 +2392,7 @@ body {
   font-size: 0.9375rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #343a40;
+  color: #212529;
   text-align: left;
   background-color: #fff; }
 
@@ -3372,7 +3372,7 @@ pre {
 .generaltable {
   width: 100%;
   margin-bottom: 1rem;
-  color: #343a40; }
+  color: #212529; }
   .table th, table.collection th, table.flexible th, .generaltable th,
   .table td,
   table.collection td,
@@ -3420,7 +3420,7 @@ table#listdirectories td {
   background-color: rgba(0, 0, 0, 0.05); }
 
 .table-hover tbody tr:hover, table.grading-report tbody tr:hover, .forumheaderlist tbody tr:hover, .generaltable tbody tr:hover, table.flexible tbody tr:hover, .category_subcategories tbody tr:hover, table#modules tbody tr:hover, table#permissions tbody tr:hover {
-  color: #343a40;
+  color: #212529;
   background-color: rgba(0, 0, 0, 0.075); }
 
 .table-primary,
@@ -3791,7 +3791,7 @@ select.form-control:focus::-ms-value {
   padding-bottom: 0.375rem;
   margin-bottom: 0;
   line-height: 1.5;
-  color: #343a40;
+  color: #212529;
   background-color: transparent;
   border: solid transparent;
   border-width: 1px 0; }
@@ -4110,7 +4110,7 @@ div.backup-section + form {
 .btn, #page-grade-grading-manage .actions .action {
   display: inline-block;
   font-weight: 400;
-  color: #343a40;
+  color: #212529;
   text-align: center;
   vertical-align: middle;
   user-select: none;
@@ -4125,7 +4125,7 @@ div.backup-section + form {
     .btn, #page-grade-grading-manage .actions .action {
       transition: none; } }
   .btn:hover, #page-grade-grading-manage .actions .action:hover {
-    color: #343a40;
+    color: #212529;
     text-decoration: none; }
   .btn:focus, #page-grade-grading-manage .actions .action:focus, .btn.focus, #page-grade-grading-manage .actions .focus.action {
     outline: 0;
@@ -4591,7 +4591,7 @@ p.arrow_button input[type="button"],
   padding: 0.5rem 0;
   margin: 0.125rem 0 0;
   font-size: 0.9375rem;
-  color: #343a40;
+  color: #212529;
   text-align: left;
   list-style: none;
   background-color: #fff;
@@ -6254,7 +6254,7 @@ p.arrow_button input[type="button"],
     text-decoration: none;
     background-color: #f8f9fa; }
   .list-group-item-action:active {
-    color: #343a40;
+    color: #212529;
     background-color: #e9ecef; }
 
 .list-group-item {
@@ -6872,7 +6872,7 @@ a.close.disabled, .moodle-dialogue-base a.disabled.closebutton {
 
 .popover-body {
   padding: 0.5rem 0.75rem;
-  color: #343a40; }
+  color: #212529; }
 
 .carousel {
   position: relative; }
@@ -9479,7 +9479,7 @@ a.text-dark:hover, #categoryquestions a.highlight:hover, a.text-dark:focus, #cat
   color: #121416 !important; }
 
 .text-body {
-  color: #343a40 !important; }
+  color: #212529 !important; }
 
 .text-muted, a.dimmed,
 a.dimmed:link,
@@ -11470,7 +11470,7 @@ ul {
 .dropdown-item a {
   display: block;
   width: 100%;
-  color: #343a40; }
+  color: #212529; }
 
 .dropdown-item:active a {
   color: #fff; }
@@ -12349,7 +12349,7 @@ body.h5p-embed .h5pmessages {
 
 .block .block-controls .dropdown-toggle {
   /* So that the caret takes the colour of the icon. */
-  color: #343a40; }
+  color: #212529; }
 
 [data-region="blocks-column"] {
   width: 360px;
@@ -14902,7 +14902,7 @@ a.ygtvspacer:hover {
       direction: ltr; }
   .message-app .matchtext {
     background-color: #b5d9f9;
-    color: #343a40;
+    color: #212529;
     height: 1.5rem; }
   .message-app .contact-status {
     position: absolute;
@@ -15484,7 +15484,7 @@ body.jsenabled .questionflag input[type=checkbox] {
     margin: 0; }
 
 #page-mod-quiz-edit .questionbankwindow div.header .title {
-  color: #343a40; }
+  color: #212529; }
 
 #page-mod-quiz-edit div.container div.generalbox {
   background-color: transparent;
@@ -16149,7 +16149,7 @@ fieldset.coursesearchbox label {
   padding: 0.2em;
   margin: 0;
   cursor: pointer;
-  color: #343a40; }
+  color: #212529; }
 
 .form-autocomplete-suggestions li:hover {
   background-color: #3f9def;
@@ -16160,7 +16160,7 @@ fieldset.coursesearchbox label {
   color: #495057; }
 
 .form-autocomplete-downarrow {
-  color: #343a40;
+  color: #212529;
   top: 0.2rem;
   right: 0.5rem;
   cursor: pointer; }
@@ -16403,10 +16403,10 @@ select {
   font-weight: inherit; }
 
 .path-mod-forum .subscriptionmode {
-  color: #343a40; }
+  color: #212529; }
 
 .path-mod-forum .activesetting {
-  color: #343a40;
+  color: #212529;
   font-weight: bold; }
 
 .discussion-settings-container .custom-select {
