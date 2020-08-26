@@ -2382,7 +2382,7 @@ body {
   font-size: 0.9375rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #343a40;
+  color: #212529;
   text-align: left;
   background-color: #fff; }
   @media (max-width: 1200px) {
@@ -3513,7 +3513,7 @@ pre {
 .table {
   width: 100%;
   margin-bottom: 1rem;
-  color: #343a40; }
+  color: #212529; }
   .table th,
   .table td {
     padding: 0.75rem;
@@ -3548,7 +3548,7 @@ pre {
   background-color: rgba(0, 0, 0, 0.05); }
 
 .table-hover tbody tr:hover {
-  color: #343a40;
+  color: #212529;
   background-color: rgba(0, 0, 0, 0.075); }
 
 .table-primary,
@@ -3850,7 +3850,7 @@ select.form-control:focus::-ms-value {
   margin-bottom: 0;
   font-size: 0.9375rem;
   line-height: 1.5;
-  color: #343a40;
+  color: #212529;
   background-color: transparent;
   border: solid transparent;
   border-width: 1px 0; }
@@ -4132,7 +4132,7 @@ textarea.form-control {
 .btn {
   display: inline-block;
   font-weight: 400;
-  color: #343a40;
+  color: #212529;
   text-align: center;
   vertical-align: middle;
   user-select: none;
@@ -4150,7 +4150,7 @@ textarea.form-control {
     .btn {
       transition: none; } }
   .btn:hover {
-    color: #343a40;
+    color: #212529;
     text-decoration: none; }
   .btn:focus, .btn.focus {
     outline: 0;
@@ -4630,7 +4630,7 @@ input[type="button"].btn-block {
   padding: 0.5rem 0;
   margin: 0.125rem 0 0;
   font-size: 0.9375rem;
-  color: #343a40;
+  color: #212529;
   text-align: left;
   list-style: none;
   background-color: #fff;
@@ -6112,7 +6112,7 @@ input[type="button"].btn-block {
     text-decoration: none;
     background-color: #f8f9fa; }
   .list-group-item-action:active {
-    color: #343a40;
+    color: #212529;
     background-color: #e9ecef; }
 
 .list-group-item {
@@ -6694,7 +6694,7 @@ a.close.disabled {
 
 .popover-body {
   padding: 0.5rem 0.75rem;
-  color: #343a40; }
+  color: #212529; }
 
 .carousel {
   position: relative; }
@@ -9289,7 +9289,7 @@ a.text-dark:hover, a.text-dark:focus {
   color: #121416 !important; }
 
 .text-body {
-  color: #343a40 !important; }
+  color: #212529 !important; }
 
 .text-muted {
   color: #6c757d !important; }
@@ -11502,7 +11502,7 @@ ul {
   #page-footer a .icon {
     color: #fff; }
   #page-footer a:focus .icon {
-    color: #343a40; }
+    color: #212529; }
 
 .bg-inverse a {
   color: #fff;
@@ -11516,7 +11516,7 @@ ul {
 .dropdown-item a {
   display: block;
   width: 100%;
-  color: #343a40; }
+  color: #212529; }
 
 .dropdown-item:active a {
   color: #fff; }
@@ -11665,7 +11665,7 @@ body.h5p-embed .h5pmessages {
 
 .matchtext {
   background-color: #b5d9f9;
-  color: #343a40;
+  color: #212529;
   height: 1.5rem; }
 
 .emoji-picker {
@@ -12464,7 +12464,7 @@ body.h5p-embed .h5pmessages {
 
 .block .block-controls .dropdown-toggle {
   /* So that the caret takes the colour of the icon. */
-  color: #343a40; }
+  color: #212529; }
 
 [data-region="blocks-column"] {
   width: 360px;
@@ -15769,7 +15769,7 @@ body.jsenabled .questionflag input[type=checkbox] {
     margin: 0; }
 
 #page-mod-quiz-edit .questionbankwindow div.header .title {
-  color: #343a40; }
+  color: #212529; }
 
 #page-mod-quiz-edit div.container div.generalbox {
   background-color: transparent;
@@ -16433,7 +16433,7 @@ fieldset.coursesearchbox label {
   padding: 0.2em;
   margin: 0;
   cursor: pointer;
-  color: #343a40; }
+  color: #212529; }
 
 .form-autocomplete-suggestions li:hover {
   background-color: #3f9def;
@@ -16444,7 +16444,7 @@ fieldset.coursesearchbox label {
   color: #495057; }
 
 .form-autocomplete-downarrow {
-  color: #343a40;
+  color: #212529;
   top: 0.2rem;
   right: 0.5rem;
   cursor: pointer; }
@@ -16663,10 +16663,10 @@ select {
   font-weight: inherit; }
 
 .path-mod-forum .subscriptionmode {
-  color: #343a40; }
+  color: #212529; }
 
 .path-mod-forum .activesetting {
-  color: #343a40;
+  color: #212529;
   font-weight: bold; }
 
 .discussion-settings-container .custom-select {
@@ -17829,7 +17829,7 @@ div#dock {
 .generaltable {
   width: 100%;
   margin-bottom: 1rem;
-  color: #343a40; }
+  color: #212529; }
   .generaltable th,
   .generaltable td {
     padding: 0.75rem;
@@ -17846,7 +17846,7 @@ div#dock {
   .generaltable.table-sm td {
     padding: 0.3rem; }
   .generaltable tbody tr:hover {
-    color: #343a40;
+    color: #212529;
     background-color: rgba(0, 0, 0, 0.075); }
 
 table caption {
