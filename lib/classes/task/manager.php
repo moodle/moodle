@@ -255,6 +255,9 @@ class manager {
         $record->dayofweek = $task->get_day_of_week();
         $record->month = $task->get_month();
         $record->disabled = $task->get_disabled();
+        $record->timestarted = $task->get_timestarted();
+        $record->hostname = $task->get_hostname();
+        $record->pid = $task->get_pid();
 
         return $record;
     }
@@ -276,6 +279,9 @@ class manager {
         $record->customdata = $task->get_custom_data_as_string();
         $record->userid = $task->get_userid();
         $record->timecreated = time();
+        $record->timestarted = $task->get_timestarted();
+        $record->hostname = $task->get_hostname();
+        $record->pid = $task->get_pid();
 
         return $record;
     }
@@ -312,6 +318,15 @@ class manager {
 
         if (isset($record->userid)) {
             $task->set_userid($record->userid);
+        }
+        if (isset($record->timestarted)) {
+            $task->set_timestarted($record->timestarted);
+        }
+        if (isset($record->hostname)) {
+            $task->set_hostname($record->hostname);
+        }
+        if (isset($record->pid)) {
+            $task->set_pid($record->pid);
         }
 
         return $task;
@@ -366,6 +381,15 @@ class manager {
         }
         if (isset($record->disabled)) {
             $task->set_disabled($record->disabled);
+        }
+        if (isset($record->timestarted)) {
+            $task->set_timestarted($record->timestarted);
+        }
+        if (isset($record->hostname)) {
+            $task->set_hostname($record->hostname);
+        }
+        if (isset($record->pid)) {
+            $task->set_pid($record->pid);
         }
 
         return $task;
@@ -709,6 +733,9 @@ class manager {
      */
     public static function adhoc_task_failed(adhoc_task $task) {
         global $DB;
+        // Finalise the log output.
+        logmanager::finalise_log(true);
+
         $delay = $task->get_fail_delay();
 
         // Reschedule task with exponential fall off for failing tasks.
@@ -724,6 +751,9 @@ class manager {
         }
 
         // Reschedule and then release the locks.
+        $task->set_timestarted();
+        $task->set_hostname();
+        $task->set_pid();
         $task->set_next_run_time(time() + $delay);
         $task->set_fail_delay($delay);
         $record = self::record_from_adhoc_task($task);
@@ -734,9 +764,31 @@ class manager {
             $task->get_cron_lock()->release();
         }
         $task->get_lock()->release();
+    }
 
-        // Finalise the log output.
-        logmanager::finalise_log(true);
+    /**
+     * Records that a adhoc task is starting to run.
+     *
+     * @param adhoc_task $task Task that is starting
+     * @param int $time Start time (leave blank for now)
+     * @throws \dml_exception
+     * @throws \coding_exception
+     */
+    public static function adhoc_task_starting(adhoc_task $task, int $time = 0) {
+        global $DB;
+        $pid = (int)getmypid();
+        $hostname = (string)gethostname();
+
+        if (empty($time)) {
+            $time = time();
+        }
+
+        $task->set_timestarted($time);
+        $task->set_hostname($hostname);
+        $task->set_pid($pid);
+
+        $record = self::record_from_adhoc_task($task);
+        $DB->update_record('task_adhoc', $record);
     }
 
     /**
@@ -749,6 +801,9 @@ class manager {
 
         // Finalise the log output.
         logmanager::finalise_log();
+        $task->set_timestarted();
+        $task->set_hostname();
+        $task->set_pid();
 
         // Delete the adhoc task record - it is finished.
         $DB->delete_records('task_adhoc', array('id' => $task->get_id()));
@@ -768,6 +823,8 @@ class manager {
      */
     public static function scheduled_task_failed(scheduled_task $task) {
         global $DB;
+        // Finalise the log output.
+        logmanager::finalise_log(true);
 
         $delay = $task->get_fail_delay();
 
@@ -783,20 +840,24 @@ class manager {
             $delay = 86400;
         }
 
+        $task->set_timestarted();
+        $task->set_hostname();
+        $task->set_pid();
+
         $classname = self::get_canonical_class_name($task);
 
         $record = $DB->get_record('task_scheduled', array('classname' => $classname));
         $record->nextruntime = time() + $delay;
         $record->faildelay = $delay;
+        $record->timestarted = null;
+        $record->hostname = null;
+        $record->pid = null;
         $DB->update_record('task_scheduled', $record);
 
         if ($task->is_blocking()) {
             $task->get_cron_lock()->release();
         }
         $task->get_lock()->release();
-
-        // Finalise the log output.
-        logmanager::finalise_log(true);
     }
 
     /**
@@ -817,6 +878,34 @@ class manager {
     }
 
     /**
+     * Records that a scheduled task is starting to run.
+     *
+     * @param scheduled_task $task Task that is starting
+     * @param int $time Start time (0 = current)
+     * @throws \dml_exception If the task doesn't exist
+     */
+    public static function scheduled_task_starting(scheduled_task $task, int $time = 0) {
+        global $DB;
+        $pid = (int)getmypid();
+        $hostname = (string)gethostname();
+
+        if (!$time) {
+            $time = time();
+        }
+
+        $task->set_timestarted($time);
+        $task->set_hostname($hostname);
+        $task->set_pid($pid);
+
+        $classname = self::get_canonical_class_name($task);
+        $record = $DB->get_record('task_scheduled', ['classname' => $classname], '*', MUST_EXIST);
+        $record->timestarted = $time;
+        $record->hostname = $hostname;
+        $record->pid = $pid;
+        $DB->update_record('task_scheduled', $record);
+    }
+
+    /**
      * This function indicates that a scheduled task was completed successfully and should be rescheduled.
      *
      * @param \core\task\scheduled_task $task
@@ -826,6 +915,9 @@ class manager {
 
         // Finalise the log output.
         logmanager::finalise_log();
+        $task->set_timestarted();
+        $task->set_hostname();
+        $task->set_pid();
 
         $classname = self::get_canonical_class_name($task);
         $record = $DB->get_record('task_scheduled', array('classname' => $classname));
@@ -833,6 +925,9 @@ class manager {
             $record->lastruntime = time();
             $record->faildelay = 0;
             $record->nextruntime = $task->get_next_scheduled_time();
+            $record->timestarted = null;
+            $record->hostname = null;
+            $record->pid = null;
 
             $DB->update_record('task_scheduled', $record);
         }
@@ -842,6 +937,47 @@ class manager {
             $task->get_cron_lock()->release();
         }
         $task->get_lock()->release();
+    }
+
+    /**
+     * Gets a list of currently-running tasks.
+     *
+     * @param  string $sort Sorting method
+     * @return array Array of scheduled and adhoc tasks
+     * @throws \dml_exception
+     */
+    public static function get_running_tasks($sort = ''): array {
+        global $DB;
+        if (empty($sort)) {
+            $sort = 'timestarted ASC, classname ASC';
+        }
+        $params = ['now1' => time(), 'now2' => time()];
+
+        $sql = "SELECT subquery.*
+                  FROM (SELECT concat('s', ts.id) as uniqueid,
+                               ts.id,
+                               'scheduled' as type,
+                               ts.classname,
+                               (:now1 - ts.timestarted) as time,
+                               ts.timestarted,
+                               ts.hostname,
+                               ts.pid
+                          FROM {task_scheduled} ts
+                         WHERE ts.timestarted IS NOT NULL
+                         UNION ALL
+                        SELECT concat('a', ta.id) as uniqueid,
+                               ta.id,
+                               'adhoc' as type,
+                               ta.classname,
+                               (:now2 - ta.timestarted) as time,
+                               ta.timestarted,
+                               ta.hostname,
+                               ta.pid
+                          FROM {task_adhoc} ta
+                         WHERE ta.timestarted IS NOT NULL) subquery
+              ORDER BY " . $sort;
+
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
@@ -959,7 +1095,7 @@ class manager {
 
             // Shell-escaped task name.
             $classname = get_class($task);
-            $taskarg   = escapeshellarg("--execute={$classname}");
+            $taskarg   = escapeshellarg("--execute={$classname}") . " " . escapeshellarg("--force");
 
             // Build the CLI command.
             $command = "{$phpbinary} {$scriptpath} {$taskarg}";

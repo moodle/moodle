@@ -33,4 +33,13 @@ if ($hassiteconfig) {
             "$CFG->wwwroot/$CFG->admin/tool/task/scheduledtasks.php"
         )
     );
+
+    $ADMIN->add(
+        'taskconfig',
+        new admin_externalpage(
+            'runningtasks',
+            new lang_string('runningtasks', 'tool_task'),
+            "$CFG->wwwroot/$CFG->admin/tool/task/runningtasks.php"
+        )
+    );
 }

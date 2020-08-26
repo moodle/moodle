@@ -57,6 +57,8 @@ class task_log_table extends \table_sql {
             'userid'     => get_string('user', 'admin'),
             'timestart'  => get_string('task_starttime', 'admin'),
             'duration'   => get_string('task_duration', 'admin'),
+            'hostname'   => get_string('hostname', 'tool_task'),
+            'pid'        => get_string('pid', 'tool_task'),
             'db'         => get_string('task_dbstats', 'admin'),
             'result'     => get_string('task_result', 'admin'),
             'actions'    => '',
@@ -132,6 +134,7 @@ class task_log_table extends \table_sql {
 
         $sql = "SELECT
                     tl.id, tl.type, tl.component, tl.classname, tl.userid, tl.timestart, tl.timeend,
+                    tl.hostname, tl.pid,
                     tl.dbreads, tl.dbwrites, tl.result,
                     tl.dbreads + tl.dbwrites AS db,
                     tl.timeend - tl.timestart AS duration,
