@@ -2576,7 +2576,6 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021052500.04) {
-
         // Define field metadatasettings to be added to h5p_libraries.
         $table = new xmldb_table('h5p_libraries');
         $field = new xmldb_field('metadatasettings', XMLDB_TYPE_TEXT, null, null, null, null, null, 'coreminor');
@@ -2614,6 +2613,52 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2021052500.04);
+    }
+
+    if ($oldversion < 2021052500.05) {
+        // Define fields to be added to task_scheduled.
+        $table = new xmldb_table('task_scheduled');
+        $field = new xmldb_field('timestarted', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'disabled');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('hostname', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'timestarted');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('pid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'hostname');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define fields to be added to task_adhoc.
+        $table = new xmldb_table('task_adhoc');
+        $field = new xmldb_field('timestarted', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'blocking');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('hostname', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'timestarted');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('pid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'hostname');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define fields to be added to task_log.
+        $table = new xmldb_table('task_log');
+        $field = new xmldb_field('hostname', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'output');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('pid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'hostname');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.05);
     }
 
     return true;

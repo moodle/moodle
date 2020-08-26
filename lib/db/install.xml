@@ -3352,6 +3352,9 @@
         <FIELD NAME="faildelay" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="customised" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Used on upgrades to prevent overwriting custom schedules."/>
         <FIELD NAME="disabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 means do not run from cron"/>
+        <FIELD NAME="timestarted" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time when the task was started"/>
+        <FIELD NAME="hostname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Hostname where the task is running"/>
+        <FIELD NAME="pid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="PHP process ID that is running the task"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -3371,6 +3374,9 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="blocking" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp of adhoc task creation"/>
+        <FIELD NAME="timestarted" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time when the task was started"/>
+        <FIELD NAME="hostname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Hostname where the task is running"/>
+        <FIELD NAME="pid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="PHP process ID that is running the task"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -3393,6 +3399,8 @@
         <FIELD NAME="dbwrites" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The number of DB writes performed during the task."/>
         <FIELD NAME="result" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="Whether the task was successful or not. 0 = pass; 1 = fail."/>
         <FIELD NAME="output" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="hostname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Hostname where the task was executed"/>
+        <FIELD NAME="pid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="PHP process ID that was running the task"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -37,11 +37,13 @@ list($options, $unrecognized) = cli_get_params(
         'showsql' => false,
         'showdebugging' => false,
         'ignorelimits' => false,
+        'force' => false,
     ], [
         'h' => 'help',
         'e' => 'execute',
         'k' => 'keep-alive',
         'i' => 'ignorelimits',
+        'f' => 'force',
     ]
 );
 
@@ -61,6 +63,7 @@ Options:
  -e, --execute             Run all queued adhoc tasks
  -k, --keep-alive=N        Keep this script alive for N seconds and poll for new adhoc tasks
  -i  --ignorelimits        Ignore task_adhoc_concurrency_limit and task_adhoc_max_runtime limits
+ -f, --force               Run even if cron is disabled
 
 Example:
 \$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --execute
@@ -92,6 +95,12 @@ if (moodle_needs_upgrading()) {
 if (empty($options['execute'])) {
     exit(0);
 }
+
+if (!get_config('core', 'cron_enabled') && !$options['force']) {
+    mtrace('Cron is disabled. Use --force to override.');
+    exit(1);
+}
+
 if (empty($options['keep-alive'])) {
     $options['keep-alive'] = 0;
 }
