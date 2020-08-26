@@ -106,6 +106,7 @@ class core_component {
         'Firebase\\JWT' => 'lib/php-jwt/src',
         'ZipStream' => 'lib/zipstream/src/',
         'MyCLabs\\Enum' => 'lib/php-enum/src',
+        'Psr\\Http\\Message' => 'lib/http-message/src',
     );
 
     /**
