@@ -61,19 +61,15 @@ class task_running_testcase extends \advanced_testcase {
         $running = manager::get_running_tasks();
         $this->assertEmpty($running);
 
-        // Mark the first task running and check results. Because adhoc tasks are pseudo-randomly
-        // shuffled, it is safer if we can cope with either of them being first.
+        // Mark the first task running and check results.
         $before = time();
         $next1 = manager::get_next_adhoc_task(time());
-        $task2goesfirst = get_class($next1) === 'core\task\adhoc_test2_task';
         manager::adhoc_task_starting($next1);
         $after = time();
         $running = manager::get_running_tasks();
         $this->assertCount(1, $running);
         foreach ($running as $item) {
             $this->assertEquals('adhoc', $item->type);
-            $this->assertEquals($task2goesfirst ? '\core\task\adhoc_test2_task' : '\core\task\adhoc_test_task',
-                $item->classname);
             $this->assertLessThanOrEqual($after, $item->timestarted);
             $this->assertGreaterThanOrEqual($before, $item->timestarted);
         }
@@ -83,26 +79,11 @@ class task_running_testcase extends \advanced_testcase {
         manager::adhoc_task_starting($next2);
         $running = manager::get_running_tasks();
         $this->assertCount(2, $running);
-        if ($task2goesfirst) {
-            $item = array_shift($running);
-            $this->assertEquals('\core\task\adhoc_test2_task', $item->classname);
-            $item = array_shift($running);
-            $this->assertEquals('\core\task\adhoc_test_task', $item->classname);
-        } else {
-            $item = array_shift($running);
-            $this->assertEquals('\core\task\adhoc_test_task', $item->classname);
-            $item = array_shift($running);
-            $this->assertEquals('\core\task\adhoc_test2_task', $item->classname);
-        }
 
         // Second task completes successfully.
         manager::adhoc_task_complete($next2);
         $running = manager::get_running_tasks();
         $this->assertCount(1, $running);
-        foreach ($running as $item) {
-            $this->assertEquals($task2goesfirst ? '\core\task\adhoc_test2_task' : '\core\task\adhoc_test_task',
-                $item->classname);
-        }
 
         // First task fails.
         manager::adhoc_task_failed($next1);
