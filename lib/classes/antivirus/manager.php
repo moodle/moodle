@@ -67,15 +67,50 @@ class manager {
      * @return void
      */
     public static function scan_file($file, $filename, $deleteinfected) {
+        global $USER;
         $antiviruses = self::get_enabled();
         foreach ($antiviruses as $antivirus) {
-            $result = $antivirus->scan_file($file, $filename);
+            // Attempt to scan, catching internal exceptions.
+            try {
+                $result = $antivirus->scan_file($file, $filename);
+            } catch (\core\antivirus\scanner_exception $e) {
+                // If there was a scanner exception (such as ClamAV denying upload), send messages and rethrow.
+                $notice = $antivirus->get_scanning_notice();
+                $incidentdetails = $antivirus->get_incident_details($file, $filename, $notice, false);
+                self::send_antivirus_messages($antivirus, $incidentdetails);
+                throw $e;
+            }
+
+            $notice = $antivirus->get_scanning_notice();
             if ($result === $antivirus::SCAN_RESULT_FOUND) {
-                // Infection found.
+                // Infection found, send notification.
+                $incidentdetails = $antivirus->get_incident_details($file, $filename, $notice);
+                self::send_antivirus_messages($antivirus, $incidentdetails);
+
+                // Move to quarantine folder.
+                $zipfile = \core\antivirus\quarantine::quarantine_file($file, $filename, $incidentdetails, $notice);
+                // If file not stored due to disabled quarantine, store a message.
+                if (empty($zipfile)) {
+                    $zipfile = get_string('quarantinedisabled', 'antivirus');
+                }
+
+                // Log file infected event.
+                $params = [
+                    'context' => \context_system::instance(),
+                    'relateduserid' => $USER->id,
+                    'other' => ['filename' => $filename, 'zipfile' => $zipfile, 'incidentdetails' => $incidentdetails],
+                ];
+                $event = \core\event\virus_infected_file_detected::create($params);
+                $event->trigger();
+
                 if ($deleteinfected) {
                     unlink($file);
                 }
                 throw new \core\antivirus\scanner_exception('virusfound', '', array('item' => $filename));
+            } else if ($result === $antivirus::SCAN_RESULT_ERROR) {
+                // Here we need to generate a different incident based on an error.
+                $incidentdetails = $antivirus->get_incident_details($file, $filename, $notice, false);
+                self::send_antivirus_messages($antivirus, $incidentdetails);
             }
         }
     }
@@ -83,16 +118,56 @@ class manager {
     /**
      * Scan data steam using all enabled antiviruses, throws exception in case of infected data.
      *
-     * @param string $data The varaible containing the data to scan.
+     * @param string $data The variable containing the data to scan.
      * @throws \core\antivirus\scanner_exception If data is infected.
      * @return void
      */
     public static function scan_data($data) {
+        global $USER;
         $antiviruses = self::get_enabled();
         foreach ($antiviruses as $antivirus) {
-            $result = $antivirus->scan_data($data);
+            // Attempt to scan, catching internal exceptions.
+            try {
+                $result = $antivirus->scan_data($data);
+            } catch (\core\antivirus\scanner_exception $e) {
+                // If there was a scanner exception (such as ClamAV denying upload), send messages and rethrow.
+                $notice = $antivirus->get_scanning_notice();
+                $filename = get_string('datastream', 'antivirus');
+                $incidentdetails = $antivirus->get_incident_details('', $filename, $notice, false);
+                self::send_antivirus_messages($antivirus, $incidentdetails);
+
+                throw $e;
+            }
+
+            $filename = get_string('datastream', 'antivirus');
+            $notice = $antivirus->get_scanning_notice();
+
             if ($result === $antivirus::SCAN_RESULT_FOUND) {
+                // Infection found, send notification.
+                $incidentdetails = $antivirus->get_incident_details('', $filename, $notice);
+                self::send_antivirus_messages($antivirus, $incidentdetails);
+
+                // Copy data to quarantine folder.
+                $zipfile = \core\antivirus\quarantine::quarantine_data($data, $filename, $incidentdetails, $notice);
+                // If file not stored due to disabled quarantine, store a message.
+                if (empty($zipfile)) {
+                    $zipfile = get_string('quarantinedisabled', 'antivirus');
+                }
+
+                // Log file infected event.
+                $params = [
+                    'context' => \context_system::instance(),
+                    'relateduserid' => $USER->id,
+                    'other' => ['filename' => $filename, 'zipfile' => $zipfile, 'incidentdetails' => $incidentdetails],
+                ];
+                $event = \core\event\virus_infected_data_detected::create($params);
+                $event->trigger();
+
                 throw new \core\antivirus\scanner_exception('virusfound', '', array('item' => get_string('datastream', 'antivirus')));
+            } else if ($result === $antivirus::SCAN_RESULT_ERROR) {
+                // Here we need to generate a different incident based on an error.
+                $incidentdetails = $antivirus->get_incident_details('', $filename, $notice, false);
+                self::send_antivirus_messages($antivirus, $incidentdetails);
             }
         }
     }
@@ -124,5 +199,54 @@ class manager {
             $antiviruses[$antivirusname] = get_string('pluginname', 'antivirus_'.$antivirusname);
         }
         return $antiviruses;
+    }
+
+    /**
+     * This function puts all relevant information into the messages required, and sends them.
+     *
+     * @param \core\antivirus\scanner $antivirus the scanner engine.
+     * @param string $incidentdetails details of the incident.
+     * @return void
+     */
+    public static function send_antivirus_messages(\core\antivirus\scanner $antivirus, string $incidentdetails) {
+        $messages = $antivirus->get_messages();
+
+        // If there is no messages, and a virus is found, we should generate one, then send it.
+        if (empty($messages)) {
+            $antivirus->message_admins($antivirus->get_scanning_notice(), FORMAT_MOODLE, 'infected');
+            $messages = $antivirus->get_messages();
+        }
+
+        foreach ($messages as $message) {
+
+            // Check if the information is already in the current scanning notice.
+            if (!empty($antivirus->get_scanning_notice()) &&
+                strpos($antivirus->get_scanning_notice(), $message->fullmessage) === false) {
+                // This is some extra information. We should append this to the end of the incident details.
+                $incidentdetails .= \html_writer::tag('pre', $message->fullmessage);
+            }
+
+            // Now update the message to the detailed version, and format.
+            $message->name = 'infected';
+            $message->fullmessagehtml = $incidentdetails;
+            $message->fullmessageformat = FORMAT_MOODLE;
+            $message->fullmessage = format_text_email($incidentdetails, $message->fullmessageformat);
+
+            // Now we must check if message is going to a real account.
+            // It may be an email that needs to be sent to non-user address.
+            if ($message->userto->id === -1) {
+                // If this doesnt exist, send a regular email.
+                email_to_user(
+                    $message->userto,
+                    get_admin(),
+                    $message->subject,
+                    $message->fullmessage,
+                    $message->fullmessagehtml
+                );
+            } else {
+                // And now we can send.
+                message_send($message);
+            }
+        }
     }
 }
