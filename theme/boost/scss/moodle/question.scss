@@ -245,7 +245,7 @@ body.path-question-type {
     width: 7em;
     padding: 0.5em;
     margin-bottom: 1.8em;
-    background-color: $gray-300;
+    background-color: $gray-100;
     border: 1px solid darken($gray-300, 7%);
 
     @include border-radius(2px);
@@ -292,11 +292,15 @@ body.path-question-type {
 }
 .que .outcome,
 .que .comment {
-    @include alert-variant(theme-color-level('warning', $alert-bg-level), theme-color-level('warning', $alert-border-level), theme-color-level('warning', $alert-color-level)); /* stylelint-disable-line max-line-length */
+    @include alert-variant(theme-color-level('warning', $alert-bg-level), theme-color-level('warning', $alert-border-level), theme-color-level('warning', $alert-color-level - 0.9)); /* stylelint-disable-line max-line-length */
+    // Darken link colour inside comments for better colour contrast against regular text.
+    a {
+        color: darken($link-color, 30%);
+    }
 }
 
 .que .formulation {
-    @include alert-variant(theme-color-level('info', $alert-bg-level), theme-color-level('info', $alert-border-level), theme-color-level('info', $alert-color-level)); /* stylelint-disable-line max-line-length */
+    @include alert-variant(theme-color-level('info', $alert-bg-level - 1.30), theme-color-level('info', $alert-border-level), theme-color-level('info', $alert-color-level + 4)); /* stylelint-disable-line max-line-length */
 }
 
 .que.multichoice .answer div.r0 .icon.fa-check,
