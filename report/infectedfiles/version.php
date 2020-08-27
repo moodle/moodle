@@ -25,6 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2020031800;
+$plugin->version   = 2020061500;
 $plugin->requires  = 2019111200;
 $plugin->component = 'report_infectedfiles';
