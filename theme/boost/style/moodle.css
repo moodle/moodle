@@ -5965,25 +5965,23 @@ p.arrow_button input[type="button"],
   .alert-success .alert-link, .que .comment .alert-link {
     color: #0c1b0b; }
 
-.alert-info, #page-admin-index .releasenoteslink, #adminsettings .form-overridden, .que .formulation, .assignfeedback_editpdf_widget .label {
+.alert-info, #page-admin-index .releasenoteslink, #adminsettings .form-overridden, .assignfeedback_editpdf_widget .label {
   color: #00434e;
   background-color: #cce6ea;
   border-color: #b8dce2; }
-  .alert-info hr, #page-admin-index .releasenoteslink hr, #adminsettings .form-overridden hr, .que .formulation hr, .assignfeedback_editpdf_widget .label hr {
+  .alert-info hr, #page-admin-index .releasenoteslink hr, #adminsettings .form-overridden hr, .assignfeedback_editpdf_widget .label hr {
     border-top-color: #a6d3db; }
-  .alert-info .alert-link, #page-admin-index .releasenoteslink .alert-link, #adminsettings .form-overridden .alert-link, .que .formulation .alert-link, .assignfeedback_editpdf_widget .label .alert-link {
+  .alert-info .alert-link, #page-admin-index .releasenoteslink .alert-link, #adminsettings .form-overridden .alert-link, .assignfeedback_editpdf_widget .label .alert-link {
     color: #00171b; }
 
 .alert-warning,
-#page-admin-index .adminwarning, .uninstalldeleteconfirmexternal,
-.que .outcome,
-.que .comment {
+#page-admin-index .adminwarning, .uninstalldeleteconfirmexternal {
   color: #7d5a29;
   background-color: #fcefdc;
   border-color: #fbe8cd; }
-  .alert-warning hr, #page-admin-index .adminwarning hr, .uninstalldeleteconfirmexternal hr, .que .outcome hr, .que .comment hr {
+  .alert-warning hr, #page-admin-index .adminwarning hr, .uninstalldeleteconfirmexternal hr {
     border-top-color: #f9ddb5; }
-  .alert-warning .alert-link, #page-admin-index .adminwarning .alert-link, .uninstalldeleteconfirmexternal .alert-link, .que .outcome .alert-link, .que .comment .alert-link {
+  .alert-warning .alert-link, #page-admin-index .adminwarning .alert-link, .uninstalldeleteconfirmexternal .alert-link {
     color: #573e1c; }
 
 .alert-danger,
@@ -11491,10 +11489,10 @@ body.h5p-embed .h5pmessages {
 .alert-success a, .que .comment a {
   color: #0c1b0b; }
 
-.alert-info a, #page-admin-index .releasenoteslink a, #adminsettings .form-overridden a, .que .formulation a, .assignfeedback_editpdf_widget .label a {
+.alert-info a, #page-admin-index .releasenoteslink a, #adminsettings .form-overridden a, .assignfeedback_editpdf_widget .label a {
   color: #00171b; }
 
-.alert-warning a, #page-admin-index .adminwarning a, .uninstalldeleteconfirmexternal a, .que .outcome a, .que .comment a {
+.alert-warning a, #page-admin-index .adminwarning a, .uninstalldeleteconfirmexternal a {
   color: #573e1c; }
 
 .alert-danger a, #page-admin-index .adminerror a {
@@ -15104,7 +15102,7 @@ body.path-question-type {
   width: 7em;
   padding: 0.5em;
   margin-bottom: 1.8em;
-  background-color: #dee2e6;
+  background-color: #f8f9fa;
   border: 1px solid #cad0d7; }
 
 .que h3.no {
@@ -15130,6 +15128,32 @@ body.path-question-type {
 
 .que .content {
   margin: 0 0 0 8.5em; }
+
+.que .outcome,
+.que .comment {
+  color: #8e662e;
+  background-color: #fcefdc;
+  border-color: #fbe8cd;
+  /* stylelint-disable-line max-line-length */ }
+  .que .outcome hr,
+  .que .comment hr {
+    border-top-color: #f9ddb5; }
+  .que .outcome .alert-link,
+  .que .comment .alert-link {
+    color: #674a22; }
+  .que .outcome a,
+  .que .comment a {
+    color: #041f37; }
+
+.que .formulation {
+  color: #001a1e;
+  background-color: #e7f3f5;
+  border-color: #b8dce2;
+  /* stylelint-disable-line max-line-length */ }
+  .que .formulation hr {
+    border-top-color: #a6d3db; }
+  .que .formulation .alert-link {
+    color: black; }
 
 .que.multichoice .answer div.r0 .icon.fa-check,
 .que.multichoice .answer div.r1 .icon.fa-check,
