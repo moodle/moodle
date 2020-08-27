@@ -1,0 +1,80 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/infected_file_email
+
+    Moodle template for infected files emails.
+
+    Context variables required for this template:
+    * report - Hyperlink to the report page,
+    * scanner - Scanning engine that found this file,
+    * filename - Name of the infected file,
+    * filesize - Size of the file,
+    * contenthash - File content hash,
+    * contenttype - Type of uploaded file,
+    * author - User that uploaded the file,
+    * ipaddress - IP address the file was uploaded from,
+    * geoinfo - Geo information about IP address,
+    * referer - The referring page,
+    * identityproviders - List of identiy providers,
+    * date - Date of upload
+    * notice - Notice returned from the scanning engine
+    * additionalinfo - Any additional information from the scanning engine
+
+    Example context (json):
+    {
+        "header": "Infected file detected",
+        "report": "http://example.moodle/report/infectedfiles/index.php",
+        "scanner": "antivirus_clamav",
+        "filename": "virus.txt",
+        "filesize": 100,
+        "contenthash": "3395856ce81f2b7382dee72602f798b642f14140",
+        "contenttype": "text/plain",
+        "author": "Example User (exampleuser)",
+        "ipaddress": "192.168.0.1",
+        "geoinfo": "Brisbane, Australia",
+        "referer": "http://example.moodle/user/files.php",
+        "date": "28/05/20, 11:19",
+        "notice": "Clamav scanning has tried 1 time(s). ClamAV has failed to run.",
+        "additionalinfo": "Here is the output from ClamAV: /tmp/phpElIcr2: Not a regular file ERROR"
+    }
+}}
+
+<div>
+<b>{{header}}</b>
+    <div>
+        <p><b>{{#str}} emailreport, antivirus {{/str}}</b><a href={{report}}>{{report}}</a></p>
+        <p><b>{{#str}} emailscanner, antivirus {{/str}}</b>{{scanner}}</p>
+        <br>
+        <p><b>{{#str}} emailfilename, antivirus {{/str}}</b>{{filename}}</p>
+        <p><b>{{#str}} emailfilesize, antivirus {{/str}}</b>{{filesize}}</p>
+        <p><b>{{#str}} emailcontenthash, antivirus {{/str}}</b>{{contenthash}}</p>
+        <p><b>{{#str}} emailcontenttype, antivirus {{/str}}</b>{{contenttype}}</p>
+        <p><b>{{#str}} emaildate, antivirus {{/str}}</b>{{date}}</p>
+        <br>
+        <p><b>{{#str}} emailauthor, antivirus {{/str}}</b>{{author}}</p>
+        <p><b>{{#str}} emailipaddress, antivirus {{/str}}</b>{{ipaddress}}</p>
+        <p><b>{{#str}} emailgeoinfo, antivirus {{/str}}</b>{{geoinfo}}</p>
+        <p><b>{{#str}} emailreferer, antivirus {{/str}}</b><a href={{referer}}>{{referer}}</a></p>
+    </div>
+    <div>
+        <br>
+        <pre>{{notice}}</pre>
+        <br>
+        <p><b>{{#str}} emailadditionalinfo, antivirus {{/str}} </b></p>
+    </div>
+</div>
