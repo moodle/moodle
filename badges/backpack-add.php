@@ -105,6 +105,18 @@ if (!empty($issuedbadge->recipient->id)) {
         $assertionentityid = badges_generate_badgr_open_url($sitebackpack, OPEN_BADGES_V2_TYPE_ASSERTION, $response->id);
         badges_external_create_mapping($sitebackpack->id, OPEN_BADGES_V2_TYPE_ASSERTION, $assertionid,
             $response->id);
+    } else {
+        // An assertion already exists. Make sure it's up to date.
+        $internalid = badges_external_get_mapping(
+            $sitebackpack->id,
+            OPEN_BADGES_V2_TYPE_ASSERTION,
+            $assertionid,
+            'externalid'
+        );
+        $response = $api->update_assertion($internalid, $assertiondata);
+        if (!$response) {
+            throw new moodle_exception('invalidrequest', 'error');
+        }
     }
 
     // Now award/upload the badge to the user's account.

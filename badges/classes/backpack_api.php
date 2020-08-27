@@ -225,6 +225,17 @@ class backpack_api {
                     true,                                       // JSON Encoded.
                     true                                        // Auth required.
                 ];
+                $mapping[] = [
+                    'updateassertion',                                // Action.
+                    '[URL]/assertions/[PARAM2]?expand=badgeclass&expand=issuer',
+                    '[PARAM]',                                  // Post params.
+                    'core_badges\external\assertion_exporter', // Request exporter.
+                    'core_badges\external\assertion_exporter', // Response exporter.
+                    false,                                      // Multiple.
+                    'put',                                     // Method.
+                    true,                                       // JSON Encoded.
+                    true                                        // Auth required.
+                ];
                 foreach ($mapping as $map) {
                     $map[] = false; // Site api function.
                     $map[] = OPEN_BADGES_V2; // V2 function.
@@ -417,6 +428,22 @@ class backpack_api {
         }
 
         return $this->curl_request('assertions', null, $entityid, $data);
+    }
+
+    /**
+     * Update a badgeclass assertion.
+     *
+     * @param string $entityid The id of the badge class.
+     * @param array $data The structure of the badge class assertion.
+     * @return mixed
+     */
+    public function update_assertion(string $entityid, array $data) {
+        // V2 Only.
+        if ($this->backpackapiversion == OPEN_BADGES_V1) {
+            throw new coding_exception('Not supported in this backpack API');
+        }
+
+        return $this->curl_request('updateassertion', null, $entityid, $data);
     }
 
     /**
