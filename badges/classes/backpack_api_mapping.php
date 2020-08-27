@@ -362,6 +362,8 @@ class backpack_api_mapping {
             $response = $curl->get($url, $post, $options);
         } else if ($this->method == 'post') {
             $response = $curl->post($url, $post, $options);
+        } else if ($this->method == 'put') {
+            $response = $curl->put($url, $post, $options);
         }
         $response = json_decode($response);
         if (isset($response->result)) {

@@ -155,7 +155,7 @@ class external_backpack extends \moodleform {
      * Add backpack specific auth details.
      *
      * @param string|null $email The email addressed provided or null if it's new.
-     * @param boolean|true $includepassword Include the password field.
+     * @param bool $includepassword Include the password field. Defaults to true
      * @throws \coding_exception
      */
     protected function add_auth_fields(?string $email, bool $includepassword = true) {
