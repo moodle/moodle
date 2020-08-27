@@ -30,16 +30,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['clianswerno'] = 'e';
-$string['cliansweryes'] = 'b';
-$string['cliincorrectvalueerror'] = 'Errorea, "{$a->value}" balioa ez da egokia "{$a->option}"-rako';
-$string['cliincorrectvalueretry'] = 'Balio ezegokia, mesedez saiatu berriz';
-$string['clitypevalue'] = 'Sartu balioa';
-$string['clitypevaluedefault'] = 'sartu balioa, sakatu Enter-i lehenetsitako balioa erabiltzeko ({$a})';
-$string['cliunknowoption'] = 'Aukera ezezagunak:
- {$a}
-Mesedez, erabili --help aukera.';
-$string['cliyesnoprompt'] = 'idatzi b (bai esateko) edo e (ez esateko)';
-$string['environmentrequireinstall'] = 'derrigorrezkoa da instalatuta eta gaituta izatea';
-$string['environmentrequireversion'] = '{$a->needed} bertsioa beharrezkoa da eta zu {$a->current} ari zara exekutatzen';
-$string['upgradekeyset'] = 'Eguneraketa-kodea (utzi hutsik kodea erabili nahi ez baduzu)';
+$string['language'] = 'زبان';
+$string['moodlelogo'] = 'لوگوی مودل (Moodle)';
+$string['next'] = 'بعدی';
+$string['previous'] = 'قبلی';
+$string['reload'] = 'بارگیری مجدد';
