@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the block_html implementation of the privacy API.
+ * Unit tests for the tool_usertours implementation of the privacy API.
  *
- * @package    block_html
+ * @package    tool_usertours
  * @category   test
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,18 +27,16 @@ defined('MOODLE_INTERNAL') || die();
 
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\writer;
-use \core_privacy\local\request\approved_contextlist;
-use \core_privacy\local\request\deletion_criteria;
 use \tool_usertours\tour;
 use \tool_usertours\privacy\provider;
 
 /**
- * Unit tests for the block_html implementation of the privacy API.
+ * Unit tests for the tool_usertours implementation of the privacy API.
  *
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_usertours_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class tool_usertours_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
 
     /**
      * Ensure that get_metadata exports valid content.
@@ -111,6 +109,40 @@ class tool_usertours_privacy_testcase extends \core_privacy\tests\provider_testc
         $prefs = $writer->get_user_preferences('tool_usertours');
 
         $this->assertCount(2, (array) $prefs);
+    }
+
+    /**
+     * Make sure we are exporting preferences for the correct user
+     */
+    public function test_export_user_preferences_correct_user(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $alltours = $DB->get_records('tool_usertours_tours');
+        $tour = tour::instance(reset($alltours)->id);
+
+        // Create test user, mark them as having completed the tour.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $tour->mark_user_completed();
+
+        // Switch to admin user, mark them as having reset the tour.
+        $this->setAdminUser();
+        $tour->request_user_reset();
+
+        // Export test users preferences.
+        provider::export_user_preferences($user->id);
+
+        $writer = writer::with_context(\context_system::instance());
+        $this->assertTrue($writer->has_any_data());
+
+        $prefs = $writer->get_user_preferences('tool_usertours');
+        $this->assertCount(1, (array) $prefs);
+
+        // We should have received back the "completed tour" preference of the test user.
+        $this->assertStringStartsWith('You last marked the "' . $tour->get_name() . '" user tour as completed on',
+            reset($prefs)->description);
     }
 
     /**
