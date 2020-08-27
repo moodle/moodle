@@ -41,5 +41,5 @@ $string['cliunknowoption'] = 'Aukera ezezagunak:
 Mesedez, erabili --help aukera.';
 $string['cliyesnoprompt'] = 'idatzi b (bai esateko) edo e (ez esateko)';
 $string['environmentrequireinstall'] = 'derrigorrezkoa da instalatuta eta gaituta izatea';
-$string['environmentrequireversion'] = '{$a->needed} bertsioa beharrezkoa da eta zu {$a->current} ari zara egikaritzen';
+$string['environmentrequireversion'] = '{$a->needed} bertsioa beharrezkoa da eta zu {$a->current} ari zara exekutatzen';
 $string['upgradekeyset'] = 'Eguneraketa-kodea (utzi hutsik kodea erabili nahi ez baduzu)';
