@@ -7,6 +7,10 @@
     position: relative;
 }
 
+.block_online_users .content .list li.listentry .otherusers {
+    margin-left: 1.5rem;
+}
+
 .block_online_users .content .list li.listentry .user .userpicture {
     vertical-align: text-bottom;
 }
