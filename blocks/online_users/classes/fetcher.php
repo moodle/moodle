@@ -76,7 +76,7 @@ class fetcher {
         $timeaccess    = ", ul.timeaccess AS lastaccess";
         $params = array();
 
-        $userfields = \user_picture::fields('u', array('username'));
+        $userfields = \user_picture::fields('u', array('username', 'deleted'));
 
         // Add this to the SQL to show only group users.
         if ($currentgroup !== null) {

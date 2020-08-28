@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['otherusers'] = 'Other Users ({$a})';
 $string['configtimetosee'] = 'Number of minutes determining the period of inactivity after which a user is no longer considered to be online.';
 $string['nouser'] = 'No online users';
 $string['numuser'] = '{$a} online user';
