@@ -6143,6 +6143,177 @@ EOD;
 
         $dbman->drop_table($table);
     }
+
+    /**
+     * Mock the methods used by {@see \mysqli_native_moodle_database::get_server_info()}.
+     *
+     * Mocking allows to test it without the need of an actual MySQL-ish running DB server.
+     *
+     * @param string $mysqliserverinfo A string representing the server info as provided by the MySQLi extension.
+     * @param string $versionfromdb A string representing the result of VERSION function.
+     * @param bool $cfgversionfromdb A boolean representing !empty($CFG->dboptions['versionfromdb']).
+     * @param string $expecteddbversion A string representing the expected DB version.
+     * @see \mysqli_native_moodle_database::get_server_info()
+     * @covers \mysqli_native_moodle_database::get_server_info
+     * @dataProvider get_server_info_mysql_provider
+     */
+    public function test_get_server_info_mysql(
+        string $mysqliserverinfo, string $versionfromdb, bool $cfgversionfromdb, string $expecteddbversion) {
+        // Avoid to run MySQL-ish related tests when running tests on other DB families.
+        $DB = $this->tdb;
+        if ($DB->get_dbfamily() != 'mysql') {
+            $this->markTestSkipped("Not MySQL family");
+        }
+
+        // Mock the methods used by get_server_info() to simulate different MySQL-ish DB servers.
+        $methods = [
+            'get_mysqli_server_info',
+            'get_version_from_db',
+            'should_db_version_be_read_from_db',
+        ];
+        $mysqlinativemoodledatabase = $this->getMockBuilder('\mysqli_native_moodle_database')
+            ->onlyMethods($methods)
+            ->getMock();
+        $mysqlinativemoodledatabase->method('get_mysqli_server_info')->willReturn($mysqliserverinfo);
+        $mysqlinativemoodledatabase->method('get_version_from_db')->willReturn($versionfromdb);
+        $mysqlinativemoodledatabase->method('should_db_version_be_read_from_db')->willReturn($cfgversionfromdb);
+
+        ['description' => $description, 'version' => $version] = $mysqlinativemoodledatabase->get_server_info();
+        $this->assertEquals($mysqliserverinfo, $description);
+        $this->assertEquals($expecteddbversion, $version);
+    }
+
+    /**
+     * Data provider to test {@see \mysqli_native_moodle_database::get_server_info} when mocking
+     * the results of a connection to the DB server.
+     *
+     * The set of the data is represented by the following array items:
+     * - a string representing the server info as provided by the MySQLi extension
+     * - a string representing the result of VERSION function
+     * - a boolean representing !empty($CFG->dboptions['versionfromdb'])
+     * - a string representing the expected DB version
+     *
+     * @return array[]
+     * @see \mysqli_native_moodle_database::get_server_info
+     */
+    public function get_server_info_mysql_provider() {
+        return [
+            'MySQL 5.7.39 - MySQLi version' => [
+                '5.7.39-log',
+                '',
+                false,
+                '5.7.39'
+            ],
+            'MySQL 5.7.40 - MySQLi version' => [
+                '5.7.40',
+                '',
+                false,
+                '5.7.40'
+            ],
+            'MySQL 8.0.31 - MySQLi version' => [
+                '8.0.31',
+                '',
+                false,
+                '8.0.31'
+            ],
+            'MariaDB 10.4.26 (https://moodle.org/mod/forum/discuss.php?d=441156#p1774957) - MySQLi version' => [
+                '10.4.26-MariaDB-1:10.4.26+mariadb~deb10',
+                '',
+                false,
+                '10.4.26'
+            ],
+            'MariaDB 10.4.27 - MySQLi version' => [
+                '5.5.5-10.4.27-MariaDB',
+                '',
+                false,
+                '10.4.27'
+            ],
+            'MariaDB 10.4.27 - DB version' => [
+                '',
+                '10.4.27-MariaDB',
+                true,
+                '10.4.27'
+            ],
+            'MariaDB 10.7.7 - MySQLi version' => [
+                '10.7.7-MariaDB-1:10.7.7+maria~ubu2004',
+                '',
+                false,
+                '10.7.7'
+            ],
+            'MariaDB 10.7.7 - DB version' => [
+                '',
+                '10.7.7-MariaDB-1:10.7.7+maria~ubu2004',
+                true,
+                '10.7.7'
+            ],
+            'MariaDB 10.2.32 on Azure via gateway - MySQLi version' => [
+                '5.6.42.0',
+                '10.2.32-MariaDB',
+                false,
+                '5.6.42.0'
+            ],
+            'MariaDB 10.2.32 on Azure via gateway - DB version' => [
+                '5.6.42.0',
+                '10.2.32-MariaDB',
+                true,
+                '10.2.32'
+            ],
+            'MariaDB 10.3.23 on Azure via gateway - DB version' => [
+                '5.6.47.0',
+                '10.3.23-MariaDB',
+                true,
+                '10.3.23'
+            ],
+        ];
+    }
+
+    /**
+     * Test {@see \mysqli_native_moodle_database::get_server_info()} with the actual DB Server.
+     * @see \mysqli_native_moodle_database::get_server_info
+     * @covers \mysqli_native_moodle_database::get_server_info
+     */
+    public function test_get_server_info_dbfamily_mysql() {
+        $DB = $this->tdb;
+        if ($DB->get_dbfamily() != 'mysql') {
+            $this->markTestSkipped("Not MySQL family");
+        }
+
+        $cfg = $DB->export_dbconfig();
+        if (!isset($cfg->dboptions)) {
+            $cfg->dboptions = [];
+        }
+        // By default, DB Server version is read from the PHP client.
+        $this->assertTrue(empty($cfg->dboptions['versionfromdb']));
+        $rc = new \ReflectionClass(\mysqli_native_moodle_database::class);
+        $rcm = $rc->getMethod('should_db_version_be_read_from_db');
+        $rcm->setAccessible(true);
+        $this->assertFalse($rcm->invokeArgs($DB, []));
+
+        ['description' => $description, 'version' => $version] = $DB->get_server_info();
+        // MariaDB RPL_VERSION_HACK sanity check: "5.5.5" has never been released!
+        $this->assertNotSame('5.5.5', $version,
+            "Found invalid DB server version i.e. RPL_VERSION_HACK: '${version}' (${description}).");
+        // DB version format is: "X.Y.Z".
+        $this->assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', $version,
+            "Found invalid DB server version format: '${version}' (${description}).");
+
+        // Alter the DB options to force the read from DB and check for the same assertions above.
+        $cfg->dboptions['versionfromdb'] = true;
+        // Open a new DB connection with the forced setting.
+        $db2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
+        $db2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
+        $cfg2 = $db2->export_dbconfig();
+        $cfg = null;
+        $this->assertNotEmpty($cfg2->dboptions);
+        $this->assertFalse(empty($cfg2->dboptions['versionfromdb']), 'Invalid test state!');
+        $this->assertTrue($rcm->invokeArgs($db2, []), 'Invalid test state!');
+        ['description' => $description, 'version' => $version] = $db2->get_server_info();
+        $this->assertNotSame('5.5.5', $version,
+            "Found invalid DB server version when reading version from DB i.e. RPL_VERSION_HACK: '${version}' (${description}).");
+        $this->assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', $version,
+            "Found invalid DB server version format when reading version from DB: '${version}' (${description}).");
+        $db2->dispose();
+    }
 }
 
 /**

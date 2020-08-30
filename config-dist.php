@@ -70,6 +70,14 @@ $CFG->dboptions = array(
                                 // can be removed for MySQL (by default it will
                                 // use 'utf8mb4_unicode_ci'. This option should
                                 // be removed for all other databases.
+    // 'versionfromdb' => false,   // On MySQL and MariaDB, this can force
+                                // the DB version to be evaluated using
+                                // the VERSION function instead of the version
+                                // provided by the PHP client which could be
+                                // wrong based on the DB server infrastructure,
+                                // e.g. PaaS on Azure. Default is false/unset.
+                                // Uncomment and set to true to force MySQL and
+                                // MariaDB to use 'SELECT VERSION();'.
     // 'fetchbuffersize' => 100000, // On PostgreSQL, this option sets a limit
                                 // on the number of rows that are fetched into
                                 // memory when doing a large recordset query
