@@ -18,34 +18,16 @@
     @template core_contentbank/bankcontent/search
 
     Example context (json):
-    {}
+    {
+    }
 
 }}
-<div class="searchbar input-group" role="search">
-    <label for="searchinput">
-        <span class="sr-only">{{#str}} searchcontentbankbyname, contentbank {{/str}}</span>
-    </label>
-    <input type="text"
-           id="searchinput"
-           class="form-control searchinput border-right-0"
-           placeholder="{{#str}} search, core {{/str}}"
-           name="search"
-           autocomplete="off"
-    >
-    <div class="input-group-append">
-        <div class="input-group-text bg-transparent">
-            <div class="search-icon">
-                <button class="btn p-0 align-baseline icon-no-margin" data-action="searchcontent"
-                    aria-label="{{#str}} search, core {{/str}}">
-                    <span class="d-flex" aria-hidden="true">{{#pix}} a/search, core {{/pix}}</span>
-                </button>
-            </div>
-            <div class="clear-icon d-none">
-                <button class="btn p-0 align-baseline icon-no-margin" data-action="clearsearchcontent"
-                    aria-label="{{#str}} clearsearch, core {{/str}}">
-                    <span class="d-flex" aria-hidden="true">{{#pix}} e/cancel_solid_circle, core {{/pix}}</span>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+
+{{< core/search_input_auto }}
+    {{$label}}{{#str}}
+        searchcontentbankbyname, contentbank
+    {{/str}}{{/label}}
+    {{$placeholder}}{{#str}}
+        search, core
+    {{/str}}{{/placeholder}}
+{{/ core/search_input_auto }}
