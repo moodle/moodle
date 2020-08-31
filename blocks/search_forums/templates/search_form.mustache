@@ -21,25 +21,23 @@
 
     Example context (json):
     {
-        "actionurl": "https://domain.example/mod/forum/search.php",
-        "courseid": "2",
-        "advancedsearchurl": "https://domain.example/mod/forum/search.php?id=2",
+        "action": "https://moodle.local/admin/search.php",
+        "inputname": "search",
+        "searchstring": "Search settings",
+        "value": "policy",
+        "hiddenfields": [
+            {
+                "name": "course",
+                "value": "11"
+            }
+        ],
         "helpicon": "<a class='btn'><i class='icon fa fa-question-circle'></i></a>"
     }
 }}
 <div class="searchform">
-    <form action="{{actionurl}}" class="form-inline">
-        <input type="hidden" name="id" value="{{courseid}}">
-        <div class="input-group w-100">
-            <label class="sr-only" for="searchform_search">{{#str}}search{{/str}}</label>
-            <input id="searchform_search" name="search" type="text" class="form-control" size="10">
-            <div class="input-group-append">
-                <button class="btn btn-secondary" id="searchform_button" type="submit">{{#str}}go{{/str}}</button>
-            </div>
-        </div>
-    </form>
+    {{>core/search_input}}
     <div class="mt-3">
-        <a href="{{advancedsearchurl}}">{{#str}}advancedsearch, block_search_forums{{/str}}</a>
+        <a href="{{action}}">{{#str}}advancedsearch, block_search_forums{{/str}}</a>
         {{#helpicon}}
             {{>core/help_icon}}
         {{/helpicon}}

@@ -183,7 +183,7 @@ Feature: Students can use block blog menu in a course
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I set the field "blogsearchquery" to "First"
+    And I set the field "Search" to "First"
     And I press "Search"
     Then I should see "S1 First Blog"
     And I should see "S2 First Blog"

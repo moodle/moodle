@@ -144,11 +144,12 @@ class block_settings_renderer extends plugin_renderer_base {
 
     public function search_form(moodle_url $formtarget, $searchvalue) {
         $data = [
-                'action' => $formtarget->out(false),
-                'label' => get_string('searchinsettings', 'admin'),
-                'searchvalue' => $searchvalue
+            'action' => $formtarget,
+            'inputname' => 'query',
+            'searchstring' => get_string('searchinsettings', 'admin'),
+            'query' => $searchvalue
         ];
-        return $this->render_from_template('block_settings/search_form', $data);
+        return $this->render_from_template('core/search_input', $data);
     }
 
 }

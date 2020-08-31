@@ -17,15 +17,13 @@ Feature: The search forums block allows users to search for forum posts on front
   Scenario: Use the search forum block on the frontpage and search for posts as a user
     Given I log in as "student1"
     And I am on site homepage
-    When I set the following fields to these values:
-      | searchform_search | Moodle |
-    And I press "Go"
+    When I set the field "Search" to "Moodle"
+    And I press "Search"
     Then I should see "No posts"
 
   Scenario: Use the search forum block on the frontpage and search for posts as a guest
     Given I log in as "guest"
     And I am on site homepage
-    When I set the following fields to these values:
-      | searchform_search | Moodle |
-    And I press "Go"
+    When I set the field "Search" to "Moodle"
+    And I press "Search"
     Then I should see "No posts"
