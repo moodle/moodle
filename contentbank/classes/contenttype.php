@@ -40,15 +40,16 @@ use moodle_url;
  */
 abstract class contenttype {
 
-    /** Plugin implements uploading feature */
+    /** @var string Constant representing whether the plugin implements uploading feature */
     const CAN_UPLOAD = 'upload';
 
-    /** Plugin implements edition feature */
+    /** @var string Constant representing whether the plugin implements edition feature */
     const CAN_EDIT = 'edit';
 
-    /** Plugin implements download feature
-     *  @since  Moodle 3.10
-    */
+    /**
+     * @var string Constant representing whether the plugin implements download feature
+     * @since  Moodle 3.10
+     */
     const CAN_DOWNLOAD = 'download';
 
     /** @var \context This contenttype's context. **/
@@ -236,7 +237,7 @@ abstract class contenttype {
         $downloadurl = '';
         $file = $content->get_file();
         if (!empty($file)) {
-            $url  = \moodle_url::make_pluginfile_url(
+            $url = \moodle_url::make_pluginfile_url(
                 $file->get_contextid(),
                 $file->get_component(),
                 $file->get_filearea(),
