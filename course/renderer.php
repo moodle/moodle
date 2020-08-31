@@ -399,48 +399,22 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renders html to display a course search form.
+     * Renders html to display a course search form
      *
      * @param string $value default value to populate the search field
-     * @param string $format display format - 'plain' (default), 'short' or 'navbar'
      * @return string
      */
-    public function course_search_form($value = '', $format = 'plain') {
-        static $count = 0;
-        $formid = 'coursesearch';
-        if ((++$count) > 1) {
-            $formid .= $count;
-        }
+    public function course_search_form($value = '') {
 
-        switch ($format) {
-            case 'navbar' :
-                $formid = 'coursesearchnavbar';
-                $inputid = 'navsearchbox';
-                $inputsize = 20;
-                break;
-            case 'short' :
-                $inputid = 'shortsearchbox';
-                $inputsize = 12;
-                break;
-            default :
-                $inputid = 'coursesearchbox';
-                $inputsize = 30;
-        }
-
-        $data = new stdClass();
-        $data->searchurl = \core_search\manager::get_course_search_url()->out(false);
-        $data->id = $formid;
-        $data->inputid = $inputid;
-        $data->inputsize = $inputsize;
-        $data->value = $value;
-        $data->areaids = 'core_course-course';
-
-        if ($format != 'navbar') {
-            $helpicon = new \help_icon('coursesearch', 'core');
-            $data->helpicon = $helpicon->export_for_template($this);
-        }
-
-        return $this->render_from_template('core_course/course_search_form', $data);
+        $data = [
+            'action' => \core_search\manager::get_course_search_url(),
+            'btnclass' => 'btn-primary',
+            'inputname' => 'q',
+            'searchstring' => get_string('searchcourses'),
+            'hiddenfields' => (object) ['name' => 'areaids', 'value' => 'core_course-course'],
+            'query' => $value
+        ];
+        return $this->render_from_template('core/search_input', $data);
     }
 
     /**
@@ -1890,6 +1864,13 @@ class core_course_renderer extends plugin_renderer_base {
     public function search_courses($searchcriteria) {
         global $CFG;
         $content = '';
+
+        $search = '';
+        if (!empty($searchcriteria['search'])) {
+            $search = $searchcriteria['search'];
+        }
+        $content .= $this->course_search_form($search);
+
         if (!empty($searchcriteria)) {
             // print search results
 
@@ -1931,18 +1912,6 @@ class core_course_renderer extends plugin_renderer_base {
                 $content .= $this->heading(get_string('searchresults'). ": $totalcount");
                 $content .= $courseslist;
             }
-
-            if (!empty($searchcriteria['search'])) {
-                // print search form only if there was a search by search string, otherwise it is confusing
-                $content .= $this->box_start('generalbox mdl-align');
-                $content .= $this->course_search_form($searchcriteria['search']);
-                $content .= $this->box_end();
-            }
-        } else {
-            // just print search form
-            $content .= $this->box_start('generalbox mdl-align');
-            $content .= $this->course_search_form();
-            $content .= $this->box_end();
         }
         return $content;
     }
@@ -2464,7 +2433,7 @@ class core_course_renderer extends plugin_renderer_base {
                     break;
 
                 case FRONTPAGECOURSESEARCH:
-                    $output .= $this->box($this->course_search_form('', 'short'), 'mdl-align');
+                    $output .= $this->box($this->course_search_form(''), 'd-flex justify-content-center');
                     break;
 
             }
