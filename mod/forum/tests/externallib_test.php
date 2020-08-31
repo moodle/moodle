@@ -1685,7 +1685,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($thispost['attachment'], 1, "There should be a non-inline attachment");
                 $this->assertCount(1, $thispost['attachments'], "There should be 1 attachment");
                 $this->assertEquals($thispost['attachments'][0]['filename'], $attachfilename, "There should be 1 attachment");
-                $this->assertContains('pluginfile.php', $thispost['message']);
+                $this->assertStringContainsString('pluginfile.php', $thispost['message']);
                 $postfound = true;
                 break;
             }
@@ -1902,8 +1902,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($thisdiscussion['attachment'], 1, "There should be a non-inline attachment");
                 $this->assertCount(1, $thisdiscussion['attachments'], "There should be 1 attachment");
                 $this->assertEquals($thisdiscussion['attachments'][0]['filename'], $attachfilename, "There should be 1 attachment");
-                $this->assertNotContains('draftfile.php', $thisdiscussion['message']);
-                $this->assertContains('pluginfile.php', $thisdiscussion['message']);
+                $this->assertStringNotContainsString('draftfile.php', $thisdiscussion['message']);
+                $this->assertStringContainsString('pluginfile.php', $thisdiscussion['message']);
                 $postfound = true;
                 break;
             }

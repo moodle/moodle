@@ -155,7 +155,7 @@ class search_manager_testcase extends advanced_testcase {
             $search->reset_config($fakeareaid);
             $this->fail('An exception should be triggered if the provided search area does not exist.');
         } catch (moodle_exception $ex) {
-            $this->assertContains($fakeareaid . ' search area is not available.', $ex->getMessage());
+            $this->assertStringContainsString($fakeareaid . ' search area is not available.', $ex->getMessage());
         }
 
         // We clean it all but enabled components.
@@ -343,18 +343,18 @@ class search_manager_testcase extends advanced_testcase {
         $progress->reset_buffer();
 
         // Check for the standard text.
-        $this->assertContains('Processing area: Mock search area', $out);
-        $this->assertContains('Stopping indexing due to time limit', $out);
+        $this->assertStringContainsString('Processing area: Mock search area', $out);
+        $this->assertStringContainsString('Stopping indexing due to time limit', $out);
 
         // Check for initial query performance indication.
-        $this->assertContains('Initial query took 10.1 seconds.', $out);
+        $this->assertStringContainsString('Initial query took 10.1 seconds.', $out);
 
         // Check for the two (approximately) every-30-seconds messages.
-        $this->assertContains('01:00:41: Done to 1/11/17, 01:01', $out);
-        $this->assertContains('01:01:13: Done to 1/11/17, 01:03', $out);
+        $this->assertStringContainsString('01:00:41: Done to 1/11/17, 01:01', $out);
+        $this->assertStringContainsString('01:01:13: Done to 1/11/17, 01:03', $out);
 
         // Check for the 'not complete' indicator showing when it was done until.
-        $this->assertContains('Processed 5 records containing 5 documents, in 89.1 seconds ' .
+        $this->assertStringContainsString('Processed 5 records containing 5 documents, in 89.1 seconds ' .
                 '(not complete; done to 1/11/17, 01:04)', $out);
 
         // Make the initial query delay less than 5 seconds, so it won't appear. Make the documents
@@ -368,11 +368,11 @@ class search_manager_testcase extends advanced_testcase {
         $out = $progress->get_buffer();
         $progress->reset_buffer();
 
-        $this->assertContains('Processing area: Mock search area', $out);
-        $this->assertContains('Stopping indexing due to time limit', $out);
-        $this->assertNotContains('Initial query took', $out);
-        $this->assertNotContains(': Done to', $out);
-        $this->assertContains('Processed 2 records containing 2 documents, in 6.9 seconds ' .
+        $this->assertStringContainsString('Processing area: Mock search area', $out);
+        $this->assertStringContainsString('Stopping indexing due to time limit', $out);
+        $this->assertStringNotContainsString('Initial query took', $out);
+        $this->assertStringNotContainsString(': Done to', $out);
+        $this->assertStringContainsString('Processed 2 records containing 2 documents, in 6.9 seconds ' .
                 '(not complete; done to 1/11/17, 01:05).', $out);
 
         // Run the remaining items to complete it.
@@ -381,11 +381,11 @@ class search_manager_testcase extends advanced_testcase {
         $out = $progress->get_buffer();
         $progress->reset_buffer();
 
-        $this->assertContains('Processing area: Mock search area', $out);
-        $this->assertNotContains('Stopping indexing due to time limit', $out);
-        $this->assertNotContains('Initial query took', $out);
-        $this->assertNotContains(': Done to', $out);
-        $this->assertContains('Processed 3 records containing 3 documents, in 7.9 seconds.', $out);
+        $this->assertStringContainsString('Processing area: Mock search area', $out);
+        $this->assertStringNotContainsString('Stopping indexing due to time limit', $out);
+        $this->assertStringNotContainsString('Initial query took', $out);
+        $this->assertStringNotContainsString(': Done to', $out);
+        $this->assertStringContainsString('Processed 3 records containing 3 documents, in 7.9 seconds.', $out);
 
         $searchgenerator->tearDown();
     }
@@ -1161,14 +1161,14 @@ class search_manager_testcase extends advanced_testcase {
         $progress->reset_buffer();
 
         // Check that it's done both areas.
-        $this->assertContains(
+        $this->assertStringContainsString(
                 'Indexing requested context: Course: TCourse (search area: mod_label-activity)',
                 $out);
-        $this->assertContains(
+        $this->assertStringContainsString(
                 'Completed requested context: Course: TCourse (search area: mod_label-activity)',
                 $out);
-        $this->assertContains('Indexing requested context: Forum: TForum1', $out);
-        $this->assertContains('Completed requested context: Forum: TForum1', $out);
+        $this->assertStringContainsString('Indexing requested context: Forum: TForum1', $out);
+        $this->assertStringContainsString('Completed requested context: Forum: TForum1', $out);
 
         // Check the requests database table is now empty.
         $this->assertEquals(0, $DB->count_records('search_index_requests'));
@@ -1187,11 +1187,11 @@ class search_manager_testcase extends advanced_testcase {
         $progress->reset_buffer();
 
         // Confirm the right wrapper information was logged.
-        $this->assertContains(
+        $this->assertStringContainsString(
                 'Indexing requested context: Course: TCourse (search area: mod_forum-activity)',
                 $out);
-        $this->assertContains('Stopping indexing due to time limit', $out);
-        $this->assertContains(
+        $this->assertStringContainsString('Stopping indexing due to time limit', $out);
+        $this->assertStringContainsString(
                 'Ending requested context: Course: TCourse (search area: mod_forum-activity)',
                 $out);
 
@@ -1204,10 +1204,10 @@ class search_manager_testcase extends advanced_testcase {
         $search->process_index_requests(2.0, $progress);
         $out = $progress->get_buffer();
         $progress->reset_buffer();
-        $this->assertContains(
+        $this->assertStringContainsString(
                 'Completed requested context: Course: TCourse (search area: mod_forum-activity)',
                 $out);
-        $this->assertContains(
+        $this->assertStringContainsString(
                 'Completed requested context: Course: TCourse (search area: mod_forum-post)',
                 $out);
 
@@ -1225,13 +1225,13 @@ class search_manager_testcase extends advanced_testcase {
         $search->process_index_requests(0.1, $progress);
         $out = $progress->get_buffer();
         $progress->reset_buffer();
-        $this->assertContains(
+        $this->assertStringContainsString(
                 'Completed requested context: Forum: TForum2 (search area: mod_forum-activity)',
                 $out);
         $search->process_index_requests(0.1, $progress);
         $out = $progress->get_buffer();
         $progress->reset_buffer();
-        $this->assertContains(
+        $this->assertStringContainsString(
                 'Completed requested context: Forum: TForum1 (search area: mod_forum-activity)',
                 $out);
 
@@ -1249,7 +1249,7 @@ class search_manager_testcase extends advanced_testcase {
         $search->process_index_requests(10, $progress);
         $out = $progress->get_buffer();
         $progress->reset_buffer();
-        $this->assertContains('Skipped deleted context: ' . $context->id, $out);
+        $this->assertStringContainsString('Skipped deleted context: ' . $context->id, $out);
 
         // Confirm request table is now empty.
         $this->assertEquals(0, $DB->count_records('search_index_requests'));

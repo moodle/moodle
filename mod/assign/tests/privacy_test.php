@@ -318,8 +318,8 @@ class mod_assign_privacy_testcase extends provider_testcase {
         $this->assertEquals((float)$grade1, $writer->get_data(['attempt 1', 'grade'])->grade);
         $this->assertEquals((float)$grade2, $writer->get_data(['attempt 2', 'grade'])->grade);
         // Check feedback.
-        $this->assertContains($teachercommenttext, $writer->get_data(['attempt 1', 'Feedback comments'])->commenttext);
-        $this->assertContains($teachercommenttext2, $writer->get_data(['attempt 2', 'Feedback comments'])->commenttext);
+        $this->assertStringContainsString($teachercommenttext, $writer->get_data(['attempt 1', 'Feedback comments'])->commenttext);
+        $this->assertStringContainsString($teachercommenttext2, $writer->get_data(['attempt 2', 'Feedback comments'])->commenttext);
 
         // Check override data was exported correctly.
         $overrideexport = $writer->get_data(['Overrides']);
@@ -431,11 +431,11 @@ class mod_assign_privacy_testcase extends provider_testcase {
         $student2grade2 = $writer->get_data(['studentsubmissions', $user2->id, 'attempt 2', 'grade']);
         $this->assertEquals((float)$grade3, $student2grade2->grade);
         // Check for feedback given to students.
-        $this->assertContains($teachercommenttext, $writer->get_data(['studentsubmissions', $user1->id, 'attempt 1',
+        $this->assertStringContainsString($teachercommenttext, $writer->get_data(['studentsubmissions', $user1->id, 'attempt 1',
                 'Feedback comments'])->commenttext);
-        $this->assertContains($teachercommenttext2, $writer->get_data(['studentsubmissions', $user2->id, 'attempt 1',
+        $this->assertStringContainsString($teachercommenttext2, $writer->get_data(['studentsubmissions', $user2->id, 'attempt 1',
                 'Feedback comments'])->commenttext);
-        $this->assertContains($teachercommenttext3, $writer->get_data(['studentsubmissions', $user2->id, 'attempt 2',
+        $this->assertStringContainsString($teachercommenttext3, $writer->get_data(['studentsubmissions', $user2->id, 'attempt 2',
                 'Feedback comments'])->commenttext);
     }
 

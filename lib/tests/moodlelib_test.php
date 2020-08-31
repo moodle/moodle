@@ -3239,8 +3239,8 @@ class core_moodlelib_testcase extends advanced_testcase {
         $emails = $sink->get_messages();
         $this->assertCount(1, $emails);
         $email = reset($emails);
-        $this->assertContains('X-Custom-Header: foo', $email->header);
-        $this->assertContains("X-Fixed-Header: bar", $email->header);
+        $this->assertStringContainsString('X-Custom-Header: foo', $email->header);
+        $this->assertStringContainsString("X-Fixed-Header: bar", $email->header);
         $sink->clear();
     }
 
@@ -3381,13 +3381,13 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame($messagetext, trim($result[0]->body));
         $this->assertSame($user1->email, $result[0]->to);
         $this->assertSame($user2->email, $result[0]->from);
-        $this->assertContains('Content-Type: text/plain', $result[0]->header);
+        $this->assertStringContainsString('Content-Type: text/plain', $result[0]->header);
 
         $this->assertSame($subject2, $result[1]->subject);
-        $this->assertContains($messagetext2, quoted_printable_decode($result[1]->body));
+        $this->assertStringContainsString($messagetext2, quoted_printable_decode($result[1]->body));
         $this->assertSame($user2->email, $result[1]->to);
         $this->assertSame($user1->email, $result[1]->from);
-        $this->assertNotContains('Content-Type: text/plain', $result[1]->header);
+        $this->assertStringNotContainsString('Content-Type: text/plain', $result[1]->header);
 
         email_to_user($user1, $user2, $subject, $messagetext);
         $this->assertDebuggingCalled('Unit tests must not send real emails! Use $this->redirectEmails()');
@@ -3426,8 +3426,8 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame(1, $sink->count());
         $result = $sink->get_messages();
         $this->assertCount(1, $result);
-        $this->assertContains('error.txt', $result[0]->body);
-        $this->assertContains('Error in attachment.  User attempted to attach a filename with a unsafe name.', $result[0]->body);
+        $this->assertStringContainsString('error.txt', $result[0]->body);
+        $this->assertStringContainsString('Error in attachment.  User attempted to attach a filename with a unsafe name.', $result[0]->body);
         $sink->close();
     }
 
@@ -3483,8 +3483,8 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         // Verify attachment in message body (attachment is in MIME format, but we can detect some Content fields).
         $messagebody = reset($messages)->body;
-        $this->assertContains('Content-Type: text/plain; name="' . $filename . '"', $messagebody);
-        $this->assertContains('Content-Disposition: attachment; filename=' . $filename, $messagebody);
+        $this->assertStringContainsString('Content-Type: text/plain; name="' . $filename . '"', $messagebody);
+        $this->assertStringContainsString('Content-Disposition: attachment; filename=' . $filename, $messagebody);
 
         // Cleanup.
         unlink($filepath);
@@ -3511,8 +3511,8 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         // Verify attachment not in message body (attachment is in MIME format, but we can detect some Content fields).
         $messagebody = reset($messages)->body;
-        $this->assertNotContains('Content-Type: text/plain; name="' . $filename . '"', $messagebody);
-        $this->assertNotContains('Content-Disposition: attachment; filename=' . $filename, $messagebody);
+        $this->assertStringNotContainsString('Content-Type: text/plain; name="' . $filename . '"', $messagebody);
+        $this->assertStringNotContainsString('Content-Disposition: attachment; filename=' . $filename, $messagebody);
     }
 
     /**
@@ -3651,7 +3651,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $message = array_shift($messages);
         $messagebody = quoted_printable_decode($message->body);
 
-        $this->assertContains($expected, $messagebody);
+        $this->assertStringContainsString($expected, $messagebody);
     }
 
     /**
@@ -3683,7 +3683,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $messagebody = quoted_printable_decode($message->body);
 
         $sink->close();
-        $this->assertContains($expected, $messagebody);
+        $this->assertStringContainsString($expected, $messagebody);
 
         $CFG->admin = $admin;
     }
@@ -4650,7 +4650,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $result = $sink->get_messages();
         $sink->close();
 
-        $this->assertContains('passwords cannot be reset on this site', quoted_printable_decode($result[0]->body));
+        $this->assertStringContainsString('passwords cannot be reset on this site', quoted_printable_decode($result[0]->body));
     }
 
     /**

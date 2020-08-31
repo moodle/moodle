@@ -87,9 +87,9 @@ The capital of France is {#5}.
         ob_end_clean();
 
         // Check that there were some expected errors.
-        $this->assertContains('Error importing question', $output);
-        $this->assertContains('Invalid embedded answers (Cloze) question', $output);
-        $this->assertContains('This type of question requires at least 2 choices', $output);
+        $this->assertStringContainsString('Error importing question', $output);
+        $this->assertStringContainsString('Invalid embedded answers (Cloze) question', $output);
+        $this->assertStringContainsString('This type of question requires at least 2 choices', $output);
 
         // No question  have been imported.
         $this->assertCount(0, $questions);
@@ -106,9 +106,9 @@ The capital of France is {#5}.
         ob_end_clean();
 
         // Check that there were some expected errors.
-        $this->assertContains('Error importing question', $output);
-        $this->assertContains('Invalid embedded answers (Cloze) question', $output);
-        $this->assertContains('One of the answers should have a score of 100% so it is possible to get full marks for this question.',
+        $this->assertStringContainsString('Error importing question', $output);
+        $this->assertStringContainsString('Invalid embedded answers (Cloze) question', $output);
+        $this->assertStringContainsString('One of the answers should have a score of 100% so it is possible to get full marks for this question.',
                 $output);
 
         // No question  have been imported.
@@ -126,9 +126,9 @@ The capital of France is {#5}.
         ob_end_clean();
 
         // Check that there were some expected errors.
-        $this->assertContains('Error importing question', $output);
-        $this->assertContains('Invalid embedded answers (Cloze) question', $output);
-        $this->assertContains('The answer must be a number, for example -1.234 or 3e8, or \'*\'.', $output);
+        $this->assertStringContainsString('Error importing question', $output);
+        $this->assertStringContainsString('Invalid embedded answers (Cloze) question', $output);
+        $this->assertStringContainsString('The answer must be a number, for example -1.234 or 3e8, or \'*\'.', $output);
 
         // No question  have been imported.
         $this->assertCount(0, $questions);
@@ -145,9 +145,9 @@ The capital of France is {#5}.
         ob_end_clean();
 
         // Check that there were some expected errors.
-        $this->assertContains('Error importing question', $output);
-        $this->assertContains('Invalid embedded answers (Cloze) question', $output);
-        $this->assertContains('The question text must include at least one embedded answer.', $output);
+        $this->assertStringContainsString('Error importing question', $output);
+        $this->assertStringContainsString('Invalid embedded answers (Cloze) question', $output);
+        $this->assertStringContainsString('The question text must include at least one embedded answer.', $output);
 
         // No question  have been imported.
         $this->assertCount(0, $questions);

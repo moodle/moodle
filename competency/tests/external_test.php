@@ -1758,7 +1758,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $resultduplicated = external::list_competencies_in_template($duplicatedtemplate->id);
 
         $this->assertEquals(count($result), count($resultduplicated));
-        $this->assertContains($template->shortname, $duplicatedtemplate->shortname);
+        $this->assertStringContainsString($template->shortname, $duplicatedtemplate->shortname);
         $this->assertEquals($duplicatedtemplate->description, $template->description);
         $this->assertEquals($duplicatedtemplate->descriptionformat, $template->descriptionformat);
         $this->assertEquals($duplicatedtemplate->visible, $template->visible);

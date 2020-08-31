@@ -155,7 +155,7 @@ class httpsreplace_test extends \advanced_testcase {
         $finder->upgrade_http_links();
 
         $summary = $DB->get_field('course', 'summary', ['id' => $course->id]);
-        $this->assertContains($expectedcontent, $summary);
+        $this->assertStringContainsString($expectedcontent, $summary);
     }
 
     /**
@@ -253,10 +253,10 @@ class httpsreplace_test extends \advanced_testcase {
         $this->assertCount(0, $results);
 
         $summary = $DB->get_field('course', 'summary', ['id' => $course->id]);
-        $this->assertContains('http://intentionally.unavailable/page.php', $summary);
-        $this->assertContains('http://other.unavailable/page.php', $summary);
-        $this->assertNotContains('https://intentionally.unavailable', $summary);
-        $this->assertNotContains('https://other.unavailable', $summary);
+        $this->assertStringContainsString('http://intentionally.unavailable/page.php', $summary);
+        $this->assertStringContainsString('http://other.unavailable/page.php', $summary);
+        $this->assertStringNotContainsString('https://intentionally.unavailable', $summary);
+        $this->assertStringNotContainsString('https://other.unavailable', $summary);
     }
 
     /**
@@ -281,7 +281,7 @@ class httpsreplace_test extends \advanced_testcase {
 
         $finder->upgrade_http_links();
         $summary = $DB->get_field('course', 'summary', ['id' => $course->id]);
-        $this->assertContains($CFG->wwwroot, $summary);
+        $this->assertStringContainsString($CFG->wwwroot, $summary);
     }
 
     /**
@@ -298,10 +298,10 @@ class httpsreplace_test extends \advanced_testcase {
         $output = ob_get_contents();
         ob_end_clean();
         $this->assertTrue($results);
-        $this->assertNotContains('https://somesite', $output);
+        $this->assertStringNotContainsString('https://somesite', $output);
         $testconf = get_config('core', 'test_upgrade_http_links');
-        $this->assertContains('http://somesite', $testconf);
-        $this->assertNotContains('https://somesite', $testconf);
+        $this->assertStringContainsString('http://somesite', $testconf);
+        $this->assertStringNotContainsString('https://somesite', $testconf);
     }
 
     /**
@@ -331,8 +331,8 @@ class httpsreplace_test extends \advanced_testcase {
         $finder->upgrade_http_links();
 
         $summary = $DB->get_field('course', 'summary', ['id' => $course->id]);
-        $this->assertContains('https://secure.example.com', $summary);
-        $this->assertNotContains('http://example.com', $summary);
+        $this->assertStringContainsString('https://secure.example.com', $summary);
+        $this->assertStringNotContainsString('http://example.com', $summary);
         $this->assertEquals('<script src="https://secure.example.com/test.js">' .
             '<img src="https://secure.example.com/someimage.png">', $summary);
     }
@@ -401,7 +401,7 @@ class httpsreplace_test extends \advanced_testcase {
         $finder->upgrade_http_links();
 
         $record = $DB->get_record('reserved_words_temp', []);
-        $this->assertContains($expectedcontent, $record->where);
+        $this->assertStringContainsString($expectedcontent, $record->where);
 
         $dbman->drop_table($table);
     }

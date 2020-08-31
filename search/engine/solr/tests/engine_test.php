@@ -1161,7 +1161,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertCount(2, $orders);
         $this->assertArrayHasKey('relevance', $orders);
         $this->assertArrayHasKey('location', $orders);
-        $this->assertContains('Course: Frogs', $orders['location']);
+        $this->assertStringContainsString('Course: Frogs', $orders['location']);
 
         // Test with activity context.
         $page = $generator->create_module('page', ['course' => $course->id, 'name' => 'Toads']);
@@ -1170,7 +1170,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertCount(2, $orders);
         $this->assertArrayHasKey('relevance', $orders);
         $this->assertArrayHasKey('location', $orders);
-        $this->assertContains('Page: Toads', $orders['location']);
+        $this->assertStringContainsString('Page: Toads', $orders['location']);
 
         // Test with block context.
         $instance = (object)['blockname' => 'html', 'parentcontextid' => $coursecontext->id,
@@ -1184,7 +1184,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertCount(2, $orders);
         $this->assertArrayHasKey('relevance', $orders);
         $this->assertArrayHasKey('location', $orders);
-        $this->assertContains('Block: HTML', $orders['location']);
+        $this->assertStringContainsString('Block: HTML', $orders['location']);
     }
 
     /**

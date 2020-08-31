@@ -499,7 +499,7 @@ class qtype_essay_walkthrough_testcase extends qbehaviour_walkthrough_test_base 
         // Test taht no HTML comment has been added to the response.
         $this->assertRegExp('/Once upon a time there was a frog called Freddy. He lived happily ever after.(?!&lt;!--)/', $this->currentoutput);
         // Test for the hash of an empty file area.
-        $this->assertNotContains('d41d8cd98f00b204e9800998ecf8427e', $this->currentoutput);
+        $this->assertStringNotContainsString('d41d8cd98f00b204e9800998ecf8427e', $this->currentoutput);
     }
 
     public function test_deferred_feedback_html_editor_with_files_attempt_wrong_filetypes() {

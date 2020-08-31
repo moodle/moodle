@@ -1218,9 +1218,9 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
         $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
         // The new revision is in the url for the user.
-        $this->assertContains($picture, $result['profileimageurl']);
+        $this->assertStringContainsString($picture, $result['profileimageurl']);
         // Check expected URL for serving the image.
-        $this->assertContains("/$contextid/user/icon", $result['profileimageurl']);
+        $this->assertStringContainsString("/$contextid/user/icon", $result['profileimageurl']);
 
         // Delete image.
         $result = core_user_external::update_picture(0, true);
@@ -1241,8 +1241,8 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
         // The new revision is in the url for the user.
         $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
-        $this->assertContains($picture, $result['profileimageurl']);
-        $this->assertContains("/$contextid/user/icon", $result['profileimageurl']);
+        $this->assertStringContainsString($picture, $result['profileimageurl']);
+        $this->assertStringContainsString("/$contextid/user/icon", $result['profileimageurl']);
     }
 
     /**

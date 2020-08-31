@@ -959,7 +959,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($author, [$post]);
         $this->send_notifications_and_assert($commenter, [$post]);
         $messages = $this->messagesink->get_messages();
-        $this->assertNotContains($strre, $messages[0]->subject);
+        $this->assertStringNotContainsString($strre, $messages[0]->subject);
         $this->messagesink->clear();
 
         // Replies should have Re: in the subject.
@@ -980,8 +980,8 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($commenter, [$reply]);
         $this->send_notifications_and_assert($author, [$reply]);
         $messages = $this->messagesink->get_messages();
-        $this->assertContains($strre, $messages[0]->subject);
-        $this->assertContains($strre, $messages[1]->subject);
+        $this->assertStringContainsString($strre, $messages[0]->subject);
+        $this->assertStringContainsString($strre, $messages[1]->subject);
     }
 
     /**

@@ -87,7 +87,7 @@ function hm()
 
         $js = "function hm{}";
         $result = core_minify::js($js);
-        $this->assertContains($js, $result);
+        $this->assertStringContainsString($js, $result);
     }
 
     public function test_js_files() {

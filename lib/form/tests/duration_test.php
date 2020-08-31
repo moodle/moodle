@@ -81,9 +81,9 @@ class core_form_duration_testcase extends basic_testcase {
         $mform->addElement('duration', 'testel', null, ['units' => [MINSECS, 1], 'optional' => false]);
         $html = $mform->toHtml();
         $html = preg_replace('~ +>~', '>', $html); // Clean HTML to avoid spurious errors.
-        $this->assertContains('<option value="60" selected>minutes</option>', $html);
-        $this->assertContains('<option value="1">seconds</option>', $html);
-        $this->assertNotContains('value="3600"', $html);
+        $this->assertStringContainsString('<option value="60" selected>minutes</option>', $html);
+        $this->assertStringContainsString('<option value="1">seconds</option>', $html);
+        $this->assertStringNotContainsString('value="3600"', $html);
     }
 
     /**

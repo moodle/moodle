@@ -1729,7 +1729,7 @@ class core_cache_testcase extends advanced_testcase {
             cache_helper::purge_by_definition('phpunit', 'purge2');
             $this->fail('Should not be able to purge a definition required identifiers without providing them.');
         } catch (coding_exception $ex) {
-            $this->assertContains('Identifier required for cache has not been provided', $ex->getMessage());
+            $this->assertStringContainsString('Identifier required for cache has not been provided', $ex->getMessage());
         }
     }
 

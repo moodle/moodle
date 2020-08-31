@@ -149,7 +149,7 @@ class availability_grade_condition_testcase extends advanced_testcase {
             $cond = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Missing or invalid ->id', $e->getMessage());
+            $this->assertStringContainsString('Missing or invalid ->id', $e->getMessage());
         }
 
         // Invalid id (not int).
@@ -158,7 +158,7 @@ class availability_grade_condition_testcase extends advanced_testcase {
             $cond = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Missing or invalid ->id', $e->getMessage());
+            $this->assertStringContainsString('Missing or invalid ->id', $e->getMessage());
         }
 
         // Invalid min (not number).
@@ -168,7 +168,7 @@ class availability_grade_condition_testcase extends advanced_testcase {
             $cond = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Missing or invalid ->min', $e->getMessage());
+            $this->assertStringContainsString('Missing or invalid ->min', $e->getMessage());
         }
 
         // Invalid max (not number).
@@ -178,7 +178,7 @@ class availability_grade_condition_testcase extends advanced_testcase {
             $cond = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Missing or invalid ->max', $e->getMessage());
+            $this->assertStringContainsString('Missing or invalid ->max', $e->getMessage());
         }
 
         // All valid.

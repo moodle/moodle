@@ -273,7 +273,7 @@ class core_externallib_testcase extends advanced_testcase {
             $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('invalid_response_exception', $e);
-            $this->assertContains('of PHP type "NULL"', $e->debuginfo);
+            $this->assertStringContainsString('of PHP type "NULL"', $e->debuginfo);
         }
     }
 

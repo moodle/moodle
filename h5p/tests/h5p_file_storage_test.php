@@ -596,7 +596,7 @@ class h5p_file_storage_testcase extends \advanced_testcase {
             $h5plib->minorversion
         );
         if ($expected) {
-            $this->assertContains(file_storage::ICON_FILENAME, $iconurl);
+            $this->assertStringContainsString(file_storage::ICON_FILENAME, $iconurl);
         } else {
             $this->assertFalse($iconurl);
         }

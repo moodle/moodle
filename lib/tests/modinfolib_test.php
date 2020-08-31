@@ -806,7 +806,7 @@ class core_modinfolib_testcase extends advanced_testcase {
             get_course_and_cm_from_cmid($page->cmid, 'pigs can fly');
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Invalid modulename parameter', $e->getMessage());
+            $this->assertStringContainsString('Invalid modulename parameter', $e->getMessage());
         }
 
         // Doesn't exist.
@@ -895,7 +895,7 @@ class core_modinfolib_testcase extends advanced_testcase {
             get_course_and_cm_from_cmid($page->cmid, '1337 h4x0ring');
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Invalid modulename parameter', $e->getMessage());
+            $this->assertStringContainsString('Invalid modulename parameter', $e->getMessage());
         }
 
         // Create a second hidden activity.

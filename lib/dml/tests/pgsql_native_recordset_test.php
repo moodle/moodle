@@ -304,7 +304,7 @@ class pgsql_native_recordset_testcase extends basic_testcase {
             $transaction->rollback(new dml_transaction_exception('rollback please'));
             $this->fail('should not get here');
         } catch (dml_transaction_exception $e) {
-            $this->assertContains('rollback please', $e->getMessage());
+            $this->assertStringContainsString('rollback please', $e->getMessage());
         } finally {
 
             // Rollback should not kill our recordset.

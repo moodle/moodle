@@ -500,18 +500,18 @@ class tool_monitor_eventobservers_testcase extends advanced_testcase {
 
         $this->assertRegExp('~<h2>.*' . preg_quote($event->get_url()->out(), '~') . '.*</h2>~', $msg->fullmessagehtml);
         $this->assertRegExp('~<li>.*' . preg_quote($modurl->out(), '~') . '.*</li>~', $msg->fullmessagehtml);
-        $this->assertContains('<li><strong>'.$rule->get_name($context).'</strong></li>', $msg->fullmessagehtml);
-        $this->assertContains('<li>'.$rule->get_description($context).'</li>', $msg->fullmessagehtml);
-        $this->assertContains('<li>'.$rule->get_event_name().'</li>', $msg->fullmessagehtml);
+        $this->assertStringContainsString('<li><strong>'.$rule->get_name($context).'</strong></li>', $msg->fullmessagehtml);
+        $this->assertStringContainsString('<li>'.$rule->get_description($context).'</li>', $msg->fullmessagehtml);
+        $this->assertStringContainsString('<li>'.$rule->get_event_name().'</li>', $msg->fullmessagehtml);
 
         $this->assertEquals(FORMAT_PLAIN, $msg->fullmessageformat);
-        $this->assertNotContains('<h2>', $msg->fullmessage);
-        $this->assertNotContains('##', $msg->fullmessage);
-        $this->assertContains(strtoupper($event->get_url()->out()), $msg->fullmessage);
-        $this->assertContains('* '.$modurl->out(), $msg->fullmessage);
-        $this->assertContains('* '.strtoupper($rule->get_name($context)), $msg->fullmessage);
-        $this->assertContains('* '.$rule->get_description($context), $msg->fullmessage);
-        $this->assertContains('* '.$rule->get_event_name(), $msg->fullmessage);
+        $this->assertStringNotContainsString('<h2>', $msg->fullmessage);
+        $this->assertStringNotContainsString('##', $msg->fullmessage);
+        $this->assertStringContainsString(strtoupper($event->get_url()->out()), $msg->fullmessage);
+        $this->assertStringContainsString('* '.$modurl->out(), $msg->fullmessage);
+        $this->assertStringContainsString('* '.strtoupper($rule->get_name($context)), $msg->fullmessage);
+        $this->assertStringContainsString('* '.$rule->get_description($context), $msg->fullmessage);
+        $this->assertStringContainsString('* '.$rule->get_event_name(), $msg->fullmessage);
     }
 
     /**

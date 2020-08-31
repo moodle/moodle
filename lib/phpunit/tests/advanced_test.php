@@ -235,9 +235,9 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
             self::resetAllData(true);
         } catch (Exception $e) {
             $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
-            $this->assertContains('xx', $e->getMessage());
-            $this->assertContains('admin', $e->getMessage());
-            $this->assertContains('rolesactive', $e->getMessage());
+            $this->assertStringContainsString('xx', $e->getMessage());
+            $this->assertStringContainsString('admin', $e->getMessage());
+            $this->assertStringContainsString('rolesactive', $e->getMessage());
         }
         $this->assertFalse(isset($CFG->xx));
         $this->assertTrue(isset($CFG->admin));

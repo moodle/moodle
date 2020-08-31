@@ -1001,7 +1001,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertEquals($this->user->id, $message->useridto);
         $this->assertEquals('coursecompleted', $message->eventtype);
         $this->assertEquals(get_string('coursecompleted', 'completion'), $message->subject);
-        $this->assertContains($this->course->fullname, $message->fullmessage);
+        $this->assertStringContainsString($this->course->fullname, $message->fullmessage);
     }
 
     /**
