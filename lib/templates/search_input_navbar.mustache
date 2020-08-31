@@ -1,0 +1,116 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/search_input_navbar
+
+    Navbar search input template.
+
+    Example context (json):
+    {
+        "action": "https://moodle.local/admin/search.php",
+        "inputname": "search",
+        "searchstring": "Search",
+        "hiddenfields": [
+            {
+                "name": "cmid",
+                "value": "11"
+            }
+        ]
+    }
+}}
+<div id="searchinput-navbar-{{uniqid}}" class="simplesearchform">
+    <div class="collapse" id="searchform-navbar">
+        <form autocomplete="off" action="{{{ action }}}" method="get" accept-charset="utf-8" class="mform form-inline searchform-navbar">
+            {{#hiddenfields}}
+                <input type="hidden" name="{{ name }}" value="{{ value }}">
+            {{/hiddenfields}}
+            <div class="input-group">
+                <label for="searchinput-{{uniqid}}">
+                    <span class="sr-only">{{{ searchstring }}}</span>
+                </label>
+                    <input type="text"
+                       id="searchinput-{{uniqid}}"
+                       class="form-control withclear"
+                       placeholder="{{{ searchstring }}}"
+                       aria-label="{{{ searchstring }}}"
+                       name="{{{ inputname }}}"
+                       data-region="input"
+                       autocomplete="off"
+                    >
+                    <a class="btn btn-close"
+                        data-action="closesearch"
+                        data-toggle="collapse"
+                        href="#searchform-navbar"
+                        role="button"
+                    >
+                        {{#pix}} e/cancel, core {{/pix}}
+                        <span class="sr-only">{{#str}} closebuttontitle {{/str}}</span>
+                    </a>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-submit" data-action="submit">
+                        {{#pix}} a/search, core {{/pix}}
+                        <span class="sr-only">{{{ searchstring }}}</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <a
+        class="btn btn-open"
+        data-toggle="collapse"
+        data-action="opensearch"
+        href="#searchform-navbar"
+        role="button"
+        aria-expanded="false"
+        aria-controls="searchform-navbar"
+    >
+        <i class="icon fa fa-search fa-fw " aria-hidden="true"></i>
+        <span class="sr-only">{{#str}} togglesearch {{/str}}</span>
+    </a>
+</div>
+
+{{#js}}
+require(
+[
+    'jquery',
+],
+function(
+    $
+) {
+    var uniqid = "{{uniqid}}";
+    var container = $('#searchinput-navbar-' + uniqid);
+    var opensearch = container.find('[data-action="opensearch"]');
+    var input = container.find('[data-region="input"]');
+    var submit = container.find('[data-action="submit"');
+
+    submit.on('click', function(e) {
+        if (input.val() === '') {
+            e.preventDefault();
+        }
+    });
+    container.on('hidden.bs.collapse', function() {
+        opensearch.removeClass('d-none');
+        input.val('');
+    });
+    container.on('show.bs.collapse', function() {
+        opensearch.addClass('d-none');
+    });
+    container.on('shown.bs.collapse', function() {
+        input.focus();
+    });
+});
+{{/js}}

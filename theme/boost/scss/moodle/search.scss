@@ -11,54 +11,70 @@
     font-style: italic;
 }
 
-.search-input-wrapper {
-    margin: 0 $spacer 0 0;
-    overflow: hidden;
-    float: right;
-    width: 24px;
-    transition: width 0.5s ease, left 0.5s ease;
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-.search-input-wrapper > div {
-    float: left;
-    margin: 0;
-
-    .icon {
-        margin-right: 0;
-        margin-top: 10px;
+.simplesearchform {
+    .btn {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    .btn .icon {
+        margin: 0;
+    }
+    .btn-submit {
+        border-color: $input-border-color;
+        color: $gray-600;
+    }
+    .btn-close,
+    .btn-clear {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: $gray-600;
+        z-index: 4;
+    }
+    .btn-close {
+        right: 2.2rem;
+    }
+    .btn-submit {
+        background-color: $gray-100;
+    }
+    .withclear {
+        padding-right: 2rem;
+    }
+    .searchinput {
+        display: flex;
+        flex: 1 1 auto;
+    }
+    .collapsing {
+        height: inherit;
+        transition: none;
+        width: inherit;
     }
 }
 
-.search-input-wrapper > form {
-    opacity: 0;
-    margin-left: 25px;
-    transition: opacity 0.5s ease-in-out;
-}
-
-.search-input-wrapper > form > input {
-    margin: 0;
-}
-
-.search-input-wrapper form.expanded {
-    opacity: 1;
-}
-
-.search-input-wrapper.expanded {
-    width: 162px;
-}
-
-@include media-breakpoint-down(xs) {
-    .search-input-wrapper {
-        > div {
-            margin: 0;
+@include media-breakpoint-down(md) {
+    .simplesearchform .collapse.show,
+    .simplesearchform .collapsing {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        display: flex;
+        background-color: $white;
+        z-index: $zindex-popover;
+        height: $navbar-height;
+        .form-inline {
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
         }
-
-        > form {
-            display: none;
+    }
+}
+.navbar.navbar-light {
+    .simplesearchform .btn-open {
+        color: $navbar-light-color;
+        &:hover {
+            color: $navbar-light-hover-color;
         }
-        margin: 0 $spacer 0 0;
     }
 }
 

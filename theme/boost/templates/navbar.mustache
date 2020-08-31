@@ -15,7 +15,27 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Page navbar.
+
+    @template theme_boost/navbar
+
+    This template renders the top navbar.
+
+    Example context (json):
+    {
+        "output": {
+            "should_display_navbar_logo": true,
+            "get_compact_logo_url": "http://placekitten.com/50/50",
+            "custom_menu": "<li>..</li>",
+            "page_heading_menu": "<li>..</li>",
+            "search_box": "<div><input type='text'></div>",
+            "navbar_plugin_output": "<div class='dropdown'>Messaging</div>",
+            "user_menu": "<div class='dropdown'>John Doe</div>"
+        },
+        "config": {
+            "wwwroot": "#"
+        },
+        "sitename": "Moodle Site"
+    }
 }}
 <nav class="fixed-top navbar navbar-light bg-white navbar-expand moodle-has-zindex" aria-label="{{#str}}sitemenubar, admin{{/str}}">
 
@@ -42,19 +62,18 @@
             <!-- page_heading_menu -->
             {{{ output.page_heading_menu }}}
         </ul>
-        <ul class="nav navbar-nav ml-auto">
-            <li class="d-none d-lg-block">
-                {{{ output.search_box }}}
-            </li>
+        <div class="ml-auto">
+            {{{ output.search_box }}}
+        </div>
+        <ul class="nav navbar-nav usernav">
             <!-- navbar_plugin_output -->
             <li class="nav-item">
                 {{{ output.navbar_plugin_output }}}
             </li>
             <!-- user_menu -->
-            <li class="nav-item d-flex align-items-center">
+            <li class="nav-item align-items-center pl-2">
                 {{{ output.user_menu }}}
             </li>
         </ul>
         <!-- search_box -->
 </nav>
-
