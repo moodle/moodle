@@ -11206,6 +11206,8 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
       width: 1em; }
   .modchooser .modal-body .carousel-item .loading-icon .icon {
     margin: 1em auto; }
+  .modchooser .modal-body .searchbar {
+    width: 100%; }
 
 .modchooser .modal-footer {
   height: 70px;
@@ -11217,16 +11219,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 
 .modchoosercontainer.noscroll {
   overflow-y: hidden; }
-
-.modchooser .searchcontainer .searchbar .input-group-append {
-  align-items: center; }
-  .modchooser .searchcontainer .searchbar .input-group-append i {
-    color: #868e96;
-    margin: 0;
-    vertical-align: middle;
-    font-size: 20px;
-    height: 20px;
-    width: 20px; }
 
 .modchoosercontainer .optionscontainer,
 .modchoosercontainer .searchresultitemscontainer {
