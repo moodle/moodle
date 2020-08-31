@@ -153,6 +153,7 @@ $string['confirmunassignno'] = 'Cancel';
 $string['contentbank:access'] = 'Access the content bank';
 $string['contentbank:deleteanycontent'] = 'Delete any content from the content bank';
 $string['contentbank:deleteowncontent'] = 'Delete content from own content bank';
+$string['contentbank:downloadcontent'] = 'Download a content from the content bank';
 $string['contentbank:manageanycontent'] = 'Manage any content from the content bank';
 $string['contentbank:manageowncontent'] = 'Manage content from own content bank';
 $string['contentbank:upload'] = 'Upload new content to the content bank';
