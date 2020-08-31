@@ -5572,8 +5572,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
         $this->assertObjectHasAttribute('id', $message1);
-        $this->assertAttributeEquals($user1->id, 'useridfrom', $message1);
-        $this->assertAttributeEquals('this is a message', 'text', $message1);
+        $this->assertEquals($user1->id, $message1->useridfrom);
+        $this->assertEquals('this is a message', $message1->text);
         $this->assertObjectHasAttribute('timecreated', $message1);
 
         // Verify events. Note: the event is a message read event because of an if (PHPUNIT) conditional within message_send(),
@@ -5614,8 +5614,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
         $this->assertObjectHasAttribute('id', $message1);
-        $this->assertAttributeEquals($user1->id, 'useridfrom', $message1);
-        $this->assertAttributeEquals('message to the group', 'text', $message1);
+        $this->assertEquals($user1->id, $message1->useridfrom);
+        $this->assertEquals('message to the group', $message1->text);
         $this->assertObjectHasAttribute('timecreated', $message1);
         // Test customdata.
         $customdata = json_decode($messages[0]->customdata);
@@ -5683,8 +5683,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
         $this->assertObjectHasAttribute('id', $message1);
-        $this->assertAttributeEquals($user1->id, 'useridfrom', $message1);
-        $this->assertAttributeEquals('message to the group', 'text', $message1);
+        $this->assertEquals($user1->id, $message1->useridfrom);
+        $this->assertEquals('message to the group', $message1->text);
         $this->assertObjectHasAttribute('timecreated', $message1);
         // Test customdata.
         $customdata = json_decode($messages[0]->customdata);
