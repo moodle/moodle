@@ -20,8 +20,8 @@ Feature: Courses can be searched for and moved in bulk.
   Scenario: Search courses finds correct results
     Given I log in as "admin"
     And I go to the courses management page
-    When I set the field "coursesearchbox" to "Biology"
-    And I press "Go"
+    When I set the field "Search" to "Biology"
+    And I press "Search"
     Then I should see "Biology Y1"
     And I should see "Biology Y2"
     And I should not see "English Y1"
@@ -31,8 +31,8 @@ Feature: Courses can be searched for and moved in bulk.
   Scenario: Search courses and move results in bulk
     Given I log in as "admin"
     And I go to the courses management page
-    And I set the field "coursesearchbox" to "Biology"
-    And I press "Go"
+    And I set the field "Search" to "Biology"
+    And I press "Search"
     When I select course "Biology Y1" in the management interface
     And I select course "Biology Y2" in the management interface
     And I set the field "menumovecoursesto" to "Science"
