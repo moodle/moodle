@@ -199,15 +199,15 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $badge = new badge($this->badgeid);
         $old_status = $badge->status;
         $badge->set_status(BADGE_STATUS_ACTIVE);
-        $this->assertAttributeNotEquals($old_status, 'status', $badge);
-        $this->assertAttributeEquals(BADGE_STATUS_ACTIVE, 'status', $badge);
+        $this->assertNotEquals($old_status, $badge->status);
+        $this->assertEquals(BADGE_STATUS_ACTIVE, $badge->status);
     }
 
     public function test_delete_badge() {
         $badge = new badge($this->badgeid);
         $badge->delete();
         // We don't actually delete badges. We archive them.
-        $this->assertAttributeEquals(BADGE_STATUS_ARCHIVED, 'status', $badge);
+        $this->assertEquals(BADGE_STATUS_ARCHIVED, $badge->status);
     }
 
     /**
