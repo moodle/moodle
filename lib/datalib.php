@@ -784,7 +784,6 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
  *
  * @global object
  * @global object
- * @uses MAX_COURSES_IN_CATEGORY
  * @uses MAX_COURSE_CATEGORIES
  * @uses SITEID
  * @uses CONTEXT_COURSE
@@ -801,7 +800,8 @@ function fix_course_sortorder() {
 
     if ($unsorted = $DB->get_records('course_categories', array('sortorder'=>0))) {
         //move all categories that are not sorted yet to the end
-        $DB->set_field('course_categories', 'sortorder', MAX_COURSES_IN_CATEGORY*MAX_COURSE_CATEGORIES, array('sortorder'=>0));
+        $DB->set_field('course_categories', 'sortorder',
+            get_max_courses_in_category() * MAX_COURSE_CATEGORIES, array('sortorder' => 0));
         $cacheevents['changesincoursecat'] = true;
     }
 
@@ -901,7 +901,7 @@ function fix_course_sortorder() {
         $categories = array();
         foreach ($updatecounts as $cat) {
             $cat->coursecount = $cat->newcount;
-            if ($cat->coursecount >= MAX_COURSES_IN_CATEGORY) {
+            if ($cat->coursecount >= get_max_courses_in_category()) {
                 $categories[] = $cat->id;
             }
             unset($cat->newcount);
@@ -909,7 +909,11 @@ function fix_course_sortorder() {
         }
         if (!empty($categories)) {
             $str = implode(', ', $categories);
-            debugging("The number of courses (category id: $str) has reached MAX_COURSES_IN_CATEGORY (" . MAX_COURSES_IN_CATEGORY . "), it will cause a sorting performance issue, please increase the value of MAX_COURSES_IN_CATEGORY in lib/datalib.php file. See tracker issue: MDL-25669", DEBUG_DEVELOPER);
+            debugging("The number of courses (category id: $str) has reached max number of courses " .
+                "in a category (" . get_max_courses_in_category() . "). It will cause a sorting performance issue. " .
+                "Please set higher value for \$CFG->maxcoursesincategory in config.php. " .
+                "Please also make sure \$CFG->maxcoursesincategory * MAX_COURSE_CATEGORIES less than max integer. " .
+                "See tracker issues: MDL-25669 and MDL-69573", DEBUG_DEVELOPER);
         }
         $cacheevents['changesincoursecat'] = true;
     }
@@ -918,13 +922,13 @@ function fix_course_sortorder() {
     $sql = "SELECT DISTINCT cc.id, cc.sortorder
               FROM {course_categories} cc
               JOIN {course} c ON c.category = cc.id
-             WHERE c.sortorder < cc.sortorder OR c.sortorder > cc.sortorder + ".MAX_COURSES_IN_CATEGORY;
+             WHERE c.sortorder < cc.sortorder OR c.sortorder > cc.sortorder + " . get_max_courses_in_category();
 
     if ($fixcategories = $DB->get_records_sql($sql)) {
         //fix the course sortorder ranges
         foreach ($fixcategories as $cat) {
             $sql = "UPDATE {course}
-                       SET sortorder = ".$DB->sql_modulo('sortorder', MAX_COURSES_IN_CATEGORY)." + ?
+                       SET sortorder = ".$DB->sql_modulo('sortorder', get_max_courses_in_category())." + ?
                      WHERE category = ?";
             $DB->execute($sql, array($cat->sortorder, $cat->id));
         }
@@ -992,7 +996,6 @@ function fix_course_sortorder() {
  * @todo Document the arguments of this function better
  *
  * @global object
- * @uses MAX_COURSES_IN_CATEGORY
  * @uses CONTEXT_COURSECAT
  * @param array $children
  * @param int $sortorder
@@ -1009,7 +1012,7 @@ function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixc
     $changesmade = false;
 
     foreach ($children as $cat) {
-        $sortorder = $sortorder + MAX_COURSES_IN_CATEGORY;
+        $sortorder = $sortorder + get_max_courses_in_category();
         $update = false;
         if ($parent != $cat->parent or $depth != $cat->depth or $path.'/'.$cat->id != $cat->path) {
             $cat->parent = $parent;
@@ -1803,4 +1806,20 @@ function decompose_update_into_safe_changes(array $newvalues, $unusedvalue) {
     }
 
     return $safechanges;
+}
+
+/**
+ * Return maximum number of courses in a category
+ *
+ * @uses MAX_COURSES_IN_CATEGORY
+ * @return int number of courses
+ */
+function get_max_courses_in_category() {
+    global $CFG;
+    // Use default MAX_COURSES_IN_CATEGORY if $CFG->maxcoursesincategory is not set or invalid.
+    if (!isset($CFG->maxcoursesincategory) || clean_param($CFG->maxcoursesincategory, PARAM_INT) == 0) {
+        return MAX_COURSES_IN_CATEGORY;
+    } else {
+        return $CFG->maxcoursesincategory;
+    }
 }

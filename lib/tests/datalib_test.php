@@ -653,4 +653,97 @@ class core_datalib_testcase extends advanced_testcase {
             $this->assertInstanceOf('coding_exception', $e);
         }
     }
+
+    /**
+     * Test max courses in category
+     */
+    public function test_max_courses_in_category() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        // Default settings.
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY, get_max_courses_in_category());
+
+        // Misc category.
+        $misc = core_course_category::get_default();
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY, $misc->sortorder);
+
+        $category1 = $this->getDataGenerator()->create_category();
+        $category2 = $this->getDataGenerator()->create_category();
+
+        // Check category sort orders.
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY, core_course_category::get($misc->id)->sortorder);
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY * 2, core_course_category::get($category1->id)->sortorder);
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY * 3, core_course_category::get($category2->id)->sortorder);
+
+        // Create courses.
+        $course1 = $this->getDataGenerator()->create_course(['category' => $category1->id]);
+        $course2 = $this->getDataGenerator()->create_course(['category' => $category2->id]);
+        $course3 = $this->getDataGenerator()->create_course(['category' => $category1->id]);
+        $course4 = $this->getDataGenerator()->create_course(['category' => $category2->id]);
+
+        // Check course sort orders.
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY * 2 + 2, get_course($course1->id)->sortorder);
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY * 3 + 2, get_course($course2->id)->sortorder);
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY * 2 + 1, get_course($course3->id)->sortorder);
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY * 3 + 1, get_course($course4->id)->sortorder);
+
+        // Increase max course in category.
+        $CFG->maxcoursesincategory = 20000;
+        $this->assertEquals(20000, get_max_courses_in_category());
+
+        // The sort order has not yet fixed, these sort orders should be the same as before.
+        // Categories.
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY, core_course_category::get($misc->id)->sortorder);
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY * 2, core_course_category::get($category1->id)->sortorder);
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY * 3, core_course_category::get($category2->id)->sortorder);
+        // Courses in category 1.
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY * 2 + 2, get_course($course1->id)->sortorder);
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY * 2 + 1, get_course($course3->id)->sortorder);
+        // Courses in category 2.
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY * 3 + 2, get_course($course2->id)->sortorder);
+        $this->assertEquals(MAX_COURSES_IN_CATEGORY * 3 + 1, get_course($course4->id)->sortorder);
+
+        // Create new category so that the sort orders are applied.
+        $category3 = $this->getDataGenerator()->create_category();
+        // Categories.
+        $this->assertEquals(20000, core_course_category::get($misc->id)->sortorder);
+        $this->assertEquals(20000 * 2, core_course_category::get($category1->id)->sortorder);
+        $this->assertEquals(20000 * 3, core_course_category::get($category2->id)->sortorder);
+        $this->assertEquals(20000 * 4, core_course_category::get($category3->id)->sortorder);
+        // Courses in category 1.
+        $this->assertEquals(20000 * 2 + 2, get_course($course1->id)->sortorder);
+        $this->assertEquals(20000 * 2 + 1, get_course($course3->id)->sortorder);
+        // Courses in category 2.
+        $this->assertEquals(20000 * 3 + 2, get_course($course2->id)->sortorder);
+        $this->assertEquals(20000 * 3 + 1, get_course($course4->id)->sortorder);
+    }
+
+    /**
+     * Test debug message for max courses in category
+     */
+    public function test_debug_max_courses_in_category() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        // Set to small value so that we can check the debug message.
+        $CFG->maxcoursesincategory = 3;
+        $this->assertEquals(3, get_max_courses_in_category());
+
+        $category1 = $this->getDataGenerator()->create_category();
+
+        // There is only one course, no debug message.
+        $this->getDataGenerator()->create_course(['category' => $category1->id]);
+        $this->assertDebuggingNotCalled();
+        // There are two courses, no debug message.
+        $this->getDataGenerator()->create_course(['category' => $category1->id]);
+        $this->assertDebuggingNotCalled();
+        // There is debug message when number of courses reaches the maximum number.
+        $this->getDataGenerator()->create_course(['category' => $category1->id]);
+        $this->assertDebuggingCalled("The number of courses (category id: $category1->id) has reached max number of courses " .
+            "in a category (" . get_max_courses_in_category() . "). It will cause a sorting performance issue. " .
+            "Please set higher value for \$CFG->maxcoursesincategory in config.php. " .
+            "Please also make sure \$CFG->maxcoursesincategory * MAX_COURSE_CATEGORIES less than max integer. " .
+            "See tracker issues: MDL-25669 and MDL-69573");
+    }
 }

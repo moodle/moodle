@@ -2103,7 +2103,7 @@ function move_courses($courseids, $categoryid) {
         $course->id = $dbcourse->id;
         $course->timemodified = time();
         $course->category  = $category->id;
-        $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
+        $course->sortorder = $category->sortorder + get_max_courses_in_category() - $i++;
         if ($category->visible == 0) {
             // Hide the course when moving into hidden category, do not update the visibleold flag - we want to get
             // to previous state if somebody unhides the category.
