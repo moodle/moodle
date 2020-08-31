@@ -15,20 +15,20 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_forum/quick_search_form
+    @template core/checkbox
 
-    This template renders the search form within forums.
+    Chooser search template.
 
     Example context (json):
     {
-        "action": "https://domain.example/mod/forum/search.php",
-        "helpicon": "<a class='btn'><i class='icon fa fa-question-circle'></i></a>",
-        "query": "find this post",
-        "inputname": "search"
+        "name": "fullsearch",
+        "id": "fullsearch",
+        "checked": true,
+        "value": "1",
+        "label": "Reset options"
     }
 }}
-{{#helpicon}}
-    {{>core/help_icon}}
-{{/helpicon}}
-{{< core/search_input }}
-{{/ core/search_input }}
+<div class="custom-control custom-checkbox">
+  <input type="checkbox" name={{{ name }}} class="custom-control-input" value={{{ value }}} id="{{{ id }}}" {{#checked}} checked="checked" {{/checked}}>
+  <label class="custom-control-label" for="{{{ id }}}">{{{ label }}}</label>
+</div>
