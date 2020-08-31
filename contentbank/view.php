@@ -84,6 +84,15 @@ if ($contenttype->can_manage($content)) {
         $attributes
     ));
 }
+if ($contenttype->can_download($content)) {
+    // Add the download content item to the menu.
+    $actionmenu->add_secondary_action(new action_menu_link(
+        new moodle_url($contenttype->get_download_url($content)),
+        new pix_icon('t/download', get_string('download')),
+        get_string('download'),
+        false
+    ));
+}
 if ($contenttype->can_delete($content)) {
     // Add the delete content item to the menu.
     $attributes = [
