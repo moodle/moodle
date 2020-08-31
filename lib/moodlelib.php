@@ -9790,6 +9790,39 @@ function get_performance_info() {
 }
 
 /**
+ * Renames a file or directory to a unique name within the same directory.
+ *
+ * This function is designed to avoid any potential race conditions, and select an unused name.
+ *
+ * @param string $filepath Original filepath
+ * @param string $prefix Prefix to use for the temporary name
+ * @return string|bool New file path or false if failed
+ * @since Moodle 3.10
+ */
+function rename_to_unused_name(string $filepath, string $prefix = '_temp_') {
+    $dir = dirname($filepath);
+    $basename = $dir . '/' . $prefix;
+    $limit = 0;
+    while ($limit < 100) {
+        // Select a new name based on a random number.
+        $newfilepath = $basename . md5(mt_rand());
+
+        // Attempt a rename to that new name.
+        if (@rename($filepath, $newfilepath)) {
+            return $newfilepath;
+        }
+
+        // The first time, do some sanity checks, maybe it is failing for a good reason and there
+        // is no point trying 100 times if so.
+        if ($limit === 0 && (!file_exists($filepath) || !is_writable($dir))) {
+            return false;
+        }
+        $limit++;
+    }
+    return false;
+}
+
+/**
  * Delete directory or only its content
  *
  * @param string $dir directory path
@@ -9801,6 +9834,19 @@ function remove_dir($dir, $contentonly=false) {
         // Nothing to do.
         return true;
     }
+
+    if (!$contentonly) {
+        // Start by renaming the directory; this will guarantee that other processes don't write to it
+        // while it is in the process of being deleted.
+        $tempdir = rename_to_unused_name($dir);
+        if ($tempdir) {
+            // If the rename was successful then delete the $tempdir instead.
+            $dir = $tempdir;
+        }
+        // If the rename fails, we will continue through and attempt to delete the directory
+        // without renaming it since that is likely to at least delete most of the files.
+    }
+
     if (!$handle = opendir($dir)) {
         return false;
     }

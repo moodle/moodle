@@ -4713,4 +4713,67 @@ class core_moodlelib_testcase extends advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Tests the rename_to_unused_name function with a file.
+     */
+    public function test_rename_to_unused_name_file() {
+        global $CFG;
+
+        // Create a new file in dataroot.
+        $file = $CFG->dataroot . '/argh.txt';
+        file_put_contents($file, 'Frogs');
+
+        // Rename it.
+        $newname = rename_to_unused_name($file);
+
+        // Check new name has expected format.
+        $this->assertRegExp('~/_temp_[a-f0-9]+$~', $newname);
+
+        // Check it's still in the same folder.
+        $this->assertEquals($CFG->dataroot, dirname($newname));
+
+        // Check file can be loaded.
+        $this->assertEquals('Frogs', file_get_contents($newname));
+
+        // OK, delete the file.
+        unlink($newname);
+    }
+
+    /**
+     * Tests the rename_to_unused_name function with a directory.
+     */
+    public function test_rename_to_unused_name_dir() {
+        global $CFG;
+
+        // Create a new directory in dataroot.
+        $file = $CFG->dataroot . '/arghdir';
+        mkdir($file);
+
+        // Rename it.
+        $newname = rename_to_unused_name($file);
+
+        // Check new name has expected format.
+        $this->assertRegExp('~/_temp_[a-f0-9]+$~', $newname);
+
+        // Check it's still in the same folder.
+        $this->assertEquals($CFG->dataroot, dirname($newname));
+
+        // Check it's still a directory
+        $this->assertTrue(is_dir($newname));
+
+        // OK, delete the directory.
+        rmdir($newname);
+    }
+
+    /**
+     * Tests the rename_to_unused_name function with error cases.
+     */
+    public function test_rename_to_unused_name_failure() {
+        global $CFG;
+
+        // Rename a file that doesn't exist.
+        $file = $CFG->dataroot . '/argh.txt';
+        $this->assertFalse(rename_to_unused_name($file));
+    }
 }
