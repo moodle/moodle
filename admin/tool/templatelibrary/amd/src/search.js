@@ -45,8 +45,13 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
      */
     var refreshSearch = function(themename) {
         var componentStr = $('[data-field="component"]').val();
-        var searchStr = $('[data-field="search"]').val();
+        var searchStr = $('[data-region="list-templates"] [data-region="input"]').val();
 
+        if (searchStr !== '') {
+            $('[data-region="list-templates"] [data-action="clearsearch"]').removeClass('d-none');
+        } else {
+            $('[data-region="list-templates"] [data-action="clearsearch"]').addClass('d-none');
+        }
         // Trigger the search.
         document.location.hash = searchStr;
 
@@ -84,9 +89,14 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
     };
     // Add change handlers to refresh the list.
     $('[data-region="list-templates"]').on('change', '[data-field="component"]', changeHandler);
-    $('[data-region="list-templates"]').on('input', '[data-field="search"]', changeHandler);
+    $('[data-region="list-templates"]').on('input', '[data-region="input"]', changeHandler);
+    $('[data-action="clearsearch"]').on('click', function() {
+        $('[data-region="input"]').val('');
+        refreshSearch(config.theme);
+        $(this).addClass('d-none');
+    });
 
-    $('[data-field="search"]').val(document.location.hash.replace('#', ''));
+    $('[data-region="input"]').val(document.location.hash.replace('#', ''));
     refreshSearch(config.theme);
     return {};
 });
