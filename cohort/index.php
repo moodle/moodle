@@ -103,19 +103,21 @@ if ($editcontrols = cohort_edit_controls($context, $baseurl)) {
 }
 
 // Add search form.
-$search  = html_writer::start_tag('form', array('id'=>'searchcohortquery', 'method'=>'get', 'class' => 'form-inline search-cohort'));
-$search .= html_writer::start_div('mb-1');
-$search .= html_writer::label(get_string('searchcohort', 'cohort'), 'cohort_search_q', true,
-        array('class' => 'mr-1')); // No : in form labels!
-$search .= html_writer::empty_tag('input', array('id' => 'cohort_search_q', 'type' => 'text', 'name' => 'search',
-        'value' => $searchquery, 'class' => 'form-control mr-1'));
-$search .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('search', 'cohort'),
-        'class' => 'btn btn-secondary'));
-$search .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'contextid', 'value'=>$contextid));
-$search .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'showall', 'value'=>$showall));
-$search .= html_writer::end_div();
-$search .= html_writer::end_tag('form');
-echo $search;
+$hiddenfields = [
+    (object) ['name' => 'contextid', 'value' => $contextid],
+    (object) ['name' => 'showall', 'value' => $showall]
+];
+
+$data = [
+    'action' => new moodle_url('/cohort/index.php'),
+    'inputname' => 'search',
+    'searchstring' => get_string('search', 'cohort'),
+    'query' => $searchquery,
+    'hiddenfields' => $hiddenfields,
+    'extraclasses' => 'mb-3'
+];
+
+echo $OUTPUT->render_from_template('core/search_input', $data);
 
 // Output pagination bar.
 echo $OUTPUT->paging_bar($cohorts['totalcohorts'], $page, 25, $baseurl);
