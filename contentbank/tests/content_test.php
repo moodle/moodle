@@ -275,4 +275,27 @@ class core_contenttype_content_testcase extends \advanced_testcase {
         $contentfile = $content->get_file($file);
         $this->assertEquals($importedfile->get_id(), $contentfile->get_id());
     }
+
+    /**
+     * Tests for 'get_content_type_instance'
+     *
+     * @covers ::get_content_type_instance
+     */
+    public function test_get_content_type_instance(): void {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $context = context_system::instance();
+
+        $type = new contenttype($context);
+        $record = (object)[
+            'name' => 'content name',
+            'usercreated' => $USER->id,
+        ];
+        $content = $type->create_content($record);
+
+        $contenttype = $content->get_content_type_instance();
+
+        $this->assertInstanceOf(get_class($type), $contenttype);
+    }
 }

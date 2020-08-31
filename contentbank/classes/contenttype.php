@@ -122,6 +122,21 @@ abstract class contenttype {
     }
 
     /**
+     * Replace a content using an uploaded file.
+     *
+     * @throws file_exception If file operations fail
+     * @throws dml_exception if the content creation fails
+     * @param stored_file $file the uploaded file
+     * @param content $content the original content record
+     * @return content Object with the updated content bank information.
+     */
+    public function replace_content(stored_file $file, content $content): content {
+        $content->import_file($file);
+        $content->update_content();
+        return $content;
+    }
+
+    /**
      * Delete this content from the content_bank.
      * This method can be overwritten by the plugins if they need to delete specific information.
      *

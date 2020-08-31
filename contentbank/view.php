@@ -83,6 +83,15 @@ if ($contenttype->can_manage($content)) {
         false,
         $attributes
     ));
+
+    if ($contenttype->can_upload()) {
+        $actionmenu->add_secondary_action(new action_menu_link(
+            new moodle_url('/contentbank/upload.php', ['contextid' => $context->id, 'id' => $content->get_id()]),
+            new pix_icon('i/upload', get_string('upload')),
+            get_string('replacecontent', 'contentbank'),
+            false
+        ));
+    }
 }
 if ($contenttype->can_download($content)) {
     // Add the download content item to the menu.
