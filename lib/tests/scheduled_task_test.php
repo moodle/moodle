@@ -145,7 +145,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Should be displayed in user timezone.
         // I used http://www.timeanddate.com/worldclock/fixedtime.html?msg=Moodle+Test&iso=20160502T01&p1=113
         // setting my location to Kathmandu to verify this time.
-        $this->assertContains('2:15 AM', core_text::strtoupper($userdate));
+        $this->assertStringContainsString('2:15 AM', core_text::strtoupper($userdate));
     }
 
     public function test_reset_scheduled_tasks_for_component_customised(): void {

@@ -997,8 +997,8 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $this->assertEquals($subject, $message->subject);
         $this->assertEquals('tool_dataprivacy', $message->component);
         $this->assertEquals('contactdataprotectionofficer', $message->eventtype);
-        $this->assertContains(fullname($dpo), $message->fullmessage);
-        $this->assertContains(fullname($user1), $message->fullmessage);
+        $this->assertStringContainsString(fullname($dpo), $message->fullmessage);
+        $this->assertStringContainsString(fullname($user1), $message->fullmessage);
     }
 
     /**

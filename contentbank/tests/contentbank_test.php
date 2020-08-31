@@ -244,7 +244,7 @@ class core_contentbank_testcase extends advanced_testcase {
         $this->assertCount($expectedresult, $contents);
         if (!empty($contents) && !empty($search)) {
             foreach ($contents as $content) {
-                $this->assertContains($search, $content->get_name());
+                $this->assertStringContainsString($search, $content->get_name());
             }
         }
     }

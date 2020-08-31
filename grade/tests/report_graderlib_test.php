@@ -274,13 +274,13 @@ class core_grade_report_graderlib_testcase extends advanced_testcase {
 
         // The second row should contain 2 cells - one for the graded quiz and course total.
         $this->assertCount(2, $result[1]->cells);
-        $this->assertContains('NormalQuiz', $result[1]->cells[0]->text);
-        $this->assertContains('Course total', $result[1]->cells[1]->text);
+        $this->assertStringContainsString('NormalQuiz', $result[1]->cells[0]->text);
+        $this->assertStringContainsString('Course total', $result[1]->cells[1]->text);
 
         // User row should contain grade values '-'.
         $this->assertCount(2, $result[2]->cells);
-        $this->assertContains('>-<', $result[2]->cells[0]->text);
-        $this->assertContains('>-<', $result[2]->cells[1]->text);
+        $this->assertStringContainsString('>-<', $result[2]->cells[0]->text);
+        $this->assertStringContainsString('>-<', $result[2]->cells[1]->text);
 
         // Supposing the user cannot view hidden grades, this shouldn't make any difference (due
         // to a bug, it previously did).

@@ -61,7 +61,7 @@ class external_testcase extends \advanced_testcase {
         // Check that the result contains all the expected fields.
         $this->assertEquals($student1->id, $result[0]->id);
         $this->assertEquals('Amelia Aardvark', $result[0]->fullname);
-        $this->assertContains('/u/f2', $result[0]->profileimageurlsmall);
+        $this->assertStringContainsString('/u/f2', $result[0]->profileimageurlsmall);
 
         // Check we aren't leaking information about user email address (for instance).
         $this->assertObjectNotHasAttribute('email', $result[0]);

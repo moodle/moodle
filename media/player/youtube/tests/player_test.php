@@ -66,53 +66,53 @@ class media_youtube_testcase extends advanced_testcase {
         // Format: youtube.
         $url = new moodle_url('http://www.youtube.com/watch?v=vyrwMmsufJc');
         $t = $manager->embed_url($url);
-        $this->assertContains('</iframe>', $t);
+        $this->assertStringContainsString('</iframe>', $t);
         $url = new moodle_url('http://www.youtube.com/v/vyrwMmsufJc');
         $t = $manager->embed_url($url);
-        $this->assertContains('</iframe>', $t);
+        $this->assertStringContainsString('</iframe>', $t);
         $url = new moodle_url('http://m.youtube.com/watch?v=vyrwMmsufJc');
         $t = $manager->embed_url($url);
-        $this->assertContains('</iframe>', $t);
+        $this->assertStringContainsString('</iframe>', $t);
 
         // Format: youtube video within playlist.
         $url = new moodle_url('https://www.youtube.com/watch?v=dv2f_xfmbD8&index=4&list=PLxcO_MFWQBDcyn9xpbmx601YSDlDcTcr0');
         $t = $manager->embed_url($url);
-        $this->assertContains('</iframe>', $t);
-        $this->assertContains('list=PLxcO_MFWQBDcyn9xpbmx601YSDlDcTcr0', $t);
+        $this->assertStringContainsString('</iframe>', $t);
+        $this->assertStringContainsString('list=PLxcO_MFWQBDcyn9xpbmx601YSDlDcTcr0', $t);
 
         // Format: youtube video with start time.
         $url = new moodle_url('https://www.youtube.com/watch?v=JNJMF1l3udM&t=1h11s');
         $t = $manager->embed_url($url);
-        $this->assertContains('</iframe>', $t);
-        $this->assertContains('start=3611', $t);
+        $this->assertStringContainsString('</iframe>', $t);
+        $this->assertStringContainsString('start=3611', $t);
 
         // Format: youtube video within playlist with start time.
         $url = new moodle_url('https://www.youtube.com/watch?v=dv2f_xfmbD8&index=4&list=PLxcO_MFWQBDcyn9xpbmx601YSDlDcTcr0&t=1m5s');
         $t = $manager->embed_url($url);
-        $this->assertContains('</iframe>', $t);
-        $this->assertContains('list=PLxcO_MFWQBDcyn9xpbmx601YSDlDcTcr0', $t);
-        $this->assertContains('start=65', $t);
+        $this->assertStringContainsString('</iframe>', $t);
+        $this->assertStringContainsString('list=PLxcO_MFWQBDcyn9xpbmx601YSDlDcTcr0', $t);
+        $this->assertStringContainsString('start=65', $t);
 
         // Format: youtube video with invalid parameter values (injection attempts).
         $url = new moodle_url('https://www.youtube.com/watch?v=dv2f_xfmbD8&index=4&list=PLxcO_">');
         $t = $manager->embed_url($url);
-        $this->assertContains('</iframe>', $t);
-        $this->assertNotContains('list=PLxcO_', $t); // We shouldn't get a list param as input was invalid.
+        $this->assertStringContainsString('</iframe>', $t);
+        $this->assertStringNotContainsString('list=PLxcO_', $t); // We shouldn't get a list param as input was invalid.
         $url = new moodle_url('https://www.youtube.com/watch?v=JNJMF1l3udM&t=">');
         $t = $manager->embed_url($url);
-        $this->assertContains('</iframe>', $t);
-        $this->assertNotContains('start=', $t); // We shouldn't get a start param as input was invalid.
+        $this->assertStringContainsString('</iframe>', $t);
+        $this->assertStringNotContainsString('start=', $t); // We shouldn't get a start param as input was invalid.
 
         // Format: youtube playlist.
         $url = new moodle_url('http://www.youtube.com/view_play_list?p=PL6E18E2927047B662');
         $t = $manager->embed_url($url);
-        $this->assertContains('</iframe>', $t);
+        $this->assertStringContainsString('</iframe>', $t);
         $url = new moodle_url('http://www.youtube.com/playlist?list=PL6E18E2927047B662');
         $t = $manager->embed_url($url);
-        $this->assertContains('</iframe>', $t);
+        $this->assertStringContainsString('</iframe>', $t);
         $url = new moodle_url('http://www.youtube.com/p/PL6E18E2927047B662');
         $t = $manager->embed_url($url);
-        $this->assertContains('</iframe>', $t);
+        $this->assertStringContainsString('</iframe>', $t);
 
     }
 

@@ -129,9 +129,9 @@ class filetypes_util_testcase extends advanced_testcase {
         $this->assertEquals('.mudrd8mz', $desc[0]->extensions);
 
         $this->assertEquals('Image (JPEG)', $desc[2]->description);
-        $this->assertContains('.jpg', $desc[2]->extensions);
-        $this->assertContains('.jpeg', $desc[2]->extensions);
-        $this->assertContains('.jpe', $desc[2]->extensions);
+        $this->assertStringContainsString('.jpg', $desc[2]->extensions);
+        $this->assertStringContainsString('.jpeg', $desc[2]->extensions);
+        $this->assertStringContainsString('.jpe', $desc[2]->extensions);
 
         // Check that it can describe groups and mimetypes too.
         $desc = $util->describe_file_types('audio text/plain');
@@ -141,12 +141,12 @@ class filetypes_util_testcase extends advanced_testcase {
         $this->assertEquals(2, count($desc));
 
         $this->assertEquals('Audio files', $desc[0]->description);
-        $this->assertContains('.mp3', $desc[0]->extensions);
-        $this->assertContains('.wav', $desc[0]->extensions);
-        $this->assertContains('.ogg', $desc[0]->extensions);
+        $this->assertStringContainsString('.mp3', $desc[0]->extensions);
+        $this->assertStringContainsString('.wav', $desc[0]->extensions);
+        $this->assertStringContainsString('.ogg', $desc[0]->extensions);
 
         $this->assertEquals('Text file', $desc[1]->description);
-        $this->assertContains('.txt', $desc[1]->extensions);
+        $this->assertStringContainsString('.txt', $desc[1]->extensions);
 
         // Empty.
         $desc = $util->describe_file_types('');

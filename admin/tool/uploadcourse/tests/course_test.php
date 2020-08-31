@@ -1230,7 +1230,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $data = \core_course\customfield\course_handler::create()->export_instance_data_object($course->id);
         $this->assertEquals('Wednesday, 1 April 2020, 4:00 PM', $data->mydatefield, '', 0.0, 10, false, true);
         $this->assertEquals($dataupload['customfield_mytextfield'], $data->mytextfield);
-        $this->assertContains($dataupload['customfield_mytextareafield'], $data->mytextareafield);
+        $this->assertStringContainsString($dataupload['customfield_mytextareafield'], $data->mytextareafield);
     }
 
     /**

@@ -122,7 +122,7 @@ class availability_group_condition_testcase extends advanced_testcase {
             $cond = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Invalid ->id', $e->getMessage());
+            $this->assertStringContainsString('Invalid ->id', $e->getMessage());
         }
 
         // Valid (with id).

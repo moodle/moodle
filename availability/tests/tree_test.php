@@ -49,83 +49,83 @@ class tree_testcase extends \advanced_testcase {
             new tree('frog');
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('not object', $e->getMessage());
+            $this->assertStringContainsString('not object', $e->getMessage());
         }
         try {
             new tree((object)array());
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('missing ->op', $e->getMessage());
+            $this->assertStringContainsString('missing ->op', $e->getMessage());
         }
         try {
             new tree((object)array('op' => '*'));
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('unknown ->op', $e->getMessage());
+            $this->assertStringContainsString('unknown ->op', $e->getMessage());
         }
         try {
             new tree((object)array('op' => '|'));
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('missing ->show', $e->getMessage());
+            $this->assertStringContainsString('missing ->show', $e->getMessage());
         }
         try {
             new tree((object)array('op' => '|', 'show' => 0));
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('->show not bool', $e->getMessage());
+            $this->assertStringContainsString('->show not bool', $e->getMessage());
         }
         try {
             new tree((object)array('op' => '&'));
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('missing ->showc', $e->getMessage());
+            $this->assertStringContainsString('missing ->showc', $e->getMessage());
         }
         try {
             new tree((object)array('op' => '&', 'showc' => 0));
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('->showc not array', $e->getMessage());
+            $this->assertStringContainsString('->showc not array', $e->getMessage());
         }
         try {
             new tree((object)array('op' => '&', 'showc' => array(0)));
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('->showc value not bool', $e->getMessage());
+            $this->assertStringContainsString('->showc value not bool', $e->getMessage());
         }
         try {
             new tree((object)array('op' => '|', 'show' => true));
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('missing ->c', $e->getMessage());
+            $this->assertStringContainsString('missing ->c', $e->getMessage());
         }
         try {
             new tree((object)array('op' => '|', 'show' => true,
                     'c' => 'side'));
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('->c not array', $e->getMessage());
+            $this->assertStringContainsString('->c not array', $e->getMessage());
         }
         try {
             new tree((object)array('op' => '|', 'show' => true,
                     'c' => array(3)));
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('child not object', $e->getMessage());
+            $this->assertStringContainsString('child not object', $e->getMessage());
         }
         try {
             new tree((object)array('op' => '|', 'show' => true,
                     'c' => array((object)array('type' => 'doesnotexist'))));
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Unknown condition type: doesnotexist', $e->getMessage());
+            $this->assertStringContainsString('Unknown condition type: doesnotexist', $e->getMessage());
         }
         try {
             new tree((object)array('op' => '|', 'show' => true,
                     'c' => array((object)array())));
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('missing ->op', $e->getMessage());
+            $this->assertStringContainsString('missing ->op', $e->getMessage());
         }
         try {
             new tree((object)array('op' => '&',
@@ -134,7 +134,7 @@ class tree_testcase extends \advanced_testcase {
                     ));
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('->c, ->showc mismatch', $e->getMessage());
+            $this->assertStringContainsString('->c, ->showc mismatch', $e->getMessage());
         }
     }
 

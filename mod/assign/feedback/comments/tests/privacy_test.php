@@ -133,7 +133,7 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\mod_ass
         // The student should be able to see the teachers feedback.
         $exportdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign, $grade, [], $user1);
         \assignfeedback_comments\privacy\provider::export_feedback_user_data($exportdata);
-        $this->assertContains($feedbacktext, $writer->get_data(['Feedback comments'])->commenttext);
+        $this->assertStringContainsString($feedbacktext, $writer->get_data(['Feedback comments'])->commenttext);
 
         $filespath = [];
         $filespath[] = 'Feedback comments';
@@ -145,7 +145,7 @@ class assignfeedback_comments_privacy_testcase extends \mod_assign\tests\mod_ass
         // The teacher should also be able to see the feedback that they provided.
         $exportdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign, $grade, [], $user2);
         \assignfeedback_comments\privacy\provider::export_feedback_user_data($exportdata);
-        $this->assertContains($feedbacktext, $writer->get_data(['Feedback comments'])->commenttext);
+        $this->assertStringContainsString($feedbacktext, $writer->get_data(['Feedback comments'])->commenttext);
 
         $feedbackfile = $writer->get_files($filespath)['feedback1.txt'];
 

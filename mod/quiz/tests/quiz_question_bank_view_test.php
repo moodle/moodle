@@ -67,7 +67,7 @@ class quiz_question_bank_view_testcase extends advanced_testcase {
         $html = ob_get_clean();
 
         // Verify the output includes the expected question.
-        $this->assertContains('Example question', $html);
+        $this->assertStringContainsString('Example question', $html);
 
         // Verify the question has not been loaded into the cache.
         $this->assertFalse($cache->has($questiondata->id));

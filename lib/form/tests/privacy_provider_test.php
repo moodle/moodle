@@ -69,7 +69,7 @@ class core_form_privacy_provider_testcase extends \core_privacy\tests\provider_t
         $this->assertNotEmpty($prefs->filemanager_recentviewmode->value);
         $this->assertNotEmpty($prefs->filemanager_recentviewmode->description);
         $this->assertEquals($val, $prefs->filemanager_recentviewmode->value);
-        $this->assertContains($desc, $prefs->filemanager_recentviewmode->description);
+        $this->assertStringContainsString($desc, $prefs->filemanager_recentviewmode->description);
     }
 
     /**

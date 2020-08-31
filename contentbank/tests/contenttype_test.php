@@ -112,7 +112,7 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
         $record->name = 'New content';
         $content = $testable->create_content($record);
         $icon = $testable->get_icon($content);
-        $this->assertContains('archive', $icon);
+        $this->assertStringContainsString('archive', $icon);
     }
 
     /**
@@ -649,7 +649,7 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
         $contenttype = new contenttype($systemcontext);
         $url = $contenttype->get_download_url($content);
         $this->assertNotEmpty($url);
-        $this->assertContains($filename, $url);
+        $this->assertStringContainsString($filename, $url);
 
         // Check the URL is empty when the content hasn't any file.
         $record = new stdClass();

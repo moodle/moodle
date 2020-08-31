@@ -64,8 +64,8 @@ class core_filetypes_testcase extends advanced_testcase {
             core_filetypes::add_type('frog', 'application/x-frog', 'document');
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('already exists', $e->getMessage());
-            $this->assertContains('frog', $e->getMessage());
+            $this->assertStringContainsString('already exists', $e->getMessage());
+            $this->assertStringContainsString('frog', $e->getMessage());
         }
 
         // Test bogus extension causes exception.
@@ -73,14 +73,14 @@ class core_filetypes_testcase extends advanced_testcase {
             core_filetypes::add_type('.frog', 'application/x-frog', 'document');
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Invalid extension', $e->getMessage());
-            $this->assertContains('..frog', $e->getMessage());
+            $this->assertStringContainsString('Invalid extension', $e->getMessage());
+            $this->assertStringContainsString('..frog', $e->getMessage());
         }
         try {
             core_filetypes::add_type('', 'application/x-frog', 'document');
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Invalid extension', $e->getMessage());
+            $this->assertStringContainsString('Invalid extension', $e->getMessage());
         }
 
         // Test there is an exception if you add something with defaulticon when
@@ -90,8 +90,8 @@ class core_filetypes_testcase extends advanced_testcase {
                     array(), '', '', true);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('default icon set', $e->getMessage());
-            $this->assertContains('text/plain', $e->getMessage());
+            $this->assertStringContainsString('default icon set', $e->getMessage());
+            $this->assertStringContainsString('text/plain', $e->getMessage());
         }
     }
 
@@ -122,8 +122,8 @@ class core_filetypes_testcase extends advanced_testcase {
             core_filetypes::update_type('doc', 'doc', 'application/x-frog', 'document');
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('not found', $e->getMessage());
-            $this->assertContains('doc', $e->getMessage());
+            $this->assertStringContainsString('not found', $e->getMessage());
+            $this->assertStringContainsString('doc', $e->getMessage());
         }
 
         // Test bogus extension causes exception.
@@ -131,14 +131,14 @@ class core_filetypes_testcase extends advanced_testcase {
             core_filetypes::update_type('docccc', '.frog', 'application/x-frog', 'document');
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Invalid extension', $e->getMessage());
-            $this->assertContains('.frog', $e->getMessage());
+            $this->assertStringContainsString('Invalid extension', $e->getMessage());
+            $this->assertStringContainsString('.frog', $e->getMessage());
         }
         try {
             core_filetypes::update_type('docccc', '', 'application/x-frog', 'document');
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Invalid extension', $e->getMessage());
+            $this->assertStringContainsString('Invalid extension', $e->getMessage());
         }
 
         // Test defaulticon changes.
@@ -147,8 +147,8 @@ class core_filetypes_testcase extends advanced_testcase {
                     array(), '', '', true);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('default icon set', $e->getMessage());
-            $this->assertContains('text/plain', $e->getMessage());
+            $this->assertStringContainsString('default icon set', $e->getMessage());
+            $this->assertStringContainsString('text/plain', $e->getMessage());
         }
     }
 
@@ -169,8 +169,8 @@ class core_filetypes_testcase extends advanced_testcase {
             core_filetypes::delete_type('doc');
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('not found', $e->getMessage());
-            $this->assertContains('doc', $e->getMessage());
+            $this->assertStringContainsString('not found', $e->getMessage());
+            $this->assertStringContainsString('doc', $e->getMessage());
         }
 
         // Try a custom type (slightly different).
@@ -204,8 +204,8 @@ class core_filetypes_testcase extends advanced_testcase {
             core_filetypes::revert_type_to_default('frog');
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('not a default type', $e->getMessage());
-            $this->assertContains('frog', $e->getMessage());
+            $this->assertStringContainsString('not a default type', $e->getMessage());
+            $this->assertStringContainsString('frog', $e->getMessage());
         }
     }
 

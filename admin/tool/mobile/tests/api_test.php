@@ -132,7 +132,7 @@ class tool_mobile_api_testcase extends externallib_advanced_testcase {
         $email = reset($emails);
 
         // Check we got the promotion text.
-        $this->assertContains($mobileappdownloadpage, quoted_printable_decode($email->body));
+        $this->assertStringContainsString($mobileappdownloadpage, quoted_printable_decode($email->body));
         $sink->clear();
 
         // Disable mobile so we don't get mobile promotions.
@@ -142,7 +142,7 @@ class tool_mobile_api_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $emails);
         $email = reset($emails);
         // Check we don't get the promotion text.
-        $this->assertNotContains($mobileappdownloadpage, quoted_printable_decode($email->body));
+        $this->assertStringNotContainsString($mobileappdownloadpage, quoted_printable_decode($email->body));
         $sink->clear();
 
         // Enable mobile again and set current user mobile token so we don't get mobile promotions.
@@ -158,7 +158,7 @@ class tool_mobile_api_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $emails);
         $email = reset($emails);
         // Check we don't get the promotion text.
-        $this->assertNotContains($mobileappdownloadpage, quoted_printable_decode($email->body));
+        $this->assertStringNotContainsString($mobileappdownloadpage, quoted_printable_decode($email->body));
         $sink->clear();
         $sink->close();
     }

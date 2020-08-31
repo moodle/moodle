@@ -97,7 +97,7 @@ class core_antivirus_testcase extends advanced_testcase {
         $this->assertNotEmpty($exception);
         $result = $sink->get_messages();
         $this->assertCount(1, $result);
-        $this->assertContains('fake@example.com', $result[0]->to);
+        $this->assertStringContainsString('fake@example.com', $result[0]->to);
         $sink->close();
     }
 
@@ -174,7 +174,7 @@ class core_antivirus_testcase extends advanced_testcase {
         $this->assertNotEmpty($exception);
         $result = $sink->get_messages();
         $this->assertCount(1, $result);
-        $this->assertContains('fake@example.com', $result[0]->to);
+        $this->assertStringContainsString('fake@example.com', $result[0]->to);
         $sink->close();
     }
 

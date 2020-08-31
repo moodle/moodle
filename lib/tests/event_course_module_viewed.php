@@ -80,7 +80,7 @@ class core_event_course_module_viewed_testcase extends advanced_testcase {
                 'courseid' => 2,
                 'objectid' => 3 ));
         } catch (coding_exception $e) {
-            $this->assertContains("course_module_viewed event must define objectid and object table.", $e->getMessage());
+            $this->assertStringContainsString("course_module_viewed event must define objectid and object table.", $e->getMessage());
         }
 
         try {
@@ -89,7 +89,7 @@ class core_event_course_module_viewed_testcase extends advanced_testcase {
                 'courseid' => 2,
             ));
         } catch (coding_exception $e) {
-            $this->assertContains("course_module_viewed event must define objectid and object table.", $e->getMessage());
+            $this->assertStringContainsString("course_module_viewed event must define objectid and object table.", $e->getMessage());
         }
     }
 }
