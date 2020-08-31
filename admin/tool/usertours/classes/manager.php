@@ -139,12 +139,27 @@ class manager {
     const CONFIG_SHIPPED_VERSION = 'shipped_version';
 
     /**
+     * Helper method to initialize admin page, setting appropriate extra URL parameters
+     *
+     * @param string $action
+     */
+    protected function setup_admin_externalpage(string $action): void {
+        admin_externalpage_setup('tool_usertours/tours', '', array_filter([
+            'action' => $action,
+            'id' => optional_param('id', 0, PARAM_INT),
+            'tourid' => optional_param('tourid', 0, PARAM_INT),
+            'direction' => optional_param('direction', 0, PARAM_INT),
+        ]));
+    }
+
+    /**
      * This is the entry point for this controller class.
      *
      * @param   string  $action     The action to perform.
      */
     public function execute($action) {
-        admin_externalpage_setup('tool_usertours/tours');
+        $this->setup_admin_externalpage($action);
+
         // Add the main content.
         switch($action) {
             case self::ACTION_NEWTOUR:
