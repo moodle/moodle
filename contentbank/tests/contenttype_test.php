@@ -291,6 +291,84 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
     }
 
     /**
+     * Tests for behaviour of replace_content() using a dummy file.
+     *
+     * @covers ::replace_content
+     */
+    public function test_replace_content(): void {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $context = context_system::instance();
+
+        // Add some content to the content bank.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $contents = $generator->generate_contentbank_data('contenttype_testable', 3, 0, $context);
+        $content = reset($contents);
+
+        $dummy = [
+            'contextid' => context_user::instance($USER->id)->id,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => 1,
+            'filepath' => '/',
+            'filename' => 'file.h5p',
+            'userid' => $USER->id,
+        ];
+        $fs = get_file_storage();
+        $dummyfile = $fs->create_file_from_string($dummy, 'Dummy content');
+
+        $contenttype = new contenttype(context_system::instance());
+        $content = $contenttype->replace_content($dummyfile, $content);
+
+        $this->assertEquals('contenttype_testable', $content->get_content_type());
+        $this->assertInstanceOf('\\contenttype_testable\\content', $content);
+
+        $file = $content->get_file();
+        $this->assertEquals($dummyfile->get_userid(), $file->get_userid());
+        $this->assertEquals($dummyfile->get_contenthash(), $file->get_contenthash());
+        $this->assertEquals('contentbank', $file->get_component());
+        $this->assertEquals('public', $file->get_filearea());
+        $this->assertEquals('/', $file->get_filepath());
+    }
+
+    /**
+     * Tests for behaviour of replace_content() using an error file.
+     *
+     * @covers ::replace_content
+     */
+    public function test_replace_content_exception(): void {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $context = context_system::instance();
+
+        // Add some content to the content bank.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $contents = $generator->generate_contentbank_data('contenttype_testable', 3, 0, $context);
+        $content = reset($contents);
+
+        $dummy = [
+            'contextid' => context_user::instance($USER->id)->id,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => 1,
+            'filepath' => '/',
+            'filename' => 'error.txt',
+            'userid' => $USER->id,
+        ];
+        $fs = get_file_storage();
+        $dummyfile = $fs->create_file_from_string($dummy, 'Dummy content');
+
+        $contenttype = new contenttype(context_system::instance());
+
+        $this->expectException(Exception::class);
+        $content = $contenttype->replace_content($dummyfile, $content);
+    }
+
+    /**
      * Test the behaviour of can_delete().
      */
     public function test_can_delete() {
