@@ -35,19 +35,19 @@
 }}
 <div class="border-bottom  p-1 px-sm-2 py-sm-3" aria-hidden="false" {{^isdrawer}}data-in-panel="true"{{/isdrawer}} data-region="view-overview">
     <div class="d-flex align-items-center">
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text pr-2 bg-white">
-                    {{#pix}} a/search, core {{/pix}}
-                </span>
-            </div>
+        <div class="input-group simplesearchform">
             <input
                 type="text"
-                class="form-control border-left-0"
+                class="form-control"
                 placeholder="{{#str}} search, core_search {{/str}}"
                 aria-label="{{#str}} search, core_search {{/str}}"
                 data-region="view-overview-search-input"
             >
+            <div class="input-group-append">
+                <span class="icon-no-margin btn btn-submit">
+                    {{#pix}} a/search, core {{/pix}}
+                </span>
+            </div>
         </div>
         <div class="ml-2">
             <a
