@@ -44,8 +44,6 @@ class search_form implements renderable, templatable {
     protected $courseid;
     /** @var moodle_url The form action URL. */
     protected $actionurl;
-    /** @var moodle_url The advanced search URL. */
-    protected $advancedsearchurl;
     /** @var help_icon The help icon. */
     protected $helpicon;
 
@@ -56,17 +54,17 @@ class search_form implements renderable, templatable {
      */
     public function __construct($courseid) {
         $this->courseid = $courseid;
-        $this->actionurl = new moodle_url('/mod/forum/search.php');
-        $this->advancedsearchurl = new moodle_url('/mod/forum/search.php', ['id' => $this->courseid]);
+        $this->actionurl = new moodle_url('/mod/forum/search.php', ['id' => $courseid]);
         $this->helpicon = new help_icon('search', 'core');
     }
 
     public function export_for_template(renderer_base $output) {
         $data = [
-            'actionurl' => $this->actionurl->out(false),
-            'courseid' => $this->courseid,
-            'advancedsearchurl' => $this->advancedsearchurl->out(false),
+            'action' => $this->actionurl,
             'helpicon' => $this->helpicon->export_for_template($output),
+            'hiddenfields' => (object) ['name' => 'id', 'value' => $this->courseid],
+            'inputname' => 'search',
+            'searchstring' => get_string('search')
         ];
         return $data;
     }
