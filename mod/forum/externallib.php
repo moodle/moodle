@@ -226,6 +226,8 @@ class mod_forum_external extends external_api {
 
         return [
             'posts' => $postbuilder->build($USER, [$forum], [$discussion], $posts),
+            'forumid' => $discussion->get_forum_id(),
+            'courseid' => $discussion->get_course_id(),
             'ratinginfo' => \core_rating\external\util::get_rating_info(
                 $legacydatamapper->get_forum_data_mapper()->to_legacy_object($forum),
                 $forum->get_context(),
@@ -258,6 +260,8 @@ class mod_forum_external extends external_api {
     public static function get_discussion_posts_returns() {
         return new external_single_structure([
             'posts' => new external_multiple_structure(\mod_forum\local\exporters\post::get_read_structure()),
+            'forumid' => new external_value(PARAM_INT, 'The forum id'),
+            'courseid' => new external_value(PARAM_INT, 'The forum course id'),
             'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
             'warnings' => new external_warnings()
         ]);
