@@ -173,8 +173,8 @@ class user_roles_editable extends \core\output\inplace_editable {
         }
 
         // Check that all the groups belong to the course.
-        $allroles = role_fix_names(get_all_roles($context), $context);
-        $assignableroles = get_assignable_roles($context, ROLENAME_ALIAS, false);
+        $allroles = role_fix_names(get_all_roles($context), $context, ROLENAME_BOTH);
+        $assignableroles = get_assignable_roles($context, ROLENAME_BOTH, false);
         $viewableroles = get_viewable_roles($context);
         $userrolesbyid = get_user_roles($context, $userid, true, 'c.contextlevel DESC, r.sortorder ASC');
         $profileroles = get_profile_roles($context);

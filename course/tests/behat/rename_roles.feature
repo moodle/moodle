@@ -32,9 +32,15 @@ Feature: Rename roles within a course
     And I navigate to course participants
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I should see "Tutor" in the ".form-autocomplete-suggestions" "css_element"
-    And I should see "Learner" in the ".form-autocomplete-suggestions" "css_element"
-    And I should not see "Student" in the ".form-autocomplete-suggestions" "css_element"
+    And I should see "Tutor (Non-editing teacher)" in the ".form-autocomplete-suggestions" "css_element"
+    And I should see "Learner (Student)" in the ".form-autocomplete-suggestions" "css_element"
+    And I click on "Student 1's role assignments" "link"
+    And I click on ".form-autocomplete-downarrow" "css_element" in the "Student 1" "table_row"
+    And "Tutor (Non-editing teacher)" "autocomplete_suggestions" should exist
+    And I click on "Cancel" "link"
+    And I press "Enrol users"
+    And the "Assign role" select box should contain "Learner (Student)"
+    And I click on "Cancel" "button" in the "Enrol users" "dialogue"
     And I am on "Course 1" course homepage
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:

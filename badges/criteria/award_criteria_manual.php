@@ -49,7 +49,7 @@ class award_criteria_manual extends award_criteria {
         $rec = $DB->get_record('role', array('id' => $rid));
 
         if ($rec) {
-            return role_get_name($rec, $PAGE->context, ROLENAME_ALIAS);
+            return role_get_name($rec, $PAGE->context, ROLENAME_BOTH);
         } else {
             return null;
         }
