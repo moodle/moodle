@@ -468,7 +468,7 @@ class mod_wiki_lib_testcase extends advanced_testcase {
         $expectedsubwikis[] = $teachersubwiki;
 
         $result = wiki_get_visible_subwikis($indwiki);
-        $this->assertEquals($expectedsubwikis, $result, '', 0, 10, true); // Compare without order.
+        $this->assertEqualsCanonicalizing($expectedsubwikis, $result); // Compare without order.
     }
 
     /**
@@ -544,7 +544,7 @@ class mod_wiki_lib_testcase extends advanced_testcase {
         // Check that he can get subwikis from both groups in collaborative wiki with visible groups, and also all participants.
         $expectedsubwikis = array($swviscolallparts, $swviscolg1, $swviscolg2);
         $result = wiki_get_visible_subwikis($wikiviscol);
-        $this->assertEquals($expectedsubwikis, $result, '', 0, 10, true);
+        $this->assertEqualsCanonicalizing($expectedsubwikis, $result);
 
         // Now test it as a teacher. No need to check visible groups wikis because the result is the same as student.
         $this->setUser($teacher);
@@ -552,7 +552,7 @@ class mod_wiki_lib_testcase extends advanced_testcase {
         // Check that he can get the subwikis from all the groups in collaborative wiki with separate groups.
         $expectedsubwikis = array($swsepcolg1, $swsepcolg2, $swsepcolallparts);
         $result = wiki_get_visible_subwikis($wikisepcol);
-        $this->assertEquals($expectedsubwikis, $result, '', 0, 10, true);
+        $this->assertEqualsCanonicalizing($expectedsubwikis, $result);
     }
 
     /**
@@ -639,12 +639,12 @@ class mod_wiki_lib_testcase extends advanced_testcase {
         // Check that student can get the subwikis from his group in individual wiki with separate groups.
         $expectedsubwikis = array($swsepindg1s1, $swsepindg1s2);
         $result = wiki_get_visible_subwikis($wikisepind);
-        $this->assertEquals($expectedsubwikis, $result, '', 0, 10, true);
+        $this->assertEqualsCanonicalizing($expectedsubwikis, $result);
 
         // Check that he can get subwikis from all users and groups in individual wiki with visible groups.
         $expectedsubwikis = array($swvisindg1s1, $swvisindg1s2, $swvisindg2s2, $swvisindg2s3, $swvisindteacher);
         $result = wiki_get_visible_subwikis($wikivisind);
-        $this->assertEquals($expectedsubwikis, $result, '', 0, 10, true);
+        $this->assertEqualsCanonicalizing($expectedsubwikis, $result);
 
         // Now test it as a teacher. No need to check visible groups wikis because the result is the same as student.
         $this->setUser($teacher);
@@ -652,7 +652,7 @@ class mod_wiki_lib_testcase extends advanced_testcase {
         // Check that teacher can get the subwikis from all the groups in individual wiki with separate groups.
         $expectedsubwikis = array($swsepindg1s1, $swsepindg1s2, $swsepindg2s2, $swsepindg2s3, $swsepindteacher);
         $result = wiki_get_visible_subwikis($wikisepind);
-        $this->assertEquals($expectedsubwikis, $result, '', 0, 10, true);
+        $this->assertEqualsCanonicalizing($expectedsubwikis, $result);
     }
 
     public function test_mod_wiki_get_tagged_pages() {

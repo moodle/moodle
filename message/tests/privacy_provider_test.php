@@ -1631,7 +1631,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         // Test for users with any group conversation in course1.
         provider::add_conversations_in_context($userlist1, $component, $itemtype);
         $this->assertCount(3, $userlist1);
-        $this->assertEquals([$user1->id, $user2->id, $user3->id], $userlist1->get_userids(), '', 0, 10, true);
+        $this->assertEqualsCanonicalizing([$user1->id, $user2->id, $user3->id], $userlist1->get_userids());
 
         // Test for users with any group conversation in course2.
         $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, 'core_message');

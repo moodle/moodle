@@ -3957,7 +3957,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertRegExp('/^[' . $pool . ']+$/', $result);
 
         $result = complex_random_string();
-        $this->assertEquals(28, strlen($result), '', 4); // Expected length is 24 - 32.
+        $this->assertEqualsWithDelta(28, strlen($result), 4); // Expected length is 24 - 32.
         $this->assertRegExp('/^[' . $pool . ']+$/', $result);
 
         $this->assertDebuggingNotCalled();

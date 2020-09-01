@@ -42,10 +42,7 @@ class auth_oauth2_auth_testcase extends advanced_testcase {
         $auth = get_auth_plugin($user->auth);
         $info = $auth->get_password_change_info($user);
 
-        $this->assertEquals(
-                ['subject', 'message'],
-                array_keys($info),
-                '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing(['subject', 'message'], array_keys($info));
         $this->assertStringContainsString(
                 'your password cannot be reset because you are using your account on another site to log in',
                 $info['message']);

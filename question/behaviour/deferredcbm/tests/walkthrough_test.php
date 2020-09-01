@@ -113,7 +113,7 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
         $this->check_current_state(question_state::$mangrright);
         $this->check_current_mark(5);
         $autogradedstep = $this->get_step($this->get_step_count() - 2);
-        $this->assertEquals(-6, $autogradedstep->get_fraction(), '', 0.0000001);
+        $this->assertEqualsWithDelta(-6, $autogradedstep->get_fraction(), 0.0000001);
     }
 
     public function test_deferred_cbm_truefalse_low_certainty() {

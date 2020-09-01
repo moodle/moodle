@@ -363,7 +363,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
 
     public function test_set_max_mark() {
         $this->quba->set_max_mark($this->slot, 6.0);
-        $this->assertEquals(4.0, $this->quba->get_total_mark(), '', 0.0000005);
+        $this->assertEqualsWithDelta(4.0, $this->quba->get_total_mark(), 0.0000005);
 
         $this->assertEquals(0, count($this->observer->get_attempts_added()));
 

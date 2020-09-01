@@ -690,7 +690,7 @@ class core_blog_privacy_testcase extends provider_testcase {
             $commentpath = array_merge($path, [get_string('commentsubcontext', 'core_comment')]);
             if ($e->id == $e1->id) {
                 $tagdata = $writer->get_related_data($path, 'tags');
-                $this->assertEquals(['Beer', 'Golf'], $tagdata, '', 0, 10, true);
+                $this->assertEqualsCanonicalizing(['Beer', 'Golf'], $tagdata);
 
                 $comments = $writer->get_data($commentpath);
                 $this->assertCount(2, $comments->comments);

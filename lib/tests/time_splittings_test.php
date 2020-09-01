@@ -247,13 +247,13 @@ class core_analytics_time_splittings_testcase extends advanced_testcase {
         $ranges = $pastweek->get_most_recent_prediction_range();
         $range = reset($ranges);
         $this->assertEquals(3, key($ranges));
-        $this->assertEquals(time(), $range['time'], '', 1);
+        $this->assertEqualsWithDelta(time(), $range['time'], 1);
         // 1 second delta for the start just in case a second passes between the set_analysable call
         // and this checking below.
         $time = new \DateTime();
         $time->sub($pastweek->periodicity());
-        $this->assertEquals($time->getTimestamp(), $range['start'], '', 1.0);
-        $this->assertEquals(time(), $range['end'], '', 1);
+        $this->assertEqualsWithDelta($time->getTimestamp(), $range['start'], 1.0);
+        $this->assertEqualsWithDelta(time(), $range['end'], 1);
 
         $starttime = time();
 
@@ -264,8 +264,8 @@ class core_analytics_time_splittings_testcase extends advanced_testcase {
         $ranges = $upcomingweek->get_all_ranges();
         $this->assertEquals(1, count($ranges));
         $range = reset($ranges);
-        $this->assertEquals(time(), $range['time'], '', 1);
-        $this->assertEquals(time(), $range['start'], '', 1);
+        $this->assertEqualsWithDelta(time(), $range['time'], 1);
+        $this->assertEqualsWithDelta(time(), $range['start'], 1);
         $this->assertGreaterThan(time(), $range['end']);
 
         $this->assertCount(0, $upcomingweek->get_training_ranges());
@@ -273,8 +273,8 @@ class core_analytics_time_splittings_testcase extends advanced_testcase {
         $ranges = $upcomingweek->get_most_recent_prediction_range();
         $range = reset($ranges);
         $this->assertEquals(0, key($ranges));
-        $this->assertEquals(time(), $range['time'], '', 1);
-        $this->assertEquals(time(), $range['start'], '', 1);
+        $this->assertEqualsWithDelta(time(), $range['time'], 1);
+        $this->assertEqualsWithDelta(time(), $range['start'], 1);
         $this->assertGreaterThanOrEqual($starttime, $range['time']);
         $this->assertGreaterThanOrEqual($starttime, $range['start']);
         $this->assertGreaterThan(time(), $range['end']);

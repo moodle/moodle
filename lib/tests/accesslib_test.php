@@ -676,13 +676,13 @@ class core_accesslib_testcase extends advanced_testcase {
         assign_capability('moodle/backup:backupcourse', CAP_PREVENT, $teacher->id, $frontcontext->id);
 
         $roles = get_roles_with_capability('moodle/backup:backupcourse');
-        $this->assertEquals(array($teacher->id, $manager->id), array_keys($roles), '', 0, 10, true);
+        $this->assertEqualsCanonicalizing(array($teacher->id, $manager->id), array_keys($roles), true);
 
         $roles = get_roles_with_capability('moodle/backup:backupcourse', CAP_ALLOW);
-        $this->assertEquals(array($manager->id), array_keys($roles), '', 0, 10, true);
+        $this->assertEqualsCanonicalizing(array($manager->id), array_keys($roles), true);
 
         $roles = get_roles_with_capability('moodle/backup:backupcourse', null, $syscontext);
-        $this->assertEquals(array($manager->id), array_keys($roles), '', 0, 10, true);
+        $this->assertEqualsCanonicalizing(array($manager->id), array_keys($roles), true);
     }
 
     /**
@@ -762,7 +762,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $role = reset($allroles);
         $role = (array)$role;
 
-        $this->assertEquals(array('id', 'name', 'shortname', 'description', 'sortorder', 'archetype'), array_keys($role), '', 0, 10, true);
+        $this->assertEqualsCanonicalizing(array('id', 'name', 'shortname', 'description', 'sortorder', 'archetype'),
+            array_keys($role));
 
         foreach ($allroles as $roleid => $role) {
             $this->assertEquals($role->id, $roleid);
@@ -784,7 +785,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $role = reset($allroles);
         $role = (array)$role;
 
-        $this->assertEquals(array('id', 'name', 'shortname', 'description', 'sortorder', 'archetype', 'coursealias'), array_keys($role), '', 0, 10, true);
+        $this->assertEqualsCanonicalizing(array('id', 'name', 'shortname', 'description', 'sortorder', 'archetype', 'coursealias'), array_keys($role));
 
         foreach ($allroles as $roleid => $role) {
             $this->assertEquals($role->id, $roleid);
