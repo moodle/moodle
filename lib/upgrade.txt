@@ -31,6 +31,8 @@ information provided here is intended especially for developers.
 * The form element 'htmleditor', which was deprecated in 3.6, has been removed.
 * The `core_output_load_fontawesome_icon_map` web service has been deprecated and replaced by
   `core_output_load_fontawesome_icon_system_map` which takes the name of the theme to generate the icon system map for.
+* A new parameter `$rolenamedisplay` has been added to `get_viewable_roles()` and `get_switchable_roles` to define how role names
+  should be returned.
 * The class coursecat_sortable_records has been removed.
 * Admin setting admin_setting_configselect now supports lazy-loading the options list by supplying
   a callback function instead of an array of options.
