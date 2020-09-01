@@ -1109,10 +1109,9 @@ class core_grouplib_testcase extends advanced_testcase {
         // Test without userid.
         $groups = groups_get_all_groups($course1->id, null, $c1grouping1->id, 'g.*', true);
 
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$c1group1->id, $c1group2->id],
-                array_keys($groups),
-                '', 0.0, 10, true
+                array_keys($groups)
         );
         $this->assertEquals(
                 [$c1user1->id => $c1user1->id, $c12user1->id => $c12user1->id],
@@ -1127,10 +1126,9 @@ class core_grouplib_testcase extends advanced_testcase {
         $groups = groups_get_all_groups($course1->id, $c1user1->id, $c1grouping1->id, 'g.*', true);
 
         $this->assertEquals([$c1group1->id], array_keys($groups));
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$c1user1->id, $c12user1->id],
-                $groups[$c1group1->id]->members,
-                '', 0.0, 10, true
+                $groups[$c1group1->id]->members
         );
     }
 
@@ -1847,12 +1845,12 @@ class core_grouplib_testcase extends advanced_testcase {
         // Retrieve users sharing groups with user1.
         $members = groups_get_activity_shared_group_members($cm, $user1->id);
         $this->assertCount(2, $members);
-        $this->assertEquals([$user1->id, $user2->id], array_keys($members), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing([$user1->id, $user2->id], array_keys($members));
 
         // Retrieve users sharing groups with user2.
         $members = groups_get_activity_shared_group_members($cm, $user2->id);
         $this->assertCount(2, $members);
-        $this->assertEquals([$user1->id, $user2->id], array_keys($members), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing([$user1->id, $user2->id], array_keys($members));
 
         // Retrieve users sharing groups with user3.
         $members = groups_get_activity_shared_group_members($cm, $user3->id);
@@ -1881,6 +1879,6 @@ class core_grouplib_testcase extends advanced_testcase {
         $generator->create_group_member(array('groupid' => $group3->id, 'userid' => $user1->id));
         $members = groups_get_activity_shared_group_members($cm, $user1->id);
         $this->assertCount(2, $members);    // Now I see members of group 3.
-        $this->assertEquals([$user1->id, $user3->id], array_keys($members), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing([$user1->id, $user3->id], array_keys($members));
     }
 }

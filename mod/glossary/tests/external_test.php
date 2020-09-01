@@ -914,7 +914,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
         $expected = array($e1->id, $e2->id);
         $actual = array($return['entries'][0]['id'], $return['entries'][1]['id']);
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $actual);
         // Compare rawnames of all expected tags, ignore ordering of array, using canonicalize parameter of assertEquals.
         $expected = array('Cats', 'Dogs'); // Only $e1 has 2 tags.
         $actual = array(); // Accumulate all tags returned.
@@ -923,7 +923,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
                 $actual[] = $tag['rawname'];
             }
         }
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $actual);
 
         // Search alias.
         $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => false));
@@ -934,7 +934,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
         $expected = array($e2->id, $e3->id);
         $actual = array($return['entries'][0]['id'], $return['entries'][1]['id']);
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $actual);
 
         // Search including not approved.
         $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => true));
@@ -944,7 +944,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
         $expected = array($e4->id, $e2->id, $e3->id);
         $actual = array($return['entries'][0]['id'], $return['entries'][1]['id'], $return['entries'][2]['id']);
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $actual);
 
         // Pagination.
         $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 1, array('includenotapproved' => true));

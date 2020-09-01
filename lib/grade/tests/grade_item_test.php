@@ -427,14 +427,14 @@ class core_grade_item_testcase extends grade_base_testcase {
 
         // Check that the grades were updated to match the grade item.
         $grade = $DB->get_record('grade_grades', array('id' => $gradeids[0]));
-        $this->assertEquals($gradeitem->grademax, $grade->rawgrademax, 'Max grade mismatch', 0.0001);
-        $this->assertEquals($gradeitem->grademin, $grade->rawgrademin, 'Min grade mismatch', 0.0001);
-        $this->assertEquals(6, $grade->finalgrade, 'Min grade mismatch', 0.0001);
+        $this->assertEqualsWithDelta($gradeitem->grademax, $grade->rawgrademax, 0.0001, 'Max grade mismatch');
+        $this->assertEqualsWithDelta($gradeitem->grademin, $grade->rawgrademin, 0.0001, 'Min grade mismatch');
+        $this->assertEqualsWithDelta(6, $grade->finalgrade, 0.0001, 'Min grade mismatch');
 
         $grade = $DB->get_record('grade_grades', array('id' => $gradeids[1]));
-        $this->assertEquals($gradeitem->grademax, $grade->rawgrademax, 'Max grade mismatch', 0.0001);
-        $this->assertEquals($gradeitem->grademin, $grade->rawgrademin, 'Min grade mismatch', 0.0001);
-        $this->assertEquals(18, $grade->finalgrade, 'Min grade mismatch', 0.0001);
+        $this->assertEqualsWithDelta($gradeitem->grademax, $grade->rawgrademax, 0.0001, 'Max grade mismatch');
+        $this->assertEqualsWithDelta($gradeitem->grademin, $grade->rawgrademin, 0.0001, 'Min grade mismatch');
+        $this->assertEqualsWithDelta(18, $grade->finalgrade, 0.0001, 'Min grade mismatch');
     }
 
     protected function sub_test_grade_item_set_locked() {

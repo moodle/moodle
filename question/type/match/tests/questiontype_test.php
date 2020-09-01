@@ -134,7 +134,7 @@ class qtype_match_test extends advanced_testcase {
 
     public function test_get_random_guess_score() {
         $q = $this->get_test_question_data();
-        $this->assertEquals(0.3333333, $this->qtype->get_random_guess_score($q), '', 0.0000001);
+        $this->assertEqualsWithDelta(0.3333333, $this->qtype->get_random_guess_score($q), 0.0000001);
     }
 
     public function test_get_possible_responses() {

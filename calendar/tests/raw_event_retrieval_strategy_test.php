@@ -402,10 +402,9 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
         // Get all events.
         $events = $retrievalstrategy->get_raw_events([$user1->id, $user2->id]);
         $this->assertCount(2, $events);
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 ['User1 Event', 'User2 Event'],
-                array_column($events, 'name'),
-                '', 0.0, 10, true);
+                array_column($events, 'name'));
     }
 
     public function test_get_raw_events_for_groups_with_no_members() {
@@ -442,10 +441,9 @@ class core_calendar_raw_event_retrieval_strategy_testcase extends advanced_testc
         // Get group eventsl.
         $events = $retrievalstrategy->get_raw_events(null, [$group1->id, $group2->id]);
         $this->assertCount(2, $events);
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 ['Group 1 Event', 'Group 2 Event'],
-                array_column($events, 'name'),
-                '', 0.0, 10, true);
+                array_column($events, 'name'));
     }
 
     /**

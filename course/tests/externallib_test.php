@@ -240,7 +240,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
             $returnedids[] = $category['id'];
         }
         // Sort the arrays upon comparision.
-        $this->assertEquals(array_keys($generatedcats), $returnedids, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing(array_keys($generatedcats), $returnedids);
 
         // Check different params.
         $categories = core_course_external::get_categories(array(

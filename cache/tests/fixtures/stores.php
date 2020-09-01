@@ -116,10 +116,10 @@ abstract class cachestore_tests extends advanced_testcase {
         // Test find and find with prefix if this class implements the searchable interface.
         if ($instance->is_searchable()) {
             // Extra settings here ignore the return order of the array.
-            $this->assertEquals(['test3', 'test1', 'test2', 'other3'], $instance->find_all(), '', 0, 1, true);
+            $this->assertEqualsCanonicalizing(['test3', 'test1', 'test2', 'other3'], $instance->find_all());
 
             // Extra settings here ignore the return order of the array.
-            $this->assertEquals(['test2', 'test1', 'test3'], $instance->find_by_prefix('test'), '', 0, 1, true);
+            $this->assertEqualsCanonicalizing(['test2', 'test1', 'test3'], $instance->find_by_prefix('test'));
             $this->assertEquals(['test2'], $instance->find_by_prefix('test2'));
             $this->assertEquals(['other3'], $instance->find_by_prefix('other'));
             $this->assertEquals([], $instance->find_by_prefix('nothere'));

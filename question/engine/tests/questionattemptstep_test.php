@@ -112,7 +112,7 @@ class question_attempt_step_test extends advanced_testcase {
     public function test_constructor_default_params() {
         global $USER;
         $step = new question_attempt_step();
-        $this->assertEquals(time(), $step->get_timecreated(), '', 5);
+        $this->assertEquals(time(), $step->get_timecreated(), 5);
         $this->assertEquals($USER->id, $step->get_user_id());
         $this->assertEquals(array(), $step->get_qt_data());
         $this->assertEquals(array(), $step->get_behaviour_data());

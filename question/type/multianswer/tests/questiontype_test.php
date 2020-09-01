@@ -112,7 +112,7 @@ class qtype_multianswer_test extends advanced_testcase {
 
     public function test_get_random_guess_score() {
         $q = test_question_maker::get_question_data('multianswer', 'twosubq');
-        $this->assertEquals(0.1666667, $this->qtype->get_random_guess_score($q), '', 0.0000001);
+        $this->assertEqualsWithDelta(0.1666667, $this->qtype->get_random_guess_score($q), 0.0000001);
     }
 
     public function test_load_question() {

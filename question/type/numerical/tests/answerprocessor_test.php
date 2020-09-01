@@ -89,13 +89,13 @@ class qtype_numerical_answer_processor_test extends advanced_testcase {
         if (is_null($exectedval)) {
             $this->assertNull($val);
         } else {
-            $this->assertEquals($exectedval, $val, '', 0.0001);
+            $this->assertEqualsWithDelta($exectedval, $val, 0.0001);
         }
         $this->assertEquals($expectedunit, $unit);
         if (is_null($expectedmultiplier)) {
             $this->assertNull($multiplier);
         } else {
-            $this->assertEquals($expectedmultiplier, $multiplier, '', 0.0001);
+            $this->assertEqualsWithDelta($expectedmultiplier, $multiplier, 0.0001);
         }
     }
 

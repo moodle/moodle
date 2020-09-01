@@ -151,7 +151,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
                     $precision = 1e-6;
             }
             $delta = abs($expected) * $precision;
-            $this->assertEquals((float)$expected, $actual, $message, $delta);
+            $this->assertEqualsWithDelta((float)$expected, $actual, $delta, $message);
         } else {
             $this->assertEquals($expected, $actual, $message);
         }
@@ -273,7 +273,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
             $variantsnos = $analysis->get_variant_nos();
             if (isset($expectedvariantcounts[$slot])) {
                 // Compare contents, ignore ordering of array, using canonicalize parameter of assertEquals.
-                $this->assertEquals(array_keys($expectedvariantcounts[$slot]), $variantsnos, '', 0, 10, true);
+                $this->assertEqualsCanonicalizing(array_keys($expectedvariantcounts[$slot]), $variantsnos);
             } else {
                 $this->assertEquals(array(1), $variantsnos);
             }
@@ -310,12 +310,9 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
                     if (isset($expectedvariantcounts[$slot])) {
                         // If we know how many attempts there are at each variant we can check
                         // that we have counted the correct amount of responses for each variant.
-                        $this->assertEquals($expectedvariantcounts[$slot],
+                        $this->assertEqualsCanonicalizing($expectedvariantcounts[$slot],
                                             $totalpervariantno,
-                                            "Totals responses do not add up in response analysis for slot {$slot}.",
-                                            0,
-                                            10,
-                                            true);
+                                            "Totals responses do not add up in response analysis for slot {$slot}.");
                     } else {
                         $this->assertEquals(25,
                                             array_sum($totalpervariantno),
@@ -351,7 +348,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
         );
 
         foreach ($quizstatsexpected as $statname => $statvalue) {
-            $this->assertEquals($statvalue, $quizstats->$statname, $quizstats->$statname, abs($statvalue) * 1.5e-5);
+            $this->assertEqualsWithDelta($statvalue, $quizstats->$statname, abs($statvalue) * 1.5e-5, $quizstats->$statname);
         }
     }
 
