@@ -337,7 +337,7 @@ class core_comment_external extends external_api {
             $args->area      = $commentrecord->commentarea;
             $manager = new comment($args);
 
-            if ($commentrecord->userid != $USER->id && !$manager->can_delete($commentrecord->id)) {
+            if (!$manager->can_delete($commentrecord)) {
                 throw new comment_exception('nopermissiontodelentry');
             }
 
