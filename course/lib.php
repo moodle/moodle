@@ -71,6 +71,11 @@ define('COURSE_CUSTOMFIELD_EMPTY', -1);
 // Course activity chooser footer default display option.
 define('COURSE_CHOOSER_FOOTER_NONE', 'hidden');
 
+// Download course content options.
+define('DOWNLOAD_COURSE_CONTENT_DISABLED', 0);
+define('DOWNLOAD_COURSE_CONTENT_ENABLED', 1);
+define('DOWNLOAD_COURSE_CONTENT_SITE_DEFAULT', 2);
+
 function make_log_url($module, $url) {
     switch ($module) {
         case 'course':
