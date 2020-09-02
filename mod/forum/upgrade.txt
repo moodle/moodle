@@ -9,6 +9,9 @@ information provided here is intended especially for developers.
     for each post in the database when posts are created or updated. For posts that existed prior to a Moodle 3.8 upgrade, these
     are calculated by the refresh_forum_post_counts ad-hoc task in chunks of 5000 posts by default. Site admins are able to modify this
     default, by setting $CFG->forumpostcountchunksize to the required integer value.
+* Changes in external function mod_forum_external::get_discussion_posts_by_userid 
+  $postbuilder build the posts of given user in respect of the permission check of current user $USER who is viewing the user posts,
+  it could be teacher or privileged user who can view student post or it can be the user himself.
 
 === 3.7 ===
   * Changed the forum discussion rendering to use templates rather than print functions.
