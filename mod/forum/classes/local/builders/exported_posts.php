@@ -110,7 +110,7 @@ class exported_posts {
      * Note: Some posts will be removed as part of the build process according to capabilities.
      * A one-to-one mapping should not be expected.
      *
-     * @param stdClass $user The user to export the posts for.
+     * @param stdClass $user The user or Author to export the posts for.
      * @param forum_entity[] $forums A list of all forums that each of the $discussions belong to
      * @param discussion_entity[] $discussions A list of all discussions that each of the $posts belong to
      * @param post_entity[] $posts The list of posts to export.
