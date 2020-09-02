@@ -199,10 +199,10 @@ Feature: Perform basic calendar functionality
     And I am viewing site calendar
     And I click on "New event" "button"
     And I set the field "Type of event" to "Course"
-    When I open the autocomplete suggestions list
-    Then I should see "Course 1" in the ".form-autocomplete-suggestions" "css_element"
-    And I should not see "Course 2" in the ".form-autocomplete-suggestions" "css_element"
-    And I should not see "Course 3" in the ".form-autocomplete-suggestions" "css_element"
+    When I expand the "Course" autocomplete
+    Then "Course 1" "autocomplete_suggestions" should exist
+    And "Course 2" "autocomplete_suggestions" should not exist
+    And "Course 3" "autocomplete_suggestions" should not exist
     And I click on "Close" "button"
     And I am on site homepage
     And I navigate to "Appearance > Calendar" in site administration
@@ -211,10 +211,10 @@ Feature: Perform basic calendar functionality
     And I am viewing site calendar
     And I click on "New event" "button"
     And I set the field "Type of event" to "Course"
-    When I open the autocomplete suggestions list
-    Then I should see "Course 1" in the ".form-autocomplete-suggestions" "css_element"
-    And I should see "Course 2" in the ".form-autocomplete-suggestions" "css_element"
-    And I should see "Course 3" in the ".form-autocomplete-suggestions" "css_element"
+    When I expand the "Course" autocomplete
+    Then "Course 1" "autocomplete_suggestions" should exist
+    And "Course 2" "autocomplete_suggestions" should exist
+    And "Course 3" "autocomplete_suggestions" should exist
 
   @javascript
   Scenario: Students can only see user event type by default.
