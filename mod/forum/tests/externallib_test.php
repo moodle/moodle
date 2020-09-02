@@ -2611,6 +2611,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
      * Test get forum posts by user id.
      */
     public function test_mod_forum_get_discussion_posts_by_userid() {
+        global $DB;
         $this->resetAfterTest(true);
 
         $urlfactory = mod_forum\local\container::get_url_factory();
@@ -2722,9 +2723,20 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         // Following line enrol and assign default role id to the user.
         // So the user automatically gets mod/forum:viewdiscussion on all forums of the course.
-        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'teacher');
         $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
-
+        // Changed display period for the discussions in past.
+        $time = time();
+        $discussion = new \stdClass();
+        $discussion->id = $discussion1->id;
+        $discussion->timestart = $time - 200;
+        $discussion->timeend = $time - 100;
+        $DB->update_record('forum_discussions', $discussion);
+        $discussion = new \stdClass();
+        $discussion->id = $discussion2->id;
+        $discussion->timestart = $time - 200;
+        $discussion->timeend = $time - 100;
+        $DB->update_record('forum_discussions', $discussion);
         // Create what we expect to be returned when querying the discussion.
         $expectedposts = array(
             'discussions' => array(),
@@ -2773,34 +2785,36 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                             'view' => true,
                             'edit' => true,
                             'delete' => true,
-                            'split' => false,
+                            'split' => true,
                             'reply' => true,
                             'export' => false,
                             'controlreadstatus' => false,
-                            'canreplyprivately' => false,
+                            'canreplyprivately' => true,
                             'selfenrol' => false
                         ],
                         'urls' => [
                             'view' => $urlfactory->get_view_post_url_from_post_id(
-                                    $discussion1reply1->discussion, $discussion1reply1->id)->out(false),
+                                $discussion1reply1->discussion, $discussion1reply1->id)->out(false),
                             'viewisolated' => $isolatedurluser->out(false),
                             'viewparent' => $urlfactory->get_view_post_url_from_post_id(
-                                    $discussion1reply1->discussion, $discussion1reply1->parent)->out(false),
+                                $discussion1reply1->discussion, $discussion1reply1->parent)->out(false),
                             'edit' => (new moodle_url('/mod/forum/post.php', [
-                                    'edit' => $discussion1reply1->id
+                                'edit' => $discussion1reply1->id
                             ]))->out(false),
                             'delete' => (new moodle_url('/mod/forum/post.php', [
-                                    'delete' => $discussion1reply1->id
+                                'delete' => $discussion1reply1->id
                             ]))->out(false),
-                            'split' => null,
+                            'split' => (new moodle_url('/mod/forum/post.php', [
+                                'prune' => $discussion1reply1->id
+                            ]))->out(false),
                             'reply' => (new moodle_url('/mod/forum/post.php#mformforum', [
-                                    'reply' => $discussion1reply1->id
+                                'reply' => $discussion1reply1->id
                             ]))->out(false),
                             'export' => null,
                             'markasread' => null,
                             'markasunread' => null,
                             'discuss' => $urlfactory->get_discussion_view_url_from_discussion_id(
-                                    $discussion1reply1->discussion)->out(false),
+                                $discussion1reply1->discussion)->out(false),
                         ],
                     ]
                 ],
@@ -2833,13 +2847,13 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                         'charcount' => null,
                         'capabilities' => [
                             'view' => true,
-                            'edit' => false,
-                            'delete' => false,
+                            'edit' => true,
+                            'delete' => true,
                             'split' => false,
                             'reply' => true,
                             'export' => false,
                             'controlreadstatus' => false,
-                            'canreplyprivately' => false,
+                            'canreplyprivately' => true,
                             'selfenrol' => false
                         ],
                         'urls' => [
@@ -2847,8 +2861,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                                 $discussion1firstpostobject->discussion, $discussion1firstpostobject->id)->out(false),
                             'viewisolated' => $isolatedurlparent->out(false),
                             'viewparent' => null,
-                            'edit' => null,
-                            'delete' => null,
+                            'edit' => (new moodle_url('/mod/forum/post.php', [
+                                'edit' => $discussion1firstpostobject->id
+                            ]))->out(false),
+                            'delete' => (new moodle_url('/mod/forum/post.php', [
+                                'delete' => $discussion1firstpostobject->id
+                            ]))->out(false),
                             'split' => null,
                             'reply' => (new moodle_url('/mod/forum/post.php#mformforum', [
                                 'reply' => $discussion1firstpostobject->id
@@ -2906,11 +2924,11 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                             'view' => true,
                             'edit' => true,
                             'delete' => true,
-                            'split' => false,
+                            'split' => true,
                             'reply' => true,
                             'export' => false,
                             'controlreadstatus' => false,
-                            'canreplyprivately' => false,
+                            'canreplyprivately' => true,
                             'selfenrol' => false
                         ],
                         'urls' => [
@@ -2925,7 +2943,9 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                             'delete' => (new moodle_url('/mod/forum/post.php', [
                                 'delete' => $discussion2reply1->id
                             ]))->out(false),
-                            'split' => null,
+                            'split' => (new moodle_url('/mod/forum/post.php', [
+                                'prune' => $discussion2reply1->id
+                            ]))->out(false),
                             'reply' => (new moodle_url('/mod/forum/post.php#mformforum', [
                                 'reply' => $discussion2reply1->id
                             ]))->out(false),
@@ -2966,13 +2986,13 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                         'charcount' => null,
                         'capabilities' => [
                             'view' => true,
-                            'edit' => false,
-                            'delete' => false,
+                            'edit' => true,
+                            'delete' => true,
                             'split' => false,
                             'reply' => true,
                             'export' => false,
                             'controlreadstatus' => false,
-                            'canreplyprivately' => false,
+                            'canreplyprivately' => true,
                             'selfenrol' => false
                         ],
                         'urls' => [
@@ -2980,8 +3000,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                                 $discussion2firstpostobject->discussion, $discussion2firstpostobject->id)->out(false),
                             'viewisolated' => $isolatedurlparent->out(false),
                             'viewparent' => null,
-                            'edit' => null,
-                            'delete' => null,
+                            'edit' => (new moodle_url('/mod/forum/post.php', [
+                                'edit' => $discussion2firstpostobject->id
+                            ]))->out(false),
+                            'delete' => (new moodle_url('/mod/forum/post.php', [
+                                'delete' => $discussion2firstpostobject->id
+                            ]))->out(false),
                             'split' => null,
                             'reply' => (new moodle_url('/mod/forum/post.php#mformforum', [
                                 'reply' => $discussion2firstpostobject->id
