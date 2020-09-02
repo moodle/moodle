@@ -516,6 +516,8 @@ $string['doctonewwindow'] = 'Open in new window';
 $string['doesnotfit'] = 'Email display settings';
 $string['doesnotfitdetail'] = 'Display settings for email leaving Moodle.';
 $string['download'] = 'Download';
+$string['downloadcoursecontentallowed'] = 'Download course content feature available';
+$string['downloadcoursecontentallowed_desc'] = 'Whether the download course content feature is available to courses. When available, course content downloads can be enabled/disabled using the "Enable download course content" setting within the course edit menu (the default for this can be set in <a href={$a} target="_blank">Course default settings</a>).';
 $string['durationunits'] = 'duration units';
 $string['edithelpdocs'] = 'Edit help documents';
 $string['editlang'] = '<b>Edit</b>';
@@ -802,6 +804,8 @@ sites. If this is not what you wanted then you should make sure you are updating
 from a STABLE branch of the Moodle code. See Moodle Docs for more details.';
 $string['maxbytes'] = 'Maximum uploaded file size';
 $string['maxconsecutiveidentchars'] = 'Consecutive identical characters';
+$string['maxsizeperdownloadcoursefile'] = 'Maximum size per file';
+$string['maxsizeperdownloadcoursefile_desc'] = 'The maximum size of each file when downloading course content. Files exceeding this size will be omitted from the download.';
 $string['maxeditingtime'] = 'Maximum time to edit posts';
 $string['maxusersperpage'] = ' Maximum users per page';
 $string['configmaxusersperpage'] = 'Maximum number of users displayed within user selector in course, group, cohort, webservice etc.';
