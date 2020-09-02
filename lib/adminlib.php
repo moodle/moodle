@@ -5007,12 +5007,12 @@ class admin_settings_num_course_sections extends admin_setting_configselect {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_settings_coursecat_select extends admin_setting_configselect {
+class admin_settings_coursecat_select extends admin_setting_configselect_autocomplete {
     /**
      * Calls parent::__construct with specific arguments
      */
-    public function __construct($name, $visiblename, $description, $defaultsetting) {
-        parent::__construct($name, $visiblename, $description, $defaultsetting, NULL);
+    public function __construct($name, $visiblename, $description, $defaultsetting = 1) {
+        parent::__construct($name, $visiblename, $description, $defaultsetting, $choices = null);
     }
 
     /**
@@ -5021,8 +5021,6 @@ class admin_settings_coursecat_select extends admin_setting_configselect {
      * @return bool
      */
     public function load_choices() {
-        global $CFG;
-        require_once($CFG->dirroot.'/course/lib.php');
         if (is_array($this->choices)) {
             return true;
         }
@@ -5435,6 +5433,54 @@ class admin_setting_configcheckbox_with_lock extends admin_setting_configcheckbo
 
 }
 
+/**
+ * Autocomplete as you type form element.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_configselect_autocomplete extends admin_setting_configselect {
+    /** @var boolean $tags Should we allow typing new entries to the field? */
+    protected $tags = false;
+    /** @var string $ajax Name of an AMD module to send/process ajax requests. */
+    protected $ajax = '';
+    /** @var string $placeholder Placeholder text for an empty list. */
+    protected $placeholder = '';
+    /** @var bool $casesensitive Whether the search has to be case-sensitive. */
+    protected $casesensitive = false;
+    /** @var bool $showsuggestions Show suggestions by default - but this can be turned off. */
+    protected $showsuggestions = true;
+    /** @var string $noselectionstring String that is shown when there are no selections. */
+    protected $noselectionstring = '';
+
+    /**
+     * Returns XHTML select field and wrapping div(s)
+     *
+     * @see output_select_html()
+     *
+     * @param string $data the option to show as selected
+     * @param string $query
+     * @return string XHTML field and wrapping div
+     */
+    public function output_html($data, $query='') {
+        global $PAGE;
+
+        $html = parent::output_html($data, $query);
+
+        if ($html === '') {
+            return $html;
+        }
+
+        $this->placeholder = get_string('search');
+
+        $params = array('#' . $this->get_id(), $this->tags, $this->ajax,
+            $this->placeholder, $this->casesensitive, $this->showsuggestions, $this->noselectionstring);
+
+        // Load autocomplete wrapper for select2 library.
+        $PAGE->requires->js_call_amd('core/form-autocomplete', 'enhance', $params);
+
+        return $html;
+    }
+}
 
 /**
  * Dropdown menu with an advanced checkbox, that controls a additional $name.'_adv' setting.

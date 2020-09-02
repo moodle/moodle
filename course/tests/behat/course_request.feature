@@ -76,7 +76,7 @@ Feature: Users can request and approve courses
     And I am on course index
     And I follow "English category"
     And I press "Request a course"
-    And the field "Course category" matches value "English category"
+    And the "Course category" select box should contain "English category"
     And I set the following fields to these values:
       | Course full name  | My new course |
       | Course short name | Mynewcourse   |

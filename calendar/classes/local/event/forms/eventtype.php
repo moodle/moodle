@@ -94,7 +94,7 @@ trait eventtype {
                 $categoryoptions[$id] = $category;
             }
 
-            $mform->addElement('select', 'categoryid', get_string('category'), $categoryoptions);
+            $mform->addElement('autocomplete', 'categoryid', get_string('category'), $categoryoptions);
             $mform->hideIf('categoryid', 'eventtype', 'noteq', 'category');
         }
 
