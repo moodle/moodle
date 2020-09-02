@@ -43,6 +43,7 @@ Feature: Test category management actions
     And I should see "Category 1 (edited)" in the "#category-listing" "css_element"
     And I should see "Category 1 (edited)" in the "#course-listing h3" "css_element"
 
+  @javascript
   Scenario: Test deleting a categories through the management interface.
     Given the following "categories" exist:
       | name | category | idnumber |
@@ -227,9 +228,9 @@ Feature: Test category management actions
     And I should see "Delete category: Cat 1"
     And I should see "Contents of Cat 1"
     And "What to do" "select" should exist
-    And "Move into" "select" should exist
-    And the "Move into" select box should not contain "Cat 2"
-    And the "Move into" select box should contain "Miscellaneous"
+    And I expand the "Move into" autocomplete
+    And "Cat 2" "autocomplete_suggestions" should not exist
+    And "Miscellaneous" "autocomplete_selection" should be visible
     And I set the field "What to do" to "Delete all - cannot be undone"
     And "Move into" "select" should not be visible
     And I press "Cancel"

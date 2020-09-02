@@ -111,7 +111,7 @@ class core_course_deletecategory_form extends moodleform {
         }
 
         if ($displaylist) {
-            $mform->addElement('select', 'newparent', get_string('movecategorycontentto'), $displaylist);
+            $mform->addElement('autocomplete', 'newparent', get_string('movecategorycontentto'), $displaylist);
             if (in_array($this->coursecat->parent, $displaylist)) {
                 $mform->setDefault('newparent', $this->coursecat->parent);
             }

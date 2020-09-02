@@ -43,7 +43,7 @@ class cohort_edit_form extends moodleform {
         $mform->setType('name', PARAM_TEXT);
 
         $options = $this->get_category_options($cohort->contextid);
-        $mform->addElement('select', 'contextid', get_string('context', 'role'), $options);
+        $mform->addElement('autocomplete', 'contextid', get_string('context', 'role'), $options);
 
         $mform->addElement('text', 'idnumber', get_string('idnumber', 'cohort'), 'maxlength="254" size="50"');
         $mform->setType('idnumber', PARAM_RAW); // Idnumbers are plain text, must not be changed.
