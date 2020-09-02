@@ -3992,6 +3992,16 @@ function get_user_fieldnames() {
 }
 
 /**
+ * Returns the string of the language for the new user.
+ *
+ * @return string language for the new user
+ */
+function get_newuser_language() {
+    global $CFG, $SESSION;
+    return (!empty($CFG->autolangusercreation) && !empty($SESSION->lang)) ? $SESSION->lang : $CFG->lang;
+}
+
+/**
  * Creates a bare-bones user record
  *
  * @todo Outline auth types and provide code example
@@ -4002,7 +4012,7 @@ function get_user_fieldnames() {
  * @return stdClass A complete user object
  */
 function create_user_record($username, $password, $auth = 'manual') {
-    global $CFG, $DB;
+    global $CFG, $DB, $SESSION;
     require_once($CFG->dirroot.'/user/profile/lib.php');
     require_once($CFG->dirroot.'/user/lib.php');
 
@@ -4038,7 +4048,7 @@ function create_user_record($username, $password, $auth = 'manual') {
     // user CFG lang for user if $newuser->lang is empty
     // or $user->lang is not an installed language.
     if (empty($newuser->lang) || !get_string_manager()->translation_exists($newuser->lang)) {
-        $newuser->lang = $CFG->lang;
+        $newuser->lang = get_newuser_language();
     }
     $newuser->confirmed = 1;
     $newuser->lastip = getremoteaddr();
@@ -4378,7 +4388,7 @@ function guest_user() {
 
     if ($newuser = $DB->get_record('user', array('id' => $CFG->siteguest))) {
         $newuser->confirmed = 1;
-        $newuser->lang = $CFG->lang;
+        $newuser->lang = get_newuser_language();
         $newuser->lastip = getremoteaddr();
     }
 
@@ -5026,7 +5036,7 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
     }
     if (isguestuser($user)) {
         // Guest language always same as site.
-        $user->lang = $CFG->lang;
+        $user->lang = get_newuser_language();
         // Name always in current language.
         $user->firstname = get_string('guestuser');
         $user->lastname = ' ';
@@ -6460,7 +6470,7 @@ function setnew_password_and_mail($user, $fasthash = false) {
     // We try to send the mail in language the user understands,
     // unfortunately the filter_string() does not support alternative langs yet
     // so multilang will not work properly for site->fullname.
-    $lang = empty($user->lang) ? $CFG->lang : $user->lang;
+    $lang = empty($user->lang) ? get_newuser_language() : $user->lang;
 
     $site  = get_site();
 
