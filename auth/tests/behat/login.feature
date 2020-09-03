@@ -73,6 +73,6 @@ Feature: Authentication
   Scenario: The login page must have sufficient colour contrast
     Given the following config values are set as admin:
       | custommenuitems | -This is a custom item\|/customurl/ |
-    And I am on site homepage
-    And the page should meet "wcag143" accessibility standards
+    When I am on site homepage
+    Then the page should meet "wcag143" accessibility standards
     And the page should meet accessibility standards with "wcag143" extra tests
