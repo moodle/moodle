@@ -1451,7 +1451,7 @@ class theme_config {
             );
         } else {
             if (file_exists($cachedir)) {
-                remove_directory($cachedir);
+                remove_dir($cachedir);
             }
         }
 
