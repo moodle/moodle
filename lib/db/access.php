@@ -2576,4 +2576,16 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
         ]
     ],
+
+    // Allow users to download course content.
+    'moodle/course:downloadcoursecontent' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ],
 );
