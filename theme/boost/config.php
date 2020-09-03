@@ -148,7 +148,6 @@ $THEME->layouts = [
 
 $THEME->parents = [];
 $THEME->enable_dock = false;
-$THEME->csstreepostprocessor = 'theme_boost_css_tree_post_processor';
 $THEME->extrascsscallback = 'theme_boost_get_extra_scss';
 $THEME->prescsscallback = 'theme_boost_get_pre_scss';
 $THEME->precompiledcsscallback = 'theme_boost_get_precompiled_css';
