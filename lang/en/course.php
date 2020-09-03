@@ -54,6 +54,7 @@ $string['customfield_visibility_help'] = 'This setting determines who can view t
 $string['customfield_visibletoall'] = 'Everyone';
 $string['customfield_visibletoteachers'] = 'Teachers';
 $string['customfieldsettings'] = 'Common course custom fields settings';
+$string['downloadcourseconfirmation'] = 'You are about to download a zip file of course content (excluding items which cannot be downloaded and any files larger than {$a}).';
 $string['downloadcoursecontent'] = 'Download course content';
 $string['downloadcoursecontent_help'] = 'This setting determines whether course content may be downloaded by users with the download course content capability (by default users with the role of student or teacher).';
 $string['enabledownloadcoursecontent'] = 'Enable download course content';
