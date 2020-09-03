@@ -146,7 +146,11 @@ class restore_gradebook_structure_step extends restore_structure_step {
 
         $paths[] = new restore_path_element('attributes', '/gradebook/attributes');
         $paths[] = new restore_path_element('grade_category', '/gradebook/grade_categories/grade_category');
-        $paths[] = new restore_path_element('grade_item', '/gradebook/grade_items/grade_item');
+
+        $gradeitem = new restore_path_element('grade_item', '/gradebook/grade_items/grade_item');
+        $paths[] = $gradeitem;
+        $this->add_plugin_structure('local', $gradeitem);
+
         if ($userinfo) {
             $paths[] = new restore_path_element('grade_grade', '/gradebook/grade_items/grade_item/grade_grades/grade_grade');
         }
