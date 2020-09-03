@@ -238,3 +238,12 @@ Feature: Perform basic calendar functionality
     And I follow "This month"
     When I click on "New event" "button"
     Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
+
+  @javascript @accessibility
+  Scenario: The calendar page must be accessible
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "This month"
+    Then the page should meet accessibility standards
+    And the page should meet "wcag131, wcag143, wcag412" accessibility standards
+    And the page should meet accessibility standards with "wcag131, wcag143, wcag412" extra tests
