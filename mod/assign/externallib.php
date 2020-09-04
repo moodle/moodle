@@ -593,8 +593,8 @@ class mod_assign_external extends external_api {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'course id'),
-                'fullname' => new external_value(PARAM_TEXT, 'course full name'),
-                'shortname' => new external_value(PARAM_TEXT, 'course short name'),
+                'fullname' => new external_value(PARAM_RAW, 'course full name'),
+                'shortname' => new external_value(PARAM_RAW, 'course short name'),
                 'timemodified' => new external_value(PARAM_INT, 'last time modified'),
                 'assignments' => new external_multiple_structure(self::get_assignments_assignment_structure(), 'assignment info')
               ), 'course information object'
