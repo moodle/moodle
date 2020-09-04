@@ -3,6 +3,10 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
+=== 3.10 ===
+
+* The class externallib_advanced_testcase, used in unit tests, has a new function called "configure_filters" to easily configure filters for external functions testing.
+
 === 3.8 ===
 
 * Ajax calls can now specify a cache key. This allows for better caching capabilities on servers. If a cache key
