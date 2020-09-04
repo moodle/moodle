@@ -213,6 +213,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'tool_mobile_forcelogout', 'value' => 0),
             array('name' => 'tool_mobile_customlangstrings', 'value' => ''),
             array('name' => 'tool_mobile_disabledfeatures', 'value' => ''),
+            array('name' => 'tool_mobile_filetypeexclusionlist', 'value' => ''),
             array('name' => 'tool_mobile_custommenuitems', 'value' => ''),
             array('name' => 'tool_mobile_apppolicy', 'value' => ''),
             array('name' => 'calendartype', 'value' => $CFG->calendartype),

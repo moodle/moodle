@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_admin\local\settings\autocomplete;
+
 if ($hassiteconfig) {
 
     $ADMIN->add('root', new admin_category('mobileapp', new lang_string('mobileapp', 'tool_mobile')), 'development');
@@ -187,6 +189,27 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configtextarea('tool_mobile/custommenuitems',
                 new lang_string('custommenuitems', 'tool_mobile'),
                 new lang_string('custommenuitems_desc', 'tool_mobile'), '', PARAM_RAW, '50', '10'));
+
+    // File type exclusionlist.
+    $choices = [];
+    foreach (core_filetypes::get_types() as $key => $info) {
+        $text = '.' . $key;
+        if (!empty($info['type'])) {
+            $text .= ' (' . $info['type'] . ')';
+        }
+        $choices[$key] = $text;
+    }
+
+    $attributes = [
+        'manageurl' => new \moodle_url('/admin/tool/filetypes/index.php'),
+        'managetext' => get_string('managefiletypes', 'tool_mobile'),
+        'multiple' => true,
+        'delimiter' => ',',
+        'placeholder' => get_string('filetypeexclusionlistplaceholder', 'tool_mobile')
+    ];
+    $temp->add(new autocomplete('tool_mobile/filetypeexclusionlist',
+        new lang_string('filetypeexclusionlist', 'tool_mobile'),
+        new lang_string('filetypeexclusionlist_desc', 'tool_mobile'), array(), $choices, $attributes));
 
     $temp->add(new admin_setting_heading('tool_mobile/language',
                 new lang_string('language'), ''));
