@@ -1457,8 +1457,8 @@ class framework_testcase extends \advanced_testcase {
         // Get the semantics of 'Library1' from the DB.
         $currentsemantics = $DB->get_field('h5p_libraries', 'semantics', array('id' => $library1->id));
 
-        // The semantics for Library1 should be successfully updated.
-        $this->assertEquals(json_encode($updatedsemantics), $currentsemantics);
+        // The semantics for Library1 shouldn't be updated.
+        $this->assertEquals($semantics, $currentsemantics);
     }
 
     /**

@@ -37,4 +37,49 @@ use plugin_renderer_base;
  */
 class renderer extends plugin_renderer_base {
 
+    /**
+     * Alter which stylesheets are loaded for H5P.
+     * This is useful for adding custom styles or replacing existing ones.
+     *
+     * @param array|object $scripts List of stylesheets that will be loaded
+     * @param array $libraries Array of libraries indexed by the library's machineName
+     * @param string $embedtype Possible values: div, iframe, external, editor
+     */
+    public function h5p_alter_styles(&$scripts, array $libraries, string $embedtype) {
+    }
+
+    /**
+     * Alter which scripts are loaded for H5P.
+     * This is useful for adding custom scripts or replacing existing ones.
+     *
+     * @param array|object $scripts List of JavaScripts that will be loaded
+     * @param array $libraries Array of libraries indexed by the library's machineName
+     * @param string $embedtype Possible values: div, iframe, external, editor
+     */
+    public function h5p_alter_scripts(&$scripts, array $libraries, string $embedtype) {
+    }
+
+    /**
+     * Alter semantics before they are processed. This is useful for changing
+     * how the editor looks and how content parameters are filtered.
+     *
+     * @param object|object $semantics Semantics as object
+     * @param string $name Machine name of library
+     * @param int $majorversion Major version of library
+     * @param int $minorversion Minor version of library
+     */
+    public function h5p_alter_semantics(&$semantics, $name, $majorversion, $minorversion) {
+    }
+
+    /**
+     * Alter parameters of H5P content after it has been filtered through semantics.
+     * This is useful for adapting the content to the current context.
+     *
+     * @param array|object $parameters The content parameters for the library
+     * @param string $name The machine readable name of the library
+     * @param int $majorversion Major version of the library
+     * @param int $minorversion Minor version of the library
+     */
+    public function h5p_alter_filtered_parameters(&$parameters, string $name, int $majorversion, int $minorversion) {
+    }
 }
