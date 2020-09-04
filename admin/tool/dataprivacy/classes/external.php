@@ -1613,7 +1613,7 @@ class external extends external_api {
      */
     private static function get_tree_node_structure($allowchildbranches = true) {
         $fields = [
-            'text' => new external_value(PARAM_TEXT, 'The node text', VALUE_REQUIRED),
+            'text' => new external_value(PARAM_RAW, 'The node text', VALUE_REQUIRED),
             'expandcontextid' => new external_value(PARAM_INT, 'The contextid this node expands', VALUE_REQUIRED),
             'expandelement' => new external_value(PARAM_ALPHA, 'What element is this node expanded to', VALUE_REQUIRED),
             'contextid' => new external_value(PARAM_INT, 'The node contextid', VALUE_REQUIRED),

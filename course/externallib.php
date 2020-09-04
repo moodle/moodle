@@ -426,7 +426,7 @@ class core_course_external extends external_api {
             new external_single_structure(
                 array(
                     'id' => new external_value(PARAM_INT, 'Section ID'),
-                    'name' => new external_value(PARAM_TEXT, 'Section name'),
+                    'name' => new external_value(PARAM_RAW, 'Section name'),
                     'visible' => new external_value(PARAM_INT, 'is the section visible', VALUE_OPTIONAL),
                     'summary' => new external_value(PARAM_RAW, 'Section description'),
                     'summaryformat' => new external_format_value('summary'),
@@ -669,12 +669,12 @@ class core_course_external extends external_api {
                 new external_single_structure(
                         array(
                             'id' => new external_value(PARAM_INT, 'course id'),
-                            'shortname' => new external_value(PARAM_TEXT, 'course short name'),
+                            'shortname' => new external_value(PARAM_RAW, 'course short name'),
                             'categoryid' => new external_value(PARAM_INT, 'category id'),
                             'categorysortorder' => new external_value(PARAM_INT,
                                     'sort order into the category', VALUE_OPTIONAL),
-                            'fullname' => new external_value(PARAM_TEXT, 'full name'),
-                            'displayname' => new external_value(PARAM_TEXT, 'course display name'),
+                            'fullname' => new external_value(PARAM_RAW, 'full name'),
+                            'displayname' => new external_value(PARAM_RAW, 'course display name'),
                             'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL),
                             'summary' => new external_value(PARAM_RAW, 'summary'),
                             'summaryformat' => new external_format_value('summary'),
@@ -729,7 +729,7 @@ class core_course_external extends external_api {
                              ),
                             'customfields' => new external_multiple_structure(
                                 new external_single_structure(
-                                    ['name' => new external_value(PARAM_TEXT, 'The name of the custom field'),
+                                    ['name' => new external_value(PARAM_RAW, 'The name of the custom field'),
                                      'shortname' => new external_value(PARAM_ALPHANUMEXT, 'The shortname of the custom field'),
                                      'type'  => new external_value(PARAM_COMPONENT,
                                          'The type of the custom field - text, checkbox...'),
@@ -939,7 +939,7 @@ class core_course_external extends external_api {
             new external_single_structure(
                 array(
                     'id'       => new external_value(PARAM_INT, 'course id'),
-                    'shortname' => new external_value(PARAM_TEXT, 'short name'),
+                    'shortname' => new external_value(PARAM_RAW, 'short name'),
                 )
             )
         );
@@ -1485,7 +1485,7 @@ class core_course_external extends external_api {
         return new external_single_structure(
             array(
                 'id'       => new external_value(PARAM_INT, 'course id'),
-                'shortname' => new external_value(PARAM_TEXT, 'short name'),
+                'shortname' => new external_value(PARAM_RAW, 'short name'),
             )
         );
     }
@@ -1963,7 +1963,7 @@ class core_course_external extends external_api {
             new external_single_structure(
                 array(
                     'id' => new external_value(PARAM_INT, 'category id'),
-                    'name' => new external_value(PARAM_TEXT, 'category name'),
+                    'name' => new external_value(PARAM_RAW, 'category name'),
                     'idnumber' => new external_value(PARAM_RAW, 'category id number', VALUE_OPTIONAL),
                     'description' => new external_value(PARAM_RAW, 'category description'),
                     'descriptionformat' => new external_format_value('description'),
@@ -2069,7 +2069,7 @@ class core_course_external extends external_api {
             new external_single_structure(
                 array(
                     'id' => new external_value(PARAM_INT, 'new category id'),
-                    'name' => new external_value(PARAM_TEXT, 'new category name'),
+                    'name' => new external_value(PARAM_RAW, 'new category name'),
                 )
             )
         );
@@ -2607,11 +2607,11 @@ class core_course_external extends external_api {
     protected static function get_course_structure($onlypublicdata = true) {
         $coursestructure = array(
             'id' => new external_value(PARAM_INT, 'course id'),
-            'fullname' => new external_value(PARAM_TEXT, 'course full name'),
-            'displayname' => new external_value(PARAM_TEXT, 'course display name'),
-            'shortname' => new external_value(PARAM_TEXT, 'course short name'),
+            'fullname' => new external_value(PARAM_RAW, 'course full name'),
+            'displayname' => new external_value(PARAM_RAW, 'course display name'),
+            'shortname' => new external_value(PARAM_RAW, 'course short name'),
             'categoryid' => new external_value(PARAM_INT, 'category id'),
-            'categoryname' => new external_value(PARAM_TEXT, 'category name'),
+            'categoryname' => new external_value(PARAM_RAW, 'category name'),
             'sortorder' => new external_value(PARAM_INT, 'Sort order in the category', VALUE_OPTIONAL),
             'summary' => new external_value(PARAM_RAW, 'summary'),
             'summaryformat' => new external_format_value('summary'),
@@ -2861,7 +2861,7 @@ class core_course_external extends external_api {
                             new external_single_structure(
                                 array(
                                     'id' => new external_value(PARAM_ALPHANUMEXT, 'Outcome id'),
-                                    'name'  => new external_value(PARAM_TEXT, 'Outcome full name'),
+                                    'name'  => new external_value(PARAM_RAW, 'Outcome full name'),
                                     'scale' => new external_value(PARAM_TEXT, 'Scale items')
                                 )
                             ),
