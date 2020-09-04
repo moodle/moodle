@@ -522,6 +522,61 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_users_courses with mathjax in the name.
+     */
+    public function test_get_users_courses_with_mathjax() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Enable MathJax filter in content and headings.
+        $this->configure_filters([
+            ['name' => 'mathjaxloader', 'state' => TEXTFILTER_ON, 'move' => -1, 'applytostrings' => true],
+        ]);
+
+        // Create a course with MathJax in the name and summary.
+        $coursedata = [
+            'fullname'         => 'Course 1 $$(a+b)=2$$',
+            'shortname'         => 'Course 1 $$(a+b)=2$$',
+            'summary'          => 'Lightwork Course 1 description $$(a+b)=2$$',
+            'summaryformat'    => FORMAT_HTML,
+        ];
+
+        $course = self::getDataGenerator()->create_course($coursedata);
+        $context = context_course::instance($course->id);
+
+        // Enrol a student in the course.
+        $student = $this->getDataGenerator()->create_user();
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentroleid);
+
+        $this->setUser($student);
+
+        // Call the external function.
+        $enrolledincourses = core_enrol_external::get_users_courses($student->id, true);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $enrolledincourses = external_api::clean_returnvalue(core_enrol_external::get_users_courses_returns(), $enrolledincourses);
+
+        // Check that the amount of courses is the right one.
+        $this->assertCount(1, $enrolledincourses);
+
+        // Filter the values to compare them with the returned ones.
+        $course->fullname = external_format_string($course->fullname, $context->id);
+        $course->shortname = external_format_string($course->shortname, $context->id);
+        list($course->summary, $course->summaryformat) =
+             external_format_text($course->summary, $course->summaryformat, $context->id, 'course', 'summary', 0);
+
+        // Compare the values.
+        $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $enrolledincourses[0]['fullname']);
+        $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $enrolledincourses[0]['shortname']);
+        $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $enrolledincourses[0]['summary']);
+        $this->assertEquals($course->fullname, $enrolledincourses[0]['fullname']);
+        $this->assertEquals($course->shortname, $enrolledincourses[0]['shortname']);
+        $this->assertEquals($course->summary, $enrolledincourses[0]['summary']);
+    }
+
+    /**
      * Test get_course_enrolment_methods
      */
     public function test_get_course_enrolment_methods() {
