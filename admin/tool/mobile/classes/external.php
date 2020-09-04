@@ -138,7 +138,7 @@ class external extends external_api {
             array(
                 'wwwroot' => new external_value(PARAM_RAW, 'Site URL.'),
                 'httpswwwroot' => new external_value(PARAM_RAW, 'Site https URL (if httpslogin is enabled).'),
-                'sitename' => new external_value(PARAM_TEXT, 'Site name.'),
+                'sitename' => new external_value(PARAM_RAW, 'Site name.'),
                 'guestlogin' => new external_value(PARAM_INT, 'Whether guest login is enabled.'),
                 'rememberusername' => new external_value(PARAM_INT, 'Values: 0 for No, 1 for Yes, 2 for optional.'),
                 'authloginviaemail' => new external_value(PARAM_INT, 'Whether log in via email is enabled.'),
