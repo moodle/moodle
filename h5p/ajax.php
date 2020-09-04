@@ -44,6 +44,9 @@ $action = required_param('action', PARAM_ALPHA);
 $factory = new factory();
 $editor = $factory->get_editor();
 
+// Set context to default system context.
+$PAGE->set_context(null);
+
 switch ($action) {
     // Load list of libraries or details for library.
     case 'libraries':
