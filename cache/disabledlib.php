@@ -49,7 +49,12 @@ class cache_disabled extends cache {
      * @param null $loader Unused.
      */
     public function __construct(cache_definition $definition, cache_store $store, $loader = null) {
-        // Nothing to do here.
+        if ($loader instanceof cache_data_source) {
+            // Set the data source to allow data sources to work when caching is entirely disabled.
+            $this->set_data_source($loader);
+        }
+
+        // No other features are handled.
     }
 
     /**
@@ -60,6 +65,10 @@ class cache_disabled extends cache {
      * @return bool
      */
     public function get($key, $strictness = IGNORE_MISSING) {
+        if ($this->get_datasource() !== false) {
+            return $this->get_datasource()->load_for_cache($key);
+        }
+
         return false;
     }
 
@@ -71,10 +80,10 @@ class cache_disabled extends cache {
      * @return array
      */
     public function get_many(array $keys, $strictness = IGNORE_MISSING) {
-        $return = array();
-        foreach ($keys as $key) {
-            $return[$key] = false;
+        if ($this->get_datasource() !== false) {
+            return $this->get_datasource()->load_many_for_cache($keys);
         }
+
         return $return;
     }
 
@@ -129,7 +138,9 @@ class cache_disabled extends cache {
      * @return bool
      */
     public function has($key, $tryloadifpossible = false) {
-        return false;
+        $result = $this->get($key);
+
+        return $result !== false;
     }
 
     /**
@@ -138,7 +149,16 @@ class cache_disabled extends cache {
      * @return bool
      */
     public function has_all(array $keys) {
-        return false;
+        if (!$this->get_datasource()) {
+            return false;
+        }
+
+        foreach ($keys as $key) {
+            if (!$this->has($key)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -148,6 +168,12 @@ class cache_disabled extends cache {
      * @return bool
      */
     public function has_any(array $keys) {
+        foreach ($keys as $key) {
+            if ($this->has($key)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -189,6 +215,11 @@ class cache_factory_disabled extends cache_factory {
      * @return cache_definition
      */
     public function create_definition($component, $area, $unused = null) {
+        $definition = parent::create_definition($component, $area);
+        if ($definition->has_data_source()) {
+            return $definition;
+        }
+
         return cache_definition::load_adhoc(cache_store::MODE_REQUEST, $component, $area);
     }
 
@@ -200,7 +231,11 @@ class cache_factory_disabled extends cache_factory {
      * @throws coding_exception
      */
     public function create_cache(cache_definition $definition) {
-        return new cache_disabled($definition, $this->create_dummy_store($definition));
+        $loader = null;
+        if ($definition->has_data_source()) {
+            $loader = $definition->get_data_source();
+        }
+        return new cache_disabled($definition, $this->create_dummy_store($definition), $loader);
     }
 
     /**
