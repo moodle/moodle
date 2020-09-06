@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  * @deprecated since Moodle 3.7 MDL-64495. Please use /admin/message.php instead.
- * @todo       MDL-64866 This will be deleted in Moodle 4.1.
+ * @todo       MDL-64866 This will be deleted in Moodle 3.11.
  */
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/message/lib.php');

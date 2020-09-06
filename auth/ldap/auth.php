@@ -709,7 +709,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
             do {
                 if ($ldappagedresults) {
-                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 4.1).
+                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 3.11).
                     if (version_compare(PHP_VERSION, '7.3.0', '<')) {
                         // Before 7.3, use this function that was deprecated in PHP 7.4.
                         ldap_control_paged_result($ldapconnection, $this->config->pagesize, true, $ldapcookie);
@@ -722,7 +722,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 }
                 if ($this->config->search_sub) {
                     // Use ldap_search to find first user from subtree.
-                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 4.1).
+                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 3.11).
                     if (version_compare(PHP_VERSION, '7.3.0', '<')) {
                         $ldapresult = ldap_search($ldapconnection, $context, $filter, array($this->config->user_attribute));
                     } else {
@@ -731,7 +731,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     }
                 } else {
                     // Search only in this context.
-                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 4.1).
+                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 3.11).
                     if (version_compare(PHP_VERSION, '7.3.0', '<')) {
                         $ldapresult = ldap_list($ldapconnection, $context, $filter, array($this->config->user_attribute));
                     } else {
@@ -745,7 +745,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 if ($ldappagedresults) {
                     // Get next server cookie to know if we'll need to continue searching.
                     $ldapcookie = '';
-                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 4.1).
+                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 3.11).
                     if (version_compare(PHP_VERSION, '7.3.0', '<')) {
                         // Before 7.3, use this function that was deprecated in PHP 7.4.
                         $pagedresp = ldap_control_paged_result_response($ldapconnection, $ldapresult, $ldapcookie);
@@ -1554,7 +1554,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
             do {
                 if ($ldap_pagedresults) {
-                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 4.1).
+                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 3.11).
                     if (version_compare(PHP_VERSION, '7.3.0', '<')) {
                         // Before 7.3, use this function that was deprecated in PHP 7.4.
                         ldap_control_paged_result($ldapconnection, $this->config->pagesize, true, $ldap_cookie);
@@ -1567,7 +1567,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 }
                 if ($this->config->search_sub) {
                     // Use ldap_search to find first user from subtree.
-                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 4.1).
+                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 3.11).
                     if (version_compare(PHP_VERSION, '7.3.0', '<')) {
                         $ldap_result = ldap_search($ldapconnection, $context, $filter, array($this->config->user_attribute));
                     } else {
@@ -1576,7 +1576,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     }
                 } else {
                     // Search only in this context.
-                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 4.1).
+                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 3.11).
                     if (version_compare(PHP_VERSION, '7.3.0', '<')) {
                         $ldap_result = ldap_list($ldapconnection, $context, $filter, array($this->config->user_attribute));
                     } else {
@@ -1590,7 +1590,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 if ($ldap_pagedresults) {
                     // Get next server cookie to know if we'll need to continue searching.
                     $ldap_cookie = '';
-                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 4.1).
+                    // TODO: Remove the old branch of code once PHP 7.3.0 becomes required (Moodle 3.11).
                     if (version_compare(PHP_VERSION, '7.3.0', '<')) {
                         // Before 7.3, use this function that was deprecated in PHP 7.4.
                         ldap_control_paged_result_response($ldapconnection, $ldap_result, $ldap_cookie);

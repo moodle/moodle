@@ -6538,7 +6538,7 @@ class admin_page_managemessageoutputs extends admin_externalpage {
  * Default message outputs configuration
  *
  * @deprecated since Moodle 3.7 MDL-64495. Please use admin_page_managemessageoutputs instead.
- * @todo       MDL-64866 This will be deleted in Moodle 4.1.
+ * @todo       MDL-64866 This will be deleted in Moodle 3.11.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -6547,7 +6547,7 @@ class admin_page_defaultmessageoutputs extends admin_page_managemessageoutputs {
      * Calls parent::__construct with specific arguments
      *
      * @deprecated since Moodle 3.7 MDL-64495. Please use admin_page_managemessageoutputs instead.
-     * @todo       MDL-64866 This will be deleted in Moodle 4.1.
+     * @todo       MDL-64866 This will be deleted in Moodle 3.11.
      */
     public function __construct() {
         global $CFG;
