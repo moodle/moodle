@@ -3276,7 +3276,7 @@ class admin_setting_configselect extends admin_setting {
      * an empty string '' if the value is OK, or an error message if not.
      *
      * @param callable|null $validatefunction Validate function or null to clear
-     * @since Moodle 4.0
+     * @since Moodle 3.10
      */
     public function set_validate_function(?callable $validatefunction = null) {
         $this->validatefunction = $validatefunction;
@@ -3362,7 +3362,7 @@ class admin_setting_configselect extends admin_setting {
      *
      * @param string $data New value being set
      * @return string Empty string if valid, or error message text
-     * @since Moodle 4.0
+     * @since Moodle 3.10
      */
     protected function validate_setting(string $data): string {
         // If validation function is specified, call it now.
