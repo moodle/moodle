@@ -109,7 +109,7 @@ information provided here is intended especially for developers.
     - type: specifies the calendar type. Optional, defaults to Gregorian.
     - fixday: Whether to remove leading zero for day. Optional, defaults to 1.
     - fixhour: Whether to remove leading zero for hour. Optional, defaults to 1.
-* Legacy cron has been deprecated and will be removed in Moodle 4.3. This includes the functions:
+* Legacy cron has been deprecated and will be removed in Moodle 4.1. This includes the functions:
   - cron_execute_plugin_type()
   - cron_bc_hack_plugin_functions()
   Please, use the Task API instead: https://docs.moodle.org/dev/Task_API

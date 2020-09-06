@@ -18,7 +18,7 @@
  * Task executor for adhoc tasks.
  *
  * @deprecated since Moodle 3.9 MDL-63580. Please use the admin/cli/adhoc_task.php.
- * @todo final deprecation. To be removed in Moodle 4.3 MDL-63594.
+ * @todo final deprecation. To be removed in Moodle 4.1 MDL-63594.
  *
  * @package    tool_task
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
