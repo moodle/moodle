@@ -2823,7 +2823,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  * Returns the models that generated insights in the provided context.
  *
  * @deprecated since Moodle 3.8 MDL-66091 - please do not use this function any more.
- * @todo MDL-65799 This will be deleted in Moodle 4.2
+ * @todo MDL-65799 This will be deleted in Moodle 4.0
  * @see \core_analytics\manager::cached_models_with_insights
  * @param  \context $context
  * @return int[]
