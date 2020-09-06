@@ -3358,7 +3358,7 @@ function user_get_participants($courseid, $groupid = 0, $accesssince, $roleid, $
  * Calls {@see core_course_category::make_categories_list()} to build the list.
  *
  * @deprecated since Moodle 3.10
- * @todo This will be finally removed for Moodle 4.4 as part of MDL-69124.
+ * @todo This will be finally removed for Moodle 4.2 as part of MDL-69124.
  * @return array array mapping course category id to the display name
  */
 function make_categories_options() {
