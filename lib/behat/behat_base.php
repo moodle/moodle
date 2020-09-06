@@ -66,7 +66,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * be enough.
      *
      * @deprecated since Moodle 3.7 MDL-64979 - please use get_reduced_timeout() instead
-     * @todo MDL-64982 This will be deleted in Moodle 4.1
+     * @todo MDL-64982 This will be deleted in Moodle 3.11
      * @see behat_base::get_reduced_timeout()
      */
     const REDUCED_TIMEOUT = 2;
@@ -75,7 +75,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * The timeout for each Behat step (load page, wait for an element to load...).
      *
      * @deprecated since Moodle 3.7 MDL-64979 - please use get_timeout() instead
-     * @todo MDL-64982 This will be deleted in Moodle 4.1
+     * @todo MDL-64982 This will be deleted in Moodle 3.11
      * @see behat_base::get_timeout()
      */
     const TIMEOUT = 6;
@@ -84,7 +84,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * And extended timeout for specific cases.
      *
      * @deprecated since Moodle 3.7 MDL-64979 - please use get_extended_timeout() instead
-     * @todo MDL-64982 This will be deleted in Moodle 4.1
+     * @todo MDL-64982 This will be deleted in Moodle 3.11
      * @see behat_base::get_extended_timeout()
      */
     const EXTENDED_TIMEOUT = 10;

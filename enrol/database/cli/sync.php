@@ -27,7 +27,7 @@
  *   - use "su" if "sudo" not available
  *
  * @deprecated since Moodle 3.7 MDL-59986 - please do not use this CLI script any more, use scheduled task instead.
- * @todo       MDL-63266 This will be deleted in Moodle 4.1.
+ * @todo       MDL-63266 This will be deleted in Moodle 3.11.
  * @package    enrol_database
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

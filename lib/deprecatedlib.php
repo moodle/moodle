@@ -2761,7 +2761,7 @@ function message_get_contact() {
  *            in such a large SELECT
  *
  * @deprecated since Moodle 3.7
- * @todo The final deprecation of this function will take place in Moodle 41 - see MDL-65319.
+ * @todo The final deprecation of this function will take place in Moodle 3.11 - see MDL-65319.
  *
  * @param string|int $categoryid Either a category id or 'all' for everything
  * @param string $sort A field and direction to sort by

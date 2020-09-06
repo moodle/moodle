@@ -111,14 +111,14 @@ abstract class base {
      * \core_analytics\local\analyser\by_course and \core_analytics\local\analyser\sitewide are implementing
      * this method returning site courses (by_course) and the whole system (sitewide) as analysables.
      *
-     * @todo MDL-65284 This will be removed in Moodle 4.1
+     * @todo MDL-65284 This will be removed in Moodle 3.11
      * @deprecated
      * @see get_analysables_iterator
      * @throws  \coding_exception
      * @return \core_analytics\analysable[] Array of analysable elements using the analysable id as array key.
      */
     public function get_analysables() {
-        // This function should only be called from get_analysables_iterator and we keep it here until Moodle 4.1
+        // This function should only be called from get_analysables_iterator and we keep it here until Moodle 3.11
         // for backwards compatibility.
         throw new \coding_exception('This method is deprecated in favour of get_analysables_iterator.');
     }

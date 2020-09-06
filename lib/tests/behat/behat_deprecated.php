@@ -47,7 +47,7 @@ class behat_deprecated extends behat_base {
      * @param string $blockname
      * @return void
      * @deprecated since Moodle 3.7 MDL-64506 - please do not use this definition step any more.
-     * @todo MDL-65215 This will be deleted in Moodle 4.1.
+     * @todo MDL-65215 This will be deleted in Moodle 3.11.
      */
     public function i_dock_block($blockname) {
 
