@@ -7348,12 +7348,12 @@ class admin_setting_manageantiviruses extends admin_setting {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 3.9 MDL-45184. Please use \tool_licensemanager\manager instead.
- * @todo MDL-45184 This class will be deleted in Moodle 4.3.
+ * @todo MDL-45184 This class will be deleted in Moodle 4.1.
  */
 class admin_setting_managelicenses extends admin_setting {
     /**
      * @deprecated since Moodle 3.9 MDL-45184. Please use \tool_licensemanager\manager instead.
-     * @todo MDL-45184 This class will be deleted in Moodle 4.3
+     * @todo MDL-45184 This class will be deleted in Moodle 4.1
      */
     public function __construct() {
         global $ADMIN;
@@ -7375,7 +7375,7 @@ class admin_setting_managelicenses extends admin_setting {
      * Always returns true, does nothing
      *
      * @deprecated since Moodle 3.9 MDL-45184.
-     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     * @todo MDL-45184 This method will be deleted in Moodle 4.1
      *
      * @return true
      */
@@ -7390,7 +7390,7 @@ class admin_setting_managelicenses extends admin_setting {
      * Always returns true, does nothing
      *
      * @deprecated since Moodle 3.9 MDL-45184.
-     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     * @todo MDL-45184 This method will be deleted in Moodle 4.1
      *
      * @return true
      */
@@ -7405,7 +7405,7 @@ class admin_setting_managelicenses extends admin_setting {
      * Always returns '', does not write anything
      *
      * @deprecated since Moodle 3.9 MDL-45184.
-     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     * @todo MDL-45184 This method will be deleted in Moodle 4.1
      *
      * @return string Always returns ''
      */
@@ -7421,7 +7421,7 @@ class admin_setting_managelicenses extends admin_setting {
      * Builds the XHTML to display the control
      *
      * @deprecated since Moodle 3.9 MDL-45184. Please use \tool_licensemanager\manager instead.
-     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     * @todo MDL-45184 This method will be deleted in Moodle 4.1
      *
      * @param string $data Unused
      * @param string $query

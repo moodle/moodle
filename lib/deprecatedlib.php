@@ -2944,7 +2944,7 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
  * with other processing (other than displaying the rest of the page) after using this function!
  *
  * @deprecated since Moodle 3.9 MDL-63580. Please use the \core\task\manager::run_from_cli($task).
- * @todo final deprecation. To be removed in Moodle 4.3 MDL-63594.
+ * @todo final deprecation. To be removed in Moodle 4.1 MDL-63594.
  * @param \core\task\scheduled_task $task Task to run
  * @return bool True if cron run successful
  */
@@ -2962,7 +2962,7 @@ function cron_run_single_task(\core\task\scheduled_task $task) {
  *   and 'Finished (whatever)' lines, otherwise does not display
  *
  * @deprecated since Moodle 3.9 MDL-52846. Please use new task API.
- * @todo MDL-61165 This will be deleted in Moodle 4.3.
+ * @todo MDL-61165 This will be deleted in Moodle 4.1.
  */
 function cron_execute_plugin_type($plugintype, $description = null) {
     global $DB;
@@ -3036,7 +3036,7 @@ function cron_execute_plugin_type($plugintype, $description = null) {
  *   looking in the older location
  *
  * @deprecated since Moodle 3.9 MDL-52846. Please use new task API.
- * @todo MDL-61165 This will be deleted in Moodle 4.3.
+ * @todo MDL-61165 This will be deleted in Moodle 4.1.
  */
 function cron_bc_hack_plugin_functions($plugintype, $plugins) {
     global $CFG; // Mandatory in case it is referenced by include()d PHP script.
