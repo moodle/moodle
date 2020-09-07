@@ -460,6 +460,7 @@ class quiz_settings extends persistent {
 
         // One of the requirements for USE_SEB_CONFIG_MANUALLY is setting examSessionClearCookiesOnStart to false.
         $this->plist->set_or_update_value('examSessionClearCookiesOnStart', new CFBoolean(false));
+        $this->plist->set_or_update_value('allowPreferencesWindow', new CFBoolean(false));
         $this->config = $this->plist->to_xml();
     }
 
