@@ -1,6 +1,38 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 3.10 ===
+
+* The following methods have been deprecated and should not be used any more:
+  * message_count_unread_messages()
+  * get_non_contacts_with_unread_message_count()
+  * get_contacts_with_unread_message_count()
+
+* The following functions have been finally deprecated and can not be used anymore::
+  * search_users_in_course()
+  * search_users()
+  * get_contacts()
+  * get_messages()
+  * get_most_recent_message()
+  * get_profile()
+  * get_messages()
+  * create_messages()
+  * get_conversations_legacy_formatter()
+  * create_contacts()
+  * block_contacts()
+  * unblock_contacts()
+  * data_for_messagearea_search_users_in_course()
+  * data_for_messagearea_search_users()
+  * message_search_users()
+  * data_for_messagearea_conversations()
+  * data_for_messagearea_contacts()
+  * data_for_messagearea_messages()
+  * get_conversation_messages()
+  * data_for_messagearea_get_most_recent_message()
+  * data_for_messagearea_get_profile()
+  * mark_all_messages_as_read()
+  * delete_conversation()
+
 === 3.9 ===
 * Removed the following deprecated functions:
   - message_move_userfrom_unread2read

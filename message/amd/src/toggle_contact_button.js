@@ -68,6 +68,17 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
     };
 
     /**
+     * Get the id for the logged in user.
+     *
+     * @method getUserId
+     * @param {object} element jQuery object for the button
+     * @return {int}
+     */
+    var getCurrentUserId = function(element) {
+        return element.attr('data-currentuserid');
+    };
+
+    /**
      * Check if this element is currently loading.
      *
      * @method isLoading
@@ -117,9 +128,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         }
 
         var request = {
-            methodname: 'core_message_create_contacts',
+            methodname: 'core_message_create_contact_request',
             args: {
-                userids: [getUserId(element)],
+                userid: getCurrentUserId(element),
+                requesteduserid: getUserId(element),
             }
         };
         sendRequest(element, request).done(function() {
