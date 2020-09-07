@@ -2821,7 +2821,9 @@ function calendar_add_subscription($sub) {
         // User events.
         $sub->courseid = 0;
     }
-    $sub->userid = $USER->id;
+
+    // Only subscriptions for user type should store user id, shared events (course,site...) should have userid set to 0.
+    $sub->userid = ($sub->eventtype == 'user') ? $USER->id : 0;
 
     // File subscriptions never update.
     if (empty($sub->url)) {
@@ -2950,7 +2952,7 @@ function calendar_add_icalendar_event($event, $unused = null, $subscriptionid, $
     // We should never do anything with an event without a subscription reference.
     $sub = calendar_get_subscription($subscriptionid);
     $eventrecord->subscriptionid = $subscriptionid;
-    $eventrecord->userid = $sub->userid;
+    $eventrecord->userid = ($sub->eventtype == 'user') ? $sub->userid : 0;
     $eventrecord->groupid = $sub->groupid;
     $eventrecord->courseid = $sub->courseid;
     $eventrecord->categoryid = $sub->categoryid;
@@ -3309,6 +3311,8 @@ function calendar_get_calendar_context($subscription) {
     // Determine context based on calendar type.
     if ($subscription->eventtype === 'site') {
         $context = \context_course::instance(SITEID);
+    } else if ($subscription->eventtype === 'category') {
+        $context = \context_coursecat::instance($subscription->categoryid);
     } else if ($subscription->eventtype === 'group' || $subscription->eventtype === 'course') {
         $context = \context_course::instance($subscription->courseid);
     } else {
