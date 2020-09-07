@@ -2458,5 +2458,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021052500.60);
     }
 
+    if ($oldversion < 2021052500.64) {
+        // This upgrade step will update all shared events setting userid to 0.
+        // Site, category, course, group and action events (except user overrides) dont belong to the user who creates them.
+        $DB->execute("UPDATE {event} SET userid = 0 WHERE eventtype <> 'user' OR priority <> 0");
+
+        // Only user type of subscription should record user id.
+        $DB->execute("UPDATE {event_subscriptions} SET userid = 0 WHERE eventtype <> 'user'");
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.64);
+    }
+
     return true;
 }
