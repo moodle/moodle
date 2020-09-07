@@ -37,48 +37,6 @@ define(
     var CONVERSATION_TYPES = Constants.CONVERSATION_TYPES;
 
     /**
-     * Retrieve a list of messages from the server.
-     *
-     * @param {object} args The request arguments:
-     * @return {object} jQuery promise
-     */
-    var query = function(args) {
-        // Normalise the arguments to use limit/offset rather than limitnum/limitfrom.
-        if (typeof args.limit === 'undefined') {
-            args.limit = 0;
-        }
-
-        if (typeof args.offset === 'undefined') {
-            args.offset = 0;
-        }
-
-        if (typeof args.type === 'undefined') {
-            args.type = null;
-        }
-
-        if (typeof args.favouritesonly === 'undefined') {
-            args.favouritesonly = false;
-        }
-
-        args.limitfrom = args.offset;
-        args.limitnum = args.limit;
-
-        delete args.limit;
-        delete args.offset;
-
-        var request = {
-            methodname: 'core_message_data_for_messagearea_conversations',
-            args: args
-        };
-
-        var promise = Ajax.call([request])[0];
-
-        promise.fail(Notification.exception);
-
-        return promise;
-    };
-
-    /**
      * Count the number of unread conversations (one or more messages from a user)
      * for a given user.
      *
@@ -88,25 +46,6 @@ define(
     var countUnreadConversations = function(args) {
         var request = {
             methodname: 'core_message_get_unread_conversations_count',
-            args: args
-        };
-
-        var promise = Ajax.call([request])[0];
-
-        promise.fail(Notification.exception);
-
-        return promise;
-    };
-
-    /**
-     * Mark all of unread messages for a user as read.
-     *
-     * @param {object} args The request arguments:
-     * @return {object} jQuery promise
-     */
-    var markAllAsRead = function(args) {
-        var request = {
-            methodname: 'core_message_mark_all_messages_as_read',
             args: args
         };
 
@@ -141,25 +80,6 @@ define(
         var request = {
             methodname: 'core_message_get_user_contacts',
             args: args
-        };
-
-        return Ajax.call([request])[0];
-    };
-
-    /**
-     * Request profile information as a user for a given user.
-     *
-     * @param {int} userId The requesting user
-     * @param {int} profileUserId The id of the user who's profile is being requested
-     * @return {object} jQuery promise
-     */
-    var getProfile = function(userId, profileUserId) {
-        var request = {
-            methodname: 'core_message_data_for_messagearea_get_profile',
-            args: {
-                currentuserid: userId,
-                otheruserid: profileUserId
-            }
         };
 
         return Ajax.call([request])[0];
@@ -1139,11 +1059,8 @@ define(
     };
 
     return {
-        query: query,
         countUnreadConversations: countUnreadConversations,
-        markAllAsRead: markAllAsRead,
         getContacts: getContacts,
-        getProfile: getProfile,
         blockUser: blockUser,
         unblockUser: unblockUser,
         createContactRequest: createContactRequest,

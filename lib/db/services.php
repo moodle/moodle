@@ -1104,26 +1104,6 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-    'core_message_block_contacts' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'block_contacts',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Block contacts',
-        'type' => 'write',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
-    'core_message_create_contacts' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'create_contacts',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Add contacts to the contact list',
-        'type' => 'write',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
     'core_message_get_contact_requests' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_contact_requests',
@@ -1178,17 +1158,6 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-    'core_message_delete_conversation' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'delete_conversation',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Deletes a conversation.',
-        'type' => 'write',
-        'capabilities' => 'moodle/site:deleteownmessage',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
     'core_message_delete_conversations_by_id' => array(
         'classname' => 'core_message_external',
         'methodname' => 'delete_conversations_by_id',
@@ -1226,24 +1195,6 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-    'core_message_data_for_messagearea_search_users' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'data_for_messagearea_search_users',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Retrieve the template data for searching for people',
-        'type' => 'read',
-        'ajax' => true,
-    ),
-    'core_message_data_for_messagearea_search_users_in_course' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'data_for_messagearea_search_users_in_course',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Retrieve the template data for searching for people in a course',
-        'type' => 'read',
-        'ajax' => true,
-    ),
     'core_message_message_search_users' => array(
         'classname' => 'core_message_external',
         'methodname' => 'message_search_users',
@@ -1251,63 +1202,6 @@ $functions = array(
         'description' => 'Retrieve the data for searching for people',
         'type' => 'read',
         'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
-    'core_message_data_for_messagearea_conversations' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'data_for_messagearea_conversations',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Retrieve the template data for the conversation list',
-        'type' => 'read',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
-    'core_message_data_for_messagearea_contacts' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'data_for_messagearea_contacts',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Retrieve the template data for the contact list',
-        'type' => 'read',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
-    'core_message_data_for_messagearea_messages' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'data_for_messagearea_messages',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Retrieve the template data for the messages',
-        'type' => 'read',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
-    'core_message_data_for_messagearea_get_most_recent_message' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'data_for_messagearea_get_most_recent_message',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Retrieve the template data for the most recent message',
-        'type' => 'read',
-        'ajax' => true,
-    ),
-    'core_message_data_for_messagearea_get_profile' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'data_for_messagearea_get_profile',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Retrieve the template data for the users\'s profile',
-        'type' => 'read',
-        'ajax' => true,
-    ),
-    'core_message_get_contacts' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'get_contacts',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Retrieve the contact list',
-        'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_get_user_contacts' => array(
@@ -1419,16 +1313,6 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-    'core_message_mark_all_messages_as_read' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'mark_all_messages_as_read',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          Mark all messages as read for a given user',
-        'type' => 'write',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
     'core_message_mark_all_conversation_messages_as_read' => array(
         'classname' => 'core_message_external',
         'methodname' => 'mark_all_conversation_messages_as_read',
@@ -1515,16 +1399,6 @@ $functions = array(
         'methodname' => 'unblock_user',
         'classpath' => 'message/externallib.php',
         'description' => 'Unblocks a user',
-        'type' => 'write',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
-    'core_message_unblock_contacts' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'unblock_contacts',
-        'classpath' => 'message/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                         Unblock contacts',
         'type' => 'write',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
