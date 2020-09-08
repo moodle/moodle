@@ -46,7 +46,7 @@
         $approvaltype = 'both';
     } else {
         // What type of manager am I?
-        if ($manageruser = $DB->get_record('company_users', array('userid' => $USER->id))) {
+        if ($manageruser = $DB->get_record('company_users', array('userid' => $USER->id, 'companyid' => $companyid))) {
             if ($manageruser->managertype == 2) {
                 $approvaltype = 'manager';
             } else if ($manageruser->managertype == 1) {
