@@ -2186,7 +2186,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
         }
 
         // Iomad savepoint reached.
-        upgrade_plugin_savepoint(true, 2019030112, 'local', 'iomad');
+        upgrade_plugin_savepoint(true, 2019030113, 'local', 'iomad');
     }
 
     return $result;
