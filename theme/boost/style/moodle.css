@@ -17522,6 +17522,91 @@ div#dock {
   padding: 0;
   margin: 0 0.4em; }
 
+/* Countdown timer. */
+#page-mod-quiz-attempt #region-main {
+  overflow-x: inherit; }
+
+#quiz-timer-wrapper {
+  display: none;
+  position: sticky;
+  justify-content: end;
+  top: 55px;
+  z-index: 1050; }
+  #quiz-timer-wrapper #quiz-timer {
+    border: 1px solid #d43f3a;
+    background-color: #fff; }
+
+.pagelayout-embedded #quiz-timer-wrapper {
+  top: 5px; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft0 {
+  background-color: #d43f3a;
+  color: #fff; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft1 {
+  background-color: #d74b47;
+  color: #fff; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft2 {
+  background-color: #d95753;
+  color: #fff; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft3 {
+  background-color: #dc6460;
+  color: #fff; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft4 {
+  background-color: #df706c;
+  color: #fff; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft5 {
+  background-color: #e27c79;
+  color: #212529; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft6 {
+  background-color: #e48885;
+  color: #212529; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft7 {
+  background-color: #e79592;
+  color: #212529; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft8 {
+  background-color: #eaa19e;
+  color: #212529; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft9 {
+  background-color: #edadab;
+  color: #212529; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft10 {
+  background-color: #efb9b8;
+  color: #212529; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft11 {
+  background-color: #f2c6c4;
+  color: #212529; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft12 {
+  background-color: #f5d2d1;
+  color: #212529; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft13 {
+  background-color: #f8dedd;
+  color: #212529; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft14 {
+  background-color: #faeaea;
+  color: #212529; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft15 {
+  background-color: #fdf7f6;
+  color: #212529; }
+
+#quiz-timer-wrapper #quiz-timer.timeleft16 {
+  background-color: white;
+  color: #212529; }
+
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
   top: auto; }
 

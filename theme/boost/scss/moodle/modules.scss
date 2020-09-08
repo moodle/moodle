@@ -1265,6 +1265,34 @@ div#dock {
     margin: 0 0.4em;
 }
 
+/* Countdown timer. */
+#page-mod-quiz-attempt #region-main {
+    overflow-x: inherit;
+}
+
+#quiz-timer-wrapper {
+    display: none;
+    position: sticky;
+    justify-content: end;
+    top: $navbar-height + 5px;
+    z-index: $zindex-modal;
+    #quiz-timer {
+        border: $border-width solid $red;
+        background-color: $white;
+    }
+}
+.pagelayout-embedded #quiz-timer-wrapper {
+    top: 5px;
+}
+
+@for $i from 0 through 16 {
+    #quiz-timer-wrapper #quiz-timer.timeleft#{$i} {
+        $bg: lighten($red, ($i * 3%));
+        background-color: $bg;
+        color: color-yiq($bg);
+    }
+}
+
 // Assign.
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
     top: auto;

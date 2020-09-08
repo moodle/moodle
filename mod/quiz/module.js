@@ -71,7 +71,7 @@ M.mod_quiz.timer = {
         M.mod_quiz.timer.endtime = M.pageloadstarttime.getTime() + start*1000;
         M.mod_quiz.timer.preview = preview;
         M.mod_quiz.timer.update();
-        Y.one('#quiz-timer').setStyle('display', 'block');
+        Y.one('#quiz-timer-wrapper').setStyle('display', 'flex');
     },
 
     /**
