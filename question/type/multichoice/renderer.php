@@ -289,24 +289,31 @@ class qtype_multichoice_single_renderer extends qtype_multichoice_renderer_base 
             'name' => $qa->get_qt_field_name('answer'),
             'id' => $clearchoiceid,
             'value' => -1,
-            'class' => 'sr-only'
+            'class' => 'sr-only',
+            'aria-hidden' => 'true'
+        ];
+        $clearchoicewrapperattrs = [
+            'id' => $clearchoicefieldname,
+            'class' => 'qtype_multichoice_clearchoice',
         ];
 
-        $cssclass = 'qtype_multichoice_clearchoice';
         // When no choice selected during rendering, then hide the clear choice option.
+        // We are using .sr-only and aria-hidden together so while the element is hidden
+        // from both the monitor and the screen-reader, it is still tabbable.
         $linktabindex = 0;
         if (!$hascheckedchoice && $response == -1) {
-            $cssclass .= ' sr-only';
+            $clearchoicewrapperattrs['class'] .= ' sr-only';
+            $clearchoicewrapperattrs['aria-hidden'] = 'true';
             $clearchoiceradioattrs['checked'] = 'checked';
             $linktabindex = -1;
         }
         // Adds an hidden radio that will be checked to give the impression the choice has been cleared.
         $clearchoiceradio = html_writer::empty_tag('input', $clearchoiceradioattrs);
-        $clearchoiceradio .= html_writer::link('', get_string('clearchoice', 'qtype_multichoice'),
+        $clearchoiceradio .= html_writer::tag('label', get_string('clearchoice', 'qtype_multichoice'),
             ['for' => $clearchoiceid, 'role' => 'button', 'tabindex' => $linktabindex]);
 
         // Now wrap the radio and label inside a div.
-        $result = html_writer::tag('div', $clearchoiceradio, ['id' => $clearchoicefieldname, 'class' => $cssclass]);
+        $result = html_writer::tag('div', $clearchoiceradio, $clearchoicewrapperattrs);
 
         // Load required clearchoice AMD module.
         $this->page->requires->js_call_amd('qtype_multichoice/clearchoice', 'init',
