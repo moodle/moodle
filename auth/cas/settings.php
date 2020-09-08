@@ -27,7 +27,9 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
 
     if (!function_exists('ldap_connect')) {
-        $settings->add(new admin_setting_heading('auth_casnotinstalled', '', get_string('auth_casnotinstalled', 'auth_cas')));
+        $notify = new \core\output\notification(get_string('auth_casnotinstalled', 'auth_cas'),
+            \core\output\notification::NOTIFY_WARNING);
+        $settings->add(new admin_setting_heading('auth_casnotinstalled', '', $OUTPUT->render($notify)));
     } else {
         // We use a couple of custom admin settings since we need to massage the data before it is inserted into the DB.
         require_once($CFG->dirroot.'/auth/ldap/classes/admin_setting_special_lowercase_configtext.php');
