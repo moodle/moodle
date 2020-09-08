@@ -69,6 +69,7 @@ $string['choosecompletiontype'] = 'Select completion status';
 $string['companycity'] = 'Location (Town/City)';
 $string['companycityfilter'] = 'Company location contains';
 $string['companycode'] = 'Company code';
+$string['companycodetaken'] = 'Company code is already in use in the system';
 $string['companygroupsusers'] = 'Manage course groups for ';
 $string['company'] = 'Company';
 $string['companies'] = 'Companies';

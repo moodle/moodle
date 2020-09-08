@@ -599,7 +599,8 @@ class company_edit_form extends \company_moodleform {
             }
         }
 
-        if ($foundcompanies = $DB->get_records('company', array('code' => $data['code']))) {
+        if (!empty($data['code'] &&
+            $foundcompanies = $DB->get_records('company', array('code' => $data['code']))) {
             if (!empty($this->companyid)) {
                 unset($foundcompanies[$this->companyid]);
             }
