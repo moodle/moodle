@@ -97,6 +97,11 @@ class company_edit_form extends \company_moodleform {
         $mform->setType('shortname', PARAM_NOTAGS);
         $mform->addRule('shortname', $strrequired, 'required', null, 'client');
 
+        $mform->addElement('text', 'code',
+                            get_string('companycode', 'block_iomad_company_admin'),
+                            'maxlength="25" size="25"');
+        $mform->setType('code', PARAM_NOTAGS);
+
         $mform->addElement('hidden', 'previousroletemplateid');
         $mform->addElement('hidden', 'previousemailtemplateid');
 
@@ -589,6 +594,22 @@ class company_edit_form extends \company_moodleform {
                 }
                 $foundcompanynamestring = implode(',', $foundcompanyshortnames);
                 $errors['shortname'] = get_string('companyshortnametaken',
+                                                 'block_iomad_company_admin',
+                                                  $foundcompanynamestring);
+            }
+        }
+
+        if (!empty($data['code']) &&
+            $foundcompanies = $DB->get_records('company', array('code' => $data['code']))) {
+            if (!empty($this->companyid)) {
+                unset($foundcompanies[$this->companyid]);
+            }
+            if (!empty($foundcompanies)) {
+                foreach ($foundcompanies as $foundcompany) {
+                    $foundcompanycodes[] = $foundcompany->code;
+                }
+                $foundcompanynamestring = implode(',', $foundcompanycodes);
+                $errors['code'] = get_string('companycodetaken',
                                                  'block_iomad_company_admin',
                                                   $foundcompanynamestring);
             }

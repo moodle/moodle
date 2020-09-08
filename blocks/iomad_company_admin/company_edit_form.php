@@ -303,6 +303,7 @@ if ($mform->is_cancelled()) {
         // Deal with leading/trailing spaces
         $data->name = trim($data->name);
         $data->shortname = trim($data->shortname);
+        $data->code = trim($data->code);
         $data->city = trim($data->city);
 
         $companyid = $DB->insert_record('company', $data);

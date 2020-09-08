@@ -196,6 +196,13 @@ class company_license_form extends \company_moodleform {
             $mform->disabledIf('cutoffdate', 'type', 'eq', 1);
             $mform->disabledIf('cutoffdate', 'type', 'eq', 3);
 
+            $mform->addElement('advcheckbox', 'clearonexpire', get_string('clearonexpire', 'block_iomad_company_admin'));
+
+            $mform->addHelpButton('clearonexpire', 'clearonexpire', 'block_iomad_company_admin');
+            $mform->disabledIf('clearonexpire', 'type', 'eq', 1);
+            $mform->disabledIf('clearonexpire', 'type', 'eq', 3);
+            $mform->disabledIf('clearonexpire', 'cutoffdate[enabled]');
+
             $mform->addElement('text', 'validlength', get_string('licenseduration', 'block_iomad_company_admin'),
                                'maxlength="254" size="50"');
             $mform->addHelpButton('validlength', 'licenseduration', 'block_iomad_company_admin');

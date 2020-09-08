@@ -40,6 +40,7 @@ class block_iomad_company_admin_external extends external_api {
                         array(
                             'name' => new external_value(PARAM_TEXT, 'Company long name'),
                             'shortname' => new external_value(PARAM_TEXT, 'Compay short name'),
+                            'code' => new external_value(PARAM_TEXT, 'Compay code'),
                             'city' => new external_value(PARAM_TEXT, 'Company location city'),
                             'country' => new external_value(PARAM_TEXT, 'Company location country'),
                             'maildisplay' => new external_value(PARAM_INT, 'User default email display', VALUE_DEFAULT, 2),
@@ -93,6 +94,9 @@ class block_iomad_company_admin_external extends external_api {
             }
             if ($DB->get_record('company', array('shortname' => $company['shortname']))) {
                 throw new invalid_parameter_exception('Company shortname is already being used');
+            }
+            if ($DB->get_record('company', array('code' => $company['code']))) {
+                throw new invalid_parameter_exception('Company code is already being used');
             }
 
             // Create the company record
@@ -190,6 +194,7 @@ class block_iomad_company_admin_external extends external_api {
                                 "id" (int) matching company id,
                                 "name" (string) company name (Note: you can use % for searching but it may be considerably slower!),
                                 "shortname" (string) company short name (Note: you can use % for searching but it may be considerably slower!),
+                                "code" (string) company code (Note: you can use % for searching but it may be considerably slower!),
                                 "suspended" (bool) company is suspended or not,
                                 "city" (string) matching company city,
                                 "country" (string) matching company country,
@@ -252,6 +257,7 @@ class block_iomad_company_admin_external extends external_api {
                     break;
                 case 'name':
                 case 'shortname':
+                case 'code':
                 case 'city':
                 case 'country':
                     $paramtype = PARAM_RAW;
@@ -323,6 +329,7 @@ class block_iomad_company_admin_external extends external_api {
                          'id' => new external_value(PARAM_INT, 'Companid ID'),
                          'name' => new external_value(PARAM_TEXT, 'Company long name'),
                          'shortname' => new external_value(PARAM_TEXT, 'Compay short name'),
+                         'code' => new external_value(PARAM_TEXT, 'Compay code'),
                          'city' => new external_value(PARAM_TEXT, 'Company location city'),
                          'country' => new external_value(PARAM_TEXT, 'Company location country'),
                          'maildisplay' => new external_value(PARAM_INT, 'User default email display'),
@@ -364,6 +371,7 @@ class block_iomad_company_admin_external extends external_api {
                             'id' => new external_value(PARAM_INT, 'Company id number'),
                             'name' => new external_value(PARAM_TEXT, 'Company long name', VALUE_OPTIONAL),
                             'shortname' => new external_value(PARAM_TEXT, 'Compay short name', VALUE_OPTIONAL),
+                            'code' => new external_value(PARAM_TEXT, 'Compay code', VALUE_OPTIONAL),
                             'city' => new external_value(PARAM_TEXT, 'Company location city', VALUE_OPTIONAL),
                             'country' => new external_value(PARAM_TEXT, 'Company location country', VALUE_OPTIONAL),
                             'maildisplay' => new external_value(PARAM_INT, 'User default email display', VALUE_OPTIONAL),
@@ -440,6 +448,12 @@ class block_iomad_company_admin_external extends external_api {
             if ($duplicate = $DB->get_record('company', array('shortname' => $oldcompany->shortname))) {
                 if ($duplicate->id != $oldcompany->id) {
                     throw new invalid_parameter_exception('Duplicate company shortname');
+                }
+            }
+
+            if ($duplicate = $DB->get_record('company', array('code' => $oldcompany->code))) {
+                if ($duplicate->id != $oldcompany->id) {
+                    throw new invalid_parameter_exception('Duplicate company code');
                 }
             }
 
