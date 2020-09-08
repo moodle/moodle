@@ -363,6 +363,10 @@ class company_user {
 
         // Did we get passed a course id in the user? (Comes from a selector)
         if (!empty($user->courseid)) {
+            // Skip if course is licensed.
+            if ($DB->get_record('iomad_courses', array('courseid' => $user->courseid, 'licensed' => true))) {
+                return;
+            }
             $roles = get_user_roles(context_course::instance($user->courseid), $user->id, false);
             foreach ($roles as $role) {
                 if (!$all && $role->roleid == $studentrole->id) {
@@ -403,11 +407,12 @@ class company_user {
                     $DB->delete_records('email', array('id' => $email->id));
                 }
             }
-
-            // Remove the tracking inf if the user hasn't completed the course.
-            //$DB->delete_records('local_iomad_track', array('courseid' => $user->courseid, 'userid' => $user->id, 'timecompleted' => null));
         } else {
             foreach ($courseids as $courseid) {
+                // Skip if course is licensed.
+                if ($DB->get_record('iomad_courses', array('courseid' => $user->courseid, 'licensed' => true))) {
+                    continue;
+                }
                 $roles = get_user_roles(context_course::instance($courseid), $user->id, false);
                 foreach ($roles as $role) {
                     if (!$all && $role->roleid == $studentrole->id) {
