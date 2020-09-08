@@ -2174,5 +2174,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019030111, 'local', 'iomad');
     }
 
+    if ($oldversion < 2019030113) {
+
+        // Define field clearonexpire to be added to companylicense.
+        $table = new xmldb_table('companylicense');
+        $field = new xmldb_field('clearonexpire', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'cutoffdate');
+
+        // Conditionally launch add field clearonexpire.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2019030112, 'local', 'iomad');
+    }
+
     return $result;
 }
