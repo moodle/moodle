@@ -65,6 +65,13 @@ if (empty($SESSION->wantsurl)) {
 if (!empty($wantedcompanyid) &&!$company = $DB->get_record('company', array('id'=> $wantedcompanyid, 'shortname'=>$wantedcompanyshort))) {
     print_error(get_string('unknown_company', 'local_iomad_signup'));
 }
+// Check if the company can have more users?.
+if (!empty($wantedcompanyid) && $company->maxusers > 0) {
+    $currentusers = $DB->count_records('company_users', array('companyid' => $wantedcompanyid));
+    if ($currentusers >= $company->maxusers) {
+        print_error(get_string('maxuserswarning', 'local_iomad_signup', $company->maxusers));
+    }
+}
 if (!empty($wantedcompanyid)) {
     $company->deptid = 0;
     $SESSION->company->deptid = 0;
