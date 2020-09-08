@@ -58,9 +58,9 @@ $capabilities = array(
         )
     ),*/
 
-    // can manage files in the folder
+    // Can manage files in the folder.
     'mod/folder:managefiles' => array(
-        'riskbitmask' => RISK_SPAM,
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -68,4 +68,3 @@ $capabilities = array(
         )
     )
 );
-

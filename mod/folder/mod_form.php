@@ -68,6 +68,12 @@ class mod_folder_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'showdownloadfolder', get_string('showdownloadfolder', 'folder'));
         $mform->addHelpButton('showdownloadfolder', 'showdownloadfolder', 'mod_folder');
         $mform->setDefault('showdownloadfolder', true);
+
+        // Adding option to enable viewing of individual files.
+        $mform->addElement('advcheckbox', 'forcedownload', get_string('forcedownload', 'folder'));
+        $mform->addHelpButton('forcedownload', 'forcedownload', 'mod_folder');
+        $mform->setDefault('forcedownload', true);
+
         //-------------------------------------------------------
         $this->standard_coursemodule_elements();
 
