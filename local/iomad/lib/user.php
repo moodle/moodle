@@ -797,6 +797,18 @@ class company_user {
                 }
             }
 
+            // Deal with H5P Activity.
+            if ($h5ps = $DB->get_records('h5pactivity', array('course' => $courseid))) {
+                foreach ($h5ps as $h5p) {
+                    if ($attempts = $DB->get_records('h5pactivity_attempts', array('userid' => $userid, 'h5pactivityid' => $h5p->id))) {
+                        foreach ($attempts as $attempt) {
+                            $DB->delete_records('h5pactivity_attempts_results', array('attemptid' => $attempt->id));
+                            $DB->delete_records('h5pactivity_attempts', array('id' => $attempt->id));
+                        }
+                    }
+                }
+            }
+
             // Remove grades
             if ($items = $DB->get_records('grade_items', array('courseid' => $courseid))) {
                 foreach ($items as $item) {
