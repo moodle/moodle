@@ -31,15 +31,14 @@ import Ajax from 'core/ajax';
 import LocalStorage from 'core/localstorage';
 import Notification from 'core/notification';
 
-/**
- * Whether this is the first load of videojs module.
- */
+/** @var {bool} Whether this is the first load of videojs module */
 let firstLoad;
 
-/**
- * The language that is used in the player
- */
+/** @var {string} The language that is used in the player */
 let language;
+
+/** @var {object} List of languages and translations for the current page */
+let langStringCache;
 
 /**
  * Set-up.
@@ -108,21 +107,38 @@ const notifyVideoJS = (e, nodes) => {
  * @returns {Promise}
  */
 const getLanguageJson = () => {
-    const cached = JSON.parse(LocalStorage.get('media_videojs') || '{}');
-    if (language in cached) {
-        return Promise.resolve(cached[language]);
+    if (langStringCache) {
+        return Promise.resolve(langStringCache);
+    }
+
+    const cacheKey = `media_videojs/${language}`;
+
+    const rawCacheContent = LocalStorage.get(cacheKey);
+    if (rawCacheContent) {
+        const cacheContent = JSON.parse(rawCacheContent);
+
+        langStringCache = cacheContent;
+
+        return Promise.resolve(langStringCache);
     }
 
     const request = {
         methodname: 'media_videojs_get_language',
         args: {
-            lang: language
+            lang: language,
         },
     };
-    return Ajax.call([request])[0].then(result => {
-        cached[language] = JSON.parse(result);
-        LocalStorage.set('media_videojs', JSON.stringify(cached));
 
-        return cached[language];
-    });
+    return Ajax.call([request])[0]
+        .then(langStringData => {
+            LocalStorage.set(cacheKey, langStringData);
+
+            return langStringData;
+        })
+        .then(result => JSON.parse(result))
+        .then(langStrings => {
+            langStringCache = langStrings;
+
+            return langStrings;
+        });
 };
