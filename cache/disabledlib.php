@@ -327,6 +327,15 @@ class cache_factory_disabled extends cache_factory {
         // Return the instance.
         return $this->configs[$class];
     }
+
+    /**
+     * Returns true if the cache API has been disabled.
+     *
+     * @return bool
+     */
+    public function is_disabled() {
+        return true;
+    }
 }
 
 /**
