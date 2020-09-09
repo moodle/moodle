@@ -81,7 +81,7 @@ class lock {
     /**
      * Extend the lifetime of this lock. Not supported by all factories.
      *
-     * @deprecated since Moodle 4.0.
+     * @deprecated since Moodle 3.10.
      * @param int $maxlifetime - the new lifetime for the lock (in seconds).
      * @return bool
      */

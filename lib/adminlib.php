@@ -3276,7 +3276,7 @@ class admin_setting_configselect extends admin_setting {
      * an empty string '' if the value is OK, or an error message if not.
      *
      * @param callable|null $validatefunction Validate function or null to clear
-     * @since Moodle 4.0
+     * @since Moodle 3.10
      */
     public function set_validate_function(?callable $validatefunction = null) {
         $this->validatefunction = $validatefunction;
@@ -3362,7 +3362,7 @@ class admin_setting_configselect extends admin_setting {
      *
      * @param string $data New value being set
      * @return string Empty string if valid, or error message text
-     * @since Moodle 4.0
+     * @since Moodle 3.10
      */
     protected function validate_setting(string $data): string {
         // If validation function is specified, call it now.
@@ -6538,7 +6538,7 @@ class admin_page_managemessageoutputs extends admin_externalpage {
  * Default message outputs configuration
  *
  * @deprecated since Moodle 3.7 MDL-64495. Please use admin_page_managemessageoutputs instead.
- * @todo       MDL-64866 This will be deleted in Moodle 4.1.
+ * @todo       MDL-64866 This will be deleted in Moodle 3.11.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -6547,7 +6547,7 @@ class admin_page_defaultmessageoutputs extends admin_page_managemessageoutputs {
      * Calls parent::__construct with specific arguments
      *
      * @deprecated since Moodle 3.7 MDL-64495. Please use admin_page_managemessageoutputs instead.
-     * @todo       MDL-64866 This will be deleted in Moodle 4.1.
+     * @todo       MDL-64866 This will be deleted in Moodle 3.11.
      */
     public function __construct() {
         global $CFG;
@@ -7348,12 +7348,12 @@ class admin_setting_manageantiviruses extends admin_setting {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 3.9 MDL-45184. Please use \tool_licensemanager\manager instead.
- * @todo MDL-45184 This class will be deleted in Moodle 4.3.
+ * @todo MDL-45184 This class will be deleted in Moodle 4.1.
  */
 class admin_setting_managelicenses extends admin_setting {
     /**
      * @deprecated since Moodle 3.9 MDL-45184. Please use \tool_licensemanager\manager instead.
-     * @todo MDL-45184 This class will be deleted in Moodle 4.3
+     * @todo MDL-45184 This class will be deleted in Moodle 4.1
      */
     public function __construct() {
         global $ADMIN;
@@ -7375,7 +7375,7 @@ class admin_setting_managelicenses extends admin_setting {
      * Always returns true, does nothing
      *
      * @deprecated since Moodle 3.9 MDL-45184.
-     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     * @todo MDL-45184 This method will be deleted in Moodle 4.1
      *
      * @return true
      */
@@ -7390,7 +7390,7 @@ class admin_setting_managelicenses extends admin_setting {
      * Always returns true, does nothing
      *
      * @deprecated since Moodle 3.9 MDL-45184.
-     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     * @todo MDL-45184 This method will be deleted in Moodle 4.1
      *
      * @return true
      */
@@ -7405,7 +7405,7 @@ class admin_setting_managelicenses extends admin_setting {
      * Always returns '', does not write anything
      *
      * @deprecated since Moodle 3.9 MDL-45184.
-     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     * @todo MDL-45184 This method will be deleted in Moodle 4.1
      *
      * @return string Always returns ''
      */
@@ -7421,7 +7421,7 @@ class admin_setting_managelicenses extends admin_setting {
      * Builds the XHTML to display the control
      *
      * @deprecated since Moodle 3.9 MDL-45184. Please use \tool_licensemanager\manager instead.
-     * @todo MDL-45184 This method will be deleted in Moodle 4.3
+     * @todo MDL-45184 This method will be deleted in Moodle 4.1
      *
      * @param string $data Unused
      * @param string $query

@@ -109,7 +109,7 @@ class file_lock_factory implements lock_factory {
     /**
      * Multiple locks for the same resource cannot be held from a single process.
      *
-     * @deprecated since Moodle 4.0.
+     * @deprecated since Moodle 3.10.
      * @return boolean - False
      */
     public function supports_recursion() {
@@ -193,7 +193,7 @@ class file_lock_factory implements lock_factory {
     /**
      * Extend a lock that was previously obtained with @lock.
      *
-     * @deprecated since Moodle 4.0.
+     * @deprecated since Moodle 3.10.
      * @param lock $lock - not used
      * @param int $maxlifetime - not used
      * @return boolean - true if the lock was extended.

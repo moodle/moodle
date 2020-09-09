@@ -228,7 +228,7 @@ function lti_delete_instance($id) {
  * This is so you can add an external tool types directly to the activity chooser
  *
  * @deprecated since 3.9
- * @todo MDL-68011 This is to be moved from here to deprecatedlib.php in Moodle 4.3
+ * @todo MDL-68011 This is to be moved from here to deprecatedlib.php in Moodle 4.1
  * @param stdClass $defaultitem default item that would be added to the activity chooser if this callback was not present.
  *     It has properties: archetype, name, title, help, icon, link
  * @return array An array of aliases for this activity. Each element is an object with same list of properties as $defaultitem,

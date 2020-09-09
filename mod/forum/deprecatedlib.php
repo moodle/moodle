@@ -1628,7 +1628,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
  * @param bool $children
  * @return int
  * @deprecated since Moodle 3.7
- * @todo MDL-65252 This will be removed in Moodle 4.1
+ * @todo MDL-65252 This will be removed in Moodle 3.11
  */
 function forum_count_replies($post, $children = true) {
     global $USER;

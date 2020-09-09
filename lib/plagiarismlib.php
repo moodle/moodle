@@ -79,7 +79,7 @@ function plagiarism_get_file_results($cmid, $userid, $file) {
  * saves/updates plagiarism settings from a modules config page - called by course/modedit.php
  *
  * @deprecated Since Moodle 3.9. MDL-65835 Please use {plugin name}_coursemodule_edit_post_actions() instead.
- * @todo MDL-67526 This is to be moved from here to deprecatedlib.php in Moodle 4.3
+ * @todo MDL-67526 This is to be moved from here to deprecatedlib.php in Moodle 4.1
  * @param object $data - form data
  */
 function plagiarism_save_form_elements($data) {
@@ -108,7 +108,7 @@ function plagiarism_save_form_elements($data) {
  * adds the list of plagiarism settings to a form - called inside modules that have enabled plagiarism
  *
  * @deprecated Since Moodle 3.9. MDL-65835 Please use {plugin name}_coursemodule_standard_elements() instead.
- * @todo MDL-67526 This is to be moved from here to deprecatedlib.php in Moodle 4.3
+ * @todo MDL-67526 This is to be moved from here to deprecatedlib.php in Moodle 4.1
  * @param object $mform - Moodle form object
  * @param object $context - context object
  * @param string $modulename - Name of the module
@@ -181,7 +181,7 @@ function plagiarism_print_disclosure($cmid) {
 /**
  * Helper function - also loads lib file of plagiarism plugin
  *
- * @todo MDL-67872 the deprecated code in this function to be removed in Moodle 4.3
+ * @todo MDL-67872 the deprecated code in this function to be removed in Moodle 4.1
  * @return array of available plugins
  */
 function plagiarism_load_available_plugins() {

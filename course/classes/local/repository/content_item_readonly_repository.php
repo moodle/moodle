@@ -298,7 +298,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
                 }
 
             } else if (component_callback_exists('mod_' . $mod->name, 'get_shortcuts')) {
-                // TODO: MDL-68011 this block needs to be removed in 4.3.
+                // TODO: MDL-68011 this block needs to be removed in 4.1.
                 debugging('The callback get_shortcuts has been deprecated. Please use get_course_content_items and
                     get_all_content_items instead. Some features of the activity chooser, such as favourites and recommendations
                     are not supported when providing content items via the deprecated callback.');
