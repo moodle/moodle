@@ -1196,8 +1196,8 @@ class manager {
             } else if (count($result) === 5) {
                 // Backward compatibility for engines that don't return a batch count.
                 [$numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial] = $result;
-                // Deprecated since Moodle 4.0 MDL-68690.
-                // TODO: MDL-68776 This will be deleted in Moodle 4.4.
+                // Deprecated since Moodle 3.10 MDL-68690.
+                // TODO: MDL-68776 This will be deleted in Moodle 4.2.
                 debugging('engine::add_documents() should return $batches (5-value return is deprecated)',
                         DEBUG_DEVELOPER);
             } else {
@@ -1361,8 +1361,8 @@ class manager {
             } else if (count($result) === 5) {
                 // Backward compatibility for engines that don't return a batch count.
                 [$numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial] = $result;
-                // Deprecated since Moodle 4.0 MDL-68690.
-                // TODO: MDL-68776 This will be deleted in Moodle 4.4 (as should the below bit).
+                // Deprecated since Moodle 3.10 MDL-68690.
+                // TODO: MDL-68776 This will be deleted in Moodle 4.2 (as should the below bit).
                 debugging('engine::add_documents() should return $batches (5-value return is deprecated)',
                         DEBUG_DEVELOPER);
             } else {

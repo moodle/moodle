@@ -293,7 +293,7 @@ class mod_forum_external extends external_api {
      *
      * @return array the forum post details
      * @since Moodle 2.7
-     * @todo MDL-65252 This will be removed in Moodle 4.1
+     * @todo MDL-65252 This will be removed in Moodle 3.11
      */
     public static function get_forum_discussion_posts($discussionid, $sortby = "created", $sortdirection = "DESC") {
         global $CFG, $DB, $USER, $PAGE;

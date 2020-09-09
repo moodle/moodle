@@ -63,7 +63,7 @@ interface lock_factory {
     /**
      * Supports recursion.
      *
-     * @deprecated since Moodle 4.0.
+     * @deprecated since Moodle 3.10.
      * @return boolean - True if attempting to get 2 locks on the same resource will "stack"
      */
     public function supports_recursion();
@@ -99,7 +99,7 @@ interface lock_factory {
     /**
      * Extend the timeout on a held lock.
      *
-     * @deprecated since Moodle 4.0.
+     * @deprecated since Moodle 3.10.
      * @param lock $lock - lock obtained from this factory
      * @param int $maxlifetime - new max time to hold the lock
      * @return boolean - True if the lock was extended.

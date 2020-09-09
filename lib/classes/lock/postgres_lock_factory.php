@@ -120,7 +120,7 @@ class postgres_lock_factory implements lock_factory {
     /**
      * Multiple locks for the same resource can NOT be held by a single process.
      *
-     * @deprecated since Moodle 4.0.
+     * @deprecated since Moodle 3.10.
      * @return boolean - false.
      */
     public function supports_recursion() {
@@ -206,7 +206,7 @@ class postgres_lock_factory implements lock_factory {
     /**
      * Extend a lock that was previously obtained with @lock.
      *
-     * @deprecated since Moodle 4.0.
+     * @deprecated since Moodle 3.10.
      * @param lock $lock - a lock obtained from this factory.
      * @param int $maxlifetime - the new lifetime for the lock (in seconds).
      * @return boolean - true if the lock was extended.

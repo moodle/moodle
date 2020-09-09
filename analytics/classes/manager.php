@@ -303,7 +303,7 @@ class manager {
      * Returns the enabled time splitting methods.
      *
      * @deprecated since Moodle 3.7
-     * @todo MDL-65086 This will be deleted in Moodle 4.1
+     * @todo MDL-65086 This will be deleted in Moodle 3.11
      * @see \core_analytics\manager::get_time_splitting_methods_for_evaluation
      * @return \core_analytics\local\time_splitting\base[]
      */
@@ -604,7 +604,7 @@ class manager {
      * Used to be used to add models included with the Moodle core.
      *
      * @deprecated Deprecated since Moodle 3.7 (MDL-61667) - Use lib/db/analytics.php instead.
-     * @todo Remove this method in Moodle 4.1 (MDL-65186).
+     * @todo Remove this method in Moodle 3.11 (MDL-65186).
      * @return void
      */
     public static function add_builtin_models() {
