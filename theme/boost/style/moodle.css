@@ -16202,7 +16202,7 @@ body.path-question-type .mform fieldset.hidden {
   margin: 0; }
 
 .simplesearchform .btn-submit {
-  border-color: #ced4da;
+  border-color: #8f959e;
   color: #6c757d; }
 
 .simplesearchform .btn-close,
@@ -16249,7 +16249,7 @@ body.path-question-type .mform fieldset.hidden {
       margin-right: auto; } }
 
 .navbar.navbar-light .simplesearchform .btn-open {
-  color: rgba(0, 0, 0, 0.5); }
+  color: rgba(0, 0, 0, 0.6); }
   .navbar.navbar-light .simplesearchform .btn-open:hover {
     color: rgba(0, 0, 0, 0.9); }
 
