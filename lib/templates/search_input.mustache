@@ -24,6 +24,7 @@
         "action": "https://moodle.local/admin/search.php",
         "extraclasses": "my-2",
         "inputname": "search",
+        "inform": false,
         "searchstring": "Search settings",
         "value": "policy",
         "btnclass": "primary",
@@ -37,7 +38,9 @@
     }
 }}
 <div class="simplesearchform {{{ extraclasses }}}">
+    {{^inform}}
     <form autocomplete="off" action="{{{ action }}}" method="get" accept-charset="utf-8" class="mform form-inline simplesearchform">
+    {{/inform}}
     {{#hiddenfields}}
         <input type="hidden" name="{{ name }}" value="{{ value }}">
     {{/hiddenfields}}
@@ -61,9 +64,12 @@
                 <span class="sr-only">{{{ searchstring }}}</span>
             </button>
         </div>
+
     </div>
     {{#otherfields}}
         <div  class="ml-2">{{{ otherfields }}}</div>
     {{/otherfields}}
-</form>
+{{^inform}}
+    </form>
+{{/inform}}
 </div>

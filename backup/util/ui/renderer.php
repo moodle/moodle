@@ -720,7 +720,7 @@ class core_backup_renderer extends plugin_renderer_base {
     public function render_restore_course_search(restore_course_search $component) {
         $url = $component->get_url();
 
-        $output = html_writer::start_tag('div', array('class' => 'restore-course-search form-inline mb-1'));
+        $output = html_writer::start_tag('div', array('class' => 'restore-course-search mb-1'));
         $output .= html_writer::start_tag('div', array('class' => 'rcs-results table-sm w-75'));
 
         $table = new html_table();
@@ -759,22 +759,14 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::table($table);
         $output .= html_writer::end_tag('div');
 
-        $output .= html_writer::start_tag('div', array('class' => 'rcs-search'));
-        $attrs = array(
-            'type' => 'text',
-            'name' => restore_course_search::$VAR_SEARCH,
-            'value' => $component->get_search(),
-            'class' => 'form-control'
-        );
-        $output .= html_writer::empty_tag('input', $attrs);
-        $attrs = array(
-            'type' => 'submit',
-            'name' => 'searchcourses',
-            'value' => get_string('search'),
-            'class' => 'btn btn-secondary'
-        );
-        $output .= html_writer::empty_tag('input', $attrs);
-        $output .= html_writer::end_tag('div');
+        $data = [
+            'inform' => true,
+            'extraclasses' => 'rcs-search mb-3 w-25',
+            'inputname' => restore_course_search::$VAR_SEARCH,
+            'searchstring' => get_string('searchcourses'),
+            'query' => $component->get_search(),
+        ];
+        $output .= $this->output->render_from_template('core/search_input', $data);
 
         $output .= html_writer::end_tag('div');
         return $output;
@@ -880,7 +872,7 @@ class core_backup_renderer extends plugin_renderer_base {
     public function render_restore_category_search(restore_category_search $component) {
         $url = $component->get_url();
 
-        $output = html_writer::start_tag('div', array('class' => 'restore-course-search form-inline mb-1'));
+        $output = html_writer::start_tag('div', array('class' => 'restore-course-search mb-1'));
         $output .= html_writer::start_tag('div', array('class' => 'rcs-results table-sm w-75'));
 
         $table = new html_table();
@@ -922,22 +914,14 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::table($table);
         $output .= html_writer::end_tag('div');
 
-        $output .= html_writer::start_tag('div', array('class' => 'rcs-search'));
-        $attrs = array(
-            'type' => 'text',
-            'name' => restore_category_search::$VAR_SEARCH,
-            'value' => $component->get_search(),
-            'class' => 'form-control'
-        );
-        $output .= html_writer::empty_tag('input', $attrs);
-        $attrs = array(
-            'type' => 'submit',
-            'name' => 'searchcourses',
-            'value' => get_string('search'),
-            'class' => 'btn btn-secondary'
-        );
-        $output .= html_writer::empty_tag('input', $attrs);
-        $output .= html_writer::end_tag('div');
+        $data = [
+            'inform' => true,
+            'extraclasses' => 'rcs-search mb-3 w-25',
+            'inputname' => restore_category_search::$VAR_SEARCH,
+            'searchstring' => get_string('search'),
+            'query' => $component->get_search(),
+        ];
+        $output .= $this->output->render_from_template('core/search_input', $data);
 
         $output .= html_writer::end_tag('div');
         return $output;
