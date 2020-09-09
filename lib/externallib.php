@@ -250,7 +250,7 @@ class external_api {
                 foreach ($plugins as $plugin => $callback) {
                     $result = $callback($externalfunctioninfo, $params);
                     if ($result !== false) {
-                        break;
+                        break 2;
                     }
                 }
             }
