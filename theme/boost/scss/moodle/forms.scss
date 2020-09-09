@@ -339,7 +339,8 @@ fieldset.coursesearchbox label {
 }
 
 .form-autocomplete-selection:focus {
-    outline: none;
+    outline: 0;
+    box-shadow: $input-btn-focus-box-shadow;
 }
 /** Undo some bootstrap things */
 .form-autocomplete-selection + input.form-control {

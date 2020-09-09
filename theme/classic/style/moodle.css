@@ -16208,7 +16208,8 @@ fieldset.coursesearchbox label {
     background-color: #fff; }
 
 .form-autocomplete-selection:focus {
-  outline: none; }
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(17, 119, 209, 0.25); }
 
 /** Undo some bootstrap things */
 .form-autocomplete-selection + input.form-control {
