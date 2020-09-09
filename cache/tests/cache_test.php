@@ -1335,7 +1335,7 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertInstanceOf('cache_config_disabled', $config);
 
         // Check we get the expected disabled caches.
-        $cache = cache::make('phpunit', 'disable');
+        $cache = cache::make('core', 'string');
         $this->assertInstanceOf('cache_disabled', $cache);
 
         // Test an application cache.
