@@ -662,6 +662,41 @@ class file_storage {
     }
 
     /**
+     * Returns the file area item ids and their updatetime for a user's draft uploads, sorted by updatetime DESC.
+     *
+     * @param int $userid user id
+     * @param int $updatedsince only return draft areas updated since this time
+     * @param int $lastnum only return the last specified numbers
+     * @return array
+     */
+    public function get_user_draft_items(int $userid, int $updatedsince = 0, int $lastnum = 0): array {
+        global $DB;
+
+        $params = [
+            'component' => 'user',
+            'filearea' => 'draft',
+            'contextid' => context_user::instance($userid)->id,
+        ];
+
+        $updatedsincesql = '';
+        if ($updatedsince) {
+            $updatedsincesql = 'AND f.timemodified > :time';
+            $params['time'] = $updatedsince;
+        }
+        $sql = "SELECT itemid,
+                       MAX(f.timemodified) AS timemodified
+                  FROM {files} f
+                 WHERE component = :component
+                       AND filearea = :filearea
+                       AND contextid = :contextid
+                       $updatedsincesql
+              GROUP BY itemid
+              ORDER BY MAX(f.timemodified) DESC";
+
+        return $DB->get_records_sql($sql, $params, 0, $lastnum);
+    }
+
+    /**
      * Returns array based tree structure of area files
      *
      * @param int $contextid context ID

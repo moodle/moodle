@@ -34,6 +34,16 @@ define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7');
  */
 define('FILE_AREA_MAX_BYTES_UNLIMITED', -1);
 
+/**
+ * Capacity of the draft area bucket when using the leaking bucket technique to limit the draft upload rate.
+ */
+define('DRAFT_AREA_BUCKET_CAPACITY', 50);
+
+/**
+ * Leaking rate of the draft area bucket when using the leaking bucket technique to limit the draft upload rate.
+ */
+define('DRAFT_AREA_BUCKET_LEAK', 0.2);
+
 require_once("$CFG->libdir/filestorage/file_exceptions.php");
 require_once("$CFG->libdir/filestorage/file_storage.php");
 require_once("$CFG->libdir/filestorage/zip_packer.php");
@@ -384,7 +394,7 @@ function file_get_unused_draft_itemid() {
  * @return string|null returns string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
 function file_prepare_draft_area(&$draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null) {
-    global $CFG, $USER, $CFG;
+    global $CFG, $USER;
 
     $options = (array)$options;
     if (!isset($options['subdirs'])) {
@@ -585,6 +595,55 @@ function file_is_draft_area_limit_reached($draftitemid, $areamaxbytes, $newfiles
         }
     }
     return false;
+}
+
+/**
+ * Returns whether a user has reached their draft area upload rate.
+ *
+ * @param int $userid The user id
+ * @return bool
+ */
+function file_is_draft_areas_limit_reached(int $userid): bool {
+    global $CFG;
+
+    $capacity = $CFG->draft_area_bucket_capacity ?? DRAFT_AREA_BUCKET_CAPACITY;
+    $leak = $CFG->draft_area_bucket_leak ?? DRAFT_AREA_BUCKET_LEAK;
+
+    $since = time() - floor($capacity / $leak); // The items that were in the bucket before this time are already leaked by now.
+                                                // We are going to be a bit generous to the user when using the leaky bucket
+                                                // algorithm below. We are going to assume that the bucket is empty at $since.
+                                                // We have to do an assumption here unless we really want to get ALL user's draft
+                                                // items without any limit and put all of them in the leaking bucket.
+                                                // I decided to favour performance over accuracy here.
+
+    $fs = get_file_storage();
+    $items = $fs->get_user_draft_items($userid, $since);
+    $items = array_reverse($items); // So that the items are sorted based on time in the ascending direction.
+
+    // We only need to store the time that each element in the bucket is going to leak. So $bucket is array of leaking times.
+    $bucket = [];
+    foreach ($items as $item) {
+        $now = $item->timemodified;
+        // First let's see if items can be dropped from the bucket as a result of leakage.
+        while (!empty($bucket) && ($now >= $bucket[0])) {
+            array_shift($bucket);
+        }
+
+        // Calculate the time that the new item we put into the bucket will be leaked from it, and store it into the bucket.
+        if ($bucket) {
+            $bucket[] = max($bucket[count($bucket) - 1], $now) + (1 / $leak);
+        } else {
+            $bucket[] = $now + (1 / $leak);
+        }
+    }
+
+    // Recalculate the bucket's content based on the leakage until now.
+    $now = time();
+    while (!empty($bucket) && ($now >= $bucket[0])) {
+        array_shift($bucket);
+    }
+
+    return count($bucket) >= $capacity;
 }
 
 /**
