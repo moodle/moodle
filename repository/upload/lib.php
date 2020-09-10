@@ -199,6 +199,10 @@ class repository_upload extends repository {
         if (file_is_draft_area_limit_reached($record->itemid, $areamaxbytes, filesize($_FILES[$elname]['tmp_name']))) {
             throw new file_exception('maxareabytes');
         }
+        // Ensure the user does not upload too many draft files in a short period.
+        if (file_is_draft_areas_limit_reached($USER->id)) {
+            throw new file_exception('maxdraftitemids');
+        }
 
         $record->contextid = $context->id;
         $record->userid    = $USER->id;
