@@ -309,6 +309,10 @@ switch ($action) {
                 if (file_is_draft_area_limit_reached($itemid, $areamaxbytes, filesize($downloadedfile['path']))) {
                     throw new file_exception('maxareabytes');
                 }
+                // Ensure the user does not upload too many draft files in a short period.
+                if (file_is_draft_areas_limit_reached($USER->id)) {
+                    throw new file_exception('maxdraftitemids');
+                }
 
                 $info = repository::move_to_filepool($downloadedfile['path'], $record);
                 if (empty($info)) {
