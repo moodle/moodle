@@ -1667,6 +1667,65 @@ EOF;
         $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $file2->get_itemid(), 'itemid', 0);
         $this->assertCount(1, $draftfiles);
     }
+
+    /**
+     * Test file_is_draft_areas_limit_reached
+     */
+    public function test_file_is_draft_areas_limit_reached() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        $capacity = $CFG->draft_area_bucket_capacity = 5;
+        $leak = $CFG->draft_area_bucket_leak = 0.2; // Leaks every 5 seconds.
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+
+        $this->setUser($user);
+
+        $itemids = [];
+        for ($i = 0; $i < $capacity; $i++) {
+            $itemids[$i] = file_get_unused_draft_itemid();
+        }
+
+        // This test highly depends on time. We try to make sure that the test starts at the early moments on the second.
+        // This was not needed if MDL-37327 was implemented.
+        $after = time();
+        while (time() === $after) {
+            usleep(100000);
+        }
+
+        // Burst up to the capacity and make sure that the bucket allows it.
+        for ($i = 0; $i < $capacity; $i++) {
+            if ($i) {
+                sleep(1); // A little delay so we have different timemodified value for files.
+            }
+            $this->assertFalse(file_is_draft_areas_limit_reached($user->id));
+            self::create_draft_file([
+                'filename' => 'file1.png',
+                'itemid' => $itemids[$i],
+            ]);
+        }
+
+        // The bucket should be full after bursting.
+        $this->assertTrue(file_is_draft_areas_limit_reached($user->id));
+
+        // The bucket leaks so it shouldn't be full after a certain time.
+        // Reiterating that this test could have been faster if MDL-37327 was implemented.
+        sleep(ceil(1 / $leak) - ($capacity - 1));
+        $this->assertFalse(file_is_draft_areas_limit_reached($user->id));
+
+        // Only one item was leaked from the bucket. So the bucket should become full again if we add a single item to it.
+        self::create_draft_file([
+            'filename' => 'file2.png',
+            'itemid' => $itemids[0],
+        ]);
+        $this->assertTrue(file_is_draft_areas_limit_reached($user->id));
+
+        // The bucket leaks at a constant rate. It doesn't matter if it is filled as the result of bursting or not.
+        sleep(ceil(1 / $leak));
+        $this->assertFalse(file_is_draft_areas_limit_reached($user->id));
+    }
 }
 
 /**
