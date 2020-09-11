@@ -256,12 +256,11 @@ class local_report_course_completion_course_table extends table_sql {
 
     // Just valid courses?
     if ($params['validonly']) {
-        $validcompletedsql = " AND (lit.timeexpires > :runtime || (lit.timecompleted > 0 AND lit.timeexpires IS NULL))";
+        $validcompletedsql = " AND (lit.timeexpires > :runtime or (lit.timecompleted > 0 AND lit.timeexpires IS NULL))";
         $sqlparams['runtime'] = time();
     } else {
         $validcompletedsql = "";
     }
-
 
         // Count the completed users.
         $completed = $DB->count_records_sql("SELECT COUNT(lit.id)

@@ -188,7 +188,7 @@ $sqlparams = array('userid' => $userid, 'companyid' => $companyid);
 
 // Just valid courses?
 if ($validonly) {
-    $validsql = " AND (lit.timeexpires > :runtime || (lit.timecompleted IS NULL) || (lit.timecompleted > 0 AND lit.timeexpires IS NULL))";
+    $validsql = " AND (lit.timeexpires > :runtime or (lit.timecompleted IS NULL) or (lit.timecompleted > 0 AND lit.timeexpires IS NULL))";
     $sqlparams['runtime'] = time();
 } else {
     $validsql = "";
