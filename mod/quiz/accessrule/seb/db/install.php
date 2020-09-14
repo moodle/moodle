@@ -37,57 +37,59 @@ function xmldb_quizaccess_seb_install() {
     $params = ['browsersecurity' => 'safebrowser'];
 
     $total = $DB->count_records('quiz', $params);
-    $rs = $DB->get_recordset('quiz', $params);
+    if ($total > 0) {
+        $rs = $DB->get_recordset('quiz', $params);
 
-    $i = 0;
-    $pbar = new progress_bar('updatequizrecords', 500, true);
+        $i = 0;
+        $pbar = new progress_bar('updatequizrecords', 500, true);
 
-    foreach ($rs as $quiz) {
-        if (!$DB->record_exists('quizaccess_seb_quizsettings', ['quizid' => $quiz->id])) {
-            $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+        foreach ($rs as $quiz) {
+            if (!$DB->record_exists('quizaccess_seb_quizsettings', ['quizid' => $quiz->id])) {
+                $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
 
-            $sebsettings = new stdClass();
+                $sebsettings = new stdClass();
 
-            $sebsettings->quizid = $quiz->id;
-            $sebsettings->cmid = $cm->id;
-            $sebsettings->templateid = 0;
-            $sebsettings->requiresafeexambrowser = \quizaccess_seb\settings_provider::USE_SEB_CLIENT_CONFIG;
-            $sebsettings->showsebtaskbar = null;
-            $sebsettings->showwificontrol = null;
-            $sebsettings->showreloadbutton = null;
-            $sebsettings->showtime = null;
-            $sebsettings->showkeyboardlayout = null;
-            $sebsettings->allowuserquitseb = null;
-            $sebsettings->quitpassword = null;
-            $sebsettings->linkquitseb = null;
-            $sebsettings->userconfirmquit = null;
-            $sebsettings->enableaudiocontrol = null;
-            $sebsettings->muteonstartup = null;
-            $sebsettings->allowspellchecking = null;
-            $sebsettings->allowreloadinexam = null;
-            $sebsettings->activateurlfiltering = null;
-            $sebsettings->filterembeddedcontent = null;
-            $sebsettings->expressionsallowed = null;
-            $sebsettings->regexallowed = null;
-            $sebsettings->expressionsblocked = null;
-            $sebsettings->regexblocked = null;
-            $sebsettings->allowedbrowserexamkeys = null;
-            $sebsettings->showsebdownloadlink = 1;
-            $sebsettings->usermodified = get_admin()->id;
-            $sebsettings->timecreated = time();
-            $sebsettings->timemodified = time();
+                $sebsettings->quizid = $quiz->id;
+                $sebsettings->cmid = $cm->id;
+                $sebsettings->templateid = 0;
+                $sebsettings->requiresafeexambrowser = \quizaccess_seb\settings_provider::USE_SEB_CLIENT_CONFIG;
+                $sebsettings->showsebtaskbar = null;
+                $sebsettings->showwificontrol = null;
+                $sebsettings->showreloadbutton = null;
+                $sebsettings->showtime = null;
+                $sebsettings->showkeyboardlayout = null;
+                $sebsettings->allowuserquitseb = null;
+                $sebsettings->quitpassword = null;
+                $sebsettings->linkquitseb = null;
+                $sebsettings->userconfirmquit = null;
+                $sebsettings->enableaudiocontrol = null;
+                $sebsettings->muteonstartup = null;
+                $sebsettings->allowspellchecking = null;
+                $sebsettings->allowreloadinexam = null;
+                $sebsettings->activateurlfiltering = null;
+                $sebsettings->filterembeddedcontent = null;
+                $sebsettings->expressionsallowed = null;
+                $sebsettings->regexallowed = null;
+                $sebsettings->expressionsblocked = null;
+                $sebsettings->regexblocked = null;
+                $sebsettings->allowedbrowserexamkeys = null;
+                $sebsettings->showsebdownloadlink = 1;
+                $sebsettings->usermodified = get_admin()->id;
+                $sebsettings->timecreated = time();
+                $sebsettings->timemodified = time();
 
-            $DB->insert_record('quizaccess_seb_quizsettings', $sebsettings);
+                $DB->insert_record('quizaccess_seb_quizsettings', $sebsettings);
 
-            $quiz->browsersecurity = '-';
-            $DB->update_record('quiz', $quiz);
+                $quiz->browsersecurity = '-';
+                $DB->update_record('quiz', $quiz);
+            }
+
+            $i++;
+            $pbar->update($i, $total, "Reconfiguring existing quizzes to use a new SEB plugin - $i/$total.");
         }
 
-        $i++;
-        $pbar->update($i, $total, "Reconfiguring existing quizzes to use a new SEB plugin - $i/$total.");
+        $rs->close();
     }
-
-    $rs->close();
 
     return true;
 }
