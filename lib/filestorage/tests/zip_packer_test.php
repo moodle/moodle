@@ -526,6 +526,24 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
     }
 
     /**
+     * Test opening an encrypted archive
+     */
+    public function test_open_encrypted_archive() {
+        $this->resetAfterTest();
+
+        // The archive contains a single encrypted "hello.txt" file.
+        $archive = __DIR__ . '/fixtures/passwordis1.zip';
+
+        /** @var zip_packer $packer */
+        $packer = get_file_packer('application/zip');
+        $result = $packer->extract_to_pathname($archive, make_temp_directory('zip'));
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('hello.txt', $result);
+        $this->assertEquals('Can not read file from zip archive', $result['hello.txt']);
+    }
+
+    /**
      * Tests the progress reporting.
      */
     public function test_file_progress() {
