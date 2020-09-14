@@ -3429,6 +3429,29 @@ class core_dml_testcase extends database_driver_testcase {
         $this->assertEquals(1, $DB->count_records($tablename));
     }
 
+    public function test_delete_records_subquery() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $DB->insert_record($tablename, array('course' => 3));
+        $DB->insert_record($tablename, array('course' => 2));
+        $DB->insert_record($tablename, array('course' => 2));
+
+        // This is not a useful scenario for using a subquery, but it will be sufficient for testing.
+        // Use the 'frog' alias just to make it clearer when we are testing the alias parameter.
+        $DB->delete_records_subquery($tablename, 'id', 'frog',
+                'SELECT id AS frog FROM {' . $tablename . '} WHERE course = ?', [2]);
+        $this->assertEquals(1, $DB->count_records($tablename));
+    }
+
     public function test_delete_records_list() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
