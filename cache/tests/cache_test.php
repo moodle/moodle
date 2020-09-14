@@ -1335,14 +1335,12 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertInstanceOf('cache_config_disabled', $config);
 
         // Check we get the expected disabled caches.
-        $cache = cache::make('phpunit', 'disable');
+        $cache = cache::make('core', 'string');
         $this->assertInstanceOf('cache_disabled', $cache);
 
         // Test an application cache.
         $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'phpunit', 'disable');
         $this->assertInstanceOf('cache_disabled', $cache);
-
-        $this->assertFalse(file_exists($configfile));
 
         $this->assertFalse($cache->get('test'));
         $this->assertFalse($cache->set('test', 'test'));
@@ -1353,8 +1351,6 @@ class core_cache_testcase extends advanced_testcase {
         $cache = cache::make_from_params(cache_store::MODE_SESSION, 'phpunit', 'disable');
         $this->assertInstanceOf('cache_disabled', $cache);
 
-        $this->assertFalse(file_exists($configfile));
-
         $this->assertFalse($cache->get('test'));
         $this->assertFalse($cache->set('test', 'test'));
         $this->assertFalse($cache->delete('test'));
@@ -1363,8 +1359,6 @@ class core_cache_testcase extends advanced_testcase {
         // Finally test a request cache.
         $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'phpunit', 'disable');
         $this->assertInstanceOf('cache_disabled', $cache);
-
-        $this->assertFalse(file_exists($configfile));
 
         $this->assertFalse($cache->get('test'));
         $this->assertFalse($cache->set('test', 'test'));
