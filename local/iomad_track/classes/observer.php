@@ -224,9 +224,9 @@ class observer {
                                                                    AND gi.courseid = :courseid)
                                          WHERE gg.userid = :userid", array('courseid' => $courseid,
                                                                            'userid' => $userid))) {
-            $finalgrade = $graderec->finalgrade;
+            $finalscore = $graderec->finalgrade / $graderec->rawgrademax * 100;
         } else {
-            $finalgrade = 0;
+            $finalscore = 0;
         }
 
         // Is the record broken?
@@ -282,11 +282,7 @@ class observer {
             $completion->timeenrolled = $enrolrec->timestart;
             $completion->timestarted = $comprec->timestarted;
             $completion->timecompleted = $comprec->timecompleted;
-            if (!empty($graderec->finalgrade)) {
-                $completion->finalscore = $graderec->finalgrade;
-            } else {
-                $completion->finalscore = 0;
-            }
+            $completion->finalscore = $finalscore;
             $completion->coursename = $courserec->fullname;
             $completion->companyid = $companyrec->id;
             $completion->companyname = $companyrec->name;
@@ -306,11 +302,7 @@ class observer {
             $trackid = $DB->insert_record('local_iomad_track', $completion);
         } else {
             $current->timecompleted = $comprec->timecompleted;
-            if (!empty($graderec->finalgrade)) {
-                $current->finalscore = $graderec->finalgrade;
-            } else {
-                $current->finalscore = 0;
-            }
+            $current->finalscore = $finalscore;
             $broken = false;
             if (empty($current->timeenrolled)) {
                 if (empty($comprec->timeenrolled)) {
@@ -673,7 +665,7 @@ class observer {
         $finalgrade = $event->other['finalgrade'];
 
         // If this isn't a course, we don't care.
-        if (!$DB->get_record('grade_items', array('id' => $itemid, 'itemtype' => 'course'))) {
+        if (!$graderec = $DB->get_record('grade_items', array('id' => $itemid, 'itemtype' => 'course'))) {
             return true;
         }
 
@@ -687,7 +679,7 @@ class observer {
                                                                 'courseid' => $courseid,
                                                                 'timecompleted' => null))) {
             // We already have an entry.  Remove it.
-            $DB->set_field('local_iomad_track', 'finalscore', $finalgrade, array('id' => $entry->id));
+            $DB->set_field('local_iomad_track', 'finalscore', $graderec->finalgrade/$graderec->rawgrademax * 100, array('id' => $entry->id));
             $DB->set_field('local_iomad_track', 'modifiedtime', $event->timecreated, array('id' => $entry->id));
         }
 
