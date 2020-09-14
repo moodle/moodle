@@ -237,8 +237,20 @@ switch ($action) {
         $temppath = $fs->get_unused_dirname($user_context->id, 'user', 'draft', $draftid, $filepath. pathinfo($filename, PATHINFO_FILENAME). '/');
         $donotremovedirs = array();
         $doremovedirs = array($temppath);
+
         // Extract archive and move all files from $temppath to $filepath
-        if ($file->extract_to_storage($zipper, $user_context->id, 'user', 'draft', $draftid, $temppath, $USER->id) !== false) {
+        if (($processed = $file->extract_to_storage($zipper, $user_context->id, 'user', 'draft', $draftid, $temppath, $USER->id))
+                !== false) {
+
+            // Find all failures within the processed files, and return an error if any are found.
+            $failed = array_filter($processed, static function($result): bool {
+                return $result !== true;
+            });
+            if (count($failed) > 0) {
+                $return->error = get_string('cannotunzipextractfileerror',  'repository');
+                die(json_encode($return));
+            }
+
             $extractedfiles = $fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $temppath, true);
             $xtemppath = preg_quote($temppath, '|');
             foreach ($extractedfiles as $file) {
