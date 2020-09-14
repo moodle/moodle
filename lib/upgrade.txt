@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.8.6 ===
+* New DML function $DB->delete_records_subquery() to delete records based on a subquery in a way
+  that will work across databases.
+
 === 3.8.5 ===
 * The `$CFG->behat_retart_browser_after` configuration setting has been removed.
   The browser session is now restarted between all tests.
