@@ -158,7 +158,8 @@ abstract class restore_controller_dbops extends restore_dbops {
             'restore_general_questionbank'       => 'questionbank',
             'restore_general_groups'             => 'groups',
             'restore_general_competencies'       => 'competencies',
-            'restore_general_contentbankcontent' => 'contentbankcontent'
+            'restore_general_contentbankcontent' => 'contentbankcontent',
+            'restore_general_legacyfiles'        => 'legacyfiles'
         );
         self::apply_admin_config_defaults($controller, $settings, true);
 
