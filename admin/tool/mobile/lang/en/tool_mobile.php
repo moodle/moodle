@@ -88,7 +88,6 @@ $string['managefiletypes'] = 'Manage file types';
 $string['minimumversion'] = 'If an app version is specified (3.8.0 or higher), any users using an older app version will be prompted to upgrade their app before being allowed access to the site.';
 $string['minimumversion_key'] = 'Minimum app version required';
 $string['mobileapp'] = 'Mobile app';
-$string['mobileappconnected'] = 'Mobile app connected';
 $string['mobileappenabled'] = 'This site has mobile app access enabled.<br /><a href="{$a}">Download the mobile app</a>.';
 $string['mobileappearance'] = 'Mobile appearance';
 $string['mobileappsubscription'] = 'Moodle app subscription';
@@ -144,3 +143,6 @@ $string['privacy:metadata:preference:tool_mobile_autologin_request_last'] = 'The
 $string['privacy:metadata:core_userkey'] = 'User\'s keys used to create auto-login key for the current user.';
 $string['responsivemainmenuitems'] = 'Responsive menu items';
 $string['viewqrcode'] = 'View QR code';
+
+// Deprecated since Moodle 3.10.
+$string['mobileappconnected'] = 'Mobile app connected';
