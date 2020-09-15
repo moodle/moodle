@@ -84,7 +84,7 @@ class cache_disabled extends cache {
             return $this->get_datasource()->load_many_for_cache($keys);
         }
 
-        return $return;
+        return array_combine($keys, array_fill(0, count($keys), false));
     }
 
     /**
