@@ -9,6 +9,7 @@
         processIsolation="false"
         backupGlobals="false"
         backupStaticAttributes="false"
+        cacheResult="false"
         stopOnError="false"
         stopOnFailure="false"
         stopOnIncomplete="false"
