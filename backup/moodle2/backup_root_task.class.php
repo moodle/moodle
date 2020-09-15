@@ -184,5 +184,10 @@ class backup_root_task extends backup_task {
         $contentbank = new backup_contentbankcontent_setting('contentbankcontent', base_setting::IS_BOOLEAN, true);
         $contentbank->set_ui(new backup_setting_ui_checkbox($contentbank, get_string('rootsettingcontentbankcontent', 'backup')));
         $this->add_setting($contentbank);
+
+        // Define legacy file inclusion setting.
+        $legacyfiles = new backup_generic_setting('legacyfiles', base_setting::IS_BOOLEAN, true);
+        $legacyfiles->set_ui(new backup_setting_ui_checkbox($legacyfiles, get_string('rootsettinglegacyfiles', 'backup')));
+        $this->add_setting($legacyfiles);
     }
 }
