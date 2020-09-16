@@ -3257,7 +3257,7 @@ function calendar_get_calendar_context($subscription) {
 }
 
 /**
- * Implements callback user_preferences, whitelists preferences that users are allowed to update directly
+ * Implements callback user_preferences, lists preferences that users are allowed to update directly
  *
  * Used in {@see core_user::fill_preferences_cache()}, see also {@see useredit_update_user_preference()}
  *

@@ -49,7 +49,7 @@ function events_trigger() {
 /**
  * List all core subsystems and their location
  *
- * This is a whitelist of components that are part of the core and their
+ * This is a list of components that are part of the core and their
  * language strings are defined in /lang/en/<<subsystem>>.php. If a given
  * plugin is not listed here and it does not have proper plugintype prefix,
  * then it is considered as course activity module.

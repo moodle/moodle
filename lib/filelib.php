@@ -3571,7 +3571,7 @@ class curl {
      * @return bool
      */
     protected function request($url, $options = array()) {
-        // Reset here so that the data is valid when result returned from cache, or if we return due to a blacklist hit.
+        // Reset here so that the data is valid when result returned from cache, or if we return due to a blocked URL hit.
         $this->reset_request_state_vars();
 
         if ((defined('PHPUNIT_TEST') && PHPUNIT_TEST)) {
@@ -3581,8 +3581,8 @@ class curl {
             }
         }
 
-        // If curl security is enabled, check the URL against the blacklist before calling curl_exec.
-        // Note: This will only check the base url. In the case of redirects, the blacklist is also after the curl_exec.
+        // If curl security is enabled, check the URL against the list of blocked URLs before calling curl_exec.
+        // Note: This will only check the base url. In the case of redirects, the blocking check is also after the curl_exec.
         if (!$this->ignoresecurity && $this->securityhelper->url_is_blocked($url)) {
             $this->error = $this->securityhelper->get_blocked_url_string();
             return $this->error;
@@ -3605,7 +3605,7 @@ class curl {
         $this->errno = curl_errno($curl);
         // Note: $this->response and $this->rawresponse are filled by $hits->formatHeader callback.
 
-        // In the case of redirects (which curl blindly follows), check the post-redirect URL against the blacklist entries too.
+        // In the case of redirects (which curl blindly follows), check the post-redirect URL against the list of blocked list too.
         if (intval($this->info['redirect_count']) > 0 && !$this->ignoresecurity
             && $this->securityhelper->url_is_blocked($this->info['url'])) {
             $this->reset_request_state_vars();
