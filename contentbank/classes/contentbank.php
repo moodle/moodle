@@ -36,6 +36,10 @@ use context;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class contentbank {
+
+    /** @var array All the context levels allowed in the content bank */
+    private const ALLOWED_CONTEXT_LEVELS = [CONTEXT_SYSTEM, CONTEXT_COURSECAT, CONTEXT_COURSE];
+
     /** @var array Enabled content types. */
     private $enabledcontenttypes = null;
 
@@ -347,5 +351,15 @@ class contentbank {
         $record = $DB->get_record('contentbank_content', ['id' => $id], '*', MUST_EXIST);
         $contentclass = "\\$record->contenttype\\content";
         return new $contentclass($record);
+    }
+
+    /**
+     * Whether the context is allowed.
+     *
+     * @param context $context Context to check.
+     * @return bool
+     */
+    public function is_context_allowed(context $context): bool {
+        return in_array($context->contextlevel, self::ALLOWED_CONTEXT_LEVELS);
     }
 }
