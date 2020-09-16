@@ -248,9 +248,9 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input implements templat
     public function validateSubmitValue($value) {
 
         $filetypesutil = new \core_form\filetypes_util();
-        $whitelist = $filetypesutil->normalize_file_types($this->_options['accepted_types']);
+        $allowlist = $filetypesutil->normalize_file_types($this->_options['accepted_types']);
 
-        if (empty($whitelist) || $whitelist === ['*']) {
+        if (empty($allowlist) || $allowlist === ['*']) {
             // Any file type is allowed, nothing to check here.
             return;
         }
@@ -264,14 +264,14 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input implements templat
         }
 
         foreach ($draftfiles->list as $file) {
-            if (!$filetypesutil->is_allowed_file_type($file->filename, $whitelist)) {
+            if (!$filetypesutil->is_allowed_file_type($file->filename, $allowlist)) {
                 $wrongfiles[] = $file->filename;
             }
         }
 
         if ($wrongfiles) {
             $a = array(
-                'whitelist' => implode(', ', $whitelist),
+                'allowlist' => implode(', ', $allowlist),
                 'wrongfiles' => implode(', ', $wrongfiles),
             );
             return get_string('err_wrongfileextension', 'core_form', $a);
