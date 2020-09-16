@@ -25,7 +25,7 @@
  */
 
 import $ from 'jquery';
-import Aria from './aria';
+import * as Aria from './aria';
 import Bootstrap from './bootstrap/index';
 import Pending from 'core/pending';
 import Scroll from './scroll';
