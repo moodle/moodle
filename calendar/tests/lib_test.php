@@ -963,4 +963,36 @@ class core_calendar_lib_testcase extends advanced_testcase {
         // Viewing as someone not enrolled in a course with guest access on.
         $this->assertTrue(calendar_view_event_allowed($caleventguest));
     }
+
+    /**
+     *  Test for calendar_get_export_token for current user.
+     */
+    public function test_calendar_get_export_token_for_current_user() {
+        global $USER, $DB, $CFG;
+
+        $this->setAdminUser();
+
+        // Get my token.
+        $authtoken = calendar_get_export_token($USER);
+        $expected = sha1($USER->id . $DB->get_field('user', 'password', ['id' => $USER->id]) . $CFG->calendar_exportsalt);
+
+        $this->assertEquals($expected, $authtoken);
+    }
+
+    /**
+     *  Test for calendar_get_export_token for another user.
+     */
+    public function test_calendar_get_export_token_for_another_user() {
+        global $CFG;
+
+        // Get any user token.
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+
+        // Get other user token.
+        $authtoken = calendar_get_export_token($user);
+        $expected = sha1($user->id . $user->password . $CFG->calendar_exportsalt);
+
+        $this->assertEquals($expected, $authtoken);
+    }
 }
