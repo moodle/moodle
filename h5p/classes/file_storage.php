@@ -48,7 +48,12 @@ class file_storage implements \H5PFileStorage {
     public const EXPORT_FILEAREA = 'export';
     /** The icon filename */
     public const ICON_FILENAME = 'icon.svg';
-    /** The editor file area */
+
+    /**
+     * The editor file area.
+     * @deprecated since Moodle 3.10 MDL-68909. Please do not use this constant any more.
+     * @todo MDL-69530 This will be deleted in Moodle 4.2.
+     */
     public const EDITOR_FILEAREA = 'editor';
 
     /**
@@ -331,10 +336,22 @@ class file_storage implements \H5PFileStorage {
      * @return int The id of the saved file.
      */
     public function saveFile($file, $contentid) {
+        global $USER;
+
+        $context = $this->context->id;
+        $component = self::COMPONENT;
+        $filearea = self::CONTENT_FILEAREA;
+        if ($contentid === 0) {
+            $usercontext = \context_user::instance($USER->id);
+            $context = $usercontext->id;
+            $component = 'user';
+            $filearea = 'draft';
+        }
+
         $record = array(
-            'contextid' => $this->context->id,
-            'component' => self::COMPONENT,
-            'filearea' => $contentid === 0 ? self::EDITOR_FILEAREA : self::CONTENT_FILEAREA,
+            'contextid' => $context,
+            'component' => $component,
+            'filearea' => $filearea,
             'itemid' => $contentid,
             'filepath' => '/' . $file->getType() . 's/',
             'filename' => $file->getName()
@@ -357,8 +374,8 @@ class file_storage implements \H5PFileStorage {
      */
     public function cloneContentFile($file, $fromid, $tocontent): void {
         // Determine source filearea and itemid.
-        if ($fromid === self::EDITOR_FILEAREA) {
-            $sourcefilearea = self::EDITOR_FILEAREA;
+        if ($fromid === 'editor') {
+            $sourcefilearea = 'draft';
             $sourceitemid = 0;
         } else {
             $sourcefilearea = self::CONTENT_FILEAREA;
@@ -791,15 +808,22 @@ class file_storage implements \H5PFileStorage {
      * @return stored_file|null
      */
     private function get_file(string $filearea, int $itemid, string $file): ?stored_file {
-        if ($filearea === 'editor') {
+        global $USER;
+
+        $component = self::COMPONENT;
+        $context = $this->context->id;
+        if ($filearea === 'draft') {
             $itemid = 0;
+            $component = 'user';
+            $usercontext = \context_user::instance($USER->id);
+            $context = $usercontext->id;
         }
 
         $filepath = '/'. dirname($file). '/';
         $filename = basename($file);
 
         // Load file.
-        $existingfile = $this->fs->get_file($this->context->id, self::COMPONENT, $filearea, $itemid, $filepath, $filename);
+        $existingfile = $this->fs->get_file($context, $component, $filearea, $itemid, $filepath, $filename);
         if (!$existingfile) {
             return null;
         }
@@ -824,8 +848,8 @@ class file_storage implements \H5PFileStorage {
         // Create file record for content.
         $record = array(
             'contextid' => $this->context->id,
-            'component' => self::COMPONENT,
-            'filearea' => $contentid > 0 ? self::CONTENT_FILEAREA : self::EDITOR_FILEAREA,
+            'component' => $contentid > 0 ? self::COMPONENT : 'user',
+            'filearea' => $contentid > 0 ? self::CONTENT_FILEAREA : 'draft',
             'itemid' => $contentid > 0 ? $contentid : 0,
             'filepath' => '/' . $foldername . '/',
             'filename' => $filename

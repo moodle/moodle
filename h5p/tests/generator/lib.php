@@ -414,6 +414,8 @@ class core_h5p_generator extends \component_generator_base {
      * @throws coding_exception
      */
     public function create_content_file(string $file, string $filearea, int $contentid = 0): stored_file {
+        global $USER;
+
         $filepath = '/'.dirname($file).'/';
         $filename = basename($file);
 
@@ -421,15 +423,25 @@ class core_h5p_generator extends \component_generator_base {
             throw new coding_exception('Files belonging to an H5P content must specify the H5P content id');
         }
 
+        if ($filearea === 'draft') {
+            $usercontext = \context_user::instance($USER->id);
+            $context = $usercontext->id;
+            $component = 'user';
+            $itemid = 0;
+        } else {
+            $systemcontext = context_system::instance();
+            $context = $systemcontext->id;
+            $component = \core_h5p\file_storage::COMPONENT;
+            $itemid = $contentid;
+        }
+
         $content = 'fake content';
 
-        $systemcontext = context_system::instance();
-
         $filerecord = array(
-            'contextid' => $systemcontext->id,
-            'component' => \core_h5p\file_storage::COMPONENT,
+            'contextid' => $context,
+            'component' => $component,
             'filearea'  => $filearea,
-            'itemid'    => ($filearea === 'editor') ? 0 : $contentid,
+            'itemid'    => $itemid,
             'filepath'  => $filepath,
             'filename'  => $filename,
         );

@@ -625,6 +625,7 @@ class h5p_file_storage_testcase extends \advanced_testcase {
      */
     public function test_get_file(): void {
 
+        $this->setAdminUser();
         $file = 'img/fake.png';
         $h5pcontentid = 3;
 
@@ -641,9 +642,9 @@ class h5p_file_storage_testcase extends \advanced_testcase {
         $this->assertInstanceOf('stored_file', $contentfile);
 
         // Add a file to editor.
-        $this->h5p_generator->create_content_file($file, file_storage::EDITOR_FILEAREA, $h5pcontentid);
+        $this->h5p_generator->create_content_file($file, 'draft', $h5pcontentid);
 
-        $editorfile = $method->invoke(new file_storage(), file_storage::EDITOR_FILEAREA, $h5pcontentid, $file);
+        $editorfile = $method->invoke(new file_storage(), 'draft', $h5pcontentid, $file);
 
         // Check that it returns an instance of store_file.
         $this->assertInstanceOf('stored_file', $editorfile);
@@ -692,6 +693,9 @@ class h5p_file_storage_testcase extends \advanced_testcase {
      */
     public function test_cloneContentFile(): void {
 
+        $admin = get_admin();
+        $usercontext = \context_user::instance($admin->id);
+        $this->setUser($admin);
         // Upload a file to the editor.
         $file = 'images/fake.jpg';
         $filepath = '/'.dirname($file).'/';
@@ -700,9 +704,9 @@ class h5p_file_storage_testcase extends \advanced_testcase {
         $content = 'abcd';
 
         $filerecord = array(
-            'contextid' => $this->h5p_fs_context->id,
-            'component' => file_storage::COMPONENT,
-            'filearea'  => file_storage::EDITOR_FILEAREA,
+            'contextid' => $usercontext->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
             'itemid'    => 0,
             'filepath'  => $filepath,
             'filename'  => $filename,
@@ -731,7 +735,9 @@ class h5p_file_storage_testcase extends \advanced_testcase {
         $filename = basename($file);
 
         $sourcecontentid = 111;
-        $filerecord['filearea'] = 'content';
+        $filerecord['contextid'] = $this->h5p_fs_context->id;
+        $filerecord['component'] = file_storage::COMPONENT;
+        $filerecord['filearea'] = file_storage::CONTENT_FILEAREA;
         $filerecord['itemid'] = $sourcecontentid;
         $filerecord['filepath'] = $filepath;
         $filerecord['filename'] = $filename;
