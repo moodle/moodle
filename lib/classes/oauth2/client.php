@@ -46,6 +46,9 @@ class client extends \oauth2_client {
     /** @var bool $system */
     protected $system = false;
 
+    /** @var bool $autorefresh whether this client will use a refresh token to automatically renew access tokens.*/
+    protected $autorefresh = false;
+
     /**
      * Constructor.
      *
@@ -53,10 +56,12 @@ class client extends \oauth2_client {
      * @param moodle_url|null $returnurl
      * @param string $scopesrequired
      * @param boolean $system
+     * @param boolean $autorefresh whether refresh_token grants are used to allow continued access across sessions.
      */
-    public function __construct(issuer $issuer, $returnurl, $scopesrequired, $system = false) {
+    public function __construct(issuer $issuer, $returnurl, $scopesrequired, $system = false, $autorefresh = false) {
         $this->issuer = $issuer;
         $this->system = $system;
+        $this->autorefresh = $autorefresh;
         $scopes = $this->get_login_scopes();
         $additionalscopes = explode(' ', $scopesrequired);
 
@@ -98,15 +103,22 @@ class client extends \oauth2_client {
      */
     public function get_additional_login_parameters() {
         $params = '';
-        if ($this->system) {
+
+        if ($this->system || $this->can_autorefresh()) {
+            // System clients and clients supporting the refresh_token grant (provided the user is authenticated) add
+            // extra params to the login request, depending on the issuer settings. The extra params allow a refresh
+            // token to be returned during the authorization_code flow.
             if (!empty($this->issuer->get('loginparamsoffline'))) {
                 $params = $this->issuer->get('loginparamsoffline');
             }
         } else {
+            // This is not a system client, nor a client supporting the refresh_token grant type, so just return the
+            // vanilla login params.
             if (!empty($this->issuer->get('loginparams'))) {
                 $params = $this->issuer->get('loginparams');
             }
         }
+
         if (empty($params)) {
             return [];
         }
@@ -121,9 +133,14 @@ class client extends \oauth2_client {
      * @return string
      */
     protected function get_login_scopes() {
-        if ($this->system) {
+        if ($this->system || $this->can_autorefresh()) {
+            // System clients and clients supporting the refresh_token grant (provided the user is authenticated) add
+            // extra scopes to the login request, depending on the issuer settings. The extra params allow a refresh
+            // token to be returned during the authorization_code flow.
             return $this->issuer->get('loginscopesoffline');
         } else {
+            // This is not a system client, nor a client supporting the refresh_token grant type, so just return the
+            // vanilla login scopes.
             return $this->issuer->get('loginscopes');
         }
     }
@@ -224,15 +241,148 @@ class client extends \oauth2_client {
     }
 
     /**
-     * Upgrade a refresh token from oauth 2.0 to an access token
+     * Override which upgrades the authorization code to an access token and stores any refresh token in the DB.
      *
-     * @param \core\oauth2\system_account $systemaccount
-     * @return boolean true if token is upgraded succesfully
-     * @throws moodle_exception Request for token upgrade failed for technical reasons
+     * @param string $code the authorisation code
+     * @return bool true if the token could be upgraded
+     * @throws moodle_exception
      */
-    public function upgrade_refresh_token(system_account $systemaccount) {
-        $refreshtoken = $systemaccount->get('refreshtoken');
+    public function upgrade_token($code) {
+        $upgraded = parent::upgrade_token($code);
+        if (!$this->can_autorefresh()) {
+            return $upgraded;
+        }
 
+        // For clients supporting auto-refresh, try to store a refresh token.
+        if (!empty($this->refreshtoken)) {
+            $refreshtoken = (object) [
+                'token' => $this->refreshtoken,
+                'scope' => $this->scope
+            ];
+            $this->store_user_refresh_token($refreshtoken);
+        }
+
+        return $upgraded;
+    }
+
+    /**
+     * Override which in addition to auth code upgrade, also attempts to exchange a refresh token for an access token.
+     *
+     * @return bool true if the user is logged in as a result, false otherwise.
+     */
+    public function is_logged_in() {
+        global $DB, $USER;
+
+        $isloggedin = parent::is_logged_in();
+
+        // Attempt to exchange a user refresh token, but only if required and supported.
+        if ($isloggedin || !$this->can_autorefresh()) {
+            return $isloggedin;
+        }
+
+        // Autorefresh is supported. Try to negotiate a login by exchanging a stored refresh token for an access token.
+        $issuerid = $this->issuer->get('id');
+        $refreshtoken = $DB->get_record('oauth2_refresh_token', ['userid' => $USER->id, 'issuerid' => $issuerid]);
+        if ($refreshtoken) {
+            try {
+                $tokensreceived = $this->exchange_refresh_token($refreshtoken->token);
+                if (empty($tokensreceived)) {
+                    // No access token was returned, so invalidate the refresh token and return false.
+                    $DB->delete_records('oauth2_refresh_token', ['id' => $refreshtoken->id]);
+                    return false;
+                }
+
+                // Otherwise, save the access token and, if provided, the new refresh token.
+                $this->store_token($tokensreceived['access_token']);
+                if (!empty($tokensreceived['refresh_token'])) {
+                    $this->store_user_refresh_token($tokensreceived['refresh_token']);
+                }
+                return true;
+            } catch (\moodle_exception $e) {
+                // The refresh attempt failed either due to an error or a bad request. A bad request could be received
+                // for a number of reasons including expired refresh token (lifetime is not specified in OAuth 2 spec),
+                // scope change or if app access has been revoked manually by the user (tokens revoked).
+                // Remove the refresh token and suppress the exception, allowing the user to be taken through the
+                // authorization_code flow again.
+                $DB->delete_records('oauth2_refresh_token', ['id' => $refreshtoken->id]);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether this client should automatically exchange a refresh token for an access token as part of login checks.
+     *
+     * @return bool true if supported, false otherwise.
+     */
+    protected function can_autorefresh(): bool {
+        global $USER;
+
+        // Auto refresh is only supported when the follow criteria are met:
+        // a) The client is not a system client. The exchange process for system client refresh tokens is handled
+        // externally, via a call to client->upgrade_refresh_token().
+        // b) The user is authenticated.
+        // c) The client has been configured with autorefresh enabled.
+        return !$this->system && ($this->autorefresh && !empty($USER->id));
+    }
+
+    /**
+     * Store the user's refresh token for later use.
+     *
+     * @param stdClass $token a refresh token.
+     */
+    protected function store_user_refresh_token(stdClass $token): void {
+        global $DB, $USER;
+
+        $id = $DB->get_field('oauth2_refresh_token', 'id', ['userid' => $USER->id,
+            'scopehash' => sha1($token->scope), 'issuerid' => $this->issuer->get('id')]);
+        $time = time();
+        if ($id) {
+            $record = [
+                'id' => $id,
+                'timemodified' => $time,
+                'token' => $token->token
+            ];
+            $DB->update_record('oauth2_refresh_token', $record);
+        } else {
+            $record = [
+                'timecreated' => $time,
+                'timemodified' => $time,
+                'userid' => $USER->id,
+                'issuerid' => $this->issuer->get('id'),
+                'token' => $token->token,
+                'scopehash' => sha1($token->scope)
+            ];
+            $DB->insert_record('oauth2_refresh_token', $record);
+        }
+    }
+
+    /**
+     * Attempt to exchange a refresh token for a new access token.
+     *
+     * If successful, will return an array of token objects in the form:
+     * Array
+     * (
+     *     [access_token] => stdClass object
+     *         (
+     *             [token] => 'the_token_string'
+     *             [expires] => 123456789
+     *             [scope] => 'openid files etc'
+     *         )
+     *     [refresh_token] => stdClass object
+     *         (
+     *             [token] => 'the_refresh_token_string'
+     *             [scope] => 'openid files etc'
+     *         )
+     *  )
+     * where the 'refresh_token' will only be provided if supplied by the auth server in the response.
+     *
+     * @param string $refreshtoken the refresh token to exchange.
+     * @return null|array array containing access token and refresh token if provided, null if the exchange was denied.
+     * @throws moodle_exception if an invalid response is received or if the response contains errors.
+     */
+    protected function exchange_refresh_token(string $refreshtoken): ?array {
         $params = array('refresh_token' => $refreshtoken,
             'grant_type' => 'refresh_token'
         );
@@ -263,24 +413,69 @@ class client extends \oauth2_client {
         }
 
         if (!isset($r->access_token)) {
-            return false;
+            return null;
         }
 
         // Store the token an expiry time.
-        $accesstoken = new stdClass;
+        $accesstoken = new stdClass();
         $accesstoken->token = $r->access_token;
         if (isset($r->expires_in)) {
             // Expires 10 seconds before actual expiry.
             $accesstoken->expires = (time() + ($r->expires_in - 10));
         }
         $accesstoken->scope = $this->scope;
-        // Also add the scopes.
-        $this->store_token($accesstoken);
+
+        $tokens = ['access_token' => $accesstoken];
 
         if (isset($r->refresh_token)) {
-            $systemaccount->set('refreshtoken', $r->refresh_token);
-            $systemaccount->update();
             $this->refreshtoken = $r->refresh_token;
+            $newrefreshtoken = new stdClass();
+            $newrefreshtoken->token = $this->refreshtoken;
+            $newrefreshtoken->scope = $this->scope;
+            $tokens['refresh_token'] = $newrefreshtoken;
+        }
+
+        return $tokens;
+    }
+
+    /**
+     * Override which, in addition to deleting access tokens, also deletes any stored refresh token.
+     */
+    public function log_out() {
+        global $DB, $USER;
+        parent::log_out();
+        if (!$this->can_autorefresh()) {
+            return;
+        }
+
+        // For clients supporting autorefresh, delete the stored refresh token too.
+        $issuerid = $this->issuer->get('id');
+        $refreshtoken = $DB->get_record('oauth2_refresh_token', ['userid' => $USER->id, 'issuerid' => $issuerid,
+            'scopehash' => sha1($this->scope)]);
+        if ($refreshtoken) {
+            $DB->delete_records('oauth2_refresh_token', ['id' => $refreshtoken->id]);
+        }
+    }
+
+    /**
+     * Upgrade a refresh token from oauth 2.0 to an access token, for system clients only.
+     *
+     * @param \core\oauth2\system_account $systemaccount
+     * @return boolean true if token is upgraded succesfully
+     */
+    public function upgrade_refresh_token(system_account $systemaccount) {
+        $receivedtokens = $this->exchange_refresh_token($systemaccount->get('refreshtoken'));
+
+        // No access token received, so return false.
+        if (empty($receivedtokens)) {
+            return false;
+        }
+
+        // Store the access token and, if provided by the server, the new refresh token.
+        $this->store_token($receivedtokens['access_token']);
+        if (isset($receivedtokens['refreshtoken'])) {
+            $systemaccount->set('refreshtoken', $receivedtokens['refresh_token']->token);
+            $systemaccount->update();
         }
 
         return true;
