@@ -30,6 +30,11 @@ $contextid    = optional_param('contextid', \context_system::instance()->id, PAR
 $search = optional_param('search', '', PARAM_CLEAN);
 $context = context::instance_by_id($contextid, MUST_EXIST);
 
+$cb = new \core_contentbank\contentbank();
+if (!$cb->is_context_allowed($context)) {
+    print_error('contextnotallowed', 'core_contentbank');
+}
+
 require_capability('moodle/contentbank:access', $context);
 
 $statusmsg = optional_param('statusmsg', '', PARAM_ALPHANUMEXT);
@@ -47,7 +52,6 @@ $PAGE->set_heading($title);
 $PAGE->set_pagetype('contentbank');
 
 // Get all contents managed by active plugins where the user has permission to render them.
-$cb = new \core_contentbank\contentbank();
 $contenttypes = [];
 $enabledcontenttypes = $cb->get_enabled_content_types();
 foreach ($enabledcontenttypes as $contenttypename) {
