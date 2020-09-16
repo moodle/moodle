@@ -23,3 +23,7 @@
 .que.essay div.qtype_essay_response textarea {
     width: 100%;
 }
+
+.que.essay .ablock .filemanager .fp-restrictions {
+    margin-top: 1em;
+}

@@ -44,6 +44,9 @@ class qtype_essay_question extends question_with_responses {
     public $responsefieldlines;
     public $attachments;
 
+    /** @var int maximum file size in bytes */
+    public $maxbytes;
+
     /** @var int The number of attachments required for a response to be complete. */
     public $attachmentsrequired;
 
