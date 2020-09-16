@@ -56,10 +56,6 @@
     }
 }
 
-.editor_atto_content.form-control {
-    width: 100%;
-}
-
 #adminsettings .form-control[size] {
     width: auto;
 }
@@ -408,20 +404,6 @@ textarea[data-auto-rows] {
     padding: $card-spacer-x;
     margin-left: $grid-gutter-width / 2;
     max-width: 30rem;
-}
-
-/** Atto fields do not have form-control because that would break the layout of the editor.
-    So they need these extra styles to highlight the editor when there is a validation error. */
-/* stylelint-disable function-url-scheme-blacklist */
-$form-icon-danger: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23d9534f' viewBox='-2 -2 7 7'%3E%3Cpath stroke='%23d9534f' d='M0 0l3 3m0-3L0 3'/%3E%3Ccircle r='.5'/%3E%3Ccircle cx='3' r='.5'/%3E%3Ccircle cy='3' r='.5'/%3E%3Ccircle cx='3' cy='3' r='.5'/%3E%3C/svg%3E") !default;
-/* stylelint-enable function-url-scheme-blacklist */
-.has-danger .editor_atto_content.form-control,
-.has-danger .editor_atto_content.form-control-danger {
-    background-image: $form-icon-danger;
-    padding-right: ($input-padding-x * 3);
-    background-repeat: no-repeat;
-    background-position: center right 1rem;
-    background-size: 1.5rem;
 }
 
 // Styles for the JS file types browser provided by the "filetypes" element.
