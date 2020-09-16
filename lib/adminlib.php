@@ -9071,7 +9071,7 @@ function any_new_admin_settings($node) {
  */
 function db_should_replace($table, $column = ''): bool {
 
-    // TODO: this is horrible hack, we should do whitelisting and each plugin should be responsible for proper replacing...
+    // TODO: this is horrible hack, we should have a hook and each plugin should be responsible for proper replacing...
     $skiptables = ['config', 'config_plugins', 'filter_config', 'sessions',
         'events_queue', 'repository_instance_config', 'block_instances', 'files'];
 
@@ -11271,11 +11271,11 @@ class admin_setting_filetypes extends admin_setting_configtext {
 
         // No need to call parent's validation here as we are PARAM_RAW.
 
-        if ($this->util->is_whitelisted($data, $this->onlytypes)) {
+        if ($this->util->is_listed($data, $this->onlytypes)) {
             return true;
 
         } else {
-            $troublemakers = $this->util->get_not_whitelisted($data, $this->onlytypes);
+            $troublemakers = $this->util->get_not_listed($data, $this->onlytypes);
             return get_string('filetypesnotallowed', 'core_form', implode(' ', $troublemakers));
         }
     }

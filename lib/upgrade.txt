@@ -48,6 +48,8 @@ information provided here is intended especially for developers.
 * The ZipStream-PHP library has been added to Moodle core in /lib/zipstream.
 * The php-enum library has been added to Moodle core in /lib/php-enum.
 * The http-message library has been added to Moodle core in /lib/http-message.
+* Methods `filetypes_util::is_whitelisted()` and `filetypes_util::get_not_whitelisted()` have been deprecated and
+  renamed to `is_listed()` and `get_not_listed()` respectively.
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
