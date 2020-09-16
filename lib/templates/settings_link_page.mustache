@@ -40,7 +40,7 @@
 <ul class="nav nav-tabs" role="tablist">
 <!-- First the top most node and immediate children -->
     <li class="nav-item">
-        <a class="nav-link active" href="#link{{node.key}}" data-toggle="tab" role="tab">{{node.text}}</a>
+        <a class="nav-link active" href="#link{{node.key}}" data-toggle="tab" role="tab" aria-selected="true">{{node.text}}</a>
     </li>
 <!-- Now the first level children with sub nodes -->
 {{#node.children}}
@@ -48,7 +48,7 @@
         {{#display}}
             {{^is_short_branch}}
                 <li class="nav-item">
-                    <a class="nav-link" href="#link{{key}}" data-toggle="tab" role="tab">{{text}}</a>
+                    <a class="nav-link" href="#link{{key}}" data-toggle="tab" role="tab" aria-selected="false" tabindex="-1">{{text}}</a>
                 </li>
             {{/is_short_branch}}
         {{/display}}
