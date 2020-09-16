@@ -1385,15 +1385,20 @@ class core_renderer extends renderer_base {
     public function footer() {
         global $CFG, $DB;
 
+        $output = '';
+
         // Give plugins an opportunity to touch the page before JS is finalized.
         $pluginswithfunction = get_plugins_with_function('before_footer', 'lib.php');
         foreach ($pluginswithfunction as $plugins) {
             foreach ($plugins as $function) {
-                $function();
+                $extrafooter = $function();
+                if (is_string($extrafooter)) {
+                    $output .= $extrafooter;
+                }
             }
         }
 
-        $output = $this->container_end_all(true);
+        $output .= $this->container_end_all(true);
 
         $footer = $this->opencontainers->pop('header/footer');
 
