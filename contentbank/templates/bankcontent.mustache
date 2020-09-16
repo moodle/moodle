@@ -95,87 +95,96 @@ data-region="contentbank">
                 <div class="cb-navbar-totalsearch d-none">
                 </div>
             </div>
-            <div class="cb-content-wrapper d-flex px-2" data-region="filearea">
-                <div class="cb-heading bg-white">
-                    <div class="cb-file cb-column d-flex">
-                        <div class="title">{{#str}} contentname, contentbank {{/str}}</div>
-                        <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="contentname" data-action="sortname"
-                            title="{{#str}} sortbyx, core, {{#str}} contentname, contentbank {{/str}} {{/str}}">
-                            <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
-                            <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
-                            <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
-                        </button>
-                    </div>
-                    <div class="cb-date cb-column d-flex">
-                        <div class="title">{{#str}} lastmodified, contentbank {{/str}}</div>
-                        <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="lastmodified" data-action="sortdate"
-                        title="{{#str}} sortbyx, core, {{#str}} lastmodified, contentbank {{/str}} {{/str}}">
-                            <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
-                            <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
-                            <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
-                        </button>
-                    </div>
-                    <div class="cb-size cb-column d-flex">
-                        <div class="title">{{#str}} size, contentbank {{/str}}</div>
-                        <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="size" data-action="sortsize"
-                        title="{{#str}} sortbyx, core, {{#str}} size, contentbank {{/str}} {{/str}}">
-                            <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
-                            <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
-                            <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
-                        </button>
-                    </div>
-                    <div class="cb-type cb-column d-flex">
-                        <div class="title">{{#str}} type, contentbank {{/str}}</div>
-                        <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="type" data-action="sorttype"
-                        title="{{#str}} sortbyx, core, {{#str}} type, contentbank {{/str}} {{/str}}">
-                            <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
-                            <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
-                            <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
-                        </button>
-                    </div>
-                    <div class="cb-author cb-column d-flex last">
-                        <div class="title">{{#str}} author, contentbank {{/str}}</div>
-                        <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="author" data-action="sortauthor"
-                        title="{{#str}} sortbyx, core, {{#str}} author, contentbank {{/str}} {{/str}}">
-                            <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
-                            <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
-                            <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
-                        </button>
-                    </div>
-                </div>
-            {{#contents}}
-                <div class="cb-listitem"
-                    data-file="{{{ title }}}"
-                    data-name="{{{ name }}}"
-                    data-bytes="{{ bytes }}"
-                    data-timemodified="{{ timemodified }}"
-                    data-type="{{{ type }}}"
-                    data-author="{{{ author }}}">
-                    <div class="cb-file cb-column position-relative">
-                        <div class="cb-thumbnail" role="img" aria-label="{{{ name }}}"
-                        style="background-image: url('{{{ icon }}}');">
+            {{#contents.0}}
+                <div class="cb-content-wrapper d-flex px-2" data-region="filearea">
+                    <div class="cb-heading bg-white">
+                        <div class="cb-file cb-column d-flex">
+                            <div class="title">{{#str}} contentname, contentbank {{/str}}</div>
+                            <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="contentname" data-action="sortname"
+                                title="{{#str}} sortbyx, core, {{#str}} contentname, contentbank {{/str}} {{/str}}">
+                                <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
+                                <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
+                                <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                            </button>
                         </div>
-                        <a href="{{{ link }}}" class="cb-link stretched-link" title="{{{ name }}}">
-                            <span class="cb-name word-break-all clamp-2" data-region="cb-content-name">
-                                {{{ name }}}
-                            </span>
-                        </a>
+                        <div class="cb-date cb-column d-flex">
+                            <div class="title">{{#str}} lastmodified, contentbank {{/str}}</div>
+                            <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="lastmodified" data-action="sortdate"
+                            title="{{#str}} sortbyx, core, {{#str}} lastmodified, contentbank {{/str}} {{/str}}">
+                                <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
+                                <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
+                                <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                            </button>
+                        </div>
+                        <div class="cb-size cb-column d-flex">
+                            <div class="title">{{#str}} size, contentbank {{/str}}</div>
+                            <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="size" data-action="sortsize"
+                            title="{{#str}} sortbyx, core, {{#str}} size, contentbank {{/str}} {{/str}}">
+                                <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
+                                <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
+                                <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                            </button>
+                        </div>
+                        <div class="cb-type cb-column d-flex">
+                            <div class="title">{{#str}} type, contentbank {{/str}}</div>
+                            <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="type" data-action="sorttype"
+                            title="{{#str}} sortbyx, core, {{#str}} type, contentbank {{/str}} {{/str}}">
+                                <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
+                                <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
+                                <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                            </button>
+                        </div>
+                        <div class="cb-author cb-column d-flex last">
+                            <div class="title">{{#str}} author, contentbank {{/str}}</div>
+                            <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="author" data-action="sortauthor"
+                            title="{{#str}} sortbyx, core, {{#str}} author, contentbank {{/str}} {{/str}}">
+                                <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
+                                <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
+                                <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="cb-date cb-column small">
-                        {{#userdate}} {{ timemodified }}, {{#str}} strftimedatetimeshort, core_langconfig {{/str}} {{/userdate}}
+                {{#contents}}
+                    <div class="cb-listitem"
+                        data-file="{{{ title }}}"
+                        data-name="{{{ name }}}"
+                        data-bytes="{{ bytes }}"
+                        data-timemodified="{{ timemodified }}"
+                        data-type="{{{ type }}}"
+                        data-author="{{{ author }}}">
+                        <div class="cb-file cb-column position-relative">
+                            <div class="cb-thumbnail" role="img" aria-label="{{{ name }}}"
+                            style="background-image: url('{{{ icon }}}');">
+                            </div>
+                            <a href="{{{ link }}}" class="cb-link stretched-link" title="{{{ name }}}">
+                                <span class="cb-name word-break-all clamp-2" data-region="cb-content-name">
+                                    {{{ name }}}
+                                </span>
+                            </a>
+                        </div>
+                        <div class="cb-date cb-column small">
+                            {{#userdate}} {{ timemodified }}, {{#str}} strftimedatetimeshort, core_langconfig {{/str}} {{/userdate}}
+                        </div>
+                        <div class="cb-size cb-column small">
+                            {{ size }}
+                        </div>
+                        <div class="cb-type cb-column small">
+                            {{{ type }}}
+                        </div>
+                        <div class="cb-type cb-column last small">
+                            {{{ author }}}
+                        </div>
                     </div>
-                    <div class="cb-size cb-column small">
-                        {{ size }}
-                    </div>
-                    <div class="cb-type cb-column small">
-                        {{{ type }}}
-                    </div>
-                    <div class="cb-type cb-column last small">
-                        {{{ author }}}
+                {{/contents}}
+                </div>
+            {{/contents.0}}
+            {{^contents.0}}
+                <div class="cb-content-wrapper d-flex flex-wrap p-2" data-region="filearea">
+                    <div class="w-100 p-3 text-center text-muted">
+                        {{#str}} nocontentavailable, core_contentbank {{/str}}
                     </div>
                 </div>
-            {{/contents}}
-            </div>
+            {{/contents.0}}
         </div>
     </div>
 </div>
