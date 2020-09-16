@@ -484,10 +484,12 @@ class api {
      * @param \core\oauth2\issuer $issuer The desired OAuth issuer
      * @param moodle_url $currenturl The url to the current page.
      * @param string $additionalscopes The additional scopes required for authorization.
+     * @param bool $autorefresh Should the client support the use of refresh tokens to persist access across sessions.
      * @return \core\oauth2\client
      */
-    public static function get_user_oauth_client(issuer $issuer, moodle_url $currenturl, $additionalscopes = '') {
-        $client = new \core\oauth2\client($issuer, $currenturl, $additionalscopes);
+    public static function get_user_oauth_client(issuer $issuer, moodle_url $currenturl, $additionalscopes = '',
+            $autorefresh = false) {
+        $client = new \core\oauth2\client($issuer, $currenturl, $additionalscopes, false, $autorefresh);
 
         return $client;
     }
