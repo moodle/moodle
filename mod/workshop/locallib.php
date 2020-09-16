@@ -499,54 +499,54 @@ class workshop {
     /**
      * Check given file types and return invalid/unknown ones.
      *
-     * Empty whitelist is interpretted as "any extension is valid".
+     * Empty allowlist is interpretted as "any extension is valid".
      *
      * @deprecated since Moodle 3.4 MDL-56486 - please use the {@link core_form\filetypes_util}
      * @param string|array $extensions list of file extensions
-     * @param string|array $whitelist list of valid extensions
-     * @return array list of invalid extensions not found in the whitelist
+     * @param string|array $allowlist list of valid extensions
+     * @return array list of invalid extensions not found in the allowlist
      */
-    public static function invalid_file_extensions($extensions, $whitelist) {
+    public static function invalid_file_extensions($extensions, $allowlist) {
 
         debugging('The method workshop::invalid_file_extensions() is deprecated.
             Please use the methods provided by the \core_form\filetypes_util class.', DEBUG_DEVELOPER);
 
         $extensions = self::normalize_file_extensions($extensions);
-        $whitelist = self::normalize_file_extensions($whitelist);
+        $allowlist = self::normalize_file_extensions($allowlist);
 
-        if (empty($extensions) or empty($whitelist)) {
+        if (empty($extensions) or empty($allowlist)) {
             return array();
         }
 
-        // Return those items from $extensions that are not present in $whitelist.
-        return array_keys(array_diff_key(array_flip($extensions), array_flip($whitelist)));
+        // Return those items from $extensions that are not present in $allowlist.
+        return array_keys(array_diff_key(array_flip($extensions), array_flip($allowlist)));
     }
 
     /**
      * Is the file have allowed to be uploaded to the workshop?
      *
-     * Empty whitelist is interpretted as "any file type is allowed" rather
+     * Empty allowlist is interpretted as "any file type is allowed" rather
      * than "no file can be uploaded".
      *
      * @deprecated since Moodle 3.4 MDL-56486 - please use the {@link core_form\filetypes_util}
      * @param string $filename the file name
-     * @param string|array $whitelist list of allowed file extensions
+     * @param string|array $allowlist list of allowed file extensions
      * @return false
      */
-    public static function is_allowed_file_type($filename, $whitelist) {
+    public static function is_allowed_file_type($filename, $allowlist) {
 
         debugging('The method workshop::is_allowed_file_type() is deprecated.
             Please use the methods provided by the \core_form\filetypes_util class.', DEBUG_DEVELOPER);
 
-        $whitelist = self::normalize_file_extensions($whitelist);
+        $allowlist = self::normalize_file_extensions($allowlist);
 
-        if (empty($whitelist)) {
+        if (empty($allowlist)) {
             return true;
         }
 
         $haystack = strrev(trim(strtolower($filename)));
 
-        foreach ($whitelist as $extension) {
+        foreach ($allowlist as $extension) {
             if (strpos($haystack, strrev($extension)) === 0) {
                 // The file name ends with the extension.
                 return true;
