@@ -111,10 +111,10 @@ class qtype_essay_question extends question_with_responses {
         if ($hasattachments) {
             // Check the filetypes.
             $filetypesutil = new \core_form\filetypes_util();
-            $whitelist = $filetypesutil->normalize_file_types($this->filetypeslist);
+            $allowlist = $filetypesutil->normalize_file_types($this->filetypeslist);
             $wrongfiles = array();
             foreach ($response['attachments']->get_files() as $file) {
-                if (!$filetypesutil->is_allowed_file_type($file->get_filename(), $whitelist)) {
+                if (!$filetypesutil->is_allowed_file_type($file->get_filename(), $allowlist)) {
                     $wrongfiles[] = $file->get_filename();
                 }
             }
