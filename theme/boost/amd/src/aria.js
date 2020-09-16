@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {end, escape, arrowUp, arrowDown, home, enter, space} from 'core/key_codes';
+import {end, escape, arrowUp, arrowDown, arrowLeft, arrowRight, home, enter, space} from 'core/key_codes';
 import $ from 'jquery';
 import Pending from 'core/pending';
 
@@ -206,7 +206,87 @@ const autoFocus = () => {
     });
 };
 
+/**
+ * Changes the focus to the correct tab based on the key that is pressed.
+ * @param {KeyboardEvent} e
+ */
+const updateTabFocus = e => {
+    const tabList = e.target.closest('[role="tablist"]');
+    const vertical = tabList.getAttribute('aria-orientation') == 'vertical';
+    const rtl = window.right_to_left();
+    const arrowNext = vertical ? arrowDown : (rtl ? arrowLeft : arrowRight);
+    const arrowPrevious = vertical ? arrowUp : (rtl ? arrowRight : arrowLeft);
+    const tabs = Array.prototype.filter.call(
+        tabList.querySelectorAll('[role="tab"]'),
+        tab => getComputedStyle(tab).display !== 'none'); // We only work with the visible tabs.
+
+    for (let i = 0; i < tabs.length; i++) {
+        tabs[i].index = i;
+    }
+
+    switch (e.keyCode) {
+        case arrowNext:
+            e.preventDefault();
+            if (e.target.index !== undefined && tabs[e.target.index + 1]) {
+                tabs[e.target.index + 1].focus();
+            } else {
+                tabs[0].focus();
+            }
+            break;
+        case arrowPrevious:
+            e.preventDefault();
+            if (e.target.index !== undefined && tabs[e.target.index - 1]) {
+                tabs[e.target.index - 1].focus();
+            } else {
+                tabs[tabs.length - 1].focus();
+            }
+            break;
+        case home:
+            e.preventDefault();
+            tabs[0].focus();
+            break;
+        case end:
+            e.preventDefault();
+            tabs[tabs.length - 1].focus();
+            break;
+        case enter:
+        case space:
+            e.preventDefault();
+            $(e.target).tab('show');
+            tabs.forEach(tab => {
+                tab.tabIndex = -1;
+            });
+            e.target.tabIndex = 0;
+    }
+};
+
+/**
+ * Fix accessibility issues regarding tab elements focus and their tab order in Bootstrap navs.
+ */
+const tabElementFix = () => {
+    document.addEventListener('keydown', e => {
+        if ([arrowUp, arrowDown, arrowLeft, arrowRight, home, end, enter, space].includes(e.keyCode)) {
+            if (e.target.matches('[role="tablist"] [role="tab"]')) {
+                updateTabFocus(e);
+            }
+        }
+    });
+
+    document.addEventListener('click', e => {
+        if (e.target.matches('[role="tablist"] [role="tab"]')) {
+            const tabs = e.target.closest('[role="tablist"]').querySelectorAll('[role="tab"]');
+            e.preventDefault();
+            $(e.target).tab('show');
+            tabs.forEach(tab => {
+                tab.tabIndex = -1;
+            });
+            e.target.tabIndex = 0;
+        }
+    });
+};
+
 export const init = () => {
     dropdownFix();
     autoFocus();
+    tabElementFix();
 };
