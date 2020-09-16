@@ -261,6 +261,7 @@ class core_course_external extends external_api {
                         $module['id'] = $cm->id;
                         $module['name'] = external_format_string($cm->name, $modcontext->id);
                         $module['instance'] = $cm->instance;
+                        $module['contextid'] = $modcontext->id;
                         $module['modname'] = (string) $cm->modname;
                         $module['modplural'] = (string) $cm->modplural;
                         $module['modicon'] = $cm->get_icon_url()->out(false);
@@ -442,6 +443,7 @@ class core_course_external extends external_api {
                                     'url' => new external_value(PARAM_URL, 'activity url', VALUE_OPTIONAL),
                                     'name' => new external_value(PARAM_RAW, 'activity module name'),
                                     'instance' => new external_value(PARAM_INT, 'instance id', VALUE_OPTIONAL),
+                                    'contextid' => new external_value(PARAM_INT, 'Activity context id.', VALUE_OPTIONAL),
                                     'description' => new external_value(PARAM_RAW, 'activity description', VALUE_OPTIONAL),
                                     'visible' => new external_value(PARAM_INT, 'is the module visible', VALUE_OPTIONAL),
                                     'uservisible' => new external_value(PARAM_BOOL, 'Is the module visible for the user?',
