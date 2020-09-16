@@ -11276,7 +11276,7 @@ class admin_setting_filetypes extends admin_setting_configtext {
 
         } else {
             $troublemakers = $this->util->get_not_whitelisted($data, $this->onlytypes);
-            return get_string('filetypesnotwhitelisted', 'core_form', implode(' ', $troublemakers));
+            return get_string('filetypesnotallowed', 'core_form', implode(' ', $troublemakers));
         }
     }
 

@@ -245,7 +245,7 @@ class MoodleQuickForm_filetypes extends MoodleQuickForm_group {
             $notwhitelisted = $this->util->get_not_whitelisted($value['filetypes'], $this->onlytypes);
 
             if ($notwhitelisted) {
-                return get_string('filetypesnotwhitelisted', 'core_form', implode(', ', $notwhitelisted));
+                return get_string('filetypesnotallowed', 'core_form', implode(', ', $notwhitelisted));
             }
         }
 

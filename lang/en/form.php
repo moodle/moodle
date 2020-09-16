@@ -46,7 +46,7 @@ $string['err_wrongfileextension'] = 'Some files ({$a->wrongfiles}) cannot be upl
 $string['filesofthesetypes'] = 'Accepted file types:';
 $string['filetypesany'] = 'All file types';
 $string['filetypesnotall'] = 'It is not allowed to select \'All file types\' here';
-$string['filetypesnotwhitelisted'] = 'These file types are not allowed here: {$a}';
+$string['filetypesnotallowed'] = 'These file types are not allowed here: {$a}';
 $string['filetypesothers'] = 'Other files';
 $string['filetypesunknown'] = 'Unknown file types: {$a}';
 $string['general'] = 'General';
@@ -85,3 +85,6 @@ $string['timeunit'] = 'Time unit';
 $string['timing'] = 'Timing';
 $string['unmaskpassword'] = 'Unmask';
 $string['year'] = 'Year';
+
+// Deprecated since Moodle 3.10.
+$string['filetypesnotwhitelisted'] = 'These file types are not allowed here: {$a}';
