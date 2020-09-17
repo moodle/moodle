@@ -86,6 +86,15 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('summary_editor', 'coursesummary');
         $mform->setType('summary_editor', PARAM_RAW);
 
+        $mform->addElement('date_time_selector', 'startdate', get_string('startdate'));
+        $mform->addHelpButton('startdate', 'startdate');
+        $date = (new DateTime())->setTimestamp(usergetmidnight(time()));
+        $date->modify('+1 day');
+        $mform->setDefault('startdate', $date->getTimestamp());
+
+        $mform->addElement('date_time_selector', 'enddate', get_string('enddate'), array('optional' => true));
+        $mform->addHelpButton('enddate', 'enddate');
+
         // Add action buttons.
         $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton',
