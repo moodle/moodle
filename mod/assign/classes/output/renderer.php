@@ -1345,6 +1345,14 @@ class renderer extends \plugin_renderer_base {
                                       $info['cmname']);
             $due = $info['timedue'] ? userdate($info['timedue']) : '-';
 
+            if ($info['cangrade']) {
+                $params['action'] = 'grading';
+                $gradeinfo = \html_writer::link(new \moodle_url('/mod/assign/view.php', $params),
+                    get_string('numberofsubmissionsneedgradinglabel', 'assign', $info['gradeinfo']));
+            } else {
+                $gradeinfo = $info['gradeinfo'];
+            }
+
             $printsection = '';
             if ($indexsummary->usesections) {
                 if ($info['sectionname'] !== $currentsection) {
@@ -1359,9 +1367,9 @@ class renderer extends \plugin_renderer_base {
             }
 
             if ($indexsummary->usesections) {
-                $row = array($printsection, $link, $due, $info['submissioninfo'], $info['gradeinfo']);
+                $row = [$printsection, $link, $due, $info['submissioninfo'], $gradeinfo];
             } else {
-                $row = array($link, $due, $info['submissioninfo'], $info['gradeinfo']);
+                $row = [$link, $due, $info['submissioninfo'], $gradeinfo];
             }
             $table->data[] = $row;
         }

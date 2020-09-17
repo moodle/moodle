@@ -393,6 +393,7 @@ $string['numberofdraftsubmissions'] = 'Drafts';
 $string['numberofparticipants'] = 'Participants';
 $string['numberofsubmittedassignments'] = 'Submitted';
 $string['numberofsubmissionsneedgrading'] = 'Needs grading';
+$string['numberofsubmissionsneedgradinglabel'] = 'Needs grading: {$a}';
 $string['numberofteams'] = 'Groups';
 $string['offline'] = 'No online submissions required';
 $string['open'] = 'Open';
