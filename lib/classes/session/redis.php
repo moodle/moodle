@@ -56,6 +56,9 @@ class redis extends handler {
     protected $lockretry = 100;
     /** @var int $serializer The serializer to use */
     protected $serializer = \Redis::SERIALIZER_PHP;
+    /** @var string $lasthash hash of the session data content */
+    protected $lasthash = null;
+
     /**
      * @var int $lockexpire how long to wait in seconds before expiring the lock automatically
      * so that other requests may continue execution, ignored if PECL redis is below version 2.2.0.
@@ -237,6 +240,7 @@ class redis extends handler {
      * @return bool true on success.  false on unable to unlock sessions.
      */
     public function handler_close() {
+        $this->lasthash = null;
         try {
             foreach ($this->locks as $id => $expirytime) {
                 if ($expirytime > $this->time()) {
@@ -269,6 +273,7 @@ class redis extends handler {
                 if ($this->requires_write_lock()) {
                     $this->unlock_session($id);
                 }
+                $this->lasthash = sha1('');
                 return '';
             }
             $this->connection->expire($id, $this->timeout);
@@ -276,6 +281,7 @@ class redis extends handler {
             error_log('Failed talking to redis: '.$e->getMessage());
             throw $e;
         }
+        $this->lasthash = sha1(base64_encode($sessiondata));
         return $sessiondata;
     }
 
@@ -287,6 +293,14 @@ class redis extends handler {
      * @return bool true on write success, false on failure
      */
     public function handler_write($id, $data) {
+
+        $hash = sha1(base64_encode($data));
+
+        // If the content has not changed don't bother writing.
+        if ($hash === $this->lasthash) {
+            return true;
+        }
+
         if (is_null($this->connection)) {
             // The session has already been closed, don't attempt another write.
             error_log('Tried to write session: '.$id.' before open or after close.');
@@ -313,6 +327,7 @@ class redis extends handler {
      * @return bool true if the session was deleted, false otherwise.
      */
     public function handler_destroy($id) {
+        $this->lasthash = null;
         try {
             $this->connection->del($id);
             $this->unlock_session($id);
