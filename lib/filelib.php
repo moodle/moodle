@@ -2234,21 +2234,25 @@ function readfile_accel($file, $mimetype, $accelerate) {
         }
     }
 
-    if ($filesize > 10000000) {
-        // for large files try to flush and close all buffers to conserve memory
-        while(@ob_get_level()) {
-            if (!@ob_end_flush()) {
-                break;
-            }
-        }
-    }
-
-    // Send this header after we have flushed the buffers so that if we fail
-    // later can remove this because it wasn't sent.
     header('Content-Length: ' . $filesize);
 
     if (!empty($_SERVER['REQUEST_METHOD']) and $_SERVER['REQUEST_METHOD'] === 'HEAD') {
         exit;
+    }
+
+    while (ob_get_level()) {
+        $handlerstack = ob_list_handlers();
+        $activehandler = array_pop($handlerstack);
+        if ($activehandler === 'default output handler') {
+            // We do not expect any content in the buffer when we are serving files.
+            $buffercontents = ob_get_clean();
+            if ($buffercontents !== '') {
+                error_log('Non-empty default output handler buffer detected while serving the file ' . $file);
+            }
+        } else {
+            // Some handlers such as zlib output compression may have file signature buffered - flush it.
+            ob_end_flush();
+        }
     }
 
     // send the whole file content
