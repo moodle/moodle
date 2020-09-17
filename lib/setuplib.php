@@ -1325,17 +1325,19 @@ function get_real_size($size = 0) {
     }
 
     static $binaryprefixes = array(
-        'K' => 1024,
-        'k' => 1024,
-        'M' => 1048576,
-        'm' => 1048576,
-        'G' => 1073741824,
-        'g' => 1073741824,
-        'T' => 1099511627776,
-        't' => 1099511627776,
+        'K' => 1024 ** 1,
+        'k' => 1024 ** 1,
+        'M' => 1024 ** 2,
+        'm' => 1024 ** 2,
+        'G' => 1024 ** 3,
+        'g' => 1024 ** 3,
+        'T' => 1024 ** 4,
+        't' => 1024 ** 4,
+        'P' => 1024 ** 5,
+        'p' => 1024 ** 5,
     );
 
-    if (preg_match('/^([0-9]+)([KMGT])/i', $size, $matches)) {
+    if (preg_match('/^([0-9]+)([KMGTP])/i', $size, $matches)) {
         return $matches[1] * $binaryprefixes[$matches[2]];
     }
 
