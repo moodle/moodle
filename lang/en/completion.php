@@ -122,6 +122,7 @@ $string['courseaggregation_any'] = 'ANY selected courses to be completed';
 $string['coursealreadycompleted'] = 'You have already completed this course';
 $string['coursecomplete'] = 'Course complete';
 $string['coursecompleted'] = 'Course completed';
+$string['coursecompletedmessage'] = '<p>Congratulations!</p><p>You just completed the following course: <a href="{$a->courselink}">{$a->coursename}</a>.</p>';
 $string['coursecompletion'] = 'Course completion';
 $string['coursecompletioncondition'] = 'Condition: {$a}';
 $string['coursegrade'] = 'Course grade';
