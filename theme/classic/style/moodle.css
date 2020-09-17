@@ -19638,10 +19638,6 @@ body {
 .navbar {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); }
 
-.filemanager-container,
-.filepicker-filelist {
-  border: 1px solid #dee2e6; }
-
 .userpicture {
   border-radius: 50%; }
 
