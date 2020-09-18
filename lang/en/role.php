@@ -172,6 +172,7 @@ $string['course:changelockedcustomfields'] = 'Change locked custom fields';
 $string['course:changeshortname'] = 'Change course short name';
 $string['course:changesummary'] = 'Change course summary';
 $string['course:configurecustomfields'] = 'Configure custom fields';
+$string['course:configuredownloadcontent'] = 'Configure download course content';
 $string['course:downloadcoursecontent'] = 'Download course content';
 $string['course:enrolconfig'] = 'Configure enrol instances in courses';
 $string['course:enrolreview'] = 'Review course enrolments';
