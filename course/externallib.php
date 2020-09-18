@@ -167,7 +167,8 @@ class core_course_external extends external_api {
             //retrieve sections
             $modinfo = get_fast_modinfo($course);
             $sections = $modinfo->get_section_info_all();
-            $coursenumsections = course_get_format($course)->get_last_section_number();
+            $courseformat = course_get_format($course);
+            $coursenumsections = $courseformat->get_last_section_number();
             $stealthmodules = array();   // Array to keep all the modules available but not visible in a course section/topic.
 
             $completioninfo = new completion_info($course);
@@ -383,20 +384,26 @@ class core_course_external extends external_api {
             // We didn't this before to be able to retrieve stealth activities.
             foreach ($coursecontents as $sectionnumber => $sectioncontents) {
                 $section = $sections[$sectionnumber];
-                // Show the section if the user is permitted to access it, OR if it's not available
-                // but there is some available info text which explains the reason & should display.
+                // Show the section if the user is permitted to access it OR
+                // if it's not available but there is some available info text which explains the reason & should display OR
+                // the course is configured to show hidden sections name.
                 $showsection = $section->uservisible ||
-                    ($section->visible && !$section->available &&
-                    !empty($section->availableinfo));
+                    ($section->visible && !$section->available && !empty($section->availableinfo)) ||
+                    (!$section->visible && empty($courseformat->get_course()->hiddensections));
 
                 if (!$showsection) {
                     unset($coursecontents[$sectionnumber]);
                     continue;
                 }
 
-                // Remove modules information if the section is not visible for the user.
+                // Remove section and modules information if the section is not visible for the user.
                 if (!$section->uservisible) {
                     $coursecontents[$sectionnumber]['modules'] = array();
+                    // Remove summary information if the section is completely hidden only,
+                    // even if the section is not user visible, the summary is always displayed among the availability information.
+                    if (!$section->visible) {
+                        $coursecontents[$sectionnumber]['summary'] = '';
+                    }
                 }
             }
 
