@@ -911,7 +911,7 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
         }
            $params['companyid'] = $extraparams['companyid'];
     }
-    return $DB->get_records_sql("SELECT concat(c.id, '-', u.id), u.*, d.name as departmentname, c.name as companyname
+    return $DB->get_records_sql("SELECT " . $DB->sql_concat('c.id', "'-'", 'u.id')." , u.*, d.name as departmentname, c.name as companyname
                                  FROM {user} u, {department} d, {company_users} cu, {company} c
                                  WHERE $select and cu.userid = u.id and d.id = cu.departmentid AND c.id = cu.companyid
                                  $companysql

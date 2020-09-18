@@ -1135,10 +1135,10 @@ class iomad {
         }
 
         // Get the user details.
-        $countsql = "SELECT CONCAT(co.id, u.id) AS id ";
+        $countsql = "SELECT" . $DB->sql_concat('co.id', 'u.id'). "AS id ";
         $selectsql = "
-                SELECT
-                CONCAT(co.id, u.id) AS id,
+                SELECT ".
+                $DB->sql_concat('co.id', 'u.id')." AS id,
                 u.id AS uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,
@@ -1504,9 +1504,9 @@ class iomad {
 
         // Get the user details.
         $shortname = addslashes($course->shortname);
-        $countsql = "SELECT CONCAT(clu.id, u.id, clu.isusing) AS id";
-        $selectsql = "SELECT
-                CONCAT(clu.id, u.id) AS id,
+        $countsql = "SELECT " . $DB->sql_concat('clu.id', 'u.id', 'clu.isusing') . " AS id";
+        $selectsql = "SELECT ".
+                $DB->sql_concat('clu.id', 'u.id'). " AS id,
                 u.id AS uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,
