@@ -68,6 +68,9 @@ lib/babel-polyfill/
 lib/polyfills/
 lib/emoji-data/
 lib/plist/
+lib/zipstream/
+lib/php-enum/
+lib/http-message/
 media/player/videojs/amd/src/video-lazy.js
 media/player/videojs/amd/src/Youtube-lazy.js
 media/player/videojs/videojs/
