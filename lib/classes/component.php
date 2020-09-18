@@ -104,6 +104,9 @@ class core_component {
         'RedeyeVentures\\GeoPattern' => 'lib/geopattern-php/GeoPattern',
         'MongoDB' => 'cache/stores/mongodb/MongoDB',
         'Firebase\\JWT' => 'lib/php-jwt/src',
+        'ZipStream' => 'lib/zipstream/src/',
+        'MyCLabs\\Enum' => 'lib/php-enum/src',
+        'Psr\\Http\\Message' => 'lib/http-message/src',
     );
 
     /**

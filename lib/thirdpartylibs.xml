@@ -339,4 +339,22 @@
     <license>MIT</license>
     <version>2.0.1</version>
   </library>
+  <library>
+    <location>zipstream</location>
+    <name>ZipStream-PHP</name>
+    <license>MIT</license>
+    <version>2.1.0</version>
+  </library>
+  <library>
+    <location>php-enum</location>
+    <name>php-enum</name>
+    <license>MIT</license>
+    <version>1.7.6</version>
+  </library>
+  <library>
+    <location>http-message</location>
+    <name>http-message</name>
+    <license>MIT</license>
+    <version>1.0.1</version>
+  </library>
 </libraries>
