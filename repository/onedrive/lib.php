@@ -93,7 +93,7 @@ class repository_onedrive extends repository {
             $returnurl->param('sesskey', sesskey());
         }
 
-        $this->client = \core\oauth2\api::get_user_oauth_client($this->issuer, $returnurl, self::SCOPES);
+        $this->client = \core\oauth2\api::get_user_oauth_client($this->issuer, $returnurl, self::SCOPES, true);
 
         return $this->client;
     }
