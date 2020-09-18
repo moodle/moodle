@@ -2588,4 +2588,14 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ],
+
+    // Allow users to configure download course content functionality within a course, if the feature is available.
+    'moodle/course:configuredownloadcontent' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ],
 );
