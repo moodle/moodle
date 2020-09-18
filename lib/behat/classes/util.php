@@ -135,7 +135,7 @@ class behat_util extends testing_util {
     /**
      * Build theme CSS.
      */
-    public static function build_themes() {
+    public static function build_themes($mtraceprogress = false) {
         global $CFG;
         require_once("{$CFG->libdir}/outputlib.php");
 
@@ -147,7 +147,7 @@ class behat_util extends testing_util {
         }, $themenames);
 
         // Build the list of themes and cache them in local cache.
-        $themes = theme_build_css_for_themes($themeconfigs, ['ltr'], true);
+        $themes = theme_build_css_for_themes($themeconfigs, ['ltr'], true, $mtraceprogress);
 
         $framework = self::get_framework();
         $storageroot = self::get_dataroot() . "/{$framework}/themedata";
@@ -278,7 +278,6 @@ class behat_util extends testing_util {
      * @return void
      */
     public static function start_test_mode($themesuitewithallfeatures = false, $tags = '', $parallelruns = 0, $run = 0) {
-        global $CFG;
 
         if (!defined('BEHAT_UTIL')) {
             throw new coding_exception('This method can be only used by Behat CLI tool');
