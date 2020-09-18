@@ -922,4 +922,146 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         // Meta-link enrolment has enrol actions for suspended students -- unenrol.
         $this->assertCount(1, $actions);
     }
+
+    /**
+     * Test how data for instance editing is validated.
+     */
+    public function test_edit_instance_validation() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $metaplugin = enrol_get_plugin('meta');
+
+        // A course with meta enrolment.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        // Create a meta enrolment instance.
+        $instance = (object)$metaplugin->get_instance_defaults();
+        $instance->id       = null;
+        $instance->courseid = $course->id;
+        $instance->status   = ENROL_INSTANCE_ENABLED;
+        // Emulate the form data.
+        $data = [
+            'customint1' => 0,
+            'customint2' => 0
+        ];
+        // Test when no valid 'customint1' field (meta courses links) is provided.
+        $errors = $metaplugin->edit_instance_validation($data, [], $instance, $coursecontext);
+        // We're going to check the string contents of the errors returned as this is the only way
+        // to differentiate the errors produced by the 'edit_instance_validation()' method somehow.
+        // The method always returns what the edit instance form expects and this is an array of form fields
+        // with the corresponding errors messages.
+        $this->assertEquals('Required', $errors['customint1']);
+
+        // Test when 'customint1' contains an unknown course.
+        // Fetch the max course id from the courses table and increment it to get
+        // the course id which surely doesn't exist.
+        $maxid = $DB->get_field_sql('SELECT MAX(id) FROM {course}');
+        // Use the same instance as before but set another data.
+        $data = [
+            'customint1' => [$maxid + 1],
+            'customint2' => 0
+        ];
+        $errors = $metaplugin->edit_instance_validation($data, [], $instance, $coursecontext);
+        $this->assertEquals('You are trying to use an invalid course ID', $errors['customint1']);
+
+        // Test when 'customint1' field already contains courses meta linked with the current one.
+        $metacourse1 = $this->getDataGenerator()->create_course();
+        $metaplugin->add_instance($course, array('customint1' => $metacourse1->id));
+        // Use the same instance as before but set another data.
+        $data = [
+            'customint1' => [$metacourse1->id],
+            'customint2' => 0
+        ];
+        $errors = $metaplugin->edit_instance_validation($data, [], $instance, $coursecontext);
+        $this->assertEquals('You are trying to use an invalid course ID', $errors['customint1']);
+
+        // Test when a course is set as a not visible and a user doesn't have the capability to use it here.
+        $metacourse2record = new stdClass();
+        $metacourse2record->visible = 0;
+        $metacourse2 = $this->getDataGenerator()->create_course($metacourse2record);
+        $metacourse2context = context_course::instance($metacourse2->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        role_assign($teacherrole->id, $user->id, $metacourse2context->id);
+        unassign_capability('moodle/course:viewhiddencourses', $teacherrole->id);
+        $this->setUser($user);
+
+        // Use the same instance as before but set another data.
+        $data = [
+            'customint1' => [$metacourse2->id],
+            'customint2' => 0
+        ];
+        $errors = $metaplugin->edit_instance_validation($data, [], $instance, $coursecontext);
+        $this->assertEquals('Sorry, but you do not currently have permissions to do that (moodle/course:viewhiddencourses).',
+            $errors['customint1']);
+
+        // Revert some changes from the last assertion to reuse the course.
+        $metacourse2->visible = 1;
+        $DB->update_record('course', $metacourse2);
+        assign_capability('moodle/course:viewhiddencourses', CAP_ALLOW,
+            $teacherrole->id, context_course::instance($metacourse2->id));
+
+        // Test with no 'enrol/meta:selectaslinked' capability.
+        unassign_capability('enrol/meta:selectaslinked', $teacherrole->id);
+        $errors = $metaplugin->edit_instance_validation($data, [], $instance, $coursecontext);
+        $this->assertEquals('Sorry, but you do not currently have permissions to do that (enrol/meta:selectaslinked).',
+            $errors['customint1']);
+
+        // Back to admin user to regain the capabilities quickly.
+        $this->setAdminUser();
+
+        // Test when meta course id is the site id.
+        $site = $DB->get_record('course', ['id' => SITEID]);
+        // Use the same instance as before but set another data.
+        $data = [
+            'customint1' => [$site->id],
+            'customint2' => 0
+        ];
+        $errors = $metaplugin->edit_instance_validation($data, [], $instance, $coursecontext);
+        $this->assertEquals('You are trying to use an invalid course ID', $errors['customint1']);
+
+        // Test when meta course id is id of the current course.
+        // Use the same instance as before but set another data.
+        $data = [
+            'customint1' => [$course->id],
+            'customint2' => 0
+        ];
+        $errors = $metaplugin->edit_instance_validation($data, [], $instance, $coursecontext);
+        $this->assertEquals('You are trying to use an invalid course ID', $errors['customint1']);
+
+        // Test with the 'customint2' field set (which is groups).
+        // Prepare some groups data.
+        $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $groups = [];
+        foreach (groups_get_all_groups($course->id) as $group) {
+            $groups[$group->id] = format_string($group->name, true, array('context' => $coursecontext));
+        }
+
+        // Use the same instance as before but set another data.
+        // Use a non-existing group id.
+        if (!$maxid = $DB->get_field_sql('SELECT MAX(id) FROM {groups}')) {
+            $maxid = 0;
+        }
+        $data = [
+            'customint1' => [$metacourse2->id],
+            'customint2' => [$maxid + 1]
+        ];
+        $errors = $metaplugin->edit_instance_validation($data, [], $instance, $coursecontext);
+        $this->assertArrayHasKey('customint2', $errors);
+
+        // Test with valid data.
+        $validgroup = reset($groups);
+        $data = [
+            'customint1' => [$metacourse2->id],
+            'customint2' => $validgroup
+        ];
+        $errors = $metaplugin->edit_instance_validation($data, [], $instance, $coursecontext);
+        $this->assertArrayNotHasKey('customint1', $errors);
+        $this->assertArrayNotHasKey('customint2', $errors);
+    }
 }
