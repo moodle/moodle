@@ -181,7 +181,8 @@ function theme_get_css_filename($themename, $globalrevision, $themerevision, $di
  * @param bool           $cache        Should the generated files be stored in local cache.
  * @return array         The built theme content in a multi-dimensional array of name => direction => content
  */
-function theme_build_css_for_themes($themeconfigs = [], $directions = ['rtl', 'ltr'], $cache = true): array {
+function theme_build_css_for_themes($themeconfigs = [], $directions = ['rtl', 'ltr'],
+        $cache = true, $mtraceprogress = false): array {
     global $CFG;
 
     if (empty($themeconfigs)) {
@@ -202,6 +203,11 @@ function theme_build_css_for_themes($themeconfigs = [], $directions = ['rtl', 'l
 
         // First generate all the new css.
         foreach ($directions as $direction) {
+            if ($mtraceprogress) {
+                $timestart = microtime(true);
+                mtrace('Building theme CSS for ' . $themeconfig->name . ' [' .
+                        $direction . '] ...', '');
+            }
             // Lock it on. Technically we should build all themes for SVG and no SVG - but ie9 is out of support.
             $themeconfig->force_svg_use(true);
             $themeconfig->set_rtl_mode(($direction === 'rtl'));
@@ -211,6 +217,9 @@ function theme_build_css_for_themes($themeconfigs = [], $directions = ['rtl', 'l
                 $themeconfig->set_css_content_cache($themecss[$direction]);
                 $filename = theme_get_css_filename($themeconfig->name, $themerev, $newrevision, $direction);
                 css_store_css($themeconfig, $filename, $themecss[$direction]);
+            }
+            if ($mtraceprogress) {
+                mtrace(' done in ' . round(microtime(true) - $timestart, 2) . ' seconds.');
             }
         }
         $themescss[$themeconfig->name] = $themecss;
