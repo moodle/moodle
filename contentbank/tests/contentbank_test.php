@@ -603,4 +603,76 @@ class core_contentbank_testcase extends advanced_testcase {
         $actual = $cb->get_contenttypes_with_capability_feature('test2', null, $enabled);
         $this->assertEquals($contenttypescanfeature, array_values($actual));
     }
+
+    /**
+     * Test the behaviour of is_context_allowed().
+     *
+     * @dataProvider context_provider
+     * @param  \Closure $getcontext Get the context to check.
+     * @param  bool $expectedresult Expected result.
+     *
+     * @covers ::is_context_allowed
+     */
+    public function test_is_context_allowed(\Closure $getcontext, bool $expectedresult): void {
+        $this->resetAfterTest();
+
+        $cb = new contentbank();
+        $context = $getcontext();
+        $this->assertEquals($expectedresult, $cb->is_context_allowed($context));
+    }
+
+    /**
+     * Data provider for test_is_context_allowed().
+     *
+     * @return array
+     */
+    public function context_provider(): array {
+
+        return [
+            'System context' => [
+                function (): \context {
+                    return \context_system::instance();
+                },
+                true,
+            ],
+            'User context' => [
+                function (): \context {
+                    $user = $this->getDataGenerator()->create_user();
+                    return \context_user::instance($user->id);
+                },
+                false,
+            ],
+            'Course category context' => [
+                function (): \context {
+                    $coursecat = $this->getDataGenerator()->create_category();
+                    return \context_coursecat::instance($coursecat->id);
+                },
+                true,
+            ],
+            'Course context' => [
+                function (): \context {
+                    $course = $this->getDataGenerator()->create_course();
+                    return \context_course::instance($course->id);
+                },
+                true,
+            ],
+            'Module context' => [
+                function (): \context {
+                    $course = $this->getDataGenerator()->create_course();
+                    $module = $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
+                    return \context_module::instance($module->cmid);
+                },
+                false,
+            ],
+            'Block context' => [
+                function (): \context {
+                    $course = $this->getDataGenerator()->create_course();
+                    $coursecontext = context_course::instance($course->id);
+                    $block = $this->getDataGenerator()->create_block('online_users', ['parentcontextid' => $coursecontext->id]);
+                    return \context_block::instance($block->id);
+                },
+                false,
+            ],
+        ];
+    }
 }
