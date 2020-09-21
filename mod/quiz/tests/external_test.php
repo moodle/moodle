@@ -109,9 +109,11 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
      * @param  boolean $startattempt whether to start a new attempt
      * @param  boolean $finishattempt whether to finish the new attempt
      * @param  string $behaviour the quiz preferredbehaviour, defaults to 'deferredfeedback'.
+     * @param  boolean $includeqattachments whether to include a question that supports attachments, defaults to false.
      * @return array array containing the quiz, context and the attempt
      */
-    private function create_quiz_with_questions($startattempt = false, $finishattempt = false, $behaviour = 'deferredfeedback') {
+    private function create_quiz_with_questions($startattempt = false, $finishattempt = false, $behaviour = 'deferredfeedback',
+            $includeqattachments = false) {
 
         // Create a new quiz with attempts.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
@@ -129,6 +131,12 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         quiz_add_quiz_question($question->id, $quiz);
         $question = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
         quiz_add_quiz_question($question->id, $quiz);
+
+        if ($includeqattachments) {
+            $question = $questiongenerator->create_question('essay', null, array('category' => $cat->id, 'attachments' => 1,
+                'attachmentsrequired' => 1));
+            quiz_add_quiz_question($question->id, $quiz);
+        }
 
         $quizobj = quiz::create($quiz->id, $this->student->id);
 
@@ -1126,8 +1134,9 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         global $DB;
 
         $timenow = time();
-        // Create a new quiz with two questions and one attempt started.
-        list($quiz, $context, $quizobj, $attempt, $attemptobj, $quba) = $this->create_quiz_with_questions(true);
+        // Create a new quiz with three questions and one attempt started.
+        list($quiz, $context, $quizobj, $attempt, $attemptobj, $quba) = $this->create_quiz_with_questions(true, false,
+            'deferredfeedback', true);
 
         // Response for slot 1.
         $prefix = $quba->get_field_prefix(1);
@@ -1144,9 +1153,12 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
         $this->assertEquals(quiz_attempt::IN_PROGRESS, $result['state']);
 
+        $result = mod_quiz_external::get_attempt_data($attempt->id, 2);
+
         // Now, get the summary.
         $result = mod_quiz_external::get_attempt_summary($attempt->id);
         $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+        $this->assertDebuggingCalled(); // Expect $PAGE->set_url debugging.
 
         // Check it's marked as completed only the first one.
         $this->assertEquals('complete', $result['questions'][0]['state']);
@@ -1182,11 +1194,56 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $result = mod_quiz_external::get_attempt_summary($attempt->id);
         $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
 
-        // Check it's marked as completed only the first one.
+        // Check it's marked as completed the two first questions.
         $this->assertEquals('complete', $result['questions'][0]['state']);
         $this->assertEquals('complete', $result['questions'][1]['state']);
         $this->assertFalse($result['questions'][0]['flagged']);
         $this->assertTrue($result['questions'][1]['flagged']);
+
+        // Add files in the attachment response.
+        $draftitemid = file_get_unused_draft_itemid();
+        $filerecordinline = array(
+            'contextid' => context_user::instance($this->student->id)->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $draftitemid,
+            'filepath'  => '/',
+            'filename'  => 'faketxt.txt',
+        );
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecordinline, 'fake txt contents 1.');
+
+        // Last slot.
+        $prefix = $quba->get_field_prefix(3);
+        $data = array(
+            array('name' => 'slots', 'value' => 3),
+            array('name' => $prefix . ':sequencecheck',
+                    'value' => $attemptobj->get_question_attempt(1)->get_sequence_check_count()),
+            array('name' => $prefix . 'answer', 'value' => 'Some test'),
+            array('name' => $prefix . 'answerformat', 'value' => FORMAT_HTML),
+            array('name' => $prefix . 'attachments', 'value' => $draftitemid),
+        );
+
+        $result = mod_quiz_external::process_attempt($attempt->id, $data);
+        $result = external_api::clean_returnvalue(mod_quiz_external::process_attempt_returns(), $result);
+        $this->assertEquals(quiz_attempt::IN_PROGRESS, $result['state']);
+
+        // Now, get the summary.
+        $result = mod_quiz_external::get_attempt_summary($attempt->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_summary_returns(), $result);
+
+        $this->assertEquals('complete', $result['questions'][0]['state']);
+        $this->assertEquals('complete', $result['questions'][1]['state']);
+        $this->assertEquals('complete', $result['questions'][2]['state']);
+        $this->assertFalse($result['questions'][0]['flagged']);
+        $this->assertTrue($result['questions'][1]['flagged']);
+        $this->assertFalse($result['questions'][2]['flagged']);
+
+        // Check submitted files are there.
+        $this->assertCount(1, $result['questions'][2]['responsefileareas']);
+        $this->assertEquals('attachments', $result['questions'][2]['responsefileareas'][0]['area']);
+        $this->assertCount(1, $result['questions'][2]['responsefileareas'][0]['files']);
+        $this->assertEquals($filerecordinline['filename'], $result['questions'][2]['responsefileareas'][0]['files'][0]['filename']);
 
         // Finish the attempt.
         $sink = $this->redirectMessages();
