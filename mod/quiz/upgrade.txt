@@ -1,5 +1,11 @@
 This files describes API changes in the quiz code.
 
+=== 3.10 ===
+
+* External functions mod_quiz_external::get_attempt_data, mod_quiz_external::get_attempt_summary
+  and mod_quiz_external::get_attempt_review now return a new additional optional field:
+   - responsefileareas: Containing the user responses to questions file area names including files.
+
 === 3.7 ===
 
 * Quiz_cron() has been removed. Sub-plugins should implemented scheduled tasks, however legacy cron in subplugins are

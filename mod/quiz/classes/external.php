@@ -877,6 +877,14 @@ class mod_quiz_external extends external_api {
                 'type' => new external_value(PARAM_ALPHANUMEXT, 'question type, i.e: multichoice'),
                 'page' => new external_value(PARAM_INT, 'page of the quiz this question appears on'),
                 'html' => new external_value(PARAM_RAW, 'the question rendered'),
+                'responsefileareas' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'area' => new external_value(PARAM_NOTAGS, 'File area name'),
+                            'files' => new external_files('Response files for the question', VALUE_OPTIONAL),
+                        )
+                    ), 'Response file areas including files', VALUE_OPTIONAL
+                ),
                 'sequencecheck' => new external_value(PARAM_INT, 'the number of real steps in this attempt', VALUE_OPTIONAL),
                 'lastactiontime' => new external_value(PARAM_INT, 'the timestamp of the most recent step in this question attempt',
                                                         VALUE_OPTIONAL),
@@ -914,23 +922,47 @@ class mod_quiz_external extends external_api {
         $contextid = $attemptobj->get_quizobj()->get_context()->id;
         $displayoptions = $attemptobj->get_display_options($review);
         $renderer = $PAGE->get_renderer('mod_quiz');
+        $contextid = $attemptobj->get_quizobj()->get_context()->id;
 
         foreach ($attemptobj->get_slots($page) as $slot) {
+            $qtype = $attemptobj->get_question_type_name($slot);
+            $qattempt = $attemptobj->get_question_attempt($slot);
+
+            // Get response files (for questions like essay that allows attachments).
+            $responsefileareas = [];
+            foreach (question_bank::get_qtype($qtype)->response_file_areas() as $area) {
+                if ($files = $attemptobj->get_question_attempt($slot)->get_last_qt_files($area, $contextid)) {
+                    $responsefileareas[$area]['area'] = $area;
+                    $responsefileareas[$area]['files'] = [];
+
+                    foreach ($files as $file) {
+                        $responsefileareas[$area]['files'][] = array(
+                            'filename' => $file->get_filename(),
+                            'fileurl' => $qattempt->get_response_file_url($file),
+                            'filesize' => $file->get_filesize(),
+                            'filepath' => $file->get_filepath(),
+                            'mimetype' => $file->get_mimetype(),
+                            'timemodified' => $file->get_timemodified(),
+                        );
+                    }
+                }
+            }
 
             $question = array(
                 'slot' => $slot,
-                'type' => $attemptobj->get_question_type_name($slot),
+                'type' => $qtype,
                 'page' => $attemptobj->get_question_page($slot),
                 'flagged' => $attemptobj->is_question_flagged($slot),
                 'html' => $attemptobj->render_question($slot, $review, $renderer) . $PAGE->requires->get_end_code(),
-                'sequencecheck' => $attemptobj->get_question_attempt($slot)->get_sequence_check_count(),
-                'lastactiontime' => $attemptobj->get_question_attempt($slot)->get_last_step()->get_timecreated(),
-                'hasautosavedstep' => $attemptobj->get_question_attempt($slot)->has_autosaved_step()
+                'responsefileareas' => $responsefileareas,
+                'sequencecheck' => $qattempt->get_sequence_check_count(),
+                'lastactiontime' => $qattempt->get_last_step()->get_timecreated(),
+                'hasautosavedstep' => $qattempt->has_autosaved_step()
             );
 
             if ($attemptobj->is_real_question($slot)) {
                 $question['number'] = $attemptobj->get_question_number($slot);
-                $showcorrectness = $displayoptions->correctness && $attemptobj->get_question_attempt($slot)->has_marks();
+                $showcorrectness = $displayoptions->correctness && $qattempt->has_marks();
                 if ($showcorrectness) {
                     $question['state'] = (string) $attemptobj->get_question_state($slot);
                 }
@@ -938,7 +970,7 @@ class mod_quiz_external extends external_api {
                 $question['blockedbyprevious'] = $attemptobj->is_blocked_by_previous_question($slot);
             }
             if ($displayoptions->marks >= question_display_options::MAX_ONLY) {
-                $question['maxmark'] = $attemptobj->get_question_attempt($slot)->get_max_mark();
+                $question['maxmark'] = $qattempt->get_max_mark();
             }
             if ($displayoptions->marks >= question_display_options::MARK_AND_MAX) {
                 $question['mark'] = $attemptobj->get_question_mark($slot);
