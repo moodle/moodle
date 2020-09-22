@@ -2694,5 +2694,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020091000.02);
     }
 
+    if ($oldversion < 2020091800.01) {
+        // Copy From id captures the id of the source course when a new course originates from a restore
+        // of another course on the same site.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('originalcourseid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020091800.01);
+    }
+
     return true;
 }
