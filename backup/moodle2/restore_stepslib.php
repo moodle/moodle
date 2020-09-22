@@ -2154,11 +2154,22 @@ class restore_default_enrolments_step extends restore_execution_step {
         }
 
         $course = $DB->get_record('course', array('id'=>$this->get_courseid()), '*', MUST_EXIST);
+        // Return any existing course enrolment instances.
+        $enrolinstances = enrol_get_instances($course->id, false);
 
-        if ($DB->record_exists('enrol', array('courseid'=>$this->get_courseid(), 'enrol'=>'manual'))) {
-            // Something already added instances, do not add default instances.
+        if ($enrolinstances) {
+            // Something already added instances.
+            // Get the existing enrolment methods in the course.
+            $enrolmethods = array_map(function($enrolinstance) {
+                return $enrolinstance->enrol;
+            }, $enrolinstances);
+
             $plugins = enrol_get_plugins(true);
-            foreach ($plugins as $plugin) {
+            foreach ($plugins as $pluginname => $plugin) {
+                // Make sure all default enrolment methods exist in the course.
+                if (!in_array($pluginname, $enrolmethods)) {
+                    $plugin->course_updated(true, $course, null);
+                }
                 $plugin->restore_sync_course($course);
             }
 
