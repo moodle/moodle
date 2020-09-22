@@ -1168,7 +1168,7 @@ class mod_quiz_external extends external_api {
      * @since Moodle 3.1
      */
     public static function save_attempt($attemptid, $data, $preflightdata = array()) {
-        global $DB;
+        global $DB, $USER;
 
         $warnings = array();
 
@@ -1182,11 +1182,17 @@ class mod_quiz_external extends external_api {
         // Add a page, required by validate_attempt.
         list($attemptobj, $messages) = self::validate_attempt($params);
 
+        // Prevent functions like file_get_submitted_draft_itemid() or form library requiring a sesskey for WS requests.
+        if (WS_SERVER || PHPUNIT_TEST) {
+            $USER->ignoresesskey = true;
+        }
         $transaction = $DB->start_delegated_transaction();
         // Create the $_POST object required by the question engine.
         $_POST = array();
         foreach ($data as $element) {
             $_POST[$element['name']] = $element['value'];
+            // Some deep core functions like file_get_submitted_draft_itemid() also requires $_REQUEST to be filled.
+            $_REQUEST[$element['name']] = $element['value'];
         }
         $timenow = time();
         // Update the timemodifiedoffline field.
@@ -1261,6 +1267,7 @@ class mod_quiz_external extends external_api {
      * @since Moodle 3.1
      */
     public static function process_attempt($attemptid, $data, $finishattempt = false, $timeup = false, $preflightdata = array()) {
+        global $USER;
 
         $warnings = array();
 
@@ -1279,10 +1286,15 @@ class mod_quiz_external extends external_api {
 
         list($attemptobj, $messages) = self::validate_attempt($params, false, $failifoverdue);
 
+        // Prevent functions like file_get_submitted_draft_itemid() or form library requiring a sesskey for WS requests.
+        if (WS_SERVER || PHPUNIT_TEST) {
+            $USER->ignoresesskey = true;
+        }
         // Create the $_POST object required by the question engine.
         $_POST = array();
         foreach ($params['data'] as $element) {
             $_POST[$element['name']] = $element['value'];
+            $_REQUEST[$element['name']] = $element['value'];
         }
         $timenow = time();
         $finishattempt = $params['finishattempt'];
