@@ -362,6 +362,7 @@ class restore_controller extends base_controller {
             $options = array();
             $options['keep_roles_and_enrolments'] = $this->get_setting_value('keep_roles_and_enrolments');
             $options['keep_groups_and_groupings'] = $this->get_setting_value('keep_groups_and_groupings');
+            $options['userid'] = $this->userid;
             restore_dbops::delete_course_content($this->get_courseid(), $options);
         }
         // If this is not a course restore or single activity restore (e.g. duplicate), inform the plan we are not

@@ -1064,20 +1064,35 @@ function enrol_user_delete($user) {
 
 /**
  * Called when course is about to be deleted.
+ * If a user id is passed, only enrolments that the user has permission to un-enrol will be removed,
+ * otherwise all enrolments in the course will be removed.
+ *
  * @param stdClass $course
+ * @param int|null $userid
  * @return void
  */
-function enrol_course_delete($course) {
+function enrol_course_delete($course, $userid = null) {
     global $DB;
 
+    $context = context_course::instance($course->id);
     $instances = enrol_get_instances($course->id, false);
     $plugins = enrol_get_plugins(true);
+
+    if ($userid) {
+        // If the user id is present, include only course enrolment instances which allow manual unenrolment and
+        // the given user have a capability to perform unenrolment.
+        $instances = array_filter($instances, function($instance) use ($userid, $plugins, $context) {
+            $unenrolcap = "enrol/{$instance->enrol}:unenrol";
+            return $plugins[$instance->enrol]->allow_unenrol($instance) &&
+                has_capability($unenrolcap, $context, $userid);
+        });
+    }
+
     foreach ($instances as $instance) {
         if (isset($plugins[$instance->enrol])) {
             $plugins[$instance->enrol]->delete_instance($instance);
         }
         // low level delete in case plugin did not do it
-        $DB->delete_records('user_enrolments', array('enrolid'=>$instance->id));
         $DB->delete_records('role_assignments', array('itemid'=>$instance->id, 'component'=>'enrol_'.$instance->enrol));
         $DB->delete_records('user_enrolments', array('enrolid'=>$instance->id));
         $DB->delete_records('enrol', array('id'=>$instance->id));
