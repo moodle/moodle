@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use tool_usertours\manager;
+use tool_usertours\tour;
 
 /**
  * Upgrade the user tours plugin.
@@ -72,6 +73,27 @@ function xmldb_tool_usertours_upgrade($oldversion) {
         manager::update_shipped_tours();
 
         upgrade_plugin_savepoint(true, 2019111801, 'tool', 'usertours');
+    }
+
+    if ($oldversion < 2019111802) {
+        // Clean up user preferences of deleted tours.
+        $select = $DB->sql_like('name', ':lastcompleted') . ' OR ' . $DB->sql_like('name', ':requested');
+        $params = [
+            'lastcompleted' => tour::TOUR_LAST_COMPLETED_BY_USER . '%',
+            'requested' => tour::TOUR_REQUESTED_BY_USER . '%',
+        ];
+
+        $preferences = $DB->get_records_select('user_preferences', $select, $params, '', 'DISTINCT name');
+        foreach ($preferences as $preference) {
+            // Match tour ID at the end of the preference name, remove all of that preference type if tour ID doesn't exist.
+            if (preg_match('/(?<tourid>\d+)$/', $preference->name, $matches) &&
+                    !$DB->record_exists('tool_usertours_tours', ['id' => $matches['tourid']])) {
+
+                $DB->delete_records('user_preferences', ['name' => $preference->name]);
+            }
+        }
+
+        upgrade_plugin_savepoint(true, 2019111802, 'tool', 'usertours');
     }
 
     return true;
