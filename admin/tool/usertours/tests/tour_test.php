@@ -64,7 +64,7 @@ class tour_testcase extends advanced_testcase {
     /**
      * Helper to mock the database.
      *
-     * @return moodle_database
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     public function mock_database() {
         global $DB;
@@ -569,9 +569,14 @@ class tour_testcase extends advanced_testcase {
 
         // Mock the database.
         $DB = $this->mock_database();
-        $DB->expects($this->once())
+
+        $DB->expects($this->exactly(3))
             ->method('delete_records')
-            ->with($this->equalTo('tool_usertours_tours'), $this->equalTo(['id' => $id]))
+            ->withConsecutive(
+                [$this->equalTo('tool_usertours_tours'), $this->equalTo(['id' => $id])],
+                [$this->equalTo('user_preferences'), $this->equalTo(['name' => tour::TOUR_LAST_COMPLETED_BY_USER . $id])],
+                [$this->equalTo('user_preferences'), $this->equalTo(['name' => tour::TOUR_REQUESTED_BY_USER . $id])]
+            )
             ->willReturn(null)
             ;
 
