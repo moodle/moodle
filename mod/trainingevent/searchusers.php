@@ -98,7 +98,7 @@ echo $output->header();
 $location = $DB->get_record('classroom', array('id' => $event->classroomid));
 
 // How many are already attending?
-$attending = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id));
+$attending = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0));
 
 // Get the associated department id.
 $company = new company($location->companyid);
@@ -226,7 +226,7 @@ if (!empty($params['email'])) {
     $sqlsearch .= " AND email like '%".$params['email']."%' ";
 }
 // Deal with users already assigned..
-if ($assignedusers = $DB->get_records('trainingevent_users', array('trainingeventid' => $event->id), null, 'userid')) {
+if ($assignedusers = $DB->get_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0), null, 'userid')) {
     $sqlsearch .= " AND id not in (".implode(',', array_keys($assignedusers)).") ";
 }
 

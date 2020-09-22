@@ -147,7 +147,7 @@ if (!empty($courseid)) {
             if (!empty($allowedusers) &&
                 $users = $DB->get_records_sql('SELECT userid AS id FROM {trainingevent_users}
                                                WHERE trainingeventid='.$event->id.'
-                                               AND userid IN ('.$allowedlist.')')) {
+                                               AND userid IN ('.$allowedlist.') AND waitlisted=0' )) {
                 foreach ($users as $user) {
                     $fulluserdata = $DB->get_record('user', array('id' => $user->id));
                     $fulluserdata->department = company_user::get_department_name($user->id);
@@ -181,7 +181,7 @@ if (!empty($courseid)) {
         echo "\"".get_string('fullname')."\",\"". get_string('email')."\"\n";
         if ($users = $DB->get_records_sql('SELECT userid AS id FROM {trainingevent_users}
                                            WHERE trainingeventid='.$event->id.'
-                                           AND userid IN ('.$allowedlist.')')) {
+                                           AND userid IN ('.$allowedlist.') AND waitlisted=0')) {
             foreach ($users as $user) {
                 $fulluserdata = $DB->get_record('user', array('id' => $user->id));
                 $fulluserdata->department = company_user::get_department_name($user->id);

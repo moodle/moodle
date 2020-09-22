@@ -304,7 +304,7 @@ function trainingevent_event_clashes($event, $userid) {
     // the user is already booked on.
     if ($DB->get_records_sql("SELECT cc.id FROM {trainingevent} cc
                               RIGHT JOIN {trainingevent_users} ccu
-                              ON (ccu.trainingeventid = cc.id AND ccu.userid = :userid)
+                              ON (ccu.trainingeventid = cc.id AND ccu.userid = :userid AND waitlisted=0)
                               WHERE ( cc.startdatetime <= ".$event->startdatetime."
                               AND cc.enddatetime >= ".$event->startdatetime.")
                               OR ( cc.startdatetime <= ".$event->enddatetime."

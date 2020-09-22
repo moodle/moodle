@@ -74,6 +74,18 @@ $capabilities = array(
         )
     ),
 
+    'mod/trainingevent:resetattendees' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'companycourseeditor' => CAP_ALLOW,
+            'companycoursenoneditor' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
     'mod/trainingevent:grade' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,

@@ -39,7 +39,7 @@ class backup_trainingevent_activity_structure_step extends backup_activity_struc
         $trainingevent = new backup_nested_element('trainingevent', array('id'), array(
             'course', 'name', 'intro', 'introformat', 'timemodified', 'startdatetime', 'enddatetime', 'classroomid', 'approvaltype'));
         $trainingevent_users = new backup_nested_element('trainingevent_user');
-        $trainingevent_user = new backup_nested_element('trainingevent_users', array('id'), array('userid', 'trainingeventid'));
+        $trainingevent_user = new backup_nested_element('trainingevent_users', array('id'), array('userid', 'trainingeventid', 'waitlisted'));
 
         $trainingevent->add_child($trainingevent_users);
         $trainingevent_users->add_child($trainingevent_user);

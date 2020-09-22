@@ -31,6 +31,7 @@ require_once('lib.php');
 $id = required_param('id', PARAM_INT);    // Course Module ID, or.
 $attending = optional_param('attending', null, PARAM_ALPHA);
 $view = optional_param('view', 0, PARAM_INTEGER);
+$waitingoption = optional_param('waiting', 0, PARAM_INTEGER);
 $publish = optional_param('publish', 0, PARAM_INTEGER);
 $dodownload = optional_param('dodownload', 0, PARAM_INTEGER);
 $userid = optional_param('userid', 0, PARAM_INTEGER);
@@ -60,6 +61,16 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         }
         print_error('location not defined');
     } else {
+
+        // Page stuff.
+        $url = new moodle_url('/course/view.php', array('id' => $event->course));
+        $context = context_course::instance($event->course);
+        require_login($event->course); // Adds to $PAGE, creates $OUTPUT.
+        $PAGE->set_url($url);
+        $PAGE->set_pagelayout('standard');
+        $PAGE->set_title($event->name);
+        $PAGE->set_heading($SITE->fullname);
+
         // Get the associated department id.
         $company = new company($location->companyid);
         $parentlevel = company::get_company_parentnode($company->id);
@@ -96,8 +107,24 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
         if (!empty($attending)) {
             if ('yes' == $attending) {
-                if (!$DB->get_record('trainingevent_users', array('trainingeventid' => $event->id, 'userid' => $USER->id))) {
-                    if (!$DB->insert_record('trainingevent_users', array('trainingeventid' => $event->id, 'userid' => $USER->id))) {
+                $record = $DB->get_record('trainingevent_users', array('trainingeventid' => $event->id, 'userid' => $USER->id));
+
+                if ($waitingoption)
+                    if (!($record && $record->waitlisted)) {
+                        if ($record) {
+                            $DB->update_record('trainingevent_users', array('id'=>$record->id, 'trainingeventid' => $event->id, 'userid' => $USER->id, 'waitlisted'=>1));
+                        } else {
+                            $DB->insert_record('trainingevent_users', array('trainingeventid' => $event->id, 'userid' => $USER->id, 'waitlisted'=>1));
+                        }
+                    }
+
+                else if (!($record && !$record->waitlisted)) {
+                    if ($record && $record->waitlisted) {
+                        $res = $DB->update_record('trainingevent_users', array('id'=>$record->id, 'trainingeventid' => $event->id, 'userid' => $USER->id, 'waitlisted'=>0));
+                    } else {
+                        $res = $DB->insert_record('trainingevent_users', array('trainingeventid' => $event->id, 'userid' => $USER->id));
+                    }
+                    if (!res) {
                         print_error('error creating attendance record');
                     } else {
                         $course = $DB->get_record('course', array('id' => $event->course));
@@ -149,6 +176,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                 'companyid' => $company->id))) {
                         print_error('error creating attendance record');
                     } else {
+                        // theoretically should be a transaction with requesting approval but it's pretty easy to fix this glitch if it happens
+                        $db->delete_records('trainingevent_users', array('trainingeventid' => $event->id, 'userid' => $USER->id, 'waitlist' => 1));
+
                         $course = $DB->get_record('course', array('id' => $event->course));
                         $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
                         // Get the list of managers we need to send an email to.
@@ -240,7 +270,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                   WHERE name = 'trainingevent')", array('eventid' => $event->id));
 
                 $chosenlocation = $DB->get_record('classroom', array('id' => $chosenevent->classroomid));
-                $alreadyattending = $DB->count_records('trainingevent_users', array('trainingeventid' => $chosenevent->id));
+                $alreadyattending = $DB->count_records('trainingevent_users', array('trainingeventid' => $chosenevent->id, 'waitlisted' => 0));
                 $user = $DB->get_record('user', array('id' => $userid));
                 $course = $DB->get_record('course', array('id' => $event->course));
                 if ($alreadyattending < $chosenlocation->capacity) {
@@ -249,9 +279,11 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         ($chosenevent->approvaltype == 1 && $myapprovallevel == "department")) {
                         // Add to the chosen event.
                         if (!$DB->get_record('trainingevent_users', array('userid' => $userid,
-                                                                          'trainingeventid' => $chosenevent->id))) {
+                                                                          'trainingeventid' => $chosenevent->id,
+                                                                          'waitlisted' => 0))) {
                             $DB->insert_record('trainingevent_users', array('userid' => $userid,
-                                                                            'trainingeventid' => $chosenevent->id));
+                                                                            'trainingeventid' => $chosenevent->id,
+                                                                            'waitlisted' => 0));
                             $messagestring = get_string('usermovedsuccessfully', 'trainingevent');
                             $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $chosenevent->startdatetime);
                             EmailTemplate::send('user_signed_up_for_event', array('course' => $course,
@@ -384,16 +416,26 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         }
         if ($action == 'add' && !empty($userid)) {
             $chosenlocation = $DB->get_record('classroom', array('id' => $event->classroomid));
-            $alreadyattending = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id));
+            $alreadyattending = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0));
             $user = $DB->get_record('user', array('id' => $userid));
             $course = $DB->get_record('course', array('id' => $event->course));
-            if ($alreadyattending < $chosenlocation->capacity) {
+
+            $record = $DB->get_record('trainingevent_users', array('userid' => $userid, 'trainingeventid' => $event->id));
+
+            $waitlist = $alreadyattending >= $maxcapacity;
+            if ($alreadyattending < $maxcapacity) {
                 // What kind of event is this?
                 if ($event->approvaltype == 0 || $event->approvaltype == 4 || $myapprovallevel == "company" ||
                     ($event->approvaltype == 1 && $myapprovallevel == "department")) {
                     // Add to the chosen event.
-                    if (!$DB->get_record('trainingevent_users', array('userid' => $userid, 'trainingeventid' => $event->id))) {
-                        $DB->insert_record('trainingevent_users', array('userid' => $userid, 'trainingeventid' => $event->id));
+                    if (!($record && $record->waitlisted == 0)) {
+                        if ($record->waitlisted) {
+                            $DB->update_record('trainingevent_users', array('userid' => $userid, 'trainingeventid' => $event->id, 'waitlisted' => 0));
+                        }
+                        else {
+                            $DB->insert_record('trainingevent_users', array('userid' => $userid, 'trainingeventid' => $event->id, 'waitlisted' => 0));
+                        }
+
                         $messagestring = get_string('useraddedsuccessfully', 'trainingevent');
                         $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
                         EmailTemplate::send('user_signed_up_for_event', array('course' => $course,
@@ -472,6 +514,11 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                 }
             }
         }
+        if ($action == 'reset') {
+            if (has_capability('mod/trainingevent:resetattendees', $context)) {
+                $DB->delete_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0));
+            }
+        }
         if ($action == 'grade' && !empty($userid)) {
             // Grade the user.
             $gradegrade->userid = $userid;
@@ -485,7 +532,8 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             $gradeparams['reset'] = false;
             grade_update('mod/trainingevent', $event->course, 'mod', 'trainingevent', $event->id, 0, $gradegrade, $gradeparams);
         }
-        if ($attendance = (array) $DB->get_records('trainingevent_users', array('trainingeventid' => $event->id), null, 'userid')) {
+
+        if ($attendance = (array) $DB->get_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0), null, 'userid')) {
             $attendancecount = count($attendance);
             if (array_key_exists($USER->id, $attendance)) {
                 $attending = true;
@@ -497,17 +545,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             $attending = false;
         }
 
-        // Page stuff.
-        $url = new moodle_url('/course/view.php', array('id' => $event->course));
-        $context = context_course::instance($event->course);
-        require_login($event->course); // Adds to $PAGE, creates $OUTPUT.
-        $PAGE->set_url($url);
-        $PAGE->set_pagelayout('standard');
-        $PAGE->set_title($event->name);
-        $PAGE->set_heading($SITE->fullname);
-
         // Are we sending out emails?
         if (!empty($publish)) {
+
             echo $OUTPUT->header();
 
             // Check the userid is valid.
@@ -519,17 +559,28 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             $course = $DB->get_record('course', array('id' => $event->course));
             $course->url = new moodle_url('course/view.php', array('id' => $course->id));
             $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
-            EmailTemplate::send_to_all_users_in_department($departmentid,
-                                                           'advertise_classroom_based_course',
-                                                           array('course' => $course,
-                                                           'classroom' => $location,
-                                                           'event' => $event));
-            redirect("$CFG->wwwroot/mod/trainingevent/view.php?id=$id", get_string('emailssent', 'trainingevent'));
+            if ($waitingoption) {
+                $waiting = (array) $DB->get_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 1));
+                $waitinglist = array_map(function($training_user) {return array('user' => $training_user->userid);}, $waiting);
+
+                EmailTemplate::send('advertise_classroom_based_course',
+                                    array('course' => $course,
+                                    'classroom' => $location,
+                                    'event' => $event),
+                                    $waitinglist);
+            } else {
+                EmailTemplate::send_to_all_users_in_department($departmentid,
+                                                            'advertise_classroom_based_course',
+                                                            array('course' => $course,
+                                                            'classroom' => $location,
+                                                            'event' => $event));
+                redirect("$CFG->wwwroot/mod/trainingevent/view.php?id=$id", get_string('emailssent', 'trainingevent'));
+            }
             die;
         }
 
         // Get the current number booked on it.
-        $numattending = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id));
+        $numattending = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0));
 
         $eventtable = "<h2>$event->name</h2>";
         if (!empty($messagestring)) {
@@ -540,11 +591,19 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             $eventtable .= "<td>".$OUTPUT->single_button("$CFG->wwwroot/mod/trainingevent/view.php?id=$id&publish=1",
                                                          get_string('publish', 'trainingevent')). "</td>";
         }
+        if (has_capability('mod/trainingevent:invite', $context)) {
+            $eventtable .= "<td>".$OUTPUT->single_button("$CFG->wwwroot/mod/trainingevent/view.php?id=$id&publish=1&waiting=1",
+                                                         get_string('publishwaitlist', 'trainingevent')). "</td>";
+        }
         if (has_capability('mod/trainingevent:viewattendees', $context)) {
             $eventtable .= "<td>".$OUTPUT->single_button("$CFG->wwwroot/mod/trainingevent/view.php?id=$id&view=1",
                                                          get_string('viewattendees', 'trainingevent'))."</td>";
         }
-        if (has_capability('mod/trainingevent:add', $context) && $numattending < $location->capacity
+        if (has_capability('mod/trainingevent:viewattendees', $context)) {
+            $eventtable .= "<td>".$OUTPUT->single_button("$CFG->wwwroot/mod/trainingevent/view.php?id=$id&view=1&waiting=1",
+                                                         get_string('viewwaitlist', 'trainingevent'))."</td>";
+        }
+        if (has_capability('mod/trainingevent:add', $context) && $numattending < $maxcapacity
                             && time() < $event->startdatetime) {
             $eventtable .= "<td>".$OUTPUT->single_button(new moodle_url("/mod/trainingevent/searchusers.php",
                                                                         array('eventid' => $event->id)),
@@ -591,16 +650,31 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     echo get_string('eventhaspassed', 'trainingevent');
                 }
             } else {
-                if ($numattending < $location->capacity) {
+
+                if (time() < $event->startdatetime) {
+
+                    if (!$DB->get_records('trainingevent_users', array('userid' =>$USER->id, 'trainingeventid' => $event->id, 'waitlisted' => 1))) {
+                        echo $OUTPUT->single_button(new moodle_url('/mod/trainingevent/view.php',
+                        array('id' => $id, 'attending' => 'yes', 'waiting' => 1)),
+                        get_string("waitlist", 'trainingevent'));
+                    }
+                    else {
+                        echo get_string('youarewaiting', 'trainingevent');
+                    }
+
+                    
+                if ($numattending < $maxcapacity) {
                     if (time() < $event->startdatetime) {
                         if (!trainingevent_event_clashes($event, $USER->id)) {
                             if ($event->approvaltype == 0) {
-                                echo $OUTPUT->single_button(new moodle_url('/mod/trainingevent/view.php',
-                                                            array('id' => $id, 'attending' => 'yes')),
-                                                            get_string("attend", 'trainingevent'));
+                                    echo $OUTPUT->single_button(new moodle_url('/mod/trainingevent/view.php',
+                                                                array('id' => $id, 'attending' => 'yes', 'waiting' => true)),
+                                                                get_string("attend", 'trainingevent'));
+                                }
                             } else if ($event->approvaltype != 4 ) {
                                 if (!$mybooking = $DB->get_record('block_iomad_approve_access', array('activityid' => $event->id,
-                                                                                                      'userid' => $USER->id))) {
+                                                                                                        'userid' => $USER->id))) {
+
                                     echo $OUTPUT->single_button(new moodle_url('/mod/trainingevent/view.php',
                                                                 array('id' => $id, 'booking' => 'yes')),
                                                                 get_string("request", 'trainingevent'));
@@ -686,14 +760,16 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     $attendancetable->align[] = "center";
                     $attendancetable->align[] = "center";
                 }
-                if (has_capability('mod/trainingevent:grade', $context)) {
+                if (has_capability('mod/trainingevent:grade', $context) && $waitingoption == 0) {
                     $attendancetable->head[] = get_string('grade');
                     $attendancetable->align[] = "center";
                 }
 
                 if ($users = $DB->get_records_sql('SELECT userid AS id FROM {trainingevent_users}
                                                    WHERE trainingeventid='.$event->id.'
-                                                   AND userid IN ('.$allowedlist.')')) {
+                                                   AND userid IN ('.$allowedlist.') AND waitlisted=:waitlisted', 
+                                                   array('waitlisted' => $waitingoption),
+                                                   )) {
                     foreach ($users as $user) {
                         $fulluserdata = $DB->get_record('user', array('id' => $user->id));
                         $userrow = array($fulluserdata->firstname.' '.$fulluserdata->lastname, $fulluserdata->email);
@@ -720,7 +796,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             $userrow[] = $removebutton;
                         }
 
-                        if (has_capability('mod/trainingevent:grade', $context)) {
+                        if (has_capability('mod/trainingevent:grade', $context) && $waitingoption == 0) {
                             $usergradeentry = grade_get_grades($event->course, 'mod', 'trainingevent', $event->id, $user->id);
                             $gradehtml = '<form action="view.php" method="get">
                                          <input type="hidden" name="id" value="' . $id . '" />
@@ -738,9 +814,15 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     }
                 }
                 echo "<h3>".get_string('attendance', 'local_report_attendance')."</h3>";
-                echo $OUTPUT->single_button($CFG->wwwroot."/mod/trainingevent/view.php?id=".$id."&dodownload=1",
-                                            get_string("downloadcsv",
-                                            'local_report_attendance'));
+                if (!$waitingoption) {
+                    echo $OUTPUT->single_button($CFG->wwwroot."/mod/trainingevent/view.php?id=".$id."&dodownload=1",
+                                                get_string("downloadcsv",
+                                                'local_report_attendance'));
+                    if (has_capability('mod/trainingevent:resetattendees', $context)) {
+                        echo $OUTPUT->single_button("$CFG->wwwroot/mod/trainingevent/view.php?id=$id&action=reset",
+                                                                        get_string('resetattending', 'trainingevent'))."</td>";
+                    }
+                }
                 echo html_writer::start_tag('div', array('id' => 'trainingeventattendancetable'));
                 echo html_writer::table($attendancetable);
                 echo html_writer::end_tag('div');
@@ -784,7 +866,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             if ($users = $DB->get_records_sql('SELECT userid AS id
                                                FROM {trainingevent_users}
                                                WHERE trainingeventid='.$event->id.'
-                                               AND userid IN ('.$allowedlist.')')) {
+                                               AND userid IN ('.$allowedlist.') AND waitlisted=0')) {
                 foreach ($users as $user) {
                     $fulluserdata = $DB->get_record('user', array('id' => $user->id));
                     $usergradeentry = grade_get_grades($event->course, 'mod', 'trainingevent', $event->id, $user->id);

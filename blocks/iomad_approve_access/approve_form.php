@@ -62,7 +62,7 @@ class approve_form extends moodleform {
                 $roominfo = $DB->get_record('classroom', array('id' => $activity->classroomid));
 
                 // Get the number of current attendees.
-                $numattendees = $DB->count_records('trainingevent_users', array('trainingeventid' => $activity->id));
+                $numattendees = $DB->count_records('trainingevent_users', array('trainingeventid' => $activity->id, 'waitlisted' => 0));
 
                 // Check the approval status.
                 if ($activity->approvaltype == 3 && $result->manager_ok != 1 && !$department) {

@@ -88,7 +88,7 @@ if ($data = $callform->get_data()) {
                 $roominfo = $DB->get_record('classroom', array('id' => $event->classroomid));
 
                 // Get the number of current attendees.
-                $numattendees = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id));
+                $numattendees = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0));
 
                 // Is the event full?
                 if ($numattendees >= $roominfo->capacity && $dataresult == 1) {
