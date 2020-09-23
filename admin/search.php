@@ -68,9 +68,16 @@ if ($errormsg !== '') {
 $showsettingslinks = true;
 
 if ($hassiteconfig) {
-    require_once("admin_settings_search_form.php");
-    $form = new admin_settings_search_form();
-    $form->display();
+    $data = [
+        'action' => new moodle_url('/admin/search.php'),
+        'btnclass' => 'btn-primary',
+        'inputname' => 'query',
+        'searchstring' => get_string('search'),
+        'query' => $query,
+        'extraclasses' => 'd-flex justify-content-center'
+    ];
+    echo $OUTPUT->render_from_template('core/search_input', $data);
+
     echo '<hr>';
     if ($query) {
         echo admin_search_settings_html($query);

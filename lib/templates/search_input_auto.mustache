@@ -1,0 +1,63 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/search_input_auto
+
+    Search input that auto searches.
+
+    Example context (json):
+    {
+        "action": "https://moodle.local/admin/search.php",
+        "extraclasses": "my-2",
+        "inputname": "search",
+        "searchstring": "Search settings",
+        "sesskey": "sesskey",
+        "value": "policy",
+        "btnclass": "primary",
+        "hiddenfields": [
+            {
+                "name": "course",
+                "value": "11"
+            }
+        ]
+    }
+}}
+<div id="searchform-auto-{{uniqid}}" class="form-inline simplesearchform">
+    <div class="input-group searchbar" role="search">
+        <label for="searchinput">
+            <span class="sr-only">{{$label}}{{#str}} search, core {{/str}}{{/label}}</span>
+        </label>
+        <input
+           type="text"
+           data-region="input"
+           data-action="search"
+           id="searchinput"
+           class="form-control withclear"
+           placeholder="{{$placeholder}}{{#str}} search, core {{/str}}{{/placeholder}}"
+           name="search"
+           autocomplete="off"
+        >
+        <button
+            class="btn btn-clear d-none"
+            data-action="clearsearch"
+            type="button"
+        >
+           {{#pix}} e/cancel, core {{/pix}}
+            <span class="sr-only">{{#str}} clearsearch, core {{/str}}</span>
+        </button>
+    </div>
+</div>

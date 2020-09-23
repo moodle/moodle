@@ -206,7 +206,7 @@ Feature: Enable Block blog menu in an activity
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment 1"
-    And I set the field "blogsearchquery" to "First"
+    And I set the field "Search" to "First"
     And I press "Search"
     Then I should see "S1 First Blog"
     And I should see "S2 First Blog"

@@ -95,7 +95,7 @@ if (empty($searchcriteria)) {
         $aurl = new moodle_url('/course/management.php', $searchcriteria);
         $searchform = $OUTPUT->single_button($aurl, get_string('managecourses'), 'get');
     } else {
-        $searchform = $courserenderer->course_search_form($search, 'navbar');
+        $searchform = $courserenderer->course_search_form($search);
     }
     $PAGE->set_button($searchform);
 

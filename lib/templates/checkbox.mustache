@@ -15,22 +15,20 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_settings/search_form
+    @template core/checkbox
 
-    This template renders the search form.
+    Chooser search template.
 
     Example context (json):
     {
-        "action": "https://domain.example/admin/search.php",
-        "label": "Search in settings",
-        "searchvalue": "Find this setting",
-        "quote": "Search"
+        "name": "fullsearch",
+        "id": "fullsearch",
+        "checked": true,
+        "value": "1",
+        "label": "Reset options"
     }
 }}
-<form method="get" action="{{action}}" class="adminsearchform form-inline" role="search">
-    <div class="form-group">
-        <label class="sr-only" for="adminsearchquery">{{label}}</label>
-        <input class="form-control" type="text" name="query" value="{{searchvalue}}" id="adminsearchquery" size="10">
-    </div>
-    <input type="submit" class="btn btn-secondary" value={{#quote}}{{#str}}search{{/str}}{{/quote}}>
-</form>
+<div class="custom-control custom-checkbox">
+  <input type="checkbox" name={{{ name }}} class="custom-control-input" value={{{ value }}} id="{{{ id }}}" {{#checked}} checked="checked" {{/checked}}>
+  <label class="custom-control-label" for="{{{ id }}}">{{{ label }}}</label>
+</div>

@@ -42,7 +42,7 @@ export default {
     },
     actions: {
         search: getDataSelector('action', 'searchcontent'),
-        clearSearch: getDataSelector('action', 'clearsearchcontent'),
+        clearSearch: getDataSelector('action', 'clearsearch'),
         viewgrid: getDataSelector('action', 'viewgrid'),
         viewlist: getDataSelector('action', 'viewlist'),
         sortname: getDataSelector('action', 'sortname'),
@@ -55,8 +55,6 @@ export default {
         listitem: '.cb-listitem',
         cbnavbarbreadcrumb: '.cb-navbar-breadbrumb',
         cbnavbartotalsearch: '.cb-navbar-totalsearch',
-        clearsearch: '.input-group-append .clear-icon',
-        searchicon: '.input-group-append .search-icon',
         searchinput: '#searchinput',
         sortbutton: '.cb-btnsort'
     },

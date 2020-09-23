@@ -466,8 +466,7 @@ const toggleSearchResultsView = async(modal, mappedModules, searchQuery) => {
     const modalBody = modal.getBody()[0];
     const searchResultsContainer = modalBody.querySelector(selectors.regions.searchResults);
     const chooserContainer = modalBody.querySelector(selectors.regions.chooser);
-    const clearSearchButton = modalBody.querySelector(selectors.elements.clearsearch);
-    const searchIcon = modalBody.querySelector(selectors.elements.searchicon);
+    const clearSearchButton = modalBody.querySelector(selectors.actions.clearSearch);
 
     if (searchQuery.length > 0) { // Search query is present.
         const searchResultsData = searchModules(mappedModules, searchQuery);
@@ -481,7 +480,6 @@ const toggleSearchResultsView = async(modal, mappedModules, searchQuery) => {
             initChooserOptionsKeyboardNavigation(modalBody, mappedModules, searchResultItemsContainer, modal);
         }
         // Display the "clear" search button in the activity chooser search bar.
-        searchIcon.classList.add('d-none');
         clearSearchButton.classList.remove('d-none');
         // Hide the default chooser options container.
         chooserContainer.setAttribute('hidden', 'hidden');
@@ -490,7 +488,6 @@ const toggleSearchResultsView = async(modal, mappedModules, searchQuery) => {
     } else { // Search query is not present.
         // Hide the "clear" search button in the activity chooser search bar.
         clearSearchButton.classList.add('d-none');
-        searchIcon.classList.remove('d-none');
         // Hide the search results container.
         searchResultsContainer.setAttribute('hidden', 'hidden');
         // Display the default chooser options container.
