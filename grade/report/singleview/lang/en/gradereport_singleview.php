@@ -50,6 +50,7 @@ $string['override'] = 'Override';
 $string['overrideall'] = 'Override all grades';
 $string['overridefor'] = 'Override for {$a}';
 $string['overridenone'] = 'Do not override any grades';
+$string['overridenoneconfirm'] = 'You are trying to disable all grade overrides. After saving, all the previously overridden grades will be lost. Do you want to continue?';
 $string['pluginname'] = 'Single view';
 $string['privacy:metadata'] = 'The Grade single view report only shows data stored in other locations.';
 $string['savegrades'] = 'Saving grades';
