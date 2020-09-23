@@ -55,6 +55,7 @@ $string['missingenddatetime'] = 'Missing end date/time';
 $string['missingstartdatetime'] = 'Missing start date/time';
 $string['mod/trainingevent:invite'] = 'User can invite department users to an event';
 $string['mod/trainingevent:viewattendees'] = 'User can view the current list of attendees';
+$string['mod/trainingevent:resetattendees'] = 'User can reset the list of attendees';
 $string['modulename'] = 'Training event';
 $string['modulename_help'] = 'A training event allows for face to face training workshops to be added to a course.  It uses the company defined training locations and can have a complex booking and approval method to allow access for users.';
 $string['modulenameplural'] = 'Training events';
