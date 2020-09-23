@@ -97,6 +97,7 @@ $string['welcomep20'] = 'أنت تشاهد هذه الصفحة لأنك تمكن
 $string['welcomep30'] = 'الإطلاق العائد لـ <strong>{$a->installername}</strong> يتضمن
 التطبيقات المعدة لإنشاء بيئة تسمح لـ <strong>مودل</strong> بالعمل، وهي:';
 $string['welcomep40'] = 'الحزمة تتضمن أيضاً <strong>مودل {$a->moodlerelease} ({$a->moodleversion})</strong>.';
+$string['welcomep50'] = 'استعمال كل التطبيقات في هذه الحزمة محكوم برخصها. حزمة التنصيب <strong>{$a->installername}</strong> الكاملة هي <a href="https://www.opensource.org/docs/definition_plain.html">مفتوحة المصدر</a> وموزعة بموجب الرخصة <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a>.';
 $string['welcomep60'] = 'الصفحات الآتية ستقودك عبر خطوات سهلة التتبع لتنصيب
 وتهيئة <strong>مودل</strong> في حاسبتك. يمكنك قبول
 الإعدادات الافتراضية، أو إختيارياً، تغييرها بما يتناسب مع احتياجاتك الخاصة.';
