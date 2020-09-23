@@ -807,6 +807,13 @@ $functions = array(
         'type'        => 'write',
         'classpath'   => 'files/externallib.php',
     ),
+    'core_files_delete_draft_files' => array(
+        'classname' => 'core_files\external\delete\draft',
+        'methodname' => 'execute',
+        'description' => 'Delete the indicated files (or directories) from a user draft file area.',
+        'type'        => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_form_get_filetypes_browser_data' => array(
         'classname' => 'core_form\external',
         'methodname' => 'get_filetypes_browser_data',
