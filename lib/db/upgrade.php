@@ -2393,5 +2393,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021052500.55);
     }
 
+    if ($oldversion < 2021052500.59) {
+        // Define field visibility to be added to contentbank_content.
+        $table = new xmldb_table('contentbank_content');
+        $field = new xmldb_field('visibility', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'contextid');
+
+        // Conditionally launch add field visibility.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.59);
+    }
+
     return true;
 }

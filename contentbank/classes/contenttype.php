@@ -75,9 +75,16 @@ abstract class contenttype {
      * @return content  Object with content bank information.
      */
     public function create_content(\stdClass $record = null): content {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
 
         $entry = new \stdClass();
+        if (isset($record->visibility)) {
+            $entry->visibility = $record->visibility;
+        } else {
+            $usercreated = $record->usercreated ?? $USER->id;
+            $entry->visibility = get_user_preferences('core_contentbank_visibility',
+                $CFG->defaultpreference_core_contentbank_visibility, $usercreated);
+        }
         $entry->contenttype = $this->get_contenttype_name();
         $entry->contextid = $this->context->id;
         $entry->name = $record->name ?? '';

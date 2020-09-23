@@ -28,6 +28,7 @@ use renderable;
 use templatable;
 use renderer_base;
 use stdClass;
+use core_contentbank\content;
 
 /**
  * Class containing data for bank content
@@ -85,7 +86,11 @@ class bankcontent implements renderable, templatable {
             $mimetype = $file ? get_mimetype_description($file) : '';
             $contenttypeclass = $content->get_content_type().'\\contenttype';
             $contenttype = new $contenttypeclass($this->context);
-            $name = $content->get_name();
+            if ($content->get_visibility() == content::VISIBILITY_UNLISTED) {
+                $name = get_string('visibilitytitleunlisted', 'contentbank', $content->get_name());
+            } else {
+                $name = $content->get_name();
+            }
             $author = \core_user::get_user($content->get_content()->usercreated);
             $contentdata[] = array(
                 'name' => $name,
@@ -98,6 +103,7 @@ class bankcontent implements renderable, templatable {
                 'size' => display_size($filesize),
                 'type' => $mimetype,
                 'author' => fullname($author),
+                'visibilityunlisted' => $content->get_visibility() == content::VISIBILITY_UNLISTED
             );
         }
         $data->viewlist = get_user_preferences('core_contentbank_view_list');
