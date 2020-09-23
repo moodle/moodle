@@ -25,8 +25,8 @@
  */
 define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragment',
         'core/ajax', 'core/str', 'mod_assign/grading_form_change_checker',
-        'mod_assign/grading_events', 'core/event'],
-       function($, Y, notification, templates, fragment, ajax, str, checker, GradingEvents, Event) {
+        'mod_assign/grading_events', 'core/event', 'core/toast'],
+       function($, Y, notification, templates, fragment, ajax, str, checker, GradingEvents, Event, Toast) {
 
     /**
      * GradingPanel class.
@@ -148,10 +148,9 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
             $(document).trigger('reset', [this._lastUserId, formdata]);
         } else {
             str.get_strings([
-                {key: 'changessaved', component: 'core'},
                 {key: 'gradechangessaveddetail', component: 'mod_assign'},
             ]).done(function(strs) {
-                notification.alert(strs[0], strs[1]);
+                Toast.add(strs[0]);
             }).fail(notification.exception);
             Y.use('moodle-core-formchangechecker', function() {
                 M.core_formchangechecker.reset_form_dirty_state();
