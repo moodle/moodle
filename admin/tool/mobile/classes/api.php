@@ -487,6 +487,7 @@ class api {
                 '$mmSideMenuDelegate_mmaCompetency' => new lang_string('myplans', 'tool_lp'),
                 'CoreMainMenuDelegate_AddonBlog' => new lang_string('blog', 'blog'),
                 '$mmSideMenuDelegate_mmaFiles' => new lang_string('files'),
+                'CoreMainMenuDelegate_CoreTag' => new lang_string('tags'),
                 '$mmSideMenuDelegate_website' => new lang_string('webpage'),
                 '$mmSideMenuDelegate_help' => new lang_string('help'),
                 'CoreMainMenuDelegate_QrReader' => new lang_string('scanqrcode', 'tool_mobile'),
