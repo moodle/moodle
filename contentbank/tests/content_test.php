@@ -193,6 +193,35 @@ class core_contenttype_content_testcase extends \advanced_testcase {
     }
 
     /**
+     * Tests for set_visibility behaviour
+     *
+     * @covers ::set_visibility
+     */
+    public function test_set_visibility() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $context = context_system::instance();
+        $oldvisibility = content::VISIBILITY_PUBLIC;
+        $newvisibility = content::VISIBILITY_UNLISTED;
+        $illegalvisibility = -1;
+
+        $record = new stdClass();
+        $record->visibility = $oldvisibility;
+        $contenttype = new contenttype($context);
+        $content = $contenttype->create_content($record);
+
+        $this->assertEquals($oldvisibility, $content->get_visibility());
+
+        $content->set_visibility($newvisibility);
+
+        $this->assertEquals($newvisibility, $content->get_visibility());
+
+        $content->set_visibility($illegalvisibility);
+
+        $this->assertEquals($newvisibility, $content->get_visibility());
+    }
+
+    /**
      * Tests for 'import_file' behaviour when replacing a file.
      *
      * @covers ::import_file
@@ -297,6 +326,44 @@ class core_contenttype_content_testcase extends \advanced_testcase {
         $contenttype = $content->get_content_type_instance();
 
         $this->assertInstanceOf(get_class($type), $contenttype);
+    }
+
+    /**
+     * Tests for 'is_view_allowed'.
+     *
+     * @covers ::is_view_allowed
+     */
+    public function test_is_view_allowed() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $context = context_system::instance();
+
+        $userauthor = $this->getDataGenerator()->create_user();
+        $userother = $this->getDataGenerator()->create_user();
+
+        $contenttype = new contenttype($context);
+
+        $unlistedrecord = new stdClass();
+        $unlistedrecord->visibility = content::VISIBILITY_UNLISTED;
+        $unlistedrecord->usercreated = $userauthor->id;
+        $unlistedcontent = $contenttype->create_content($unlistedrecord);
+
+        $publicrecord = new stdClass();
+        $publicrecord->visibility = content::VISIBILITY_PUBLIC;
+        $publicrecord->usercreated = $userauthor->id;
+        $publiccontent = $contenttype->create_content($publicrecord);
+
+        $this->setUser($userother);
+        $this->assertFalse($unlistedcontent->is_view_allowed());
+        $this->assertTrue($publiccontent->is_view_allowed());
+
+        $this->setUser($userauthor);
+        $this->assertTrue($unlistedcontent->is_view_allowed());
+        $this->assertTrue($publiccontent->is_view_allowed());
+
+        $this->setAdminUser();
+        $this->assertTrue($unlistedcontent->is_view_allowed());
+        $this->assertTrue($publiccontent->is_view_allowed());
     }
 
     /**

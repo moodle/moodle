@@ -29,7 +29,8 @@
                 "type": "Archive (H5P)",
                 "author": "Admin user",
                 "link": "http://something/contentbank/contenttype/h5p/view.php?url=http://something/pluginfile.php/1/contentbank/public/accordion.h5p",
-                "icon" : "http://something/theme/image.php/boost/core/1581597850/f/h5p-64"
+                "icon" : "http://something/theme/image.php/boost/core/1581597850/f/h5p-64",
+                "visibilityunlisted": true
             },
             {
                 "name": "resume.pdf",
@@ -40,7 +41,8 @@
                 "bytes": 716126,
                 "type": "Archive (PDF)",
                 "author": "Admin user",
-                "icon": "http://something/theme/image.php/boost/core/1584597850/f/pdf-64"
+                "icon": "http://something/theme/image.php/boost/core/1584597850/f/pdf-64",
+                "visibilityunlisted": false
             }
         ],
         "tools": [
@@ -155,7 +157,7 @@ data-region="contentbank">
                         </div>
                     </div>
                 {{#contents}}
-                    <div class="cb-listitem"
+                    <div class="cb-listitem {{#visibilityunlisted}}cb-unlisted{{/visibilityunlisted}}"
                         data-file="{{ title }}"
                         data-name="{{ name }}"
                         data-bytes="{{ bytes }}"

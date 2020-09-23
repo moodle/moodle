@@ -925,6 +925,9 @@ class behat_core_generator extends behat_generator_base {
             $record = new stdClass();
             $record->usercreated = $data['userid'];
             $record->name = $data['contentname'];
+            if (isset($data['visibility'])) {
+                $record->visibility = $data['visibility'];
+            }
             $content = $contenttype->create_content($record);
 
             if (!empty($data['filepath'])) {

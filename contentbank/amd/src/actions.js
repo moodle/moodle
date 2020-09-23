@@ -40,6 +40,7 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
     var ACTIONS = {
         DELETE_CONTENT: '[data-action="deletecontent"]',
         RENAME_CONTENT: '[data-action="renamecontent"]',
+        SET_CONTENT_VISIBILITY: '[data-action="setcontentvisibility"]',
     };
 
     /**
@@ -181,6 +182,15 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                 return;
             }).catch(Notification.exception);
         });
+
+        $(ACTIONS.SET_CONTENT_VISIBILITY).click(function(e) {
+            e.preventDefault();
+
+            var contentid = $(this).data('contentid');
+            var visibility = $(this).data('visibility');
+
+            setContentVisibility(contentid, visibility);
+        });
     };
 
     /**
@@ -237,6 +247,49 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
         Ajax.call([request])[0].then(function(data) {
             if (data.result) {
                 return 'contentrenamed';
+            }
+            requestType = 'error';
+            return data.warnings[0].message;
+
+        }).then(function(message) {
+            var params = null;
+            if (requestType == 'success') {
+                params = {
+                    id: contentid,
+                    statusmsg: message
+                };
+                // Redirect to the content view page and display the message as a notification.
+                window.location.href = Url.relativeUrl('contentbank/view.php', params, false);
+            } else {
+                // Fetch error notifications.
+                Notification.addNotification({
+                    message: message,
+                    type: 'error'
+                });
+                Notification.fetchNotifications();
+            }
+            return;
+        }).catch(Notification.exception);
+    }
+
+    /**
+     * Set content visibility in the content bank.
+     *
+     * @param {int} contentid The content to modify
+     * @param {int} visibility The new visibility value
+     */
+    function setContentVisibility(contentid, visibility) {
+        var request = {
+            methodname: 'core_contentbank_set_content_visibility',
+            args: {
+                contentid: contentid,
+                visibility: visibility
+            }
+        };
+        var requestType = 'success';
+        Ajax.call([request])[0].then(function(data) {
+            if (data.result) {
+                return 'contentvisibilitychanged';
             }
             requestType = 'error';
             return data.warnings[0].message;

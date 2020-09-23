@@ -2728,6 +2728,15 @@ $functions = array(
         'ajax'          => 'true',
         'capabilities'  => 'moodle/contentbank:manageowncontent',
     ],
+    'core_contentbank_set_content_visibility' => [
+        'classname'     => 'core_contentbank\external\set_content_visibility',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Set the visibility of a content in the content bank.',
+        'type'          => 'write',
+        'ajax'          => 'true',
+        'capabilities'  => 'moodle/contentbank:manageowncontent',
+    ],
     'core_create_userfeedback_action_record' => [
         'classname'     => 'core\external\record_userfeedback_action',
         'methodname'    => 'execute',
