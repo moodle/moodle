@@ -115,7 +115,16 @@ class framework implements \H5PFrameworkInterface {
      * @param string $url
      */
     public function setLibraryTutorialUrl($libraryname, $url) {
-        // Tutorial url is currently not being used or stored in libraries.
+        global $DB;
+
+        $sql = 'UPDATE {h5p_libraries}
+                   SET tutorial = :tutorial
+                 WHERE machinename = :machinename';
+        $params = [
+            'tutorial' => $url,
+            'machinename' => $libraryname,
+        ];
+        $DB->execute($sql, $params);
     }
 
     /**
