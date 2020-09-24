@@ -103,16 +103,6 @@ if ($backpack) {
         $bp->set_backpack_collections($backpack->id, $groups);
         redirect(new moodle_url('/badges/mybadges.php'));
     }
-} else if (badges_open_badges_backpack_api() == OPEN_BADGES_V2P1) {
-    // If backpack is version 2.1 to redirect on the backpack site to login.
-    // User input username/email/password on the backpack site
-    // After confirm the scopes.
-    $form = new \core_badges\form\backpack(new moodle_url('/badges/mybackpack.php'));
-    if ($form->is_cancelled()) {
-        redirect(new moodle_url('/badges/mybadges.php'));
-    } else if ($data = $form->get_submitted_data()) {
-        redirect(new moodle_url('/badges/backpack-connect.php'));
-    }
 } else {
     // If backpack is not connected, need to connect first.
     // To create a new connection to the backpack, first we need to verify the user's email address:
@@ -130,8 +120,14 @@ if ($backpack) {
     $params['backpackid'] = get_user_preferences('badges_email_verify_backpackid');
 
     $form = new \core_badges\form\backpack(new moodle_url('/badges/mybackpack.php'), $params);
+    $data = $form->get_submitted_data();
     if ($form->is_cancelled()) {
         redirect(new moodle_url('/badges/mybadges.php'));
+    } else if (badges_open_badges_backpack_api($data->externalbackpackid) == OPEN_BADGES_V2P1) {
+        // If backpack is version 2.1 to redirect on the backpack site to login.
+        // User input username/email/password on the backpack site
+        // After confirm the scopes.
+        redirect(new moodle_url('/badges/backpack-connect.php', ['backpackid' => $data->externalbackpackid]));
     } else if ($data = $form->get_data()) {
         // The form may have been submitted under one of the following circumstances:
         // 1. After clicking 'Connect to backpack'. We'll have $data->email.

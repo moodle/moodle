@@ -909,12 +909,16 @@ function badges_save_backpack_credentials(stdClass $data) {
 
 /**
  * Is any backpack enabled that supports open badges V1?
+ * @param int|null $backpackid Check the version of the given id OR if null the sitewide backpack
  * @return boolean
  */
-function badges_open_badges_backpack_api() {
-    global $CFG;
+function badges_open_badges_backpack_api(?int $backpackid = null) {
+    if (!$backpackid) {
+        global $CFG;
+        $backpackid = $CFG->badges_site_backpack;
+    }
 
-    $backpack = badges_get_site_backpack($CFG->badges_site_backpack);
+    $backpack = badges_get_site_backpack($backpackid);
     if (empty($backpack->apiversion)) {
         return OPEN_BADGES_V2;
     }
@@ -937,6 +941,28 @@ function badges_get_site_backpack($id, int $userid = 0) {
              WHERE beb.id=:id";
 
     return $DB->get_record_sql($sql, ['id' => $id, 'userid' => $userid]);
+}
+
+/**
+ * Get the user backpack for the currently logged in user OR the provided user
+ *
+ * @param int|null $userid The user whose backpack you're requesting for. If null, get the logged in user's backpack
+ * @return mixed The user's backpack or none.
+ * @throws dml_exception
+ */
+function badges_get_user_backpack(?int $userid = 0) {
+    global $DB;
+
+    if (!$userid) {
+        global $USER;
+        $userid = $USER->id;
+    }
+
+    $sql = "SELECT beb.*, bb.id AS badgebackpack, bb.password, bb.email AS backpackemail
+              FROM {badge_external_backpack} beb
+              JOIN {badge_backpack} bb ON bb.externalbackpackid = beb.id AND bb.userid=:userid";
+
+    return $DB->get_record_sql($sql, ['userid' => $userid]);
 }
 
 /**
