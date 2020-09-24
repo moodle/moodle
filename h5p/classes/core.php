@@ -190,6 +190,13 @@ class core extends \H5PCore {
                 'minorVersion' => $type->version->minor,
                 'patchVersion' => $type->version->patch,
             ];
+            // Add example and tutorial to the library, to store this information too.
+            if (isset($type->example)) {
+                $library['example'] = $type->example;
+            }
+            if (isset($type->tutorial)) {
+                $library['tutorial'] = $type->tutorial;
+            }
 
             $shoulddownload = true;
             if ($framework->getLibraryId($type->id, $type->version->major, $type->version->minor)) {
@@ -221,6 +228,8 @@ class core extends \H5PCore {
      * @return int|null Returns the id of the content type library installed, null otherwise.
      */
     public function fetch_content_type(array $library): ?int {
+        global $DB;
+
         $factory = new factory();
 
         // Download the latest content type from the H5P official repository.
@@ -249,6 +258,18 @@ class core extends \H5PCore {
 
         $librarykey = static::libraryToString($library);
         $libraryid = $factory->get_storage()->h5pC->librariesJsonData[$librarykey]["libraryId"];
+
+        // Update example and tutorial (if any of them are defined in $library).
+        $params = ['id' => $libraryid];
+        if (array_key_exists('example', $library)) {
+            $params['example'] = $library['example'];
+        }
+        if (array_key_exists('tutorial', $library)) {
+            $params['tutorial'] = $library['tutorial'];
+        }
+        if (count($params) > 1) {
+            $DB->update_record('h5p_libraries', $params);
+        }
 
         return $libraryid;
     }
