@@ -322,6 +322,7 @@ $string['invalidcourselevel'] = 'Incorrect context level';
 $string['invalidcourseformat'] = 'Invalid course format';
 $string['invalidcoursemodule'] = 'Invalid course module ID';
 $string['invalidcoursenameshort'] = 'Invalid short course name';
+$string['invalidcountrycode'] = 'Invalid country code: {$a}';
 $string['invaliddata'] = 'Data submitted is invalid';
 $string['invaliddatarootpermissions'] = 'Invalid permissions detected when trying to create a directory. Turn debugging on for further details.';
 $string['invaliddevicetype'] = 'Invalid device type';
