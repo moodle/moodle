@@ -579,7 +579,6 @@ abstract class base {
      */
     public final function get_default_uninstall_url($return = 'overview') {
         return new moodle_url('/admin/plugins.php', array(
-            'sesskey' => sesskey(),
             'uninstall' => $this->component,
             'confirm' => 0,
             'return' => $return,
