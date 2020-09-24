@@ -227,19 +227,22 @@ class license_manager {
         $cache = \cache::make('core', 'license');
         $licenses = $cache->get('licenses');
 
-        if (empty($licenses)) {
+        if ($licenses === false) {
             $licenses = [];
             $records = $DB->get_records_select('license', null, null, 'sortorder ASC');
             foreach ($records as $license) {
-                // Interpret core license strings for internationalisation.
-                if ($license->custom == self::CORE_LICENSE) {
-                    $license->fullname = get_string($license->shortname, 'license');
-                } else {
-                    $license->fullname = format_string($license->fullname);
-                }
                 $licenses[$license->shortname] = $license;
             }
             $cache->set('licenses', $licenses);
+        }
+
+        foreach ($licenses as $license) {
+            // Localise the license names.
+            if ($license->custom == self::CORE_LICENSE) {
+                $license->fullname = get_string($license->shortname, 'core_license');
+            } else {
+                $license->fullname = format_string($license->fullname);
+            }
         }
 
         return $licenses;
