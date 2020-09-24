@@ -7104,27 +7104,33 @@ function get_directory_size($rootdir, $excludefile='') {
  */
 function display_size($size) {
 
-    static $gb, $mb, $kb, $b;
+    static $units;
 
     if ($size === USER_CAN_IGNORE_FILE_SIZE_LIMITS) {
         return get_string('unlimited');
     }
 
-    if (empty($gb)) {
-        $gb = get_string('sizegb');
-        $mb = get_string('sizemb');
-        $kb = get_string('sizekb');
-        $b  = get_string('sizeb');
+    if (empty($units)) {
+        $units[] = get_string('sizeb');
+        $units[] = get_string('sizekb');
+        $units[] = get_string('sizemb');
+        $units[] = get_string('sizegb');
+        $units[] = get_string('sizetb');
+        $units[] = get_string('sizepb');
     }
 
-    if ($size >= 1073741824) {
-        $size = round($size / 1073741824 * 10) / 10 . $gb;
-    } else if ($size >= 1048576) {
-        $size = round($size / 1048576 * 10) / 10 . $mb;
-    } else if ($size >= 1024) {
-        $size = round($size / 1024 * 10) / 10 . $kb;
+    if ($size >= 1024 ** 5) {
+        $size = round($size / 1024 ** 5 * 10) / 10 . $units[5];
+    } else if ($size >= 1024 ** 4) {
+        $size = round($size / 1024 ** 4 * 10) / 10 . $units[4];
+    } else if ($size >= 1024 ** 3) {
+        $size = round($size / 1024 ** 3 * 10) / 10 . $units[3];
+    } else if ($size >= 1024 ** 2) {
+        $size = round($size / 1024 ** 2 * 10) / 10 . $units[2];
+    } else if ($size >= 1024 ** 1) {
+        $size = round($size / 1024 ** 1 * 10) / 10 . $units[1];
     } else {
-        $size = intval($size) .' '. $b; // File sizes over 2GB can not work in 32bit PHP anyway.
+        $size = intval($size) .' '. $units[0]; // File sizes over 2GB can not work in 32bit PHP anyway.
     }
     return $size;
 }

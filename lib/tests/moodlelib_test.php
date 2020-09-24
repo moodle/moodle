@@ -4776,4 +4776,45 @@ class core_moodlelib_testcase extends advanced_testcase {
         $file = $CFG->dataroot . '/argh.txt';
         $this->assertFalse(rename_to_unused_name($file));
     }
+
+    /**
+     * Provider for display_size
+     *
+     * @return array of ($size, $expected)
+     */
+    public function display_size_provider() {
+
+        return [
+            [0,     '0 bytes'    ],
+            [1,     '1 bytes'    ],
+            [1023,  '1023 bytes' ],
+            [1024,      '1KB'    ],
+            [2222,      '2.2KB'  ],
+            [33333,     '32.6KB' ],
+            [444444,    '434KB'  ],
+            [5555555,       '5.3MB'  ],
+            [66666666,      '63.6MB' ],
+            [777777777,     '741.7MB'],
+            [8888888888,        '8.3GB'  ],
+            [99999999999,       '93.1GB' ],
+            [111111111111,      '103.5GB'],
+            [2222222222222,         '2TB'    ],
+            [33333333333333,        '30.3TB' ],
+            [444444444444444,       '404.2TB'],
+            [5555555555555555,          '4.9PB'  ],
+            [66666666666666666,         '59.2PB' ],
+            [777777777777777777,        '690.8PB'],
+        ];
+    }
+
+    /**
+     * Test display_size
+     * @dataProvider display_size_provider
+     * @param int $size the size in bytes
+     * @param string $expected the expected string.
+     */
+    public function test_display_size($size, $expected) {
+        $result = display_size($size);
+        $this->assertEquals($expected, $result);
+    }
 }
