@@ -52,6 +52,7 @@ information provided here is intended especially for developers.
   renamed to `is_listed()` and `get_not_listed()` respectively.
 * Method `mustache_helper_collection::strip_blacklisted_helpers()` has been deprecated and renamed to
   `strip_disallowed_helpers()`.
+* Function redirect() now emits a line of backtrace into the X-Redirect-By header when debugging is one
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
