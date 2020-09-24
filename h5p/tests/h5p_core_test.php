@@ -68,8 +68,14 @@ class h5p_core_testcase extends \advanced_testcase {
 
         // Get info of latest content types versions.
         $contenttypes = $this->core->get_latest_content_types()->contentTypes;
-        // We are installing the first content type.
+        // We are installing the first content type with tutorial and example fields (or the first one if none has them).
         $librarydata = $contenttypes[0];
+        foreach ($contenttypes as $contentype) {
+            if (isset($contenttype->tutorial) && isset($contenttype->example)) {
+                $librarydata = $contenttype;
+                break;
+            }
+        }
 
         $library = [
                 'machineName' => $librarydata->id,
@@ -77,6 +83,13 @@ class h5p_core_testcase extends \advanced_testcase {
                 'minorVersion' => $librarydata->version->minor,
                 'patchVersion' => $librarydata->version->patch,
         ];
+        // Add example and tutorial to the library.
+        if (isset($librarydata->example)) {
+            $library['example'] = $librarydata->example;
+        }
+        if (isset($librarydata->tutorial)) {
+            $library['tutorial'] = $librarydata->tutorial;
+        }
 
         // Verify that the content type is not yet installed.
         $conditions['machinename'] = $library['machineName'];
@@ -92,6 +105,10 @@ class h5p_core_testcase extends \advanced_testcase {
         $this->assertEquals($librarydata->id, $typeinstalled->machinename);
         $this->assertEquals($librarydata->coreApiVersionNeeded->major, $typeinstalled->coremajor);
         $this->assertEquals($librarydata->coreApiVersionNeeded->minor, $typeinstalled->coreminor);
+        if (isset($librarydata->tutorial)) {
+            $this->assertEquals($librarydata->tutorial, $typeinstalled->tutorial);
+            $this->assertEquals($librarydata->example, $typeinstalled->example);
+        }
     }
 
     /**

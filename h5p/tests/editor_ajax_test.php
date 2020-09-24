@@ -80,6 +80,35 @@ class editor_ajax_testcase extends \advanced_testcase {
     }
 
     /**
+     * Test that getContentTypeCache method retrieves the latest library versions that exists locally.
+     */
+    public function test_getContentTypeCache(): void {
+        $this->resetAfterTest();
+
+        $h5pgenerator = \testing_util::get_data_generator()->get_plugin_generator('core_h5p');
+
+        // Create several libraries records.
+        $lib1 = $h5pgenerator->create_library_record('Library1', 'Lib1', 1, 0, 1, '', null, 'http://tutorial.org',
+            'http://example.org');
+        $lib2 = $h5pgenerator->create_library_record('Library2', 'Lib2', 2, 0, 1, '', null, 'http://tutorial.org');
+        $lib3 = $h5pgenerator->create_library_record('Library3', 'Lib3', 3, 0);
+        $libs = [$lib1, $lib2, $lib3];
+
+        $libraries = $this->editorajax->getContentTypeCache();
+        $this->assertCount(3, $libraries);
+        foreach ($libs as $lib) {
+            $library = $libraries[$lib->id];
+            $this->assertEquals($library->id, $lib->id);
+            $this->assertEquals($library->machine_name, $lib->machinename);
+            $this->assertEquals($library->major_version, $lib->majorversion);
+            $this->assertEquals($library->tutorial, $lib->tutorial);
+            $this->assertEquals($library->example, $lib->example);
+            $this->assertEquals($library->is_recommended, 0);
+            $this->assertEquals($library->summary, '');
+        }
+    }
+
+    /**
      * Test that the method getTranslations retrieves the translations of several libraries.
      *
      * @dataProvider  get_translations_provider
