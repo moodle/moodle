@@ -143,6 +143,57 @@ class core_string_manager_standard_testcase extends advanced_testcase {
         set_config('langlist', '');
         get_string_manager(true);
     }
+
+    /**
+     * Test {@see core_string_manager_standard::get_list_of_countries()} under different conditions.
+     */
+    public function test_get_list_of_countries() {
+
+        $this->resetAfterTest();
+        $stringman = get_string_manager();
+
+        $countries = $stringman->get_list_of_countries(true);
+        $this->assertIsArray($countries);
+        $this->assertArrayHasKey('AU', $countries);
+        $this->assertArrayHasKey('BE', $countries);
+        $this->assertArrayHasKey('CZ', $countries);
+        $this->assertArrayHasKey('ES', $countries);
+        $this->assertGreaterThan(4, count($countries));
+
+        set_config('allcountrycodes', '');
+        $countries = $stringman->get_list_of_countries(false);
+        $this->assertArrayHasKey('AU', $countries);
+        $this->assertArrayHasKey('BE', $countries);
+        $this->assertArrayHasKey('CZ', $countries);
+        $this->assertArrayHasKey('ES', $countries);
+        $this->assertGreaterThan(4, count($countries));
+
+        set_config('allcountrycodes', 'CZ,BE');
+        $countries = $stringman->get_list_of_countries(true);
+        $this->assertArrayHasKey('AU', $countries);
+        $this->assertArrayHasKey('BE', $countries);
+        $this->assertArrayHasKey('CZ', $countries);
+        $this->assertArrayHasKey('ES', $countries);
+        $this->assertGreaterThan(4, count($countries));
+
+        $countries = $stringman->get_list_of_countries(false);
+        $this->assertEquals(2, count($countries));
+        $this->assertArrayHasKey('BE', $countries);
+        $this->assertArrayHasKey('CZ', $countries);
+
+        set_config('allcountrycodes', 'CZ,UVWXYZ');
+        $countries = $stringman->get_list_of_countries();
+        $this->assertArrayHasKey('CZ', $countries);
+        $this->assertEquals(1, count($countries));
+
+        set_config('allcountrycodes', 'UVWXYZ');
+        $countries = $stringman->get_list_of_countries();
+        $this->assertArrayHasKey('AU', $countries);
+        $this->assertArrayHasKey('BE', $countries);
+        $this->assertArrayHasKey('CZ', $countries);
+        $this->assertArrayHasKey('ES', $countries);
+        $this->assertGreaterThan(4, count($countries));
+    }
 }
 
 /**
