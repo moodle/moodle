@@ -1,0 +1,106 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/content/export/course_index
+
+    Renders content for a course index.
+    This template is not for use within moodle.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * global
+
+    Example context (json):
+    {
+        "global": {
+            "righttoleft": 0,
+            "language": "en",
+            "sitename": "Kevin's Emporium of fine course material",
+            "siteurl": "https://kevin.example.com",
+            "pathtotop": "./",
+            "contentexportfooter": "This file is part of the content downloaded from <a href='https://example.com'>Kevin's Emporium of fine course material</a> by Jennifer Collins on Tuesday, 24th February 2021, 12:21 am.",
+            "contentexportsummary": "This file is part of the content downloaded from <a href='https://example.com/course/view.php?id=4'>Kevin's Emporium of fine course material</a> on Tuesday, 24th February 2021, 12:21 am.",
+            "coursename": "Marketing 101",
+            "courseshortname": "MKT101",
+            "courselink": "https://example.com/course/view.php?id=4",
+            "exportdate": "Tuesday, 24th February 2021, 12:21 am",
+            "maxfilesize": "40MB"
+        },
+        "aboutpagelink": "./about.html",
+        "sections": [
+            {
+                "title": "Welcome",
+                "summary": "<p>Welcome to my <em>awesome</em> course.</p>",
+                "activities": [
+                    {
+                        "title": "Data Structures - Arrays and Objects",
+                        "modname": "Assignment",
+                        "link": "./dsao_.1/index.html"
+                    },
+                    {
+                        "title": "Data Structures - Discussion",
+                        "modname": "Forum",
+                        "link": "./dsao_.2/index.html"
+                    },
+                    {
+                        "title": "Data Structures - Lecture Notes",
+                        "modname": "Folder",
+                        "link": "./dsao_.3/index.html"
+                    }
+                ]
+            }
+        ]
+    }
+}}
+{{<core/content/export/external_page}}
+{{$pagecontent}}
+    <div class="alert alert-info alert-block">
+        {{{global.contentexportsummary}}}
+    </div>
+    {{#aboutpagelink}}
+    <div>
+        <a href="{{{aboutpagelink}}}">{{#str}}contentexport_aboutthiscourse, core{{/str}}</a>
+    </div>
+    {{/aboutpagelink}}
+
+    {{#sections.0}}
+    <div>
+        {{#sections}}
+        <h3>{{{title}}}</h3>
+        {{#summary}}
+        <div>
+            {{{summary}}}
+        </div>
+        {{/summary}}
+        {{#activities.0}}
+        <ul>
+        {{#activities}}
+            <li><a href="{{{link}}}">{{{title}}} ({{{modname}}})</a></li>
+        {{/activities}}
+        </ul>
+        {{/activities.0}}
+        <hr>
+        {{/sections}}
+    </div>
+    {{/sections.0}}
+{{/pagecontent}}
+{{/core/content/export/external_page}}
