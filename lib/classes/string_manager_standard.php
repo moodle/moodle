@@ -427,6 +427,7 @@ class core_string_manager_standard implements core_string_manager {
 
         $countries = $this->load_component_strings('core_countries', $lang);
         core_collator::asort($countries);
+
         if (!$returnall and !empty($CFG->allcountrycodes)) {
             $enabled = explode(',', $CFG->allcountrycodes);
             $return = array();
@@ -435,7 +436,10 @@ class core_string_manager_standard implements core_string_manager {
                     $return[$c] = $countries[$c];
                 }
             }
-            return $return;
+
+            if (!empty($return)) {
+                return $return;
+            }
         }
 
         return $countries;
