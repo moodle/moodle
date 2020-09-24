@@ -49,8 +49,8 @@ if ($hassiteconfig) {
         $temp->add(new admin_setting_configtext('googlemapkey3', new lang_string('googlemapkey3', 'core_admin'),
             new lang_string('googlemapkey3_help', 'core_admin'), '', PARAM_RAW, 60));
 
-        $temp->add(new admin_setting_configtext('allcountrycodes', new lang_string('allcountrycodes', 'core_admin'),
-            new lang_string('configallcountrycodes', 'core_admin'), '', '/^(?:\w+(?:,\w+)*)?$/'));
+        $temp->add(new admin_setting_countrycodes('allcountrycodes', new lang_string('allcountrycodes', 'core_admin'),
+            new lang_string('configallcountrycodes', 'core_admin')));
     }
 
     $ADMIN->add('location', $temp);
