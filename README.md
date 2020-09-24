@@ -5,6 +5,7 @@
     <img src="https://moodle.org/theme/image.php/moodleorg/theme_moodleorg/1600426962/moodle_logo_small" />
   </a>
   </p> 
+ </div>
 
 
 # Moodle - the world's open source learning platform
