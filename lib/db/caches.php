@@ -473,7 +473,7 @@ $definitions = array(
     // Cache for licenses.
     'license' => [
         'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => false,
-        'simpledata' => false
+        'simplekeys' => true,
+        'simpledata' => false,
     ],
 );
