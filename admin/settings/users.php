@@ -210,7 +210,7 @@ if ($hassiteconfig
         // Custom user profile fields are not currently supported.
         $temp->add(new admin_setting_configmulticheckbox('showuseridentity',
                 new lang_string('showuseridentity', 'admin'),
-                new lang_string('showuseridentity_desc', 'admin'), array('email' => 1), array(
+                new lang_string('showuseridentity_desc', 'admin'), array('email' => 1, 'department' => 1), array(
                     'username'    => new lang_string('username'),
                     'idnumber'    => new lang_string('idnumber'),
                     'email'       => new lang_string('email'),

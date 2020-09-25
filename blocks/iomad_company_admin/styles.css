@@ -352,3 +352,7 @@ border-radius: 10px;
     border-width: 0 3px 3px 0;
   }
   
+.tree_dept_name {
+    display: inline-block;
+    width: 100%;
+}

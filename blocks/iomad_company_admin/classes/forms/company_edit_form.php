@@ -101,6 +101,7 @@ class company_edit_form extends \company_moodleform {
                             get_string('companycode', 'block_iomad_company_admin'),
                             'maxlength="25" size="25"');
         $mform->setType('code', PARAM_NOTAGS);
+        $mform->addHelpButton('code', 'companycode', 'block_iomad_company_admin');
 
         $mform->addElement('hidden', 'previousroletemplateid');
         $mform->addElement('hidden', 'previousemailtemplateid');

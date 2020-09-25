@@ -19,16 +19,16 @@
 function block_iomad_company_admin_menu() {
 
         return array(
-            'managecompanies' => array(
+            'addcompany' => array(
                 'category' => 'CompanyAdmin',
                 'tab' => 1,
-                'name' => get_string('managecompanies', 'block_iomad_company_admin'),
-                'url' => 'editcompanies.php',
-                'cap' => 'block/iomad_company_admin:company_add_child',
-                'icondefault' => 'editcompany',
+                'name' => get_string('createcompany', 'block_iomad_company_admin'),
+                'url' => 'company_edit_form.php?createnew=1',
+                'cap' => 'block/iomad_company_admin:company_add',
+                'icondefault' => 'newcompany',
                 'style' => 'company',
                 'icon' => 'fa-building',
-                'iconsmall' => 'fa-gear'
+                'iconsmall' => 'fa-plus-square'
             ),
             'editcompany' => array(
                 'category' => 'CompanyAdmin',
@@ -41,16 +41,16 @@ function block_iomad_company_admin_menu() {
                 'icon' => 'fa-building',
                 'iconsmall' => 'fa-edit'
             ),
-            'addcompany' => array(
+            'managecompanies' => array(
                 'category' => 'CompanyAdmin',
                 'tab' => 1,
-                'name' => get_string('createcompany', 'block_iomad_company_admin'),
-                'url' => 'company_edit_form.php?createnew=1',
-                'cap' => 'block/iomad_company_admin:company_add',
-                'icondefault' => 'newcompany',
+                'name' => get_string('managecompanies', 'block_iomad_company_admin'),
+                'url' => 'editcompanies.php',
+                'cap' => 'block/iomad_company_admin:company_add_child',
+                'icondefault' => 'editcompany',
                 'style' => 'company',
                 'icon' => 'fa-building',
-                'iconsmall' => 'fa-plus-square'
+                'iconsmall' => 'fa-gear'
             ),
             'editdepartments' => array(
                 'category' => 'CompanyAdmin',
@@ -63,17 +63,6 @@ function block_iomad_company_admin_menu() {
                 'icon' => 'fa-group',
                 'iconsmall' => 'fa-gear'
             ),
-            'assignmanagers' => array(
-                'category' => 'CompanyAdmin',
-                'tab' => 1,
-                'name' => get_string('assignmanagers', 'block_iomad_company_admin'),
-                'url' => 'company_managers_form.php',
-                'cap' => 'block/iomad_company_admin:company_manager',
-                'icondefault' => 'assigndepartmentusers',
-                'style' => 'department',
-                'icon' => 'fa-group',
-                'iconsmall' => 'fa-chevron-circle-right'
-            ),
             'userprofiles' => array(
                 'category' => 'CompanyAdmin',
                 'tab' => 1,
@@ -85,29 +74,7 @@ function block_iomad_company_admin_menu() {
                 'icon' => 'fa-user',
                 'iconsmall' => 'fa-info-circle'
             ),
-            'assignusers' => array(
-                'category' => 'CompanyAdmin',
-                'tab' => 1,
-                'name' => get_string('assignusers', 'block_iomad_company_admin'),
-                'url' => 'company_users_form.php',
-                'cap' => 'block/iomad_company_admin:company_user',
-                'icondefault' => 'assignusers',
-                'style' => 'user',
-                'icon' => 'fa-user',
-                'iconsmall' => 'fa-chevron-circle-right'
-            ),
-            'assigncourses' => array(
-                'category' => 'CompanyAdmin',
-                'tab' => 1,
-                'name' => get_string('assigncourses', 'block_iomad_company_admin'),
-                'url' => 'company_courses_form.php',
-                'cap' => 'block/iomad_company_admin:company_course',
-                'icondefault' => 'assigncourses',
-                'style' => 'course',
-                'icon' => 'fa-file-text',
-                'iconsmall' => 'fa-chevron-circle-right'
-            ),
-            'assigncourses' => array(
+            'restrictcapabilities' => array(
                 'category' => 'CompanyAdmin',
                 'tab' => 1,
                 'name' => get_string('restrictcapabilities', 'block_iomad_company_admin'),
@@ -140,7 +107,18 @@ function block_iomad_company_admin_menu() {
                 'icon' => 'fa-user',
                 'iconsmall' => 'fa-gear',
             ),
-            'assigntocompany' => array(
+            'assignmanagers' => array(
+                'category' => 'CompanyAdmin',
+                'tab' => 2,
+                'name' => get_string('assignmanagers', 'block_iomad_company_admin'),
+                'url' => 'company_managers_form.php',
+                'cap' => 'block/iomad_company_admin:company_manager',
+                'icondefault' => 'assigndepartmentusers',
+                'style' => 'department',
+                'icon' => 'fa-group',
+                'iconsmall' => 'fa-chevron-circle-right'
+            ),
+            'assignusertocompany' => array(
                 'category' => 'UserAdmin',
                 'tab' => 2,
                 'name' => get_string('assigntocompany', 'block_iomad_company_admin'),
@@ -150,17 +128,6 @@ function block_iomad_company_admin_menu() {
                 'style' => 'user',
                 'icon' => 'fa-building',
                 'iconsmall' => 'fa-chevron-circle-left',
-            ),
-            'enroluser' => array(
-                'category' => 'UserAdmin',
-                'tab' => 2,
-                'name' => get_string('enroluser', 'block_iomad_company_admin'),
-                'url' => 'company_course_users_form.php',
-                'cap' => 'block/iomad_company_admin:company_course_users',
-                'icondefault' => '',
-                'style' => 'user',
-                'icon' => 'fa-file-text',
-                'iconsmal' => 'fa-user',
             ),
             'uploadfromfile' => array(
                 'category' => 'UserAdmin',
@@ -196,16 +163,16 @@ function block_iomad_company_admin_menu() {
                 'icon' => 'fa-file-text',
                 'iconsmall' => 'fa-plus-square',
             ),
-            'assigntocompany' => array(
-                'category' => 'CourseAdmin',
+            'enroluser' => array(
+                'category' => 'UserAdmin',
                 'tab' => 3,
-                'name' => get_string('assigntocompany', 'block_iomad_company_admin'),
-                'url' => 'company_courses_form.php',
-                'cap' => 'block/iomad_company_admin:company_course',
-                'icondefault' => 'assigntocompany',
+                'name' => get_string('enroluser', 'block_iomad_company_admin'),
+                'url' => 'company_course_users_form.php',
+                'cap' => 'block/iomad_company_admin:company_course_users',
+                'icondefault' => 'userenrolements',
                 'style' => 'course',
-                'icon' => 'fa-building',
-                'iconsmall' => 'fa-chevron-circle-left'
+                'icon' => 'fa-file-text',
+                'iconsmall' => 'fa-user',
             ),
             'managecourses' => array(
                 'category' => 'CourseAdmin',
@@ -218,16 +185,16 @@ function block_iomad_company_admin_menu() {
                 'icon' => 'fa-file-text',
                 'iconsmall' => 'fa-gear',
             ),
-            'enroluser' => array(
+            'assigntocompany' => array(
                 'category' => 'CourseAdmin',
                 'tab' => 3,
-                'name' => get_string('enroluser', 'block_iomad_company_admin'),
-                'url' => 'company_course_users_form.php',
-                'cap' => 'block/iomad_company_admin:company_course_users',
-                'icondefault' => 'userenrolements',
+                'name' => get_string('assigntocompany', 'block_iomad_company_admin'),
+                'url' => 'company_courses_form.php',
+                'cap' => 'block/iomad_company_admin:company_course',
+                'icondefault' => 'assigntocompany',
                 'style' => 'course',
-                'icon' => 'fa-file-text',
-                'iconsmall' => 'fa-user',
+                'icon' => 'fa-building',
+                'iconsmall' => 'fa-chevron-circle-left'
             ),
             'managegroups' => array(
                 'category' => 'CourseAdmin',

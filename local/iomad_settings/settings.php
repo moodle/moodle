@@ -43,12 +43,12 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_configcheckbox('iomad_sync_institution',
                                                 get_string('iomad_sync_institution', 'local_iomad_settings'),
                                                 get_string('iomad_sync_institution_help', 'local_iomad_settings'),
-                                                0));
+                                                1));
 
     $settings->add(new admin_setting_configcheckbox('iomad_sync_department',
                                                 get_string('iomad_sync_department', 'local_iomad_settings'),
                                                 get_string('iomad_sync_department', 'local_iomad_settings'),
-                                                0));
+                                                1));
 
     $settings->add(new admin_setting_configcheckbox('iomad_autoenrol_managers',
                                                 get_string('iomad_autoenrol_managers', 'local_iomad_settings'),
