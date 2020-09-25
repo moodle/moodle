@@ -152,7 +152,7 @@ class observer {
 
             // Generate correct filename (same as certificate mod's view.php does)
             $certname = rtrim($certificate->name, '.');
-            $filename = clean_filename("$certname.pdf");
+            $filename = clean_filename(format_string($certname) . ".pdf");
 
             // Create the certificate content (always create new so it's up to date)
             $content = self::create_certificate($certificate, $user, $cm, $course, $certissue);
