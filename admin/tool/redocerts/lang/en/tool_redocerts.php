@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clearingcertificate'] = 'Clearing ID {$a->id} - {$a->count} out of {$a->total}';
 $string['companyid'] = 'Company ID';
 $string['courseid'] = 'Course ID';
 $string['doit'] = 'Yes, do it!';
@@ -32,6 +33,7 @@ $string['notifyfinished'] = '...finished';
 $string['pageheader'] = 'Recreate stored certificates';
 $string['privacy:metadata'] = 'Admin tool redo certs doesn\'t store any user details';
 $string['pluginname'] = 'Recreate stored certificates';
+$string['recreatingcertificate'] = 'Recreating Certificate - ';
 $string['searchusers'] = 'Select a user';
 $string['searchcourses'] = 'Select a course';
 $string['searchcompanies'] = 'Select a company';

@@ -64,21 +64,32 @@ function do_redocerts($user = 0, $course = 0, $company = 0, $idnumber = 0, $from
         $usersql[] = " lit.timecompleted < $todate ";
     }
     if (!empty($usersql)) {
-        $extrasql = " WHERE " . implode("AND", $usersql);
+        $extrasql = " WHERE lit.timecompleted > 0 " . implode("AND", $usersql);
     } else {
-        $extrasql = "";
+        $extrasql = " WHERE lit.timecompleted > 0 ";
     }
     // delete the initial records
     $oldrecords = $DB->get_records_sql("SELECT lit.* from {local_iomad_track} lit JOIN {course} c ON (c.id = lit.courseid) join {user} u on (lit.userid = u.id and u.deleted = 0 ) $extrasql order by lit.id asc");
 
     $total = count($oldrecords);
     $count = 1;
+    $sumstring = new stdclass();
+    $sumstring->total = $total;
     foreach ($oldrecords as $track) {
-        echo "<br>clearing id $track->id - $count out of $total </br>";
+        $sumstring->count = $count;
+        $sumstring->id = $track->id;
+        echo html_writer::start_tag('p');
+        echo format_string('clearingcertificate', 'tool_redocerts', $sumstring);
+        echo html_writer::end_tag('br');
         local_iomad_track_delete_entry($track->id);
-        echo "</br>Recreating Certificate</br>";
-        xmldb_local_iomad_track_record_certificates($track->courseid, $track->userid, $track->id);
-    
+        echo format_string('recreatingcertificate', 'tool_redocerts');
+        if (xmldb_local_iomad_track_record_certificates($track->courseid, $track->userid, $track->id)) {
+            echo format_string('success');
+        } else {
+            echo format_string('falied', 'scorm');
+        }
+        echo html_writer::end_tag('p');
+
         $count++;
     }
 }

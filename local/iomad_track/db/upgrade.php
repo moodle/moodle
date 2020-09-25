@@ -22,6 +22,8 @@ function xmldb_local_iomad_track_upgrade($oldversion) {
     $result = true;
     $dbman = $DB->get_manager();
 
+    require_once($CFG->dirroot.'/local/iomad_track/lib.php');
+
     if ($oldversion < 2017080800) {
 
         // Changing type of field finalscore on table local_iomad_track to number.
@@ -607,6 +609,22 @@ mtrace("enrol end " . time());
 
         // Iomad_track savepoint reached.
         upgrade_plugin_savepoint(true, 2020051900, 'local', 'iomad_track');
+    }
+
+    if ($oldversion < 2020062900) {
+
+        // Remove the certificates which have been recorded erroneously / with no timecompleted
+        $brokentracks = $DB->get_records_sql("SELECT lit.* FROM {local_iomad_track} lit
+                                              JOIN {local_iomad_track_certs} litc
+                                              ON (lit.id = litc.trackid)
+                                              WHERE lit.timecompleted IS NULL");
+        foreach ($brokentracks as $brokentrack) {
+            // Remove the file
+            local_iomad_track_delete_entry($brokentrack->id);
+        }
+
+        // Iomad_track savepoint reached.
+        upgrade_plugin_savepoint(true, 2020062900, 'local', 'iomad_track');
     }
 
    return $result;
