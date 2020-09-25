@@ -66,6 +66,8 @@ class block_iomad_company_admin extends block_base {
     private function get_menu() {
         $menus = [];
         $plugins = get_plugins_with_function('menu', $file = 'db/iomadmenu.php', $include = true);
+        unset($plugins['block']['iomad_company_admin']);
+        $plugins['block'] = array('iomad_company_admin' => 'block_iomad_company_admin_menu') + $plugins['block'];
         foreach ($plugins as $plugintype) {
             foreach ($plugintype as $plugin => $menufunction) {
                 $menus += $menufunction();
