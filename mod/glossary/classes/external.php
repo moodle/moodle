@@ -162,7 +162,7 @@ class mod_glossary_external extends external_api {
      * @param  int $id The glossary ID.
      * @return array Contains glossary, context, course and cm.
      */
-    protected static function validate_glossary($id) {
+    public static function validate_glossary($id) {
         global $DB;
         $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
         list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
