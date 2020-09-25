@@ -23,130 +23,6 @@ require_once($CFG->libdir . '/formslib.php');
 require_once('lib.php');
 require_once(dirname(__FILE__) . '/../../course/lib.php');
 
-class course_edit_form extends moodleform {
-    protected $title = '';
-    protected $description = '';
-    protected $selectedcompany = 0;
-    protected $context = null;
-
-    public function __construct($actionurl, $companyid, $editoroptions) {
-        global $CFG, $DB;
-
-        $this->selectedcompany = $companyid;
-        $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
-        $this->editoroptions = $editoroptions;
-        $this->companyrec = $DB->get_record('company', array('id' => $companyid));
-
-        parent::__construct($actionurl);
-    }
-
-    public function definition() {
-        global $CFG;
-
-        $mform =& $this->_form;
-
-        // Then show the fields about where this block appears.
-        $mform->addElement('header', 'header',
-                            get_string('companycourse', 'block_iomad_company_admin'));
-
-        $mform->addElement('text', 'fullname', get_string('fullnamecourse'),
-                            'maxlength="254" size="50"');
-        $mform->addHelpButton('fullname', 'fullnamecourse');
-        $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
-        $mform->setType('fullname', PARAM_MULTILANG);
-
-        $mform->addElement('text', 'shortname', get_string('shortnamecourse'),
-                            'maxlength="100" size="20"');
-        $mform->addHelpButton('shortname', 'shortnamecourse');
-        $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
-        $mform->setType('shortname', PARAM_MULTILANG);
-
-        // Create course as self enrolable.
-        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
-            $selectarray = array(get_string('selfenrolled', 'block_iomad_company_admin'),
-                                 get_string('enrolled', 'block_iomad_company_admin'),
-                                 get_string('licensedcourse', 'block_iomad_company_admin'));
-        } else {
-            $selectarray = array(get_string('selfenrolled', 'block_iomad_company_admin'),
-                                 get_string('enrolled', 'block_iomad_company_admin'));
-        }
-        $select = &$mform->addElement('select', 'selfenrol',
-                            get_string('enrolcoursetype', 'block_iomad_company_admin'),
-                            $selectarray);
-        $mform->addHelpButton('selfenrol', 'enrolcourse', 'block_iomad_company_admin');
-        $select->setSelected('no');
-
-        $mform->addElement('editor', 'summary_editor',
-                            get_string('coursesummary'), null, $this->editoroptions);
-        $mform->addHelpButton('summary_editor', 'coursesummary');
-        $mform->setType('summary_editor', PARAM_RAW);
-
-        $mform->addElement('date_time_selector', 'startdate', get_string('startdate'));
-        $mform->addHelpButton('startdate', 'startdate');
-        $date = (new DateTime())->setTimestamp(usergetmidnight(time()));
-        $date->modify('+1 day');
-        $mform->setDefault('startdate', $date->getTimestamp());
-
-        $mform->addElement('date_time_selector', 'enddate', get_string('enddate'), array('optional' => true));
-        $mform->addHelpButton('enddate', 'enddate');
-
-        // Add custom fields to the form.
-        $handler = core_course\customfield\course_handler::create();
-        $handler->set_parent_context(context_coursecat::instance($this->companyrec->category)); // For course handler only.
-        $handler->instance_form_definition($mform, 0);
-
-        // Add action buttons.
-        $buttonarray = array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton',
-                            get_string('createcourse', 'block_iomad_company_admin'));
-        $buttonarray[] = &$mform->createElement('submit', 'submitandviewbutton',
-                            get_string('createandvisitcourse', 'block_iomad_company_admin'));
-        $buttonarray[] = &$mform->createElement('cancel');
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-        $mform->closeHeaderBefore('buttonar');
-
-    }
-
-    public function get_data() {
-        $data = parent::get_data();
-        if ($data) {
-            $data->title = '';
-            $data->description = '';
-
-            if ($this->title) {
-                $data->title = $this->title;
-            }
-
-            if ($this->description) {
-                $data->description = $this->description;
-            }
-        }
-        return $data;
-    }
-
-    // Perform some extra moodle validation.
-    public function validation($data, $files) {
-        global $DB, $CFG;
-
-        $errors = parent::validation($data, $files);
-        if ($foundcourses = $DB->get_records('course', array('shortname' => $data['shortname']))) {
-            if (!empty($data['id'])) {
-                unset($foundcourses[$data['id']]);
-            }
-            if (!empty($foundcourses)) {
-                foreach ($foundcourses as $foundcourse) {
-                    $foundcoursenames[] = $foundcourse->fullname;
-                }
-                $foundcoursenamestring = implode(',', $foundcoursenames);
-                $errors['shortname'] = get_string('shortnametaken', '', $foundcoursenamestring);
-            }
-        }
-
-        return $errors;
-    }
-
-}
-
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 
@@ -191,7 +67,7 @@ $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES,
                        'trusttext' => false,
                        'noclean' => true);
 
-$mform = new course_edit_form($PAGE->url, $companyid, $editoroptions);
+$mform = new block_iomad_company_admin\forms\course_edit_form($PAGE->url, $companyid, $editoroptions);
 
 if ($mform->is_cancelled()) {
     redirect($companylist);
