@@ -47,6 +47,7 @@ $string['iomad_microlearning:addinstance'] = 'Add a microlearning block';
 $string['iomad_microlearning:assign_threads'] = 'Assign a user to a microlearning thread';
 $string['iomad_microlearning:edit_nuggets'] = 'Edit microlearning nuggets';
 $string['iomad_microlearning:edit_threads'] = 'Edit microlearning threads';
+$string['iomad_microlearning:import_threads'] = 'Import micorlearning threads';
 $string['iomad_microlearning:myaddinstance'] = 'Add a microlearning block to my dashboard';
 $string['iomad_microlearning:thread_clone'] = 'Clone a microlearning thread';
 $string['iomad_microlearning:thread_delete'] = 'Delete a microlearnng thread';

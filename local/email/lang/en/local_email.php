@@ -47,6 +47,7 @@ $string['email:delete'] = 'Revert to Default Email Templates';
 $string['email:edit'] = 'Edit Email Templates';
 $string['email:list'] = 'List Email Templates';
 $string['email:send'] = 'Send emails using templates';
+$string['email:templateset_list'] = 'List saved email template sets';
 $string['enable_manager'] = 'Enable for managers';
 $string['enable_supervisor'] = 'Enable for supervisors';
 $string['emailrepeatday'] = 'Email re-send day**';
