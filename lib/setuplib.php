@@ -1635,14 +1635,11 @@ function get_request_storage_directory($exceptiononerror = true, bool $forcecrea
     $createnewdirectory = $forcecreate || !$writabledirectoryexists;
 
     if ($createnewdirectory) {
-        if ($CFG->localcachedir !== "$CFG->dataroot/localcache") {
-            check_dir_exists($CFG->localcachedir, true, true);
-            protect_directory($CFG->localcachedir);
-        } else {
-            protect_directory($CFG->dataroot);
-        }
+        $basedir = "{$CFG->localrequestdir}/{$CFG->siteidentifier}";
+        make_writable_directory($basedir);
+        protect_directory($basedir);
 
-        if ($dir = make_unique_writable_directory($CFG->localcachedir, $exceptiononerror)) {
+        if ($dir = make_unique_writable_directory($basedir, $exceptiononerror)) {
             // Register a shutdown handler to remove the directory.
             \core_shutdown_manager::register_function('remove_dir', [$dir]);
         }
