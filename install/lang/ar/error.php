@@ -35,7 +35,7 @@ $string['cannotcreatedboninstall'] = '<p> لا يمكن إنشاء قاعدة ا
 <p> المسؤول عن الموقع يجب أن يتحقق من إعدادات قاعدة بيانات. </p>';
 $string['cannotcreatelangdir'] = 'لا يمكن إنشاء مجلد اللغة';
 $string['cannotcreatetempdir'] = 'لا يمكن إنشاء المجلد المؤقت';
-$string['cannotdownloadcomponents'] = 'لم يتم تحميل العناصر';
+$string['cannotdownloadcomponents'] = 'تعذر تنزيل المُكونات';
 $string['cannotdownloadzipfile'] = 'لم يتم تحميل الملف المضغوط';
 $string['cannotfindcomponent'] = 'لم يتم العثور على المكون';
 $string['cannotsavemd5file'] = 'لم يتم حفظ ملف  md5';
