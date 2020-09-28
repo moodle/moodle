@@ -1397,7 +1397,7 @@ class mod_glossary_external extends external_api {
 
         // Get and validate the glossary.
         $entry = $DB->get_record('glossary_entries', array('id' => $id), '*', MUST_EXIST);
-        list($glossary, $context) = self::validate_glossary($entry->glossaryid);
+        list($glossary, $context, $course, $cm) = self::validate_glossary($entry->glossaryid);
 
         if (empty($entry->approved) && $entry->userid != $USER->id && !has_capability('mod/glossary:approve', $context)) {
             throw new invalid_parameter_exception('invalidentry');
@@ -1409,6 +1409,7 @@ class mod_glossary_external extends external_api {
         // Permissions (for entry edition).
         $permissions = [
             'candelete' => mod_glossary_can_delete_entry($entry, $glossary, $context),
+            'canupdate' => mod_glossary_can_update_entry($entry, $glossary, $context, $cm),
         ];
 
         return array(
@@ -1433,6 +1434,7 @@ class mod_glossary_external extends external_api {
             'permissions' => new external_single_structure(
                 [
                     'candelete' => new external_value(PARAM_BOOL, 'Whether the user can delete the entry.'),
+                    'canupdate' => new external_value(PARAM_BOOL, 'Whether the user can update the entry.'),
                 ],
                 'User permissions for the managing the entry.', VALUE_OPTIONAL
             ),
