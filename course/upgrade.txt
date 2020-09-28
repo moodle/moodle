@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 3.10 ===
 
 * The function make_categories_options() has now been deprecated. Please use \core_course_category::make_categories_list() instead.
+* External function core_course_external::get_course_contents now returns a new field contextid with the module context id.
 
 === 3.9 ===
 
