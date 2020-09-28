@@ -170,4 +170,13 @@ $functions = array(
         'type'          => 'write',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
     ],
+
+    'mod_glossary_update_entry' => [
+        'classname'     => 'mod_glossary\external\update_entry',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Updates the given glossary entry.',
+        'type'          => 'write',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 );
