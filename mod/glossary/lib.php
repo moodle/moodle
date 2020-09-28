@@ -4455,3 +4455,60 @@ function mod_glossary_delete_entry($entry, $glossary, $cm, $context, $course, $h
         \mod_glossary\local\concept_cache::reset_glossary($glossary);
     }
 }
+
+/**
+ * Checks if the current user can update the given glossary entry.
+ *
+ * @since Moodle 3.10
+ * @param stdClass $entry the entry database object
+ * @param stdClass $glossary the glossary database object
+ * @param stdClass $context the glossary context
+ * @param object $cm the course module object (cm record or cm_info instance)
+ * @param bool $return Whether to return a boolean value or stop the execution (exception)
+ * @return bool if the user can update the entry
+ * @throws moodle_exception
+ */
+function mod_glossary_can_update_entry(stdClass $entry, stdClass $glossary, stdClass $context, object $cm,
+        bool $return = true): bool {
+
+    global $USER, $CFG;
+
+    $ineditperiod = ((time() - $entry->timecreated < $CFG->maxeditingtime) || $glossary->editalways);
+    if (!has_capability('mod/glossary:manageentries', $context) and
+            !($entry->userid == $USER->id and ($ineditperiod and has_capability('mod/glossary:write', $context)))) {
+
+        if ($USER->id != $entry->userid) {
+            if ($return) {
+                return false;
+            }
+            throw new moodle_exception('errcannoteditothers', 'glossary', "view.php?id=$cm->id&amp;mode=entry&amp;hook=$entry->id");
+        } else if (!$ineditperiod) {
+            if ($return) {
+                return false;
+            }
+            throw new moodle_exception('erredittimeexpired', 'glossary', "view.php?id=$cm->id&amp;mode=entry&amp;hook=$entry->id");
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Prepares an entry for editing, adding aliases and category information.
+ *
+ * @param  stdClass $entry the entry being edited
+ * @return stdClass the entry with the additional data
+ */
+function mod_glossary_prepare_entry_for_edition(stdClass $entry): stdClass {
+    global $DB;
+
+    if ($aliases = $DB->get_records_menu("glossary_alias", ["entryid" => $entry->id], '', 'id, alias')) {
+        $entry->aliases = implode("\n", $aliases) . "\n";
+    }
+    if ($categoriesarr = $DB->get_records_menu("glossary_entries_categories", ['entryid' => $entry->id], '', 'id, categoryid')) {
+        // TODO: this fetches cats from both main and secondary glossary :-(
+        $entry->categories = array_values($categoriesarr);
+    }
+
+    return $entry;
+}
