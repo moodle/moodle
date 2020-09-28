@@ -367,6 +367,45 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_data_access_information with groups.
+     */
+    public function test_get_data_access_information_groups() {
+        global $DB;
+
+        $DB->set_field('course', 'groupmode', VISIBLEGROUPS, ['id' => $this->course->id]);
+
+        // Check I can see my group.
+        $this->setUser($this->student1);
+
+        $result = mod_data_external::get_data_access_information($this->database->id);
+        $result = external_api::clean_returnvalue(mod_data_external::get_data_access_information_returns(), $result);
+
+        $this->assertEquals($this->group1->id, $result['groupid']); // My group is correctly found.
+        $this->assertFalse($result['canmanageentries']);
+        $this->assertFalse($result['canapprove']);
+        $this->assertTrue($result['canaddentry']);  // I can entries in my groups.
+        $this->assertTrue($result['timeavailable']);
+        $this->assertFalse($result['inreadonlyperiod']);
+        $this->assertEquals(0, $result['numentries']);
+        $this->assertEquals(0, $result['entrieslefttoadd']);
+        $this->assertEquals(0, $result['entrieslefttoview']);
+
+        // Check the other course group in visible groups mode.
+        $result = mod_data_external::get_data_access_information($this->database->id, $this->group2->id);
+        $result = external_api::clean_returnvalue(mod_data_external::get_data_access_information_returns(), $result);
+
+        $this->assertEquals($this->group2->id, $result['groupid']); // The group is correctly found.
+        $this->assertFalse($result['canmanageentries']);
+        $this->assertFalse($result['canapprove']);
+        $this->assertFalse($result['canaddentry']);  // I cannot add entries in other groups.
+        $this->assertTrue($result['timeavailable']);
+        $this->assertFalse($result['inreadonlyperiod']);
+        $this->assertEquals(0, $result['numentries']);
+        $this->assertEquals(0, $result['entrieslefttoadd']);
+        $this->assertEquals(0, $result['entrieslefttoview']);
+    }
+
+    /**
      * Helper method to populate the database with some entries.
      *
      * @return array the entry ids created
@@ -1077,6 +1116,16 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->expectExceptionMessage(get_string('noaccess', 'data'));
         $this->expectException('moodle_exception');
         mod_data_external::add_entry($this->database->id, 0, []);
+    }
+
+    /**
+     * Test add_entry invalid group.
+     */
+    public function test_add_entry_invalid_group() {
+        $this->setUser($this->student1);
+        $this->expectExceptionMessage(get_string('noaccess', 'data'));
+        $this->expectException('moodle_exception');
+        mod_data_external::add_entry($this->database->id, $this->group2->id, []);
     }
 
     /**
