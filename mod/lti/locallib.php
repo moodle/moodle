@@ -2010,6 +2010,18 @@ function lti_calculate_custom_parameter($value) {
             return implode(",", groups_get_user_groups($COURSE->id, $USER->id)[0]);
         case 'Context.id.history':
             return implode(",", get_course_history($COURSE));
+        case 'CourseSection.timeFrame.begin':
+            if (empty($COURSE->startdate)) {
+                return "";
+            }
+            $dt = new DateTime("@$COURSE->startdate", new DateTimeZone('UTC'));
+            return $dt->format(DateTime::ATOM);
+        case 'CourseSection.timeFrame.end':
+            if (empty($COURSE->enddate)) {
+                return "";
+            }
+            $dt = new DateTime("@$COURSE->enddate", new DateTimeZone('UTC'));
+            return $dt->format(DateTime::ATOM);
     }
     return null;
 }
@@ -3669,7 +3681,8 @@ function lti_get_capabilities() {
        'CourseSection.label' => 'context_label',
        'CourseSection.sourcedId' => 'lis_course_section_sourcedid',
        'CourseSection.longDescription' => '$COURSE->summary',
-       'CourseSection.timeFrame.begin' => '$COURSE->startdate',
+       'CourseSection.timeFrame.begin' => null,
+       'CourseSection.timeFrame.end' => null,
        'ResourceLink.id' => 'resource_link_id',
        'ResourceLink.title' => 'resource_link_title',
        'ResourceLink.description' => 'resource_link_description',
