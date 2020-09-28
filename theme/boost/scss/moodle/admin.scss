@@ -652,3 +652,17 @@
         color: $gray-600;
     }
 }
+
+.path-admin-tool-uploaduser {
+    .uuwarning {
+        background-color: $state-warning-bg;
+    }
+
+    .uuerror {
+        background-color: $state-danger-bg;
+    }
+
+    .uuinfo {
+        background-color: $state-success-bg;
+    }
+}
