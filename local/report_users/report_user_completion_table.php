@@ -147,63 +147,74 @@ class local_report_user_completion_table extends table_sql {
         }
 
         // Get the buttons.
-        if (!empty($row->action) || (!empty($row->licenseallocated) && empty($row->timecompleted))) {
-            // Link for user delete
-            $dellink = new moodle_url('/local/report_users/userdisplay.php', array(
-                    'userid' => $row->userid,
-                    'delete' => $row->userid,
-                    'courseid' => $row->courseid,
-                    'rowid' => $row->id,
-                    'action' => 'delete'
-                ));
-            $clearlink = new moodle_url('/local/report_users/userdisplay.php', array(
-                    'userid' => $row->userid,
-                    'delete' => $row->userid,
-                    'rowid' => $row->id,
-                    'courseid' => $row->courseid,
-                    'action' => 'clear'
-                ));
-            $trackonlylink = new moodle_url('/local/report_users/userdisplay.php', array(
-                    'userid' => $row->userid,
-                    'delete' => $row->userid,
-                    'rowid' => $row->id,
-                    'courseid' => $row->courseid,
-                    'action' => 'trackonly'
-                ));
-            $delaction = '';
+        // Link for user delete
+        $dellink = new moodle_url('/local/report_users/userdisplay.php', array(
+                'userid' => $row->userid,
+                'delete' => $row->userid,
+                'courseid' => $row->courseid,
+                'rowid' => $row->id,
+                'action' => 'delete'
+            ));
+        $clearlink = new moodle_url('/local/report_users/userdisplay.php', array(
+                'userid' => $row->userid,
+                'delete' => $row->userid,
+                'rowid' => $row->id,
+                'courseid' => $row->courseid,
+                'action' => 'clear'
+            ));
+        $revokelink = new moodle_url('/local/report_users/userdisplay.php', array(
+                'userid' => $row->userid,
+                'delete' => $row->userid,
+                'rowid' => $row->id,
+                'courseid' => $row->courseid,
+                'action' => 'revoke'
+            ));
+        $trackonlylink = new moodle_url('/local/report_users/userdisplay.php', array(
+                'userid' => $row->userid,
+                'delete' => $row->userid,
+                'rowid' => $row->id,
+                'courseid' => $row->courseid,
+                'action' => 'trackonly'
+            ));
+        $delaction = '';
 
-            if (has_capability('local/report_users:deleteentries', context_system::instance())) {
-                // Its from the course_completions table.  Check the license type.
+        if (has_capability('local/report_users:deleteentries', context_system::instance())) {
+            // Its from the course_completions table.  Check the license type.
+            if (empty($row->coursecleared)) {
                 if (!empty($row->licenseid) &&
                     $DB->get_record('companylicense',
                                      array('id' => $row->licenseid,
                                            'program' => 1))) {
                     if (has_capability('local/report_users:clearentries', context_system::instance())) {
-                        $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                        $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('resetcourse', 'local_report_users') . '</a>';
                     }
                 } else {
                     if (!empty($row->timecompleted)) {
                         if (has_capability('local/report_users:clearentries', context_system::instance())) {
-                            $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                            $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('resetcourseconfirm', 'local_report_users') . '</a>';
                         }
                     } else if ($DB->get_record('companylicense_users', array('userid' => $row->userid, 'licensecourseid' => $row->courseid, 'licenseid' => $row->licenseid, 'issuedate' => $row->licenseallocated, 'isusing' => 1))) {
                         if (has_capability('local/report_users:deleteentries', context_system::instance())) {
-                            $delaction .= '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete') . '</a>';
+                            $delaction .= '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('clearcourse', 'local_report_users') . '</a>';
                         }
-                    } else if ($DB->get_record('course_completions', array('course' => $row->courseid, 'userid' => $row->userid, 'timecompleted' => $row->timecompleted))) {
+                    } else if ($DB->get_record('companylicense_users', array('userid' => $row->userid, 'licensecourseid' => $row->courseid, 'licenseid' => $row->licenseid, 'issuedate' => $row->licenseallocated, 'isusing' => 0))) {
+                        if (has_capability('local/report_users:deleteentries', context_system::instance())) {
+                            $delaction .= '<a class="btn btn-danger" href="'.$revokelink.'">' . get_string('revokelicense', 'local_report_users') . '</a>';
+                        }
+                    } else {
                         if (has_capability('local/report_users:clearentries', context_system::instance())) {
-                            $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clear', 'local_report_users') . '</a>';
+                            $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clearcourse', 'local_report_users') . '</a>';
                         }
-                    } else if (has_capability('local/report_users:deleteentriesfull', context_system::instance())) {
-                        $delaction .= '<a class="btn btn-danger" href="'.$trackonlylink.'">' . get_string('delete', 'local_report_users') . '</a>';
                     }
                 }
+            } else {
+                if (has_capability('local/report_users:deleteentriesfull', context_system::instance())) {
+                        $delaction .= '<a class="btn btn-danger" href="'.$trackonlylink.'">' . get_string('purgerecord', 'local_report_users') . '</a>';
+                }
             }
-
-            return $delaction;
-        } else {
-            return;
         }
+
+        return $delaction;
     }
 
     /**
