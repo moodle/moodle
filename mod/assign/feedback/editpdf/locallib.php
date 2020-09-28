@@ -69,6 +69,7 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
                                                                  $attempt);
 
         $stampfiles = array();
+        $systemfiles = array();
         $fs = get_file_storage();
         $syscontext = context_system::instance();
 
@@ -82,13 +83,17 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
             foreach ($files as $file) {
                 $filename = $file->get_filename();
                 if ($filename !== '.') {
+                    $systemfiles[] = $filename;
 
-                    $existingfile = $fs->get_file($this->assignment->get_context()->id,
-                                                  'assignfeedback_editpdf',
-                                                  'stamps',
-                                                  $grade->id,
-                                                  '/',
-                                                  $file->get_filename());
+                    $existingfile = $fs->file_exists(
+                        $this->assignment->get_context()->id,
+                        'assignfeedback_editpdf',
+                        'stamps',
+                        $grade->id,
+                        '/',
+                        $file->get_filename()
+                    );
+
                     if (!$existingfile) {
                         $newrecord = new stdClass();
                         $newrecord->contextid = $this->assignment->get_context()->id;
@@ -109,13 +114,24 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
             foreach ($files as $file) {
                 $filename = $file->get_filename();
                 if ($filename !== '.') {
-                    $url = moodle_url::make_pluginfile_url($this->assignment->get_context()->id,
-                                                   'assignfeedback_editpdf',
-                                                   'stamps',
-                                                   $grade->id,
-                                                   '/',
-                                                   $file->get_filename(),
-                                                   false);
+
+                    // Check to see if the file exists in system context.
+                    $insystemfiles = in_array($filename, $systemfiles);
+
+                    // If stamp is available in the system context, use that copy.
+                    // If not then fall back to file saved in the files table.
+                    $context = $insystemfiles ? $syscontext->id : $this->assignment->get_context()->id;
+                    $itemid = $insystemfiles ? 0 : $grade->id;
+
+                    $url = moodle_url::make_pluginfile_url(
+                        $context,
+                        'assignfeedback_editpdf',
+                        'stamps',
+                        $itemid,
+                        '/',
+                        $file->get_filename(),
+                        false
+                    );
                     array_push($stampfiles, $url->out());
                 }
             }

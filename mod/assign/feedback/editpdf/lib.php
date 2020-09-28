@@ -47,7 +47,24 @@ function assignfeedback_editpdf_pluginfile($course,
 
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
-    if ($context->contextlevel == CONTEXT_MODULE) {
+    if ($filearea === 'stamps' && $context->contextlevel === CONTEXT_SYSTEM) {
+
+        $itemid = (int)array_shift($args);
+
+        $relativepath = implode('/', $args);
+
+        $fullpath = "/{$context->id}/assignfeedback_editpdf/$filearea/$itemid/$relativepath";
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        $options['cacheability'] = 'public';
+        $options['immutable'] = true;
+
+        send_stored_file($file, 0, 0, true, $options);
+    } else if ($context->contextlevel == CONTEXT_MODULE) {
 
         require_login($course, false, $cm);
         $itemid = (int)array_shift($args);
