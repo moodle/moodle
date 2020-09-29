@@ -641,6 +641,8 @@ flush();
 if (!$users) {
     $match = array();
     echo $output->heading(get_string('nousersfound'));
+    echo $output->single_button(new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/company_user_create_form.php'),
+                                get_string('createuser', 'block_iomad_company_admin'));
 
     $table = null;
 
