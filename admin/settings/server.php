@@ -444,6 +444,17 @@ if ($hassiteconfig) {
         new lang_string('configallowedemaildomains', 'admin'),
         ''));
 
+    $temp->add(new admin_setting_heading('divertallemailsheading', new lang_string('divertallemails', 'admin'),
+        new lang_string('divertallemailsdetail', 'admin')));
+    $temp->add(new admin_setting_configtext('divertallemailsto',
+        new lang_string('divertallemailsto', 'admin'),
+        new lang_string('divertallemailsto_desc', 'admin'),
+        ''));
+    $temp->add(new admin_setting_configtextarea('divertallemailsexcept',
+        new lang_string('divertallemailsexcept', 'admin'),
+        new lang_string('divertallemailsexcept_desc', 'admin'),
+        '', PARAM_RAW, '50', '4'));
+
     $url = new moodle_url('/admin/testoutgoingmailconf.php');
     $link = html_writer::link($url, get_string('testoutgoingmailconf', 'admin'));
     $temp->add(new admin_setting_heading('testoutgoinmailc', new lang_string('testoutgoingmailconf', 'admin'),

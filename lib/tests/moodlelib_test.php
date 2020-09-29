@@ -3297,6 +3297,26 @@ class core_moodlelib_testcase extends advanced_testcase {
                 ),
                 false,
             ),
+            'divertsexceptionsnewline' => array(
+                'divertallemailsto' => 'somewhere@elsewhere.com',
+                'divertallemailsexcept' => "@dev.com\nfred(\+.*)?@example.com",
+                array(
+                    'dev1@dev.com',
+                    'fred@example.com',
+                    'fred+verp@example.com',
+                ),
+                false,
+            ),
+            'alsodivertsnewline' => array(
+                'divertallemailsto' => 'somewhere@elsewhere.com',
+                'divertallemailsexcept' => "@dev.com\nfred(\+.*)?@example.com",
+                array(
+                    'foo@example.com',
+                    'test@real.com',
+                    'fred.jones@example.com',
+                ),
+                true,
+            ),
         );
     }
 
