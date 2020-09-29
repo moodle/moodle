@@ -15,18 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'pg_paypal', language 'en'
+ * External functions and service definitions for the PayPal payment gateway plugin.
  *
  * @package    pg_paypal
- * @copyright  2019 Shamim Rezaie <shamim@moodle.com>
+ * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['brandname'] = 'Brand name';
-$string['brandname_desc'] = 'The optional label that overrides the business name in the PayPal account on the PayPal site.';
-$string['clientid'] = 'Client ID';
-$string['clientid_desc'] = 'The client ID that PayPal generated for your application.';
-$string['gatewaydescription'] = 'PayPal is an authorised payment gateway provider for processing credit card transactions.';
-$string['gatewayname'] = 'PayPal';
-$string['pluginname'] = 'PayPal';
-$string['pluginname_desc'] = 'The PayPal plugin allows you to receive payments via PayPal.';
+defined('MOODLE_INTERNAL') || die();
+
+$functions = [
+    'pg_paypal_get_config_for_js' => [
+        'classname'   => 'pg_paypal\external\get_config_for_js',
+        'methodname'  => 'execute',
+        'classpath'   => '',
+        'description' => 'Returns the configuration settings to be used in js',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+];
