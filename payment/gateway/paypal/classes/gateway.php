@@ -41,4 +41,51 @@ class gateway extends \core_payment\gateway {
             'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'USD'
         ];
     }
+
+    /**
+     * Configuration form for the gateway instance
+     *
+     * Use $form->get_mform() to access the \MoodleQuickForm instance
+     *
+     * @param \core_payment\form\account_gateway $form
+     */
+    public static function add_configuration_to_gateway_form(\core_payment\form\account_gateway $form): void {
+        $mform = $form->get_mform();
+
+        $mform->addElement('text', 'brandname', get_string('brandname', 'pg_paypal'));
+        $mform->setType('brandname', PARAM_TEXT);
+        $mform->addHelpButton('brandname', 'brandname', 'pg_paypal');
+
+        $mform->addElement('text', 'clientid', get_string('clientid', 'pg_paypal'));
+        $mform->setType('clientid', PARAM_TEXT);
+        $mform->addHelpButton('clientid', 'clientid', 'pg_paypal');
+
+        $mform->addElement('text', 'secret', get_string('secret', 'pg_paypal'));
+        $mform->setType('secret', PARAM_TEXT);
+        $mform->addHelpButton('secret', 'secret', 'pg_paypal');
+
+        $options = [
+            'live' => get_string('live', 'pg_paypal'),
+            'sandbox'  => get_string('sandbox', 'pg_paypal'),
+        ];
+
+        $mform->addElement('select', 'environment', get_string('environment', 'pg_paypal'), $options);
+        $mform->addHelpButton('environment', 'environment', 'pg_paypal');
+    }
+
+    /**
+     * Validates the gateway configuration form.
+     *
+     * @param \core_payment\form\account_gateway $form
+     * @param \stdClass $data
+     * @param array $files
+     * @param array $errors form errors (passed by reference)
+     */
+    public static function validate_gateway_form(\core_payment\form\account_gateway $form,
+                                                 \stdClass $data, array $files, array &$errors): void {
+        if ($data->enabled &&
+                (empty($data->brandname) || empty($data->clientid) || empty($data->secret))) {
+            $errors['enabled'] = get_string('gatewaycannotbeenabled', 'payment');
+        }
+    }
 }

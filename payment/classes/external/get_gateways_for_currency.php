@@ -43,7 +43,8 @@ class get_gateways_for_currency extends external_api {
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters(
-                ['currency' => new external_value(PARAM_ALPHA, 'Currency code')]
+                ['currency' => new external_value(PARAM_ALPHA, 'Currency code'),
+                    'accountid' => new external_value(PARAM_INT, 'Account id')]
         );
     }
 
@@ -51,16 +52,18 @@ class get_gateways_for_currency extends external_api {
      * Returns the list of gateways that can process payments in the given currency.
      *
      * @param string $currency The currency in the three-character ISO-4217 format.
+     * @param int $accountid
      * @return \stdClass[]
      */
-    public static function execute(string $currency): array {
+    public static function execute(string $currency, int $accountid): array {
 
         $params = external_api::validate_parameters(self::execute_parameters(), [
             'currency' => $currency,
+            'accountid' => $accountid,
         ]);
 
         $list = [];
-        $gateways = \core_payment\helper::get_gateways_for_currency($params['currency']);
+        $gateways = \core_payment\helper::get_gateways_for_currency($params['currency'], $params['accountid']);
 
         foreach ($gateways as $gateway) {
             $list[] = (object)[

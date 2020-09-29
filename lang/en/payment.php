@@ -22,11 +22,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['accountname'] = 'Account name';
+$string['accountnotavailable'] = 'Not available';
 $string['callbacknotimplemented'] = 'The callback is not implemented for component {$a}.';
+$string['createaccount'] = 'Create payment account';
 $string['feeincludesurcharge'] = '{$a->fee} (includes {$a->surcharge}% surcharge for using this payment type)';
+$string['gatewaycannotbeenabled'] = 'The payment gateway cannot be enabled because the configuration is incomplete.';
+$string['gatewaydisabled'] = 'Disabled';
+$string['gatewayenabled'] = 'Enabled';
+$string['gatewaynotfound'] = 'Gateway not found';
 $string['nocurrencysupported'] = 'No payment in any currency is supported. Please make sure that at least one payment gateway is enabled.';
 $string['nogateway'] = 'There is no payment gateway that can be used.';
 $string['nogatewayselected'] = 'You first need to select a payment gateway.';
+$string['payments'] = 'Payments';
+$string['paymentaccount'] = 'Payment account';
+$string['paymentaccounts'] = 'Payment accounts';
 $string['selectpaymenttype'] = 'Select payment type';
 $string['supportedcurrencies'] = 'Supported currencies';
 $string['surcharge'] = 'Surcharge (percentage)';

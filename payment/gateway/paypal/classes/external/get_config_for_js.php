@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace pg_paypal\external;
 
+use core_payment\helper;
 use external_api;
 use external_function_parameters;
 use external_value;
@@ -43,7 +44,10 @@ class get_config_for_js extends external_api {
      * @return external_function_parameters
      */
     public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters([]);
+        return new external_function_parameters([
+            'component' => new external_value(PARAM_COMPONENT, ''),
+            'componentid' => new external_value(PARAM_INT, ''),
+        ]);
     }
 
     /**
@@ -51,12 +55,17 @@ class get_config_for_js extends external_api {
      *
      * @return string[]
      */
-    public static function execute(): array {
-        $config = get_config('pg_paypal');
+    public static function execute($component, $componentid): array {
+        self::validate_parameters(self::execute_parameters(), [
+            'component' => $component,
+            'componentid' => $componentid,
+        ]);
+
+        $config = helper::get_gateway_configuration($component, $componentid, 'paypal');
 
         return [
-            'clientid' => $config->clientid,
-            'brandname' => $config->brandname,
+            'clientid' => $config['clientid'],
+            'brandname' => $config['brandname'],
         ];
     }
 

@@ -268,7 +268,7 @@ abstract class persistent extends moodleform {
     /**
      * Return the persistent object associated with this form instance.
      *
-     * @return core\persistent
+     * @return \core\persistent
      */
     final protected function get_persistent() {
         return $this->persistent;
