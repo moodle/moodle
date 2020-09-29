@@ -499,6 +499,15 @@ $string['disabled'] = 'Disabled';
 $string['disableuserimages'] = 'Disable user profile images';
 $string['displayerrorswarning'] = 'Enabling the PHP setting <em>display_errors</em> is not recommended on production sites because some error messages may reveal sensitive information about your server.';
 $string['displayloginfailures'] = 'Display login failures';
+$string['divertallemails'] = 'Email diverting';
+$string['divertallemailsdetail'] = 'Used as a safeguard in development environments when testing emails and should not be used in production.';
+$string['divertallemailsexcept'] = 'Email diversion exceptions';
+$string['divertallemailsexcept_desc'] = 'A list of email exception rules separated by either commas or new lines. Each rule is interpreted as a regular expression, eg<pre>simone@acme.com
+.*@acme.com
+fred(\\+.*)?@acme.com
+</pre>';
+$string['divertallemailsto'] = 'Divert all emails';
+$string['divertallemailsto_desc'] = 'If set then all emails will be diverted to this single email address instead.';
 $string['dndallowtextandlinks'] = 'Drag and drop upload of text/links';
 $string['doclang'] = 'Language for docs';
 $string['docroot'] = 'Moodle Docs document root';
