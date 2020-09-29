@@ -1160,6 +1160,7 @@ abstract class webservice_server implements webservice_server_interface {
             'fileurl' => array('default' => true, 'type' => PARAM_BOOL),
             'filter' => array('default' => false, 'type' => PARAM_BOOL),
             'lang' => array('default' => '', 'type' => PARAM_LANG),
+            'timezone' => array('default' => '', 'type' => PARAM_TIMEZONE),
         );
 
         // Load the external settings with the web service settings.
@@ -1235,7 +1236,7 @@ abstract class webservice_base_server extends webservice_server {
      * @uses die
      */
     public function run() {
-        global $CFG, $SESSION;
+        global $CFG, $USER, $SESSION;
 
         // we will probably need a lot of memory in some functions
         raise_memory_limit(MEMORY_EXTRA);
@@ -1285,6 +1286,12 @@ abstract class webservice_base_server extends webservice_server {
             } else {
                 $CFG->lang = $SESSION->lang;
             }
+        }
+
+        // Change timezone only in sites where it isn't forced.
+        $newtimezone = $settings->get_timezone();
+        if (!empty($newtimezone) && (!isset($CFG->forcetimezone) || $CFG->forcetimezone == 99)) {
+            $USER->timezone = $newtimezone;
         }
 
         // finally, execute the function - any errors are catched by the default exception handler
