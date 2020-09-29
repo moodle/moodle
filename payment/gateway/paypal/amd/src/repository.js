@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,18 +14,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'pg_paypal', language 'en'
+ * PayPal repository module to encapsulate all of the AJAX requests that can be sent for PayPal.
  *
+ * @module     pg_paypal/repository
  * @package    pg_paypal
- * @copyright  2019 Shamim Rezaie <shamim@moodle.com>
+ * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['brandname'] = 'Brand name';
-$string['brandname_desc'] = 'The optional label that overrides the business name in the PayPal account on the PayPal site.';
-$string['clientid'] = 'Client ID';
-$string['clientid_desc'] = 'The client ID that PayPal generated for your application.';
-$string['gatewaydescription'] = 'PayPal is an authorised payment gateway provider for processing credit card transactions.';
-$string['gatewayname'] = 'PayPal';
-$string['pluginname'] = 'PayPal';
-$string['pluginname_desc'] = 'The PayPal plugin allows you to receive payments via PayPal.';
+import Ajax from 'core/ajax';
+
+/**
+ * Return the PayPal JavaScript SDK URL.
+ *
+ * @returns {Promise<{clientid: String, brandname: String}>}
+ */
+export const getConfigForJs = () => {
+    const request = {
+        methodname: 'pg_paypal_get_config_for_js',
+        args: {},
+    };
+
+    return Ajax.call([request])[0];
+};
