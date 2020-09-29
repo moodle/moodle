@@ -63,11 +63,6 @@ export const process = async(amount, currency, component, componentid, descripti
         Repository.getConfigForJs(),
     ]);
 
-    modal.getRoot().on(ModalEvents.outsideClick, (e) => {
-        // Prevent closing the modal when clicking outside of it.
-        e.preventDefault();
-    });
-
     modal.getRoot().on(ModalEvents.hidden, () => {
         // Destroy when hidden.
         modal.destroy();
@@ -97,6 +92,11 @@ export const process = async(amount, currency, component, componentid, descripti
             },
             // Finalise the transaction.
             onApprove: function(data) {
+                modal.getRoot().on(ModalEvents.outsideClick, (e) => {
+                    // Prevent closing the modal when clicking outside of it.
+                    e.preventDefault();
+                });
+
                 modal.setBody(getString('authorising', 'pg_paypal'));
 
                 // Call server to validate and capture payment for order.
