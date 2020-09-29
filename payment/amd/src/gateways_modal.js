@@ -140,7 +140,21 @@ const show = async(rootNode, {
 
     const {html, js} = await Templates.renderForPromise('core_payment/gateways', context);
     Templates.replaceNodeContents(rootElement.querySelector(Selectors.regions.gatewaysContainer), html, js);
+    selectSingleGateway(rootElement);
     await updateCostRegion(rootElement, parseFloat(rootNode.dataset.amount), rootNode.dataset.currency);
+};
+
+/**
+ * Auto-select the gateway if there is only one gateway.
+ *
+ * @param {HTMLElement} root An HTMLElement that contains the cost region
+ */
+const selectSingleGateway = root => {
+    const gateways = root.querySelectorAll(Selectors.elements.gateways);
+
+    if (gateways.length == 1) {
+        gateways[0].checked = true;
+    }
 };
 
 /**
