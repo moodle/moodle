@@ -52,6 +52,8 @@ information provided here is intended especially for developers.
   renamed to `is_listed()` and `get_not_listed()` respectively.
 * Method `mustache_helper_collection::strip_blacklisted_helpers()` has been deprecated and renamed to
   `strip_disallowed_helpers()`.
+* A new admin externalpage type `\core_admin\local\externalpage\accesscallback` for use in plugin settings is available that allows
+  a callback to be provided to determine whether page can be accessed.
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
