@@ -2658,7 +2658,7 @@ class company {
         return false;
     }
 
-    public function get_menu_courses($shared = false, $licensed = false, $groups = false, $default = true) {
+    public function get_menu_courses($shared = false, $licensed = false, $groups = false, $default = true, $onlylicensed = false) {
         global $DB;
 
         // Deal with license option.
@@ -2672,6 +2672,16 @@ class company {
         } else {
             $licensesql = "";
             $sharedlicsql = "";
+        }
+
+        if ($onlylicensed) {
+            $onlylicensedsql = "c.id IN (
+                             SELECT courseid FROM {iomad_courses}
+                             WHERE licensed = 1
+                           )
+                           AND";
+        } else {
+            $onlylicensedsql = "";
         }
 
         // Deal with shared option.
@@ -2703,6 +2713,7 @@ class company {
                                                  WHERE
                                                  $groupsql
                                                  $licensesql
+                                                 $onlylicensedsql
                                                  c.id IN (
                                                      SELECT courseid FROM {company_course}
                                                      WHERE companyid = :companyid

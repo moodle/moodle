@@ -60,7 +60,7 @@ class company_license_form extends \company_moodleform {
         $parentlevel = \company::get_company_parentnode($company->id);
         $this->companydepartment = $parentlevel->id;
         if(empty($parentid)) {
-            $this->courses = $company->get_menu_courses(true, false, false, false);
+            $this->courses = $company->get_menu_courses(true, false, false, false, true);
         } else {
             $this->courses = $DB->get_records_sql_menu("SELECT c.id, c.fullname
                                                         FROM {course} c
