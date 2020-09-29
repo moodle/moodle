@@ -1057,6 +1057,18 @@ $CFG->admin = 'admin';
 //      $CFG->showcampaigncontent = true;
 //
 //=========================================================================
+// 16. ALTERNATIVE CACHE CONFIG SETTINGS
+//=========================================================================
+//
+// Alternative cache config.
+// Since 3.10 it is possible to override the cache_factory class with an alternative caching factory.
+// This overridden factory can provide alternative classes for caching such as cache_config,
+// cache_config_writer and core_cache\local\administration_display_helper.
+// The autoloaded factory class name can be specified to use.
+//
+//      $CFG->alternative_cache_factory_class = 'tool_alternativecache_cache_factory';
+//
+//=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
 
