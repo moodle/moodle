@@ -35,7 +35,7 @@ require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
 
 
 /**
- * PHPunit tests for the cache API and in particular the cache_administration_helper
+ * PHPunit tests for the cache API and in particular the core_cache\administration_helper
  *
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -73,7 +73,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
             cache_store::MODE_REQUEST => array('default_request'),
         )));
 
-        $storesummaries = cache_administration_helper::get_store_instance_summaries();
+        $storesummaries = core_cache\administration_helper::get_store_instance_summaries();
         $this->assertInternalType('array', $storesummaries);
         $this->assertArrayHasKey('summariesstore', $storesummaries);
         $summary = $storesummaries['summariesstore'];
@@ -94,7 +94,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $this->assertEquals(1, $summary['requirementsmet']);
         $this->assertEquals(1, $summary['mappings']);
 
-        $definitionsummaries = cache_administration_helper::get_definition_summaries();
+        $definitionsummaries = core_cache\administration_helper::get_definition_summaries();
         $this->assertInternalType('array', $definitionsummaries);
         $this->assertArrayHasKey('core/eventinvalidation', $definitionsummaries);
         $summary = $definitionsummaries['core/eventinvalidation'];
@@ -114,7 +114,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $this->assertInternalType('array', $summary['mappings']);
         $this->assertContains('summariesstore', $summary['mappings']);
 
-        $pluginsummaries = cache_administration_helper::get_store_plugin_summaries();
+        $pluginsummaries = core_cache\administration_helper::get_store_plugin_summaries();
         $this->assertInternalType('array', $pluginsummaries);
         $this->assertArrayHasKey('file', $pluginsummaries);
         $summary = $pluginsummaries['file'];
@@ -126,18 +126,18 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $this->assertArrayHasKey('supports', $summary);
         $this->assertArrayHasKey('canaddinstance', $summary);
 
-        $locksummaries = cache_administration_helper::get_lock_summaries();
+        $locksummaries = core_cache\administration_helper::get_lock_summaries();
         $this->assertInternalType('array', $locksummaries);
         $this->assertTrue(count($locksummaries) > 0);
 
-        $mappings = cache_administration_helper::get_default_mode_stores();
+        $mappings = core_cache\administration_helper::get_default_mode_stores();
         $this->assertInternalType('array', $mappings);
         $this->assertCount(3, $mappings);
         $this->assertArrayHasKey(cache_store::MODE_APPLICATION, $mappings);
         $this->assertInternalType('array', $mappings[cache_store::MODE_APPLICATION]);
         $this->assertContains('summariesstore', $mappings[cache_store::MODE_APPLICATION]);
 
-        $potentials = cache_administration_helper::get_definition_store_options('core', 'eventinvalidation');
+        $potentials = core_cache\administration_helper::get_definition_store_options('core', 'eventinvalidation');
         $this->assertInternalType('array', $potentials); // Currently used, suitable, default
         $this->assertCount(3, $potentials);
         $this->assertArrayHasKey('summariesstore', $potentials[0]);
@@ -149,11 +149,11 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
      * Test instantiating an add store form.
      */
     public function test_get_add_store_form() {
-        $form = cache_administration_helper::get_add_store_form('file');
+        $form = cache_factory::get_administration_display_helper()->get_add_store_form('file');
         $this->assertInstanceOf('moodleform', $form);
 
         try {
-            $form = cache_administration_helper::get_add_store_form('somethingstupid');
+            $form = cache_factory::get_administration_display_helper()->get_add_store_form('somethingstupid');
             $this->fail('You should not be able to create an add form for a store plugin that does not exist.');
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e, 'Needs to be: ' .get_class($e)." ::: ".$e->getMessage());
@@ -164,21 +164,23 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
      * Test instantiating a form to edit a store instance.
      */
     public function test_get_edit_store_form() {
+        // Always instantiate a new core display helper here.
+        $administrationhelper = new core_cache\local\administration_display_helper;
         $config = cache_config_writer::instance();
         $this->assertTrue($config->add_store_instance('test_get_edit_store_form', 'file'));
 
-        $form = cache_administration_helper::get_edit_store_form('file', 'test_get_edit_store_form');
+        $form = $administrationhelper->get_edit_store_form('file', 'test_get_edit_store_form');
         $this->assertInstanceOf('moodleform', $form);
 
         try {
-            $form = cache_administration_helper::get_edit_store_form('somethingstupid', 'moron');
+            $form = $administrationhelper->get_edit_store_form('somethingstupid', 'moron');
             $this->fail('You should not be able to create an edit form for a store plugin that does not exist.');
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
-            $form = cache_administration_helper::get_edit_store_form('file', 'blisters');
+            $form = $administrationhelper->get_edit_store_form('file', 'blisters');
             $this->fail('You should not be able to create an edit form for a store plugin that does not exist.');
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
