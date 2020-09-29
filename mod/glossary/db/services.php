@@ -179,4 +179,13 @@ $functions = array(
         'type'          => 'write',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
     ],
+
+    'mod_glossary_prepare_entry_for_edition' => [
+        'classname'     => 'mod_glossary\external\prepare_entry',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Prepares the given entry for edition returning draft item areas and file areas information.',
+        'type'          => 'read',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 );
