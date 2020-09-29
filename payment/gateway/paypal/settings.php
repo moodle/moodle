@@ -28,19 +28,5 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_heading('pg_paypal_settings', '', get_string('pluginname_desc', 'pg_paypal')));
 
-    $settings->add(new admin_setting_configtext('pg_paypal/brandname', get_string('brandname', 'pg_paypal'),
-            get_string('brandname', 'pg_paypal'), '', PARAM_TEXT));
-    $settings->add(new admin_setting_configtext('pg_paypal/clientid', get_string('clientid', 'pg_paypal'),
-            get_string('clientid_desc', 'pg_paypal'), '', PARAM_TEXT));
-    $settings->add(new admin_setting_configtext('pg_paypal/secret', get_string('secret', 'pg_paypal'),
-            get_string('secret_desc', 'pg_paypal'), '', PARAM_TEXT));
-
-    $options = [
-        'live' => get_string('live', 'pg_paypal'),
-        'sandbox'  => get_string('sandbox', 'pg_paypal'),
-    ];
-    $settings->add(new admin_setting_configselect('pg_paypal/environment', get_string('environment', 'pg_paypal'),
-            get_string('environment_desc', 'pg_paypal'), 'live', $options));
-
     \core_payment\helper::add_common_gateway_settings($settings, 'pg_paypal');
 }

@@ -28,13 +28,15 @@ import Ajax from 'core/ajax';
  * Returns the list of gateways that can process payments in the given currency.
  *
  * @param {string} currency The currency in the three-character ISO-4217 format
+ * @param {int} accountid
  * @returns {Promise<{shortname: string, name: string, description: String}[]>}
  */
-export const getGatewaysSupportingCurrency = currency => {
+export const getGatewaysSupportingCurrency = (currency, accountid) => {
     const request = {
         methodname: 'core_payment_get_gateways_for_currency',
         args: {
-            currency
+            currency,
+            accountid
         }
     };
     return Ajax.call([request])[0];

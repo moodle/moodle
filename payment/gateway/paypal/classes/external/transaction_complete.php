@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace pg_paypal\external;
 
+use core_payment\helper;
 use external_api;
 use external_function_parameters;
 use external_value;
@@ -69,12 +70,13 @@ class transaction_complete extends external_api {
             'orderid' => $orderid,
         ]);
 
-        $config = get_config('pg_paypal');
+        $config = (object)helper::get_gateway_configuration($component, $componentid, 'paypal');
         $sandbox = $config->environment == 'sandbox';
 
         [
             'amount' => $amount,
-            'currency' => $currency
+            'currency' => $currency,
+            'accountid' => $accountid,
         ] = payment_helper::get_cost($component, $componentid);
 
         // Add surcharge if there is any.

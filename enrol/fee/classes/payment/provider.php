@@ -37,7 +37,7 @@ class provider implements \core_payment\local\callback\provider {
      * Callback function that returns the enrolment cost for the course that $instanceid enrolment instance belongs to.
      *
      * @param int $instanceid The enrolment instance id
-     * @return array['amount' => float, 'currency' => string]
+     * @return array['amount' => float, 'currency' => string, 'accountid' => int]
      */
     public static function get_cost(int $instanceid): array {
         global $DB;
@@ -47,6 +47,7 @@ class provider implements \core_payment\local\callback\provider {
         return [
             'amount' => (float) $instance->cost,
             'currency' => $instance->currency,
+            'accountid' => $instance->customint1,
         ];
     }
 

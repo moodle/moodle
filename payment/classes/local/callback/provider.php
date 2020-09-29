@@ -38,7 +38,7 @@ interface provider {
 
     /**
      * @param int $identifier An identifier that is known to the plugin
-     * @return array['amount' => float, 'currency' => string]
+     * @return array['amount' => float, 'currency' => string, 'accountid' => int]
      */
     public static function get_cost(int $identifier): array;
 

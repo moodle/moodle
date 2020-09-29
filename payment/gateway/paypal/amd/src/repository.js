@@ -29,10 +29,10 @@ import Ajax from 'core/ajax';
  *
  * @returns {Promise<{clientid: String, brandname: String}>}
  */
-export const getConfigForJs = () => {
+export const getConfigForJs = (component, componentid) => {
     const request = {
         methodname: 'pg_paypal_get_config_for_js',
-        args: {},
+        args: {component, componentid},
     };
 
     return Ajax.call([request])[0];

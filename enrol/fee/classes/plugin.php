@@ -210,6 +210,7 @@ class enrol_fee_plugin extends enrol_plugin {
                 'isguestuser' => isguestuser(),
                 'cost' => $localisedcost,
                 'currency' => $instance->currency,
+                'accountid' => $instance->customint1,
                 'amount' => $cost,
                 'instanceid' => $instance->id,
                 'description' => get_string('purchasedescription', 'enrol_fee',
@@ -308,6 +309,10 @@ class enrol_fee_plugin extends enrol_plugin {
         $options = $this->get_status_options();
         $mform->addElement('select', 'status', get_string('status', 'enrol_fee'), $options);
         $mform->setDefault('status', $this->get_config('status'));
+
+        $mform->addElement('select', 'customint1', get_string('paymentaccount', 'payment'),
+            ['' => ''] + \core_payment\helper::get_payment_accounts_menu($context));
+        $mform->addRule('customint1', get_string('required'), 'required', null, 'client');
 
         $mform->addElement('text', 'cost', get_string('cost', 'enrol_fee'), array('size' => 4));
         $mform->setType('cost', PARAM_RAW);

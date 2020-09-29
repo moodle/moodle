@@ -166,6 +166,7 @@ $string['type_mnetservice_plural'] = 'MNet services';
 $string['type_mod'] = 'Activity module';
 $string['type_mod_plural'] = 'Activity modules';
 $string['type_pgmanage'] = 'Manage payment gateways';
+$string['type_pg'] = 'Payment gateway';
 $string['type_pg_plural'] = 'Payment gateways';
 $string['type_plagiarism'] = 'Plagiarism plugin';
 $string['type_plagiarism_plural'] = 'Plagiarism plugins';

@@ -60,7 +60,7 @@ export const process = async(amount, currency, component, componentid, descripti
         paypalConfig,
     ] = await Promise.all([
         showModalWithPlaceholder(),
-        Repository.getConfigForJs(),
+        Repository.getConfigForJs(component, componentid),
     ]);
 
     modal.getRoot().on(ModalEvents.hidden, () => {

@@ -133,7 +133,8 @@ const show = async(rootNode, {
     });
 
     const currency = rootNode.dataset.currency;
-    const gateways = await getGatewaysSupportingCurrency(currency);
+    const accountid = rootNode.dataset.accountid;
+    const gateways = await getGatewaysSupportingCurrency(currency, accountid);
     const context = {
         gateways
     };

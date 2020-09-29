@@ -44,6 +44,7 @@ class helper {
 
         $plugins = \core_plugin_manager::instance()->get_enabled_plugins('pg');
         foreach ($plugins as $plugin) {
+            /** @var \pg_paypal\gateway $classname */
             $classname = '\pg_' . $plugin . '\gateway';
 
             $currencies += $classname::get_supported_currencies();
@@ -58,13 +59,22 @@ class helper {
      * Returns the list of gateways that can process payments in the given currency.
      *
      * @param string $currency The currency in the three-character ISO-4217 format.
+     * @param int $accountid
      * @return string[]
      */
-    public static function get_gateways_for_currency(string $currency): array {
+    public static function get_gateways_for_currency(string $currency, int $accountid): array {
         $gateways = [];
 
-        $plugins = \core_plugin_manager::instance()->get_enabled_plugins('pg');
-        foreach ($plugins as $plugin) {
+        $account = new account($accountid);
+        if (!$account->get('id') || !$account->get('enabled')) {
+            return $gateways;
+        }
+
+        foreach ($account->get_gateways() as $plugin => $gateway) {
+            if (!$gateway->get('enabled')) {
+                continue;
+            }
+            /** @var gateway $classname */
             $classname = '\pg_' . $plugin . '\gateway';
 
             $currencies = $classname::get_supported_currencies();
@@ -114,17 +124,40 @@ class helper {
      *
      * @param string $component Name of the component that the componentid belongs to
      * @param int $componentid An internal identifier that is used by the component
-     * @return array['amount' => float, 'currency' => string]
+     * @return array['amount' => float, 'currency' => string, 'accountid' => int]
      * @throws \moodle_exception
      */
     public static function get_cost(string $component, int $componentid): array {
         $cost = component_class_callback("$component\\payment\\provider", 'get_cost', [$componentid]);
 
-        if ($cost === null) {
+        if ($cost === null || !is_array($cost) || !array_key_exists('amount', $cost)
+                || !array_key_exists('currency', $cost) || !array_key_exists('accountid', $cost) ) {
             throw new \moodle_exception('callbacknotimplemented', 'core_payment', '', $component);
         }
 
         return $cost;
+    }
+
+    /**
+     * Returns the gateway configuration for given component and gateway
+     *
+     * @param string $component
+     * @param int $componentid
+     * @param string $gatewayname
+     * @return array
+     * @throws \moodle_exception
+     */
+    public static function get_gateway_configuration(string $component, int $componentid, string $gatewayname): array {
+        $x = self::get_cost($component, $componentid);
+        $gateway = null;
+        $account = new account($x['accountid']);
+        if ($account && $account->get('enabled')) {
+            $gateway = $account->get_gateways()[$gatewayname] ?? null;
+        }
+        if (!$gateway) {
+            throw new \moodle_exception('gatewaynotfound', 'payment');
+        }
+        return $gateway->get_configuration();
     }
 
     /**
@@ -185,5 +218,83 @@ class helper {
         $settings->add(new \admin_setting_configtext($gateway . '/surcharge', get_string('surcharge', 'core_payment'),
                 get_string('surcharge_desc', 'core_payment'), 0, PARAM_INT));
 
+    }
+
+    /**
+     * Save a new or edited payment account (used in management interface)
+     *
+     * @param \stdClass $data
+     */
+    public static function save_payment_account(\stdClass $data) {
+
+        if (empty($data->id)) {
+            $account = new account(0, $data);
+        } else {
+            $account = new account($data->id);
+            $account->from_record($data);
+        }
+
+        $account->save();
+        // TODO trigger event.
+    }
+
+    /**
+     * Delete a payment account (used in management interface)
+     *
+     * @param account $account
+     */
+    public static function delete_payment_account(account $account) {
+        foreach ($account->get_gateways(false) as $gateway) {
+            if ($gateway->get('id')) {
+                $gateway->delete();
+            }
+        }
+        $account->delete();
+        // TODO trigger event.
+    }
+
+    /**
+     * Save a payment gateway linked to an existing account (used in management interface)
+     *
+     * @param \stdClass $data
+     */
+    public static function save_payment_gateway(\stdClass $data) {
+        if (empty($data->id)) {
+            $gateway = new account_gateway(0, $data);
+        } else {
+            $gateway = new account_gateway($data->id);
+            unset($data->accountid, $data->gateway, $data->id);
+            $gateway->from_record($data);
+        }
+
+        $gateway->save();
+        // TODO trigger event.
+    }
+
+    /**
+     * Returns the list of payment accounts in the given context (used in management interface)
+     *
+     * @param \context $context
+     * @return account[]
+     */
+    public static function get_payment_accounts_to_manage(\context $context): array {
+        return account::get_records(['contextid' => $context->id]);
+    }
+
+    /**
+     * Get list of accounts available in the given context
+     *
+     * @param \context $context
+     * @return array
+     */
+    public static function get_payment_accounts_menu(\context $context): array {
+        global $DB;
+        [$sql, $params] = $DB->get_in_or_equal($context->get_parent_context_ids(true));
+        $accounts = array_filter(account::get_records_select('contextid '.$sql, $params), function($account) {
+            return $account->is_available();
+        });
+        return array_map(function($account) {
+            return $account->get_formatted_name();
+        }, $accounts);
     }
 }
