@@ -2622,5 +2622,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020061502.10);
     }
 
+    if ($oldversion < 2020061502.12) {
+        // Reset analytics model output dir if it's the default value.
+        $modeloutputdir = get_config('analytics', 'modeloutputdir');
+        if (strcasecmp($modeloutputdir, $CFG->dataroot . DIRECTORY_SEPARATOR . 'models') == 0) {
+            set_config('modeloutputdir', '', 'analytics');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020061502.12);
+    }
+
     return true;
 }
