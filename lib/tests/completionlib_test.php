@@ -979,6 +979,32 @@ class core_completionlib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test course completed message.
+     */
+    public function test_course_completed_message() {
+        $this->setup_data();
+        $this->setAdminUser();
+
+        $completionauto = array('completion' => COMPLETION_TRACKING_AUTOMATIC);
+        $ccompletion = new completion_completion(array('course' => $this->course->id, 'userid' => $this->user->id));
+
+        // Mark course as complete and get the message.
+        $sink = $this->redirectMessages();
+        $ccompletion->mark_complete();
+        $messages = $sink->get_messages();
+        $sink->close();
+
+        $this->assertCount(1, $messages);
+        $message = array_pop($messages);
+
+        $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
+        $this->assertEquals($this->user->id, $message->useridto);
+        $this->assertEquals('coursecompleted', $message->eventtype);
+        $this->assertEquals(get_string('coursecompleted', 'completion'), $message->subject);
+        $this->assertContains($this->course->fullname, $message->fullmessage);
+    }
+
+    /**
      * Test course completed event.
      */
     public function test_course_completion_updated_event() {

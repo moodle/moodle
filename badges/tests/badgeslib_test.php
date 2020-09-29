@@ -570,9 +570,13 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $this->assertFalse($badge->is_issued($this->user->id));
 
         // Mark course as complete.
-        $sink = $this->redirectEmails();
+        $sink = $this->redirectMessages();
         $ccompletion->mark_complete();
-        $this->assertCount(1, $sink->get_messages());
+        // Two messages are generated: One for the course completed and the other one for the badge awarded.
+        $messages = $sink->get_messages();
+        $this->assertCount(2, $messages);
+        $this->assertEquals('badgerecipientnotice', $messages[0]->eventtype);
+        $this->assertEquals('coursecompleted', $messages[1]->eventtype);
         $sink->close();
 
         // Check if badge is awarded.
