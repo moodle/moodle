@@ -126,7 +126,7 @@ class external extends external_api {
         if (!empty($messages->error)) {
             foreach ($messages->error as $error) {
                 // We have to apply clean_param because warningcode is a PARAM_ALPHANUM.
-                // And H5P has some error code like 'not-in-whitelist'.
+                // And H5P has some error code like 'total-size-too-large'.
                 $warnings[] = [
                     'item' => $url,
                     'warningcode' => clean_param($error->code, PARAM_ALPHANUM),
