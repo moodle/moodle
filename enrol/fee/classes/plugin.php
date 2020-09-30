@@ -202,16 +202,9 @@ class enrol_fee_plugin extends enrol_plugin {
             echo '<p>'.get_string('nocost', 'enrol_fee').'</p>';
         } else {
 
-            $locale = get_string('localecldr', 'langconfig');
-            $fmt = NumberFormatter::create($locale, NumberFormatter::CURRENCY);
-            $localisedcost = numfmt_format_currency($fmt, $cost, $instance->currency);
-
             $data = [
                 'isguestuser' => isguestuser(),
-                'cost' => $localisedcost,
-                'currency' => $instance->currency,
-                'accountid' => $instance->customint1,
-                'amount' => $cost,
+                'cost' => \core_payment\helper::get_cost_as_string($instance->cost, $instance->currency),
                 'instanceid' => $instance->id,
                 'description' => get_string('purchasedescription', 'enrol_fee',
                     format_string($course->fullname, true, ['context' => $context])),

@@ -55,9 +55,10 @@ class provider implements \core_payment\local\callback\provider {
      * Callback function that delivers what the user paid for to them.
      *
      * @param int $instanceid The enrolment instance id
+     * @param int $paymentid payment id as inserted into the 'payments' table, if needed for reference
      * @return bool Whether successful or not
      */
-    public static function deliver_order(int $instanceid): bool {
+    public static function deliver_order(int $instanceid, int $paymentid): bool {
         global $DB, $USER;
 
         $instance = $DB->get_record('enrol', ['enrol' => 'fee', 'id' => $instanceid], '*', MUST_EXIST);

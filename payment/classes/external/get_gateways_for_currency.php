@@ -24,6 +24,7 @@
 
 namespace core_payment\external;
 
+use core_payment\helper;
 use external_api;
 use external_function_parameters;
 use external_value;
@@ -43,34 +44,40 @@ class get_gateways_for_currency extends external_api {
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters(
-                ['currency' => new external_value(PARAM_ALPHA, 'Currency code'),
-                    'accountid' => new external_value(PARAM_INT, 'Account id')]
+                ['component' => new external_value(PARAM_COMPONENT, 'Component'),
+                    'componentid' => new external_value(PARAM_INT, 'Component id')]
         );
     }
 
     /**
      * Returns the list of gateways that can process payments in the given currency.
      *
-     * @param string $currency The currency in the three-character ISO-4217 format.
-     * @param int $accountid
+     * @param string $component
+     * @param int $componentid
      * @return \stdClass[]
      */
-    public static function execute(string $currency, int $accountid): array {
+    public static function execute(string $component, int $componentid): array {
 
         $params = external_api::validate_parameters(self::execute_parameters(), [
-            'currency' => $currency,
-            'accountid' => $accountid,
+            'component' => $component,
+            'componentid' => $componentid,
         ]);
 
         $list = [];
-        $gateways = \core_payment\helper::get_gateways_for_currency($params['currency'], $params['accountid']);
+        $gateways = \core_payment\helper::get_gateways_for_currency($params['component'], $params['componentid']);
+        [
+            'amount' => $amount,
+            'currency' => $currency
+        ] = \core_payment\helper::get_cost($params['component'], $params['componentid']);
 
         foreach ($gateways as $gateway) {
+            $surcharge = \core_payment\helper::get_gateway_surcharge($gateway);
             $list[] = (object)[
                 'shortname' => $gateway,
                 'name' => get_string('gatewayname', 'pg_' . $gateway),
                 'description' => get_string('gatewaydescription', 'pg_' . $gateway),
-                'surcharge' => \core_payment\helper::get_gateway_surcharge($gateway),
+                'surcharge' => $surcharge,
+                'cost' => helper::get_cost_as_string(helper::get_cost_with_surcharge($amount, $surcharge, $currency), $currency),
             ];
         }
 
@@ -89,6 +96,8 @@ class get_gateways_for_currency extends external_api {
                     'name' => new external_value(PARAM_TEXT, 'Human readable name of the gateway'),
                     'description' => new external_value(PARAM_TEXT, 'description of the gateway'),
                     'surcharge' => new external_value(PARAM_INT, 'percentage of surcharge when using the gateway'),
+                    'cost' => new external_value(PARAM_TEXT,
+                        'Cost in human-readable form (amount plus surcharge with currency sign)'),
                 ])
         );
     }
