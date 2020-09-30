@@ -24,6 +24,8 @@
 
 namespace tool_usertours;
 
+use tool_usertours\local\clientside_filter\clientside_filter;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -769,11 +771,14 @@ class tour {
     /**
      * Check whether this tour matches all filters.
      *
-     * @param   context     $context    The context to check
+     * @param   \context     $context    The context to check.
+     * @param   array|null   $filters    Optional array of filters.
      * @return  bool
      */
-    public function matches_all_filters(\context $context) {
-        $filters = helper::get_all_filters();
+    public function matches_all_filters(\context $context, array $filters = null): bool {
+        if (!$filters) {
+            $filters = helper::get_all_filters();
+        }
 
         // All filters must match.
         // If any one filter fails to match, we return false.
@@ -784,5 +789,21 @@ class tour {
         }
 
         return true;
+    }
+
+    /**
+     * Gets all filter values for use in client side filters.
+     *
+     * @param   array     $filters    Array of clientside filters.
+     * @return  array
+     */
+    public function get_client_filter_values(array $filters): array {
+        $results = [];
+
+        foreach ($filters as $filter) {
+            $results[$filter::get_filter_name()] = $filter::get_client_side_values($this);
+        }
+
+        return $results;
     }
 }
