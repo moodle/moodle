@@ -26,6 +26,16 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
 
+    $currencies = enrol_get_plugin('fee')->get_possible_currencies();
+
+    if (empty($currencies)) {
+        $notify = new \core\output\notification(
+            get_string('nocurrencysupported', 'core_payment'),
+            \core\output\notification::NOTIFY_WARNING
+        );
+        $settings->add(new admin_setting_heading('enrol_fee_nocurrency', '', $OUTPUT->render($notify)));
+    }
+
     $settings->add(new admin_setting_heading('enrol_fee_settings', '', get_string('pluginname_desc', 'enrol_fee')));
 
     // Note: let's reuse the ext sync constants and strings here, internally it is very similar,
@@ -36,11 +46,11 @@ if ($ADMIN->fulltree) {
         ENROL_EXT_REMOVED_UNENROL        => get_string('extremovedunenrol', 'enrol'),
     );
     $settings->add(new admin_setting_configselect(
-            'enrol_fee/expiredaction',
-            get_string('expiredaction', 'enrol_fee'),
-            get_string('expiredaction_help', 'enrol_fee'),
-            ENROL_EXT_REMOVED_SUSPENDNOROLES,
-            $options));
+        'enrol_fee/expiredaction',
+        get_string('expiredaction', 'enrol_fee'),
+        get_string('expiredaction_help', 'enrol_fee'),
+        ENROL_EXT_REMOVED_SUSPENDNOROLES,
+        $options));
 
     $settings->add(new admin_setting_heading('enrol_fee_defaults',
         get_string('enrolinstancedefaults', 'admin'), get_string('enrolinstancedefaults_desc', 'admin')));
@@ -50,10 +60,11 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('enrol_fee/status',
         get_string('status', 'enrol_fee'), get_string('status_desc', 'enrol_fee'), ENROL_INSTANCE_DISABLED, $options));
 
-    $settings->add(new admin_setting_configtext('enrol_fee/cost', get_string('cost', 'enrol_fee'), '', 0, PARAM_FLOAT, 4));
-
-    $currencies = enrol_get_plugin('fee')->get_possible_currencies();
-    $settings->add(new admin_setting_configselect('enrol_fee/currency', get_string('currency', 'enrol_fee'), '', '', $currencies));
+    if (!empty($currencies)) {
+        $settings->add(new admin_setting_configtext('enrol_fee/cost', get_string('cost', 'enrol_fee'), '', 0, PARAM_FLOAT, 4));
+        $settings->add(new admin_setting_configselect('enrol_fee/currency', get_string('currency', 'enrol_fee'), '', '',
+            $currencies));
+    }
 
     if (!during_initial_install()) {
         $options = get_default_enrol_roles(context_system::instance());
