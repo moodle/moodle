@@ -87,6 +87,18 @@ class behat_core_generator extends behat_generator_base {
                 'required' => ['name', 'category', 'type', 'shortname'],
                 'switchids' => [],
             ],
+            'custom profile field categories' => [
+                'singular' => 'custom profile field category',
+                'datagenerator' => 'custom_profile_field_category',
+                'required' => ['name'],
+                'switchids' => [],
+            ],
+            'custom profile fields' => [
+                'singular' => 'custom profile field',
+                'datagenerator' => 'custom_profile_field',
+                'required' => ['datatype', 'shortname', 'name'],
+                'switchids' => [],
+            ],
             'permission overrides' => [
                 'singular' => 'permission override',
                 'datagenerator' => 'permission_override',

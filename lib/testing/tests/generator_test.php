@@ -466,4 +466,119 @@ class core_test_generator_testcase extends advanced_testcase {
                     'parent' => $gradecategory->id));
         $this->assertEquals($gradecategory->id, $gradecategory2->parent);
     }
+
+    public function test_create_custom_profile_field_category() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Insert first category without specified sortorder.
+        $result = $generator->create_custom_profile_field_category(['name' => 'Frogs']);
+        $record = $DB->get_record('user_info_category', ['name' => 'Frogs']);
+        $this->assertEquals(1, $record->sortorder);
+
+        // Also check the return value.
+        $this->assertEquals(1, $result->sortorder);
+        $this->assertEquals('Frogs', $result->name);
+        $this->assertEquals($record->id, $result->id);
+
+        // Insert next category without specified sortorder.
+        $generator->create_custom_profile_field_category(['name' => 'Zombies']);
+        $record = $DB->get_record('user_info_category', ['name' => 'Zombies']);
+        $this->assertEquals(2, $record->sortorder);
+
+        // Insert category with specified sortorder.
+        $generator->create_custom_profile_field_category(['name' => 'Toads', 'sortorder' => 9]);
+        $record = $DB->get_record('user_info_category', ['name' => 'Toads']);
+        $this->assertEquals(9, $record->sortorder);
+
+        // Insert another with unspecified sortorder.
+        $generator->create_custom_profile_field_category(['name' => 'Werewolves']);
+        $record = $DB->get_record('user_info_category', ['name' => 'Werewolves']);
+        $this->assertEquals(10, $record->sortorder);
+    }
+
+    public function test_create_custom_profile_field() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Insert minimal field without specified category.
+        $field1 = $generator->create_custom_profile_field(
+                ['datatype' => 'text', 'shortname' => 'colour', 'name' => 'Colour']);
+        $record = $DB->get_record('user_info_field', ['shortname' => 'colour']);
+
+        // Check specified values.
+        $this->assertEquals('Colour', $record->name);
+        $this->assertEquals('text', $record->datatype);
+
+        // Check sortorder (first in category).
+        $this->assertEquals(1, $record->sortorder);
+
+        // Check shared defaults for most datatypes.
+        $this->assertEquals('', $record->description);
+        $this->assertEquals(0, $record->descriptionformat);
+        $this->assertEquals(0, $record->required);
+        $this->assertEquals(0, $record->locked);
+        $this->assertEquals(PROFILE_VISIBLE_ALL, $record->visible);
+        $this->assertEquals(0, $record->forceunique);
+        $this->assertEquals(0, $record->signup);
+        $this->assertEquals('', $record->defaultdata);
+        $this->assertEquals(0, $record->defaultdataformat);
+
+        // Check specific defaults for text datatype.
+        $this->assertEquals(30, $record->param1);
+        $this->assertEquals(2048, $record->param2);
+
+        // Check the returned value matches the database data.
+        $this->assertEquals($record, $field1);
+
+        // The category should relate to a new 'testing' category.
+        $catrecord = $DB->get_record('user_info_category', ['id' => $record->categoryid]);
+        $this->assertEquals('Testing', $catrecord->name);
+        $this->assertEquals(1, $catrecord->sortorder);
+
+        // Create another field, this time supplying values for a few of the fields.
+        $generator->create_custom_profile_field(
+                ['datatype' => 'text', 'shortname' => 'brightness', 'name' => 'Brightness',
+                'required' => 1, 'forceunique' => 1]);
+        $record = $DB->get_record('user_info_field', ['shortname' => 'brightness']);
+
+        // Same testing category, next sortorder.
+        $this->assertEquals($catrecord->id, $record->categoryid);
+        $this->assertEquals(2, $record->sortorder);
+
+        // Check modified fields.
+        $this->assertEquals(1, $record->required);
+        $this->assertEquals(1, $record->forceunique);
+
+        // Create a field in specified category by id or name...
+        $category = $generator->create_custom_profile_field_category(['name' => 'Amphibians']);
+        $field3 = $generator->create_custom_profile_field(
+                ['datatype' => 'text', 'shortname' => 'frog', 'name' => 'Frog',
+                'categoryid' => $category->id]);
+        $this->assertEquals($category->id, $field3->categoryid);
+        $this->assertEquals(1, $field3->sortorder);
+        $field4 = $generator->create_custom_profile_field(
+                ['datatype' => 'text', 'shortname' => 'toad', 'name' => 'Toad',
+                'category' => 'Amphibians', 'sortorder' => 4]);
+        $this->assertEquals($category->id, $field4->categoryid);
+        $this->assertEquals(4, $field4->sortorder);
+
+        // Check defaults for menu, datetime, and checkbox.
+        $field5 = $generator->create_custom_profile_field(
+                ['datatype' => 'menu', 'shortname' => 'cuisine', 'name' => 'Cuisine']);
+        $this->assertEquals("Yes\nNo", $field5->param1);
+        $this->assertEquals('No', $field5->defaultdata);
+        $field6 = $generator->create_custom_profile_field(
+                ['datatype' => 'datetime', 'shortname' => 'epoch', 'name' => 'Epoch']);
+        $this->assertEquals(2010, $field6->param1);
+        $this->assertEquals(2015, $field6->param2);
+        $this->assertEquals(1, $field6->param3);
+        $field7 = $generator->create_custom_profile_field(
+                ['datatype' => 'checkbox', 'shortname' => 'areyousure', 'name' => 'Are you sure?']);
+        $this->assertEquals(0, $field7->defaultdata);
+    }
 }
