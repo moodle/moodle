@@ -36,6 +36,7 @@ $string['formatnoinline'] = 'No online text';
 $string['formatplain'] = 'Plain text';
 $string['graderinfo'] = 'Information for graders';
 $string['graderinfoheader'] = 'Grader Information';
+$string['maxbytes'] = 'Maximum file size';
 $string['mustattach'] = 'When "No online text" is selected, or responses are optional, you must allow at least one attachment.';
 $string['mustrequire'] = 'When "No online text" is selected, or responses are optional, you must require at least one attachment.';
 $string['mustrequirefewer'] = 'You cannot require more attachments than you allow.';
