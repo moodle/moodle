@@ -427,6 +427,31 @@ abstract class question_definition {
             return false;
         }
     }
+
+    /**
+     * Return the question settings that define this question as structured data.
+     *
+     * This is used by external systems such as the Moodle mobile app, which want to display the question themselves,
+     * rather than using the renderer provided.
+     *
+     * This method should only return the data that the student is allowed to see or know, given the current state of
+     * the question. For example, do not include the 'General feedback' until the student has completed the question,
+     * and even then, only include it if the question_display_options say it should be visible.
+     *
+     * But, within those rules, it is recommended that you return all the settings for the question,
+     * to give maximum flexibility to the external system providing its own rendering of the question.
+     *
+     * @param question_attempt $qa the current attempt for which we are exporting the settings.
+     * @param question_display_options $options the question display options which say which aspects of the question
+     * should be visible.
+     * @return mixed structure representing the question settings. In web services, this will be JSON-encoded.
+     */
+    public function get_question_definition_for_external_rendering(question_attempt $qa, question_display_options $options) {
+
+        debugging('This question does not implement the get_question_definition_for_external_rendering() method yet.',
+            DEBUG_DEVELOPER);
+        return null;
+    }
 }
 
 
