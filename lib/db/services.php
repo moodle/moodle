@@ -287,6 +287,13 @@ $functions = array(
         'type'          => 'read',
         'ajax'          => true,
     ],
+    'core_calendar_get_calendar_export_token' => [
+        'classname'     => 'core_calendar\external\export\token',
+        'methodname'    => 'execute',
+        'description'   => 'Return the auth token required for exporting a calendar.',
+        'type'          => 'read',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ],
     'core_cohort_add_cohort_members' => array(
         'classname' => 'core_cohort_external',
         'methodname' => 'add_cohort_members',
