@@ -33,6 +33,8 @@ information provided here is intended especially for developers.
 * New DML driver method `$DB->sql_group_concat` for performing group concatenation of a field within a SQL query
 * Added new class, AMD modules and WS that allow displaying forms in modal popups or load and submit in AJAX requests.
   See https://docs.moodle.org/dev/Modal_and_AJAX_forms for more details.
+* Admin setting admin_setting_configmulticheckbox now supports lazy-loading the options list by
+  supplying a callback function instead of an array of options.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:
