@@ -80,9 +80,8 @@ class transaction_complete extends external_api {
         ] = payment_helper::get_cost($component, $componentid);
 
         // Add surcharge if there is any.
-        if ($config->surcharge) {
-            $amount += $amount * $config->surcharge / 100;
-        }
+        $surcharge = helper::get_gateway_surcharge('paypal');
+        $amount = helper::get_cost_with_surcharge($amount, $surcharge, $currency);
 
         $paypalhelper = new paypal_helper($config->clientid, $config->secret, $sandbox);
         $orderdetails = $paypalhelper->get_order_details($orderid);
@@ -100,10 +99,8 @@ class transaction_complete extends external_api {
                         $success = true;
                         // Everything is correct. Let's give them what they paid for.
                         try {
-                            payment_helper::deliver_order($component, $componentid);
-
-                            $paymentid = payment_helper::save_payment($component, $componentid, (int) $USER->id, $amount,
-                                    $currency, 'paypal');
+                            $paymentid = payment_helper::save_payment((int)$accountid, $component, $componentid, (int) $USER->id,
+                                $amount, $currency, 'paypal');
 
                             // Store PayPal extra information.
                             $record = new \stdClass();
@@ -111,6 +108,8 @@ class transaction_complete extends external_api {
                             $record->pp_orderid = $orderid;
 
                             $DB->insert_record('pg_paypal', $record);
+
+                            payment_helper::deliver_order($component, $componentid, $paymentid);
                         } catch (\Exception $e) {
                             debugging('Exception while trying to process payment: ' . $e->getMessage(), DEBUG_DEVELOPER);
                             $success = false;
@@ -148,7 +147,7 @@ class transaction_complete extends external_api {
     public static function execute_returns() {
         return new external_function_parameters([
             'success' => new external_value(PARAM_BOOL, 'Whether everything was successful or not.'),
-            'message' => new external_value(PARAM_TEXT, 'Message (usually the error message).', VALUE_OPTIONAL),
+            'message' => new external_value(PARAM_RAW, 'Message (usually the error message).'),
         ]);
     }
 }

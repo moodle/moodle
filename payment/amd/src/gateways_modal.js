@@ -93,12 +93,6 @@ const show = async(rootNode, {
         if (gateway) {
             processPayment(
                 gateway,
-                {
-                    value: parseFloat(rootNode.dataset.amount),
-                    currency: rootNode.dataset.currency,
-                    surcharge: parseInt((rootElement.querySelector(Selectors.values.gateway) || {dataset: {surcharge: 0}})
-                        .dataset.surcharge),
-                },
                 rootNode.dataset.component,
                 rootNode.dataset.componentid,
                 rootNode.dataset.description,
@@ -128,13 +122,11 @@ const show = async(rootNode, {
     // Re-calculate the cost when gateway is changed.
     rootElement.addEventListener('change', e => {
         if (e.target.matches(Selectors.elements.gateways)) {
-            updateCostRegion(rootElement, parseFloat(rootNode.dataset.amount), rootNode.dataset.currency);
+            updateCostRegion(rootElement);
         }
     });
 
-    const currency = rootNode.dataset.currency;
-    const accountid = rootNode.dataset.accountid;
-    const gateways = await getGatewaysSupportingCurrency(currency, accountid);
+    const gateways = await getGatewaysSupportingCurrency(rootNode.dataset.component, rootNode.dataset.componentid);
     const context = {
         gateways
     };
@@ -142,7 +134,7 @@ const show = async(rootNode, {
     const {html, js} = await Templates.renderForPromise('core_payment/gateways', context);
     Templates.replaceNodeContents(rootElement.querySelector(Selectors.regions.gatewaysContainer), html, js);
     selectSingleGateway(rootElement);
-    await updateCostRegion(rootElement, parseFloat(rootNode.dataset.amount), rootNode.dataset.currency);
+    await updateCostRegion(rootElement);
 };
 
 /**
@@ -166,13 +158,11 @@ const selectSingleGateway = root => {
  * @param {string} currency The currency part of cost in the 3-letter ISO-4217 format
  * @returns {Promise<void>}
  */
-const updateCostRegion = async(root, amount, currency) => {
-    const locale = await updateCostRegion.locale; // This only takes a bit the first time.
+const updateCostRegion = async(root) => {
     const surcharge = parseInt((root.querySelector(Selectors.values.gateway) || {dataset: {surcharge: 0}}).dataset.surcharge);
-    amount += amount * surcharge / 100;
-    const localisedCost = amount.toLocaleString(locale, {style: "currency", currency: currency});
+    const cost = root.querySelector(Selectors.values.gateway).dataset.cost;
 
-    const {html, js} = await Templates.renderForPromise('core_payment/fee_breakdown', {fee: localisedCost, surcharge});
+    const {html, js} = await Templates.renderForPromise('core_payment/fee_breakdown', {fee: cost, surcharge});
     Templates.replaceNodeContents(root.querySelector(Selectors.regions.costContainer), html, js);
 };
 updateCostRegion.locale = getString("localecldr", "langconfig");
@@ -181,21 +171,15 @@ updateCostRegion.locale = getString("localecldr", "langconfig");
  * Process payment using the selected gateway.
  *
  * @param {string} gateway The gateway to be used for payment
- * @param {Object} amount - Amount of payment
- * @param {number} amount.value The numerical part of the amount
- * @param {string} amount.currency The currency part of the amount in the three-character ISO-4217 format
- * @param {number} amount.surcharge The surcharge percentage that should be added to the amount
  * @param {string} component Name of the component that the componentid belongs to
  * @param {number} componentid An internal identifier that is used by the component
  * @param {string} description Description of the payment
  * @param {processPaymentCallback} callback The callback function to call when processing is finished
  * @returns {Promise<void>}
  */
-const processPayment = async(gateway, {value, currency, surcharge = 0}, component, componentid, description, callback) => {
+const processPayment = async(gateway, component, componentid, description, callback) => {
     const paymentMethod = await import(`pg_${gateway}/gateways_modal`);
-
-    value += value * surcharge / 100;
-    paymentMethod.process(value, currency, component, componentid, description, callback);
+    paymentMethod.process(component, componentid, description, callback);
 };
 
 /**

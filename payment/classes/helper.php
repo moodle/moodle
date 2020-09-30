@@ -47,7 +47,7 @@ class helper {
             /** @var \pg_paypal\gateway $classname */
             $classname = '\pg_' . $plugin . '\gateway';
 
-            $currencies += $classname::get_supported_currencies();
+            $currencies += component_class_callback($classname, 'get_supported_currencies', [], []);
         }
 
         $currencies = array_unique($currencies);
@@ -58,13 +58,18 @@ class helper {
     /**
      * Returns the list of gateways that can process payments in the given currency.
      *
-     * @param string $currency The currency in the three-character ISO-4217 format.
-     * @param int $accountid
+     * @param string $component
+     * @param int $componentid
      * @return string[]
      */
-    public static function get_gateways_for_currency(string $currency, int $accountid): array {
+    public static function get_gateways_for_currency(string $component, int $componentid): array {
         $gateways = [];
 
+        [
+            'amount' => $amount,
+            'currency' => $currency,
+            'accountid' => $accountid,
+        ] = self::get_cost($component, $componentid);
         $account = new account($accountid);
         if (!$account->get('id') || !$account->get('enabled')) {
             return $gateways;
@@ -77,7 +82,7 @@ class helper {
             /** @var gateway $classname */
             $classname = '\pg_' . $plugin . '\gateway';
 
-            $currencies = $classname::get_supported_currencies();
+            $currencies = component_class_callback($classname, 'get_supported_currencies', [], []);
             if (in_array($currency, $currencies)) {
                 $gateways[] = $plugin;
             }
@@ -87,32 +92,59 @@ class helper {
     }
 
     /**
+     * Calculates the cost with the surcharge
+     *
+     * @param float $amount amount in the currency units
+     * @param float $surcharge surcharge in percents
+     * @param string $currency currency, used for calculating the number of fractional digits
+     * @return float
+     */
+    public static function get_cost_with_surcharge(float $amount, float $surcharge, string $currency): float {
+        return round($amount + $amount * $surcharge / 100, 2); // TODO number of digits depends on currency.
+    }
+
+    /**
+     * Returns human-readable amount with fixed number of fractional digits and currency indicator
+     *
+     * @param float $amount
+     * @param string $currency
+     * @return string
+     * @throws \coding_exception
+     */
+    public static function get_cost_as_string(float $amount, string $currency): string {
+        if (class_exists('NumberFormatter') && function_exists('numfmt_format_currency')) {
+            $locale = get_string('localecldr', 'langconfig');
+            $fmt = \NumberFormatter::create($locale, \NumberFormatter::CURRENCY);
+            $localisedcost = numfmt_format_currency($fmt, $amount, $currency);
+        } else {
+            $localisedcost = sprintf("%.2f %s", $amount, $currency); // TODO number of digits depends on currency.
+        }
+
+        return $localisedcost;
+    }
+
+    /**
      * Returns the percentage of surcharge that is applied when using a gateway
      *
      * @param string $gateway Name of the gateway
-     * @return int
+     * @return float
      */
-    public static function get_gateway_surcharge(string $gateway): int {
-        return get_config('pg_' . $gateway, 'surcharge') ?: 0;
+    public static function get_gateway_surcharge(string $gateway): float {
+        return (float)get_config('pg_' . $gateway, 'surcharge');
     }
 
     /**
      * Returns the attributes to place on a pay button.
      *
-     * @param float $amount Amount of payment
-     * @param string $currency Currency of payment
      * @param string $component Name of the component that the componentid belongs to
      * @param int $componentid An internal identifier that is used by the component
      * @param string $description Description of the payment
      * @return array
      */
-    public static function gateways_modal_link_params(float $amount, string $currency, string $component, int $componentid,
-            string $description): array {
+    public static function gateways_modal_link_params(string $component, int $componentid, string $description): array {
         return [
             'id' => 'gateways-modal-trigger',
             'role' => 'button',
-            'data-amount' => $amount,
-            'data-currency' => $currency,
             'data-component' => $component,
             'data-componentid' => $componentid,
             'data-description' => $description,
@@ -163,13 +195,15 @@ class helper {
     /**
      * Delivers what the user paid for.
      *
+     * @uses \core_payment\local\callback\provider::deliver_order()
+     *
      * @param string $component Name of the component that the componentid belongs to
      * @param int $componentid An internal identifier that is used by the component
+     * @param int $paymentid payment id as inserted into the 'payments' table, if needed for reference
      * @return bool Whether successful or not
-     * @throws \moodle_exception
      */
-    public static function deliver_order(string $component, int $componentid): bool {
-        $result = component_class_callback("$component\\payment\\provider", 'deliver_order', [$componentid]);
+    public static function deliver_order(string $component, int $componentid, int $paymentid): bool {
+        $result = component_class_callback("$component\\payment\\provider", 'deliver_order', [$componentid, $paymentid]);
 
         if ($result === null) {
             throw new \moodle_exception('callbacknotimplemented', 'core_payment', '', $component);
@@ -182,6 +216,7 @@ class helper {
      * Stores essential information about the payment and returns the "id" field of the payment record in DB.
      * Each payment gateway may then store the additional information their way.
      *
+     * @param int $accountid Account id
      * @param string $component Name of the component that the componentid belongs to
      * @param int $componentid An internal identifier that is used by the component
      * @param int $userid Id of the user who is paying
@@ -190,7 +225,7 @@ class helper {
      * @param string $gateway The gateway that is used for the payment
      * @return int
      */
-    public static function save_payment(string $component, int $componentid, int $userid, float $amount, string $currency,
+    public static function save_payment(int $accountid, string $component, int $componentid, int $userid, float $amount, string $currency,
             string $gateway): int {
         global $DB;
 
@@ -201,6 +236,7 @@ class helper {
         $record->amount = $amount;
         $record->currency = $currency;
         $record->gateway = $gateway;
+        $record->accountid = $accountid;
         $record->timecreated = $record->timemodified = time();
 
         $id = $DB->insert_record('payments', $record);

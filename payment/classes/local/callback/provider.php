@@ -43,8 +43,9 @@ interface provider {
     public static function get_cost(int $identifier): array;
 
     /**
-     * @param int $identifier An identifier that is known to the plugin
+     * @param int $componentid An identifier that is known to the plugin
+     * @param int $paymentid payment id as inserted into the 'payments' table, if needed for reference
      * @return bool Whether successful or not
      */
-    public static function deliver_order(int $identifier): bool;
+    public static function deliver_order(int $componentid, int $paymentid): bool;
 }

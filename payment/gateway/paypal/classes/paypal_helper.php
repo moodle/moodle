@@ -162,10 +162,8 @@ class paypal_helper {
             ],
         ];
 
-        $command = '{}';
-
         $curl = new curl();
-        $result = $curl->get($location, $command, $options);
+        $result = $curl->get($location, [], $options);
 
         return json_decode($result, true);
     }

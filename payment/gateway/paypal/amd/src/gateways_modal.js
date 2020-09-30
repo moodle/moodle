@@ -45,15 +45,13 @@ const showModalWithPlaceholder = async() => {
 /**
  * Process the payment.
  *
- * @param {double} amount Amount of payment
- * @param {string} currency The currency in the three-character ISO-4217 format
  * @param {string} component Name of the component that the componentid belongs to
  * @param {number} componentid An internal identifier that is used by the component
  * @param {string} description Description of the payment
  * @param {processCallback} callback The callback function to call when processing is finished
  * @returns {Promise<void>}
  */
-export const process = async(amount, currency, component, componentid, description, callback) => {
+export const process = async(component, componentid, description, callback) => {
 
     const [
         modal,
@@ -62,6 +60,8 @@ export const process = async(amount, currency, component, componentid, descripti
         showModalWithPlaceholder(),
         Repository.getConfigForJs(component, componentid),
     ]);
+    const currency = paypalConfig.currency;
+    const amount = paypalConfig.cost; // Cost with surcharge.
 
     modal.getRoot().on(ModalEvents.hidden, () => {
         // Destroy when hidden.
