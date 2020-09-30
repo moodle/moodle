@@ -105,6 +105,10 @@ class enrol_fee_plugin extends enrol_plugin {
     public function can_add_instance($courseid) {
         $context = context_course::instance($courseid, MUST_EXIST);
 
+        if (empty(\core_payment\helper::get_supported_currencies())) {
+            return false;
+        }
+
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/fee:config', $context)) {
             return false;
         }
