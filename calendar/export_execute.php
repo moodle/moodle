@@ -24,7 +24,7 @@ if (!$checkuserid && !$checkusername) {
 }
 
 //Check authentication token
-$authuserid = !empty($userid) && $authtoken == sha1($userid . $user->password . $CFG->calendar_exportsalt);
+$authuserid = !empty($userid) && $authtoken == calendar_get_export_token($user);
 //allowing for fallback check of old url - MDL-27542
 $authusername = !empty($username) && $authtoken == sha1($username . $user->password . $CFG->calendar_exportsalt);
 if (!$authuserid && !$authusername) {
@@ -44,7 +44,7 @@ $allowedwhat = ['all', 'user', 'groups', 'courses', 'categories'];
 $allowedtime = ['weeknow', 'weeknext', 'monthnow', 'monthnext', 'recentupcoming', 'custom'];
 
 if (!empty($generateurl)) {
-    $authtoken = sha1($user->id . $user->password . $CFG->calendar_exportsalt);
+    $authtoken = calendar_get_export_token($user);
     $params = array();
     $params['preset_what'] = $what;
     $params['preset_time'] = $time;
