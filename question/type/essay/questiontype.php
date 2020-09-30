@@ -72,6 +72,7 @@ class qtype_essay extends question_type {
         } else {
             $options->filetypeslist = $formdata->filetypeslist;
         }
+        $options->maxbytes = $formdata->maxbytes ?? 0;
         $options->graderinfo = $this->import_or_save_files($formdata->graderinfo,
                 $context, 'qtype_essay', 'graderinfo', $formdata->id);
         $options->graderinfoformat = $formdata->graderinfo['format'];
@@ -93,6 +94,7 @@ class qtype_essay extends question_type {
         $question->responsetemplateformat = $questiondata->options->responsetemplateformat;
         $filetypesutil = new \core_form\filetypes_util();
         $question->filetypeslist = $filetypesutil->normalize_file_types($questiondata->options->filetypeslist);
+        $question->maxbytes = $questiondata->options->maxbytes;
     }
 
     public function delete_question($questionid, $contextid) {
@@ -160,6 +162,15 @@ class qtype_essay extends question_type {
             2 => '2',
             3 => '3'
         );
+    }
+
+    /**
+     * Return array of the choices that should be offered for the maximum file sizes.
+     * @return array|lang_string[]|string[]
+     */
+    public function max_file_size_options() {
+        global $CFG, $COURSE;
+        return get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes);
     }
 
     public function move_files($questionid, $oldcontextid, $newcontextid) {
