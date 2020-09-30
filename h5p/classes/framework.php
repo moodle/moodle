@@ -568,7 +568,7 @@ class framework implements \H5PFrameworkInterface {
     }
 
     /**
-     * Get file extension whitelist.
+     * Get allowed file extension list.
      * Implements getWhitelist.
      *
      * The default extension list is part of h5p, but admins should be allowed to modify it.
