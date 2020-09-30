@@ -38,6 +38,10 @@ class mod_data_mod_form extends moodleform_mod {
         $mform->hideIf('manageapproved', 'approval', 'eq', 0);
 
         $mform->addElement('selectyesno', 'comments', get_string('allowcomments', 'data'));
+        if (empty($CFG->usecomments)) {
+            $mform->hardFreeze('comments');
+            $mform->setConstant('comments', 0);
+        }
 
         $countoptions = array(0=>get_string('none'))+
                         (array_combine(range(1, DATA_MAX_ENTRIES), // Keys.
