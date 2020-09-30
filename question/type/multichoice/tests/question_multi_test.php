@@ -175,4 +175,19 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
         }
     }
 
+    /**
+     * test_get_question_definition_for_external_rendering
+     */
+    public function test_get_question_definition_for_external_rendering() {
+        $question = test_question_maker::make_a_multichoice_multi_question();
+        $question->start_attempt(new question_attempt_step(), 1);
+        $qa = test_question_maker::get_a_qa($question);
+        $displayoptions = new question_display_options();
+
+        $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
+        $this->assertEquals(1, $options['shuffleanswers']);
+        $this->assertEquals('abc', $options['answernumbering']);
+        $this->assertEquals(0, $options['showstandardinstruction']);
+        $this->assertEquals(1, $options['shuffleanswers']);
+    }
 }
