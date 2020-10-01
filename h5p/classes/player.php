@@ -357,7 +357,7 @@ class player {
         $cid = $this->get_cid();
         // The filterParameters function should be called before getting the dependencyfiles because it rebuild content
         // dependency cache and export file.
-        $settings['contents'][$cid]['jsonContent'] = $this->core->filterParameters($this->content);
+        $settings['contents'][$cid]['jsonContent'] = $this->get_filtered_parameters();
 
         $files = $this->get_dependency_files();
         if ($this->embedtype === 'div') {
@@ -399,13 +399,42 @@ class player {
     }
 
     /**
+     * Get filtered parameters, modifying them by the renderer if the theme implements the h5p_alter_filtered_parameters function.
+     *
+     * @return string Filtered parameters.
+     */
+    private function get_filtered_parameters(): string {
+        global $PAGE;
+
+        $safeparams = $this->core->filterParameters($this->content);
+        $decodedparams = json_decode($safeparams);
+        $h5poutput = $PAGE->get_renderer('core_h5p');
+        $h5poutput->h5p_alter_filtered_parameters(
+            $decodedparams,
+            $this->content['library']['name'],
+            $this->content['library']['majorVersion'],
+            $this->content['library']['minorVersion']
+        );
+        $safeparams = json_encode($decodedparams);
+
+        return $safeparams;
+    }
+
+    /**
      * Finds library dependencies of view
      *
      * @return array Files that the view has dependencies to
      */
     private function get_dependency_files(): array {
+        global $PAGE;
+
         $preloadeddeps = $this->core->loadContentDependencies($this->h5pid, 'preloaded');
         $files = $this->core->getDependenciesFiles($preloadeddeps);
+
+        // Add additional asset files if required.
+        $h5poutput = $PAGE->get_renderer('core_h5p');
+        $h5poutput->h5p_alter_scripts($files['scripts'], $preloadeddeps, $this->embedtype);
+        $h5poutput->h5p_alter_styles($files['styles'], $preloadeddeps, $this->embedtype);
 
         return $files;
     }
