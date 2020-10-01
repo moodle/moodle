@@ -1093,20 +1093,10 @@ class framework implements \H5PFrameworkInterface {
      * @param int $minorversion The library's minor version
      */
     public function alterLibrarySemantics(&$semantics, $name, $majorversion, $minorversion) {
-        global $DB;
+        global $PAGE;
 
-        $library = $DB->get_record('h5p_libraries',
-            array(
-                'machinename' => $name,
-                'majorversion' => $majorversion,
-                'minorversion' => $minorversion,
-            )
-        );
-
-        if ($library) {
-            $library->semantics = json_encode($semantics);
-            $DB->update_record('h5p_libraries', $library);
-        }
+        $renderer = $PAGE->get_renderer('core_h5p');
+        $renderer->h5p_alter_semantics($semantics, $name, $majorversion, $minorversion);
     }
 
     /**
