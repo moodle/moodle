@@ -32,6 +32,11 @@ require_login();
 $contextid = optional_param('contextid', \context_system::instance()->id, PARAM_INT);
 $context = context::instance_by_id($contextid, MUST_EXIST);
 
+$cb = new \core_contentbank\contentbank();
+if (!$cb->is_context_allowed($context)) {
+    print_error('contextnotallowed', 'core_contentbank');
+}
+
 require_capability('moodle/contentbank:upload', $context);
 
 $title = get_string('contentbank');
@@ -55,7 +60,6 @@ if (has_capability('moodle/user:ignoreuserquota', $context)) {
     $maxareabytes = FILE_AREA_MAX_BYTES_UNLIMITED;
 }
 
-$cb = new \core_contentbank\contentbank();
 $accepted = $cb->get_supported_extensions_as_string($context);
 
 $data = new stdClass();
