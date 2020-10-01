@@ -456,6 +456,11 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 3.10.
+        '/grade/grading/classes/privacy/gradingform_provider.php',
+        '/lib/coursecatlib.php',
+        '/lib/form/htmleditor.php',
+        '/message/classes/output/messagearea/contact.php',
         // Removed in 3.9.
         '/course/classes/output/modchooser_item.php',
         '/course/yui/build/moodle-course-modchooser/moodle-course-modchooser-min.js',
