@@ -109,7 +109,7 @@ if (!empty($action)) {
         $cancel = new moodle_url('/local/report_users/userdisplay.php',
                                  array('userid' => $userid));
         if ($action == 'delete') {
-            echo $OUTPUT->confirm(get_string('resetconfirm', 'local_report_users'), $confirmurl, $cancel);
+            echo $OUTPUT->confirm(get_string('resetcourseconfirm', 'local_report_users'), $confirmurl, $cancel);
         } else if ($action == 'clear') {
             if ($revoke) {
                 echo $OUTPUT->confirm(get_string('revokeconfirm', 'local_report_users'), $confirmurl, $cancel);
