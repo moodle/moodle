@@ -148,7 +148,7 @@ class local_report_user_completion_table extends table_sql {
 
         // Get the buttons.
         // Link for user delete
-        $dellink = new moodle_url('/local/report_users/userdisplay.php', array(
+        $resetlink = new moodle_url('/local/report_users/userdisplay.php', array(
                 'userid' => $row->userid,
                 'delete' => $row->userid,
                 'courseid' => $row->courseid,
