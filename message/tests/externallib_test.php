@@ -5913,6 +5913,54 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test that group conversations containing MathJax don't break the WebService.
+     */
+    public function test_get_conversations_group_with_mathjax() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Enable MathJax filter in content and headings.
+        $this->configure_filters([
+            ['name' => 'mathjaxloader', 'state' => TEXTFILTER_ON, 'move' => -1, 'applytostrings' => true],
+        ]);
+
+        // Create some users, a course and a group with a linked conversation.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $coursename = 'Course $$(a+b)=2$$';
+        $groupname = 'Group $$(a+b)=2$$';
+        $course1 = $this->getDataGenerator()->create_course(['shortname' => $coursename]);
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $group1 = $this->getDataGenerator()->create_group([
+            'name' => $groupname,
+            'courseid' => $course1->id,
+            'enablemessaging' => 1,
+        ]);
+
+        // Add users to group1.
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id));
+        $this->getDataGenerator()->create_group_member(array('groupid' => $group1->id, 'userid' => $user2->id));
+
+        // Call the WebService.
+        $result = core_message_external::get_conversations($user1->id, 0, 20, null, false);
+        $result = external_api::clean_returnvalue(core_message_external::get_conversations_returns(), $result);
+        $conversations = $result['conversations'];
+
+        // Format original data.
+        $coursecontext = \context_course::instance($course1->id);
+        $coursename = external_format_string($coursename, $coursecontext->id);
+        $groupname = external_format_string($groupname, $coursecontext->id);
+
+        $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $conversations[0]['name']);
+        $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">', $conversations[0]['subname']);
+        $this->assertEquals($groupname, $conversations[0]['name']);
+        $this->assertEquals($coursename, $conversations[0]['subname']);
+    }
+
+    /**
      * Test verifying get_conversations when there are users in a group and/or individual conversation. The reason this
      * test is performed is because we do not need as much data for group conversations (saving DB calls), so we want
      * to confirm this happens.

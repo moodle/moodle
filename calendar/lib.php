@@ -968,6 +968,22 @@ class calendar_event {
     }
 
     /**
+     * Format the event name using the external API.
+     *
+     * This function should we used when text formatting is required in external functions.
+     *
+     * @return string Formatted name.
+     */
+    public function format_external_name() {
+        if ($this->editorcontext === null) {
+            // Switch on the event type to decide upon the appropriate context to use for this event.
+            $this->editorcontext = $this->get_context();
+        }
+
+        return external_format_string($this->properties->name, $this->editorcontext->id);
+    }
+
+    /**
      * Format the text using the external API.
      *
      * This function should we used when text formatting is required in external functions.
