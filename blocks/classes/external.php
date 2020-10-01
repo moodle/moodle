@@ -59,7 +59,7 @@ class core_block_external extends external_api {
                 'visible'       => new external_value(PARAM_BOOL, 'Whether the block is visible.', VALUE_OPTIONAL),
                 'contents'      => new external_single_structure(
                     array(
-                        'title'         => new external_value(PARAM_TEXT, 'Block title.'),
+                        'title'         => new external_value(PARAM_RAW, 'Block title.'),
                         'content'       => new external_value(PARAM_RAW, 'Block contents.'),
                         'contentformat' => new external_format_value('content'),
                         'footer'        => new external_value(PARAM_RAW, 'Block footer.'),
