@@ -274,7 +274,7 @@ function url_export_contents($cm, $baseurl) {
     $fullurl = str_replace('&amp;', '&', url_get_full_url($urlrecord, $cm, $course));
     $isurl = clean_param($fullurl, PARAM_URL);
     if (empty($isurl)) {
-        return null;
+        return [];
     }
 
     $url = array();
