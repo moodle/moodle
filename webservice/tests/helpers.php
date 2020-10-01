@@ -65,6 +65,43 @@ abstract class externallib_advanced_testcase extends advanced_testcase {
     }
 
     /**
+     * Configure some filters for external tests.
+     *
+     * @param array $filters Filters to enable. Each filter should contain:
+     *                           - name: name of the filter.
+     *                           - state: the state of the filter.
+     *                           - move: -1 means up, 0 means the same, 1 means down.
+     *                           - applytostrings: true to apply the filter to content and headings, false for just content.
+     */
+    public static function configure_filters($filters) {
+        global $CFG;
+
+        $filterstrings = false;
+
+        // Enable the filters.
+        foreach ($filters as $filter) {
+            $filter = (array) $filter;
+            filter_set_global_state($filter['name'], $filter['state'], $filter['move']);
+            filter_set_applies_to_strings($filter['name'], $filter['applytostrings']);
+
+            $filterstrings = $filterstrings || $filter['applytostrings'];
+        }
+
+        // Set WS filtering.
+        $wssettings = external_settings::get_instance();
+        $wssettings->set_filter(true);
+
+        // Reset filter caches.
+        $filtermanager = filter_manager::instance();
+        $filtermanager->reset_caches();
+
+        if ($filterstrings) {
+            // Don't strip tags in strings.
+            $CFG->formatstringstriptags = false;
+        }
+    }
+
+    /**
      * Unassign a capability to $USER.
      *
      * @param string $capability capability name.
