@@ -122,7 +122,7 @@ const show = async(rootNode, {
     // Re-calculate the cost when gateway is changed.
     rootElement.addEventListener('change', e => {
         if (e.target.matches(Selectors.elements.gateways)) {
-            updateCostRegion(rootElement);
+            updateCostRegion(rootElement, rootNode.dataset.cost);
         }
     });
 
@@ -134,7 +134,7 @@ const show = async(rootNode, {
     const {html, js} = await Templates.renderForPromise('core_payment/gateways', context);
     Templates.replaceNodeContents(rootElement.querySelector(Selectors.regions.gatewaysContainer), html, js);
     selectSingleGateway(rootElement);
-    await updateCostRegion(rootElement);
+    await updateCostRegion(rootElement, rootNode.dataset.cost);
 };
 
 /**
@@ -154,18 +154,17 @@ const selectSingleGateway = root => {
  * Shows the cost of the item the user is purchasing in the cost region.
  *
  * @param {HTMLElement} root An HTMLElement that contains the cost region
- * @param {number} amount The amount part of cost
- * @param {string} currency The currency part of cost in the 3-letter ISO-4217 format
+ * @param {string} defaultCost The default cost that is going to be displayed if no gateway is selected
  * @returns {Promise<void>}
  */
-const updateCostRegion = async(root) => {
-    const surcharge = parseInt((root.querySelector(Selectors.values.gateway) || {dataset: {surcharge: 0}}).dataset.surcharge);
-    const cost = root.querySelector(Selectors.values.gateway).dataset.cost;
+const updateCostRegion = async(root, defaultCost = '') => {
+    const gatewayElement = root.querySelector(Selectors.values.gateway);
+    const surcharge = parseInt((gatewayElement || {dataset: {surcharge: 0}}).dataset.surcharge);
+    const cost = (gatewayElement || {dataset: {cost: defaultCost}}).dataset.cost;
 
     const {html, js} = await Templates.renderForPromise('core_payment/fee_breakdown', {fee: cost, surcharge});
     Templates.replaceNodeContents(root.querySelector(Selectors.regions.costContainer), html, js);
 };
-updateCostRegion.locale = getString("localecldr", "langconfig");
 
 /**
  * Process payment using the selected gateway.

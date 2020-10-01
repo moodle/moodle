@@ -204,7 +204,7 @@ class enrol_fee_plugin extends enrol_plugin {
 
             $data = [
                 'isguestuser' => isguestuser(),
-                'cost' => \core_payment\helper::get_cost_as_string($instance->cost, $instance->currency),
+                'cost' => \core_payment\helper::get_cost_as_string($cost, $instance->currency),
                 'instanceid' => $instance->id,
                 'description' => get_string('purchasedescription', 'enrol_fee',
                     format_string($course->fullname, true, ['context' => $context])),
