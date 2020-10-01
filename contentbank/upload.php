@@ -32,9 +32,12 @@ require_login();
 $contextid = optional_param('contextid', \context_system::instance()->id, PARAM_INT);
 $context = context::instance_by_id($contextid, MUST_EXIST);
 
-require_capability('moodle/contentbank:upload', $context);
-
 $cb = new \core_contentbank\contentbank();
+if (!$cb->is_context_allowed($context)) {
+    print_error('contextnotallowed', 'core_contentbank');
+}
+
+require_capability('moodle/contentbank:upload', $context);
 
 $id = optional_param('id', null, PARAM_INT);
 if ($id) {
