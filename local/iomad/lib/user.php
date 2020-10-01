@@ -876,6 +876,8 @@ class company_user {
             // Deal with Iomad track table stuff.
             if ($action == 'delete') {
                 $DB->delete_records('local_iomad_track', array('userid' => $userid, 'courseid' => $courseid, 'timecompleted' => null));
+            } else {
+                $DB->set_field('local_iomad_track', 'coursecleared', 1, array('userid' => $userid, 'courseid' => $courseid));
             }
 
             // Fix company licenses
