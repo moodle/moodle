@@ -191,7 +191,7 @@ class local_report_user_completion_table extends table_sql {
                 } else {
                     if (!empty($row->timecompleted)) {
                         if (has_capability('local/report_users:clearentries', context_system::instance())) {
-                            $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('resetcourseconfirm', 'local_report_users') . '</a>';
+                            $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('resetcourse', 'local_report_users') . '</a>';
                         }
                     } else if ($DB->get_record('companylicense_users', array('userid' => $row->userid, 'licensecourseid' => $row->courseid, 'licenseid' => $row->licenseid, 'issuedate' => $row->licenseallocated, 'isusing' => 1))) {
                         if (has_capability('local/report_users:deleteentries', context_system::instance())) {
