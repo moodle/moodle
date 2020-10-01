@@ -709,6 +709,20 @@ $CFG->admin = 'admin';
 //
 //      $CFG->forumpostcountchunksize = 5000;
 //
+// Course and category sorting
+//
+// If the number of courses in a category exceeds $CFG->maxcoursesincategory (10000 by default), it may lead to duplicate
+// sort orders of courses in separated categories. For example:
+// - Category A has the sort order of 10000, and has 10000 courses. The last course will have the sort order of 20000.
+// - Category B has the sort order of 20000, and has a course with the sort order of 20001.
+// - If we add another course in category A, it will have a sort order of 20001,
+// which is the same as the course in category B
+// The duplicate will cause sorting issue and hence we need to increase $CFG->maxcoursesincategory
+// to fix the duplicate sort order
+// Please also make sure $CFG->maxcoursesincategory * MAX_COURSE_CATEGORIES less than max integer.
+//
+// $CFG->maxcoursesincategory = 10000;
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
