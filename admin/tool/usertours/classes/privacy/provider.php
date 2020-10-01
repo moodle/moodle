@@ -47,7 +47,7 @@ class provider implements
     /**
      * Returns meta data about this system.
      *
-     * @param   collection     $itemcollection The initialised item collection to add items to.
+     * @param   collection     $items The initialised item collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
     public static function get_metadata(collection $items) : collection {
@@ -64,7 +64,7 @@ class provider implements
      * @param   int         $userid The userid of the user whose data is to be exported.
      */
     public static function export_user_preferences(int $userid) {
-        $preferences = get_user_preferences();
+        $preferences = get_user_preferences(null, null, $userid);
         foreach ($preferences as $name => $value) {
             $descriptionidentifier = null;
             $tourid = null;
