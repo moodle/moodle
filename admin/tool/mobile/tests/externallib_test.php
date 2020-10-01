@@ -230,6 +230,10 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
                 'value' => get_config('core_admin', 'coursecolor' . $number)
             ];
         }
+        $expected[] = ['name' => 'supportname', 'value' => $CFG->supportname];
+        $expected[] = ['name' => 'supportemail', 'value' => $CFG->supportemail];
+        $expected[] = ['name' => 'supportpage', 'value' => $CFG->supportpage];
+
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
 
