@@ -214,9 +214,8 @@ class mod_lti_edit_types_form extends moodleform {
         $mform->addHelpButton('lti_launchcontainer', 'default_launch_container', 'lti');
         $mform->setType('lti_launchcontainer', PARAM_INT);
 
-        $mform->addElement('advcheckbox', 'lti_contentitem', get_string('contentitem', 'lti'));
-        $mform->addHelpButton('lti_contentitem', 'contentitem', 'lti');
-        $mform->setAdvanced('lti_contentitem');
+        $mform->addElement('advcheckbox', 'lti_contentitem', get_string('contentitem_deeplinking', 'lti'));
+        $mform->addHelpButton('lti_contentitem', 'contentitem_deeplinking', 'lti');
         if ($istool) {
             $mform->disabledIf('lti_contentitem', null);
         }
@@ -224,7 +223,6 @@ class mod_lti_edit_types_form extends moodleform {
         $mform->addElement('text', 'lti_toolurl_ContentItemSelectionRequest',
             get_string('toolurl_contentitemselectionrequest', 'lti'), array('size' => '64'));
         $mform->setType('lti_toolurl_ContentItemSelectionRequest', PARAM_URL);
-        $mform->setAdvanced('lti_toolurl_ContentItemSelectionRequest');
         $mform->addHelpButton('lti_toolurl_ContentItemSelectionRequest', 'toolurl_contentitemselectionrequest', 'lti');
         $mform->disabledIf('lti_toolurl_ContentItemSelectionRequest', 'lti_contentitem', 'notchecked');
         if ($istool) {
@@ -271,7 +269,12 @@ class mod_lti_edit_types_form extends moodleform {
             // LTI Extensions.
 
             // Add grading preferences fieldset where the tool is allowed to return grades.
-            $mform->addElement('select', 'lti_acceptgrades', get_string('accept_grades_admin', 'lti'), $options);
+            $gradeoptions = array();
+            $gradeoptions[] = get_string('never', 'lti');
+            $gradeoptions[] = get_string('always', 'lti');
+            $gradeoptions[] = get_string('delegate_tool', 'lti');
+
+            $mform->addElement('select', 'lti_acceptgrades', get_string('accept_grades_admin', 'lti'), $gradeoptions);
             $mform->setType('lti_acceptgrades', PARAM_INT);
             $mform->setDefault('lti_acceptgrades', '2');
             $mform->addHelpButton('lti_acceptgrades', 'accept_grades_admin', 'lti');

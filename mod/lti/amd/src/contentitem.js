@@ -110,7 +110,80 @@ define(
         ];
 
         /**
+         * Hide the element, including aria and tab index.
+         * @param {HTMLElement} e the element to be hidden.
+         */
+        const hideElement = (e) => {
+            e.setAttribute('hidden', 'true');
+            e.setAttribute('aria-hidden', 'true');
+            e.setAttribute('tab-index', '-1');
+        };
+
+        /**
+         * Show the element, including aria and tab index (set to 1).
+         * @param {HTMLElement} e the element to be shown.
+         */
+        const showElement = (e) => {
+            e.removeAttribute('hidden');
+            e.setAttribute('aria-hidden', 'false');
+            e.setAttribute('tab-index', '1');
+        };
+
+        /**
+         * When more than one item needs to be added, the UI is simplified
+         * to just list the items to be added. Form is hidden and the only
+         * options is (save and return to course) or cancel.
+         * This function injects the summary to the form page, and hides
+         * the unneeded elements.
+         * @param {Object[]} items items to be added to the course.
+         */
+        const showMultipleSummaryAndHideForm = async function(items) {
+            const form = document.querySelector('#region-main-box form');
+            const toolArea = form.querySelector('[data-attribute="dynamic-import"]');
+            const buttonGroup = form.querySelector('#fgroup_id_buttonar');
+            const submitAndLaunch = form.querySelector('#id_submitbutton');
+            Array.from(form.children).forEach(hideElement);
+            hideElement(submitAndLaunch);
+            const {html, js} = await templates.renderForPromise('mod_lti/tool_deeplinking_results',
+                {items: items});
+
+            await templates.replaceNodeContents(toolArea, html, js);
+            showElement(toolArea);
+            showElement(buttonGroup);
+        };
+
+        /**
+         * Transforms config values aimed at populating the lti mod form to JSON variant
+         * which are used to insert more than one activity modules in one submit
+         * by applying variation to the submitted form.
+         * See /course/modedit.php.
+         * @private
+         * @param {Object} config transforms a config to an actual form data to be posted.
+         * @return {Object} variant that will be used to modify form values on submit.
+         */
+        var configToVariant = (config) => {
+            const variant = {};
+            ['name', 'toolurl', 'securetoolurl', 'instructorcustomparameters', 'icon', 'secureicon', 'launchcontainer'].forEach(
+                function(name) {
+                    variant[name] = config[name] || '';
+                }
+            );
+            variant['introeditor[text]'] = config.introeditor ? config.introeditor.text : '';
+            variant['introeditor[format]'] = config.introeditor ? config.introeditor.format : '';
+            if (config.instructorchoiceacceptgrades === 1) {
+                variant.instructorchoiceacceptgrades = '1';
+                variant['grade[modgrade_point]'] = config.grade_modgrade_point || '100';
+            } else {
+                variant.instructorchoiceacceptgrades = '0';
+            }
+            return variant;
+        };
+
+        /**
          * Window function that can be called from mod_lti/contentitem_return to close the dialogue and process the return data.
+         * If the return data contains more than one item, the form will not be populated with item data
+         * but rather hidden, and the item data will be added to a single input field used to create multiple
+         * instances in one request.
          *
          * @param {object} returnData The fetched configuration data from the Content-Item selection dialogue.
          */
@@ -118,20 +191,49 @@ define(
             if (dialogue) {
                 dialogue.hide();
             }
-
-            // Populate LTI configuration fields from return data.
             var index;
-            for (index in ltiFormFields) {
-                var field = ltiFormFields[index];
-                var value = null;
-                if (typeof returnData[field.name] !== 'undefined') {
-                    value = returnData[field.name];
+            if (returnData.multiple) {
+                for (index in ltiFormFields) {
+                    // Name is required, so putting a placeholder as it will not be used
+                    // in multi-items add.
+                    ltiFormFields[index].setFieldValue(ltiFormFields[index].name === 'name' ? 'item' : null);
+                }
+                var variants = [];
+                returnData.multiple.forEach(function(v) {
+                    variants.push(configToVariant(v));
+                });
+                showMultipleSummaryAndHideForm(returnData.multiple);
+                const submitAndCourse = document.querySelector('#id_submitbutton2');
+                submitAndCourse.onclick = (e) => {
+                    e.preventDefault();
+                    submitAndCourse.disabled = true;
+                    const fd = new FormData(document.querySelector('form.mform'));
+                    const postVariant = (promise, variant) => {
+                        Object.entries(variant).forEach((entry) => fd.set(entry[0], entry[1]));
+                        const body = new URLSearchParams(fd);
+                        const doPost = () => fetch(document.location.pathname, {method: 'post', body});
+                        return promise.then(doPost).catch(doPost);
+                    };
+                    const backToCourse = () => {
+                        document.querySelector("#id_cancel").click();
+                    };
+                    variants.reduce(postVariant, Promise.resolve()).then(backToCourse).catch(backToCourse);
+                };
+            } else {
+                // Populate LTI configuration fields from return data.
+                for (index in ltiFormFields) {
+                    var field = ltiFormFields[index];
+                    var value = null;
+                    if (typeof returnData[field.name] !== 'undefined') {
+                        value = returnData[field.name];
+                    }
+                    field.setFieldValue(value);
                 }
                 field.setFieldValue(value);
             }
 
             if (doneCallback) {
-                doneCallback();
+                doneCallback(returnData);
             }
         };
 
