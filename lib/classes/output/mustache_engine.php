@@ -38,7 +38,7 @@ class mustache_engine extends \Mustache_Engine {
     /**
      * @var string[] Names of helpers that aren't allowed to be called within other helpers.
      */
-    private $blacklistednestedhelpers = [];
+    private $disallowednestedhelpers = [];
 
     /**
      * Mustache engine constructor.
@@ -47,13 +47,19 @@ class mustache_engine extends \Mustache_Engine {
      * $options = [
      *      // A list of helpers (by name) to prevent from executing within the rendering
      *      // of other helpers.
-     *      'blacklistednestedhelpers' => ['js']
+     *      'disallowednestedhelpers' => ['js']
      * ];
      * @param array $options [description]
      */
     public function __construct(array $options = []) {
+
         if (isset($options['blacklistednestedhelpers'])) {
-            $this->blacklistednestedhelpers = $options['blacklistednestedhelpers'];
+            debugging('blacklistednestedhelpers option is deprecated. Use disallowednestedhelpers instead.', DEBUG_DEVELOPER);
+            $this->disallowednestedhelpers = $options['blacklistednestedhelpers'];
+        }
+
+        if (isset($options['disallowednestedhelpers'])) {
+            $this->disallowednestedhelpers = $options['disallowednestedhelpers'];
         }
 
         parent::__construct($options);
@@ -69,7 +75,7 @@ class mustache_engine extends \Mustache_Engine {
     public function getHelpers()
     {
         if (!isset($this->helpers)) {
-            $this->helpers = new mustache_helper_collection(null, $this->blacklistednestedhelpers);
+            $this->helpers = new mustache_helper_collection(null, $this->disallowednestedhelpers);
         }
 
         return $this->helpers;

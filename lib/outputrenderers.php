@@ -129,7 +129,7 @@ class renderer_base {
                 // Don't allow the JavaScript helper to be executed from within another
                 // helper. If it's allowed it can be used by users to inject malicious
                 // JS into the page.
-                'blacklistednestedhelpers' => ['js']));
+                'disallowednestedhelpers' => ['js']));
 
         }
 

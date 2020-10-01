@@ -152,7 +152,7 @@ function useredit_load_preferences(&$user, $reload=true) {
  * Updates the user preferences for the given user
  *
  * Only preference that can be updated directly will be updated here. This method is called from various WS
- * updating users and should be used when updating user details. Plugins may whitelist preferences that can
+ * updating users and should be used when updating user details. Plugins may list preferences that can
  * be updated by defining 'user_preferences' callback, {@see core_user::fill_preferences_cache()}
  *
  * Some parts of code may use user preference table to store internal data, in these cases it is acceptable
