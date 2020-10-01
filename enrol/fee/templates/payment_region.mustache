@@ -23,24 +23,19 @@
     * none
 
     Data attributes required for JS:
-    * data-amount
-    * data-currency
     * data-component
     * data-componentid
+    * data-cost
     * data-description
 
     Context variables required for this template:
     * cost - Human readable cost string including amount and currency
-    * amount - amount of the cost
-    * currency - currency of the cost
     * instanceid - Id of the enrolment instance
     * description - The description for this purchase
 
     Example context (json):
     {
         "cost": "$108.50",
-        "amount": 108.50,
-        "currency": "AUD",
         "instanceid": 11,
         "description": "Enrolment in course Introduction to algorithms",
         "isguestuser": false
@@ -64,6 +59,7 @@
             id="gateways-modal-trigger-{{ uniqid }}"
             data-component="enrol_fee"
             data-componentid="{{instanceid}}"
+            data-cost="{{cost}}"
             data-description={{# quote }}{{description}}{{/ quote }}
         >
             {{# str }} sendpaymentbutton, enrol_fee {{/ str }}

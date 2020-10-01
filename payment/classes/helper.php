@@ -142,11 +142,17 @@ class helper {
      * @return array
      */
     public static function gateways_modal_link_params(string $component, int $componentid, string $description): array {
+        [
+            'amount' => $amount,
+            'currency' => $currency
+        ] = self::get_cost($component, $componentid);
+
         return [
             'id' => 'gateways-modal-trigger',
             'role' => 'button',
             'data-component' => $component,
             'data-componentid' => $componentid,
+            'data-cost' => self::get_cost_as_string($amount, $currency),
             'data-description' => $description,
         ];
     }
