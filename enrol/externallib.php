@@ -460,7 +460,7 @@ class core_enrol_external extends external_api {
                     'id'        => new external_value(PARAM_INT, 'id of course'),
                     'shortname' => new external_value(PARAM_RAW, 'short name of course'),
                     'fullname'  => new external_value(PARAM_RAW, 'long name of course'),
-                    'displayname' => new external_value(PARAM_TEXT, 'course display name for lists.', VALUE_OPTIONAL),
+                    'displayname' => new external_value(PARAM_RAW, 'course display name for lists.', VALUE_OPTIONAL),
                     'enrolledusercount' => new external_value(PARAM_INT, 'Number of enrolled users in this course',
                             VALUE_OPTIONAL),
                     'idnumber'  => new external_value(PARAM_RAW, 'id number of course'),
