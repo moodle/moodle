@@ -1105,7 +1105,7 @@ function external_generate_token_for_current_user($service) {
             $unsettoken = true;
         }
 
-        // Remove token if its ip not in whitelist.
+        // Remove token if its IP is restricted.
         if (isset($token->iprestriction) and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
             $unsettoken = true;
         }

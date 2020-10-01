@@ -257,7 +257,7 @@ function mnet_server_dispatch($payload) {
     // $method is something like: "mod/forum/lib.php/forum_add_instance"
     // $params is an array of parameters. A parameter might itself be an array.
 
-    // Whitelist characters that are permitted in a method name
+    // Check that the method name consists of allowed characters only.
     // The method name must not begin with a / - avoid absolute paths
     // A dot character . is only allowed in the filename, i.e. something.php
     if (0 == preg_match("@^[A-Za-z0-9]+/[A-Za-z0-9/_\.-]+(\.php/)?[A-Za-z0-9_-]+$@",$method)) {
