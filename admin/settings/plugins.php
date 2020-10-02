@@ -284,6 +284,12 @@ if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('paymentgateways', new lang_string('type_pg_plural', 'plugin')));
     $temp = new admin_settingpage('managepaymentgateways', new lang_string('type_pgmanage', 'plugin'));
     $temp->add(new \core_admin\local\settings\manage_payment_gateway_plugins());
+    $temp->add(new admin_setting_description(
+        'managepaymentgatewayspostfix',
+        '',
+        new lang_string('gotopaymentaccounts', 'payment',
+            html_writer::link(new moodle_url('/payment/accounts.php'), get_string('paymentaccounts', 'payment')))
+    ));
     $ADMIN->add('paymentgateways', $temp);
 
     $plugins = core_plugin_manager::instance()->get_plugins_of_type('pg');

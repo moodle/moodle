@@ -303,9 +303,16 @@ class enrol_fee_plugin extends enrol_plugin {
         $mform->addElement('select', 'status', get_string('status', 'enrol_fee'), $options);
         $mform->setDefault('status', $this->get_config('status'));
 
-        $mform->addElement('select', 'customint1', get_string('paymentaccount', 'payment'),
-            ['' => ''] + \core_payment\helper::get_payment_accounts_menu($context));
-        $mform->addRule('customint1', get_string('required'), 'required', null, 'client');
+        $accounts = \core_payment\helper::get_payment_accounts_menu($context);
+        if ($accounts) {
+            $accounts = ((count($accounts) > 1) ? ['' => ''] : []) + $accounts;
+            $mform->addElement('select', 'customint1', get_string('paymentaccount', 'payment'), $accounts);
+        } else {
+            $mform->addElement('static', 'customint1_text', get_string('paymentaccount', 'payment'),
+                html_writer::span(get_string('noaccountsavilable', 'payment'), 'alert alert-danger'));
+            $mform->addElement('hidden', 'customint1');
+            $mform->setType('customint1', PARAM_INT);
+        }
 
         $mform->addElement('text', 'cost', get_string('cost', 'enrol_fee'), array('size' => 4));
         $mform->setType('cost', PARAM_RAW);
@@ -378,6 +385,12 @@ class enrol_fee_plugin extends enrol_plugin {
 
         $typeerrors = $this->validate_param_types($data, $tovalidate);
         $errors = array_merge($errors, $typeerrors);
+
+        if ($data['status'] == ENROL_INSTANCE_ENABLED &&
+                (!$data['customint1']
+                    || !array_key_exists($data['customint1'], \core_payment\helper::get_payment_accounts_menu($context)))) {
+            $errors['status'] = 'Enrolments can not be enabled without specifying the payment account';
+        }
 
         return $errors;
     }

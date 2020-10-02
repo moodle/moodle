@@ -22,22 +22,34 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['accountarchived'] = 'Archived';
+$string['accountdeleteconfirm'] = 'If this account has previous payments, they will be archived, otherwise all other data will be permanently deleted. Are you sure you want to continue?';
 $string['accountname'] = 'Account name';
 $string['accountnotavailable'] = 'Not available';
 $string['callbacknotimplemented'] = 'The callback is not implemented for component {$a}.';
 $string['createaccount'] = 'Create payment account';
+$string['deleteorarchive'] = 'Delete or archive';
+$string['eventaccountcreated'] = 'Payment account created';
+$string['eventaccountdeleted'] = 'Payment account deleted';
+$string['eventaccountupdated'] = 'Payment account updated';
 $string['feeincludesurcharge'] = '{$a->fee} (includes {$a->surcharge}% surcharge for using this payment type)';
 $string['gatewaycannotbeenabled'] = 'The payment gateway cannot be enabled because the configuration is incomplete.';
 $string['gatewaydisabled'] = 'Disabled';
 $string['gatewayenabled'] = 'Enabled';
 $string['gatewaynotfound'] = 'Gateway not found';
+$string['gotomanageplugins'] = 'Enable and disable payment gateways and set surcharges via {$a}.';
+$string['gotopaymentaccounts'] = 'You can create multiple payment accounts using any of these gateways on the {$a} page';
+$string['hidearchived'] = 'Hide archived';
+$string['noaccountsavilable'] = 'No payment accounts are available.';
 $string['nocurrencysupported'] = 'No payment in any currency is supported. Please make sure that at least one payment gateway is enabled.';
 $string['nogateway'] = 'There is no payment gateway that can be used.';
 $string['nogatewayselected'] = 'You first need to select a payment gateway.';
 $string['payments'] = 'Payments';
 $string['paymentaccount'] = 'Payment account';
 $string['paymentaccounts'] = 'Payment accounts';
+$string['restoreaccount'] = 'Restore';
 $string['selectpaymenttype'] = 'Select payment type';
+$string['showarchived'] = 'Show archived';
 $string['supportedcurrencies'] = 'Supported currencies';
 $string['surcharge'] = 'Surcharge (percentage)';
 $string['surcharge_desc'] = 'The surcharge is an additional percentage charged to users who choose to pay using this payment gateway.';

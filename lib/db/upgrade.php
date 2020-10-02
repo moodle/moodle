@@ -2959,5 +2959,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021052500.33);
     }
 
+    if ($oldversion < 2021052500.26) {
+
+        // Define field archived to be added to payment_accounts.
+        $table = new xmldb_table('payment_accounts');
+        $field = new xmldb_field('archived', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'enabled');
+
+        // Conditionally launch add field archived.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.26);
+    }
+
     return true;
 }

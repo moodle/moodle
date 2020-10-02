@@ -24,6 +24,10 @@
 
 namespace core_payment;
 
+use core_payment\event\account_created;
+use core_payment\event\account_deleted;
+use core_payment\event\account_updated;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -266,18 +270,22 @@ class helper {
      * Save a new or edited payment account (used in management interface)
      *
      * @param \stdClass $data
+     * @return account
      */
-    public static function save_payment_account(\stdClass $data) {
+    public static function save_payment_account(\stdClass $data): account {
 
         if (empty($data->id)) {
             $account = new account(0, $data);
+            $account->save();
+            account_created::create_from_account($account)->trigger();
         } else {
             $account = new account($data->id);
             $account->from_record($data);
+            $account->save();
+            account_updated::create_from_account($account)->trigger();
         }
 
-        $account->save();
-        // TODO trigger event.
+        return $account;
     }
 
     /**
@@ -285,32 +293,60 @@ class helper {
      *
      * @param account $account
      */
-    public static function delete_payment_account(account $account) {
+    public static function delete_payment_account(account $account): void {
+        global $DB;
+        if ($DB->record_exists('payments', ['accountid' => $account->get('id')])) {
+            $account->set('archived', 1);
+            $account->save();
+            account_updated::create_from_account($account, ['archived' => 1])->trigger();
+            return;
+        }
+
         foreach ($account->get_gateways(false) as $gateway) {
             if ($gateway->get('id')) {
                 $gateway->delete();
             }
         }
+        $event = account_deleted::create_from_account($account);
         $account->delete();
-        // TODO trigger event.
+        $event->trigger();
+    }
+
+    /**
+     * Restore archived payment account (used in management interface)
+     *
+     * @param account $account
+     */
+    public static function restore_payment_account(account $account): void {
+        $account->set('archived', 0);
+        $account->save();
+        account_updated::create_from_account($account, ['restored' => 1])->trigger();
     }
 
     /**
      * Save a payment gateway linked to an existing account (used in management interface)
      *
      * @param \stdClass $data
+     * @return account_gateway
      */
-    public static function save_payment_gateway(\stdClass $data) {
+    public static function save_payment_gateway(\stdClass $data): account_gateway {
         if (empty($data->id)) {
-            $gateway = new account_gateway(0, $data);
+            $records = account_gateway::get_records(['accountid' => $data->accountid, 'gateway' => $data->gateway]);
+            if ($records) {
+                $gateway = reset($records);
+            } else {
+                $gateway = new account_gateway(0, $data);
+            }
         } else {
             $gateway = new account_gateway($data->id);
-            unset($data->accountid, $data->gateway, $data->id);
-            $gateway->from_record($data);
         }
+        unset($data->accountid, $data->gateway, $data->id);
+        $gateway->from_record($data);
 
+        $account = $gateway->get_account();
         $gateway->save();
-        // TODO trigger event.
+        account_updated::create_from_account($account)->trigger();
+        return $gateway;
     }
 
     /**
@@ -319,8 +355,10 @@ class helper {
      * @param \context $context
      * @return account[]
      */
-    public static function get_payment_accounts_to_manage(\context $context): array {
-        return account::get_records(['contextid' => $context->id]);
+    public static function get_payment_accounts_to_manage(\context $context, bool $showarchived = false): array {
+        $records = account::get_records(['contextid' => $context->id] + ($showarchived ? [] : ['archived' => 0]));
+        \core_collator::asort_objects_by_method($records, 'get_formatted_name');
+        return $records;
     }
 
     /**
@@ -333,7 +371,7 @@ class helper {
         global $DB;
         [$sql, $params] = $DB->get_in_or_equal($context->get_parent_context_ids(true));
         $accounts = array_filter(account::get_records_select('contextid '.$sql, $params), function($account) {
-            return $account->is_available();
+            return $account->is_available() && !$account->get('archived');
         });
         return array_map(function($account) {
             return $account->get_formatted_name();
