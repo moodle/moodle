@@ -65,6 +65,10 @@ class account extends persistent {
                 'type' => PARAM_BOOL,
                 'default' => true
             ],
+            'archived' => [
+                'type' => PARAM_BOOL,
+                'default' => false
+            ],
         );
     }
 

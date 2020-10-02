@@ -27,6 +27,7 @@ require_once($CFG->libdir . '/adminlib.php');
 
 $id = optional_param('id', 0, PARAM_INT);
 $delete = optional_param('delete', false, PARAM_BOOL);
+$restore = optional_param('restore', false, PARAM_BOOL);
 
 $pageurl = new moodle_url('/payment/manage_account.php');
 admin_externalpage_setup('paymentaccounts', '', [], $pageurl);
@@ -36,8 +37,12 @@ $enabledplugins = \core\plugininfo\pg::get_enabled_plugins();
 $account = new \core_payment\account($id);
 require_capability('moodle/payment:manageaccounts', $account->get_context());
 
-if ($delete && confirm_sesskey()) {
+if ($delete && !$account->get('archived') && confirm_sesskey()) {
     \core_payment\helper::delete_payment_account($account);
+    redirect(new moodle_url('/payment/accounts.php'));
+}
+if ($restore && $account->get('archived') && confirm_sesskey()) {
+    \core_payment\helper::restore_payment_account($account);
     redirect(new moodle_url('/payment/accounts.php'));
 }
 
