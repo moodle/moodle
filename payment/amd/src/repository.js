@@ -27,16 +27,18 @@ import Ajax from 'core/ajax';
 /**
  * Returns the list of gateways that can process payments in the given currency.
  *
- * @param {String} component
- * @param {Integer} componentid
+ * @param {string} component
+ * @param {string} paymentArea
+ * @param {number} componentId
  * @returns {Promise<{shortname: string, name: string, description: String}[]>}
  */
-export const getGatewaysSupportingCurrency = (component, componentid) => {
+export const getGatewaysSupportingCurrency = (component, paymentArea, componentId) => {
     const request = {
         methodname: 'core_payment_get_gateways_for_currency',
         args: {
             component,
-            componentid
+            paymentarea: paymentArea,
+            componentid: componentId,
         }
     };
     return Ajax.call([request])[0];

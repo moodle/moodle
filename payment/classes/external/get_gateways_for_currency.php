@@ -43,35 +43,38 @@ class get_gateways_for_currency extends external_api {
      * @return external_function_parameters
      */
     public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters(
-                ['component' => new external_value(PARAM_COMPONENT, 'Component'),
-                    'componentid' => new external_value(PARAM_INT, 'Component id')]
-        );
+        return new external_function_parameters([
+            'component' => new external_value(PARAM_COMPONENT, 'Component'),
+            'paymentarea' => new external_value(PARAM_AREA, 'Payment area in the component'),
+            'componentid' => new external_value(PARAM_INT, 'An identifier for payment area in the component')
+        ]);
     }
 
     /**
      * Returns the list of gateways that can process payments in the given currency.
      *
      * @param string $component
+     * @param string $paymentarea
      * @param int $componentid
      * @return \stdClass[]
      */
-    public static function execute(string $component, int $componentid): array {
+    public static function execute(string $component, string $paymentarea, int $componentid): array {
 
         $params = external_api::validate_parameters(self::execute_parameters(), [
             'component' => $component,
+            'paymentarea' => $paymentarea,
             'componentid' => $componentid,
         ]);
 
         $list = [];
-        $gateways = \core_payment\helper::get_gateways_for_currency($params['component'], $params['componentid']);
+        $gateways = helper::get_gateways_for_currency($params['component'], $params['paymentarea'], $params['componentid']);
         [
             'amount' => $amount,
             'currency' => $currency
-        ] = \core_payment\helper::get_cost($params['component'], $params['componentid']);
+        ] = helper::get_cost($params['component'], $params['paymentarea'], $params['componentid']);
 
         foreach ($gateways as $gateway) {
-            $surcharge = \core_payment\helper::get_gateway_surcharge($gateway);
+            $surcharge = helper::get_gateway_surcharge($gateway);
             $list[] = (object)[
                 'shortname' => $gateway,
                 'name' => get_string('gatewayname', 'pg_' . $gateway),

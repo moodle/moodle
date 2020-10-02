@@ -24,6 +24,7 @@
 
     Data attributes required for JS:
     * data-component
+    * data-paymentarea
     * data-componentid
     * data-cost
     * data-description
@@ -58,6 +59,7 @@
             type="button"
             id="gateways-modal-trigger-{{ uniqid }}"
             data-component="enrol_fee"
+            data-paymentarea="fee"
             data-componentid="{{instanceid}}"
             data-cost="{{cost}}"
             data-description={{# quote }}{{description}}{{/ quote }}

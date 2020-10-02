@@ -4321,7 +4321,8 @@
     <TABLE NAME="payments" COMMENT="Stores information about payments">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="component" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The plugin this payment belongs to."/>
+        <FIELD NAME="paymentarea" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="The name of payable area"/>
         <FIELD NAME="componentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="amount" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
@@ -4337,9 +4338,8 @@
         <KEY NAME="accountid" TYPE="foreign" FIELDS="accountid" REFTABLE="payment_accounts" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="component" UNIQUE="false" FIELDS="component"/>
-        <INDEX NAME="componentid" UNIQUE="false" FIELDS="componentid"/>
         <INDEX NAME="gateway" UNIQUE="false" FIELDS="gateway"/>
+        <INDEX NAME="component-paymentarea-componentid" UNIQUE="false" FIELDS="component, paymentarea, componentid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="infected_files" COMMENT="Table to store infected file details.">

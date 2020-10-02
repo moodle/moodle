@@ -2974,5 +2974,48 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021052500.26);
     }
 
+    if ($oldversion < 2021052500.27) {
+
+        // Define field paymentarea to be added to payments.
+        $table = new xmldb_table('payments');
+        $field = new xmldb_field('paymentarea', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, 'component');
+
+        // Conditionally launch add field paymentarea.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define index component (not unique) to be dropped form payments.
+        $table = new xmldb_table('payments');
+        $index = new xmldb_index('component', XMLDB_INDEX_NOTUNIQUE, ['component']);
+
+        // Conditionally launch drop index component.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Define index componentid (not unique) to be dropped form payments.
+        $table = new xmldb_table('payments');
+        $index = new xmldb_index('componentid', XMLDB_INDEX_NOTUNIQUE, ['componentid']);
+
+        // Conditionally launch drop index componentid.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Define index component-paymentarea-componentid (not unique) to be added to payments.
+        $table = new xmldb_table('payments');
+        $index = new xmldb_index('component-paymentarea-componentid', XMLDB_INDEX_NOTUNIQUE,
+            ['component', 'paymentarea', 'componentid']);
+
+        // Conditionally launch add index component-paymentarea-componentid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.27);
+    }
+
     return true;
 }
