@@ -45,20 +45,21 @@ const showModalWithPlaceholder = async() => {
 /**
  * Process the payment.
  *
- * @param {string} component Name of the component that the componentid belongs to
- * @param {number} componentid An internal identifier that is used by the component
+ * @param {string} component Name of the component that the componentId belongs to
+ * @param {string} paymentArea The area of the component that the componentId belongs to
+ * @param {number} componentId An internal identifier that is used by the component
  * @param {string} description Description of the payment
  * @param {processCallback} callback The callback function to call when processing is finished
  * @returns {Promise<void>}
  */
-export const process = async(component, componentid, description, callback) => {
+export const process = async(component, paymentArea, componentId, description, callback) => {
 
     const [
         modal,
         paypalConfig,
     ] = await Promise.all([
         showModalWithPlaceholder(),
-        Repository.getConfigForJs(component, componentid),
+        Repository.getConfigForJs(component, paymentArea, componentId),
     ]);
     const currency = paypalConfig.currency;
     const amount = paypalConfig.cost; // Cost with surcharge.
@@ -104,7 +105,8 @@ export const process = async(component, componentid, description, callback) => {
                     methodname: 'pg_paypal_create_transaction_complete',
                     args: {
                         component,
-                        componentid,
+                        paymentarea: paymentArea,
+                        componentid: componentId,
                         orderid: data.orderID,
                     },
                 }])[0]

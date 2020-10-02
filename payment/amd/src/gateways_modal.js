@@ -94,6 +94,7 @@ const show = async(rootNode, {
             processPayment(
                 gateway,
                 rootNode.dataset.component,
+                rootNode.dataset.paymentarea,
                 rootNode.dataset.componentid,
                 rootNode.dataset.description,
                 ({success, message = ''}) => {
@@ -126,7 +127,8 @@ const show = async(rootNode, {
         }
     });
 
-    const gateways = await getGatewaysSupportingCurrency(rootNode.dataset.component, rootNode.dataset.componentid);
+    const gateways = await getGatewaysSupportingCurrency(rootNode.dataset.component, rootNode.dataset.paymentarea,
+        rootNode.dataset.componentid);
     const context = {
         gateways
     };
@@ -170,15 +172,16 @@ const updateCostRegion = async(root, defaultCost = '') => {
  * Process payment using the selected gateway.
  *
  * @param {string} gateway The gateway to be used for payment
- * @param {string} component Name of the component that the componentid belongs to
- * @param {number} componentid An internal identifier that is used by the component
+ * @param {string} component Name of the component that the componentId belongs to
+ * @param {string} paymentArea Name of the area in the component that the componentId belongs to
+ * @param {number} componentId An internal identifier that is used by the component
  * @param {string} description Description of the payment
  * @param {processPaymentCallback} callback The callback function to call when processing is finished
  * @returns {Promise<void>}
  */
-const processPayment = async(gateway, component, componentid, description, callback) => {
+const processPayment = async(gateway, component, paymentArea, componentId, description, callback) => {
     const paymentMethod = await import(`pg_${gateway}/gateways_modal`);
-    paymentMethod.process(component, componentid, description, callback);
+    paymentMethod.process(component, paymentArea, componentId, description, callback);
 };
 
 /**

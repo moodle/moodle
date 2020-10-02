@@ -118,8 +118,8 @@ class accounts_testcase extends advanced_testcase {
         // Delete account with payments - it will be archived.
         $this->setAdminUser();
         $account = helper::save_payment_account((object)['name' => 'Test 1', 'idnumber' => '']);
-        $DB->insert_record('payments', ['accountid' => $account->get('id'), 'component' => 'test', 'componentid' => 1,
-            'userid' => $USER->id]);
+        $DB->insert_record('payments', ['accountid' => $account->get('id'), 'component' => 'test', 'paymentarea' => 'test',
+            'componentid' => 1, 'userid' => $USER->id]);
         helper::delete_payment_account(account::get_record(['id' => $account->get('id')]));
         $this->assertEquals(1, $DB->get_field('payment_accounts', 'archived', ['id' => $account->get('id')]));
 

@@ -36,10 +36,11 @@ class provider implements \core_payment\local\callback\provider {
     /**
      * Callback function that returns the enrolment cost for the course that $instanceid enrolment instance belongs to.
      *
+     * @param string $paymentarea
      * @param int $instanceid The enrolment instance id
      * @return array['amount' => float, 'currency' => string, 'accountid' => int]
      */
-    public static function get_cost(int $instanceid): array {
+    public static function get_cost(string $paymentarea, int $instanceid): array {
         global $DB;
 
         $instance = $DB->get_record('enrol', ['enrol' => 'fee', 'id' => $instanceid], '*', MUST_EXIST);
@@ -54,11 +55,12 @@ class provider implements \core_payment\local\callback\provider {
     /**
      * Callback function that delivers what the user paid for to them.
      *
+     * @param string $paymentarea
      * @param int $instanceid The enrolment instance id
      * @param int $paymentid payment id as inserted into the 'payments' table, if needed for reference
      * @return bool Whether successful or not
      */
-    public static function deliver_order(int $instanceid, int $paymentid): bool {
+    public static function deliver_order(string $paymentarea, int $instanceid, int $paymentid): bool {
         global $DB, $USER;
 
         $instance = $DB->get_record('enrol', ['enrol' => 'fee', 'id' => $instanceid], '*', MUST_EXIST);

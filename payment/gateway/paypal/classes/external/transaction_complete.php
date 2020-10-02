@@ -47,7 +47,8 @@ class transaction_complete extends external_api {
     public static function execute_parameters() {
         return new external_function_parameters([
             'component' => new external_value(PARAM_COMPONENT, 'The component name'),
-            'componentid' => new external_value(PARAM_INT, 'The item id in the context of the component'),
+            'paymentarea' => new external_value(PARAM_AREA, 'Payment area in the component'),
+            'componentid' => new external_value(PARAM_INT, 'The item id in the context of the component area'),
             'orderid' => new external_value(PARAM_TEXT, 'The order id coming back from PayPal'),
         ]);
     }
@@ -57,27 +58,29 @@ class transaction_complete extends external_api {
      * This function does not take cost as a parameter as we cannot rely on any provided value.
      *
      * @param string $component Name of the component that the componentid belongs to
+     * @param string $paymentarea
      * @param int $componentid An internal identifier that is used by the component
      * @param string $orderid PayPal order ID
      * @return array
      */
-    public static function execute(string $component, int $componentid, string $orderid): array {
+    public static function execute(string $component, string $paymentarea, int $componentid, string $orderid): array {
         global $USER, $DB;
 
         self::validate_parameters(self::execute_parameters(), [
             'component' => $component,
+            'paymentarea' => $paymentarea,
             'componentid' => $componentid,
             'orderid' => $orderid,
         ]);
 
-        $config = (object)helper::get_gateway_configuration($component, $componentid, 'paypal');
+        $config = (object)helper::get_gateway_configuration($component, $paymentarea, $componentid, 'paypal');
         $sandbox = $config->environment == 'sandbox';
 
         [
             'amount' => $amount,
             'currency' => $currency,
             'accountid' => $accountid,
-        ] = payment_helper::get_cost($component, $componentid);
+        ] = payment_helper::get_cost($component, $paymentarea, $componentid);
 
         // Add surcharge if there is any.
         $surcharge = helper::get_gateway_surcharge('paypal');
@@ -99,8 +102,8 @@ class transaction_complete extends external_api {
                         $success = true;
                         // Everything is correct. Let's give them what they paid for.
                         try {
-                            $paymentid = payment_helper::save_payment((int)$accountid, $component, $componentid, (int) $USER->id,
-                                $amount, $currency, 'paypal');
+                            $paymentid = payment_helper::save_payment((int) $accountid, $component, $paymentarea, $componentid,
+                                (int) $USER->id, $amount, $currency, 'paypal');
 
                             // Store PayPal extra information.
                             $record = new \stdClass();
@@ -109,7 +112,7 @@ class transaction_complete extends external_api {
 
                             $DB->insert_record('pg_paypal', $record);
 
-                            payment_helper::deliver_order($component, $componentid, $paymentid);
+                            payment_helper::deliver_order($component, $paymentarea, $componentid, $paymentid);
                         } catch (\Exception $e) {
                             debugging('Exception while trying to process payment: ' . $e->getMessage(), DEBUG_DEVELOPER);
                             $success = false;

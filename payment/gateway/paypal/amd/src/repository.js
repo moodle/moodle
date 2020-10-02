@@ -27,12 +27,19 @@ import Ajax from 'core/ajax';
 /**
  * Return the PayPal JavaScript SDK URL.
  *
- * @returns {Promise<{clientid: String, brandname: String}>}
+ * @param {string} component Name of the component that the componentid belongs to
+ * @param {string} paymentArea The area of the component that the componentid belongs to
+ * @param {number} componentId An internal identifier that is used by the component
+ * @returns {Promise<{clientid: string, brandname: string}>}
  */
-export const getConfigForJs = (component, componentid) => {
+export const getConfigForJs = (component, paymentArea, componentId) => {
     const request = {
         methodname: 'pg_paypal_get_config_for_js',
-        args: {component, componentid},
+        args: {
+            component,
+            paymentarea: paymentArea,
+            componentid: componentId,
+        },
     };
 
     return Ajax.call([request])[0];

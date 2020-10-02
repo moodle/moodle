@@ -70,11 +70,12 @@ class core_payment_generator extends component_generator_base {
             $data['gateway'] = reset($gateways);
         }
 
-        $id = $DB->insert_record('payments', $data +
-            ['component' => 'testcomponent',
-                'componentarea' => 'teatarea',
-                'componentid' => 0,
-                'currency' => 'AUD']);
+        $id = $DB->insert_record('payments', $data + [
+            'component' => 'testcomponent',
+            'paymentarea' => 'teatarea',
+            'componentid' => 0,
+            'currency' => 'AUD'
+        ]);
         return $id;
     }
 
