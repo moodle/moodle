@@ -225,7 +225,7 @@ body:not(.editing)  .sitetopic ul.section {
 
 .editing .section .activity:hover,
 .editing .section .activity.action-menu-shown {
-    background-color: $table-bg-accent;
+    background-color: $table-accent-bg;
 }
 
 .course-content .current {
@@ -234,7 +234,7 @@ body:not(.editing)  .sitetopic ul.section {
 
 .course-content .current::before {
     content: "";
-    border-left: $brand-primary 2px solid;
+    border-left: $primary 2px solid;
     position: absolute;
     left: -$card-spacer-x;
     top: 0;
@@ -537,13 +537,15 @@ span.editinstructions {
     margin-left: 30px;
     font-size: $font-size-sm;
     padding: .1em .4em;
-    background-color: $state-info-bg;
-    color: $state-info-text;
     text-decoration: none;
     z-index: 9999;
+    border: $alert-border-width solid transparent;
 
-    @include box-shadow(2px 2px 5px 1px #ccc);
-    border: 1px solid $state-info-border;
+    @include alert-variant(
+        theme-color-level('info', $alert-bg-level),
+        theme-color-level('info', $alert-border-level),
+        theme-color-level('info', $alert-color-level)
+    );
 }
 
 /* Course drag and drop upload styles */
@@ -553,14 +555,15 @@ span.editinstructions {
     width: 40%;
     margin: 0 30%;
     padding: 6px;
-    border: 1px solid $state-info-border;
     text-align: center;
-    background: $state-info-bg;
-    color: $state-info-text;
     z-index: 1; // Required in order to have this above relatively positioned course content@mixin
+    border: $alert-border-width solid transparent;
 
-    @include box-shadow(2px 2px 5px 1px #ccc);
-    @include border-radius(8px);
+    @include alert-variant(
+        theme-color-level('info', $alert-bg-level),
+        theme-color-level('info', $alert-border-level),
+        theme-color-level('info', $alert-color-level)
+    );
 }
 
 .dndupload-preview {
@@ -712,12 +715,12 @@ span.editinstructions {
 
 .courses .coursebox {
     &.collapsed {
-        padding-top: $spacer-y / 2;
-        padding-bottom: $spacer-y / 2;
+        padding-top: $spacer / 2;
+        padding-bottom: $spacer / 2;
     }
 
     &.even {
-        background-color: $table-bg-accent;
+        background-color: $table-accent-bg;
     }
 }
 
@@ -870,7 +873,7 @@ span.editinstructions {
     .listitem {
 
         &[data-selected='1'] {
-            border-left: calc(#{$list-group-border-width} + 5px) solid map-get($theme-colors, 'info');
+            border-left: calc(#{$list-group-border-width} + 5px) solid map-get($theme-colors, 'primary');
             padding-left: calc(#{$list-group-item-padding-x} - 5px);
         }
     }
@@ -948,7 +951,7 @@ span.editinstructions {
             > div,
             > div:hover,
             &[data-selected='1'] > div {
-                background-color: $table-bg-hover;
+                background-color: $table-hover-bg;
             }
         }
     }

@@ -660,6 +660,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         // Create what we expect to be returned when querying the discussion.
         $expectedposts = array(
             'posts' => array(),
+            'courseid' => $course1->id,
+            'forumid' => $forum1->id,
             'ratinginfo' => array(
                 'contextid' => $forum1context->id,
                 'component' => 'mod_forum',

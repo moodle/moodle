@@ -274,6 +274,16 @@ function theme_reset_all_caches() {
 }
 
 /**
+ * Reset static caches.
+ *
+ * This method indicates that all running cron processes should exit at the
+ * next opportunity.
+ */
+function theme_reset_static_caches() {
+    \core\task\manager::clear_static_caches();
+}
+
+/**
  * Enable or disable theme designer mode.
  *
  * @param bool $state
@@ -1433,17 +1443,33 @@ class theme_config {
 
         // TODO: MDL-62757 When changing anything in this method please do not forget to check
         // if the validate() method in class admin_setting_configthemepreset needs updating too.
-        $cacheoptions = '';
+
+        $cachedir = make_localcache_directory('scsscache-' . $this->name, false);
+        $cacheoptions = [];
         if ($themedesigner) {
-            $scsscachedir = $CFG->localcachedir . '/scsscache/';
             $cacheoptions = array(
-                  'cacheDir' => $scsscachedir,
+                  'cacheDir' => $cachedir,
                   'prefix' => 'scssphp_',
                   'forceRefresh' => false,
             );
+        } else {
+            if (file_exists($cachedir)) {
+                remove_dir($cachedir);
+            }
         }
+
         // Set-up the compiler.
         $compiler = new core_scss($cacheoptions);
+
+        if ($this->supports_source_maps($themedesigner)) {
+            // Enable source maps.
+            $compiler->setSourceMapOptions([
+                'sourceMapBasepath' => str_replace('\\', '/', $CFG->dirroot),
+                'sourceMapRootpath' => $CFG->wwwroot . '/'
+            ]);
+            $compiler->setSourceMap($compiler::SOURCE_MAP_INLINE);
+        }
+
         $compiler->prepend_raw_scss($this->get_pre_scss_code());
         if (is_string($scss)) {
             $compiler->set_file($scss);
@@ -2183,6 +2209,19 @@ class theme_config {
      */
     public function set_rtl_mode($inrtl = true) {
         $this->rtlmode = $inrtl;
+    }
+
+    /**
+     * Checks if source maps are supported
+     *
+     * @param bool $themedesigner True if theme designer is enabled.
+     * @return boolean True if source maps are supported.
+     */
+    public function supports_source_maps($themedesigner): bool {
+        if (empty($this->rtlmode) && $themedesigner) {
+            return true;
+        }
+        return false;
     }
 
     /**

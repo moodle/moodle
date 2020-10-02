@@ -581,11 +581,11 @@ abstract class restore_dbops {
         $rc = restore_controller_dbops::load_controller($restoreid);
         $restoreinfo = $rc->get_info();
         $rc->destroy(); // Always need to destroy.
-        $backuprelease = floatval($restoreinfo->backup_release);
+        $backuprelease = $restoreinfo->backup_release; // The major version: 2.9, 3.0, 3.10...
         preg_match('/(\d{8})/', $restoreinfo->moodle_release, $matches);
         $backupbuild = (int)$matches[1];
         $after35 = false;
-        if ($backuprelease >= 3.5 && $backupbuild > 20180205) {
+        if (version_compare($backuprelease, '3.5', '>=') && $backupbuild > 20180205) {
             $after35 = true;
         }
 
@@ -1165,7 +1165,7 @@ abstract class restore_dbops {
 
             // if user lang doesn't exist here, use site default
             if (!array_key_exists($user->lang, $languages)) {
-                $user->lang = $CFG->lang;
+                $user->lang = get_newuser_language();
             }
 
             // if user theme isn't available on target site or they are disabled, reset theme

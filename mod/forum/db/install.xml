@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/forum/db" VERSION="20191001" COMMENT="XMLDB file for Moodle mod/forum"
+<XMLDB PATH="mod/forum/db" VERSION="20200508" COMMENT="XMLDB file for Moodle mod/forum"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -99,6 +99,7 @@
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
         <INDEX NAME="created" UNIQUE="false" FIELDS="created"/>
         <INDEX NAME="mailed" UNIQUE="false" FIELDS="mailed"/>
+        <INDEX NAME="privatereplyto" UNIQUE="false" FIELDS="privatereplyto" COMMENT="The field is used in certain queries (such as privacy requests) to search for private replies to the user."/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="forum_queue" COMMENT="For keeping track of posts that will be mailed in digest form">

@@ -81,7 +81,9 @@ class core_contenttype_content_testcase extends \advanced_testcase {
             'Name with symbols' => ['Follow us: @moodle', 'Follow us: @moodle'],
             'Name with tags' => ['This is <b>bold</b>', 'This is bold'],
             'Long name' => [str_repeat('a', 100), str_repeat('a', 100)],
-            'Too long name' => [str_repeat('a', 300), str_repeat('a', 255)]
+            'Too long name' => [str_repeat('a', 300), str_repeat('a', 255)],
+            'Empty name' => ['', 'Old name'],
+            'Blanks only' => ['  ', 'Old name'],
         ];
     }
 
@@ -188,5 +190,112 @@ class core_contenttype_content_testcase extends \advanced_testcase {
 
         $this->assertEquals($newcontext->id, $content->get_contextid());
         $this->assertEquals($newcontext->id, $file->get_contextid());
+    }
+
+    /**
+     * Tests for 'import_file' behaviour when replacing a file.
+     *
+     * @covers ::import_file
+     */
+    public function test_import_file_replace(): void {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $context = context_system::instance();
+
+        // Add some content to the content bank.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $contents = $generator->generate_contentbank_data('contenttype_testable', 3, 0, $context);
+        $content = reset($contents);
+
+        $originalfile = $content->get_file();
+
+        // Create a dummy file.
+        $filerecord = array(
+            'contextid' => $context->id,
+            'component' => 'contentbank',
+            'filearea' => 'draft',
+            'itemid' => $content->get_id(),
+            'filepath' => '/',
+            'filename' => 'example.txt'
+        );
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_string($filerecord, 'Dummy content ');
+
+        $importedfile = $content->import_file($file);
+
+        $this->assertEquals($originalfile->get_filename(), $importedfile->get_filename());
+        $this->assertEquals($originalfile->get_filearea(), $importedfile->get_filearea());
+        $this->assertEquals($originalfile->get_filepath(), $importedfile->get_filepath());
+        $this->assertEquals($originalfile->get_mimetype(), $importedfile->get_mimetype());
+
+        $this->assertEquals($file->get_userid(), $importedfile->get_userid());
+        $this->assertEquals($file->get_contenthash(), $importedfile->get_contenthash());
+    }
+
+    /**
+     * Tests for 'import_file' behaviour when uploading a new file.
+     *
+     * @covers ::import_file
+     */
+    public function test_import_file_upload(): void {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $context = context_system::instance();
+
+        $type = new contenttype($context);
+        $record = (object)[
+            'name' => 'content name',
+            'usercreated' => $USER->id,
+        ];
+        $content = $type->create_content($record);
+
+        // Create a dummy file.
+        $filerecord = array(
+            'contextid' => $context->id,
+            'component' => 'contentbank',
+            'filearea' => 'draft',
+            'itemid' => $content->get_id(),
+            'filepath' => '/',
+            'filename' => 'example.txt'
+        );
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_string($filerecord, 'Dummy content ');
+
+        $importedfile = $content->import_file($file);
+
+        $this->assertEquals($file->get_filename(), $importedfile->get_filename());
+        $this->assertEquals($file->get_userid(), $importedfile->get_userid());
+        $this->assertEquals($file->get_mimetype(), $importedfile->get_mimetype());
+        $this->assertEquals($file->get_contenthash(), $importedfile->get_contenthash());
+        $this->assertEquals('public', $importedfile->get_filearea());
+        $this->assertEquals('/', $importedfile->get_filepath());
+
+        $contentfile = $content->get_file($file);
+        $this->assertEquals($importedfile->get_id(), $contentfile->get_id());
+    }
+
+    /**
+     * Tests for 'get_content_type_instance'
+     *
+     * @covers ::get_content_type_instance
+     */
+    public function test_get_content_type_instance(): void {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $context = context_system::instance();
+
+        $type = new contenttype($context);
+        $record = (object)[
+            'name' => 'content name',
+            'usercreated' => $USER->id,
+        ];
+        $content = $type->create_content($record);
+
+        $contenttype = $content->get_content_type_instance();
+
+        $this->assertInstanceOf(get_class($type), $contenttype);
     }
 }

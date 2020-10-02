@@ -323,6 +323,7 @@ function label_generate_resized_image(stored_file $file, $maxwidth, $maxheight) 
         $attrib['width'] = $maxwidth;
     }
 
+    $attrib['class'] = "img-fluid";
     $img = html_writer::empty_tag('img', $attrib);
     if ($link) {
         return html_writer::link($link, $img);

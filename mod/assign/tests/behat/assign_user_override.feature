@@ -277,3 +277,28 @@ Feature: Assign user override
     And I navigate to "User overrides" in current page administration
     Then I should see "Student1" in the ".generaltable" "css_element"
     And I should not see "Student2" in the ".generaltable" "css_element"
+
+  @javascript
+  Scenario: Create a user override when the assignment is not available to the student
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test assignment name"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Availability" to "Hide from students"
+    And I click on "Save and display" "button"
+    When I navigate to "User overrides" in current page administration
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user                       | Student1 |
+      | id_allowsubmissionsfromdate_enabled | 1       |
+      | allowsubmissionsfromdate[day]       | 1       |
+      | allowsubmissionsfromdate[month]     | January |
+      | allowsubmissionsfromdate[year]      | 2015    |
+      | allowsubmissionsfromdate[hour]      | 08      |
+      | allowsubmissionsfromdate[minute]    | 00      |
+    And I press "Save"
+    Then I should see "This override is inactive"
+    And "Edit" "icon" should exist in the "Sam1 Student1" "table_row"
+    And "copy" "icon" should exist in the "Sam1 Student1" "table_row"
+    And "Delete" "icon" should exist in the "Sam1 Student1" "table_row"

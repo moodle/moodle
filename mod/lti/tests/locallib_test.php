@@ -377,7 +377,7 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertEquals('frame,iframe,window', $params['accept_presentation_document_targets']);
         $this->assertEquals($returnurl->out(false), $params['content_item_return_url']);
         $this->assertEquals('false', $params['accept_unsigned']);
-        $this->assertEquals('false', $params['accept_multiple']);
+        $this->assertEquals('true', $params['accept_multiple']);
         $this->assertEquals('false', $params['accept_copy_advice']);
         $this->assertEquals('false', $params['auto_create']);
         $this->assertEquals($type->name, $params['title']);
@@ -1185,7 +1185,6 @@ MwIDAQAB
      */
     public function test_lti_verify_jwt_signature_no_public_key() {
         $this->resetAfterTest();
-
         $this->setAdminUser();
 
         // Create a tool type, associated with that proxy.
@@ -1214,7 +1213,28 @@ MwIDAQAB
             'url' => 'http://example.com/messages/launch',
             'title' => 'Test title',
             'text' => 'Test text',
-            'frame' => []
+            'iframe' => []
+        ];
+        $contentitems[] = [
+            'type' => 'ltiResourceLink',
+            'url' => 'http://example.com/messages/launch2',
+            'title' => 'Test title2',
+            'text' => 'Test text2',
+            'iframe' => [
+                'height' => 200,
+                'width' => 300
+            ],
+            'window' => []
+        ];
+        $contentitems[] = [
+            'type' => 'ltiResourceLink',
+            'url' => 'http://example.com/messages/launch3',
+            'title' => 'Test title3',
+            'text' => 'Test text3',
+            'window' => [
+                'targetName' => 'test-win',
+                'height' => 400
+            ]
         ];
 
         $contentitems = json_encode($contentitems);
@@ -1231,16 +1251,184 @@ MwIDAQAB
         $objgraph->url = 'http://example.com/messages/launch';
         $objgraph->title = 'Test title';
         $objgraph->text = 'Test text';
-        $objgraph->frame = [];
+        $objgraph->placementAdvice = new stdClass();
+        $objgraph->placementAdvice->presentationDocumentTarget = 'iframe';
         $objgraph->{$strtype} = 'LtiLinkItem';
         $objgraph->mediaType = 'application\/vnd.ims.lti.v1.ltilink';
+
+        $objgraph2 = new stdClass();
+        $objgraph2->url = 'http://example.com/messages/launch2';
+        $objgraph2->title = 'Test title2';
+        $objgraph2->text = 'Test text2';
+        $objgraph2->placementAdvice = new stdClass();
+        $objgraph2->placementAdvice->presentationDocumentTarget = 'iframe';
+        $objgraph2->placementAdvice->displayHeight = 200;
+        $objgraph2->placementAdvice->displayWidth = 300;
+        $objgraph2->{$strtype} = 'LtiLinkItem';
+        $objgraph2->mediaType = 'application\/vnd.ims.lti.v1.ltilink';
+
+        $objgraph3 = new stdClass();
+        $objgraph3->url = 'http://example.com/messages/launch3';
+        $objgraph3->title = 'Test title3';
+        $objgraph3->text = 'Test text3';
+        $objgraph3->placementAdvice = new stdClass();
+        $objgraph3->placementAdvice->presentationDocumentTarget = 'window';
+        $objgraph3->placementAdvice->displayHeight = 400;
+        $objgraph3->placementAdvice->windowTarget = 'test-win';
+        $objgraph3->{$strtype} = 'LtiLinkItem';
+        $objgraph3->mediaType = 'application\/vnd.ims.lti.v1.ltilink';
 
         $expected = new stdClass();
         $expected->{$strcontext} = 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem';
         $expected->{$strgraph} = [];
         $expected->{$strgraph}[] = $objgraph;
+        $expected->{$strgraph}[] = $objgraph2;
+        $expected->{$strgraph}[] = $objgraph3;
 
         $this->assertEquals($expected, $jsondecode);
+    }
+
+    /**
+     * Test adding a single gradable item through content item.
+     */
+    public function test_lti_tool_configuration_from_content_item_single_gradable() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $type = new stdClass();
+        $type->name = "Test tool";
+        $type->baseurl = "http://example.com";
+        $config = new stdClass();
+        $config->lti_acceptgrades = LTI_SETTING_DELEGATE;
+        $typeid = lti_add_type($type, $config);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
+        $contentitems = [];
+        $contentitems[] = [
+            'type' => 'ltiResourceLink',
+            'url' => 'http://example.com/messages/launch',
+            'title' => 'Test title',
+            'lineItem' => [
+                'resourceId' => 'r12345',
+                'tag' => 'final',
+                'scoreMaximum' => 10.0
+            ],
+            'frame' => []
+        ];
+        $contentitemsjson13 = json_encode($contentitems);
+        $json11 = lti_convert_content_items($contentitemsjson13);
+
+        $config = lti_tool_configuration_from_content_item($typeid,
+                                                           'ContentItemSelection',
+                                                           $type->ltiversion,
+                                                           'ConsumerKey',
+                                                           $json11);
+
+        $this->assertEquals($contentitems[0]['url'], $config->toolurl);
+        $this->assertEquals(LTI_SETTING_ALWAYS, $config->instructorchoiceacceptgrades);
+        $this->assertEquals($contentitems[0]['lineItem']['tag'], $config->lineitemtag);
+        $this->assertEquals($contentitems[0]['lineItem']['resourceId'], $config->lineitemresourceid);
+        $this->assertEquals($contentitems[0]['lineItem']['scoreMaximum'], $config->grade_modgrade_point);
+    }
+
+    /**
+     * Test adding multiple gradable items through content item.
+     */
+    public function test_lti_tool_configuration_from_content_item_multiple() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $type = new stdClass();
+        $type->name = "Test tool";
+        $type->baseurl = "http://example.com";
+        $config = new stdClass();
+        $config->lti_acceptgrades = LTI_SETTING_DELEGATE;
+        $typeid = lti_add_type($type, $config);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
+        $contentitems = [];
+        $contentitems[] = [
+            'type' => 'ltiResourceLink',
+            'url' => 'http://example.com/messages/launch',
+            'title' => 'Test title',
+            'text' => 'Test text',
+            'icon' => [
+                'url' => 'http://lti.example.com/image.jpg',
+                'width' => 100
+            ],
+            'frame' => []
+        ];
+        $contentitems[] = [
+            'type' => 'ltiResourceLink',
+            'url' => 'http://example.com/messages/launchgraded',
+            'title' => 'Test Graded',
+            'lineItem' => [
+                'resourceId' => 'r12345',
+                'tag' => 'final',
+                'scoreMaximum' => 10.0
+            ],
+            'frame' => []
+        ];
+        $contentitemsjson13 = json_encode($contentitems);
+        $json11 = lti_convert_content_items($contentitemsjson13);
+
+        $config = lti_tool_configuration_from_content_item($typeid,
+                                                           'ContentItemSelection',
+                                                           $type->ltiversion,
+                                                           'ConsumerKey',
+                                                           $json11);
+        $this->assertNotNull($config->multiple);
+        $this->assertEquals(2, count( $config->multiple ));
+        $this->assertEquals($contentitems[0]['title'], $config->multiple[0]->name);
+        $this->assertEquals($contentitems[0]['url'], $config->multiple[0]->toolurl);
+        $this->assertEquals(LTI_SETTING_NEVER, $config->multiple[0]->instructorchoiceacceptgrades);
+        $this->assertEquals($contentitems[1]['url'], $config->multiple[1]->toolurl);
+        $this->assertEquals(LTI_SETTING_ALWAYS, $config->multiple[1]->instructorchoiceacceptgrades);
+        $this->assertEquals($contentitems[1]['lineItem']['tag'], $config->multiple[1]->lineitemtag);
+        $this->assertEquals($contentitems[1]['lineItem']['resourceId'], $config->multiple[1]->lineitemresourceid);
+        $this->assertEquals($contentitems[1]['lineItem']['scoreMaximum'], $config->multiple[1]->grade_modgrade_point);
+    }
+
+    /**
+     * Test adding a single non gradable item through content item.
+     */
+    public function test_lti_tool_configuration_from_content_item_single() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $type = new stdClass();
+        $type->name = "Test tool";
+        $type->baseurl = "http://example.com";
+        $config = new stdClass();
+        $typeid = lti_add_type($type, $config);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
+        $contentitems = [];
+        $contentitems[] = [
+            'type' => 'ltiResourceLink',
+            'url' => 'http://example.com/messages/launch',
+            'title' => 'Test title',
+            'text' => 'Test text',
+            'icon' => [
+                'url' => 'http://lti.example.com/image.jpg',
+                'width' => 100
+            ],
+            'frame' => []
+        ];
+        $contentitemsjson13 = json_encode($contentitems);
+        $json11 = lti_convert_content_items($contentitemsjson13);
+
+        $config = lti_tool_configuration_from_content_item($typeid,
+                                                           'ContentItemSelection',
+                                                           $type->ltiversion,
+                                                           'ConsumerKey',
+                                                           $json11);
+        $this->assertEquals($contentitems[0]['title'], $config->name);
+        $this->assertEquals($contentitems[0]['text'], $config->introeditor['text']);
+        $this->assertEquals($contentitems[0]['url'], $config->toolurl);
+        $this->assertEquals($contentitems[0]['icon']['url'], $config->icon);
+        $this->assertEquals(LTI_SETTING_NEVER, $config->instructorchoiceacceptgrades);
+
     }
 
     /**
@@ -1526,6 +1714,25 @@ MwIDAQAB
         $link = $this->create_instance($type, $course);
         $launchdata = lti_get_launch_data($link);
         $this->assertEquals($launchdata[1]['tool_consumer_instance_guid'], 'overridden!');
+    }
+
+    public function test_get_course_history() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $parentparentcourse = $this->getDataGenerator()->create_course();
+        $parentcourse = $this->getDataGenerator()->create_course();
+        $parentcourse->originalcourseid = $parentparentcourse->id;
+        $DB->update_record('course', $parentcourse);
+        $course = $this->getDataGenerator()->create_course();
+        $course->originalcourseid = $parentcourse->id;
+        $DB->update_record('course', $course);
+        $this->assertEquals(get_course_history($parentparentcourse), []);
+        $this->assertEquals(get_course_history($parentcourse), [$parentparentcourse->id]);
+        $this->assertEquals(get_course_history($course), [$parentcourse->id, $parentparentcourse->id]);
+        $course->originalcourseid = 38903;
+        $DB->update_record('course', $course);
+        $this->assertEquals(get_course_history($course), [38903]);
     }
 
     /**

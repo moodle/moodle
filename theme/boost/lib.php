@@ -31,6 +31,8 @@ defined('MOODLE_INTERNAL') || die();
  * @param theme_config $theme The theme config object.
  */
 function theme_boost_css_tree_post_processor($tree, $theme) {
+    error_log('theme_boost_css_tree_post_processor() is deprecated. Required' .
+        'prefixes for Bootstrap are now in theme/boost/scss/moodle/prefixes.scss');
     $prefixer = new theme_boost\autoprefixer($tree);
     $prefixer->prefix();
 }
@@ -148,10 +150,6 @@ function theme_boost_get_pre_scss($theme) {
     // Prepend pre-scss.
     if (!empty($theme->settings->scsspre)) {
         $scss .= $theme->settings->scsspre;
-    }
-
-    if (!empty($theme->settings->fontsize)) {
-        $scss .= '$font-size-base: ' . (1 / 100 * $theme->settings->fontsize) . "rem !default;\n";
     }
 
     return $scss;

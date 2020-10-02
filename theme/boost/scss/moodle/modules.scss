@@ -17,6 +17,12 @@ select {
     }
 }
 
+.path-mod-choice {
+    .choices .option label {
+        vertical-align: top;
+    }
+}
+
 .path-mod-feedback .feedback_form .col-form-label {
     display: block !important; /* stylelint-disable-line declaration-no-important */
 }
@@ -487,12 +493,15 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
 }
 
 .path-mod-forum .unified-grader {
-    .navbar {
-        max-height: none;
-        z-index: 1;
+    @include media-breakpoint-up(xs) {
+        .navbar {
+            max-height: none;
+            z-index: 1;
+        }
     }
 
     .body-container {
+        overflow: auto;
         &.hidden {
             display: none !important; /* stylelint-disable-line declaration-no-important */
         }
@@ -504,8 +513,8 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
     }
 
     .grader-grading-panel {
-        position: absolute;
         top: 0;
+        position: absolute;
         height: 100%;
         z-index: 0;
         width: $grading-drawer-width;
@@ -911,6 +920,13 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
     .path-mod-forum .unified-grader {
         .grader-grading-panel {
             width: 100%;
+            position: fixed;
+            height: calc(100vh - 50px);
+            overflow: scroll;
+            top: 50px;
+        }
+        .body-container {
+            overflow: visible;
         }
     }
 }
@@ -949,10 +965,6 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
 .breadcrumb-button .singlebutton {
     float: left;
     margin-left: 4px;
-}
-
-.ie .row-fluid .desktop-first-column {
-    margin-left: 0;
 }
 
 .langmenu form {
@@ -1033,7 +1045,7 @@ div#dock {
         }
 
         > tbody > tr:nth-of-type(even) {
-            background-color: $table-bg-accent;
+            background-color: $table-accent-bg;
         }
 
         .rblock label {
@@ -1171,8 +1183,8 @@ div#dock {
 
     span.qnbutton {
         cursor: default;
-        background-color: $input-bg-disabled;
-        color: $gray;
+        background-color: $input-disabled-bg;
+        color: $gray-700;
     }
 
     a.qnbutton:hover,
@@ -1218,28 +1230,28 @@ div#dock {
 
     .qnbutton.correct .trafficlight {
         background-image: url([[pix:theme|mod/quiz/checkmark]]);
-        background-color: $state-success-text;
+        background-color: $success;
     }
 
     .qnbutton.blocked .trafficlight {
         background-image: url([[pix:core|t/locked]]);
-        background-color: $input-bg-disabled;
+        background-color: $input-disabled-bg;
     }
 
     .qnbutton.notanswered .trafficlight,
     .qnbutton.incorrect .trafficlight {
-        background-color: $state-danger-text;
+        background-color: $danger;
     }
 
     .qnbutton.partiallycorrect .trafficlight {
         background-image: url([[pix:theme|mod/quiz/whitecircle]]);
-        background-color: $state-warning-text;
+        background-color: $warning;
     }
 
     .qnbutton.complete .trafficlight,
     .qnbutton.answersaved .trafficlight,
     .qnbutton.requiresgrading .trafficlight {
-        background-color: $gray-light;
+        background-color: $gray-600;
     }
 }
 
@@ -1251,6 +1263,34 @@ div#dock {
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
     padding: 0;
     margin: 0 0.4em;
+}
+
+/* Countdown timer. */
+#page-mod-quiz-attempt #region-main {
+    overflow-x: inherit;
+}
+
+#quiz-timer-wrapper {
+    display: none;
+    position: sticky;
+    justify-content: end;
+    top: $navbar-height + 5px;
+    z-index: $zindex-modal;
+    #quiz-timer {
+        border: $border-width solid $red;
+        background-color: $white;
+    }
+}
+.pagelayout-embedded #quiz-timer-wrapper {
+    top: 5px;
+}
+
+@for $i from 0 through 16 {
+    #quiz-timer-wrapper #quiz-timer.timeleft#{$i} {
+        $bg: lighten($red, ($i * 3%));
+        background-color: $bg;
+        color: color-yiq($bg);
+    }
 }
 
 // Assign.

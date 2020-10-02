@@ -72,6 +72,7 @@ class mod_h5pactivity_mod_form extends moodleform_mod {
 
         $mform->addElement('filemanager', 'packagefile', get_string('package', 'mod_h5pactivity'), null, $options);
         $mform->addHelpButton('packagefile', 'package', 'mod_h5pactivity');
+        $mform->addRule('packagefile', null, 'required');
 
         // Add a link to the Content Bank if the user can access.
         $course = $this->get_course();

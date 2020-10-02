@@ -60,7 +60,7 @@ $preview = '';
 $error = '';
 
 /// Get applicable roles - used in menus etc later on
-$rolenames = role_fix_names(get_profile_roles($context), $context, ROLENAME_ALIAS, true);
+$rolenames = role_fix_names(get_profile_roles($context), $context, ROLENAME_BOTH, true);
 
 /// Create the form
 $editform = new autogroup_form(null, array('roles' => $rolenames));

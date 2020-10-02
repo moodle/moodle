@@ -1,4 +1,3 @@
-$toggle-width: 25px;
 $standard-border: 1px solid #ddd;
 $region-container-height: 500px;
 $region-container-width: 380px;
@@ -176,9 +175,6 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
 
 .navbar {
     .popover-region {
-        float: left;
-        margin-right: 10px;
-
         &.collapsed {
             .popover-region-container {
                 @include invisible();
@@ -188,10 +184,6 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
                 transition: height 0.25s, opacity 101ms 0.25s, visibility 101ms 0.25s;
             }
         }
-    }
-
-    .popover-region-toggle {
-        width: $toggle-width;
     }
 
     .count-container {

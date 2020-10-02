@@ -107,7 +107,7 @@ function xmldb_main_install() {
     $cat = new stdClass();
     $cat->name         = get_string('miscellaneous');
     $cat->depth        = 1;
-    $cat->sortorder    = MAX_COURSES_IN_CATEGORY;
+    $cat->sortorder    = get_max_courses_in_category();
     $cat->timemodified = time();
     $catid = $DB->insert_record('course_categories', $cat);
     $DB->set_field('course_categories', 'path', '/'.$catid, array('id'=>$catid));

@@ -112,7 +112,13 @@ class cache_factory {
     protected $state = 0;
 
     /**
-     * Returns an instance of the cache_factor method.
+     * The current cache display helper.
+     * @var core_cache\local\administration_display_helper
+     */
+    protected static $displayhelper = null;
+
+    /**
+     * Returns an instance of the cache_factory class.
      *
      * @param bool $forcereload If set to true a new cache_factory instance will be created and used.
      * @return cache_factory
@@ -134,6 +140,10 @@ class cache_factory {
                     // The cache stores have been disabled.
                     self::$instance->set_state(self::STATE_STORES_DISABLED);
                 }
+
+            } else if (!empty($CFG->alternative_cache_factory_class)) {
+                $factoryclass = $CFG->alternative_cache_factory_class;
+                self::$instance = new $factoryclass();
             } else {
                 // We're using the regular factory.
                 self::$instance = new cache_factory();
@@ -449,7 +459,8 @@ class cache_factory {
                         $definition = $instance->get_definition_by_id($id);
                         if (!$definition) {
                             throw new coding_exception('The requested cache definition does not exist.'. $id, $id);
-                        } else if (!$this->is_disabled()) {
+                        }
+                        if (!$this->is_disabled()) {
                             debugging('Cache definitions reparsed causing cache reset in order to locate definition.
                                 You should bump the version number to ensure definitions are reprocessed.', DEBUG_DEVELOPER);
                         }
@@ -634,5 +645,17 @@ class cache_factory {
         $factory = self::instance();
         $factory->reset_cache_instances();
         $factory->set_state(self::STATE_STORES_DISABLED);
+    }
+
+    /**
+     * Returns an instance of the current display_helper.
+     *
+     * @return core_cache\administration_helper
+     */
+    public static function get_administration_display_helper() : core_cache\administration_helper {
+        if (is_null(self::$displayhelper)) {
+            self::$displayhelper = new \core_cache\local\administration_display_helper();
+        }
+        return self::$displayhelper;
     }
 }

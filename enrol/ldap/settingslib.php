@@ -200,7 +200,7 @@ class enrol_ldap_admin_setting_category extends admin_setting_configselect {
             return true;
         }
 
-        $this->choices = make_categories_options();
+        $this->choices = core_course_category::make_categories_list('', 0, ' / ');
         return true;
     }
 }

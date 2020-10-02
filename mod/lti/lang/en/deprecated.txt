@@ -1,3 +1,5 @@
 leaveblank,mod_lti
 organizationid,mod_lti
 organizationid_help,mod_lti
+contentitem,mod_lti
+contentitem_help,mod_lti

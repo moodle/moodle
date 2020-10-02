@@ -40,6 +40,7 @@ class core_grade_grade_testcase extends grade_base_testcase {
         $this->sub_test_grade_grade_set_hidden();
         $this->sub_test_grade_grade_is_hidden();
         $this->sub_test_grade_grade_deleted();
+        $this->sub_test_grade_grade_deleted_event();
     }
 
     protected function sub_test_grade_grade_construct() {
@@ -505,5 +506,68 @@ class core_grade_grade_testcase extends grade_base_testcase {
 
         $fs = get_file_storage();
         $fs->create_file_from_string($dummy, '');
+    }
+
+    /**
+     * Tests grade_deleted event.
+     */
+    public function sub_test_grade_grade_deleted_event() {
+        global $DB;
+        $dg = $this->getDataGenerator();
+
+        // Create the data we need for the tests.
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $c1 = $dg->create_course();
+        $a1 = $dg->create_module('assign', ['course' => $c1->id]);
+
+        $gi = new grade_item($dg->create_grade_item(
+            [
+                'courseid' => $c1->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $a1->id
+            ]
+        ), false);
+
+        grade_update('mod/assign', $gi->courseid, $gi->itemtype, $gi->itemmodule, $gi->iteminstance,
+            $gi->itemnumber, ['userid' => $u1->id]);
+        grade_update('mod/assign', $gi->courseid, $gi->itemtype, $gi->itemmodule, $gi->iteminstance,
+            $gi->itemnumber, ['userid' => $u2->id]);
+
+        $gg = grade_grade::fetch(array('userid' => $u1->id, 'itemid' => $gi->id));
+        $this->assertEquals($u1->id, $gg->userid);
+        $gg->load_grade_item();
+        $this->assertEquals($gi->id, $gg->grade_item->id);
+
+        // Delete user with valid grade item.
+        $sink = $this->redirectEvents();
+        grade_user_delete($u1->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+        $sink->close();
+        $this->assertInstanceOf('core\event\grade_deleted', $event);
+
+        $gg = grade_grade::fetch(array('userid' => $u2->id, 'itemid' => $gi->id));
+        $this->assertEquals($u2->id, $gg->userid);
+        $gg->load_grade_item();
+        $this->assertEquals($gi->id, $gg->grade_item->id);
+
+        // Delete grade item, mock up orphaned grade_grades.
+        $DB->delete_records('grade_items', ['id' => $gi->id]);
+        $gg = grade_grade::fetch(array('userid' => $u2->id, 'itemid' => $gi->id));
+        $this->assertEquals($u2->id, $gg->userid);
+
+        // No event is triggered and there is a debugging message.
+        $sink = $this->redirectEvents();
+        grade_user_delete($u2->id);
+        $this->assertDebuggingCalled("Missing grade item id $gi->id");
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertEmpty($events);
+
+        // The grade should be deleted.
+        $gg = grade_grade::fetch(array('userid' => $u2->id, 'itemid' => $gi->id));
+        $this->assertEmpty($gg);
     }
 }

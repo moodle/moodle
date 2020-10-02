@@ -19,6 +19,7 @@ lib/editor/tinymce/plugins/spellchecker/rpc.php
 lib/editor/tinymce/tiny_mce/
 lib/mlbackend/php/phpml/
 lib/adodb/
+lib/behat/axe/
 lib/bennu/
 lib/evalmath/
 lib/phpspreadsheet/
@@ -66,6 +67,9 @@ lib/babel-polyfill/
 lib/polyfills/
 lib/emoji-data/
 lib/plist/
+lib/zipstream/
+lib/php-enum/
+lib/http-message/
 media/player/videojs/amd/src/video-lazy.js
 media/player/videojs/amd/src/Youtube-lazy.js
 media/player/videojs/videojs/
@@ -88,5 +92,4 @@ theme/boost/amd/src/bootstrap/tab.js
 theme/boost/amd/src/bootstrap/toast.js
 theme/boost/amd/src/bootstrap/tooltip.js
 theme/boost/amd/src/bootstrap/util.js
-theme/boost/amd/src/tether.js
 theme/boost/scss/fontawesome/

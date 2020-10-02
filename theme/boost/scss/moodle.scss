@@ -1,13 +1,12 @@
 $breadcrumb-divider: "▶" !default;
 $breadcrumb-divider-rtl: "◀" !default;
-// Making BS4 Stable compatible with BS4 Alpha for moodle core sass
-@import "moodle/bs4alphacompat";
 
 // Specific overrides to make Bootstrap RTL.
 @import "moodle/bootstrap-rtl";
 
 // Old Moodle stuff from base theme.
 // Massive, needs broken up.
+@import "moodle/variables";
 @import "moodle/core";
 @import "moodle/icons";
 @import "moodle/admin";
@@ -38,7 +37,8 @@ $breadcrumb-divider-rtl: "◀" !default;
 @import "moodle/sticky-footer";
 @import "moodle/popover-region";
 @import "moodle/tool_usertours";
-@import "moodle/bs2-compat";
 @import "moodle/print";
 @import "moodle/modal";
 @import "moodle/layout";
+@import "moodle/prefixes";
+@import "moodle/atto";

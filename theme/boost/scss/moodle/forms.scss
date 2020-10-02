@@ -56,10 +56,6 @@
     }
 }
 
-.editor_atto_content.form-control {
-    width: 100%;
-}
-
 #adminsettings .form-control[size] {
     width: auto;
 }
@@ -69,7 +65,7 @@
 }
 
 #adminsettings .error {
-    color: $state-danger-text;
+    color: $danger;
 }
 
 .mform ul.file-list {
@@ -290,7 +286,7 @@ fieldset.coursesearchbox label {
 .form-autocomplete-suggestions {
     position: absolute;
     background-color: white;
-    border: 2px solid $gray-lighter;
+    border: 2px solid $gray-300;
     border-radius: 3px;
     min-width: 206px;
     max-height: 20em;
@@ -316,7 +312,7 @@ fieldset.coursesearchbox label {
 
 .form-autocomplete-suggestions li[aria-selected=true] {
     background-color: darken($dropdown-bg, 5%);
-    color: $gray;
+    color: $gray-700;
 }
 
 .form-autocomplete-downarrow {
@@ -333,7 +329,8 @@ fieldset.coursesearchbox label {
 }
 
 .form-autocomplete-selection:focus {
-    outline: none;
+    outline: 0;
+    box-shadow: $input-btn-focus-box-shadow;
 }
 /** Undo some bootstrap things */
 .form-autocomplete-selection + input.form-control {
@@ -407,18 +404,6 @@ textarea[data-auto-rows] {
     padding: $card-spacer-x;
     margin-left: $grid-gutter-width / 2;
     max-width: 30rem;
-}
-
-/** Atto fields do not have form-control because that would break the layout of the editor.
-    So they need these extra styles to highlight the editor when there is a validation error. */
-.has-danger .editor_atto_content.form-control,
-.has-danger .editor_atto_content.form-control-danger {
-    @include form-control-validation($brand-danger);
-    background-image: $form-icon-danger;
-    padding-right: ($input-padding-x * 3);
-    background-repeat: no-repeat;
-    background-position: center right 1rem;
-    background-size: 1.5rem;
 }
 
 // Styles for the JS file types browser provided by the "filetypes" element.

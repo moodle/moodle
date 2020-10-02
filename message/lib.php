@@ -65,12 +65,17 @@ define('MESSAGE_DEFAULT_TIMEOUT_POLL_IN_SECONDS', 5 * MINSECS);
 /**
  * Returns the count of unread messages for user. Either from a specific user or from all users.
  *
+ * @deprecated since 3.10
+ * TODO: MDL-69643
  * @param object $user1 the first user. Defaults to $USER
  * @param object $user2 the second user. If null this function will count all of user 1's unread messages.
  * @return int the count of $user1's unread messages
  */
 function message_count_unread_messages($user1=null, $user2=null) {
     global $USER, $DB;
+
+    debugging('message_count_unread_messages is deprecated and no longer used',
+        DEBUG_DEVELOPER);
 
     if (empty($user1)) {
         $user1 = $USER;
@@ -724,7 +729,7 @@ function core_message_can_edit_message_profile($user) {
 }
 
 /**
- * Implements callback user_preferences, whitelists preferences that users are allowed to update directly
+ * Implements callback user_preferences, lists preferences that users are allowed to update directly
  *
  * Used in {@see core_user::fill_preferences_cache()}, see also {@see useredit_update_user_preference()}
  *

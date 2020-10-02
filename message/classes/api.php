@@ -167,138 +167,17 @@ class api {
     }
 
     /**
-     * Handles searching for user in a particular course in the message area.
-     *
-     * TODO: This function should be removed once the related web service goes through final deprecation.
-     * The related web service is data_for_messagearea_search_users_in_course.
-     * Followup: MDL-63261
-     *
-     * @param int $userid The user id doing the searching
-     * @param int $courseid The id of the course we are searching in
-     * @param string $search The string the user is searching
-     * @param int $limitfrom
-     * @param int $limitnum
-     * @return array
+     * @deprecated since 3.6
      */
-    public static function search_users_in_course($userid, $courseid, $search, $limitfrom = 0, $limitnum = 0) {
-        global $DB;
-
-        // Get all the users in the course.
-        list($esql, $params) = get_enrolled_sql(\context_course::instance($courseid), '', 0, true);
-        $sql = "SELECT u.*, mub.id as isblocked
-                  FROM {user} u
-                  JOIN ($esql) je
-                    ON je.id = u.id
-             LEFT JOIN {message_users_blocked} mub
-                    ON (mub.blockeduserid = u.id AND mub.userid = :userid)
-                 WHERE u.deleted = 0";
-        // Add more conditions.
-        $fullname = $DB->sql_fullname();
-        $sql .= " AND u.id != :userid2
-                  AND " . $DB->sql_like($fullname, ':search', false) . "
-             ORDER BY " . $DB->sql_fullname();
-        $params = array_merge(array('userid' => $userid, 'userid2' => $userid, 'search' => '%' . $search . '%'), $params);
-
-        // Convert all the user records into contacts.
-        $contacts = array();
-        if ($users = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum)) {
-            foreach ($users as $user) {
-                $user->blocked = $user->isblocked ? 1 : 0;
-                $contacts[] = helper::create_contact($user);
-            }
-        }
-
-        return $contacts;
+    public static function search_users_in_course() {
+        throw new \coding_exception('\core_message\api::search_users_in_course has been removed.');
     }
 
     /**
-     * Handles searching for user in the message area.
-     *
-     * TODO: This function should be removed once the related web service goes through final deprecation.
-     * The related web service is data_for_messagearea_search_users.
-     * Followup: MDL-63261
-     *
-     * @param int $userid The user id doing the searching
-     * @param string $search The string the user is searching
-     * @param int $limitnum
-     * @return array
+     * @deprecated since 3.6
      */
-    public static function search_users($userid, $search, $limitnum = 0) {
-        global $CFG, $DB;
-
-        // Used to search for contacts.
-        $fullname = $DB->sql_fullname();
-        $ufields = \user_picture::fields('u', array('lastaccess'));
-
-        // Users not to include.
-        $excludeusers = array($userid, $CFG->siteguest);
-        list($exclude, $excludeparams) = $DB->get_in_or_equal($excludeusers, SQL_PARAMS_NAMED, 'param', false);
-
-        // Ok, let's search for contacts first.
-        $contacts = array();
-        $sql = "SELECT $ufields, mub.id as isuserblocked
-                  FROM {user} u
-                  JOIN {message_contacts} mc
-                    ON u.id = mc.contactid
-             LEFT JOIN {message_users_blocked} mub
-                    ON (mub.userid = :userid2 AND mub.blockeduserid = u.id)
-                 WHERE mc.userid = :userid
-                   AND u.deleted = 0
-                   AND u.confirmed = 1
-                   AND " . $DB->sql_like($fullname, ':search', false) . "
-                   AND u.id $exclude
-              ORDER BY " . $DB->sql_fullname();
-        if ($users = $DB->get_records_sql($sql, array('userid' => $userid, 'userid2' => $userid,
-                'search' => '%' . $search . '%') + $excludeparams, 0, $limitnum)) {
-            foreach ($users as $user) {
-                $user->blocked = $user->isuserblocked ? 1 : 0;
-                $contacts[] = helper::create_contact($user);
-            }
-        }
-
-        // Now, let's get the courses.
-        // Make sure to limit searches to enrolled courses.
-        $enrolledcourses = enrol_get_my_courses(array('id', 'cacherev'));
-        $courses = array();
-        // Really we want the user to be able to view the participants if they have the capability
-        // 'moodle/course:viewparticipants' or 'moodle/course:enrolreview', but since the search_courses function
-        // only takes required parameters we can't. However, the chance of a user having 'moodle/course:enrolreview' but
-        // *not* 'moodle/course:viewparticipants' are pretty much zero, so it is not worth addressing.
-        if ($arrcourses = \core_course_category::search_courses(array('search' => $search), array('limit' => $limitnum),
-                array('moodle/course:viewparticipants'))) {
-            foreach ($arrcourses as $course) {
-                if (isset($enrolledcourses[$course->id])) {
-                    $data = new \stdClass();
-                    $data->id = $course->id;
-                    $data->shortname = $course->shortname;
-                    $data->fullname = $course->fullname;
-                    $courses[] = $data;
-                }
-            }
-        }
-
-        // Let's get those non-contacts. Toast them gears boi.
-        // Note - you can only block contacts, so these users will not be blocked, so no need to get that
-        // extra detail from the database.
-        $noncontacts = array();
-        $sql = "SELECT $ufields
-                  FROM {user} u
-                 WHERE u.deleted = 0
-                   AND u.confirmed = 1
-                   AND " . $DB->sql_like($fullname, ':search', false) . "
-                   AND u.id $exclude
-                   AND u.id NOT IN (SELECT contactid
-                                      FROM {message_contacts}
-                                     WHERE userid = :userid)
-              ORDER BY " . $DB->sql_fullname();
-        if ($users = $DB->get_records_sql($sql,  array('userid' => $userid, 'search' => '%' . $search . '%') + $excludeparams,
-                0, $limitnum)) {
-            foreach ($users as $user) {
-                $noncontacts[] = helper::create_contact($user);
-            }
-        }
-
-        return array($contacts, $courses, $noncontacts);
+    public static function search_users() {
+        throw new \coding_exception('\core_message\api::search_users has been removed.');
     }
 
     /**
@@ -1070,55 +949,10 @@ class api {
     }
 
     /**
-     * Returns the contacts to display in the contacts area.
-     *
-     * TODO: This function should be removed once the related web service goes through final deprecation.
-     * The related web service is data_for_messagearea_contacts.
-     * Followup: MDL-63261
-     *
-     * @param int $userid The user id
-     * @param int $limitfrom
-     * @param int $limitnum
-     * @return array
+     * @deprecated since 3.6
      */
-    public static function get_contacts($userid, $limitfrom = 0, $limitnum = 0) {
-        global $DB;
-
-        $contactids = [];
-        $sql = "SELECT mc.*
-                  FROM {message_contacts} mc
-                 WHERE mc.userid = ? OR mc.contactid = ?
-              ORDER BY timecreated DESC";
-        if ($contacts = $DB->get_records_sql($sql, [$userid, $userid], $limitfrom, $limitnum)) {
-            foreach ($contacts as $contact) {
-                if ($userid == $contact->userid) {
-                    $contactids[] = $contact->contactid;
-                } else {
-                    $contactids[] = $contact->userid;
-                }
-            }
-        }
-
-        if (!empty($contactids)) {
-            list($insql, $inparams) = $DB->get_in_or_equal($contactids);
-
-            $sql = "SELECT u.*, mub.id as isblocked
-                      FROM {user} u
-                 LEFT JOIN {message_users_blocked} mub
-                        ON u.id = mub.blockeduserid
-                     WHERE u.id $insql";
-            if ($contacts = $DB->get_records_sql($sql, $inparams)) {
-                $arrcontacts = [];
-                foreach ($contacts as $contact) {
-                    $contact->blocked = $contact->isblocked ? 1 : 0;
-                    $arrcontacts[] = helper::create_contact($contact);
-                }
-
-                return $arrcontacts;
-            }
-        }
-
-        return [];
+    public static function get_contacts() {
+        throw new \coding_exception('\core_message\api::get_contacts has been removed.');
     }
 
     /**
@@ -1170,6 +1004,8 @@ class api {
      * Returns the an array of the users the given user is in a conversation
      * with who are a contact and the number of unread messages.
      *
+     * @deprecated since 3.10
+     * TODO: MDL-69643
      * @param int $userid The user id
      * @param int $limitfrom
      * @param int $limitnum
@@ -1177,6 +1013,9 @@ class api {
      */
     public static function get_contacts_with_unread_message_count($userid, $limitfrom = 0, $limitnum = 0) {
         global $DB;
+
+        debugging('\core_message\api::get_contacts_with_unread_message_count is deprecated and no longer used',
+            DEBUG_DEVELOPER);
 
         $userfields = \user_picture::fields('u', array('lastaccess'));
         $unreadcountssql = "SELECT $userfields, count(m.id) as messagecount
@@ -1206,6 +1045,8 @@ class api {
      * Returns the an array of the users the given user is in a conversation
      * with who are not a contact and the number of unread messages.
      *
+     * @deprecated since 3.10
+     * TODO: MDL-69643
      * @param int $userid The user id
      * @param int $limitfrom
      * @param int $limitnum
@@ -1213,6 +1054,9 @@ class api {
      */
     public static function get_non_contacts_with_unread_message_count($userid, $limitfrom = 0, $limitnum = 0) {
         global $DB;
+
+        debugging('\core_message\api::get_non_contacts_with_unread_message_count is deprecated and no longer used',
+            DEBUG_DEVELOPER);
 
         $userfields = \user_picture::fields('u', array('lastaccess'));
         $unreadcountssql = "SELECT $userfields, count(m.id) as messagecount
@@ -1240,52 +1084,10 @@ class api {
     }
 
     /**
-     * Returns the messages to display in the message area.
-     *
-     * TODO: This function should be removed once the related web service goes through final deprecation.
-     * The related web service is data_for_messagearea_messages.
-     * Followup: MDL-63261
-     *
-     * @param int $userid the current user
-     * @param int $otheruserid the other user
-     * @param int $limitfrom
-     * @param int $limitnum
-     * @param string $sort
-     * @param int $timefrom the time from the message being sent
-     * @param int $timeto the time up until the message being sent
-     * @return array
+     * @deprecated since 3.6
      */
-    public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0,
-            $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
-
-        if (!empty($timefrom)) {
-            // Get the conversation between userid and otheruserid.
-            $userids = [$userid, $otheruserid];
-            if (!$conversationid = self::get_conversation_between_users($userids)) {
-                // This method was always used for individual conversations.
-                $conversation = self::create_conversation(self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $userids);
-                $conversationid = $conversation->id;
-            }
-
-            // Check the cache to see if we even need to do a DB query.
-            $cache = \cache::make('core', 'message_time_last_message_between_users');
-            $key = helper::get_last_message_time_created_cache_key($conversationid);
-            $lastcreated = $cache->get($key);
-
-            // The last known message time is earlier than the one being requested so we can
-            // just return an empty result set rather than having to query the DB.
-            if ($lastcreated && $lastcreated < $timefrom) {
-                return [];
-            }
-        }
-
-        $arrmessages = array();
-        if ($messages = helper::get_messages($userid, $otheruserid, 0, $limitfrom, $limitnum,
-                                             $sort, $timefrom, $timeto)) {
-            $arrmessages = helper::create_messages($userid, $messages);
-        }
-
-        return $arrmessages;
+    public static function get_messages() {
+        throw new \coding_exception('\core_message\api::get_messages has been removed.');
     }
 
     /**
@@ -1321,26 +1123,10 @@ class api {
     }
 
     /**
-     * Returns the most recent message between two users.
-     *
-     * TODO: This function should be removed once the related web service goes through final deprecation.
-     * The related web service is data_for_messagearea_get_most_recent_message.
-     * Followup: MDL-63261
-     *
-     * @param int $userid the current user
-     * @param int $otheruserid the other user
-     * @return \stdClass|null
+     * @deprecated since 3.6
      */
-    public static function get_most_recent_message($userid, $otheruserid) {
-        // We want two messages here so we get an accurate 'blocktime' value.
-        if ($messages = helper::get_messages($userid, $otheruserid, 0, 0, 2, 'timecreated DESC')) {
-            // Swap the order so we now have them in historical order.
-            $messages = array_reverse($messages);
-            $arrmessages = helper::create_messages($userid, $messages);
-            return array_pop($arrmessages);
-        }
-
-        return null;
+    public static function get_most_recent_message() {
+        throw new \coding_exception('\core_message\api::get_most_recent_message has been removed.');
     }
 
     /**
@@ -1366,58 +1152,10 @@ class api {
     }
 
     /**
-     * Returns the profile information for a contact for a user.
-     *
-     * TODO: This function should be removed once the related web service goes through final deprecation.
-     * The related web service is data_for_messagearea_get_profile.
-     * Followup: MDL-63261
-     *
-     * @param int $userid The user id
-     * @param int $otheruserid The id of the user whose profile we want to view.
-     * @return \stdClass
+     * @deprecated since 3.6
      */
-    public static function get_profile($userid, $otheruserid) {
-        global $CFG, $PAGE;
-
-        require_once($CFG->dirroot . '/user/lib.php');
-
-        $user = \core_user::get_user($otheruserid, '*', MUST_EXIST);
-
-        // Create the data we are going to pass to the renderable.
-        $data = new \stdClass();
-        $data->userid = $otheruserid;
-        $data->fullname = fullname($user);
-        $data->city = '';
-        $data->country = '';
-        $data->email = '';
-        $data->isonline = null;
-        // Get the user picture data - messaging has always shown these to the user.
-        $userpicture = new \user_picture($user);
-        $userpicture->size = 1; // Size f1.
-        $data->profileimageurl = $userpicture->get_url($PAGE)->out(false);
-        $userpicture->size = 0; // Size f2.
-        $data->profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
-
-        $userfields = user_get_user_details($user, null, array('city', 'country', 'email', 'lastaccess'));
-        if ($userfields) {
-            if (isset($userfields['city'])) {
-                $data->city = $userfields['city'];
-            }
-            if (isset($userfields['country'])) {
-                $data->country = $userfields['country'];
-            }
-            if (isset($userfields['email'])) {
-                $data->email = $userfields['email'];
-            }
-            if (isset($userfields['lastaccess'])) {
-                $data->isonline = helper::is_online($userfields['lastaccess']);
-            }
-        }
-
-        $data->isblocked = self::is_blocked($userid, $otheruserid);
-        $data->iscontact = self::is_contact($userid, $otheruserid);
-
-        return $data;
+    public static function get_profile() {
+        throw new \coding_exception('\core_message\api::get_profile has been removed.');
     }
 
     /**
@@ -1456,30 +1194,11 @@ class api {
     }
 
     /**
-     * Deletes a conversation.
-     *
-     * This function does not verify any permissions.
-     *
      * @deprecated since 3.6
-     * @param int $userid The user id of who we want to delete the messages for (this may be done by the admin
-     *  but will still seem as if it was by the user)
-     * @param int $otheruserid The id of the other user in the conversation
-     * @return bool
      */
-    public static function delete_conversation($userid, $otheruserid) {
-        debugging('\core_message\api::delete_conversation() is deprecated, please use ' .
-            '\core_message\api::delete_conversation_by_id() instead.', DEBUG_DEVELOPER);
-
-        $conversationid = self::get_conversation_between_users([$userid, $otheruserid]);
-
-        // If there is no conversation, there is nothing to do.
-        if (!$conversationid) {
-            return true;
-        }
-
-        self::delete_conversation_by_id($userid, $conversationid);
-
-        return true;
+    public static function delete_conversation() {
+        throw new \coding_exception('\core_message\api::delete_conversation() is deprecated, please use ' .
+            '\core_message\api::delete_conversation_by_id() instead.');
     }
 
     /**
@@ -2028,80 +1747,17 @@ class api {
     }
 
     /**
-     * Checks if the recipient is allowing messages from users that aren't a
-     * contact. If not then it checks to make sure the sender is in the
-     * recipient's contacts.
-     *
      * @deprecated since 3.6
-     * @param \stdClass $recipient The user object.
-     * @param \stdClass|null $sender The user object.
-     * @return bool true if $sender is blocked, false otherwise.
      */
-    public static function is_user_non_contact_blocked($recipient, $sender = null) {
-        debugging('\core_message\api::is_user_non_contact_blocked() is deprecated', DEBUG_DEVELOPER);
-
-        global $USER, $CFG;
-
-        if (is_null($sender)) {
-            // The message is from the logged in user, unless otherwise specified.
-            $sender = $USER;
-        }
-
-        $privacypreference = self::get_user_privacy_messaging_preference($recipient->id);
-        switch ($privacypreference) {
-            case self::MESSAGE_PRIVACY_SITE:
-                if (!empty($CFG->messagingallusers)) {
-                    // Users can be messaged without being contacts or members of the same course.
-                    break;
-                }
-                // When the $CFG->messagingallusers privacy setting is disabled, continue with the next
-                // case, because MESSAGE_PRIVACY_SITE is replaced to MESSAGE_PRIVACY_COURSEMEMBER.
-            case self::MESSAGE_PRIVACY_COURSEMEMBER:
-                // Confirm the sender and the recipient are both members of the same course.
-                if (enrol_sharing_course($recipient, $sender)) {
-                    // All good, the recipient and the sender are members of the same course.
-                    return false;
-                }
-            case self::MESSAGE_PRIVACY_ONLYCONTACTS:
-                // True if they aren't contacts (they can't send a message because of the privacy settings), false otherwise.
-                return !self::is_contact($sender->id, $recipient->id);
-        }
-
-        return false;
+    public static function is_user_non_contact_blocked() {
+        throw new \coding_exception('\core_message\api::is_user_non_contact_blocked() is deprecated');
     }
 
     /**
-     * Checks if the recipient has specifically blocked the sending user.
-     *
-     * Note: This function will always return false if the sender has the
-     * readallmessages capability at the system context level.
-     *
      * @deprecated since 3.6
-     * @param int $recipientid User ID of the recipient.
-     * @param int $senderid User ID of the sender.
-     * @return bool true if $sender is blocked, false otherwise.
      */
-    public static function is_user_blocked($recipientid, $senderid = null) {
-        debugging('\core_message\api::is_user_blocked is deprecated and should not be used.',
-            DEBUG_DEVELOPER);
-
-        global $USER;
-
-        if (is_null($senderid)) {
-            // The message is from the logged in user, unless otherwise specified.
-            $senderid = $USER->id;
-        }
-
-        $systemcontext = \context_system::instance();
-        if (has_capability('moodle/site:readallmessages', $systemcontext, $senderid)) {
-            return false;
-        }
-
-        if (self::is_blocked($recipientid, $senderid)) {
-            return true;
-        }
-
-        return false;
+    public static function is_user_blocked() {
+        throw new \coding_exception('\core_message\api::is_user_blocked is deprecated and should not be used.');
     }
 
     /**
@@ -2465,20 +2121,11 @@ class api {
     }
 
     /**
-     * Creates a conversation between two users.
-     *
      * @deprecated since 3.6
-     * @param array $userids
-     * @return int The id of the conversation
      */
-    public static function create_conversation_between_users(array $userids) {
-        debugging('\core_message\api::create_conversation_between_users is deprecated, please use ' .
-            '\core_message\api::create_conversation instead.', DEBUG_DEVELOPER);
-
-        // This method was always used for individual conversations.
-        $conversation = self::create_conversation(self::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL, $userids);
-
-        return $conversation->id;
+    public static function create_conversation_between_users() {
+        throw new \coding_exception('\core_message\api::create_conversation_between_users is deprecated, please use ' .
+            '\core_message\api::create_conversation instead.');
     }
 
     /**
@@ -2629,14 +2276,15 @@ class api {
         $userto = \core_user::get_user($requesteduserid);
         $url = new \moodle_url('/message/index.php', ['view' => 'contactrequests']);
 
-        $subject = get_string('messagecontactrequestsubject', 'core_message', (object) [
+        $subject = get_string_manager()->get_string('messagecontactrequestsubject', 'core_message', (object) [
             'sitename' => format_string($SITE->fullname, true, ['context' => \context_system::instance()]),
             'user' => $userfromfullname,
-        ]);
-        $fullmessage = get_string('messagecontactrequest', 'core_message', (object) [
+        ], $userto->lang);
+
+        $fullmessage = get_string_manager()->get_string('messagecontactrequest', 'core_message', (object) [
             'url' => $url->out(),
             'user' => $userfromfullname,
-        ]);
+        ], $userto->lang);
 
         $message = new \core\message\message();
         $message->courseid = SITEID;

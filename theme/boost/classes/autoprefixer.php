@@ -104,6 +104,8 @@ class autoprefixer {
      * @param Document $tree The CSS tree.
      */
     public function __construct(Document $tree) {
+        debugging('theme_boost\autoprefixer() is deprecated. Required prefixes for Bootstrap ' .
+            'are now in theme/boost/scss/moodle/prefixes.scss', DEBUG_DEVELOPER);
         $this->tree = $tree;
 
         $pseudos = array_map(function($pseudo) {

@@ -1,6 +1,19 @@
 This files describes API changes in /search/*,
 information provided here is intended especially for developers.
 
+=== 3.10 ===
+
+* Search indexing now supports sending multiple documents to the server in a batch. This is implemented
+  for the Solr search engine, where it significantly increases performance. For this to work, engines
+  should implement add_document_batch() function and return true to supports_add_document_batch().
+  There is also an additional parameter returned from add_documents() with the number of batches
+  sent, which is used for the log display. Existing engines should continue to work unmodified.
+* Search engines can now implement the optional has_alternate_configuration() function to indicate
+  if they provide two different connection configurations (for use when moving between two search
+  engines of the same type). The constructor should also accept a boolean value (true = alternate);
+  passing this to the base class constructor will automatically switch in the alternate
+  configuration settings, provided they begin with 'alternate'.
+
 === 3.8 ===
 
 * Search indexing supports time limits to make the scheduled task run more neatly since 3.4. In order for

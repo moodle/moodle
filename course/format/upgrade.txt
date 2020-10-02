@@ -2,6 +2,9 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 3.10 ===
+* Added the missing callback supports_ajax() to format_social.
+
 === 3.9 ===
 
 * The following functions, previously used (exclusively) by upgrade steps are not available anymore because of the upgrade cleanup performed for this version. See MDL-65809 for more info:

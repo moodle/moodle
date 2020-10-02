@@ -31,7 +31,7 @@ M.availability_group.form.initInner = function(groups) {
 
 M.availability_group.form.getNode = function(json) {
     // Create HTML structure.
-    var html = '<label><span class="p-r-1">' + M.util.get_string('title', 'availability_group') + '</span> ' +
+    var html = '<label><span class="pr-3">' + M.util.get_string('title', 'availability_group') + '</span> ' +
             '<span class="availability-group">' +
             '<select name="id" class="custom-select">' +
             '<option value="choose">' + M.util.get_string('choosedots', 'moodle') + '</option>' +

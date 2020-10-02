@@ -43,7 +43,7 @@ class core_setuplib_testcase extends advanced_testcase {
         } else {
             $docroot = $CFG->docroot;
         }
-        $this->assertRegExp('~^' . preg_quote($docroot, '') . '/\d{2}/' . current_language() . '/course/editing$~',
+        $this->assertRegExp('~^' . preg_quote($docroot, '') . '/\d{2,3}/' . current_language() . '/course/editing$~',
                 get_docs_url('course/editing'));
     }
 
@@ -450,17 +450,23 @@ class core_setuplib_testcase extends advanced_testcase {
      */
     public function data_for_test_get_real_size() {
         return array(
-            array('8KB', 8192),
-            array('8Kb', 8192),
-            array('8K', 8192),
-            array('8k', 8192),
-            array('50MB', 52428800),
-            array('50Mb', 52428800),
-            array('50M', 52428800),
-            array('50m', 52428800),
-            array('8Gb', 8589934592),
-            array('8GB', 8589934592),
-            array('8G', 8589934592),
+            array('8KB',    8192),
+            array('8Kb',    8192),
+            array('8K',     8192),
+            array('8k',     8192),
+            array('50MB',   52428800),
+            array('50Mb',   52428800),
+            array('50M',    52428800),
+            array('50m',    52428800),
+            array('8GB',    8589934592),
+            array('8Gb',    8589934592),
+            array('8G',     8589934592),
+            array('7T',     7696581394432),
+            array('7TB',    7696581394432),
+            array('7Tb',    7696581394432),
+            array('6P',     6755399441055744),
+            array('6PB',    6755399441055744),
+            array('6Pb',    6755399441055744),
         );
     }
 

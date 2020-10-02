@@ -30,8 +30,17 @@ require_once("$CFG->libdir/clilib.php");
 require_once("$CFG->libdir/cronlib.php");
 
 list($options, $unrecognized) = cli_get_params(
-    array('help' => false, 'list' => false, 'execute' => false, 'showsql' => false, 'showdebugging' => false),
-    array('h' => 'help')
+    [
+        'help' => false,
+        'list' => false,
+        'execute' => false,
+        'showsql' => false,
+        'showdebugging' => false,
+        'force' => false,
+    ], [
+        'h' => 'help',
+        'f' => 'force',
+    ]
 );
 
 if ($unrecognized) {
@@ -49,6 +58,7 @@ if ($options['help'] or (!$options['list'] and !$options['execute'])) {
     --showsql             Show sql queries before they are executed
     --showdebugging       Show developer level debugging information
     -h, --help            Print out this help
+    -f, --force           Execute task even if cron is disabled
 
     Example:
     \$sudo -u www-data /usr/bin/php admin/cli/scheduled_task.php --execute=\\core\\task\\session_cleanup_task
@@ -120,6 +130,13 @@ if ($execute = $options['execute']) {
         mtrace("Moodle upgrade pending, cannot execute tasks.");
         exit(1);
     }
+
+    if (!get_config('core', 'cron_enabled') && !$options['force']) {
+        mtrace('Cron is disabled. Use --force to override.');
+        exit(1);
+    }
+
+    \core\task\manager::scheduled_task_starting($task);
 
     // Increase memory limit.
     raise_memory_limit(MEMORY_EXTRA);

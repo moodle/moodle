@@ -1,11 +1,13 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
-=== 4.0 ===
+=== 3.10 ===
 * The function supports_recursion() from the lock_factory interface has been deprecated including the related implementations.
 * The function extend_lock() from the lock_factory interface has been deprecated without replacement including the related
   implementations.
 * The function extend() from the lock class has been deprecated without replacement.
+* The cache_factory class can now be overridden by an alternative cache config class, which can
+  also now control the frontend display of the cache/admin.php page (see MDL-41492).
 
 === 3.9 ===
 * The record_cache_hit/miss/set methods now take a cache_store instead of a cache_definition object

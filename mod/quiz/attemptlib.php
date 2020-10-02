@@ -2795,7 +2795,6 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
         }
         return html_writer::link($this->attemptobj->summary_url(),
                 get_string('endtest', 'quiz'), array('class' => 'endtestlink aalink')) .
-                $output->countdown_timer($this->attemptobj, time()) .
                 $this->render_restart_preview_link($output);
     }
 }

@@ -770,7 +770,20 @@ class tool_uploadcourse_course {
 
         // Saving data.
         $this->data = $coursedata;
+
+        // Get enrolment data. Where the course already exists, we can also perform validation.
         $this->enrolmentdata = tool_uploadcourse_helper::get_enrolment_data($this->rawdata);
+        if ($exists) {
+            $errors = $this->validate_enrolment_data($coursedata['id'], $this->enrolmentdata);
+
+            if (!empty($errors)) {
+                foreach ($errors as $key => $message) {
+                    $this->error($key, $message);
+                }
+
+                return false;
+            }
+        }
 
         if (isset($this->rawdata['tags']) && strval($this->rawdata['tags']) !== '') {
             $this->data['tags'] = preg_split('/\s*,\s*/', trim($this->rawdata['tags']), -1, PREG_SPLIT_NO_EMPTY);
@@ -872,6 +885,71 @@ class tool_uploadcourse_course {
     }
 
     /**
+     * Validate passed enrolment data against an existing course
+     *
+     * @param int $courseid
+     * @param array[] $enrolmentdata
+     * @return lang_string[] Errors keyed on error code
+     */
+    protected function validate_enrolment_data(int $courseid, array $enrolmentdata): array {
+        // Nothing to validate.
+        if (empty($enrolmentdata)) {
+            return [];
+        }
+
+        $errors = [];
+
+        $enrolmentplugins = tool_uploadcourse_helper::get_enrolment_plugins();
+        $instances = enrol_get_instances($courseid, false);
+
+        foreach ($enrolmentdata as $method => $options) {
+            $plugin = $enrolmentplugins[$method];
+
+            // Find matching instances by enrolment method.
+            $methodinstances = array_filter($instances, static function(stdClass $instance) use ($method) {
+                return (strcmp($instance->enrol, $method) == 0);
+            });
+
+            if (!empty($options['delete'])) {
+                // Ensure user is able to delete the instances.
+                foreach ($methodinstances as $methodinstance) {
+                    if (!$plugin->can_delete_instance($methodinstance)) {
+                        $errors['errorcannotdeleteenrolment'] = new lang_string('errorcannotdeleteenrolment', 'tool_uploadcourse',
+                            $plugin->get_instance_name($methodinstance));
+
+                        break;
+                    }
+                }
+            } else if (!empty($options['disable'])) {
+                // Ensure user is able to toggle instance statuses.
+                foreach ($methodinstances as $methodinstance) {
+                    if (!$plugin->can_hide_show_instance($methodinstance)) {
+                        $errors['errorcannotdisableenrolment'] =
+                            new lang_string('errorcannotdisableenrolment', 'tool_uploadcourse',
+                                $plugin->get_instance_name($methodinstance));
+
+                        break;
+                    }
+                }
+            } else {
+                // Ensure user is able to create/update instance.
+                $methodinstance = empty($methodinstances) ? null : reset($methodinstances);
+                if ((empty($methodinstance) && !$plugin->can_add_instance($courseid)) ||
+                        (!empty($methodinstance) && !$plugin->can_edit_instance($methodinstance))) {
+
+                    $errors['errorcannotcreateorupdateenrolment'] =
+                        new lang_string('errorcannotcreateorupdateenrolment', 'tool_uploadcourse',
+                            $plugin->get_instance_name($methodinstance));
+
+                    break;
+                }
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
      * Add the enrolment data for the course.
      *
      * @param object $course course record.
@@ -907,7 +985,16 @@ class tool_uploadcourse_course {
                 foreach ($instances as $instance) {
                     if ($instance->enrol == $enrolmethod) {
                         $plugin = $enrolmentplugins[$instance->enrol];
-                        $plugin->delete_instance($instance);
+
+                        // Ensure user is able to delete the instance.
+                        if ($plugin->can_delete_instance($instance)) {
+                            $plugin->delete_instance($instance);
+                        } else {
+                            $this->error('errorcannotdeleteenrolment',
+                                new lang_string('errorcannotdeleteenrolment', 'tool_uploadcourse',
+                                    $plugin->get_instance_name($instance)));
+                        }
+
                         break;
                     }
                 }
@@ -916,22 +1003,37 @@ class tool_uploadcourse_course {
                 foreach ($instances as $instance) {
                     if ($instance->enrol == $enrolmethod) {
                         $plugin = $enrolmentplugins[$instance->enrol];
-                        $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
-                        $enrol_updated = true;
+
+                        // Ensure user is able to toggle instance status.
+                        if ($plugin->can_hide_show_instance($instance)) {
+                            $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
+                        } else {
+                            $this->error('errorcannotdisableenrolment',
+                                new lang_string('errorcannotdisableenrolment', 'tool_uploadcourse',
+                                    $plugin->get_instance_name($instance)));
+                        }
+
                         break;
                     }
                 }
             } else {
-                $plugin = null;
-                if (empty($instance)) {
-                    $plugin = $enrolmentplugins[$enrolmethod];
+                // Create/update enrolment.
+                $plugin = $enrolmentplugins[$enrolmethod];
+
+                // Ensure user is able to create/update instance.
+                if (empty($instance) && $plugin->can_add_instance($course->id)) {
                     $instance = new stdClass();
                     $instance->id = $plugin->add_default_instance($course);
                     $instance->roleid = $plugin->get_config('roleid');
                     $instance->status = ENROL_INSTANCE_ENABLED;
-                } else {
-                    $plugin = $enrolmentplugins[$instance->enrol];
+                } else if (!empty($instance) && $plugin->can_edit_instance($instance)) {
                     $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
+                } else {
+                    $this->error('errorcannotcreateorupdateenrolment',
+                        new lang_string('errorcannotcreateorupdateenrolment', 'tool_uploadcourse',
+                            $plugin->get_instance_name($instance)));
+
+                    break;
                 }
 
                 // Now update values.

@@ -268,6 +268,7 @@ abstract class screen {
             'requires' => array('base', 'dom', 'event', 'event-simulate', 'io-base')
         );
 
+        $PAGE->requires->string_for_js('overridenoneconfirm', 'gradereport_singleview');
         $PAGE->requires->js_init_call('M.gradereport_singleview.init', array(), false, $module);
     }
 

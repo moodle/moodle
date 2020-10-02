@@ -44,6 +44,10 @@ class mod_choice_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'limitanswers', get_string('limitanswers', 'choice'));
         $mform->addHelpButton('limitanswers', 'limitanswers', 'choice');
 
+        $mform->addElement('selectyesno', 'showavailable', get_string('showavailable', 'choice'));
+        $mform->addHelpButton('showavailable', 'showavailable', 'choice');
+        $mform->hideIf('showavailable', 'limitanswers', 'eq', 0);
+
         $repeatarray = array();
         $repeatarray[] = $mform->createElement('text', 'option', get_string('optionno', 'choice'));
         $repeatarray[] = $mform->createElement('text', 'limit', get_string('limitno', 'choice'));

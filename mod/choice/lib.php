@@ -213,7 +213,9 @@ function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
 
     $cdisplay = array('options'=>array());
 
-    $cdisplay['limitanswers'] = true;
+    $cdisplay['limitanswers'] = $choice->limitanswers;
+    $cdisplay['showavailable'] = $choice->showavailable;
+
     $context = context_module::instance($coursemodule->id);
 
     foreach ($choice->option as $optionid => $text) {

@@ -61,7 +61,7 @@ foreach ($allfunctions as $f) {
     }
 }
 
-// whitelisting security
+// Allow only functions available for testing.
 if (!isset($functions[$function])) {
     $function = '';
 }
@@ -81,7 +81,9 @@ foreach ($active_protocols as $p) {
     }
     $protocols[$p] = get_string('pluginname', 'webservice_'.$p);
 }
-if (!isset($protocols[$protocol])) { // whitelisting security
+
+// Allow only protocols supporting the test client.
+if (!isset($protocols[$protocol])) {
     $protocol = '';
 }
 

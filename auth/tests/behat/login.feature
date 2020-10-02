@@ -54,3 +54,25 @@ Feature: Authentication
       | 0            | not see |
       | 1            | see     |
       | 2            | see     |
+
+  @javascript @accessibility
+  Scenario: Login page must be accessible
+    When I am on site homepage
+    # The following tests are all provided to ensure that the accessibility tests themselves are tested.
+    # In normal tests only one of the following is required.
+    Then the page should meet accessibility standards
+    And the page should meet "wcag131, wcag141, wcag412" accessibility standards
+    And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
+
+    And I follow "Log in"
+    And the page should meet accessibility standards
+    And the page should meet "wcag131, wcag141, wcag412" accessibility standards
+    And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
+
+  @javascript @accessibility
+  Scenario: The login page must have sufficient colour contrast
+    Given the following config values are set as admin:
+      | custommenuitems | -This is a custom item\|/customurl/ |
+    When I am on site homepage
+    Then the page should meet "wcag143" accessibility standards
+    And the page should meet accessibility standards with "wcag143" extra tests

@@ -1117,7 +1117,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $newcase['forums'][0]['forumposts'][0]['name'] = 'HTML text and image';
         $newcase['forums'][0]['forumposts'][0]['message'] = '<p>Welcome to Moodle, '
             .'<img src="@@PLUGINFILE@@/Screen%20Shot%202016-03-22%20at%205.54.36%20AM%20%281%29.png"'
-            .' alt="" width="200" height="393" class="img-responsive" />!</p>';
+            .' alt="" width="200" height="393" class="img-fluid" />!</p>';
         $newcase['expectations'][0]['subject'] = '.*101.*HTML text and image';
         $newcase['expectations'][0]['contents'] = array(
             '~{\$a',
@@ -1127,7 +1127,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
             '<p>Welcome to Moodle, '
             .'<img src="https://www.example.com/moodle/tokenpluginfile.php/[^/]*/\d+/mod_forum/post/\d+/'
                 .'Screen%20Shot%202016-03-22%20at%205\.54\.36%20AM%20%281%29\.png"'
-                .' alt="" width="200" height="393" class="img-responsive" />!</p>',
+                .' alt="" width="200" height="393" class="img-fluid" />!</p>',
             '>Love Moodle', '>1\d1');
         $htmlcases['HTML mail with text+image message i.e. @@PLUGINFILE@@ token handling'] = array('data' => $newcase);
 

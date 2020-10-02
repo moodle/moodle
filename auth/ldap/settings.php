@@ -27,7 +27,9 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
 
     if (!function_exists('ldap_connect')) {
-        $settings->add(new admin_setting_heading('auth_ldap_noextension', '', get_string('auth_ldap_noextension', 'auth_ldap')));
+        $notify = new \core\output\notification(get_string('auth_ldap_noextension', 'auth_ldap'),
+            \core\output\notification::NOTIFY_WARNING);
+        $settings->add(new admin_setting_heading('auth_ldap_noextension', '', $OUTPUT->render($notify)));
     } else {
 
         // We use a couple of custom admin settings since we need to massage the data before it is inserted into the DB.
@@ -142,9 +144,9 @@ if ($ADMIN->fulltree) {
                 get_string('auth_ldap_memberattribute', 'auth_ldap'), '', PARAM_RAW));
 
         // Member attribute uses dn.
-        $settings->add(new admin_setting_configtext('auth_ldap/memberattribute_isdn',
+        $settings->add(new admin_setting_configselect('auth_ldap/memberattribute_isdn',
                 get_string('auth_ldap_memberattribute_isdn_key', 'auth_ldap'),
-                get_string('auth_ldap_memberattribute_isdn', 'auth_ldap'), '', PARAM_RAW));
+                get_string('auth_ldap_memberattribute_isdn', 'auth_ldap'), 0, $yesno));
 
         // Object class.
         $settings->add(new admin_setting_configtext('auth_ldap/objectclass',

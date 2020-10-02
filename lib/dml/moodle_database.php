@@ -889,6 +889,9 @@ abstract class moodle_database {
         // convert table names
         $sql = $this->fix_table_names($sql);
 
+        // Optionally add debug trace to sql as a comment.
+        $sql = $this->add_sql_debugging($sql);
+
         // cast booleans to 1/0 int and detect forbidden objects
         foreach ($params as $key => $value) {
             $this->detect_objects($value);
@@ -1029,6 +1032,50 @@ abstract class moodle_database {
             }
         }
     }
+
+    /**
+     * Add an SQL comment to trace all sql calls back to the calling php code
+     * @param string $sql Original sql
+     * @return string Instrumented sql
+     */
+    protected function add_sql_debugging(string $sql): string {
+        global $CFG;
+
+        if (!property_exists($CFG, 'debugsqltrace')) {
+            return $sql;
+        }
+
+        $level = $CFG->debugsqltrace;
+
+        if (empty($level)) {
+            return $sql;
+        }
+
+        $callers = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+
+        // Ignore moodle_database internals.
+        $callers = array_filter($callers, function($caller) {
+            return empty($caller['class']) || $caller['class'] != 'moodle_database';
+        });
+
+        $callers = array_slice($callers, 0, $level);
+
+        $text = trim(format_backtrace($callers, true));
+
+        // Convert all linebreaks to SQL comments, optionally
+        // also eating any * formatting.
+        $text = preg_replace("/(^|\n)\*?\s*/", "\n-- ", $text);
+
+        // Convert all ? to 'unknown' in the sql coment so these don't get
+        // caught by fix_sql_params().
+        $text = str_replace('?', 'unknown', $text);
+
+        // Convert tokens like :test to ::test for the same reason.
+        $text = preg_replace('/(?<!:):[a-z][a-z0-9_]*/', ':\0', $text);
+
+        return $sql . $text;
+    }
+
 
     /**
      * Ensures that limit params are numeric and positive integers, to be passed to the database.

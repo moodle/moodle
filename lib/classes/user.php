@@ -601,33 +601,35 @@ class core_user {
             // The user has chosen to delete the selected users picture.
             $fs->delete_area_files($context->id, 'user', 'icon'); // Drop all images in area.
             $newpicture = 0;
+        }
 
-        } else {
-            // Save newly uploaded file, this will avoid context mismatch for newly created users.
-            file_save_draft_area_files($usernew->imagefile, $context->id, 'user', 'newicon', 0, $filemanageroptions);
-            if (($iconfiles = $fs->get_area_files($context->id, 'user', 'newicon')) && count($iconfiles) == 2) {
-                // Get file which was uploaded in draft area.
-                foreach ($iconfiles as $file) {
-                    if (!$file->is_directory()) {
-                        break;
-                    }
+        // Save newly uploaded file, this will avoid context mismatch for newly created users.
+        if (!isset($usernew->imagefile)) {
+            $usernew->imagefile = 0;
+        }
+        file_save_draft_area_files($usernew->imagefile, $context->id, 'user', 'newicon', 0, $filemanageroptions);
+        if (($iconfiles = $fs->get_area_files($context->id, 'user', 'newicon')) && count($iconfiles) == 2) {
+            // Get file which was uploaded in draft area.
+            foreach ($iconfiles as $file) {
+                if (!$file->is_directory()) {
+                    break;
                 }
-                // Copy file to temporary location and the send it for processing icon.
-                if ($iconfile = $file->copy_content_to_temp()) {
-                    // There is a new image that has been uploaded.
-                    // Process the new image and set the user to make use of it.
-                    // NOTE: Uploaded images always take over Gravatar.
-                    $newpicture = (int)process_new_icon($context, 'user', 'icon', 0, $iconfile);
-                    // Delete temporary file.
-                    @unlink($iconfile);
-                    // Remove uploaded file.
-                    $fs->delete_area_files($context->id, 'user', 'newicon');
-                } else {
-                    // Something went wrong while creating temp file.
-                    // Remove uploaded file.
-                    $fs->delete_area_files($context->id, 'user', 'newicon');
-                    return false;
-                }
+            }
+            // Copy file to temporary location and the send it for processing icon.
+            if ($iconfile = $file->copy_content_to_temp()) {
+                // There is a new image that has been uploaded.
+                // Process the new image and set the user to make use of it.
+                // NOTE: Uploaded images always take over Gravatar.
+                $newpicture = (int)process_new_icon($context, 'user', 'icon', 0, $iconfile);
+                // Delete temporary file.
+                @unlink($iconfile);
+                // Remove uploaded file.
+                $fs->delete_area_files($context->id, 'user', 'newicon');
+            } else {
+                // Something went wrong while creating temp file.
+                // Remove uploaded file.
+                $fs->delete_area_files($context->id, 'user', 'newicon');
+                return false;
             }
         }
 
@@ -658,7 +660,7 @@ class core_user {
      * @return void
      */
     protected static function fill_properties_cache() {
-        global $CFG;
+        global $CFG, $SESSION;
         if (self::$propertiescache !== null) {
             return;
         }
@@ -694,7 +696,8 @@ class core_user {
         $fields['city'] = array('type' => PARAM_TEXT, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->defaultcity);
         $fields['country'] = array('type' => PARAM_ALPHA, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->country,
                 'choices' => array_merge(array('' => ''), get_string_manager()->get_list_of_countries(true, true)));
-        $fields['lang'] = array('type' => PARAM_LANG, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->lang,
+        $fields['lang'] = array('type' => PARAM_LANG, 'null' => NULL_NOT_ALLOWED,
+                'default' => (!empty($CFG->autolangusercreation) && !empty($SESSION->lang)) ? $SESSION->lang : $CFG->lang,
                 'choices' => array_merge(array('' => ''), get_string_manager()->get_list_of_translations(false)));
         $fields['calendartype'] = array('type' => PARAM_PLUGIN, 'null' => NULL_NOT_ALLOWED, 'default' => $CFG->calendartype,
                 'choices' => array_merge(array('' => ''), \core_calendar\type_factory::get_list_of_calendar_types()));

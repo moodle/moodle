@@ -36,7 +36,7 @@ Feature: Tagging courses
     And I am on "Course 1" course homepage
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
-    Then I should see "Mathematics" in the ".form-autocomplete-selection" "css_element"
+    Then "Mathematics" "autocomplete_suggestions" should exist
     And I set the following fields to these values:
       | Tags | Algebra |
     And I press "Save and display"

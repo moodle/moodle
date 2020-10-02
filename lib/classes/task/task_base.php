@@ -50,6 +50,15 @@ abstract class task_base {
     /** @var int $nextruntime - When this task is due to run next */
     private $nextruntime = 0;
 
+    /** @var int $timestarted - When this task was started */
+    private $timestarted = null;
+
+    /** @var string $hostname - Hostname where this task was started and PHP process ID */
+    private $hostname = null;
+
+    /** @var int $pid - PHP process ID that is running the task */
+    private $pid = null;
+
     /**
      * Set the current lock for this task.
      * @param \core\lock\lock $lock
@@ -151,4 +160,52 @@ abstract class task_base {
      * Throw exceptions on errors (the job will be retried).
      */
     public abstract function execute();
+
+    /**
+     * Setter for $timestarted.
+     * @param int $timestarted
+     */
+    public function set_timestarted($timestarted = null) {
+        $this->timestarted = $timestarted;
+    }
+
+    /**
+     * Getter for $timestarted.
+     * @return int
+     */
+    public function get_timestarted() {
+        return $this->timestarted;
+    }
+
+    /**
+     * Setter for $hostname.
+     * @param string $hostname
+     */
+    public function set_hostname($hostname = null) {
+        $this->hostname = $hostname;
+    }
+
+    /**
+     * Getter for $hostname.
+     * @return string
+     */
+    public function get_hostname() {
+        return $this->hostname;
+    }
+
+    /**
+     * Setter for $pid.
+     * @param int $pid
+     */
+    public function set_pid($pid = null) {
+        $this->pid = $pid;
+    }
+
+    /**
+     * Getter for $pid.
+     * @return int
+     */
+    public function get_pid() {
+        return $this->pid;
+    }
 }

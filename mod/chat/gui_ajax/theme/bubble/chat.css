@@ -242,3 +242,8 @@ Dual licensed under MIT and GNU GPLv2 © Nicolas Gallagher
     border-width: 9px 0 9px 21px;
     border-color: transparent #fff;
 }
+
+#button-send + a > i.text-info {
+    /* stylelint-disable-next-line declaration-no-important */
+    color: black !important;
+}

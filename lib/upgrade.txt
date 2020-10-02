@@ -1,7 +1,8 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
-=== 4.0 ===
+=== 3.10 ===
+* Retains the source course id when a course is copied from another course on the same site.
 * Added function setScrollable in core/modal. This function can be used to set the modal's body to be scrollable or not
   when the modal's height exceeds the browser's height. This is also supported in core/modal_factory through the
   'scrollable' config parameter which can be set to either true or false. If not explicitly defined, the default value
@@ -29,6 +30,28 @@ information provided here is intended especially for developers.
     - course_in_list (now: core_course_list_element)
     - coursecat (now: core_course_category)
 * The form element 'htmleditor', which was deprecated in 3.6, has been removed.
+* The `core_output_load_fontawesome_icon_map` web service has been deprecated and replaced by
+  `core_output_load_fontawesome_icon_system_map` which takes the name of the theme to generate the icon system map for.
+* A new parameter `$rolenamedisplay` has been added to `get_viewable_roles()` and `get_switchable_roles` to define how role names
+  should be returned.
+* The class coursecat_sortable_records has been removed.
+* Admin setting admin_setting_configselect now supports lazy-loading the options list by supplying
+  a callback function instead of an array of options.
+* Admin setting admin_setting_configselect now supports validating the selection by supplying a
+  callback function.
+* The task system has new functions adhoc_task_starting() and scheduled_task_starting() which must
+  be called before executing a task, and a new function \core\task\manager::get_running_tasks()
+  returns information about currently-running tasks.
+* New library function rename_to_unused_name() to rename a file within its current location.
+* Constant \core_h5p\file_storage::EDITOR_FILEAREA has been deprecated
+  because it's not required any more.
+* The ZipStream-PHP library has been added to Moodle core in /lib/zipstream.
+* The php-enum library has been added to Moodle core in /lib/php-enum.
+* The http-message library has been added to Moodle core in /lib/http-message.
+* Methods `filetypes_util::is_whitelisted()` and `filetypes_util::get_not_whitelisted()` have been deprecated and
+  renamed to `is_listed()` and `get_not_listed()` respectively.
+* Method `mustache_helper_collection::strip_blacklisted_helpers()` has been deprecated and renamed to
+  `strip_disallowed_helpers()`.
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
@@ -96,7 +119,7 @@ information provided here is intended especially for developers.
     - type: specifies the calendar type. Optional, defaults to Gregorian.
     - fixday: Whether to remove leading zero for day. Optional, defaults to 1.
     - fixhour: Whether to remove leading zero for hour. Optional, defaults to 1.
-* Legacy cron has been deprecated and will be removed in Moodle 4.3. This includes the functions:
+* Legacy cron has been deprecated and will be removed in Moodle 4.1. This includes the functions:
   - cron_execute_plugin_type()
   - cron_bc_hack_plugin_functions()
   Please, use the Task API instead: https://docs.moodle.org/dev/Task_API

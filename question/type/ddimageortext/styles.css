@@ -26,6 +26,7 @@ form.mform fieldset#id_previewareaheader div.ddarea {
 .que.ddimageortext div.droparea .dropzones {
     position: absolute;
     top: 0;
+    /*rtl:ignore*/
     left: 0;
 }
 
@@ -37,10 +38,6 @@ form.mform fieldset#id_previewareaheader .dropbackground {
 
 form.mform fieldset#id_previewareaheader .dropbackground {
     max-width: none;
-}
-
-.que.ddimageortext .dropbackground.img-responsive.img-fluid {
-    width: 100%;
 }
 
 .que.ddimageortext .dropzone {

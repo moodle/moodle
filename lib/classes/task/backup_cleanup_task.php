@@ -44,24 +44,27 @@ class backup_cleanup_task extends scheduled_task {
     public function execute() {
         global $DB;
 
-        $timenow = time();
-
-        // Delete old backup_controllers and logs.
         $loglifetime = get_config('backup', 'loglifetime');
-        if (!empty($loglifetime)) {  // Value in days.
-            $loglifetime = $timenow - ($loglifetime * 3600 * 24);
-            // Delete child records from backup_logs.
-            $DB->execute("DELETE FROM {backup_logs}
-                           WHERE EXISTS (
-                               SELECT 'x'
-                                 FROM {backup_controllers} bc
-                                WHERE bc.backupid = {backup_logs}.backupid
-                                  AND bc.timecreated < ?)", array($loglifetime));
-            // Delete records from backup_controllers.
-            $DB->execute("DELETE FROM {backup_controllers}
-                          WHERE timecreated < ?", array($loglifetime));
+
+        if (empty($loglifetime)) {
+            throw new coding_exception('The \'loglifetime\' config is not set. Can\'t proceed and delete old backup records.');
         }
 
+        // First, get the list of all backupids older than loglifetime.
+        $timecreated = time() - ($loglifetime * DAYSECS);
+        $records = $DB->get_records_select('backup_controllers', 'timecreated < ?', array($timecreated), 'id', 'id, backupid');
+
+        foreach ($records as $record) {
+            // Check if there is no incomplete adhoc task relying on the given backupid.
+            $params = array('%' . $record->backupid . '%');
+            $select = $DB->sql_like('customdata', '?', false);
+            $count = $DB->count_records_select('task_adhoc',  $select, $params);
+            if ($count === 0) {
+                // Looks like there is no adhoc task, so we can delete logs and controllers for this backupid.
+                $DB->delete_records('backup_logs', array('backupid' => $record->backupid));
+                $DB->delete_records('backup_controllers', array('backupid' => $record->backupid));
+            }
+        }
     }
 
 }

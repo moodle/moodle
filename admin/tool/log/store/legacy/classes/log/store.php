@@ -17,7 +17,7 @@
 /**
  * Legacy log reader.
  * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
- * @todo  MDL-52805 This is to be removed in Moodle 4.0
+ * @todo  MDL-52805 This is to be removed in Moodle 3.10
  *
  * @package    logstore_legacy
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
@@ -34,7 +34,7 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
 
     /**
      * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
-     * @todo  MDL-52805 This is to be removed in Moodle 4.0
+     * @todo  MDL-52805 This is to be removed in Moodle 3.10
      *
      * @param \tool_log\log\manager $manager
      */
@@ -93,7 +93,7 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
 
     /**
      * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
-     * @todo MDL-52805 This will be removed in Moodle 4.0
+     * @todo MDL-52805 This will be removed in Moodle 3.10
      *
      * @param  string $selectwhere
      * @param  array  $params
@@ -134,7 +134,7 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
     /**
      * Fetch records using given criteria returning a Traversable object.
      * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
-     * @todo MDL-52805 This will be removed in Moodle 4.0
+     * @todo MDL-52805 This will be removed in Moodle 3.10
      *
      * Note that the traversable object contains a moodle_recordset, so
      * remember that is important that you call close() once you finish
@@ -168,7 +168,7 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
     /**
      * Returns an event from the log data.
      * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
-     * @todo MDL-52805 This will be removed in Moodle 4.0
+     * @todo MDL-52805 This will be removed in Moodle 3.10
      *
      * @param stdClass $data Log data
      * @return \core\event\base
@@ -179,7 +179,7 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
 
     /**
      * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
-     * @todo MDL-52805 This will be removed in Moodle 4.0
+     * @todo MDL-52805 This will be removed in Moodle 3.10
      *
      * @param  string $selectwhere
      * @param  array  $params
@@ -202,7 +202,7 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
     /**
      * Are the new events appearing in the reader?
      * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
-     * @todo MDL-52805 This will be removed in Moodle 4.0
+     * @todo MDL-52805 This will be removed in Moodle 3.10
      *
      * @return bool true means new log events are being added, false means no new data will be added
      */
@@ -212,7 +212,7 @@ class store implements \tool_log\log\store, \core\log\sql_reader {
 
     /**
      * @deprecated since Moodle 3.6 MDL-52953 - Please use supported log stores such as "standard" or "external" instead.
-     * @todo MDL-52805 This will be removed in Moodle 4.0
+     * @todo MDL-52805 This will be removed in Moodle 3.10
      */
     public function dispose() {
     }

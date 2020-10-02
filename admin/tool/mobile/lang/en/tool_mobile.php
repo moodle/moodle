@@ -63,6 +63,9 @@ $string['downloadcourse'] = 'Download course';
 $string['downloadcourses'] = 'Download courses';
 $string['enablesmartappbanners'] = 'Enable App Banners';
 $string['enablesmartappbanners_desc'] = 'If enabled, a banner promoting the mobile app will be displayed when accessing the site using a mobile browser.';
+$string['filetypeexclusionlist'] = 'File type exclusion list';
+$string['filetypeexclusionlist_desc'] = 'List of file types that we don\'t want users to try and open in the app. These files will still be listed on the app\'s course screen, but attempting to open them on iOS or Android would display a warning to the user indicating that this file type is not intended for use on a mobile device. They can then either cancel the open, or ignore the warning and open anyway.';
+$string['filetypeexclusionlistplaceholder'] = 'Mobile file type exclusion list';
 $string['forcedurlscheme'] = 'If you want to allow only your custom branded app to be opened via a browser window, then specify its URL scheme here. If you want to allow only the official app, then set the default value. Leave the field empty if you want to allow any app.';
 $string['forcedurlscheme_key'] = 'URL scheme';
 $string['forcelogout'] = 'Force log out';
@@ -81,10 +84,10 @@ $string['loginintheapp'] = 'Via the app';
 $string['logininthebrowser'] = 'Via a browser window (for SSO plugins)';
 $string['loginintheembeddedbrowser'] = 'Via an embedded browser (for SSO plugins)';
 $string['mainmenu'] = 'Main menu';
+$string['managefiletypes'] = 'Manage file types';
 $string['minimumversion'] = 'If an app version is specified (3.8.0 or higher), any users using an older app version will be prompted to upgrade their app before being allowed access to the site.';
 $string['minimumversion_key'] = 'Minimum app version required';
 $string['mobileapp'] = 'Mobile app';
-$string['mobileappconnected'] = 'Mobile app connected';
 $string['mobileappenabled'] = 'This site has mobile app access enabled.<br /><a href="{$a}">Download the mobile app</a>.';
 $string['mobileappearance'] = 'Mobile appearance';
 $string['mobileappsubscription'] = 'Moodle app subscription';
@@ -114,7 +117,7 @@ $string['qrcodeformobileapploginabout'] = 'Scan the QR code with your mobile app
 $string['qrcodeformobileappurlabout'] = 'Scan the QR code with your mobile app to fill in the site URL in your app.';
 $string['qrsiteadminsnotallowed'] = 'For security reasons login via QR code is not allowed for site administrators or if you are logged in as another user.';
 $string['qrcodetype'] = 'QR code access';
-$string['qrcodetype_desc'] = 'A QR code can be provided for mobile app users to scan and either have the site URL filled in or be automatically logged in without having to enter their credentials.';
+$string['qrcodetype_desc'] = 'A QR code can be provided for mobile app users to scan. This can be used to fill in the site URL, or where the site is secured using HTTPS, to automatically log the user in without having to enter their username and password.';
 $string['qrcodetypeurl'] = 'QR code with site URL';
 $string['qrcodetypelogin'] = 'QR code with automatic login';
 $string['readingthisemailgettheapp'] = 'Reading this in an email? <a href="{$a}">Download the mobile app and receive notifications on your mobile device</a>.';
@@ -140,3 +143,6 @@ $string['privacy:metadata:preference:tool_mobile_autologin_request_last'] = 'The
 $string['privacy:metadata:core_userkey'] = 'User\'s keys used to create auto-login key for the current user.';
 $string['responsivemainmenuitems'] = 'Responsive menu items';
 $string['viewqrcode'] = 'View QR code';
+
+// Deprecated since Moodle 3.10.
+$string['mobileappconnected'] = 'Mobile app connected';

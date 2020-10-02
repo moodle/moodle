@@ -392,7 +392,7 @@ class participants_search {
             $forcedgroupjoin = groups_get_members_join($allowedgroupids, $forceduid, $this->context, $forcedjointype);
 
             $forcedjoins[] = $forcedgroupjoin->joins;
-            $forcedwhere .= "AND ({$forcedgroupjoin->wheres})";
+            $forcedwhere .= " AND ({$forcedgroupjoin->wheres})";
 
             $params = array_merge($params, $forcedgroupjoin->params);
 

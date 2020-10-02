@@ -152,7 +152,7 @@ function useredit_load_preferences(&$user, $reload=true) {
  * Updates the user preferences for the given user
  *
  * Only preference that can be updated directly will be updated here. This method is called from various WS
- * updating users and should be used when updating user details. Plugins may whitelist preferences that can
+ * updating users and should be used when updating user details. Plugins may list preferences that can
  * be updated by defining 'user_preferences' callback, {@see core_user::fill_preferences_cache()}
  *
  * Some parts of code may use user preference table to store internal data, in these cases it is acceptable
@@ -304,7 +304,8 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
     $mform->addHelpButton('maildisplay', 'emaildisplay');
 
     $mform->addElement('text', 'moodlenetprofile', get_string('moodlenetprofile', 'user'));
-    $mform->setType('moodlenetprofile', PARAM_RAW_TRIMMED);
+    $mform->setType('moodlenetprofile', PARAM_NOTAGS);
+    $mform->addHelpButton('moodlenetprofile', 'moodlenetprofile', 'user');
 
     $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="21"');
     $mform->setType('city', PARAM_TEXT);

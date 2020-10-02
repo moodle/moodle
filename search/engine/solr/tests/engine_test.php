@@ -132,7 +132,7 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->search->delete_index();
 
         // Add moodle fields if they don't exist.
-        $schema = new \search_solr\schema();
+        $schema = new \search_solr\schema($this->engine);
         $schema->setup(false);
     }
 
@@ -157,6 +157,45 @@ class search_solr_engine_testcase extends advanced_testcase {
 
     public function test_connection() {
         $this->assertTrue($this->engine->is_server_ready());
+    }
+
+    /**
+     * Tests that the alternate settings are used when configured.
+     */
+    public function test_alternate_settings() {
+        // Index a couple of things.
+        $this->generator->create_record();
+        $this->generator->create_record();
+        $this->search->index();
+
+        // By default settings, alternates are not set.
+        $this->assertFalse($this->engine->has_alternate_configuration());
+
+        // Set up all the config the same as normal.
+        foreach (['server_hostname', 'indexname', 'secure', 'server_port',
+                'server_username', 'server_password'] as $setting) {
+            set_config('alternate' . $setting, get_config('search_solr', $setting), 'search_solr');
+        }
+        // Also mess up the normal config.
+        set_config('indexname', 'not_the_right_index_name', 'search_solr');
+
+        // Construct a new engine using normal settings.
+        $engine = new search_solr\engine();
+
+        // Now alternates are available.
+        $this->assertTrue($engine->has_alternate_configuration());
+
+        // But it won't actually work because of the bogus index name.
+        $this->assertFalse($engine->is_server_ready() === true);
+        $this->assertDebuggingCalled();
+
+        // But if we construct one using alternate settings, it will work as normal.
+        $engine = new search_solr\engine(true);
+        $this->assertTrue($engine->is_server_ready());
+
+        // Including finding the search results.
+        $this->assertCount(2, $engine->execute_query(
+                (object)['q' => 'message'], (object)['everything' => true]));
     }
 
     /**
@@ -1295,6 +1334,148 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assert_raw_solr_query_result('content:xyzzy', ['C1', 'C1P2']);
         delete_course($course1, false);
         $this->assert_raw_solr_query_result('content:xyzzy', []);
+    }
+
+    /**
+     * Specific test of the add_document_batch function (also used in many other tests).
+     */
+    public function test_add_document_batch() {
+        // Get a default document.
+        $area = new core_mocksearch\search\mock_search_area();
+        $record = $this->generator->create_record();
+        $doc = $area->get_document($record);
+        $originalid = $doc->get('id');
+
+        // Now create 5 similar documents.
+        $docs = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $doc = $area->get_document($record);
+            $doc->set('id', $originalid . '-' . $i);
+            $doc->set('title', 'Batch ' . $i);
+            $docs[$i] = $doc;
+        }
+
+        // Document 3 has a file attached.
+        $fs = get_file_storage();
+        $filerecord = new \stdClass();
+        $filerecord->content = 'Some FileContents';
+        $file = $this->generator->create_file($filerecord);
+        $docs[3]->add_stored_file($file);
+
+        // Add all these documents to the search engine.
+        $this->assertEquals([5, 0, 1], $this->engine->add_document_batch($docs, true));
+        $this->engine->area_index_complete($area->get_area_id());
+
+        // Check all documents were indexed.
+        $querydata = new stdClass();
+        $querydata->q = 'Batch';
+        $results = $this->search->search($querydata);
+        $this->assertCount(5, $results);
+
+        // Check it also finds based on the file.
+        $querydata->q = 'FileContents';
+        $results = $this->search->search($querydata);
+        $this->assertCount(1, $results);
+    }
+
+    /**
+     * Tests the batching logic, specifically the limit to 100 documents per
+     * batch, and not batching very large documents.
+     */
+    public function test_batching() {
+        $area = new core_mocksearch\search\mock_search_area();
+        $record = $this->generator->create_record();
+        $doc = $area->get_document($record);
+        $originalid = $doc->get('id');
+
+        // Up to 100 documents in 1 batch.
+        $docs = [];
+        for ($i = 1; $i <= 100; $i++) {
+            $doc = $area->get_document($record);
+            $doc->set('id', $originalid . '-' . $i);
+            $docs[$i] = $doc;
+        }
+        [, , , , , $batches] = $this->engine->add_documents(
+                new ArrayIterator($docs), $area, ['indexfiles' => true]);
+        $this->assertEquals(1, $batches);
+
+        // More than 100 needs 2 batches.
+        $docs = [];
+        for ($i = 1; $i <= 101; $i++) {
+            $doc = $area->get_document($record);
+            $doc->set('id', $originalid . '-' . $i);
+            $docs[$i] = $doc;
+        }
+        [, , , , , $batches] = $this->engine->add_documents(
+                new ArrayIterator($docs), $area, ['indexfiles' => true]);
+        $this->assertEquals(2, $batches);
+
+        // Small number but with some large documents that aren't batched.
+        $docs = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $doc = $area->get_document($record);
+            $doc->set('id', $originalid . '-' . $i);
+            $docs[$i] = $doc;
+        }
+        // This one is just small enough to fit.
+        $docs[3]->set('content', str_pad('xyzzy ', 1024 * 1024, 'x'));
+        // These two don't fit.
+        $docs[5]->set('content', str_pad('xyzzy ', 1024 * 1024 + 1, 'x'));
+        $docs[6]->set('content', str_pad('xyzzy ', 1024 * 1024 + 1, 'x'));
+        [, , , , , $batches] = $this->engine->add_documents(
+                new ArrayIterator($docs), $area, ['indexfiles' => true]);
+        $this->assertEquals(3, $batches);
+
+        // Check that all 3 of the large documents (added as batch or not) show up in results.
+        $this->engine->area_index_complete($area->get_area_id());
+        $querydata = new stdClass();
+        $querydata->q = 'xyzzy';
+        $results = $this->search->search($querydata);
+        $this->assertCount(3, $results);
+    }
+
+    /**
+     * Tests with large documents. The point of this test is that we stop batching
+     * documents if they are bigger than 1MB, and the maximum batch count is 100,
+     * so the maximum size batch will be about 100 1MB documents.
+     */
+    public function test_add_document_batch_large() {
+        // This test is a bit slow and not that important to run every time...
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
+
+        // Get a default document.
+        $area = new core_mocksearch\search\mock_search_area();
+        $record = $this->generator->create_record();
+        $doc = $area->get_document($record);
+        $originalid = $doc->get('id');
+
+        // Now create 100 large documents.
+        $size = 1024 * 1024;
+        $docs = [];
+        for ($i = 1; $i <= 100; $i++) {
+            $doc = $area->get_document($record);
+            $doc->set('id', $originalid . '-' . $i);
+            $doc->set('title', 'Batch ' . $i);
+            $doc->set('content', str_pad('', $size, 'Long text ' . $i . '. ', STR_PAD_RIGHT) . ' xyzzy');
+            $docs[$i] = $doc;
+        }
+
+        // Add all these documents to the search engine.
+        $this->engine->add_document_batch($docs, true);
+        $this->engine->area_index_complete($area->get_area_id());
+
+        // Check all documents were indexed, searching for text at end.
+        $querydata = new stdClass();
+        $querydata->q = 'xyzzy';
+        $results = $this->search->search($querydata);
+        $this->assertCount(100, $results);
+
+        // Search for specific text that's only in one.
+        $querydata->q = '42';
+        $results = $this->search->search($querydata);
+        $this->assertCount(1, $results);
     }
 
     /**

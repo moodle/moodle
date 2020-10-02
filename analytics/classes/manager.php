@@ -303,7 +303,7 @@ class manager {
      * Returns the enabled time splitting methods.
      *
      * @deprecated since Moodle 3.7
-     * @todo MDL-65086 This will be deleted in Moodle 4.1
+     * @todo MDL-65086 This will be deleted in Moodle 3.11
      * @see \core_analytics\manager::get_time_splitting_methods_for_evaluation
      * @return \core_analytics\local\time_splitting\base[]
      */
@@ -604,7 +604,7 @@ class manager {
      * Used to be used to add models included with the Moodle core.
      *
      * @deprecated Deprecated since Moodle 3.7 (MDL-61667) - Use lib/db/analytics.php instead.
-     * @todo Remove this method in Moodle 4.1 (MDL-65186).
+     * @todo Remove this method in Moodle 3.11 (MDL-65186).
      * @return void
      */
     public static function add_builtin_models() {
@@ -624,9 +624,25 @@ class manager {
                         LEFT JOIN {context} ctx ON ap.contextid = ctx.id
                             WHERE ctx.id IS NULL)");
 
-        $contextsql = "SELECT id FROM {context} ctx";
-        $DB->delete_records_select('analytics_predictions', "contextid NOT IN ($contextsql)");
-        $DB->delete_records_select('analytics_indicator_calc', "contextid NOT IN ($contextsql)");
+        // Cleanup analaytics predictions/calcs with MySQL friendly sub-select.
+        $DB->execute("DELETE FROM {analytics_predictions} WHERE id IN (
+                        SELECT oldpredictions.id
+                        FROM (
+                            SELECT p.id
+                            FROM {analytics_predictions} p
+                            LEFT JOIN {context} ctx ON p.contextid = ctx.id
+                            WHERE ctx.id IS NULL
+                        ) oldpredictions
+                    )");
+
+        $DB->execute("DELETE FROM {analytics_indicator_calc} WHERE id IN (
+                        SELECT oldcalcs.id FROM (
+                            SELECT c.id
+                            FROM {analytics_indicator_calc} c
+                            LEFT JOIN {context} ctx ON c.contextid = ctx.id
+                            WHERE ctx.id IS NULL
+                        ) oldcalcs
+                    )");
 
         // Clean up stuff that depends on analysable ids that do not exist anymore.
 

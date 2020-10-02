@@ -191,7 +191,8 @@ abstract class event_abstract_factory implements event_factory_interface {
                 (new \DateTimeImmutable())->setTimestamp($dbrow->timestart),
                 (new \DateTimeImmutable())->setTimestamp($dbrow->timestart + $dbrow->timeduration),
                 (new \DateTimeImmutable())->setTimestamp($dbrow->timesort ? $dbrow->timesort : $dbrow->timestart),
-                (new \DateTimeImmutable())->setTimestamp($dbrow->timemodified)
+                (new \DateTimeImmutable())->setTimestamp($dbrow->timemodified),
+                (new \DateTimeImmutable())->setTimestamp(usergetmidnight($dbrow->timesort))
             ),
             !empty($dbrow->visible),
             $subscription,

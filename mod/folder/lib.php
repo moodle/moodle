@@ -283,9 +283,13 @@ function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
         return false;
     }
 
-    // finally send the file
-    // for folder module, we force download file all the time
-    send_stored_file($file, 0, 0, true, $options);
+    // Set security posture for in-browser display.
+    if (!$forcedownload) {
+        header("Content-Security-Policy: default-src 'none'; img-src 'self'");
+    }
+
+    // Finally send the file.
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**
@@ -399,7 +403,7 @@ function folder_dndupload_handle($uploadinfo) {
 function folder_get_coursemodule_info($cm) {
     global $DB;
     if (!($folder = $DB->get_record('folder', array('id' => $cm->instance),
-            'id, name, display, showexpanded, showdownloadfolder, intro, introformat'))) {
+            'id, name, display, showexpanded, showdownloadfolder, forcedownload, intro, introformat'))) {
         return NULL;
     }
     $cminfo = new cached_cm_info();
@@ -409,6 +413,7 @@ function folder_get_coursemodule_info($cm) {
         $fdata = new stdClass();
         $fdata->showexpanded = $folder->showexpanded;
         $fdata->showdownloadfolder = $folder->showdownloadfolder;
+        $fdata->forcedownload = $folder->forcedownload;
         if ($cm->showdescription && strlen(trim($folder->intro))) {
             $fdata->intro = $folder->intro;
             if ($folder->introformat != FORMAT_MOODLE) {

@@ -84,9 +84,13 @@ abstract class engine {
      *
      * Search engine availability should be checked separately.
      *
+     * The alternate configuration option is only used to construct a special second copy of the
+     * search engine object, as described in {@see has_alternate_configuration}.
+     *
+     * @param bool $alternateconfiguration If true, use alternate configuration settings
      * @return void
      */
-    public function __construct() {
+    public function __construct(bool $alternateconfiguration = false) {
 
         $classname = get_class($this);
         if (strpos($classname, '\\') === false) {
@@ -102,6 +106,19 @@ abstract class engine {
         } else {
             $this->config = new stdClass();
         }
+
+        // For alternate configuration, automatically replace normal configuration values with
+        // those beginning with 'alternate'.
+        if ($alternateconfiguration) {
+            foreach ((array)$this->config as $key => $value) {
+                if (preg_match('~^alternate(.*)$~', $key, $matches)) {
+                    $this->config->{$matches[1]} = $value;
+                }
+            }
+        }
+
+        // Flag just in case engine needs to know it is using the alternate configuration.
+        $this->config->alternateconfiguration = $alternateconfiguration;
     }
 
     /**
@@ -218,8 +235,8 @@ abstract class engine {
      * and and have the search engine back end add them
      * to the index.
      *
-     * @param iterator $iterator the iterator of documents to index
-     * @param searcharea $searcharea the area for the documents to index
+     * @param \iterator $iterator the iterator of documents to index
+     * @param base $searcharea the area for the documents to index
      * @param array $options document indexing options
      * @return array Processed document counts
      */
@@ -227,10 +244,14 @@ abstract class engine {
         $numrecords = 0;
         $numdocs = 0;
         $numdocsignored = 0;
+        $numbatches = 0;
         $lastindexeddoc = 0;
         $firstindexeddoc = 0;
         $partial = false;
         $lastprogress = manager::get_current_time();
+
+        $batchmode = $this->supports_add_document_batch();
+        $currentbatch = [];
 
         foreach ($iterator as $document) {
             // Stop if we have exceeded the time limit (and there are still more items). Always
@@ -255,10 +276,22 @@ abstract class engine {
                 $searcharea->attach_files($document);
             }
 
-            if ($this->add_document($document, $options['indexfiles'])) {
-                $numdocs++;
+            if ($batchmode && strlen($document->get('content')) <= $this->get_batch_max_content()) {
+                $currentbatch[] = $document;
+                if (count($currentbatch) >= $this->get_batch_max_documents()) {
+                    [$processed, $failed, $batches] = $this->add_document_batch($currentbatch, $options['indexfiles']);
+                    $numdocs += $processed;
+                    $numdocsignored += $failed;
+                    $numbatches += $batches;
+                    $currentbatch = [];
+                }
             } else {
-                $numdocsignored++;
+                if ($this->add_document($document, $options['indexfiles'])) {
+                    $numdocs++;
+                } else {
+                    $numdocsignored++;
+                }
+                $numbatches++;
             }
 
             $lastindexeddoc = $document->get('modified');
@@ -279,7 +312,15 @@ abstract class engine {
             }
         }
 
-        return array($numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial);
+        // Add remaining documents from batch.
+        if ($batchmode && $currentbatch) {
+            [$processed, $failed, $batches] = $this->add_document_batch($currentbatch, $options['indexfiles']);
+            $numdocs += $processed;
+            $numdocsignored += $failed;
+            $numbatches += $batches;
+        }
+
+        return [$numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial, $numbatches];
     }
 
     /**
@@ -370,6 +411,8 @@ abstract class engine {
      */
     public function optimize() {
         // Nothing by default.
+        mtrace('The ' . get_string('pluginname', $this->get_plugin_name()) .
+                ' search engine does not require automatic optimization.');
     }
 
     /**
@@ -472,6 +515,27 @@ abstract class engine {
      * @return bool    False if the file was skipped or failed, true on success
      */
     abstract function add_document($document, $fileindexing = false);
+
+    /**
+     * Adds multiple documents to the search engine.
+     *
+     * It should return the number successfully processed, and the number of batches they were
+     * processed in (for example if you add 100 documents and there is an error processing one of
+     * those documents, and it took 4 batches, it would return [99, 1, 4]).
+     *
+     * If the engine implements this, it should return true to {@see supports_add_document_batch}.
+     *
+     * The system will only call this function with up to {@see get_batch_max_documents} documents,
+     * and each document in the batch will have content no larger than specified by
+     * {@see get_batch_max_content}.
+     *
+     * @param document[] $documents Documents to add
+     * @param bool $fileindexing True if file indexing is to be used
+     * @return int[] Array of three elements, successfully processed, failed processed, batch count
+     */
+    public function add_document_batch(array $documents, bool $fileindexing = false): array {
+        throw new \coding_exception('add_document_batch not supported by this engine');
+    }
 
     /**
      * Executes the query on the engine.
@@ -651,6 +715,66 @@ abstract class engine {
      * @return bool True if the search engine supports searching by user
      */
     public function supports_users() {
+        return false;
+    }
+
+    /**
+     * Checks if the search engine supports adding documents in a batch.
+     *
+     * If it returns true to this function, the search engine must implement the add_document_batch
+     * function.
+     *
+     * @return bool True if the search engine supports adding documents in a batch
+     */
+    public function supports_add_document_batch(): bool {
+        return false;
+    }
+
+    /**
+     * Gets the maximum number of documents to send together in batch mode.
+     *
+     * Only relevant if the engine returns true to {@see supports_add_document_batch}.
+     *
+     * Can be overridden by search engine if required.
+     *
+     * @var int Number of documents to send together in batch mode, default 100.
+     */
+    public function get_batch_max_documents(): int {
+        return 100;
+    }
+
+    /**
+     * Gets the maximum size of document content to be included in a shared batch (if the
+     * document is bigger then it will be sent on its own; batching does not provide a performance
+     * improvement for big documents anyway).
+     *
+     * Only relevant if the engine returns true to {@see supports_add_document_batch}.
+     *
+     * Can be overridden by search engine if required.
+     *
+     * @return int Max size in bytes, default 1MB
+     */
+    public function get_batch_max_content(): int {
+        return 1024 * 1024;
+    }
+
+    /**
+     * Checks if the search engine has an alternate configuration.
+     *
+     * This is used where the same search engine class supports two different configurations,
+     * which are both shown on the settings screen. The alternate configuration is selected by
+     * passing 'true' parameter to the constructor.
+     *
+     * The feature is used when a different connection is in use for indexing vs. querying
+     * the search engine.
+     *
+     * This function should only return true if the engine supports an alternate configuration
+     * and the user has filled in the settings. (We do not need to test they are valid, that will
+     * happen as normal.)
+     *
+     * @return bool True if an alternate configuration is defined
+     */
+    public function has_alternate_configuration(): bool {
         return false;
     }
 }

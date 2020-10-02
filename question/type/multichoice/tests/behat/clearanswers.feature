@@ -8,21 +8,31 @@ Feature: Clear my answers
     Given the following "users" exist:
       | username | firstname | lastname | email               |
       | student1 | S1        | Student1 | student1@moodle.com |
-    And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
+    And the following "course" exists:
+      | fullname  | Course 1  |
+      | shortname | C1        |
+      | category  | 0         |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | student1 | C1     | student        |
-    And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
-    And the following "questions" exist:
-      | questioncategory | qtype       | name             | template    | questiontext    |
-      | Test questions   | multichoice | Multi-choice-001 | one_of_four | Question One    |
-    And the following "activities" exist:
-      | activity   | name   | intro              | course | idnumber | preferredbehaviour | canredoquestions |
-      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | immediatefeedback  | 1                |
+    And the following "question category" exists:
+      | contextlevel  | Course          |
+      | reference     | C1              |
+      | name          | Test questions  |
+    And the following "question" exists:
+      |  questioncategory  |  Test questions    |
+      |  qtype             |  multichoice       |
+      |  name              |  Multi-choice-001  |
+      |  template          |  one_of_four       |
+      |  questiontext      |  Question One      |
+    And the following "activity" exists:
+      |  activity            |  quiz                |
+      |  name                |  Quiz 1              |
+      |  intro               |  Quiz 1 description  |
+      |  course              |  C1                  |
+      |  idnumber            |  quiz1               |
+      |  preferredbehaviour  |  immediatefeedback   |
+      |  canredoquestions    |  1                   |
     And quiz "Quiz 1" contains the following questions:
       | question         | page |
       | Multi-choice-001 | 1    |

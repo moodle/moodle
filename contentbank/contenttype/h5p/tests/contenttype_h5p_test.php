@@ -147,4 +147,40 @@ class contenttype_h5p_contenttype_plugin_testcase extends advanced_testcase {
         $this->assertNotEquals($defaulticon, $findicon);
         $this->assertContains('find', $findicon, '', true);
     }
+
+    /**
+     * Tests get_download_url result.
+     *
+     * @covers ::get_download_url
+     */
+    public function test_get_download_url() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $systemcontext = context_system::instance();
+        $this->setAdminUser();
+        $contenttype = new contenttype_h5p\contenttype($systemcontext);
+
+        // Add an H5P fill the blanks file to the content bank.
+        $filename = 'filltheblanks.h5p';
+        $filepath = $CFG->dirroot . '/h5p/tests/fixtures/' . $filename;
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $contents = $generator->generate_contentbank_data('contenttype_h5p', 1, 0, $systemcontext, true, $filepath);
+        $filltheblanks = array_shift($contents);
+
+        // Check before deploying the URL is returned OK.
+        $url1 = $contenttype->get_download_url($filltheblanks);
+        $this->assertNotEmpty($url1);
+        $this->assertContains($filename, $url1);
+
+        // Deploy the contents though the player to create the H5P DB entries and know specific content type.
+        $h5pplayer = new \core_h5p\player($filltheblanks->get_file_url(), new \stdClass(), true);
+        $h5pplayer->add_assets_to_page();
+        $h5pplayer->output();
+
+        // Once the H5P has been deployed, the URL is still the same.
+        $url2 = $contenttype->get_download_url($filltheblanks);
+        $this->assertNotEmpty($url2);
+        $this->assertEquals($url1, $url2);
+    }
 }

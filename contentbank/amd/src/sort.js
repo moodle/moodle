@@ -35,7 +35,7 @@ import Notification from 'core/notification';
  */
 export const init = () => {
     const contentBank = document.querySelector(selectors.regions.contentbank);
-    Prefetch.prefetchStrings('contentbank', ['contentname', 'lastmodified', 'size', 'type']);
+    Prefetch.prefetchStrings('contentbank', ['contentname', 'lastmodified', 'size', 'type', 'author']);
     Prefetch.prefetchStrings('moodle', ['sortbyx', 'sortbyxreverse']);
     registerListenerEvents(contentBank);
 };
@@ -48,56 +48,78 @@ export const init = () => {
  */
 const registerListenerEvents = (contentBank) => {
 
-    // The search.
-    const fileArea = document.querySelector(selectors.regions.filearea);
-    const shownItems = fileArea.querySelectorAll(selectors.elements.listitem);
+    contentBank.addEventListener('click', e => {
+        const viewList = contentBank.querySelector(selectors.actions.viewlist);
+        const viewGrid = contentBank.querySelector(selectors.actions.viewgrid);
 
-    // The view buttons.
-    const viewGrid = contentBank.querySelector(selectors.actions.viewgrid);
-    const viewList = contentBank.querySelector(selectors.actions.viewlist);
+        // View as Grid button.
+        if (e.target.closest(selectors.actions.viewgrid)) {
+            contentBank.classList.remove('view-list');
+            contentBank.classList.add('view-grid');
+            viewGrid.classList.add('active');
+            viewList.classList.remove('active');
+            setViewListPreference(false);
 
-    viewGrid.addEventListener('click', () => {
-        contentBank.classList.remove('view-list');
-        contentBank.classList.add('view-grid');
-        viewGrid.classList.add('active');
-        viewList.classList.remove('active');
-        setViewListPreference(false);
-    });
+            return;
+        }
 
-    viewList.addEventListener('click', () => {
-        contentBank.classList.remove('view-grid');
-        contentBank.classList.add('view-list');
-        viewList.classList.add('active');
-        viewGrid.classList.remove('active');
-        setViewListPreference(true);
-    });
+        // View as List button.
+        if (e.target.closest(selectors.actions.viewlist)) {
+            contentBank.classList.remove('view-grid');
+            contentBank.classList.add('view-list');
+            viewList.classList.add('active');
+            viewGrid.classList.remove('active');
+            setViewListPreference(true);
 
-    // Sort by file name alphabetical
-    const sortByName = contentBank.querySelector(selectors.actions.sortname);
-    sortByName.addEventListener('click', () => {
-        const ascending = updateSortButtons(contentBank, sortByName);
-        updateSortOrder(fileArea, shownItems, 'data-file', ascending);
-    });
+            return;
+        }
 
-    // Sort by date.
-    const sortByDate = contentBank.querySelector(selectors.actions.sortdate);
-    sortByDate.addEventListener('click', () => {
-        const ascending = updateSortButtons(contentBank, sortByDate);
-        updateSortOrder(fileArea, shownItems, 'data-timemodified', ascending);
-    });
+        // TODO: This should _not_ use `document`. Every query should be constrained to the content bank container.
+        const fileArea = document.querySelector(selectors.regions.filearea);
+        const shownItems = fileArea.querySelectorAll(selectors.elements.listitem);
 
-    // Sort by size.
-    const sortBySize = contentBank.querySelector(selectors.actions.sortsize);
-    sortBySize.addEventListener('click', () => {
-        const ascending = updateSortButtons(contentBank, sortBySize);
-        updateSortOrder(fileArea, shownItems, 'data-bytes', ascending);
-    });
+        if (fileArea && shownItems) {
 
-    // Sort by type
-    const sortByType = contentBank.querySelector(selectors.actions.sorttype);
-    sortByType.addEventListener('click', () => {
-        const ascending = updateSortButtons(contentBank, sortByType);
-        updateSortOrder(fileArea, shownItems, 'data-type', ascending);
+            // Sort by file name alphabetical
+            const sortByName = e.target.closest(selectors.actions.sortname);
+            if (sortByName) {
+                const ascending = updateSortButtons(contentBank, sortByName);
+                updateSortOrder(fileArea, shownItems, 'data-file', ascending);
+                return;
+            }
+
+            // Sort by date.
+            const sortByDate = e.target.closest(selectors.actions.sortdate);
+            if (sortByDate) {
+                const ascending = updateSortButtons(contentBank, sortByDate);
+                updateSortOrder(fileArea, shownItems, 'data-timemodified', ascending);
+                return;
+            }
+
+            // Sort by size.
+            const sortBySize = e.target.closest(selectors.actions.sortsize);
+            if (sortBySize) {
+                const ascending = updateSortButtons(contentBank, sortBySize);
+                updateSortOrder(fileArea, shownItems, 'data-bytes', ascending);
+                return;
+            }
+
+            // Sort by type.
+            const sortByType = e.target.closest(selectors.actions.sorttype);
+            if (sortByType) {
+                const ascending = updateSortButtons(contentBank, sortByType);
+                updateSortOrder(fileArea, shownItems, 'data-type', ascending);
+                return;
+            }
+
+            // Sort by author.
+            const sortByAuthor = e.target.closest(selectors.actions.sortauthor);
+            if (sortByAuthor) {
+                const ascending = updateSortButtons(contentBank, sortByAuthor);
+                updateSortOrder(fileArea, shownItems, 'data-author', ascending);
+            }
+            return;
+        }
     });
 };
 

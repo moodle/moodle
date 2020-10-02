@@ -4,7 +4,7 @@ $gray-100: #f8f9fa !default;
 $gray-200: #e9ecef !default;
 $gray-300: #dee2e6 !default;
 $gray-400: #ced4da !default;
-$gray-500: #adb5bd !default;
+$gray-500: #8f959e !default;
 $gray-600: #6c757d !default;
 $gray-700: #495057 !default;
 $gray-800: #343a40 !default;
@@ -20,7 +20,7 @@ $orange:  #f0ad4e !default;
 $yellow:  #ff7518 !default;
 $green:   #398439 !default;
 $teal:    #20c997 !default;
-$cyan:    #5bc0de !default;
+$cyan:    #008196 !default;
 
 $primary:       $blue !default;
 $success:       $green !default;
@@ -37,7 +37,7 @@ $enable-rounded: true !default;
 $enable-responsive-font-sizes: true !default;
 
 // Body
-$body-color:    $gray-800 !default;
+$body-color:    $gray-900 !default;
 
 // Fonts
 $font-size-base: 0.9375rem !default;
@@ -46,6 +46,7 @@ $headings-font-weight:   300 !default;
 
 // Navbar
 $navbar-dark-hover-color:           rgba($white, 1) !default;
+$navbar-light-color:                rgba($black, 0.6) !default;
 $navbar-light-hover-color:          rgba($black, .9) !default;
 
 // Breadcrumbs
@@ -64,6 +65,8 @@ $card-group-margin: .25rem;
 
 $input-btn-focus-color: rgba($primary, .75) !default;
 
+$input-border-color: $gray-500 !default;
+
 // stylelint-disable
 $theme-colors: () !default;
 $theme-colors: map-merge((
@@ -75,6 +78,17 @@ $theme-colors: map-merge((
     danger: $danger,
 ), $theme-colors);
 // stylelint-enable
+
+$spacer: 1rem !default;
+$spacers: (
+    0: 0,
+    1: ($spacer * .25),
+    2: ($spacer * .5),
+    3: $spacer,
+    4: ($spacer * 1.5),
+    5: ($spacer * 2),
+    6: ($spacer * 3)
+) !default;
 
 // Import FontAwesome.
 @import "fontawesome";
@@ -93,11 +107,6 @@ body {
 // Preset CSS
 .navbar {
     box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
-}
-
-.filemanager-container,
-.filepicker-filelist {
-    border: $border-width solid $border-color;
 }
 
 // Rounded user pictures

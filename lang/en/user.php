@@ -36,6 +36,7 @@ $string['filtersetmatchdescription'] = 'How multiple filters should be combined'
 $string['match'] = 'Match';
 $string['matchofthefollowing'] = 'of the following:';
 $string['moodlenetprofile'] = 'MoodleNet profile';
+$string['moodlenetprofile_help'] = 'This field is to link your MoodleNet profile to Moodle. It expects a WebFinger compliant URI';
 $string['placeholdertypeorselect'] = 'Type or select...';
 $string['placeholdertype'] = 'Type...';
 $string['privacy:courserequestpath'] = 'Requested courses';

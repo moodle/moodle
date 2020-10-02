@@ -105,6 +105,12 @@ function cli_get_params(array $longoptions, array $shortmapping=null) {
             if (count($parts) == 1) {
                 $key   = reset($parts);
                 $value = true;
+
+                if (substr($key, 0, 3) === 'no-') {
+                    // Support flipping the boolean value.
+                    $value = !$value;
+                    $key = substr($key, 3);
+                }
             } else {
                 $key = array_shift($parts);
                 $value = implode('=', $parts);

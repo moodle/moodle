@@ -60,7 +60,7 @@
         {{#modules}}
             {{#canmanage}}
              <div class="mb-1">
-                <div class="row mb-1 row-fluid">
+                <div class="row mb-1">
                     <div class="col-6">
                         <label class="accesshide" for="modtype_{{id}}">{{#str}}select, core_completion{{/str}} {{formattedname}}</label>
                         <input id="modtype_{{id}}" type="checkbox" class="mr-1" name="modids[]" value="{{id}}" aria-label="{{#str}}checkactivity, completion, {{{formattedname}}}{{/str}}">
@@ -68,7 +68,7 @@
                         <span>{{{formattedname}}}</span>
                     </div>
                     <div class="activity-completionstatus col-6">
-                        <div class="col-sm-1 p-l-0">
+                        <div class="col-sm-1 pl-0">
                             {{#completionstatus.icon}}
                                 {{{completionstatus.icon}}}
                             {{/completionstatus.icon}}
@@ -76,7 +76,7 @@
                                 <span class="mr-3"></span>
                             {{/completionstatus.icon}}
                         </div>
-                        <div class="col-sm-11 p-l-0">
+                        <div class="col-sm-11 pl-0">
                             <span class="text-muted muted">{{{completionstatus.string}}}</span>
                         </div>
                     </div>

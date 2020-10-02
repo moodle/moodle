@@ -28,6 +28,7 @@ use core_text;
 use stored_file;
 use stdClass;
 use coding_exception;
+use context;
 use moodle_url;
 use core\event\contentbank_content_updated;
 
@@ -86,6 +87,17 @@ abstract class content {
     }
 
     /**
+     * Return the contenttype instance of this content.
+     *
+     * @return contenttype The content type instance
+     */
+    public function get_content_type_instance(): contenttype {
+        $context = context::instance_by_id($this->content->contextid);
+        $contenttypeclass = "\\{$this->content->contenttype}\\contenttype";
+        return new $contenttypeclass($context);
+    }
+
+    /**
      * Returns $this->content->timemodified.
      *
      * @return int  $this->content->timemodified.
@@ -127,6 +139,7 @@ abstract class content {
      * @throws \coding_exception if not loaded.
      */
     public function set_name(string $name): bool {
+        $name = trim($name);
         if (empty($name)) {
             return false;
         }
@@ -235,6 +248,42 @@ abstract class content {
      */
     public function get_configdata() {
         return $this->content->configdata;
+    }
+
+    /**
+     * Import a file as a valid content.
+     *
+     * By default, all content has a public file area to interact with the content bank
+     * repository. This method should be overridden by contentypes which does not simply
+     * upload to the public file area.
+     *
+     * If any, the method will return the final stored_file. This way it can be invoked
+     * as parent::import_file in case any plugin want to store the file in the public area
+     * and also parse it.
+     *
+     * @throws file_exception If file operations fail
+     * @param stored_file $file File to store in the content file area.
+     * @return stored_file|null the stored content file or null if the file is discarted.
+     */
+    public function import_file(stored_file $file): ?stored_file {
+        $originalfile = $this->get_file();
+        if ($originalfile) {
+            $originalfile->replace_file_with($file);
+            return $originalfile;
+        } else {
+            $itemid = $this->get_id();
+            $fs = get_file_storage();
+            $filerecord = [
+                'contextid' => $this->get_contextid(),
+                'component' => 'contentbank',
+                'filearea' => 'public',
+                'itemid' => $this->get_id(),
+                'filepath' => '/',
+                'filename' => $file->get_filename(),
+                'timecreated' => time(),
+            ];
+            return $fs->create_file_from_storedfile($filerecord, $file);
+        }
     }
 
     /**

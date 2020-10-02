@@ -199,6 +199,8 @@ class insights_list implements \renderable, \templatable {
             $data->noinsights = $notification->export_for_template($output);
         }
 
+        $url = $PAGE->url;
+
         if ($this->othermodels) {
 
             $options = array();
@@ -207,14 +209,15 @@ class insights_list implements \renderable, \templatable {
             }
 
             // New moodle_url instance returned by magic_get_url.
-            $url = $PAGE->url;
             $url->remove_params('modelid');
             $modelselector = new \single_select($url, 'modelid', $options, '',
                 array('' => get_string('selectotherinsights', 'report_insights')));
             $data->modelselector = $modelselector->export_for_template($output);
         }
 
-        $data->pagingbar = $output->render(new \paging_bar($total, $this->page, $this->perpage, $PAGE->url));
+        // Add the 'perpage' parameter to the url which is later used to generate the pagination links.
+        $url->param('perpage', $this->perpage);
+        $data->pagingbar = $output->render(new \paging_bar($total, $this->page, $this->perpage, $url));
 
         return $data;
     }

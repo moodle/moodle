@@ -107,7 +107,8 @@ Feature: Backpack badges
     And I set the field "backpackweburl" to "http://backpackweburl.cat"
     And I press "Save changes"
     Then I should see "http://backpackweburl.cat"
-    And "Delete" "button" should exist
+    And "Delete" "icon" should exist in the "http://backpackweburl.cat" "table_row"
+    And "Edit settings" "icon" should exist in the "http://backpackweburl.cat" "table_row"
 
   @javascript
   Scenario: Remove a site backpack

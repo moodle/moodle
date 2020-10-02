@@ -21,6 +21,7 @@
  */
 
 import $ from 'jquery';
+import * as Aria from 'core/aria';
 import Popper from 'core/popper';
 
 /**
@@ -594,7 +595,7 @@ export default class Tour {
             });
         }
 
-        this.listeners.forEach(function (listener) {
+        this.listeners.forEach(function(listener) {
             listener.node.on.apply(listener.node, listener.args);
         });
 
@@ -1498,7 +1499,7 @@ export default class Tour {
             let hidden = child.attr(attrName);
             if (!hidden) {
                 child.attr(stateHolder, true);
-                child.attr(attrName, true);
+                Aria.hide(child);
             }
         };
 
@@ -1519,12 +1520,11 @@ export default class Tour {
      */
     accessibilityHide() {
         let stateHolder = 'data-has-hidden';
-        let attrName = 'aria-hidden';
         let showFunction = function(child) {
             let hidden = child.attr(stateHolder);
             if (typeof hidden !== 'undefined') {
                 child.removeAttr(stateHolder);
-                child.removeAttr(attrName);
+                Aria.unhide(child);
             }
         };
 

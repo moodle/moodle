@@ -51,6 +51,19 @@ class core_dml_testcase extends database_driver_testcase {
         return $table;
     }
 
+    /**
+     * Convert a unix string to a OS (dir separator) dependent string.
+     *
+     * @param string $source the original srting, using unix dir separators and newlines.
+     * @return string the resulting string, using current OS dir separators newlines.
+     */
+    private function unix_to_os_dirsep(string $source): string {
+        if (DIRECTORY_SEPARATOR !== '/') {
+            return str_replace('/', DIRECTORY_SEPARATOR, $source);
+        }
+        return $source; // No changes, so far.
+    }
+
     public function test_diagnose() {
         $DB = $this->tdb;
         $result = $DB->diagnose();
@@ -436,6 +449,55 @@ class core_dml_testcase extends database_driver_testcase {
         $inparams = array('abc', 'ABC', null, '1', 1, 1.4);
         list($sql, $params) = $DB->fix_sql_params($sql, $inparams);
         $this->assertSame(array_values($params), array_values($inparams));
+    }
+
+    /**
+     * Test the database debugging as SQL comment.
+     */
+    public function test_add_sql_debugging() {
+        global $CFG;
+        $DB = $this->tdb;
+
+        require_once($CFG->dirroot . '/lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php');
+        $fixture = new test_dml_sql_debugging_fixture($this);
+
+        $sql = "SELECT * FROM {users}";
+
+        $out = $fixture->four($sql);
+
+        $CFG->debugsqltrace = 0;
+        $this->assertEquals("SELECT * FROM {users}", $out);
+
+        $CFG->debugsqltrace = 1;
+        $out = $fixture->four($sql);
+        $expected = <<<EOD
+SELECT * FROM {users}
+-- line 65 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
+EOD;
+        $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
+
+        $CFG->debugsqltrace = 2;
+        $out = $fixture->four($sql);
+        $expected = <<<EOD
+SELECT * FROM {users}
+-- line 65 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
+-- line 74 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
+EOD;
+        $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
+
+        $CFG->debugsqltrace = 5;
+        $out = $fixture->four($sql);
+        $expected = <<<EOD
+SELECT * FROM {users}
+-- line 65 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
+-- line 74 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
+-- line 83 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->two()
+-- line 92 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->three()
+-- line 489 of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four()
+EOD;
+        $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
+
+        $CFG->debugsqltrace = 0;
     }
 
     public function test_strtok() {

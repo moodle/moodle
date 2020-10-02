@@ -1,7 +1,7 @@
 This files describes API changes in /grade/grading/form/* - Advanced grading methods
 information provided here is intended especially for developers.
 
-=== 4.0 ===
+=== 3.10 ===
 
 * Removed gradingform_provider.
 * Removed the following deprecated functions:

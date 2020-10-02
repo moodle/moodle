@@ -84,7 +84,7 @@ function quiz_add_instance($quiz) {
     $cmid = $quiz->coursemodule;
 
     // Process the options from the form.
-    $quiz->created = time();
+    $quiz->timecreated = time();
     $result = quiz_process_options($quiz);
     if ($result && is_string($result)) {
         return $result;
@@ -562,7 +562,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
                     echo get_string('hidden', 'grades');
                 }
             }
-            echo ' - '.userdate($attempt->timemodified).'<br />';
+            echo ' - '.userdate($attempt->timefinish).'<br />';
         }
     } else {
         print_string('noattempts', 'quiz');
@@ -1127,6 +1127,9 @@ function quiz_process_options($quiz) {
     }
     if (empty($quiz->completionpass)) {
         $quiz->completionattemptsexhausted = 0;
+    }
+    if (empty($quiz->completionminattemptsenabled)) {
+        $quiz->completionminattempts = 0;
     }
 }
 
@@ -1895,6 +1898,74 @@ function quiz_get_navigation_options() {
 }
 
 /**
+ * Internal function used in quiz_get_completion_state. Check passing grade (or no attempts left) requirement for completion.
+ *
+ * @param object $course
+ * @param object $cm
+ * @param int $userid
+ * @param object $quiz
+ * @return bool True if the passing grade (or no attempts left) requirement is disabled or met.
+ * @throws coding_exception
+ */
+function quiz_completion_check_passing_grade_or_all_attempts($course, $cm, $userid, $quiz) {
+    global $CFG;
+
+    if (!$quiz->completionpass) {
+        return true;
+    }
+
+    // Check for passing grade.
+    require_once($CFG->libdir . '/gradelib.php');
+    $item = grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod',
+        'itemmodule' => 'quiz', 'iteminstance' => $cm->instance, 'outcomeid' => null));
+    if ($item) {
+        $grades = grade_grade::fetch_users_grades($item, array($userid), false);
+        if (!empty($grades[$userid]) && $grades[$userid]->is_passed($item)) {
+            return true;
+        }
+    }
+
+    // If a passing grade is required and exhausting all available attempts is not accepted for completion,
+    // then this quiz is not complete.
+    if (!$quiz->completionattemptsexhausted) {
+        return false;
+    }
+
+    // Check if all attempts are used up.
+    $attempts = quiz_get_user_attempts($quiz->id, $userid, 'finished', true);
+    if (!$attempts) {
+        return false;
+    }
+    $lastfinishedattempt = end($attempts);
+    $context = context_module::instance($cm->id);
+    $quizobj = quiz::create($quiz->id, $userid);
+    $accessmanager = new quiz_access_manager($quizobj, time(),
+        has_capability('mod/quiz:ignoretimelimits', $context, $userid, false));
+
+    return $accessmanager->is_finished(count($attempts), $lastfinishedattempt);
+}
+
+/**
+ * Internal function used in quiz_get_completion_state. Check minimum attempts requirement for completion.
+ *
+ * @param int $userid
+ * @param object $quiz
+ * @return bool True if minimum attempts requirement is disabled or met.
+ * @throws coding_exception
+ */
+function quiz_completion_check_min_attempts($userid, $quiz) {
+    global $DB;
+
+    if (empty($quiz->completionminattempts)) {
+        return true;
+    }
+
+    // Check if the user has done enough attempts.
+    $attempts = quiz_get_user_attempts($quiz->id, $userid, 'finished', true);
+    return $quiz->completionminattempts <= count($attempts);
+}
+
+/**
  * Obtains the automatic completion state for this quiz on any conditions
  * in quiz settings, such as if all attempts are used or a certain grade is achieved.
  *
@@ -1907,41 +1978,21 @@ function quiz_get_navigation_options() {
  */
 function quiz_get_completion_state($course, $cm, $userid, $type) {
     global $DB;
-    global $CFG;
 
     $quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
-    if (!$quiz->completionattemptsexhausted && !$quiz->completionpass) {
+    if (!$quiz->completionattemptsexhausted && !$quiz->completionpass && !$quiz->completionminattempts) {
         return $type;
     }
 
-    // Check if the user has used up all attempts.
-    if ($quiz->completionattemptsexhausted) {
-        $attempts = quiz_get_user_attempts($quiz->id, $userid, 'finished', true);
-        if ($attempts) {
-            $lastfinishedattempt = end($attempts);
-            $context = context_module::instance($cm->id);
-            $quizobj = quiz::create($quiz->id, $userid);
-            $accessmanager = new quiz_access_manager($quizobj, time(),
-                    has_capability('mod/quiz:ignoretimelimits', $context, $userid, false));
-            if ($accessmanager->is_finished(count($attempts), $lastfinishedattempt)) {
-                return true;
-            }
-        }
+    if (!quiz_completion_check_passing_grade_or_all_attempts($course, $cm, $userid, $quiz)) {
+        return false;
     }
 
-    // Check for passing grade.
-    if ($quiz->completionpass) {
-        require_once($CFG->libdir . '/gradelib.php');
-        $item = grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod',
-                'itemmodule' => 'quiz', 'iteminstance' => $cm->instance, 'outcomeid' => null));
-        if ($item) {
-            $grades = grade_grade::fetch_users_grades($item, array($userid), false);
-            if (!empty($grades[$userid])) {
-                return $grades[$userid]->is_passed($item);
-            }
-        }
+    if (!quiz_completion_check_min_attempts($userid, $quiz)) {
+        return false;
     }
-    return false;
+
+    return true;
 }
 
 /**

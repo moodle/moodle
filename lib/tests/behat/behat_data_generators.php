@@ -75,7 +75,7 @@ class behat_data_generators extends behat_base {
     ];
 
     /**
-     * Creates the specified element.
+     * Creates the specified elements.
      *
      * See the class comment for an overview.
      *
@@ -90,6 +90,24 @@ class behat_data_generators extends behat_base {
         }
         list($component, $entity) = $this->parse_entity_type($entitytype);
         $this->get_instance_for_component($component)->generate_items($entity, $data);
+    }
+
+    /**
+     * Creates the specified element.
+     *
+     * See the class comment for an overview.
+     *
+     * @Given the following :entitytype exists:
+     *
+     * @param string    $entitytype The name of the type entity to add
+     * @param TableNode $data
+     */
+    public function the_following_entity_exists($entitytype, TableNode $data) {
+        if (isset($this->movedentitytypes[$entitytype])) {
+            $entitytype = $this->movedentitytypes[$entitytype];
+        }
+        list($component, $entity) = $this->parse_entity_type($entitytype);
+        $this->get_instance_for_component($component)->generate_items($entity, $data, true);
     }
 
     /**

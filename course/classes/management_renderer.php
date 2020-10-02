@@ -85,6 +85,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                     $categoryid = '';
                 }
                 $select = new single_select($this->page->url, 'categoryid', $categories, $categoryid, $nothing);
+                $select->attributes['aria-label'] = get_string('selectacategory');
                 $html .= $this->render($select);
             }
             $html .= html_writer::end_div();
@@ -264,8 +265,8 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::start_div('float-left ' . $checkboxclass);
         $html .= html_writer::start_div('custom-control custom-checkbox mr-1 ');
         $html .= html_writer::empty_tag('input', $bcatinput);
-        $html .= html_writer::tag('label', '', array(
-            'aria-label' => get_string('bulkactionselect', 'moodle', $text),
+        $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'sr-only');
+        $html .= html_writer::tag('label', $labeltext, array(
             'class' => 'custom-control-label',
             'for' => 'categorylistitem' . $category->id));
         $html .= html_writer::end_div();
@@ -540,7 +541,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::start_div('card-body');
         $html .= $this->course_listing_actions($category, $course, $perpage);
         $html .= $this->listing_pagination($category, $page, $perpage, false, $viewmode);
-        $html .= html_writer::start_tag('ul', array('class' => 'ml course-list', 'role' => 'group'));
+        $html .= html_writer::start_tag('ul', array('class' => 'ml course-list'));
         foreach ($category->get_courses($options) as $listitem) {
             $html .= $this->course_listitem($category, $listitem, $courseid);
         }
@@ -641,8 +642,8 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::start_div('float-left ' . $checkboxclass);
         $html .= html_writer::start_div('custom-control custom-checkbox mr-1 ');
         $html .= html_writer::empty_tag('input', $bulkcourseinput);
-        $html .= html_writer::tag('label', '', array(
-            'aria-label' => get_string('bulkactionselect', 'moodle', $text),
+        $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'sr-only');
+        $html .= html_writer::tag('label', $labeltext, array(
             'class' => 'custom-control-label',
             'for' => 'courselistitem' . $course->id));
         $html .= html_writer::end_div();
@@ -1215,8 +1216,8 @@ class core_course_management_renderer extends plugin_renderer_base {
         if ($bulkcourseinput) {
             $html .= html_writer::start_div('custom-control custom-checkbox mr-1');
             $html .= html_writer::empty_tag('input', $bulkcourseinput);
-            $html .= html_writer::tag('label', '', array(
-                'aria-label' => get_string('bulkactionselect', 'moodle', $text),
+            $labeltext = html_writer::span(get_string('bulkactionselect', 'moodle', $text), 'sr-only');
+            $html .= html_writer::tag('label', $labeltext, array(
                 'class' => 'custom-control-label',
                 'for' => 'coursesearchlistitem' . $course->id));
             $html .= html_writer::end_div();
@@ -1290,56 +1291,19 @@ class core_course_management_renderer extends plugin_renderer_base {
      * Renders html to display a course search form
      *
      * @param string $value default value to populate the search field
-     * @param string $format display format - 'plain' (default), 'short' or 'navbar'
      * @return string
      */
-    public function course_search_form($value = '', $format = 'plain') {
-        static $count = 0;
-        $formid = 'coursesearch';
-        if ((++$count) > 1) {
-            $formid .= $count;
-        }
+    public function course_search_form($value = '') {
 
-        switch ($format) {
-            case 'navbar' :
-                $formid = 'coursesearchnavbar';
-                $inputid = 'navsearchbox';
-                $inputsize = 20;
-                break;
-            case 'short' :
-                $inputid = 'shortsearchbox';
-                $inputsize = 12;
-                break;
-            default :
-                $inputid = 'coursesearchbox';
-                $inputsize = 30;
-        }
-
-        $strsearchcourses = get_string("searchcourses");
-        $searchurl = new moodle_url('/course/management.php');
-
-        $output = html_writer::start_div('row');
-        $output .= html_writer::start_div('col-md-12');
-        $output .= html_writer::start_tag('form', array('class' => 'card', 'id' => $formid,
-                'action' => $searchurl, 'method' => 'get'));
-        $output .= html_writer::start_tag('fieldset', array('class' => 'coursesearchbox invisiblefieldset'));
-        $output .= html_writer::tag('div', $this->output->heading($strsearchcourses.': ', 2, 'm-0'),
-                array('class' => 'card-header'));
-        $output .= html_writer::start_div('card-body');
-        $output .= html_writer::start_div('input-group col-sm-6 col-lg-4 m-auto');
-        $output .= html_writer::empty_tag('input', array('class' => 'form-control', 'type' => 'text', 'id' => $inputid,
-                'size' => $inputsize, 'name' => 'search', 'value' => s($value)));
-        $output .= html_writer::start_tag('span', array('class' => 'input-group-btn'));
-        $output .= html_writer::tag('button', get_string('go'), array('class' => 'btn btn-primary', 'type' => 'submit'));
-        $output .= html_writer::end_tag('span');
-        $output .= html_writer::end_div();
-        $output .= html_writer::end_div();
-        $output .= html_writer::end_tag('fieldset');
-        $output .= html_writer::end_tag('form');
-        $output .= html_writer::end_div();
-        $output .= html_writer::end_div();
-
-        return $output;
+        $data = [
+            'action' => new moodle_url('/course/management.php'),
+            'btnclass' => 'btn-primary',
+            'extraclasses' => 'my-3 d-flex justify-content-center',
+            'inputname' => 'search',
+            'searchstring' => get_string('searchcourses'),
+            'value' => $value
+        ];
+        return $this->render_from_template('core/search_input', $data);
     }
 
     /**

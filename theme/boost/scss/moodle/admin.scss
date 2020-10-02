@@ -17,17 +17,17 @@
 .environmenttable {
     .warn {
         background-color: $state-warning-bg;
-        color: $state-warning-text;
+        color: $warning;
     }
 
     .error {
         background-color: $state-danger-bg;
-        color: $state-danger-text;
+        color: $danger;
     }
 
     .ok {
         background-color: $state-success-bg;
-        color: $state-success-text;
+        color: $success;
     }
 }
 
@@ -105,7 +105,7 @@
     text-align: left;
     margin-left: auto;
     margin-right: auto;
-    margin-top: $spacer-y;
+    margin-top: $spacer;
 }
 
 #page-admin-roles-define .topfields {
@@ -113,7 +113,7 @@
 }
 
 #page-admin-roles-define .capdefault {
-    background-color: $table-bg-hover;
+    background-color: $table-hover-bg;
 }
 
 #page-filter-manage .backlink,
@@ -388,15 +388,15 @@
     }
     .admin_colourpicker .colourdialogue {
         float: left;
-        border: 1px solid $state-info-border;
+        border: 1px solid $input-border-color;
     }
     .admin_colourpicker .previewcolour {
-        border: 1px solid $state-info-border;
+        border: 1px solid $input-border-color;
         margin-left: 301px;
     }
 
     .admin_colourpicker .currentcolour {
-        border: 1px solid $state-info-border;
+        border: 1px solid $input-border-color;
         margin-left: 301px;
         border-top-width: 0;
     }
@@ -484,7 +484,7 @@
 
         .uninstall {
             a {
-                color: $state-danger-text;
+                color: $danger;
             }
         }
 
@@ -603,7 +603,7 @@
 
 #core-cache-rescan-definitions,
 #core-cache-mode-mappings .edit-link,
-#core-cache-lock-summary .new-instance {
+#core-cache-lock-additional-actions .new-instance {
     margin-top: 0.5em;
     text-align: center;
 }

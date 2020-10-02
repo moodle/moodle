@@ -45,7 +45,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_folder_upgrade($oldversion) {
-    global $CFG;
+    global $CFG, $DB;
+
+    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
     // Automatically generated Moodle v3.5.0 release upgrade line.
     // Put any upgrade step following this.
@@ -61,6 +63,20 @@ function xmldb_folder_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
+    if ($oldversion < 2021052501) {
+
+        // Define field forcedownload to be added to folder.
+        $table = new xmldb_table('folder');
+        $field = new xmldb_field('forcedownload', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'showdownloadfolder');
+
+        // Conditionally launch add field forcedownload.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Folder savepoint reached.
+        upgrade_mod_savepoint(true, 2021052501, 'folder');
+    }
 
     return true;
 }

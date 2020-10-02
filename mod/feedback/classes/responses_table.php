@@ -194,7 +194,11 @@ class mod_feedback_responses_table extends table_sql {
         if (preg_match('/^val(\d+)$/', $column, $matches)) {
             $items = $this->feedbackstructure->get_items();
             $itemobj = feedback_get_item_class($items[$matches[1]]->typ);
-            return trim($itemobj->get_printval($items[$matches[1]], (object) ['value' => $row->$column] ));
+            $printval = $itemobj->get_printval($items[$matches[1]], (object) ['value' => $row->$column]);
+            if ($this->is_downloading()) {
+                $printval = html_entity_decode($printval, ENT_QUOTES);
+            }
+            return trim($printval);
         }
         return $row->$column;
     }
@@ -310,7 +314,15 @@ class mod_feedback_responses_table extends table_sql {
 
             $tablecolumns[] = "val{$nr}";
             $itemobj = feedback_get_item_class($item->typ);
-            $tableheaders[] = $itemobj->get_display_name($item, $headernamepostfix);
+            $columnheader = $itemobj->get_display_name($item, $headernamepostfix);
+            if (!$this->is_downloading()) {
+                $columnheader = shorten_text($columnheader);
+            }
+            if (strval($item->label) !== '') {
+                $columnheader = get_string('nameandlabelformat', 'mod_feedback',
+                    (object)['label' => format_string($item->label), 'name' => $columnheader]);
+            }
+            $tableheaders[] = $columnheader;
         }
 
         // Add 'Delete entry' column.

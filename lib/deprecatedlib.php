@@ -49,7 +49,7 @@ function events_trigger() {
 /**
  * List all core subsystems and their location
  *
- * This is a whitelist of components that are part of the core and their
+ * This is a list of components that are part of the core and their
  * language strings are defined in /lang/en/<<subsystem>>.php. If a given
  * plugin is not listed here and it does not have proper plugintype prefix,
  * then it is considered as course activity module.
@@ -2761,7 +2761,7 @@ function message_get_contact() {
  *            in such a large SELECT
  *
  * @deprecated since Moodle 3.7
- * @todo The final deprecation of this function will take place in Moodle 41 - see MDL-65319.
+ * @todo The final deprecation of this function will take place in Moodle 3.11 - see MDL-65319.
  *
  * @param string|int $categoryid Either a category id or 'all' for everything
  * @param string $sort A field and direction to sort by
@@ -2823,7 +2823,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  * Returns the models that generated insights in the provided context.
  *
  * @deprecated since Moodle 3.8 MDL-66091 - please do not use this function any more.
- * @todo MDL-65799 This will be deleted in Moodle 4.2
+ * @todo MDL-65799 This will be deleted in Moodle 4.0
  * @see \core_analytics\manager::cached_models_with_insights
  * @param  \context $context
  * @return int[]
@@ -2944,7 +2944,7 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
  * with other processing (other than displaying the rest of the page) after using this function!
  *
  * @deprecated since Moodle 3.9 MDL-63580. Please use the \core\task\manager::run_from_cli($task).
- * @todo final deprecation. To be removed in Moodle 4.3 MDL-63594.
+ * @todo final deprecation. To be removed in Moodle 4.1 MDL-63594.
  * @param \core\task\scheduled_task $task Task to run
  * @return bool True if cron run successful
  */
@@ -2962,7 +2962,7 @@ function cron_run_single_task(\core\task\scheduled_task $task) {
  *   and 'Finished (whatever)' lines, otherwise does not display
  *
  * @deprecated since Moodle 3.9 MDL-52846. Please use new task API.
- * @todo MDL-61165 This will be deleted in Moodle 4.3.
+ * @todo MDL-61165 This will be deleted in Moodle 4.1.
  */
 function cron_execute_plugin_type($plugintype, $description = null) {
     global $DB;
@@ -3036,7 +3036,7 @@ function cron_execute_plugin_type($plugintype, $description = null) {
  *   looking in the older location
  *
  * @deprecated since Moodle 3.9 MDL-52846. Please use new task API.
- * @todo MDL-61165 This will be deleted in Moodle 4.3.
+ * @todo MDL-61165 This will be deleted in Moodle 4.1.
  */
 function cron_bc_hack_plugin_functions($plugintype, $plugins) {
     global $CFG; // Mandatory in case it is referenced by include()d PHP script.
@@ -3350,4 +3350,20 @@ function user_get_participants($courseid, $groupid = 0, $accesssince, $roleid, $
         $statusid, $search, $additionalwhere, $additionalparams);
 
     return $DB->get_recordset_sql("$select $from $where $sort", $params, $limitfrom, $limitnum);
+}
+
+/**
+ * Returns the list of full course categories to be used in html_writer::select()
+ *
+ * Calls {@see core_course_category::make_categories_list()} to build the list.
+ *
+ * @deprecated since Moodle 3.10
+ * @todo This will be finally removed for Moodle 4.2 as part of MDL-69124.
+ * @return array array mapping course category id to the display name
+ */
+function make_categories_options() {
+    $deprecatedtext = __FUNCTION__ . '() is deprecated. Please use \core_course_category::make_categories_list() instead.';
+    debugging($deprecatedtext, DEBUG_DEVELOPER);
+
+    return core_course_category::make_categories_list('', 0, ' / ');
 }

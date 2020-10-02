@@ -302,5 +302,13 @@ class restore_root_task extends restore_task {
         $contents->set_ui(new backup_setting_ui_checkbox($contents, get_string('rootsettingcontentbankcontent', 'backup')));
         $contents->get_ui()->set_changeable($changeable);
         $this->add_setting($contents);
+
+        // Include legacy files.
+        $defaultvalue = true;
+        $changeable = true;
+        $legacyfiles = new restore_generic_setting('legacyfiles', base_setting::IS_BOOLEAN, $defaultvalue);
+        $legacyfiles->set_ui(new backup_setting_ui_checkbox($legacyfiles, get_string('rootsettinglegacyfiles', 'backup')));
+        $legacyfiles->get_ui()->set_changeable($changeable);
+        $this->add_setting($legacyfiles);
     }
 }

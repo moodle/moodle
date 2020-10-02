@@ -68,6 +68,9 @@ define('COURSE_DB_QUERY_LIMIT', 1000);
 /** Searching for all courses that have no value for the specified custom field. */
 define('COURSE_CUSTOMFIELD_EMPTY', -1);
 
+// Course activity chooser footer default display option.
+define('COURSE_CHOOSER_FOOTER_NONE', 'hidden');
+
 function make_log_url($module, $url) {
     switch ($module) {
         case 'course':
@@ -634,23 +637,6 @@ function get_category_or_system_context($categoryid) {
     } else {
         return context_system::instance();
     }
-}
-
-/**
- * Returns full course categories trees to be used in html_writer::select()
- *
- * Calls {@link core_course_category::make_categories_list()} to build the tree and
- * adds whitespace to denote nesting
- *
- * @return array array mapping course category id to the display name
- */
-function make_categories_options() {
-    $cats = core_course_category::make_categories_list('', 0, ' / ');
-    foreach ($cats as $key => $value) {
-        // Prefix the value with the number of spaces equal to category depth (number of separators in the value).
-        $cats[$key] = str_repeat('&nbsp;', substr_count($value, ' / ')). $value;
-    }
-    return $cats;
 }
 
 /**
@@ -2117,7 +2103,7 @@ function move_courses($courseids, $categoryid) {
         $course->id = $dbcourse->id;
         $course->timemodified = time();
         $course->category  = $category->id;
-        $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
+        $course->sortorder = $category->sortorder + get_max_courses_in_category() - $i++;
         if ($category->visible == 0) {
             // Hide the course when moving into hidden category, do not update the visibleold flag - we want to get
             // to previous state if somebody unhides the category.

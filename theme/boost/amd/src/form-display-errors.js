@@ -69,7 +69,7 @@ define(['jquery', 'core/event'], function($, Event) {
             });
 
             var form = element.closest('form');
-            if (!('boostFormErrorsEnhanced' in form.dataset)) {
+            if (form && !('boostFormErrorsEnhanced' in form.dataset)) {
                 form.addEventListener('submit', function() {
                     var visibleError = $('.form-control-feedback:visible');
                     if (visibleError.length) {

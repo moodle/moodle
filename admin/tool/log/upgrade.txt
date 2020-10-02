@@ -11,5 +11,5 @@ information provided here is intended especially for developers.
 
 === 3.6 ===
 
-* The legacy log store is in its first stage of deprecation and is due for removal in Moodle 4.0. Please use one of
+* The legacy log store is in its first stage of deprecation and is due for removal in Moodle 3.10. Please use one of
   the other log stores such as "standard" and "database".

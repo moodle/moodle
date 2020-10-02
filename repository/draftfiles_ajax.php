@@ -200,19 +200,47 @@ switch ($action) {
     case 'unzip':
         $filename = required_param('filename', PARAM_FILE);
         $filepath = required_param('filepath', PARAM_PATH);
+        $areamaxbytes = required_param('areamaxbytes', PARAM_INT);
 
+        $return = new stdClass();
         $zipper = get_file_packer('application/zip');
-
         $fs = get_file_storage();
-
         $file = $fs->get_file($usercontext->id, 'user', 'draft', $draftid, $filepath, $filename);
+        // Get the total size of the content in the archive.
+        $filecontentsize = $file->get_total_content_size($zipper);
+
+        // Return an error if the returned size of the content is NULL.
+        // This means the utility class was unable to read the content of the archive.
+        if (is_null($filecontentsize)) {
+            $return->error = get_string('cannotunzipcontentunreadable', 'repository');
+            die(json_encode($return));
+        }
+
+        // Check whether the maximum size allowed in this draft area will be exceeded with unzipping the file.
+        // If the maximum size allowed is exceeded, return an error before attempting to unzip.
+        if (file_is_draft_area_limit_reached($draftid, $areamaxbytes, $filecontentsize)) {
+            $return->error = get_string('cannotunzipquotaexceeded', 'repository');
+            die(json_encode($return));
+        }
 
         // Find unused name for directory to extract the archive.
         $temppath = $fs->get_unused_dirname($usercontext->id, 'user', 'draft', $draftid, $filepath. pathinfo($filename, PATHINFO_FILENAME). '/');
         $donotremovedirs = array();
         $doremovedirs = array($temppath);
+
         // Extract archive and move all files from $temppath to $filepath
-        if ($file->extract_to_storage($zipper, $usercontext->id, 'user', 'draft', $draftid, $temppath, $USER->id) !== false) {
+        if (($processed = $file->extract_to_storage($zipper, $usercontext->id, 'user', 'draft', $draftid, $temppath, $USER->id))
+                !== false) {
+
+            // Find all failures within the processed files, and return an error if any are found.
+            $failed = array_filter($processed, static function($result): bool {
+                return $result !== true;
+            });
+            if (count($failed) > 0) {
+                $return->error = get_string('cannotunzipextractfileerror',  'repository');
+                die(json_encode($return));
+            }
+
             $extractedfiles = $fs->get_directory_files($usercontext->id, 'user', 'draft', $draftid, $temppath, true);
             $xtemppath = preg_quote($temppath, '|');
             foreach ($extractedfiles as $file) {
@@ -233,7 +261,6 @@ switch ($action) {
                     $donotremovedirs[] = $realpath;
                 }
             }
-            $return = new stdClass();
             $return->filepath = $filepath;
         } else {
             $return = false;

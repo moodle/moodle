@@ -21,27 +21,14 @@
 
     Example context (json):
     {
-        "actionurl": "https://domain.example/mod/forum/search.php",
-        "courseid": "2",
+        "action": "https://domain.example/mod/forum/search.php",
         "helpicon": "<a class='btn'><i class='icon fa fa-question-circle'></i></a>",
-        "query": "find this post"
+        "query": "find this post",
+        "inputname": "search"
     }
 }}
-<div class="forumsearch">
-    <form action="{{actionurl}}" class="form-inline">
-        <input type="hidden" name="id" value="{{courseid}}">
-        <div class="input-group">
-            <div class="input-group-prepend">
-            {{#helpicon}}
-                {{>core/help_icon}}
-            {{/helpicon}}
-            </div>
-            <label class="sr-only" for="search">{{#str}}search, forum{{/str}}</label>
-            <input id="search" name="search" type="text" class="form-control" value="{{query}}">
-            <div class="input-group-append">
-                <button class="btn btn-secondary" id="searchforums" type="submit">{{#str}}searchforums, mod_forum{{/str}}</button>
-            </div>
-        </div>
-
-    </form>
-</div>
+{{#helpicon}}
+    {{>core/help_icon}}
+{{/helpicon}}
+{{< core/search_input }}
+{{/ core/search_input }}

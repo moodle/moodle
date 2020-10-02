@@ -1,35 +1,64 @@
 /* calendar.less */
 
 // Calendar colour variables defined.
-$calendarEventCategoryColor: #d8bfd8 !default; // Pale purple.
+$calendarEventCategoryColor: #e0cbe0 !default; // Pale purple.
 $calendarEventCourseColor: #ffd3bd !default; // Pale red.
 $calendarEventGlobalColor: #d6f8cd !default; // Pale green.
 $calendarEventGroupColor: #fee7ae !default; // Pale yellow.
 $calendarEventUserColor: #dce7ec !default; // Pale blue.
 $calendarEventOtherColor: #ced4da !default; // Pale gray.
 
+// Border colours for the event colour indicators.
+$calendarEventCategoryBorder: 2px solid #9e619f !default; // Purple.
+$calendarEventCourseBorder: 2px solid #d34600 !default; // Red-orange.
+$calendarEventGlobalBorder: 2px solid #2b8713 !default; // Green.
+$calendarEventGroupBorder: 2px solid #9a6e02 !default; // Dark orange.
+$calendarEventUserBorder: 2px solid #4e7c91 !default; // Blue.
+$calendarEventOtherBorder: 2px solid #687889 !default; // Gray.
+
+// This will be the colour of mini-calendar links, hide/show filter icons, edit/delete icon buttons.
+$calendarEventColor: #0d5ca1 !default;
+
 // Calendar event background colours defined.
 .calendar_event_category {
     background-color: $calendarEventCategoryColor;
+    .commands a {
+        color: $calendarEventColor;
+    }
 }
 .calendar_event_course {
     background-color: $calendarEventCourseColor;
+    .commands a {
+        color: $calendarEventColor;
+    }
 }
 
 .calendar_event_site {
     background-color: $calendarEventGlobalColor;
+    .commands a {
+        color: $calendarEventColor;
+    }
 }
 
 .calendar_event_group {
     background-color: $calendarEventGroupColor;
+    .commands a {
+        color: $calendarEventColor;
+    }
 }
 
 .calendar_event_user {
     background-color: $calendarEventUserColor;
+    .commands a {
+        color: $calendarEventColor;
+    }
 }
 
 .calendar_event_other {
     background-color: $calendarEventOtherColor;
+    .commands a {
+        color: $calendarEventColor;
+    }
 }
 
 // Calendar restyling.
@@ -73,7 +102,7 @@ $calendarEventOtherColor: #ced4da !default; // Pale gray.
 
         .drop-target {
             box-sizing: border-box;
-            border: 1px dashed $brand-primary;
+            border: 1px dashed $primary;
         }
     }
 
@@ -139,25 +168,31 @@ $calendarEventOtherColor: #ced4da !default; // Pale gray.
 
                             &.calendar_event_category {
                                 background-color: $calendarEventCategoryColor;
+                                border: $calendarEventCategoryBorder;
                             }
                             &.calendar_event_course {
                                 background-color: $calendarEventCourseColor;
+                                border: $calendarEventCourseBorder;
                             }
 
                             &.calendar_event_site {
                                 background-color: $calendarEventGlobalColor;
+                                border: $calendarEventGlobalBorder;
                             }
 
                             &.calendar_event_group {
                                 background-color: $calendarEventGroupColor;
+                                border: $calendarEventGroupBorder;
                             }
 
                             &.calendar_event_user {
                                 background-color: $calendarEventUserColor;
+                                border: $calendarEventUserBorder;
                             }
 
                             &.calendar_event_other {
                                 background-color: $calendarEventOtherColor;
+                                border: $calendarEventOtherBorder;
                             }
                         }
                     }
@@ -289,6 +324,7 @@ $calendarEventOtherColor: #ced4da !default; // Pale gray.
                 width: 100%;
                 height: 100%;
                 display: block;
+                color: $calendarEventColor;
             }
 
             &.duration_global {
@@ -389,6 +425,36 @@ $calendarEventOtherColor: #ced4da !default; // Pale gray.
             margin-bottom: 0.2em;
 
             span {
+                &.calendar_event_category {
+                    i {
+                        color: $calendarEventColor;
+                    }
+                }
+                &.calendar_event_course {
+                    i {
+                        color: $calendarEventColor;
+                    }
+                }
+                &.calendar_event_site {
+                    i {
+                        color: $calendarEventColor;
+                    }
+                }
+                &.calendar_event_group {
+                    i {
+                        color: $calendarEventColor;
+                    }
+                }
+                &.calendar_event_user {
+                    i {
+                        color: $calendarEventColor;
+                    }
+                }
+                &.calendar_event_other {
+                    i {
+                        color: $calendarEventColor;
+                    }
+                }
                 img {
                     padding: 0 0.2em;
                     margin: 0;
@@ -455,5 +521,5 @@ table.calendartable caption {
 }
 
 .cal_courses_flt {
-    color: #868e96;
+    color: $gray-600;
 }

@@ -8,6 +8,13 @@
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
+    <location>behat/axe</location>
+    <name>axe-core</name>
+    <license>MPL</license>
+    <version>3.5.5</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+  <library>
     <location>bennu</location>
     <name>Bennu</name>
     <license>LGPL</license>
@@ -331,5 +338,23 @@
     <name>plist</name>
     <license>MIT</license>
     <version>2.0.1</version>
+  </library>
+  <library>
+    <location>zipstream</location>
+    <name>ZipStream-PHP</name>
+    <license>MIT</license>
+    <version>2.1.0</version>
+  </library>
+  <library>
+    <location>php-enum</location>
+    <name>php-enum</name>
+    <license>MIT</license>
+    <version>1.7.6</version>
+  </library>
+  <library>
+    <location>http-message</location>
+    <name>http-message</name>
+    <license>MIT</license>
+    <version>1.0.1</version>
   </library>
 </libraries>

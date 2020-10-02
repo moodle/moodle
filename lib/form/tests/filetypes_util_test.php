@@ -207,67 +207,67 @@ class filetypes_util_testcase extends advanced_testcase {
     /**
      * Test checking that a type is among others.
      */
-    public function test_is_whitelisted() {
+    public function test_is_listed() {
 
         $this->resetAfterTest(true);
         $util = new filetypes_util();
 
         // These should be intuitively true.
-        $this->assertTrue($util->is_whitelisted('txt', 'text/plain'));
-        $this->assertTrue($util->is_whitelisted('txt', 'doc txt rtf'));
-        $this->assertTrue($util->is_whitelisted('.txt', '.doc;.txt;.rtf'));
-        $this->assertTrue($util->is_whitelisted('audio', 'text/plain audio video'));
-        $this->assertTrue($util->is_whitelisted('text/plain', 'text/plain audio video'));
-        $this->assertTrue($util->is_whitelisted('jpg jpe jpeg', 'image/jpeg'));
-        $this->assertTrue($util->is_whitelisted(['jpg', 'jpe', '.png'], 'image'));
+        $this->assertTrue($util->is_listed('txt', 'text/plain'));
+        $this->assertTrue($util->is_listed('txt', 'doc txt rtf'));
+        $this->assertTrue($util->is_listed('.txt', '.doc;.txt;.rtf'));
+        $this->assertTrue($util->is_listed('audio', 'text/plain audio video'));
+        $this->assertTrue($util->is_listed('text/plain', 'text/plain audio video'));
+        $this->assertTrue($util->is_listed('jpg jpe jpeg', 'image/jpeg'));
+        $this->assertTrue($util->is_listed(['jpg', 'jpe', '.png'], 'image'));
 
         // These should be intuitively false.
-        $this->assertFalse($util->is_whitelisted('.gif', 'text/plain'));
+        $this->assertFalse($util->is_listed('.gif', 'text/plain'));
 
         // Not all text/plain formats are in the document group.
-        $this->assertFalse($util->is_whitelisted('text/plain', 'document'));
+        $this->assertFalse($util->is_listed('text/plain', 'document'));
 
         // Not all documents (and also the group itself) is not a plain text.
-        $this->assertFalse($util->is_whitelisted('document', 'text/plain'));
+        $this->assertFalse($util->is_listed('document', 'text/plain'));
 
         // This may look wrong at the first sight as you might expect that the
         // mimetype should simply map to an extension ...
-        $this->assertFalse($util->is_whitelisted('image/jpeg', '.jpg'));
+        $this->assertFalse($util->is_listed('image/jpeg', '.jpg'));
 
         // But it is principally same situation as this (there is no 1:1 mapping).
-        $this->assertFalse($util->is_whitelisted('.c', '.txt'));
-        $this->assertTrue($util->is_whitelisted('.txt .c', 'text/plain'));
-        $this->assertFalse($util->is_whitelisted('text/plain', '.c'));
+        $this->assertFalse($util->is_listed('.c', '.txt'));
+        $this->assertTrue($util->is_listed('.txt .c', 'text/plain'));
+        $this->assertFalse($util->is_listed('text/plain', '.c'));
 
         // Any type is included if the filter is empty.
-        $this->assertTrue($util->is_whitelisted('txt', ''));
-        $this->assertTrue($util->is_whitelisted('txt', '*'));
+        $this->assertTrue($util->is_listed('txt', ''));
+        $this->assertTrue($util->is_listed('txt', '*'));
 
-        // Empty value is part of any whitelist.
-        $this->assertTrue($util->is_whitelisted('', '.txt'));
+        // Empty value is part of any list.
+        $this->assertTrue($util->is_listed('', '.txt'));
     }
 
     /**
-     * Test getting types not present in a whitelist.
+     * Test getting types not present in a list.
      */
-    public function test_get_not_whitelisted() {
+    public function test_get_not_listed() {
 
         $this->resetAfterTest(true);
         $util = new filetypes_util();
 
-        $this->assertEmpty($util->get_not_whitelisted('txt', 'text/plain'));
-        $this->assertEmpty($util->get_not_whitelisted('txt', '.doc .txt .rtf'));
-        $this->assertEmpty($util->get_not_whitelisted('txt', 'text/plain'));
-        $this->assertEmpty($util->get_not_whitelisted(['jpg', 'jpe', 'jpeg'], 'image/jpeg'));
-        $this->assertEmpty($util->get_not_whitelisted('', 'foo/bar'));
-        $this->assertEmpty($util->get_not_whitelisted('.foobar', ''));
-        $this->assertEmpty($util->get_not_whitelisted('.foobar', '*'));
+        $this->assertEmpty($util->get_not_listed('txt', 'text/plain'));
+        $this->assertEmpty($util->get_not_listed('txt', '.doc .txt .rtf'));
+        $this->assertEmpty($util->get_not_listed('txt', 'text/plain'));
+        $this->assertEmpty($util->get_not_listed(['jpg', 'jpe', 'jpeg'], 'image/jpeg'));
+        $this->assertEmpty($util->get_not_listed('', 'foo/bar'));
+        $this->assertEmpty($util->get_not_listed('.foobar', ''));
+        $this->assertEmpty($util->get_not_listed('.foobar', '*'));
 
         // Returned list is normalized so extensions have the dot added.
-        $this->assertContains('.exe', $util->get_not_whitelisted('exe', '.c .h'));
+        $this->assertContains('.exe', $util->get_not_listed('exe', '.c .h'));
 
-        // If this looks wrong to you, see {@link test_is_whitelisted()} for more details on this behaviour.
-        $this->assertContains('image/jpeg', $util->get_not_whitelisted('image/jpeg', '.jpg .jpeg'));
+        // If this looks wrong to you, see {@see self::test_is_listed()} for more details on this behaviour.
+        $this->assertContains('image/jpeg', $util->get_not_listed('image/jpeg', '.jpg .jpeg'));
     }
 
     /**
@@ -302,10 +302,10 @@ class filetypes_util_testcase extends advanced_testcase {
         // All these three files are in both "image" and also "web_image"
         // groups. We display both groups.
         $data = $util->data_for_browser('jpg png gif', true, '.gif');
-        $this->assertEquals(2, count($data));
+        $this->assertEquals(3, count($data));
         $this->assertTrue($data[0]->key !== $data[1]->key);
         foreach ($data as $group) {
-            $this->assertTrue(($group->key === 'image' || $group->key === 'web_image'));
+            $this->assertTrue(($group->key === 'image' || $group->key === 'web_image' || $group->key === 'optimised_image'));
             $this->assertEquals(3, count($group->types));
             $this->assertFalse($group->selectable);
             foreach ($group->types as $ext) {
@@ -317,11 +317,11 @@ class filetypes_util_testcase extends advanced_testcase {
             }
         }
 
-        // There is a group web_image which is a subset of the group image. The
-        // file extensions that fall into both groups will be displayed twice.
+        // The groups web_image and optimised_image are a subset of the group image. The
+        // file extensions that fall into these groups will be displayed thrice.
         $data = $util->data_for_browser('web_image');
         foreach ($data as $group) {
-            $this->assertTrue(($group->key === 'image' || $group->key === 'web_image'));
+            $this->assertTrue(($group->key === 'image' || $group->key === 'web_image' || $group->key === 'optimised_image'));
         }
 
         // Check that "All file types" are displayed first.
@@ -361,44 +361,44 @@ class filetypes_util_testcase extends advanced_testcase {
      */
     public function is_allowed_file_type_provider() {
         return [
-            'Filetype not in extension whitelist' => [
+            'Filetype not in extension list' => [
                 'filename' => 'test.xml',
-                'whitelist' => '.png .jpg',
+                'list' => '.png .jpg',
                 'expected' => false
             ],
-            'Filetype not in mimetype whitelist' => [
+            'Filetype not in mimetype list' => [
                 'filename' => 'test.xml',
-                'whitelist' => 'image/png',
+                'list' => 'image/png',
                 'expected' => false
             ],
-            'Filetype not in group whitelist' => [
+            'Filetype not in group list' => [
                 'filename' => 'test.xml',
-                'whitelist' => 'web_file',
+                'list' => 'web_file',
                 'expected' => false
             ],
-            'Filetype in whitelist as extension' => [
+            'Filetype in list as extension' => [
                 'filename' => 'test.xml',
-                'whitelist' => 'xml',
+                'list' => 'xml',
                 'expected' => true
             ],
-            'Empty whitelist should allow all' => [
+            'Empty list should allow all' => [
                 'filename' => 'test.xml',
-                'whitelist' => '',
+                'list' => '',
                 'expected' => true
             ],
-            'Filetype in whitelist but later on' => [
+            'Filetype in list but later on' => [
                 'filename' => 'test.xml',
-                'whitelist' => 'gif;jpeg,image/png xml xlsx',
+                'list' => 'gif;jpeg,image/png xml xlsx',
                 'expected' => true
             ],
-            'Filetype in whitelist as mimetype' => [
+            'Filetype in list as mimetype' => [
                 'filename' => 'test.xml',
-                'whitelist' => 'image/png application/xml',
+                'list' => 'image/png application/xml',
                 'expected' => true
             ],
-            'Filetype in whitelist as group' => [
+            'Filetype in list as group' => [
                 'filename' => 'test.html',
-                'whitelist' => 'video,web_file',
+                'list' => 'video,web_file',
                 'expected' => true
             ],
         ];
@@ -408,12 +408,12 @@ class filetypes_util_testcase extends advanced_testcase {
      * Test is_allowed_file_type().
      * @dataProvider is_allowed_file_type_provider
      * @param string $filename The filename to check
-     * @param string $whitelist The space , or ; separated list of types supported
+     * @param string $list The space , or ; separated list of types supported
      * @param boolean $expected The expected result. True if the file is allowed, false if not.
      */
-    public function test_is_allowed_file_type($filename, $whitelist, $expected) {
+    public function test_is_allowed_file_type($filename, $list, $expected) {
         $util = new filetypes_util();
-        $this->assertSame($expected, $util->is_allowed_file_type($filename, $whitelist));
+        $this->assertSame($expected, $util->is_allowed_file_type($filename, $list));
     }
 
     /**
@@ -483,5 +483,27 @@ class filetypes_util_testcase extends advanced_testcase {
     public function test_get_unknown_file_types($filetypes, $expected) {
         $util = new filetypes_util();
         $this->assertSame($expected, $util->get_unknown_file_types($filetypes));
+    }
+
+    /**
+     * Test that a debugging noticed is displayed when calling is_whitelisted().
+     */
+    public function test_deprecation_is_whitelisted() {
+
+        $util = new filetypes_util();
+        $this->assertTrue($util->is_whitelisted('txt', 'text/plain'));
+        $this->assertDebuggingCalled('filetypes_util::is_whitelisted() is deprecated. ' .
+            'Please use filetypes_util::is_listed() instead.', DEBUG_DEVELOPER);
+    }
+
+    /**
+     * Test that a debugging noticed is displayed when calling get_not_whitelisted().
+     */
+    public function test_deprecation_get_not_whitelisted() {
+
+        $util = new filetypes_util();
+        $this->assertEmpty($util->get_not_whitelisted('txt', 'text/plain'));
+        $this->assertDebuggingCalled('filetypes_util::get_not_whitelisted() is deprecated. ' .
+            'Please use filetypes_util::get_not_listed() instead.', DEBUG_DEVELOPER);
     }
 }

@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 /** Numerical question type */
 define("LESSON_PAGE_NUMERICAL",     "8");
 
+use mod_lesson\local\numeric\helper;
+
 class lesson_page_type_numerical extends lesson_page {
 
     protected $type = lesson_page::TYPE_QUESTION;
@@ -48,8 +50,9 @@ class lesson_page_type_numerical extends lesson_page {
         return $this->typeidstring;
     }
     public function display($renderer, $attempt) {
-        global $USER, $CFG, $PAGE;
-        $mform = new lesson_display_answer_form_shortanswer($CFG->wwwroot.'/mod/lesson/continue.php', array('contents'=>$this->get_contents(), 'lessonid'=>$this->lesson->id));
+        global $USER, $PAGE;
+        $mform = new lesson_display_answer_form_numerical(new moodle_url('/mod/lesson/continue.php'),
+            array('contents' => $this->get_contents(), 'lessonid' => $this->lesson->id));
         $data = new stdClass;
         $data->id = $PAGE->cm->id;
         $data->pageid = $this->properties->id;
@@ -109,10 +112,10 @@ class lesson_page_type_numerical extends lesson_page {
     }
 
     public function check_answer() {
-        global $CFG;
         $result = parent::check_answer();
 
-        $mform = new lesson_display_answer_form_shortanswer($CFG->wwwroot.'/mod/lesson/continue.php', array('contents'=>$this->get_contents()));
+        $mform = new lesson_display_answer_form_numerical(new moodle_url('/mod/lesson/continue.php'),
+            array('contents' => $this->get_contents()));
         $data = $mform->get_data();
         require_sesskey();
 
@@ -124,12 +127,11 @@ class lesson_page_type_numerical extends lesson_page {
         $result->response = '';
         $result->newpageid = 0;
 
-        if (!isset($data->answer) || !is_numeric($data->answer)) {
+        if (!isset($data->answer)) {
             $result->noanswer = true;
             return $result;
         } else {
-            // Just doing default PARAM_RAW, not doing PARAM_INT because it could be a float.
-            $result->useranswer = (float)$data->answer;
+            $result->useranswer = $data->answer;
         }
         $result->studentanswer = $result->userresponse = $result->useranswer;
         $answers = $this->get_answers();
@@ -201,7 +203,8 @@ class lesson_page_type_numerical extends lesson_page {
             } else {
                 $cells[] = '<label class="correct">' . get_string('answer', 'lesson') . ' ' . $i . '</label>:';
             }
-            $cells[] = format_text($answer->answer, $answer->answerformat, $options);
+            $formattedanswer = helper::lesson_format_numeric_value($answer->answer);
+            $cells[] = format_text($formattedanswer, $answer->answerformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
@@ -258,7 +261,8 @@ class lesson_page_type_numerical extends lesson_page {
                     unset($stats["total"]);
                     foreach ($stats as $valentered => $ntimes) {
                         $data = '<input class="form-control" type="text" size="50" ' .
-                                'disabled="disabled" readonly="readonly" value="'.s($valentered).'" />';
+                                'disabled="disabled" readonly="readonly" value="'.
+                                s(format_float($valentered, strlen($valentered), true, true)).'" />';
                         $percent = $ntimes / $total * 100;
                         $percent = round($percent, 2);
                         $percent .= "% ".get_string("enteredthis", "lesson");
@@ -272,7 +276,8 @@ class lesson_page_type_numerical extends lesson_page {
                     empty($answerdata->answers)))) {
                 // Get in here when the user answered or for the last answer.
                 $data = '<input class="form-control" type="text" size="50" ' .
-                        'disabled="disabled" readonly="readonly" value="'.s($useranswer->useranswer).'">';
+                        'disabled="disabled" readonly="readonly" value="'.
+                        s(format_float($useranswer->useranswer, strlen($useranswer->useranswer), true, true)).'">';
                 if (isset($pagestats[$this->properties->id][$useranswer->useranswer])) {
                     $percent = $pagestats[$this->properties->id][$useranswer->useranswer] / $pagestats[$this->properties->id]["total"] * 100;
                     $percent = round($percent, 2);
@@ -321,6 +326,12 @@ class lesson_page_type_numerical extends lesson_page {
      */
     public function update_form_data(stdClass $data) : stdClass {
         $answercount = count($this->get_answers());
+
+        // If no answers provided, then we don't need to check anything.
+        if (!$answercount) {
+            return $data;
+        }
+
         // Check for other answer entry.
         $lastanswer = $data->{'answer_editor[' . ($answercount - 1) . ']'};
         if (strpos($lastanswer, LESSON_OTHER_ANSWERS) !== false) {
@@ -354,7 +365,10 @@ class lesson_add_page_form_numerical extends lesson_add_page_form_base {
         $answercount = $this->_customdata['lesson']->maxanswers;
         for ($i = 0; $i < $answercount; $i++) {
             $this->_form->addElement('header', 'answertitle'.$i, get_string('answer').' '.($i+1));
-            $this->add_answer($i, null, ($i < 1));
+            $this->add_answer($i, null, ($i < 1), '', [
+                    'identifier' => 'numericanswer',
+                    'component' => 'mod_lesson'
+            ]);
             $this->add_response($i);
             $this->add_jumpto($i, null, ($i == 0 ? LESSON_NEXTPAGE : LESSON_THISPAGE));
             $this->add_score($i, null, ($i===0)?1:0);
@@ -366,6 +380,64 @@ class lesson_add_page_form_numerical extends lesson_add_page_form_base {
         $this->add_response($newcount);
         $this->add_jumpto($newcount, get_string('allotheranswersjump', 'lesson'), LESSON_NEXTPAGE);
         $this->add_score($newcount, get_string('allotheranswersscore', 'lesson'), 0);
+    }
+
+    /**
+     * We call get data when storing the data into the db. Override to format the floats properly
+     *
+     * @return object|void
+     */
+    public function get_data() : ?stdClass {
+        $data = parent::get_data();
+
+        if (!empty($data->answer_editor)) {
+            foreach ($data->answer_editor as $key => $answer) {
+                $data->answer_editor[$key] = helper::lesson_unformat_numeric_value($answer);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Return submitted data if properly submitted or returns NULL if validation fails or
+     * if there is no submitted data with formatted numbers
+     *
+     * @return object submitted data; NULL if not valid or not submitted or cancelled
+     */
+    public function get_submitted_data() : ?stdClass {
+        $data = parent::get_submitted_data();
+
+        if (!empty($data->answer_editor)) {
+            foreach ($data->answer_editor as $key => $answer) {
+                $data->answer_editor[$key] = helper::lesson_unformat_numeric_value($answer);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Load in existing data as form defaults. Usually new entry defaults are stored directly in
+     * form definition (new entry form); this function is used to load in data where values
+     * already exist and data is being edited (edit entry form) after formatting numbers
+     *
+     *
+     * @param stdClass|array $defaults object or array of default values
+     */
+    public function set_data($defaults) {
+        if (is_object($defaults)) {
+            $defaults = (array) $defaults;
+        }
+
+        $editor = 'answer_editor';
+        foreach ($defaults as $key => $answer) {
+            if (substr($key, 0, strlen($editor)) == $editor) {
+                $defaults[$key] = helper::lesson_format_numeric_value($answer);
+            }
+        }
+
+        parent::set_data($defaults);
     }
 }
 
@@ -402,8 +474,7 @@ class lesson_display_answer_form_numerical extends moodleform {
         $mform->addElement('hidden', 'pageid');
         $mform->setType('pageid', PARAM_INT);
 
-        $mform->addElement('text', 'answer', get_string('youranswer', 'lesson'), $attrs);
-        $mform->setType('answer', PARAM_FLOAT);
+        $mform->addElement('float', 'answer', get_string('youranswer', 'lesson'), $attrs);
 
         if ($hasattempt) {
             $this->add_action_buttons(null, get_string("nextpage", "lesson"));
@@ -411,5 +482,4 @@ class lesson_display_answer_form_numerical extends moodleform {
             $this->add_action_buttons(null, get_string("submit", "lesson"));
         }
     }
-
 }

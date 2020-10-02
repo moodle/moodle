@@ -226,6 +226,8 @@ class mod_forum_external extends external_api {
 
         return [
             'posts' => $postbuilder->build($USER, [$forum], [$discussion], $posts),
+            'forumid' => $discussion->get_forum_id(),
+            'courseid' => $discussion->get_course_id(),
             'ratinginfo' => \core_rating\external\util::get_rating_info(
                 $legacydatamapper->get_forum_data_mapper()->to_legacy_object($forum),
                 $forum->get_context(),
@@ -258,6 +260,8 @@ class mod_forum_external extends external_api {
     public static function get_discussion_posts_returns() {
         return new external_single_structure([
             'posts' => new external_multiple_structure(\mod_forum\local\exporters\post::get_read_structure()),
+            'forumid' => new external_value(PARAM_INT, 'The forum id'),
+            'courseid' => new external_value(PARAM_INT, 'The forum course id'),
             'ratinginfo' => \core_rating\external\util::external_ratings_structure(),
             'warnings' => new external_warnings()
         ]);
@@ -289,7 +293,7 @@ class mod_forum_external extends external_api {
      *
      * @return array the forum post details
      * @since Moodle 2.7
-     * @todo MDL-65252 This will be removed in Moodle 4.1
+     * @todo MDL-65252 This will be removed in Moodle 3.11
      */
     public static function get_forum_discussion_posts($discussionid, $sortby = "created", $sortdirection = "DESC") {
         global $CFG, $DB, $USER, $PAGE;
@@ -463,7 +467,7 @@ class mod_forum_external extends external_api {
                                 'created' => new external_value(PARAM_INT, 'Creation time'),
                                 'modified' => new external_value(PARAM_INT, 'Time modified'),
                                 'mailed' => new external_value(PARAM_INT, 'Mailed?'),
-                                'subject' => new external_value(PARAM_TEXT, 'The post subject'),
+                                'subject' => new external_value(PARAM_RAW, 'The post subject'),
                                 'message' => new external_value(PARAM_RAW, 'The post message'),
                                 'messageformat' => new external_format_value('message'),
                                 'messagetrust' => new external_value(PARAM_INT, 'Can we trust?'),
@@ -712,7 +716,7 @@ class mod_forum_external extends external_api {
                         new external_single_structure(
                             array(
                                 'id' => new external_value(PARAM_INT, 'Post id'),
-                                'name' => new external_value(PARAM_TEXT, 'Discussion name'),
+                                'name' => new external_value(PARAM_RAW, 'Discussion name'),
                                 'groupid' => new external_value(PARAM_INT, 'Group id'),
                                 'timemodified' => new external_value(PARAM_INT, 'Time modified'),
                                 'usermodified' => new external_value(PARAM_INT, 'The id of the user who last modified'),
@@ -724,7 +728,7 @@ class mod_forum_external extends external_api {
                                 'created' => new external_value(PARAM_INT, 'Creation time'),
                                 'modified' => new external_value(PARAM_INT, 'Time modified'),
                                 'mailed' => new external_value(PARAM_INT, 'Mailed?'),
-                                'subject' => new external_value(PARAM_TEXT, 'The post subject'),
+                                'subject' => new external_value(PARAM_RAW, 'The post subject'),
                                 'message' => new external_value(PARAM_RAW, 'The post message'),
                                 'messageformat' => new external_format_value('message'),
                                 'messagetrust' => new external_value(PARAM_INT, 'Can we trust?'),
@@ -998,7 +1002,7 @@ class mod_forum_external extends external_api {
                     new external_single_structure(
                         array(
                             'id' => new external_value(PARAM_INT, 'Post id'),
-                            'name' => new external_value(PARAM_TEXT, 'Discussion name'),
+                            'name' => new external_value(PARAM_RAW, 'Discussion name'),
                             'groupid' => new external_value(PARAM_INT, 'Group id'),
                             'timemodified' => new external_value(PARAM_INT, 'Time modified'),
                             'usermodified' => new external_value(PARAM_INT, 'The id of the user who last modified'),
@@ -1010,7 +1014,7 @@ class mod_forum_external extends external_api {
                             'created' => new external_value(PARAM_INT, 'Creation time'),
                             'modified' => new external_value(PARAM_INT, 'Time modified'),
                             'mailed' => new external_value(PARAM_INT, 'Mailed?'),
-                            'subject' => new external_value(PARAM_TEXT, 'The post subject'),
+                            'subject' => new external_value(PARAM_RAW, 'The post subject'),
                             'message' => new external_value(PARAM_RAW, 'The post message'),
                             'messageformat' => new external_format_value('message'),
                             'messagetrust' => new external_value(PARAM_INT, 'Can we trust?'),

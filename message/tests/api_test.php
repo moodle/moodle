@@ -54,7 +54,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         \core_message\api::mark_all_notifications_as_read($recipient->id);
         \core_message\api::mark_all_messages_as_read($recipient->id);
+
         $this->assertEquals(message_count_unread_messages($recipient), 0);
+        $this->assertDebuggingCalled();
     }
 
     public function test_mark_all_read_for_user_touser_with_fromuser() {
@@ -80,6 +82,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         \core_message\api::mark_all_messages_as_read($recipient->id, $conversationid);
 
         $this->assertEquals(message_count_unread_messages($recipient), 3);
+        $this->assertDebuggingCalled();
     }
 
     public function test_mark_all_read_for_user_touser_with_type() {
@@ -95,9 +98,11 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         \core_message\api::mark_all_notifications_as_read($recipient->id);
         $this->assertEquals(message_count_unread_messages($recipient), 3);
+        $this->assertDebuggingCalled();
 
         \core_message\api::mark_all_messages_as_read($recipient->id);
         $this->assertEquals(message_count_unread_messages($recipient), 0);
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -120,190 +125,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         $this->assertEquals(0, \core_message\api::count_blocked_users($user1));
         $this->assertEquals(1, \core_message\api::count_blocked_users());
-    }
-
-    /**
-     * Tests searching users in a course.
-     */
-    public function test_search_users_in_course() {
-        // Create some users.
-        $user1 = new stdClass();
-        $user1->firstname = 'User';
-        $user1->lastname = 'One';
-        $user1 = self::getDataGenerator()->create_user($user1);
-
-        // The person doing the search.
-        $this->setUser($user1);
-
-        // Second user is going to have their last access set to now, so they are online.
-        $user2 = new stdClass();
-        $user2->firstname = 'User';
-        $user2->lastname = 'Two';
-        $user2->lastaccess = time();
-        $user2 = self::getDataGenerator()->create_user($user2);
-
-        // Block the second user.
-        \core_message\api::block_user($user1->id, $user2->id);
-
-        $user3 = new stdClass();
-        $user3->firstname = 'User';
-        $user3->lastname = 'Three';
-        $user3 = self::getDataGenerator()->create_user($user3);
-
-        // Create a course.
-        $course1 = new stdClass();
-        $course1->fullname = 'Course';
-        $course1->shortname = 'One';
-        $course1 = $this->getDataGenerator()->create_course($course1);
-
-        // Enrol the searcher and one user in the course.
-        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
-        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
-
-        // Perform a search.
-        $results = \core_message\api::search_users_in_course($user1->id, $course1->id, 'User');
-
-        $this->assertEquals(1, count($results));
-
-        $user = $results[0];
-        $this->assertEquals($user2->id, $user->userid);
-        $this->assertEquals(fullname($user2), $user->fullname);
-        $this->assertFalse($user->ismessaging);
-        $this->assertNull($user->lastmessage);
-        $this->assertNull($user->messageid);
-        $this->assertNull($user->isonline);
-        $this->assertFalse($user->isread);
-        $this->assertTrue($user->isblocked);
-        $this->assertNull($user->unreadcount);
-    }
-
-    /**
-     * Tests searching users.
-     */
-    public function test_search_users() {
-        global $DB;
-
-        // Create some users.
-        $user1 = new stdClass();
-        $user1->firstname = 'User';
-        $user1->lastname = 'One';
-        $user1 = self::getDataGenerator()->create_user($user1);
-
-        // Set as the user performing the search.
-        $this->setUser($user1);
-
-        $user2 = new stdClass();
-        $user2->firstname = 'User search';
-        $user2->lastname = 'Two';
-        $user2 = self::getDataGenerator()->create_user($user2);
-
-        $user3 = new stdClass();
-        $user3->firstname = 'User search';
-        $user3->lastname = 'Three';
-        $user3 = self::getDataGenerator()->create_user($user3);
-
-        $user4 = new stdClass();
-        $user4->firstname = 'User';
-        $user4->lastname = 'Four';
-        $user4 = self::getDataGenerator()->create_user($user4);
-
-        $user5 = new stdClass();
-        $user5->firstname = 'User search';
-        $user5->lastname = 'Five';
-        $user5 = self::getDataGenerator()->create_user($user5);
-
-        $user6 = new stdClass();
-        $user6->firstname = 'User';
-        $user6->lastname = 'Six';
-        $user6 = self::getDataGenerator()->create_user($user6);
-
-        // Create some courses.
-        $course1 = new stdClass();
-        $course1->fullname = 'Course search';
-        $course1->shortname = 'One';
-        $course1 = $this->getDataGenerator()->create_course($course1);
-
-        $course2 = new stdClass();
-        $course2->fullname = 'Course';
-        $course2->shortname = 'Two';
-        $course2 = $this->getDataGenerator()->create_course($course2);
-
-        $course3 = new stdClass();
-        $course3->fullname = 'Course';
-        $course3->shortname = 'Three search';
-        $course3 = $this->getDataGenerator()->create_course($course3);
-
-        $course4 = new stdClass();
-        $course4->fullname = 'Course Four';
-        $course4->shortname = 'CF100';
-        $course4 = $this->getDataGenerator()->create_course($course4);
-
-        $course5 = new stdClass();
-        $course5->fullname = 'Course';
-        $course5->shortname = 'Five search';
-        $course5 = $this->getDataGenerator()->create_course($course5);
-
-        $role = $DB->get_record('role', ['shortname' => 'student']);
-        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, $role->id);
-        $this->getDataGenerator()->enrol_user($user1->id, $course2->id, $role->id);
-        $this->getDataGenerator()->enrol_user($user1->id, $course3->id, $role->id);
-        $this->getDataGenerator()->enrol_user($user1->id, $course5->id, $role->id);
-
-        // Add some users as contacts.
-        \core_message\api::add_contact($user1->id, $user2->id);
-        \core_message\api::add_contact($user1->id, $user3->id);
-        \core_message\api::add_contact($user1->id, $user4->id);
-
-        // Remove the viewparticipants capability from one of the courses.
-        $course5context = context_course::instance($course5->id);
-        assign_capability('moodle/course:viewparticipants', CAP_PROHIBIT, $role->id, $course5context->id);
-
-        // Perform a search $CFG->messagingallusers setting enabled.
-        set_config('messagingallusers', 1);
-        list($contacts, $courses, $noncontacts) = \core_message\api::search_users($user1->id, 'search');
-
-        // Check that we retrieved the correct contacts.
-        $this->assertEquals(2, count($contacts));
-        $this->assertEquals($user3->id, $contacts[0]->userid);
-        $this->assertEquals($user2->id, $contacts[1]->userid);
-
-        // Check that we retrieved the correct courses.
-        $this->assertEquals(2, count($courses));
-        $this->assertEquals($course3->id, $courses[0]->id);
-        $this->assertEquals($course1->id, $courses[1]->id);
-
-        // Check that we retrieved the correct non-contacts.
-        $this->assertEquals(1, count($noncontacts));
-        $this->assertEquals($user5->id, $noncontacts[0]->userid);
-    }
-
-    /**
-     * Tests searching users with empty result.
-     */
-    public function test_search_users_with_empty_result() {
-
-        // Create some users.
-        $user1 = new stdClass();
-        $user1->firstname = 'User';
-        $user1->lastname = 'One';
-        $user1 = self::getDataGenerator()->create_user($user1);
-
-        // Set as the user performing the search.
-        $this->setUser($user1);
-
-        $user2 = new stdClass();
-        $user2->firstname = 'User';
-        $user2->lastname = 'Two';
-        $user2 = self::getDataGenerator()->create_user($user2);
-
-        // Perform a search $CFG->messagingallusers setting enabled.
-        set_config('messagingallusers', 1);
-        list($contacts, $courses, $noncontacts) = \core_message\api::search_users($user1->id, 'search');
-
-        // Check results are empty.
-        $this->assertEquals(0, count($contacts));
-        $this->assertEquals(0, count($courses));
-        $this->assertEquals(0, count($noncontacts));
     }
 
     /**
@@ -2351,83 +2172,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Tests retrieving contacts.
-     */
-    public function test_get_contacts() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-
-        // Set as the user.
-        $this->setUser($user1);
-
-        $user2 = new stdClass();
-        $user2->firstname = 'User';
-        $user2->lastname = 'A';
-        $user2 = self::getDataGenerator()->create_user($user2);
-
-        $user3 = new stdClass();
-        $user3->firstname = 'User';
-        $user3->lastname = 'B';
-        $user3 = self::getDataGenerator()->create_user($user3);
-
-        $user4 = new stdClass();
-        $user4->firstname = 'User';
-        $user4->lastname = 'C';
-        $user4 = self::getDataGenerator()->create_user($user4);
-
-        $user5 = new stdClass();
-        $user5->firstname = 'User';
-        $user5->lastname = 'D';
-        $user5 = self::getDataGenerator()->create_user($user5);
-
-        // Add some users as contacts.
-        \core_message\api::add_contact($user1->id, $user2->id);
-        \core_message\api::add_contact($user1->id, $user3->id);
-        \core_message\api::add_contact($user1->id, $user4->id);
-
-        // Retrieve the contacts.
-        $contacts = \core_message\api::get_contacts($user1->id);
-
-        // Confirm the data is correct.
-        $this->assertEquals(3, count($contacts));
-        usort($contacts, ['static', 'sort_contacts']);
-
-        $contact1 = $contacts[0];
-        $contact2 = $contacts[1];
-        $contact3 = $contacts[2];
-
-        $this->assertEquals($user2->id, $contact1->userid);
-        $this->assertEmpty($contact1->useridfrom);
-        $this->assertFalse($contact1->ismessaging);
-        $this->assertNull($contact1->lastmessage);
-        $this->assertNull($contact1->messageid);
-        $this->assertNull($contact1->isonline);
-        $this->assertFalse($contact1->isread);
-        $this->assertFalse($contact1->isblocked);
-        $this->assertNull($contact1->unreadcount);
-
-        $this->assertEquals($user3->id, $contact2->userid);
-        $this->assertEmpty($contact2->useridfrom);
-        $this->assertFalse($contact2->ismessaging);
-        $this->assertNull($contact2->lastmessage);
-        $this->assertNull($contact2->messageid);
-        $this->assertNull($contact2->isonline);
-        $this->assertFalse($contact2->isread);
-        $this->assertFalse($contact2->isblocked);
-        $this->assertNull($contact2->unreadcount);
-
-        $this->assertEquals($user4->id, $contact3->userid);
-        $this->assertEmpty($contact3->useridfrom);
-        $this->assertFalse($contact3->ismessaging);
-        $this->assertNull($contact3->lastmessage);
-        $this->assertNull($contact3->messageid);
-        $this->assertNull($contact3->isonline);
-        $this->assertFalse($contact3->isread);
-        $this->assertFalse($contact3->isblocked);
-        $this->assertNull($contact3->unreadcount);
-    }
-
-    /**
      * Tests retrieving user contacts.
      */
     public function test_get_user_contacts() {
@@ -2485,56 +2229,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($user4->id, $contact3->id);
         $this->assertEquals(fullname($user4), $contact3->fullname);
         $this->assertTrue($contact3->iscontact);
-    }
-
-    /**
-     * Tests retrieving messages.
-     */
-    public function test_get_messages() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // The person doing the search.
-        $this->setUser($user1);
-
-        // Send some messages back and forth.
-        $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
-
-        // Retrieve the messages.
-        $messages = \core_message\api::get_messages($user1->id, $user2->id);
-
-        // Confirm the message data is correct.
-        $this->assertEquals(4, count($messages));
-
-        $message1 = $messages[0];
-        $message2 = $messages[1];
-        $message3 = $messages[2];
-        $message4 = $messages[3];
-
-        $this->assertEquals($user1->id, $message1->useridfrom);
-        $this->assertEquals($user2->id, $message1->useridto);
-        $this->assertTrue($message1->displayblocktime);
-        $this->assertContains('Yo!', $message1->text);
-
-        $this->assertEquals($user2->id, $message2->useridfrom);
-        $this->assertEquals($user1->id, $message2->useridto);
-        $this->assertFalse($message2->displayblocktime);
-        $this->assertContains('Sup mang?', $message2->text);
-
-        $this->assertEquals($user1->id, $message3->useridfrom);
-        $this->assertEquals($user2->id, $message3->useridto);
-        $this->assertFalse($message3->displayblocktime);
-        $this->assertContains('Writing PHPUnit tests!', $message3->text);
-
-        $this->assertEquals($user2->id, $message4->useridfrom);
-        $this->assertEquals($user1->id, $message4->useridto);
-        $this->assertFalse($message4->displayblocktime);
-        $this->assertContains('Word.', $message4->text);
     }
 
     /**
@@ -3010,33 +2704,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Tests retrieving most recent message.
-     */
-    public function test_get_most_recent_message() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // The person doing the search.
-        $this->setUser($user1);
-
-        // Send some messages back and forth.
-        $time = 1;
-        $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
-
-        // Retrieve the most recent messages.
-        $message = \core_message\api::get_most_recent_message($user1->id, $user2->id);
-
-        // Check the results are correct.
-        $this->assertEquals($user2->id, $message->useridfrom);
-        $this->assertEquals($user1->id, $message->useridto);
-        $this->assertContains('Word.', $message->text);
-    }
-
-    /**
      * Tests retrieving most recent conversation message.
      */
     public function test_get_most_recent_conversation_message() {
@@ -3067,62 +2734,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Check the results are correct.
         $this->assertEquals($user2->id, $message->useridfrom);
         $this->assertContains('Word.', $message->text);
-    }
-
-    /**
-     * Tests retrieving a user's profile.
-     */
-    public function test_get_profile() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-
-        $user2 = new stdClass();
-        $user2->country = 'AU';
-        $user2->city = 'Perth';
-        $user2 = self::getDataGenerator()->create_user($user2);
-
-        // The person doing the search.
-        $this->setUser($user1);
-
-        // Get the profile.
-        $profile = \core_message\api::get_profile($user1->id, $user2->id);
-
-        $this->assertEquals($user2->id, $profile->userid);
-        $this->assertEmpty($profile->email);
-        $this->assertEmpty($profile->country);
-        $this->assertEmpty($profile->city);
-        $this->assertEquals(fullname($user2), $profile->fullname);
-        $this->assertNull($profile->isonline);
-        $this->assertFalse($profile->isblocked);
-        $this->assertFalse($profile->iscontact);
-    }
-
-    /**
-     * Tests retrieving a user's profile.
-     */
-    public function test_get_profile_as_admin() {
-        // The person doing the search.
-        $this->setAdminUser();
-
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-
-        $user2 = new stdClass();
-        $user2->country = 'AU';
-        $user2->city = 'Perth';
-        $user2 = self::getDataGenerator()->create_user($user2);
-
-        // Get the profile.
-        $profile = \core_message\api::get_profile($user1->id, $user2->id);
-
-        $this->assertEquals($user2->id, $profile->userid);
-        $this->assertEquals($user2->email, $profile->email);
-        $this->assertEquals($user2->country, $profile->country);
-        $this->assertEquals($user2->city, $profile->city);
-        $this->assertEquals(fullname($user2), $profile->fullname);
-        $this->assertFalse($profile->isonline);
-        $this->assertFalse($profile->isblocked);
-        $this->assertFalse($profile->iscontact);
     }
 
     /**
@@ -3193,57 +2804,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // They can't delete someone elses.
         $this->assertFalse(\core_message\api::can_delete_conversation($user2->id, $conversationid));
-    }
-
-    /**
-     * Tests deleting a conversation.
-     */
-    public function test_delete_conversation() {
-        global $DB;
-
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // The person doing the search.
-        $this->setUser($user1);
-
-        // Send some messages back and forth.
-        $time = 1;
-        $m1id = $this->send_fake_message($user1, $user2, 'Yo!', 0, $time + 1);
-        $m2id = $this->send_fake_message($user2, $user1, 'Sup mang?', 0, $time + 2);
-        $m3id = $this->send_fake_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 3);
-        $m4id = $this->send_fake_message($user2, $user1, 'Word.', 0, $time + 4);
-
-        // Delete the conversation as user 1.
-        \core_message\api::delete_conversation($user1->id, $user2->id);
-        $this->assertDebuggingCalled();
-
-        $muas = $DB->get_records('message_user_actions', array(), 'timecreated ASC');
-        $this->assertCount(4, $muas);
-        // Sort by id.
-        ksort($muas);
-
-        $mua1 = array_shift($muas);
-        $mua2 = array_shift($muas);
-        $mua3 = array_shift($muas);
-        $mua4 = array_shift($muas);
-
-        $this->assertEquals($user1->id, $mua1->userid);
-        $this->assertEquals($m1id, $mua1->messageid);
-        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua1->action);
-
-        $this->assertEquals($user1->id, $mua2->userid);
-        $this->assertEquals($m2id, $mua2->messageid);
-        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua2->action);
-
-        $this->assertEquals($user1->id, $mua3->userid);
-        $this->assertEquals($m3id, $mua3->messageid);
-        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua3->action);
-
-        $this->assertEquals($user1->id, $mua4->userid);
-        $this->assertEquals($m4id, $mua4->messageid);
-        $this->assertEquals(\core_message\api::MESSAGE_ACTION_DELETED, $mua4->action);
     }
 
     /**
@@ -4157,99 +3717,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         );
     }
 
-    /**
-     * Tests that when blocking messages from non-contacts is enabled that
-     * non-contacts trying to send a message return false.
-     */
-    public function test_is_user_non_contact_blocked() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // Set as the first user.
-        $this->setUser($user1);
-
-        // By default, user only can be messaged by contacts and members of any of his/her courses.
-        $this->assertTrue(\core_message\api::is_user_non_contact_blocked($user2));
-        $this->assertDebuggingCalled();
-
-        // Enable all users privacy messaging and check now the default user's preference has been set to allow receiving
-        // messages from everybody.
-        set_config('messagingallusers', true);
-        // Check that the return result is now false because any site user can contact him/her.
-        $this->assertFalse(\core_message\api::is_user_non_contact_blocked($user2));
-        $this->assertDebuggingCalled();
-
-        // Set the second user's preference to not receive messages from non-contacts.
-        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_ONLYCONTACTS, $user2->id);
-        // Check that the return result is still true (because is even more restricted).
-        $this->assertTrue(\core_message\api::is_user_non_contact_blocked($user2));
-        $this->assertDebuggingCalled();
-
-        // Add the first user as a contact for the second user.
-        \core_message\api::add_contact($user2->id, $user1->id);
-
-        // Check that the return result is now false.
-        $this->assertFalse(\core_message\api::is_user_non_contact_blocked($user2));
-        $this->assertDebuggingCalled();
-
-        // Set the second user's preference to receive messages from course members.
-        set_user_preference('message_blocknoncontacts', \core_message\api::MESSAGE_PRIVACY_COURSEMEMBER, $user2->id);
-        // Check that the return result is still false (because $user1 is still his/her contact).
-        $this->assertFalse(\core_message\api::is_user_non_contact_blocked($user2));
-        $this->assertDebuggingCalled();
-    }
-
-    /**
-     * Tests that we return true when a user is blocked, or false
-     * if they are not blocked.
-     */
-    public function test_is_user_blocked() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // Set the user.
-        $this->setUser($user1);
-
-        // User shouldn't be blocked.
-        $this->assertFalse(\core_message\api::is_user_blocked($user1->id, $user2->id));
-        $this->assertDebuggingCalled();
-
-        // Block the user.
-        \core_message\api::block_user($user1->id, $user2->id);
-
-        // User should be blocked.
-        $this->assertTrue(\core_message\api::is_user_blocked($user1->id, $user2->id));
-        $this->assertDebuggingCalled();
-
-        // Unblock the user.
-        \core_message\api::unblock_user($user1->id, $user2->id);
-        $this->assertFalse(\core_message\api::is_user_blocked($user1->id, $user2->id));
-        $this->assertDebuggingCalled();
-    }
-
-    /**
-     * Tests that the admin is not blocked even if someone has chosen to block them.
-     */
-    public function test_is_user_blocked_as_admin() {
-        // Create a user.
-        $user1 = self::getDataGenerator()->create_user();
-
-        // Set the user.
-        $this->setUser($user1);
-
-        // Block the admin user.
-        \core_message\api::block_user($user1->id, 2);
-
-        // Now change to the admin user.
-        $this->setAdminUser();
-
-        // As the admin you should still be able to send messages to the user.
-        $this->assertFalse(\core_message\api::is_user_blocked($user1->id));
-        $this->assertDebuggingCalled();
-    }
-
     /*
      * Tes get_message_processor api.
      */
@@ -4340,131 +3807,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Test retrieving messages by providing a minimum timecreated value.
-     */
-    public function test_get_messages_time_from_only() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // The person doing the search.
-        $this->setUser($user1);
-
-        // Send some messages back and forth.
-        $time = 1;
-        $this->send_fake_message($user1, $user2, 'Message 1', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Message 2', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Message 3', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Message 4', 0, $time + 4);
-
-        // Retrieve the messages from $time, which should be all of them.
-        $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', $time);
-
-        // Confirm the message data is correct.
-        $this->assertEquals(4, count($messages));
-
-        $message1 = $messages[0];
-        $message2 = $messages[1];
-        $message3 = $messages[2];
-        $message4 = $messages[3];
-
-        $this->assertContains('Message 1', $message1->text);
-        $this->assertContains('Message 2', $message2->text);
-        $this->assertContains('Message 3', $message3->text);
-        $this->assertContains('Message 4', $message4->text);
-
-        // Retrieve the messages from $time + 3, which should only be the 2 last messages.
-        $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', $time + 3);
-
-        // Confirm the message data is correct.
-        $this->assertEquals(2, count($messages));
-
-        $message1 = $messages[0];
-        $message2 = $messages[1];
-
-        $this->assertContains('Message 3', $message1->text);
-        $this->assertContains('Message 4', $message2->text);
-    }
-
-    /**
-     * Test retrieving messages by providing a maximum timecreated value.
-     */
-    public function test_get_messages_time_to_only() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // The person doing the search.
-        $this->setUser($user1);
-
-        // Send some messages back and forth.
-        $time = 1;
-        $this->send_fake_message($user1, $user2, 'Message 1', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Message 2', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Message 3', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Message 4', 0, $time + 4);
-
-        // Retrieve the messages up until $time + 4, which should be all of them.
-        $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', 0, $time + 4);
-
-        // Confirm the message data is correct.
-        $this->assertEquals(4, count($messages));
-
-        $message1 = $messages[0];
-        $message2 = $messages[1];
-        $message3 = $messages[2];
-        $message4 = $messages[3];
-
-        $this->assertContains('Message 1', $message1->text);
-        $this->assertContains('Message 2', $message2->text);
-        $this->assertContains('Message 3', $message3->text);
-        $this->assertContains('Message 4', $message4->text);
-
-        // Retrieve the messages up until $time + 2, which should be the first two.
-        $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', 0, $time + 2);
-
-        // Confirm the message data is correct.
-        $this->assertEquals(2, count($messages));
-
-        $message1 = $messages[0];
-        $message2 = $messages[1];
-
-        $this->assertContains('Message 1', $message1->text);
-        $this->assertContains('Message 2', $message2->text);
-    }
-
-    /**
-     * Test retrieving messages by providing a minimum and maximum timecreated value.
-     */
-    public function test_get_messages_time_from_and_to() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // The person doing the search.
-        $this->setUser($user1);
-
-        // Send some messages back and forth.
-        $time = 1;
-        $this->send_fake_message($user1, $user2, 'Message 1', 0, $time + 1);
-        $this->send_fake_message($user2, $user1, 'Message 2', 0, $time + 2);
-        $this->send_fake_message($user1, $user2, 'Message 3', 0, $time + 3);
-        $this->send_fake_message($user2, $user1, 'Message 4', 0, $time + 4);
-
-        // Retrieve the messages from $time + 2 up until $time + 3, which should be 2nd and 3rd message.
-        $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', $time + 2, $time + 3);
-
-        // Confirm the message data is correct.
-        $this->assertEquals(2, count($messages));
-
-        $message1 = $messages[0];
-        $message2 = $messages[1];
-
-        $this->assertContains('Message 2', $message1->text);
-        $this->assertContains('Message 3', $message2->text);
-    }
-
-    /**
      * Test returning blocked users.
      */
     public function test_get_blocked_users() {
@@ -4493,6 +3835,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
     /**
      * Test returning contacts with unread message count.
+     * MDL-69643
      */
     public function test_get_contacts_with_unread_message_count() {
         global $DB;
@@ -4522,6 +3865,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Get the contacts and the unread message count.
         $messages = \core_message\api::get_contacts_with_unread_message_count($user2->id);
+        $this->assertDebuggingCalled();
 
         // Confirm the size is correct.
         $this->assertCount(2, $messages);
@@ -4543,6 +3887,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Get the contacts and the unread message count.
         $messages = \core_message\api::get_contacts_with_unread_message_count($user2->id);
+        $this->assertDebuggingCalled();
 
         // Confirm the size is correct.
         $this->assertCount(2, $messages);
@@ -4566,6 +3911,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Get the contacts and the unread message count.
         $messages = \core_message\api::get_contacts_with_unread_message_count($user1->id);
+        $this->assertDebuggingCalled();
 
         // Confirm the size is correct.
         $this->assertCount(1, $messages);
@@ -4578,6 +3924,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         \core_message\api::mark_message_as_read($user1->id, $m);
 
         $messages = \core_message\api::get_contacts_with_unread_message_count($user1->id);
+        $this->assertDebuggingCalled();
 
         // Confirm the size is correct.
         $this->assertCount(1, $messages);
@@ -4600,6 +3947,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Check we get the correct message count.
         $messages = \core_message\api::get_contacts_with_unread_message_count($user2->id);
+        $this->assertDebuggingCalled();
 
         // Confirm the size is correct.
         $this->assertCount(1, $messages);
@@ -4612,6 +3960,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
     /**
      * Test returning non-contacts with unread message count.
+     * MDL-69643
      */
     public function test_get_non_contacts_with_unread_message_count() {
         global $DB;
@@ -4639,8 +3988,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // Send a message that should never be included as the user is a contact.
         $this->send_fake_message($user4, $user2);
 
+
         // Get the non-contacts and the unread message count.
         $messages = \core_message\api::get_non_contacts_with_unread_message_count($user2->id);
+        $this->assertDebuggingCalled();
 
         // Check we get the correct message count.
         ksort($messages);
@@ -4660,6 +4011,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Get the non-contacts and the unread message count.
         $messages = \core_message\api::get_non_contacts_with_unread_message_count($user2->id);
+        $this->assertDebuggingCalled();
 
         // Check the marked message is not returned in the message count.
         ksort($messages);
@@ -4681,6 +4033,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Get the non-contacts and the unread message count.
         $messages = \core_message\api::get_non_contacts_with_unread_message_count($user1->id);
+        $this->assertDebuggingCalled();
 
         // Confirm the size is correct.
         $this->assertCount(1, $messages);
@@ -4694,6 +4047,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // Get the non-contacts and the unread message count.
         $messages = \core_message\api::get_non_contacts_with_unread_message_count($user1->id);
+        $this->assertDebuggingCalled();
 
         // Check the marked message is not returned in the message count.
         $this->assertCount(1, $messages);
@@ -4779,20 +4133,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $user2 = self::getDataGenerator()->create_user();
 
         $this->assertFalse(\core_message\api::get_conversation_between_users([$user1->id, $user2->id]));
-    }
-
-    /**
-     * Test we can return a conversation that exists between users.
-     */
-    public function test_get_conversation_between_users_with_existing_conversation() {
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        $conversationid = \core_message\api::create_conversation_between_users([$user1->id, $user2->id]);
-        $this->assertDebuggingCalled();
-
-        $this->assertEquals($conversationid,
-            \core_message\api::get_conversation_between_users([$user1->id, $user2->id]));
     }
 
     /**

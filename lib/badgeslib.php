@@ -1232,7 +1232,7 @@ function badges_verify_backpack(int $backpackid) {
 
             $message = get_string('sitebackpackwarning', 'badges', ['url' => $backpackurl, 'warning' => $warning]);
             $icon = $OUTPUT->pix_icon('i/warning', get_string('warning', 'moodle'));
-            return $OUTPUT->container($icon . $message, 'text-error');
+            return $OUTPUT->container($icon . $message, 'text-danger');
         }
     }
 

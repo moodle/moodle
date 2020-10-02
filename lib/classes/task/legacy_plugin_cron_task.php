@@ -28,7 +28,7 @@ namespace core\task;
  * Note - this is only for plugins using the legacy cron method,
  * plugins can also now just add their own scheduled tasks which is the preferred method.
  * @deprecated since Moodle 3.9 MDL-52846. Please use new task API.
- * @todo MDL-61165 This will be deleted in Moodle 4.3
+ * @todo MDL-61165 This will be deleted in Moodle 4.1
  */
 class legacy_plugin_cron_task extends scheduled_task {
 

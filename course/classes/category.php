@@ -2372,7 +2372,8 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         $context->update_moved($newparent);
 
         // Now make it last in new category.
-        $DB->set_field('course_categories', 'sortorder', MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES, ['id' => $this->id]);
+        $DB->set_field('course_categories', 'sortorder',
+            get_max_courses_in_category() * MAX_COURSE_CATEGORIES, ['id' => $this->id]);
 
         if ($hidecat) {
             fix_course_sortorder();
@@ -2644,8 +2645,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * are omitted from the tree. This is useful when you are doing something like
      * moving categories, where you do not want to allow people to move a category
      * to be the child of itself.
-     *
-     * See also {@link make_categories_options()}
      *
      * @param string/array $requiredcapability if given, only categories where the current
      *      user has this capability will be returned. Can also be an array of capabilities,

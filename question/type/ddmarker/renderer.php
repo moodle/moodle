@@ -58,7 +58,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         $output .= html_writer::start_div('ddarea');
         $output .= html_writer::start_div($dropareaclass);
         $output .= html_writer::img(self::get_url_for_image($qa, 'bgimage'), get_string('dropbackground', 'qtype_ddmarker'),
-                ['class' => 'dropbackground img-responsive img-fluid']);
+                ['class' => 'dropbackground img-fluid w-100']);
 
         $output .= html_writer::div('', 'dropzones');
         $output .= html_writer::div('', 'markertexts');

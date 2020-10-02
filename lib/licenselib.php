@@ -96,7 +96,7 @@ class license_manager {
      * Adding a new license type
      *
      * @deprecated Since Moodle 3.9, MDL-45184.
-     * @todo MDL-67344 This will be deleted in Moodle 4.3.
+     * @todo MDL-67344 This will be deleted in Moodle 4.1.
      * @see license_manager::save()
      *
      * @param object $license the license record to add.
@@ -227,19 +227,22 @@ class license_manager {
         $cache = \cache::make('core', 'license');
         $licenses = $cache->get('licenses');
 
-        if (empty($licenses)) {
+        if ($licenses === false) {
             $licenses = [];
             $records = $DB->get_records_select('license', null, null, 'sortorder ASC');
             foreach ($records as $license) {
-                // Interpret core license strings for internationalisation.
-                if ($license->custom == self::CORE_LICENSE) {
-                    $license->fullname = get_string($license->shortname, 'license');
-                } else {
-                    $license->fullname = format_string($license->fullname);
-                }
                 $licenses[$license->shortname] = $license;
             }
             $cache->set('licenses', $licenses);
+        }
+
+        foreach ($licenses as $license) {
+            // Localise the license names.
+            if ($license->custom == self::CORE_LICENSE) {
+                $license->fullname = get_string($license->shortname, 'core_license');
+            } else {
+                $license->fullname = format_string($license->fullname);
+            }
         }
 
         return $licenses;
