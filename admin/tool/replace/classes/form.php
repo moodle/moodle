@@ -46,6 +46,13 @@ class tool_replace_form extends moodleform {
         $mform->addElement('text', 'replace', get_string('replacewith', 'tool_replace'), 'size="50"', PARAM_RAW);
         $mform->addElement('static', 'replacest', '', get_string('replacewithhelp', 'tool_replace'));
         $mform->setType('replace', PARAM_RAW);
+
+        $mform->addElement('textarea', 'additionalskiptables', get_string("additionalskiptables", "tool_replace"),
+            array('rows' => 5, 'cols' => 50));
+        $mform->addElement('static', 'additionalskiptables_desc', '', get_string('additionalskiptables_desc', 'tool_replace'));
+        $mform->setType('additionalskiptables', PARAM_RAW);
+        $mform->setDefault('additionalskiptables', '');
+
         $mform->addElement('checkbox', 'shorten', get_string('shortenoversized', 'tool_replace'));
         $mform->addRule('replace', get_string('required'), 'required', null, 'client');
 

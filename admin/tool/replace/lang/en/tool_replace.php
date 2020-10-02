@@ -22,7 +22,8 @@
  * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+$string['additionalskiptables'] = 'Additional skip tables';
+$string['additionalskiptables_desc'] = 'Please specify the additional tables (comma separated list) you want to skip while running DB search and replace.';
 $string['cannotfit'] = 'The replacement is longer than the original and shortening is not allowed; cannot continue.';
 $string['disclaimer'] = 'I understand the risks of this operation';
 $string['doit'] = 'Yes, do it!';

@@ -9069,11 +9069,16 @@ function any_new_admin_settings($node) {
  * @param string $column name
  * @return bool success or fail
  */
-function db_should_replace($table, $column = ''): bool {
+function db_should_replace($table, $column = '', $additionalskiptables = ''): bool {
 
     // TODO: this is horrible hack, we should do whitelisting and each plugin should be responsible for proper replacing...
     $skiptables = ['config', 'config_plugins', 'filter_config', 'sessions',
         'events_queue', 'repository_instance_config', 'block_instances', 'files'];
+
+    // Additional skip tables.
+    if (!empty($additionalskiptables)) {
+        $skiptables = array_merge($skiptables, explode(',', str_replace(' ', '',  $additionalskiptables)));
+    }
 
     // Don't process these.
     if (in_array($table, $skiptables)) {
@@ -9103,7 +9108,7 @@ function db_should_replace($table, $column = ''): bool {
  * @param string $replace string to replace
  * @return bool success or fail
  */
-function db_replace($search, $replace) {
+function db_replace($search, $replace, $additionalskiptables = '') {
     global $DB, $CFG, $OUTPUT;
 
     // Turn off time limits, sometimes upgrades can be slow.
@@ -9114,7 +9119,7 @@ function db_replace($search, $replace) {
     }
     foreach ($tables as $table) {
 
-        if (!db_should_replace($table)) {
+        if (!db_should_replace($table, '', $additionalskiptables)) {
             continue;
         }
 
