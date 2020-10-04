@@ -15,4 +15,19 @@
             <value>pepa@example.com</value>
         </row>
     </table>
+    <table name="course">
+        <column>id</column>
+        <column>shortname</column>
+        <column>fullname</column>
+        <row>
+            <value>6</value>
+            <value>101</value>
+            <value>1-0-1</value>
+        </row>
+        <row>
+            <value>8</value>
+            <value>202</value>
+            <value>2-0-2</value>
+        </row>
+    </table>
 </dataset>

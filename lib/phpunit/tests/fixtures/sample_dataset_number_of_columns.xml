@@ -4,15 +4,16 @@
         <column>id</column>
         <column>username</column>
         <column>email</column>
+        <column>toomany</column>
         <row>
             <value>5</value>
-            <value>bozka.novakova</value>
-            <value>bozka@example.com</value>
+            <value>pepa.novak</value>
+            <value>pepa@example.com</value>
         </row>
         <row>
             <value>7</value>
-            <value>pepa.novak</value>
-            <value>pepa@example.com</value>
+            <value>bozka.novakova</value>
+            <value>bozka@example.com</value>
         </row>
     </table>
 </dataset>

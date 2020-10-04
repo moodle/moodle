@@ -26,6 +26,7 @@
 // NOTE: MOODLE_INTERNAL is not verified here because we load this before setup.php!
 
 require_once(__DIR__.'/classes/util.php');
+require_once(__DIR__.'/classes/phpunit_dataset.php');
 require_once(__DIR__.'/classes/event_mock.php');
 require_once(__DIR__.'/classes/event_sink.php');
 require_once(__DIR__.'/classes/message_sink.php');
