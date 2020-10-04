@@ -153,6 +153,7 @@ abstract class advanced_testcase extends base_testcase {
      * @return PHPUnit\DbUnit\DataSet\FlatXmlDataSet
      */
     protected function createFlatXMLDataSet($xmlFile) {
+        // TODO: MDL-67673 - removed
         return new PHPUnit\DbUnit\DataSet\FlatXmlDataSet($xmlFile);
     }
 
@@ -163,24 +164,22 @@ abstract class advanced_testcase extends base_testcase {
      * @return PHPUnit\DbUnit\DataSet\XmlDataSet
      */
     protected function createXMLDataSet($xmlFile) {
-        return new PHPUnit\DbUnit\DataSet\XmlDataSet($xmlFile);
+        // TODO: MDL-67673 - deprecate this (debugging...)
+        return $this->dataset_from_files([$xmlFile]);
     }
 
     /**
      * Creates a new CsvDataSet from the given array of csv files. (absolute paths.)
      *
      * @param array $files array tablename=>cvsfile
-     * @param string $delimiter
-     * @param string $enclosure
-     * @param string $escape
-     * @return PHPUnit\DbUnit\DataSet\CsvDataSet
+     * @param string $delimiter unused
+     * @param string $enclosure unused
+     * @param string $escape unused
+     * @return phpunit_dataset
      */
     protected function createCsvDataSet($files, $delimiter = ',', $enclosure = '"', $escape = '"') {
-        $dataSet = new PHPUnit\DbUnit\DataSet\CsvDataSet($delimiter, $enclosure, $escape);
-        foreach($files as $table=>$file) {
-            $dataSet->addTable($table, $file);
-        }
-        return $dataSet;
+        // TODO: MDL-67673 - deprecate this (debugging...)
+        return $this->dataset_from_files($files);
     }
 
     /**
@@ -190,7 +189,8 @@ abstract class advanced_testcase extends base_testcase {
      * @return phpunit_ArrayDataSet
      */
     protected function createArrayDataSet(array $data) {
-        return new phpunit_ArrayDataSet($data);
+        // TODO: MDL-67673 - deprecate this (debugging...)
+        return $this->dataset_from_array($data);
     }
 
     /**
@@ -198,36 +198,59 @@ abstract class advanced_testcase extends base_testcase {
      *
      * Note: it is usually better to use data generators
      *
-     * @param PHPUnit\DbUnit\DataSet\IDataSet $dataset
+     * @param phpunit_dataset $dataset
      * @return void
      */
-    protected function loadDataSet(PHPUnit\DbUnit\DataSet\IDataSet $dataset) {
-        global $DB;
+    protected function loadDataSet(phpunit_dataset $dataset) {
+        // TODO: MDL-67673 - deprecate this (debugging...)
+        $dataset->to_database();
+    }
 
-        $structure = phpunit_util::get_tablestructure();
+    /**
+     * Creates a new dataset from CVS/XML files.
+     *
+     * This method accepts an array of full paths to CSV or XML files to be loaded
+     * into the dataset. For CSV files, the name of the table which the file belongs
+     * to needs to be specified. Example:
+     *
+     *   $fullpaths = [
+     *       '/path/to/users.xml',
+     *       'course' => '/path/to/courses.csv',
+     *   ];
+     *
+     * @param array $files full paths to CSV or XML files to load.
+     * @return phpunit_dataset
+     */
+    protected function dataset_from_files(array $files) {
+        // We ignore $delimiter, $enclosure and $escape, use the default ones in your fixtures.
+        $dataset = new phpunit_dataset();
+        $dataset->from_files($files);
+        return $dataset;
+    }
 
-        foreach($dataset->getTableNames() as $tablename) {
-            $table = $dataset->getTable($tablename);
-            $metadata = $dataset->getTableMetaData($tablename);
-            $columns = $metadata->getColumns();
+    /**
+     * Creates a new dataset from string (CSV or XML).
+     *
+     * @param string $content contents (CSV or XML) to load.
+     * @param string $type format of the content to be loaded (csv or xml).
+     * @param string $table name of the table which the file belongs to (only for CSV files).
+     */
+    protected function dataset_from_string(string $content, string $type, ?string $table = null) {
+        $dataset = new phpunit_dataset();
+        $dataset->from_string($content, $type, $table);
+        return $dataset;
+    }
 
-            $doimport = false;
-            if (isset($structure[$tablename]['id']) and $structure[$tablename]['id']->auto_increment) {
-                $doimport = in_array('id', $columns);
-            }
-
-            for($r=0; $r<$table->getRowCount(); $r++) {
-                $record = $table->getRow($r);
-                if ($doimport) {
-                    $DB->import_record($tablename, $record);
-                } else {
-                    $DB->insert_record($tablename, $record);
-                }
-            }
-            if ($doimport) {
-                $DB->get_manager()->reset_sequence(new xmldb_table($tablename));
-            }
-        }
+    /**
+     * Creates a new dataset from PHP array.
+     *
+     * @param array $data array of tables, see {@see phpunit_dataset::from_array()} for supported formats.
+     * @return phpunit_dataset
+     */
+    protected function dataset_from_array(array $data) {
+        $dataset = new phpunit_dataset();
+        $dataset->from_array($data);
+        return $dataset;
     }
 
     /**
