@@ -127,3 +127,37 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I should not see "Yes, I'd like to try again"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
+
+  Scenario: Student should not see remaining attempts notification if maximum number of attempts is set to unlimited
+    Given I add a "Lesson" to section "1" and I fill the form with:
+      | Name | Test lesson name |
+      | Description | Test lesson description |
+      | id_review | Yes |
+      | id_maxattempts | 0 |
+    And I follow "Test lesson name"
+    And I follow "Add a question page"
+    And I set the following fields to these values:
+      | id_qtype | True/false |
+    And I press "Add a question page"
+    And I set the following fields to these values:
+      | Page title | Test question |
+      | Page contents | Test content |
+      | id_answer_editor_0 | right |
+      | id_answer_editor_1 | wrong |
+    And I press "Save page"
+    And I log out
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    When I follow "Test lesson name"
+    Then I should see "Test content"
+    And I set the following fields to these values:
+      | wrong | 1 |
+    And I press "Submit"
+    And I should not see "attempt(s) remaining"
+    And I press "Yes, I'd like to try again"
+    And I should see "Test content"
+    And I set the following fields to these values:
+      | right | 1 |
+    And I press "Submit"
+    And I should not see "Yes, I'd like to try again"
+    And I should see "Congratulations - end of lesson reached"
