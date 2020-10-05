@@ -312,3 +312,8 @@ Feature: The my overview block allows users to easily access their courses
     And I click on "Display drop-down menu" "button" in the "Course overview" "block"
     When I click on "Summary" "link" in the "Course overview" "block"
     Then I should not see "Category 1" in the "Course overview" "block"
+
+  @accessibility
+  Scenario: The dashboard page must have sufficient colour contrast
+    When I log in as "student1"
+    Then the page should meet "wcag143" accessibility standards
