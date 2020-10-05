@@ -138,8 +138,12 @@ class content_item_service {
             // Add any subplugins to the list of item types.
             $subplugins = $pluginmanager->get_subplugins_of_plugin('mod_' . $plugin->name);
             foreach ($subplugins as $subpluginname => $subplugininfo) {
-                if (component_callback_exists($subpluginname, 'get_course_content_items')) {
-                    $itemtypes[] = $prefix . $subpluginname;
+                try {
+                    if (component_callback_exists($subpluginname, 'get_course_content_items')) {
+                        $itemtypes[] = $prefix . $subpluginname;
+                    }
+                } catch (\moodle_exception $e) {
+                    debugging('Cannot get_course_content_items: ' . $e->getMessage(), DEBUG_DEVELOPER);
                 }
             }
         }
