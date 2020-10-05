@@ -5,6 +5,8 @@ information provided here is intended especially for developers.
 
 * The function make_categories_options() has now been deprecated. Please use \core_course_category::make_categories_list() instead.
 * External function core_course_external::get_course_contents now returns a new field contextid with the module context id.
+* The core_course_external class methods get_courses(), get_courses_by_field() and search_courses() now return a "valueraw" property
+  for each custom course field, which contains the original/unformatted version of the custom field value.
 
 === 3.9 ===
 
