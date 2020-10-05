@@ -775,8 +775,16 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                     array('name' => 'coursedisplay', 'value' => $dbcourse->coursedisplay),
                 ));
             }
-            if ($dbcourse->id == 4) {
-                $this->assertEquals($course['customfields'], [array_merge($customfield, $customfieldvalue)]);
+
+            // Assert custom field that we previously added to test course 4.
+            if ($dbcourse->id == $course4->id) {
+                $this->assertEquals([
+                    'shortname' => $customfield['shortname'],
+                    'name' => $customfield['name'],
+                    'type' => $customfield['type'],
+                    'value' => $customfieldvalue['value'],
+                    'valueraw' => $customfieldvalue['value'],
+                ], $course['customfields'][0]);
             }
         }
 
@@ -787,6 +795,49 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $courses = external_api::clean_returnvalue(core_course_external::get_courses_returns(), $courses);
 
         $this->assertEquals($DB->count_records('course'), count($courses));
+    }
+
+    /**
+     * Test retrieving courses returns custom field data
+     */
+    public function test_get_courses_customfields(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $fieldcategory = $this->getDataGenerator()->create_custom_field_category([]);
+        $datefield = $this->getDataGenerator()->create_custom_field([
+            'categoryid' => $fieldcategory->get('id'),
+            'shortname' => 'mydate',
+            'name' => 'My date',
+            'type' => 'date',
+        ]);
+
+        $newcourse = $this->getDataGenerator()->create_course(['customfields' => [
+            [
+                'shortname' => $datefield->get('shortname'),
+                'value' => 1580389200, // 30/01/2020 13:00 GMT.
+            ],
+        ]]);
+
+        $courses = external_api::clean_returnvalue(
+            core_course_external::get_courses_returns(),
+            core_course_external::get_courses(['ids' => [$newcourse->id]])
+        );
+
+        $this->assertCount(1, $courses);
+        $course = reset($courses);
+
+        $this->assertArrayHasKey('customfields', $course);
+        $this->assertCount(1, $course['customfields']);
+
+        // Assert the received custom field, "value" containing a human-readable version and "valueraw" the unmodified version.
+        $this->assertEquals([
+            'name' => $datefield->get('name'),
+            'shortname' => $datefield->get('shortname'),
+            'type' => $datefield->get('type'),
+            'value' => userdate(1580389200),
+            'valueraw' => 1580389200,
+        ], reset($course['customfields']));
     }
 
     /**
@@ -910,6 +961,49 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // Search by block (use news_items default block). Should fail (only admins allowed).
         $this->expectException('required_capability_exception');
         $results = core_course_external::search_courses('blocklist', $blockid);
+    }
+
+    /**
+     * Test searching for courses returns custom field data
+     */
+    public function test_search_courses_customfields(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $fieldcategory = $this->getDataGenerator()->create_custom_field_category([]);
+        $datefield = $this->getDataGenerator()->create_custom_field([
+            'categoryid' => $fieldcategory->get('id'),
+            'shortname' => 'mydate',
+            'name' => 'My date',
+            'type' => 'date',
+        ]);
+
+        $newcourse = $this->getDataGenerator()->create_course(['customfields' => [
+            [
+                'shortname' => $datefield->get('shortname'),
+                'value' => 1580389200, // 30/01/2020 13:00 GMT.
+            ],
+        ]]);
+
+        $result = external_api::clean_returnvalue(
+            core_course_external::search_courses_returns(),
+            core_course_external::search_courses('search', $newcourse->shortname)
+        );
+
+        $this->assertCount(1, $result['courses']);
+        $course = reset($result['courses']);
+
+        $this->assertArrayHasKey('customfields', $course);
+        $this->assertCount(1, $course['customfields']);
+
+        // Assert the received custom field, "value" containing a human-readable version and "valueraw" the unmodified version.
+        $this->assertEquals([
+            'name' => $datefield->get('name'),
+            'shortname' => $datefield->get('shortname'),
+            'type' => $datefield->get('type'),
+            'value' => userdate(1580389200),
+            'valueraw' => 1580389200,
+        ], reset($course['customfields']));
     }
 
     /**
@@ -2453,8 +2547,13 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $result['courses']);
         $this->assertEquals($course2->id, $result['courses'][0]['id']);
         // Check custom fields properly returned.
-        unset($customfield['categoryid']);
-        $this->assertEquals([array_merge($customfield, $customfieldvalue)], $result['courses'][0]['customfields']);
+        $this->assertEquals([
+            'shortname' => $customfield['shortname'],
+            'name' => $customfield['name'],
+            'type' => $customfield['type'],
+            'value' => $customfieldvalue['value'],
+            'valueraw' => $customfieldvalue['value'],
+        ], $result['courses'][0]['customfields'][0]);
 
         $result = core_course_external::get_courses_by_field('ids', "$course1->id,$course2->id");
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
@@ -2581,6 +2680,49 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $result = core_course_external::get_courses_by_field('idnumber', 'x');
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(0, $result['courses']);
+    }
+
+    /**
+     * Test retrieving courses by field returns custom field data
+     */
+    public function test_get_courses_by_field_customfields(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $fieldcategory = $this->getDataGenerator()->create_custom_field_category([]);
+        $datefield = $this->getDataGenerator()->create_custom_field([
+            'categoryid' => $fieldcategory->get('id'),
+            'shortname' => 'mydate',
+            'name' => 'My date',
+            'type' => 'date',
+        ]);
+
+        $newcourse = $this->getDataGenerator()->create_course(['customfields' => [
+            [
+                'shortname' => $datefield->get('shortname'),
+                'value' => 1580389200, // 30/01/2020 13:00 GMT.
+            ],
+        ]]);
+
+        $result = external_api::clean_returnvalue(
+            core_course_external::get_courses_by_field_returns(),
+            core_course_external::get_courses_by_field('id', $newcourse->id)
+        );
+
+        $this->assertCount(1, $result['courses']);
+        $course = reset($result['courses']);
+
+        $this->assertArrayHasKey('customfields', $course);
+        $this->assertCount(1, $course['customfields']);
+
+        // Assert the received custom field, "value" containing a human-readable version and "valueraw" the unmodified version.
+        $this->assertEquals([
+            'name' => $datefield->get('name'),
+            'shortname' => $datefield->get('shortname'),
+            'type' => $datefield->get('type'),
+            'value' => userdate(1580389200),
+            'valueraw' => 1580389200,
+        ], reset($course['customfields']));
     }
 
     public function test_get_courses_by_field_invalid_field() {
