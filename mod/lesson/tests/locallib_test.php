@@ -251,4 +251,36 @@ class mod_lesson_locallib_testcase extends advanced_testcase {
         $this->assertEquals(true, $lesson->is_participant($USER->id),
             'Admin is enrolled, suspended and can participate');
     }
+
+    /**
+     * Data provider for test_get_last_attempt.
+     *
+     * @return array
+     */
+    public function test_get_last_attempt_dataprovider() {
+        return [
+            [0, [(object)['id' => 1], (object)['id' => 2], (object)['id' => 3]], (object)['id' => 3]],
+            [1, [(object)['id' => 1], (object)['id' => 2], (object)['id' => 3]], (object)['id' => 1]],
+            [2, [(object)['id' => 1], (object)['id' => 2], (object)['id' => 3]], (object)['id' => 2]],
+            [3, [(object)['id' => 1], (object)['id' => 2], (object)['id' => 3]], (object)['id' => 3]],
+            [4, [(object)['id' => 1], (object)['id' => 2], (object)['id' => 3]], (object)['id' => 3]],
+        ];
+    }
+
+    /**
+     * Test the get_last_attempt() method.
+     *
+     * @dataProvider test_get_last_attempt_dataprovider
+     * @param int $maxattempts Lesson setting.
+     * @param array $attempts The list of student attempts.
+     * @param object $expected Expected result.
+     */
+    public function test_get_last_attempt($maxattempts, $attempts, $expected) {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $lesson = $this->getDataGenerator()->create_module('lesson', ['course' => $course, 'maxattempts' => $maxattempts]);
+        $lesson = new lesson($lesson);
+        $this->assertEquals($expected, $lesson->get_last_attempt($attempts));
+    }
 }
