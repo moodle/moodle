@@ -1,47 +1,47 @@
 <?php
-/**
- * XMPPHP: The PHP XMPP Library
- * Copyright (C) 2008  Nathanael C. Fritz
- * This file is part of SleekXMPP.
- * 
- * XMPPHP is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * 
- * XMPPHP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with XMPPHP; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * @category   xmpphp 
- * @package	XMPPHP
- * @author	 Nathanael C. Fritz <JID: fritzy@netflint.net>
- * @author	 Stephan Wentz <JID: stephan@jabber.wentz.it>
- * @author	 Michael Garvin <JID: gar@netflint.net>
- * @copyright  2008 Nathanael C. Fritz
- */
 
-/** XMPPHP_XMLStream */
-require_once dirname(__FILE__) . "/XMLStream.php";
-require_once dirname(__FILE__) . "/Roster.php";
+namespace BirknerAlex\XMPPHP;
+
+	/**
+	 * XMPPHP: The PHP XMPP Library
+	 * Copyright (C) 2008  Nathanael C. Fritz
+	 * This file is part of SleekXMPP.
+	 *
+	 * XMPPHP is free software; you can redistribute it and/or modify
+	 * it under the terms of the GNU General Public License as published by
+	 * the Free Software Foundation; either version 2 of the License, or
+	 * (at your option) any later version.
+	 *
+	 * XMPPHP is distributed in the hope that it will be useful,
+	 * but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 * GNU General Public License for more details.
+	 *
+	 * You should have received a copy of the GNU General Public License
+	 * along with XMPPHP; if not, write to the Free Software
+	 * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	 *
+	 * @category   xmpphp
+	 * @package    XMPPHP
+	 * @author     Nathanael C. Fritz <JID: fritzy@netflint.net>
+	 * @author     Stephan Wentz <JID: stephan@jabber.wentz.it>
+	 * @author     Michael Garvin <JID: gar@netflint.net>
+	 * @author     Alexander Birkner (https://github.com/BirknerAlex)
+	 * @copyright  2008 Nathanael C. Fritz
+	 */
 
 /**
  * XMPPHP Main Class
- * 
- * @category   xmpphp 
- * @package	XMPPHP
- * @author	 Nathanael C. Fritz <JID: fritzy@netflint.net>
- * @author	 Stephan Wentz <JID: stephan@jabber.wentz.it>
- * @author	 Michael Garvin <JID: gar@netflint.net>
+ *
+ * @category   xmpphp
+ * @package    XMPPHP
+ * @author     Nathanael C. Fritz <JID: fritzy@netflint.net>
+ * @author     Stephan Wentz <JID: stephan@jabber.wentz.it>
+ * @author     Michael Garvin <JID: gar@netflint.net>
  * @copyright  2008 Nathanael C. Fritz
- * @version	$Id$
+ * @version    $Id$
  */
-class XMPPHP_XMPP extends XMPPHP_XMLStream {
+class XMPP extends XMLStream {
 	/**
 	 * @var string
 	 */
@@ -117,6 +117,7 @@ class XMPPHP_XMPP extends XMPPHP_XMLStream {
 		$this->password = $password;
 		$this->resource = $resource;
 		if(!$server) $server = $host;
+		$this->server = $server;
 		$this->basejid = $this->user . '@' . $this->host;
 
 		$this->roster = new Roster();
@@ -162,11 +163,14 @@ class XMPPHP_XMPP extends XMPPHP_XMLStream {
 	 * @param string $subject
 	 */
 	public function message($to, $body, $type = 'chat', $subject = null, $payload = null) {
-	    if(is_null($type))
-	    {
+		if ($this->disconnected) {
+			throw new Exception('You need to connect first');
+		}
+
+	    if(empty($type)) {
 	        $type = 'chat';
 	    }
-	    
+
 		$to	  = htmlspecialchars($to);
 		$body	= htmlspecialchars($body);
 		$subject = htmlspecialchars($subject);
@@ -187,7 +191,11 @@ class XMPPHP_XMPP extends XMPPHP_XMLStream {
 	 * @param string $show
 	 * @param string $to
 	 */
-	public function presence($status = null, $show = 'available', $to = null, $type='available', $priority=0) {
+	public function presence($status = null, $show = 'available', $to = null, $type='available', $priority=null) {
+		if ($this->disconnected) {
+			throw new Exception('You need to connect first');
+		}
+
 		if($type == 'available') $type = '';
 		$to	 = htmlspecialchars($to);
 		$status = htmlspecialchars($status);
@@ -196,13 +204,13 @@ class XMPPHP_XMPP extends XMPPHP_XMLStream {
 		$out = "<presence";
 		if($to) $out .= " to=\"$to\"";
 		if($type) $out .= " type='$type'";
-		if($show == 'available' and !$status) {
+		if($show == 'available' and !$status and $priority !== null) {
 			$out .= "/>";
 		} else {
 			$out .= ">";
 			if($show != 'available') $out .= "<show>$show</show>";
 			if($status) $out .= "<status>$status</status>";
-			if($priority) $out .= "<priority>$priority</priority>";
+			if($priority !== null) $out .= "<priority>$priority</priority>";
 			$out .= "</presence>";
 		}
 		
@@ -229,10 +237,11 @@ class XMPPHP_XMPP extends XMPPHP_XMLStream {
 		} else {
 			$payload['type'] = 'chat';
 		}
+		$body = $xml->sub('body');
 		$payload['from'] = $xml->attrs['from'];
-		$payload['body'] = $xml->sub('body')->data;
+		$payload['body'] = is_object($body) ? $body->data : FALSE; // $xml->sub('body')->data;
 		$payload['xml'] = $xml;
-		$this->log->log("Message: {$xml->sub('body')->data}", XMPPHP_Log::LEVEL_DEBUG);
+		$this->log->log("Message: {$payload['body']}", Log::LEVEL_DEBUG);
 		$this->event('message', $payload);
 	}
 
@@ -251,7 +260,7 @@ class XMPPHP_XMPP extends XMPPHP_XMLStream {
 		if($this->track_presence) {
 			$this->roster->setPresence($payload['from'], $payload['priority'], $payload['show'], $payload['status']);
 		}
-		$this->log->log("Presence: {$payload['from']} [{$payload['show']}] {$payload['status']}",  XMPPHP_Log::LEVEL_DEBUG);
+		$this->log->log("Presence: {$payload['from']} [{$payload['show']}] {$payload['status']}",  Log::LEVEL_DEBUG);
 		if(array_key_exists('type', $xml->attrs) and $xml->attrs['type'] == 'subscribe') {
 			if($this->auto_subscribe) {
 				$this->send("<presence type='subscribed' to='{$xml->attrs['from']}' from='{$this->fulljid}' />");
@@ -304,10 +313,10 @@ class XMPPHP_XMPP extends XMPPHP_XMLStream {
 	 * @param string $xml
 	 */
 	protected function sasl_failure_handler($xml) {
-		$this->log->log("Auth failed!",  XMPPHP_Log::LEVEL_ERROR);
+		$this->log->log("Auth failed!",  Log::LEVEL_ERROR);
 		$this->disconnect();
 		
-		throw new XMPPHP_Exception('Auth failed!');
+		throw new Exception('Auth failed!');
 	}
 
 	/**
