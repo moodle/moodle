@@ -50,3 +50,33 @@ Feature: As a teacher, you can manually lock individual discussions when viewing
     And I navigate to post "Discussion 1" in "Test forum name" forum
     Then I should see "This discussion has been locked so you can no longer reply to it."
     And "Reply" "link" should not be visible
+
+  @accessibility
+  Scenario: A locked discussion must be accessible
+    Given I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I navigate to post "Discussion 1" in "Test forum name" forum
+    When I reply "Discussion 1" post from "Test forum name" forum with:
+      | Subject | Discussion 1: Hello world! |
+      | Message | Discussion contents 1, hello world! |
+    # Check discussion view accessibility with success notification shown on post.
+    Then the page should meet accessibility standards with "wcag143" extra tests
+    And I press "Settings"
+    When I follow "Lock this discussion"
+    # Check discussion view accessibility with info notification shown when discussion is locked.
+    And the page should meet accessibility standards with "wcag143" extra tests
+    And I log out
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Test forum name"
+    # Check discussion list accessibility with danger pill shown when discussion is locked.
+    And the page should meet accessibility standards with "wcag143" extra tests
+    And I follow "Preferences" in the user menu
+    And I click on "Forum preferences" "link"
+    And I set the following fields to these values:
+      | Use experimental nested discussion view | Yes |
+    And I press "Save changes"
+    And I am on "Course 1" course homepage
+    And I navigate to post "Discussion 1" in "Test forum name" forum
+    # Check experimental discussion view accessibility with danger pill shown when discussion is locked.
+    And the page should meet accessibility standards with "wcag143" extra tests
