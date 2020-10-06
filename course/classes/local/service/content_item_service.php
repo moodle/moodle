@@ -110,7 +110,12 @@ class content_item_service {
             throw new \coding_exception('The guest user does not exist in the database.');
         }
 
-        $favourites = $this->get_content_favourites(self::RECOMMENDATION_PREFIX, \context_user::instance($CFG->siteguest));
+        // Make sure the guest user context exists.
+        if (!$guestusercontext = \context_user::instance($CFG->siteguest, false)) {
+            throw new \coding_exception('The guest user context does not exist.');
+        }
+
+        $favourites = $this->get_content_favourites(self::RECOMMENDATION_PREFIX, $guestusercontext);
 
         $recommendationcache->set($CFG->siteguest, $favourites);
         return $favourites;
