@@ -25,7 +25,7 @@
 
 namespace core_h5p;
 
-defined('MOODLE_INTERNAL') || die();
+use core_collator;
 
 /**
  *
@@ -472,15 +472,19 @@ class framework_testcase extends \advanced_testcase {
         // The addons array should return 2 results (Library and Library1 addon).
         $this->assertCount(2, $addons);
 
+        // Ensure the addons array is consistently ordered before asserting their contents.
+        core_collator::asort_array_of_arrays_by_key($addons, 'machineName');
+        [$addonone, $addontwo] = array_values($addons);
+
         // Make sure the version 1.3 is the latest 'Library' addon version.
-        $this->assertEquals('Library', $addons[0]['machineName']);
-        $this->assertEquals(1, $addons[0]['majorVersion']);
-        $this->assertEquals(3, $addons[0]['minorVersion']);
+        $this->assertEquals('Library', $addonone['machineName']);
+        $this->assertEquals(1, $addonone['majorVersion']);
+        $this->assertEquals(3, $addonone['minorVersion']);
 
         // Make sure the version 1.2 is the latest 'Library1' addon version.
-        $this->assertEquals('Library1', $addons[1]['machineName']);
-        $this->assertEquals(1, $addons[1]['majorVersion']);
-        $this->assertEquals(2, $addons[1]['minorVersion']);
+        $this->assertEquals('Library1', $addontwo['machineName']);
+        $this->assertEquals(1, $addontwo['majorVersion']);
+        $this->assertEquals(2, $addontwo['minorVersion']);
     }
 
     /**
@@ -504,7 +508,6 @@ class framework_testcase extends \advanced_testcase {
         $this->assertEquals('1', $libraries['MainLibrary'][0]->major_version);
         $this->assertEquals('0', $libraries['MainLibrary'][0]->minor_version);
         $this->assertEquals('1', $libraries['MainLibrary'][0]->patch_version);
-        $this->assertEquals('MainLibrary', $libraries['MainLibrary'][0]->machine_name);
     }
 
     /**
