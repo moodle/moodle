@@ -34,6 +34,7 @@ $help =
 Options:
 --search=STRING       String to search for.
 --replace=STRING      String to replace with.
+--skiptables=STRING   Skip these tables (comma separated list of tables).
 --shorten             Shorten result if necessary.
 --non-interactive     Perform the replacement without confirming.
 -h, --help            Print out this help.
@@ -46,6 +47,7 @@ list($options, $unrecognized) = cli_get_params(
     array(
         'search'  => null,
         'replace' => null,
+        'skiptables' => '',
         'shorten' => false,
         'non-interactive' => false,
         'help'    => false,
@@ -71,6 +73,7 @@ if (empty($options['shorten']) && core_text::strlen($options['search']) < core_t
 try {
     $search = validate_param($options['search'], PARAM_RAW);
     $replace = validate_param($options['replace'], PARAM_RAW);
+    $skiptables = validate_param($options['skiptables'], PARAM_RAW);
 } catch (invalid_parameter_exception $e) {
     cli_error(get_string('invalidcharacter', 'tool_replace'));
 }
@@ -85,7 +88,7 @@ if (!$options['non-interactive']) {
     }
 }
 
-if (!db_replace($search, $replace)) {
+if (!db_replace($search, $replace, $skiptables)) {
     cli_heading(get_string('error'));
     exit(1);
 }
