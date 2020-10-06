@@ -353,6 +353,9 @@ class player {
         $settings['moodleLibraryPaths'] = $this->core->get_dependency_roots($this->h5pid);
         // Add also the Moodle component where the results will be tracked.
         $settings['moodleComponent'] = $this->component;
+        if (!empty($settings['moodleComponent'])) {
+            $settings['reportingIsEnabled'] = true;
+        }
 
         $cid = $this->get_cid();
         // The filterParameters function should be called before getting the dependencyfiles because it rebuild content
