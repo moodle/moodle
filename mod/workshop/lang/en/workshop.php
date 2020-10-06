@@ -445,3 +445,4 @@ $string['workshop:viewreviewernames'] = 'View reviewer names';
 $string['yourassessmentfor'] = 'Your assessment for {$a}';
 $string['yourgrades'] = 'Your grades';
 $string['yoursubmission'] = 'Your submission';
+$string['yoursubmissionwithassessments'] = 'Your submission with assessments';
