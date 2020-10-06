@@ -31,12 +31,13 @@ $rowid = optional_param('rowid', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_CLEAN);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 $validonly = optional_param('validonly', $CFG->iomad_hidevalidcourses, PARAM_BOOL);
-$revoke = false;
+/*$revoke = false;
 
 if ($action == 'revoke') {
     $revoke = true;
-    $action = 'clear';
+    $action = 'delete';
 }
+*/
 $params = array();
 $params['userid'] = $userid;
 $params['validonly'] = $validonly;
@@ -110,15 +111,13 @@ if (!empty($action)) {
                                  array('userid' => $userid));
         if ($action == 'delete') {
             echo $OUTPUT->confirm(get_string('resetcourseconfirm', 'local_report_users'), $confirmurl, $cancel);
+        } else if ($action == 'revoke') {
+            echo $OUTPUT->confirm(get_string('revokeconfirm', 'local_report_users'), $confirmurl, $cancel);
         } else if ($action == 'clear') {
-            if ($revoke) {
-                echo $OUTPUT->confirm(get_string('revokeconfirm', 'local_report_users'), $confirmurl, $cancel);
+            if (empty($CFG->iomad_autoreallocate_licenses)) {
+                echo $OUTPUT->confirm(get_string('clearconfirm', 'local_report_users'), $confirmurl, $cancel);
             } else {
-                if (empty($CFG->iomad_autoreallocate_licenses)) {
-                    echo $OUTPUT->confirm(get_string('clearconfirm', 'local_report_users'), $confirmurl, $cancel);
-                } else {
-                    echo $OUTPUT->confirm(get_string('clearreallocateconfirm', 'local_report_users'), $confirmurl, $cancel);
-                }
+                echo $OUTPUT->confirm(get_string('clearreallocateconfirm', 'local_report_users'), $confirmurl, $cancel);
             }
         } else if ($action == 'trackonly') {
             // We are only removing the saved record for this.
