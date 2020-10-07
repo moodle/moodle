@@ -84,7 +84,7 @@ class transaction_complete extends external_api {
 
         // Add surcharge if there is any.
         $surcharge = helper::get_gateway_surcharge('paypal');
-        $amount = helper::get_cost_with_surcharge($amount, $surcharge, $currency);
+        $amount = helper::get_rounded_cost($amount, $currency, $surcharge);
 
         $paypalhelper = new paypal_helper($config->clientid, $config->secret, $sandbox);
         $orderdetails = $paypalhelper->get_order_details($orderid);

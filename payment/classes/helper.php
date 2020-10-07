@@ -67,7 +67,7 @@ class helper {
      * @param int $componentid
      * @return string[]
      */
-    public static function get_gateways_for_currency(string $component, string $paymentarea, int $componentid): array {
+    public static function get_available_gateways(string $component, string $paymentarea, int $componentid): array {
         $gateways = [];
 
         [
@@ -97,33 +97,37 @@ class helper {
     }
 
     /**
-     * Calculates the cost with the surcharge
+     * Rounds the cost based on the currency fractional digits, can also apply surcharge
      *
      * @param float $amount amount in the currency units
-     * @param float $surcharge surcharge in percents
      * @param string $currency currency, used for calculating the number of fractional digits
+     * @param float $surcharge surcharge in percents
      * @return float
      */
-    public static function get_cost_with_surcharge(float $amount, float $surcharge, string $currency): float {
-        return round($amount + $amount * $surcharge / 100, 2); // TODO number of digits depends on currency.
+    public static function get_rounded_cost(float $amount, string $currency, float $surcharge = 0): float {
+        $amount = $amount * (100 + $surcharge) / 100;
+
+        $locale = get_string('localecldr', 'langconfig');
+        $fmt = \NumberFormatter::create($locale, \NumberFormatter::CURRENCY);
+        $localisedcost = numfmt_format_currency($fmt, $amount, $currency);
+
+        return numfmt_parse_currency($fmt, $localisedcost, $currency);
     }
 
     /**
-     * Returns human-readable amount with fixed number of fractional digits and currency indicator
+     * Returns human-readable amount with correct number of fractional digits and currency indicator, can also apply surcharge
      *
-     * @param float $amount
-     * @param string $currency
+     * @param float $amount amount in the currency units
+     * @param string $currency The currency
+     * @param float $surcharge surcharge in percents
      * @return string
-     * @throws \coding_exception
      */
-    public static function get_cost_as_string(float $amount, string $currency): string {
-        if (class_exists('NumberFormatter') && function_exists('numfmt_format_currency')) {
-            $locale = get_string('localecldr', 'langconfig');
-            $fmt = \NumberFormatter::create($locale, \NumberFormatter::CURRENCY);
-            $localisedcost = numfmt_format_currency($fmt, $amount, $currency);
-        } else {
-            $localisedcost = sprintf("%.2f %s", $amount, $currency); // TODO number of digits depends on currency.
-        }
+    public static function get_cost_as_string(float $amount, string $currency, float $surcharge = 0): string {
+        $amount = $amount * (100 + $surcharge) / 100;
+
+        $locale = get_string('localecldr', 'langconfig');
+        $fmt = \NumberFormatter::create($locale, \NumberFormatter::CURRENCY);
+        $localisedcost = numfmt_format_currency($fmt, $amount, $currency);
 
         return $localisedcost;
     }

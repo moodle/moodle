@@ -127,4 +127,20 @@ class accounts_testcase extends advanced_testcase {
         helper::restore_payment_account(account::get_record(['id' => $account->get('id')]));
         $this->assertEquals(0, $DB->get_field('payment_accounts', 'archived', ['id' => $account->get('id')]));
     }
+
+    public function test_format_cost() {
+        $amount = 5.345;
+
+        $currency = 'IRR';
+        $this->assertEquals(5, helper::get_rounded_cost($amount, $currency));
+        $this->assertEquals('IRR'."\xc2\xa0".'5', helper::get_cost_as_string($amount, $currency));
+        $this->assertEquals(6, helper::get_rounded_cost($amount, $currency, 12));
+        $this->assertEquals('IRR'."\xc2\xa0".'6', helper::get_cost_as_string($amount, $currency, 12));
+
+        $currency = 'USD';
+        $this->assertEquals(5.34, helper::get_rounded_cost($amount, $currency));
+        $this->assertEquals('USD'."\xc2\xa0".'5.34', helper::get_cost_as_string($amount, $currency));
+        $this->assertEquals(5.40, helper::get_rounded_cost($amount, $currency, 1));
+        $this->assertEquals('USD'."\xc2\xa0".'5.40', helper::get_cost_as_string($amount, $currency, 1));
+    }
 }
