@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/externallib.php');
 
-class get_gateways_for_currency extends external_api {
+class get_available_gateways extends external_api {
 
     /**
      * Returns description of method parameters.
@@ -67,7 +67,7 @@ class get_gateways_for_currency extends external_api {
         ]);
 
         $list = [];
-        $gateways = helper::get_gateways_for_currency($params['component'], $params['paymentarea'], $params['componentid']);
+        $gateways = helper::get_available_gateways($params['component'], $params['paymentarea'], $params['componentid']);
         [
             'amount' => $amount,
             'currency' => $currency
@@ -80,7 +80,7 @@ class get_gateways_for_currency extends external_api {
                 'name' => get_string('gatewayname', 'pg_' . $gateway),
                 'description' => get_string('gatewaydescription', 'pg_' . $gateway),
                 'surcharge' => $surcharge,
-                'cost' => helper::get_cost_as_string(helper::get_cost_with_surcharge($amount, $surcharge, $currency), $currency),
+                'cost' => helper::get_cost_as_string($amount, $currency, $surcharge),
             ];
         }
 

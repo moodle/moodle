@@ -25,7 +25,7 @@
 import ModalFactory from 'core/modal_factory';
 import Templates from 'core/templates';
 import {get_string as getString} from 'core/str';
-import {getGatewaysSupportingCurrency} from './repository';
+import {getAvailableGateways} from './repository';
 import Selectors from './selectors';
 import ModalEvents from 'core/modal_events';
 import PaymentEvents from 'core_payment/events';
@@ -127,7 +127,7 @@ const show = async(rootNode, {
         }
     });
 
-    const gateways = await getGatewaysSupportingCurrency(rootNode.dataset.component, rootNode.dataset.paymentarea,
+    const gateways = await getAvailableGateways(rootNode.dataset.component, rootNode.dataset.paymentarea,
         rootNode.dataset.componentid);
     const context = {
         gateways

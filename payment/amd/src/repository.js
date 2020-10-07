@@ -32,9 +32,9 @@ import Ajax from 'core/ajax';
  * @param {number} componentId
  * @returns {Promise<{shortname: string, name: string, description: String}[]>}
  */
-export const getGatewaysSupportingCurrency = (component, paymentArea, componentId) => {
+export const getAvailableGateways = (component, paymentArea, componentId) => {
     const request = {
-        methodname: 'core_payment_get_gateways_for_currency',
+        methodname: 'core_payment_get_available_gateways',
         args: {
             component,
             paymentarea: paymentArea,
