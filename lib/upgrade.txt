@@ -2,6 +2,18 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.10 ===
+* PHPUnit has been upgraded to 8.5. That comes with a few changes:
+  - phpunit/dbunit is not available any more and it has been replaced by a lightweight phpunit_dataset class, able to
+    load XML/CSV and PHP arrays, send the to database and return rows to calling code (in tests). That implies the
+    follwoing changes in the advanced_testcase class:
+      - createFlatXMLDataSet() has been removed. No uses in core, uses can switch to createXMLDataSet() (read below).
+      - createXMLDataSet() has been deprecated. Use dataset_from_files() instead.
+      - createCsvDataSet() has been deprecated. Use dataset_from_files() instead.
+      - createArrayDataSet() has been deprecated. This method was using the phpunit_ArrayDataSet class
+        that has been also removed from core. Use dataset_from_array() instead.
+      - loadDataSet() has been deprecated. Use phpunit_dataset->to_database() instead.
+      - All the previous uses of phpunit/dbunit methods like Dataset:getRows(), Dataset::getRowCount()
+        must be replaced by the new phpunit_dataset->get_rows() method.
 * Retains the source course id when a course is copied from another course on the same site.
 * Added function setScrollable in core/modal. This function can be used to set the modal's body to be scrollable or not
   when the modal's height exceeds the browser's height. This is also supported in core/modal_factory through the

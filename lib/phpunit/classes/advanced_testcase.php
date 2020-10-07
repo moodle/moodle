@@ -147,29 +147,24 @@ abstract class advanced_testcase extends base_testcase {
     }
 
     /**
-     * Creates a new FlatXmlDataSet with the given $xmlFile. (absolute path.)
-     *
-     * @param string $xmlFile
-     * @return PHPUnit\DbUnit\DataSet\FlatXmlDataSet
-     */
-    protected function createFlatXMLDataSet($xmlFile) {
-        // TODO: MDL-67673 - removed
-        return new PHPUnit\DbUnit\DataSet\FlatXmlDataSet($xmlFile);
-    }
-
-    /**
      * Creates a new XMLDataSet with the given $xmlFile. (absolute path.)
      *
+     * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
+     * @todo This will be removed for Moodle 4.2 as part of MDL-69882.
+     *
      * @param string $xmlFile
-     * @return PHPUnit\DbUnit\DataSet\XmlDataSet
+     * @return phpunit_dataset
      */
     protected function createXMLDataSet($xmlFile) {
-        // TODO: MDL-67673 - deprecate this (debugging...)
+        debugging(__FUNCTION__ . '() is deprecated. Please use dataset_from_files() instead.', DEBUG_DEVELOPER);
         return $this->dataset_from_files([$xmlFile]);
     }
 
     /**
      * Creates a new CsvDataSet from the given array of csv files. (absolute paths.)
+     *
+     * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
+     * @todo This will be removed for Moodle 4.2 as part of MDL-69882.
      *
      * @param array $files array tablename=>cvsfile
      * @param string $delimiter unused
@@ -178,23 +173,29 @@ abstract class advanced_testcase extends base_testcase {
      * @return phpunit_dataset
      */
     protected function createCsvDataSet($files, $delimiter = ',', $enclosure = '"', $escape = '"') {
-        // TODO: MDL-67673 - deprecate this (debugging...)
+        debugging(__FUNCTION__ . '() is deprecated. Please use dataset_from_files() instead.', DEBUG_DEVELOPER);
         return $this->dataset_from_files($files);
     }
 
     /**
      * Creates new ArrayDataSet from given array
      *
+     * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
+     * @todo This will be removed for Moodle 4.2 as part of MDL-69882.
+     *
      * @param array $data array of tables, first row in each table is columns
-     * @return phpunit_ArrayDataSet
+     * @return phpunit_dataset
      */
     protected function createArrayDataSet(array $data) {
-        // TODO: MDL-67673 - deprecate this (debugging...)
+        debugging(__FUNCTION__ . '() is deprecated. Please use dataset_from_array() instead.', DEBUG_DEVELOPER);
         return $this->dataset_from_array($data);
     }
 
     /**
      * Load date into moodle database tables from standard PHPUnit data set.
+     *
+     * @deprecated since Moodle 3.10 - See MDL-67673 and MDL-64600 for more info.
+     * @todo This will be removed for Moodle 4.2 as part of MDL-69882.
      *
      * Note: it is usually better to use data generators
      *
@@ -202,7 +203,7 @@ abstract class advanced_testcase extends base_testcase {
      * @return void
      */
     protected function loadDataSet(phpunit_dataset $dataset) {
-        // TODO: MDL-67673 - deprecate this (debugging...)
+        debugging(__FUNCTION__ . '() is deprecated. Please use dataset->to_database() instead.', DEBUG_DEVELOPER);
         $dataset->to_database();
     }
 
@@ -218,6 +219,8 @@ abstract class advanced_testcase extends base_testcase {
      *       'course' => '/path/to/courses.csv',
      *   ];
      *
+     * @since Moodle 3.10
+     *
      * @param array $files full paths to CSV or XML files to load.
      * @return phpunit_dataset
      */
@@ -231,9 +234,12 @@ abstract class advanced_testcase extends base_testcase {
     /**
      * Creates a new dataset from string (CSV or XML).
      *
+     * @since Moodle 3.10
+     *
      * @param string $content contents (CSV or XML) to load.
      * @param string $type format of the content to be loaded (csv or xml).
      * @param string $table name of the table which the file belongs to (only for CSV files).
+     * @return phpunit_dataset
      */
     protected function dataset_from_string(string $content, string $type, ?string $table = null) {
         $dataset = new phpunit_dataset();
@@ -243,6 +249,8 @@ abstract class advanced_testcase extends base_testcase {
 
     /**
      * Creates a new dataset from PHP array.
+     *
+     * @since Moodle 3.10
      *
      * @param array $data array of tables, see {@see phpunit_dataset::from_array()} for supported formats.
      * @return phpunit_dataset
