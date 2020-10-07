@@ -12671,6 +12671,15 @@ input[disabled] {
   font-size: 0.8203125rem;
   color: #6c757d; }
 
+.path-admin-tool-uploaduser .uuwarning {
+  background-color: #fcefdc; }
+
+.path-admin-tool-uploaduser .uuerror {
+  background-color: #f6d9d8; }
+
+.path-admin-tool-uploaduser .uuinfo {
+  background-color: #d7e6d7; }
+
 .blockmovetarget .accesshide {
   position: relative;
   left: initial; }
