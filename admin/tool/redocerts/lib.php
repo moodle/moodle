@@ -64,7 +64,7 @@ function do_redocerts($user = 0, $course = 0, $company = 0, $idnumber = 0, $from
         $usersql[] = " lit.timecompleted < $todate ";
     }
     if (!empty($usersql)) {
-        $extrasql = " WHERE lit.timecompleted > 0 " . implode("AND", $usersql);
+        $extrasql = " WHERE lit.timecompleted > 0 AND " . implode("AND", $usersql);
     } else {
         $extrasql = " WHERE lit.timecompleted > 0 ";
     }

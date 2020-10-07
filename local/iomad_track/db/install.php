@@ -196,7 +196,7 @@ function xmldb_local_iomad_track_record_certificates($courseid, $userid, $tracki
 
             // Generate correct filename (same as certificate mod's view.php does)
             $certname = rtrim($certificate->name, '.');
-            $filename = clean_filename(format_strng("$certname.pdf"));
+            $filename = clean_filename(format_string("$certname.pdf"));
 
             $certificate->finalscore = $trackinfo->finalscore;
 
