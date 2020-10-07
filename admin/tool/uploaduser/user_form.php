@@ -68,6 +68,18 @@ class admin_uploaduser_form1 extends moodleform {
 
         $this->add_action_buttons(false, get_string('uploadusers', 'tool_uploaduser'));
     }
+
+    /**
+     * Returns list of elements and their default values, to be used in CLI
+     *
+     * @return array
+     */
+    public function get_form_for_cli() {
+        $elements = array_filter($this->_form->_elements, function($element) {
+            return !in_array($element->getName(), ['buttonar', 'userfile', 'previewrows']);
+        });
+        return [$elements, $this->_form->_defaultValues];
+    }
 }
 
 
@@ -433,5 +445,26 @@ class admin_uploaduser_form2 extends moodleform {
         }
 
         return $data;
+    }
+
+    /**
+     * Returns list of elements and their default values, to be used in CLI
+     *
+     * @return array
+     */
+    public function get_form_for_cli() {
+        $elements = array_filter($this->_form->_elements, function($element) {
+            return !in_array($element->getName(), ['buttonar', 'uubulk']);
+        });
+        return [$elements, $this->_form->_defaultValues];
+    }
+
+    /**
+     * Returns validation errors (used in CLI)
+     *
+     * @return array
+     */
+    public function get_validation_errors(): array {
+        return $this->_form->_errors;
     }
 }
