@@ -326,7 +326,9 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('user', array('id' => 5)));
         $this->assertFalse($DB->record_exists('user', array('id' => 7)));
         $dataset = $this->createXMLDataSet(__DIR__.'/fixtures/sample_dataset.xml');
+        $this->assertDebuggingCalled('createXMLDataSet() is deprecated. Please use dataset_from_files() instead.');
         $this->loadDataSet($dataset);
+        $this->assertDebuggingCalled('loadDataSet() is deprecated. Please use dataset->to_database() instead.');
         $this->assertTrue($DB->record_exists('user', array('id' => 5)));
         $this->assertTrue($DB->record_exists('user', array('id' => 7)));
         $user5 = $DB->get_record('user', array('id' => 5));
@@ -344,7 +346,9 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('user', array('id' => 8)));
         $this->assertFalse($DB->record_exists('user', array('id' => 9)));
         $dataset = $this->createCsvDataSet(array('user' => __DIR__.'/fixtures/sample_dataset.csv'));
+        $this->assertDebuggingCalled('createCsvDataSet() is deprecated. Please use dataset_from_files() instead.');
         $this->loadDataSet($dataset);
+        $this->assertDebuggingCalled('loadDataSet() is deprecated. Please use dataset->to_database() instead.');
         $this->assertEquals(5, $DB->get_field('user', 'id', array('username' => 'bozka.novakova')));
         $this->assertEquals(7, $DB->get_field('user', 'id', array('username' => 'pepa.novak')));
 
@@ -366,7 +370,9 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('user', array('email' => 'top@example.com')));
         $this->assertFalse($DB->record_exists('user', array('email' => 'low@example.com')));
         $dataset = $this->createArrayDataSet($data);
+        $this->assertDebuggingCalled('createArrayDataSet() is deprecated. Please use dataset_from_array() instead.');
         $this->loadDataSet($dataset);
+        $this->assertDebuggingCalled('loadDataSet() is deprecated. Please use dataset->to_database() instead.');
         $this->assertTrue($DB->record_exists('user', array('email' => 'top@example.com')));
         $this->assertTrue($DB->record_exists('user', array('email' => 'low@example.com')));
 
@@ -377,7 +383,9 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
             ),
         );
         $dataset = $this->createArrayDataSet($data);
+        $this->assertDebuggingCalled('createArrayDataSet() is deprecated. Please use dataset_from_array() instead.');
         $this->loadDataSet($dataset);
+        $this->assertDebuggingCalled('loadDataSet() is deprecated. Please use dataset->to_database() instead.');
         $this->assertTrue($DB->record_exists('user', array('username' => 'noidea')));
         $this->assertTrue($DB->record_exists('user', array('username' => 'onemore')));
     }
