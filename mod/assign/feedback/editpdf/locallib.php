@@ -77,19 +77,19 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
         // Three file areas are used for stamps.
         // Current stamps are those configured as a site administration setting to be available for new uses.
         // When a stamp is removed from this filearea it is no longer available for new grade items.
-        $currentstamps = $fs->get_area_files($syscontext->id, 'assignfeedback_editpdf', 'stamps', 0, "filename", false);
+        $currentstamps = $fs->get_area_files($syscontext->id, 'assignfeedback_editpdf', 'stamps', 0, 'filename', false);
 
         // Grade stamps are those which have been assigned for a specific grade item.
         // The stamps associated with a grade item are always used for that grade item, even if the stamp is removed
         // from the list of current stamps.
-        $gradestamps = $fs->get_area_files($asscontext->id, 'assignfeedback_editpdf', 'stamps', $grade->id, "filename", false);
+        $gradestamps = $fs->get_area_files($asscontext->id, 'assignfeedback_editpdf', 'stamps', $grade->id, 'filename', false);
 
         // The system stamps are perpetual and always exist.
         // They allow Moodle to serve a common URL for all users for any possible combination of stamps.
         // Files in the perpetual stamp filearea are within the system context, in itemid 0, and use the original stamps
         // contenthash as a folder name. This ensures that the combination of stamp filename, and stamp file content is
         // unique.
-        $systemstamps = $fs->get_area_files($syscontext->id, 'assignfeedback_editpdf', 'systemstamps', 0, "filename", false);
+        $systemstamps = $fs->get_area_files($syscontext->id, 'assignfeedback_editpdf', 'systemstamps', 0, 'filename', false);
 
         // First check that all current stamps are listed in the grade stamps.
         foreach ($currentstamps as $stamp) {
@@ -142,7 +142,7 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
                 $gradestamp->get_contextid(),
                 $gradestamp->get_component(),
                 $gradestamp->get_filearea(),
-                false,
+                null,
                 $gradestamp->get_filepath(),
                 $gradestamp->get_filename(),
                 false
