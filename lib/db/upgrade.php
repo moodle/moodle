@@ -2708,5 +2708,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020091800.01);
     }
 
+    if ($oldversion < 2020100700.00) {
+
+        // Define index modulename-instance-eventtype (not unique) to be added to event.
+        $table = new xmldb_table('event');
+        $index = new xmldb_index('modulename-instance-eventtype', XMLDB_INDEX_NOTUNIQUE, ['modulename', 'instance', 'eventtype']);
+
+        // Conditionally launch add index modulename-instance-eventtype.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index modulename-instance (not unique) to be dropped form event.
+        $table = new xmldb_table('event');
+        $index = new xmldb_index('modulename-instance', XMLDB_INDEX_NOTUNIQUE, ['modulename', 'instance']);
+
+        // Conditionally launch drop index modulename-instance.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020100700.00);
+    }
+
     return true;
 }
