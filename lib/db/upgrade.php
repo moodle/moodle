@@ -2862,40 +2862,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020102100.02);
     }
 
-    if ($oldversion < 2020102700.00) {
-
-        // Define table payments to be created.
-        $table = new xmldb_table('payments');
-
-        // Adding fields to table payments.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('component', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('componentid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('amount', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('currency', XMLDB_TYPE_CHAR, '3', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('gateway', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-
-        // Adding keys to table payments.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
-
-        // Adding indexes to table payments.
-        $table->add_index('component', XMLDB_INDEX_NOTUNIQUE, ['component']);
-        $table->add_index('componentid', XMLDB_INDEX_NOTUNIQUE, ['componentid']);
-        $table->add_index('gateway', XMLDB_INDEX_NOTUNIQUE, ['gateway']);
-
-        // Conditionally launch create table for payments.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2020102700.00);
-    }
-
     if ($oldversion < 2020102700.01) {
 
         // Define table payment_accounts to be created.
@@ -2907,6 +2873,7 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('idnumber', XMLDB_TYPE_CHAR, '100', null, null, null, null);
         $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('enabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('archived', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
@@ -2917,6 +2884,12 @@ function xmldb_main_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020102700.01);
+    }
+
+    if ($oldversion < 2020102700.02) {
 
         // Define table payment_gateways to be created.
         $table = new xmldb_table('payment_gateways');
@@ -2939,82 +2912,44 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        // Define field accountid to be added to payments.
-        $table = new xmldb_table('payments');
-        $field = new xmldb_field('accountid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'currency');
-
-        // Conditionally launch add field accountid.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define key accountid (foreign) to be added to payments.
-        $table = new xmldb_table('payments');
-        $key = new xmldb_key('accountid', XMLDB_KEY_FOREIGN, ['accountid'], 'payment_accounts', ['id']);
-
-        // Launch add key accountid.
-        $dbman->add_key($table, $key);
-
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2020102700.01);
+        upgrade_main_savepoint(true, 2020102700.02);
     }
 
-    if ($oldversion < 2021052500.26) {
+    if ($oldversion < 2020102700.03) {
 
-        // Define field archived to be added to payment_accounts.
-        $table = new xmldb_table('payment_accounts');
-        $field = new xmldb_field('archived', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'enabled');
+        // Define table payments to be created.
+        $table = new xmldb_table('payments');
 
-        // Conditionally launch add field archived.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
+        // Adding fields to table payments.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('paymentarea', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('componentid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('amount', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('currency', XMLDB_TYPE_CHAR, '3', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('accountid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('gateway', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table payments.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+        $table->add_key('accountid', XMLDB_KEY_FOREIGN, ['accountid'], 'payment_accounts', ['id']);
+
+        // Adding indexes to table payments.
+        $table->add_index('gateway', XMLDB_INDEX_NOTUNIQUE, ['gateway']);
+        $table->add_index('component-paymentarea-componentid', XMLDB_INDEX_NOTUNIQUE, ['component', 'paymentarea', 'componentid']);
+
+        // Conditionally launch create table for payments.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2021052500.26);
-    }
-
-    if ($oldversion < 2021052500.27) {
-
-        // Define field paymentarea to be added to payments.
-        $table = new xmldb_table('payments');
-        $field = new xmldb_field('paymentarea', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, 'component');
-
-        // Conditionally launch add field paymentarea.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define index component (not unique) to be dropped form payments.
-        $table = new xmldb_table('payments');
-        $index = new xmldb_index('component', XMLDB_INDEX_NOTUNIQUE, ['component']);
-
-        // Conditionally launch drop index component.
-        if ($dbman->index_exists($table, $index)) {
-            $dbman->drop_index($table, $index);
-        }
-
-        // Define index componentid (not unique) to be dropped form payments.
-        $table = new xmldb_table('payments');
-        $index = new xmldb_index('componentid', XMLDB_INDEX_NOTUNIQUE, ['componentid']);
-
-        // Conditionally launch drop index componentid.
-        if ($dbman->index_exists($table, $index)) {
-            $dbman->drop_index($table, $index);
-        }
-
-        // Define index component-paymentarea-componentid (not unique) to be added to payments.
-        $table = new xmldb_table('payments');
-        $index = new xmldb_index('component-paymentarea-componentid', XMLDB_INDEX_NOTUNIQUE,
-            ['component', 'paymentarea', 'componentid']);
-
-        // Conditionally launch add index component-paymentarea-componentid.
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2021052500.27);
+        upgrade_main_savepoint(true, 2020102700.03);
     }
 
     return true;
