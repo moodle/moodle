@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
 /**
  * Serves assignment feedback and other files.
  *
@@ -36,27 +39,28 @@ defined('MOODLE_INTERNAL') || die();
  * @param array $options - List of options affecting file serving.
  * @return bool false if file not found, does not return if found - just send the file
  */
-function assignfeedback_editpdf_pluginfile($course,
-                                           $cm,
-                                           context $context,
-                                           $filearea,
-                                           $args,
-                                           $forcedownload,
-                                           array $options=array()) {
-    global $USER, $DB, $CFG;
+function assignfeedback_editpdf_pluginfile(
+    $course,
+    $cm,
+    context $context,
+    $filearea,
+    $args,
+    $forcedownload,
+    array $options = array()
+) {
+    global $DB;
+    if ($filearea === 'systemstamps') {
 
-    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+        if ($context->contextlevel !== CONTEXT_SYSTEM) {
+            return false;
+        }
 
-    if ($filearea === 'stamps' && $context->contextlevel === CONTEXT_SYSTEM) {
-
-        $itemid = (int)array_shift($args);
-
-        $relativepath = implode('/', $args);
-
-        $fullpath = "/{$context->id}/assignfeedback_editpdf/$filearea/$itemid/$relativepath";
+        $filename = array_pop($args);
+        $filepath = '/' . implode('/', $args) . '/';
 
         $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        $file = $fs->get_file($context->id, 'assignfeedback_editpdf', $filearea, 0, $filepath, $filename);
+        if (!$file) {
             return false;
         }
 
@@ -64,7 +68,9 @@ function assignfeedback_editpdf_pluginfile($course,
         $options['immutable'] = true;
 
         send_stored_file($file, 0, 0, true, $options);
-    } else if ($context->contextlevel == CONTEXT_MODULE) {
+    }
+
+    if ($context->contextlevel == CONTEXT_MODULE) {
 
         require_login($course, false, $cm);
         $itemid = (int)array_shift($args);

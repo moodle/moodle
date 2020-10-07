@@ -72,69 +72,82 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
         $systemfiles = array();
         $fs = get_file_storage();
         $syscontext = context_system::instance();
+        $asscontext = $this->assignment->get_context();
 
-        // Copy any new stamps to this instance.
-        if ($files = $fs->get_area_files($syscontext->id,
-                                         'assignfeedback_editpdf',
-                                         'stamps',
-                                         0,
-                                         "filename",
-                                         false)) {
-            foreach ($files as $file) {
-                $filename = $file->get_filename();
-                if ($filename !== '.') {
-                    $systemfiles[] = $filename;
+        // Three file areas are used for stamps.
+        // Current stamps are those configured as a site administration setting to be available for new uses.
+        // When a stamp is removed from this filearea it is no longer available for new grade items.
+        $currentstamps = $fs->get_area_files($syscontext->id, 'assignfeedback_editpdf', 'stamps', 0, "filename", false);
 
-                    $existingfile = $fs->file_exists(
-                        $this->assignment->get_context()->id,
-                        'assignfeedback_editpdf',
-                        'stamps',
-                        $grade->id,
-                        '/',
-                        $file->get_filename()
-                    );
+        // Grade stamps are those which have been assigned for a specific grade item.
+        // The stamps associated with a grade item are always used for that grade item, even if the stamp is removed
+        // from the list of current stamps.
+        $gradestamps = $fs->get_area_files($asscontext->id, 'assignfeedback_editpdf', 'stamps', $grade->id, "filename", false);
 
-                    if (!$existingfile) {
-                        $newrecord = new stdClass();
-                        $newrecord->contextid = $this->assignment->get_context()->id;
-                        $newrecord->itemid = $grade->id;
-                        $fs->create_file_from_storedfile($newrecord, $file);
-                    }
-                }
+        // The system stamps are perpetual and always exist.
+        // They allow Moodle to serve a common URL for all users for any possible combination of stamps.
+        // Files in the perpetual stamp filearea are within the system context, in itemid 0, and use the original stamps
+        // contenthash as a folder name. This ensures that the combination of stamp filename, and stamp file content is
+        // unique.
+        $systemstamps = $fs->get_area_files($syscontext->id, 'assignfeedback_editpdf', 'systemstamps', 0, "filename", false);
+
+        // First check that all current stamps are listed in the grade stamps.
+        foreach ($currentstamps as $stamp) {
+            // Ensure that the current stamp is in the list of perpetual stamps.
+            $systempathnamehash = $this->get_system_stamp_path($stamp);
+            if (!array_key_exists($systempathnamehash, $systemstamps)) {
+                $filerecord = (object) [
+                    'filearea' => 'systemstamps',
+                    'filepath' => '/' . $stamp->get_contenthash() . '/',
+                ];
+                $newstamp = $fs->create_file_from_storedfile($filerecord, $stamp);
+                $systemstamps[$newstamp->get_pathnamehash()] = $newstamp;
+            }
+
+            // Ensure that the current stamp is in the list of stamps for the current grade item.
+            $gradeitempathhash = $this->get_assignment_stamp_path($stamp, $grade->id);
+            if (!array_key_exists($gradeitempathhash, $gradestamps)) {
+                $filerecord = (object) [
+                    'contextid' => $asscontext->id,
+                    'filearea' => 'stamps',
+                    'itemid' => $grade->id,
+                ];
+                $newstamp = $fs->create_file_from_storedfile($filerecord, $stamp);
+                $gradestamps[$newstamp->get_pathnamehash()] = $newstamp;
             }
         }
 
-        // Now get the full list of stamp files for this instance.
-        if ($files = $fs->get_area_files($this->assignment->get_context()->id,
-                                         'assignfeedback_editpdf',
-                                         'stamps',
-                                         $grade->id,
-                                         "filename",
-                                         false)) {
-            foreach ($files as $file) {
-                $filename = $file->get_filename();
-                if ($filename !== '.') {
-
-                    // Check to see if the file exists in system context.
-                    $insystemfiles = in_array($filename, $systemfiles);
-
-                    // If stamp is available in the system context, use that copy.
-                    // If not then fall back to file saved in the files table.
-                    $context = $insystemfiles ? $syscontext->id : $this->assignment->get_context()->id;
-                    $itemid = $insystemfiles ? 0 : $grade->id;
-
-                    $url = moodle_url::make_pluginfile_url(
-                        $context,
-                        'assignfeedback_editpdf',
-                        'stamps',
-                        $itemid,
-                        '/',
-                        $file->get_filename(),
-                        false
-                    );
-                    array_push($stampfiles, $url->out());
-                }
+        foreach ($gradestamps as $stamp) {
+            // All gradestamps should be available in the systemstamps filearea, but some legacy stamps may not be.
+            // These need to be copied over.
+            // Note: This should ideally be performed as an upgrade step, but there may be other cases that these do not
+            // exist, for example restored backups.
+            // In any case this is a cheap operation as it is solely performing an array lookup.
+            $systempathnamehash = $this->get_system_stamp_path($stamp);
+            if (!array_key_exists($systempathnamehash, $systemstamps)) {
+                $filerecord = (object) [
+                    'contextid' => $syscontext->id,
+                    'itemid' => 0,
+                    'filearea' => 'systemstamps',
+                    'filepath' => '/' . $stamp->get_contenthash() . '/',
+                ];
+                $systemstamp = $fs->create_file_from_storedfile($filerecord, $stamp);
+                $systemstamps[$systemstamp->get_pathnamehash()] = $systemstamp;
             }
+
+            // Always serve the perpetual system stamp.
+            // This ensures that the stamp is highly cached and reduces the hit on the application server.
+            $gradestamp = $systemstamps[$systempathnamehash];
+            $url = moodle_url::make_pluginfile_url(
+                $gradestamp->get_contextid(),
+                $gradestamp->get_component(),
+                $gradestamp->get_filearea(),
+                false,
+                $gradestamp->get_filepath(),
+                $gradestamp->get_filename(),
+                false
+            );
+            array_push($stampfiles, $url->out());
         }
 
         $url = false;
@@ -159,6 +172,43 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
                                                     $readonly
                                                 );
         return $widget;
+    }
+
+    /**
+     * Get the pathnamehash for the specified stamp if in the system stamps.
+     *
+     * @param   stored_file $file
+     * @return  string
+     */
+    protected function get_system_stamp_path(stored_file $stamp): string {
+        $systemcontext = context_system::instance();
+
+        return file_storage::get_pathname_hash(
+            $systemcontext->id,
+            'assignfeedback_editpdf',
+            'systemstamps',
+            0,
+            '/' . $stamp->get_contenthash() . '/',
+            $stamp->get_filename()
+        );
+    }
+
+    /**
+     * Get the pathnamehash for the specified stamp if in the current assignment stamps.
+     *
+     * @param   stored_file $file
+     * @param   int $gradeid
+     * @return  string
+     */
+    protected function get_assignment_stamp_path(stored_file $stamp, int $gradeid): string {
+        return file_storage::get_pathname_hash(
+            $this->assignment->get_context()->id,
+            'assignfeedback_editpdf',
+            'stamps',
+            $gradeid,
+            $stamp->get_filepath(),
+            $stamp->get_filename()
+        );
     }
 
     /**
