@@ -67,7 +67,7 @@ class manager {
 
         foreach ($tasks as $task) {
             $record = (object) $task;
-            $scheduledtask = self::scheduled_task_from_record($record, $expandr);
+            $scheduledtask = self::scheduled_task_from_record($record, $expandr, false);
             // Safety check in case the task in the DB does not match a real class (maybe something was uninstalled).
             if ($scheduledtask) {
                 $scheduledtask->set_component($componentname);
@@ -338,9 +338,10 @@ class manager {
      * @param \stdClass $record
      * @param bool $expandr - if true (default) an 'R' value in a time is expanded to an appropriate int.
      *      If false, they are left as 'R'
+     * @param bool $override - if true loads overridden settings from config.
      * @return \core\task\scheduled_task|false
      */
-    public static function scheduled_task_from_record($record, $expandr = true) {
+    public static function scheduled_task_from_record($record, $expandr = true, $override = true) {
         $classname = self::get_canonical_class_name($record->classname);
         if (!class_exists($classname)) {
             debugging("Failed to load task: " . $classname, DEBUG_DEVELOPER);
@@ -348,6 +349,12 @@ class manager {
         }
         /** @var \core\task\scheduled_task $task */
         $task = new $classname;
+
+        if ($override) {
+            // Update values with those defined in the config, if any are set.
+            $record = self::get_record_with_config_overrides($record);
+        }
+
         if (isset($record->lastruntime)) {
             $task->set_last_run_time($record->lastruntime);
         }
@@ -391,6 +398,7 @@ class manager {
         if (isset($record->pid)) {
             $task->set_pid($record->pid);
         }
+        $task->set_overridden(self::scheduled_task_has_override($classname));
 
         return $task;
     }
@@ -701,10 +709,12 @@ class manager {
                     }
                 }
 
-                // Make sure the task data is unchanged.
-                if (!$DB->record_exists('task_scheduled', (array) $record)) {
-                    $lock->release();
-                    continue;
+                if (!self::scheduled_task_has_override($record->classname)) {
+                    // Make sure the task data is unchanged unless an override is being used.
+                    if (!$DB->record_exists('task_scheduled', (array)$record)) {
+                        $lock->release();
+                        continue;
+                    }
                 }
 
                 // The global cron lock is under the most contention so request it
@@ -1105,5 +1115,92 @@ class manager {
         }
 
         return true;
+    }
+
+    /**
+     * For a given scheduled task record, this method will check to see if any overrides have
+     * been applied in config and return a copy of the record with any overridden values.
+     *
+     * The format of the config value is:
+     *      $CFG->scheduled_tasks = array(
+     *          '$classname' => array(
+     *              'schedule' => '* * * * *',
+     *              'disabled' => 1,
+     *          ),
+     *      );
+     *
+     * Where $classname is the value of the task's classname, i.e. '\core\task\grade_cron_task'.
+     *
+     * @param \stdClass $record scheduled task record
+     * @return \stdClass scheduled task with any configured overrides
+     */
+    protected static function get_record_with_config_overrides(\stdClass $record): \stdClass {
+        global $CFG;
+
+        $scheduledtaskkey = self::scheduled_task_get_override_key($record->classname);
+        $overriddenrecord = $record;
+
+        if ($scheduledtaskkey) {
+            $overriddenrecord->customised = true;
+            $taskconfig = $CFG->scheduled_tasks[$scheduledtaskkey];
+
+            if (isset($taskconfig['disabled'])) {
+                $overriddenrecord->disabled = $taskconfig['disabled'];
+            }
+            if (isset($taskconfig['schedule'])) {
+                list (
+                    $overriddenrecord->minute,
+                    $overriddenrecord->hour,
+                    $overriddenrecord->day,
+                    $overriddenrecord->dayofweek,
+                    $overriddenrecord->month) = explode(' ', $taskconfig['schedule']);
+            }
+        }
+
+        return $overriddenrecord;
+    }
+
+    /**
+     * This checks whether or not there is a value set in config
+     * for a scheduled task.
+     *
+     * @param string $classname Scheduled task's classname
+     * @return bool true if there is an entry in config
+     */
+    public static function scheduled_task_has_override(string $classname): bool {
+        return self::scheduled_task_get_override_key($classname) !== null;
+    }
+
+    /**
+     * Get the key within the scheduled tasks config object that
+     * for a classname.
+     *
+     * @param string $classname the scheduled task classname to find
+     * @return string the key if found, otherwise null
+     */
+    public static function scheduled_task_get_override_key(string $classname): ?string {
+        global $CFG;
+
+        if (isset($CFG->scheduled_tasks)) {
+            // Firstly, attempt to get a match against the full classname.
+            if (isset($CFG->scheduled_tasks[$classname])) {
+                return $classname;
+            }
+
+            // Check to see if there is a wildcard matching the classname.
+            foreach (array_keys($CFG->scheduled_tasks) as $key) {
+                if (strpos($key, '*') === false) {
+                    continue;
+                }
+
+                $pattern = '/' . str_replace('\\', '\\\\', str_replace('*', '.*', $key)) . '/';
+
+                if (preg_match($pattern, $classname)) {
+                    return $key;
+                }
+            }
+        }
+
+        return null;
     }
 }

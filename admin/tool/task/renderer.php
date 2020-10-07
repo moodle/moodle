@@ -82,7 +82,7 @@ class tool_task_renderer extends plugin_renderer_base {
             $defaulttask = \core\task\manager::get_default_scheduled_task($classname, false);
 
             $customised = $task->is_customised() ? $no : $yes;
-            if (empty($CFG->preventscheduledtaskchanges)) {
+            if (empty($CFG->preventscheduledtaskchanges) && !$task->is_overridden()) {
                 $configureurl = new moodle_url('/admin/tool/task/scheduledtasks.php',
                         ['action' => 'edit', 'task' => $classname]);
                 $editlink = $this->output->action_icon($configureurl, new pix_icon('t/edit',
@@ -100,8 +100,13 @@ class tool_task_renderer extends plugin_renderer_base {
                 ));
             }
 
-            $namecell = new html_table_cell($task->get_name() . "\n" .
-                    html_writer::span('\\' . $classname, 'task-class text-ltr'));
+            $namecellcontent = $task->get_name() . "\n" .
+                html_writer::span('\\' . $classname, 'task-class text-ltr');
+            if ($task->is_overridden()) {
+                // Let the user know the scheduled task is defined in config.
+                $namecellcontent .= "\n" . html_writer::div(get_string('configoverride', 'admin'), 'alert-info');
+            }
+            $namecell = new html_table_cell($namecellcontent);
             $namecell->header = true;
 
             $plugininfo = core_plugin_manager::instance()->get_plugin_info($task->get_component());
