@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20200911" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20201007" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -464,8 +464,8 @@
         <INDEX NAME="type-timesort" UNIQUE="false" FIELDS="type, timesort"/>
         <INDEX NAME="groupid-courseid-categoryid-visible-userid" UNIQUE="false" FIELDS="groupid, courseid, categoryid, visible, userid" COMMENT="used for calendar view"/>
         <INDEX NAME="eventtype" UNIQUE="false" FIELDS="eventtype"/>
-        <INDEX NAME="modulename-instance" UNIQUE="false" FIELDS="modulename, instance"/>
         <INDEX NAME="component" UNIQUE="false" FIELDS="component, eventtype, instance"/>
+        <INDEX NAME="modulename-instance-eventtype" UNIQUE="false" FIELDS="modulename, instance, eventtype" COMMENT="Improve performance on assign adhoc tasks."/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="cache_filters" COMMENT="For keeping information about cached data">
