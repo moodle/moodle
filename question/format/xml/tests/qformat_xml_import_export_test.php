@@ -427,6 +427,44 @@ class qformat_xml_import_export_test extends advanced_testcase {
     }
 
     /**
+     * Simple check for exporting a category.
+     */
+    public function test_export_category_with_special_chars() {
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $this->resetAfterTest(true);
+        $course = $this->getDataGenerator()->create_course();
+        $this->setAdminUser();
+        // Note while this loads $qformat with all the 'right' data from the xml file,
+        // the call to setCategory, followed by exportprocess will actually only export data
+        // from the database (created by the generator).
+        $qformat = $this->create_qformat('export_category.xml', $course);
+
+        $category = $generator->create_question_category([
+                'name' => 'Alpha',
+                'contextid' => '2',
+                'info' => 'This is Alpha category for test',
+                'infoformat' => '0',
+                'idnumber' => 'The inequalities < & >',
+                'stamp' => make_unique_id_code(),
+                'parent' => '0',
+                'sortorder' => '999']);
+        $generator->create_question('truefalse', null, [
+                'category' => $category->id,
+                'name' => 'Alpha Question',
+                'questiontext' => ['format' => '1', 'text' => '<p>Testing Alpha Question</p>'],
+                'generalfeedback' => ['format' => '1', 'text' => ''],
+                'idnumber' => 'T & F',
+                'correctanswer' => '1',
+                'feedbacktrue' => ['format' => '1', 'text' => ''],
+                'feedbackfalse' => ['format' => '1', 'text' => ''],
+                'penalty' => '1']);
+        $qformat->setCategory($category);
+
+        $expectedxml = file_get_contents(__DIR__ . '/fixtures/html_chars_in_idnumbers.xml');
+        $this->assert_same_xml($expectedxml, $qformat->exportprocess());
+    }
+
+    /**
      * Test that bad multianswer questions are not imported.
      */
     public function test_import_broken_multianswer_questions() {
