@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
 /**
  * Serves assignment feedback and other files.
  *
@@ -36,16 +39,36 @@ defined('MOODLE_INTERNAL') || die();
  * @param array $options - List of options affecting file serving.
  * @return bool false if file not found, does not return if found - just send the file
  */
-function assignfeedback_editpdf_pluginfile($course,
-                                           $cm,
-                                           context $context,
-                                           $filearea,
-                                           $args,
-                                           $forcedownload,
-                                           array $options=array()) {
-    global $USER, $DB, $CFG;
+function assignfeedback_editpdf_pluginfile(
+    $course,
+    $cm,
+    context $context,
+    $filearea,
+    $args,
+    $forcedownload,
+    array $options = array()
+) {
+    global $DB;
+    if ($filearea === 'systemstamps') {
 
-    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+        if ($context->contextlevel !== CONTEXT_SYSTEM) {
+            return false;
+        }
+
+        $filename = array_pop($args);
+        $filepath = '/' . implode('/', $args) . '/';
+
+        $fs = get_file_storage();
+        $file = $fs->get_file($context->id, 'assignfeedback_editpdf', $filearea, 0, $filepath, $filename);
+        if (!$file) {
+            return false;
+        }
+
+        $options['cacheability'] = 'public';
+        $options['immutable'] = true;
+
+        send_stored_file($file, 0, 0, true, $options);
+    }
 
     if ($context->contextlevel == CONTEXT_MODULE) {
 
