@@ -64,12 +64,13 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
             $grade = $this->assignment->get_user_grade($userid, true);
         }
 
-        $feedbackfile = document_services::get_feedback_document($this->assignment->get_instance()->id,
-                                                                 $userid,
-                                                                 $attempt);
+        $feedbackfile = document_services::get_feedback_document(
+            $this->assignment->get_instance()->id,
+            $userid,
+            $attempt
+        );
 
         $stampfiles = array();
-        $systemfiles = array();
         $fs = get_file_storage();
         $syscontext = context_system::instance();
         $asscontext = $this->assignment->get_context();
@@ -153,24 +154,27 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
         $url = false;
         $filename = '';
         if ($feedbackfile) {
-            $url = moodle_url::make_pluginfile_url($this->assignment->get_context()->id,
-                                                   'assignfeedback_editpdf',
-                                                   document_services::FINAL_PDF_FILEAREA,
-                                                   $grade->id,
-                                                   '/',
-                                                   $feedbackfile->get_filename(),
-                                                   false);
+            $url = moodle_url::make_pluginfile_url(
+                $this->assignment->get_context()->id,
+                'assignfeedback_editpdf',
+                document_services::FINAL_PDF_FILEAREA,
+                $grade->id,
+                '/',
+                $feedbackfile->get_filename(),
+                false
+            );
            $filename = $feedbackfile->get_filename();
         }
 
-        $widget = new assignfeedback_editpdf_widget($this->assignment->get_instance()->id,
-                                                    $userid,
-                                                    $attempt,
-                                                    $url,
-                                                    $filename,
-                                                    $stampfiles,
-                                                    $readonly
-                                                );
+        $widget = new assignfeedback_editpdf_widget(
+            $this->assignment->get_instance()->id,
+            $userid,
+            $attempt,
+            $url,
+            $filename,
+            $stampfiles,
+            $readonly
+        );
         return $widget;
     }
 
