@@ -1194,6 +1194,8 @@ class qformat_xml extends qformat_default {
         // Check question type.
         $questiontype = $this->get_qtype($question->qtype);
 
+        $idnumber = htmlspecialchars($question->idnumber);
+
         // Categories are a special case.
         if ($question->qtype == 'category') {
             $categorypath = $this->writetext($question->category);
@@ -1206,7 +1208,7 @@ class qformat_xml extends qformat_default {
             $expout .= "    <info {$infoformat}>\n";
             $expout .= "      {$categoryinfo}";
             $expout .= "    </info>\n";
-            $expout .= "    <idnumber>{$question->idnumber}</idnumber>\n";
+            $expout .= "    <idnumber>{$idnumber}</idnumber>\n";
             $expout .= "  </question>\n";
             return $expout;
         }
@@ -1230,7 +1232,7 @@ class qformat_xml extends qformat_default {
         }
         $expout .= "    <penalty>{$question->penalty}</penalty>\n";
         $expout .= "    <hidden>{$question->hidden}</hidden>\n";
-        $expout .= "    <idnumber>{$question->idnumber}</idnumber>\n";
+        $expout .= "    <idnumber>{$idnumber}</idnumber>\n";
 
         // The rest of the output depends on question type.
         switch($question->qtype) {
