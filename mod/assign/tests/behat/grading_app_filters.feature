@@ -39,7 +39,6 @@ Feature: In an assignment, teachers can change filters in the grading app
     And I set the field "workflowstate" to "In marking"
     And I set the field "Notify students" to "0"
     And I press "Save changes"
-    And I press "OK"
     And I click on "Edit settings" "link"
     And I log out
     When I log in as "teacher1"
@@ -89,7 +88,6 @@ Feature: In an assignment, teachers can change filters in the grading app
     And I set the field "workflowstate" to "In marking"
     And I set the field "Notify students" to "0"
     And I press "Save changes"
-    And I press "OK"
     And I click on "Edit settings" "link"
     And I log out
     When I log in as "teacher1"

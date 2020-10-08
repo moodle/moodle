@@ -58,7 +58,6 @@ Feature: In an assignment, students can comment in their submissions
       | Grade out of 100 | 50 |
       | Feedback comments | I'm the teacher feedback |
     And I press "Save changes"
-    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -78,7 +77,6 @@ Feature: In an assignment, students can comment in their submissions
       | Grade out of 100 | 0 |
     And I press "Save changes"
     And I should see "The changes to the grade and feedback were saved"
-    And I press "OK"
     And I set the following fields to these values:
       | Feedback comments | I'm the teacher feedback |
     And I press "Save changes"

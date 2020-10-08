@@ -34,7 +34,6 @@ I should be able to create an assignment with a due date relative to the course 
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
     And I should not see "Assignment is overdue by:" in the "Time remaining" "table_row"
-    And I log out
 
   Scenario: As a teacher, I should see the relative dates when reviewing assignment submissions
     Given the following config values are set as admin:
@@ -67,4 +66,3 @@ I should be able to create an assignment with a due date relative to the course 
     And I should see "Assignment is overdue by:" in the "Student 1" "table_row"
     And I should see "No submission" in the "Student 2" "table_row"
     And I should not see "Assignment is overdue by:" in the "Student 2" "table_row"
-    And I log out
