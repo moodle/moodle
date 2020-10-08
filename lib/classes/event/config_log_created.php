@@ -23,7 +23,7 @@
  */
 namespace core\event;
 
-defined('MOODLE_INTERNAL') || die();
+use moodle_url;
 
 /**
  * Event class for when an admin config log is created.
@@ -78,10 +78,12 @@ class config_log_created extends base {
     /**
      * Returns relevant URL.
      *
-     * @return \moodle_url
+     * @return moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/index.php');
+        return new moodle_url('/report/configlog/index.php', [
+            'search' => $this->other['name'],
+        ]);
     }
 
     /**
