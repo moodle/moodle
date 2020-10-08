@@ -39,7 +39,6 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I wait until the page is ready
     And I press "Save changes"
-    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     Then I should see "1" in the "Needs grading" "table_row"
@@ -113,7 +112,6 @@ Feature: In an assignment, teachers grade multiple students on one page
       | M8d skillZ! | 1337 |
       | Feedback comments | I'm the teacher first feedback |
     And I press "Save changes"
-    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration

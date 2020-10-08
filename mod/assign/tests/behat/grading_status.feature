@@ -57,7 +57,6 @@ Feature: View the grading status of an assignment
     And I set the field "Feedback comments" to "Great job! Lol, not really."
     And I set the field "Notify students" to "0"
     And I press "Save changes"
-    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -80,7 +79,6 @@ Feature: View the grading status of an assignment
     And I should see "1 of 1"
     And I set the field "Marking workflow state" to "Released"
     And I press "Save changes"
-    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -104,7 +102,6 @@ Feature: View the grading status of an assignment
     And I set the field "Marking workflow state" to "In marking"
     And I set the field "Notify students" to "0"
     And I press "Save changes"
-    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -117,7 +114,6 @@ Feature: View the grading status of an assignment
     And I set the field "Workflow filter" to "In review"
     And I should see "0 of 0"
     And I follow "Test assignment name"
-    And I log out
 
   @javascript
   Scenario: View the grading status for an assignment with marking workflow disabled
@@ -154,7 +150,6 @@ Feature: View the grading status of an assignment
     And I set the field "Grade out of 100" to "50"
     And I set the field "Feedback comments" to "Great job! Lol, not really."
     And I press "Save changes"
-    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -188,7 +183,6 @@ Feature: View the grading status of an assignment
     And I set the field "Grade out of 100" to "99.99"
     And I set the field "Feedback comments" to "Even better job! Really."
     And I press "Save changes"
-    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration
@@ -200,4 +194,3 @@ Feature: View the grading status of an assignment
     And I follow "Test assignment name"
     And I should see "Graded" in the "Grading status" "table_row"
     And I should see "Even better job! Really."
-    And I log out

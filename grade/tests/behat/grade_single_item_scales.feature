@@ -51,7 +51,6 @@ Feature: View gradebook when single item scales are used
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade" to "A"
     And I press "Save changes"
-    And I press "OK"
     And I am on "Course 1" course homepage
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field "Show weightings" to "Show"
