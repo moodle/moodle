@@ -323,6 +323,12 @@ class api {
             }
         }
 
+        if (empty($section) or $section == 'supportcontact') {
+            $settings->supportname = $CFG->supportname;
+            $settings->supportemail = $CFG->supportemail;
+            $settings->supportpage = $CFG->supportpage;
+        }
+
         return $settings;
     }
 
