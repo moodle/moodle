@@ -129,8 +129,8 @@
                         <strong>{{#str}}headinglocal, tool_customlang{{/str}}</strong>
                     </div>
                     <div class="py-2 py-md-0 px-md-3">
-                        <textarea class="form-control w-100 border-box" name="cust[{{id}}]" cols="40" rows="3">{{{ local }}}</textarea>
-
+                        <label for="{{id}}" class="sr-only sr-only-focusable">{{{ component }}}/{{{ stringid }}}</label>
+                        <textarea class="form-control w-100 border-box" id="{{id}}" name="cust[{{id}}]" cols="40" rows="3">{{{ local }}}</textarea>
                         {{#checkupdated}}
                         <div class="uptodatewrapper">
                             <div class="form-check">
