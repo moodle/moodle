@@ -46,7 +46,6 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
       | Feedback comments | I'm the teacher first feedback |
       | Allow another attempt | Yes |
     And I press "Save changes"
-    And I click on "OK" "button"
     And I click on "Edit settings" "link"
     And I log out
     And I log in as "student2"
@@ -66,7 +65,6 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
       | Grade | 50 |
       | Feedback comments | I'm the teacher second feedback |
     And I press "Save changes"
-    And I click on "OK" "button"
     And I click on "Edit settings" "link"
     And I log out
     Then I log in as "student2"

@@ -133,7 +133,6 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I draw on the pdf
     And I press "Save changes"
     And I should see "The changes to the grade and feedback were saved"
-    And I press "OK"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
     And I navigate to "View all submissions" in current page administration

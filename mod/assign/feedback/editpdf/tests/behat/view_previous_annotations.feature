@@ -54,7 +54,6 @@ Feature: In an assignment, teacher can view the feedback for a previous attempt.
     And I press "Save changes"
     And I wait until the page is ready
     And I should see "The changes to the grade and feedback were saved"
-    And I press "OK"
     And I follow "View a different attempt"
     And I click on "Attempt 1" "radio" in the "View a different attempt" "dialogue"
     And I press "View"
