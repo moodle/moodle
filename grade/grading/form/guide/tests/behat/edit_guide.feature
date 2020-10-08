@@ -83,7 +83,6 @@ Feature: Marking guides can be created and edited
     And I wait "1" seconds
     Then the field "Guide criterion B criterion remark" matches value "Comment \"4\""
     When I press "Save changes"
-    And I press "OK"
     And I follow "Edit settings"
     And I follow "Test assignment 1 name"
     And I navigate to "View all submissions" in current page administration
