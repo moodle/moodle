@@ -126,7 +126,8 @@ function lti_get_jwt_claim_mapping() {
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'accept_copy_advice',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'accept_media_types' => [
             'suffix' => 'dl',
@@ -138,7 +139,8 @@ function lti_get_jwt_claim_mapping() {
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'accept_multiple',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'accept_presentation_document_targets' => [
             'suffix' => 'dl',
@@ -156,19 +158,22 @@ function lti_get_jwt_claim_mapping() {
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'accept_unsigned',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'auto_create' => [
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'auto_create',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'can_confirm' => [
             'suffix' => 'dl',
             'group' => 'deep_linking_settings',
             'claim' => 'can_confirm',
-            'isarray' => false
+            'isarray' => false,
+            'type' => 'boolean'
         ],
         'content_item_return_url' => [
             'suffix' => 'dl',
@@ -389,7 +394,7 @@ function lti_get_jwt_claim_mapping() {
         'tool_consumer_info_product_family_code' => [
             'suffix' => '',
             'group' => 'tool_platform',
-            'claim' => 'family_code',
+            'claim' => 'product_family_code',
             'isarray' => false
         ],
         'tool_consumer_info_version' => [
@@ -483,14 +488,14 @@ function lti_get_jwt_claim_mapping() {
             'isarray' => false
         ],
         'lis_outcome_service_url' => [
-            'suffix' => 'bos',
-            'group' => 'basicoutcomesservice',
+            'suffix' => 'bo',
+            'group' => 'basicoutcome',
             'claim' => 'lis_outcome_service_url',
             'isarray' => false
         ],
         'lis_result_sourcedid' => [
-            'suffix' => 'bos',
-            'group' => 'basicoutcomesservice',
+            'suffix' => 'bo',
+            'group' => 'basicoutcome',
             'claim' => 'lis_result_sourcedid',
             'isarray' => false
         ],
@@ -3172,9 +3177,12 @@ function lti_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0, $nonce 
         $claim = LTI_JWT_CLAIM_PREFIX;
         if (array_key_exists($key, $claimmapping)) {
             $mapping = $claimmapping[$key];
+            $type = $mapping["type"] ?? "string";
             if ($mapping['isarray']) {
                 $value = explode(',', $value);
                 sort($value);
+            } else if ($type == 'boolean') {
+                $value = isset($value) && ($value == 'true');
             }
             if (!empty($mapping['suffix'])) {
                 $claim .= "-{$mapping['suffix']}";
