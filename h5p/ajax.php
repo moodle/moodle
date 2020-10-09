@@ -75,6 +75,17 @@ switch ($action) {
         $token = required_param('token', PARAM_RAW);
         $contentid = required_param('contentId', PARAM_INT);
 
+        $maxsize = get_max_upload_file_size($CFG->maxbytes);
+        // Check size of each uploaded file and scan for viruses.
+        foreach ($_FILES as $uploadedfile) {
+            $filename = clean_param($uploadedfile['name'], PARAM_FILE);
+            if ($uploadedfile['size'] > $maxsize) {
+                H5PCore::ajaxError(get_string('maxbytesfile', 'error', ['file' => $filename, 'size' => display_size($maxsize)]));
+                return;
+            }
+            \core\antivirus\manager::scan_file($uploadedfile['tmp_name'], $filename, true);
+        }
+
         $editor->ajax->action(H5PEditorEndpoints::FILES, $token, $contentid);
         break;
 
