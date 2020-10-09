@@ -11021,7 +11021,7 @@ class admin_setting_searchsetupinfo extends admin_setting {
      * @return string
      */
     public function output_html($data, $query='') {
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $ADMIN;
 
         $return = '';
         $brtag = html_writer::empty_tag('br');
@@ -11083,9 +11083,13 @@ class admin_setting_searchsetupinfo extends admin_setting {
             $row[0] = '3. ' . get_string('setupsearchengine', 'admin');
             $row[1] = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         } else {
-            $url = new moodle_url('/admin/settings.php?section=search' . $CFG->searchengine);
-            $row[0] = '3. ' . html_writer::tag('a', get_string('setupsearchengine', 'admin'),
-                            array('href' => $url));
+            if ($ADMIN->locate('search' . $CFG->searchengine)) {
+                $url = new moodle_url('/admin/settings.php?section=search' . $CFG->searchengine);
+                $row[0] = '3. ' . html_writer::link($url, get_string('setupsearchengine', 'core_admin'));
+            } else {
+                $row[0] = '3. ' . get_string('setupsearchengine', 'core_admin');
+            }
+
             // Check the engine status.
             $searchengine = \core_search\manager::search_engine_instance();
             try {
