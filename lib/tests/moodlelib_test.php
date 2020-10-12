@@ -1505,6 +1505,8 @@ class core_moodlelib_testcase extends advanced_testcase {
 
     /**
      * Test essential features implementation of {@link get_extra_user_fields()} as the admin user with all capabilities.
+     *
+     * @deprecated since Moodle 3.11 MDL-45242
      */
     public function test_get_extra_user_fields_essentials() {
         global $CFG, $USER, $DB;
@@ -1536,12 +1538,15 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Two fields.
         $CFG->showuseridentity = 'frog,zombie';
         $this->assertEquals(array('zombie'), get_extra_user_fields($context, array('frog')));
+
+        $this->assertDebuggingCalledCount(6);
     }
 
     /**
      * Prepare environment for couple of tests related to permission checks in {@link get_extra_user_fields()}.
      *
      * @return stdClass
+     * @deprecated since Moodle 3.11 MDL-45242
      */
     protected function environment_for_get_extra_user_fields_tests() {
         global $CFG, $DB;
@@ -1571,6 +1576,8 @@ class core_moodlelib_testcase extends advanced_testcase {
 
     /**
      * No identity fields shown to student user (no permission to view identity fields).
+     *
+     * @deprecated since Moodle 3.11 MDL-45242
      */
     public function test_get_extra_user_fields_no_access() {
 
@@ -1580,10 +1587,14 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $this->assertEquals(array(), get_extra_user_fields($env->coursecontext));
         $this->assertEquals(array(), get_extra_user_fields(context_system::instance()));
+
+        $this->assertDebuggingCalledCount(2);
     }
 
     /**
      * Teacher can see students' identity fields only within the course.
+     *
+     * @deprecated since Moodle 3.11 MDL-45242
      */
     public function test_get_extra_user_fields_course_only_access() {
 
@@ -1593,10 +1604,14 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $this->assertEquals(array('idnumber', 'country', 'city'), get_extra_user_fields($env->coursecontext));
         $this->assertEquals(array(), get_extra_user_fields(context_system::instance()));
+
+        $this->assertDebuggingCalledCount(2);
     }
 
     /**
      * Teacher can be prevented from seeing students' identity fields even within the course.
+     *
+     * @deprecated since Moodle 3.11 MDL-45242
      */
     public function test_get_extra_user_fields_course_prevented_access() {
 
@@ -1606,10 +1621,14 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         assign_capability('moodle/course:viewhiddenuserfields', CAP_PREVENT, $env->teacherrole->id, $env->coursecontext->id);
         $this->assertEquals(array('idnumber'), get_extra_user_fields($env->coursecontext));
+
+        $this->assertDebuggingCalledCount(1);
     }
 
     /**
      * Manager can see students' identity fields anywhere.
+     *
+     * @deprecated since Moodle 3.11 MDL-45242
      */
     public function test_get_extra_user_fields_anywhere_access() {
 
@@ -1619,10 +1638,14 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $this->assertEquals(array('idnumber', 'country', 'city'), get_extra_user_fields($env->coursecontext));
         $this->assertEquals(array('idnumber', 'country', 'city'), get_extra_user_fields(context_system::instance()));
+
+        $this->assertDebuggingCalledCount(2);
     }
 
     /**
      * Manager can be prevented from seeing hidden fields outside the course.
+     *
+     * @deprecated since Moodle 3.11 MDL-45242
      */
     public function test_get_extra_user_fields_schismatic_access() {
 
@@ -1635,10 +1658,14 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Note that inside the course, the manager can still see the hidden identifiers as this is currently
         // controlled by a separate capability for legacy reasons.
         $this->assertEquals(array('idnumber', 'country', 'city'), get_extra_user_fields($env->coursecontext));
+
+        $this->assertDebuggingCalledCount(2);
     }
 
     /**
      * Two capabilities must be currently set to prevent manager from seeing hidden fields.
+     *
+     * @deprecated since Moodle 3.11 MDL-45242
      */
     public function test_get_extra_user_fields_hard_to_prevent_access() {
 
@@ -1651,8 +1678,15 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $this->assertEquals(array('idnumber'), get_extra_user_fields(context_system::instance()));
         $this->assertEquals(array('idnumber'), get_extra_user_fields($env->coursecontext));
+
+        $this->assertDebuggingCalledCount(2);
     }
 
+    /**
+     * Tests get_extra_user_fields_sql.
+     *
+     * @deprecated since Moodle 3.11 MDL-45242
+     */
     public function test_get_extra_user_fields_sql() {
         global $CFG, $USER, $DB;
         $this->resetAfterTest();
@@ -1686,6 +1720,8 @@ class core_moodlelib_testcase extends advanced_testcase {
         $CFG->showuseridentity = 'frog,zombie';
         $this->assertEquals(', u1.zombie AS u_zombie',
             get_extra_user_fields_sql($context, 'u1', 'u_', array('frog')));
+
+        $this->assertDebuggingCalledCount(6);
     }
 
     /**
@@ -3037,6 +3073,11 @@ class core_moodlelib_testcase extends advanced_testcase {
         $CFG->alternativefullnameformat = $originalcfg->alternativefullnameformat;
     }
 
+    /**
+     * Tests the get_all_user_name_fields() deprecated function.
+     *
+     * @deprecated since Moodle 3.11 MDL-45242
+     */
     public function test_get_all_user_name_fields() {
         $this->resetAfterTest();
 
@@ -3084,6 +3125,8 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Returning a string.
         $teststring = 'firstname,lastname,firstnamephonetic,lastnamephonetic,middlename,alternatename';
         $this->assertEquals($teststring, get_all_user_name_fields(true, null, null, null, true));
+
+        $this->assertDebuggingCalledCount(7);
     }
 
     public function test_order_in_string() {
