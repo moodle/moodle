@@ -1784,6 +1784,7 @@ For advanced searching, press the search button without typing anything in the s
 $string['searchagain'] = 'Search again';
 $string['searchbyemail'] = 'Search by email address';
 $string['searchbyusername'] = 'Search by username';
+$string['searchcoursecategories'] = 'Search categories';
 $string['searchcourses'] = 'Search courses';
 $string['searchoptions'] = 'Search options';
 $string['searchresults'] = 'Search results';
