@@ -575,8 +575,10 @@ function(
     var renderAddDays = function(header, body, footer, days, datesCache) {
         var messagesContainer = getMessagesContainer(body);
         var daysRenderPromises = days.map(function(data) {
+            var timestampDate = new Date(data.value.timestamp * 1000);
             return Templates.render(TEMPLATES.DAY, {
                 timestamp: data.value.timestamp,
+                currentyear: timestampDate.getFullYear() === (new Date()).getFullYear(),
                 messages: formatMessagesForTemplate(data.value.messages, datesCache)
             });
         });
