@@ -962,30 +962,29 @@ class participants_search {
 
             $conditions[] = $idnumber;
 
-            if (!empty($CFG->showuseridentity)) {
-                // Search all user identify fields.
-                $extrasearchfields = explode(',', $CFG->showuseridentity);
-                foreach ($extrasearchfields as $extrasearchfield) {
-                    if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
-                        // Already covered above. Search by country not supported.
-                        continue;
-                    }
-                    $param = $searchkey3 . $extrasearchfield;
-                    $condition = $DB->sql_like($extrasearchfield, ':' . $param, false, false);
-                    $params[$param] = "%$keyword%";
-
-                    if ($notjoin) {
-                        $condition = "($extrasearchfield IS NOT NULL AND {$condition})";
-                    }
-
-                    if (!in_array($extrasearchfield, $this->userfields)) {
-                        // User cannot see this field, but allow match if their own account.
-                        $userid3 = 'userid' . $index . '3' . $extrasearchfield;
-                        $condition = "(". $condition . " AND u.id = :$userid3)";
-                        $params[$userid3] = $USER->id;
-                    }
-                    $conditions[] = $condition;
+            // Search all user identify fields.
+            // TODO Does not support custom user profile fields (MDL-70456).
+            $extrasearchfields = \core\user_fields::get_identity_fields(null, false);
+            foreach ($extrasearchfields as $extrasearchfield) {
+                if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
+                    // Already covered above. Search by country not supported.
+                    continue;
                 }
+                $param = $searchkey3 . $extrasearchfield;
+                $condition = $DB->sql_like($extrasearchfield, ':' . $param, false, false);
+                $params[$param] = "%$keyword%";
+
+                if ($notjoin) {
+                    $condition = "($extrasearchfield IS NOT NULL AND {$condition})";
+                }
+
+                if (!in_array($extrasearchfield, $this->userfields)) {
+                    // User cannot see this field, but allow match if their own account.
+                    $userid3 = 'userid' . $index . '3' . $extrasearchfield;
+                    $condition = "(". $condition . " AND u.id = :$userid3)";
+                    $params[$userid3] = $USER->id;
+                }
+                $conditions[] = $condition;
             }
 
             // Search by middlename.
