@@ -240,4 +240,48 @@ class core_user_profilelib_testcase extends advanced_testcase {
         $this->assertObjectHasAttribute('house', $profilefields2);
         $this->assertNull($profilefields2->house);
     }
+
+    /**
+     * Tests the profile_get_custom_field_data_by_shortname function when working normally.
+     */
+    public function test_profile_get_custom_field_data_by_shortname_normal() {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+
+        $this->resetAfterTest();
+
+        // Create 3 profile fields.
+        $generator = $this->getDataGenerator();
+        $field1 = $generator->create_custom_profile_field(['datatype' => 'text',
+                'shortname' => 'speciality', 'name' => 'Speciality',
+                'visible' => PROFILE_VISIBLE_ALL]);
+        $field2 = $generator->create_custom_profile_field(['datatype' => 'menu',
+                'shortname' => 'veggie', 'name' => 'Vegetarian',
+                'visible' => PROFILE_VISIBLE_PRIVATE]);
+
+        // Get the first field data and check it is correct.
+        $data = profile_get_custom_field_data_by_shortname('speciality');
+        $this->assertEquals('Speciality', $data['name']);
+        $this->assertEquals(PROFILE_VISIBLE_ALL, $data['visible']);
+        $this->assertEquals($field1->id, $data['id']);
+
+        // Get the second field data, checking there is no database query this time.
+        $before = $DB->perf_get_queries();
+        $data = profile_get_custom_field_data_by_shortname('veggie');
+        $this->assertEquals($before, $DB->perf_get_queries());
+        $this->assertEquals('Vegetarian', $data['name']);
+        $this->assertEquals(PROFILE_VISIBLE_PRIVATE, $data['visible']);
+        $this->assertEquals($field2->id, $data['id']);
+    }
+
+    /**
+     * Tests the profile_get_custom_field_data_by_shortname function with a field that doesn't exist.
+     */
+    public function test_profile_get_custom_field_data_by_shortname_missing() {
+        global $CFG;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+
+        $this->expectExceptionMessage('Unknown custom field: speciality');
+        profile_get_custom_field_data_by_shortname('speciality');
+    }
 }

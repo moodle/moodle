@@ -214,21 +214,38 @@ if ($hassiteconfig
         // with moodle/site:viewuseridentity).
         // Options include fields from the user table that might be helpful to
         // distinguish when adding or listing users ('I want to add the John
-        // Smith from Science faculty').
-        // Custom user profile fields are not currently supported.
+        // Smith from Science faculty') and any custom profile fields.
         $temp->add(new admin_setting_configmulticheckbox('showuseridentity',
                 new lang_string('showuseridentity', 'admin'),
-                new lang_string('showuseridentity_desc', 'admin'), array('email' => 1), array(
-                    'username'    => new lang_string('username'),
-                    'idnumber'    => new lang_string('idnumber'),
-                    'email'       => new lang_string('email'),
-                    'phone1'      => new lang_string('phone1'),
-                    'phone2'      => new lang_string('phone2'),
-                    'department'  => new lang_string('department'),
-                    'institution' => new lang_string('institution'),
-                    'city'        => new lang_string('city'),
-                    'country'     => new lang_string('country'),
-                )));
+                new lang_string('showuseridentity_desc', 'admin'), ['email' => 1],
+                function() {
+                    global $DB;
+
+                    // Basic fields available in user table.
+                    $fields = [
+                        'username'    => new lang_string('username'),
+                        'idnumber'    => new lang_string('idnumber'),
+                        'email'       => new lang_string('email'),
+                        'phone1'      => new lang_string('phone1'),
+                        'phone2'      => new lang_string('phone2'),
+                        'department'  => new lang_string('department'),
+                        'institution' => new lang_string('institution'),
+                        'city'        => new lang_string('city'),
+                        'country'     => new lang_string('country'),
+                    ];
+
+                    // Custom profile fields.
+                    $profilefields = $DB->get_records('user_info_field', ['datatype' => 'text'], 'sortorder ASC');
+                    foreach ($profilefields as $key => $field) {
+                        // Only reasonable-length fields can be used as identity fields.
+                        if ($field->param2 > 255) {
+                            continue;
+                        }
+                        $fields['profile_field_' . $field->shortname] = $field->name . ' *';
+                    }
+
+                    return $fields;
+                }));
         $setting = new admin_setting_configtext('fullnamedisplay', new lang_string('fullnamedisplay', 'admin'),
             new lang_string('configfullnamedisplay', 'admin'), 'language', PARAM_TEXT, 50);
         $setting->set_force_ltr(true);

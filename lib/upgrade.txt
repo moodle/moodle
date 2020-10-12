@@ -35,6 +35,8 @@ information provided here is intended especially for developers.
   See https://docs.moodle.org/dev/Modal_and_AJAX_forms for more details.
 * Admin setting admin_setting_configmulticheckbox now supports lazy-loading the options list by
   supplying a callback function instead of an array of options.
+* A new core API class \core\user_fields provides ways to get lists of user fields, and SQL related to
+  those fields.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:
