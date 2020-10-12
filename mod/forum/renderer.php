@@ -125,7 +125,8 @@ class mod_forum_renderer extends plugin_renderer_base {
             $output .= $this->output->heading(get_string("invalidmodule", "error"));
         } else {
             $cm = $modinfo->instances['forum'][$forum->id];
-            $canviewemail = in_array('email', get_extra_user_fields(context_module::instance($cm->id)));
+            // TODO Does not support custom user profile fields (MDL-70456).
+            $canviewemail = in_array('email', \core\user_fields::get_identity_fields(context_module::instance($cm->id), false));
             $strparams = new stdclass();
             $strparams->name = format_string($forum->name);
             $strparams->count = count($users);

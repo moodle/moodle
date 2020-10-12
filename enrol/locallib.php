@@ -238,7 +238,8 @@ class course_enrolment_manager {
             list($instancessql, $params, $filter) = $this->get_instance_sql();
             list($filtersql, $moreparams) = $this->get_filter_sql();
             $params += $moreparams;
-            $extrafields = get_extra_user_fields($this->get_context());
+            // TODO Does not support custom user profile fields (MDL-70456).
+            $extrafields = \core\user_fields::get_identity_fields($this->get_context(), false);
             $extrafields[] = 'lastaccess';
             $ufields = user_picture::fields('u', $extrafields);
             $sql = "SELECT DISTINCT $ufields, COALESCE(ul.timeaccess, 0) AS lastcourseaccess
@@ -268,7 +269,8 @@ class course_enrolment_manager {
         global $DB;
 
         // Search condition.
-        $extrafields = get_extra_user_fields($this->get_context());
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $extrafields = \core\user_fields::get_identity_fields($this->get_context(), false);
         list($sql, $params) = users_search_sql($this->searchfilter, 'u', true, $extrafields);
 
         // Role condition.
@@ -341,7 +343,8 @@ class course_enrolment_manager {
             list($ctxcondition, $params) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'ctx');
             $params['courseid'] = $this->course->id;
             $params['cid'] = $this->course->id;
-            $extrafields = get_extra_user_fields($this->get_context());
+            // TODO Does not support custom user profile fields (MDL-70456).
+            $extrafields = \core\user_fields::get_identity_fields($this->get_context(), false);
             $ufields = user_picture::fields('u', $extrafields);
             $sql = "SELECT ra.id as raid, ra.contextid, ra.component, ctx.contextlevel, ra.roleid, $ufields,
                         coalesce(u.lastaccess,0) AS lastaccess
@@ -379,8 +382,9 @@ class course_enrolment_manager {
         $tests = array("u.id <> :guestid", 'u.deleted = 0', 'u.confirmed = 1');
         $params = array('guestid' => $CFG->siteguest);
         if (!empty($search)) {
-            $conditions = get_extra_user_fields($this->get_context());
-            foreach (get_all_user_name_fields() as $field) {
+            // TODO Does not support custom user profile fields (MDL-70456).
+            $conditions = \core\user_fields::get_identity_fields($this->get_context(), false);
+            foreach (\core\user_fields::get_name_fields() as $field) {
                 $conditions[] = 'u.'.$field;
             }
             $conditions[] = $DB->sql_fullname('u.firstname', 'u.lastname');
@@ -399,7 +403,9 @@ class course_enrolment_manager {
         }
         $wherecondition = implode(' AND ', $tests);
 
-        $extrafields = get_extra_user_fields($this->get_context(), array('username', 'lastaccess'));
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $userfieldsapi = \core\user_fields::for_identity($this->get_context(), false)->excluding('username', 'lastaccess');
+        $extrafields = $userfieldsapi->get_required_fields();
         $extrafields[] = 'username';
         $extrafields[] = 'lastaccess';
         $extrafields[] = 'maildisplay';
@@ -1046,7 +1052,8 @@ class course_enrolment_manager {
 
         $context    = $this->get_context();
         $now = time();
-        $extrafields = get_extra_user_fields($context);
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $extrafields = \core\user_fields::get_identity_fields($context, false);
 
         $users = array();
         foreach ($userroles as $userrole) {
@@ -1124,7 +1131,8 @@ class course_enrolment_manager {
         $canmanagegroups = has_capability('moodle/course:managegroups', $context);
 
         $url = new moodle_url($pageurl, $this->get_url_params());
-        $extrafields = get_extra_user_fields($context);
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $extrafields = \core\user_fields::get_identity_fields($context, false);
 
         $enabledplugins = $this->get_enrolment_plugins(true);
 
@@ -1301,7 +1309,8 @@ class course_enrolment_manager {
             list($instancesql, $instanceparams) = $DB->get_in_or_equal(array_keys($instances), SQL_PARAMS_NAMED, 'instanceid0000');
         }
 
-        $userfields = user_picture::fields('u');
+        $userfieldsapi = \core\user_fields::for_userpic();
+        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         list($idsql, $idparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid0000');
 
         list($sort, $sortparams) = users_order_by_sql('u');

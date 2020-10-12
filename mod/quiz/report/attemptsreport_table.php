@@ -135,7 +135,7 @@ abstract class quiz_attempts_report_table extends table_sql {
     public function col_picture($attempt) {
         global $OUTPUT;
         $user = new stdClass();
-        $additionalfields = explode(',', user_picture::fields());
+        $additionalfields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
         $user = username_load_fields_from_object($user, $attempt, null, $additionalfields);
         $user->id = $attempt->userid;
         return $OUTPUT->user_picture($user);
@@ -413,15 +413,15 @@ abstract class quiz_attempts_report_table extends table_sql {
             $fields .= "\n(CASE WHEN $this->qmsubselect THEN 1 ELSE 0 END) AS gradedattempt,";
         }
 
-        $extrafields = get_extra_user_fields_sql($this->context, 'u', '',
-                array('id', 'idnumber', 'firstname', 'lastname', 'picture',
-                'imagealt', 'institution', 'department', 'email'));
-        $allnames = get_all_user_name_fields(true, 'u');
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $userfields = \core\user_fields::for_identity($this->context, false)->with_name()
+                ->excluding('id', 'idnumber', 'picture', 'imagealt', 'institution', 'department', 'email');
+        $extrafields = $userfields->get_sql('u')->selects;
         $fields .= '
                 quiza.uniqueid AS usageid,
                 quiza.id AS attempt,
                 u.id AS userid,
-                u.idnumber, ' . $allnames . ',
+                u.idnumber,
                 u.picture,
                 u.imagealt,
                 u.institution,

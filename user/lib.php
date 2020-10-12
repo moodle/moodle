@@ -302,7 +302,8 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     $currentuser = ($user->id == $USER->id);
     $isadmin = is_siteadmin($USER);
 
-    $showuseridentityfields = get_extra_user_fields($context);
+    // TODO Does not support custom user profile fields (MDL-70456).
+    $showuseridentityfields = \core\user_fields::get_identity_fields($context, false);
 
     if (!empty($course)) {
         $canviewhiddenuserfields = has_capability('moodle/course:viewhiddenuserfields', $context);

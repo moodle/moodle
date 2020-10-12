@@ -1190,11 +1190,10 @@ class completion_info {
                 context_course::instance($this->course->id),
                 'moodle/course:isincompletionreports', $groupid, true);
 
-        $allusernames = get_all_user_name_fields(true, 'u');
-        $sql = 'SELECT u.id, u.idnumber, ' . $allusernames;
-        if ($extracontext) {
-            $sql .= get_extra_user_fields_sql($extracontext, 'u', '', array('idnumber'));
-        }
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $userfieldsapi = \core\user_fields::for_identity($extracontext, false)->with_name();
+        $allusernames = $userfieldsapi->get_sql('u')->selects;
+        $sql = 'SELECT u.id, u.idnumber ' . $allusernames;
         $sql .= ' FROM (' . $enrolledsql . ') eu JOIN {user} u ON u.id = eu.id';
 
         if ($where) {

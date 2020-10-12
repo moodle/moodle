@@ -123,7 +123,9 @@ class quiz_override_form extends moodleform {
             }
         } else {
             // User override.
-            $extrauserfields = get_extra_user_fields($this->context);
+            // TODO Does not support custom user profile fields (MDL-70456).
+            $userfieldsapi = \core\user_fields::for_identity($this->context, false)->with_userpic()->with_name();
+            $extrauserfields = $userfieldsapi->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]);
             if ($this->userid) {
                 // There is already a userid, so freeze the selector.
                 $user = $DB->get_record('user', ['id' => $this->userid]);
@@ -143,7 +145,7 @@ class quiz_override_form extends moodleform {
                 }
 
                 // Get the list of appropriate users, depending on whether and how groups are used.
-                $userfields = user_picture::fields('u', $extrauserfields, 'userid');
+                $userfields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;
                 if ($accessallgroups) {
                     $users = get_users_by_capability($this->context, 'mod/quiz:attempt',
                             $userfields, $sort);
@@ -226,7 +228,7 @@ class quiz_override_form extends moodleform {
      * Get a user's name and identity ready to display.
      *
      * @param stdClass $user a user object.
-     * @param array $extrauserfields from get_extra_user_fields.
+     * @param array $extrauserfields (identity fields in user table only from the user_fields API)
      * @return string User's name, with extra info, for display.
      */
     protected function display_user_name(stdClass $user, array $extrauserfields) {

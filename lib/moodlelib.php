@@ -3540,7 +3540,7 @@ function fullname($user, $override=false) {
     }
 
     // Get all of the name fields.
-    $allnames = get_all_user_name_fields();
+    $allnames = \core\user_fields::get_name_fields();
     if ($CFG->debugdeveloper) {
         foreach ($allnames as $allname) {
             if (!property_exists($user, $allname)) {
@@ -3645,7 +3645,10 @@ function fullname($user, $override=false) {
  * @return object User name fields.
  */
 function username_load_fields_from_object($addtoobject, $secondobject, $prefix = null, $additionalfields = null) {
-    $fields = get_all_user_name_fields(false, null, $prefix);
+    $fields = \core\user_fields::get_name_fields();
+    foreach ($fields as &$field) {
+        $field = $prefix . $field;
+    }
     if ($additionalfields) {
         // Additional fields can specify their own 'alias' such as 'id' => 'userid'. This checks to see if
         // the key is a number and then sets the key to the array value.

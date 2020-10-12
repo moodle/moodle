@@ -224,7 +224,8 @@ class quiz_grading_report extends quiz_default_report {
         $params[] = $this->quiz->id;
 
         $fields = 'quiza.*, u.idnumber, ';
-        $fields .= get_all_user_name_fields(true, 'u');
+        $userfieldsapi = \core\user_fields::for_name();
+        $fields .= $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $attemptsbyid = $DB->get_records_sql("
                 SELECT $fields
                 FROM {quiz_attempts} quiza

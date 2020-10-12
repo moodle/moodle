@@ -560,7 +560,8 @@ class core_enrol_external extends external_api {
         // Add also extra user fields.
         $requiredfields = array_merge(
             ['id', 'fullname', 'profileimageurl', 'profileimageurlsmall'],
-            get_extra_user_fields($context)
+            // TODO Does not support custom user profile fields (MDL-70456).
+            \core\user_fields::get_identity_fields($context, false)
         );
         foreach ($users['users'] as $id => $user) {
             // Note: We pass the course here to validate that the current user can at least view user details in this course.
@@ -652,7 +653,8 @@ class core_enrol_external extends external_api {
         // Add also extra user fields.
         $requiredfields = array_merge(
                 ['id', 'fullname', 'profileimageurl', 'profileimageurlsmall'],
-                get_extra_user_fields($context)
+                // TODO Does not support custom user profile fields (MDL-70456).
+                \core\user_fields::get_identity_fields($context, false)
         );
         foreach ($users['users'] as $user) {
             if ($userdetails = user_get_user_details($user, $course, $requiredfields)) {

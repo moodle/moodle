@@ -93,7 +93,8 @@ class enrol_manual_enrol_users_form extends moodleform {
             'courseid' => $course->id,
             'enrolid' => $instance->id,
             'perpage' => $CFG->maxusersperpage,
-            'userfields' => implode(',', get_extra_user_fields($context))
+            // TODO Does not support custom user profile fields (MDL-70456).
+            'userfields' => implode(',', \core\user_fields::get_identity_fields($context, false))
         );
         $mform->addElement('autocomplete', 'userlist', get_string('selectusers', 'enrol_manual'), array(), $options);
 

@@ -33,6 +33,11 @@ require_once($CFG->libdir . '/outputcomponents.php');
  */
 class core_outputcomponents_testcase extends advanced_testcase {
 
+    /**
+     * Tests user_picture::fields.
+     *
+     * @deprecated since Moodle 3.11 MDL-45242
+     */
     public function test_fields_aliasing() {
         $fields = user_picture::fields();
         $fields = array_map('trim', explode(',', $fields));
@@ -60,10 +65,16 @@ class core_outputcomponents_testcase extends advanced_testcase {
             $this->assertContains($expected, $returned, "Expected pattern '$expected' not returned");
         }
         $this->assertContains("custom1 AS prefixcustom1", $returned, "Expected pattern 'custom1 AS prefixcustom1' not returned");
+
+        // Deprecation warnings for user_picture::fields.
+        $this->assertDebuggingCalledCount(2);
     }
 
+    /**
+     * Tests user_picture::unalias.
+     */
     public function test_fields_unaliasing() {
-        $fields = user_picture::fields();
+        $fields = implode(',', \core\user_fields::get_picture_fields());
         $fields = array_map('trim', explode(',', $fields));
 
         $fakerecord = new stdClass();
@@ -86,8 +97,11 @@ class core_outputcomponents_testcase extends advanced_testcase {
         $this->assertSame('Value of custom1', $returned->custom1);
     }
 
+    /**
+     * Tests user_picture::unalias with null values.
+     */
     public function test_fields_unaliasing_null() {
-        $fields = user_picture::fields();
+        $fields = implode(',', \core\user_fields::get_picture_fields());
         $fields = array_map('trim', explode(',', $fields));
 
         $fakerecord = new stdClass();

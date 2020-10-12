@@ -110,8 +110,11 @@ if ($groupingid) {
 
 list($sort, $sortparams) = users_order_by_sql('u');
 
-$extrafields = get_extra_user_fields($context);
-$allnames = 'u.id, ' . user_picture::fields('u', $extrafields);
+// TODO Does not support custom user profile fields (MDL-70456).
+$userfieldsapi = \core\user_fields::for_identity($context, false)->with_userpic();
+$userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+$extrafields = $userfieldsapi->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]);
+$allnames = 'u.id, ' . $userfields;
 
 $sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, $allnames, u.idnumber, u.username
           FROM {groups} g

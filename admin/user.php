@@ -183,13 +183,15 @@
     // These columns are always shown in the users list.
     $requiredcolumns = array('city', 'country', 'lastaccess');
     // Extra columns containing the extra user fields, excluding the required columns (city and country, to be specific).
-    $extracolumns = get_extra_user_fields($context, $requiredcolumns);
-    // Get all user name fields as an array.
-    $allusernamefields = get_all_user_name_fields(false, null, null, null, true);
+    // TODO Does not support custom user profile fields (MDL-70456).
+    $userfields = \core\user_fields::for_identity($context, false)->excluding(...$requiredcolumns);
+    $extracolumns = $userfields->get_required_fields();
+    // Get all user name fields as an array, but with firstname and lastname first.
+    $allusernamefields = \core\user_fields::get_name_fields(true);
     $columns = array_merge($allusernamefields, $extracolumns, $requiredcolumns);
 
     foreach ($columns as $column) {
-        $string[$column] = get_user_field_name($column);
+        $string[$column] = \core\user_fields::get_display_name($column);
         if ($sort != $column) {
             $columnicon = "";
             if ($column == "lastaccess") {

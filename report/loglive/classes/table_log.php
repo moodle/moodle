@@ -374,7 +374,9 @@ class report_loglive_table_log extends table_sql {
         // Get user fullname and put that in return list.
         if (!empty($userids)) {
             list($usql, $uparams) = $DB->get_in_or_equal($userids);
-            $users = $DB->get_records_sql("SELECT id," . get_all_user_name_fields(true) . " FROM {user} WHERE id " . $usql,
+            $userfieldsapi = \core\user_fields::for_name();
+            $users = $DB->get_records_sql("SELECT id," .
+                    $userfieldsapi->get_sql('', false, '', '', false)->selects . " FROM {user} WHERE id " . $usql,
                     $uparams);
             foreach ($users as $userid => $user) {
                 $this->userfullnames[$userid] = fullname($user);

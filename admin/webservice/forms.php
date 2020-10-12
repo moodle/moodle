@@ -241,7 +241,8 @@ class web_service_token_form extends moodleform {
             if ($usertotal < 500) {
                 list($sort, $params) = users_order_by_sql('u');
                 // User searchable selector - return users who are confirmed, not deleted, not suspended and not a guest.
-                $sql = 'SELECT u.id, ' . get_all_user_name_fields(true, 'u') . '
+                $userfieldsapi = \core\user_fields::for_name();
+                $sql = 'SELECT u.id' . $userfieldsapi->get_sql('u')->selects . '
                         FROM {user} u
                         WHERE u.deleted = 0
                         AND u.confirmed = 1
