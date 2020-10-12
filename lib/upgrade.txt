@@ -58,6 +58,8 @@ information provided here is intended especially for developers.
   completion_info::internal_set_data() to reaggregate completions that have been marked for instant course completion.
 * The following functions have been finally deprecated and can not be used anymore:
   - generate_uuid
+* The YUI moodle-core-formchangechecker module has been deprecated and replaced with a new AMD module
+  core_form/changechecker.
 
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.
