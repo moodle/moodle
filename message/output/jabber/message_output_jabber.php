@@ -23,8 +23,6 @@
  */
 
 require_once($CFG->dirroot.'/message/output/lib.php');
-require_once($CFG->libdir.'/jabber/XMPP/XMPP.php');
-
 /**
  * The jabber message processor
  *
@@ -76,7 +74,7 @@ class message_output_jabber extends message_output {
 
         $jabbermessage .= "\n(".get_string('noreply','message').')';
 
-        $conn = new XMPPHP_XMPP($CFG->jabberhost,$CFG->jabberport,$CFG->jabberusername,$CFG->jabberpassword,'moodle',$CFG->jabberserver);
+        $conn = new \BirknerAlex\XMPPHP\XMPP($CFG->jabberhost,$CFG->jabberport,$CFG->jabberusername,$CFG->jabberpassword,'moodle',$CFG->jabberserver);
 
         // No need to track the presence during the sending message process.
         $conn->track_presence = false;
@@ -88,7 +86,7 @@ class message_output_jabber extends message_output {
             $conn->presence();
             $conn->message($jabberaddress, $jabbermessage);
             $conn->disconnect();
-        } catch(XMPPHP_Exception $e) {
+        } catch(\BirknerAlex\XMPPHP\Exception $e) {
             debugging($e->getMessage());
             return false;
         }
