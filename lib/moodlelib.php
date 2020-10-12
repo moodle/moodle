@@ -3755,6 +3755,8 @@ function order_in_string($values, $stringformat) {
 /**
  * Checks if current user is shown any extra fields when listing users.
  *
+ * Does not include any custom profile fields.
+ *
  * @param object $context Context
  * @param array $already Array of fields that we're going to show anyway
  *   so don't bother listing them
@@ -3762,52 +3764,16 @@ function order_in_string($values, $stringformat) {
  *   listed in $already
  */
 function get_extra_user_fields($context, $already = array()) {
-    global $CFG;
-
-    // Only users with permission get the extra fields.
-    if (!has_capability('moodle/site:viewuseridentity', $context)) {
-        return array();
-    }
-
-    // Split showuseridentity on comma (filter needed in case the showuseridentity is empty).
-    $extra = array_filter(explode(',', $CFG->showuseridentity));
-
-    foreach ($extra as $key => $field) {
-        if (in_array($field, $already)) {
-            unset($extra[$key]);
-        }
-    }
-
-    // If the identity fields are also among hidden fields, make sure the user can see them.
-    $hiddenfields = array_filter(explode(',', $CFG->hiddenuserfields));
-    $hiddenidentifiers = array_intersect($extra, $hiddenfields);
-
-    if ($hiddenidentifiers) {
-        if ($context->get_course_context(false)) {
-            // We are somewhere inside a course.
-            $canviewhiddenuserfields = has_capability('moodle/course:viewhiddenuserfields', $context);
-
-        } else {
-            // We are not inside a course.
-            $canviewhiddenuserfields = has_capability('moodle/user:viewhiddendetails', $context);
-        }
-
-        if (!$canviewhiddenuserfields) {
-            // Remove hidden identifiers from the list.
-            $extra = array_diff($extra, $hiddenidentifiers);
-        }
-    }
-
-    // Re-index the entries.
-    $extra = array_values($extra);
-
-    return $extra;
+    $fields = new \core\user_fields([\core\user_fields::PURPOSE_IDENTITY], [], $already);
+    return $fields->get_required_fields($context, false);
 }
 
 /**
  * If the current user is to be shown extra user fields when listing or
  * selecting users, returns a string suitable for including in an SQL select
  * clause to retrieve those fields.
+ *
+ * Does not include any custom profile fields.
  *
  * @param context $context Context
  * @param string $alias Alias of user table, e.g. 'u' (default none)
@@ -3816,53 +3782,28 @@ function get_extra_user_fields($context, $already = array()) {
  * @return string Partial SQL select clause, beginning with comma, for example ',u.idnumber,u.department' unless it is blank
  */
 function get_extra_user_fields_sql($context, $alias='', $prefix='', $already = array()) {
-    $fields = get_extra_user_fields($context, $already);
-    $result = '';
-    // Add punctuation for alias.
-    if ($alias !== '') {
-        $alias .= '.';
+    $fields = new \core\user_fields([\core\user_fields::PURPOSE_IDENTITY], [], $already);
+    // Note: $joins and $joinparams will always be empty because we turned off profile fields.
+    [$selects, $joins, $joinparams] = $fields->get_sql($context, false, false, $alias, $prefix);
+
+    if ($alias === '') {
+        // The new code puts {user}. in front of the field names while the old code didn't.
+        $selects = str_replace('{user}.', '', $selects);
     }
-    foreach ($fields as $field) {
-        $result .= ', ' . $alias . $field;
-        if ($prefix) {
-            $result .= ' AS ' . $prefix . $field;
-        }
-    }
-    return $result;
+
+    return $selects;
 }
 
 /**
  * Returns the display name of a field in the user table. Works for most fields that are commonly displayed to users.
+ *
+ * Also works for custom fields.
+ *
  * @param string $field Field name, e.g. 'phone1'
  * @return string Text description taken from language file, e.g. 'Phone number'
  */
 function get_user_field_name($field) {
-    // Some fields have language strings which are not the same as field name.
-    switch ($field) {
-        case 'url' : {
-            return get_string('webpage');
-        }
-        case 'icq' : {
-            return get_string('icqnumber');
-        }
-        case 'skype' : {
-            return get_string('skypeid');
-        }
-        case 'aim' : {
-            return get_string('aimid');
-        }
-        case 'yahoo' : {
-            return get_string('yahooid');
-        }
-        case 'msn' : {
-            return get_string('msnid');
-        }
-        case 'picture' : {
-            return get_string('pictureofuser');
-        }
-    }
-    // Otherwise just use the same lang string.
-    return get_string($field);
+    return \core\user_fields::get_display_name($field);
 }
 
 /**
