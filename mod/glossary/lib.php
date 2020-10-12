@@ -403,7 +403,8 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
     $params['timestart'] = $timestart;
     $params['glossaryid'] = $cm->instance;
 
-    $ufields = user_picture::fields('u', null, 'userid');
+    $userfieldsapi = \core\user_fields::for_userpic();
+    $ufields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;
     $entries = $DB->get_records_sql("
               SELECT ge.id AS entryid, ge.glossaryid, ge.concept, ge.definition, ge.approved,
                      ge.timemodified, $ufields
@@ -564,8 +565,10 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
     if (count($approvals) == 0) {
         return false;
     }
+    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;
     $selectsql = 'SELECT ge.id, ge.concept, ge.approved, ge.timemodified, ge.glossaryid,
-                                        '.user_picture::fields('u',null,'userid');
+            ' . $userfields;
     $countsql = 'SELECT COUNT(*)';
 
     $joins = array(' FROM {glossary_entries} ge ');
@@ -3671,7 +3674,8 @@ function glossary_get_authors($glossary, $context, $limit, $from, $options = arr
     global $DB, $USER;
 
     $params = array();
-    $userfields = user_picture::fields('u', null);
+    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
     $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
     $params['myid'] = $USER->id;
@@ -3824,7 +3828,8 @@ function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch
 
     list($searchcond, $params) = glossary_get_search_terms_sql($terms, $fullsearch, $glossary->id);
 
-    $userfields = user_picture::fields('u', null, 'userdataid', 'userdata');
+    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfields = $userfieldsapi->get_sql('u', false, 'userdata', 'userdataid', false)->selects;
 
     // Need one inner view here to avoid distinct + text.
     $sqlwrapheader = 'SELECT ge.*, ge.concept AS glossarypivot, ' . $userfields . '

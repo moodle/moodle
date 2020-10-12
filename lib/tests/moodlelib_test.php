@@ -3788,7 +3788,7 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         // User information for showing a picture.
         $user = new stdClass();
-        $additionalfields = explode(',', user_picture::fields());
+        $additionalfields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
         $user = username_load_fields_from_object($user, $userinfo, null, $additionalfields);
         $user->id = $userinfo->userid;
         $expectedarray = new stdClass();
@@ -3817,7 +3817,7 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         // Return an object with user picture information.
         $user = new stdClass();
-        $additionalfields = explode(',', user_picture::fields());
+        $additionalfields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
         $user = username_load_fields_from_object($user, $userinfo, 'author', $additionalfields);
         $user->id = $userinfo->userid;
         $expectedarray = new stdClass();

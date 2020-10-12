@@ -108,15 +108,17 @@ if ($groupmode) {
     // User overrides.
     $colclasses[] = 'colname';
     $headers[] = get_string('user');
-    $extrauserfields = get_extra_user_fields($context);
+    // TODO Does not support custom user profile fields (MDL-70456).
+    $userfieldsapi = \core\user_fields::for_identity($context, false)->with_name()->with_userpic();
+    $extrauserfields = $userfieldsapi->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]);
     foreach ($extrauserfields as $field) {
         $colclasses[] = 'col' . $field;
-        $headers[] = get_user_field_name($field);
+        $headers[] = \core\user_fields::get_display_name($field);
     }
 
     list($sort, $params) = users_order_by_sql('u');
     $params['quizid'] = $quiz->id;
-    $userfields = user_picture::fields('u', $extrauserfields, 'userid');
+    $userfields = $userfieldsapi->get_sql('u', true, '', 'userid', false)->selects;
 
     if ($showallgroups) {
         $groupsjoin = '';

@@ -3083,8 +3083,10 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
     $joins = array('FROM {user} u');
     $wheres = array();
 
-    $userfields = get_extra_user_fields($context);
-    $userfieldssql = user_picture::fields('u', $userfields);
+    // TODO Does not support custom user profile fields (MDL-70456).
+    $userfields = \core\user_fields::get_identity_fields($context, false);
+    $userfieldsapi = \core\user_fields::for_userpic()->including(...$userfields);
+    $userfieldssql = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
     if ($isfrontpage) {
         $select = "SELECT $userfieldssql, u.lastaccess";

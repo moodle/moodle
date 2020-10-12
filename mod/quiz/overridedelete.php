@@ -95,12 +95,13 @@ if ($override->groupid) {
     $group = $DB->get_record('groups', ['id' => $override->groupid], 'id, name');
     $confirmstr = get_string("overridedeletegroupsure", "quiz", $group->name);
 } else {
-    $namefields = get_all_user_name_fields(true);
     $user = $DB->get_record('user', ['id' => $override->userid]);
 
     $username = fullname($user);
     $namefields = [];
-    foreach (get_extra_user_fields($context) as $field) {
+
+    // TODO Does not support custom user profile fields (MDL-70456).
+    foreach (\core\user_fields::for_identity($context, false)->get_required_fields() as $field) {
         if (isset($user->$field) && $user->$field !== '') {
             $namefields[] = $user->$field;
         }

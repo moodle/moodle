@@ -480,7 +480,7 @@ function useredit_get_enabled_name_fields() {
     global $CFG;
 
     // Get all of the other name fields which are not ranked as necessary.
-    $additionalusernamefields = array_diff(get_all_user_name_fields(), array('firstname', 'lastname'));
+    $additionalusernamefields = array_diff(\core\user_fields::get_name_fields(), array('firstname', 'lastname'));
     // Find out which additional name fields are actually being used from the fullnamedisplay setting.
     $enabledadditionalusernames = array();
     foreach ($additionalusernamefields as $enabledname) {
@@ -507,7 +507,14 @@ function useredit_get_disabled_name_fields($enabledadditionalusernames = null) {
     }
 
     // These are the additional fields that are not currently enabled.
-    $nonusednamefields = array_diff(get_all_user_name_fields(),
+    $nonusednamefields = array_diff(\core\user_fields::get_name_fields(),
             array_merge(array('firstname', 'lastname'), $enabledadditionalusernames));
-    return $nonusednamefields;
+
+    // It may not be significant anywhere, but for compatibility, this used to return an array
+    // with keys and values the same.
+    $result = [];
+    foreach ($nonusednamefields as $field) {
+        $result[$field] = $field;
+    }
+    return $result;
 }

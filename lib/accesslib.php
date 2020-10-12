@@ -3923,7 +3923,8 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
     global $DB;
 
     if (empty($fields)) {
-        $allnames = get_all_user_name_fields(true, 'u');
+        $userfieldsapi = \core\user_fields::for_name();
+        $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .
                   'u.maildisplay, u.mailformat, u.maildigest, u.email, u.emailstop, u.city, '.
                   'u.country, u.picture, u.idnumber, u.department, u.institution, '.

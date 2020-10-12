@@ -243,7 +243,8 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
 
     $slist = implode(',', $ids); // there should not be hundreds of glossaries in one course, right?
 
-    $allusernames = user_picture::fields('u');
+    $userfieldsapi = \core\user_fields::for_userpic();
+    $allusernames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     $rs = $DB->get_recordset_sql("SELECT sa.userid, sa.survey, MAX(sa.time) AS time,
                                          $allusernames
                                     FROM {survey_answers} sa
@@ -315,7 +316,8 @@ function survey_get_responses($surveyid, $groupid, $groupingid) {
         $groupsjoin = "";
     }
 
-    $userfields = user_picture::fields('u');
+    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     return $DB->get_records_sql("SELECT $userfields, MAX(a.time) as time
                                    FROM {survey_answers} a
                                    JOIN {user} u ON a.userid = u.id
@@ -375,7 +377,8 @@ function survey_get_user_answers($surveyid, $questionid, $groupid, $sort="sa.ans
         $groupsql  = '';
     }
 
-    $userfields = user_picture::fields('u');
+    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     return $DB->get_records_sql("SELECT sa.*, $userfields
                                    FROM {survey_answers} sa,  {user} u $groupfrom
                                   WHERE sa.survey = :surveyid

@@ -405,7 +405,7 @@ case workshop::PHASE_ASSESSMENT:
                 $submission->title              = $assessment->submissiontitle;
                 $submission->timecreated        = $assessment->submissioncreated;
                 $submission->timemodified       = $assessment->submissionmodified;
-                $userpicturefields = explode(',', user_picture::fields());
+                $userpicturefields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
                 foreach ($userpicturefields as $userpicturefield) {
                     $prefixedusernamefield = 'author' . $userpicturefield;
                     $submission->$prefixedusernamefield = $assessment->$prefixedusernamefield;
@@ -533,7 +533,7 @@ case workshop::PHASE_EVALUATION:
             $submission->title              = $assessment->submissiontitle;
             $submission->timecreated        = $assessment->submissioncreated;
             $submission->timemodified       = $assessment->submissionmodified;
-            $userpicturefields = explode(',', user_picture::fields());
+            $userpicturefields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
             foreach ($userpicturefields as $userpicturefield) {
                 $prefixedusernamefield = 'author' . $userpicturefield;
                 $submission->$prefixedusernamefield = $assessment->$prefixedusernamefield;
@@ -647,7 +647,7 @@ case workshop::PHASE_CLOSED:
             $submission->title              = $assessment->submissiontitle;
             $submission->timecreated        = $assessment->submissioncreated;
             $submission->timemodified       = $assessment->submissionmodified;
-            $userpicturefields = explode(',', user_picture::fields());
+            $userpicturefields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
             foreach ($userpicturefields as $userpicturefield) {
                 $prefixedusernamefield = 'author' . $userpicturefield;
                 $submission->$prefixedusernamefield = $assessment->$prefixedusernamefield;

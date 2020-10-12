@@ -230,7 +230,8 @@ class user_picture implements renderable {
         }
 
         if ($needrec) {
-            $this->user = $DB->get_record('user', array('id'=>$user->id), self::fields(), MUST_EXIST);
+            $this->user = $DB->get_record('user', array('id'=>$user->id),
+                    implode(',', \core\user_fields::get_picture_fields()), MUST_EXIST);
         } else {
             $this->user = clone($user);
         }
