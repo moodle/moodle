@@ -1274,6 +1274,10 @@ class manager {
             return;
         }
 
+        if (defined('READ_ONLY_SESSION') && READ_ONLY_SESSION && !empty($CFG->enable_read_only_sessions)) {
+            return;
+        }
+
         $SESSION->recentsessionlocks = self::get_recent_session_locks();
         array_push($SESSION->recentsessionlocks, $sessionlock);
 
