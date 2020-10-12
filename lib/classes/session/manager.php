@@ -118,7 +118,7 @@ class manager {
      *                           and the session will be read-only.
      */
     private static function start_session(bool $requireslock) {
-        global $PERF;
+        global $PERF, $CFG;
 
         try {
             self::$handler->init();
@@ -138,8 +138,15 @@ class manager {
             self::$sessionactive = true; // Set here, so the session can be cleared if the security check fails.
             self::check_security();
 
-            if (!$requireslock) {
+            if (!$requireslock || $CFG->debugdeveloper || isset($CFG->enable_read_only_sessions_debug)) {
                 self::$priorsession = (array) $_SESSION['SESSION'];
+            }
+            if (!empty($CFG->enable_read_only_sessions) && isset($_SESSION['SESSION']->cachestore_session)) {
+                $caches = join(', ', array_keys($_SESSION['SESSION']->cachestore_session));
+                $caches = str_replace('default_session-', '', $caches);
+                throw new \moodle_exception("The session caches can not be in the session store when "
+                    . "enable_read_only_sessions is enabled. Please map all session mode caches to be outside of the "
+                    . "default session store before enabling this features. Found these definitions in the session: $caches");
             }
 
             // Link global $USER and $SESSION,
@@ -685,7 +692,7 @@ class manager {
      * Unblocks the sessions, other scripts may start executing in parallel.
      */
     public static function write_close() {
-        global $PERF;
+        global $PERF, $ME, $CFG;
 
         if (self::$sessionactive) {
             // Grab the time when session lock is released.
@@ -697,7 +704,8 @@ class manager {
             self::update_recent_session_locks($PERF->sessionlock);
             self::sessionlock_debugging();
 
-            if (!self::$handler->requires_write_lock()) {
+            $requireslock = self::$handler->requires_write_lock();
+            if (!$requireslock || $CFG->debugdeveloper || isset($CFG->enable_read_only_sessions_debug)) {
                 // Compare the array of the earlier session data with the array now, if
                 // there is a difference then a lock is required.
                 $arraydiff = self::array_session_diff(
@@ -706,16 +714,15 @@ class manager {
                 );
 
                 if ($arraydiff) {
-                    if (isset($arraydiff['cachestore_session'])) {
-                        throw new \moodle_exception('The session store can not be in the session when '
-                            . 'enable_read_only_sessions is enabled');
-                    }
-
-                    error_log('This session was started as a read-only session but writes have been detected.');
-                    error_log('The following SESSION params were either added, or were updated.');
+                    $error = "Script $ME defined READ_ONLY_SESSION but the following SESSION attributes were changed:";
                     foreach ($arraydiff as $key => $value) {
-                        error_log('SESSION key: ' . $key);
+                        $error .= ' $SESSION->' . $key;
                     }
+                    // This will emit an error if debugging is on, even if $CFG->enable_read_only_sessions
+                    // is not true as we need to surface this class of errors.
+                    // @codingStandardsIgnoreStart
+                    error_log($error);
+                    // @codingStandardsIgnoreEnd
                 }
             }
         }
