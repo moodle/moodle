@@ -71,9 +71,6 @@ class restore_feedback_activity_structure_step extends restore_activity_structur
         $oldid = $data->id;
         $data->feedback = $this->get_new_parentid('feedback');
 
-        //dependitem
-        $data->dependitem = $this->get_mappingid('feedback_item', $data->dependitem);
-
         $newitemid = $DB->insert_record('feedback_item', $data);
         $this->set_mapping('feedback_item', $oldid, $newitemid, true); // Can have files
     }
@@ -117,9 +114,19 @@ class restore_feedback_activity_structure_step extends restore_activity_structur
     }
 
     protected function after_execute() {
+        global $DB;
         // Add feedback related files, no need to match by itemname (just internally handled context)
         $this->add_related_files('mod_feedback', 'intro', null);
         $this->add_related_files('mod_feedback', 'page_after_submit', null);
         $this->add_related_files('mod_feedback', 'item', 'feedback_item');
+
+        // Once all items are restored we can set their dependency.
+        if ($records = $DB->get_records('feedback_item', array('feedback' => $this->task->get_activityid()))) {
+            foreach ($records as $record) {
+                // Get new id for dependitem if present. This will also reset dependitem if not found.
+                $record->dependitem = $this->get_mappingid('feedback_item', $record->dependitem);
+                $DB->update_record('feedback_item', $record);
+            }
+        }
     }
 }
