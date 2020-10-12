@@ -83,6 +83,7 @@ $string['iosappid_desc'] = 'This setting may be left as default unless you have 
 $string['loginintheapp'] = 'Via the app';
 $string['logininthebrowser'] = 'Via a browser window (for SSO plugins)';
 $string['loginintheembeddedbrowser'] = 'Via an embedded browser (for SSO plugins)';
+$string['logoutconfirmation'] = 'Are you sure you want to log out from the mobile app on your mobile devices? By logging out, you will then need to re-enter your username and password in the mobile app on all devices where you have the app installed.';
 $string['mainmenu'] = 'Main menu';
 $string['managefiletypes'] = 'Manage file types';
 $string['minimumversion'] = 'If an app version is specified (3.8.0 or higher), any users using an older app version will be prompted to upgrade their app before being allowed access to the site.';

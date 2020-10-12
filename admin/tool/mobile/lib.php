@@ -134,15 +134,11 @@ function tool_mobile_myprofile_navigation(\core_user\output\myprofile\tree $tree
         return;
     }
 
-    if (!$iscurrentuser) {
-        return;
-    }
-
     $newnodes = [];
     $mobilesettings = get_config('tool_mobile');
 
     // Check if we should display a QR code.
-    if (!empty($mobilesettings->qrcodetype)) {
+    if ($iscurrentuser && !empty($mobilesettings->qrcodetype)) {
         $mobileqr = null;
         $qrcodeforappstr = get_string('qrcodeformobileappaccess', 'tool_mobile');
 
@@ -182,6 +178,13 @@ function tool_mobile_myprofile_navigation(\core_user\output\myprofile\tree $tree
         $mobilestrconnected = get_string('lastsiteaccess');
         if ($usertoken->lastaccess) {
             $mobilelastaccess = userdate($usertoken->lastaccess) . "&nbsp; (" . format_time(time() - $usertoken->lastaccess) . ")";
+            // Logout link.
+            $validtoken = empty($usertoken->validuntil) || time() < $usertoken->validuntil;
+            if ($iscurrentuser && $validtoken) {
+                $url = new moodle_url('/'.$CFG->admin.'/tool/mobile/logout.php', ['sesskey' => sesskey()]);
+                $logoutlink = html_writer::link($url, get_string('logout'));
+                $mobilelastaccess .= "&nbsp; ($logoutlink)";
+            }
         } else {
             // We should not reach this point.
             $mobilelastaccess = get_string("never");
