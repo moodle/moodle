@@ -96,6 +96,7 @@ class core_component {
         'MoodleHQ\\RTLCSS' => 'lib/rtlcss',
         'ScssPhp\\ScssPhp' => 'lib/scssphp',
         'Box\\Spout' => 'lib/spout/src/Spout',
+        'BirknerAlex\\XMPPHP' => 'lib/jabber/XMPP',
         'MatthiasMullie\\Minify' => 'lib/minify/matthiasmullie-minify/src/',
         'MatthiasMullie\\PathConverter' => 'lib/minify/matthiasmullie-pathconverter/src/',
         'IMSGlobal\LTI' => 'lib/ltiprovider/src',
