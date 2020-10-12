@@ -251,12 +251,8 @@ class core_user {
         $extrasql = '';
         $extraparams = [];
 
-        if (empty($CFG->showuseridentity)) {
-            // Explode gives wrong result with empty string.
-            $extra = [];
-        } else {
-            $extra = explode(',', $CFG->showuseridentity);
-        }
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $extra = \core\user_fields::get_identity_fields(null, false);
 
         // We need the username just to skip guests.
         $extrafieldlist = $extra;

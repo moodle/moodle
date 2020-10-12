@@ -125,12 +125,8 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
     } else {
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
     }
-    $canviewuseridentity = has_capability('moodle/site:viewuseridentity', $courseorusercontext);
-    if ($canviewuseridentity) {
-        $identityfields = array_flip(explode(',', $CFG->showuseridentity));
-    } else {
-        $identityfields = array();
-    }
+    // TODO Does not support custom user profile fields (MDL-70456).
+    $identityfields = array_flip(\core\user_fields::get_identity_fields($courseorusercontext, false));
 
     if (is_mnet_remote_user($user)) {
         $sql = "SELECT h.id, h.name, h.wwwroot,
@@ -156,7 +152,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
             or ($user->maildisplay == core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY and enrol_sharing_course($user, $USER))
             or has_capability('moodle/course:useremail', $courseorusercontext) // TODO: Deprecate/remove for MDL-37479.
         ))
-        or (isset($identityfields['email']) and $canviewuseridentity)
+        or (isset($identityfields['email']))
        ) {
         $maildisplay = obfuscate_mailto($user->email, '');
         if ($iscurrentuser) {
