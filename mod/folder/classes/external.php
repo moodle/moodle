@@ -197,6 +197,7 @@ class mod_folder_external extends external_api {
                             'display' => new external_value(PARAM_INT, 'Display type of folder contents on a separate page or inline'),
                             'showexpanded' => new external_value(PARAM_INT, '1 = expanded, 0 = collapsed for sub-folders'),
                             'showdownloadfolder' => new external_value(PARAM_INT, 'Whether to show the download folder button'),
+                            'forcedownload' => new external_value(PARAM_INT, 'Whether file download is forced'),
                             'section' => new external_value(PARAM_INT, 'Course section id'),
                             'visible' => new external_value(PARAM_INT, 'Module visibility'),
                             'groupmode' => new external_value(PARAM_INT, 'Group mode'),
