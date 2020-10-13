@@ -92,7 +92,12 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $this->assertEquals(0, $summary['default']);
         $this->assertEquals(1, $summary['isready']);
         $this->assertEquals(1, $summary['requirementsmet']);
-        $this->assertEquals(1, $summary['mappings']);
+
+        // Find the number of mappings to sessionstore.
+        $mappingcount = count(array_filter($config->get_definitions(), function($element) {
+            return $element['mode'] === cache_store::MODE_APPLICATION;
+        }));
+        $this->assertEquals($mappingcount, $summary['mappings']);
 
         $definitionsummaries = core_cache\administration_helper::get_definition_summaries();
         $this->assertInternalType('array', $definitionsummaries);
