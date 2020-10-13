@@ -169,6 +169,12 @@ define([
                         submitButton.trigger(EVENTS.POST_CREATED, newid);
                         hideSubmitButtonLoadingIcon(submitButton);
                         allButtons.prop('disabled', false);
+
+                        // Tell formchangechecker we submitted the form.
+                        if (typeof M.core_formchangechecker !== 'undefined') {
+                            M.core_formchangechecker.reset_form_dirty_state();
+                        }
+
                         return currentRoot.find(Selectors.post.inpageReplyContent).hide();
                     })
                     .then(function() {
