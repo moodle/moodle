@@ -1,6 +1,10 @@
 This files describes API changes in /mod/glossary/*,
 information provided here is intended especially for developers.
 
+=== 3.10 ===
+* External function get_entries_by_id now returns and additional "permissions" field indicating the user permissions for managing
+  the entry.
+
 === 3.8 ===
 * The following functions have been finally deprecated and can not be used anymore:
     * glossary_scale_used()

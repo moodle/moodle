@@ -1077,11 +1077,14 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $c1 = $this->getDataGenerator()->create_course();
         $c2 = $this->getDataGenerator()->create_course();
         $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
-        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id, 'visible' => 0));
+        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c2->id, 'visible' => 0));
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
+        $u3 = $this->getDataGenerator()->create_user();
         $ctx = context_module::instance($g1->cmid);
         $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+        $this->getDataGenerator()->enrol_user($u2->id, $c1->id);
+        $this->getDataGenerator()->enrol_user($u3->id, $c1->id);
 
         $e1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id, 'tags' => array('Cats', 'Dogs')));
         // Add a fake inline image to the entry.
@@ -1108,10 +1111,12 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('Cats', $return['entry']['tags'][0]['rawname']);
         $this->assertEquals('Dogs', $return['entry']['tags'][1]['rawname']);
         $this->assertEquals($filename, $return['entry']['definitioninlinefiles'][0]['filename']);
+        $this->assertTrue($return['permissions']['candelete']);
 
         $return = mod_glossary_external::get_entry_by_id($e2->id);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
         $this->assertEquals($e2->id, $return['entry']['id']);
+        $this->assertTrue($return['permissions']['candelete']);
 
         try {
             $return = mod_glossary_external::get_entry_by_id($e3->id);
@@ -1127,11 +1132,19 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
             // All good.
         }
 
-        // An admin can be other's entries to be approved.
+        // An admin can see other's entries to be approved.
         $this->setAdminUser();
         $return = mod_glossary_external::get_entry_by_id($e3->id);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
         $this->assertEquals($e3->id, $return['entry']['id']);
+        $this->assertTrue($return['permissions']['candelete']);
+
+        // Students can see other students approved entries but they will not be able to delete them.
+        $this->setUser($u3);
+        $return = mod_glossary_external::get_entry_by_id($e1->id);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
+        $this->assertEquals($e1->id, $return['entry']['id']);
+        $this->assertFalse($return['permissions']['candelete']);
     }
 
     public function test_add_entry_without_optional_settings() {
