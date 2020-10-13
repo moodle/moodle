@@ -503,4 +503,171 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         $search = glossary_get_entries_search($concept, $course->id);
         $this->assertCount(0, $search);
     }
+
+    public function test_mod_glossary_can_delete_entry_users() {
+        $this->resetAfterTest();
+
+        // Create required data.
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $anotherstudent = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $glossary = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id]);
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $this->setUser($student);
+        $entry = $gg->create_content($glossary);
+        $context = context_module::instance($glossary->cmid);
+
+        // Test student can delete.
+        $this->assertTrue(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Test teacher can delete.
+        $this->setUser($teacher);
+        $this->assertTrue(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Test admin can delete.
+        $this->setAdminUser();
+        $this->assertTrue(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Test a different student is not able to delete.
+        $this->setUser($anotherstudent);
+        $this->assertFalse(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Test exception.
+        $this->expectExceptionMessage(get_string('nopermissiontodelentry', 'error'));
+        mod_glossary_can_delete_entry($entry, $glossary, $context, false);
+    }
+
+    public function test_mod_glossary_can_delete_entry_edit_period() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        // Create required data.
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $glossary = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id, 'editalways' => 1]);
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $this->setUser($student);
+        $entry = $gg->create_content($glossary);
+        $context = context_module::instance($glossary->cmid);
+
+        // Test student can always delete when edit always is set to 1.
+        $entry->timecreated = time() - 2 * $CFG->maxeditingtime;
+        $this->assertTrue(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Test student cannot delete old entries when edit always is set to 0.
+        $glossary->editalways = 0;
+        $this->assertFalse(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Test student can delete recent entries when edit always is set to 0.
+        $entry->timecreated = time();
+        $this->assertTrue(mod_glossary_can_delete_entry($entry, $glossary, $context));
+
+        // Check exception.
+        $entry->timecreated = time() - 2 * $CFG->maxeditingtime;
+        $this->expectExceptionMessage(get_string('errdeltimeexpired', 'glossary'));
+        mod_glossary_can_delete_entry($entry, $glossary, $context, false);
+    }
+
+    public function test_mod_glossary_delete_entry() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        require_once($CFG->dirroot . '/rating/lib.php');
+
+        // Create required data.
+        $course = $this->getDataGenerator()->create_course();
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->assessed = RATING_AGGREGATE_AVERAGE;
+        $scale = $this->getDataGenerator()->create_scale(['scale' => 'A,B,C,D']);
+        $record->scale = "-$scale->id";
+        $glossary = $this->getDataGenerator()->create_module('glossary', $record);
+        $context = context_module::instance($glossary->cmid);
+        $cm = get_coursemodule_from_instance('glossary', $glossary->id);
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $this->setUser($student1);
+
+        // Create entry with tags and rating.
+        $entry = $gg->create_content(
+            $glossary,
+            ['approved' => 1, 'userid' => $student1->id, 'tags' => ['Cats', 'Dogs']],
+            ['alias1', 'alias2']
+        );
+
+        // Rate the entry as user2.
+        $rating1 = new stdClass();
+        $rating1->contextid = $context->id;
+        $rating1->component = 'mod_glossary';
+        $rating1->ratingarea = 'entry';
+        $rating1->itemid = $entry->id;
+        $rating1->rating = 1; // 1 is A.
+        $rating1->scaleid = "-$scale->id";
+        $rating1->userid = $student2->id;
+        $rating1->timecreated = time();
+        $rating1->timemodified = time();
+        $rating1->id = $DB->insert_record('rating', $rating1);
+
+        $sink = $this->redirectEvents();
+        mod_glossary_delete_entry(fullclone($entry), $glossary, $cm, $context, $course);
+        $events = $sink->get_events();
+        $event = array_pop($events);
+
+        // Check events.
+        $this->assertEquals('\mod_glossary\event\entry_deleted', $event->eventname);
+        $this->assertEquals($entry->id, $event->objectid);
+        $sink->close();
+
+        // No entry, no alias, no ratings, no tags.
+        $this->assertEquals(0, $DB->count_records('glossary_entries', ['id' => $entry->id]));
+        $this->assertEquals(0, $DB->count_records('glossary_alias', ['entryid' => $entry->id]));
+        $this->assertEquals(0, $DB->count_records('rating', ['component' => 'mod_glossary', 'itemid' => $entry->id]));
+        $this->assertEmpty(core_tag_tag::get_by_name(0, 'Cats'));
+    }
+
+    public function test_mod_glossary_delete_entry_imported() {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Create required data.
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $glossary1 = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id]);
+        $glossary2 = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id]);
+
+        $context = context_module::instance($glossary2->cmid);
+        $cm = get_coursemodule_from_instance('glossary', $glossary2->id);
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $this->setUser($student);
+
+        $entry1 = $gg->create_content($glossary1);
+        $entry2 = $gg->create_content(
+            $glossary2,
+            ['approved' => 1, 'userid' => $student->id, 'sourceglossaryid' => $glossary1->id, 'tags' => ['Cats', 'Dogs']]
+        );
+
+        $sink = $this->redirectEvents();
+        mod_glossary_delete_entry(fullclone($entry2), $glossary2, $cm, $context, $course);
+        $events = $sink->get_events();
+        $event = array_pop($events);
+
+        // Check events.
+        $this->assertEquals('\mod_glossary\event\entry_deleted', $event->eventname);
+        $this->assertEquals($entry2->id, $event->objectid);
+        $sink->close();
+
+        // Check source.
+        $this->assertEquals(0, $DB->get_field('glossary_entries', 'sourceglossaryid', ['id' => $entry2->id]));
+        $this->assertEquals($glossary1->id, $DB->get_field('glossary_entries', 'glossaryid', ['id' => $entry2->id]));
+
+        // Tags.
+        $this->assertEmpty(core_tag_tag::get_by_name(0, 'Cats'));
+    }
 }

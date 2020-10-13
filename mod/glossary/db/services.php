@@ -162,4 +162,12 @@ $functions = array(
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
+    'mod_glossary_delete_entry' => [
+        'classname'     => 'mod_glossary\external\delete_entry',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Delete the given entry from the glossary.',
+        'type'          => 'write',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 );

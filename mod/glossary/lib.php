@@ -4318,3 +4318,140 @@ function mod_glossary_get_completion_active_rule_descriptions($cm) {
     }
     return $descriptions;
 }
+
+/**
+ * Checks if the current user can delete the given glossary entry.
+ *
+ * @since Moodle 3.10
+ * @param stdClass $entry the entry database object
+ * @param stdClass $glossary the glossary database object
+ * @param stdClass $context the glossary context
+ * @param bool $return Whether to return a boolean value or stop the execution (exception)
+ * @return bool if the user can delete the entry
+ * @throws moodle_exception
+ */
+function mod_glossary_can_delete_entry($entry, $glossary, $context, $return = true) {
+    global $USER, $CFG;
+
+    $manageentries = has_capability('mod/glossary:manageentries', $context);
+
+    if ($manageentries) {   // Users with the capability will always be able to delete entries.
+        return true;
+    }
+
+    if ($entry->userid != $USER->id) { // Guest id is never matched, no need for special check here.
+        if ($return) {
+            return false;
+        }
+        throw new moodle_exception('nopermissiontodelentry');
+    }
+
+    $ineditperiod = ((time() - $entry->timecreated < $CFG->maxeditingtime) || $glossary->editalways);
+
+    if (!$ineditperiod) {
+        if ($return) {
+            return false;
+        }
+        throw new moodle_exception('errdeltimeexpired', 'glossary');
+    }
+
+    return true;
+}
+
+/**
+ * Deletes the given entry, this function does not perform capabilities/permission checks.
+ *
+ * @since Moodle 3.10
+ * @param stdClass $entry the entry database object
+ * @param stdClass $glossary the glossary database object
+ * @param stdClass $cm the glossary course moduule object
+ * @param stdClass $context the glossary context
+ * @param stdClass $course the glossary course
+ * @param string $hook the hook, usually type of filtering, value
+ * @param string $prevmode the previsualisation mode
+ * @throws moodle_exception
+ */
+function mod_glossary_delete_entry($entry, $glossary, $cm, $context, $course, $hook = '', $prevmode = '') {
+    global $CFG, $DB;
+
+    $origentry = fullclone($entry);
+
+    // If it is an imported entry, just delete the relation.
+    if ($entry->sourceglossaryid) {
+        if (!$newcm = get_coursemodule_from_instance('glossary', $entry->sourceglossaryid)) {
+            print_error('invalidcoursemodule');
+        }
+        $newcontext = context_module::instance($newcm->id);
+
+        $entry->glossaryid       = $entry->sourceglossaryid;
+        $entry->sourceglossaryid = 0;
+        $DB->update_record('glossary_entries', $entry);
+
+        // Move attachments too.
+        $fs = get_file_storage();
+
+        if ($oldfiles = $fs->get_area_files($context->id, 'mod_glossary', 'attachment', $entry->id)) {
+            foreach ($oldfiles as $oldfile) {
+                $filerecord = new stdClass();
+                $filerecord->contextid = $newcontext->id;
+                $fs->create_file_from_storedfile($filerecord, $oldfile);
+            }
+            $fs->delete_area_files($context->id, 'mod_glossary', 'attachment', $entry->id);
+            $entry->attachment = '1';
+        } else {
+            $entry->attachment = '0';
+        }
+        $DB->update_record('glossary_entries', $entry);
+
+    } else {
+        $fs = get_file_storage();
+        $fs->delete_area_files($context->id, 'mod_glossary', 'attachment', $entry->id);
+        $DB->delete_records("comments",
+            ['itemid' => $entry->id, 'commentarea' => 'glossary_entry', 'contextid' => $context->id]);
+        $DB->delete_records("glossary_alias", ["entryid" => $entry->id]);
+        $DB->delete_records("glossary_entries", ["id" => $entry->id]);
+
+        // Update completion state.
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $glossary->completionentries) {
+            $completion->update_state($cm, COMPLETION_INCOMPLETE, $entry->userid);
+        }
+
+        // Delete glossary entry ratings.
+        require_once($CFG->dirroot.'/rating/lib.php');
+        $delopt = new stdClass;
+        $delopt->contextid = $context->id;
+        $delopt->component = 'mod_glossary';
+        $delopt->ratingarea = 'entry';
+        $delopt->itemid = $entry->id;
+        $rm = new rating_manager();
+        $rm->delete_ratings($delopt);
+    }
+
+    // Delete cached RSS feeds.
+    if (!empty($CFG->enablerssfeeds)) {
+        require_once($CFG->dirroot . '/mod/glossary/rsslib.php');
+        glossary_rss_delete_file($glossary);
+    }
+
+    core_tag_tag::remove_all_item_tags('mod_glossary', 'glossary_entries', $origentry->id);
+
+    $event = \mod_glossary\event\entry_deleted::create(
+        [
+            'context' => $context,
+            'objectid' => $origentry->id,
+            'other' => [
+                'mode' => $prevmode,
+                'hook' => $hook,
+                'concept' => $origentry->concept
+            ]
+        ]
+    );
+    $event->add_record_snapshot('glossary_entries', $origentry);
+    $event->trigger();
+
+    // Reset caches.
+    if ($entry->usedynalink and $entry->approved) {
+        \mod_glossary\local\concept_cache::reset_glossary($glossary);
+    }
+}
