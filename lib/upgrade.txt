@@ -54,6 +54,7 @@ information provided here is intended especially for developers.
   `strip_disallowed_helpers()`.
 * A new admin externalpage type `\core_admin\local\externalpage\accesscallback` for use in plugin settings is available that allows
   a callback to be provided to determine whether page can be accessed.
+* New setting $CFG->localtempdir overrides which defaults to sys_get_temp_dir()
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
