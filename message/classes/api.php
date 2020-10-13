@@ -1699,6 +1699,10 @@ class api {
 
         $messageid = message_send($eventdata);
 
+        if (!$messageid) {
+            throw new \moodle_exception('messageundeliveredbynotificationsettings', 'moodle');
+        }
+
         $messagerecord = $DB->get_record('messages', ['id' => $messageid], 'id, useridfrom, fullmessage,
                 timecreated, fullmessagetrust');
         $message = (object) [
