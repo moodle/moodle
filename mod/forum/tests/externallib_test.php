@@ -2661,11 +2661,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $forum1context = context_module::instance($forum1->cmid);
 
         // Add discussions to the forums.
+        $time = time();
         $record = new stdClass();
         $record->course = $course1->id;
         $record->userid = $user1->id;
         $record->forum = $forum1->id;
-        $record->timemodified = 1;
+        $record->timemodified = $time + 100;
         $discussion1 = $forumgenerator->create_discussion($record);
         $discussion1firstpost = $postvault->get_first_post_for_discussion_ids([$discussion1->id]);
         $discussion1firstpost = $discussion1firstpost[$discussion1->firstpost];
@@ -2675,7 +2676,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record->course = $course1->id;
         $record->userid = $user1->id;
         $record->forum = $forum1->id;
-        $record->timemodified = 2;
+        $record->timemodified = $time + 200;
         $discussion2 = $forumgenerator->create_discussion($record);
         $discussion2firstpost = $postvault->get_first_post_for_discussion_ids([$discussion2->id]);
         $discussion2firstpost = $discussion2firstpost[$discussion2->firstpost];
@@ -2724,7 +2725,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'teacher');
         $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
         // Changed display period for the discussions in past.
-        $time = time();
         $discussion = new \stdClass();
         $discussion->id = $discussion1->id;
         $discussion->timestart = $time - 200;
