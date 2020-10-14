@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 use core_course\external\course_summary_exporter;
 
 require_once("$CFG->libdir/externallib.php");
-require_once("lib.php");
+require_once(__DIR__."/lib.php");
 
 /**
  * Course external functions
