@@ -2241,7 +2241,7 @@ class mod_forum_external extends external_api {
             $parentposts = [];
             if ($parentids) {
                 $parentposts = $postbuilder->build(
-                    $user,
+                    $USER,
                     [$forum],
                     [$discussion],
                     $postvault->get_from_ids(array_values($parentids))
@@ -2257,7 +2257,7 @@ class mod_forum_external extends external_api {
                 'timecreated' => $firstpost->get_time_created(),
                 'authorfullname' => $discussionauthor->get_full_name(),
                 'posts' => [
-                    'userposts' => $postbuilder->build($user, [$forum], [$discussion], $posts),
+                    'userposts' => $postbuilder->build($USER, [$forum], [$discussion], $posts),
                     'parentposts' => $parentposts,
                 ],
             ];
