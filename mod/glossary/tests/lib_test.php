@@ -670,4 +670,100 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         // Tags.
         $this->assertEmpty(core_tag_tag::get_by_name(0, 'Cats'));
     }
+
+    public function test_mod_glossary_can_update_entry_users() {
+        $this->resetAfterTest();
+
+        // Create required data.
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $anotherstudent = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $glossary = $this->getDataGenerator()->create_module('glossary', array('course' => $course->id));
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $this->setUser($student);
+        $entry = $gg->create_content($glossary);
+        $context = context_module::instance($glossary->cmid);
+        $cm = get_coursemodule_from_instance('glossary', $glossary->id);
+
+        // Test student can update.
+        $this->assertTrue(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Test teacher can update.
+        $this->setUser($teacher);
+        $this->assertTrue(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Test admin can update.
+        $this->setAdminUser();
+        $this->assertTrue(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Test a different student is not able to update.
+        $this->setUser($anotherstudent);
+        $this->assertFalse(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Test exception.
+        $this->expectExceptionMessage(get_string('errcannoteditothers', 'glossary'));
+        mod_glossary_can_update_entry($entry, $glossary, $context, $cm, false);
+    }
+
+    public function test_mod_glossary_can_update_entry_edit_period() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        // Create required data.
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $glossary = $this->getDataGenerator()->create_module('glossary', array('course' => $course->id, 'editalways' => 1));
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $this->setUser($student);
+        $entry = $gg->create_content($glossary);
+        $context = context_module::instance($glossary->cmid);
+        $cm = get_coursemodule_from_instance('glossary', $glossary->id);
+
+        // Test student can always update when edit always is set to 1.
+        $entry->timecreated = time() - 2 * $CFG->maxeditingtime;
+        $this->assertTrue(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Test student cannot update old entries when edit always is set to 0.
+        $glossary->editalways = 0;
+        $this->assertFalse(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Test student can update recent entries when edit always is set to 0.
+        $entry->timecreated = time();
+        $this->assertTrue(mod_glossary_can_update_entry($entry, $glossary, $context, $cm));
+
+        // Check exception.
+        $entry->timecreated = time() - 2 * $CFG->maxeditingtime;
+        $this->expectExceptionMessage(get_string('erredittimeexpired', 'glossary'));
+        mod_glossary_can_update_entry($entry, $glossary, $context, $cm, false);
+    }
+
+    public function test_prepare_entry_for_edition() {
+        global $USER;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $glossary = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id]);
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+
+        $this->setAdminUser();
+        $aliases = ['alias1', 'alias2'];
+        $entry = $gg->create_content(
+            $glossary,
+            ['approved' => 1, 'userid' => $USER->id],
+            $aliases
+        );
+
+        $cat1 = $gg->create_category($glossary, [], [$entry]);
+        $gg->create_category($glossary);
+
+        $entry = mod_glossary_prepare_entry_for_edition($entry);
+        $this->assertCount(1, $entry->categories);
+        $this->assertEquals($cat1->id, $entry->categories[0]);
+        $returnedaliases = array_values(explode("\n", trim($entry->aliases)));
+        sort($returnedaliases);
+        $this->assertEquals($aliases, $returnedaliases);
+    }
 }
