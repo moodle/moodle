@@ -388,8 +388,8 @@ $string['loginasnoenrol'] = 'You cannot use enrol or unenrol when in course "Log
 $string['loginasonecourse'] = 'You cannot enter this course.<br /> You have to terminate the "Login as" session before entering any other course.';
 $string['maxbytesfile'] = 'The file {$a->file} is too large. The maximum size you can upload is {$a->size}.';
 $string['maxareabytes'] = 'The file is larger than the space remaining in this area.';
+$string['messageundeliveredbynotificationsettings'] = 'The message could not be sent because personal messages between users (in Notification settings) has been disabled by a site administrator.';
 $string['messagingdisable'] = 'Messaging is disabled on this site';
-$string['messageundeliveredbynotificationsettings'] = 'Message failed to deliver. Please check the notification settings.';
 $string['mimetexisnotexist'] = 'Your system is not configured to run mimeTeX. You need to obtain the C source from <a href="https://www.forkosh.com/mimetex.zip">https://www.forkosh.com/mimetex.zip</a>, compile it and put the executable into your moodle/filter/tex/ directory.';
 $string['mimetexnotexecutable'] = 'Custom mimetex is not executable!';
 $string['missingfield'] = 'Field "{$a}" is missing';
