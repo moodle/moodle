@@ -115,7 +115,7 @@ class tool_task_renderer extends plugin_renderer_base {
             $disabled = $plugindisabled || $task->get_disabled();
 
             $runnow = '';
-            if (!$disabled && get_config('tool_task', 'enablerunnow') && $canruntasks ) {
+            if (!$plugindisabled && get_config('tool_task', 'enablerunnow') && $canruntasks ) {
                 $runnow = html_writer::div(html_writer::link(
                         new moodle_url('/admin/tool/task/schedule_task.php',
                             ['task' => $classname]),
