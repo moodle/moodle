@@ -38,6 +38,7 @@ $string['live'] = 'Live';
 $string['paymentnotcleared'] = 'payment not cleared by PayPal.';
 $string['pluginname'] = 'PayPal';
 $string['pluginname_desc'] = 'The PayPal plugin allows you to receive payments via PayPal.';
+$string['privacy:metadata'] = 'The Analytic models plugin does not store any personal data.';
 $string['repeatedorder'] = 'This order has already been processed earlier.';
 $string['sandbox'] = 'Sandbox';
 $string['secret'] = 'Secret';
