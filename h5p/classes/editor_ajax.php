@@ -76,8 +76,23 @@ class editor_ajax implements H5PEditorAjaxInterface {
      * @return mixed|null Returns results from querying the database
      */
     public function getContentTypeCache($machinename = null) {
-        // This is to be implemented when the Hub client is used.
-        return [];
+        global $DB;
+
+        // Added some extra fields to the result because they are expected by functions calling this. They have been
+        // taken from method getCachedLibsMap() in h5peditor.class.php.
+        $sql = "SELECT l.id, l.machinename AS machine_name, l.majorversion AS major_version,
+                       l.minorversion AS minor_version, l.patchversion AS patch_version, l.coremajor AS h5p_major_version,
+                       l.coreminor AS h5p_minor_version, l.title, l.tutorial, l.example,
+                       '' AS summary, '' AS description, '' AS icon, 0 AS created_at, 0 AS updated_at, 0 AS is_recommended,
+                       0 AS popularity, '' AS screenshots, '' AS license, '' AS owner
+                  FROM {h5p_libraries} l";
+        $params = [];
+        if (!empty($machinename)) {
+            $sql .= ' WHERE l.machinename = :machine_name';
+            $params = ['machine_name' => $machinename];
+        }
+
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**

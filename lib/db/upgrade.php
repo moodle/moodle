@@ -2762,5 +2762,25 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021052500.20);
     }
 
+    if ($oldversion < 2021052500.24) {
+        // Define fields tutorial and example to be added to h5p_libraries.
+        $table = new xmldb_table('h5p_libraries');
+
+        // Add tutorial field.
+        $field = new xmldb_field('tutorial', XMLDB_TYPE_TEXT, null, null, null, null, null, 'metadatasettings');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add example field.
+        $field = new xmldb_field('example', XMLDB_TYPE_TEXT, null, null, null, null, null, 'tutorial');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.24);
+    }
+
     return true;
 }
