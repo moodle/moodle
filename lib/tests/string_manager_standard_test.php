@@ -140,6 +140,13 @@ class core_string_manager_standard_testcase extends advanced_testcase {
 
         $this->assertEquals(['en' => 'En'], $stringman->get_list_of_translations());
 
+        // Set invalid config, ensure original list is returned.
+        set_config('langlist', 'xx');
+        $this->assertEquals(['en' => 'English ‎(en)‎'], get_string_manager(true)->get_list_of_translations());
+
+        set_config('langlist', 'xx,en|En');
+        $this->assertEquals(['en' => 'En'], get_string_manager(true)->get_list_of_translations());
+
         set_config('langlist', '');
         get_string_manager(true);
     }

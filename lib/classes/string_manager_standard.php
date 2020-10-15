@@ -533,7 +533,13 @@ class core_string_manager_standard implements core_string_manager {
                     $languages[$langcode] = !empty($this->transaliases[$langcode]) ? $this->transaliases[$langcode] : $langname;
                 }
             }
-            return $languages;
+
+            // If there are no valid enabled translations, then return all languages.
+            if (!empty($languages)) {
+                return $languages;
+            } else {
+                return $cachedlist;
+            }
         }
 
         // Get all languages available in system.
@@ -584,7 +590,12 @@ class core_string_manager_standard implements core_string_manager {
             }
         }
 
-        return $languages;
+        // If there are no valid enabled translations, then return all languages.
+        if (!empty($languages)) {
+            return $languages;
+        } else {
+            return $cachedlist;
+        }
     }
 
     /**
