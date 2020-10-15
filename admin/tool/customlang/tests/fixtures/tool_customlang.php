@@ -15,16 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Local language pack from http://localhost/m/MDL-69583
  *
- * @package    tool
- * @subpackage customlang
- * @copyright  2010 David Mudrak <david@moodle.com>
+ * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020101300;
-$plugin->requires  = 2020060900;
-$plugin->component = 'tool_customlang'; // Full name of the plugin (used for diagnostics)
+
+$string['pluginname'] = 'An amazing import feature';
+$string['nonexistentinvetedstring'] = 'This string should not be imported';
