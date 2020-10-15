@@ -4198,6 +4198,8 @@
         <FIELD NAME="coremajor" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="H5P core API major version required"/>
         <FIELD NAME="coreminor" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="H5P core API minor version required"/>
         <FIELD NAME="metadatasettings" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Library metadata settings"/>
+        <FIELD NAME="tutorial" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Tutorial URL"/>
+        <FIELD NAME="example" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Example URL"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
