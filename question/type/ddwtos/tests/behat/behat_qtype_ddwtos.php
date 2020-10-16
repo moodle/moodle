@@ -41,8 +41,8 @@ class behat_qtype_ddwtos extends behat_base {
      * @return string the xpath expression.
      */
     protected function drag_xpath($dragitem) {
-        return '//span[contains(@class, "draghome") and contains(., "' . $this->escape($dragitem) .
-                '") and not(contains(@class, "dragplaceholder"))]';
+        return '//div[@class="answercontainer"]//span[contains(@class, "draghome") and contains(., "' .
+                $this->escape($dragitem) . '") and not(contains(@class, "dragplaceholder"))]';
     }
 
     /**
@@ -85,5 +85,16 @@ class behat_qtype_ddwtos extends behat_base {
             $node->keyUp($key);
             $this->wait_for_pending_js();
         }
+    }
+
+    /**
+     * Check that the given drag exist in drag home area
+     *
+     * @param string $dragitem the text of the drag item.
+     *
+     * @Given /^I should see "(?P<drag_item>[^"]*)" in the home area of drag and drop into text question$/
+     */
+    public function i_should_see_drag_in_the_home_area($dragitem) {
+        $this->ensure_element_exists($this->drag_xpath($dragitem), 'xpath_element');
     }
 }
