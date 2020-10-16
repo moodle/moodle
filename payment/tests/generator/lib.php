@@ -73,7 +73,7 @@ class core_payment_generator extends component_generator_base {
             [
                 'component' => 'testcomponent',
                 'paymentarea' => 'teatarea',
-                'componentid' => 0,
+                'itemid' => 0,
                 'currency' => 'AUD',
             ]);
         return $id;

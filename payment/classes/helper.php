@@ -62,17 +62,17 @@ class helper {
      *
      * @param string $component
      * @param string $paymentarea
-     * @param int $componentid
+     * @param int $itemid
      * @return string[]
      */
-    public static function get_available_gateways(string $component, string $paymentarea, int $componentid): array {
+    public static function get_available_gateways(string $component, string $paymentarea, int $itemid): array {
         $gateways = [];
 
         [
             'amount' => $amount,
             'currency' => $currency,
             'accountid' => $accountid,
-        ] = self::get_cost($component, $paymentarea, $componentid);
+        ] = self::get_cost($component, $paymentarea, $itemid);
         $account = new account($accountid);
         if (!$account->get('id') || !$account->get('enabled')) {
             return $gateways;
@@ -143,24 +143,24 @@ class helper {
     /**
      * Returns the attributes to place on a pay button.
      *
-     * @param string $component Name of the component that the componentid belongs to
+     * @param string $component Name of the component that the itemid belongs to
      * @param string $paymentarea
-     * @param int $componentid An internal identifier that is used by the component
+     * @param int $itemid An internal identifier that is used by the component
      * @param string $description Description of the payment
      * @return array
      */
-    public static function gateways_modal_link_params(string $component, string $paymentarea, int $componentid, string $description): array {
+    public static function gateways_modal_link_params(string $component, string $paymentarea, int $itemid, string $description): array {
         [
             'amount' => $amount,
             'currency' => $currency
-        ] = self::get_cost($component, $paymentarea, $componentid);
+        ] = self::get_cost($component, $paymentarea, $itemid);
 
         return [
             'id' => 'gateways-modal-trigger',
             'role' => 'button',
             'data-component' => $component,
             'data-paymentarea' => $paymentarea,
-            'data-componentid' => $componentid,
+            'data-itemid' => $itemid,
             'data-cost' => self::get_cost_as_string($amount, $currency),
             'data-description' => $description,
         ];
@@ -169,14 +169,14 @@ class helper {
     /**
      * Asks the cost from the related component.
      *
-     * @param string $component Name of the component that the componentid belongs to
+     * @param string $component Name of the component that the itemid belongs to
      * @param string $paymentarea
-     * @param int $componentid An internal identifier that is used by the component
+     * @param int $itemid An internal identifier that is used by the component
      * @return array['amount' => float, 'currency' => string, 'accountid' => int]
      * @throws \moodle_exception
      */
-    public static function get_cost(string $component, string $paymentarea, int $componentid): array {
-        $cost = component_class_callback("$component\\payment\\provider", 'get_cost', [$paymentarea, $componentid]);
+    public static function get_cost(string $component, string $paymentarea, int $itemid): array {
+        $cost = component_class_callback("$component\\payment\\provider", 'get_cost', [$paymentarea, $itemid]);
 
         if ($cost === null || !is_array($cost) || !array_key_exists('amount', $cost)
                 || !array_key_exists('currency', $cost) || !array_key_exists('accountid', $cost) ) {
@@ -191,14 +191,14 @@ class helper {
      *
      * @param string $component
      * @param string $paymentarea
-     * @param int $componentid
+     * @param int $itemid
      * @param string $gatewayname
      * @return array
      * @throws \moodle_exception
      */
-    public static function get_gateway_configuration(string $component, string $paymentarea, int $componentid,
+    public static function get_gateway_configuration(string $component, string $paymentarea, int $itemid,
             string $gatewayname): array {
-        $x = self::get_cost($component, $paymentarea, $componentid);
+        $x = self::get_cost($component, $paymentarea, $itemid);
         $gateway = null;
         $account = new account($x['accountid']);
         if ($account && $account->get('enabled')) {
@@ -215,15 +215,15 @@ class helper {
      *
      * @uses \core_payment\local\callback\provider::deliver_order()
      *
-     * @param string $component Name of the component that the componentid belongs to
+     * @param string $component Name of the component that the itemid belongs to
      * @param string $paymentarea
-     * @param int $componentid An internal identifier that is used by the component
+     * @param int $itemid An internal identifier that is used by the component
      * @param int $paymentid payment id as inserted into the 'payments' table, if needed for reference
      * @return bool Whether successful or not
      */
-    public static function deliver_order(string $component, string $paymentarea, int $componentid, int $paymentid): bool {
+    public static function deliver_order(string $component, string $paymentarea, int $itemid, int $paymentid): bool {
         $result = component_class_callback("$component\\payment\\provider", 'deliver_order',
-                [$paymentarea, $componentid, $paymentid]);
+                [$paymentarea, $itemid, $paymentid]);
 
         if ($result === null) {
             throw new \moodle_exception('callbacknotimplemented', 'core_payment', '', $component);
@@ -237,23 +237,23 @@ class helper {
      * Each payment gateway may then store the additional information their way.
      *
      * @param int $accountid Account id
-     * @param string $component Name of the component that the componentid belongs to
+     * @param string $component Name of the component that the itemid belongs to
      * @param string $paymentarea
-     * @param int $componentid An internal identifier that is used by the component
+     * @param int $itemid An internal identifier that is used by the component
      * @param int $userid Id of the user who is paying
      * @param float $amount Amount of payment
      * @param string $currency Currency of payment
      * @param string $gateway The gateway that is used for the payment
      * @return int
      */
-    public static function save_payment(int $accountid, string $component, string $paymentarea, int $componentid, int $userid,
+    public static function save_payment(int $accountid, string $component, string $paymentarea, int $itemid, int $userid,
             float $amount, string $currency, string $gateway): int {
         global $DB;
 
         $record = new \stdClass();
         $record->component = $component;
         $record->paymentarea = $paymentarea;
-        $record->componentid = $componentid;
+        $record->itemid = $itemid;
         $record->userid = $userid;
         $record->amount = $amount;
         $record->currency = $currency;

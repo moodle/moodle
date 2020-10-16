@@ -121,7 +121,7 @@ class accounts_testcase extends advanced_testcase {
             'accountid' => $account->get('id'),
             'component' => 'test',
             'paymentarea' => 'test',
-            'componentid' => 1,
+            'itemid' => 1,
             'userid' => $USER->id,
         ]);
         helper::delete_payment_account(account::get_record(['id' => $account->get('id')]));

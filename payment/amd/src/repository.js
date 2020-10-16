@@ -29,16 +29,16 @@ import Ajax from 'core/ajax';
  *
  * @param {string} component
  * @param {string} paymentArea
- * @param {number} componentId
+ * @param {number} itemId
  * @returns {Promise<{shortname: string, name: string, description: String}[]>}
  */
-export const getAvailableGateways = (component, paymentArea, componentId) => {
+export const getAvailableGateways = (component, paymentArea, itemId) => {
     const request = {
         methodname: 'core_payment_get_available_gateways',
         args: {
             component,
             paymentarea: paymentArea,
-            componentid: componentId,
+            itemid: itemId,
         }
     };
     return Ajax.call([request])[0];
