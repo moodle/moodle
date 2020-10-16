@@ -208,4 +208,178 @@ class core_question_backup_testcase extends advanced_testcase {
         }
 
     }
+
+    /**
+     * Test that the question author is retained when they are enrolled in to the course.
+     */
+    public function test_backup_question_author_retained_when_enrolled() {
+        global $DB, $USER, $CFG;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course, a category and a user.
+        $course = $this->getDataGenerator()->create_course();
+        $category = $this->getDataGenerator()->create_category();
+        $user = $this->getDataGenerator()->create_user();
+
+        // Create a question.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $questioncategory = $questiongenerator->create_question_category();
+        $overrides = ['category' => $questioncategory->id, 'createdby' => $user->id, 'modifiedby' => $user->id];
+        $question = $questiongenerator->create_question('truefalse', null, $overrides);
+
+        // Create a quiz and a questions.
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        quiz_add_quiz_question($question->id, $quiz);
+
+        // Enrol user with a teacher role.
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id, 'manual');
+
+        // Backup the course.
+        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id);
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $results = $bc->get_results();
+        $file = $results['backup_destination'];
+        $fp = get_file_packer('application/vnd.moodle.backup');
+        $filepath = $CFG->dataroot . '/temp/backup/' . $backupid;
+        $file->extract_to_pathname($fp, $filepath);
+        $bc->destroy();
+
+        // Delete the original course and related question.
+        delete_course($course, false);
+        question_delete_question($question->id);
+
+        // Restore the course.
+        $restoredcourseid = restore_dbops::create_new_course($course->fullname, $course->shortname . '_1', $category->id);
+        $rc = new restore_controller($backupid, $restoredcourseid, backup::INTERACTIVE_NO,
+            backup::MODE_GENERAL, $USER->id, backup::TARGET_NEW_COURSE);
+        $rc->execute_precheck();
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Test the question author.
+        $questions = $DB->get_records('question');
+        $this->assertCount(1, $questions);
+        $question3 = array_shift($questions);
+        $this->assertEquals($user->id, $question3->createdby);
+        $this->assertEquals($user->id, $question3->modifiedby);
+    }
+
+    /**
+     * Test that the question author is retained when they are not enrolled in to the course,
+     * but we are restoring the backup at the same site.
+     */
+    public function test_backup_question_author_retained_when_not_enrolled() {
+        global $DB, $USER, $CFG;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course, a category and a user.
+        $course = $this->getDataGenerator()->create_course();
+        $category = $this->getDataGenerator()->create_category();
+        $user = $this->getDataGenerator()->create_user();
+
+        // Create a question.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $questioncategory = $questiongenerator->create_question_category();
+        $overrides = ['category' => $questioncategory->id, 'createdby' => $user->id, 'modifiedby' => $user->id];
+        $question = $questiongenerator->create_question('truefalse', null, $overrides);
+
+        // Create a quiz and a questions.
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        quiz_add_quiz_question($question->id, $quiz);
+
+        // Backup the course.
+        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id);
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $results = $bc->get_results();
+        $file = $results['backup_destination'];
+        $fp = get_file_packer('application/vnd.moodle.backup');
+        $filepath = $CFG->dataroot . '/temp/backup/' . $backupid;
+        $file->extract_to_pathname($fp, $filepath);
+        $bc->destroy();
+
+        // Delete the original course and related question.
+        delete_course($course, false);
+        question_delete_question($question->id);
+
+        // Restore the course.
+        $restoredcourseid = restore_dbops::create_new_course($course->fullname, $course->shortname . '_1', $category->id);
+        $rc = new restore_controller($backupid, $restoredcourseid, backup::INTERACTIVE_NO,
+            backup::MODE_GENERAL, $USER->id, backup::TARGET_NEW_COURSE);
+        $rc->execute_precheck();
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Test the question author.
+        $questions = $DB->get_records('question');
+        $this->assertCount(1, $questions);
+        $question = array_shift($questions);
+        $this->assertEquals($user->id, $question->createdby);
+        $this->assertEquals($user->id, $question->modifiedby);
+    }
+
+    /**
+     * Test that the current user is set as a question author when we are restoring the backup
+     * at the another site and the question author is not enrolled in to the course.
+     */
+    public function test_backup_question_author_reset() {
+        global $DB, $USER, $CFG;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course, a category and a user.
+        $course = $this->getDataGenerator()->create_course();
+        $category = $this->getDataGenerator()->create_category();
+        $user = $this->getDataGenerator()->create_user();
+
+        // Create a question.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $questioncategory = $questiongenerator->create_question_category();
+        $overrides = ['category' => $questioncategory->id, 'createdby' => $user->id, 'modifiedby' => $user->id];
+        $question = $questiongenerator->create_question('truefalse', null, $overrides);
+
+        // Create a quiz and a questions.
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        quiz_add_quiz_question($question->id, $quiz);
+
+        // Backup the course.
+        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $USER->id);
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $results = $bc->get_results();
+        $file = $results['backup_destination'];
+        $fp = get_file_packer('application/vnd.moodle.backup');
+        $filepath = $CFG->dataroot . '/temp/backup/' . $backupid;
+        $file->extract_to_pathname($fp, $filepath);
+        $bc->destroy();
+
+        // Delete the original course and related question.
+        delete_course($course, false);
+        question_delete_question($question->id);
+
+        // Emulate restoring to a different site.
+        set_config('siteidentifier', random_string(32) . 'not the same site');
+
+        // Restore the course.
+        $restoredcourseid = restore_dbops::create_new_course($course->fullname, $course->shortname . '_1', $category->id);
+        $rc = new restore_controller($backupid, $restoredcourseid, backup::INTERACTIVE_NO,
+            backup::MODE_SAMESITE, $USER->id, backup::TARGET_NEW_COURSE);
+        $rc->execute_precheck();
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Test the question author.
+        $questions = $DB->get_records('question');
+        $this->assertCount(1, $questions);
+        $question = array_shift($questions);
+        $this->assertEquals($USER->id, $question->createdby);
+        $this->assertEquals($USER->id, $question->modifiedby);
+    }
 }
