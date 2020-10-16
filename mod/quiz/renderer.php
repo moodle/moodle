@@ -859,7 +859,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                     'quiz_access_manager::get_preflight_check_form, not a warning message string.');
         }
 
-        $button = new single_button($url, $buttontext);
+        $button = new single_button($url, $buttontext, 'post', true);
         $button->class .= ' quizstartbuttondiv';
         if ($popuprequired) {
             $button->class .= ' quizsecuremoderequired';
