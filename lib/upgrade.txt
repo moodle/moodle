@@ -56,6 +56,7 @@ information provided here is intended especially for developers.
   a callback to be provided to determine whether page can be accessed.
 * New setting $CFG->localtempdir overrides which defaults to sys_get_temp_dir()
 * Function redirect() now emits a line of backtrace into the X-Redirect-By header when debugging is on
+* Add support for email DKIM signatures via $CFG->emaildkimselector
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
