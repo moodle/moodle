@@ -180,7 +180,7 @@ const updateCostRegion = async(root, defaultCost = '') => {
  * @returns {Promise<void>}
  */
 const processPayment = async(gateway, component, paymentArea, componentId, description, callback) => {
-    const paymentMethod = await import(`pg_${gateway}/gateways_modal`);
+    const paymentMethod = await import(`paygw_${gateway}/gateways_modal`);
     paymentMethod.process(component, paymentArea, componentId, description, callback);
 };
 

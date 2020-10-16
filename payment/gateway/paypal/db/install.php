@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * pg_paypal installer script.
+ * paygw_paypal installer script.
  *
- * @package    pg_paypal
+ * @package    paygw_paypal
  * @copyright  2020 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function xmldb_pg_paypal_install() {
+function xmldb_paygw_paypal_install() {
     // Enable the Paypal payment gateway on installation. It still needs to be configured and enabled for accounts.
-    $order = (!empty($CFG->pg_plugins_sortorder)) ? explode(',', $CFG->pg_plugins_sortorder) : [];
-    set_config('pg_plugins_sortorder', join(',', array_merge($order, ['paypal'])));
+    $order = (!empty($CFG->paygw_plugins_sortorder)) ? explode(',', $CFG->paygw_plugins_sortorder) : [];
+    set_config('paygw_plugins_sortorder', join(',', array_merge($order, ['paypal'])));
 }

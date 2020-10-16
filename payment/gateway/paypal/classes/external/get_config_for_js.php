@@ -17,14 +17,14 @@
 /**
  * This class contains a list of webservice functions related to the PayPal payment gateway.
  *
- * @package    pg_paypal
+ * @package    paygw_paypal
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 declare(strict_types=1);
 
-namespace pg_paypal\external;
+namespace paygw_paypal\external;
 
 use core_payment\helper;
 use external_api;

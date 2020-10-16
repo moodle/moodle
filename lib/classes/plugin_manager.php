@@ -1923,7 +1923,7 @@ class core_plugin_manager {
                 'quiz', 'resource', 'scorm', 'survey', 'url', 'wiki', 'workshop'
             ),
 
-            'pg' => [
+            'paygw' => [
                 'paypal',
             ],
 

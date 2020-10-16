@@ -17,7 +17,7 @@
 /**
  * External functions and service definitions for the PayPal payment gateway plugin.
  *
- * @package    pg_paypal
+ * @package    paygw_paypal
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,16 +25,16 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
-    'pg_paypal_get_config_for_js' => [
-        'classname'   => 'pg_paypal\external\get_config_for_js',
+    'paygw_paypal_get_config_for_js' => [
+        'classname'   => 'paygw_paypal\external\get_config_for_js',
         'methodname'  => 'execute',
         'classpath'   => '',
         'description' => 'Returns the configuration settings to be used in js',
         'type'        => 'read',
         'ajax'        => true,
     ],
-    'pg_paypal_create_transaction_complete' => [
-        'classname'   => 'pg_paypal\external\transaction_complete',
+    'paygw_paypal_create_transaction_complete' => [
+        'classname'   => 'paygw_paypal\external\transaction_complete',
         'methodname'  => 'execute',
         'classpath'   => '',
         'description' => 'Takes care of what needs to be done when a PayPal transaction comes back as complete.',

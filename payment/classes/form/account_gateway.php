@@ -53,13 +53,13 @@ class account_gateway extends persistent {
         $mform->addElement('static', 'accountname', get_string('accountname', 'payment'),
             $this->get_gateway_persistent()->get_account()->get_formatted_name());
 
-        $mform->addElement('static', 'gatewayname', get_string('type_pg', 'plugin'),
+        $mform->addElement('static', 'gatewayname', get_string('type_paygw', 'plugin'),
             $this->get_gateway_persistent()->get_display_name());
 
         $mform->addElement('advcheckbox', 'enabled', get_string('enable'));
 
         /** @var \core_payment\gateway $classname */
-        $classname = '\pg_' . $this->get_gateway_persistent()->get('gateway') . '\gateway';
+        $classname = '\paygw_' . $this->get_gateway_persistent()->get('gateway') . '\gateway';
         if (class_exists($classname)) {
             $classname::add_configuration_to_gateway_form($this);
         }
@@ -76,7 +76,7 @@ class account_gateway extends persistent {
      */
     protected function extra_validation($data, $files, array &$errors) {
         /** @var \core_payment\gateway $classname */
-        $classname = '\pg_' . $this->get_gateway_persistent()->get('gateway') . '\gateway';
+        $classname = '\paygw_' . $this->get_gateway_persistent()->get('gateway') . '\gateway';
         if (class_exists($classname)) {
             $classname::validate_gateway_form($this, $data, $files, $errors);
         }

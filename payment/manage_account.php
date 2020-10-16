@@ -32,7 +32,7 @@ $restore = optional_param('restore', false, PARAM_BOOL);
 $pageurl = new moodle_url('/payment/manage_account.php');
 admin_externalpage_setup('paymentaccounts', '', [], $pageurl);
 
-$enabledplugins = \core\plugininfo\pg::get_enabled_plugins();
+$enabledplugins = \core\plugininfo\paygw::get_enabled_plugins();
 
 $account = new \core_payment\account($id);
 require_capability('moodle/payment:manageaccounts', $account->get_context());

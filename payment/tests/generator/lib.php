@@ -64,7 +64,7 @@ class core_payment_generator extends component_generator_base {
             throw new coding_exception('Amount must be specified');
         }
 
-        $gateways = \core\plugininfo\pg::get_enabled_plugins();
+        $gateways = \core\plugininfo\paygw::get_enabled_plugins();
         if (empty($data['gateway'])) {
             $data['gateway'] = reset($gateways);
         }

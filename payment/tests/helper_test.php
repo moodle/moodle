@@ -26,7 +26,7 @@
 namespace core_payment;
 
 use advanced_testcase;
-use core\plugininfo\pg;
+use core\plugininfo\paygw;
 
 /**
  * Testing helper class methods in payments API
@@ -39,7 +39,7 @@ use core\plugininfo\pg;
 class accounts_testcase extends advanced_testcase {
 
     protected function enable_paypal_gateway(): bool {
-        if (!array_key_exists('paypal', \core_component::get_plugin_list('pg'))) {
+        if (!array_key_exists('paypal', \core_component::get_plugin_list('paygw'))) {
             return false;
         }
         return true;

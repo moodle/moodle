@@ -39,7 +39,7 @@
         "theme": "theme",
         "local": "local",
         "h5plib": "h5p\/h5plib",
-        "pg": "payment\/gateway"
+        "paygw": "payment\/gateway"
     },
     "subsystems": {
         "access": null,

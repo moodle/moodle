@@ -17,7 +17,7 @@
 /**
  * Settings for the PayPal payment gateway
  *
- * @package    pg_paypal
+ * @package    paygw_paypal
  * @copyright  2019 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
 
-    $settings->add(new admin_setting_heading('pg_paypal_settings', '', get_string('pluginname_desc', 'pg_paypal')));
+    $settings->add(new admin_setting_heading('paygw_paypal_settings', '', get_string('pluginname_desc', 'paygw_paypal')));
 
-    \core_payment\helper::add_common_gateway_settings($settings, 'pg_paypal');
+    \core_payment\helper::add_common_gateway_settings($settings, 'paygw_paypal');
 }

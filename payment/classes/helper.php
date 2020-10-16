@@ -44,10 +44,10 @@ class helper {
     public static function get_supported_currencies(): array {
         $currencies = [];
 
-        $plugins = \core_plugin_manager::instance()->get_enabled_plugins('pg');
+        $plugins = \core_plugin_manager::instance()->get_enabled_plugins('paygw');
         foreach ($plugins as $plugin) {
-            /** @var \pg_paypal\gateway $classname */
-            $classname = '\pg_' . $plugin . '\gateway';
+            /** @var \paygw_paypal\gateway $classname */
+            $classname = '\paygw_' . $plugin . '\gateway';
 
             $currencies += component_class_callback($classname, 'get_supported_currencies', [], []);
         }
@@ -83,7 +83,7 @@ class helper {
                 continue;
             }
             /** @var gateway $classname */
-            $classname = '\pg_' . $plugin . '\gateway';
+            $classname = '\paygw_' . $plugin . '\gateway';
 
             $currencies = component_class_callback($classname, 'get_supported_currencies', [], []);
             if (in_array($currency, $currencies)) {
@@ -137,7 +137,7 @@ class helper {
      * @return float
      */
     public static function get_gateway_surcharge(string $gateway): float {
-        return (float)get_config('pg_' . $gateway, 'surcharge');
+        return (float)get_config('paygw_' . $gateway, 'surcharge');
     }
 
     /**
@@ -270,7 +270,7 @@ class helper {
      * This functions adds the settings that are common for all payment gateways.
      *
      * @param \admin_settingpage $settings The settings object
-     * @param string $gateway The gateway name prefic with pg_
+     * @param string $gateway The gateway name prefixed with paygw_
      */
     public static function add_common_gateway_settings(\admin_settingpage $settings, string $gateway): void {
         $settings->add(new \admin_setting_configtext($gateway . '/surcharge', get_string('surcharge', 'core_payment'),

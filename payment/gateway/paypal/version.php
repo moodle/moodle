@@ -17,7 +17,7 @@
 /**
  * Version information
  *
- * @package    pg_paypal
+ * @package    paygw_paypal
  * @copyright  2019 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,4 +26,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2021052500;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2021052500;        // Requires this Moodle version.
-$plugin->component = 'pg_paypal';       // Full name of the plugin (used for diagnostics).
+$plugin->component = 'paygw_paypal';       // Full name of the plugin (used for diagnostics).

@@ -16,8 +16,8 @@
 /**
  * PayPal repository module to encapsulate all of the AJAX requests that can be sent for PayPal.
  *
- * @module     pg_paypal/repository
- * @package    pg_paypal
+ * @module     paygw_paypal/repository
+ * @package    paygw_paypal
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +34,7 @@ import Ajax from 'core/ajax';
  */
 export const getConfigForJs = (component, paymentArea, componentId) => {
     const request = {
-        methodname: 'pg_paypal_get_config_for_js',
+        methodname: 'paygw_paypal_get_config_for_js',
         args: {
             component,
             paymentarea: paymentArea,
