@@ -341,6 +341,7 @@ $string['invalidgroupid'] = 'Incorrect group ID specified';
 $string['invalidipformat'] = 'Invalid IP address format';
 $string['invaliditemid'] = 'Incorrect item ID';
 $string['invalidkey'] = 'Incorrect key';
+$string['invalidlanguagecode'] = 'Invalid language code: {$a}';
 $string['invalidlegacy'] = 'Incorrect legacy role definition for type: {$a}';
 $string['invalidmd5'] = 'The check variable was wrong - try again';
 $string['invalidmode'] = 'Invalid mode ({$a})';
