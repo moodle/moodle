@@ -95,7 +95,7 @@ const show = async(rootNode, {
                 gateway,
                 rootNode.dataset.component,
                 rootNode.dataset.paymentarea,
-                rootNode.dataset.componentid,
+                rootNode.dataset.itemid,
                 rootNode.dataset.description,
                 ({success, message = ''}) => {
                     modal.hide();
@@ -127,8 +127,7 @@ const show = async(rootNode, {
         }
     });
 
-    const gateways = await getAvailableGateways(rootNode.dataset.component, rootNode.dataset.paymentarea,
-        rootNode.dataset.componentid);
+    const gateways = await getAvailableGateways(rootNode.dataset.component, rootNode.dataset.paymentarea, rootNode.dataset.itemid);
     const context = {
         gateways
     };
@@ -172,16 +171,16 @@ const updateCostRegion = async(root, defaultCost = '') => {
  * Process payment using the selected gateway.
  *
  * @param {string} gateway The gateway to be used for payment
- * @param {string} component Name of the component that the componentId belongs to
- * @param {string} paymentArea Name of the area in the component that the componentId belongs to
- * @param {number} componentId An internal identifier that is used by the component
+ * @param {string} component Name of the component that the itemId belongs to
+ * @param {string} paymentArea Name of the area in the component that the itemId belongs to
+ * @param {number} itemId An internal identifier that is used by the component
  * @param {string} description Description of the payment
  * @param {processPaymentCallback} callback The callback function to call when processing is finished
  * @returns {Promise<void>}
  */
-const processPayment = async(gateway, component, paymentArea, componentId, description, callback) => {
+const processPayment = async(gateway, component, paymentArea, itemId, description, callback) => {
     const paymentMethod = await import(`paygw_${gateway}/gateways_modal`);
-    paymentMethod.process(component, paymentArea, componentId, description, callback);
+    paymentMethod.process(component, paymentArea, itemId, description, callback);
 };
 
 /**

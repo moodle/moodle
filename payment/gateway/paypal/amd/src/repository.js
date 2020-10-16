@@ -27,18 +27,18 @@ import Ajax from 'core/ajax';
 /**
  * Return the PayPal JavaScript SDK URL.
  *
- * @param {string} component Name of the component that the componentid belongs to
- * @param {string} paymentArea The area of the component that the componentid belongs to
- * @param {number} componentId An internal identifier that is used by the component
+ * @param {string} component Name of the component that the itemId belongs to
+ * @param {string} paymentArea The area of the component that the itemId belongs to
+ * @param {number} itemId An internal identifier that is used by the component
  * @returns {Promise<{clientid: string, brandname: string}>}
  */
-export const getConfigForJs = (component, paymentArea, componentId) => {
+export const getConfigForJs = (component, paymentArea, itemId) => {
     const request = {
         methodname: 'paygw_paypal_get_config_for_js',
         args: {
             component,
             paymentarea: paymentArea,
-            componentid: componentId,
+            itemid: itemId,
         },
     };
 

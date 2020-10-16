@@ -38,16 +38,16 @@ interface provider {
 
     /**
      * @param string $paymentarea
-     * @param int $componentid An identifier that is known to the plugin
+     * @param int $itemid An identifier that is known to the plugin
      * @return array['amount' => float, 'currency' => string, 'accountid' => int]
      */
-    public static function get_cost(string $paymentarea, int $componentid): array;
+    public static function get_cost(string $paymentarea, int $itemid): array;
 
     /**
      * @param string $paymentarea
-     * @param int $componentid An identifier that is known to the plugin
+     * @param int $itemid An identifier that is known to the plugin
      * @param int $paymentid payment id as inserted into the 'payments' table, if needed for reference
      * @return bool Whether successful or not
      */
-    public static function deliver_order(string $paymentarea, int $componentid, int $paymentid): bool;
+    public static function deliver_order(string $paymentarea, int $itemid, int $paymentid): bool;
 }

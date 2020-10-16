@@ -2925,7 +2925,7 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
         $table->add_field('paymentarea', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('componentid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('amount', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
         $table->add_field('currency', XMLDB_TYPE_CHAR, '3', null, XMLDB_NOTNULL, null, null);
@@ -2941,7 +2941,7 @@ function xmldb_main_upgrade($oldversion) {
 
         // Adding indexes to table payments.
         $table->add_index('gateway', XMLDB_INDEX_NOTUNIQUE, ['gateway']);
-        $table->add_index('component-paymentarea-componentid', XMLDB_INDEX_NOTUNIQUE, ['component', 'paymentarea', 'componentid']);
+        $table->add_index('component-paymentarea-itemid', XMLDB_INDEX_NOTUNIQUE, ['component', 'paymentarea', 'itemid']);
 
         // Conditionally launch create table for payments.
         if (!$dbman->table_exists($table)) {

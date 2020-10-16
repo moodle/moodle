@@ -45,21 +45,21 @@ const showModalWithPlaceholder = async() => {
 /**
  * Process the payment.
  *
- * @param {string} component Name of the component that the componentId belongs to
- * @param {string} paymentArea The area of the component that the componentId belongs to
- * @param {number} componentId An internal identifier that is used by the component
+ * @param {string} component Name of the component that the itemId belongs to
+ * @param {string} paymentArea The area of the component that the itemId belongs to
+ * @param {number} itemId An internal identifier that is used by the component
  * @param {string} description Description of the payment
  * @param {processCallback} callback The callback function to call when processing is finished
  * @returns {Promise<void>}
  */
-export const process = async(component, paymentArea, componentId, description, callback) => {
+export const process = async(component, paymentArea, itemId, description, callback) => {
 
     const [
         modal,
         paypalConfig,
     ] = await Promise.all([
         showModalWithPlaceholder(),
-        Repository.getConfigForJs(component, paymentArea, componentId),
+        Repository.getConfigForJs(component, paymentArea, itemId),
     ]);
     const currency = paypalConfig.currency;
     const amount = paypalConfig.cost; // Cost with surcharge.
@@ -106,7 +106,7 @@ export const process = async(component, paymentArea, componentId, description, c
                     args: {
                         component,
                         paymentarea: paymentArea,
-                        componentid: componentId,
+                        itemid: itemId,
                         orderid: data.orderID,
                     },
                 }])[0]

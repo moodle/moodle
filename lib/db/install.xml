@@ -4323,7 +4323,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The plugin this payment belongs to."/>
         <FIELD NAME="paymentarea" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="The name of payable area"/>
-        <FIELD NAME="componentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="amount" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="currency" TYPE="char" LENGTH="3" NOTNULL="true" SEQUENCE="false"/>
@@ -4339,7 +4339,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="gateway" UNIQUE="false" FIELDS="gateway"/>
-        <INDEX NAME="component-paymentarea-componentid" UNIQUE="false" FIELDS="component, paymentarea, componentid"/>
+        <INDEX NAME="component-paymentarea-itemid" UNIQUE="false" FIELDS="component, paymentarea, itemid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="infected_files" COMMENT="Table to store infected file details.">

@@ -47,7 +47,7 @@ class get_config_for_js extends external_api {
         return new external_function_parameters([
             'component' => new external_value(PARAM_COMPONENT, 'Component'),
             'paymentarea' => new external_value(PARAM_AREA, 'Payment area in the component'),
-            'componentid' => new external_value(PARAM_INT, 'An identifier for payment area in the component'),
+            'itemid' => new external_value(PARAM_INT, 'An identifier for payment area in the component'),
         ]);
     }
 
@@ -56,18 +56,18 @@ class get_config_for_js extends external_api {
      *
      * @param string $component
      * @param string $paymentarea
-     * @param int $componentid
+     * @param int $itemid
      * @return string[]
      */
-    public static function execute(string $component, string $paymentarea, int $componentid): array {
+    public static function execute(string $component, string $paymentarea, int $itemid): array {
         self::validate_parameters(self::execute_parameters(), [
             'component' => $component,
             'paymentarea' => $paymentarea,
-            'componentid' => $componentid,
+            'itemid' => $itemid,
         ]);
 
-        $config = helper::get_gateway_configuration($component, $paymentarea, $componentid, 'paypal');
-        $cost = helper::get_cost($component, $paymentarea, $componentid);
+        $config = helper::get_gateway_configuration($component, $paymentarea, $itemid, 'paypal');
+        $cost = helper::get_cost($component, $paymentarea, $itemid);
         $surcharge = helper::get_gateway_surcharge('paypal');
 
         return [

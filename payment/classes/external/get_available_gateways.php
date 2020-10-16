@@ -46,7 +46,7 @@ class get_available_gateways extends external_api {
         return new external_function_parameters([
             'component' => new external_value(PARAM_COMPONENT, 'Component'),
             'paymentarea' => new external_value(PARAM_AREA, 'Payment area in the component'),
-            'componentid' => new external_value(PARAM_INT, 'An identifier for payment area in the component')
+            'itemid' => new external_value(PARAM_INT, 'An identifier for payment area in the component')
         ]);
     }
 
@@ -55,23 +55,23 @@ class get_available_gateways extends external_api {
      *
      * @param string $component
      * @param string $paymentarea
-     * @param int $componentid
+     * @param int $itemid
      * @return \stdClass[]
      */
-    public static function execute(string $component, string $paymentarea, int $componentid): array {
+    public static function execute(string $component, string $paymentarea, int $itemid): array {
 
         $params = external_api::validate_parameters(self::execute_parameters(), [
             'component' => $component,
             'paymentarea' => $paymentarea,
-            'componentid' => $componentid,
+            'itemid' => $itemid,
         ]);
 
         $list = [];
-        $gateways = helper::get_available_gateways($params['component'], $params['paymentarea'], $params['componentid']);
+        $gateways = helper::get_available_gateways($params['component'], $params['paymentarea'], $params['itemid']);
         [
             'amount' => $amount,
             'currency' => $currency
-        ] = helper::get_cost($params['component'], $params['paymentarea'], $params['componentid']);
+        ] = helper::get_cost($params['component'], $params['paymentarea'], $params['itemid']);
 
         foreach ($gateways as $gateway) {
             $surcharge = helper::get_gateway_surcharge($gateway);
