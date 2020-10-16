@@ -68,10 +68,9 @@ class get_available_gateways extends external_api {
 
         $list = [];
         $gateways = helper::get_available_gateways($params['component'], $params['paymentarea'], $params['itemid']);
-        [
-            'amount' => $amount,
-            'currency' => $currency
-        ] = helper::get_cost($params['component'], $params['paymentarea'], $params['itemid']);
+        $payable = helper::get_payable($params['component'], $params['paymentarea'], $params['itemid']);
+        $amount = $payable->get_amount();
+        $currency = $payable->get_currency();
 
         foreach ($gateways as $gateway) {
             $surcharge = helper::get_gateway_surcharge($gateway);

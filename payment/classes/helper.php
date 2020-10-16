@@ -68,16 +68,14 @@ class helper {
     public static function get_available_gateways(string $component, string $paymentarea, int $itemid): array {
         $gateways = [];
 
-        [
-            'amount' => $amount,
-            'currency' => $currency,
-            'accountid' => $accountid,
-        ] = self::get_cost($component, $paymentarea, $itemid);
-        $account = new account($accountid);
+        $payable = static::get_payable($component, $paymentarea, $itemid);
+        $account = new account($payable->get_account_id());
+
         if (!$account->get('id') || !$account->get('enabled')) {
             return $gateways;
         }
 
+        $currency = $payable->get_currency();
         foreach ($account->get_gateways() as $plugin => $gateway) {
             if (!$gateway->get('enabled')) {
                 continue;
@@ -149,41 +147,53 @@ class helper {
      * @param string $description Description of the payment
      * @return array
      */
-    public static function gateways_modal_link_params(string $component, string $paymentarea, int $itemid, string $description): array {
-        [
-            'amount' => $amount,
-            'currency' => $currency
-        ] = self::get_cost($component, $paymentarea, $itemid);
+    public static function gateways_modal_link_params(string $component, string $paymentarea, int $itemid,
+            string $description): array {
+
+        $payable = static::get_payable($component, $paymentarea, $itemid);
 
         return [
             'id' => 'gateways-modal-trigger',
             'role' => 'button',
+            'data-action' => 'core_payment/triggerPayment',
             'data-component' => $component,
             'data-paymentarea' => $paymentarea,
             'data-itemid' => $itemid,
-            'data-cost' => self::get_cost_as_string($amount, $currency),
+            'data-cost' => static::get_cost_as_string($payable->get_amount(), $payable->get_currency()),
             'data-description' => $description,
         ];
     }
 
     /**
-     * Asks the cost from the related component.
+     * @param string $component
+     * @return string
+     * @throws \coding_exception
+     */
+    private static function get_service_provider_classname(string $component) {
+        $providerclass = "$component\\payment\\service_provider";
+
+        if (class_exists($providerclass)) {
+            $rc = new \ReflectionClass($providerclass);
+            if ($rc->implementsInterface(local\callback\service_provider::class)) {
+                return $providerclass;
+            }
+        }
+
+        throw new \coding_exception("$component does not have an eligible implementation of payment service_provider.");
+    }
+
+    /**
+     * Asks the payable from the related component.
      *
      * @param string $component Name of the component that the itemid belongs to
      * @param string $paymentarea
      * @param int $itemid An internal identifier that is used by the component
-     * @return array['amount' => float, 'currency' => string, 'accountid' => int]
-     * @throws \moodle_exception
+     * @return local\entities\payable
      */
-    public static function get_cost(string $component, string $paymentarea, int $itemid): array {
-        $cost = component_class_callback("$component\\payment\\provider", 'get_cost', [$paymentarea, $itemid]);
+    public static function get_payable(string $component, string $paymentarea, int $itemid): local\entities\payable {
+        $providerclass = static::get_service_provider_classname($component);
 
-        if ($cost === null || !is_array($cost) || !array_key_exists('amount', $cost)
-                || !array_key_exists('currency', $cost) || !array_key_exists('accountid', $cost) ) {
-            throw new \moodle_exception('callbacknotimplemented', 'core_payment', '', $component);
-        }
-
-        return $cost;
+        return component_class_callback($providerclass, 'get_payable', [$paymentarea, $itemid]);
     }
 
     /**
@@ -198,9 +208,9 @@ class helper {
      */
     public static function get_gateway_configuration(string $component, string $paymentarea, int $itemid,
             string $gatewayname): array {
-        $x = self::get_cost($component, $paymentarea, $itemid);
+        $payable = self::get_payable($component, $paymentarea, $itemid);
         $gateway = null;
-        $account = new account($x['accountid']);
+        $account = new account($payable->get_account_id());
         if ($account && $account->get('enabled')) {
             $gateway = $account->get_gateways()[$gatewayname] ?? null;
         }
@@ -213,21 +223,18 @@ class helper {
     /**
      * Delivers what the user paid for.
      *
-     * @uses \core_payment\local\callback\provider::deliver_order()
+     * @uses \core_payment\local\callback\service_provider::deliver_order()
      *
      * @param string $component Name of the component that the itemid belongs to
      * @param string $paymentarea
      * @param int $itemid An internal identifier that is used by the component
      * @param int $paymentid payment id as inserted into the 'payments' table, if needed for reference
+     * @param int $userid The userid the order is going to deliver to
      * @return bool Whether successful or not
      */
-    public static function deliver_order(string $component, string $paymentarea, int $itemid, int $paymentid): bool {
-        $result = component_class_callback("$component\\payment\\provider", 'deliver_order',
-                [$paymentarea, $itemid, $paymentid]);
-
-        if ($result === null) {
-            throw new \moodle_exception('callbacknotimplemented', 'core_payment', '', $component);
-        }
+    public static function deliver_order(string $component, string $paymentarea, int $itemid, int $paymentid, int $userid): bool {
+        $providerclass = static::get_service_provider_classname($component);
+        $result = component_class_callback($providerclass, 'deliver_order', [$paymentarea, $itemid, $paymentid, $userid]);
 
         return $result;
     }

@@ -313,6 +313,7 @@ class enrol_fee_plugin extends enrol_plugin {
             $mform->addElement('hidden', 'customint1');
             $mform->setType('customint1', PARAM_INT);
         }
+        $mform->addHelpButton('customint1', 'paymentaccount', 'enrol_fee');
 
         $mform->addElement('text', 'cost', get_string('cost', 'enrol_fee'), array('size' => 4));
         $mform->setType('cost', PARAM_RAW);

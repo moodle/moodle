@@ -31,7 +31,6 @@ $string['accountname'] = 'Account name';
 $string['accountname_help'] = 'How this account will be identified for teachers or managers who set up payments (for example in the course enrolment plugin)';
 $string['accountnotavailable'] = 'Not available';
 $string['paymentaccountsexplained'] = 'Create one or multiple payment accounts for this site. Each account includes configuration for available payment gateways. The person who configures payments on the site (for example, payment for the course enrolment) will be able to chose from the available accounts.';
-$string['callbacknotimplemented'] = 'The callback is not implemented for component {$a}.';
 $string['createaccount'] = 'Create payment account';
 $string['deleteorarchive'] = 'Delete or archive';
 $string['eventaccountcreated'] = 'Payment account created';

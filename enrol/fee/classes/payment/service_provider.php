@@ -31,25 +31,22 @@ namespace enrol_fee\payment;
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_payment\local\callback\provider {
+class service_provider implements \core_payment\local\callback\service_provider {
 
     /**
-     * Callback function that returns the enrolment cost for the course that $instanceid enrolment instance belongs to.
+     * Callback function that returns the enrolment cost and the accountid
+     * for the course that $instanceid enrolment instance belongs to.
      *
      * @param string $paymentarea
      * @param int $instanceid The enrolment instance id
-     * @return array['amount' => float, 'currency' => string, 'accountid' => int]
+     * @return \core_payment\local\entities\payable
      */
-    public static function get_cost(string $paymentarea, int $instanceid): array {
+    public static function get_payable(string $paymentarea, int $instanceid): \core_payment\local\entities\payable {
         global $DB;
 
         $instance = $DB->get_record('enrol', ['enrol' => 'fee', 'id' => $instanceid], '*', MUST_EXIST);
 
-        return [
-            'amount' => (float) $instance->cost,
-            'currency' => $instance->currency,
-            'accountid' => $instance->customint1,
-        ];
+        return new \core_payment\local\entities\payable($instance->cost, $instance->currency, $instance->customint1);
     }
 
     /**
@@ -58,10 +55,11 @@ class provider implements \core_payment\local\callback\provider {
      * @param string $paymentarea
      * @param int $instanceid The enrolment instance id
      * @param int $paymentid payment id as inserted into the 'payments' table, if needed for reference
+     * @param int $userid The userid the order is going to deliver to
      * @return bool Whether successful or not
      */
-    public static function deliver_order(string $paymentarea, int $instanceid, int $paymentid): bool {
-        global $DB, $USER;
+    public static function deliver_order(string $paymentarea, int $instanceid, int $paymentid, int $userid): bool {
+        global $DB;
 
         $instance = $DB->get_record('enrol', ['enrol' => 'fee', 'id' => $instanceid], '*', MUST_EXIST);
 
@@ -75,7 +73,7 @@ class provider implements \core_payment\local\callback\provider {
             $timeend   = 0;
         }
 
-        $plugin->enrol_user($instance, $USER->id, $instance->roleid, $timestart, $timeend);
+        $plugin->enrol_user($instance, $userid, $instance->roleid, $timestart, $timeend);
 
         return true;
     }
