@@ -6,7 +6,7 @@ Feature: Manage payment accounts
     When I log in as "admin"
     And I navigate to "Payments > Payment accounts" in site administration
     And I follow "Manage payment gateways"
-    And I click on "Enable" "link" in the "PayPal" "table_row"
+    Then "Australian Dollar" "text" should exist in the "PayPal" "table_row"
     And I follow "Payment accounts"
     And I press "Create payment account"
     And I set the field "Account name" to "TestAccount"
@@ -22,8 +22,7 @@ Feature: Manage payment accounts
 
   @javascript
   Scenario: Configuring gateways on payment accounts
-    Given payment plugin "paypal" is enabled
-    And the following "core_payment > payment accounts" exist:
+    Given the following "core_payment > payment accounts" exist:
       | name           |
       | Account1       |
       | Account2       |
@@ -44,8 +43,7 @@ Feature: Manage payment accounts
 
   @javascript
   Scenario: Deleting payment accounts
-    Given payment plugin "paypal" is enabled
-    And the following "core_payment > payment accounts" exist:
+    Given the following "core_payment > payment accounts" exist:
       | name           |
       | Account1       |
       | Account2       |
@@ -60,8 +58,7 @@ Feature: Manage payment accounts
 
   @javascript
   Scenario: Archiving and restoring accounts
-    Given payment plugin "paypal" is enabled
-    And the following "users" exist:
+    Given the following "users" exist:
       | username |
       | user1    |
     And the following "core_payment > payment accounts" exist:

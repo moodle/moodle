@@ -23,8 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Behat data generator for core_payment.
@@ -36,6 +34,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class behat_core_payment_generator extends behat_generator_base {
 
+    /**
+     * Get a list of the entities that can be created.
+     *
+     * @return array entity name => information about how to generate.
+     */
     protected function get_creatable_entities(): array {
         return [
             'payment accounts' => [

@@ -23,9 +23,14 @@
  */
 
 $string['accountarchived'] = 'Archived';
-$string['accountdeleteconfirm'] = 'If this account has previous payments, they will be archived, otherwise all other data will be permanently deleted. Are you sure you want to continue?';
+$string['accountdeleteconfirm'] = 'If this account has previous payments, it will be archived, otherwise its configuration data will be permanently deleted. Are you sure you want to continue?';
+$string['accountconfignote'] = 'Payment gateways for this account will be configured separately';
+$string['accountidnumber'] = 'ID number';
+$string['accountidnumber_help'] = 'The ID number is only used when matching the account against external systems and is not displayed anywhere on the site. If the account has an official code name it may be entered, otherwise the field can be left blank.';
 $string['accountname'] = 'Account name';
+$string['accountname_help'] = 'How this account will be identified for teachers or managers who set up payments (for example in the course enrolment plugin)';
 $string['accountnotavailable'] = 'Not available';
+$string['paymentaccountsexplained'] = 'Create one or multiple payment accounts for this site. Each account includes configuration for available payment gateways. The person who configures payments on the site (for example, payment for the course enrolment) will be able to chose from the available accounts.';
 $string['callbacknotimplemented'] = 'The callback is not implemented for component {$a}.';
 $string['createaccount'] = 'Create payment account';
 $string['deleteorarchive'] = 'Delete or archive';

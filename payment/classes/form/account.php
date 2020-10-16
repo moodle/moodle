@@ -26,8 +26,6 @@ namespace core_payment\form;
 
 use core\form\persistent;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class account
  *
@@ -50,13 +48,17 @@ class account extends persistent {
         $mform->addElement('hidden', 'contextid');
 
         $mform->addElement('text', 'name', get_string('accountname', 'payment'), 'maxlength="255"');
+        $mform->addHelpButton('name', 'accountname', 'payment');
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'server');
 
-        $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="100"');
+        $mform->addElement('text', 'idnumber', get_string('accountidnumber', 'payment'), 'maxlength="100"');
+        $mform->addHelpButton('idnumber', 'accountidnumber', 'payment');
         $mform->setType('idnumber', PARAM_RAW_TRIMMED);
         $mform->addRule('idnumber', get_string('maximumchars', '', 100), 'maxlength', 100, 'server');
+
+        $mform->addElement('static', 'staticinfo', '', get_string('accountconfignote', 'payment'));
 
         $mform->addElement('advcheckbox', 'enabled', get_string('enable'));
         $this->add_action_buttons();

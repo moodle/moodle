@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Testing accounts management in payments API
+ * Testing helper class methods in payments API
  *
  * @package    core_payment
  * @category   test
@@ -29,7 +29,7 @@ use advanced_testcase;
 use core\plugininfo\pg;
 
 /**
- * Testing accounts management in payments API
+ * Testing helper class methods in payments API
  *
  * @package    core_payment
  * @category   test
@@ -42,7 +42,6 @@ class accounts_testcase extends advanced_testcase {
         if (!array_key_exists('paypal', \core_component::get_plugin_list('pg'))) {
             return false;
         }
-        pg::set_enabled_plugins('paypal');
         return true;
     }
 
@@ -118,8 +117,13 @@ class accounts_testcase extends advanced_testcase {
         // Delete account with payments - it will be archived.
         $this->setAdminUser();
         $account = helper::save_payment_account((object)['name' => 'Test 1', 'idnumber' => '']);
-        $DB->insert_record('payments', ['accountid' => $account->get('id'), 'component' => 'test', 'paymentarea' => 'test',
-            'componentid' => 1, 'userid' => $USER->id]);
+        $DB->insert_record('payments', [
+            'accountid' => $account->get('id'),
+            'component' => 'test',
+            'paymentarea' => 'test',
+            'componentid' => 1,
+            'userid' => $USER->id,
+        ]);
         helper::delete_payment_account(account::get_record(['id' => $account->get('id')]));
         $this->assertEquals(1, $DB->get_field('payment_accounts', 'archived', ['id' => $account->get('id')]));
 
@@ -128,19 +132,57 @@ class accounts_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->get_field('payment_accounts', 'archived', ['id' => $account->get('id')]));
     }
 
-    public function test_format_cost() {
-        $amount = 5.345;
+    /**
+     * Provider for format_cost test
+     *
+     * @return array
+     */
+    public function get_rounded_cost_provider(): array {
+        return [
+            'IRR 0 surcharge' => [5.345, 'IRR', 0, 5],
+            'IRR 12% surcharge' => [5.345, 'IRR', 12, 6],
+            'USD 0 surcharge' => [5.345, 'USD', 0, 5.34],
+            'USD 1% surcharge' => [5.345, 'USD', 1, 5.4],
+        ];
+    }
 
-        $currency = 'IRR';
-        $this->assertEquals(5, helper::get_rounded_cost($amount, $currency));
-        $this->assertEquals('IRR'."\xc2\xa0".'5', helper::get_cost_as_string($amount, $currency));
-        $this->assertEquals(6, helper::get_rounded_cost($amount, $currency, 12));
-        $this->assertEquals('IRR'."\xc2\xa0".'6', helper::get_cost_as_string($amount, $currency, 12));
+    /**
+     * Provier for test_get_cost_as_string
+     *
+     * @return array[]
+     */
+    public function get_cost_as_string_provider(): array {
+        return [
+            'IRR 0 surcharge' => [5.345, 'IRR', 0, 'IRR'."\xc2\xa0".'5'],
+            'IRR 12% surcharge' => [5.345, 'IRR', 12, 'IRR'."\xc2\xa0".'6'],
+            'USD 0 surcharge' => [5.345, 'USD', 0, 'USD'."\xc2\xa0".'5.34'],
+            'USD 1% surcharge' => [5.345, 'USD', 1, 'USD'."\xc2\xa0".'5.40'],
+        ];
+    }
 
-        $currency = 'USD';
-        $this->assertEquals(5.34, helper::get_rounded_cost($amount, $currency));
-        $this->assertEquals('USD'."\xc2\xa0".'5.34', helper::get_cost_as_string($amount, $currency));
-        $this->assertEquals(5.40, helper::get_rounded_cost($amount, $currency, 1));
-        $this->assertEquals('USD'."\xc2\xa0".'5.40', helper::get_cost_as_string($amount, $currency, 1));
+    /**
+     * Test for test_format_cost function
+     *
+     * @dataProvider get_rounded_cost_provider
+     * @param float $amount
+     * @param string $currency
+     * @param float $surcharge
+     * @param string $expected
+     */
+    public function test_get_rounded_cost(float $amount, string $currency, float $surcharge, string $expected) {
+        $this->assertEquals($expected, helper::get_rounded_cost($amount, $currency, $surcharge));
+    }
+
+    /**
+     * Test for get_cost_as_string function
+     *
+     * @dataProvider get_cost_as_string_provider
+     * @param float $amount
+     * @param string $currency
+     * @param float $surcharge
+     * @param string $expected
+     */
+    public function test_get_cost_as_string(float $amount, string $currency, float $surcharge, string $expected) {
+        $this->assertEquals($expected, helper::get_cost_as_string($amount, $currency, $surcharge));
     }
 }

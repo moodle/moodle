@@ -28,8 +28,6 @@ use core_payment\event\account_created;
 use core_payment\event\account_deleted;
 use core_payment\event\account_updated;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Helper class for the payment subsystem.
  *

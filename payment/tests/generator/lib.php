@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Quiz module test data generator class
  *
@@ -26,6 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class core_payment_generator extends component_generator_base {
 
+    /** @var int */
     protected $accountcounter = 0;
 
     /**
@@ -34,7 +33,7 @@ class core_payment_generator extends component_generator_base {
      * @param array $data account data (name, idnumber, enabled) and additionally field 'gateways' that can include
      *    a list of gateways that should be mock-enabled for this account.
      */
-    public function create_payment_account(array $data): \core_payment\account {
+    public function create_payment_account(array $data = []): \core_payment\account {
         $this->accountcounter++;
         $gateways = [];
         if (!empty($data['gateways'])) {
@@ -70,12 +69,13 @@ class core_payment_generator extends component_generator_base {
             $data['gateway'] = reset($gateways);
         }
 
-        $id = $DB->insert_record('payments', $data + [
-            'component' => 'testcomponent',
-            'paymentarea' => 'teatarea',
-            'componentid' => 0,
-            'currency' => 'AUD'
-        ]);
+        $id = $DB->insert_record('payments', $data +
+            [
+                'component' => 'testcomponent',
+                'paymentarea' => 'teatarea',
+                'componentid' => 0,
+                'currency' => 'AUD',
+            ]);
         return $id;
     }
 
