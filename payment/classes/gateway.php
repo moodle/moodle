@@ -24,8 +24,6 @@
 
 namespace core_payment;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Base class for payment gateways.
  *

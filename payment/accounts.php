@@ -36,7 +36,7 @@ echo $OUTPUT->header();
 
 $accounts = \core_payment\helper::get_payment_accounts_to_manage(context_system::instance(), $showarchived);
 $table = new html_table();
-$table->head = [get_string('accountname', 'payment'), get_string('type_pg', 'plugin'), ''];
+$table->head = [get_string('accountname', 'payment'), get_string('type_pg_plural', 'plugin'), ''];
 $table->colclasses = ['', '', 'mdl-right'];
 $table->data = [];
 foreach ($accounts as $account) {
@@ -74,6 +74,16 @@ foreach ($accounts as $account) {
     $table->data[] = [$name, join(', ', $gateways), $OUTPUT->render($menu)];
 }
 
+echo html_writer::div(get_string('paymentaccountsexplained', 'payment'), 'pb-2');
+
+if (has_capability('moodle/site:config', context_system::instance())) {
+    // For administrators add a link to "Manage payment gateways" page.
+    $link = html_writer::link(new moodle_url('/admin/settings.php', ['section' => 'managepaymentgateways']),
+        get_string('type_pgmanage', 'plugin'));
+    $text = get_string('gotomanageplugins', 'payment', $link);
+    echo html_writer::div($text, 'pb-2');
+}
+
 echo html_writer::table($table);
 
 $PAGE->requires->event_handler('[data-action=delete]', 'click', 'M.util.show_confirm_dialog',
@@ -83,13 +93,5 @@ echo html_writer::div(html_writer::link(new moodle_url($PAGE->url, ['showarchive
     $showarchived ? get_string('hidearchived', 'payment') : get_string('showarchived', 'payment')), 'mdl-right');
 
 echo $OUTPUT->single_button(new moodle_url('/payment/manage_account.php'), get_string('createaccount', 'payment'), 'get');
-
-if (has_capability('moodle/site:config', context_system::instance())) {
-    // For administrators add a link to "Manage payment gateways" page.
-    $link = html_writer::link(new moodle_url('/admin/settings.php', ['section' => 'managepaymentgateways']),
-        get_string('type_pgmanage', 'plugin'));
-    $text = get_string('gotomanageplugins', 'payment', $link);
-    echo html_writer::div($text, 'pt-3');
-}
 
 echo $OUTPUT->footer();

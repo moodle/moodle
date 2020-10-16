@@ -14,7 +14,6 @@ Feature: Signing up for a course with a fee enrolment method
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | manager1 | C1     | manager        |
-    And payment plugin "paypal" is enabled
     And the following "core_payment > payment accounts" exist:
       | name           | gateways |
       | Account1       | paypal   |
@@ -31,16 +30,15 @@ Feature: Signing up for a course with a fee enrolment method
     And I select "Fee" from the "Add method" singleselect
     And I set the following fields to these values:
       | Payment account | Account1 |
-      | Enrol cost      | 10       |
+      | Enrolment fee   | 123.45   |
       | Currency        | Euro     |
     And I press "Add method"
     And I log out
     And I log in as "student1"
     And I am on course index
     And I follow "Course 1"
-    And I should see "This course requires a payment for entry."
-    #And I should see "Cost: EUR 10.00" # TODO for some reason behat does not "see" this text.
-    And I press "Pay enrolment fee"
-    And I should see "PayPal" in the "Select Payment Type" "dialogue"
-    And I click on "Cancel" "button" in the "Select Payment Type" "dialogue"
-    And I log out
+    Then I should see "This course requires a payment for entry."
+    And I should see "123.45"
+    And I press "Select payment type"
+    And I should see "PayPal" in the "Select payment type" "dialogue"
+    And I click on "Cancel" "button" in the "Select payment type" "dialogue"

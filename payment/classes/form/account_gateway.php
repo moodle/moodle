@@ -25,9 +25,6 @@
 namespace core_payment\form;
 
 use core\form\persistent;
-use core_payment\gateway;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class account_gateway

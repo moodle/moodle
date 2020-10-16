@@ -26,8 +26,6 @@ namespace core_payment;
 
 use core\persistent;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class account_gateway
  *
@@ -46,14 +44,13 @@ class account_gateway extends persistent {
      *
      * @return array
      */
-    protected static function define_properties() : array {
+    protected static function define_properties(): array {
         return array(
             'accountid' => [
                 'type' => PARAM_INT,
             ],
             'gateway' => [
                 'type' => PARAM_COMPONENT,
-                // TODO select with options?
             ],
             'enabled' => [
                 'type' => PARAM_BOOL,
@@ -72,7 +69,6 @@ class account_gateway extends persistent {
      * Return the gateway name ready for display
      *
      * @return string
-     * @throws \coding_exception
      */
     public function get_display_name(): string {
         return get_string('pluginname', 'pg_' . $this->get('gateway'));
@@ -82,8 +78,6 @@ class account_gateway extends persistent {
      * Gateway management url
      *
      * @return \moodle_url
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
     public function get_edit_url(): \moodle_url {
         $params = $this->get('id') ? ['id' => $this->get('id')] :
@@ -95,7 +89,6 @@ class account_gateway extends persistent {
      * Get corresponding account
      *
      * @return account
-     * @throws \coding_exception
      */
     public function get_account(): account {
         return new account($this->get('accountid'));
@@ -105,7 +98,6 @@ class account_gateway extends persistent {
      * Parse configuration from the json-encoded stored value
      *
      * @return array
-     * @throws \coding_exception
      */
     public function get_configuration(): array {
         $config = @json_decode($this->get('config'), true);
