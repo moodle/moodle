@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the \core_payment\local\local\callback\provider interface.
+ * This file contains the \core_payment\local\local\callback\service_provider interface.
  *
  * Plugins should implement this if they use payment subsystem.
  *
@@ -26,28 +26,28 @@
 
 namespace core_payment\local\callback;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
- * The provider interface for plugins to provide callbacks which are needed by the payment subsystem.
+ * The service_provider interface for plugins to provide callbacks which are needed by the payment subsystem.
  *
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface provider {
+interface service_provider {
 
     /**
      * @param string $paymentarea
      * @param int $itemid An identifier that is known to the plugin
-     * @return array['amount' => float, 'currency' => string, 'accountid' => int]
+     * @return \core_payment\local\entities\payable
      */
-    public static function get_cost(string $paymentarea, int $itemid): array;
+    public static function get_payable(string $paymentarea, int $itemid): \core_payment\local\entities\payable;
 
     /**
      * @param string $paymentarea
      * @param int $itemid An identifier that is known to the plugin
      * @param int $paymentid payment id as inserted into the 'payments' table, if needed for reference
+     * @param int $userid The userid the order is going to deliver to
+     *
      * @return bool Whether successful or not
      */
-    public static function deliver_order(string $paymentarea, int $itemid, int $paymentid): bool;
+    public static function deliver_order(string $paymentarea, int $itemid, int $paymentid, int $userid): bool;
 }

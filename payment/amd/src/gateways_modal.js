@@ -35,24 +35,15 @@ import ModalGateways from './modal_gateways';
 
 /**
  * Register event listeners for the module.
- *
- * @param {string} nodeSelector The root to listen to.
  */
-export const registerEventListenersBySelector = (nodeSelector) => {
-    document.querySelectorAll(nodeSelector).forEach((element) => {
-        registerEventListeners(element);
-    });
-};
+const registerEventListeners = () => {
+    document.addEventListener('click', e => {
+        const gatewayTrigger = e.target.closest('[data-action="core_payment/triggerPayment"]');
+        if (gatewayTrigger) {
+            e.preventDefault();
 
-/**
- * Register event listeners for the module.
- *
- * @param {HTMLElement} rootNode The root to listen to.
- */
-export const registerEventListeners = (rootNode) => {
-    rootNode.addEventListener('click', (e) => {
-        e.preventDefault();
-        show(rootNode, {focusOnClose: e.target});
+            show(gatewayTrigger, {focusOnClose: e.target});
+        }
     });
 };
 
@@ -190,3 +181,22 @@ const processPayment = async(gateway, component, paymentArea, itemId, descriptio
  * @param {bool} success
  * @param {string} message
  */
+
+/**
+ * Set up the payment actions.
+ */
+export const init = () => {
+    if (!init.initialised) {
+        // Event listeners should only be registered once.
+        init.initialised = true;
+        registerEventListeners();
+    }
+};
+
+/**
+ * Whether the init function was called before.
+ *
+ * @static
+ * @type {boolean}
+ */
+init.initialised = false;

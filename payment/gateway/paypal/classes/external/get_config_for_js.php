@@ -67,14 +67,14 @@ class get_config_for_js extends external_api {
         ]);
 
         $config = helper::get_gateway_configuration($component, $paymentarea, $itemid, 'paypal');
-        $cost = helper::get_cost($component, $paymentarea, $itemid);
+        $payable = helper::get_payable($component, $paymentarea, $itemid);
         $surcharge = helper::get_gateway_surcharge('paypal');
 
         return [
             'clientid' => $config['clientid'],
             'brandname' => $config['brandname'],
-            'cost' => helper::get_rounded_cost($cost['amount'], $cost['currency'], $surcharge),
-            'currency' => $cost['currency'],
+            'cost' => helper::get_rounded_cost($payable->get_amount(), $payable->get_currency(), $surcharge),
+            'currency' => $payable->get_currency(),
         ];
     }
 

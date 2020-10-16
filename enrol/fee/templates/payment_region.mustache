@@ -58,6 +58,7 @@
             class="btn btn-secondary"
             type="button"
             id="gateways-modal-trigger-{{ uniqid }}"
+            data-action="core_payment/triggerPayment"
             data-component="enrol_fee"
             data-paymentarea="fee"
             data-itemid="{{instanceid}}"
@@ -70,6 +71,6 @@
 </div>
 {{#js}}
     require(['core_payment/gateways_modal'], function(modal) {
-        modal.registerEventListeners(document.querySelector('#gateways-modal-trigger-{{ uniqid }}'));
+        modal.init();
     });
 {{/js}}

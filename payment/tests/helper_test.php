@@ -147,7 +147,7 @@ class accounts_testcase extends advanced_testcase {
     }
 
     /**
-     * Provier for test_get_cost_as_string
+     * Provider for test_get_cost_as_string
      *
      * @return array[]
      */

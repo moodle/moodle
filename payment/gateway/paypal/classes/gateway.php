@@ -24,8 +24,6 @@
 
 namespace paygw_paypal;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The gateway class for PayPal payment gateway.
  *
