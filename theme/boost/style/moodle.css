@@ -12458,24 +12458,24 @@ body.h5p-embed .h5pmessages {
           margin-left: 0.25em;
           margin-right: 0.25em;
           vertical-align: initial; }
-        .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle {
+        .path-calendar .maincalendar .calendarmonth ul li .calendar-circle {
           width: 12px;
           height: 12px;
           border-radius: 6px;
           vertical-align: middle; }
-          .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_category {
+          .path-calendar .maincalendar .calendarmonth ul li .calendar-circle.calendar_event_category {
             background-color: #e0cbe0;
             border: 2px solid #9e619f; }
-          .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_course {
+          .path-calendar .maincalendar .calendarmonth ul li .calendar-circle.calendar_event_course {
             background-color: #ffd3bd;
             border: 2px solid #d34600; }
-          .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_site {
+          .path-calendar .maincalendar .calendarmonth ul li .calendar-circle.calendar_event_site {
             background-color: #d6f8cd;
             border: 2px solid #2b8713; }
-          .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_group {
+          .path-calendar .maincalendar .calendarmonth ul li .calendar-circle.calendar_event_group {
             background-color: #fee7ae;
             border: 2px solid #9a6e02; }
-          .path-calendar .maincalendar .calendarmonth ul li .badge.badge-circle.calendar_event_user {
+          .path-calendar .maincalendar .calendarmonth ul li .calendar-circle.calendar_event_user {
             background-color: #dce7ec;
             border: 2px solid #4e7c91; }
     .path-calendar .maincalendar .calendarmonth td {
