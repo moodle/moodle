@@ -43,7 +43,7 @@ class testoutgoingmailconf_form extends \moodleform {
         $mform = $this->_form;
 
         // Recipient.
-        $options = ['maxlength' => '100', 'size' => '25'];
+        $options = ['maxlength' => '100', 'size' => '25', 'autocomplete' => 'email'];
         $mform->addElement('text', 'recipient', get_string('testoutgoingmailconf_toemail', 'admin'), $options);
         $mform->setType('recipient', PARAM_EMAIL);
         $mform->addRule('recipient', get_string('required'), 'required');

@@ -455,6 +455,15 @@ if ($hassiteconfig) {
         new lang_string('divertallemailsexcept_desc', 'admin'),
         '', PARAM_RAW, '50', '4'));
 
+    $noreplyaddress = isset($CFG->noreplyaddress) ? $CFG->noreplyaddress : 'noreply@example.com';
+    $dkimdomain = substr(strrchr($noreplyaddress, "@"), 1);
+    $dkimselector = empty($CFG->emaildkimselector) ? '[selector]' : $CFG->emaildkimselector;
+    $pempath = "{$CFG->dataroot}/dkim/{$dkimdomain}/{$dkimselector}.private";
+    $temp->add(new admin_setting_heading('emaildkim', new lang_string('emaildkim', 'admin'),
+        new lang_string('emaildkiminfo', 'admin', ['path' => $pempath, 'docs' => \get_docs_url('Mail_configuration#DKIM')])));
+    $temp->add(new admin_setting_configtext('emaildkimselector', new lang_string('emaildkimselector', 'admin'),
+        new lang_string('configemaildkimselector', 'admin'), '', PARAM_FILE));
+
     $url = new moodle_url('/admin/testoutgoingmailconf.php');
     $link = html_writer::link($url, get_string('testoutgoingmailconf', 'admin'));
     $temp->add(new admin_setting_heading('testoutgoinmailc', new lang_string('testoutgoingmailconf', 'admin'),
