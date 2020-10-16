@@ -281,8 +281,8 @@ if ($hassiteconfig) {
     }
 
     // Payment gateway plugins.
-    $ADMIN->add('modules', new admin_category('paymentgateways', new lang_string('type_pg_plural', 'plugin')));
-    $temp = new admin_settingpage('managepaymentgateways', new lang_string('type_pgmanage', 'plugin'));
+    $ADMIN->add('modules', new admin_category('paymentgateways', new lang_string('type_paygw_plural', 'plugin')));
+    $temp = new admin_settingpage('managepaymentgateways', new lang_string('type_paygwmanage', 'plugin'));
     $temp->add(new \core_admin\local\settings\manage_payment_gateway_plugins());
     $temp->add(new admin_setting_description(
         'managepaymentgatewayspostfix',
@@ -292,10 +292,10 @@ if ($hassiteconfig) {
     ));
     $ADMIN->add('paymentgateways', $temp);
 
-    $plugins = core_plugin_manager::instance()->get_plugins_of_type('pg');
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('paygw');
     core_collator::asort_objects_by_property($plugins, 'displayname');
     foreach ($plugins as $plugin) {
-        /** @var \core\plugininfo\pg $plugin */
+        /** @var \core\plugininfo\paygw $plugin */
         $plugin->load_settings($ADMIN, 'paymentgateways', $hassiteconfig);
     }
 

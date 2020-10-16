@@ -118,9 +118,9 @@ class account extends persistent {
             return [];
         }
         if ($this->gateways === null) {
-            \core_component::get_plugin_list('pg');
+            \core_component::get_plugin_list('paygw');
             $this->gateways = [];
-            foreach (\core_component::get_plugin_list('pg') as $gatewayname => $unused) {
+            foreach (\core_component::get_plugin_list('paygw') as $gatewayname => $unused) {
                 $gateway = account_gateway::get_record(['accountid' => $id, 'gateway' => $gatewayname]);
                 if (!$gateway) {
                     $gateway = new account_gateway(0, (object)['accountid' => $id, 'gateway' => $gatewayname,
@@ -130,7 +130,7 @@ class account extends persistent {
             }
         }
         if ($enabledpluginsonly) {
-            $enabledplugins = \core\plugininfo\pg::get_enabled_plugins();
+            $enabledplugins = \core\plugininfo\paygw::get_enabled_plugins();
             return array_intersect_key($this->gateways, $enabledplugins);
         }
         return $this->gateways;

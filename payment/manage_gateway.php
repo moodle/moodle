@@ -32,7 +32,7 @@ $gatewayname = optional_param('gateway', null, PARAM_COMPONENT);
 $pageurl = new moodle_url('/payment/manage_gateway.php');
 admin_externalpage_setup('paymentaccounts', '', [], $pageurl);
 
-$enabledplugins = \core\plugininfo\pg::get_enabled_plugins();
+$enabledplugins = \core\plugininfo\paygw::get_enabled_plugins();
 
 if ($id) {
     $gateway = new \core_payment\account_gateway($id);

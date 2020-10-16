@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'pg_paypal', language 'en'
+ * Strings for component 'paygw_paypal', language 'en'
  *
- * @package    pg_paypal
+ * @package    paygw_paypal
  * @copyright  2019 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

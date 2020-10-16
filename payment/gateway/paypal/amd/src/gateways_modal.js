@@ -16,7 +16,7 @@
 /**
  * This module is responsible for PayPal content in the gateways modal.
  *
- * @module     pg_paypal/gateway_modal
+ * @module     paygw_paypal/gateway_modal
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,7 +36,7 @@ import {get_string as getString} from 'core/str';
  */
 const showModalWithPlaceholder = async() => {
     const modal = await ModalFactory.create({
-        body: await Templates.render('pg_paypal/paypal_button_placeholder', {})
+        body: await Templates.render('paygw_paypal/paypal_button_placeholder', {})
     });
     modal.show();
     return modal;
@@ -98,11 +98,11 @@ export const process = async(component, paymentArea, componentId, description, c
                     e.preventDefault();
                 });
 
-                modal.setBody(getString('authorising', 'pg_paypal'));
+                modal.setBody(getString('authorising', 'paygw_paypal'));
 
                 // Call server to validate and capture payment for order.
                 return Ajax.call([{
-                    methodname: 'pg_paypal_create_transaction_complete',
+                    methodname: 'paygw_paypal_create_transaction_complete',
                     args: {
                         component,
                         paymentarea: paymentArea,

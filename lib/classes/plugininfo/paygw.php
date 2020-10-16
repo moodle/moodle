@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2019 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class pg extends base {
+class paygw extends base {
     public function is_uninstall_allowed() {
         return true;
     }
@@ -73,9 +73,9 @@ class pg extends base {
     public static function get_enabled_plugins() {
         global $CFG;
 
-        $order = (!empty($CFG->pg_plugins_sortorder)) ? explode(',', $CFG->pg_plugins_sortorder) : [];
+        $order = (!empty($CFG->paygw_plugins_sortorder)) ? explode(',', $CFG->paygw_plugins_sortorder) : [];
         if ($order) {
-            $plugins = \core_plugin_manager::instance()->get_installed_plugins('pg');
+            $plugins = \core_plugin_manager::instance()->get_installed_plugins('paygw');
             $order = array_intersect($order, array_keys($plugins));
         }
 
@@ -96,7 +96,7 @@ class pg extends base {
         }
         if ($newstate) {
             // Enable gateway plugin.
-            $plugins = \core_plugin_manager::instance()->get_plugins_of_type('pg');
+            $plugins = \core_plugin_manager::instance()->get_plugins_of_type('paygw');
             if (!array_key_exists($this->name, $plugins)) {
                 // Can not be enabled.
                 return;
@@ -123,10 +123,10 @@ class pg extends base {
             $list = explode(',', $list);
         }
         if ($list) {
-            $plugins = \core_plugin_manager::instance()->get_installed_plugins('pg');
+            $plugins = \core_plugin_manager::instance()->get_installed_plugins('paygw');
             $list = array_intersect($list, array_keys($plugins));
         }
-        set_config('pg_plugins_sortorder', join(',', $list));
+        set_config('paygw_plugins_sortorder', join(',', $list));
         \core_plugin_manager::reset_caches();
     }
 
@@ -136,7 +136,7 @@ class pg extends base {
      * @return string[] An array of the currency codes in the three-character ISO-4217 format
      */
     public function get_supported_currencies(): array {
-        $classname = '\pg_'.$this->name.'\gateway';
+        $classname = '\paygw_'.$this->name.'\gateway';
 
         return $classname::get_supported_currencies();
     }

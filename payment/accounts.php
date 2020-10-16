@@ -30,13 +30,13 @@ $showarchived = optional_param('showarchived', false, PARAM_BOOL);
 admin_externalpage_setup('paymentaccounts');
 $PAGE->set_heading(get_string('paymentaccounts', 'payment'));
 
-$enabledplugins = \core\plugininfo\pg::get_enabled_plugins();
+$enabledplugins = \core\plugininfo\paygw::get_enabled_plugins();
 
 echo $OUTPUT->header();
 
 $accounts = \core_payment\helper::get_payment_accounts_to_manage(context_system::instance(), $showarchived);
 $table = new html_table();
-$table->head = [get_string('accountname', 'payment'), get_string('type_pg_plural', 'plugin'), ''];
+$table->head = [get_string('accountname', 'payment'), get_string('type_paygw_plural', 'plugin'), ''];
 $table->colclasses = ['', '', 'mdl-right'];
 $table->data = [];
 foreach ($accounts as $account) {
@@ -79,7 +79,7 @@ echo html_writer::div(get_string('paymentaccountsexplained', 'payment'), 'pb-2')
 if (has_capability('moodle/site:config', context_system::instance())) {
     // For administrators add a link to "Manage payment gateways" page.
     $link = html_writer::link(new moodle_url('/admin/settings.php', ['section' => 'managepaymentgateways']),
-        get_string('type_pgmanage', 'plugin'));
+        get_string('type_paygwmanage', 'plugin'));
     $text = get_string('gotomanageplugins', 'payment', $link);
     echo html_writer::div($text, 'pb-2');
 }

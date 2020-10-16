@@ -77,8 +77,8 @@ class get_available_gateways extends external_api {
             $surcharge = helper::get_gateway_surcharge($gateway);
             $list[] = (object)[
                 'shortname' => $gateway,
-                'name' => get_string('gatewayname', 'pg_' . $gateway),
-                'description' => get_string('gatewaydescription', 'pg_' . $gateway),
+                'name' => get_string('gatewayname', 'paygw_' . $gateway),
+                'description' => get_string('gatewaydescription', 'paygw_' . $gateway),
                 'surcharge' => $surcharge,
                 'cost' => helper::get_cost_as_string($amount, $currency, $surcharge),
             ];

@@ -71,7 +71,7 @@ class account_gateway extends persistent {
      * @return string
      */
     public function get_display_name(): string {
-        return get_string('pluginname', 'pg_' . $this->get('gateway'));
+        return get_string('pluginname', 'paygw_' . $this->get('gateway'));
     }
 
     /**

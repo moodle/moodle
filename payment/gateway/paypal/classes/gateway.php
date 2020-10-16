@@ -17,12 +17,12 @@
 /**
  * Contains class for PayPal payment gateway.
  *
- * @package    pg_paypal
+ * @package    paygw_paypal
  * @copyright  2019 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace pg_paypal;
+namespace paygw_paypal;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -52,25 +52,25 @@ class gateway extends \core_payment\gateway {
     public static function add_configuration_to_gateway_form(\core_payment\form\account_gateway $form): void {
         $mform = $form->get_mform();
 
-        $mform->addElement('text', 'brandname', get_string('brandname', 'pg_paypal'));
+        $mform->addElement('text', 'brandname', get_string('brandname', 'paygw_paypal'));
         $mform->setType('brandname', PARAM_TEXT);
-        $mform->addHelpButton('brandname', 'brandname', 'pg_paypal');
+        $mform->addHelpButton('brandname', 'brandname', 'paygw_paypal');
 
-        $mform->addElement('text', 'clientid', get_string('clientid', 'pg_paypal'));
+        $mform->addElement('text', 'clientid', get_string('clientid', 'paygw_paypal'));
         $mform->setType('clientid', PARAM_TEXT);
-        $mform->addHelpButton('clientid', 'clientid', 'pg_paypal');
+        $mform->addHelpButton('clientid', 'clientid', 'paygw_paypal');
 
-        $mform->addElement('text', 'secret', get_string('secret', 'pg_paypal'));
+        $mform->addElement('text', 'secret', get_string('secret', 'paygw_paypal'));
         $mform->setType('secret', PARAM_TEXT);
-        $mform->addHelpButton('secret', 'secret', 'pg_paypal');
+        $mform->addHelpButton('secret', 'secret', 'paygw_paypal');
 
         $options = [
-            'live' => get_string('live', 'pg_paypal'),
-            'sandbox'  => get_string('sandbox', 'pg_paypal'),
+            'live' => get_string('live', 'paygw_paypal'),
+            'sandbox'  => get_string('sandbox', 'paygw_paypal'),
         ];
 
-        $mform->addElement('select', 'environment', get_string('environment', 'pg_paypal'), $options);
-        $mform->addHelpButton('environment', 'environment', 'pg_paypal');
+        $mform->addElement('select', 'environment', get_string('environment', 'paygw_paypal'), $options);
+        $mform->addHelpButton('environment', 'environment', 'paygw_paypal');
     }
 
     /**

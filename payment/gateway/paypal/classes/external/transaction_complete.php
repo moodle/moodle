@@ -17,21 +17,21 @@
 /**
  * This class contains a list of webservice functions related to the PayPal payment gateway.
  *
- * @package    pg_paypal
+ * @package    paygw_paypal
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 declare(strict_types=1);
 
-namespace pg_paypal\external;
+namespace paygw_paypal\external;
 
 use core_payment\helper;
 use external_api;
 use external_function_parameters;
 use external_value;
 use core_payment\helper as payment_helper;
-use pg_paypal\paypal_helper;
+use paygw_paypal\paypal_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -110,30 +110,30 @@ class transaction_complete extends external_api {
                             $record->paymentid = $paymentid;
                             $record->pp_orderid = $orderid;
 
-                            $DB->insert_record('pg_paypal', $record);
+                            $DB->insert_record('paygw_paypal', $record);
 
                             payment_helper::deliver_order($component, $paymentarea, $componentid, $paymentid);
                         } catch (\Exception $e) {
                             debugging('Exception while trying to process payment: ' . $e->getMessage(), DEBUG_DEVELOPER);
                             $success = false;
-                            $message = get_string('internalerror', 'pg_paypal');
+                            $message = get_string('internalerror', 'paygw_paypal');
                         }
                     } else {
                         $success = false;
-                        $message = get_string('paymentnotcleared', 'pg_paypal');
+                        $message = get_string('paymentnotcleared', 'paygw_paypal');
                     }
                 } else {
                     $success = false;
-                    $message = get_string('amountmismatch', 'pg_paypal');
+                    $message = get_string('amountmismatch', 'paygw_paypal');
                 }
             } else {
                 $success = false;
-                $message = get_string('paymentnotcleared', 'pg_paypal');
+                $message = get_string('paymentnotcleared', 'paygw_paypal');
             }
         } else {
             // Could not capture authorization!
             $success = false;
-            $message = get_string('cannotfetchorderdatails', 'pg_paypal');
+            $message = get_string('cannotfetchorderdatails', 'paygw_paypal');
         }
 
         return [
