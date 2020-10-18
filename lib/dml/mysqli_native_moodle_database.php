@@ -886,7 +886,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $info->type           = $rawcolumn->data_type;
         $info->meta_type      = $this->mysqltype2moodletype($rawcolumn->data_type);
         if ($this->has_breaking_change_quoted_defaults()) {
-            $info->default_value = trim($rawcolumn->column_default, "'");
+            $info->default_value = is_null($rawcolumn->column_default) ? null : trim($rawcolumn->column_default, "'");
             if ($info->default_value === 'NULL') {
                 $info->default_value = null;
             }
