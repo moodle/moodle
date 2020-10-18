@@ -30,7 +30,7 @@ import Ajax from 'core/ajax';
  * @param {string} component Name of the component that the itemId belongs to
  * @param {string} paymentArea The area of the component that the itemId belongs to
  * @param {number} itemId An internal identifier that is used by the component
- * @returns {Promise<{clientid: string, brandname: string}>}
+ * @returns {Promise<{clientid: string, brandname: string, cost: number, currency: string}>}
  */
 export const getConfigForJs = (component, paymentArea, itemId) => {
     const request = {
@@ -39,6 +39,29 @@ export const getConfigForJs = (component, paymentArea, itemId) => {
             component,
             paymentarea: paymentArea,
             itemid: itemId,
+        },
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
+ * Call server to validate and capture payment for order.
+ *
+ * @param {string} component Name of the component that the itemId belongs to
+ * @param {string} paymentArea The area of the component that the itemId belongs to
+ * @param {number} itemId An internal identifier that is used by the component
+ * @param {string} orderId The order id coming back from PayPal
+ * @returns {*}
+ */
+export const markTransactionComplete = (component, paymentArea, itemId, orderId) => {
+    const request = {
+        methodname: 'paygw_paypal_create_transaction_complete',
+        args: {
+            component,
+            paymentarea: paymentArea,
+            itemid: itemId,
+            orderid: orderId,
         },
     };
 

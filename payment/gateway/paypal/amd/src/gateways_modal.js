@@ -24,7 +24,6 @@
 import * as Repository from './repository';
 import Templates from 'core/templates';
 import Truncate from 'core/truncate';
-import Ajax from 'core/ajax';
 import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
 import {get_string as getString} from 'core/str';
@@ -49,102 +48,95 @@ const showModalWithPlaceholder = async() => {
  * @param {string} paymentArea The area of the component that the itemId belongs to
  * @param {number} itemId An internal identifier that is used by the component
  * @param {string} description Description of the payment
- * @param {processCallback} callback The callback function to call when processing is finished
- * @returns {Promise<void>}
+ * @returns {Promise<string>}
  */
-export const process = async(component, paymentArea, itemId, description, callback) => {
-
-    const [
-        modal,
-        paypalConfig,
-    ] = await Promise.all([
+export const process = (component, paymentArea, itemId, description) => {
+    return Promise.all([
         showModalWithPlaceholder(),
         Repository.getConfigForJs(component, paymentArea, itemId),
-    ]);
-    const currency = paypalConfig.currency;
-    const amount = paypalConfig.cost; // Cost with surcharge.
+    ])
+    .then(([modal, paypalConfig]) => {
+        modal.getRoot().on(ModalEvents.hidden, () => {
+            // Destroy when hidden.
+            modal.destroy();
+        });
 
-    modal.getRoot().on(ModalEvents.hidden, () => {
-        // Destroy when hidden.
-        modal.destroy();
-    });
+        return Promise.all([
+            modal,
+            paypalConfig,
+            switchSdk(paypalConfig.clientid, paypalConfig.currency),
+        ]);
+    })
+    .then(([modal, paypalConfig]) => {
+        // We have to clear the body. The render method in paypal.Buttons will render everything.
+        modal.setBody('');
 
-    const paypalScript = `https://www.paypal.com/sdk/js?client-id=${paypalConfig.clientid}&currency=${currency}`;
-
-    callExternalFunction(paypalScript, () => {
-        modal.setBody(''); // We have to clear the body. The render method in paypal.Buttons will render everything.
-
-        paypal.Buttons({ // eslint-disable-line
-            // Set up the transaction.
-            createOrder: function(data, actions) {
-                return actions.order.create({
-                    purchase_units: [{ // eslint-disable-line
-                        amount: {
-                            currency_code: currency, // eslint-disable-line
-                            value: amount
+        return new Promise(resolve => {
+            window.paypal.Buttons({
+                // Set up the transaction.
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{ // eslint-disable-line
+                            amount: {
+                                currency_code: paypalConfig.currency_code, // eslint-disable-line
+                                value: paypalConfig.cost,
+                            },
+                            description: Truncate.truncate(description, {length: 127, stripTags: true}),
+                        }],
+                        application_context: { // eslint-disable-line
+                            shipping_preference: 'NO_SHIPPING', // eslint-disable-line
+                            brand_name: Truncate.truncate(paypalConfig.brandname, {length: 127, stripTags: true}), // eslint-disable-line
                         },
-                        description: Truncate.truncate(description, {length: 127, stripTags: true}),
-                    }],
-                    application_context: { // eslint-disable-line
-                        shipping_preference: 'NO_SHIPPING', // eslint-disable-line
-                        brand_name: Truncate.truncate(paypalConfig.brandname, {length: 127, stripTags: true}), // eslint-disable-line
-                    },
-                });
-            },
-            // Finalise the transaction.
-            onApprove: function(data) {
-                modal.getRoot().on(ModalEvents.outsideClick, (e) => {
-                    // Prevent closing the modal when clicking outside of it.
-                    e.preventDefault();
-                });
+                    });
+                },
+                // Finalise the transaction.
+                onApprove: function(data) {
+                    modal.getRoot().on(ModalEvents.outsideClick, (e) => {
+                        // Prevent closing the modal when clicking outside of it.
+                        e.preventDefault();
+                    });
 
-                modal.setBody(getString('authorising', 'paygw_paypal'));
+                    modal.setBody(getString('authorising', 'paygw_paypal'));
 
-                // Call server to validate and capture payment for order.
-                return Ajax.call([{
-                    methodname: 'paygw_paypal_create_transaction_complete',
-                    args: {
-                        component,
-                        paymentarea: paymentArea,
-                        itemid: itemId,
-                        orderid: data.orderID,
-                    },
-                }])[0]
-                .then(function(res) {
-                    modal.hide();
-                    return callback(res);
-                });
-            }
-        }).render(modal.getBody()[0]);
+                    Repository.markTransactionComplete(component, paymentArea, itemId, data.orderID)
+                    .then(res => {
+                        modal.hide();
+                        return res;
+                    })
+                    .then(resolve);
+                }
+            }).render(modal.getBody()[0]);
+        });
+    })
+    .then(res => {
+        if (res.success) {
+            return Promise.resolve(res.message);
+        }
+
+        return Promise.reject(res.message);
     });
 };
 
 /**
- * The callback definition for process.
+ * Unloads the previously loaded PayPal JavaScript SDK, and loads a new one.
  *
- * @callback processCallback
- * @param {bool} success
- * @param {string} message
+ * @param {string} clientId PayPal client ID
+ * @param {string} currency The currency
+ * @returns {Promise}
  */
+const switchSdk = (clientId, currency) => {
+    const sdkUrl = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${currency}`;
 
-/**
- * Calls a function from an external javascript file.
- *
- * @param {string} jsFile URL of the external JavaScript file
- * @param {function} func The function to call
- */
-const callExternalFunction = (jsFile, func) => {
     // Check to see if this file has already been loaded. If so just go straight to the func.
-    if (callExternalFunction.currentlyloaded == jsFile) {
-        func();
-        return;
+    if (switchSdk.currentlyloaded === sdkUrl) {
+        return Promise.resolve();
     }
 
     // PayPal can only work with one currency at the same time. We have to unload the previously loaded script
     // if it was loaded for a different currency. Weird way indeed, but the only way.
     // See: https://github.com/paypal/paypal-checkout-components/issues/1180
-    if (callExternalFunction.currentlyloaded) {
-        const suspectedScript = document.querySelector(`script[src="${callExternalFunction.currentlyloaded}"]`);
+    if (switchSdk.currentlyloaded) {
+        const suspectedScript = document.querySelector(`script[src="${switchSdk.currentlyloaded}"]`);
         if (suspectedScript) {
             suspectedScript.parentNode.removeChild(suspectedScript);
         }
@@ -152,29 +144,31 @@ const callExternalFunction = (jsFile, func) => {
 
     const script = document.createElement('script');
 
-    if (script.readyState) {
-        script.onreadystatechange = function() {
-            if (this.readyState == 'complete' || this.readyState == 'loaded') {
-                this.onreadystatechange = null;
-                func();
-            }
-        };
-    } else {
-        script.onload = function() {
-            func();
-        };
-    }
+    return new Promise(resolve => {
+        if (script.readyState) {
+            script.onreadystatechange = function() {
+                if (this.readyState == 'complete' || this.readyState == 'loaded') {
+                    this.onreadystatechange = null;
+                    resolve();
+                }
+            };
+        } else {
+            script.onload = function() {
+                resolve();
+            };
+        }
 
-    script.setAttribute('src', jsFile);
-    document.head.appendChild(script);
+        script.setAttribute('src', sdkUrl);
+        document.head.appendChild(script);
 
-    callExternalFunction.currentlyloaded = jsFile;
+        switchSdk.currentlyloaded = sdkUrl;
+    });
 };
 
 /**
- * Holds the full url of loaded external JavaScript file.
+ * Holds the full url of loaded PayPal JavaScript SDK.
  *
  * @static
  * @type {string}
  */
-callExternalFunction.currentlyloaded = '';
+switchSdk.currentlyloaded = '';
