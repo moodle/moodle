@@ -87,25 +87,25 @@ const show = async(rootNode, {
                 rootNode.dataset.component,
                 rootNode.dataset.paymentarea,
                 rootNode.dataset.itemid,
-                rootNode.dataset.description,
-                ({success, message = ''}) => {
-                    modal.hide();
-                    if (success) {
-                        Notification.addNotification({
-                            message: message,
-                            type: 'success',
-                        });
-                        location.reload();
-                    } else {
-                        Notification.alert('', message);
-                    }
-                },
-            );
+                rootNode.dataset.description
+            )
+            .then(message => {
+                modal.hide();
+                Notification.addNotification({
+                    message: message,
+                    type: 'success',
+                });
+                location.reload();
+
+                // The following return statement is never reached. It is put here just to make eslint happy.
+                return message;
+            })
+            .catch(message => Notification.alert('', message));
         } else {
             // We cannot use await in the following line.
             // The reason is that we are preventing the default action of the save event being triggered,
             // therefore we cannot define the event handler function asynchronous.
-            getString('nogatewayselected', 'core_payment').then(message => addToast(message));
+            getString('nogatewayselected', 'core_payment').then(message => addToast(message)).catch();
         }
 
         e.preventDefault();
@@ -166,21 +166,12 @@ const updateCostRegion = async(root, defaultCost = '') => {
  * @param {string} paymentArea Name of the area in the component that the itemId belongs to
  * @param {number} itemId An internal identifier that is used by the component
  * @param {string} description Description of the payment
- * @param {processPaymentCallback} callback The callback function to call when processing is finished
- * @returns {Promise<void>}
+ * @returns {Promise<string>}
  */
-const processPayment = async(gateway, component, paymentArea, itemId, description, callback) => {
+const processPayment = async(gateway, component, paymentArea, itemId, description) => {
     const paymentMethod = await import(`paygw_${gateway}/gateways_modal`);
-    paymentMethod.process(component, paymentArea, itemId, description, callback);
+    return paymentMethod.process(component, paymentArea, itemId, description);
 };
-
-/**
- * The callback definition for processPayment.
- *
- * @callback processPaymentCallback
- * @param {bool} success
- * @param {string} message
- */
 
 /**
  * Set up the payment actions.
