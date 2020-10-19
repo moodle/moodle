@@ -234,3 +234,18 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | Student 2  | 10.00 | 30.00 | 20.00 | 5.00 | 45.00 | 110.00 | 110.00 |
     And I click on student "Student 2" for grade item "Item 1"
     And the field "ajaxfeedback" matches value "Some feedback"
+
+  @javascript
+  Scenario: Teacher can see an error when an incorrect grade is given using the grader report with editing and AJAX on
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I navigate to "View > Grader report" in the course gradebook
+    And I turn editing mode on
+    And I give the grade "66.00" to the user "Student 2" for the grade item "Item VU"
+    And I click away from student "Student 2" and grade item "Item VU" value
+    When I give the grade "999.00" to the user "Student 2" for the grade item "Item VU"
+    And I click away from student "Student 2" and grade item "Item VU" value
+    Then I should see "The grade entered for Item VU for Student 2 is more than the maximum allowed"
+    And I click on "The grade entered for Item VU for Student 2 is more than the maximum allowed" "text"
+    And I should not see "The grade entered for Item VU for Student 2 is more than the maximum allowed"
+    And the grade for "Student 2" in grade item "Item VU" should match "66.00"
