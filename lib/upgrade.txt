@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.9.3 ===
+* New DML function $DB->delete_records_subquery() to delete records based on a subquery in a way
+  that will work across databases.
+
 === 3.9.2 ===
 * A new web service `core_output_load_fontawesome_icon_system_map` has been created.
   This replaces the existing `core_output_load_fontawesome_icon_map` web service, which will be deprecated in Moodle 3.10.
