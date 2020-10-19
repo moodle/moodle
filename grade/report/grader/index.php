@@ -43,14 +43,6 @@ $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 $graderreportsifirst  = optional_param('sifirst', null, PARAM_NOTAGS);
 $graderreportsilast   = optional_param('silast', null, PARAM_NOTAGS);
 
-// The report object is recreated each time, save search information to SESSION object for future use.
-if (isset($graderreportsifirst)) {
-    $SESSION->gradereport['filterfirstname'] = $graderreportsifirst;
-}
-if (isset($graderreportsilast)) {
-    $SESSION->gradereport['filtersurname'] = $graderreportsilast;
-}
-
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 $PAGE->requires->yui_module('moodle-gradereport_grader-gradereporttable', 'Y.M.gradereport_grader.init', null, null, true);
 
@@ -60,6 +52,14 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
 }
 require_login($course);
 $context = context_course::instance($course->id);
+
+// The report object is recreated each time, save search information to SESSION object for future use.
+if (isset($graderreportsifirst)) {
+    $SESSION->gradereport["filterfirstname-{$context->id}"] = $graderreportsifirst;
+}
+if (isset($graderreportsilast)) {
+    $SESSION->gradereport["filtersurname-{$context->id}"] = $graderreportsilast;
+}
 
 require_capability('gradereport/grader:view', $context);
 require_capability('moodle/grade:viewall', $context);
@@ -161,8 +161,8 @@ echo $report->group_selector;
 
 // User search
 $url = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
-$firstinitial = isset($SESSION->gradereport['filterfirstname']) ? $SESSION->gradereport['filterfirstname'] : '';
-$lastinitial  = isset($SESSION->gradereport['filtersurname']) ? $SESSION->gradereport['filtersurname'] : '';
+$firstinitial = $SESSION->gradereport["filterfirstname-{$context->id}"] ?? '';
+$lastinitial  = $SESSION->gradereport["filtersurname-{$context->id}"] ?? '';
 $totalusers = $report->get_numusers(true, false);
 $renderer = $PAGE->get_renderer('core_user');
 echo $renderer->user_search($url, $firstinitial, $lastinitial, $numusers, $totalusers, $report->currentgroupname);
