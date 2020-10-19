@@ -224,5 +224,19 @@ function xmldb_lti_upgrade($oldversion) {
     // Automatically generated Moodle v3.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2019111801) {
+
+        // Changing type of field instructorcustomparameters on table lti to text.
+        $table = new xmldb_table('lti');
+        $field = new xmldb_field('instructorcustomparameters', XMLDB_TYPE_TEXT, null, null, null, null, null,
+                'instructorchoiceallowsetting');
+
+        // Launch change of type for field value.
+        $dbman->change_field_type($table, $field);
+
+        // Lti savepoint reached.
+        upgrade_mod_savepoint(true, 2019111801, 'lti');
+    }
+
     return true;
 }
