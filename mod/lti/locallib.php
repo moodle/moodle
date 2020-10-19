@@ -4173,9 +4173,14 @@ function serialise_tool_type(stdClass $type) {
  *
  * @param stdClass $proxy The tool proxy
  *
+ * @deprecated since Moodle 3.10
+ * @todo This will be finally removed for Moodle 4.2 as part of MDL-69976.
  * @return array An array of values representing this type
  */
 function serialise_tool_proxy(stdClass $proxy) {
+    $deprecatedtext = __FUNCTION__ . '() is deprecated. Please remove all references to this method.';
+    debugging($deprecatedtext, DEBUG_DEVELOPER);
+
     return array(
         'id' => $proxy->id,
         'name' => $proxy->name,
