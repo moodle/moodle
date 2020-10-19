@@ -88,7 +88,6 @@ class block_site_main_menu extends block_list {
         $section = $modinfo->get_section_info(0);
 
         if ($ismoving) {
-            $strmovehere = get_string('movehere');
             $strmovefull = strip_tags(get_string('movefull', '', "'$USER->activitycopyname'"));
             $strcancel= get_string('cancel');
         } else {
@@ -128,8 +127,9 @@ class block_site_main_menu extends block_list {
                         if ($mod->id == $USER->activitycopy) {
                             continue;
                         }
-                        $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.sesskey().'">'.
-                            '<img style="height:16px; width:80px; border:0px" src="'.$OUTPUT->image_url('movehere') . '" alt="'.$strmovehere.'" /></a>';
+                        $movingurl = new moodle_url('/course/mod.php', array('moveto' => $mod->id, 'sesskey' => sesskey()));
+                        $this->content->items[] = html_writer::link($movingurl, '', array('title' => $strmovefull,
+                            'class' => 'movehere'));
                         $this->content->icons[] = '';
                     }
                     if ($mod->indent > 0) {
@@ -148,8 +148,8 @@ class block_site_main_menu extends block_list {
         }
 
         if ($ismoving) {
-            $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.sesskey().'">'.
-                                      '<img style="height:16px; width:80px; border:0px" src="'.$OUTPUT->image_url('movehere') . '" alt="'.$strmovehere.'" /></a>';
+            $movingurl = new moodle_url('/course/mod.php', array('movetosection' => $section->id, 'sesskey' => sesskey()));
+            $this->content->items[] = html_writer::link($movingurl, '', array('title' => $strmovefull, 'class' => 'movehere'));
             $this->content->icons[] = '';
         }
 
