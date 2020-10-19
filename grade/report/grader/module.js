@@ -569,7 +569,7 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
         var p = args.properties;
         if (args.type == 'grade') {
             var oldgrade = args.values.oldgrade;
-            p.cell.one('.gradevalue').set('innerHTML',oldgrade);
+            p.cell.one('input.text').set('value', oldgrade);
         } else if (args.type == 'feedback') {
             this.report.update_feedback(p.userid, p.itemid, args.values.oldfeedback);
         }
