@@ -1662,6 +1662,23 @@ class mysqli_native_moodle_database extends moodle_database {
         return true;
     }
 
+    /**
+     * Deletes records using a subquery, which is done with a strange DELETE...JOIN syntax in MySQL
+     * because it performs very badly with normal subqueries.
+     *
+     * @param string $table Table to delete from
+     * @param string $field Field in table to match
+     * @param string $alias Name of single column in subquery e.g. 'id'
+     * @param string $subquery Query that will return values of the field to delete
+     * @param array $params Parameters for query
+     * @throws dml_exception If there is any error
+     */
+    public function delete_records_subquery(string $table, string $field, string $alias, string $subquery, array $params = []): void {
+        // Aliases mysql_deltable and mysql_subquery are chosen to be unlikely to conflict.
+        $this->execute("DELETE mysql_deltable FROM {" . $table . "} mysql_deltable JOIN " .
+                "($subquery) mysql_subquery ON mysql_subquery.$alias = mysql_deltable.$field", $params);
+    }
+
     public function sql_cast_char2int($fieldname, $text=false) {
         return ' CAST(' . $fieldname . ' AS SIGNED) ';
     }

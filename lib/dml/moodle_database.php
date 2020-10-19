@@ -1955,6 +1955,29 @@ abstract class moodle_database {
     }
 
     /**
+     * Deletes records from a table using a subquery. The subquery should return a list of values
+     * in a single column, which match one field from the table being deleted.
+     *
+     * The $alias parameter must be set to the name of the single column in your subquery result
+     * (e.g. if the subquery is 'SELECT id FROM whatever', then it should be 'id'). This is not
+     * needed on most databases, but MySQL requires it.
+     *
+     * (On database where the subquery is inefficient, it is implemented differently.)
+     *
+     * @param string $table Table to delete from
+     * @param string $field Field in table to match
+     * @param string $alias Name of single column in subquery e.g. 'id'
+     * @param string $subquery Subquery that will return values of the field to delete
+     * @param array $params Parameters for subquery
+     * @throws dml_exception If there is any error
+     * @since Moodle 3.10
+     */
+    public function delete_records_subquery(string $table, string $field, string $alias,
+            string $subquery, array $params = []): void {
+        $this->delete_records_select($table, $field . ' IN (' . $subquery . ')', $params);
+    }
+
+    /**
      * Delete one or more records from a table which match a particular WHERE clause.
      *
      * @param string $table The database table to be checked against.
