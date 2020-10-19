@@ -276,6 +276,17 @@
         padding-left: 24px;
     }
 
+    td.movehere {
+        padding: 0;
+    }
+
+    td.movehere a.movehere {
+        display: block;
+        width: 100%;
+        height: 2rem;
+        border: 2px dashed $gray-800;
+    }
+
     .category input[type="text"],
     .category .column-range,
     .categoryitem,
