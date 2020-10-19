@@ -637,11 +637,13 @@ class manager {
         $tours = cache::get_matching_tourdata($pageurl);
 
         $matches = [];
-        $filters = helper::get_all_filters();
-        foreach ($tours as $record) {
-            $tour = tour::load_from_record($record);
-            if ($tour->is_enabled() && $tour->matches_all_filters($PAGE->context, $filters)) {
-                $matches[] = $tour;
+        if ($tours) {
+            $filters = helper::get_all_filters();
+            foreach ($tours as $record) {
+                $tour = tour::load_from_record($record);
+                if ($tour->is_enabled() && $tour->matches_all_filters($PAGE->context, $filters)) {
+                    $matches[] = $tour;
+                }
             }
         }
 
