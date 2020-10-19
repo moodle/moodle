@@ -12745,7 +12745,8 @@ input[disabled] {
     border-left: 0;
     border-right: 0; } }
 
-.block_social_activities li a.movehere {
+.block_social_activities li a.movehere,
+.block_site_main_menu li a.movehere {
   display: block;
   width: 100%;
   height: 2rem;
