@@ -39,6 +39,14 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->navbar->add($title);
 
+// This allows the webserver to dictate wether the http status should remain
+// what it would have been, or force it to be a 404. Under other conditions
+// it could most often be a 403, 405 or a 50x error.
+$code = optional_param('code', 0, PARAM_INT);
+if ($code == 404) {
+    header("HTTP/1.0 404 Not Found");
+}
+
 $canmessage = has_capability('moodle/site:senderrormessage', $context);
 
 $supportuser = core_user::get_support_user();
