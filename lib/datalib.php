@@ -480,7 +480,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 
     $fullname  = $DB->sql_fullname();
 
-    $select = "deleted <> 1 AND id <> :guestid";
+    $select = "deleted <> 1 AND u.id <> :guestid";
     $params = array('guestid' => $CFG->siteguest);
 
     if (!empty($search)) {
@@ -503,6 +503,10 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
     }
 
     if ($extraselect) {
+        // The extra WHERE clause may refer to the 'id' column which can now be ambiguous because we
+        // changed the query to include joins, so replace any 'id' that is on its own (no alias)
+        // with 'u.id'.
+        $extraselect = preg_replace('~([ =]|^)id([ =]|$)~', '$1u.id$2', $extraselect);
         $select .= " AND $extraselect";
         $params = $params + (array)$extraparams;
     }
@@ -512,18 +516,21 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
     }
 
     // If a context is specified, get extra user fields that the current user
-    // is supposed to see.
-    // TODO Does not support custom user profile fields (MDL-70456).
-    $userfieldsapi = \core\user_fields::for_identity($extracontext, false)->with_name()
-            ->excluding('id', 'username', 'email', 'firstname', 'lastname', 'city', 'country',
-                'lastaccess', 'confirmed', 'mnethostid');
-    $extrafields = $userfields->get_sql()->selects;
+    // is supposed to see, otherwise just get the name fields.
+    $userfields = \core\user_fields::for_name();
+    if ($extracontext) {
+        $userfields->with_identity($extracontext, true);
+    }
+    $userfields->excluding('id', 'username', 'email', 'city', 'country', 'lastaccess', 'confirmed', 'mnethostid');
+    ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams] =
+            (array)$userfields->get_sql('u', true);
 
     // warning: will return UNCONFIRMED USERS
-    return $DB->get_records_sql("SELECT id, username, email, city, country, lastaccess, confirmed, mnethostid, suspended $extrafields
-                                   FROM {user}
+    return $DB->get_records_sql("SELECT u.id, username, email, city, country, lastaccess, confirmed, mnethostid, suspended $selects
+                                   FROM {user} u
+                                        $joins
                                   WHERE $select
-                                  $sort", $params, $page, $recordsperpage);
+                                  $sort", array_merge($params, $joinparams), $page, $recordsperpage);
 
 }
 

@@ -183,12 +183,10 @@
     // These columns are always shown in the users list.
     $requiredcolumns = array('city', 'country', 'lastaccess');
     // Extra columns containing the extra user fields, excluding the required columns (city and country, to be specific).
-    // TODO Does not support custom user profile fields (MDL-70456).
-    $userfields = \core\user_fields::for_identity($context, false)->excluding(...$requiredcolumns);
+    $userfields = \core\user_fields::for_identity($context, true)->with_name()->excluding(...$requiredcolumns);
     $extracolumns = $userfields->get_required_fields();
-    // Get all user name fields as an array, but with firstname and lastname first.
-    $allusernamefields = \core\user_fields::get_name_fields(true);
-    $columns = array_merge($allusernamefields, $extracolumns, $requiredcolumns);
+    // Get all user name fields as an array.
+    $columns = array_merge($extracolumns, $requiredcolumns);
 
     foreach ($columns as $column) {
         $string[$column] = \core\user_fields::get_display_name($column);
@@ -228,7 +226,7 @@
     }
 
     // Order in string will ensure that the name columns are in the correct order.
-    $usernames = order_in_string($allusernamefields, $fullnamesetting);
+    $usernames = order_in_string($extracolumns, $fullnamesetting);
     $fullnamedisplay = array();
     foreach ($usernames as $name) {
         // Use the link from $$column for sorting on the user's name.
