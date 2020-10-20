@@ -2782,5 +2782,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020101300.01);
     }
 
+    if ($oldversion < 2020101600.01) {
+        // Delete orphaned course_modules_completion rows; these were not deleted properly
+        // by remove_course_contents function.
+        $DB->delete_records_subquery('course_modules_completion', 'id', 'id',
+               "SELECT cmc.id
+                  FROM {course_modules_completion} cmc
+             LEFT JOIN {course_modules} cm ON cm.id = cmc.coursemoduleid
+                 WHERE cm.id IS NULL");
+        upgrade_main_savepoint(true, 2020101600.01);
+    }
+
     return true;
 }
