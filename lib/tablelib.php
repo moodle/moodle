@@ -1201,6 +1201,12 @@ class flexible_table {
     function print_headers() {
         global $CFG, $OUTPUT;
 
+        // Set the primary sort column/order where possible, so that sort links/icons are correct.
+        [
+            'sortby' => $primarysortcolumn,
+            'sortorder' => $primarysortorder,
+        ] = $this->get_primary_sort_order();
+
         echo html_writer::start_tag('thead');
         echo html_writer::start_tag('tr');
         foreach ($this->columns as $column => $index) {
@@ -1209,14 +1215,6 @@ class flexible_table {
             if ($this->is_collapsible) {
                 $icon_hide = $this->show_hide_link($column, $index);
             }
-
-            $primarysortcolumn = '';
-            $primarysortorder  = '';
-            if (reset($this->prefs['sortby'])) {
-                $primarysortcolumn = key($this->prefs['sortby']);
-                $primarysortorder  = current($this->prefs['sortby']);
-            }
-
             switch ($column) {
 
                 case 'fullname':
@@ -1594,6 +1592,22 @@ class flexible_table {
                     'data-sortby' => $column,
                     'data-sortorder' => $sortorder,
                 ]) . ' ' . $this->sort_icon($isprimary, $order);
+    }
+
+    /**
+     * Return primary sorting column/order, either the first preferred "sortby" value or defaults defined for the table
+     *
+     * @return array
+     */
+    protected function get_primary_sort_order(): array {
+        if (reset($this->prefs['sortby'])) {
+            return $this->get_sort_order();
+        }
+
+        return [
+            'sortby' => $this->sort_default_column,
+            'sortorder' => $this->sort_default_order,
+        ];
     }
 
     /**
