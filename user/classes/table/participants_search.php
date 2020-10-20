@@ -30,7 +30,7 @@ use core_table\local\filter\filterset;
 use core_user;
 use moodle_recordset;
 use stdClass;
-use user_picture;
+use core\user_fields;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -77,8 +77,7 @@ class participants_search {
         $this->context = $context;
         $this->filterset = $filterset;
 
-        // TODO Does not support custom user profile fields (MDL-70456).
-        $this->userfields = \core\user_fields::get_identity_fields($this->context, false);
+        $this->userfields = user_fields::get_identity_fields($this->context);
     }
 
     /**
@@ -193,7 +192,15 @@ class participants_search {
             'params' => $params,
         ] = $this->get_enrolled_sql();
 
-        $userfieldssql = user_picture::fields('u', $this->userfields);
+        // Get the fields for all contexts because there is a special case later where it allows
+        // matches of fields you can't access if they are on your own account.
+        $userfields = user_fields::for_identity(null)->with_userpic();
+        ['selects' => $userfieldssql, 'joins' => $userfieldsjoin, 'params' => $userfieldsparams, 'mappings' => $mappings] =
+                (array)$userfields->get_sql('u', true);
+        if ($userfieldsjoin) {
+            $outerjoins[] = $userfieldsjoin;
+            $params = array_merge($params, $userfieldsparams);
+        }
 
         // Include any compulsory enrolment SQL (eg capability related filtering that must be applied).
         if (!empty($esqlforced)) {
@@ -207,12 +214,12 @@ class participants_search {
         }
 
         if ($isfrontpage) {
-            $outerselect = "SELECT {$userfieldssql}, u.lastaccess";
+            $outerselect = "SELECT u.lastaccess $userfieldssql";
             if ($accesssince) {
                 $wheres[] = user_get_user_lastaccess_sql($accesssince, 'u', $matchaccesssince);
             }
         } else {
-            $outerselect = "SELECT {$userfieldssql}, COALESCE(ul.timeaccess, 0) AS lastaccess";
+            $outerselect = "SELECT COALESCE(ul.timeaccess, 0) AS lastaccess $userfieldssql";
             // Not everybody has accessed the course yet.
             $outerjoins[] = 'LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid2)';
             $params['courseid2'] = $this->course->id;
@@ -255,7 +262,7 @@ class participants_search {
             [
                 'where' => $keywordswhere,
                 'params' => $keywordsparams,
-            ] = $this->get_keywords_search_sql();
+            ] = $this->get_keywords_search_sql($mappings);
 
             if (!empty($keywordswhere)) {
                 $wheres[] = $keywordswhere;
@@ -873,9 +880,10 @@ class participants_search {
     /**
      * Prepare SQL where clause and associated parameters for any keyword searches being performed.
      *
+     * @param array $mappings Array of field mappings (fieldname => SQL code for the value)
      * @return array SQL query data in the format ['where' => '', 'params' => []].
      */
-    protected function get_keywords_search_sql(): array {
+    protected function get_keywords_search_sql(array $mappings): array {
         global $CFG, $DB, $USER;
 
         $keywords = [];
@@ -964,24 +972,25 @@ class participants_search {
             $conditions[] = $idnumber;
 
             // Search all user identify fields.
-            // TODO Does not support custom user profile fields (MDL-70456).
-            $extrasearchfields = \core\user_fields::get_identity_fields(null, false);
-            foreach ($extrasearchfields as $extrasearchfield) {
+            $extrasearchfields = user_fields::get_identity_fields(null);
+            foreach ($extrasearchfields as $fieldindex => $extrasearchfield) {
                 if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
                     // Already covered above. Search by country not supported.
                     continue;
                 }
-                $param = $searchkey3 . $extrasearchfield;
-                $condition = $DB->sql_like($extrasearchfield, ':' . $param, false, false);
+                // The param must be short (max 32 characters) so don't include field name.
+                $param = $searchkey3 . '_ident' . $fieldindex;
+                $fieldsql = $mappings[$extrasearchfield];
+                $condition = $DB->sql_like($fieldsql, ':' . $param, false, false);
                 $params[$param] = "%$keyword%";
 
                 if ($notjoin) {
-                    $condition = "($extrasearchfield IS NOT NULL AND {$condition})";
+                    $condition = "($fieldsql IS NOT NULL AND {$condition})";
                 }
 
                 if (!in_array($extrasearchfield, $this->userfields)) {
                     // User cannot see this field, but allow match if their own account.
-                    $userid3 = 'userid' . $index . '3' . $extrasearchfield;
+                    $userid3 = 'userid' . $index . '3_ident' . $fieldindex;
                     $condition = "(". $condition . " AND u.id = :$userid3)";
                     $params[$userid3] = $USER->id;
                 }
