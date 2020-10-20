@@ -141,8 +141,7 @@ class participants extends \table_sql implements dynamic_table {
         $headers[] = get_string('fullname');
         $columns[] = 'fullname';
 
-        // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = \core\user_fields::get_identity_fields($this->context, false);
+        $extrafields = \core\user_fields::get_identity_fields($this->context);
         foreach ($extrafields as $field) {
             $headers[] = \core\user_fields::get_display_name($field);
             $columns[] = $field;
