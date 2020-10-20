@@ -138,22 +138,18 @@ class mod_lti_external extends external_api {
      * @throws moodle_exception
      */
     public static function get_tool_proxies($orphanedonly) {
-        global $PAGE;
         $params = self::validate_parameters(self::get_tool_proxies_parameters(),
                                             array(
                                                 'orphanedonly' => $orphanedonly
                                             ));
         $orphanedonly = $params['orphanedonly'];
 
-        $proxies = array();
         $context = context_system::instance();
 
         self::validate_context($context);
         require_capability('moodle/site:config', $context);
 
-        $proxies = lti_get_tool_proxies($orphanedonly);
-
-        return array_map('serialise_tool_proxy', $proxies);
+        return lti_get_tool_proxies($orphanedonly);
     }
 
     /**
@@ -164,7 +160,7 @@ class mod_lti_external extends external_api {
      */
     public static function get_tool_proxies_returns() {
         return new external_multiple_structure(
-            self::tool_type_return_structure()
+            self::tool_proxy_return_structure()
         );
     }
 
