@@ -2606,7 +2606,7 @@ function xmldb_main_upgrade($oldversion) {
                   FROM {course_modules} cm
                   JOIN {modules} m ON m.id = cm.module
                  WHERE m.name = :module AND cm.visible = :visible";
-        $hidequizlist = $DB->get_records_sql($sql, ['module' => 'quiz', 'visible' => 0]);
+        $hidequizlist = $DB->get_recordset_sql($sql, ['module' => 'quiz', 'visible' => 0]);
 
         foreach ($hidequizlist as $hidequiz) {
             $params = [
