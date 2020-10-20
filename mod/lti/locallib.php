@@ -2321,7 +2321,8 @@ function lti_get_lti_types_by_course($courseid, $coursevisible = null) {
                 FROM {lti_types}
                WHERE coursevisible $coursevisiblesql
                  AND ($coursecond)
-                 AND state = :active";
+                 AND state = :active
+            ORDER BY name ASC";
 
     return $DB->get_records_sql($query,
         array('siteid' => $SITE->id, 'courseid' => $courseid, 'active' => LTI_TOOL_STATE_CONFIGURED) + $coursevisparams);
