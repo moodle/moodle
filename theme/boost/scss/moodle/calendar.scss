@@ -156,6 +156,7 @@ $calendarEventColor: #0d5ca1 !default;
                         height: 12px;
                         border-radius: 6px;
                         vertical-align: middle;
+                        display: inline-block;
 
                         &.calendar_event_category {
                             background-color: $calendarEventCategoryColor;
