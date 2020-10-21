@@ -2622,5 +2622,41 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020061502.10);
     }
 
+    if ($oldversion < 2020061502.12) {
+        // Get the current guest user which is also set as 'deleted'.
+        $guestuser = $DB->get_record('user', ['id' => $CFG->siteguest, 'deleted' => 1]);
+        // If there is a deleted guest user, reset the user to not be deleted and make sure the related
+        // user context exists.
+        if ($guestuser) {
+            $guestuser->deleted = 0;
+            $DB->update_record('user', $guestuser);
+
+            // Get the guest user context.
+            $guestusercontext = $DB->get_record('context',
+                ['contextlevel' => CONTEXT_USER, 'instanceid' => $guestuser->id]);
+
+            // If the guest user context does not exist, create it.
+            if (!$guestusercontext) {
+                $record = new stdClass();
+                $record->contextlevel = CONTEXT_USER;
+                $record->instanceid = $guestuser->id;
+                $record->depth = 0;
+                // The path is not known before insert.
+                $record->path = null;
+                $record->locked = 0;
+
+                $record->id = $DB->insert_record('context', $record);
+
+                // Update the path.
+                $record->path = '/' . SYSCONTEXTID . '/' . $record->id;
+                $record->depth = substr_count($record->path, '/');
+                $DB->update_record('context', $record);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020061502.12);
+    }
+
     return true;
 }
