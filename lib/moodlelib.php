@@ -6384,6 +6384,19 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         $mail->addReplyTo($values[0], $values[1]);
     }
 
+    if (!empty($CFG->emaildkimselector)) {
+        $domain = substr(strrchr($mail->From, "@"), 1);
+        $pempath = "{$CFG->dataroot}/dkim/{$domain}/{$CFG->emaildkimselector}.private";
+        if (file_exists($pempath)) {
+            $mail->DKIM_domain      = $domain;
+            $mail->DKIM_private     = $pempath;
+            $mail->DKIM_selector    = $CFG->emaildkimselector;
+            $mail->DKIM_identity    = $mail->From;
+        } else {
+            debugging("Email DKIM selector chosen due to {$mail->From} but no certificate found at $pempath", DEBUG_DEVELOPER);
+        }
+    }
+
     if ($mail->send()) {
         set_send_count($user);
         if (!empty($mail->SMTPDebug)) {

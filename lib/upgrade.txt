@@ -58,6 +58,7 @@ information provided here is intended especially for developers.
 * Function redirect() now emits a line of backtrace into the X-Redirect-By header when debugging is on
 * New DML function $DB->delete_records_subquery() to delete records based on a subquery in a way
   that will work across databases.
+* Add support for email DKIM signatures via $CFG->emaildkimselector
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().

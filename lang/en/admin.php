@@ -231,6 +231,7 @@ $string['configemailchangeconfirmation'] = 'Require an email confirmation step w
 $string['configemailfromvia'] = 'Add via information in the "From" section of outgoing email. This informs the recipient from where this email came from and also helps combat recipients accidentally replying to no-reply email addresses.';
 $string['configemailsubjectprefix'] = 'Text to be prefixed to the subject line of all outgoing mail.';
 $string['configemailheaders'] = 'Raw email headers to be added verbatim to all outgoing email.';
+$string['configemaildkimselector'] = 'The DKIM selector is arbitrary and your DNS record(s) must match this.';
 $string['configenablecalendarexport'] = 'Enable exporting or subscribing to calendars.';
 $string['configenablecomments'] = 'Enable comments';
 $string['configenablecourserequests'] = 'If enabled, users with the capability to request new courses (moodle/course:request) will have the option to request a course. This capability is not allowed for any of the default roles. It may be applied in the system or category context.';
@@ -529,6 +530,9 @@ $string['editorspelling'] = 'Editor spelling';
 $string['editorspellinghelp'] = 'Enable or disable spell-checking. When enabled, <strong>aspell</strong> must be installed on the server.';
 $string['editstrings'] = 'Edit words or phrases';
 $string['emailchangeconfirmation'] = 'Email change confirmation';
+$string['emaildkim'] = 'DKIM email signing';
+$string['emaildkimselector'] = 'DKIM selector';
+$string['emaildkiminfo'] = 'If both the DKIM selector is set and a private certificate file is found which matches the emails "From" address domain in $CFG->dataroot/dkim/[domain]/[selector].private then the email will be signed. In most cases (eg if allowedemaildomains is empty) then only a single certificate is needed in: <code>{$a->path}</code>. For more setup details see <a href="{$a->docs}">{$a->docs}</a>.';
 $string['emailfromvia'] = 'Email via information';
 $string['emailheaders'] = 'Email headers';
 $string['emailsubjectprefix'] = 'Email subject prefix text';
