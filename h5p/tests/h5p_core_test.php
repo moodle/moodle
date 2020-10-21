@@ -40,7 +40,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class h5p_core_testcase extends \advanced_testcase {
 
-    protected function setup() {
+    protected function setUp(): void {
         global $CFG;
         parent::setUp();
 

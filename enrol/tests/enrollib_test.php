@@ -159,7 +159,7 @@ class core_enrollib_testcase extends advanced_testcase {
         $course = reset($courses);
         context_helper::preload_from_record($course);
         $course = (array)$course;
-        $this->assertEquals($basefields, array_keys($course), '', 0, 10, true);
+        $this->assertEqualsCanonicalizing($basefields, array_keys($course));
 
         $courses = enrol_get_all_users_courses($user2->id, false, 'timecreated');
         $course = reset($courses);

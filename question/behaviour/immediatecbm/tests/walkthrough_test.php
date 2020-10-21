@@ -130,7 +130,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
                 $this->get_contains_partcorrect_expectation());
 
         $autogradedstep = $this->get_step($this->get_step_count() - 2);
-        $this->assertEquals($autogradedstep->get_fraction(), -2, '', 0.0000001);
+        $this->assertEqualsWithDelta($autogradedstep->get_fraction(), -2, 0.0000001);
     }
 
     public function test_immediatecbm_feedback_multichoice_try_to_submit_blank() {

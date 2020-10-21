@@ -31,7 +31,7 @@ class core_ddl_testcase extends database_driver_testcase {
     /** @var array table name => array of stdClass test records loaded into that table. Created in setUp. */
     private $records = array();
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         $dbman = $this->tdb->get_manager(); // Loads DDL libs.
 
@@ -574,7 +574,7 @@ class core_ddl_testcase extends database_driver_testcase {
             $id = $DB->insert_record('test_innodb', $data);
             $expected = (array)$data;
             $expected['id'] = (string)$id;
-            $this->assertEquals($expected, (array)$DB->get_record('test_innodb', array('id' => $id)), '', 0, 10, true);
+            $this->assertEqualsCanonicalizing($expected, (array)$DB->get_record('test_innodb', array('id' => $id)));
         } catch (dml_exception $e) {
             // Give some nice error message when known problematic MySQL with InnoDB detected.
             if ($DB->get_dbfamily() === 'mysql') {
@@ -607,7 +607,7 @@ class core_ddl_testcase extends database_driver_testcase {
             $id = $DB->insert_record('test_innodb', $data);
             $expected = (array)$data;
             $expected['id'] = (string)$id;
-            $this->assertEquals($expected, (array)$DB->get_record('test_innodb', array('id' => $id)), '', 0, 10, true);
+            $this->assertEqualsCanonicalizing($expected, (array)$DB->get_record('test_innodb', array('id' => $id)));
         }
 
         $dbman->drop_table($table);
@@ -628,7 +628,7 @@ class core_ddl_testcase extends database_driver_testcase {
         $id = $DB->insert_record('test_innodb', $data);
         $expected = (array)$data;
         $expected['id'] = (string)$id;
-        $this->assertEquals($expected, (array)$DB->get_record('test_innodb', array('id' => $id)), '', 0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, (array)$DB->get_record('test_innodb', array('id' => $id)));
 
         $dbman->drop_table($table);
     }

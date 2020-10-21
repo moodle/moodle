@@ -48,7 +48,7 @@ class core_qrcode_testcase extends basic_testcase {
         $svgdata = $qrcode->getBarcodeSVGcode(1, 1);
 
         // Just check the SVG was generated.
-        $this->assertContains('<desc>' . $text . '</desc>', $svgdata);
-        $this->assertContains('fill="' . $color . '"', $svgdata);
+        $this->assertStringContainsString('<desc>' . $text . '</desc>', $svgdata);
+        $this->assertStringContainsString('fill="' . $color . '"', $svgdata);
     }
 }

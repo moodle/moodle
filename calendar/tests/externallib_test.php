@@ -43,7 +43,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
     /**
      * Tests set up
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/externallib.php');
     }
@@ -157,8 +157,6 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Test delete_calendar_events
-     *
-     * @expectedException moodle_exception
      */
     public function test_delete_calendar_events() {
         global $DB, $USER;
@@ -282,6 +280,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
             array('eventid' => $userevent->id, 'repeat' => 0),
             array('eventid' => $groupevent->id, 'repeat' => 0)
         );
+        $this->expectException(moodle_exception::class);
         core_calendar_external::delete_calendar_events($events);
     }
 
@@ -375,7 +374,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         foreach ($events['events'] as $event) {
             if (!empty($event['description'])) {
                 $withdescription++;
-                $this->assertContains($expectedurl, $event['description']);
+                $this->assertStringContainsString($expectedurl, $event['description']);
             }
         }
         $this->assertEquals(2, $withdescription);

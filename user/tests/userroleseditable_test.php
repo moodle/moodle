@@ -77,8 +77,8 @@ class userroleseditable_testcase extends advanced_testcase {
         $this->assertTrue($result instanceof \core_user\output\user_roles_editable);
         $currentroles = get_user_roles_in_course($user2->id, $course1->id);
 
-        $this->assertContains('Non-editing teacher', $currentroles);
-        $this->assertContains('Student', $currentroles);
+        $this->assertStringContainsString('Non-editing teacher', $currentroles);
+        $this->assertStringContainsString('Student', $currentroles);
 
     }
 

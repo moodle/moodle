@@ -206,24 +206,18 @@ class question_utils_test extends advanced_testcase {
         $this->assertEquals('Z', question_utils::int_to_letter(26));
     }
 
-    /**
-     * @expectedException moodle_exception
-     */
     public function test_int_to_roman_too_small() {
+        $this->expectException(moodle_exception::class);
         question_utils::int_to_roman(0);
     }
 
-    /**
-     * @expectedException moodle_exception
-     */
     public function test_int_to_roman_too_big() {
+        $this->expectException(moodle_exception::class);
         question_utils::int_to_roman(4000);
     }
 
-    /**
-     * @expectedException moodle_exception
-     */
     public function test_int_to_roman_not_int() {
+        $this->expectException(moodle_exception::class);
         question_utils::int_to_roman(1.5);
     }
 

@@ -199,6 +199,6 @@ class core_grade_import_lib_test extends advanced_testcase {
         $output = ob_get_contents();
         ob_end_clean();
         $this->assertTrue($status);
-        $this->assertContains("++ Grade import success ++", $output);
+        $this->assertStringContainsString("++ Grade import success ++", $output);
     }
 }

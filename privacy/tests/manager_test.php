@@ -45,7 +45,7 @@ class privacy_manager_testcase extends advanced_testcase {
     /**
      * Test tearDown.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         \core_privacy\local\request\writer::reset();
     }
 
@@ -491,7 +491,7 @@ class privacy_manager_testcase extends advanced_testcase {
         $metadata = $mockman->get_metadata_for_components();
         $this->assertDebuggingCalled();
 
-        $this->assertInternalType('array', $metadata);
+        $this->assertIsArray($metadata);
         $this->assertCount(1, $metadata);
     }
 }

@@ -52,7 +52,7 @@ class availability_completion_condition_testcase extends advanced_testcase {
     /**
      * Load required classes.
      */
-    public function setUp() {
+    public function setUp(): void {
         availability_completion\condition::wipe_static_cache();
     }
 
@@ -116,7 +116,7 @@ class availability_completion_condition_testcase extends advanced_testcase {
             $cond = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Missing or invalid ->cm', $e->getMessage());
+            $this->assertStringContainsString('Missing or invalid ->cm', $e->getMessage());
         }
 
         // Invalid $cm.
@@ -125,7 +125,7 @@ class availability_completion_condition_testcase extends advanced_testcase {
             $cond = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Missing or invalid ->cm', $e->getMessage());
+            $this->assertStringContainsString('Missing or invalid ->cm', $e->getMessage());
         }
 
         // Missing $e.
@@ -134,7 +134,7 @@ class availability_completion_condition_testcase extends advanced_testcase {
             $cond = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Missing or invalid ->e', $e->getMessage());
+            $this->assertStringContainsString('Missing or invalid ->e', $e->getMessage());
         }
 
         // Invalid $e.
@@ -143,7 +143,7 @@ class availability_completion_condition_testcase extends advanced_testcase {
             $cond = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Missing or invalid ->e', $e->getMessage());
+            $this->assertStringContainsString('Missing or invalid ->e', $e->getMessage());
         }
 
         // Successful construct & display with all different expected values.

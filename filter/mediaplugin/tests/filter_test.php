@@ -129,7 +129,7 @@ class filter_mediaplugin_testcase extends advanced_testcase {
         $precededlongurl = '<a href="http://moodle.org/testfile/test.mp3">test.mp3</a>'. $longurl;
         $filter = $filterplugin->filter($precededlongurl);
         $this->assertEquals(1, substr_count($filter, '</audio>'));
-        $this->assertContains($longurl, $filter);
+        $this->assertStringContainsString($longurl, $filter);
 
         // Testing for cases where: to be filtered content has 6+ text afterwards.
         $filter = $filterplugin->filter($paddedurl);

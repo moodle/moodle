@@ -221,8 +221,8 @@ class assignsubmission_comments_privacy_testcase extends \mod_assign\tests\mod_a
             $exportedteachercomment = $exportedcomments->comments[0]->content;
         }
         $this->assertCount(2, $exportedcomments->comments);
-        $this->assertContains($studentcomment, $exportedstudentcomment);
-        $this->assertContains($teachercomment, $exportedteachercomment);
+        $this->assertStringContainsString($studentcomment, $exportedstudentcomment);
+        $this->assertStringContainsString($teachercomment, $exportedteachercomment);
     }
 
     /**

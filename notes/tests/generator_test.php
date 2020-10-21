@@ -66,7 +66,7 @@ class core_notes_generator_testcase extends advanced_testcase {
             $gen->create_instance(array('courseid' => 2));
             $this->fail('A note should not be allowed to be created without associcated userid');
         } catch (coding_exception $e) {
-            $this->assertContains('Module generator requires $record->userid', $e->getMessage());
+            $this->assertStringContainsString('Module generator requires $record->userid', $e->getMessage());
         }
 
         // Test not setting courseid.
@@ -74,7 +74,7 @@ class core_notes_generator_testcase extends advanced_testcase {
             $gen->create_instance(array('userid' => 2));
             $this->fail('A note should not be allowed to be created without associcated courseid');
         } catch (coding_exception $e) {
-            $this->assertContains('Module generator requires $record->courseid', $e->getMessage());
+            $this->assertStringContainsString('Module generator requires $record->courseid', $e->getMessage());
         }
     }
 

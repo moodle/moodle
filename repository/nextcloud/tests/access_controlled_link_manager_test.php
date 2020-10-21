@@ -53,7 +53,7 @@ class repository_nextcloud_access_controlled_link_manager_testcase extends advan
     /**
      * SetUp to create an repository instance.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest(true);
 
         // Admin is necessary to create issuer object.

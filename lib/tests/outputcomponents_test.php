@@ -469,10 +469,10 @@ EOF;
         $renderer = $page->get_renderer('core');
 
         $reason = 'An icon with no alt text is hidden from screenreaders.';
-        $this->assertContains('aria-hidden="true"', $renderer->pix_icon('t/print', ''), $reason);
+        $this->assertStringContainsString('aria-hidden="true"', $renderer->pix_icon('t/print', ''), $reason);
 
         $reason = 'An icon with alt text is not hidden from screenreaders.';
-        $this->assertNotContains('aria-hidden="true"', $renderer->pix_icon('t/print', 'Print'), $reason);
+        $this->assertStringNotContainsString('aria-hidden="true"', $renderer->pix_icon('t/print', 'Print'), $reason);
 
         // Test another theme with a different icon system.
         set_config('theme', 'classic');
@@ -481,10 +481,10 @@ EOF;
         $renderer = $page->get_renderer('core');
 
         $reason = 'An icon with no alt text is hidden from screenreaders.';
-        $this->assertContains('aria-hidden="true"', $renderer->pix_icon('t/print', ''), $reason);
+        $this->assertStringContainsString('aria-hidden="true"', $renderer->pix_icon('t/print', ''), $reason);
 
         $reason = 'An icon with alt text is not hidden from screenreaders.';
-        $this->assertNotContains('aria-hidden="true"', $renderer->pix_icon('t/print', 'Print'), $reason);
+        $this->assertStringNotContainsString('aria-hidden="true"', $renderer->pix_icon('t/print', 'Print'), $reason);
     }
 
     /**

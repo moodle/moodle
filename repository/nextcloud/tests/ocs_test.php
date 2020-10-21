@@ -40,7 +40,7 @@ class repository_nextcloud_ocs_testcase extends advanced_testcase {
     /**
      * SetUp to create issuer and endpoints for OCS testing.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest(true);
 
         // Admin is neccessary to create issuer object.

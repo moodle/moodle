@@ -41,7 +41,7 @@ class core_blog_lib_testcase extends advanced_testcase {
     private $tagid;
     private $postid;
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB;
         parent::setUp();
 

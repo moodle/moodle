@@ -41,7 +41,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
      * Set up message and mail sinks, and set up other requirements for the
      * cron to be tested here.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
 
         // Messaging is not compatible with transactions...
@@ -78,7 +78,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
     /**
      * Clear the message sinks set up in this test.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         $this->messagesink->clear();
         $this->messagesink->close();
 
@@ -398,10 +398,10 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $messagecontent = $this->messagesink->get_messages()[0]->fullmessage;
 
         // Assert that the expected name is present (lastname only).
-        $this->assertContains(fullname($user, false), $messagecontent);
+        $this->assertStringContainsString(fullname($user, false), $messagecontent);
 
         // Assert that the full name is not present (firstname lastname only).
-        $this->assertNotContains(fullname($user, true), $messagecontent);
+        $this->assertStringNotContainsString(fullname($user, true), $messagecontent);
     }
 
     /**
@@ -449,10 +449,10 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         $messagecontent = $this->messagesink->get_messages()[0]->fullmessage;
 
         // Assert that the expected name is present (lastname only).
-        $this->assertContains(fullname($user, false), $messagecontent);
+        $this->assertStringContainsString(fullname($user, false), $messagecontent);
 
         // Assert that the full name is also present (firstname lastname only).
-        $this->assertContains(fullname($user, true), $messagecontent);
+        $this->assertStringContainsString(fullname($user, true), $messagecontent);
     }
 
     /**

@@ -47,7 +47,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
      */
     protected $mailsink;
 
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
 
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
@@ -67,7 +67,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $CFG->maxeditingtime = -1;
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
@@ -959,7 +959,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($author, [$post]);
         $this->send_notifications_and_assert($commenter, [$post]);
         $messages = $this->messagesink->get_messages();
-        $this->assertNotContains($strre, $messages[0]->subject);
+        $this->assertStringNotContainsString($strre, $messages[0]->subject);
         $this->messagesink->clear();
 
         // Replies should have Re: in the subject.
@@ -980,8 +980,8 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->send_notifications_and_assert($commenter, [$reply]);
         $this->send_notifications_and_assert($author, [$reply]);
         $messages = $this->messagesink->get_messages();
-        $this->assertContains($strre, $messages[0]->subject);
-        $this->assertContains($strre, $messages[1]->subject);
+        $this->assertStringContainsString($strre, $messages[0]->subject);
+        $this->assertStringContainsString($strre, $messages[1]->subject);
     }
 
     /**

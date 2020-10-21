@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  */
 class core_webservice_externallib_testcase extends externallib_advanced_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         // Calling parent is good, always
         parent::setUp();
 

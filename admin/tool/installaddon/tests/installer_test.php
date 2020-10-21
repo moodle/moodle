@@ -44,7 +44,7 @@ class tool_installaddon_installer_testcase extends advanced_testcase {
         $this->assertEquals(1, preg_match('~^site=(.+)$~', $query, $matches));
         $site = rawurldecode($matches[1]);
         $site = json_decode(base64_decode($site), true);
-        $this->assertInternalType('array', $site);
+        $this->assertIsArray($site);
         $this->assertEquals(3, count($site));
         $this->assertSame('Nasty site', $site['fullname']);
         $this->assertSame('file:///etc/passwd', $site['url']);

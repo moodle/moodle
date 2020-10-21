@@ -75,7 +75,7 @@ class tool_templatelibrary_external_testcase extends externallib_advanced_testca
         $template = external::load_canonical_template('core', 'notification_error');
 
         // Only the base template should contain the docs.
-        $this->assertContains('@template core/notification_error', $template);
+        $this->assertStringContainsString('@template core/notification_error', $template);
 
         // Restore the original theme.
         $CFG->theme = $originaltheme;

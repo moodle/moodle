@@ -95,7 +95,7 @@ class core_userliblib_testcase extends advanced_testcase {
 
         $this->setUser($user1);
         $userdetails = user_get_user_details_courses($user2);
-        $this->assertInternalType('array', $userdetails);
+        $this->assertIsArray($userdetails);
         $this->assertEquals($user2->id, $userdetails['id']);
     }
 
@@ -133,7 +133,7 @@ class core_userliblib_testcase extends advanced_testcase {
 
         $this->setUser($user1);
         $userdetails = user_get_user_details_courses($user2);
-        $this->assertInternalType('array', $userdetails);
+        $this->assertIsArray($userdetails);
         $this->assertEquals($user2->id, $userdetails['id']);
     }
 

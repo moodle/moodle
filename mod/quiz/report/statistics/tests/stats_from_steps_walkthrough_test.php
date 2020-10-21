@@ -66,8 +66,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
     /**
      * Create a quiz add questions to it, walk through quiz attempts and then check results.
      *
-     * @param PHPUnit\DbUnit\DataSet\ITable[] of data read from csv file "questionsXX.csv",
-     *                                                                                  "stepsXX.csv" and "resultsXX.csv".
+     * @param array $csvdata data read from csv file "questionsXX.csv", "stepsXX.csv" and "resultsXX.csv".
      * @dataProvider get_data_for_walkthrough
      */
     public function test_walkthrough_from_csv($quizsettings, $csvdata) {
@@ -89,12 +88,11 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
     /**
      * Check actual question stats are the same as that found in csv file.
      *
-     * @param $qstats         PHPUnit\DbUnit\DataSet\ITable data from csv file.
+     * @param $qstats         array data from csv file.
      * @param $questionstats  \core_question\statistics\questions\all_calculated_for_qubaid_condition Calculated stats.
      */
     protected function check_question_stats($qstats, $questionstats) {
-        for ($rowno = 0; $rowno < $qstats->getRowCount(); $rowno++) {
-            $slotqstats = $qstats->getRow($rowno);
+        foreach ($qstats as $slotqstats) {
             foreach ($slotqstats as $statname => $slotqstat) {
                 if (!in_array($statname, array('slot', 'subqname'))  && $slotqstat !== '') {
                     $this->assert_stat_equals($slotqstat,
@@ -151,7 +149,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
                     $precision = 1e-6;
             }
             $delta = abs($expected) * $precision;
-            $this->assertEquals((float)$expected, $actual, $message, $delta);
+            $this->assertEqualsWithDelta((float)$expected, $actual, $delta, $message);
         } else {
             $this->assertEquals($expected, $actual, $message);
         }
@@ -230,8 +228,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
      * @param $whichtries
      */
     protected function check_response_counts($responsecounts, $qubaids, $questions, $whichtries) {
-        for ($rowno = 0; $rowno < $responsecounts->getRowCount(); $rowno++) {
-            $expected = $responsecounts->getRow($rowno);
+        foreach ($responsecounts as $expected) {
             $defaultsforexpected = array('randq' => '', 'variant' => '1', 'subpart' => '1');
             foreach ($defaultsforexpected as $key => $expecteddefault) {
                 if (!isset($expected[$key])) {
@@ -273,7 +270,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
             $variantsnos = $analysis->get_variant_nos();
             if (isset($expectedvariantcounts[$slot])) {
                 // Compare contents, ignore ordering of array, using canonicalize parameter of assertEquals.
-                $this->assertEquals(array_keys($expectedvariantcounts[$slot]), $variantsnos, '', 0, 10, true);
+                $this->assertEqualsCanonicalizing(array_keys($expectedvariantcounts[$slot]), $variantsnos);
             } else {
                 $this->assertEquals(array(1), $variantsnos);
             }
@@ -310,12 +307,9 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
                     if (isset($expectedvariantcounts[$slot])) {
                         // If we know how many attempts there are at each variant we can check
                         // that we have counted the correct amount of responses for each variant.
-                        $this->assertEquals($expectedvariantcounts[$slot],
+                        $this->assertEqualsCanonicalizing($expectedvariantcounts[$slot],
                                             $totalpervariantno,
-                                            "Totals responses do not add up in response analysis for slot {$slot}.",
-                                            0,
-                                            10,
-                                            true);
+                                            "Totals responses do not add up in response analysis for slot {$slot}.");
                     } else {
                         $this->assertEquals(25,
                                             array_sum($totalpervariantno),
@@ -351,14 +345,14 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
         );
 
         foreach ($quizstatsexpected as $statname => $statvalue) {
-            $this->assertEquals($statvalue, $quizstats->$statname, $quizstats->$statname, abs($statvalue) * 1.5e-5);
+            $this->assertEqualsWithDelta($statvalue, $quizstats->$statname, abs($statvalue) * 1.5e-5, $quizstats->$statname);
         }
     }
 
     /**
      * Check the question stats and the response counts used in the statistics report. If the appropriate files exist in fixtures/.
      *
-     * @param PHPUnit\DbUnit\DataSet\ITable[] $csvdata Data loaded from csv files for this test.
+     * @param array $csvdata Data loaded from csv files for this test.
      * @param string $whichattempts
      * @param string $whichtries
      * @param \core\dml\sql_join $groupstudentsjoins

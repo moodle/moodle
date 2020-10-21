@@ -46,7 +46,7 @@ class tool_recyclebin_category_bin_tests extends advanced_testcase {
     /**
      * Setup for each test.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

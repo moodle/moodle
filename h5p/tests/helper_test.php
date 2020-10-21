@@ -197,7 +197,7 @@ class helper_testcase extends \advanced_testcase {
         $h5p = $DB->get_record('h5p', ['id' => $h5pid]);
         $this->assertEquals($lib->id, $h5p->mainlibraryid);
         $this->assertEquals(helper::get_display_options($factory->get_core(), $config), $h5p->displayoptions);
-        $this->assertContains('Hello world!', $h5p->jsoncontent);
+        $this->assertStringContainsString('Hello world!', $h5p->jsoncontent);
     }
 
     /**

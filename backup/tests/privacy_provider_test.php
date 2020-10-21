@@ -482,7 +482,7 @@ class core_backup_privacy_provider_testcase extends \core_privacy\tests\provider
         $this->assertCount(2, $userlist1);
         $expected = [$user1->id, $user2->id];
         $actual = $userlist1->get_userids();
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $actual);
 
         // The list of users for coursecontext2 should not return users.
         $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, $component);

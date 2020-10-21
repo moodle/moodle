@@ -40,7 +40,7 @@ class core_rsslib_testcase extends advanced_testcase {
     // The number of seconds tests should wait for the server to respond (high to prevent false positives).
     const TIMEOUT = 10;
 
-    protected function setUp() {
+    protected function setUp(): void {
         moodle_simplepie::reset_cache();
     }
 

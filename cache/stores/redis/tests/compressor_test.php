@@ -45,7 +45,7 @@ class cachestore_redis_compressor_test extends advanced_testcase {
     /**
      * Test set up
      */
-    public function setUp() {
+    public function setUp(): void {
         if (!cachestore_redis::are_requirements_met() || !defined('TEST_CACHESTORE_REDIS_TESTSERVERS')) {
             $this->markTestSkipped('Could not test cachestore_redis. Requirements are not met.');
         }

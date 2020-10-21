@@ -81,7 +81,7 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
     /**
      * Setup function before each test.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
 
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
@@ -113,7 +113,7 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
     /**
      * Tear down function after each test.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();

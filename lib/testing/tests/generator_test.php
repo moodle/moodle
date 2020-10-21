@@ -49,11 +49,10 @@ class core_test_generator_testcase extends advanced_testcase {
 
     /**
      * Test plugin generator, with no component directory.
-     *
-     * @expectedException        coding_exception
-     * @expectedExceptionMessage Component core_completion does not support generators yet. Missing tests/generator/lib.php.
      */
     public function test_get_plugin_generator_no_component_dir() {
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Component core_completion does not support generators yet. Missing tests/generator/lib.php.');
         $generator = $this->getDataGenerator()->get_plugin_generator('core_completion');
     }
 

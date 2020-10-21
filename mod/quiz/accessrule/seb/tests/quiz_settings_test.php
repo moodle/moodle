@@ -48,7 +48,7 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
     /**
      * Called before every test.
      */
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
 
         $this->resetAfterTest();
@@ -279,9 +279,9 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
         $xml = $this->get_config_xml(true, 'password');
         $template = $this->create_template($xml);
 
-        $this->assertContains("<key>startURL</key><string>https://safeexambrowser.org/start</string>", $template->get('content'));
-        $this->assertContains("<key>allowQuit</key><true/>", $template->get('content'));
-        $this->assertContains("<key>hashedQuitPassword</key><string>password</string>", $template->get('content'));
+        $this->assertStringContainsString("<key>startURL</key><string>https://safeexambrowser.org/start</string>", $template->get('content'));
+        $this->assertStringContainsString("<key>allowQuit</key><true/>", $template->get('content'));
+        $this->assertStringContainsString("<key>hashedQuitPassword</key><string>password</string>", $template->get('content'));
 
         $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $quizsettings->set('requiresafeexambrowser', settings_provider::USE_SEB_TEMPLATE);
@@ -289,26 +289,26 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
         $quizsettings->set('allowuserquitseb', 1);
         $quizsettings->save();
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             "<key>startURL</key><string>https://www.example.com/moodle/mod/quiz/view.php?id={$this->quiz->cmid}</string>",
             $quizsettings->get_config()
         );
 
-        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
-        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertStringNotContainsString("hashedQuitPassword", $quizsettings->get_config());
 
         $quizsettings->set('quitpassword', 'new password');
         $quizsettings->save();
         $hashedpassword = hash('SHA256', 'new password');
-        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
-        $this->assertNotContains("<key>hashedQuitPassword</key><string>password</string>", $quizsettings->get_config());
-        $this->assertContains("<key>hashedQuitPassword</key><string>{$hashedpassword}</string>", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertStringNotContainsString("<key>hashedQuitPassword</key><string>password</string>", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>hashedQuitPassword</key><string>{$hashedpassword}</string>", $quizsettings->get_config());
 
         $quizsettings->set('allowuserquitseb', 0);
         $quizsettings->set('quitpassword', '');
         $quizsettings->save();
-        $this->assertContains("<key>allowQuit</key><false/>", $quizsettings->get_config());
-        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>allowQuit</key><false/>", $quizsettings->get_config());
+        $this->assertStringNotContainsString("hashedQuitPassword", $quizsettings->get_config());
     }
 
     /**
@@ -318,9 +318,9 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
         $xml = $this->get_config_xml();
         $template = $this->create_template($xml);
 
-        $this->assertContains("<key>startURL</key><string>https://safeexambrowser.org/start</string>", $template->get('content'));
-        $this->assertNotContains("<key>allowQuit</key><true/>", $template->get('content'));
-        $this->assertNotContains("<key>hashedQuitPassword</key><string>password</string>", $template->get('content'));
+        $this->assertStringContainsString("<key>startURL</key><string>https://safeexambrowser.org/start</string>", $template->get('content'));
+        $this->assertStringNotContainsString("<key>allowQuit</key><true/>", $template->get('content'));
+        $this->assertStringNotContainsString("<key>hashedQuitPassword</key><string>password</string>", $template->get('content'));
 
         $quizsettings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $quizsettings->set('requiresafeexambrowser', settings_provider::USE_SEB_TEMPLATE);
@@ -328,20 +328,20 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
         $quizsettings->set('allowuserquitseb', 1);
         $quizsettings->save();
 
-        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
-        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertStringNotContainsString("hashedQuitPassword", $quizsettings->get_config());
 
         $quizsettings->set('quitpassword', 'new password');
         $quizsettings->save();
         $hashedpassword = hash('SHA256', 'new password');
-        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
-        $this->assertContains("<key>hashedQuitPassword</key><string>{$hashedpassword}</string>", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>hashedQuitPassword</key><string>{$hashedpassword}</string>", $quizsettings->get_config());
 
         $quizsettings->set('allowuserquitseb', 0);
         $quizsettings->set('quitpassword', '');
         $quizsettings->save();
-        $this->assertContains("<key>allowQuit</key><false/>", $quizsettings->get_config());
-        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>allowQuit</key><false/>", $quizsettings->get_config());
+        $this->assertStringNotContainsString("hashedQuitPassword", $quizsettings->get_config());
     }
 
     /**
@@ -357,28 +357,28 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
         $quizsettings->set('quitpassword', '');
         $quizsettings->save();
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             "<key>startURL</key><string>https://www.example.com/moodle/mod/quiz/view.php?id={$this->quiz->cmid}</string>",
             $quizsettings->get_config()
         );
 
-        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
-        $this->assertContains("<key>hashedQuitPassword</key><string>password</string>", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>hashedQuitPassword</key><string>password</string>", $quizsettings->get_config());
 
         $quizsettings->set('quitpassword', 'new password');
         $quizsettings->save();
         $hashedpassword = hash('SHA256', 'new password');
 
-        $this->assertNotContains("<key>hashedQuitPassword</key><string>{$hashedpassword}</string>", $quizsettings->get_config());
-        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
-        $this->assertContains("<key>hashedQuitPassword</key><string>password</string>", $quizsettings->get_config());
+        $this->assertStringNotContainsString("<key>hashedQuitPassword</key><string>{$hashedpassword}</string>", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>hashedQuitPassword</key><string>password</string>", $quizsettings->get_config());
 
         $quizsettings->set('allowuserquitseb', 0);
         $quizsettings->set('quitpassword', '');
         $quizsettings->save();
 
-        $this->assertContains("<key>allowQuit</key><true/>", $quizsettings->get_config());
-        $this->assertContains("<key>hashedQuitPassword</key><string>password</string>", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>allowQuit</key><true/>", $quizsettings->get_config());
+        $this->assertStringContainsString("<key>hashedQuitPassword</key><string>password</string>", $quizsettings->get_config());
     }
 
     /**
@@ -394,26 +394,26 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
         $quizsettings->set('quitpassword', '');
         $quizsettings->save();
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             "<key>startURL</key><string>https://www.example.com/moodle/mod/quiz/view.php?id={$this->quiz->cmid}</string>",
             $quizsettings->get_config()
         );
 
-        $this->assertNotContains("allowQuit", $quizsettings->get_config());
-        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
+        $this->assertStringNotContainsString("allowQuit", $quizsettings->get_config());
+        $this->assertStringNotContainsString("hashedQuitPassword", $quizsettings->get_config());
 
         $quizsettings->set('quitpassword', 'new password');
         $quizsettings->save();
 
-        $this->assertNotContains("allowQuit", $quizsettings->get_config());
-        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
+        $this->assertStringNotContainsString("allowQuit", $quizsettings->get_config());
+        $this->assertStringNotContainsString("hashedQuitPassword", $quizsettings->get_config());
 
         $quizsettings->set('allowuserquitseb', 0);
         $quizsettings->set('quitpassword', '');
         $quizsettings->save();
 
-        $this->assertNotContains("allowQuit", $quizsettings->get_config());
-        $this->assertNotContains("hashedQuitPassword", $quizsettings->get_config());
+        $this->assertStringNotContainsString("allowQuit", $quizsettings->get_config());
+        $this->assertStringNotContainsString("hashedQuitPassword", $quizsettings->get_config());
     }
 
     /**

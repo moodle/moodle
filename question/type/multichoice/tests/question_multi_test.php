@@ -171,7 +171,7 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
         foreach ($correctanswers as $correctanswer) {
             $postdata = $mc->prepare_simulated_post_data($correctanswer);
             $simulatedreponse = $mc->get_student_response_values_for_simulation($postdata);
-            $this->assertEquals($correctanswer, $simulatedreponse, '', 0, 10, true);
+            $this->assertEqualsCanonicalizing($correctanswer, $simulatedreponse);
         }
     }
 

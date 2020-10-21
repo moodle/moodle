@@ -44,7 +44,7 @@ class step_testcase extends advanced_testcase {
     /**
      * Setup to store the DB reference.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
 
         $this->db = $DB;
@@ -53,7 +53,7 @@ class step_testcase extends advanced_testcase {
     /**
      * Tear down to restore the original DB reference.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         global $DB;
 
         $DB = $this->db;

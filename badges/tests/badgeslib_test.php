@@ -43,7 +43,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
     /** @var $assertion2 to define json format for Open badge version 2 */
     protected $assertion2;
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB, $CFG;
         $this->resetAfterTest(true);
         $CFG->enablecompletion = true;
@@ -199,15 +199,15 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $badge = new badge($this->badgeid);
         $old_status = $badge->status;
         $badge->set_status(BADGE_STATUS_ACTIVE);
-        $this->assertAttributeNotEquals($old_status, 'status', $badge);
-        $this->assertAttributeEquals(BADGE_STATUS_ACTIVE, 'status', $badge);
+        $this->assertNotEquals($old_status, $badge->status);
+        $this->assertEquals(BADGE_STATUS_ACTIVE, $badge->status);
     }
 
     public function test_delete_badge() {
         $badge = new badge($this->badgeid);
         $badge->delete();
         // We don't actually delete badges. We archive them.
-        $this->assertAttributeEquals(BADGE_STATUS_ARCHIVED, 'status', $badge);
+        $this->assertEquals(BADGE_STATUS_ARCHIVED, $badge->status);
     }
 
     /**
@@ -385,7 +385,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
 
         // Make sure the first user has no badges.
         $result = badges_get_user_badges($user1->id);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertCount(0, $result);
 
         // Check that the second user has the expected 11 badges.

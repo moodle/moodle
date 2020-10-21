@@ -36,7 +36,7 @@ require_once($CFG->dirroot.'/filter/displayh5p/filter.php');
  */
 class filter_displayh5p_testcase extends advanced_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
 
         $this->resetAfterTest(true);

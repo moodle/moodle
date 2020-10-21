@@ -99,7 +99,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         // Test customdata.
         $customdata = json_decode($message->customdata);
         $this->assertObjectHasAttribute('notificationiconurl', $customdata);
-        $this->assertContains('tokenpluginfile.php', $customdata->notificationiconurl);
+        $this->assertStringContainsString('tokenpluginfile.php', $customdata->notificationiconurl);
         $userpicture = new \user_picture($u1);
         $userpicture->size = 1; // Use f1 size.
         $userpicture->includetoken = $u2->id;

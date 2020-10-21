@@ -48,7 +48,7 @@ class mod_choice_privacy_provider_testcase extends \core_privacy\tests\provider_
     /**
      * {@inheritdoc}
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
 
         global $DB;

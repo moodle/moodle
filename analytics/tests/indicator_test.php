@@ -70,7 +70,6 @@ class analytics_indicator_testcase extends advanced_testcase {
      * @param string $indicatorclass
      * @param string $willreturn
      * @dataProvider validate_calculated_value_exceptions
-     * @expectedException \coding_exception
      * @return null
      */
     public function test_validate_calculated_value_exceptions($indicatorclass, $willreturn) {
@@ -80,6 +79,7 @@ class analytics_indicator_testcase extends advanced_testcase {
             ->setMethods(['calculate_sample'])
             ->getMock();
         $indicatormock->method('calculate_sample')->willReturn($willreturn);
+        $this->expectException(coding_exception::class);
         list($values, $unused) = $indicatormock->calculate([1], 'notrelevanthere');
 
     }

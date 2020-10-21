@@ -42,7 +42,7 @@ class core_event_profile_field_testcase extends advanced_testcase {
     /**
      * Test set up.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 

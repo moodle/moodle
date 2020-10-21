@@ -53,7 +53,7 @@ class tool_provider_testcase extends advanced_testcase {
      *
      * This is executed before running any tests in this file.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $SESSION;
         $this->resetAfterTest();
 
@@ -148,7 +148,7 @@ class tool_provider_testcase extends advanced_testcase {
         $tp->message = $message;
         $tp->onError();
         $errormessage = get_string('failedrequest', 'enrol_lti', ['reason' => $message]);
-        $this->assertContains($errormessage, $tp->get_error_output());
+        $this->assertStringContainsString($errormessage, $tp->get_error_output());
     }
 
     /**
@@ -256,8 +256,8 @@ class tool_provider_testcase extends advanced_testcase {
         $successmessage = get_string('successfulregistration', 'enrol_lti');
 
         // Check output contents. Confirm that it has the success message and return URL.
-        $this->assertContains($successmessage, $output);
-        $this->assertContains($tp->returnUrl, $output);
+        $this->assertStringContainsString($successmessage, $output);
+        $this->assertStringContainsString($tp->returnUrl, $output);
 
         // The OK flag will be true on successful registration.
         $this->assertTrue($tp->ok);
@@ -285,7 +285,7 @@ class tool_provider_testcase extends advanced_testcase {
         @$tp->onLaunch();
         $output = ob_get_clean();
 
-        $this->assertContains(get_string('frameembeddingnotenabled', 'enrol_lti'), $output);
+        $this->assertStringContainsString(get_string('frameembeddingnotenabled', 'enrol_lti'), $output);
     }
 
     /**
@@ -373,7 +373,7 @@ class tool_provider_testcase extends advanced_testcase {
 
         $this->assertTrue($tp->ok);
         $this->assertEquals(get_string('success'), $tp->message);
-        $this->assertContains(get_string('frameembeddingnotenabled', 'enrol_lti'), $output);
+        $this->assertStringContainsString(get_string('frameembeddingnotenabled', 'enrol_lti'), $output);
     }
 
     /**

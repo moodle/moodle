@@ -29,7 +29,7 @@ require_once(__DIR__ . '/fixtures/testable_antivirus.php');
 class core_antivirus_testcase extends advanced_testcase {
     protected $tempfile;
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG;
         // Use our special testable fixture plugin.
         $CFG->antiviruses = 'testable';
@@ -42,7 +42,7 @@ class core_antivirus_testcase extends advanced_testcase {
         touch($this->tempfile);
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         @unlink($this->tempfile);
     }
 
@@ -97,7 +97,7 @@ class core_antivirus_testcase extends advanced_testcase {
         $this->assertNotEmpty($exception);
         $result = $sink->get_messages();
         $this->assertCount(1, $result);
-        $this->assertContains('fake@example.com', $result[0]->to);
+        $this->assertStringContainsString('fake@example.com', $result[0]->to);
         $sink->close();
     }
 
@@ -174,7 +174,7 @@ class core_antivirus_testcase extends advanced_testcase {
         $this->assertNotEmpty($exception);
         $result = $sink->get_messages();
         $this->assertCount(1, $result);
-        $this->assertContains('fake@example.com', $result[0]->to);
+        $this->assertStringContainsString('fake@example.com', $result[0]->to);
         $sink->close();
     }
 

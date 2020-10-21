@@ -127,8 +127,8 @@ class core_message_send_email_task_testcase extends advanced_testcase {
         $this->assertSame($user2->email, $email->to);
         $this->assertNotEmpty($email->header);
         $emailbody = quoted_printable_decode($email->body);
-        $this->assertContains('Group 1', $emailbody);
-        $this->assertContains('Group 2', $emailbody);
+        $this->assertStringContainsString('Group 1', $emailbody);
+        $this->assertStringContainsString('Group 2', $emailbody);
         // 5 unread messages per conversation, this will be listed twice.
         $this->assertRegExp("/<span\b[^>]*>5<\/span> <span\b[^>]*>Unread message\w+/", $emailbody);
 

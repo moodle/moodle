@@ -95,19 +95,15 @@ class core_admintree_testcase extends advanced_testcase {
         $this->assertEquals(array('zero', 'one', 'two', 'three', 'four', 'five', 'six'), $map);
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_add_nodes_before_invalid1() {
         $tree = new admin_root(true);
+        $this->expectException(coding_exception::class);
         $tree->add('root', new admin_externalpage('foo', 'Foo', 'http://foo.bar'), array('moodle:site/config'));
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_add_nodes_before_invalid2() {
         $tree = new admin_root(true);
+        $this->expectException(coding_exception::class);
         $tree->add('root', new admin_category('bar', 'Bar'), '');
     }
 

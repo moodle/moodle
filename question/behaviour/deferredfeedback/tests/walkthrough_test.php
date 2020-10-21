@@ -110,7 +110,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
         $this->check_current_mark(1);
 
         $autogradedstep = $this->get_step($this->get_step_count() - 2);
-        $this->assertEquals($autogradedstep->get_fraction(), 0, '', 0.0000001);
+        $this->assertEqualsWithDelta($autogradedstep->get_fraction(), 0, 0.0000001);
     }
 
     public function test_deferredfeedback_feedback_multichoice_single() {

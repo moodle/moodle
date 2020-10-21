@@ -39,7 +39,7 @@ abstract class provider_testcase extends \advanced_testcase {
     /**
      * Test tearDown.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         \core_privacy\local\request\writer::reset();
     }
 

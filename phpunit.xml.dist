@@ -9,13 +9,13 @@
         processIsolation="false"
         backupGlobals="false"
         backupStaticAttributes="false"
+        cacheResult="false"
         stopOnError="false"
         stopOnFailure="false"
         stopOnIncomplete="false"
         stopOnSkipped="false"
         beStrictAboutTestsThatDoNotTestAnything="false"
         beStrictAboutOutputDuringTests="true"
-        printerClass="Hint_ResultPrinter"
         testSuiteLoaderClass="phpunit_autoloader"
         >
 

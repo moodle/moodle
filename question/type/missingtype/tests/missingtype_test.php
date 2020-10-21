@@ -67,18 +67,14 @@ class qtype_missing_test extends question_testcase {
         return $questiondata;
     }
 
-    /**
-     * @expectedException moodle_exception
-     */
     public function test_cannot_grade() {
         $q = new qtype_missingtype_question();
+        $this->expectException(moodle_exception::class);
         $q->grade_response(array());
     }
 
-    /**
-     * @expectedException moodle_exception
-     */
     public function test_load_qtype_strict() {
+        $this->expectException(moodle_exception::class);
         $qtype = question_bank::get_qtype('strange_unknown');
     }
 

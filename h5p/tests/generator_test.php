@@ -43,7 +43,7 @@ class generator_testcase extends \advanced_testcase {
     /**
      * Tests set up.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
 
         autoloader::register();

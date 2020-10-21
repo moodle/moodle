@@ -38,7 +38,7 @@ class dataset_manager_testcase extends advanced_testcase {
      *
      * @return null
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
 
         $this->sharedtoprows = array(
@@ -60,10 +60,10 @@ class dataset_manager_testcase extends advanced_testcase {
         $f1 = $dataset1->store($dataset1data);
 
         $f1contents = $f1->get_content();
-        $this->assertContains('yeah', $f1contents);
-        $this->assertContains('var1', $f1contents);
-        $this->assertContains('value1', $f1contents);
-        $this->assertContains('header1', $f1contents);
+        $this->assertStringContainsString('yeah', $f1contents);
+        $this->assertStringContainsString('var1', $f1contents);
+        $this->assertStringContainsString('value1', $f1contents);
+        $this->assertStringContainsString('header1', $f1contents);
     }
 
     /**
@@ -86,11 +86,11 @@ class dataset_manager_testcase extends advanced_testcase {
             \core_analytics\dataset_manager::LABELLED_FILEAREA);
 
         $mergedfilecontents = $merged->get_content();
-        $this->assertContains('yeah', $mergedfilecontents);
-        $this->assertContains('no', $mergedfilecontents);
-        $this->assertContains('var1', $mergedfilecontents);
-        $this->assertContains('value1', $mergedfilecontents);
-        $this->assertContains('header1', $mergedfilecontents);
+        $this->assertStringContainsString('yeah', $mergedfilecontents);
+        $this->assertStringContainsString('no', $mergedfilecontents);
+        $this->assertStringContainsString('var1', $mergedfilecontents);
+        $this->assertStringContainsString('value1', $mergedfilecontents);
+        $this->assertStringContainsString('header1', $mergedfilecontents);
     }
 
     /**
