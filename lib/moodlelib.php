@@ -3645,9 +3645,9 @@ function fullname($user, $override=false) {
  * @return object User name fields.
  */
 function username_load_fields_from_object($addtoobject, $secondobject, $prefix = null, $additionalfields = null) {
-    $fields = \core\user_fields::get_name_fields();
-    foreach ($fields as &$field) {
-        $field = $prefix . $field;
+    $fields = [];
+    foreach (\core\user_fields::get_name_fields() as $field) {
+        $fields[$field] = $prefix . $field;
     }
     if ($additionalfields) {
         // Additional fields can specify their own 'alias' such as 'id' => 'userid'. This checks to see if

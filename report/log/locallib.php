@@ -296,7 +296,7 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
     } else {
         // this may be a lot of users :-(
         $userfieldsapi = \core\user_fields::for_name();
-        $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, ' .
+        $courseusers = $DB->get_records('user', array('deleted' => 0), 'lastaccess DESC', 'id, ' .
                 $userfieldsapi->get_sql('', false, '', '', false)->selects,
                 $limitfrom, $limitnum);
     }

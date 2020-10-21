@@ -512,7 +512,7 @@ if (!$csv) {
     $row[] = get_string('id', 'report_completion');
     $row[] = get_string('name', 'report_completion');
     foreach ($extrafields as $field) {
-       $row[] = \core\user_fields::get_display_name($field);
+        $row[] = \core\user_fields::get_display_name($field);
     }
 
     // Add activity headers

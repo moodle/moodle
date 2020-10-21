@@ -88,7 +88,8 @@ class award_criteria_profile extends award_criteria {
                 if (in_array($field, $existing)) {
                     $checked = true;
                 }
-                $this->config_options($mform, array('id' => $field, 'checked' => $checked, 'name' => \core\user_fields::get_display_name($field), 'error' => false));
+                $this->config_options($mform, array('id' => $field, 'checked' => $checked,
+                        'name' => \core\user_fields::get_display_name($field), 'error' => false));
                 $none = false;
             }
         }

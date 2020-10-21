@@ -907,7 +907,7 @@ function chat_format_message($message, $courseid, $currentuser, $chatlastrow=nul
 
     if (isset($users[$message->userid])) {
         $user = $users[$message->userid];
-    } else if ($user = $DB->get_record('user', array('id' => $message->userid), implode(',', \core\user_fields::get_picture_fields()))) {
+    } else if ($user = $DB->get_record('user', ['id' => $message->userid], implode(',', \core\user_fields::get_picture_fields()))) {
         $users[$message->userid] = $user;
     } else {
         return null;
@@ -938,7 +938,8 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
 
     if (isset($users[$message->userid])) {
         $sender = $users[$message->userid];
-    } else if ($sender = $DB->get_record('user', array('id' => $message->userid), implode(',', \core\user_fields::get_picture_fields()))) {
+    } else if ($sender = $DB->get_record('user', array('id' => $message->userid),
+            implode(',', \core\user_fields::get_picture_fields()))) {
         $users[$message->userid] = $sender;
     } else {
         return null;
