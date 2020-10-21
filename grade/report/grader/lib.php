@@ -1963,7 +1963,7 @@ class grade_report_grader extends grade_report {
 
         foreach ($extrafields as $field) {
             $fieldlink = html_writer::link(new moodle_url($this->baseurl,
-                    array('sortitemid'=>$field)), \core\user_fields::get_display_name($field));
+                    array('sortitemid' => $field)), \core\user_fields::get_display_name($field));
             $arrows[$field] = $fieldlink;
 
             if ($field == $this->sortitemid) {

@@ -77,13 +77,27 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str'], function($, Ajax, 
 
                 if (results.length <= perpage) {
                     // Render the label.
+                    const profileRegex = /^profile_field_(.*)$/;
                     $.each(results, function(index, user) {
                         var ctx = user,
                             identity = [];
                         $.each(userfields, function(i, k) {
-                            if (typeof user[k] !== 'undefined' && user[k] !== '') {
-                                ctx.hasidentity = true;
-                                identity.push(user[k]);
+                            const result = profileRegex.exec(k);
+                            if (result) {
+                                if (user.customfields) {
+                                    user.customfields.forEach(function(customfield) {
+                                        if (customfield.shortname === result[1]) {
+                                            ctx.hasidentity = true;
+                                            identity.push(customfield.value);
+                                        }
+
+                                    });
+                                }
+                            } else {
+                                if (typeof user[k] !== 'undefined' && user[k] !== '') {
+                                    ctx.hasidentity = true;
+                                    identity.push(user[k]);
+                                }
                             }
                         });
                         ctx.identity = identity.join(', ');

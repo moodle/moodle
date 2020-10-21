@@ -302,7 +302,8 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     $currentuser = ($user->id == $USER->id);
     $isadmin = is_siteadmin($USER);
 
-    // TODO Does not support custom user profile fields (MDL-70456).
+    // This does not need to include custom profile fields as it is only used to check specific
+    // fields below.
     $showuseridentityfields = \core\user_fields::get_identity_fields($context, false);
 
     if (!empty($course)) {
