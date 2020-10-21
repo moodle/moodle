@@ -180,6 +180,7 @@ Feature: View course participants
     And the field "Select 'Student 18x'" matches value "0"
     And the field "Select 'Student 19x'" matches value "0"
 
+    # Pressing the "Select all X users" button should select all including the 21st user (Student 9x).
     And I press "Select all 21 users"
     And I should see "Student 9x"
     And the field "Select 'Teacher 1x'" matches value "1"
@@ -204,6 +205,7 @@ Feature: View course participants
     And the field "Select 'Student 17x'" matches value "1"
     And the field "Select 'Student 18x'" matches value "1"
     And the field "Select 'Student 19x'" matches value "1"
+    And the "With selected users..." "select" should be enabled
 
     And I click on "Deselect all" "checkbox"
     And the field "Select 'Teacher 1x'" matches value "0"
