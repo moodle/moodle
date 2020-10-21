@@ -51,7 +51,7 @@ class core_myprofilelib_testcase extends advanced_testcase {
      */
     private $tree;
 
-    public function setUp() {
+    public function setUp(): void {
         // Set the $PAGE->url value so core_myprofile_navigation() doesn't complain.
         global $PAGE;
         $PAGE->set_url('/test');

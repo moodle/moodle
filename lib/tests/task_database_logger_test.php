@@ -43,7 +43,7 @@ class task_database_logger_testcase extends advanced_testcase {
     /**
      * Setup to backup the database before mocking.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $DB;
 
         $this->DB = $DB;
@@ -52,7 +52,7 @@ class task_database_logger_testcase extends advanced_testcase {
     /**
      * Tear down to unmock the database where it was mocked.
      */
-    public function tearDown() {
+    public function tearDown(): void {
         global $DB;
 
         $DB = $this->DB;

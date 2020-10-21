@@ -42,7 +42,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
     protected $workshop;
 
     /** setup testing environment */
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         $this->setAdminUser();
         $this->course = $this->getDataGenerator()->create_course();
@@ -51,7 +51,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $this->workshop = new testable_workshop($workshop, $cm, $this->course);
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->workshop = null;
         parent::tearDown();
     }
@@ -320,9 +320,6 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $this->assertEquals($part, $total * $percent / 100);
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_percent_to_value_negative() {
         $this->resetAfterTest(true);
         // fixture setup
@@ -330,12 +327,10 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $percent = -7.098;
 
         // exercise SUT
+        $this->expectException(coding_exception::class);
         $part = workshop::percent_to_value($percent, $total);
     }
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_percent_to_value_over_hundred() {
         $this->resetAfterTest(true);
         // fixture setup
@@ -343,6 +338,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $percent = 121.08;
 
         // exercise SUT
+        $this->expectException(coding_exception::class);
         $part = workshop::percent_to_value($percent, $total);
     }
 

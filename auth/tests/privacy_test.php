@@ -43,7 +43,7 @@ use core_auth\privacy\provider;
  */
 class core_auth_privacy_testcase extends provider_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 

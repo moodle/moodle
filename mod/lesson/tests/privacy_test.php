@@ -44,7 +44,7 @@ use mod_lesson\privacy\provider;
  */
 class mod_lesson_privacy_testcase extends provider_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         global $PAGE;
         $this->setAdminUser();  // The data generator complains without this.
         $this->resetAfterTest();

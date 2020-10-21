@@ -44,7 +44,7 @@ class framework_testcase extends \advanced_testcase {
     /**
      * Set up function for tests.
      */
-    public function setUp() {
+    public function setUp(): void {
         $factory = new \core_h5p\factory();
         $this->framework = $factory->get_framework();
     }

@@ -44,7 +44,7 @@ class core_cache_config_writer_testcase extends advanced_testcase {
     /**
      * Set things back to the default before each test.
      */
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
         cache_factory::reset();
         cache_config_testing::create_default_configuration();
@@ -53,7 +53,7 @@ class core_cache_config_writer_testcase extends advanced_testcase {
     /**
      * Final task is to reset the cache system
      */
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass(): void {
         parent::tearDownAfterClass();
         cache_factory::reset();
     }
@@ -270,7 +270,7 @@ class core_cache_config_writer_testcase extends advanced_testcase {
 
         $config = cache_config_writer::instance();
         $this->assertTrue($config->add_store_instance('setdefinitiontest', 'file'));
-        $this->assertInternalType('array', $config->get_definition_by_id('phpunit/testdefinition'));
+        $this->assertIsArray($config->get_definition_by_id('phpunit/testdefinition'));
         $config->set_definition_mappings('phpunit/testdefinition', array('setdefinitiontest', 'default_application'));
 
         try {

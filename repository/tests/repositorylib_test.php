@@ -49,7 +49,7 @@ class core_repositorylib_testcase extends advanced_testcase {
 
         $plugintype = new repository_type($repositorypluginname);
         $pluginid = $plugintype->create(false);
-        $this->assertInternalType('int', $pluginid);
+        $this->assertIsInt($pluginid);
         $args = array();
         $args['type'] = $repositorypluginname;
         $repos = repository::get_instances($args);

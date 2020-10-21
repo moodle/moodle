@@ -2,6 +2,39 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.10 ===
+* PHPUnit has been upgraded to 8.5. That comes with a few changes:
+  - Breaking change: All the "template methods" (setUp(), tearDown()...) now require to return void. This implies
+    that the minimum version of PHP able to run tests will be PHP 7.1
+  - A good number of assertions have been deprecated with this version
+    and will be removed in a future one. In core all cases have been removed
+    (so it's deprecation-warnings free). It's recommended to perform the
+    switch to their new counterparts ASAP:
+      - assertInternalType() has been deprecated. Use the assertIsXXX() methods instead.
+      - assertArraySubset() has been deprecated. Use looping + assertArrayHasKey() or similar.
+      - @expectedExceptionXXX annotations have been deprecated. Use the expectExceptionXXX()
+        methods instead (and put them exactly before the line that is expected to throw the exception).
+      - assertAttributeXXX() have been deprecated. If testing public attributes use normal assertions. If
+        testing non-public attributes... you're doing something wrong :-)
+      - assertContains() to find substrings on strings has been deprecated. Use assertStringContainsString() instead.
+        (note that there are "IgnoringCase()" variants to perform case-insensitive matching.
+      - assertEquals() extra params have been deprecated and new assertions for them created:
+        - delta => use assertEqualsWithDelta()
+        - canonicalize => use assertEqualsCanonicalizing()
+        - ignoreCase => use assertEqualsIgnoringCase()
+        - maxDepth => removed without replacement.
+  - The custom printer that was used to show how to rerun a failure has been removed, it was old and "hacky"
+    solution, for more information about how to run tests, see the docs, there are plenty of options.
+  - phpunit/dbunit is not available any more and it has been replaced by a lightweight phpunit_dataset class, able to
+    load XML/CSV and PHP arrays, send the to database and return rows to calling code (in tests). That implies the
+    follwoing changes in the advanced_testcase class:
+      - createFlatXMLDataSet() has been removed. No uses in core, uses can switch to createXMLDataSet() (read below).
+      - createXMLDataSet() has been deprecated. Use dataset_from_files() instead.
+      - createCsvDataSet() has been deprecated. Use dataset_from_files() instead.
+      - createArrayDataSet() has been deprecated. This method was using the phpunit_ArrayDataSet class
+        that has been also removed from core. Use dataset_from_array() instead.
+      - loadDataSet() has been deprecated. Use phpunit_dataset->to_database() instead.
+      - All the previous uses of phpunit/dbunit methods like Dataset:getRows(), Dataset::getRowCount()
+        must be replaced by the new phpunit_dataset->get_rows() method.
 * Retains the source course id when a course is copied from another course on the same site.
 * Added function setScrollable in core/modal. This function can be used to set the modal's body to be scrollable or not
   when the modal's height exceeds the browser's height. This is also supported in core/modal_factory through the

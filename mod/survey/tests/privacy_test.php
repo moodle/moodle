@@ -47,7 +47,7 @@ require_once($CFG->dirroot . '/mod/survey/lib.php');
  */
 class mod_survey_privacy_testcase extends provider_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         global $PAGE;
         $this->resetAfterTest();
         $PAGE->get_renderer('core');

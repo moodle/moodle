@@ -46,7 +46,7 @@ require_once($CFG->libdir . '/gradelib.php');
  */
 class core_grades_privacy_testcase extends provider_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         global $PAGE;
         $this->resetAfterTest();
         $PAGE->get_renderer('core');
@@ -390,12 +390,12 @@ class core_grades_privacy_testcase extends provider_testcase {
         $userlist = new \core_privacy\local\request\userlist($c1ctx, 'core_grades');
         provider::get_users_in_context($userlist);
         $course1userids = [$u1->id, $u2->id, $u3->id, $u4->id];
-        $this->assertEquals($course1userids, $userlist->get_userids(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($course1userids, $userlist->get_userids());
 
         $userlist = new \core_privacy\local\request\userlist($c2ctx, 'core_grades');
         provider::get_users_in_context($userlist);
         $course2userids = [$u5->id, $u2->id];
-        $this->assertEquals($course2userids, $userlist->get_userids(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($course2userids, $userlist->get_userids());
 
         $userlist = new \core_privacy\local\request\userlist($u2ctx, 'core_grades');
         provider::get_users_in_context($userlist);

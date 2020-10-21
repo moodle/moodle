@@ -79,7 +79,7 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
     /** @var stdClass A test course with 2 enrolments for student2 and student12. */
     protected $course3;
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -302,7 +302,7 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertCount(2, $contextlist);
 
         $contextids = $contextlist->get_contextids();
-        $this->assertEquals([$coursecontext1->id, $coursecontext2->id], $contextids, '', 0.0, 1, true);
+        $this->assertEqualsCanonicalizing([$coursecontext1->id, $coursecontext2->id], $contextids);
 
         // Business User 3 is the Receiver of course 3 only.
         $contextlist = provider::get_contexts_for_userid($this->businessuser3->id);
@@ -368,11 +368,9 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $data = $writer->get_data([get_string('transactions', 'enrol_paypal')]);
         $this->assertCount(2, $data->transactions);
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 ['STUDENT2-IN-COURSE2-00', 'STUDENT2-IN-COURSE2-01'],
-                array_column($data->transactions, 'txn_id'),
-                '', 0.0, 10, true
-        );
+                array_column($data->transactions, 'txn_id'));
     }
 
     /**
@@ -674,7 +672,7 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
 
         $userlist1 = new \core_privacy\local\request\userlist($coursecontext1, 'enrol_paypal');
         provider::get_users_in_context($userlist1);
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [
                     $this->businessuser1->id,
                     $this->businessuser2->id,
@@ -682,13 +680,12 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
                     $this->student1->id,
                     $this->student12->id
                 ],
-                $userlist1->get_userids(),
-                '', 0.0, 10, true
+                $userlist1->get_userids()
         );
 
         $userlist2 = new \core_privacy\local\request\userlist($coursecontext2, 'enrol_paypal');
         provider::get_users_in_context($userlist2);
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [
                     $this->businessuser1->id,
                     $this->businessuser2->id,
@@ -696,20 +693,18 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
                     $this->student2->id,
                     $this->student12->id
                 ],
-                $userlist2->get_userids(),
-                '', 0.0, 10, true
+                $userlist2->get_userids()
         );
 
         $userlist3 = new \core_privacy\local\request\userlist($coursecontext3, 'enrol_paypal');
         provider::get_users_in_context($userlist3);
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [
                     $this->businessuser3->id,
                     $this->receiveruser3->id,
                     $this->student3->id
                 ],
-                $userlist3->get_userids(),
-                '', 0.0, 10, true
+                $userlist3->get_userids()
         );
     }
 
@@ -729,16 +724,14 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
                 2,
                 $DB->count_records('enrol_paypal', ['courseid' => $this->course1->id])
         );
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$this->course1->id, $this->course2->id],
-                $DB->get_fieldset_select('enrol_paypal', 'courseid', 'userid = ?', [$this->student12->id]),
-                '', 0.0, 10, true
+                $DB->get_fieldset_select('enrol_paypal', 'courseid', 'userid = ?', [$this->student12->id])
         );
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$this->course1->id, $this->course2->id, $this->course2->id],
                 $DB->get_fieldset_select('enrol_paypal', 'courseid', 'business = ?',
-                        [\core_text::strtolower($this->businessuser1->email)]),
-                '', 0.0, 10, true
+                        [\core_text::strtolower($this->businessuser1->email)])
         );
         $this->assertEquals(
                 3,
@@ -760,16 +753,14 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
                 1,
                 $DB->count_records('enrol_paypal', ['courseid' => $this->course1->id])
         );
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$this->course2->id],
-                $DB->get_fieldset_select('enrol_paypal', 'courseid', 'userid = ?', [$this->student12->id]),
-                '', 0.0, 10, true
+                $DB->get_fieldset_select('enrol_paypal', 'courseid', 'userid = ?', [$this->student12->id])
         );
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$this->course2->id, $this->course2->id],
                 $DB->get_fieldset_select('enrol_paypal', 'courseid', 'business = ?',
-                        [\core_text::strtolower($this->businessuser1->email)]),
-                '', 0.0, 10, true
+                        [\core_text::strtolower($this->businessuser1->email)])
         );
         $this->assertEquals(
                 3,

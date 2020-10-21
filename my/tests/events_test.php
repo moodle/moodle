@@ -40,7 +40,7 @@ class dashboard_events_testcase extends advanced_testcase {
     /**
      * Setup often used objects for the following tests.
      */
-    protected function setup() {
+    protected function setUp(): void {
         global $USER;
 
         $this->resetAfterTest();

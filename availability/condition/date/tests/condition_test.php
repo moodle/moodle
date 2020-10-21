@@ -38,7 +38,7 @@ class availability_date_condition_testcase extends advanced_testcase {
     /**
      * Load required classes.
      */
-    public function setUp() {
+    public function setUp(): void {
         // Load the mock info class so that it can be used.
         global $CFG;
         require_once($CFG->dirroot . '/availability/tests/fixtures/mock_info.php');
@@ -96,7 +96,7 @@ class availability_date_condition_testcase extends advanced_testcase {
             $date = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Missing or invalid ->d', $e->getMessage());
+            $this->assertStringContainsString('Missing or invalid ->d', $e->getMessage());
         }
 
         // Invalid ->d.
@@ -105,7 +105,7 @@ class availability_date_condition_testcase extends advanced_testcase {
             $date = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Missing or invalid ->d', $e->getMessage());
+            $this->assertStringContainsString('Missing or invalid ->d', $e->getMessage());
         }
 
         // Missing ->t.
@@ -114,7 +114,7 @@ class availability_date_condition_testcase extends advanced_testcase {
             $date = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Missing or invalid ->t', $e->getMessage());
+            $this->assertStringContainsString('Missing or invalid ->t', $e->getMessage());
         }
 
         // Invalid ->t.
@@ -123,7 +123,7 @@ class availability_date_condition_testcase extends advanced_testcase {
             $date = new condition($structure);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertContains('Missing or invalid ->t', $e->getMessage());
+            $this->assertStringContainsString('Missing or invalid ->t', $e->getMessage());
         }
 
         // Valid conditions of both types.

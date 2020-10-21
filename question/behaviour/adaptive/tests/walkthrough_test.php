@@ -181,7 +181,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
                 $this->get_contains_partcorrect_expectation());
 
         $autogradedstep = $this->get_step($this->get_step_count() - 2);
-        $this->assertEquals($autogradedstep->get_fraction(), 1, '', 0.0000001);
+        $this->assertEqualsWithDelta($autogradedstep->get_fraction(), 1, 0.0000001);
     }
 
     public function test_adaptive_multichoice2() {

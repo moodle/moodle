@@ -96,7 +96,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
     /**
      * Setup function- we will create a course and add an assign instance to it.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -299,22 +299,20 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can't create a competency framework with only read permissions.
-     *
-     * @expectedException required_capability_exception
      */
     public function test_create_competency_frameworks_with_read_permissions() {
         $this->setUser($this->user);
 
+        $this->expectException(required_capability_exception::class);
         $result = $this->create_competency_framework(1, true);
     }
 
     /**
      * Test we can't create a competency framework with only read permissions.
-     *
-     * @expectedException required_capability_exception
      */
     public function test_create_competency_frameworks_with_read_permissions_in_category() {
         $this->setUser($this->catuser);
+        $this->expectException(required_capability_exception::class);
         $result = $this->create_competency_framework(1, false);
     }
 
@@ -365,8 +363,6 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we cannot create a competency framework with nasty data.
-     *
-     * @expectedException invalid_parameter_exception
      */
     public function test_create_competency_frameworks_with_nasty_data() {
         $this->setUser($this->creator);
@@ -380,6 +376,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
             'visible' => true,
             'contextid' => context_system::instance()->id
         );
+        $this->expectException(invalid_parameter_exception::class);
         $result = external::create_competency_framework($framework);
     }
 
@@ -542,8 +539,6 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can delete a competency framework with read permissions.
-     *
-     * @expectedException required_capability_exception
      */
     public function test_delete_competency_frameworks_with_read_permissions() {
         $this->setUser($this->creator);
@@ -552,6 +547,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $id = $result->id;
         // Switch users to someone with less permissions.
         $this->setUser($this->user);
+        $this->expectException(required_capability_exception::class);
         $result = external::delete_competency_framework($id);
     }
 
@@ -624,14 +620,13 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can update a competency framework with read permissions.
-     *
-     * @expectedException required_capability_exception
      */
     public function test_update_competency_frameworks_with_read_permissions() {
         $this->setUser($this->creator);
         $result = $this->create_competency_framework(1, true);
 
         $this->setUser($this->user);
+        $this->expectException(required_capability_exception::class);
         $result = $this->update_competency_framework($result->id, 2, true);
     }
 
@@ -758,12 +753,11 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can't create a competency with only read permissions.
-     *
-     * @expectedException required_capability_exception
      */
     public function test_create_competency_with_read_permissions() {
         $framework = $this->getDataGenerator()->get_plugin_generator('core_competency')->create_framework();
         $this->setUser($this->user);
+        $this->expectException(required_capability_exception::class);
         $competency = $this->create_competency(1, $framework->get('id'));
     }
 
@@ -820,8 +814,6 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we cannot create a competency with nasty data.
-     *
-     * @expectedException invalid_parameter_exception
      */
     public function test_create_competency_with_nasty_data() {
         $this->setUser($this->creator);
@@ -834,6 +826,10 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
             'competencyframeworkid' => $framework->id,
             'sortorder' => 0
         );
+        // TODO: MDL-69700 - Analyse if the throw exception is happening
+        // in the correct place and decide what happens with the trailing
+        // code that is never executed.
+        $this->expectException(invalid_parameter_exception::class);
         $result = external::create_competency($competency);
         $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
     }
@@ -998,8 +994,6 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can delete a competency with read permissions.
-     *
-     * @expectedException required_capability_exception
      */
     public function test_delete_competency_with_read_permissions() {
         $this->setUser($this->creator);
@@ -1009,6 +1003,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $id = $result->id;
         // Switch users to someone with less permissions.
         $this->setUser($this->user);
+        $this->expectException(required_capability_exception::class);
         $result = external::delete_competency($id);
     }
 
@@ -1052,8 +1047,6 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
     /**
      * Test we can update a competency with read permissions.
-     *
-     * @expectedException required_capability_exception
      */
     public function test_update_competency_with_read_permissions() {
         $this->setUser($this->creator);
@@ -1061,6 +1054,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $result = $this->create_competency(1, $framework->id);
 
         $this->setUser($this->user);
+        $this->expectException(required_capability_exception::class);
         $result = $this->update_competency($result->id, 2);
     }
 
@@ -1764,7 +1758,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $resultduplicated = external::list_competencies_in_template($duplicatedtemplate->id);
 
         $this->assertEquals(count($result), count($resultduplicated));
-        $this->assertContains($template->shortname, $duplicatedtemplate->shortname);
+        $this->assertStringContainsString($template->shortname, $duplicatedtemplate->shortname);
         $this->assertEquals($duplicatedtemplate->description, $template->description);
         $this->assertEquals($duplicatedtemplate->descriptionformat, $template->descriptionformat);
         $this->assertEquals($duplicatedtemplate->visible, $template->visible);

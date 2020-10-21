@@ -62,7 +62,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
      *
      * @return null
      */
-    public function tearDown() {
+    public function tearDown(): void {
         $this->setAdminUser();
 
         $models = \core_analytics\manager::get_all_models();

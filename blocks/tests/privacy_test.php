@@ -44,7 +44,7 @@ use core_block\privacy\provider;
  */
 class core_block_privacy_testcase extends provider_testcase {
 
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 

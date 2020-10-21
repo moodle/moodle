@@ -70,7 +70,7 @@ class mod_workshop_cron_task_testcase extends advanced_testcase {
         ob_end_clean();
 
         // Assert that the phase has been switched.
-        $this->assertContains('Processing automatic assessment phase switch', $output);
+        $this->assertStringContainsString('Processing automatic assessment phase switch', $output);
         $this->assertEquals(workshop::PHASE_ASSESSMENT, $DB->get_field('workshop', 'phase', ['id' => $workshop->id]));
     }
 }

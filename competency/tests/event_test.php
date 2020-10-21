@@ -1360,9 +1360,6 @@ class core_competency_event_testcase extends advanced_testcase {
 
     /**
      * Test evidence_created event by linking an invalid user competency to an evidence.
-     *
-     * @expectedException        coding_exception
-     * @expectedExceptionMessage The user competency linked with this evidence is invalid.
      */
     public function test_evidence_created_with_invalid_user_competency() {
         $this->resetAfterTest(true);
@@ -1388,6 +1385,8 @@ class core_competency_event_testcase extends advanced_testcase {
             'commentincontext', 'core', null, $recommend, null, 1);
 
         // We expect this to fail and throw a coding exception.
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('The user competency linked with this evidence is invalid.');
         \core\event\competency_evidence_created::create_from_evidence($evidence, $otheruc, $recommend)->trigger();
     }
 
@@ -1409,7 +1408,7 @@ class core_competency_event_testcase extends advanced_testcase {
             \core\event\competency_evidence_created::create($eventdata)->trigger();
             $this->fail('Coding exception should have been thrown: ' . $errormsg);
         } catch (coding_exception $e) {
-            $this->assertContains($errormsg, $e->getMessage());
+            $this->assertStringContainsString($errormsg, $e->getMessage());
         }
         $eventdata['relateduserid'] = 1;
 
@@ -1419,7 +1418,7 @@ class core_competency_event_testcase extends advanced_testcase {
             \core\event\competency_evidence_created::create($eventdata)->trigger();
             $this->fail('Coding exception should have been thrown: ' . $errormsg);
         } catch (coding_exception $e) {
-            $this->assertContains($errormsg, $e->getMessage());
+            $this->assertStringContainsString($errormsg, $e->getMessage());
         }
         $eventdata['other']['usercompetencyid'] = 1;
 
@@ -1429,7 +1428,7 @@ class core_competency_event_testcase extends advanced_testcase {
             \core\event\competency_evidence_created::create($eventdata)->trigger();
             $this->fail('Coding exception should have been thrown: ' . $errormsg);
         } catch (coding_exception $e) {
-            $this->assertContains($errormsg, $e->getMessage());
+            $this->assertStringContainsString($errormsg, $e->getMessage());
         }
         $eventdata['other']['competencyid'] = 1;
 
@@ -1439,7 +1438,7 @@ class core_competency_event_testcase extends advanced_testcase {
             \core\event\competency_evidence_created::create($eventdata)->trigger();
             $this->fail('Coding exception should have been thrown: ' . $errormsg);
         } catch (coding_exception $e) {
-            $this->assertContains($errormsg, $e->getMessage());
+            $this->assertStringContainsString($errormsg, $e->getMessage());
         }
         $eventdata['other']['action'] = 1;
 
@@ -1449,7 +1448,7 @@ class core_competency_event_testcase extends advanced_testcase {
             \core\event\competency_evidence_created::create($eventdata)->trigger();
             $this->fail('Coding exception should have been thrown: ' . $errormsg);
         } catch (coding_exception $e) {
-            $this->assertContains($errormsg, $e->getMessage());
+            $this->assertStringContainsString($errormsg, $e->getMessage());
         }
         $eventdata['other']['recommend'] = 1;
 

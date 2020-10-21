@@ -101,7 +101,7 @@ class mod_data_search_test extends advanced_testcase {
      * Set up function. In this instance we are setting up database
      * records to be used in the unit tests.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB, $CFG;
         parent::setUp();
 
@@ -164,7 +164,7 @@ class mod_data_search_test extends advanced_testcase {
                 'data_records' => __DIR__.'/fixtures/test_data_records.csv',
                 'data_content' => __DIR__.'/fixtures/test_data_content.csv',
         );
-        $this->loadDataSet($this->createCsvDataSet($files));
+        $this->dataset_from_files($files)->to_database();
         // Set dataid to the correct value now the data has been inserted by csv file.
         $DB->execute('UPDATE {data_fields} SET dataid = ?', array($data->id));
         $DB->execute('UPDATE {data_records} SET dataid = ?', array($data->id));

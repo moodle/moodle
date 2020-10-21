@@ -48,7 +48,7 @@ class customfield_date_plugin_testcase extends advanced_testcase {
     /**
      * Tests set up.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
 
         $this->cfcat = $this->get_generator()->create_category();

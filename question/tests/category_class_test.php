@@ -46,7 +46,7 @@ class core_question_category_class_testcase extends advanced_testcase {
      */
     protected $topcat;
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         self::setAdminUser();
         $this->resetAfterTest();

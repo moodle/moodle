@@ -43,7 +43,7 @@ class workshopform_numerrors_strategy_testcase extends advanced_testcase {
     /**
      * Setup testing environment
      */
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -54,7 +54,7 @@ class workshopform_numerrors_strategy_testcase extends advanced_testcase {
         $this->strategy = new testable_workshop_numerrors_strategy($this->workshop);
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->workshop = null;
         $this->strategy = null;
         parent::tearDown();

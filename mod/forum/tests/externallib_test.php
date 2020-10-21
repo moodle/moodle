@@ -35,7 +35,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
     /**
      * Tests set up
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG;
 
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
@@ -45,7 +45,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         require_once($CFG->dirroot . '/mod/forum/externallib.php');
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
@@ -1685,7 +1685,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($thispost['attachment'], 1, "There should be a non-inline attachment");
                 $this->assertCount(1, $thispost['attachments'], "There should be 1 attachment");
                 $this->assertEquals($thispost['attachments'][0]['filename'], $attachfilename, "There should be 1 attachment");
-                $this->assertContains('pluginfile.php', $thispost['message']);
+                $this->assertStringContainsString('pluginfile.php', $thispost['message']);
                 $postfound = true;
                 break;
             }
@@ -1902,8 +1902,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($thisdiscussion['attachment'], 1, "There should be a non-inline attachment");
                 $this->assertCount(1, $thisdiscussion['attachments'], "There should be 1 attachment");
                 $this->assertEquals($thisdiscussion['attachments'][0]['filename'], $attachfilename, "There should be 1 attachment");
-                $this->assertNotContains('draftfile.php', $thisdiscussion['message']);
-                $this->assertContains('pluginfile.php', $thisdiscussion['message']);
+                $this->assertStringNotContainsString('draftfile.php', $thisdiscussion['message']);
+                $this->assertStringContainsString('pluginfile.php', $thisdiscussion['message']);
                 $postfound = true;
                 break;
             }

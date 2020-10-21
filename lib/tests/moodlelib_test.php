@@ -2099,33 +2099,33 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $yes = get_string('yes');
         $yesexpected = 'Yes';
-        $this->assertInternalType('string', $yes);
+        $this->assertIsString($yes);
         $this->assertSame($yesexpected, $yes);
 
         $yes = get_string('yes', 'moodle');
-        $this->assertInternalType('string', $yes);
+        $this->assertIsString($yes);
         $this->assertSame($yesexpected, $yes);
 
         $yes = get_string('yes', 'core');
-        $this->assertInternalType('string', $yes);
+        $this->assertIsString($yes);
         $this->assertSame($yesexpected, $yes);
 
         $yes = get_string('yes', '');
-        $this->assertInternalType('string', $yes);
+        $this->assertIsString($yes);
         $this->assertSame($yesexpected, $yes);
 
         $yes = get_string('yes', null);
-        $this->assertInternalType('string', $yes);
+        $this->assertIsString($yes);
         $this->assertSame($yesexpected, $yes);
 
         $yes = get_string('yes', null, 1);
-        $this->assertInternalType('string', $yes);
+        $this->assertIsString($yes);
         $this->assertSame($yesexpected, $yes);
 
         $days = 1;
         $numdays = get_string('numdays', 'core', '1');
         $numdaysexpected = $days.' days';
-        $this->assertInternalType('string', $numdays);
+        $this->assertIsString($numdays);
         $this->assertSame($numdaysexpected, $numdays);
 
         $yes = get_string('yes', null, null, true);
@@ -2137,7 +2137,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $test = new lang_string('yes', null, null, true);
         $testexpected = get_string('numdays', 'core', get_string('yes'));
         $testresult = get_string('numdays', null, $test);
-        $this->assertInternalType('string', $testresult);
+        $this->assertIsString($testresult);
         $this->assertSame($testexpected, $testresult);
 
         // Test using a lang_string object as the $a argument for an object
@@ -2225,12 +2225,10 @@ class core_moodlelib_testcase extends advanced_testcase {
         $COURSE->lang = $originallang;
     }
 
-    /**
-     * @expectedException PHPUnit\Framework\Error\Warning
-     */
     public function test_get_string_limitation() {
         // This is one of the limitations to the lang_string class. It can't be
         // used as a key.
+        $this->expectException(\PHPUnit\Framework\Error\Warning::class);
         $array = array(get_string('yes', null, null, true) => 'yes');
     }
 
@@ -2644,8 +2642,8 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         // Test cache invalidation.
         $cache = cache::make('core', 'config');
-        $this->assertInternalType('array', $cache->get('core'));
-        $this->assertInternalType('array', $cache->get('mod_forum'));
+        $this->assertIsArray($cache->get('core'));
+        $this->assertIsArray($cache->get('mod_forum'));
         set_config('phpunit_test_get_config_1', 'test b');
         $this->assertFalse($cache->get('core'));
         set_config('phpunit_test_get_config_4', 'test c', 'mod_forum');
@@ -3241,8 +3239,8 @@ class core_moodlelib_testcase extends advanced_testcase {
         $emails = $sink->get_messages();
         $this->assertCount(1, $emails);
         $email = reset($emails);
-        $this->assertContains('X-Custom-Header: foo', $email->header);
-        $this->assertContains("X-Fixed-Header: bar", $email->header);
+        $this->assertStringContainsString('X-Custom-Header: foo', $email->header);
+        $this->assertStringContainsString("X-Fixed-Header: bar", $email->header);
         $sink->clear();
     }
 
@@ -3383,13 +3381,13 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame($messagetext, trim($result[0]->body));
         $this->assertSame($user1->email, $result[0]->to);
         $this->assertSame($user2->email, $result[0]->from);
-        $this->assertContains('Content-Type: text/plain', $result[0]->header);
+        $this->assertStringContainsString('Content-Type: text/plain', $result[0]->header);
 
         $this->assertSame($subject2, $result[1]->subject);
-        $this->assertContains($messagetext2, quoted_printable_decode($result[1]->body));
+        $this->assertStringContainsString($messagetext2, quoted_printable_decode($result[1]->body));
         $this->assertSame($user2->email, $result[1]->to);
         $this->assertSame($user1->email, $result[1]->from);
-        $this->assertNotContains('Content-Type: text/plain', $result[1]->header);
+        $this->assertStringNotContainsString('Content-Type: text/plain', $result[1]->header);
 
         email_to_user($user1, $user2, $subject, $messagetext);
         $this->assertDebuggingCalled('Unit tests must not send real emails! Use $this->redirectEmails()');
@@ -3428,8 +3426,8 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame(1, $sink->count());
         $result = $sink->get_messages();
         $this->assertCount(1, $result);
-        $this->assertContains('error.txt', $result[0]->body);
-        $this->assertContains('Error in attachment.  User attempted to attach a filename with a unsafe name.', $result[0]->body);
+        $this->assertStringContainsString('error.txt', $result[0]->body);
+        $this->assertStringContainsString('Error in attachment.  User attempted to attach a filename with a unsafe name.', $result[0]->body);
         $sink->close();
     }
 
@@ -3485,8 +3483,8 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         // Verify attachment in message body (attachment is in MIME format, but we can detect some Content fields).
         $messagebody = reset($messages)->body;
-        $this->assertContains('Content-Type: text/plain; name="' . $filename . '"', $messagebody);
-        $this->assertContains('Content-Disposition: attachment; filename=' . $filename, $messagebody);
+        $this->assertStringContainsString('Content-Type: text/plain; name="' . $filename . '"', $messagebody);
+        $this->assertStringContainsString('Content-Disposition: attachment; filename=' . $filename, $messagebody);
 
         // Cleanup.
         unlink($filepath);
@@ -3513,8 +3511,8 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         // Verify attachment not in message body (attachment is in MIME format, but we can detect some Content fields).
         $messagebody = reset($messages)->body;
-        $this->assertNotContains('Content-Type: text/plain; name="' . $filename . '"', $messagebody);
-        $this->assertNotContains('Content-Disposition: attachment; filename=' . $filename, $messagebody);
+        $this->assertStringNotContainsString('Content-Type: text/plain; name="' . $filename . '"', $messagebody);
+        $this->assertStringNotContainsString('Content-Disposition: attachment; filename=' . $filename, $messagebody);
     }
 
     /**
@@ -3653,7 +3651,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $message = array_shift($messages);
         $messagebody = quoted_printable_decode($message->body);
 
-        $this->assertContains($expected, $messagebody);
+        $this->assertStringContainsString($expected, $messagebody);
     }
 
     /**
@@ -3685,7 +3683,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $messagebody = quoted_printable_decode($message->body);
 
         $sink->close();
-        $this->assertContains($expected, $messagebody);
+        $this->assertStringContainsString($expected, $messagebody);
 
         $CFG->admin = $admin;
     }
@@ -3959,7 +3957,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertRegExp('/^[' . $pool . ']+$/', $result);
 
         $result = complex_random_string();
-        $this->assertEquals(28, strlen($result), '', 4); // Expected length is 24 - 32.
+        $this->assertEqualsWithDelta(28, strlen($result), 4); // Expected length is 24 - 32.
         $this->assertRegExp('/^[' . $pool . ']+$/', $result);
 
         $this->assertDebuggingNotCalled();
@@ -4652,7 +4650,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $result = $sink->get_messages();
         $sink->close();
 
-        $this->assertContains('passwords cannot be reset on this site', quoted_printable_decode($result[0]->body));
+        $this->assertStringContainsString('passwords cannot be reset on this site', quoted_printable_decode($result[0]->body));
     }
 
     /**

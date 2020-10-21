@@ -69,7 +69,7 @@ class core_form_duration_testcase extends basic_testcase {
     public function test_constructor_rejects_invalid_unit(): void {
         // Test trying to create with an invalid unit.
         $mform = $this->get_test_form();
-        $this->expectException('coding_exception');
+        $this->expectException(coding_exception::class);
         $mform->addElement('duration', 'testel', null, ['defaultunit' => 123, 'optional' => false]);
     }
 
@@ -81,9 +81,9 @@ class core_form_duration_testcase extends basic_testcase {
         $mform->addElement('duration', 'testel', null, ['units' => [MINSECS, 1], 'optional' => false]);
         $html = $mform->toHtml();
         $html = preg_replace('~ +>~', '>', $html); // Clean HTML to avoid spurious errors.
-        $this->assertContains('<option value="60" selected>minutes</option>', $html);
-        $this->assertContains('<option value="1">seconds</option>', $html);
-        $this->assertNotContains('value="3600"', $html);
+        $this->assertStringContainsString('<option value="60" selected>minutes</option>', $html);
+        $this->assertStringContainsString('<option value="1">seconds</option>', $html);
+        $this->assertStringNotContainsString('value="3600"', $html);
     }
 
     /**

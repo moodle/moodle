@@ -536,7 +536,7 @@ class core_role_privacy_testcase extends provider_testcase {
             $user1->id,
             $admin->id
         ];
-        $this->assertEquals($expected, $userlist2->get_userids(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $userlist2->get_userids());
 
         // The user list for coursecontext1 should user1, user2 and admin (role creator).
         $userlist3 = new \core_privacy\local\request\userlist($coursecontext1, $component);
@@ -547,7 +547,7 @@ class core_role_privacy_testcase extends provider_testcase {
             $user2->id,
             $admin->id
         ];
-        $this->assertEquals($expected, $userlist3->get_userids(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $userlist3->get_userids());
 
         // The user list for coursecatcontext should user2 and admin (role creator).
         $userlist4 = new \core_privacy\local\request\userlist($coursecatcontext, $component);
@@ -557,7 +557,7 @@ class core_role_privacy_testcase extends provider_testcase {
             $user2->id,
             $admin->id
         ];
-        $this->assertEquals($expected, $userlist4->get_userids(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $userlist4->get_userids());
 
         // The user list for systemcontext should user1 and admin (role creator).
         $userlist6 = new \core_privacy\local\request\userlist($systemcontext, $component);
@@ -567,7 +567,7 @@ class core_role_privacy_testcase extends provider_testcase {
             $user1->id,
             $admin->id
         ];
-        $this->assertEquals($expected, $userlist6->get_userids(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $userlist6->get_userids());
 
         // The user list for cmcontext should user1, user2 and admin (role creator).
         $userlist7 = new \core_privacy\local\request\userlist($cmcontext, $component);
@@ -578,7 +578,7 @@ class core_role_privacy_testcase extends provider_testcase {
             $user2->id,
             $admin->id
         ];
-        $this->assertEquals($expected, $userlist7->get_userids(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $userlist7->get_userids());
 
         // The user list for blockcontext should user1 and admin (role creator).
         $userlist8 = new \core_privacy\local\request\userlist($blockcontext, $component);
@@ -588,7 +588,7 @@ class core_role_privacy_testcase extends provider_testcase {
             $user1->id,
             $admin->id
         ];
-        $this->assertEquals($expected, $userlist8->get_userids(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $userlist8->get_userids());
     }
 
     /**

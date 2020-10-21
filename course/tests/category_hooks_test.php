@@ -37,7 +37,7 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 class core_course_category_hooks_testcase extends \advanced_testcase {
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
     }

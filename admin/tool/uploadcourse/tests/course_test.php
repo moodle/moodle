@@ -35,21 +35,16 @@ global $CFG;
  */
 class tool_uploadcourse_course_testcase extends advanced_testcase {
 
-    /**
-     * @expectedException coding_exception
-     */
     public function test_proceed_without_prepare() {
         $this->resetAfterTest(true);
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
         $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
         $data = array();
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->expectException(coding_exception::class);
         $co->proceed();
     }
 
-    /**
-     * @expectedException moodle_exception
-     */
     public function test_proceed_when_prepare_failed() {
         $this->resetAfterTest(true);
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
@@ -57,6 +52,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $data = array();
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertFalse($co->prepare());
+        $this->expectException(moodle_exception::class);
         $co->proceed();
     }
 
@@ -1232,9 +1228,9 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
 
         // Confirm presence of course custom fields.
         $data = \core_course\customfield\course_handler::create()->export_instance_data_object($course->id);
-        $this->assertEquals('Wednesday, 1 April 2020, 4:00 PM', $data->mydatefield, '', 0.0, 10, false, true);
+        $this->assertEqualsIgnoringCase('Wednesday, 1 April 2020, 4:00 PM', $data->mydatefield);
         $this->assertEquals($dataupload['customfield_mytextfield'], $data->mytextfield);
-        $this->assertContains($dataupload['customfield_mytextareafield'], $data->mytextareafield);
+        $this->assertStringContainsString($dataupload['customfield_mytextareafield'], $data->mytextareafield);
     }
 
     /**

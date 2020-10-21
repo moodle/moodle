@@ -50,14 +50,14 @@ class question_attempt_testcase extends advanced_testcase {
     /** @var question_attempt a question attempt that can be used in the tests. */
     private $qa;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->question = test_question_maker::make_question('description');
         $this->question->defaultmark = 3;
         $this->usageid = 13;
         $this->qa = new question_attempt($this->question, $this->usageid);
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->question = null;
         $this->useageid = null;
         $this->qa = null;

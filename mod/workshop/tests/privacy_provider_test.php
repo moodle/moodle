@@ -120,7 +120,7 @@ class mod_workshop_privacy_provider_testcase extends advanced_testcase {
      *
      *  etc.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -189,19 +189,19 @@ class mod_workshop_privacy_provider_testcase extends advanced_testcase {
         // Student1 has data in workshop11 (author + self reviewer), workshop12 (author) and workshop21 (reviewer).
         $contextlist = \mod_workshop\privacy\provider::get_contexts_for_userid($this->student1->id);
         $this->assertInstanceOf(\core_privacy\local\request\contextlist::class, $contextlist);
-        $this->assertEquals([$context11->id, $context12->id, $context21->id], $contextlist->get_contextids(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing([$context11->id, $context12->id, $context21->id], $contextlist->get_contextids());
 
         // Student2 has data in workshop11 (reviewer), workshop12 (reviewer) and workshop21 (author).
         $contextlist = \mod_workshop\privacy\provider::get_contexts_for_userid($this->student2->id);
-        $this->assertEquals([$context11->id, $context12->id, $context21->id], $contextlist->get_contextids(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing([$context11->id, $context12->id, $context21->id], $contextlist->get_contextids());
 
         // Student3 has data in workshop11 (reviewer).
         $contextlist = \mod_workshop\privacy\provider::get_contexts_for_userid($this->student3->id);
-        $this->assertEquals([$context11->id], $contextlist->get_contextids(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing([$context11->id], $contextlist->get_contextids());
 
         // Teacher4 has data in workshop12 (gradeoverby) and workshop21 (gradinggradeoverby).
         $contextlist = \mod_workshop\privacy\provider::get_contexts_for_userid($this->teacher4->id);
-        $this->assertEquals([$context21->id, $context12->id], $contextlist->get_contextids(), '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing([$context21->id, $context12->id], $contextlist->get_contextids());
     }
 
     /**
@@ -226,7 +226,7 @@ class mod_workshop_privacy_provider_testcase extends advanced_testcase {
             $this->student3->id, // Student3 has data in workshop11 (reviewer).
         ];
         $actual11 = $userlist11->get_userids();
-        $this->assertEquals($expected11, $actual11, '', 0, 10, true);
+        $this->assertEqualsCanonicalizing($expected11, $actual11);
 
         // Users in the workshop12.
         $userlist12 = new \core_privacy\local\request\userlist($context12, 'mod_workshop');
@@ -237,7 +237,7 @@ class mod_workshop_privacy_provider_testcase extends advanced_testcase {
             $this->teacher4->id, // Teacher4 has data in workshop12 (gradeoverby).
         ];
         $actual12 = $userlist12->get_userids();
-        $this->assertEquals($expected12, $actual12, '', 0, 10, true);
+        $this->assertEqualsCanonicalizing($expected12, $actual12);
 
         // Users in the workshop21.
         $userlist21 = new \core_privacy\local\request\userlist($context21, 'mod_workshop');
@@ -248,7 +248,7 @@ class mod_workshop_privacy_provider_testcase extends advanced_testcase {
             $this->teacher4->id, // Teacher4 has data in workshop21 (gradinggradeoverby).
         ];
         $actual21 = $userlist21->get_userids();
-        $this->assertEquals($expected21, $actual21, '', 0, 10, true);
+        $this->assertEqualsCanonicalizing($expected21, $actual21);
     }
 
     /**

@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
  */
 class qtype_calculated_formula_validation_testcase extends basic_testcase {
     protected function assert_nonempty_string($actual) {
-        $this->assertInternalType('string', $actual);
+        $this->assertIsString($actual);
         $this->assertNotEquals('', $actual);
     }
 

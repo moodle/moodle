@@ -65,7 +65,7 @@ class repository_contentbank_search_testcase extends advanced_testcase {
             return $searchcontentnode['shorttitle'];
         }, $searchcontentnodes);
 
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $actual);
     }
 
     /**
@@ -172,7 +172,7 @@ class repository_contentbank_search_testcase extends advanced_testcase {
             \repository_contentbank\helper::create_contentbank_content_node($categorycontent),
             \repository_contentbank\helper::create_contentbank_content_node($coursecontent),
         ];
-        $this->assertEquals($expected, $searchcontentnodes, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $searchcontentnodes);
     }
 
     /**
@@ -224,7 +224,7 @@ class repository_contentbank_search_testcase extends advanced_testcase {
             \repository_contentbank\helper::create_contentbank_content_node($systemcontent),
             \repository_contentbank\helper::create_contentbank_content_node($course1content),
         ];
-        $this->assertEquals($expected, $searchcontentnodes, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $searchcontentnodes);
 
         // Log in as a teacher.
         $this->setUser($teacher);
@@ -236,6 +236,6 @@ class repository_contentbank_search_testcase extends advanced_testcase {
         $expected = [
             \repository_contentbank\helper::create_contentbank_content_node($systemcontent),
         ];
-        $this->assertEquals($expected, $searchcontentnodes, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing($expected, $searchcontentnodes);
     }
 }

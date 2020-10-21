@@ -38,7 +38,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
     /**
      * Tests set up
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
     }
 
@@ -827,10 +827,9 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $defaultcourses = calendar_get_default_courses(null, '*', false, $users[0]->id);
         list($courseids, $groupids, $userid) = calendar_set_filters($defaultcourses);
 
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$courses[0]->id, $courses[1]->id, $courses[2]->id, SITEID],
-                array_values($courseids),
-                '', 0.0, 10, true);
+                array_values($courseids));
         $this->assertFalse($groupids);
         $this->assertFalse($userid);
     }
@@ -853,10 +852,9 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $defaultcourses = calendar_get_default_courses(null, '*', false, $users[0]->id);
         list($courseids, $groupids, $userid) = calendar_set_filters($defaultcourses, false, $users[0]);
 
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
                 [$courses[0]->id, $courses[1]->id, $courses[2]->id, SITEID],
-                array_values($courseids),
-                '', 0.0, 10, true);
+                array_values($courseids));
         $this->assertEquals(array($coursegroups[$courses[0]->id][0]->id), $groupids);
         $this->assertEquals($users[0]->id, $userid);
 
@@ -873,8 +871,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->setUser($users[0]);
         $defaultcourses = calendar_get_default_courses(null, '*', false, $users[0]->id);
         list($courseids, $groupids, $userid) = calendar_set_filters($defaultcourses, false);
-        $this->assertEquals([$courses[0]->id, $courses[1]->id, $courses[2]->id, SITEID], array_values($courseids), '', 0.0, 10,
-                true);
+        $this->assertEqualsCanonicalizing([$courses[0]->id, $courses[1]->id, $courses[2]->id, SITEID], array_values($courseids));
         $this->assertEquals(array($coursegroups[$courses[0]->id][0]->id), $groupids);
         $this->assertEquals($users[0]->id, $userid);
     }

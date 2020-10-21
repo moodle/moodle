@@ -41,7 +41,7 @@ class webservice_xmlrpc_locallib_testcase extends advanced_testcase {
     /**
      * Setup.
      */
-    public function setUp() {
+    public function setUp(): void {
         if (!function_exists('xmlrpc_decode')) {
             $this->markTestSkipped('XMLRPC is not installed.');
         }

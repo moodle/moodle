@@ -37,7 +37,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
      */
     protected $progress;
 
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->testfile = __DIR__.'/fixtures/test.txt';
@@ -464,7 +464,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
         } catch (Exception $e) {
             // New PHP versions print PHP Warning.
             $this->assertInstanceOf('PHPUnit\Framework\Error\Warning', $e);
-            $this->assertContains('ZipArchive::close', $e->getMessage());
+            $this->assertStringContainsString('ZipArchive::close', $e->getMessage());
         }
         // This is crazy, but it shows how some PHP versions do return true.
         try {

@@ -38,7 +38,7 @@ class core_calendar_std_proxy_testcase extends advanced_testcase {
      */
     public $objects;
 
-    public function setUp() {
+    public function setUp(): void {
         $this->objects = [
             1 => (object) [
                 'member1' => 'Hello',

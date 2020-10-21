@@ -39,11 +39,11 @@ class qtype_gapselect_test extends question_testcase {
     /** @var qtype_gapselect instance of the question type class to test. */
     protected $qtype;
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->qtype = question_bank::get_qtype('gapselect');
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->qtype = null;
     }
 
@@ -114,7 +114,7 @@ class qtype_gapselect_test extends question_testcase {
 
     public function test_get_random_guess_score() {
         $q = $this->get_test_question_data();
-        $this->assertEquals(0.5, $this->qtype->get_random_guess_score($q), '', 0.0000001);
+        $this->assertEqualsWithDelta(0.5, $this->qtype->get_random_guess_score($q), 0.0000001);
     }
 
     public function test_get_possible_responses() {

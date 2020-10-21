@@ -42,7 +42,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
     /**
      * Tests set up
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG;
         require_once($CFG->dirroot . '/course/externallib.php');
     }
@@ -240,7 +240,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
             $returnedids[] = $category['id'];
         }
         // Sort the arrays upon comparision.
-        $this->assertEquals(array_keys($generatedcats), $returnedids, '', 0.0, 10, true);
+        $this->assertEqualsCanonicalizing(array_keys($generatedcats), $returnedids);
 
         // Check different params.
         $categories = core_course_external::get_categories(array(
@@ -596,7 +596,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $course['categoryid'] = $this->getDataGenerator()->create_category()->id;
 
         $this->expectException(moodle_exception::class);
-        $this->expectExceptionMessageRegExp("/{$expectedemptyfield}/");
+        $this->expectExceptionMessageMatches("/{$expectedemptyfield}/");
         core_course_external::create_courses([$course]);
     }
 
@@ -622,7 +622,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         $warning = reset($result['warnings']);
         $this->assertEquals('errorinvalidparam', $warning['warningcode']);
-        $this->assertContains($expectedemptyfield, $warning['message']);
+        $this->assertStringContainsString($expectedemptyfield, $warning['message']);
     }
 
     /**
@@ -1111,7 +1111,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($formattedtext, $module['description']);
                 $this->assertEquals($forumcm->instance, $module['instance']);
                 $this->assertEquals(context_module::instance($forumcm->id)->id, $module['contextid']);
-                $this->assertContains('1 unread post', $module['afterlink']);
+                $this->assertStringContainsString('1 unread post', $module['afterlink']);
                 $this->assertFalse($module['noviewlink']);
                 $this->assertNotEmpty($module['description']);  // Module showdescription is on.
                 $testexecuted = $testexecuted + 2;
@@ -1126,7 +1126,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertNotEmpty($module['description']);  // Label always prints the description.
                 $testexecuted = $testexecuted + 1;
             } else if ($module['id'] == $datacm->id and $module['modname'] == 'data') {
-                $this->assertContains('customcompletionrules', $module['customdata']);
+                $this->assertStringContainsString('customcompletionrules', $module['customdata']);
                 $this->assertFalse($module['noviewlink']);
                 $this->assertArrayNotHasKey('description', $module);
                 $testexecuted = $testexecuted + 1;
@@ -1134,7 +1134,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         }
         foreach ($sections[2]['modules'] as $module) {
             if ($module['id'] == $urlcm->id and $module['modname'] == 'url') {
-                $this->assertContains('width=100,height=100', $module['onclick']);
+                $this->assertStringContainsString('width=100,height=100', $module['onclick']);
                 $testexecuted = $testexecuted + 1;
             }
         }
@@ -1155,8 +1155,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, $sections[2]['section']);
         $this->assertEquals(3, $sections[3]['section']);
         $this->assertEquals(4, $sections[4]['section']);
-        $this->assertContains('<iframe', $sections[2]['summary']);
-        $this->assertContains('</iframe>', $sections[2]['summary']);
+        $this->assertStringContainsString('<iframe', $sections[2]['summary']);
+        $this->assertStringContainsString('</iframe>', $sections[2]['summary']);
         $this->assertNotEmpty($sections[2]['modules'][0]['availabilityinfo']);
         try {
             $sections = core_course_external::get_course_contents($course->id,

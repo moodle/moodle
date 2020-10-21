@@ -46,7 +46,7 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /**
      * Set up method.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB;
         $this->resetAfterTest();
 

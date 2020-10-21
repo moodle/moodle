@@ -40,7 +40,7 @@ class core_media_player_native_testcase extends advanced_testcase {
     /**
      * Pre-test setup.
      */
-    public function setUp() {
+    public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
     }
@@ -150,14 +150,14 @@ class core_media_player_native_testcase extends advanced_testcase {
         $content = $player->embed($urls, $title, 0, 0, []);
 
         // Test sources present.
-        $this->assertContains('<source src="http://example.org/some_filename.mp4" />', $content);
-        $this->assertContains('<source src="http://example.org/some_filename_hires.mp4" />', $content);
+        $this->assertStringContainsString('<source src="http://example.org/some_filename.mp4" />', $content);
+        $this->assertStringContainsString('<source src="http://example.org/some_filename_hires.mp4" />', $content);
 
         // Change sources.
         $newsource = '<source src="http://example.org/new_filename.mp4" />';
         $content = media_test_native_plugin::replace_sources($content, $newsource);
-        $this->assertContains($newsource, $content);
-        $this->assertNotContains('<source src="http://example.org/some_filename.mp4" />', $content);
-        $this->assertNotContains('<source src="http://example.org/some_filename_hires.mp4" />', $content);
+        $this->assertStringContainsString($newsource, $content);
+        $this->assertStringNotContainsString('<source src="http://example.org/some_filename.mp4" />', $content);
+        $this->assertStringNotContainsString('<source src="http://example.org/some_filename_hires.mp4" />', $content);
     }
 }

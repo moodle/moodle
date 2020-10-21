@@ -38,7 +38,7 @@ class message_airnotifier_testcase extends provider_testcase {
     /**
      * Basic setup for these tests.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest(true);
     }
 
