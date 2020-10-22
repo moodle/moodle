@@ -4119,11 +4119,6 @@ class core_message_external extends external_api {
     public static function message_processor_config_form($userid, $name, $formvalues) {
         global $USER, $CFG;
 
-        // Check if messaging is enabled.
-        if (empty($CFG->messaging)) {
-            throw new moodle_exception('disabled', 'message');
-        }
-
         $params = self::validate_parameters(
             self::message_processor_config_form_parameters(),
             array(
