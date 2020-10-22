@@ -4888,6 +4888,36 @@ class admin_setting_langlist extends admin_setting_configtext {
     }
 
     /**
+     * Validate that each language identifier exists on the site
+     *
+     * @param string $data
+     * @return bool|string True if validation successful, otherwise error string
+     */
+    public function validate($data) {
+        $parentcheck = parent::validate($data);
+        if ($parentcheck !== true) {
+            return $parentcheck;
+        }
+
+        if ($data === '') {
+            return true;
+        }
+
+        // Normalize language identifiers.
+        $langcodes = array_map('trim', explode(',', $data));
+        foreach ($langcodes as $langcode) {
+            // If the langcode contains optional alias, split it out.
+            [$langcode, ] = preg_split('/\s*\|\s*/', $langcode, 2);
+
+            if (!get_string_manager()->translation_exists($langcode)) {
+                return get_string('invalidlanguagecode', 'error', $langcode);
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Save the new setting
      *
      * @param string $data The new setting
