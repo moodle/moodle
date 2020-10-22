@@ -443,7 +443,7 @@ class player {
         }
 
         $template = new \stdClass();
-        $template->embedurl = self::get_embed_url($url)->out();
+        $template->embedurl = self::get_embed_url($url, $this->component)->out(false);
 
         return $OUTPUT->render_from_template('core_h5p/h5pembed', $template);
     }
@@ -451,11 +451,18 @@ class player {
     /**
      * Get the encoded URL for embeding this H5P content.
      * @param  string $url The URL of the .h5p file.
+     * @param string $component optional Moodle component to send xAPI tracking
      *
      * @return \moodle_url The embed URL.
      */
-    public static function get_embed_url(string $url): \moodle_url {
-        return new \moodle_url('/h5p/embed.php', ['url' => $url]);
+    public static function get_embed_url(string $url, string $component = ''): \moodle_url {
+        $params = ['url' => $url];
+        if (!empty($component)) {
+            // If component is not empty, it will be passed too, in order to allow tracking too.
+            $params['component'] = $component;
+        }
+
+        return new \moodle_url('/h5p/embed.php', $params);
     }
 
     /**
