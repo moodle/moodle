@@ -1,6 +1,50 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+
+* The format_base is now deprecated. Use core_course\course_format instead.
+* The new course output components deprecate many renderer methods from course
+renderer and course format renderer:
+  - output\course_format: to render the general course structure
+  - output\section_format: to render a section
+  - output\cm_format: to render an activity card inside a section
+  - output\course_format\*: to render parts of the course structure
+  - output\section_format\*: to render parts of the course section
+* The previous format renderer page_title method has been moved to course_format::page_title
+* New format renderer methods to interact with the new output components:
+  - render: override the default templatable mustache location for the new course components.
+  - course_section_updated_cm_item: used when the course editor needs to update a cm item HTML.
+  - render_course_format: contrib formats should override this method to change the default template.
+* The following methods are adapted to use outputs but with a deprecation warning and should not be used anymore:
+  - print_single_section_page (replaced by output\course_format)
+  - print_multiple_section_page (replaced by output\course_format)
+  - course_activity_clipboard (integrated in replaced by output\course_format)
+  - format_summary_text (replaced by output\section_format\summay)
+  - change_number_sections (replaced by output\course_format\addsection)
+  - course_section_cm_list_item (replaced by output\section_format\cmitem)
+  - course_section_cm (replaced by output\cm_format)
+  - course_section_cm_list (replaced by output\section_format\cmlist)
+  - section_edit_control_menu (replaced by output\section_format\controlmenu)
+  - section_right_content (integrated in output\section_format)
+  - section_left_content (integrated in output\section_format)
+  - section_header (replaced by output\section_format\header)
+  - section_footer (integrated in output\section_format)
+  - section_edit_control_items (replaced by output\section_format\controlmenu)
+  - section_summary (replaced by output\section_format\summary)
+  - section_activity_summary (replaced by output\section_format\cmsummary)
+  - section_availability_message (integrated in output\section_format\availability)
+  - section_availability (replaced by output\section_format\availability)
+  - get_nav_links (replaced by output\course_format\sectionnavigation)
+  - stealth_section_header (replaced by output\section_format\header)
+  - stealth_section_footer (integrated in by output\section_format)
+  - section_nav_selection (replaced by output\course_format\sectionselector)
+* The following abstract methods are deleted:
+  - start_section_list (integrated in output\course_format)
+  - end_section_list (integrated in output\course_format)
+  - page_title (moved to output\course_format)
+
+
 === 3.10 ===
 
 * The function make_categories_options() has now been deprecated. Please use \core_course_category::make_categories_list() instead.

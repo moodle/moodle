@@ -989,8 +989,8 @@ function make_editing_buttons() {
  * @deprecated since 2.5
  */
 function print_section() {
-    throw new coding_exception('Function print_section() is removed. Please use course renderer function '.
-            'course_section_cm_list() instead.');
+    throw new coding_exception('Function print_section() is removed. Please use core_course\output\section_format '.
+            ' to render a course section instead.');
 }
 
 /**

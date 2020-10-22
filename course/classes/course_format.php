@@ -967,7 +967,6 @@ abstract class course_format {
     public function editsection_form($action, $customdata = array()) {
         global $CFG;
         require_once($CFG->dirroot. '/course/editsection_form.php');
-        $context = context_course::instance($this->courseid);
         if (!array_key_exists('course', $customdata)) {
             $customdata['course'] = $this->get_course();
         }
@@ -1089,6 +1088,18 @@ abstract class course_format {
             $sectionnum = $section;
         }
         return ($sectionnum && ($course = $this->get_course()) && $course->marker == $sectionnum);
+    }
+
+    /**
+     * return true if the course editor must be displayed.
+     *
+     * @return bool true if edit controls must be displayed
+     */
+    public function show_editor(): bool {
+        global $PAGE;
+        $course = $this->get_course();
+        $coursecontext = context_course::instance($course->id);
+        return $PAGE->user_is_editing() && has_capability('moodle/course:update', $coursecontext);
     }
 
     /**
@@ -1387,16 +1398,13 @@ abstract class course_format {
         }
 
         // Load the cmlist output.
-        $cmitemclass = $this->get_output_classname('section_format\\cmitem');
         $renderer = $this->get_renderer($PAGE);
 
         $coursesections = $modinfo->sections;
         if (array_key_exists($section->section, $coursesections)) {
-            $completioninfo = new completion_info($course);
             foreach ($coursesections[$section->section] as $cmid) {
                 $cm = $modinfo->get_cm($cmid);
-                $cmitem = new $cmitemclass($this, $section, $cm);
-                $modules[] = $renderer->render($cmitem);
+                $modules[] = $renderer->course_section_updated_cm_item($this, $section, $cm);
             }
         }
 

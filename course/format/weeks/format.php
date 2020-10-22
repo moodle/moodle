@@ -37,16 +37,19 @@ if ($week = optional_param('week', 0, PARAM_INT)) {
 }
 // End backwards-compatible aliasing..
 
+$format = course_get_format($course);
+
 // Make sure section 0 is created.
-$course = course_get_format($course)->get_course();
-course_create_sections_if_missing($course, 0);
+course_create_sections_if_missing($format->get_course(), 0);
 
 $renderer = $PAGE->get_renderer('format_weeks');
 
 if (!empty($displaysection)) {
-    $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
-} else {
-    $renderer->print_multiple_section_page($course, null, null, null, null);
+    $format->set_section_number($displaysection);
 }
+
+$outputclass = $format->get_output_classname('course_format');
+$output = new $outputclass($format);
+echo $renderer->render($output);
 
 $PAGE->requires->js('/course/format/weeks/format.js');

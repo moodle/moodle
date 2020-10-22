@@ -2005,11 +2005,11 @@ class global_navigation extends navigation_node {
      * Loads all of the courses section into the navigation.
      *
      * This function calls method from current course format, see
-     * {@link core_course\course_format::extend_course_navigation()}
+     * core_course\course_format::extend_course_navigation()
      * If course module ($cm) is specified but course format failed to create the node,
      * the activity node is created anyway.
      *
-     * By default course formats call the method {@link global_navigation::load_generic_course_sections()}
+     * By default course formats call the method global_navigation::load_generic_course_sections()
      *
      * @param stdClass $course Database record for the course
      * @param navigation_node $coursenode The course node within the navigation
