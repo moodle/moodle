@@ -32,7 +32,13 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
+$string['cliincorrectvalueerror'] = 'Алдаа! "{$a->option}" - ийн "{$a->value}" утга буруу байна.';
 $string['cliincorrectvalueretry'] = 'Буруу утга, дахин оролдоно уу';
 $string['clitypevalue'] = 'төрлийн утга';
+$string['clitypevaluedefault'] = 'Утга бич, эсвэл Enter дарж ({$a}) тогтмол утга сонго.';
+$string['cliunknowoption'] = 'Танихгүй сонголтууд:
+{$a}
+Тусламж хэсгийг сонгоно уу.';
+$string['cliyesnoprompt'] = 'y (гэвэл Тийм) n (гэвэл Үгүй)';
 $string['environmentrequireinstall'] = 'суусан/идэвхжсэн байх ёстой';
 $string['environmentrequireversion'] = 'та {$a->current} хувилбар ашиглаж байна {$a->needed} хувилбарыг ашиглагх ёстой';
