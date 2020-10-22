@@ -2669,5 +2669,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020061502.13);
     }
 
+    if ($oldversion < 2020061502.14) {
+        // Remove all the files with component='core_h5p' and filearea='editor' because they won't be used anymore.
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+        $fs->delete_area_files($syscontext->id, 'core_h5p', 'editor');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020061502.14);
+    }
+
     return true;
 }
