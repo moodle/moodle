@@ -34,7 +34,7 @@ require_once($CFG->dirroot. '/course/lib.php');
  * @copyright  2012 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_weeks extends format_base {
+class format_weeks extends core_course\course_format {
 
     /**
      * Returns true if this course format uses sections
