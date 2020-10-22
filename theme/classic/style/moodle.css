@@ -16002,7 +16002,8 @@ body.path-question-type .mform fieldset.hidden {
 
 .mform .form-inline br + label {
   justify-content: flex-start;
-  width: 100%; }
+  width: 100%;
+  margin-right: 0; }
 
 .unresponsive.mform .form-inline,
 .unresponsive.mform .form-inline label {
