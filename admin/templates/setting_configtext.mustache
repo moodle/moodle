@@ -26,6 +26,7 @@
     * size - element size
     * forceltr - always display as ltr
     * attributes - list of additional attributes containing name, value
+    * readonly - bool
 
     Example context (json):
     {
@@ -34,6 +35,7 @@
         "value": "A tall, dark stranger will have more fun than you.",
         "size": "21",
         "forceltr": false,
+        "readonly": false,
         "attributes": [ { "name": "readonly", "value": "readonly" } ]
     }
 }}
@@ -41,5 +43,5 @@
     Setting configtext.
 }}
 <div class="form-text defaultsnext">
-    <input type="text" name="{{name}}" value="{{value}}" size="{{size}}" id="{{id}}" class="form-control {{#forceltr}}text-ltr{{/forceltr}}">
+    <input type="text" name="{{name}}" value="{{value}}" size="{{size}}" id="{{id}}" class="form-control {{#forceltr}}text-ltr{{/forceltr}}" {{#readonly}}disabled{{/readonly}}>
 </div>
