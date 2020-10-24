@@ -46,3 +46,4 @@ composer.phar
 atlassian-ide-plugin.xml
 /node_modules/
 /.vscode/
+.gitmodules
