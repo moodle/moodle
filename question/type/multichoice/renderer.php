@@ -70,51 +70,19 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
         $response = $question->get_response($qa);
 
         $inputname = $qa->get_qt_field_name('answer');
-        $inputattributes = array(
-            'type' => $this->get_input_type(),
-            'name' => $inputname,
-        );
-
-        if ($options->readonly) {
-            $inputattributes['disabled'] = 'disabled';
-        }
-
+        $inputattributes = array();
         $radiobuttons = array();
         $feedbackimg = array();
         $feedback = array();
         $classes = array();
+        $letters = range('A', 'Z');
+        $let = -1;
+        $roclass = $options->readonly ? ' readonly-button' : '';
         foreach ($question->get_order($qa) as $value => $ansid) {
+            $let = $let + 1;
             $ans = $question->answers[$ansid];
-            $inputattributes['name'] = $this->get_input_name($qa, $value);
-            $inputattributes['value'] = $this->get_input_value($value);
-            $inputattributes['id'] = $this->get_input_id($qa, $value);
+            $corclass = '';
             $isselected = $question->is_choice_selected($response, $value);
-            if ($isselected) {
-                $inputattributes['checked'] = 'checked';
-            } else {
-                unset($inputattributes['checked']);
-            }
-            $hidden = '';
-            if (!$options->readonly && $this->get_input_type() == 'checkbox') {
-                $hidden = html_writer::empty_tag('input', array(
-                    'type' => 'hidden',
-                    'name' => $inputattributes['name'],
-                    'value' => 0,
-                ));
-            }
-            $radiobuttons[] = $hidden . html_writer::empty_tag('input', $inputattributes) .
-                    html_writer::tag('label',
-                        html_writer::span($this->number_in_style($value, $question->answernumbering), 'answernumber') .
-                        html_writer::tag('div',
-                        $question->format_text(
-                                    $ans->answer, $ans->answerformat,
-                                    $qa, 'question', 'answer', $ansid),
-                        array('class' => 'flex-fill ml-1')),
-                        array('for' => $inputattributes['id'], 'class' => 'd-flex w-100'));
-
-            // Param $options->suppresschoicefeedback is a hack specific to the
-            // oumultiresponse question type. It would be good to refactor to
-            // avoid refering to it here.
             if ($options->feedback && empty($options->suppresschoicefeedback) &&
                     $isselected && trim($ans->feedback)) {
                 $feedback[] = html_writer::tag('div',
@@ -125,14 +93,14 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             } else {
                 $feedback[] = '';
             }
-            $class = 'r' . ($value % 2);
-            if ($options->correctness && $isselected) {
-                $feedbackimg[] = $this->feedback_image($this->is_right($ans));
-                $class .= ' ' . $this->feedback_class($this->is_right($ans));
-            } else {
-                $feedbackimg[] = '';
+            if ($options->correctness && ($this->is_right($ans) > 0 || $isselected)) {
+                $corclass = $this->is_right($ans) > 0 ? " answer-button-correct" : " answer-button-incorrect";
             }
-            $classes[] = $class;
+            $radiobuttons[] = html_writer::tag('button',
+                        html_writer::tag('div',
+                        html_writer::tag('div', $letters[$let], array('class' => 'col-3 col-sm-3 col-md-2 col-lg-2 col-xl-2 letter-answer')).
+                        html_writer::tag('div', $ans->answer, array('class' => 'col-9 col-sm-9 col-md-10 col-lg-10 possible-answer')), array('class' => 'row')),
+                        array('class' => 'answer-button shortcut'.$letters[$let].$corclass.$roclass, 'type' => 'submit', 'name' => $this->get_input_name($qa, $value), 'value' => $this->get_input_value($value), 'id' => $this->get_input_id($qa, $value)));
         }
 
         $result = '';
@@ -151,9 +119,15 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
         }
         $result .= html_writer::end_tag('div'); // Answer.
 
-        $result .= $this->after_choices($qa, $options);
+        $result .= html_writer::empty_tag('input', array(
+                    'type' => 'hidden',
+                    'name' => $qa->get_qt_field_name('-submit'),
+                    'value' => 1,
+                    ));
 
         $result .= html_writer::end_tag('div'); // Ablock.
+
+        $result .= html_writer::tag('script', 'document.onkeypress=function(e){var n=window.event||e;if(console.log(n),1===n.key.length&&n.key.match(/[a-z]/i)){var t=document.getElementsByClassName("shortcut"+n.key.toUpperCase());t.length>0&&-1===t[0].className.indexOf("readonly-button")&&t[0].click()}},document.onkeydown=function(e){if("37"==(e=e||window.event).keyCode)(n=document.getElementsByName("previous")).length>0&&n[0].click();else if("39"==e.keyCode){var n;(n=document.getElementsByName("next")).length>0&&n[0].click()}};', array());
 
         if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',
@@ -271,64 +245,9 @@ class qtype_multichoice_single_renderer extends qtype_multichoice_renderer_base 
     }
 
     public function after_choices(question_attempt $qa, question_display_options $options) {
-        // Only load the clear choice feature if it's not read only.
-        if ($options->readonly) {
-            return '';
-        }
-
-        $question = $qa->get_question();
-        $response = $question->get_response($qa);
-        $hascheckedchoice = false;
-        foreach ($question->get_order($qa) as $value => $ansid) {
-            if ($question->is_choice_selected($response, $value)) {
-                $hascheckedchoice = true;
-                break;
-            }
-        }
-
-        $clearchoiceid = $this->get_input_id($qa, -1);
-        $clearchoicefieldname = $qa->get_qt_field_name('clearchoice');
-        $clearchoiceradioattrs = [
-            'type' => $this->get_input_type(),
-            'name' => $qa->get_qt_field_name('answer'),
-            'id' => $clearchoiceid,
-            'value' => -1,
-            'class' => 'sr-only',
-            'aria-hidden' => 'true'
-        ];
-        $clearchoicewrapperattrs = [
-            'id' => $clearchoicefieldname,
-            'class' => 'qtype_multichoice_clearchoice',
-        ];
-
-        // When no choice selected during rendering, then hide the clear choice option.
-        // We are using .sr-only and aria-hidden together so while the element is hidden
-        // from both the monitor and the screen-reader, it is still tabbable.
-        $linktabindex = 0;
-        if (!$hascheckedchoice && $response == -1) {
-            $clearchoicewrapperattrs['class'] .= ' sr-only';
-            $clearchoicewrapperattrs['aria-hidden'] = 'true';
-            $clearchoiceradioattrs['checked'] = 'checked';
-            $linktabindex = -1;
-        }
-        // Adds an hidden radio that will be checked to give the impression the choice has been cleared.
-        $clearchoiceradio = html_writer::empty_tag('input', $clearchoiceradioattrs);
-        $clearchoiceradio .= html_writer::tag('label', get_string('clearchoice', 'qtype_multichoice'),
-            ['for' => $clearchoiceid, 'role' => 'button', 'tabindex' => $linktabindex,
-            'class' => 'btn btn-link ml-4 pl-1 mt-2']);
-
-        // Now wrap the radio and label inside a div.
-        $result = html_writer::tag('div', $clearchoiceradio, $clearchoicewrapperattrs);
-
-        // Load required clearchoice AMD module.
-        $this->page->requires->js_call_amd('qtype_multichoice/clearchoice', 'init',
-            [$qa->get_outer_question_div_unique_id(), $clearchoicefieldname]);
-
-        return $result;
+        return '';
     }
-
 }
-
 /**
  * Subclass for generating the bits of output specific to multiple choice
  * multi=select questions.
