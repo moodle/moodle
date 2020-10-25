@@ -44,19 +44,17 @@ class qtype_multichoice_edit_form extends question_edit_form {
             get_string('answersingleno', 'qtype_multichoice'),
             get_string('answersingleyes', 'qtype_multichoice'),
         );
-        $mform->addElement('select', 'single',
-                get_string('answerhowmany', 'qtype_multichoice'), $menu);
-        $mform->setDefault('single', get_config('qtype_multichoice', 'answerhowmany'));
+        $mform->addElement('hidden', 'single',
+                get_config('qtype_multichoice', 'answerhowmany'));
 
         $mform->addElement('advcheckbox', 'shuffleanswers',
                 get_string('shuffleanswers', 'qtype_multichoice'), null, null, array(0, 1));
         $mform->addHelpButton('shuffleanswers', 'shuffleanswers', 'qtype_multichoice');
         $mform->setDefault('shuffleanswers', get_config('qtype_multichoice', 'shuffleanswers'));
 
-        $mform->addElement('select', 'answernumbering',
+        $mform->addElement('hidden', 'answernumbering',
                 get_string('answernumbering', 'qtype_multichoice'),
-                qtype_multichoice::get_numbering_styles());
-        $mform->setDefault('answernumbering', get_config('qtype_multichoice', 'answernumbering'));
+                get_config('qtype_multichoice', 'answernumbering'));
 
         $mform->addElement('selectyesno', 'showstandardinstruction',
             get_string('showstandardinstruction', 'qtype_multichoice'), null, null, [0, 1]);
