@@ -38,6 +38,8 @@ if ($hassiteconfig) {
         new lang_string('pathtodot_help', 'admin'), ''));
     $temp->add(new admin_setting_configexecutable('pathtogs', new lang_string('pathtogs', 'admin'),
         new lang_string('pathtogs_help', 'admin'), '/usr/bin/gs'));
+    $temp->add(new admin_setting_configexecutable('pathtopdftoppm', new lang_string('pathtopdftoppm', 'admin'),
+        new lang_string('pathtopdftoppm_help', 'admin'), ''));
     $temp->add(new admin_setting_configexecutable('pathtopython', new lang_string('pathtopython', 'admin'),
         new lang_string('pathtopythondesc', 'admin'), ''));
     $ADMIN->add('server', $temp);
