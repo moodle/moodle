@@ -582,7 +582,7 @@ $string['fatalsessionautostart'] = '<p>Serious configuration error detected, ple
 $string['feedbacksettings'] = 'Feedback settings';
 $string['filescleanupperiod'] = 'Clean up trash pool files';
 $string['filescleanupperiod_help'] = 'How often trash pool files are deleted. These are files that are associated with a context that no longer exists, for example when a course is deleted. Please note: This setting can result in missing files in a course which is backed up, deleted and then restored if the setting \'Include files\' (backup_auto_files) in \'Automated backup settings\' is disabled.';
-$string['fileconversioncleanuptask'] = 'Cleanup of temporary records for file conversions.';
+$string['fileconversioncleanuptask'] = 'Cleanup of temporary records for file conversions';
 $string['filecreated'] = 'New file created';
 $string['filesizeunits'] = 'file size units';
 $string['filestoredin'] = 'Save file into folder :';
@@ -1416,7 +1416,7 @@ $string['user'] = 'User';
 $string['userbulk'] = 'Bulk user actions';
 $string['userbulkdownload'] = 'Export users as';
 $string['userfeedbackafterupgrade'] = 'After every major upgrade';
-$string['userfeedbackencouragement'] = '<p>Moodle 3.9 includes a new feature that gives users the option to provide feedback about the Moodle software to Moodle HQ via an external survey site hosted by Moodle HQ. No user-identifying information is forwarded to the survey site.</p>
+$string['userfeedbackencouragement'] = '<p>In Moodle 3.9 onwards, a new feature is included which gives users the option to provide feedback about Moodle software to Moodle HQ via an external survey site hosted by Moodle HQ. No user-identifying information is forwarded to the survey site.</p>
 <p>Moodle HQ strives to be open and transparent about its data collection practices. Thus, we want to make sure that you are aware and in control of this functionality.</p>
 <p>Feedback from users will greatly assist Moodle HQ in improving the Moodle software. To enable this feature, please go to <a href="{$a}">Feedback settings</a>.</p>';
 $string['userfeedbacknextreminder'] = 'Next feedback reminder';
