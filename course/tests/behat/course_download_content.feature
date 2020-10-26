@@ -17,11 +17,11 @@ Feature: Course content can be downloaded
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
     And I log in as "admin"
-    And I navigate to "Courses > Courses > Download course content" in site administration
+    And I navigate to "Courses > Download course content" in site administration
     And I set the following fields to these values:
     | Download course content feature available | 1 |
     And I press "Save changes"
-    And I navigate to "Courses > Courses > Course default settings" in site administration
+    And I navigate to "Courses > Course default settings" in site administration
     And I set the field "Enable download course content" to "Yes"
     And I press "Save changes"
     And I log out
