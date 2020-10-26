@@ -1930,6 +1930,7 @@ $string['since'] = 'Since';
 $string['sincelast'] = 'since last login';
 $string['site'] = 'Site';
 $string['sitedefault'] = 'Site default';
+$string['sitedefaultspecified'] = 'Site default ({$a})';
 $string['siteerrors'] = 'Site errors';
 $string['sitefiles'] = 'Site files';
 $string['sitefilesused'] = 'Site files used in this course';
