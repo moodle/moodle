@@ -54,6 +54,7 @@ defined('MOODLE_INTERNAL') || die;
 use moodle\mod\lti as lti;
 use Firebase\JWT\JWT;
 use Firebase\JWT\JWK;
+use mod_lti\local\ltiopenid\jwks_helper;
 
 global $CFG;
 require_once($CFG->dirroot.'/mod/lti/OAuth.php');
@@ -2725,7 +2726,11 @@ function lti_get_type_type_config($id) {
 function lti_prepare_type_for_save($type, $config) {
     if (isset($config->lti_toolurl)) {
         $type->baseurl = $config->lti_toolurl;
-        $type->tooldomain = lti_get_domain_from_url($config->lti_toolurl);
+        if (isset($config->lti_tooldomain)) {
+            $type->tooldomain = $config->lti_tooldomain;
+        } else {
+            $type->tooldomain = lti_get_domain_from_url($config->lti_toolurl);
+        }
     }
     if (isset($config->lti_description)) {
         $type->description = $config->lti_description;
@@ -3281,9 +3286,8 @@ function lti_sign_jwt($parms, $endpoint, $oauthconsumerkey, $typeid = 0, $nonce 
         }
     }
 
-    $privatekey = get_config('mod_lti', 'privatekey');
-    $kid = get_config('mod_lti', 'kid');
-    $jwt = JWT::encode($payload, $privatekey, 'RS256', $kid);
+    $privatekey = jwks_helper::get_private_key();
+    $jwt = JWT::encode($payload, $privatekey['key'], 'RS256', $privatekey['kid']);
 
     $newparms = array();
     $newparms['id_token'] = $jwt;
@@ -3828,6 +3832,7 @@ function lti_get_service_by_resource_id($services, $resourceid) {
 
 /**
  * Initializes an array with the scopes for services supported by the LTI module
+ * and authorized for this particular tool instance.
  *
  * @param object $type  LTI tool type
  * @param array  $typeconfig  LTI tool type configuration
@@ -3848,7 +3853,6 @@ function lti_get_permitted_service_scopes($type, $typeconfig) {
     }
 
     return $scopes;
-
 }
 
 /**
@@ -4468,3 +4472,4 @@ function lti_new_access_token($typeid, $scopes) {
     return $newtoken;
 
 }
+
