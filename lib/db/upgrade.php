@@ -2876,5 +2876,44 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021052500.32);
     }
 
+    if ($oldversion < 2021052500.33) {
+        $table = new xmldb_table('badge_backpack');
+        $uniquekey = new xmldb_key('backpackcredentials', XMLDB_KEY_UNIQUE, ['userid', 'externalbackpackid']);
+
+        // All external backpack providers/hosts are now exclusively stored in badge_external_backpack.
+        // All credentials are stored in badge_backpack and are unique per user, backpack.
+        if (!$dbman->find_key_name($table, $uniquekey)) {
+            $dbman->add_key($table, $uniquekey);
+        }
+
+        // If there is a current backpack set then copy it across to the new structure.
+        if ($CFG->badges_defaultissuercontact) {
+            // Get the currently used site backpacks.
+            $records = $DB->get_records_select('badge_external_backpack', "password IS NOT NULL AND password != ''");
+            $backpack = [
+                'userid' => '0',
+                'email' => $CFG->badges_defaultissuercontact,
+                'backpackuid' => -1
+            ];
+
+            // Create records corresponding to the site backpacks.
+            foreach ($records as $record) {
+                $backpack['password'] = $record->password;
+                $backpack['externalbackpackid'] = $record->id;
+                $DB->insert_record('badge_backpack', (object) $backpack);
+            }
+        }
+
+        // Drop the password field as this is moved to badge_backpack.
+        $table = new xmldb_table('badge_external_backpack');
+        $field = new xmldb_field('password', XMLDB_TYPE_CHAR, '50');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.33);
+    }
+
     return true;
 }

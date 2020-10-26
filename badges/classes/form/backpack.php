@@ -39,7 +39,7 @@ use stdClass;
  * Form to edit backpack initial details.
  *
  */
-class backpack extends moodleform {
+class backpack extends external_backpack {
 
     /**
      * Defines the form
@@ -47,30 +47,66 @@ class backpack extends moodleform {
     public function definition() {
         global $USER, $PAGE, $OUTPUT, $CFG;
         $mform = $this->_form;
+        $this->_customdata['userbackpack'] = 1;
 
         $mform->addElement('html', html_writer::tag('span', '', array('class' => 'notconnected', 'id' => 'connection-error')));
         $mform->addElement('header', 'backpackheader', get_string('backpackconnection', 'badges'));
         $mform->addHelpButton('backpackheader', 'backpackconnection', 'badges');
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
-        $sitebackpack = badges_get_site_backpack($CFG->badges_site_backpack);
-
+        $freeze = [];
         if (isset($this->_customdata['email'])) {
             // Email will be passed in when we're in the process of verifying the user's email address,
             // so set the connection status, lock the email field, and provide options to resend the verification
             // email or cancel the verification process entirely and start over.
-            $mform->addElement('hidden', 'backpackid', $sitebackpack->id);
-            $mform->setType('backpackid', PARAM_INT);
+            $freeze = ['backpackemail'];
+            $mform->addElement('hidden', 'password', $this->_customdata['backpackpassword']);
+            $mform->setType('password', PARAM_RAW);
+            $mform->addElement('hidden', 'externalbackpackid', $this->_customdata['backpackid']);
+            $mform->setType('externalbackpackid', PARAM_INT);
             $status = html_writer::tag('span', get_string('backpackemailverificationpending', 'badges'),
                 array('class' => 'notconnected', 'id' => 'connection-status'));
-            $mform->addElement('static', 'status', get_string('status'), $status);
-            $mform->addElement('hidden', 'email', $this->_customdata['email']);
-            $mform->setType('email', PARAM_EMAIL);
-            $mform->hardFreeze(['email']);
-            $emailverify = html_writer::tag('span', s($this->_customdata['email']), []);
-            $mform->addElement('static', 'emailverify', get_string('email'), $emailverify);
-            $mform->addElement('hidden', 'backpackpassword', $this->_customdata['backpackpassword']);
-            $mform->setType('backpackpassword', PARAM_RAW);
+        } else {
+            $sitebackpacks = badges_get_site_backpacks();
+            $choices = [];
+            $restrictedoptions = [];
+            foreach ($sitebackpacks as $backpack) {
+                $choices[$backpack->id] = $backpack->backpackweburl;
+                if ($backpack->apiversion == OPEN_BADGES_V2P1) {
+                    $restrictedoptions[] = $backpack->id;
+                }
+            }
+            $mform->addElement('select', 'externalbackpackid', get_string('backpackprovider', 'badges'), $choices);
+            $mform->setType('externalbackpackid', PARAM_INT);
+            $mform->setDefault('externalbackpackid', $CFG->badges_site_backpack);
+            $mform->hideIf('password', 'externalbackpackid', 'in', $restrictedoptions);
+            $mform->hideIf('backpackemail', 'externalbackpackid', 'in', $restrictedoptions);
+
+            $status = html_writer::tag('span', get_string('notconnected', 'badges'),
+                array('class' => 'notconnected', 'id' => 'connection-status'));
+        }
+        $mform->addElement('static', 'status', get_string('status'), $status);
+
+        $this->add_auth_fields($this->_customdata['email'] ?? $USER->email, !isset($this->_customdata['email']));
+
+        $mform->setDisableShortforms(false);
+
+        // Freeze any elemnts after definition.
+        if ($freeze) {
+            $mform->freeze($freeze);
+        }
+        $this->add_action_buttons();
+    }
+
+    /**
+     * Override add_action_buttons
+     *
+     * @param bool $cancel
+     * @param null|text $submitlabel
+     */
+    public function add_action_buttons($cancel = true, $submitlabel = null) {
+        $mform = $this->_form;
+        if (isset($this->_customdata['email'])) {
             $buttonarray = [];
             $buttonarray[] = &$mform->createElement('submit', 'submitbutton',
                                                     get_string('backpackconnectionresendemail', 'badges'));
@@ -80,28 +116,7 @@ class backpack extends moodleform {
             $mform->closeHeaderBefore('buttonar');
         } else {
             // Email isn't present, so provide an input element to get it and a button to start the verification process.
-
-            $mform->addElement('static', 'info', get_string('backpackweburl', 'badges'), $sitebackpack->backpackweburl);
-            $mform->addElement('hidden', 'backpackid', $sitebackpack->id);
-            $mform->setType('backpackid', PARAM_INT);
-
-            $status = html_writer::tag('span', get_string('notconnected', 'badges'),
-                array('class' => 'notconnected', 'id' => 'connection-status'));
-            $mform->addElement('static', 'status', get_string('status'), $status);
-            if (badges_open_badges_backpack_api() != OPEN_BADGES_V2P1) {
-                $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
-                $mform->addHelpButton('email', 'backpackemail', 'badges');
-                $mform->addRule('email', get_string('required'), 'required', null, 'client');
-                $mform->setType('email', PARAM_EMAIL);
-                if (badges_open_badges_backpack_api() == OPEN_BADGES_V2) {
-                    $mform->addElement('passwordunmask', 'backpackpassword', get_string('password'));
-                    $mform->setType('backpackpassword', PARAM_RAW);
-                } else {
-                    $mform->addElement('hidden', 'backpackpassword', '');
-                    $mform->setType('backpackpassword', PARAM_RAW);
-                }
-            }
-            $this->add_action_buttons(false, get_string('backpackconnectionconnect', 'badges'));
+            parent::add_action_buttons(false, get_string('backpackconnectionconnect', 'badges'));
         }
     }
 
@@ -118,19 +133,18 @@ class backpack extends moodleform {
         // We don't need to verify the email address if we're clearing a pending email verification attempt.
         if (!isset($data['revertbutton'])) {
             $check = new stdClass();
-            $backpack = badges_get_site_backpack($data['backpackid']);
-            $check->email = $data['email'];
-            $check->password = $data['backpackpassword'];
-            $check->externalbackpackid = $backpack->id;
+            $check->email = $data['backpackemail'];
+            $check->password = $data['password'];
+            $sitebackpack = badges_get_site_backpack($data['externalbackpackid']);
+            $bp = new \core_badges\backpack_api($sitebackpack, $check);
 
-            $bp = new \core_badges\backpack_api($backpack, $check);
             $result = $bp->authenticate();
             if ($result === false || !empty($result->error)) {
-                $errors['email'] = get_string('backpackconnectionunexpectedresult', 'badges');
+                $errors['backpackemail'] = get_string('backpackconnectionunexpectedresult', 'badges');
                 $msg = $bp->get_authentication_error();
                 if (!empty($msg)) {
-                    $errors['email'] .= '<br/><br/>';
-                    $errors['email'] .= get_string('backpackconnectionunexpectedmessage', 'badges', $msg);
+                    $errors['backpackemail'] .= '<br/><br/>';
+                    $errors['backpackemail'] .= get_string('backpackconnectionunexpectedmessage', 'badges', $msg);
                 }
             }
         }
