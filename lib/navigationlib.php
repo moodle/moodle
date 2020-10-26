@@ -4448,7 +4448,7 @@ class settings_navigation extends navigation_node {
      * @return navigation_node|false
      */
     protected function load_course_settings($forceopen = false) {
-        global $CFG;
+        global $CFG, $USER;
         require_once($CFG->dirroot . '/course/lib.php');
 
         $course = $this->page->course;
@@ -4603,6 +4603,16 @@ class settings_navigation extends navigation_node {
             foreach ($plugins as $pluginfunction) {
                 $pluginfunction($coursenode, $course, $coursecontext);
             }
+        }
+
+        // Prepare data for course content download functionality if it is enabled.
+        // Will only be included here if the action menu is already in use, otherwise a button will be added to the UI elsewhere.
+        if (\core\content::can_export_context($coursecontext, $USER) && !empty($coursenode->get_children_key_list())) {
+            $linkattr = \core_course\output\content_export_link::get_attributes($coursecontext);
+            $actionlink = new action_link($linkattr->url, $linkattr->displaystring, null, $linkattr->elementattributes);
+
+            $coursenode->add($linkattr->displaystring, $actionlink, self::TYPE_SETTING, null, 'download',
+                    new pix_icon('t/download', ''));
         }
 
         // Return we are done
