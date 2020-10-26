@@ -2543,21 +2543,6 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021052500.01) {
-
-        // Define field timecreated to be added to task_adhoc.
-        $table = new xmldb_table('task_adhoc');
-        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'blocking');
-
-        // Conditionally launch add field timecreated.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2021052500.01);
-    }
-
-    if ($oldversion < 2021052500.02) {
         // Delete all user evidence files from users that have been deleted.
         $sql = "SELECT DISTINCT f.*
                   FROM {files} f
@@ -2572,6 +2557,21 @@ function xmldb_main_upgrade($oldversion) {
             $fs->get_file_instance($stalefile)->delete();
         }
 
+        upgrade_main_savepoint(true, 2021052500.01);
+    }
+
+    if ($oldversion < 2021052500.02) {
+
+        // Define field timecreated to be added to task_adhoc.
+        $table = new xmldb_table('task_adhoc');
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'blocking');
+
+        // Conditionally launch add field timecreated.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
         upgrade_main_savepoint(true, 2021052500.02);
     }
 
