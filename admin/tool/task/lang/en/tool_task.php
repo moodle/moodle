@@ -22,9 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['adhoc'] = 'Ad-hoc';
-$string['adhoctaskid'] = 'Ad-hoc task id: {$a}';
-$string['adhoctasks'] = 'Ad-hoc tasks';
+$string['adhoc'] = 'Ad hoc';
+$string['adhoctaskid'] = 'Ad hoc task ID: {$a}';
+$string['adhoctasks'] = 'Ad hoc tasks';
 $string['asap'] = 'ASAP';
 $string['adhocempty'] = 'Ad hoc task queue is empty';
 $string['adhocqueuesize'] = 'Ad hoc task queue has {$a} tasks';

@@ -279,7 +279,7 @@ $string['considereddigitalminor'] = 'You are too young to create an account on t
 $string['content'] = 'Content';
 $string['contentexport_aboutthiscourse'] = 'Course summary';
 $string['contentexport_coursesummary'] = 'This file is part of the content downloaded from <a href="{$a->courselink}">{$a->coursename}</a>.';
-$string['contentexport_footersummary'] = 'This file is part of the content downloaded from <a href="{$a->courselink}">{$a->coursename}</a> by {$a->userfullname} on {$a->date}';
+$string['contentexport_footersummary'] = 'This file is part of the content downloaded from <a href="{$a->courselink}">{$a->coursename}</a> by {$a->userfullname} on {$a->date}.';
 $string['contentexport_modulesummary'] = 'This page is part of the content downloaded from <a href="{$a->modulelink}">{$a->modulename}</a> on {$a->date}. Note that some content and any files larger than {$a->maxfilesize} are not downloaded.';
 $string['contentexport_viewfilename'] = 'View the file {$a}';
 $string['contentbank'] = 'Content bank';
