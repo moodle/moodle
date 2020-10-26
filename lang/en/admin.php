@@ -949,6 +949,8 @@ $string['pathtophp'] = 'Path to PHP CLI';
 $string['pathtodu'] = 'Path to du';
 $string['pathtogs'] = 'Path to ghostscript';
 $string['pathtogs_help'] = 'On most Linux installs, this can be left as \'/usr/bin/gs\'. On Windows it will be something like \'c:\\gs\\bin\\gswin32c.exe\' (make sure there are no spaces in the path - if necessary copy the files \'gswin32c.exe\' and \'gsdll32.dll\' to a new folder without a space in the path)';
+$string['pathtopdftoppm'] = 'Path to pdftoppm';
+$string['pathtopdftoppm_help'] = '\'pdftoppm\' is a tool that converts PDF pages to PNG at least as fast as \'gs\' does. However, you will probably have a better performance when converting large documents. If present, \'pdftoppm\' will be used instead of \'gs\' for this task. On most Linux installs, this can be left as \'/usr/bin/pdftoppm\'. If not present, install the poppler-utils or poppler package, depending on the Linux distribution. On Windows it will be provided by Cygwin installs. See <a href="https://poppler.freedesktop.org/" target="_blank">Poppler project</a> for more details.';
 $string['pathtopgdump'] = 'Path to pg_dump';
 $string['pathtopgdumpdesc'] = 'This is only necessary to enter if you have more than one pg_dump on your system (for example if you have more than one version of postgresql installed)';
 $string['pathtopgdumpinvalid'] = 'Invalid path to pg_dump - either wrong path or not executable';
