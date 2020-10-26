@@ -26,21 +26,22 @@
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
+$backpackid = required_param('backpackid', PARAM_INT);
 $scope = optional_param('scope', '', PARAM_RAW);
 $action = optional_param('action', null, PARAM_RAW);
 
-if (badges_open_badges_backpack_api() != OPEN_BADGES_V2P1) {
+if (badges_open_badges_backpack_api($backpackid) != OPEN_BADGES_V2P1) {
     throw new coding_exception('backpacks only support Open Badges V2.1');
 }
 
 require_login();
 
-$externalbackpack = badges_get_site_backpack($CFG->badges_site_backpack);
+$externalbackpack = badges_get_site_backpack($backpackid);
 $persistedissuer = \core\oauth2\issuer::get_record(['id' => $externalbackpack->oauth2_issuerid]);
 if ($persistedissuer) {
     $issuer = new \core\oauth2\issuer($externalbackpack->oauth2_issuerid);
     $returnurl = new moodle_url('/badges/backpack-connect.php',
-        ['action' => 'authorization', 'sesskey' => sesskey()]);
+        ['action' => 'authorization', 'sesskey' => sesskey(), 'backpackid' => $backpackid]);
 
     $client = new core_badges\oauth2\client($issuer, $returnurl, $scope, $externalbackpack);
     if ($client) {
