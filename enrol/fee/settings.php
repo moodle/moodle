@@ -62,7 +62,7 @@ if ($ADMIN->fulltree) {
 
     if (!empty($currencies)) {
         $settings->add(new admin_setting_configtext('enrol_fee/cost', get_string('cost', 'enrol_fee'), '', 0, PARAM_FLOAT, 4));
-        $settings->add(new admin_setting_configselect('enrol_fee/currency', get_string('currency', 'enrol_fee'), '', '',
+        $settings->add(new admin_setting_configselect('enrol_fee/currency', get_string('currency', 'enrol_fee'), '', 'USD',
             $currencies));
     }
 
