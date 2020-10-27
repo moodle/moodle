@@ -19,30 +19,33 @@
         {{/text}}
     </div>
     <div class="col-md-9 checkbox">
-        <div class="form-check">
-        <span>
-            <label class="form-check-label">
-                {{^element.hardfrozen}}{{#element.frozen}}{{#element.checked}}
-                    <input type="hidden" name="{{element.name}}" value="{{element.value}}">
-                {{/element.checked}}{{/element.frozen}}{{/element.hardfrozen}}
-                <input type="radio" class="form-check-input" {{^element.frozen}}name="{{element.name}}"{{/element.frozen}}
-                    id="{{element.id}}" value="{{element.value}}"
-                    {{#element.checked}}checked{{/element.checked}}
-                    {{#element.frozen}}disabled{{/element.frozen}}
-                    {{#error}}
-                        autofocus aria-describedby="{{element.iderror}}"
-                    {{/error}} {{{element.attributes}}} >
-                {{#text}}
-                    {{{.}}}
-                {{/text}}
-                {{^text}}
-                    {{{label}}}
-                {{/text}}
-            </label>
-            {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">{{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}</abbr>{{/required}}
-            {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">!</abbr>{{/advanced}}
-            {{{helpbutton}}}
-            </span>
+        <div class="form-check d-flex">
+                <label class="form-check-label">
+                    {{^element.hardfrozen}}{{#element.frozen}}{{#element.checked}}
+                        <input type="hidden" name="{{element.name}}" value="{{element.value}}">
+                    {{/element.checked}}{{/element.frozen}}{{/element.hardfrozen}}
+                    <input type="radio" class="form-check-input" {{^element.frozen}}name="{{element.name}}"{{/element.frozen}}
+                        id="{{element.id}}" value="{{element.value}}"
+                        {{#element.checked}}checked{{/element.checked}}
+                        {{#element.frozen}}disabled{{/element.frozen}}
+                        {{#error}}
+                            autofocus aria-describedby="{{element.iderror}}"
+                        {{/error}} {{{element.attributes}}} >
+                    {{#text}}
+                        {{{.}}}
+                    {{/text}}
+                    {{^text}}
+                        {{{label}}}
+                    {{/text}}
+                </label>
+                <span class="ml-2 d-flex align-items-center align-self-start">
+                    {{#required}}
+                        <div class="text-danger" title="{{#str}}required{{/str}}">
+                        {{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}
+                        </div>
+                    {{/required}}
+                    {{{helpbutton}}}
+                </span>
         </div>
         <div class="form-control-feedback invalid-feedback" id="{{element.iderror}}" {{#error}} style="display: block;"{{/error}}>
             {{{error}}}
