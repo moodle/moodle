@@ -2596,6 +2596,22 @@ $capabilities = array(
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
-        )
+        ),
+    ],
+
+    // Allow to manage payment accounts.
+    'moodle/payment:manageaccounts' => [
+        'captype' => 'write',
+        'riskbitmask' => RISK_PERSONAL | RISK_CONFIG | RISK_DATALOSS,
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [],
+    ],
+
+    // Allow to view payments.
+    'moodle/payment:viewpayments' => [
+        'captype' => 'read',
+        'riskbitmask' => RISK_PERSONAL,
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [],
     ],
 );

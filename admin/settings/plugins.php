@@ -280,6 +280,25 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'mediaplayers', $hassiteconfig);
     }
 
+    // Payment gateway plugins.
+    $ADMIN->add('modules', new admin_category('paymentgateways', new lang_string('type_paygw_plural', 'plugin')));
+    $temp = new admin_settingpage('managepaymentgateways', new lang_string('type_paygwmanage', 'plugin'));
+    $temp->add(new \core_admin\local\settings\manage_payment_gateway_plugins());
+    $temp->add(new admin_setting_description(
+        'managepaymentgatewayspostfix',
+        '',
+        new lang_string('gotopaymentaccounts', 'payment',
+            html_writer::link(new moodle_url('/payment/accounts.php'), get_string('paymentaccounts', 'payment')))
+    ));
+    $ADMIN->add('paymentgateways', $temp);
+
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('paygw');
+    core_collator::asort_objects_by_property($plugins, 'displayname');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\paygw $plugin */
+        $plugin->load_settings($ADMIN, 'paymentgateways', $hassiteconfig);
+    }
+
     // Data format settings.
     $ADMIN->add('modules', new admin_category('dataformatsettings', new lang_string('dataformats')));
     $temp = new admin_settingpage('managedataformats', new lang_string('managedataformats'));

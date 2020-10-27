@@ -2720,6 +2720,13 @@ $functions = array(
         'ajax'          => 'true',
         'capabilities'  => '',
     ],
+    'core_payment_get_available_gateways' => [
+        'classname'   => 'core_payment\external\get_available_gateways',
+        'methodname'  => 'execute',
+        'description' => 'Get the list of payment gateways that support the given component/area',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
 );
 
 $services = array(
