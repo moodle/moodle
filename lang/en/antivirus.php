@@ -39,26 +39,23 @@ $string['emailfilename'] = 'Filename: ';
 $string['emailfilesize'] = 'File size: ';
 $string['emailgeoinfo'] = 'Geolocation: ';
 $string['emailinfectedfiledetected'] = 'Infected file detected';
-$string['emailipaddress'] = 'IP Address: ';
+$string['emailipaddress'] = 'IP address:';
 $string['emailreferer'] = 'Referer: ';
 $string['emailreport'] = 'Report: ';
 $string['emailscanner'] = 'Scanner: ';
 $string['emailscannererrordetected'] = 'A scanner error occured';
 $string['emailsubject'] = '{$a} :: Antivirus notification';
 $string['enablequarantine'] = 'Enable quarantine';
-$string['enablequarantine_help'] = 'When quarantine is enabled, any files which are detected as viruses will be kept in a quarantine folder for later inspection ([dataroot]/{$a}).
-The upload into Moodle will still fail.
-If you have any file system level virus scanning in place, the quarantine folder should be excluded from the antivirus check to avoid detecting the quarantined files.';
+$string['enablequarantine_help'] = 'If enabled, any files which are detected as viruses will be placed in a quarantine folder ([dataroot]/{$a}) for later inspection. The upload into Moodle will fail. If you have any file system level virus scanning in place, the quarantine folder should be excluded from the antivirus check to avoid detecting the quarantined files.';
 $string['fileinfecteddesc'] = 'An infected file was detected.';
 $string['fileinfectedname'] = 'File infected';
-$string['notifyemail'] = 'Antivirus alert email';
-$string['notifyemail_help'] = 'If set, then only the specified email will be notified when a virus is detected.
-If blank, then all site admins will be notified by email when a virus is detected.';
+$string['notifyemail'] = 'Antivirus alert notification email';
+$string['notifyemail_help'] = 'The email address for notifications of when a virus is detected. If left blank, then all site administrators will be sent notifications.';
 $string['privacy:metadata'] = 'The Antivirus system does not store any personal data.';
-$string['quarantinedisabled'] = 'Quarantine disabled, file not stored.';
+$string['quarantinedisabled'] = 'Quarantine is disabled. The file is not stored.';
 $string['quarantinedfiles'] = 'Antivirus quarantined files';
 $string['quarantinetime'] = 'Maximum quarantine time';
-$string['quarantinetime_desc'] = 'Quarantined files older than specified period will be removed.';
+$string['quarantinetime_desc'] = 'Quarantined files older than the specified period will be removed.';
 $string['taskcleanup'] = 'Clean up quarantined files.';
 $string['unknown'] = 'Unknown';
 $string['virusfound'] = '{$a->item} has been scanned by a virus checker and found to be infected!';
