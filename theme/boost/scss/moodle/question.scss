@@ -288,7 +288,11 @@ body.path-question-type {
 .que .formulation,
 .que .outcome,
 .que .comment {
-    @extend .alert;
+    position: relative;
+    padding: $alert-padding-y $alert-padding-x;
+    margin-bottom: $alert-margin-bottom;
+    border: $alert-border-width solid transparent;
+    @include border-radius($alert-border-radius);
 }
 .que .outcome,
 .que .comment {
