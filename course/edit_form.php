@@ -135,7 +135,9 @@ class course_edit_form extends moodleform {
             $mform->addHelpButton('downloadcontent', 'downloadcoursecontent', 'course');
             $mform->setDefault('downloadcontent', $downloadselectdefault);
 
-            if (!has_capability('moodle/course:configuredownloadcontent', $coursecontext)) {
+            if ((!empty($course->id) && !has_capability('moodle/course:configuredownloadcontent', $coursecontext)) ||
+                    (empty($course->id) &&
+                    !guess_if_creator_will_have_course_capability('moodle/course:configuredownloadcontent', $categorycontext))) {
                 $mform->hardFreeze('downloadcontent');
                 $mform->setConstant('downloadcontent', $downloadselectdefault);
             }
