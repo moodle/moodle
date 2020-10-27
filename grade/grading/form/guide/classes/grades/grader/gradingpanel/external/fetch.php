@@ -133,7 +133,12 @@ class fetch extends external_api {
         }
 
         // Fetch the actual data.
-        $gradeduser = core_user::get_user($gradeduserid);
+        $gradeduser = core_user::get_user($gradeduserid, '*', MUST_EXIST);
+
+        // One can access its own grades. Others just if they're graders.
+        if ($gradeduserid != $USER->id) {
+            $gradeitem->require_user_can_grade($gradeduser, $USER);
+        }
 
         return self::get_fetch_data($gradeitem, $gradeduser);
     }
