@@ -27,7 +27,7 @@ Feature: Updating a file in the content bank after using in a course
     And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
     And I select "Content bank" repository in file picker
     And I click on "package.h5p" "file" in repository content area
-    And I click on "Create an alias/shortcut to the file" "radio"
+    And I click on "Link to the file" "radio"
     And I click on "Select this file" "button"
     And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
     And I wait until the page is ready
