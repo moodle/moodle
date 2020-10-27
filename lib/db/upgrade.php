@@ -2917,7 +2917,7 @@ function xmldb_main_upgrade($oldversion) {
         }
     }
 
-    if ($oldversion < 2021052500.33) {
+    if ($oldversion < 2021052500.36) {
         // Define table payment_accounts to be created.
         $table = new xmldb_table('payment_accounts');
 
