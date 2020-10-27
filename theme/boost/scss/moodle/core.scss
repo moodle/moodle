@@ -2721,3 +2721,7 @@ $picker-emojis-per-row: 7 !default;
         }
     }
 }
+.core_payment_gateways_modal .custom-control-label::before,
+.core_payment_gateways_modal .custom-control-label::after {
+    top: 45%;
+}

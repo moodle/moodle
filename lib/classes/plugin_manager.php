@@ -1853,7 +1853,7 @@ class core_plugin_manager {
             'enrol' => array(
                 'category', 'cohort', 'database', 'flatfile',
                 'guest', 'imsenterprise', 'ldap', 'lti', 'manual', 'meta', 'mnet',
-                'paypal', 'self'
+                'paypal', 'self', 'fee',
             ),
 
             'filter' => array(
@@ -1922,6 +1922,10 @@ class core_plugin_manager {
                 'forum', 'glossary', 'h5pactivity', 'imscp', 'label', 'lesson', 'lti', 'page',
                 'quiz', 'resource', 'scorm', 'survey', 'url', 'wiki', 'workshop'
             ),
+
+            'paygw' => [
+                'paypal',
+            ],
 
             'plagiarism' => array(
             ),

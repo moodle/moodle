@@ -11870,6 +11870,10 @@ input[disabled] {
     border-style: solid;
     border-width: 0.125rem; }
 
+.core_payment_gateways_modal .custom-control-label::before,
+.core_payment_gateways_modal .custom-control-label::after {
+  top: 45%; }
+
 .icon {
   font-size: 16px;
   width: 16px;
