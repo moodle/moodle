@@ -331,6 +331,8 @@ $string['overrideroles'] = 'Override roles';
 $string['overriderolesin'] = 'Override roles in {$a}';
 $string['overrides'] = 'Overrides';
 $string['overridesbycontext'] = 'Overrides (by context)';
+$string['payment:manageaccounts'] = 'Manage accounts';
+$string['payment:viewpayments'] = 'View payments';
 $string['permission'] = 'Permission';
 $string['permission_help'] = 'Permissions are capability settings. There are 4 options:
 
