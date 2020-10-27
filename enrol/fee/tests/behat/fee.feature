@@ -19,7 +19,7 @@ Feature: Signing up for a course with a fee enrolment method
       | Account1       | paypal   |
     And I log in as "admin"
     And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
-    And I click on "Enable" "link" in the "Fee" "table_row"
+    And I click on "Enable" "link" in the "Enrolment on payment" "table_row"
     And I log out
 
   @javascript
@@ -27,7 +27,7 @@ Feature: Signing up for a course with a fee enrolment method
     When I log in as "manager1"
     And I am on "Course 1" course homepage
     And I navigate to "Users > Enrolment methods" in current page administration
-    And I select "Fee" from the "Add method" singleselect
+    And I select "Enrolment on payment" from the "Add method" singleselect
     And I set the following fields to these values:
       | Payment account | Account1 |
       | Enrolment fee   | 123.45   |
