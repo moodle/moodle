@@ -53,6 +53,7 @@ class content_export_link {
             'data-download-button-text' => get_string('download'),
             'data-download-link' => $downloadlink->out(false),
             'data-download-title' => get_string('downloadcoursecontent', 'course'),
+            'data-overrides-tree-activation-key-handler' => 1,
         ];
 
         return $downloadattr;
