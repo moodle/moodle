@@ -174,8 +174,6 @@ class fetch_test extends advanced_testcase {
      */
     public function test_execute_fetch_graded(): void {
         $this->resetAfterTest();
-        $generator = \testing_util::get_data_generator();
-        $rubricgenerator = $generator->get_plugin_generator('gradingform_rubric');
 
         [
             'forum' => $forum,
@@ -185,23 +183,73 @@ class fetch_test extends advanced_testcase {
             'teacher' => $teacher,
         ] = $this->get_test_data();
 
-        $this->setUser($teacher);
+        $this->execute_and_assert_fetch($forum, $controller, $definition, $teacher, $teacher, $student);
+    }
+
+    /**
+     * Class mates should not get other's grades.
+     */
+    public function test_execute_fetch_does_not_return_data_to_other_students(): void {
+        $this->resetAfterTest();
+
+        [
+            'forum' => $forum,
+            'controller' => $controller,
+            'definition' => $definition,
+            'student' => $student,
+            'teacher' => $teacher,
+            'course' => $course,
+        ] = $this->get_test_data();
+
+        $evilstudent = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $this->expectException(\required_capability_exception::class);
+        $this->execute_and_assert_fetch($forum, $controller, $definition, $evilstudent, $teacher, $student);
+    }
+
+    /**
+     * Grades can be returned to graded user.
+     */
+    public function test_execute_fetch_return_data_to_graded_user(): void {
+        $this->resetAfterTest();
+
+        [
+            'forum' => $forum,
+            'controller' => $controller,
+            'definition' => $definition,
+            'student' => $student,
+            'teacher' => $teacher,
+        ] = $this->get_test_data();
+
+        $this->execute_and_assert_fetch($forum, $controller, $definition, $student, $teacher, $student);
+    }
+
+    /**
+     * Executes and performs all the assertions of the fetch method with the given parameters.
+     */
+    private function execute_and_assert_fetch ($forum, $controller, $definition, $fetcheruser, $grader, $gradeduser) {
+        $generator = \testing_util::get_data_generator();
+        $rubricgenerator = $generator->get_plugin_generator('gradingform_rubric');
+
+        $this->setUser($grader);
 
         $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
-        $grade = $gradeitem->get_grade_for_user($student, $teacher);
-        $instance = $gradeitem->get_advanced_grading_instance($teacher, $grade);
+        $grade = $gradeitem->get_grade_for_user($gradeduser, $grader);
+        $instance = $gradeitem->get_advanced_grading_instance($grader, $grade);
 
-        $submissiondata = $rubricgenerator->get_test_form_data($controller, (int) $student->id,
+        $submissiondata = $rubricgenerator->get_test_form_data($controller, (int) $gradeduser->id,
             0, 'Too many mistakes. Please try again.',
             2, 'Great number of pictures. Well done.'
         );
 
-        $gradeitem->store_grade_from_formdata($student, $teacher, (object) [
+        $gradeitem->store_grade_from_formdata($gradeduser, $grader, (object) [
             'instanceid' => $instance->get_id(),
             'advancedgrading' => $submissiondata,
         ]);
 
-        $result = fetch::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id);
+        $this->setUser($fetcheruser);
+
+        $result = fetch::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $gradeduser->id);
         $result = external_api::clean_returnvalue(fetch::execute_returns(), $result);
 
         $this->assertIsArray($result);
@@ -311,6 +359,7 @@ class fetch_test extends advanced_testcase {
             'definition' => $definition,
             'student' => $student,
             'teacher' => $teacher,
+            'course' => $course,
         ];
     }
 }
