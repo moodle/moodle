@@ -65,7 +65,7 @@ function xmldb_message_popup_upgrade($oldversion) {
             } while ($popupnotifications);
         }
 
-        // Reportbuilder savepoint reached.
+        // Popup message processor savepoint reached.
         upgrade_plugin_savepoint(true, 2020020600, 'message', 'popup');
     }
 
