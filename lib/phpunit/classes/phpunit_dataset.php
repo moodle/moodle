@@ -98,7 +98,7 @@ class phpunit_dataset {
      *
      * @param string $content contents (CSV or XML) to load.
      * @param string $type format of the content to be loaded (csv or xml).
-     * @param string $table|null name of the table which the file belongs to (only for CSV files).
+     * @param string|null $table name of the table which the file belongs to (only for CSV files).
      */
     public function from_string(string $content, string $type, ?string $table = null): void {
         switch ($type) {
