@@ -9862,7 +9862,7 @@ function rename_to_unused_name(string $filepath, string $prefix = '_temp_') {
  * @return bool success, true also if dir does not exist
  */
 function remove_dir($dir, $contentonly=false) {
-    if (!file_exists($dir)) {
+    if (!is_dir($dir)) {
         // Nothing to do.
         return true;
     }

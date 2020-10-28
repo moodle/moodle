@@ -1498,8 +1498,9 @@ function make_unique_writable_directory($basedir, $exceptiononerror = true) {
     }
 
     do {
-        // Generate a new (hopefully unique) directory name.
-        $uniquedir = $basedir . DIRECTORY_SEPARATOR . \core\uuid::generate();
+        // Let's use uniqid() because it's "unique enough" (microtime based). The loop does handle repetitions.
+        // Windows and old PHP don't like very long paths, so try to keep this shorter. See MDL-69975.
+        $uniquedir = $basedir . DIRECTORY_SEPARATOR . uniqid();
     } while (
             // Ensure that basedir is still writable - if we do not check, we could get stuck in a loop here.
             is_writable($basedir) &&
@@ -1635,7 +1636,12 @@ function get_request_storage_directory($exceptiononerror = true, bool $forcecrea
     $createnewdirectory = $forcecreate || !$writabledirectoryexists;
 
     if ($createnewdirectory) {
-        $basedir = "{$CFG->localrequestdir}/{$CFG->siteidentifier}";
+
+        // Let's add the first chars of siteidentifier only. This is to help separate
+        // paths on systems which host multiple moodles. We don't use the full id
+        // as Windows and old PHP don't like very long paths. See MDL-69975.
+        $basedir = $CFG->localrequestdir . '/' . substr($CFG->siteidentifier, 0, 4);
+
         make_writable_directory($basedir);
         protect_directory($basedir);
 
