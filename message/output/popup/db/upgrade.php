@@ -51,17 +51,19 @@ function xmldb_message_popup_upgrade($oldversion) {
                       ON mpn.notificationid = n.id
                    WHERE n.id IS NULL";
         $total = $DB->count_records_sql("SELECT COUNT(mpn.id) " . $fromsql);
-        $i = 0;
-        $pbar = new progress_bar('deletepopupnotification', 500, true);
-        do {
-            if ($popupnotifications = $DB->get_records_sql("SELECT mpn.id " . $fromsql, null, 0, 1000)) {
-                list($insql, $inparams) = $DB->get_in_or_equal(array_keys($popupnotifications));
-                $DB->delete_records_select('message_popup_notifications', "id $insql", $inparams);
-                // Update progress.
-                $i += count($inparams);
-                $pbar->update($i, $total, "Cleaning up orphaned popup notification records - $i/$total.");
-            }
-        } while ($popupnotifications);
+        if ($total > 0) {
+            $i = 0;
+            $pbar = new progress_bar('deletepopupnotification', 500, true);
+            do {
+                if ($popupnotifications = $DB->get_records_sql("SELECT mpn.id " . $fromsql, null, 0, 1000)) {
+                    list($insql, $inparams) = $DB->get_in_or_equal(array_keys($popupnotifications));
+                    $DB->delete_records_select('message_popup_notifications', "id $insql", $inparams);
+                    // Update progress.
+                    $i += count($inparams);
+                    $pbar->update($i, $total, "Cleaning up orphaned popup notification records - $i/$total.");
+                }
+            } while ($popupnotifications);
+        }
 
         // Reportbuilder savepoint reached.
         upgrade_plugin_savepoint(true, 2020020600, 'message', 'popup');
