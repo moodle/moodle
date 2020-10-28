@@ -124,10 +124,6 @@ $right-drawer-width: 320px;
         opacity: 1;
     }
 
-    .closewidget {
-        display: none;
-    }
-
     &.hidden {
         display: block;
         right: $right-drawer-width * -1;
@@ -146,10 +142,6 @@ $right-drawer-width: 320px;
             top: 0;
             height: 100%;
             z-index: $zindex-fixed;
-        }
-        .closewidget {
-            display: block;
-            padding: 0 0.2rem;
         }
     }
     body.drawer-open-left,
