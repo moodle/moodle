@@ -9840,7 +9840,7 @@ div.dropdown-item:focus-within {
   margin: 0;
   padding: 0; }
 
-.section li.movehere a.movehere {
+.section li.movehere a {
   display: block;
   width: 100%;
   height: 2rem;
