@@ -73,6 +73,9 @@ $input-btn-focus-color: rgba($primary, .75) !default;
 
 $input-border-color: $gray-500 !default;
 
+$dropdown-link-hover-color: $white;
+$dropdown-link-hover-bg: $primary;
+
 // stylelint-disable
 $theme-colors: () !default;
 $theme-colors: map-merge((
