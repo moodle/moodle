@@ -88,6 +88,7 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             $inputattributes['name'] = $this->get_input_name($qa, $value);
             $inputattributes['value'] = $this->get_input_value($value);
             $inputattributes['id'] = $this->get_input_id($qa, $value);
+            $inputattributes['aria-labelledby'] = $inputattributes['id'] . '_label';
             $isselected = $question->is_choice_selected($response, $value);
             if ($isselected) {
                 $inputattributes['checked'] = 'checked';
@@ -102,15 +103,16 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
                     'value' => 0,
                 ));
             }
+
+            $questionnumber = html_writer::span($this->number_in_style($value, $question->answernumbering), 'answernumber');
+            $answertext = $question->format_text($ans->answer, $ans->answerformat, $qa, 'question', 'answer', $ansid);
+            $questionanswer = html_writer::div($answertext, 'flex-fill ml-1');
+
             $radiobuttons[] = $hidden . html_writer::empty_tag('input', $inputattributes) .
-                    html_writer::tag('label',
-                        html_writer::span($this->number_in_style($value, $question->answernumbering), 'answernumber') .
-                        html_writer::tag('div',
-                        $question->format_text(
-                                    $ans->answer, $ans->answerformat,
-                                    $qa, 'question', 'answer', $ansid),
-                        array('class' => 'flex-fill ml-1')),
-                        array('for' => $inputattributes['id'], 'class' => 'd-flex w-100'));
+                    html_writer::div($questionnumber . $questionanswer, 'd-flex w-100', [
+                        'id' => $inputattributes['id'] . '_label',
+                        'data-region' => 'answer-label',
+                    ]);
 
             // Param $options->suppresschoicefeedback is a hack specific to the
             // oumultiresponse question type. It would be good to refactor to
@@ -151,6 +153,9 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
         }
         $result .= html_writer::end_tag('div'); // Answer.
 
+        // Load JS module for the question answers.
+        $this->page->requires->js_call_amd('qtype_multichoice/answers', 'init',
+            [$qa->get_outer_question_div_unique_id()]);
         $result .= $this->after_choices($qa, $options);
 
         $result .= html_writer::end_tag('div'); // Ablock.
