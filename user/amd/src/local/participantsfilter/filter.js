@@ -91,6 +91,18 @@ export default class {
 
         const dataSource = filterValueNode.querySelector('select');
 
+        // Set an ID for this filter value element.
+        dataSource.id = 'filter-value-' + dataSource.getAttribute('data-field-name');
+
+        // Create a hidden label for the filter value.
+        const filterValueLabel = document.createElement('label');
+        filterValueLabel.setAttribute('for', dataSource.id);
+        filterValueLabel.classList.add('sr-only');
+        filterValueLabel.innerText = dataSource.getAttribute('data-field-title');
+
+        // Append this label to the filter value container.
+        filterValueNode.appendChild(filterValueLabel);
+
         // If there are any initial values then attempt to apply them.
         initialValues.forEach(filterValue => {
             let selectedOption = dataSource.querySelector(`option[value="${filterValue}"]`);
