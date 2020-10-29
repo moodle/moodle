@@ -860,7 +860,7 @@ class view {
         if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
             if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
                 $url = new \moodle_url('edit.php', array_merge($pageurl->params(),
-                        array('qperpage' => MAXIMUM_QUESTIONS_PER_PAGE)));
+                        array('qpage' => 0, 'qperpage' => MAXIMUM_QUESTIONS_PER_PAGE)));
                 if ($totalnumber > MAXIMUM_QUESTIONS_PER_PAGE) {
                     $showall = '<a href="'.$url.'">'.get_string('showperpage', 'moodle', MAXIMUM_QUESTIONS_PER_PAGE).'</a>';
                 } else {
