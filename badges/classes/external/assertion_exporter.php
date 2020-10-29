@@ -104,16 +104,16 @@ class assertion_exporter extends exporter {
         global $DB;
         $result = [];
 
-        if (array_key_exists('related_badge', $this->data)) {
-            $exporter = new badgeclass_exporter($this->data['related_badge'], $this->related);
+        if (property_exists($this->data, 'related_badge')) {
+            $exporter = new badgeclass_exporter($this->data->related_badge, $this->related);
             $result['badge'] = $exporter->export($output);
         }
-        if (array_key_exists('related_recipient', $this->data)) {
-            $exporter = new recipient_exporter($this->data['related_recipient'], $this->related);
+        if (property_exists($this->data, 'related_recipient')) {
+            $exporter = new recipient_exporter($this->data->related_recipient, $this->related);
             $result['recipient'] = $exporter->export($output);
         }
-        if (array_key_exists('related_verify', $this->data)) {
-            $exporter = new verification_exporter($this->data['related_verify'], $this->related);
+        if (property_exists($this->data, 'related_verify')) {
+            $exporter = new verification_exporter($this->data->related_verify, $this->related);
             $result['verification'] = $exporter->export($output);
         }
         return $result;
