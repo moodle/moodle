@@ -44,6 +44,7 @@
     }} aria-labelledby="{{selectionId}}-label"{{!
     }} role="listbox"{{!
     }} aria-atomic="true"{{!
-    }} {{#multiple}}tabindex="0" aria-multiselectable="true"{{/multiple}}>
+    }} tabindex="0"{{!
+    }} {{#multiple}}aria-multiselectable="true"{{/multiple}}>
     {{> core/form_autocomplete_selection_items }}
 </div>
