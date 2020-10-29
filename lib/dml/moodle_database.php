@@ -137,7 +137,7 @@ abstract class moodle_database {
     /**
      * @var int internal temporary variable used to guarantee unique parameters in each request. Its used by {@link get_in_or_equal()}.
      */
-    private $inorequaluniqueindex = 1;
+    protected $inorequaluniqueindex = 1;
 
     /**
      * @var boolean variable use to temporarily disable logging.
