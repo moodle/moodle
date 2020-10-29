@@ -561,8 +561,8 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
                 } else {
                     echo get_string('hidden', 'grades');
                 }
+                echo ' - '.userdate($attempt->timefinish).'<br />';
             }
-            echo ' - '.userdate($attempt->timefinish).'<br />';
         }
     } else {
         print_string('noattempts', 'quiz');
