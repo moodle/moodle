@@ -31,8 +31,8 @@ Feature: Preview a Multiple choice question
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
-    And I click on "One" "checkbox"
-    And I click on "Two" "checkbox"
+    And I click on "One" "qtype_multichoice > Answer"
+    And I click on "Two" "qtype_multichoice > Answer"
     And I press "Check"
     Then I should see "One is odd"
     And I should see "Two is even"
@@ -46,8 +46,8 @@ Feature: Preview a Multiple choice question
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
-    And I click on "One" "checkbox"
-    And I click on "Three" "checkbox"
+    And I click on "One" "qtype_multichoice > Answer"
+    And I click on "Three" "qtype_multichoice > Answer"
     And I press "Check"
     Then I should see "One is odd"
     And I should see "Three is odd"
@@ -63,7 +63,7 @@ Feature: Preview a Multiple choice question
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
-    And I click on "One" "radio"
+    And I click on "One" "qtype_multichoice > Answer"
     And I press "Check"
     Then I should see "The oddest number is One."
     And I should see "Mark 1.00 out of 1.00"
@@ -77,7 +77,7 @@ Feature: Preview a Multiple choice question
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
-    And I click on "One" "radio"
+    And I click on "One" "qtype_multichoice > Answer"
     Then I should see "Clear my choice"
     And I click on "Clear my choice" "text"
     And I should not see "Clear my choice"
