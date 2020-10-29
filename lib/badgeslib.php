@@ -856,13 +856,13 @@ function badges_save_external_backpack(stdClass $data) {
         $backpack->sortorder = $data->sortorder;
     }
 
-    $method = 'insert_record';
-    if (isset($data->id) && $data->id) {
+    if (empty($data->id)) {
+        $backpack->id = $DB->insert_record('badge_external_backpack', $backpack);
+    } else {
         $backpack->id = $data->id;
-        $method = 'update_record';
+        $DB->update_record('badge_external_backpack', $backpack);
     }
-    $record = $DB->$method('badge_external_backpack', $backpack, true);
-    $data->externalbackpackid = $data->id ?? $record;
+    $data->externalbackpackid = $backpack->id;
 
     unset($data->id);
     badges_save_backpack_credentials($data);
@@ -888,19 +888,18 @@ function badges_save_backpack_credentials(stdClass $data) {
         $backpack->backpackuid = $data->backpackuid ?? 0;
         $backpack->autosync = $data->autosync ?? 0;
 
-        $id = null;
-        if (isset($data->badgebackpack) && $data->badgebackpack) {
-            $id = $data->badgebackpack;
-        } else if (isset($data->id) && $data->id) {
-            $id = $data->id;
+        if (!empty($data->badgebackpack)) {
+            $backpack->id = $data->badgebackpack;
+        } else if (!empty($data->id)) {
+            $backpack->id = $data->id;
         }
 
-        $method = $id ? 'update_record' : 'insert_record';
-        if ($id) {
-            $backpack->id = $id;
+        if (empty($backpack->id)) {
+            $backpack->id = $DB->insert_record('badge_backpack', $backpack);
+        } else {
+            $DB->update_record('badge_backpack', $backpack);
         }
 
-        $DB->$method('badge_backpack', $backpack);
         return $backpack->externalbackpackid;
     }
 
