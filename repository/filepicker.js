@@ -1784,7 +1784,8 @@ M.core_filepicker.init = function(Y, options) {
             if (filenode) {
                 // File has a license already, use it.
                 selectedlicense = filenode.license;
-            } else if (this.options.rememberuserlicensepref) {
+            } else if (this.options.rememberuserlicensepref && this.get_preference('recentlicense')) {
+                // When 'Remember user licence preference' is enabled use the last license selected by the user, if any.
                 selectedlicense = this.get_preference('recentlicense');
             }
             var licenses = this.options.licenses;
