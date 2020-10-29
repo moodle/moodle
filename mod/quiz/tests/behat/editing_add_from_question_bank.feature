@@ -79,6 +79,9 @@ Feature: Adding questions to a quiz from the question bank
     Then I should see "question 21 name" in the "categoryquestions" "table"
     And I should see "question 22 name" in the "categoryquestions" "table"
     And I should not see "question 01 name" in the "categoryquestions" "table"
+    And I click on "Show all 22" "link" in the ".pagingbottom" "css_element"
+    And I should see "question 01 name" in the "categoryquestions" "table"
+    And I should see "question 22 name" in the "categoryquestions" "table"
 
   Scenario: Questions are added in the right place with multiple sections
     Given the following "questions" exist:
