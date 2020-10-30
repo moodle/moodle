@@ -287,33 +287,27 @@ fieldset.coursesearchbox label {
 .form-autocomplete-suggestions {
     position: absolute;
     background-color: white;
-    border: 2px solid $gray-lighter;
-    border-radius: 3px;
+    border: $border-width solid $input-border-color;
     min-width: 206px;
     max-height: 20em;
     overflow: auto;
-    margin: 0;
     padding: 0;
-    margin-top: 0.4em;
+    margin: 2px 0 0 0;
     z-index: 1;
 }
 
 .form-autocomplete-suggestions li {
     list-style-type: none;
-    padding: 0.2em;
+    padding: $dropdown-item-padding-y $dropdown-item-padding-x;
     margin: 0;
     cursor: pointer;
     color: $body-color;
-}
-
-.form-autocomplete-suggestions li:hover {
-    background-color: lighten($dropdown-link-active-bg, 15%);
-    color: $dropdown-link-active-color;
-}
-
-.form-autocomplete-suggestions li[aria-selected=true] {
-    background-color: darken($dropdown-bg, 5%);
-    color: $gray;
+    &:hover,
+    &:focus,
+    &[aria-selected="true"] {
+        background-color: $dropdown-link-active-bg;
+        color: $dropdown-link-active-color;
+    }
 }
 
 .form-autocomplete-downarrow {
