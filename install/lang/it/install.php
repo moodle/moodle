@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Cartella Admin';
 $string['availablelangs'] = 'Elenco delle lingue disponibili';
-$string['chooselanguagehead'] = 'Scegli la lingua';
+$string['chooselanguagehead'] = 'Seleziona lingua';
 $string['chooselanguagesub'] = 'Scegli la lingua da usare durante l\'installazione. La lingua usata nel sito e dagli utenti potrà essere modificata in seguito.';
 $string['clialreadyconfigured'] = 'Il file di configurazione config.php è già presente.
 Utilizzare admin/cli/install_database.php per installare Moodle.';
@@ -53,16 +53,16 @@ $string['installation'] = 'Installazione';
 $string['langdownloaderror'] = 'Purtroppo non è stato possibile scaricare la lingua "{$a}". L\'installazione proseguirà in lingua Inglese.';
 $string['memorylimithelp'] = '<p>Il limite di memoria assegnata al PHP attualmente è {$a}.</p>
 
-<p>Tale limite potrà causare problemi nel funzionamento di Moodle, specialmente se usi molti moduli di attività con molti utenti.</p>
+<p>Tale limite potrà causare problemi nel funzionamento di Moodle, specialmente se si utilizzano molti moduli di attività con molti utenti.</p>
 
-<p>Ti raccomandiamo di impostare il PHP con un limite più alto, ad esempio 40M, usando uno dei modi seguenti:
+<p>Raccomandiamo di impostare il PHP con un limite più alto, ad esempio 40M, usando uno dei modi seguenti:
 <ol>
-<li>Se possibile, ricompila il PHP con l\'opzione <i>--enable-memory-limit</i>.
+<li>Se possibile, ricompilare il PHP con l\'opzione <i>--enable-memory-limit</i>.
 Questo consentirà a Moodle di impostare in autonomia il limite di memoria.</li>
-<li>Se hai accesso al file php.ini, è possibile modificare la variabile <b>memory_limit</b> a un valore più alto, ad esempio 40M. Se non hai accesso, puoi chiedere all\'amministratore di sistema di farlo.</li>
+<li>Se si ha accesso al file php.ini, è possibile modificare la variabile <b>memory_limit</b> a un valore più alto, ad esempio 40M. Se non hai accesso, puoi chiedere all\'amministratore di sistema di farlo.</li>
 <li>Su alcuni server con il PHP è possibile creare un file .htaccess nella cartella di Moodle contenente questa linea:
 <blockquote>php_value memory_limit 40M</blockquote>
-<p>Tuttavia, su alcuni server la direttiva potrebbe impedire a <b>tutte</b> le pagine PHP di funzionare (appariranno degli errori durante la visualizzazione delle pagine), in tal caso dovrai rimuovere il file .htaccess.</li></ol>';
+<p>Tuttavia, su alcuni server la direttiva potrebbe impedire a <b>tutte</b> le pagine PHP di funzionare (appariranno degli errori durante la visualizzazione delle pagine), in tal caso si dovrà rimuovere il file .htaccess.</li></ol>';
 $string['paths'] = 'Percorsi';
 $string['pathserrcreatedataroot'] = 'Lo script di installazione non ha potuto creare la Cartella dei dati ({$a->dataroot}).';
 $string['pathshead'] = 'Conferma percorsi';
