@@ -353,7 +353,8 @@ class discussion_list {
                 get_string('thisforumisthrottled', 'forum', [
                     'blockafter' => $forum->get_block_after(),
                     'blockperiod' => get_string('secondstotime' . $forum->get_block_period())
-                ])
+                ]),
+                notification::NOTIFY_INFO
             ))->set_show_closebutton();
         }
 
