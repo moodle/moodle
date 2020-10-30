@@ -30,6 +30,8 @@ import Notification from 'core/notification';
 import Pending from 'core/pending';
 import Selectors from './local/participantsfilter/selectors';
 import Templates from 'core/templates';
+import CustomEvents from 'core/custom_interaction_events';
+import jQuery from 'jquery';
 
 /**
  * Initialise the participants filter on the element with the given id.
@@ -475,7 +477,9 @@ export const init = participantsRegionId => {
     });
 
     // Add listeners for the filter type selection.
-    filterSet.querySelector(Selectors.filterset.regions.filterlist).addEventListener('change', e => {
+    let filterRegion = jQuery(getFilterRegion());
+    CustomEvents.define(filterRegion, [CustomEvents.events.accessibleChange]);
+    filterRegion.on(CustomEvents.events.accessibleChange, e => {
         const typeField = e.target.closest(Selectors.filter.fields.type);
         if (typeField && typeField.value) {
             const filter = e.target.closest(Selectors.filter.region);

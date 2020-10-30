@@ -226,7 +226,7 @@ XPATH
     /ancestor::*[contains(concat(' ', @class, ' '), ' fitem ')]
 XPATH
         , 'autocomplete_selection' => <<<XPATH
-.//div[contains(concat(' ', normalize-space(@class), ' '), concat(' ', 'form-autocomplete-selection', ' '))]/span[@role='listitem'][contains(normalize-space(.), %locator%)]
+.//div[contains(concat(' ', normalize-space(@class), ' '), concat(' ', 'form-autocomplete-selection', ' '))]/span[@role='option'][contains(normalize-space(.), %locator%)]
 XPATH
         , 'autocomplete_suggestions' => <<<XPATH
 .//ul[contains(concat(' ', normalize-space(@class), ' '), concat(' ', 'form-autocomplete-suggestions', ' '))]/li[@role='option'][contains(normalize-space(.), %locator%)]

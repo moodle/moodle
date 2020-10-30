@@ -33,6 +33,7 @@ $string['clearfilterselection'] = 'Remove "{$a}" from filter';
 $string['countparticipantsfound'] = '{$a} participants found';
 $string['filterrowlegend'] = 'Filter {$a}';
 $string['filtersetmatchdescription'] = 'How multiple filters should be combined';
+$string['filtertype'] = 'Filter type';
 $string['match'] = 'Match';
 $string['matchofthefollowing'] = 'of the following:';
 $string['moodlenetprofile'] = 'MoodleNet profile';
