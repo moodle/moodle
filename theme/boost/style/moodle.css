@@ -9783,7 +9783,9 @@ a.dropdown-toggle:focus,
 .moodle-dialogue-base .closebutton.focus,
 .moodle-dialogue-base .closebutton:focus,
 button.close.focus,
-button.close:focus {
+button.close:focus,
+.form-autocomplete-selection.focus,
+.form-autocomplete-selection:focus {
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(15, 111, 197, 0.75); }
 
@@ -9801,8 +9803,13 @@ input[type="image"]:focus:hover,
 a.dropdown-toggle:focus:hover,
 .modal-dialog[tabindex="0"]:focus:hover,
 .moodle-dialogue-base .closebutton:focus:hover,
-button.close:focus:hover {
+button.close:focus:hover,
+.form-autocomplete-selection:focus:hover {
   text-decoration: none; }
+
+.form-autocomplete-suggestions li[aria-selected=true] {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(15, 111, 197, 0.75); }
 
 .safari input[type="checkbox"].focus, .safari input[type="checkbox"]:focus,
 .safari input[type="radio"].focus,
@@ -16452,7 +16459,7 @@ fieldset.coursesearchbox label {
   margin: 0.25rem;
   min-height: 2.375rem; }
 
-.form-autocomplete-selection [role=listitem] {
+.form-autocomplete-selection [role=option] {
   cursor: pointer;
   white-space: inherit;
   word-break: break-word;
@@ -16466,8 +16473,8 @@ fieldset.coursesearchbox label {
   min-width: 206px;
   max-height: 20em;
   overflow: auto;
-  padding: 0;
-  margin: 2px 0 0 0;
+  margin: 0.125rem 0 0;
+  padding: 0.5rem 0;
   z-index: 1; }
 
 .form-autocomplete-suggestions li {
@@ -16479,6 +16486,8 @@ fieldset.coursesearchbox label {
   .form-autocomplete-suggestions li:hover, .form-autocomplete-suggestions li:focus, .form-autocomplete-suggestions li[aria-selected="true"] {
     background-color: #0f6fc5;
     color: #fff; }
+  .form-autocomplete-suggestions li::before {
+    content: "\200B"; }
 
 .form-autocomplete-downarrow {
   color: #212529;
@@ -16490,10 +16499,6 @@ fieldset.coursesearchbox label {
     top: 0;
     left: 0;
     background-color: #fff; }
-
-.form-autocomplete-selection:focus {
-  outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(15, 111, 197, 0.75); }
 
 /** Undo some bootstrap things */
 .form-autocomplete-selection + input.form-control {
