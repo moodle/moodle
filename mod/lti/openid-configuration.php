@@ -33,7 +33,7 @@ require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
 require_once($CFG->libdir.'/weblib.php');
 
-$scopes = registration_helper::lti_get_service_scopes();
+$scopes = registration_helper::get()->lti_get_service_scopes();
 $scopes[] = 'openid';
 $conf = [
     'issuer' => $CFG->wwwroot,
