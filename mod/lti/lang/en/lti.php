@@ -166,6 +166,15 @@ $string['domain_mismatch'] = 'Tool URL\'s domain does not match tool configurati
 $string['donot'] = 'Do not send';
 $string['donotaccept'] = 'Do not accept';
 $string['donotallow'] = 'Do not allow';
+$string['dynreg_update_text'] = 'There are existing tools attached to the registration\'s domain. Do you want to update an already installed
+external tool or create a new external tool?';
+$string['dynreg_update_warn_dupdomain'] = 'It is not recommended to have multiple external tools under the same domain.';
+$string['dynreg_update_name'] = 'Tool name';
+$string['dynreg_update_url'] = 'Base URL';
+$string['dynreg_update_version'] = 'LTI Version';
+$string['dynreg_update_notools'] = 'No tools in context.';
+$string['dynreg_update_btn_update'] = 'Update';
+$string['dynreg_update_btn_new'] = 'Register as a new external tool';
 $string['duplicateregurl'] = 'This registration URL is already in use';
 $string['editdescription'] = 'Click here to give this tool a description';
 $string['edittype'] = 'Edit preconfigured tool';
