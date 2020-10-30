@@ -152,13 +152,14 @@ class copy_form extends \moodleform {
             $mform->addHelpButton('relativedatesmodegroup', 'relativedatesmode');
         }
 
-        // Course id number.
+        // Course ID number (default to the current course ID number; blank for users who can't change ID numbers).
         $mform->addElement('text', 'idnumber', get_string('idnumbercourse'), 'maxlength="100"  size="10"');
+        $mform->setDefault('idnumber', $course->idnumber);
         $mform->addHelpButton('idnumber', 'idnumbercourse');
         $mform->setType('idnumber', PARAM_RAW);
-        if (!empty($course->id) and !has_capability('moodle/course:changeidnumber', $coursecontext)) {
+        if (!has_capability('moodle/course:changeidnumber', $coursecontext)) {
             $mform->hardFreeze('idnumber');
-            $mform->setConstants('idnumber', $course->idnumber);
+            $mform->setConstant('idnumber', '');
         }
 
         // Keep source course user data.
@@ -172,7 +173,7 @@ class copy_form extends \moodleform {
         );
         if (!has_all_capabilities($requiredcapabilities, $coursecontext)) {
             $mform->hardFreeze('userdata');
-            $mform->setConstants('userdata', 0);
+            $mform->setConstant('userdata', 0);
         }
 
         // Keep manual enrolments.
