@@ -98,7 +98,7 @@ if (!empty($issuedbadge->recipient->id)) {
                 $assertionid
             );
 
-            if (!$assertionentityid && strpos($sitebackpack->backpackapiurl, 'badgr')) {
+            if ($assertionentityid && strpos($sitebackpack->backpackapiurl, 'badgr')) {
                 $assertionentityid = badges_generate_badgr_open_url(
                     $sitebackpack,
                     OPEN_BADGES_V2_TYPE_ASSERTION,
