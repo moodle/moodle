@@ -17569,7 +17569,7 @@ div#dock {
   position: sticky;
   justify-content: end;
   top: 55px;
-  z-index: 1050; }
+  z-index: 1020; }
   #quiz-timer-wrapper #quiz-timer {
     border: 1px solid #ca3120;
     background-color: #fff; }
