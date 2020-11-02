@@ -2911,10 +2911,10 @@ function xmldb_main_upgrade($oldversion) {
             }
 
             $dbman->drop_field($table, $field);
-
-            // Main savepoint reached.
-            upgrade_main_savepoint(true, 2021052500.33);
         }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.33);
     }
 
     if ($oldversion < 2021052500.36) {
