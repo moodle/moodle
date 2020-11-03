@@ -27,6 +27,7 @@ import CustomEvents from 'core/custom_interaction_events';
 import * as ModalFactory from 'core/modal_factory';
 import jQuery from 'jquery';
 import Pending from 'core/pending';
+import {enter, space} from 'core/key_codes';
 
 /**
  * Set up listener to trigger the download course content modal.
@@ -36,12 +37,11 @@ import Pending from 'core/pending';
 export const init = () => {
     const pendingPromise = new Pending();
 
-    document.addEventListener('click', (e) => {
-        const downloadModalTrigger = e.target.closest('[data-downloadcourse]');
-
-        if (downloadModalTrigger) {
+    // Add event listeners for click and enter/space keys.
+    jQuery('[data-downloadcourse]').on('click keydown', (e) => {
+        if (e.type === 'click' || e.which === enter || e.which === space) {
             e.preventDefault();
-            displayDownloadConfirmation(downloadModalTrigger);
+            displayDownloadConfirmation(e.currentTarget);
         }
     });
 
