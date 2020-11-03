@@ -124,6 +124,7 @@ class core_customfield_generator extends component_generator_base {
             'locked' => 0,
             'visibility' => 2,
             'defaultvalue' => '',
+            'defaultvalueformat' => FORMAT_MOODLE,
             'displaysize' => 0,
             'maxlength' => 0,
             'ispassword' => 0,
