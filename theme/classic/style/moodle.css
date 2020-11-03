@@ -9828,6 +9828,9 @@ a.text-dark:hover, a.text-dark:focus {
     text-align: right;
 }
 */
+.dir-rtl .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  transform: translateX(-0.75rem); }
+
 /**
  * Moodle variables
  *
