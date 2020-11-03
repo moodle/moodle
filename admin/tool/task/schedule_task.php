@@ -83,6 +83,8 @@ if (!optional_param('confirm', 0, PARAM_INT)) {
 // Action requires session key.
 require_sesskey();
 
+\core\session\manager::write_close();
+
 // Prepare to handle output via mtrace.
 echo html_writer::start_tag('pre');
 $CFG->mtrace_wrapper = 'tool_task_mtrace_wrapper';
