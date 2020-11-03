@@ -82,7 +82,7 @@ define(['jquery', 'core/dragdrop'], function($, dragDrop) {
             // From now on, when a new file gets loaded into the filepicker, update the preview.
             // This is not in the setupEventHandlers section as it needs to be delayed until
             // after filepicker's javascript has finished.
-            $('form.mform').on('change', '.filepickerhidden', function() {
+            $('form.mform[data-qtype="ddimageortext"]').on('change', '.filepickerhidden', function() {
                 M.util.js_pending('dragDropToImageForm');
                 dragDropToImageForm.loadPreviewImage();
             });
@@ -428,7 +428,7 @@ define(['jquery', 'core/dragdrop'], function($, dragDrop) {
             },
 
             getEl: function(name, indexes) {
-                var form = $('form.mform')[0];
+                var form = $('form.mform[data-qtype="ddimageortext"]')[0];
                 return form.elements[this.toNameWithIndex(name, indexes)];
             },
 
@@ -479,7 +479,7 @@ define(['jquery', 'core/dragdrop'], function($, dragDrop) {
             if (draftItemIdsToName === undefined) {
                 draftItemIdsToName = {};
                 nameToParentNode = {};
-                var fp = $('form.mform input.filepickerhidden');
+                var fp = $('form.mform[data-qtype="ddimageortext"] input.filepickerhidden');
                 fp.each(function(index, filepicker) {
                     draftItemIdsToName[filepicker.value] = filepicker.name;
                     nameToParentNode[filepicker.name] = filepicker.parentNode;
