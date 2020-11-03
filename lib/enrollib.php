@@ -664,13 +664,12 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
                 SELECT DISTINCT e.courseid
                   FROM {enrol} e
                   JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid1)
-                 WHERE ue.status = :active AND e.status = :enabled AND ue.timestart < :now1
+                 WHERE ue.status = :active AND e.status = :enabled AND ue.timestart <= :now1
                        AND (ue.timeend = 0 OR ue.timeend > :now2)";
         $params['userid1'] = $USER->id;
         $params['active'] = ENROL_USER_ACTIVE;
         $params['enabled'] = ENROL_INSTANCE_ENABLED;
-        $params['now1'] = round(time(), -2); // Improves db caching.
-        $params['now2'] = $params['now1'];
+        $params['now1'] = $params['now2'] = time();
 
         if ($sorttimeaccess) {
             $params['userid2'] = $USER->id;
