@@ -1012,41 +1012,40 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         ];
     }
 
-
     /**
-     * Test badges_save_external_backpack without any auth details and also tests duplicate entries.
+     * Test badges_save_external_backpack.
      *
-     * @param boolean $withauth Test with authentication details provided
-     * @param boolean $duplicates Test for duplicates
-     * @dataProvider test_badges_save_external_backpack_provider
-     * @throws dml_exception
+     * @dataProvider badges_save_external_backpack_provider
+     * @param  array $data  Backpack data to save.
+     * @param  bool $adduser True if a real user has to be used for creating the backpack; false otherwise.
+     * @param  bool $duplicates True if duplicates has to be tested too; false otherwise.
      */
-    public function test_badges_save_external_backpack($withauth, $duplicates) {
+    public function test_badges_save_external_backpack(array $data, bool $adduser, bool $duplicates) {
         global $DB;
+
         $this->resetAfterTest();
-        $user = $this->getDataGenerator()->create_user();
 
-        $data = [
-            'userid' => $user->id,
-            'apiversion' => 2,
-            'backpackapiurl' => 'https://api.ca.badgr.io/v2',
-            'backpackweburl' => 'https://ca.badgr.io',
-        ];
-
-        if ($withauth) {
-            $data['backpackemail'] = 'test@test.com';
-            $data['password'] = 'test';
+        $userid = 0;
+        if ($adduser) {
+            $user = $this->getDataGenerator()->create_user();
+            $userid = $user->id;
+            $data['userid'] = $user->id;
         }
 
         $result = badges_save_external_backpack((object) $data);
+        $this->assertNotEquals(0, $result);
         $record = $DB->get_record('badge_external_backpack', ['id' => $result]);
         $this->assertEquals($record->backpackweburl, $data['backpackweburl']);
         $this->assertEquals($record->backpackapiurl, $data['backpackapiurl']);
-        $record = $DB->get_record('badge_backpack', ['userid' => $user->id]);
-        if (!$withauth) {
+
+        $record = $DB->get_record('badge_backpack', ['externalbackpackid' => $result]);
+        if (!array_key_exists('backpackemail', $data) && !array_key_exists('password', $data)) {
             $this->assertEmpty($record);
+            $total = $DB->count_records('badge_backpack');
+            $this->assertEquals(0, $total);
         } else {
             $this->assertNotEmpty($record);
+            $this->assertEquals($record->userid, $userid);
         }
 
         if ($duplicates) {
@@ -1061,19 +1060,66 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
      *
      * @return array
      */
-    public function test_badges_save_external_backpack_provider() {
+    public function badges_save_external_backpack_provider() {
+        $data = [
+            'apiversion' => 2,
+            'backpackapiurl' => 'https://api.ca.badgr.io/v2',
+            'backpackweburl' => 'https://ca.badgr.io',
+        ];
         return [
-            "Test without any auth details and duplicates" => [
-                false, true
+            'Test without user and auth details. Check duplicates too' => [
+                'data' => $data,
+                'adduser' => false,
+                'duplicates' => true,
             ],
-            "Test without any auth details and without duplicates" => [
-                false, false
+            'Test without user and auth details. No duplicates' => [
+                'data' => $data,
+                'adduser' => false,
+                'duplicates' => false,
             ],
-            "Test with auth details and duplicates" => [
-                true, true
+            'Test with user and without auth details' => [
+                'data' => $data,
+                'adduser' => true,
+                'duplicates' => false,
             ],
-            "Test with any auth details and duplicates" => [
-                true, false
+            'Test with user and without auth details. Check duplicates too' => [
+                'data' => $data,
+                'adduser' => true,
+                'duplicates' => true,
+            ],
+            'Test with empty backpackemail, password and id' => [
+                'data' => array_merge($data, [
+                    'backpackemail' => '',
+                    'password' => '',
+                    'id' => 0,
+                ]),
+                'adduser' => false,
+                'duplicates' => false,
+            ],
+            'Test with empty backpackemail, password and id but with user' => [
+                'data' => array_merge($data, [
+                    'backpackemail' => '',
+                    'password' => '',
+                    'id' => 0,
+                ]),
+                'adduser' => true,
+                'duplicates' => false,
+            ],
+            'Test with auth details but without user' => [
+                'data' => array_merge($data, [
+                    'backpackemail' => 'test@test.com',
+                    'password' => 'test',
+                ]),
+                'adduser' => false,
+                'duplicates' => false,
+            ],
+            'Test with auth details and user' => [
+                'data' => array_merge($data, [
+                    'backpackemail' => 'test@test.com',
+                    'password' => 'test',
+                ]),
+                'adduser' => true,
+                'duplicates' => false,
             ],
         ];
     }
@@ -1083,7 +1129,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
      *
      * @param boolean $isadmin
      * @param boolean $updatetest
-     * @dataProvider test_badges_create_site_backpack_provider
+     * @dataProvider badges_create_site_backpack_provider
      */
     public function test_badges_create_site_backpack($isadmin, $updatetest) {
         global $DB;
@@ -1129,7 +1175,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
     /**
      * Provider for test_badges_(create/update)_site_backpack
      */
-    public function test_badges_create_site_backpack_provider() {
+    public function badges_create_site_backpack_provider() {
         return [
             "Test as admin user - creation test" => [true, true],
             "Test as admin user - update test" => [true, false],
@@ -1253,7 +1299,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
      * Test the badges_get_site_primary_backpack function
      *
      * @param boolean $withauth Testing with authentication or not.
-     * @dataProvider test_badges_get_site_primary_backpack_provider
+     * @dataProvider badges_get_site_primary_backpack_provider
      */
     public function test_badges_get_site_primary_backpack($withauth) {
         $data = [
@@ -1289,7 +1335,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
      *
      * @return array
      */
-    public function test_badges_get_site_primary_backpack_provider() {
+    public function badges_get_site_primary_backpack_provider() {
         return [
             "Test with auth details" => [true],
             "Test without auth details" => [false],
