@@ -135,14 +135,19 @@ class writer extends \core\dataformat\base {
             // height. Solution similar to that at https://stackoverflow.com/a/1943096.
             $pdf2 = clone $this->pdf;
             $pdf2->startTransaction();
+            $numpages = $pdf2->getNumPages();
             $pdf2->AddPage('L');
             $pdf2->writeHTMLCell($this->colwidth, 0, '', '', $cell, 1, 1, false, true, 'L');
-            $rowheight = max($rowheight, $pdf2->getY() - $pdf2->getMargins()['top']);
+            $pagesadded = $pdf2->getNumPages() - $numpages;
+            $pageheight = $pdf2->getPageHeight() - $pdf2->getMargins()['top'] - $pdf2->getMargins()['bottom'];
+            $cellheight = ($pagesadded - 1) * $pageheight + $pdf2->getLastH();
+            $rowheight = max($rowheight, $cellheight);
             $pdf2->rollbackTransaction();
         }
 
         $margins = $this->pdf->getMargins();
-        if ($this->pdf->GetY() + $rowheight + $margins['bottom'] > $this->pdf->getPageHeight()) {
+        if ($this->pdf->getNumPages() > 1 &&
+                ($this->pdf->GetY() + $rowheight + $margins['bottom'] > $this->pdf->getPageHeight())) {
             $this->pdf->AddPage('L');
             $this->print_heading();
         }
