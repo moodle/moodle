@@ -1275,7 +1275,7 @@ div#dock {
     position: sticky;
     justify-content: end;
     top: $navbar-height + 5px;
-    z-index: $zindex-modal;
+    z-index: $zindex-sticky;
     #quiz-timer {
         border: $border-width solid $red;
         background-color: $white;
