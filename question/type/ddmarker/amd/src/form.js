@@ -554,7 +554,7 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
             // From now on, when a new file gets loaded into the filepicker, update the preview.
             // This is not in the setupEventHandlers section as it needs to be delayed until
             // after filepicker's javascript has finished.
-            $('form.mform').on('change', '#id_bgimage', dragDropForm.loadPreviewImage);
+            $('form.mform[data-qtype="ddmarker"]').on('change', '#id_bgimage', dragDropForm.loadPreviewImage);
 
             dragDropForm.loadPreviewImage();
         },
@@ -645,7 +645,7 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes'], function($, dragDro
             },
 
             getEl: function(name, indexes) {
-                var form = $('form.mform')[0];
+                var form = $('form.mform[data-qtype="ddmarker"]')[0];
                 return form.elements[this.toNameWithIndex(name, indexes)];
             },
 
