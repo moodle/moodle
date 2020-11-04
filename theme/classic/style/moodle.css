@@ -9834,6 +9834,9 @@ input[disabled] {
     text-align: right;
 }
 */
+.dir-rtl .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  transform: translateX(-0.75rem); }
+
 /* core.less */
 #region-main {
   overflow-x: auto;
