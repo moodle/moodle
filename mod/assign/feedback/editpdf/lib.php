@@ -67,7 +67,7 @@ function assignfeedback_editpdf_pluginfile(
         $options['cacheability'] = 'public';
         $options['immutable'] = true;
 
-        send_stored_file($file, 0, 0, true, $options);
+        send_stored_file($file, null, 0, false, $options);
     }
 
     if ($context->contextlevel == CONTEXT_MODULE) {
