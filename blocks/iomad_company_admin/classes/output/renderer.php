@@ -19,6 +19,7 @@ namespace block_iomad_company_admin\output;
 defined('MOODLE_INTERNAL') || die();
 
 use plugin_renderer_base;
+use html_writer;
 
 class renderer extends plugin_renderer_base {
 
@@ -175,5 +176,83 @@ class renderer extends plugin_renderer_base {
      */
     public function render_roletemplates(roletemplates $roletemplates) {
         return $this->render_from_template('block_iomad_company_admin/roletemplates', $roletemplates->export_for_template($this));
+    }
+
+    public function render_datetime_element($name, $id, $timestamp) {
+
+        // Get the calendar type used - see MDL-18375.
+        $calendartype = \core_calendar\type_factory::get_calendar_instance();
+
+        $this->_elements = array();
+
+        $dateformat = $calendartype->get_date_order();
+        // Reverse date element (Day, Month, Year), in RTL mode.
+        if (right_to_left()) {
+            $dateformat = array_reverse($dateformat);
+        }
+
+        if (!empty($timestamp)) {
+            $dayvalue = date('d', $timestamp);
+            $monvalue = date('n', $timestamp);
+            $yearvalue = date('Y', $timestamp);
+            $selectarray = array('class' => 'customselect', 'onchange' => "this.form.submit()");
+            $checkboxarray = array('type' => 'checkbox', 'name' => $name."[enabled]", 'value' => 1, 'checked' => 'checked', 'class' => 'form-check-input datecontrolswitch checkbox', 'id' => 'id_' . $id . '_calender_enabled');
+        } else {
+            $dayvalue = date('d', time());
+            $monvalue = date('n', time());
+            $yearvalue = date('Y', time());
+            $selectarray = array('class' => 'customselect', 'disabled' => 'disabled', 'onchange' => "this.form.submit()");
+            $checkboxarray = array('type' => 'checkbox', 'name' => $name."[enabled]", 'class' => 'form-check-input datecontrolswitch checkbox', 'id' => 'id_' . $id . '_calender_enabled');
+        }
+
+        $html = html_writer::start_tag('span', array('class' => 'fdate_selector d-flex'));
+        $html .= html_writer::start_tag('span', array('data-fieldtype' => 'select'));
+        $html .= html_writer::start_tag('select', $selectarray + array('name' => $name."[day]", 'id' => $id."_day"));
+        foreach ($dateformat['day'] as $key => $value)
+        if ($dayvalue == $key) {
+            $html .= html_writer::tag('option', $value, array('value' => $key, 'selected' => true));
+        } else {
+            $html .= html_writer::tag('option', $value, array('value' => $key));
+        }
+        $html .= html_writer::end_tag('select');
+        $html .= html_writer::end_tag('span') . " ";
+        $html .= html_writer::start_tag('span', array('data-fieldtype' => 'select'));
+        $html .= html_writer::start_tag('select', $selectarray + array('name' => $name."[month]", 'id' => $id."_month"));
+        foreach ($dateformat['month'] as $key => $value)
+        if ($monvalue == $key) {
+            $html .= html_writer::tag('option', $value, array('value' => $key, 'selected' => true));
+        } else {
+            $html .= html_writer::tag('option', $value, array('value' => $key));
+        }
+        $html .= html_writer::end_tag('select');
+        $html .= html_writer::end_tag('span') . " ";
+        $html .= html_writer::start_tag('span', array('data-fieldtype' => 'select'));
+        $html .= html_writer::start_tag('select', $selectarray + array('name' => $name."[year]", 'id' => $id."_year"));
+        foreach ($dateformat['year'] as $key => $value)
+        if ($yearvalue == $key) {
+            $html .= html_writer::tag('option', $value, array('value' => $key, 'selected' => true));
+        } else {
+            $html .= html_writer::tag('option', $value, array('value' => $key));
+        }
+        $html .= html_writer::end_tag('select');
+        $html .= html_writer::end_tag('span') . " ";
+        $html .= html_writer::start_tag('a', array('class' => "visibleifjs", 'name' => $name."[calendar]", 'href'=>"#", 'id'=>"id_" . $id ."_calendar"));
+        $html .= html_writer::tag('i', '', array('class'=>"icon fa fa-calendar fa-fw ", 'title'=>"Calendar", 'aria-label'=>"Calendar"));
+        $html .= html_writer::end_tag('a');
+        $html .= html_writer::end_tag('span');
+        if (empty($timestamp)) {
+            $html .= html_writer::start_tag('label', array('class' => 'form-check fitem'));
+            $html .= html_writer::tag('input', '', $checkboxarray);
+            $html .= get_string('enable');
+            $html .= html_writer::end_tag('label');
+        }
+        $html .= html_writer::tag('input',
+                                       '',
+                                       array('name' => 'orig' . $name,
+                                             'type' => 'hidden',
+                                             'value' => $timestamp,
+                                             'id' => 'orig' . $id));
+
+        return $html;
     }
 }

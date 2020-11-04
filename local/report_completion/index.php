@@ -19,6 +19,8 @@ require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/excellib.class.php');
 require_once(dirname(__FILE__).'/report_course_completion_course_table.php');
 require_once(dirname(__FILE__).'/report_course_completion_user_table.php');
+require_once($CFG->dirroot.'/local/iomad_track/lib.php');
+require_once($CFG->dirroot.'/local/iomad_track/db/install.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
@@ -47,7 +49,7 @@ $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $completiontype = optional_param('completiontype', 0, PARAM_INT);
 $charttype = optional_param('charttype', '', PARAM_CLEAN);
 $showchart = optional_param('showchart', false, PARAM_BOOL);
-$confirm = optional_param('confirm', false, PARAM_BOOL);
+$confirm = optional_param('confirm', 0, PARAM_INT);
 $fromraw = optional_param_array('compfromraw', null, PARAM_INT);
 $toraw = optional_param_array('comptoraw', null, PARAM_INT);
 $yearfrom = optional_param_array('fromarray', null, PARAM_INT);
@@ -55,6 +57,11 @@ $yearto = optional_param_array('toarray', null, PARAM_INT);
 $showpercentage = optional_param('showpercentage', 0, PARAM_INT);
 $submitbutton = optional_param('submitbutton', '', PARAM_CLEAN);
 $validonly = optional_param('validonly', 0, PARAM_BOOL);
+$adminediting = optional_param('adminedit', -1, PARAM_BOOL);
+$action = optional_param('action', '', PARAM_CLEAN);
+$confirm = optional_param('confirm', 0, PARAM_INT);
+$rowid = optional_param('rowid', 0, PARAM_INT);
+$redocertificate = optional_param('redocertificate', 0, PARAM_INT);
 
 require_login($SITE);
 $context = context_system::instance();
@@ -167,6 +174,188 @@ $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'ini
 
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
+
+// Deal with the adhoc form.
+$data = data_submitted();
+if (!empty($data)) {
+    if (!empty($data->redo_selected_certificates) && !empty($data->redo_certificates)) {
+        if (!empty($confirm) && confirm_sesskey()) {
+            iomad::require_capability('local/report_users:redocertificates', $context);
+            echo $OUTPUT->header();
+            foreach($data->redo_certificates as $redocertificate) {
+                if ($trackrec = $DB->get_record('local_iomad_track', array('id' => $redocertificate))) {
+                    echo html_writer::start_tag('p');
+                    local_iomad_track_delete_entry($redocertificate);
+                    xmldb_local_iomad_track_record_certificates($trackrec->courseid, $trackrec->userid, $trackrec->id);
+                    echo html_writer::end_tag('p');
+                }
+            }
+            echo $OUTPUT->single_button(new moodle_url('/local/report_completion/index.php',
+                                     $params), get_string('continue'));
+            echo $OUTPUT->footer();
+            die;
+        } else {
+            iomad::require_capability('local/report_users:redocertificates', $context);
+            $param_array = array('courseid' => $courseid,
+                                 'confirm' => true,
+                                 'redo_selected_certificates' => $data->redo_selected_certificates,
+                                 'sesskey' => sesskey()
+                                 );
+            foreach ($data->redo_certificates as $key => $redocertificate) {
+                $param_array["redo_certificates[$key]"] = $redocertificate;
+            }
+            $confirmurl = new moodle_url('/local/report_completion/index.php', $param_array + $params);
+
+            $cancel = new moodle_url('/local/report_completion/index.php', $params);
+            echo $OUTPUT->header();
+            echo $OUTPUT->confirm(get_string('redoselectedcertificatesconfirm', 'block_iomad_company_admin'), $confirmurl, $cancel);
+            echo $OUTPUT->footer();
+            die;
+
+        }
+    } else {
+        iomad::require_capability('local/report_users:updateentries', $context);
+        if (!empty($data->licenseallocated)) {
+            $data->licenseallocated = clean_param_array($data->licenseallocated, PARAM_INT, true);
+        }
+        if (!empty($data->timeenrolled)) {
+            $data->timeenrolled = clean_param_array($data->timeenrolled, PARAM_INT, true);
+        }
+        if (!empty($data->timecompleted)) {
+            $data->timecompleted = clean_param_array($data->timecompleted, PARAM_INT, true);
+        }
+        if (!empty($data->origlicenseallocated)) {
+            $data->origlicenseallocated = clean_param_array($data->origlicenseallocated, PARAM_INT);
+        }
+        if (!empty($data->origtimeenrolled)) {
+            $data->origtimeenrolled = clean_param_array($data->origtimeenrolled, PARAM_INT);
+        }
+        if (!empty($data->origtimecompleted)) {
+            $data->origtimecompleted = clean_param_array($data->origtimecompleted, PARAM_INT);
+        }
+        if (!empty($data->finalscore)) {
+            $data->finalscore = clean_param_array($data->finalscore, PARAM_INT);
+        }
+        if (!empty($data->origfinalscore)) {
+            $data->origfinalscore = clean_param_array($data->origfinalscore, PARAM_INT);
+        }
+
+        // Update any data sent from the form.
+        if (!empty($data->finalscore)) {
+            foreach ($data->finalscore as $key => $value) {
+                if ($data->origfinalscore[$key] != $value && confirm_sesskey()) {
+                    $DB->set_field('local_iomad_track', 'finalscore', $value, array('id' => $key));
+                    $DB->set_field('local_iomad_track', 'modifiedtime', time(), array('id' => $key));
+
+                    // Re-generate the certificate.
+                    if ($trackrec = $DB->get_record('local_iomad_track', array('id' => $key))) {
+                        local_iomad_track_delete_entry($key);
+                        xmldb_local_iomad_track_record_certificates($trackrec->courseid, $trackrec->userid, $trackrec->id, false);
+                    }
+                }
+            }
+        }
+        if (!empty($data->licenseallocated)) {
+            foreach ($data->licenseallocated as $key => $value) {
+                $testtime = strtotime("0:00", $data->origlicenseallocated[$key]);
+                $senttime = strtotime($value['year'] . "-" . $value['month'] . "-" . $value['day']);
+
+                if ($testtime != $senttime && confirm_sesskey()) {
+                    $DB->set_field('local_iomad_track', 'licenseallocated', $senttime, array('id' => $key));
+                    $DB->set_field('local_iomad_track', 'modifiedtime', time(), array('id' => $key));
+                }
+            }
+        }
+        if (!empty($data->timeenrolled)) {
+            foreach ($data->timeenrolled as $key => $value) {
+                $testtime = strtotime("0:00", $data->origtimeenrolled[$key]);
+                $senttime = strtotime($value['year'] . "-" . $value['month'] . "-" . $value['day']);
+
+                if ($testtime != $senttime && confirm_sesskey()) {
+                    $DB->set_field('local_iomad_track', 'timeenrolled', $senttime, array('id' => $key));
+                    $DB->set_field('local_iomad_track', 'modifiedtime', time(), array('id' => $key));
+                }
+            }
+        }
+        if (!empty($data->timecompleted)) {
+            foreach ($data->timecompleted as $key => $value) {
+                if ($trackrec = $DB->get_record('local_iomad_track', array('id' => $key))) {
+                    $testtime = strtotime("0:00", $data->origtimecompleted[$key]);
+                    $senttime = strtotime($value['year'] . "-" . $value['month'] . "-" . $value['day']);
+
+                    if ($testtime != $senttime && confirm_sesskey()) {
+                        $DB->set_field('local_iomad_track', 'timecompleted', $senttime, array('id' => $key));
+                        $DB->set_field('local_iomad_track', 'modifiedtime', time(), array('id' => $key));
+                        if ($iomadcourseinfo = $DB->get_record('iomad_courses', array('courseid' => $trackrec->courseid))) {
+                            if (!empty($iomadcourseinfo->validlength)) {
+                                $DB->set_field('local_iomad_track', 'timeexpires', $senttime + ($iomadcourseinfo->validlength * 24 * 60 * 60), array('id' => $key));
+                            }
+                        }
+
+                        // Re-generate the certificate.
+                        local_iomad_track_delete_entry($key);
+                        xmldb_local_iomad_track_record_certificates($trackrec->courseid, $trackrec->userid, $trackrec->id, false);
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Deal with edit buttons.
+if ($adminediting != -1) {
+    $SESSION->iomadeditingreports = $adminediting;
+}
+if (iomad::has_capability('local/report_users:updateentries', context_system::instance()) && !empty($courseid)) {
+    $editurl = new moodle_url($CFG->wwwroot . '/local/report_completion/index.php', $params);
+    if (!empty($SESSION->iomadeditingreports)) {
+        $caption = get_string('turneditingoff');
+        $editurl->param('adminedit', 'off');
+    } else {
+        $caption = get_string('turneditingon');
+        $editurl->param('adminedit', 'on');
+    }
+    $buttons = $OUTPUT->single_button($editurl, $caption, 'get');
+    $PAGE->set_button($buttons);
+}
+
+// Check for user/course delete?
+if (!empty($action)) {
+    if (!empty($confirm) && confirm_sesskey()) {
+        if ($action == 'redocert' && !empty($redocertificate)) {
+            if ($trackrec = $DB->get_record('local_iomad_track', array('id' => $redocertificate))) {
+                local_iomad_track_delete_entry($redocertificate);
+                if (xmldb_local_iomad_track_record_certificates($trackrec->courseid, $trackrec->userid, $trackrec->id, false)) {
+                    redirect(new moodle_url('/local/report_completion/index.php', $params),
+                             get_string($action . "_successful", 'local_report_users'),
+                             null,
+                             \core\output\notification::NOTIFY_SUCCESS);
+                } else {
+                    redirect(new moodle_url('/local/report_completion/index.php', $params),
+                             get_string($action . "_failed", 'local_report_users'),
+                             null,
+                             \core\output\notification::NOTIFY_ERROR);
+                }
+            }
+        }
+    } else {
+        echo $OUTPUT->header();
+        $confirmurl = new moodle_url('/local/report_completion/index.php',
+                                     array('rowid' => $rowid,
+                                     'confirm' => $redocertificate,
+                                     'redocertificate' => $redocertificate,
+                                     'courseid' => $courseid,
+                                     'action' => $action,
+                                     'sesskey' => sesskey()
+                                     ) + $params);
+        $cancel = new moodle_url('/local/report_completion/index.php',
+                                 $params);
+        echo $OUTPUT->confirm(get_string('redocertificateconfirm', 'local_report_users'), $confirmurl, $cancel);
+
+        echo $OUTPUT->footer();
+        die;
+    }
+}
 
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
@@ -506,24 +695,26 @@ if (empty($courseid)) {
                      'department',
                      'email');
 
-    // Deal with optional report fields.
-    if (!empty($extrafields)) {
-        foreach ($extrafields as $extrafield) {
-            $headers[] = $extrafield->title;
-            $columns[] = $extrafield->name;
-            if (!empty($extrafield->fieldid)) {
-                // Its a profile field.
-                // Skip it this time as these may not have data.
-            } else {
-                $selectsql .= ", u." . $extrafield->name;
+    if (empty($SESSION->iomadeditingreports)) {
+        // Deal with optional report fields.
+        if (!empty($extrafields)) {
+            foreach ($extrafields as $extrafield) {
+                $headers[] = $extrafield->title;
+                $columns[] = $extrafield->name;
+                if (!empty($extrafield->fieldid)) {
+                    // Its a profile field.
+                    // Skip it this time as these may not have data.
+                } else {
+                    $selectsql .= ", u." . $extrafield->name;
+                }
             }
-        }
-        foreach ($extrafields as $extrafield) {
-            if (!empty($extrafield->fieldid)) {
-                // Its a profile field.
-                $selectsql .= ", P" . $extrafield->fieldid . ".data AS " . $extrafield->name;
-                $fromsql .= " LEFT JOIN {user_info_data} P" . $extrafield->fieldid . " ON (u.id = P" . $extrafield->fieldid . ".userid AND P".$extrafield->fieldid . ".fieldid = :p" . $extrafield->fieldid . "fieldid )";
-                $sqlparams["p".$extrafield->fieldid."fieldid"] = $extrafield->fieldid;
+            foreach ($extrafields as $extrafield) {
+                if (!empty($extrafield->fieldid)) {
+                    // Its a profile field.
+                    $selectsql .= ", P" . $extrafield->fieldid . ".data AS " . $extrafield->name;
+                    $fromsql .= " LEFT JOIN {user_info_data} P" . $extrafield->fieldid . " ON (u.id = P" . $extrafield->fieldid . ".userid AND P".$extrafield->fieldid . ".fieldid = :p" . $extrafield->fieldid . "fieldid )";
+                    $sqlparams["p".$extrafield->fieldid."fieldid"] = $extrafield->fieldid;
+                }
             }
         }
     }
@@ -546,9 +737,11 @@ if (empty($courseid)) {
                                 AND licensename IS NOT NULL",
                                 array('courseid' => $courseid)) > 0) {
         // Need to add the license columns
-        $headers[] = get_string('licensename', 'block_iomad_company_admin');
+        if (empty($SESSION->iomadeditingreports)) {
+            $headers[] = get_string('licensename', 'block_iomad_company_admin');
+            $columns[] = 'licensename';
+        }
         $headers[] = get_string('licensedateallocated', 'block_iomad_company_admin');
-        $columns[] = 'licensename';
         $columns[] = 'licenseallocated';
     }
 
@@ -578,6 +771,25 @@ if (empty($courseid)) {
         $columns[] = 'certificate';
     }
 
+    // Set up the form.
+    if (!empty($SESSION->iomadeditingreports) && !$table->is_downloading()) {
+        echo html_writer::start_tag('form', array('action' => $url,
+                                                  'enctype' => 'application/x-www-form-urlencoded',
+                                                  'method' => 'post',
+                                                  'name' => 'iomad_report_user_userdisplay_values',
+                                                  'id' => 'iomad_report_user_userdisplay_values'));
+        echo "<input type='hidden' name='sesskey' value=" . sesskey() .">";
+        echo "<input type='hidden' name='download' value=''>";
+        echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+        echo html_writer::start_tag('div', array('class' => 'singlebutton'));
+        echo "<input type = 'submit' id='redo_all_certs' name='redo_selected_certificates' value = '" . get_string('redoselectedcertificates', 'block_iomad_company_admin') . "' class='btn btn-secondary'>";
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
+        echo html_writer::start_tag('div', array('class' => 'iomadclear'));
+
+    }
+
     // Set up the table and display it.
     $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
     $table->define_baseurl($url);
@@ -586,10 +798,56 @@ if (empty($courseid)) {
     $table->no_sorting('status');
     $table->no_sorting('certificate');
     $table->sort_default_column = 'lastname';
-    $table->out($CFG->iomad_max_list_users, true);
+    if (!empty($SESSION->iomadeditingreports)) {
+        $table->downloadable = false;
+    }
 
-    // End the page if appropriate.
     if (!$table->is_downloading()) {
+        echo html_writer::start_tag('div', array('class' => 'tablecontainer'));
+    }
+
+    $table->out($CFG->iomad_max_list_courses, true);
+
+    if (!$table->is_downloading()) {
+        if (!empty($SESSION->iomadeditingreports)) {
+            // Set up the form.
+            echo html_writer::end_tag('div');
+            echo html_writer::start_tag('div', array('class' => 'iomadclear'));
+            echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+            echo html_writer::start_tag('div', array('class' => 'singlebutton'));
+            echo "<input type = 'submit' id='redo_all_certs_bottom' name='redo_selected_certificates' value = '" . get_string('redoselectedcertificates', 'block_iomad_company_admin') . "' class='btn btn-secondary'>";
+            echo html_writer::end_tag('div');
+            echo html_writer::end_tag('div');
+            echo html_writer::end_tag('div');
+            echo html_writer::end_tag('form');
+            echo html_writer::end_tag('div');
+            form_init_date_js();
+        }
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
+?>
+<script>
+$(".checkbox").change(function() {
+    var inputElems = document.getElementsByTagName("input")
+    var matched = this.value;
+    if(this.checked) {
+        if(this.classList.contains("enableallcertificates")) {
+            $(".enablecertificates").prop("checked", this.checked);
+        }
+        if(this.classList.contains("enableallentries")) {
+            $(".enableentries").prop("checked", this.checked);
+        }
+    } else {
+        if(this.classList.contains("enableallcertificates")) {
+            $(".enablecertificates").prop("checked", '');
+        }
+        if(this.classList.contains("enableallentries")) {
+            $(".enableentries").prop("checked", '');
+        }
+    }
+});
+</script>
+<?php
         echo $output->footer();
     }
 }

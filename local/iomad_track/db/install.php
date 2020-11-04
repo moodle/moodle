@@ -152,7 +152,7 @@ function xmldb_local_iomad_track_save_certificate($trackid, $filename) {
 /**
  * Process (any) certificates in the course
  */
-function xmldb_local_iomad_track_record_certificates($courseid, $userid, $trackid) {
+function xmldb_local_iomad_track_record_certificates($courseid, $userid, $trackid, $showresult = true) {
     global $DB;
 
     // Get course.
@@ -210,7 +210,9 @@ function xmldb_local_iomad_track_record_certificates($courseid, $userid, $tracki
             xmldb_local_iomad_track_save_certificate($trackid, $filename);
 
             // Debugging
-            mtrace('local_iomad_track: certificate recorded for ' . $user->username . ' in course ' . $courseid . ' filename "' . $filename . '"');
+            if ($showresult) {
+                mtrace('local_iomad_track: certificate recorded for ' . $user->username . ' in course ' . $courseid . ' filename "' . $filename . '"');
+            }
         }
         return true;
     } else {

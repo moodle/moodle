@@ -16,6 +16,16 @@
     padding-right: 5px;
 }
 
+#page-local-report_users-userdisplay .form-inline label,
+#page-local-report_users-index .form-inline label {
+    display: inline-block!important;
+}
+
+#page-local-report_users-userdisplay .tablecontainer,
+#page-local-report_users-index .tablecontainer {
+    padding-top: 1px;
+}
+
 #page-local-report_users-index #mform1 {
     display: flex;
     padding-top: 5px;

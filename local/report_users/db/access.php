@@ -56,5 +56,32 @@ $capabilities = array(
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW,
         ),
+    ),
+
+    'local/report_users:addentry' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW,
+        ),
+    ),
+
+    'local/report_users:redocertificates' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW,
+        ),
+    ),
+
+    'local/report_users:updateentries' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW,
+        ),
     )
 );

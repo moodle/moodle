@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version  = 2020042400;
+$plugin->version  = 2020102700;
 $plugin->requires = 2019052000;
 $plugin->release  = '3.8.4 (Build: 20200713)'; // Human-friendly version name
 $plugin->component  = 'local_report_users';

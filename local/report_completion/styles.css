@@ -65,3 +65,6 @@
     background-color: green;
 }
 
+#page-local-report_completion-index .form-inline label {
+    display: inline-block!important;
+}
