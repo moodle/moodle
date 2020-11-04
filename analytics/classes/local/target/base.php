@@ -279,7 +279,7 @@ abstract class base extends \core_analytics\calculable {
         } else if ($context->contextlevel >= CONTEXT_COURSE) {
             // At course level or below only enrolled users although this is not ideal for
             // teachers assigned at category level.
-            $users = get_enrolled_users($context, 'moodle/analytics:listinsights');
+            $users = get_enrolled_users($context, 'moodle/analytics:listinsights', 0, 'u.*', null, 0, 0, true);
         } else {
             $users = get_users_by_capability($context, 'moodle/analytics:listinsights');
         }
