@@ -24,3 +24,7 @@
     text-align: right;
 }
 */
+
+.dir-rtl .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+    transform: translateX(-($custom-switch-width - $custom-control-indicator-size));
+}
