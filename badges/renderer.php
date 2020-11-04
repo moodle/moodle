@@ -802,7 +802,7 @@ class core_badges_renderer extends plugin_renderer_base {
                 );
 
         if (has_capability('moodle/badges:configuredetails', $context)) {
-            $row[] = new tabobject('details',
+            $row[] = new tabobject('badge',
                         new moodle_url('/badges/edit.php', array('id' => $badgeid, 'action' => 'badge')),
                         get_string('bdetails', 'badges')
                     );
@@ -853,7 +853,7 @@ class core_badges_renderer extends plugin_renderer_base {
         if (has_capability('moodle/badges:configuredetails', $context)) {
             $alignments = $DB->count_records_sql("SELECT COUNT(bc.id)
                       FROM {badge_alignment} bc WHERE bc.badgeid = :badgeid", array('badgeid' => $badgeid));
-            $row[] = new tabobject('balignment',
+            $row[] = new tabobject('alignment',
                 new moodle_url('/badges/alignment.php', array('id' => $badgeid)),
                 get_string('balignment', 'badges', $alignments)
             );
