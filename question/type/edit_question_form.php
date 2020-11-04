@@ -110,7 +110,7 @@ abstract class question_edit_form extends question_wizard_form {
         $this->category = $category;
         $this->categorycontext = context::instance_by_id($category->contextid);
 
-        parent::__construct($submiturl, null, 'post', '', null, $formeditable);
+        parent::__construct($submiturl, null, 'post', '', ['data-qtype' => $this->qtype()], $formeditable);
     }
 
     /**
