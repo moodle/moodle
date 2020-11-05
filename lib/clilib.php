@@ -106,7 +106,8 @@ function cli_get_params(array $longoptions, array $shortmapping=null) {
                 $key   = reset($parts);
                 $value = true;
 
-                if (substr($key, 0, 3) === 'no-') {
+                if (substr($key, 0, 3) === 'no-' && !array_key_exists($key, $longoptions)
+                        && array_key_exists(substr($key, 3), $longoptions)) {
                     // Support flipping the boolean value.
                     $value = !$value;
                     $key = substr($key, 3);
