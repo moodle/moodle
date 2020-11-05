@@ -6325,7 +6325,8 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
                 $CFG->dataroot,
                 $CFG->dirroot,
                 $CFG->localcachedir,
-                $CFG->tempdir
+                $CFG->tempdir,
+                $CFG->localrequestdir,
             ]);
             // Set addpath to true.
             $addpath = true;

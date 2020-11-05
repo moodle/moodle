@@ -3446,6 +3446,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             'dirroot' => [$CFG->dirroot],
             'localcachedir' => [$CFG->localcachedir],
             'tempdir' => [$CFG->tempdir],
+            // Paths within $CFG->localrequestdir.
+            'localrequestdir_request_directory' => [make_request_directory()],
+            'localrequestdir_request_storage_directory' => [get_request_storage_directory()],
             // Pass null to indicate we want to test a path relative to $CFG->dataroot.
             'relative' => [null]
         ];
