@@ -56,6 +56,13 @@ define([
             }
         });
 
+        root.on('click', Selectors.post.inpageCancelButton, function() {
+            // Tell formchangechecker to reset the form state.
+            if (typeof M.core_formchangechecker !== 'undefined') {
+                M.core_formchangechecker.reset_form_dirty_state();
+            }
+        });
+
         root.on('click', Selectors.favourite.toggle, function(e) {
             e.preventDefault();
 

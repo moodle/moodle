@@ -283,7 +283,7 @@ class mod_forum_post_form extends moodleform {
         if ($inpagereply) {
             $mform->addElement('hidden', 'discussionsubscribe');
             $mform->setType('discussionsubscribe', PARAM_INT);
-            $mform->disable_form_change_checker();
+
             $buttonarray = array();
             $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitstring);
             $buttonarray[] = &$mform->createElement('button', 'cancelbtn',
