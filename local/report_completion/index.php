@@ -213,7 +213,10 @@ if (!empty($data)) {
             die;
 
         }
-    } else {
+    } else if (!empty($data->origlicenseallocated) ||
+               !empty($data->origtimeenrolled) ||
+               !empty($data->origtimecompleted) ||
+               !empty($data->origfinalscore)) {
         iomad::require_capability('local/report_users:updateentries', $context);
         if (!empty($data->licenseallocated)) {
             $data->licenseallocated = clean_param_array($data->licenseallocated, PARAM_INT, true);
