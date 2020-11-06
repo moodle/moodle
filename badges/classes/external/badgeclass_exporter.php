@@ -45,6 +45,12 @@ class badgeclass_exporter extends exporter {
      * @param array $related - An optional list of pre-loaded objects related to this object.
      */
     public function __construct($data, $related = array()) {
+        // Having mixed $data is causing some issues. As this class is treating $data as an object everywhere, it can be converted
+        // to object at this point, to avoid errors and get the expected behaviour always.
+        // $data is an array when this class is a request exporter in backpack_api_mapping, but it is an object when this is
+        // used as a response exporter.
+        $data = (object) $data;
+
         $pick = $this->pick_related();
         foreach ($pick as $one) {
             $isarray = false;
