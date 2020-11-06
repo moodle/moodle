@@ -40,6 +40,20 @@ use stdClass;
 class assertion_exporter extends exporter {
 
     /**
+     * Constructor - saves the persistent object, and the related objects.
+     *
+     * @param mixed $data - Either an stdClass or an array of values.
+     * @param array $related - An optional list of pre-loaded objects related to this object.
+     */
+    public function __construct($data, $related = array()) {
+        // Having mixed $data is causing some issues. As this class is treating $data as an object everywhere, it can be converted
+        // to object at this point, to avoid errors and get the expected behaviour always.
+        // $data is an array when this class is a request exporter in backpack_api_mapping, but it is an object when this is
+        // used as a response exporter.
+        parent::__construct((object) $data, $related);
+    }
+
+    /**
      * Map from a request response data to the internal structure.
      *
      * @param stdClass $data The remote data.
