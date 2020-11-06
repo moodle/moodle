@@ -1119,10 +1119,10 @@ class process {
                     $this->upt->track('enrolments', get_string('unknowncourse', 'error', s($shortname)), 'error');
                     continue;
                 }
-                $ccache[$shortname] = $course;
-                $ccache[$shortname]->groups = null;
+                $this->ccache[$shortname] = $course;
+                $this->ccache[$shortname]->groups = null;
             }
-            $courseid      = $ccache[$shortname]->id;
+            $courseid      = $this->ccache[$shortname]->id;
             $coursecontext = \context_course::instance($courseid);
             if (!isset($this->manualcache[$courseid])) {
                 $this->manualcache[$courseid] = false;
@@ -1241,41 +1241,41 @@ class process {
                     continue;
                 }
                 // Build group cache.
-                if (is_null($ccache[$shortname]->groups)) {
-                    $ccache[$shortname]->groups = array();
+                if (is_null($this->ccache[$shortname]->groups)) {
+                    $this->ccache[$shortname]->groups = array();
                     if ($groups = groups_get_all_groups($courseid)) {
                         foreach ($groups as $gid => $group) {
-                            $ccache[$shortname]->groups[$gid] = new \stdClass();
-                            $ccache[$shortname]->groups[$gid]->id   = $gid;
-                            $ccache[$shortname]->groups[$gid]->name = $group->name;
+                            $this->ccache[$shortname]->groups[$gid] = new \stdClass();
+                            $this->ccache[$shortname]->groups[$gid]->id   = $gid;
+                            $this->ccache[$shortname]->groups[$gid]->name = $group->name;
                             if (!is_numeric($group->name)) { // Only non-numeric names are supported!!!
-                                $ccache[$shortname]->groups[$group->name] = new \stdClass();
-                                $ccache[$shortname]->groups[$group->name]->id   = $gid;
-                                $ccache[$shortname]->groups[$group->name]->name = $group->name;
+                                $this->ccache[$shortname]->groups[$group->name] = new \stdClass();
+                                $this->ccache[$shortname]->groups[$group->name]->id   = $gid;
+                                $this->ccache[$shortname]->groups[$group->name]->name = $group->name;
                             }
                         }
                     }
                 }
                 // Group exists?
                 $addgroup = $user->{'group'.$i};
-                if (!array_key_exists($addgroup, $ccache[$shortname]->groups)) {
+                if (!array_key_exists($addgroup, $this->ccache[$shortname]->groups)) {
                     // If group doesn't exist,  create it.
                     $newgroupdata = new \stdClass();
                     $newgroupdata->name = $addgroup;
-                    $newgroupdata->courseid = $ccache[$shortname]->id;
+                    $newgroupdata->courseid = $this->ccache[$shortname]->id;
                     $newgroupdata->description = '';
                     $gid = groups_create_group($newgroupdata);
                     if ($gid) {
-                        $ccache[$shortname]->groups[$addgroup] = new \stdClass();
-                        $ccache[$shortname]->groups[$addgroup]->id   = $gid;
-                        $ccache[$shortname]->groups[$addgroup]->name = $newgroupdata->name;
+                        $this->ccache[$shortname]->groups[$addgroup] = new \stdClass();
+                        $this->ccache[$shortname]->groups[$addgroup]->id   = $gid;
+                        $this->ccache[$shortname]->groups[$addgroup]->name = $newgroupdata->name;
                     } else {
                         $this->upt->track('enrolments', get_string('unknowngroup', 'error', s($addgroup)), 'error');
                         continue;
                     }
                 }
-                $gid   = $ccache[$shortname]->groups[$addgroup]->id;
-                $gname = $ccache[$shortname]->groups[$addgroup]->name;
+                $gid   = $this->ccache[$shortname]->groups[$addgroup]->id;
+                $gname = $this->ccache[$shortname]->groups[$addgroup]->name;
 
                 try {
                     if (groups_add_member($gid, $user->id)) {
