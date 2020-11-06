@@ -102,13 +102,15 @@ class cache_config_writer extends cache_config {
         $factory = cache_factory::instance();
         $locking = $factory->create_lock_instance($lockconf);
         if ($locking->lock('configwrite', 'config', true)) {
+            $tempcachefile = "{$cachefile}.tmp";
             // Its safe to use w mode here because we have already acquired the lock.
-            $handle = fopen($cachefile, 'w');
+            $handle = fopen($tempcachefile, 'w');
             fwrite($handle, $content);
             fflush($handle);
             fclose($handle);
             $locking->unlock('configwrite', 'config');
-            @chmod($cachefile, $CFG->filepermissions);
+            @chmod($tempcachefile, $CFG->filepermissions);
+            rename($tempcachefile, $cachefile);
             // Tell PHP to recompile the script.
             core_component::invalidate_opcode_php_cache($cachefile);
         } else {
