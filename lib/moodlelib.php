@@ -6311,10 +6311,8 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
             require_once($CFG->libdir.'/filelib.php');
             $mimetype = mimeinfo('type', $attachname);
 
-            $attachmentpath = $attachment;
-
             // Before doing the comparison, make sure that the paths are correct (Windows uses slashes in the other direction).
-            $attachpath = str_replace('\\', '/', $attachmentpath);
+            $attachpath = str_replace('\\', '/', $attachment);
 
             // Add allowed paths to an array (also check if it's not empty).
             $allowedpaths = array_filter([
@@ -6328,11 +6326,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
             // Set addpath to true.
             $addpath = true;
             // Check if attachment includes one of the allowed paths.
-            foreach ($allowedpaths as $tmpvar) {
+            foreach ($allowedpaths as $allowedpath) {
                 // Make sure both variables are normalised before comparing.
-                $temppath = str_replace('\\', '/', realpath($tmpvar));
+                $allowedpath = str_replace('\\', '/', realpath($allowedpath));
                 // Set addpath to false if the attachment includes one of the allowed paths.
-                if (strpos($attachpath, $temppath) === 0) {
+                if (strpos($attachpath, $allowedpath) === 0) {
                     $addpath = false;
                     break;
                 }
@@ -6341,10 +6339,10 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
             // If the attachment is a full path to a file in the multiple allowed paths, use it as is,
             // otherwise assume it is a relative path from the dataroot (for backwards compatibility reasons).
             if ($addpath == true) {
-                $attachmentpath = $CFG->dataroot . '/' . $attachmentpath;
+                $attachment = $CFG->dataroot . '/' . $attachment;
             }
 
-            $mail->addAttachment($attachmentpath, $attachname, 'base64', $mimetype);
+            $mail->addAttachment($attachment, $attachname, 'base64', $mimetype);
         }
     }
 
