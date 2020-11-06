@@ -6315,7 +6315,8 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
             $mimetype = mimeinfo('type', $attachname);
 
             // Before doing the comparison, make sure that the paths are correct (Windows uses slashes in the other direction).
-            $attachpath = str_replace('\\', '/', $attachment);
+            // The absolute (real) path is also fetched to ensure that comparisons to allowed paths are compared equally.
+            $attachpath = str_replace('\\', '/', realpath($attachment));
 
             // Add allowed paths to an array (also check if it's not empty).
             $allowedpaths = array_filter([
