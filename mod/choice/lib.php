@@ -122,6 +122,10 @@ function choice_add_instance($choice) {
 
     $choice->timemodified = time();
 
+    // Choice name.
+    if (!empty($choice->name)) {
+        $choice->name = trim($choice->name);
+    }
     //insert answers
     $choice->id = $DB->insert_record("choice", $choice);
     foreach ($choice->option as $key => $value) {
@@ -164,6 +168,11 @@ function choice_update_instance($choice) {
     $choice->id = $choice->instance;
     $choice->timemodified = time();
 
+    // Choice name.
+    if (!empty($choice->name)) {
+        $choice->name = trim($choice->name);
+    }
+    
     //update, delete or insert answers
     foreach ($choice->option as $key => $value) {
         $value = trim($value);
