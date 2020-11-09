@@ -55,5 +55,8 @@ function xmldb_auth_cas_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020081700, 'auth', 'cas');
     }
 
+    // Automatically generated Moodle v3.10.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
