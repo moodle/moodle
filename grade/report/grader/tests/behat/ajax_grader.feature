@@ -62,14 +62,14 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I press the enter key
     And I should not see a grade field for "Student 2" and grade item "Item VU"
     And I should not see a feedback field for "Student 2" and grade item "Item VU"
+    And I click on student "Student 3" for grade item "Item SU"
+    And I set the field "ajaxgrade" to "Very good"
+    And I press the shift tab key
     And I click on student "Student 3" for grade item "Item VU"
     And I set the field "ajaxgrade" to "50"
     And I press the enter key
     And I click on student "Student 3" for grade item "Item 1"
     And I set the field "ajaxgrade" to "80"
-    And I press the enter key
-    And I click on student "Student 3" for grade item "Item SU"
-    And I set the field "ajaxgrade" to "Very good"
     And I press the enter key
     And the following should exist in the "user-grades" table:
       | -1-                | -6-      | -7-      | -13-      | -16-         |
