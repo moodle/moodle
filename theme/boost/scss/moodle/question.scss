@@ -423,6 +423,13 @@ body.jsenabled .questionflag input[type=checkbox] {
     margin: 1em 0;
 }
 
+#page-question-preview .collapsibleregion {
+    .collapsibleregioncaption,
+    .collapsibleregionextracontent {
+        display: inline-block;
+    }
+}
+
 // imported from quiz.css
 
 #page-mod-quiz-edit ul.slots .activityinstance {
