@@ -364,10 +364,12 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
      * @param {jQuery} drag the item being moved.
      */
     DragDropOntoImageQuestion.prototype.dragMove = function(pageX, pageY, drag) {
-        var thisQ = this;
+        var thisQ = this,
+            highlighted = false;
         this.getRoot().find('.dropzone.group' + this.getGroup(drag)).each(function(i, dropNode) {
             var drop = $(dropNode);
-            if (thisQ.isPointInDrop(pageX, pageY, drop)) {
+            if (thisQ.isPointInDrop(pageX, pageY, drop) && !highlighted) {
+                highlighted = true;
                 drop.addClass('valid-drag-over-drop');
             } else {
                 drop.removeClass('valid-drag-over-drop');
@@ -375,7 +377,8 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         });
         this.getRoot().find('.draghome.placed.group' + this.getGroup(drag)).not('.beingdragged').each(function(i, dropNode) {
             var drop = $(dropNode);
-            if (thisQ.isPointInDrop(pageX, pageY, drop)) {
+            if (thisQ.isPointInDrop(pageX, pageY, drop) && !highlighted) {
+                highlighted = true;
                 drop.addClass('valid-drag-over-drop');
             } else {
                 drop.removeClass('valid-drag-over-drop');
@@ -394,6 +397,8 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         var thisQ = this,
             root = this.getRoot(),
             placed = false;
+
+        // Looking for drag that was dropped on a dropzone.
         root.find('.dropzone.group' + this.getGroup(drag)).each(function(i, dropNode) {
             var drop = $(dropNode);
             if (!thisQ.isPointInDrop(pageX, pageY, drop)) {
@@ -408,21 +413,24 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
             return false; // Stop the each() here.
         });
 
-        root.find('.draghome.placed.group' + this.getGroup(drag)).not('.beingdragged').each(function(i, placedNode) {
-            var placedDrag = $(placedNode);
-            if (!thisQ.isPointInDrop(pageX, pageY, placedDrag)) {
-                // Not this placed drag.
-                return true;
-            }
+        if (!placed) {
+            // Looking for drag that was dropped on a placed drag.
+            root.find('.draghome.placed.group' + this.getGroup(drag)).not('.beingdragged').each(function(i, placedNode) {
+                var placedDrag = $(placedNode);
+                if (!thisQ.isPointInDrop(pageX, pageY, placedDrag)) {
+                    // Not this placed drag.
+                    return true;
+                }
 
-            // Now put this drag into the drop.
-            placedDrag.removeClass('valid-drag-over-drop');
-            var currentPlace = thisQ.getClassnameNumericSuffix(placedDrag, 'inplace');
-            var drop = thisQ.getDrop(drag, currentPlace);
-            thisQ.sendDragToDrop(drag, drop);
-            placed = true;
-            return false; // Stop the each() here.
-        });
+                // Now put this drag into the drop.
+                placedDrag.removeClass('valid-drag-over-drop');
+                var currentPlace = thisQ.getClassnameNumericSuffix(placedDrag, 'inplace');
+                var drop = thisQ.getDrop(drag, currentPlace);
+                thisQ.sendDragToDrop(drag, drop);
+                placed = true;
+                return false; // Stop the each() here.
+            });
+        }
 
         if (!placed) {
             this.sendDragHome(drag);
