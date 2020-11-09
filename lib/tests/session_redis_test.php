@@ -116,6 +116,30 @@ class core_session_redis_testcase extends advanced_testcase {
         $this->assertSessionNoLocks();
     }
 
+    public function test_compression_read_and_write_works() {
+        global $CFG;
+
+        $CFG->session_redis_compressor = \core\session\redis::COMPRESSION_GZIP;
+
+        $sess = new \core\session\redis();
+        $sess->init();
+        $this->assertTrue($sess->handler_write('sess1', 'DATA'));
+        $this->assertSame('DATA', $sess->handler_read('sess1'));
+        $this->assertTrue($sess->handler_close());
+
+        if (extension_loaded('zstd')) {
+            $CFG->session_redis_compressor = \core\session\redis::COMPRESSION_ZSTD;
+
+            $sess = new \core\session\redis();
+            $sess->init();
+            $this->assertTrue($sess->handler_write('sess2', 'DATA'));
+            $this->assertSame('DATA', $sess->handler_read('sess2'));
+            $this->assertTrue($sess->handler_close());
+        }
+
+        $CFG->session_redis_compressor = \core\session\redis::COMPRESSION_NONE;
+    }
+
     public function test_session_blocks_with_existing_session() {
         $sess = new \core\session\redis();
         $sess->init();

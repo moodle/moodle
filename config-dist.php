@@ -324,6 +324,9 @@ $CFG->admin = 'admin';
 //      Use the igbinary serializer instead of the php default one. Note that phpredis must be compiled with
 //      igbinary support to make the setting to work. Also, if you change the serializer you have to flush the database!
 //      $CFG->session_redis_serializer_use_igbinary = false; // Optional, default is PHP builtin serializer.
+//      $CFG->session_redis_compressor = 'none'; // Optional, possible values are:
+//                                               // 'gzip' - PHP GZip compression
+//                                               // 'zstd' - PHP Zstandard compression
 //
 // Please be aware that when selecting Memcached for sessions that it is advised to use a dedicated
 // memcache server. The memcached extension does not provide isolated environments for individual uses.
