@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.10.1 ===
+* New optional parameter $extracontent for print_collapsible_region_start(). This allows developers to add interactive HTML elements
+  (e.g. a help icon) after the collapsible region's toggle link.
+
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:
   - Breaking change: All the "template methods" (setUp(), tearDown()...) now require to return void. This implies

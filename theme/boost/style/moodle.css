@@ -15820,6 +15820,10 @@ body.jsenabled .questionflag input[type=checkbox] {
 #page-question-preview #techinfo {
   margin: 1em 0; }
 
+#page-question-preview .collapsibleregion .collapsibleregioncaption,
+#page-question-preview .collapsibleregion .collapsibleregionextracontent {
+  display: inline-block; }
+
 #page-mod-quiz-edit ul.slots .activityinstance > a {
   display: flex;
   max-width: 100%;
