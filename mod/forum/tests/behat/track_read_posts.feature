@@ -16,37 +16,41 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
       | user | course | role |
       | student1 | C1 | student |
       | student2 | C1 | student |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Tracking forum posts off
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Off |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Test post subject |
-      | Message | Test post message |
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given the following "activity" exists:
+      | activity      | forum                           |
+      | course        | C1                              |
+      | idnumber      | forum1                          |
+      | type          | general                         |
+      | name          | Test forum name                 |
+      | trackingtype  | 0                               |
+    And the following "mod_forum > discussion" exists:
+      | forum   | forum1            |
+      | course  | C1                |
+      | user    | admin             |
+      | name    | Test post subject |
+      | message | Test post message |
+    When I am on the "Course 1" course page logged in as student1
     Then I should not see "1 unread post"
     And I follow "Test forum name"
     And I should not see "Track unread posts"
 
   Scenario: Tracking forum posts optional with user tracking on
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Optional |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Test post subject |
-      | Message | Test post message |
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given the following "activity" exists:
+      | activity     | forum                  |
+      | course       | C1                     |
+      | idnumber     | forum1                 |
+      | name         | Test forum name        |
+      | type         | general                |
+      | trackingtype | 1                      |
+    And the following "mod_forum > discussion" exists:
+      | forum   | forum1            |
+      | course  | C1                |
+      | user    | admin             |
+      | name    | Test post subject |
+      | message | Test post message |
+    When I am on the "Course 1" course page logged in as student1
     Then I should see "1 unread post"
     And I follow "Test forum name"
     And I follow "Don't track unread posts"
@@ -61,17 +65,20 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     And I should not see "1 unread post"
 
   Scenario: Tracking forum posts optional with user tracking off
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Optional |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Test post subject |
-      | Message | Test post message |
-    And I log out
-    When I log in as "student2"
-    And I am on "Course 1" course homepage
+    Given the following "activity" exists:
+      | activity     | forum                       |
+      | course       | C1                          |
+      | idnumber     | 00001                       |
+      | name         | Test forum name             |
+      | type         | general                     |
+      | trackingtype | 1                           |
+    And the following "mod_forum > discussion" exists:
+      | forum   | 00001             |
+      | course  | C1                |
+      | user    | admin             |
+      | name    | Test post subject |
+      | message | Test post message |
+    When I am on the "Course 1" course page logged in as student2
     Then I should not see "1 unread post"
     And I follow "Test forum name"
     And I should not see "Track unread posts"
@@ -79,18 +86,20 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
   Scenario: Tracking forum posts forced with user tracking on
     Given the following config values are set as admin:
       | forum_allowforcedreadtracking | 1 |
-    And I am on "Course 1" course homepage
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Force |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Test post subject |
-      | Message | Test post message |
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    And the following "activity" exists:
+      | activity     | forum                       |
+      | course       | C1                          |
+      | idnumber     | 00001                       |
+      | name         | Test forum name             |
+      | type         | general                     |
+      | trackingtype | 2                           |
+    And the following "mod_forum > discussion" exists:
+      | forum   | 00001            |
+      | course  | C1                |
+      | user    | admin             |
+      | name    | Test post subject |
+      | message | Test post message |
+    When I am on the "Course 1" course page logged in as student1
     Then I should see "1 unread post"
     And I follow "1 unread post"
     And I should not see "Don't track unread posts"
@@ -101,18 +110,20 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
   Scenario: Tracking forum posts forced with user tracking off
     Given the following config values are set as admin:
       | forum_allowforcedreadtracking | 1 |
-    And I am on "Course 1" course homepage
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Force |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Test post subject |
-      | Message | Test post message |
-    And I log out
-    When I log in as "student2"
-    And I am on "Course 1" course homepage
+    And the following "activity" exists:
+      | activity     | forum                       |
+      | course       | C1                          |
+      | idnumber     | 00001                       |
+      | name         | Test forum name             |
+      | type         | general                     |
+      | trackingtype | 2                           |
+    And the following "mod_forum > discussion" exists:
+      | forum   | 00001             |
+      | course  | C1                |
+      | user    | admin             |
+      | name    | Test post subject |
+      | message | Test post message |
+    When I am on the "Course 1" course page logged in as student2
     Then I should see "1 unread post"
     And I follow "1 unread post"
     And I should not see "Don't track unread posts"
@@ -123,20 +134,22 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
   Scenario: Tracking forum posts forced (with force disabled) with user tracking on
     Given the following config values are set as admin:
       | forum_allowforcedreadtracking | 1 |
-    And I am on "Course 1" course homepage
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Force |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Test post subject |
-      | Message | Test post message |
+    And the following "activity" exists:
+      | activity     | forum                     |
+      | course       | C1                        |
+      | idnumber     | 00001                     |
+      | name         | Test forum name           |
+      | type         | general                   |
+      | trackingtype | 2                         |
+    And the following "mod_forum > discussion" exists:
+      | forum   | 00001             |
+      | course  | C1                |
+      | user    | admin             |
+      | name    | Test post subject |
+      | message | Test post message |
     And the following config values are set as admin:
       | forum_allowforcedreadtracking | 0 |
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     Then I should see "1 unread post"
     And I follow "Test forum name"
     And I follow "Don't track unread posts"
@@ -153,20 +166,22 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
   Scenario: Tracking forum posts forced (with force disabled) with user tracking off
     Given the following config values are set as admin:
       | forum_allowforcedreadtracking | 1 |
-    And I am on "Course 1" course homepage
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Force |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Test post subject |
-      | Message | Test post message |
+    And the following "activity" exists:
+      | activity     | forum                  |
+      | course       | C1                     |
+      | idnumber     | 00001                  |
+      | name         | Test forum name        |
+      | type         | general                |
+      | trackingtype | 2                      |
+    And the following "mod_forum > discussion" exists:
+      | forum   | 00001             |
+      | course  | C1                |
+      | user    | admin             |
+      | name    | Test post subject |
+      | message | Test post message |
     And the following config values are set as admin:
       | forum_allowforcedreadtracking | 0 |
-    And I log out
-    When I log in as "student2"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student2
     Then I should not see "1 unread post"
     And I follow "Test forum name"
     And I should not see "Track unread posts"
