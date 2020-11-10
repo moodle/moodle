@@ -1157,9 +1157,14 @@ div#dock {
     clear: left;
 }
 #page-mod-quiz-mod #id_reviewoptionshdr .form-check {
-    width: 90%;
+    width: auto;
     height: 22px;
     justify-content: flex-start;
+}
+
+#page-mod-quiz-mod #id_reviewoptionshdr .review_option_item {
+    width: 90%;
+    height: 22px;
 }
 
 // Question navigation block.
