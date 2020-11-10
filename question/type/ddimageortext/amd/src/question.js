@@ -377,7 +377,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
         });
         this.getRoot().find('.draghome.placed.group' + this.getGroup(drag)).not('.beingdragged').each(function(i, dropNode) {
             var drop = $(dropNode);
-            if (thisQ.isPointInDrop(pageX, pageY, drop) && !highlighted) {
+            if (thisQ.isPointInDrop(pageX, pageY, drop) && !highlighted && !thisQ.isDragSameAsDrop(drag, drop)) {
                 highlighted = true;
                 drop.addClass('valid-drag-over-drop');
             } else {
@@ -417,7 +417,7 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
             // Looking for drag that was dropped on a placed drag.
             root.find('.draghome.placed.group' + this.getGroup(drag)).not('.beingdragged').each(function(i, placedNode) {
                 var placedDrag = $(placedNode);
-                if (!thisQ.isPointInDrop(pageX, pageY, placedDrag)) {
+                if (!thisQ.isPointInDrop(pageX, pageY, placedDrag) || thisQ.isDragSameAsDrop(drag, placedDrag)) {
                     // Not this placed drag.
                     return true;
                 }
@@ -926,6 +926,17 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
     };
 
     /**
+     * Check that the drag is drop to it's clone.
+     *
+     * @param {jQuery} drag The drag.
+     * @param {jQuery} drop The drop.
+     * @returns {boolean}
+     */
+    DragDropOntoImageQuestion.prototype.isDragSameAsDrop = function(drag, drop) {
+        return this.getChoice(drag) === this.getChoice(drop) && this.getGroup(drag) === this.getGroup(drop);
+    };
+
+    /**
      * Singleton object that handles all the DragDropOntoImageQuestions
      * on the page, and deals with event dispatching.
      * @type {Object}
@@ -1004,6 +1015,8 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
          * @param {jQuery} element Element to bind the event
          */
         addEventHandlersToDrag: function(element) {
+            // Unbind all the mousedown and touchstart events to prevent double binding.
+            element.unbind('mousedown touchstart');
             element.on('mousedown touchstart', questionManager.handleDragStart);
         },
 
