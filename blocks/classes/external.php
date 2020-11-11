@@ -92,6 +92,9 @@ class core_block_external extends external_api {
     private static function get_all_current_page_blocks($includeinvisible = false, $returncontents = false) {
         global $PAGE, $OUTPUT;
 
+        // Set page URL to a fake URL to avoid errors.
+        $PAGE->set_url(new \moodle_url('/webservice/core_block_external/'));
+
         // Load the block instances for all the regions.
         $PAGE->blocks->load_blocks($includeinvisible);
         $PAGE->blocks->create_all_block_instances();
