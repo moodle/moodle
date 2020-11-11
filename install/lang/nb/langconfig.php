@@ -31,4 +31,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['parentlanguage'] = 'no';
-$string['thislanguage'] = 'Norsk Bokmål';
+$string['thislanguage'] = 'Norsk bokmål';
