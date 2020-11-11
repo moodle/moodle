@@ -1616,6 +1616,19 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Return SQL for performing group concatenation on given field/expression
+     *
+     * @param string $field
+     * @param string $separator
+     * @param string $sort
+     * @return string
+     */
+    public function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string {
+        $fieldsort = $sort ?: '1';
+        return "LISTAGG({$field}, '{$separator}') WITHIN GROUP (ORDER BY {$fieldsort})";
+    }
+
+    /**
      * Constructs 'IN()' or '=' sql fragment
      *
      * Method overriding {@link moodle_database::get_in_or_equal} to be able to get
