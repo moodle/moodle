@@ -178,4 +178,23 @@ class qtype_calculated_question_test extends advanced_testcase {
         $this->assertEquals('category' . $question->category,
                 $question->get_variants_selection_seed());
     }
+
+    /**
+     * test_get_question_definition_for_external_rendering
+     */
+    public function test_get_question_definition_for_external_rendering() {
+        $this->resetAfterTest();
+
+        $question = test_question_maker::make_question('calculated');
+        $question->start_attempt(new question_attempt_step(), 1);
+        $qa = test_question_maker::get_a_qa($question);
+        $displayoptions = new question_display_options();
+
+        $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
+        $this->assertNotEmpty($options);
+        $this->assertEquals(0, $options['unitgradingtype']);
+        $this->assertEquals(0, $options['unitpenalty']);
+        $this->assertEquals(qtype_numerical::UNITNONE, $options['unitdisplay']);
+        $this->assertEmpty($options['unitsleft']);
+    }
 }
