@@ -4743,26 +4743,26 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
               JOIN {user_lastaccess} ul
                    ON ul.courseid = c.id
             $favsql
+         LEFT JOIN {enrol} eg ON eg.courseid = c.id AND eg.status = :statusenrolg AND eg.enrol = :guestenrol
              WHERE ul.userid = :userid
                AND c.visible = :visible
-               AND EXISTS (SELECT e.id
+               AND (eg.id IS NOT NULL
+                    OR EXISTS (SELECT e.id
                              FROM {enrol} e
-                        LEFT JOIN {user_enrolments} ue ON ue.enrolid = e.id
+                             JOIN {user_enrolments} ue ON ue.enrolid = e.id
                             WHERE e.courseid = c.id
                               AND e.status = :statusenrol
-                              AND ((ue.status = :status
-                                    AND ue.userid = ul.userid
-                                    AND ue.timestart < :now1
-                                    AND (ue.timeend = 0 OR ue.timeend > :now2)
-                                   )
-                                   OR e.enrol = :guestenrol
-                                  )
-                          )
+                              AND ue.status = :status
+                              AND ue.userid = :userid2
+                              AND ue.timestart < :now1
+                              AND (ue.timeend = 0 OR ue.timeend > :now2)
+                          ))
             $orderby";
 
     $now = round(time(), -2); // Improves db caching.
     $params = ['userid' => $userid, 'contextlevel' => CONTEXT_COURSE, 'visible' => 1, 'status' => ENROL_USER_ACTIVE,
-               'statusenrol' => ENROL_INSTANCE_ENABLED, 'guestenrol' => 'guest', 'now1' => $now, 'now2' => $now] + $favparams;
+               'statusenrol' => ENROL_INSTANCE_ENABLED, 'guestenrol' => 'guest', 'now1' => $now, 'now2' => $now,
+               'userid2' => $userid, 'statusenrolg' => ENROL_INSTANCE_ENABLED] + $favparams;
 
     $recentcourses = $DB->get_records_sql($sql, $params, $offset, $limit);
 
