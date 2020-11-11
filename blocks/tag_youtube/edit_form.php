@@ -30,6 +30,8 @@
  */
 class block_tag_youtube_edit_form extends block_edit_form {
     protected function specific_definition($mform) {
+        global $OUTPUT;
+
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 
         $mform->addElement('text', 'config_title', get_string('configtitle', 'block_tag_youtube'));
@@ -38,9 +40,25 @@ class block_tag_youtube_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_numberofvideos', get_string('numberofvideos', 'block_tag_youtube'), array('size' => 5));
         $mform->setType('config_numberofvideos', PARAM_INT);
 
-        $categorychoices = $this->block->get_categories();
-        $mform->addElement('select', 'config_category', get_string('category', 'block_tag_youtube'), $categorychoices);
+        // Category setting.
+        $categorychoices = ['0' => get_string('anycategory', 'block_tag_youtube')];
+        $categoryerror = '';
+
+        try {
+            // Get all video categories through an API call and add them to the category list.
+            $categorychoices += $this->block->get_categories();
+        } catch (Exception $e) {
+            $categoryerror = $e->getMessage();
+        }
+        $mform->addElement('select', 'config_category', get_string('category', 'block_tag_youtube'),
+            $categorychoices);
         $mform->setDefault('config_category', 0);
+
+        if ($categoryerror) {
+            $notification = $OUTPUT->notification(get_string('categoryerror', 'block_tag_youtube', $categoryerror),
+                'error');
+            $mform->addElement('static', 'config_category_error', '', $notification);
+        }
 
         $mform->addElement('text', 'config_playlist', get_string('includeonlyvideosfromplaylist', 'block_tag_youtube'));
         $mform->setType('config_playlist', PARAM_ALPHANUM);
