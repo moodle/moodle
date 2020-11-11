@@ -86,7 +86,7 @@ class local_report_course_completion_user_table extends table_sql {
 
         if ($this->is_downloading() || empty($SESSION->iomadeditingreports)) {
             if (!empty($row->licenseallocated)) {
-                return format_string(date($CFG->iomad_date_format, $row->licenseallocated) . " (" . $row->licensename . ")");
+                return format_string(date($CFG->iomad_date_format, $row->licenseallocated));
             } else {
                 return;
             }
