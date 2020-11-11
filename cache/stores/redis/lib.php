@@ -182,22 +182,28 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             $server = $serverconf[0];
             $port = $serverconf[1];
         }
-        if ($redis->connect($server, $port)) {
-            if (!empty($password)) {
-                $redis->auth($password);
+
+        try {
+            if ($redis->connect($server, $port)) {
+                if (!empty($password)) {
+                    $redis->auth($password);
+                }
+                // If using compressor, serialisation will be done at cachestore level, not php-redis.
+                if ($this->compressor == self::COMPRESSOR_NONE) {
+                    $redis->setOption(Redis::OPT_SERIALIZER, $this->serializer);
+                }
+                if (!empty($prefix)) {
+                    $redis->setOption(Redis::OPT_PREFIX, $prefix);
+                }
+                // Database setting option...
+                $this->isready = $this->ping($redis);
+            } else {
+                $this->isready = false;
             }
-            // If using compressor, serialisation will be done at cachestore level, not php-redis.
-            if ($this->compressor == self::COMPRESSOR_NONE) {
-                $redis->setOption(Redis::OPT_SERIALIZER, $this->serializer);
-            }
-            if (!empty($prefix)) {
-                $redis->setOption(Redis::OPT_PREFIX, $prefix);
-            }
-            // Database setting option...
-            $this->isready = $this->ping($redis);
-        } else {
+        } catch (\RedisException $e) {
             $this->isready = false;
         }
+
         return $redis;
     }
 
