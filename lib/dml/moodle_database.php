@@ -2298,6 +2298,16 @@ abstract class moodle_database {
     public abstract function sql_concat_join($separator="' '", $elements=array());
 
     /**
+     * Return SQL for performing group concatenation on given field/expression
+     *
+     * @param string $field Table field or SQL expression to be concatenated
+     * @param string $separator The separator desired between each concatetated field
+     * @param string $sort Ordering of the concatenated field
+     * @return string
+     */
+    public abstract function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string;
+
+    /**
      * Returns the proper SQL (for the dbms in use) to concatenate $firstname and $lastname
      *
      * @todo MDL-31233 This may not be needed here.

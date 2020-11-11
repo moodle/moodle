@@ -542,6 +542,18 @@ abstract class pdo_moodle_database extends moodle_database {
         print_error('TODO');
     }
 
+    /**
+     * Return SQL for performing group concatenation on given field/expression
+     *
+     * @param string $field
+     * @param string $separator
+     * @param string $sort
+     * @return string
+     */
+    public function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string {
+        return ''; // TODO.
+    }
+
     protected function begin_transaction() {
         $this->query_start('', NULL, SQL_QUERY_AUX);
         try {
