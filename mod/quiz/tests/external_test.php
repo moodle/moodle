@@ -1034,6 +1034,11 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(false, $result['questions'][0]['hasautosavedstep']);
         $this->assertEquals(false, $result['questions'][1]['hasautosavedstep']);
 
+        // Check question options.
+        $this->assertNotEmpty(5, $result['questions'][0]['settings']);
+        // Check at least some settings returned.
+        $this->assertCount(4, (array) json_decode($result['questions'][0]['settings']));
+
         // Submit a response for the first question.
         $tosubmit = array(1 => array('answer' => '3.14'));
         $attemptobj->process_submitted_actions(time(), false, $tosubmit);

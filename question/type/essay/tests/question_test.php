@@ -239,4 +239,27 @@ class qtype_essay_question_test extends advanced_testcase {
 
     }
 
+    /**
+     * test_get_question_definition_for_external_rendering
+     */
+    public function test_get_question_definition_for_external_rendering() {
+        $this->resetAfterTest();
+
+        $essay = test_question_maker::make_an_essay_question();
+        $essay->start_attempt(new question_attempt_step(), 1);
+        $qa = test_question_maker::get_a_qa($essay);
+        $displayoptions = new question_display_options();
+
+        $options = $essay->get_question_definition_for_external_rendering($qa, $displayoptions);
+        $this->assertNotEmpty($options);
+        $this->assertEquals('editor', $options['responseformat']);
+        $this->assertEquals(1, $options['responserequired']);
+        $this->assertEquals(15, $options['responsefieldlines']);
+        $this->assertEquals(0, $options['attachments']);
+        $this->assertEquals(0, $options['attachmentsrequired']);
+        $this->assertNull($options['maxbytes']);
+        $this->assertNull($options['filetypeslist']);
+        $this->assertEquals('', $options['responsetemplate']);
+        $this->assertEquals(FORMAT_MOODLE, $options['responsetemplateformat']);
+    }
 }

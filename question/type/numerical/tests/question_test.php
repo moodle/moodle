@@ -306,4 +306,23 @@ class qtype_numerical_question_test extends advanced_testcase {
                 new question_classified_response(null, '$abc', 0.0)),
                 $num->classify_response(array('answer' => '$abc')));
     }
+
+    /**
+     * test_get_question_definition_for_external_rendering
+     */
+    public function test_get_question_definition_for_external_rendering() {
+        $this->resetAfterTest();
+
+        $question = test_question_maker::make_question('numerical', 'unit');
+        $question->start_attempt(new question_attempt_step(), 1);
+        $qa = test_question_maker::get_a_qa($question);
+        $displayoptions = new question_display_options();
+
+        $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
+        $this->assertNotEmpty($options);
+        $this->assertEquals(1, $options['unitgradingtype']);
+        $this->assertEquals(0.5, $options['unitpenalty']);
+        $this->assertEquals(qtype_numerical::UNITSELECT, $options['unitdisplay']);
+        $this->assertEmpty($options['unitsleft']);
+    }
 }

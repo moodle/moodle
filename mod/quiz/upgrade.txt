@@ -1,5 +1,11 @@
 This files describes API changes in the quiz code.
 
+=== 3.10.1 ===
+
+* External functions mod_quiz_external::get_attempt_data, mod_quiz_external::get_attempt_summary
+  and mod_quiz_external::get_attempt_review now return a new additional optional field:
+   - settings: Containing the question definition settings for displaying the question in an external system.
+
 === 3.10 ===
 
 * External functions mod_quiz_external::get_attempt_data, mod_quiz_external::get_attempt_summary
