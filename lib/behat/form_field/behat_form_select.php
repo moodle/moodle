@@ -67,35 +67,6 @@ class behat_form_select extends behat_form_field {
            // By default, assume the passed value is a non-multiple option.
             $this->field->selectOption(trim($value));
        }
-
-        // Wait for all the possible AJAX requests that have been
-        // already triggered by selectOption() to be finished.
-        if ($this->running_javascript()) {
-            // Trigger change event and click on first skip link, as some OS/browsers (Phantomjs, Mac-FF),
-            // don't close select option field and trigger event.
-            if (!$singleselect) {
-                $dialoguexpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue-focused ')]";
-                if (!$node = $this->session->getDriver()->find($dialoguexpath)) {
-                    $script = "Syn.trigger('change', {}, {{ELEMENT}})";
-                    try {
-                        $driver = $this->session->getDriver();
-                        if ($driver instanceof \Moodle\BehatExtension\Driver\MoodleSelenium2Driver) {
-                            $driver->triggerSynScript($this->field->getXpath(), $script);
-                        }
-                        $driver->click('//body//div[@class="skiplinks"]');
-                    } catch (\Exception $e) {
-                        return;
-                    }
-                } else {
-                    try {
-                        $this->session->getDriver()->click($dialoguexpath);
-                    } catch (\Exception $e) {
-                        return;
-                    }
-                }
-            }
-            $this->session->wait(behat_base::get_timeout() * 1000, behat_base::PAGE_READY_JS);
-        }
     }
 
     /**
