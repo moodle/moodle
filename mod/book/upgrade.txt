@@ -1,5 +1,8 @@
 This files describes API changes in the book code.
 
+=== 3.11 ===
+* Final deprecation - booktool_print_get_toc(). Please use render_print_book_toc() instead.
+
 === 3.8 ===
 
 * The following functions have been finally deprecated and can not be used anymore:
