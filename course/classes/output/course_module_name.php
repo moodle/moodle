@@ -90,8 +90,9 @@ class course_module_name extends \core\output\inplace_editable {
         // Check access.
         \external_api::validate_context($context);
         require_capability('moodle/course:manageactivities', $context);
-        // Update value.
-        set_coursemodule_name($itemid, $newvalue);
+
+        // Trim module name and Update value.
+        set_coursemodule_name($itemid, trim($newvalue));
         $coursemodulerecord = get_coursemodule_from_id('', $itemid, 0, false, MUST_EXIST);
         // Return instance.
         $cm = get_fast_modinfo($coursemodulerecord->course)->get_cm($itemid);

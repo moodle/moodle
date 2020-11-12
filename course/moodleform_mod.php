@@ -1258,6 +1258,11 @@ abstract class moodleform_mod extends moodleform {
                 $data->gradepass = unformat_float($data->gradepass);
             }
 
+            // Trim name for all activity name.
+            if (isset($data->name)) {
+                $data->name = trim($data->name);
+            }
+
             $this->data_postprocessing($data);
         }
         return $data;
