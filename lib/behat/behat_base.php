@@ -457,10 +457,16 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @return NodeElement
      */
     protected function get_node_in_container($selectortype, $element, $containerselectortype, $containerelement) {
-        // Gets the container, it will always be text based.
-        $containernode = $this->get_text_selector_node($containerselectortype, $containerelement);
+        if ($containerselectortype === 'NodeElement' && is_a($containerelement, NodeElement::class)) {
+            // Support a NodeElement being passed in for use in step chaining.
+            $containernode = $containerelement;
+            $locatorexceptionmsg = $element;
+        } else {
+            // Gets the container, it will always be text based.
+            $containernode = $this->get_text_selector_node($containerselectortype, $containerelement);
+            $locatorexceptionmsg = $element . '" in the "' . $containerelement. '" "' . $containerselectortype. '"';
+        }
 
-        $locatorexceptionmsg = $element . '" in the "' . $containerelement. '" "' . $containerselectortype. '"';
         $exception = new ElementNotFoundException($this->getSession(), $selectortype, null, $locatorexceptionmsg);
 
         return $this->find($selectortype, $element, $exception, $containernode);
