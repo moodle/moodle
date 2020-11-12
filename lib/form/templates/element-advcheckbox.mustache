@@ -7,7 +7,7 @@
         {{/text}}
     </div>
     <div class="col-md-9 checkbox">
-        <div class="form-check">
+        <div class="form-check d-flex">
             <label>
             {{^element.hardfrozen}}
                 {{^element.frozen}}
@@ -38,8 +38,12 @@
                     {{{label}}}
                 {{/text}}
             </label>
-            <span class="text-nowrap">
-                {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">!</abbr>{{/advanced}}
+            <span class="ml-2 d-flex align-items-center align-self-start">
+                {{#required}}
+                    <div class="text-danger" title="{{#str}}required{{/str}}">
+                    {{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}
+                    </div>
+                {{/required}}
                 {{{helpbutton}}}
             </span>
         </div>
