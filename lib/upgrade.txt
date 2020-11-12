@@ -5,6 +5,8 @@ information provided here is intended especially for developers.
 * New optional parameter $extracontent for print_collapsible_region_start(). This allows developers to add interactive HTML elements
   (e.g. a help icon) after the collapsible region's toggle link.
 * Final deprecation i_dock_block() in behat_deprecated.php
+* Final deprecation of get_courses_page. Function has been removed and core_course_category::get_courses() should be
+  used instead.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:
