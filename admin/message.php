@@ -119,10 +119,19 @@ if (($form = data_submitted()) && confirm_sesskey()) {
     // Save processors enabled/disabled status.
     foreach ($allprocessors as $processor) {
         $enabled = isset($form->{$processor->name});
+        if ($enabled != $processor->enabled) {
+            add_to_config_log($processor->name, $processor->enabled, $enabled, 'core');
+        }
         \core_message\api::update_processor_status($processor, $enabled);
     }
 
     foreach ($newpreferences as $name => $value) {
+        $old = isset($preferences->$name) ? $preferences->$name : '';
+
+        if ($old != $value) {
+            add_to_config_log($name, $old, $value, 'core');
+        }
+
         set_config($name, $value, 'message');
     }
     $transaction->allow_commit();
