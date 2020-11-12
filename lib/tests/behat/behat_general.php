@@ -271,7 +271,7 @@ class behat_general extends behat_base {
      * @Given /^I accept the currently displayed dialog$/
      */
     public function accept_currently_displayed_alert_dialog() {
-        $this->getSession()->getDriver()->getWebDriverSession()->accept_alert();
+        $this->getSession()->getDriver()->getWebDriver()->switchTo()->alert()->accept();
     }
 
     /**
@@ -279,7 +279,7 @@ class behat_general extends behat_base {
      * @Given /^I dismiss the currently displayed dialog$/
      */
     public function dismiss_currently_displayed_alert_dialog() {
-        $this->getSession()->getDriver()->getWebDriverSession()->dismiss_alert();
+        $this->getSession()->getDriver()->getWebDriver()->switchTo()->alert()->dismiss();
     }
 
     /**
@@ -418,7 +418,8 @@ class behat_general extends behat_base {
      */
     public function i_click_on_confirming_the_dialogue($element, $selectortype) {
         $this->i_click_on($element, $selectortype);
-        $this->accept_currently_displayed_alert_dialog();
+        $this->execute('behat_general::accept_currently_displayed_alert_dialog', []);
+        $this->wait_until_the_page_is_ready();
     }
 
     /**
@@ -431,7 +432,8 @@ class behat_general extends behat_base {
      */
     public function i_click_on_dismissing_the_dialogue($element, $selectortype) {
         $this->i_click_on($element, $selectortype);
-        $this->dismiss_currently_displayed_alert_dialog();
+        $this->execute('behat_general::dismiss_currently_displayed_alert_dialog', []);
+        $this->wait_until_the_page_is_ready();
     }
 
     /**
@@ -1802,16 +1804,16 @@ EOF;
         $modifier = trim($key);
         switch (strtoupper($key)) {
             case 'UP':
-                $keys[] = behat_keys::UP_ARROW;
+                $keys[] = behat_keys::ARROW_UP;
                 break;
             case 'DOWN':
-                $keys[] = behat_keys::DOWN_ARROW;
+                $keys[] = behat_keys::ARROW_DOWN;
                 break;
             case 'LEFT':
-                $keys[] = behat_keys::LEFT_ARROW;
+                $keys[] = behat_keys::ARROW_LEFT;
                 break;
             case 'RIGHT':
-                $keys[] = behat_keys::RIGHT_ARROW;
+                $keys[] = behat_keys::ARROW_RIGHT;
                 break;
             case 'HOME':
                 $keys[] = behat_keys::HOME;
@@ -1851,9 +1853,6 @@ EOF;
             default:
                 throw new \coding_exception("Unknown key '$key'}");
         }
-
-        // Always send the NULL key as the last key.
-        $keys[] = behat_keys::NULL_KEY;
 
         behat_base::type_keys($this->getSession(), $keys);
     }

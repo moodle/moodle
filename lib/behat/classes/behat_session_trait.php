@@ -23,11 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Element\Element;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\ElementNotFoundException;
-use Behat\Mink\Element\NodeElement;
-use Behat\Mink\Element\Element;
+use Behat\Mink\Exception\NoSuchWindowException;
 use Behat\Mink\Session;
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
@@ -35,9 +36,8 @@ use Behat\Mink\Session;
 require_once(__DIR__ . '/component_named_replacement.php');
 require_once(__DIR__ . '/component_named_selector.php');
 
-// Alias the WebDriver\Key  class to behat_keys to make future transition to a different WebDriver implementation
-// easier.
-class_alias('WebDriver\\Key', 'behat_keys');
+// Alias the Facebook\WebDriver\WebDriverKeys class to behat_keys for better b/c with the older Instaclick driver.
+class_alias('Facebook\WebDriver\WebDriverKeys', 'behat_keys');
 
 /**
  * A trait containing functionality used by the behat base context, and form fields.
@@ -253,9 +253,7 @@ trait behat_session_trait {
      * @param string[] $keys
      */
     public static function type_keys(Session $session, array $keys): void {
-        $session->getDriver()->getWebDriverSession()->keys([
-            'value' => $keys,
-        ]);
+        $session->getDriver()->getWebDriver()->getKeyboard()->sendKeys($keys);
     }
 
     /**
@@ -833,7 +831,7 @@ EOF;
                         return M.util.pending_js.join(":");
                     })()'));
                 $pending = self::evaluate_script_in_session($session, $jscode);
-            } catch (NoSuchWindow $nsw) {
+            } catch (NoSuchWindowException $nsw) {
                 // We catch an exception here, in case we just closed the window we were interacting with.
                 // No javascript is running if there is no window right?
                 $pending = '';
@@ -973,7 +971,7 @@ EOF;
                 }
             }
 
-        } catch (NoSuchWindow $e) {
+        } catch (NoSuchWindowException $e) {
             // If we were interacting with a popup window it will not exists after closing it.
         } catch (DriverException $e) {
             // Same reason as above.
