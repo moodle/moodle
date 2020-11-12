@@ -848,11 +848,6 @@ EOF;
      * @return  bool Whether any JS is still pending completion.
      */
     public function wait_for_pending_js() {
-        if (!$this->running_javascript()) {
-            // JS is not available therefore there is nothing to wait for.
-            return false;
-        }
-
         return static::wait_for_pending_js_in_session($this->getSession());
     }
 
@@ -863,6 +858,11 @@ EOF;
      * @return  bool Whether any JS is still pending completion.
      */
     public static function wait_for_pending_js_in_session(Session $session) {
+        if (!self::running_javascript_in_session($session)) {
+            // JS is not available therefore there is nothing to wait for.
+            return false;
+        }
+
         // We don't use behat_base::spin() here as we don't want to end up with an exception
         // if the page & JSs don't finish loading properly.
         for ($i = 0; $i < self::get_extended_timeout() * 10; $i++) {
