@@ -64,7 +64,7 @@ class behat_form_select extends behat_form_field {
                 $afterfirstoption = true;
             }
         } else {
-           // By default, assume the passed value is a non-multiple option.
+            // By default, assume the passed value is a non-multiple option.
             $this->field->selectOption(trim($value));
        }
     }
