@@ -634,20 +634,21 @@ class behat_config_util {
         // We also need to disable web security, otherwise it can't make CSS requests to the server
         // on localhost due to CORS restrictions.
         if (!empty($values['browser']) && $values['browser'] === 'chrome') {
-            if (!isset($values['capabilities'])) {
-                $values['capabilities'] = [];
-            }
-            if (!isset($values['capabilities']['extra_capabilities'])) {
-                $values['capabilities']['extra_capabilities'] = [];
-            }
-            if (!isset($values['capabilities']['extra_capabilities']['chromeOptions'])) {
-                $values['capabilities']['extra_capabilities']['chromeOptions'] = [];
-            }
-            if (!isset($values['capabilities']['extra_capabilities']['chromeOptions']['args'])) {
-                $values['capabilities']['extra_capabilities']['chromeOptions']['args'] = [];
-            }
-            $values['capabilities']['extra_capabilities']['chromeOptions']['args'][] = '--unlimited-storage';
-            $values['capabilities']['extra_capabilities']['chromeOptions']['args'][] = '--disable-web-security';
+            $values = array_merge_recursive(
+                [
+                    'capabilities' => [
+                        'extra_capabilities' => [
+                            'chromeOptions' => [
+                                'args' => [
+                                    'unlimited-storage',
+                                    'disable-web-security',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                $values
+            );
 
             // If the mobile app is enabled, check its version and add appropriate tags.
             if ($mobiletags = $this->get_mobile_version_tags()) {
@@ -657,6 +658,14 @@ class behat_config_util {
                     $values['tags'] = $mobiletags;
                 }
             }
+
+            $values['capabilities']['extra_capabilities']['chromeOptions']['args'] = array_map(function($arg): string {
+                if (substr($arg, 0, 2) === '--') {
+                    return substr($arg, 2);
+                }
+                return $arg;
+            }, $values['capabilities']['extra_capabilities']['chromeOptions']['args']);
+            sort($values['capabilities']['extra_capabilities']['chromeOptions']['args']);
         }
 
         // Fill tags information.
