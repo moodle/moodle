@@ -308,57 +308,6 @@ EOF;
     }
 
     /**
-     * Start the session before the first javascript scenario.
-     *
-     * This is treated slightly differently to try to capture when Selenium is not running at all.
-     *
-     * @BeforeScenario @javascript
-     * @param BeforeScenarioScope $scope scope passed by event fired before scenario.
-     */
-    public function before_first_scenario_start_session(BeforeScenarioScope $scope) {
-        if (!self::is_first_javascript_scenario()) {
-            // The first Scenario has started.
-            // The `before_subsequent_scenario_start_session` function will restart the session instead.
-            return;
-        }
-        self::$firstjavascriptscenarioseen = true;
-
-        $docsurl = behat_command::DOCS_URL;
-        $driverexceptionmsg = <<<EOF
-
-The Selenium or WebDriver server is not running. You must start it to run tests that involve Javascript.
-See {$docsurl} for more information.
-
-The following debugging information is available:
-
-EOF;
-
-
-        try {
-            $this->restart_session();
-        } catch (CurlExec $e) {
-            // The CurlExec Exception is thrown by WebDriver.
-            self::log_and_stop(
-                $driverexceptionmsg . '. ' .
-                $e->getMessage() . "\n\n" .
-                format_backtrace($e->getTrace(), true)
-            );
-        } catch (DriverException $e) {
-            self::log_and_stop(
-                $driverexceptionmsg . '. ' .
-                $e->getMessage() . "\n\n" .
-                format_backtrace($e->getTrace(), true)
-            );
-        } catch (UnknownError $e) {
-            // Generic 'I have no idea' Selenium error. Custom exception to provide more feedback about possible solutions.
-            self::log_and_stop(
-                $e->getMessage() . "\n\n" .
-                format_backtrace($e->getTrace(), true)
-            );
-        }
-    }
-
-    /**
      * Start the session before each javascript scenario.
      *
      * Note: Before the first scenario the @see before_first_scenario_start_session() function is used instead.
@@ -463,6 +412,16 @@ EOF;
 
         // Run all test with medium (1024x768) screen size, to avoid responsive problems.
         $this->resize_window('medium');
+    }
+
+    /**
+     * Mark the first Javascript Scenario as have been seen.
+     *
+     * @BeforeScenario
+     * @param BeforeScenarioScope $scope scope passed by event fired before scenario.
+     */
+    public function mark_first_js_scenario_as_seen(BeforeScenarioScope $scope) {
+        self::$firstjavascriptscenarioseen = true;
     }
 
     /**
