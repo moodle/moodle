@@ -46,49 +46,46 @@ Feature: View structural changes in recent activity block
       | GG3      | G2    |
 
   Scenario: Check that Added module information is displayed respecting view capability
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Recent activity" block
-    When I add a "Forum" to section "1" and I fill the form with:
-      | name        | ForumVisibleGroups |
-      | Description | No description     |
-      | groupmode   | Visible groups     |
-    And I add a "Forum" to section "1" and I fill the form with:
-      | name        | ForumSeparateGroups |
-      | Description | No description      |
-      | groupmode   | Separate groups     |
-    And I add a "Forum" to section "1" and I fill the form with:
-      | name        | ForumHidden    |
-      | Description | No description |
-      | Availability | 0             |
-    And I add a "Forum" to section "1" and I fill the form with:
-      | name        | ForumNoGroups  |
-      | Description | No description |
-      | groupmode   | No groups      |
-    And I add a "Forum" to section "2" and I fill the form with:
-      | name                | ForumVisibleGroupsG1 |
-      | Description         | No description       |
-      | groupmode           | Visible groups       |
-      | Grouping            | Grouping 1           |
+    Given the following "activities" exist:
+      | activity | course | section | name                  | idnumber | description    | groupmode | grouping | visible |
+      | forum    | C1     | 1       | ForumVisibleGroups    | forum1   | No description | 2         |          | 1       |
+      | forum    | C1     | 1       | ForumSeparateGroups   | forum2   | No description | 1         |          | 1       |
+      | forum    | C1     | 1       | ForumHidden           | forum3   | No description | 1         |          | 0       |
+      | forum    | C1     | 1       | ForumNoGroups         | forum4   | No description | 0         |          | 1       |
+      | forum    | C1     | 2       | ForumVisibleGroupsG1  | forum5   | No description | 2         | GG1      | 1       |
+      | forum    | C1     | 2       | ForumSeparateGroupsG1 | forum6   | No description | 1         | GG1      | 1       |
+      | forum    | C1     | 3       | ForumVisibleGroupsG2  | forum7   | No description | 2         | GG2      | 1       |
+      | forum    | C1     | 3       | ForumSeparateGroupsG2 | forum8   | No description | 1         | GG2      | 1       |
+    And I log in as "teacher1"
+
+    And I am on "Course 1" course homepage
+    And I click on "ForumVisibleGroupsG1" "link"
+    And I click on "Edit settings" "link"
+    And I set the following fields to these values:
       | Access restrictions | Grouping: Grouping 1 |
-    And I add a "Forum" to section "2" and I fill the form with:
-      | name                | ForumSeparateGroupsG1 |
-      | Description         | No description        |
-      | groupmode           | Separate groups       |
-      | Grouping            | Grouping 1            |
-      | Access restrictions | Grouping: Grouping 1  |
-    And I add a "Forum" to section "3" and I fill the form with:
-      | name                | ForumVisibleGroupsG2 |
-      | Description         | No description       |
-      | groupmode           | Visible groups       |
-      | Grouping            | Grouping 2           |
+    And I press "Save and return to course"
+
+    And I click on "ForumSeparateGroupsG1" "link"
+    And I click on "Edit settings" "link"
+    And I set the following fields to these values:
+      | Access restrictions | Grouping: Grouping 1 |
+    And I press "Save and return to course"
+
+    And I click on "ForumVisibleGroupsG2" "link"
+    And I click on "Edit settings" "link"
+    And I set the following fields to these values:
       | Access restrictions | Grouping: Grouping 2 |
-    And I add a "Forum" to section "3" and I fill the form with:
-      | name                | ForumSeparateGroupsG2 |
-      | Description         | No description        |
-      | groupmode           | Separate groups       |
-      | Grouping            | Grouping 2            |
-      | Access restrictions | Grouping: Grouping 2  |
+    And I press "Save and return to course"
+
+    And I click on "ForumSeparateGroupsG2" "link"
+    And I click on "Edit settings" "link"
+    And I set the following fields to these values:
+      | Access restrictions | Grouping: Grouping 2 |
+    And I press "Save and return to course"
+
+    And I am on "Course 1" course homepage with editing mode on
+    When I add the "Recent activity" block
+
     Then I should see "ForumVisibleGroups" in the "Recent activity" "block"
     And I should see "ForumSeparateGroups" in the "Recent activity" "block"
     And I should see "ForumNoGroups" in the "Recent activity" "block"
@@ -98,6 +95,7 @@ Feature: View structural changes in recent activity block
     And I should see "ForumVisibleGroupsG2" in the "Recent activity" "block"
     And I should see "ForumSeparateGroupsG2" in the "Recent activity" "block"
     And I log out
+
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I should see "ForumVisibleGroups" in the "Recent activity" "block"
@@ -109,6 +107,7 @@ Feature: View structural changes in recent activity block
     And I should not see "ForumVisibleGroupsG2" in the "Recent activity" "block"
     And I should not see "ForumSeparateGroupsG2" in the "Recent activity" "block"
     And I log out
+
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I should see "ForumVisibleGroups" in the "Recent activity" "block"
@@ -120,6 +119,7 @@ Feature: View structural changes in recent activity block
     And I should see "ForumVisibleGroupsG2" in the "Recent activity" "block"
     And I should see "ForumSeparateGroupsG2" in the "Recent activity" "block"
     And I log out
+
     And I log in as "student3"
     And I am on "Course 1" course homepage
     And I should see "ForumVisibleGroups" in the "Recent activity" "block"
@@ -131,6 +131,7 @@ Feature: View structural changes in recent activity block
     And I should see "ForumVisibleGroupsG2" in the "Recent activity" "block"
     And I should see "ForumSeparateGroupsG2" in the "Recent activity" "block"
     And I log out
+
     # Teachers have capability to see all groups and hidden activities
     And I log in as "assistant1"
     And I am on "Course 1" course homepage
@@ -142,15 +143,20 @@ Feature: View structural changes in recent activity block
     And I log out
 
   Scenario: Updates and deletes in recent activity block
+    Given the following "activity" exists:
+      | activity    | forum          |
+      | course      | C1             |
+      | idnumber    | forum1         |
+      | name        | ForumNew       |
+      | description | No description |
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block
-    And I add a "Forum" to section "1" and I fill the form with:
-      | name        | ForumNew       |
-      | Description | No description |
     Then I should see "Added Forum" in the "Recent activity" "block"
     And I should see "ForumNew" in the "Recent activity" "block"
     And I log out
+
+    # Update forum as a teacher after a second to ensure we have a new timestamp for recent activity.
     And I wait "1" seconds
     And I log in as "student1"
     And I am on "Course 1" course homepage
@@ -159,6 +165,7 @@ Feature: View structural changes in recent activity block
     And I log out
     # Update forum as a teacher after a second to ensure we have a new timestamp for recent activity.
     And I wait "1" seconds
+
     # Update forum as a teacher
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -170,6 +177,7 @@ Feature: View structural changes in recent activity block
     And I log out
     And I wait "1" seconds
     # Student 1 already saw that forum was created, now he can see that forum was updated
+
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I should not see "Added Forum" in the "Recent activity" "block"
@@ -179,6 +187,7 @@ Feature: View structural changes in recent activity block
     And I log out
     And I wait "1" seconds
     # Student 2 has bigger interval and he can see one entry that forum was created but with the new name
+
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I should see "Added Forum" in the "Recent activity" "block"
@@ -188,6 +197,7 @@ Feature: View structural changes in recent activity block
     And I log out
     And I wait "1" seconds
     # Delete forum as a teacher
+
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I delete "ForumUpdated" activity
@@ -195,6 +205,7 @@ Feature: View structural changes in recent activity block
     And I log out
     And I wait "1" seconds
     # Students 1 and 2 see that forum was deleted
+
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I should not see "Added Forum" in the "Recent activity" "block"
@@ -205,6 +216,7 @@ Feature: View structural changes in recent activity block
     And I log out
     And I wait "1" seconds
     # Student 3 never knew that forum was created, so he does not see anything
+
     And I log in as "student3"
     And I am on "Course 1" course homepage
     And I should not see "Added Forum" in the "Recent activity" "block"
@@ -212,4 +224,3 @@ Feature: View structural changes in recent activity block
     And I should not see "Updated Forum" in the "Recent activity" "block"
     And I should not see "ForumUpdated" in the "Recent activity" "block"
     And I should not see "Deleted Forum" in the "Recent activity" "block"
-    And I log out
