@@ -78,8 +78,6 @@ Feature: In an assignment, teachers can change filters in the grading app
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I click on "[data-region=user-filters]" "css_element"
     And I set the field "filter" to "Not submitted"
-    # The popup closes for some reason, so it needs to be reopened.
-    And I click on "[data-region=user-filters]" "css_element"
     And I set the field "markerfilter" to "Marker 1"
     And I set the field "workflowfilter" to "In marking"
     And I click on "View all submissions" "link"
