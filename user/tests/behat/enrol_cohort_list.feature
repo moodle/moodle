@@ -17,19 +17,15 @@ Feature: Viewing the list of cohorts to enrol in a course
 
   @javascript
   Scenario: Check the teacher does not see the cohorts field without the proper capabilities
-    Given I log in as "admin"
+    Given the following "cohort" exists:
+      | name        | Test cohort name        |
+      | idnumber    | 1337                    |
+      | description | Test cohort description |
+    And I log in as "admin"
     And I set the following system permissions of "Teacher" role:
       | capability           | permission |
       | moodle/cohort:manage | Prohibit |
       | moodle/cohort:view   | Prohibit |
-    And I navigate to "Users > Accounts >Cohorts" in site administration
-    And I follow "Add new cohort"
-    And I set the following fields to these values:
-      | Name        | Test cohort name        |
-      | Context     | System                  |
-      | Cohort ID   | 1337                    |
-      | Description | Test cohort description |
-    And I press "Save changes"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -40,16 +36,10 @@ Feature: Viewing the list of cohorts to enrol in a course
 
   @javascript
   Scenario: Check we show the cohorts field if there are some present
-    Given I log in as "admin"
-    And I navigate to "Users > Accounts >Cohorts" in site administration
-    And I follow "Add new cohort"
-    And I set the following fields to these values:
-      | Name        | Test cohort name        |
-      | Context     | System                  |
-      | Cohort ID   | 1337                    |
-      | Description | Test cohort description |
-    And I press "Save changes"
-    And I log out
+    Given the following "cohort" exists:
+      | name        | Test cohort name        |
+      | idnumber    | 1337                    |
+      | description | Test cohort description |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to course participants
