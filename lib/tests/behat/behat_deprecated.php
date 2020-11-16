@@ -42,26 +42,6 @@ use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
 class behat_deprecated extends behat_base {
 
     /**
-     * Docks a block. Editing mode should be previously enabled.
-     * @throws ExpectationException
-     * @param string $blockname
-     * @return void
-     * @deprecated since Moodle 3.7 MDL-64506 - please do not use this definition step any more.
-     * @todo MDL-65215 This will be deleted in Moodle 3.11.
-     */
-    public function i_dock_block($blockname) {
-
-        $message = "Block docking is no longer used as of MDL-64506. Please update your tests.";
-        $this->deprecated_message($message);
-
-        // Looking for both title and alt.
-        $xpath = "//input[@type='image'][@title='" . get_string('dockblock', 'block', $blockname) . "' or @alt='" . get_string('addtodock', 'block') . "']";
-        $this->execute('behat_general::i_click_on_in_the',
-                array($xpath, "xpath_element", $this->escape($blockname), "block")
-        );
-    }
-
-    /**
      * Throws an exception if $CFG->behat_usedeprecated is not allowed.
      *
      * @throws Exception
