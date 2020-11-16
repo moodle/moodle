@@ -217,4 +217,187 @@ class message_airnotifier_manager {
         return $DB->update_record('message_airnotifier_devices', $device);
     }
 
+    /**
+     * Check the system configuration to detect possible issues.
+     *
+     * @return array result checks
+     */
+    public function check_configuration(): array {
+        global $CFG, $DB;
+
+        $results = [];
+        // Check Mobile services enabled.
+        $summary = html_writer::link((new moodle_url('/admin/settings.php', ['section' => 'mobilesettings'])),
+                get_string('enablemobilewebservice', 'admin'));
+        if (empty($CFG->enablewebservices) || empty($CFG->enablemobilewebservice)) {
+            $results[] = new core\check\result(core\check\result::CRITICAL, $summary, get_string('enablewsdescription', 'webservice'));
+        } else {
+            $results[] = new core\check\result(core\check\result::OK, $summary, get_string('enabled', 'admin'));
+        }
+
+        // Check Mobile notifications enabled.
+        require_once($CFG->dirroot . '/message/lib.php');
+        $processors = get_message_processors();
+        $enabled = false;
+        foreach ($processors as $processor => $status) {
+            if ($processor == 'airnotifier' && $status->enabled) {
+                $enabled = true;
+            }
+        }
+
+        $summary = html_writer::link((new moodle_url('/admin/message.php')), get_string('enableprocessor', 'message_airnotifier'));
+        if ($enabled) {
+            $results[] = new core\check\result(core\check\result::OK, $summary, get_string('enabled', 'admin'));
+        } else {
+            $results[] = new core\check\result(core\check\result::CRITICAL, $summary,
+                get_string('mobilenotificationsdisabledwarning', 'tool_mobile'));
+        }
+
+        // Check Mobile notifications configuration is ok.
+        $summary = html_writer::link((new moodle_url('/admin/settings.php', ['section' => 'messagesettingairnotifier'])),
+            get_string('notificationsserverconfiguration', 'message_airnotifier'));
+        if ($this->is_system_configured()) {
+            $results[] = new core\check\result(core\check\result::OK, $summary, get_string('configured', 'message_airnotifier'));
+        } else {
+            $results[] = new core\check\result(core\check\result::ERROR, $summary, get_string('notconfigured', 'message_airnotifier'));
+        }
+
+        // Check settings properly formatted. Only display in case of errors.
+        $settingstocheck = ['airnotifierappname', 'airnotifiermobileappname'];
+        if ($this->is_system_configured()) {
+            foreach ($settingstocheck as $setting) {
+                if ($CFG->$setting != trim($CFG->$setting)) {
+                    $summary = html_writer::link((new moodle_url('/admin/settings.php', ['section' => 'messagesettingairnotifier'])),
+                        get_string('notificationsserverconfiguration', 'message_airnotifier'));
+
+                    $results[] = new core\check\result(core\check\result::ERROR, $summary,
+                        get_string('airnotifierfielderror', 'message_airnotifier', get_string($setting, 'message_airnotifier')));
+                }
+            }
+        }
+
+        // Check connectivity with Airnotifier.
+        $url = $CFG->airnotifierurl . ':' . $CFG->airnotifierport;
+        $curl = new \curl();
+        $curl->setopt(['CURLOPT_TIMEOUT' => 5, 'CURLOPT_CONNECTTIMEOUT' => 5]);
+        $curl->get($url);
+        $info = $curl->get_info();
+
+        $summary = html_writer::link($url, get_string('airnotifierurl', 'message_airnotifier'));
+        if (!empty($info['http_code']) && ($info['http_code'] == 200 || $info['http_code'] == 302)) {
+            $results[] = new core\check\result(core\check\result::OK, $summary, get_string('online', 'message'));
+        } else {
+            $details = get_string('serverconnectivityerror', 'message_airnotifier', $url);
+            $curlerrno = $curl->get_errno();
+            if (!empty($curlerrno)) {
+                $details .= ' CURL ERROR: ' . $curlerrno . ' - ' . $curl->error;
+            }
+            $results[] = new core\check\result(core\check\result::ERROR, $summary, $details);
+        }
+
+        // Check access key by trying to create an invalid token.
+        $settingsurl = new moodle_url('/admin/settings.php', ['section' => 'messagesettingairnotifier']);
+        $summary = html_writer::link($settingsurl, get_string('airnotifieraccesskey', 'message_airnotifier'));
+        if (!empty($CFG->airnotifieraccesskey)) {
+            $url = $CFG->airnotifierurl . ':' . $CFG->airnotifierport . '/tokens/testtoken';
+            $header = ['Accept: application/json', 'X-AN-APP-NAME: ' . $CFG->airnotifierappname,
+                'X-AN-APP-KEY: ' . $CFG->airnotifieraccesskey];
+            $curl->setHeader($header);
+            $response = $curl->post($url);
+            $info = $curl->get_info();
+
+            if ($curlerrno = $curl->get_errno()) {
+                $details = get_string('serverconnectivityerror', 'message_airnotifier', $url);
+                $details .= ' CURL ERROR: ' . $curlerrno . ' - ' . $curl->error;
+                $results[] = new core\check\result(core\check\result::ERROR, $summary, $details);
+            } else if (!empty($info['http_code']) && $info['http_code'] == 400 && $key = json_decode($response, true)) {
+                if ($key['error'] == 'Invalid access key') {
+                    $results[] = new core\check\result(core\check\result::ERROR, $summary, $key['error']);
+                } else {
+                    $results[] = new core\check\result(core\check\result::OK, $summary, get_string('enabled', 'admin'));
+                }
+            }
+        } else {
+            $results[] = new core\check\result(core\check\result::ERROR, $summary,
+                get_string('requestaccesskey', 'message_airnotifier'));
+        }
+
+        // Check default preferences.
+        $preferences = (array) get_message_output_default_preferences();
+        $providerscount = 0;
+        $providersconfigured = 0;
+        foreach ($preferences as $prefname => $prefval) {
+            if (strpos($prefname, 'message_provider') === 0) {
+                $providerscount++;
+                if (strpos($prefval, 'airnotifier') !== false) {
+                    $providersconfigured++;
+                }
+            }
+        }
+
+        $summary = html_writer::link((new moodle_url('/admin/message.php')), get_string('managemessageoutputs', 'message'));
+        if ($providersconfigured == 0) {
+            $results[] = new core\check\result(core\check\result::ERROR, $summary,
+                get_string('messageprovidersempty', 'message_airnotifier'));
+        } else if ($providersconfigured / $providerscount < 0.25) {
+            // Less than a 25% of the providers are enabled by default for users.
+            $results[] = new core\check\result(core\check\result::WARNING, $summary,
+                get_string('messageproviderslow', 'message_airnotifier'));
+        } else {
+            $results[] = new core\check\result(core\check\result::OK, $summary, get_string('configured', 'message_airnotifier'));
+        }
+
+        // Check user devices from last month.
+        $recentdevicescount = $DB->count_records_select('user_devices', 'appid = ? AND timemodified > ?',
+            [$CFG->airnotifiermobileappname, time() - (WEEKSECS * 4)]);
+
+        $summary = get_string('userdevices', 'message_airnotifier');
+        if (!empty($recentdevicescount)) {
+            $results[] = new core\check\result(core\check\result::OK, $summary, get_string('configured', 'message_airnotifier'));
+        } else {
+            $results[] = new core\check\result(core\check\result::ERROR, $summary, get_string('nodevices', 'message_airnotifier'));
+        }
+        return $results;
+    }
+
+    /**
+     * Send a test notification to the given user.
+     *
+     * @param  stdClass $user user object
+     */
+    public function send_test_notification(stdClass $user): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/message/output/airnotifier/message_output_airnotifier.php');
+
+        $data = new stdClass;
+        $data->userto = clone $user;
+        $data->subject = 'Push Notification Test';
+        $data->fullmessage = 'This is a test message send at: ' . userdate(time());
+        $data->notification = 1;
+
+        // The send_message method always return true, so it does not make sense to return anything.
+        $airnotifier = new message_output_airnotifier();
+        $airnotifier->send_message($data);
+    }
+
+    /**
+     * Check whether the given user has enabled devices or not for the given app.
+     *
+     * @param  string $appname the app to check
+     * @param  int $userid the user to check the devices for (empty for current user)
+     * @return bool true when the user has enabled devices, false otherwise
+     */
+    public function has_enabled_devices(string $appname, int $userid = null): bool {
+        $enableddevices = false;
+        $devices = $this->get_user_devices($appname, $userid);
+
+        foreach ($devices as $device) {
+            if (!$device->enable) {
+                continue;
+            }
+            $enableddevices = true;
+            break;
+        }
+        return $enableddevices;
+    }
 }
