@@ -768,7 +768,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                 if ($users = $DB->get_records_sql('SELECT userid AS id FROM {trainingevent_users}
                                                    WHERE trainingeventid='.$event->id.'
                                                    AND userid IN ('.$allowedlist.') AND waitlisted=:waitlisted', 
-                                                   array('waitlisted' => $waitingoption),
+                                                   array('waitlisted' => $waitingoption)
                                                    )) {
                     foreach ($users as $user) {
                         $fulluserdata = $DB->get_record('user', array('id' => $user->id));
