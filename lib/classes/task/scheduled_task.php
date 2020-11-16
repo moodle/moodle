@@ -430,6 +430,33 @@ abstract class scheduled_task extends task_base {
     }
 
     /**
+     * Informs whether this task can be run.
+     * @return bool true when this task can be run. false otherwise.
+     */
+    public function can_run(): bool {
+        return $this->is_component_enabled() || $this->get_run_if_component_disabled();
+    }
+
+    /**
+     * Checks whether the component and the task disabled flag enables to run this task.
+     * This do not checks whether the task manager allows running them or if the
+     * site allows tasks to "run now".
+     * @return bool true if task is enabled. false otherwise.
+     */
+    public function is_enabled(): bool {
+        return $this->can_run() && !$this->get_disabled();
+    }
+
+    /**
+     * Produces a valid id string to use as id attribute based on the given FQCN class name.
+     * @param string $classname FQCN of a task.
+     * @return string valid string to be used as id attribute.
+     */
+    public static function get_html_id(string $classname): string {
+        return str_replace('\\', '-', ltrim($classname, '\\'));
+    }
+
+    /**
      * Get a descriptive name for this task (shown to admins).
      *
      * @return string
