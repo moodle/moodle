@@ -446,7 +446,6 @@ function url_get_variable_options($config) {
         'userlastname'    => get_string('lastname'),
         'userfullname'    => get_string('fullnameuser'),
         'useremail'       => get_string('email'),
-        'usericq'         => get_string('icqnumber'),
         'userphone1'      => get_string('phone1'),
         'userphone2'      => get_string('phone2'),
         'userinstitution' => get_string('institution'),
@@ -454,7 +453,6 @@ function url_get_variable_options($config) {
         'useraddress'     => get_string('address'),
         'usercity'        => get_string('city'),
         'usertimezone'    => get_string('timezone'),
-        'userurl'         => get_string('webpage'),
     );
 
     if ($config->rolesinparams) {
@@ -509,7 +507,6 @@ function url_get_variable_values($url, $cm, $course, $config) {
         $values['userlastname']    = $USER->lastname;
         $values['userfullname']    = fullname($USER);
         $values['useremail']       = $USER->email;
-        $values['usericq']         = $USER->icq;
         $values['userphone1']      = $USER->phone1;
         $values['userphone2']      = $USER->phone2;
         $values['userinstitution'] = $USER->institution;
@@ -518,7 +515,6 @@ function url_get_variable_values($url, $cm, $course, $config) {
         $values['usercity']        = $USER->city;
         $now = new DateTime('now', core_date::get_user_timezone_object());
         $values['usertimezone']    = $now->getOffset() / 3600.0; // Value in hours for BC.
-        $values['userurl']         = $USER->url;
     }
 
     // weak imitation of Single-Sign-On, for backwards compatibility only

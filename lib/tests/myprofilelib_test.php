@@ -169,7 +169,7 @@ class core_myprofilelib_testcase extends advanced_testcase {
         global $CFG;
 
         // User contact fields.
-        set_config("hiddenuserfields", "country,city,webpage,icqnumber,skypeid,yahooid,aimid,msnid");
+        set_config("hiddenuserfields", "country,city");
         set_config("showuseridentity", "email,address,phone1,phone2,institution,department,idnumber");
         $hiddenfields = explode(',', $CFG->hiddenuserfields);
         $identityfields = explode(',', $CFG->showuseridentity);
@@ -180,12 +180,6 @@ class core_myprofilelib_testcase extends advanced_testcase {
         $fields = array(
             'country' => 'AU',
             'city' => 'Silent hill',
-            'url' => 'Ghosts',
-            'icq' => 'Wth is ICQ?',
-            'skype' => 'derp',
-            'yahoo' => 'are you living in the 90\'s?',
-            'aim' => 'are you for real?',
-            'msn' => '...',
             'email' => 'Rulelikeaboss@example.com',
             'address' => 'Didn\'t I mention silent hill already ?',
             'phone1' => '123',

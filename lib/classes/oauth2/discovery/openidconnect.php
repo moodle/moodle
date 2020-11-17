@@ -93,7 +93,6 @@ class openidconnect extends base_definition {
             'middle_name' => 'middlename',
             'family_name' => 'lastname',
             'email' => 'email',
-            'website' => 'url',
             'nickname' => 'alternatename',
             'picture' => 'picture',
             'address' => 'address',

@@ -51,8 +51,8 @@ class award_criteria_profile extends award_criteria {
         $missing = array();
 
         // Note: cannot use user_get_default_fields() here because it is not possible to decide which fields user can modify.
-        $dfields = array('firstname', 'lastname', 'email', 'address', 'phone1', 'phone2', 'icq', 'skype', 'yahoo',
-                         'aim', 'msn', 'department', 'institution', 'description', 'picture', 'city', 'url', 'country');
+        $dfields = array('firstname', 'lastname', 'email', 'address', 'phone1', 'phone2',
+                         'department', 'institution', 'description', 'picture', 'city', 'country');
 
         $sql = "SELECT uf.id as fieldid, uf.name as name, ic.id as categoryid, ic.name as categoryname, uf.datatype
                 FROM {user_info_field} uf
