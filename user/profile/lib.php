@@ -810,6 +810,14 @@ function profile_get_custom_fields($onlyinuserobject = false) {
         }
     }
 
+    foreach ($fields as $index => $field) {
+        $component = 'profilefield_' . $field->datatype;
+        $classname = "\\$component\\helper";
+        if (class_exists($classname) && method_exists($classname, 'get_fieldname')) {
+            $fields[$index]->name = $classname::get_fieldname($field->name);
+        }
+    }
+
     return $fields;
 }
 

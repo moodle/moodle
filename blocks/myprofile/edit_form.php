@@ -57,41 +57,6 @@ class block_myprofile_edit_form extends block_edit_form {
             $mform->setDefault('config_display_email', '1');
         }
 
-        $mform->addElement('selectyesno', 'config_display_icq', get_string('display_icq', 'block_myprofile'));
-        if (isset($this->block->config->display_icq)) {
-            $mform->setDefault('config_display_icq', $this->block->config->display_icq);
-        } else {
-            $mform->setDefault('config_display_icq', '0');
-        }
-
-        $mform->addElement('selectyesno', 'config_display_skype', get_string('display_skype', 'block_myprofile'));
-        if (isset($this->block->config->display_skype)) {
-            $mform->setDefault('config_display_skype', $this->block->config->display_skype);
-        } else {
-            $mform->setDefault('config_display_skype', '0');
-        }
-
-        $mform->addElement('selectyesno', 'config_display_yahoo', get_string('display_yahoo', 'block_myprofile'));
-        if (isset($this->block->config->display_yahoo)) {
-            $mform->setDefault('config_display_yahoo', $this->block->config->display_yahoo);
-        } else {
-            $mform->setDefault('config_display_yahoo', '0');
-        }
-
-        $mform->addElement('selectyesno', 'config_display_aim', get_string('display_aim', 'block_myprofile'));
-        if (isset($this->block->config->display_aim)) {
-            $mform->setDefault('config_display_aim', $this->block->config->display_aim);
-        } else {
-            $mform->setDefault('config_display_aim', '0');
-        }
-
-        $mform->addElement('selectyesno', 'config_display_msn', get_string('display_msn', 'block_myprofile'));
-        if (isset($this->block->config->display_msn)) {
-            $mform->setDefault('config_display_msn', $this->block->config->display_msn);
-        } else {
-            $mform->setDefault('config_display_msn', '0');
-        }
-
         $mform->addElement('selectyesno', 'config_display_phone1', get_string('display_phone1', 'block_myprofile'));
         if (isset($this->block->config->display_phone1)) {
             $mform->setDefault('config_display_phone1', $this->block->config->display_phone1);

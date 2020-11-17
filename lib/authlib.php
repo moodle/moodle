@@ -1200,8 +1200,6 @@ function display_auth_lock_options($settings, $auth, $userfields, $helptext, $ma
                 // limit for the setting name is 100.
                 $fieldnametoolong = true;
             }
-        } else if ($fieldname == 'url') {
-            $fieldname = get_string('webpage');
         } else {
             $fieldname = get_string($fieldname);
         }

@@ -98,26 +98,6 @@ class backup_anonymizer_helper {
         return 'anon' . $counter . '@doesntexist.invalid'; // Just a counter.
     }
 
-    public static function process_user_icq($value) {
-        return ''; // Clean icq
-    }
-
-    public static function process_user_skype($value) {
-        return ''; // Clean skype
-    }
-
-    public static function process_user_yahoo($value) {
-        return ''; // Clean yahoo
-    }
-
-    public static function process_user_aim($value) {
-        return ''; // Clean aim
-    }
-
-    public static function process_user_msn($value) {
-        return ''; // Clean msn
-    }
-
     public static function process_user_phone1($value) {
         return ''; // Clean phone1
     }
@@ -152,10 +132,6 @@ class backup_anonymizer_helper {
 
     public static function process_user_picture($value) {
         return 0; // No picture
-    }
-
-    public static function process_user_url($value) {
-        return ''; // No url
     }
 
     public static function process_user_description($value) {

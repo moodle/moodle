@@ -90,7 +90,7 @@ class user_profile_set extends \core_analytics\local\indicator\linear {
         }
 
         // 0.2 for any of the following fields being set (some of them may even be compulsory or have a default).
-        $fields = array('institution', 'department', 'address', 'city', 'country', 'url');
+        $fields = array('institution', 'department', 'address', 'city', 'country');
         foreach ($fields as $fieldname) {
             if ($user->{$fieldname} != '') {
                 $calculatedvalue += 0.2;

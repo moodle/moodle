@@ -142,9 +142,8 @@ class process {
         $this->standardfields = array('id', 'username', 'email', 'emailstop',
             'city', 'country', 'lang', 'timezone', 'mailformat',
             'maildisplay', 'maildigest', 'htmleditor', 'autosubscribe',
-            'institution', 'department', 'idnumber', 'skype',
-            'msn', 'aim', 'yahoo', 'icq', 'phone1', 'phone2', 'address',
-            'url', 'description', 'descriptionformat', 'password',
+            'institution', 'department', 'idnumber', 'phone1', 'phone2', 'address',
+            'description', 'descriptionformat', 'password',
             'auth',        // Watch out when changing auth type or using external auth plugins!
             'oldusername', // Use when renaming users - this is the original username.
             'suspended',   // 1 means suspend user account, 0 means activate user account, nothing means keep as is.

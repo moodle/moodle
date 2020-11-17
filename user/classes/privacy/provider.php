@@ -68,11 +68,6 @@ class provider implements
             'lastname' => 'privacy:metadata:lastname',
             'email' => 'privacy:metadata:email',
             'emailstop' => 'privacy:metadata:emailstop',
-            'icq' => 'privacy:metadata:icq',
-            'skype' => 'privacy:metadata:skype',
-            'yahoo' => 'privacy:metadata:yahoo',
-            'aim' => 'privacy:metadata:aim',
-            'msn' => 'privacy:metadata:msn',
             'phone1' => 'privacy:metadata:phone',
             'phone2' => 'privacy:metadata:phone',
             'institution' => 'privacy:metadata:institution',
@@ -91,7 +86,6 @@ class provider implements
             'lastip' => 'privacy:metadata:lastip',
             'secret' => 'privacy:metadata:secret',
             'picture' => 'privacy:metadata:picture',
-            'url' => 'privacy:metadata:url',
             'description' => 'privacy:metadata:description',
             'maildigest' => 'privacy:metadata:maildigest',
             'maildisplay' => 'privacy:metadata:maildisplay',
@@ -309,11 +303,6 @@ class provider implements
         $user->deleted = 1;
         $user->idnumber = '';
         $user->emailstop = 0;
-        $user->icq = '';
-        $user->skype = '';
-        $user->yahoo = '';
-        $user->aim = '';
-        $user->msn = '';
         $user->phone1 = '';
         $user->phone2 = '';
         $user->institution = '';
@@ -332,7 +321,6 @@ class provider implements
         $user->lastip = 0;
         $user->secret = '';
         $user->picture = '';
-        $user->url = '';
         $user->description = '';
         $user->descriptionformat = 0;
         $user->mailformat = 0;
@@ -370,11 +358,6 @@ class provider implements
             'lastname' => format_string($user->lastname, true, ['context' => $context]),
             'email' => $user->email,
             'emailstop' => transform::yesno($user->emailstop),
-            'icq' => format_string($user->icq, true, ['context' => $context]),
-            'skype' => format_string($user->skype, true, ['context' => $context]),
-            'yahoo' => format_string($user->yahoo, true, ['context' => $context]),
-            'aim' => format_string($user->aim, true, ['context' => $context]),
-            'msn' => format_string($user->msn, true, ['context' => $context]),
             'phone1' => format_string($user->phone1, true, ['context' => $context]),
             'phone2' => format_string($user->phone2, true, ['context' => $context]),
             'institution' => format_string($user->institution, true, ['context' => $context]),
@@ -393,7 +376,6 @@ class provider implements
             'lastip' => $user->lastip,
             'secret' => $user->secret,
             'picture' => $user->picture,
-            'url' => $user->url,
             'description' => format_text($user->description, $user->descriptionformat, ['context' => $context]),
             'maildigest' => transform::yesno($user->maildigest),
             'maildisplay' => $user->maildisplay,

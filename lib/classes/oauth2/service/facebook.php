@@ -66,7 +66,6 @@ class facebook extends openidconnect implements issuer_interface {
             'id',
             'first_name',
             'last_name',
-            'link',
             'picture.type(large)',
             'name',
             'email',
@@ -94,7 +93,6 @@ class facebook extends openidconnect implements issuer_interface {
             'email' => 'email',
             'first_name' => 'firstname',
             'picture-data-url' => 'picture',
-            'link' => 'url',
         ];
         foreach ($mapping as $external => $internal) {
             $record = (object) [

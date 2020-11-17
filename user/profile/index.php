@@ -134,7 +134,13 @@ foreach ($categories as $category) {
 
     if ($fields = $DB->get_records('user_info_field', array('categoryid' => $category->id), 'sortorder ASC')) {
         foreach ($fields as $field) {
-            $table->data[] = array(format_string($field->name), profile_field_icons($field));
+            $fieldname = format_string($field->name);
+            $component = 'profilefield_' . $field->datatype;
+            $classname = "\\$component\\helper";
+            if (class_exists($classname) && method_exists($classname, 'get_fieldname')) {
+                $fieldname = $classname::get_fieldname($field->name);
+            }
+            $table->data[] = array($fieldname, profile_field_icons($field));
         }
     }
 
