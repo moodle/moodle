@@ -36,10 +36,10 @@
         <div class="control-group">
             <label for="selectcomponent" class="control-label">{{#str}}component, tool_templatelibrary{{/str}}</label>
             <div class="controls">
-                <select id="selectcomponent" data-field="component">
+                <select id="selectcomponent" name="component" data-field="component">
                     <option value="">{{#str}}all, tool_templatelibrary{{/str}}</option>
                     {{#allcomponents}}
-                        <option value="{{component}}">{{name}}</option>
+                        <option value="{{component}}" {{#selected}}selected{{/selected}}>{{name}}</option>
                     {{/allcomponents}}
                 </select>
             </div>
@@ -47,7 +47,7 @@
         <div class="control-group">
             <label for="search" class="control-label">{{#str}}search, tool_templatelibrary{{/str}}</label>
             <div class="controls">
-                <input type="text" id="search" data-field="search"/>
+                <input type="text" id="search" name="search" value="{{ search }}" data-field="search"/>
             </div>
         </div>
     </form>

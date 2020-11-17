@@ -38,6 +38,22 @@ use tool_templatelibrary\api;
  */
 class list_templates_page implements renderable, templatable {
 
+    /** @var string $component The currently selected component */
+    protected $component;
+    /** @var string $search The current search */
+    protected $search;
+
+    /**
+     * Template page constructor
+     *
+     * @param string $component
+     * @param string $search
+     */
+    public function __construct(string $component = '', string $search = '') {
+        $this->component = $component;
+        $this->search = $search;
+    }
+
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
@@ -46,6 +62,7 @@ class list_templates_page implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
         $data->allcomponents = array();
+        $data->search = $this->search;
         $fulltemplatenames = api::list_templates();
         $pluginmanager = core_plugin_manager::instance();
         $components = array();
@@ -59,6 +76,7 @@ class list_templates_page implements renderable, templatable {
         foreach ($components as $component) {
             $info = new stdClass();
             $info->component = $component;
+            $info->selected = ($component === $this->component);
             if (strpos($component, 'core') === 0) {
                 $info->name = get_string('coresubsystem', 'tool_templatelibrary', $component);
             } else {
