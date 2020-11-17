@@ -46,7 +46,7 @@ Feature: Manage data requests
     And I open the action menu in "John Doe" "table_row"
     And I should see "View the request"
     But I should not see "Mark as complete"
-    And I press key "27" in ".moodle-actionmenu" "css_element"
+    And I press the escape key
     And I open the action menu in "Jane Doe" "table_row"
     And I choose "Mark as complete" in the open action menu
     And I should see "Do you really want to mark this user enquiry as complete?"

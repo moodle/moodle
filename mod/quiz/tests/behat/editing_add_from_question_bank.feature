@@ -44,7 +44,7 @@ Feature: Adding questions to a quiz from the question bank
   @javascript
   Scenario: The questions can be filtered by tag
     When I set the field "Filter by tags..." to "foo"
-    And I press key "13" in the field "Filter by tags..."
+    And I press the enter key
     Then I should see "question 1 name" in the "categoryquestions" "table"
     And I should not see "question 2 name" in the "categoryquestions" "table"
 
