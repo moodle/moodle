@@ -694,6 +694,13 @@ class manager {
                     $param + $idsparams);
             }
         }
+
+        // Clean up calculations table.
+        $calclifetime = get_config('analytics', 'calclifetime');
+        if (!empty($calclifetime)) {
+            $lifetime = time() - ($calclifetime * DAYSECS); // Value in days.
+            $DB->delete_records_select('analytics_indicator_calc', 'timecreated < ?', [$lifetime]);
+        }
     }
 
     /**
