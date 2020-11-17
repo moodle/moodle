@@ -52,7 +52,6 @@ Feature: Users can edit tags to add description or rename
     And I should see "Dog" in the ".tag_list" "css_element"
     And I should see "Turtle" in the ".tag_list" "css_element"
     And I should see "Fish" in the ".tag_list" "css_element"
-    And I log out
 
   @javascript
   Scenario: Manager can change tag description, related tags and rename the tag from tag view page
@@ -87,7 +86,6 @@ Feature: Users can edit tags to add description or rename
     And I should see "Turtle" in the ".tag_list" "css_element"
     And I should see "Fish" in the ".tag_list" "css_element"
     And I should not see "Dog"
-    And I log out
 
   Scenario: Renaming the tag from tag view page
     When I log in as "manager1"
@@ -112,7 +110,6 @@ Feature: Users can edit tags to add description or rename
       | Tag name | KITTEN |
     And I press "Update"
     And "KITTEN" "text" should exist in the ".breadcrumb" "css_element"
-    And I log out
 
   @javascript
   Scenario: Manager can change tag description and rename the tag from tag manage page
@@ -133,7 +130,6 @@ Feature: Users can edit tags to add description or rename
     And I should see "Dog" in the ".tag_list" "css_element"
     And I should see "Turtle" in the ".tag_list" "css_element"
     And I should see "Fish" in the ".tag_list" "css_element"
-    And I log out
 
   Scenario: Renaming the tag in edit tag form from tag manage page
     When I log in as "manager1"
@@ -155,7 +151,6 @@ Feature: Users can edit tags to add description or rename
     And "Default collection" "text" should exist in the ".breadcrumb" "css_element"
     And I should see "KITTEN"
     And I should not see "Kitten"
-    And I log out
 
   @javascript
   Scenario: Renaming the tag using quick edit field on tag manage page
@@ -165,7 +160,7 @@ Feature: Users can edit tags to add description or rename
     # Renaming tag to a valid name
     And I click on "Edit tag name" "link" in the "Cat" "table_row"
     And I set the field "New name for tag Cat" to "Kitten"
-    And I press key "13" in the field "New name for tag Cat"
+    And I press the enter key
     Then I should not see "Cat"
     And "New name for tag" "field" should not exist
     And I wait until "Kitten" "link" exists
@@ -175,7 +170,7 @@ Feature: Users can edit tags to add description or rename
     # Renaming tag to an invalid name
     And I click on "Edit tag name" "link" in the "Turtle" "table_row"
     And I set the field "New name for tag Turtle" to "DOG"
-    And I press key "13" in the field "New name for tag Turtle"
+    And I press the enter key
     And I should see "The tag name is already in use. Do you want to combine these tags?"
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And "New name for tag" "field" should not exist
@@ -189,14 +184,13 @@ Feature: Users can edit tags to add description or rename
     # Cancel tag renaming
     And I click on "Edit tag name" "link" in the "Dog" "table_row"
     And I set the field "New name for tag Dog" to "Penguin"
-    And I press key "27" in the field "New name for tag Dog"
+    And I press the escape key
     And "New name for tag" "field" should not exist
     And I should see "Turtle"
     And I should not see "Penguin"
     And I follow "Default collection"
     And I should see "Turtle"
     And I should not see "Penguin"
-    And I log out
 
   @javascript
   Scenario: Combining tags when renaming
@@ -205,13 +199,12 @@ Feature: Users can edit tags to add description or rename
     And I follow "Default collection"
     And I click on "Edit tag name" "link" in the "Turtle" "table_row"
     And I set the field "New name for tag Turtle" to "DOG"
-    And I press key "13" in the field "New name for tag Turtle"
+    And I press the enter key
     And I should see "The tag name is already in use. Do you want to combine these tags?"
     And I press "Yes"
     Then I should not see "Turtle"
     And I should not see "DOG"
     And I should see "Dog"
-    And I log out
 
   @javascript
   Scenario: Combining multiple tags
@@ -232,7 +225,6 @@ Feature: Users can edit tags to add description or rename
     And I should see "Turtle"
     # Even though Turtle was not standard but at least one of combined tags was (Neverusedtag). Now Turtle is also standard.
     And "Remove from standard tags" "link" should exist in the "Turtle" "table_row"
-    And I log out
 
   Scenario: Filtering tags
     When I log in as "manager1"
@@ -249,4 +241,3 @@ Feature: Users can edit tags to add description or rename
     And I should see "Dog"
     And I should see "Cat"
     And I should see "Turtle"
-    And I log out

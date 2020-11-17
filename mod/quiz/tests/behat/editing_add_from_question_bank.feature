@@ -44,7 +44,7 @@ Feature: Adding questions to a quiz from the question bank
     And I should see "bar" in the "question 02 name" "table_row"
     And I should see "qidnum" in the "question 02 name" "table_row"
     And I set the field "Filter by tags..." to "foo"
-    And I press key "13" in the field "Filter by tags..."
+    And I press the enter key
     And I should see "question 01 name" in the "categoryquestions" "table"
     And I should not see "question 02 name" in the "categoryquestions" "table"
 

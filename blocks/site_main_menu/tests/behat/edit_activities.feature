@@ -14,7 +14,7 @@ Feature: Edit activities in main menu block
       | Forum name | My forum name |
     And I click on "Edit title" "link" in the "My forum name" activity in site main menu block
     And I set the field "New name for activity My forum name" to "New forum name"
-    And I press key "13" in the field "New name for activity My forum name"
+    And I press the enter key
     Then I should not see "My forum name"
     And I should see "New forum name"
     And I follow "New forum name"
