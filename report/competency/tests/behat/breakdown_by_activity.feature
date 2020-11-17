@@ -47,7 +47,7 @@ Feature: See the competencies for an activity
   Scenario: Go to the competency breakdown report
     When I navigate to "Reports > Competency breakdown" in current page administration
     And I set the field "Filter competencies by resource or activity" to "PageName1"
-    And I press key "13" in the field "Filter competencies by resource or activity"
+    And I press the enter key
     Then I should see "Test-Comp1"
     And I should not see "Test-Comp2"
     And I click on "Not rated" "link"
@@ -56,6 +56,6 @@ Feature: See the competencies for an activity
     And I click on "Rate" "button" in the ".competency-grader" "css_element"
     And I click on "Close" "button"
     And I set the field "Filter competencies by resource or activity" to "No filters applied"
-    And I press key "13" in the field "Filter competencies by resource or activity"
+    And I press the enter key
     And I should see "Test-Comp1"
     And I should see "Test-Comp2"

@@ -105,7 +105,7 @@ Feature: Course participants can be filtered
     And I navigate to course participants
     And I click on "Student 1's role assignments" "link"
     And I click on ".form-autocomplete-selection [aria-selected=true]" "css_element"
-    And I press key "27" in the field "Student 1's role assignments"
+    And I press the escape key
     And I click on "Save changes" "link"
     When I open the autocomplete suggestions list
     And I click on "Role: No roles" item in the autocomplete list
@@ -157,7 +157,7 @@ Feature: Course participants can be filtered
     And I navigate to course participants
     # Note: This is the literal string "student", not the Role student.
     When I set the field "Filters" to "student"
-    And I press key "13" in the field "Filters"
+    And I press the enter key
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
@@ -208,14 +208,14 @@ Feature: Course participants can be filtered
     And I navigate to course participants
     # Search by email (only).
     When I set the field "Filters" to "student1@example.com"
-    And I press key "13" in the field "Filters"
+    And I press the enter key
     Then I should see "Student 1" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Teacher 1" in the "participants" "table"
     # Search by idnumber (only).
     And I click on "student1@example.com" "text" in the ".form-autocomplete-selection" "css_element"
     And I set the field "Filters" to "SID"
-    And I press key "13" in the field "Filters"
+    And I press the enter key
     And I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
@@ -224,7 +224,7 @@ Feature: Course participants can be filtered
     # Search by city (only).
     And I click on "SID" "text" in the ".form-autocomplete-selection" "css_element"
     And I set the field "Filters" to "SCITY"
-    And I press key "13" in the field "Filters"
+    And I press the enter key
     And I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
@@ -233,12 +233,12 @@ Feature: Course participants can be filtered
     # Search by country text (only) - should not match.
     And I click on "SCITY" "text" in the ".form-autocomplete-selection" "css_element"
     And I set the field "Filters" to "GB"
-    And I press key "13" in the field "Filters"
+    And I press the enter key
     And I should see "Nothing to display"
     # Check no match.
     And I click on "GB" "text" in the ".form-autocomplete-selection" "css_element"
     And I set the field "Filters" to "NOTHING"
-    And I press key "13" in the field "Filters"
+    And I press the enter key
     And I should see "Nothing to display"
 
   @javascript
@@ -254,7 +254,7 @@ Feature: Course participants can be filtered
     And I navigate to course participants
     # Search by email (only) - should only see visible email + own.
     When I set the field "Filters" to "@example.com"
-    And I press key "13" in the field "Filters"
+    And I press the enter key
     Then I should not see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
@@ -263,17 +263,17 @@ Feature: Course participants can be filtered
     # Search for other fields - should only see own results.
     And I click on "@example.com" "text" in the ".form-autocomplete-selection" "css_element"
     And I set the field "Filters" to "SID"
-    And I press key "13" in the field "Filters"
+    And I press the enter key
     And I should see "Nothing to display"
     And I click on "SID" "text" in the ".form-autocomplete-selection" "css_element"
     And I set the field "Filters" to "TID"
-    And I press key "13" in the field "Filters"
+    And I press the enter key
     And I should see "Teacher 1" in the "participants" "table"
     And I set the field "Filters" to "CITY"
-    And I press key "13" in the field "Filters"
+    And I press the enter key
     And I should see "Teacher 1" in the "participants" "table"
     And I should not see "Student 1" in the "participants" "table"
     # Check no match.
     And I set the field "Filters" to "NOTHING"
-    And I press key "13" in the field "Filters"
+    And I press the enter key
     And I should see "Nothing to display"
