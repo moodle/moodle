@@ -52,9 +52,8 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
         } else {
             $('[data-region="list-templates"] [data-action="clearsearch"]').addClass('d-none');
         }
-        // Trigger the search.
-        document.location.hash = searchStr;
 
+        // Trigger the search.
         ajax.call([
             {methodname: 'tool_templatelibrary_list_templates',
               args: {component: componentStr, search: searchStr, themename: themename},
@@ -96,7 +95,6 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
         $(this).addClass('d-none');
     });
 
-    $('[data-region="input"]').val(document.location.hash.replace('#', ''));
     refreshSearch(config.theme);
     return {};
 });
