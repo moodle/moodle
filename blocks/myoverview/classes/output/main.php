@@ -370,8 +370,9 @@ class main implements renderable, templatable {
         $select = "instanceid $csql AND fieldid = :fieldid";
         $params['fieldid'] = $fieldid;
         $distinctablevalue = $DB->sql_compare_text('value');
-        $values = $DB->get_records_select_menu('customfield_data', $select, $params, $DB->sql_order_by_text('value'),
+        $values = $DB->get_records_select_menu('customfield_data', $select, $params, '',
             "DISTINCT $distinctablevalue, $distinctablevalue AS value2");
+        \core_collator::asort($values, \core_collator::SORT_NATURAL);
         $values = array_filter($values);
         if (!$values) {
             return [];
