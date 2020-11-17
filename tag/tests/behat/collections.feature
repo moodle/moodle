@@ -33,7 +33,7 @@ Feature: Managers can create and manage tag collections
   Scenario: Editing tag collections
     When I click on "Edit tag collection name" "link" in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Hobbies')]" "xpath_element"
     And I set the field "New name for tag collection Hobbies" to "Newname"
-    And I press key "13" in the field "New name for tag collection Hobbies"
+    And I press the enter key
     Then I should not see "Hobbies"
     And I should see "Newname"
     And I log out

@@ -64,7 +64,7 @@ Feature: Add cohorts of users
     When I follow "Cohorts"
     And I click on "Edit cohort name" "link" in the "Test cohort name" "table_row"
     And I set the field "New name for cohort Test cohort name" to "Students cohort"
-    And I press key "13" in the field "New name for cohort Test cohort name"
+    And I press the enter key
     Then I should not see "Test cohort name"
     And I should see "Students cohort"
     And I follow "Cohorts"
