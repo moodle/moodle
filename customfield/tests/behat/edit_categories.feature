@@ -22,7 +22,7 @@ Feature: Managers can manage categories for course custom fields
     And I navigate to "Courses > Course custom fields" in site administration
     And I click on "Edit category name" "link" in the "//div[contains(@class,'categoryinstance') and contains(.,'Category for test')]" "xpath_element"
     And I set the field "New value for Category for test" to "Good fields"
-    And I press key "13" in the field "New value for Category for test"
+    And I press the enter key
     Then I should not see "Category for test" in the "#customfield_catlist" "css_element"
     And "New value for Category for test" "field" should not exist
     And I should see "Good fields" in the "#customfield_catlist" "css_element"

@@ -36,8 +36,7 @@ Feature: Edit quiz marks with no attempts
     And I should see "Total of marks: 10.00"
 
     When I follow "Edit maximum mark"
-    And I wait until "li input[name=maxmark]" "css_element" exists
-    And I take focus off "li input[name=maxmark]" "css_element"
+    And I press the escape key
     Then I should see "7.00"
     And I should see "3.00"
     And I should see "Total of marks: 10.00"
