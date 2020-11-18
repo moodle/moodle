@@ -21,6 +21,8 @@ information provided here is intended especially for developers.
 * A new optional parameter `$sort` has been added to all `$context->get_capabilities()` methods to be able to define order of
   returned capability array.
 * Spout has been upgraded to the latest version - 3.1.0
+* The final deprecation of /message/defaultoutputs.php file and admin_page_defaultmessageoutputs.
+  All their settings moved to admin/message.php (see MDL-64495). Please use admin_page_managemessageoutputs class instead.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:
