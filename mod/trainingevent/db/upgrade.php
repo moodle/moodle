@@ -127,6 +127,38 @@ function xmldb_trainingevent_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2020092100, 'trainingevent');
     }
 
+    if ($oldversion < 2020111800) {
+
+        // Define field coursecapacity to be added to trainingevent as it was missing for xmldb install.
+        $table = new xmldb_table('trainingevent');
+        $field = new xmldb_field('coursecapacity', XMLDB_TYPE_INTEGER, '10');
+
+        // Conditionally launch add field coursecapacity.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field waitlisted to be added to trainingevent_users as it was missing for xmldb install.
+        $table = new xmldb_table('trainingevent_users');
+        $field = new xmldb_field('waitlisted', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, null);
+
+        // Conditionally launch add field waitlisted.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field haswaitinglist to be added to trainingevent.
+        $table = new xmldb_table('trainingevent');
+        $field = new xmldb_field('haswaitinglist', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'approvaltype');
+
+        // Conditionally launch add field haswaitinglist.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Trainingevent savepoint reached.
+        upgrade_mod_savepoint(true, 2020111800, 'trainingevent');
+    }
 
     return $result;
 }

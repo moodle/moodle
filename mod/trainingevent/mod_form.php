@@ -82,6 +82,13 @@ class mod_trainingevent_mod_form extends moodleform_mod {
                         get_string('enrolonly', 'trainingevent'));
         $mform->addElement('select', 'approvaltype', get_string('approvaltype', 'trainingevent'), $choices);
 
+        $mform->addElement('checkbox', 'haswaitinglist', get_string('haswaitinglist', 'mod_trainingevent'));
+        $mform->addHelpButton('haswaitinglist', 'haswaitinglist', 'mod_trainingevent');
+
+        $mform->addElement('text', 'coursecapacity', get_string('maxsize', 'mod_trainingevent'));
+        $mform->addHelpButton('coursecapacity', 'maxsize', 'mod_trainingevent');
+        $mform->setType('coursecapacity', PARAM_INT);
+
         $this->standard_grading_coursemodule_elements();
         $this->standard_coursemodule_elements();
 

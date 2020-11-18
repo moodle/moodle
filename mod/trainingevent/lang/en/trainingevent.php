@@ -91,3 +91,7 @@ $string['viewattendees'] = 'View the attendee list';
 $string['viewwaitlist'] = 'View the waitlist';
 $string['youareattending'] = '<p>You are booked as attending</p>';
 $string['youarewaiting'] = 'You are waiting for an available event';
+$string['haswaitinglist'] = 'Include waiting list';
+$string['haswaitinglist_help'] = 'If you endclude a waiting list with your event then users will be able to sign up to the waiting list for that even if the event is already full';
+$string['maxsize'] = 'Override training location size to';
+$string['maxsize_help'] = 'Setting a value here will override the default room size for the training room you have selected.';

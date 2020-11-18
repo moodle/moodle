@@ -94,6 +94,11 @@ function trainingevent_update_instance($trainingevent) {
     $trainingevent->timemodified = time();
     $trainingevent->id = $trainingevent->instance;
 
+    // Deal with checkboxes.
+    if (empty($trainingevent->haswaitinglist)) {
+        $trainingevent->haswaitinglist = 0;
+    }
+
     grade_update('mod/trainingevent',
                  $trainingevent->course,
                  'mod',
