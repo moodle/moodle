@@ -2441,9 +2441,11 @@ function print_collapsible_region($contents, $classes, $id, $caption, $userpref 
  *      (May be blank if you do not wish the state to be persisted.
  * @param boolean $default Initial collapsed state to use if the user_preference it not set.
  * @param boolean $return if true, return the HTML as a string, rather than printing it.
+ * @param string $extracontent the extra content will show next to caption, eg.Help icon.
  * @return string|void if $return is false, returns nothing, otherwise returns a string of HTML.
  */
-function print_collapsible_region_start($classes, $id, $caption, $userpref = '', $default = false, $return = false) {
+function print_collapsible_region_start($classes, $id, $caption, $userpref = '', $default = false, $return = false,
+        $extracontent = null) {
     global $PAGE;
 
     // Work out the initial state.
@@ -2463,8 +2465,11 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = '',
     $output .= '<div id="' . $id . '" class="collapsibleregion ' . $classes . '">';
     $output .= '<div id="' . $id . '_sizer">';
     $output .= '<div id="' . $id . '_caption" class="collapsibleregioncaption">';
-    $output .= $caption . ' ';
-    $output .= '</div><div id="' . $id . '_inner" class="collapsibleregioninner">';
+    $output .= $caption . ' </div>';
+    if ($extracontent) {
+        $output .= html_writer::div($extracontent, 'collapsibleregionextracontent');
+    }
+    $output .= '<div id="' . $id . '_inner" class="collapsibleregioninner">';
     $PAGE->requires->js_init_call('M.util.init_collapsible_region', array($id, $userpref, get_string('clicktohideshow')));
 
     if ($return) {
