@@ -53,7 +53,7 @@ if ($task) {
 
 $renderer = $PAGE->get_renderer('tool_task');
 
-if ($mform && ($mform->is_cancelled() || !empty($CFG->preventscheduledtaskchanges))) {
+if ($mform && ($mform->is_cancelled() || !empty($CFG->preventscheduledtaskchanges) || $task->is_overridden())) {
     redirect($nexturl);
 } else if ($action == 'edit' && empty($CFG->preventscheduledtaskchanges)) {
 

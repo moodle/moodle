@@ -1084,6 +1084,46 @@ $CFG->admin = 'admin';
 //      $CFG->alternative_cache_factory_class = 'tool_alternativecache_cache_factory';
 //
 //=========================================================================
+// 17. SCHEDULED TASK OVERRIDES
+//=========================================================================
+//
+// It is now possible to define scheduled tasks directly within config.
+// The overridden value will take precedence over the values that have been set VIA the UI from the
+// next time the task is run.
+//
+// Tasks are configured as an array of tasks that can override a task's schedule, as well as setting
+// the task as disabled. I.e:
+//
+//      $CFG->scheduled_tasks = [
+//          '\local_plugin\task\my_task' => [
+//              'schedule' => '*/15 0 0 0 0',
+//              'disabled' => 0,
+//          ],
+//      ];
+//
+// The format for the schedule definition is: '{minute} {hour} {day} {dayofweek} {month}'.
+//
+// The classname of the task also supports wildcards:
+//
+//      $CFG->scheduled_tasks = [
+//          '\local_plugin\*' => [
+//              'schedule' => '*/15 0 0 0 0',
+//              'disabled' => 0,
+//          ],
+//          '*' => [
+//              'schedule' => '0 0 0 0 0',
+//              'disabled' => 0,
+//          ],
+//      ];
+//
+// In this example, any task classnames matching '\local_plugin\*' would match the first rule and
+// use that schedule the next time the task runs. Note that even though the 'local_plugin' tasks match
+// the second rule as well, the highest rule takes precedence. Therefore, the second rule would be
+// applied to all tasks, except for tasks within '\local_plugin\'.
+//
+// When the full classname is used, this rule always takes priority over any wildcard rules.
+//
+//=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
 
