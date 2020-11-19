@@ -1,5 +1,5 @@
 @core_form
-Feature: Newly created repeat elements have the correct default values
+Feature: Repeated elements in moodleforms
 
   Scenario: Clicking button to add repeat elements creates repeat elements with the correct default values
     Given I log in as "admin"
@@ -22,3 +22,27 @@ Feature: Newly created repeat elements have the correct default values
       | testselectyes[1]          | Yes         |
       | testselectno[1]           | No          |
       | testtext[1]               | Testing 123 |
+
+  Scenario: Functionality to delete an option in the repeated elements
+    Given I log in as "admin"
+    And I am on fixture page "/lib/form/tests/behat/fixtures/repeat_with_delete_form.php"
+    And I set the field "Test text 1" to "value 1"
+    When I press "Add repeats"
+    Then the following fields match these values:
+      | Test text 1 | value 1 |
+      | Test text 2 | Testing |
+    And I set the field "Test text 2" to "value 2"
+    And I press "Add repeats"
+    And the following fields match these values:
+      | Test text 1 | value 1 |
+      | Test text 2 | value 2 |
+      | Test text 3 | Testing |
+    And I set the field "Test text 3" to "value 3"
+    And I press "Delete option 2"
+    And the following fields match these values:
+      | Test text 1 | value 1 |
+      | Test text 3 | value 3 |
+    And I should not see "Test text 2"
+    And I should not see "Delete option 2"
+    And I press "Save changes"
+    And I should see "{\"0\":\"value 1\",\"2\":\"value 3\"}"
