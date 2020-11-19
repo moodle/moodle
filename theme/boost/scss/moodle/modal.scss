@@ -31,6 +31,17 @@
     }
 }
 
+/* Change the modal-dialog-scrollable class to position: static to fix the issue with popper.js and autocomplete. */
+.modal-dialog-scrollable:has(.form-autocomplete-suggestions) {
+    position: static;
+    .modal-content {
+        position: static;
+        .modal-body {
+            position: static;
+        }
+    }
+}
+
 /* Bug fix for TinyMCE menu when in fullscreen mode. */
 body.tox-fullscreen .modal-dialog {
     width: 100%;

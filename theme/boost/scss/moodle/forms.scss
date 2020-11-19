@@ -411,6 +411,7 @@ textarea[data-auto-rows] {
 .felement[data-fieldtype="autocomplete"],
 .felement[data-fieldtype="tags"] {
     display: block !important; /* stylelint-disable-line declaration-no-important */
+    position: static;
 }
 
 // Show editor at 100% width by default.
