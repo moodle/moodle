@@ -570,4 +570,103 @@ class core_grade_grade_testcase extends grade_base_testcase {
         $gg = grade_grade::fetch(array('userid' => $u2->id, 'itemid' => $gi->id));
         $this->assertEmpty($gg);
     }
+
+    /**
+     * Tests get_hiding_affected by locked category and overridden grades.
+     */
+    public function test_category_get_hiding_affected() {
+        $generator = $this->getDataGenerator();
+
+        // Create the data we need for the tests.
+        $course1 = $generator->create_course();
+        $user1 = $generator->create_and_enrol($course1, 'student');
+        $assignment2 = $generator->create_module('assign', ['course' => $course1->id]);
+
+        // Create a category item.
+        $gradecategory = new grade_category(array('courseid' => $course1->id, 'fullname' => 'test'), false);
+        $gradecategoryid = $gradecategory->insert();
+
+        // Create one hidden grade item.
+        $gradeitem1a = new grade_item($generator->create_grade_item(
+            [
+                'courseid' => $course1->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $assignment2->id,
+                'categoryid' => $gradecategoryid,
+                'hidden' => 1,
+            ]
+        ), false);
+        grade_update('mod/assign', $gradeitem1a->courseid, $gradeitem1a->itemtype, $gradeitem1a->itemmodule, $gradeitem1a->iteminstance,
+        $gradeitem1a->itemnumber, ['userid' => $user1->id]);
+
+        // Get category grade item.
+        $gradeitem = $gradecategory->get_grade_item();
+        // Reset needsupdate to allow set_locked.
+        $gradeitem->needsupdate = 0;
+        $gradeitem->update();
+        // Lock category grade item.
+        $gradeitem->set_locked(1);
+
+        $hidingaffectedlocked = $this->call_get_hiding_affected($course1, $user1);
+        // Since locked category now should be recalculated.
+        // The number of unknown items is 2, this includes category item and course item.
+        $this->assertEquals(2, count($hidingaffectedlocked['unknown']));
+
+        // Unlock category.
+        $gradeitem->set_locked(0);
+        $hidingaffectedunlocked = $this->call_get_hiding_affected($course1, $user1);
+        // When category unlocked, hidden item should exist in altered items.
+        $this->assertTrue(in_array($gradeitem1a->id, array_keys($hidingaffectedunlocked['altered'])));
+
+        // This creates all the grade_grades we need.
+        grade_regrade_final_grades($course1->id);
+
+        // Set grade override.
+        $gradegrade = grade_grade::fetch([
+            'userid' => $user1->id,
+            'itemid' => $gradeitem->id,
+        ]);
+        // Set override grade grade, and check that grade submission has been overridden.
+        $gradegrade->set_overridden(true);
+        $this->assertEquals(true, $gradegrade->is_overridden());
+        $hidingaffectedoverridden = $this->call_get_hiding_affected($course1, $user1);
+        // No need to recalculate overridden grades.
+        $this->assertTrue(in_array($gradegrade->itemid, array_keys($hidingaffectedoverridden['alteredaggregationstatus'])));
+        $this->assertEquals('used', $hidingaffectedoverridden['alteredaggregationstatus'][$gradegrade->itemid]);
+    }
+
+    /**
+     * Call get_hiding_affected().
+     * @param stdClass $course The course object
+     * @param stdClass $user The student object
+     * @return array
+     */
+    private function call_get_hiding_affected($course, $user) {
+        global $DB;
+
+        $items = grade_item::fetch_all(array('courseid' => $course->id));
+        $grades = array();
+        $sql = "SELECT g.*
+                  FROM {grade_grades} g
+                  JOIN {grade_items} gi ON gi.id = g.itemid
+                 WHERE g.userid = :userid AND gi.courseid = :courseid";
+        if ($gradesrecords = $DB->get_records_sql($sql, ['userid' => $user->id, 'courseid' => $course->id])) {
+            foreach ($gradesrecords as $grade) {
+                $grades[$grade->itemid] = new grade_grade($grade, false);
+            }
+            unset($gradesrecords);
+        }
+        foreach ($items as $itemid => $gradeitem) {
+            if (!isset($grades[$itemid])) {
+                $gradegrade = new grade_grade();
+                $gradegrade->userid = $user->id;
+                $gradegrade->itemid = $gradeitem->id;
+                $grades[$itemid] = $gradegrade;
+            }
+            $gradeitem->grade_item = $gradeitem;
+        }
+
+        return grade_grade::get_hiding_affected($grades, $items);
+    }
 }
