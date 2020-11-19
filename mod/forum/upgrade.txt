@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 4.0 ===
 
 * The forum_count_replies() function has been removed from core.
+* The mod_forum_get_forum_discussion_posts web service has been removed from core.
 
 === 3.11 ===
 
