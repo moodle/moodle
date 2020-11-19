@@ -1652,7 +1652,7 @@ class grade_item extends grade_object {
             return $this->dependson_cache;
         }
 
-        if ($this->is_locked()) {
+        if ($this->is_locked() && !$this->is_category_item()) {
             // locked items do not need to be regraded
             $this->dependson_cache = array();
             return $this->dependson_cache;
