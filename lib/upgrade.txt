@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.9.4 ===
+* New optional parameter $extracontent for print_collapsible_region_start(). This allows developers to add interactive HTML elements
+  (e.g. a help icon) after the collapsible region's toggle link.
+
 === 3.9.3 ===
 * New DML function $DB->delete_records_subquery() to delete records based on a subquery in a way
   that will work across databases.
