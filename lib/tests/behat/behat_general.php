@@ -2032,6 +2032,16 @@ EOF;
     }
 
     /**
+     * Manually press enter key.
+     *
+     * @When /^I press enter/
+     * @throws DriverException
+     */
+    public function i_manually_press_enter() {
+        $this->execute('behat_general::i_press_named_key', ['', 'enter']);
+    }
+
+    /**
      * Visit a local URL relative to the behat root.
      *
      * @When I visit :localurl
