@@ -780,13 +780,15 @@ class grade_grade extends grade_object {
             $dependson[$grade_grade->itemid] = $grade_items[$grade_grade->itemid]->depends_on();
             if ($grade_grade->is_excluded()) {
                 //nothing to do, aggregation is ok
+                continue;
             } else if ($grade_grade->is_hidden()) {
                 $hiddenfound = true;
                 $altered[$grade_grade->itemid] = null;
                 $alteredaggregationstatus[$grade_grade->itemid] = 'dropped';
                 $alteredaggregationweight[$grade_grade->itemid] = 0;
-            } else if ($grade_grade->is_locked() or $grade_grade->is_overridden()) {
-                // no need to recalculate locked or overridden grades
+            } else if ($grade_grade->is_overridden()) {
+                // No need to recalculate overridden grades.
+                continue;
             } else {
                 if (!empty($dependson[$grade_grade->itemid])) {
                     $dependencydepth[$grade_grade->itemid] = 1;
@@ -846,9 +848,11 @@ class grade_grade extends grade_object {
                     } else {
                         // depends on altered grades - we should try to recalculate if possible
                         if ($grade_items[$do]->is_calculated() or
-                            (!$grade_items[$do]->is_category_item() and !$grade_items[$do]->is_course_item())
+                            (!$grade_items[$do]->is_category_item() and !$grade_items[$do]->is_course_item()) or
+                            ($grade_items[$do]->is_category_item() and $grade_items[$do]->is_locked())
                         ) {
                             // This is a grade item that is not a category or course and has been affected by grade hiding.
+                            // Or a grade item that is a category and it is locked.
                             // I guess this means it is a calculation that needs to be recalculated.
                             $unknown[$do] = $grade_grades[$do]->finalgrade;
                             unset($todo[$key]);
