@@ -391,7 +391,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $document = new DOMDocument();
         @$document->loadHTML($output);
         $xpath = new DOMXPath($document);
-        $this->assertEquals('', $xpath->evaluate('string(//td[@id="mod_assign_grading_r0_c8"])'));
+        $this->assertEmpty($xpath->evaluate('string(//td[@id="mod_assign_grading-' . $assign->get_context()->id. '_r0_c8"])'));
     }
 
     /**
@@ -462,25 +462,30 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         @$document->loadHTML($output);
         $xpath = new DOMXPath($document);
 
+        // The XPath expression is based on the unique ID of the table.
+        $xpathuniqueidroot = 'mod_assign_grading-' . $assign->get_context()->id;
+
         // Check status.
-        $this->assertSame(get_string('submissionstatus_submitted', 'assign'), $xpath->evaluate('string(//td[@id="mod_assign_grading_r0_c4"]/div[@class="submissionstatussubmitted"])'));
-        $this->assertSame(get_string('submissionstatus_submitted', 'assign'), $xpath->evaluate('string(//td[@id="mod_assign_grading_r3_c4"]/div[@class="submissionstatussubmitted"])'));
+        $this->assertSame(get_string('submissionstatus_submitted', 'assign'),
+            $xpath->evaluate('string(//td[@id="' . $xpathuniqueidroot . '_r0_c4"]/div[@class="submissionstatussubmitted"])'));
+        $this->assertSame(get_string('submissionstatus_submitted', 'assign'),
+            $xpath->evaluate('string(//td[@id="' . $xpathuniqueidroot . '_r3_c4"]/div[@class="submissionstatussubmitted"])'));
 
         // Check submission last modified date
-        $this->assertGreaterThan(0, strtotime($xpath->evaluate('string(//td[@id="mod_assign_grading_r0_c8"])')));
-        $this->assertGreaterThan(0, strtotime($xpath->evaluate('string(//td[@id="mod_assign_grading_r3_c8"])')));
+        $this->assertGreaterThan(0, strtotime($xpath->evaluate('string(//td[@id="' . $xpathuniqueidroot . '_r0_c8"])')));
+        $this->assertGreaterThan(0, strtotime($xpath->evaluate('string(//td[@id="' . $xpathuniqueidroot . '_r3_c8"])')));
 
         // Check group.
-        $this->assertSame($group->name, $xpath->evaluate('string(//td[@id="mod_assign_grading_r0_c5"])'));
-        $this->assertSame($group->name, $xpath->evaluate('string(//td[@id="mod_assign_grading_r3_c5"])'));
+        $this->assertSame($group->name, $xpath->evaluate('string(//td[@id="' . $xpathuniqueidroot . '_r0_c5"])'));
+        $this->assertSame($group->name, $xpath->evaluate('string(//td[@id="' . $xpathuniqueidroot . '_r3_c5"])'));
 
         // Check submission text.
-        $this->assertSame('Submission text', $xpath->evaluate('string(//td[@id="mod_assign_grading_r0_c9"]/div/div)'));
-        $this->assertSame('Submission text', $xpath->evaluate('string(//td[@id="mod_assign_grading_r3_c9"]/div/div)'));
+        $this->assertSame('Submission text', $xpath->evaluate('string(//td[@id="' . $xpathuniqueidroot . '_r0_c9"]/div/div)'));
+        $this->assertSame('Submission text', $xpath->evaluate('string(//td[@id="' . $xpathuniqueidroot . '_r3_c9"]/div/div)'));
 
         // Check comments can be made.
-        $this->assertSame(1, (int)$xpath->evaluate('count(//td[@id="mod_assign_grading_r0_c10"]//textarea)'));
-        $this->assertSame(1, (int)$xpath->evaluate('count(//td[@id="mod_assign_grading_r3_c10"]//textarea)'));
+        $this->assertEquals(1, $xpath->evaluate('count(//td[@id="' . $xpathuniqueidroot . '_r0_c10"]//textarea)'));
+        $this->assertEquals(1, $xpath->evaluate('count(//td[@id="' . $xpathuniqueidroot . '_r3_c10"]//textarea)'));
     }
 
     public function test_show_intro() {
