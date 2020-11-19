@@ -24,6 +24,8 @@ information provided here is intended especially for developers.
 * emoji-data has been upgraded to 6.0.0.
 * The final deprecation of /message/defaultoutputs.php file and admin_page_defaultmessageoutputs.
   All their settings moved to admin/message.php (see MDL-64495). Please use admin_page_managemessageoutputs class instead.
+* Added new class, AMD modules and WS that allow displaying forms in modal popups or load and submit in AJAX requests.
+  See https://docs.moodle.org/dev/Modal_and_AJAX_forms for more details.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:

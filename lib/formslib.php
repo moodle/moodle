@@ -520,19 +520,57 @@ abstract class moodleform {
     }
 
     /**
+     * Returns an element of multi-dimensional array given the list of keys
+     *
+     * Example:
+     * $array['a']['b']['c'] = 13;
+     * $v = $this->get_array_value_by_keys($array, ['a', 'b', 'c']);
+     *
+     * Will result it $v==13
+     *
+     * @param array $array
+     * @param array $keys
+     * @return mixed returns null if keys not present
+     */
+    protected function get_array_value_by_keys(array $array, array $keys) {
+        $value = $array;
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $value)) {
+                $value = $value[$key];
+            } else {
+                return null;
+            }
+        }
+        return $value;
+    }
+
+    /**
      * Checks if a parameter was passed in the previous form submission
      *
-     * @param string $name the name of the page parameter we want
+     * @param string $name the name of the page parameter we want, for example 'id' or 'element[sub][13]'
      * @param mixed  $default the default value to return if nothing is found
      * @param string $type expected type of parameter
      * @return mixed
      */
     public function optional_param($name, $default, $type) {
-        if (isset($this->_ajaxformdata[$name])) {
-            return clean_param($this->_ajaxformdata[$name], $type);
-        } else {
-            return optional_param($name, $default, $type);
+        $nameparsed = [];
+        // Convert element name into a sequence of keys, for example 'element[sub][13]' -> ['element', 'sub', '13'].
+        parse_str($name . '=1', $nameparsed);
+        $keys = [];
+        while (is_array($nameparsed)) {
+            $key = key($nameparsed);
+            $keys[] = $key;
+            $nameparsed = $nameparsed[$key];
         }
+
+        // Search for the element first in $this->_ajaxformdata, then in $_POST and then in $_GET.
+        if (($value = $this->get_array_value_by_keys($this->_ajaxformdata ?? [], $keys)) !== null ||
+            ($value = $this->get_array_value_by_keys($_POST, $keys)) !== null ||
+            ($value = $this->get_array_value_by_keys($_GET, $keys)) !== null) {
+            return $type == PARAM_RAW ? $value : clean_param($value, $type);
+        }
+
+        return $default;
     }
 
     /**
@@ -1099,11 +1137,14 @@ abstract class moodleform {
      * @param int $addfieldsno how many fields to add at a time
      * @param string $addstring name of button, {no} is replaced by no of blanks that will be added.
      * @param bool $addbuttoninside if true, don't call closeHeaderBefore($addfieldsname). Default false.
+     * @param string $deletebuttonname if specified, treats the no-submit button with this name as a "delete element" button
+     *         in each of the elements
      * @return int no of repeats of element in this page
      */
-    function repeat_elements($elementobjs, $repeats, $options, $repeathiddenname,
-            $addfieldsname, $addfieldsno=5, $addstring=null, $addbuttoninside=false){
-        if ($addstring===null){
+    public function repeat_elements($elementobjs, $repeats, $options, $repeathiddenname,
+                                    $addfieldsname, $addfieldsno = 5, $addstring = null, $addbuttoninside = false,
+                                    $deletebuttonname = '') {
+        if ($addstring === null) {
             $addstring = get_string('addfields', 'form', $addfieldsno);
         } else {
             $addstring = str_ireplace('{no}', $addfieldsno, $addstring);
@@ -1121,7 +1162,18 @@ abstract class moodleform {
         //value not to be overridden by submitted value
         $mform->setConstants(array($repeathiddenname=>$repeats));
         $namecloned = array();
+        $no = 1;
         for ($i = 0; $i < $repeats; $i++) {
+            if ($deletebuttonname) {
+                $mform->registerNoSubmitButton($deletebuttonname . "[$i]");
+                $isdeleted = $this->optional_param($deletebuttonname . "[$i]", false, PARAM_RAW) ||
+                    $this->optional_param($deletebuttonname . "-hidden[$i]", false, PARAM_RAW);
+                if ($isdeleted) {
+                    $mform->addElement('hidden', $deletebuttonname . "-hidden[$i]", 1);
+                    $mform->setType($deletebuttonname . "-hidden[$i]", PARAM_INT);
+                    continue;
+                }
+            }
             foreach ($elementobjs as $elementobj){
                 $elementclone = fullclone($elementobj);
                 $this->repeat_elements_fix_clone($i, $elementclone, $namecloned);
@@ -1130,7 +1182,13 @@ abstract class moodleform {
                     foreach ($elementclone->getElements() as $el) {
                         $this->repeat_elements_fix_clone($i, $el, $namecloned);
                     }
-                    $elementclone->setLabel(str_replace('{no}', $i + 1, $elementclone->getLabel()));
+                    $elementclone->setLabel(str_replace('{no}', $no, $elementclone->getLabel()));
+                } else if ($elementobj instanceof \HTML_QuickForm_submit && $elementobj->getName() == $deletebuttonname) {
+                    // Mark the "Delete" button as no-submit.
+                    $onclick = $elementclone->getAttribute('onclick');
+                    $skip = 'skipClientValidation = true;';
+                    $onclick = ($onclick !== null) ? $skip . ' ' . $onclick : $skip;
+                    $elementclone->updateAttributes(['data-skip-validation' => 1, 'data-no-submit' => 1, 'onclick' => $onclick]);
                 }
 
                 // Mark newly created elements, so they know not to look for any submitted data.
@@ -1139,6 +1197,7 @@ abstract class moodleform {
                 }
 
                 $mform->addElement($elementclone);
+                $no++;
             }
         }
         for ($i=0; $i<$repeats; $i++) {
@@ -1161,24 +1220,22 @@ abstract class moodleform {
                             call_user_func_array(array(&$mform, 'addHelpButton'), $params);
                             break;
                         case 'disabledif' :
-                            foreach ($namecloned as $num => $name){
-                                if ($params[0] == $name){
-                                    $params[0] = $params[0]."[$i]";
-                                    break;
-                                }
-                            }
-                            $params = array_merge(array($realelementname), $params);
-                            call_user_func_array(array(&$mform, 'disabledIf'), $params);
-                            break;
                         case 'hideif' :
+                            $pos = strpos($params[0], '[');
+                            $ending = '';
+                            if ($pos !== false) {
+                                $ending = substr($params[0], $pos);
+                                $params[0] = substr($params[0], 0, $pos);
+                            }
                             foreach ($namecloned as $num => $name){
                                 if ($params[0] == $name){
-                                    $params[0] = $params[0]."[$i]";
+                                    $params[0] = $params[0] . "[$i]" . $ending;
                                     break;
                                 }
                             }
                             $params = array_merge(array($realelementname), $params);
-                            call_user_func_array(array(&$mform, 'hideIf'), $params);
+                            $function = ($option === 'disabledif') ? 'disabledIf' : 'hideIf';
+                            call_user_func_array(array(&$mform, $function), $params);
                             break;
                         case 'rule' :
                             if (is_string($params)){
@@ -1203,7 +1260,7 @@ abstract class moodleform {
                 }
             }
         }
-        $mform->addElement('submit', $addfieldsname, $addstring);
+        $mform->addElement('submit', $addfieldsname, $addstring, [], false);
 
         if (!$addbuttoninside) {
             $mform->closeHeaderBefore($addfieldsname);
@@ -1430,6 +1487,40 @@ abstract class moodleform {
         } else {
             $_POST = $simulatedsubmitteddata;
         }
+    }
+
+    /**
+     * Used by tests to simulate submitted form data submission via AJAX.
+     *
+     * For form fields where no data is submitted the default for that field as set by set_data or setDefault will be passed to
+     * get_data.
+     *
+     * This method sets $_POST or $_GET and $_FILES with the data supplied. Our unit test code empties all these
+     * global arrays after each test.
+     *
+     * @param array  $simulatedsubmitteddata       An associative array of form values (same format as $_POST).
+     * @param array  $simulatedsubmittedfiles      An associative array of files uploaded (same format as $_FILES). Can be omitted.
+     * @param string $method                       'post' or 'get', defaults to 'post'.
+     * @param null   $formidentifier               the default is to use the class name for this class but you may need to provide
+     *                                              a different value here for some forms that are used more than once on the
+     *                                              same page.
+     * @return array array to pass to form constructor as $ajaxdata
+     */
+    public static function mock_ajax_submit($simulatedsubmitteddata, $simulatedsubmittedfiles = array(), $method = 'post',
+                                            $formidentifier = null) {
+        $_FILES = $simulatedsubmittedfiles;
+        if ($formidentifier === null) {
+            $formidentifier = get_called_class();
+            $formidentifier = str_replace('\\', '_', $formidentifier); // See MDL-56233 for more information.
+        }
+        $simulatedsubmitteddata['_qf__'.$formidentifier] = 1;
+        $simulatedsubmitteddata['sesskey'] = sesskey();
+        if (strtolower($method) === 'get') {
+            $_GET = ['sesskey' => sesskey()];
+        } else {
+            $_POST = ['sesskey' => sesskey()];
+        }
+        return $simulatedsubmitteddata;
     }
 
     /**
