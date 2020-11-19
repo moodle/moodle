@@ -10,7 +10,7 @@ Feature: Upload files
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"
-    When I follow "Manage private files..."
+    When I follow "Private files"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     Then I should see "1" elements in "Files" filemanager
     And I should see "empty.txt" in the "div.fp-content" "css_element"
@@ -19,4 +19,3 @@ Feature: Upload files
     Then I should see "2" elements in "Files" filemanager
     And I should see "empty.txt"
     And I should see "empty_copy.txt"
-    And I press "Cancel"
