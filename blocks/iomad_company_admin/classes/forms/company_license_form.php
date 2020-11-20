@@ -244,8 +244,13 @@ class company_license_form extends \company_moodleform {
         if (!empty($this->parentlicense->program)) {
             $mform->addElement('html', "</div>");
         }
+
         if ( $this->courses ) {
-            $this->add_action_buttons(true, get_string('updatelicense', 'block_iomad_company_admin'));
+            if (empty($this->licenseid)) {
+                $this->add_action_buttons(true, get_string('createlicense', 'block_iomad_company_admin'));
+            } else {
+                $this->add_action_buttons(true, get_string('updatelicense', 'block_iomad_company_admin'));
+            }
         } else {
             $mform->addElement('html', get_string('nocourses', 'block_iomad_company_admin'));
         }
