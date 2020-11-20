@@ -51,6 +51,8 @@ class qtype_essay_test_helper extends question_test_helper {
         $q->responseformat = 'editor';
         $q->responserequired = 1;
         $q->responsefieldlines = 10;
+        $q->minwordlimit = 0;
+        $q->maxwordlimit = 0;
         $q->attachments = 0;
         $q->attachmentsrequired = 0;
         $q->filetypeslist = '';
@@ -86,6 +88,8 @@ class qtype_essay_test_helper extends question_test_helper {
         $fromform->responseformat = 'editor';
         $fromform->responserequired = 1;
         $fromform->responsefieldlines = 10;
+        $fromform->minwordlimit = 0;
+        $fromform->maxwordlimit = 0;
         $fromform->attachments = 0;
         $fromform->attachmentsrequired = 0;
         $fromform->filetypeslist = '';
@@ -138,6 +142,8 @@ class qtype_essay_test_helper extends question_test_helper {
         $fromform->responseformat = 'editorfilepicker';
         $fromform->responserequired = 1;
         $fromform->responsefieldlines = 10;
+        $fromform->minwordlimit = 0;
+        $fromform->maxwordlimit = 0;
         $fromform->attachments = 3;
         $fromform->attachmentsrequired = 0;
         $fromform->filetypeslist = '';
@@ -175,6 +181,8 @@ class qtype_essay_test_helper extends question_test_helper {
         $fromform->responseformat = 'plain';
         $fromform->responserequired = 1;
         $fromform->responsefieldlines = 10;
+        $fromform->minwordlimit = 0;
+        $fromform->maxwordlimit = 0;
         $fromform->attachments = 0;
         $fromform->attachmentsrequired = 0;
         $fromform->filetypeslist = '';

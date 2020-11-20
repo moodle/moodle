@@ -25,6 +25,8 @@
     <responseformat>editor</responseformat>
     <responserequired>1</responserequired>
     <responsefieldlines>15</responsefieldlines>
+    <minwordlimit>0</minwordlimit>
+    <maxwordlimit>0</maxwordlimit>
     <attachments>0</attachments>
     <attachmentsrequired>0</attachmentsrequired>
     <filetypeslist></filetypeslist>
