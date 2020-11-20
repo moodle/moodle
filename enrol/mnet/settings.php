@@ -36,6 +36,6 @@ if ($ADMIN->fulltree) {
         $student = reset($student);
         $settings->add(new admin_setting_configselect_with_advanced('enrol_mnet/roleid',
             get_string('defaultrole', 'role'), '',
-            array('value'=>$student->id, 'adv'=>true), $options));
+            array('value'=>$student->id ?? null, 'adv'=>true), $options));
     }
 }
