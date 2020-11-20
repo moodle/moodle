@@ -88,6 +88,14 @@ class core_message_external extends external_api {
             'messages' => $messages
         ]);
 
+        // Validate messages content before posting them.
+        foreach ($params['messages'] as $message) {
+            // Check message length.
+            if (strlen($message['text']) > \core_message\api::MESSAGE_MAX_LENGTH) {
+                throw new moodle_exception('errormessagetoolong', 'message');
+            }
+        }
+
         $messages = [];
         foreach ($params['messages'] as $message) {
             $createdmessage = \core_message\api::send_message_to_conversation($USER->id, $params['conversationid'], $message['text'],
@@ -185,6 +193,12 @@ class core_message_external extends external_api {
             if (empty($tousers[$message['touserid']])) {
                 $success = false;
                 $errormessage = get_string('touserdoesntexist', 'message', $message['touserid']);
+            }
+
+            // Check message length.
+            if ($success && strlen($message['text']) > \core_message\api::MESSAGE_MAX_LENGTH) {
+                $success = false;
+                $errormessage = get_string('errormessagetoolong', 'message');
             }
 
             // TODO MDL-31118 performance improvement - edit the function so we can pass an array instead userid

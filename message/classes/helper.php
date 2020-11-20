@@ -622,7 +622,8 @@ class helper {
                 'notification' => $notification
             ],
             'isdrawer' => $isdrawer,
-            'showemojipicker' => !empty($CFG->allowemojipicker)
+            'showemojipicker' => !empty($CFG->allowemojipicker),
+            'messagemaxlength' => api::MESSAGE_MAX_LENGTH,
         ];
 
         if ($sendtouser || $conversationid) {
