@@ -47,6 +47,11 @@ class api {
     const MESSAGE_ACTION_DELETED = 2;
 
     /**
+     * The max message length.
+     */
+    const MESSAGE_MAX_LENGTH = 4096;
+
+    /**
      * Handles searching for messages in the message area.
      *
      * @param int $userid The user id doing the searching

@@ -126,6 +126,12 @@ class core_message_external extends external_api {
                 $errormessage = get_string('touserdoesntexist', 'message', $message['touserid']);
             }
 
+            // Check message length.
+            if ($success && strlen($message['text']) > \core_message\api::MESSAGE_MAX_LENGTH) {
+                $success = false;
+                $errormessage = get_string('errormessagetoolong', 'message');
+            }
+
             //check that the touser is not blocking the current user
             if ($success and !empty($blocklist[$message['touserid']]) and !$canreadallmessages) {
                 $success = false;

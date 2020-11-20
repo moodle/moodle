@@ -145,6 +145,48 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test send_instant_messages with a message text longer than permitted.
+     */
+    public function test_send_instant_messages_long_text() {
+
+        global $DB, $USER, $CFG;
+
+        $this->resetAfterTest(true);
+        // Transactions used in tests, tell phpunit use alternative reset method.
+        $this->preventResetByRollback();
+
+        // Turn off all message processors (so nothing is really sent)
+        require_once($CFG->dirroot . '/message/lib.php');
+        $messageprocessors = get_message_processors();
+        foreach($messageprocessors as $messageprocessor) {
+            $messageprocessor->enabled = 0;
+            $DB->update_record('message_processors', $messageprocessor);
+        }
+
+        // Set the required capabilities by the external function
+        $contextid = context_system::instance()->id;
+        $roleid = $this->assignUserCapability('moodle/site:sendmessage', $contextid);
+
+        $user1 = self::getDataGenerator()->create_user();
+
+        // Create test message data.
+        $message1 = array(
+            'touserid' => $user1->id,
+            'text' => str_repeat("M", \core_message\api::MESSAGE_MAX_LENGTH + 100),
+            'clientmsgid' => 4,
+        );
+        $messages = array($message1);
+
+        $sentmessages = core_message_external::send_instant_messages($messages);
+        $sentmessages = external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
+
+        $this->assertEquals(
+            get_string('errormessagetoolong', 'message'),
+            array_pop($sentmessages)['errormessage']
+        );
+    }
+
+    /**
      * Test create_contacts.
      */
     public function test_create_contacts() {
