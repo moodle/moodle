@@ -156,6 +156,41 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test send_instant_messages with a message text longer than permitted.
+     */
+    public function test_send_instant_messages_long_text() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Transactions used in tests, tell phpunit use alternative reset method.
+        $this->preventResetByRollback();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+
+        // Create test message data.
+        $message1 = [
+            'touserid' => $user2->id,
+            'text' => str_repeat("M", \core_message\api::MESSAGE_MAX_LENGTH + 100),
+            'clientmsgid' => 4,
+        ];
+        $messages = [$message1];
+
+        // Add the user1 as a contact.
+        \core_message\api::add_contact($user1->id, $user2->id);
+
+        $sentmessages = core_message_external::send_instant_messages($messages);
+        $sentmessages = external_api::clean_returnvalue(core_message_external::send_instant_messages_returns(), $sentmessages);
+        $this->assertEquals(
+            get_string('errormessagetoolong', 'message'),
+            array_pop($sentmessages)['errormessage']
+        );
+    }
+
+    /**
      * Test send_instant_messages to a user who has blocked you.
      */
     public function test_send_instant_messages_blocked_user() {
@@ -6426,6 +6461,38 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         ];
         $this->expectException(\moodle_exception::class);
         $writtenmessages = core_message_external::send_messages_to_conversation($gc1->id, $messages);
+    }
+
+    /**
+     * Test verifying a to long message can not be sent to a conversation.
+     */
+    public function test_send_messages_to_conversation_long_text() {
+        $this->resetAfterTest(true);
+
+        // Get a bunch of conversations, some group, some individual and in different states.
+        list($user1, $user2, $user3, $user4, $ic1, $ic2, $ic3,
+            $gc1, $gc2, $gc3, $gc4, $gc5, $gc6) = $this->create_conversation_test_data();
+
+        // Enrol the users in the same course, so the default privacy controls (course + contacts) can be used.
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course1->id);
+
+        // The user making the request.
+        $this->setUser($user1);
+
+        // Try to send a message as user1 to a conversation user1 is a a part of.
+        $messages = [
+            [
+                'text' => str_repeat("M", \core_message\api::MESSAGE_MAX_LENGTH + 100),
+                'textformat' => FORMAT_MOODLE
+            ],
+        ];
+
+        $this->expectException(moodle_exception::class);
+        $writtenmessages = core_message_external::send_messages_to_conversation($gc2->id, $messages);
     }
 
     /**

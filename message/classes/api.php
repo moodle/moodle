@@ -94,6 +94,11 @@ class api {
     const MESSAGE_CONVERSATION_DISABLED = 0;
 
     /**
+     * The max message length.
+     */
+    const MESSAGE_MAX_LENGTH = 4096;
+
+    /**
      * Handles searching for messages in the message area.
      *
      * @param int $userid The user id doing the searching
