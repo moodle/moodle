@@ -35,6 +35,11 @@ Feature: Verify that keyboard steps work as expected
       | saffronr | saffron.rutledge@example.com | Saffron   | Rutledge |
     And I log in as "saffronr"
     And I click on "Saffron Rutledge" "link" in the ".usermenu" "css_element"
+    # The version of Boost used in Moodle 3.5 does not have any pendingJS checks and it is not possible to add them.
+    # We need to use the poor-person's alternative and fall back to a short wait to allow the menu to open before
+    # interacting with it.
+    # This may still allow for failures on extremely slow systems but the risk is extremely minimal.
+    And I wait "1" seconds
     When I press the up key
     Then the focused element is "Log out" "link"
 
