@@ -16,30 +16,8 @@ services:
     - mysql
     - docker
 
-php:
-    # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
-    - 7.4
-    - 7.1.30 # Make this sticky because current default version (7.1.11) has a bug with redis-extension output (MDL-66062)
-
 addons:
   postgresql: "9.6"
-
-env:
-    # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
-    # start first so that the total run time is not too high.
-    #
-    # We only run MySQL on PHP 7.2, so run that first.
-    # CI Tests should be second-highest in priority as these only take <= 60 seconds to run under normal circumstances.
-    # Postgres is significantly is pretty reasonable in its run-time.
-
-    # Run CI Tests without running PHPUnit.
-    - DB=none     TASK=CITEST
-
-    # Run unit tests on Postgres
-    - DB=pgsql    TASK=PHPUNIT
-
-    # Perform an upgrade test too.
-    - DB=pgsql    TASK=UPGRADE
 
 jobs:
     # Enable fast finish.
@@ -48,12 +26,52 @@ jobs:
     fast_finish: true
 
     include:
-          # Run mysql only on highest - it's just too slow
-        - php: 7.4
+        # First all the lowest php ones (7.1.30)
+        # Make this sticky because current default version (7.1.11) has a bug with redis-extension output (MDL-66062)
+        - php: 7.1.30
+          env: DB=none     TASK=CITEST
+        - php: 7.1.30
+          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
+
+        - if: env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present
+          php: 7.1.30
+          env: DB=pgsql    TASK=PHPUNIT
+
+        - if: env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present
+          php: 7.1.30
+          env: DB=pgsql    TASK=UPGRADE
+
+        - if: env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all"
+          php: 7.1.30
           env: DB=mysqli   TASK=PHPUNIT
-          # Run grunt/npm install on highest version too ('node' is an alias for the latest node.js version.)
-        - php: 7.4
-          env: DB=none     TASK=GRUNT   NVM_VERSION='lts/carbon'
+
+        - if: env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all"
+          php: 7.1.30
+          env: DB=mysqli   TASK=UPGRADE
+
+        # Then, conditionally, all the highest php ones (7.4)
+        - if: env(MOODLE_PHP) = "all"
+          php: 7.4
+          env: DB=none     TASK=CITEST
+        - if: env(MOODLE_PHP) = "all"
+          php: 7.4
+          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
+
+        - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present)
+          php: 7.4
+          env: DB=pgsql    TASK=PHPUNIT
+
+        - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present)
+          php: 7.4
+          env: DB=pgsql    TASK=UPGRADE
+
+        - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all")
+          php: 7.4
+          env: DB=mysqli   TASK=PHPUNIT
+
+        - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all")
+          php: 7.4
+          env: DB=mysqli   TASK=UPGRADE
 
 cache:
     directories:
