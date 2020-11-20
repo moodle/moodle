@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/lib.php');
 
 $THEME->name = 'iomadboost';
-$THEME->sheets = ['iomad'];
+$THEME->sheets = ['iomad', 'moodle'];
 $THEME->editor_sheets = [];
 $THEME->editor_scss = ['editor'];
 $THEME->usefallback = true;
