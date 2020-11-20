@@ -82,8 +82,9 @@ class behat_form_autocomplete extends behat_form_text {
             }
             $this->wait_for_pending_js();
 
-            // Press the escape to close the autocomplete suggestions list.
-            behat_base::type_keys($this->session, [behat_keys::ESCAPE]);
+            // Note: This does not make use of the `type_keys` API because it can cause some modals to close.
+            // This is not an issue in later versions of Moodle where the autocomplete handling has been updated.
+            $this->key_press(27);
             $this->wait_for_pending_js();
         }
     }
