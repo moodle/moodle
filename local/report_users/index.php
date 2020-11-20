@@ -117,13 +117,14 @@ $companydepartment = $parentlevel->id;
 
 // Get the company additional optional user parameter names.
 $fieldnames = array();
-if ($category = company::get_category($companyid)) {
+if ($category = $DB->get_record_sql("SELECT uic.id, uic.name FROM {user_info_category} uic, {company} c
+                                     WHERE c.id = :companyid
+                                     AND c.profileid=uic.id", array('companyid' => $companyid))) {
     // Get field names from company category.
     if ($fields = $DB->get_records('user_info_field', array('categoryid' => $category->id))) {
         foreach ($fields as $field) {
             $fieldnames[$field->id] = 'profile_field_'.$field->shortname;
-            ${'profile_field_'.$field->shortname} = optional_param('profile_field_'.
-                                                      $field->shortname, null, PARAM_RAW);
+            ${'profile_field_'.$field->shortname} = optional_param('profile_field_'.$field->shortname, null, PARAM_RAW);
         }
     }
 }
