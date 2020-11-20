@@ -746,7 +746,11 @@ class company {
             $gone=true;
         } else {
             // Check if it belongs to a company now?
-            if ($DB->count_records('company_courses', array('courseid' => $courseid)) == 0) {
+            if (!$DB->get_records_sql("SELECT id FROM {company_courses}
+                                       WHERE courseid = :courseid
+                                       AND companyid != :companyid",
+                                       array('courseid' => $courseid,
+                                             'companyid' => $companyid))) {
                 // Call the moodle course delete function.
                 if (!delete_course($courseid)) {
                     $errors = true;
