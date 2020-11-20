@@ -61,6 +61,12 @@ class restore_qtype_essay_plugin extends restore_qtype_plugin {
         if (!isset($data->responserequired)) {
             $data->responserequired = 1;
         }
+        if (!isset($data->minwordlimit)) {
+            $data->minwordlimit = null;
+        }
+        if (!isset($data->maxwordlimit)) {
+            $data->maxwordlimit = null;
+        }
         if (!isset($data->attachmentsrequired)) {
             $data->attachmentsrequired = 0;
         }
@@ -111,6 +117,8 @@ class restore_qtype_essay_plugin extends restore_qtype_plugin {
             $defaultoptions->responseformat = 'editor';
             $defaultoptions->responserequired = 1;
             $defaultoptions->responsefieldlines = 15;
+            $defaultoptions->minwordlimit = null;
+            $defaultoptions->maxwordlimit = null;
             $defaultoptions->attachments = 0;
             $defaultoptions->attachmentsrequired = 0;
             $defaultoptions->graderinfo = '';
