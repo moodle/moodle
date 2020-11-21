@@ -1,0 +1,103 @@
+name: Core
+
+on: [push]
+
+env:
+  php: 7.4
+
+jobs:
+  Grunt:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checking out code
+        uses: actions/checkout@v2
+
+      - name: Configuring node & npm
+        shell: bash -l {0}
+        run: nvm install
+
+      - name: Installing node stuff
+        run: npm install
+
+      - name: Running grunt
+        run: npx grunt
+
+      - name: Looking for uncommitted changes
+        # Add all files to the git index and then run diff --cached to see all changes.
+        # This ensures that we get the status of all files, including new files.
+        # We ignore npm-shrinkwrap.json to make the tasks immune to npm changes.
+        run: |
+          git add .
+          git reset -- npm-shrinkwrap.json
+          git diff --cached --exit-code
+
+  PHPUnit:
+    runs-on: ${{ matrix.os }}
+    services:
+      exttests:
+        image: moodlehq/moodle-exttests
+        ports:
+          - 8080:80
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-18.04
+            php: 7.1
+            db: mysqli
+          - os: ubuntu-18.04
+            php: 7.4
+            db: pgsql
+
+    steps:
+      - name: Setting up DB mysql
+        if: ${{ matrix.db == 'mysqli' }}
+        uses: johanmeiring/mysql-action@tmpfs-patch
+        with:
+          collation server: utf8mb4_bin
+          mysql version: 5.7
+          mysql database: test
+          mysql user: test
+          mysql password: test
+          use tmpfs: true
+
+      - name: Setting up DB pgsql
+        if: ${{ matrix.db == 'pgsql' }}
+        uses: m4nu56/postgresql-action@v1
+        with:
+          postgresql version: 9.6
+          postgresql db: test
+          postgresql user: test
+          postgresql password: test
+
+      - name: Configuring git vars
+        uses: rlespinasse/github-slug-action@v3.x
+
+      - name: Setting up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
+        uses: actions/checkout@v2
+
+      - name: Setting up PHPUnit
+        env:
+          dbtype: ${{ matrix.db }}
+        run: |
+          echo "pathtophp=$(which php)" >> $GITHUB_ENV # Inject installed pathtophp to env. The template config needs it.
+          cp .github/workflows/config-template.php config.php
+          mkdir ../moodledata
+          sudo locale-gen en_AU.UTF-8
+          php admin/tool/phpunit/cli/init.php --no-composer-self-update
+
+      - name: Running PHPUnit tests
+        env:
+          dbtype: ${{ matrix.db }}
+        run: vendor/bin/phpunit -v
