@@ -5,6 +5,7 @@ information provided here is intended especially for developers.
 * New optional parameter $extracontent for print_collapsible_region_start(). This allows developers to add interactive HTML elements
   (e.g. a help icon) after the collapsible region's toggle link.
 * Final deprecation i_dock_block() in behat_deprecated.php
+* Behat timeout constants behat_base::TIMEOUT, EXTENDED_TIMEOUT, and REDUCED_TIMEOUT, which were deprecated in 3.7, have been removed.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:
