@@ -1312,7 +1312,7 @@ class api {
             // The last known message time is earlier than the one being requested so we can
             // just return an empty result set rather than having to query the DB.
             if ($lastcreated && $lastcreated < $timefrom) {
-                return [];
+                return helper::format_conversation_messages($userid, $convid, []);
             }
         }
 
