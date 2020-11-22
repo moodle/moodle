@@ -5728,6 +5728,52 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test retrieving conversation messages by providing a timefrom higher than last message timecreated. It should return no
+     * messages but keep the return structure to not break when called from the ws.
+     */
+    public function test_get_conversation_messages_timefrom_higher_than_last_timecreated() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Create group conversation.
+        $conversation = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_GROUP,
+            [$user1->id, $user2->id, $user3->id, $user4->id]
+        );
+
+        // The person asking for the messages for another user.
+        $this->setUser($user1);
+
+        // Send some messages back and forth.
+        $time = 1;
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Message 1', $time + 1);
+        testhelper::send_fake_message_to_conversation($user2, $conversation->id, 'Message 2', $time + 2);
+        testhelper::send_fake_message_to_conversation($user1, $conversation->id, 'Message 3', $time + 3);
+        testhelper::send_fake_message_to_conversation($user3, $conversation->id, 'Message 4', $time + 4);
+
+        // Retrieve the messages.
+        $result = core_message_external::get_conversation_messages($user1->id, $conversation->id, 0, 0, '', $time + 5);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::get_conversation_messages_returns(), $result);
+
+        // Check the results are correct.
+        $this->assertEquals($conversation->id, $result['id']);
+
+        // Confirm the message data is correct.
+        $messages = $result['messages'];
+        $this->assertEquals(0, count($messages));
+
+        // Confirm that members key is present.
+        $this->assertArrayHasKey('members', $result);
+    }
+
+    /**
      * Helper to seed the database with initial state with data.
      */
     protected function create_delete_message_test_data() {
