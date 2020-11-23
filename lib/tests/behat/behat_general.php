@@ -945,13 +945,7 @@ EOF;
      * @param string $selectortype The type of element where we are looking in.
      */
     public function the_element_should_be_disabled($element, $selectortype) {
-
-        // Transforming from steps definitions selector/locator format to Mink format and getting the NodeElement.
-        $node = $this->get_selected_node($selectortype, $element);
-
-        if (!$node->hasAttribute('disabled')) {
-            throw new ExpectationException('The element "' . $element . '" is not disabled', $this->getSession());
-        }
+        $this->the_attribute_of_should_be_set("disabled", $element, $selectortype, false);
     }
 
     /**
@@ -963,13 +957,7 @@ EOF;
      * @param string $selectortype The type of where we look
      */
     public function the_element_should_be_enabled($element, $selectortype) {
-
-        // Transforming from steps definitions selector/locator format to mink format and getting the NodeElement.
-        $node = $this->get_selected_node($selectortype, $element);
-
-        if ($node->hasAttribute('disabled')) {
-            throw new ExpectationException('The element "' . $element . '" is not enabled', $this->getSession());
-        }
+        $this->the_attribute_of_should_be_set("disabled", $element, $selectortype, true);
     }
 
     /**
@@ -981,12 +969,7 @@ EOF;
      * @param string $selectortype The type of element where we are looking in.
      */
     public function the_element_should_be_readonly($element, $selectortype) {
-        // Transforming from steps definitions selector/locator format to Mink format and getting the NodeElement.
-        $node = $this->get_selected_node($selectortype, $element);
-
-        if (!$node->hasAttribute('readonly')) {
-            throw new ExpectationException('The element "' . $element . '" is not readonly', $this->getSession());
-        }
+        $this->the_attribute_of_should_be_set("readonly", $element, $selectortype, false);
     }
 
     /**
@@ -998,12 +981,7 @@ EOF;
      * @param string $selectortype The type of element where we are looking in.
      */
     public function the_element_should_not_be_readonly($element, $selectortype) {
-        // Transforming from steps definitions selector/locator format to Mink format and getting the NodeElement.
-        $node = $this->get_selected_node($selectortype, $element);
-
-        if ($node->hasAttribute('readonly')) {
-            throw new ExpectationException('The element "' . $element . '" is readonly', $this->getSession());
-        }
+        $this->the_attribute_of_should_be_set("readonly", $element, $selectortype, true);
     }
 
     /**
