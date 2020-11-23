@@ -17899,6 +17899,8 @@ div#dock {
   .generaltable tbody tr:hover {
     color: #212529;
     background-color: rgba(0, 0, 0, 0.075); }
+    .generaltable tbody tr:hover.dimmed_text a:not(.menu-action) {
+      color: #212529; }
 
 table caption {
   font-size: 24px;
