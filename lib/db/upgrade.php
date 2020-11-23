@@ -2786,11 +2786,12 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2021052500.26) {
         // Delete orphaned course_modules_completion rows; these were not deleted properly
         // by remove_course_contents function.
-        $DB->delete_records_subquery('course_modules_completion', 'id', 'id',
-               "SELECT cmc.id
-                  FROM {course_modules_completion} cmc
-             LEFT JOIN {course_modules} cm ON cm.id = cmc.coursemoduleid
-                 WHERE cm.id IS NULL");
+        $DB->delete_records_select('course_modules_completion', "
+                NOT EXISTS (
+                        SELECT 1
+                          FROM {course_modules} cm
+                         WHERE cm.id = {course_modules_completion}.coursemoduleid
+                )");
         upgrade_main_savepoint(true, 2021052500.26);
     }
 
