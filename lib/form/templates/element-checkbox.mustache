@@ -38,14 +38,14 @@
                     {{{label}}}
                 {{/text}}
             </label>
-            <span class="ml-2 d-flex align-items-center align-self-start">
+            <div class="ml-2 d-flex align-items-center align-self-start">
                 {{#required}}
                     <div class="text-danger" title="{{#str}}required{{/str}}">
                     {{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}
                     </div>
                 {{/required}}
                 {{{helpbutton}}}
-            </span>
+            </div>
         </div>
         <div class="form-control-feedback invalid-feedback" id="{{element.iderror}}" {{#error}} style="display: block;"{{/error}}>
             {{{error}}}
