@@ -43,19 +43,10 @@ jobs:
           php: 7.0
           env: DB=pgsql    TASK=PHPUNIT
 
-        - if: env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present
-          php: 7.0
-          env: DB=pgsql    TASK=UPGRADE
-
         - if: env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all"
           php: 7.0
           env: DB=mysqli   TASK=PHPUNIT
 
-        - if: env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all"
-          php: 7.0
-          env: DB=mysqli   TASK=UPGRADE
-
-        # Then, conditionally, all the highest php ones (7.2)
         - if: env(MOODLE_PHP) = "all"
           php: 7.2
           env: DB=none     TASK=CITEST
@@ -67,17 +58,9 @@ jobs:
           php: 7.2
           env: DB=pgsql    TASK=PHPUNIT
 
-        - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present)
-          php: 7.2
-          env: DB=pgsql    TASK=UPGRADE
-
         - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all")
           php: 7.2
           env: DB=mysqli   TASK=PHPUNIT
-
-        - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all")
-          php: 7.2
-          env: DB=mysqli   TASK=UPGRADE
 
 cache:
     directories:
@@ -137,7 +120,7 @@ install:
 before_script:
     - phpenv config-rm xdebug.ini
     - >
-      if [ "$TASK" = 'PHPUNIT' -o "$TASK" = 'UPGRADE' ];
+      if [ "$TASK" = 'PHPUNIT' ];
       then
         # Copy generic configuration in place.
         cp config-dist.php config.php ;
@@ -240,32 +223,6 @@ before_script:
         export phpcmd=`which php`;
       fi
 
-    ########################################################################
-    # Upgrade test
-    ########################################################################
-    - >
-      if [ "$TASK" = 'UPGRADE' ];
-      then
-        # We need the official upstream.
-        git remote add upstream https://github.com/moodle/moodle.git;
-
-        # Checkout 30 STABLE branch (the first version compatible with PHP 7.x)
-        git fetch upstream MOODLE_30_STABLE;
-        git checkout MOODLE_30_STABLE;
-
-        # Perform the upgrade
-        php admin/cli/install_database.php --agree-license --adminpass=Password --adminemail=admin@example.com --fullname="Upgrade test" --shortname=Upgrade;
-
-        # Return to the previous commit
-        git checkout -;
-
-        # Perform the upgrade
-        php admin/cli/upgrade.php --non-interactive --allow-unstable ;
-
-        # The local_ci repository can be used to check upgrade savepoints.
-        git clone https://github.com/moodlehq/moodle-local_ci.git local/ci ;
-      fi
-
 script:
     - >
       if [ "$TASK" = 'PHPUNIT' ];
@@ -289,23 +246,6 @@ script:
         git add . ;
         git reset -- npm-shrinkwrap.json ;
         git diff --cached --exit-code ;
-      fi
-
-    ########################################################################
-    # Upgrade test
-    ########################################################################
-    - >
-      if [ "$TASK" = 'UPGRADE' ];
-      then
-        cp local/ci/check_upgrade_savepoints/check_upgrade_savepoints.php ./check_upgrade_savepoints.php
-        result=`php check_upgrade_savepoints.php`;
-        # Check if there are problems
-        count=`echo "$result" | grep -P "ERROR|WARN" | wc -l` ;
-        if (($count > 0));
-        then
-          echo "$result"
-          exit 1 ;
-        fi
       fi
 
 after_script:
