@@ -158,4 +158,17 @@ class behat_block_social_activities extends behat_base {
         $xpath = "//*[contains(concat(' ',normalize-space(@class),' '),' block_social_activities ')]//li[contains(., $activityname)]";
         $this->execute('behat_action_menu::i_open_the_action_menu_in', [$xpath, 'xpath_element']);
     }
+
+    /**
+     * Return the list of partial named selectors.
+     *
+     * @return array
+     */
+    public static function get_partial_named_selectors(): array {
+        return [
+            new behat_component_named_selector('Activity', [
+                "//*[contains(concat(' ',normalize-space(@class),' '),' block_social_activities ')]//li[contains(., %locator%)]",
+            ]),
+        ];
+    }
 }
