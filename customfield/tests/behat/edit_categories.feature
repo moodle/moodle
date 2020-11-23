@@ -12,7 +12,6 @@ Feature: Managers can manage categories for course custom fields
     Then I should see "Other fields" in the "#customfield_catlist" "css_element"
     And I navigate to "Reports > Logs" in site administration
     And I press "Get these logs"
-    And I log out
 
   Scenario: Edit a category name for custom course fields
     Given the following "custom field categories" exist:
@@ -20,15 +19,12 @@ Feature: Managers can manage categories for course custom fields
       | Category for test | core_course | course | 0      |
     And I log in as "admin"
     And I navigate to "Courses > Course custom fields" in site administration
-    And I click on "Edit category name" "link" in the "//div[contains(@class,'categoryinstance') and contains(.,'Category for test')]" "xpath_element"
-    And I set the field "New value for Category for test" to "Good fields"
-    And I press the enter key
+    And I set the field "Edit category name" in the "//div[contains(@class,'categoryinstance') and contains(.,'Category for test')]" "xpath_element" to "Good fields"
     Then I should not see "Category for test" in the "#customfield_catlist" "css_element"
     And "New value for Category for test" "field" should not exist
     And I should see "Good fields" in the "#customfield_catlist" "css_element"
     And I navigate to "Reports > Logs" in site administration
     And I press "Get these logs"
-    And I log out
 
   Scenario: Delete a category for custom course fields
     Given the following "custom field categories" exist:
@@ -46,7 +42,6 @@ Feature: Managers can manage categories for course custom fields
     Then I should not see "Test category" in the "#customfield_catlist" "css_element"
     And I navigate to "Reports > Logs" in site administration
     And I press "Get these logs"
-    And I log out
 
   Scenario: Move field in the course custom fields to another category
     Given the following "custom field categories" exist:
@@ -78,7 +73,6 @@ Feature: Managers can manage categories for course custom fields
     And I press "Move \"Field1\""
     And I follow "After field Field2"
     And "Field1" "text" should appear after "Field2" "text"
-    And I log out
 
   Scenario: Reorder course custom field categories
     Given the following "custom field categories" exist:
@@ -108,4 +102,3 @@ Feature: Managers can manage categories for course custom fields
     And "Field1" "text" should appear after "Category1" "text"
     And "Category2" "text" should appear after "Field1" "text"
     And "Category3" "text" should appear after "Category2" "text"
-    And I log out
