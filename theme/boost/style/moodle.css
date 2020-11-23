@@ -16653,6 +16653,9 @@ fieldset.coursesearchbox label {
   padding: 0.5em;
   font-size: large; }
 
+select.form-control[size], select.form-control[multiple] {
+  padding-right: 0; }
+
 /* Non-bootstrap selects with a size show their contents outside of the element.
  * Remove when we update to stable bootstrap 4. (MDL-56511) */
 select[size],
