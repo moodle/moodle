@@ -101,13 +101,22 @@ class registration_helper {
         $ltitoolconfiguration = self::get_parameter($registrationpayload,
             'https://purl.imsglobal.org/spec/lti-tool-configuration', true);
 
-        $domain = self::get_parameter($ltitoolconfiguration, 'domain', true);
-        $targetlinkuri = self::get_parameter($ltitoolconfiguration, 'target_link_uri', true);
+        $domain = self::get_parameter($ltitoolconfiguration, 'domain', false);
+        $targetlinkuri = self::get_parameter($ltitoolconfiguration, 'target_link_uri', false);
         $customparameters = self::get_parameter($ltitoolconfiguration, 'custom_parameters', false);
         $scopes = explode(" ", self::get_parameter($registrationpayload, 'scope', false) ?? '');
         $claims = self::get_parameter($ltitoolconfiguration, 'claims', false);
         $messages = $ltitoolconfiguration['messages'] ?? [];
         $description = self::get_parameter($ltitoolconfiguration, 'description', false);
+
+        // Validate domain and target link.
+        if (empty($domain)) {
+            throw new registration_exception('missing_domain', 400);
+        }
+        $targetlinkuri = $targetlinkuri ?: 'https://'.$domain;
+        if ($domain !== lti_get_domain_from_url($targetlinkuri)) {
+            throw new registration_exception('domain_targetlinkuri_mismatch', 400);
+        }
 
         // Validate response type.
         // According to specification, for this scenario, id_token must be explicitly set.
@@ -245,7 +254,7 @@ class registration_helper {
         $registrationresponse['initiate_login_uri'] = $config->lti_initiatelogin;
         $registrationresponse['grant_types'] = ['client_credentials', 'implicit'];
         $registrationresponse['redirect_uris'] = explode(PHP_EOL, $config->lti_redirectionuris);
-        $registrationresponse['application_type'] = ['web'];
+        $registrationresponse['application_type'] = 'web';
         $registrationresponse['token_endpoint_auth_method'] = 'private_key_jwt';
         $registrationresponse['client_name'] = $config->lti_typename;
         $registrationresponse['logo_uri'] = $config->lti_icon ?? '';
@@ -288,12 +297,12 @@ class registration_helper {
         $registrationresponse['scope'] = implode(' ', $scopesresponse);
 
         $claimsresponse = ['sub', 'iss'];
-        if ($config->lti_sendname = LTI_SETTING_ALWAYS) {
+        if ($config->lti_sendname == LTI_SETTING_ALWAYS) {
             $claimsresponse[] = 'name';
             $claimsresponse[] = 'family_name';
-            $claimsresponse[] = 'middle_name';
+            $claimsresponse[] = 'given_name';
         }
-        if ($config->lti_sendemailaddr = LTI_SETTING_ALWAYS) {
+        if ($config->lti_sendemailaddr == LTI_SETTING_ALWAYS) {
             $claimsresponse[] = 'email';
         }
         $lticonfigurationresponse['claims'] = $claimsresponse;
