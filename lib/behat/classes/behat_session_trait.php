@@ -173,7 +173,7 @@ trait behat_session_trait {
         if (method_exists('behat_selectors', $transformfunction)) {
             // A selector-specific transformation exists.
             // Perform initial transformation of the selector within the current container.
-            $normalised = $this->normalise_selector($selector, $locator, $container ?: $this->getSession()->getPage());
+            $normalised = behat_selectors::{$transformfunction}($this, $locator, $container ?: $this->getSession()->getPage());
             $selector = $normalised['selector'];
             $locator = $normalised['locator'];
             $container = $normalised['container'];
