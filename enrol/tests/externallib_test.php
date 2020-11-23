@@ -356,6 +356,95 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Verify get_enrolled_users() returned users according to their status.
+     */
+    public function test_get_enrolled_users_active_suspended() {
+        global $USER;
+
+        $this->resetAfterTest();
+
+        // Create the course and the users.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $user0 = $this->getDataGenerator()->create_user(array('username' => 'user0active'));
+        $user1 = $this->getDataGenerator()->create_user(array('username' => 'user1active'));
+        $user2 = $this->getDataGenerator()->create_user(array('username' => 'user2active'));
+        $user2su = $this->getDataGenerator()->create_user(array('username' => 'user2suspended')); // Suspended user.
+        $user3 = $this->getDataGenerator()->create_user(array('username' => 'user3active'));
+        $user3su = $this->getDataGenerator()->create_user(array('username' => 'user3suspended')); // Suspended user.
+
+        // Enrol the users in the course.
+        $this->getDataGenerator()->enrol_user($user0->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2su->id, $course->id, null, 'manual', 0, 0, ENROL_USER_SUSPENDED);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3su->id, $course->id, null, 'manual', 0, 0, ENROL_USER_SUSPENDED);
+
+        // Create a role to add the allowedcaps. Users will have this role assigned.
+        $roleid = $this->getDataGenerator()->create_role();
+        // Allow the specified capabilities.
+        assign_capability('moodle/course:enrolreview', CAP_ALLOW, $roleid, $coursecontext);
+        assign_capability('moodle/user:viewalldetails', CAP_ALLOW, $roleid, $coursecontext);
+
+        // Switch to the user and assign the role.
+        $this->setUser($user0);
+        role_assign($roleid, $USER->id, $coursecontext);
+
+        // Suspended users.
+        $options = array(
+            array('name' => 'onlysuspended', 'value' => true),
+            array('name' => 'userfields', 'value' => 'id,username')
+        );
+        $suspendedusers = core_enrol_external::get_enrolled_users($course->id, $options);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $suspendedusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $suspendedusers);
+        $this->assertCount(2, $suspendedusers);
+
+        foreach ($suspendedusers as $suspendeduser) {
+            $this->assertStringContainsString('suspended', $suspendeduser['username']);
+        }
+
+        // Active users.
+        $options = array(
+            array('name' => 'onlyactive', 'value' => true),
+            array('name' => 'userfields', 'value' => 'id,username')
+        );
+        $activeusers = core_enrol_external::get_enrolled_users($course->id, $options);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $activeusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $activeusers);
+        $this->assertCount(4, $activeusers);
+
+        foreach ($activeusers as $activeuser) {
+            $this->assertStringContainsString('active', $activeuser['username']);
+        }
+
+        // All enrolled users.
+        $options = array(
+            array('name' => 'userfields', 'value' => 'id,username')
+        );
+        $allusers = core_enrol_external::get_enrolled_users($course->id, $options);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $allusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $allusers);
+        $this->assertCount(6, $allusers);
+
+        // Active and suspended. Test exception is thrown.
+        $options = [
+            ['name' => 'onlyactive', 'value' => true],
+            ['name' => 'onlysuspended', 'value' => true],
+            ['name' => 'userfields', 'value' => 'id,username']
+        ];
+        $this->expectException('coding_exception');
+        $message = 'Coding error detected, it must be fixed by a programmer: Both onlyactive ' .
+                        'and onlysuspended are set, this is probably not what you want!';
+        $this->expectExceptionMessage($message);
+        core_enrol_external::get_enrolled_users($course->id, $options);
+    }
+
+    /**
      * Test get_users_courses
      */
     public function test_get_users_courses() {

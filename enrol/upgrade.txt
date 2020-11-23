@@ -1,6 +1,10 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.11 ===
+
+* Added onlysuspended option to core_enrol_get_enrolled_users webservice to retrieve only suspended users.
+
 === 3.8 ===
 
 * Function enrol_manual_plugin::enrol_cohort now return the number of enrolled cohort users.
