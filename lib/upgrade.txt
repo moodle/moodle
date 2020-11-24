@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
 * Final deprecation i_dock_block() in behat_deprecated.php
 * Final deprecation of get_courses_page. Function has been removed and core_course_category::get_courses() should be
   used instead.
+* \core_table\local\filter\filterset::JOINTYPE_DEFAULT is being changed from 1 (ANY) to 2 (ALL). Filterset implementations
+  can override the default filterset join type by overriding \core_table\local\filter\filterset::get_join_type() instead.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:
