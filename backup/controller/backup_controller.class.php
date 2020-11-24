@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
+ * Backup controller and related exception classes.
+ *
+ * @package core_backup
  * @subpackage backup-controller
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -641,7 +642,7 @@ class backup_controller extends base_controller {
     }
 }
 
-/*
+/**
  * Exception class used by all the @backup_controller stuff
  */
 class backup_controller_exception extends backup_exception {
