@@ -67,6 +67,9 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     if (isset($moduleinfo->cmidnumber)) {
         $newcm->idnumber         = $moduleinfo->cmidnumber;
     }
+    if (isset($moduleinfo->downloadcontent)) {
+        $newcm->downloadcontent = $moduleinfo->downloadcontent;
+    }
     $newcm->groupmode        = $moduleinfo->groupmode;
     $newcm->groupingid       = $moduleinfo->groupingid;
     $completion = new completion_info($course);
@@ -460,6 +463,10 @@ function set_moduleinfo_defaults($moduleinfo) {
         $moduleinfo->visibleoncoursepage = 1;
     }
 
+    if (!isset($moduleinfo->downloadcontent)) {
+        $moduleinfo->downloadcontent = DOWNLOAD_COURSE_CONTENT_ENABLED;
+    }
+
     return $moduleinfo;
 }
 
@@ -662,6 +669,10 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
     }
 
+    if (isset($moduleinfo->downloadcontent)) {
+        set_downloadcontent($moduleinfo->coursemodule, $moduleinfo->downloadcontent);
+    }
+
     // Update module tags.
     if (core_tag_tag::is_enabled('core', 'course_modules') && isset($moduleinfo->tags)) {
         core_tag_tag::set_item_tags('core', 'course_modules', $moduleinfo->coursemodule, $modcontext, $moduleinfo->tags);
@@ -731,6 +742,7 @@ function get_moduleinfo_data($cm, $course) {
     $data->completionpassgrade = $cm->completionpassgrade;
     $data->completiongradeitemnumber = $cm->completiongradeitemnumber;
     $data->showdescription    = $cm->showdescription;
+    $data->downloadcontent    = $cm->downloadcontent;
     $data->tags               = core_tag_tag::get_item_tags_array('core', 'course_modules', $cm->id);
     if (!empty($CFG->enableavailability)) {
         $data->availabilityconditionsjson = $cm->availability;
@@ -830,6 +842,7 @@ function prepare_new_moduleinfo_data($course, $modulename, $section) {
     $data->id               = '';
     $data->instance         = '';
     $data->coursemodule     = '';
+    $data->downloadcontent  = DOWNLOAD_COURSE_CONTENT_ENABLED;
 
     // Apply completion defaults.
     $defaults = \core_completion\manager::get_default_completion($course, $module);

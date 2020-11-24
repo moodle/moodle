@@ -3116,5 +3116,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021110100.00);
     }
 
+    if ($oldversion < 2021110600.01) {
+        // Define a field 'downloadcontent' in the 'course_modules' table.
+        $table = new xmldb_table('course_modules');
+        $field = new xmldb_field('downloadcontent', XMLDB_TYPE_INTEGER, '1', null, null, null, 1, 'deletioninprogress');
+
+        // Conditionally launch add field 'downloadcontent'.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021110600.01);
+    }
+
     return true;
 }

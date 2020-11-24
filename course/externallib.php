@@ -275,6 +275,7 @@ class core_course_external extends external_api {
                         $module['afterlink'] = $cm->afterlink;
                         $module['customdata'] = json_encode($cm->customdata);
                         $module['completion'] = $cm->completion;
+                        $module['downloadcontent'] = $cm->downloadcontent;
                         $module['noviewlink'] = plugin_supports('mod', $cm->modname, FEATURE_NO_VIEW_LINK, false);
                         $module['dates'] = $activitydates;
 
@@ -477,6 +478,7 @@ class core_course_external extends external_api {
                                     'completion' => new external_value(PARAM_INT, 'Type of completion tracking:
                                         0 means none, 1 manual, 2 automatic.', VALUE_OPTIONAL),
                                     'completiondata' => $completiondefinition,
+                                    'downloadcontent' => new external_value(PARAM_INT, 'The download content value', VALUE_OPTIONAL),
                                     'dates' => new external_multiple_structure(
                                         new external_single_structure(
                                             array(
@@ -2828,6 +2830,7 @@ class core_course_external extends external_api {
             $info->groupmode = $cm->groupmode;
             $info->groupingid = $cm->groupingid;
             $info->completion = $cm->completion;
+            $info->downloadcontent = $cm->downloadcontent;
         }
         // Format name.
         $info->name = external_format_string($cm->name, $context->id);
@@ -2871,6 +2874,7 @@ class core_course_external extends external_api {
                         'completionview' => new external_value(PARAM_INT, 'Completion view setting', VALUE_OPTIONAL),
                         'completionexpected' => new external_value(PARAM_INT, 'Completion time expected', VALUE_OPTIONAL),
                         'showdescription' => new external_value(PARAM_INT, 'If the description is showed', VALUE_OPTIONAL),
+                        'downloadcontent' => new external_value(PARAM_INT, 'The download content value', VALUE_OPTIONAL),
                         'availability' => new external_value(PARAM_RAW, 'Availability settings', VALUE_OPTIONAL),
                         'grade' => new external_value(PARAM_FLOAT, 'Grade (max value or scale id)', VALUE_OPTIONAL),
                         'scale' => new external_value(PARAM_TEXT, 'Scale items (if used)', VALUE_OPTIONAL),

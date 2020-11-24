@@ -308,6 +308,7 @@
         <FIELD NAME="showdescription" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Some module types support a 'description' which shows within the module pages. This option controls whether it also displays on the course main page. 0 = does not display (default), 1 = displays"/>
         <FIELD NAME="availability" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Availability restrictions for viewing this activity, in JSON format. Null if no restrictions."/>
         <FIELD NAME="deletioninprogress" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="downloadcontent" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether the ability to download course module content is enabled for this activity" DEFAULT="1"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

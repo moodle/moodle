@@ -63,6 +63,8 @@ class core_course_modlib_testcase extends advanced_testcase {
         $expecteddata->coursemodule     = '';
         $expecteddata->advancedgradingmethod_submissions = ''; // Not grading methods enabled by default.
         $expecteddata->completion       = 0;
+        $expecteddata->downloadcontent  = DOWNLOAD_COURSE_CONTENT_ENABLED;
+
         // Unset untestable.
         unset($data->introeditor);
         unset($data->_advancedgradingdata);
@@ -115,6 +117,7 @@ class core_course_modlib_testcase extends advanced_testcase {
         $expecteddata->completionpassgrade = $assigncm->completionpassgrade;
         $expecteddata->completiongradeitemnumber = null;
         $expecteddata->showdescription    = $assigncm->showdescription;
+        $expecteddata->downloadcontent    = $assigncm->downloadcontent;
         $expecteddata->tags               = core_tag_tag::get_item_tags_array('core', 'course_modules', $assigncm->id);
         $expecteddata->availabilityconditionsjson = null;
         $expecteddata->advancedgradingmethod_submissions = null;
