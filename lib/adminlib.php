@@ -11378,16 +11378,22 @@ class admin_setting_filetypes extends admin_setting_configtext {
      * @return bool|string True if ok, the string if error found
      */
     public function validate($data) {
-
-        // No need to call parent's validation here as we are PARAM_RAW.
-
-        if ($this->util->is_listed($data, $this->onlytypes)) {
-            return true;
-
-        } else {
-            $troublemakers = $this->util->get_not_listed($data, $this->onlytypes);
-            return get_string('filetypesnotallowed', 'core_form', implode(' ', $troublemakers));
+        $parentcheck = parent::validate($data);
+        if ($parentcheck !== true) {
+            return $parentcheck;
         }
+
+        // Check for unknown file types.
+        if ($unknown = $this->util->get_unknown_file_types($data)) {
+            return get_string('filetypesunknown', 'core_form', implode(', ', $unknown));
+        }
+
+        // Check for disallowed file types.
+        if ($notlisted = $this->util->get_not_listed($data, $this->onlytypes)) {
+            return get_string('filetypesnotallowed', 'core_form', implode(', ', $notlisted));
+        }
+
+        return true;
     }
 
     /**
