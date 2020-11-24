@@ -78,7 +78,16 @@ $functions = [
         'methodname'    => 'execute',
         'classpath'     => '',
         'description'   => 'Log that the h5pactivity was viewed.',
-        'type'          => 'write',
+	'type'          => 'write',
+	'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'mod_h5pactivity_get_user_attempts' => [
+        'classname'     => 'mod_h5pactivity\external\get_user_attempts',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Return the information needed to list all enrolled user attempts.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/h5pactivity:reviewattempts',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 ];
