@@ -6,14 +6,18 @@ Feature: Edit capabilities
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | username | firstname | lastname  |
+      | teacher1 | Teacher   | 1         |
+      | tutor    | Teaching  | Assistant |
+      | student  | Student   | One       |
     And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | fullname | shortname |
+      | Course 1 | C1        |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | tutor    | C1     | teacher        |
+      | student  | C1     | student        |
 
   Scenario: Default system capabilities modification
     Given I log in as "admin"
@@ -60,3 +64,25 @@ Feature: Edit capabilities
     Then "mod/forum:deleteanypost" capability has "Prohibit" permission
     And "mod/forum:editanypost" capability has "Prevent" permission
     And "mod/forum:addquestion" capability has "Allow" permission
+
+  @javascript
+  Scenario: Edit permissions escapes role names correctly
+    When I am on the "C1" "Course" page logged in as "admin"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
+      | Your word for 'Teacher'             | Teacher >= editing  |
+      | Your word for 'Non-editing teacher' | Teacher < "editing" |
+      | Your word for 'Student'             | Studier & 'learner' |
+    And I press "Save and display"
+    And I navigate to course participants
+    Then I should see "Teacher >= editing (Teacher)" in the "Teacher 1" "table_row"
+    And I should see "Teacher < \"editing\" (Non-editing teacher)" in the "Teaching Assistant" "table_row"
+    And I should see "Studier & 'learner' (Student)" in the "Student One" "table_row"
+    And I navigate to "Permissions" in current page administration
+    And I should see "Teacher >= editing" in the "mod/forum:replypost" "table_row"
+    And I should see "Teacher < \"editing\"" in the "mod/forum:replypost" "table_row"
+    And I should see "Studier & 'learner'" in the "mod/forum:replypost" "table_row"
+    And I follow "Prohibit"
+    And "Teacher >= editing" "button" in the "Prohibit role" "dialogue" should be visible
+    And "Teacher < \"editing\"" "button" in the "Prohibit role" "dialogue" should be visible
+    And "Studier & 'learner'" "button" in the "Prohibit role" "dialogue" should be visible
