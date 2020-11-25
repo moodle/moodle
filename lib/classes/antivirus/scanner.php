@@ -25,7 +25,7 @@
 namespace core\antivirus;
 
 defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__ . '../../../../iplookup/lib.php');
+require_once($CFG->dirroot . '/iplookup/lib.php');
 
 /**
  * Base abstract antivirus scanner class.
