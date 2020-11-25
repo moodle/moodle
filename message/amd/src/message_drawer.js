@@ -254,7 +254,7 @@ function(
         });
 
         $(SELECTORS.JUMPTO).focus(function() {
-            var firstInput = $(SELECTORS.HEADER_CONTAINER).find('input:visible');
+            var firstInput = root.find(SELECTORS.CLOSE_BUTTON);
             if (firstInput.length) {
                 firstInput.focus();
             } else {
@@ -298,6 +298,10 @@ function(
 
         var closebutton = root.find(SELECTORS.CLOSE_BUTTON);
         closebutton.on(CustomEvents.events.activate, function() {
+            var button = $(SELECTORS.DRAWER).attr('data-origin');
+            if (button) {
+                $('#' + button).focus();
+            }
             PubSub.publish(Events.TOGGLE_VISIBILITY);
         });
 

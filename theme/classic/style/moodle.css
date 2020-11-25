@@ -14389,8 +14389,6 @@ body.drawer-ease {
     padding: 0;
     visibility: visible;
     opacity: 1; }
-  [data-region=right-hand-drawer] .closewidget {
-    display: none; }
   [data-region=right-hand-drawer].hidden {
     display: block;
     right: -320px;
@@ -14406,9 +14404,6 @@ body.drawer-ease {
     top: 0;
     height: 100%;
     z-index: 1030; }
-  [data-region=right-hand-drawer] .closewidget {
-    display: block;
-    padding: 0 0.2rem; }
   body.drawer-open-left,
   body.drawer-open-right {
     overflow: hidden; } }
