@@ -101,6 +101,12 @@ class user_filtering {
         // Fist the new filter form.
         $this->_addform = new user_add_filter_form($baseurl, array('fields' => $this->_fields, 'extraparams' => $extraparams));
         if ($adddata = $this->_addform->get_data()) {
+            // Clear previous filters.
+            if (!empty($adddata->replacefilters)) {
+                $SESSION->user_filtering = [];
+            }
+
+            // Add new filters.
             foreach ($this->_fields as $fname => $field) {
                 $data = $field->check_data($adddata);
                 if ($data === false) {
@@ -111,19 +117,16 @@ class user_filtering {
                 }
                 $SESSION->user_filtering[$fname][] = $data;
             }
-            // Clear the form.
-            $_POST = array();
-            $this->_addform = new user_add_filter_form($baseurl, array('fields' => $this->_fields, 'extraparams' => $extraparams));
         }
 
         // Now the active filters.
         $this->_activeform = new user_active_filter_form($baseurl, array('fields' => $this->_fields, 'extraparams' => $extraparams));
-        if ($adddata = $this->_activeform->get_data()) {
-            if (!empty($adddata->removeall)) {
+        if ($activedata = $this->_activeform->get_data()) {
+            if (!empty($activedata->removeall)) {
                 $SESSION->user_filtering = array();
 
-            } else if (!empty($adddata->removeselected) and !empty($adddata->filter)) {
-                foreach ($adddata->filter as $fname => $instances) {
+            } else if (!empty($activedata->removeselected) and !empty($activedata->filter)) {
+                foreach ($activedata->filter as $fname => $instances) {
                     foreach ($instances as $i => $val) {
                         if (empty($val)) {
                             continue;
@@ -135,11 +138,14 @@ class user_filtering {
                     }
                 }
             }
-            // Clear+reload the form.
-            $_POST = array();
-            $this->_activeform = new user_active_filter_form($baseurl, array('fields' => $this->_fields, 'extraparams' => $extraparams));
         }
-        // Now the active filters.
+
+        // Rebuild the forms if filters data was processed.
+        if ($adddata || $activedata) {
+            $_POST = []; // Reset submitted data.
+            $this->_addform = new user_add_filter_form($baseurl, ['fields' => $this->_fields, 'extraparams' => $extraparams]);
+            $this->_activeform = new user_active_filter_form($baseurl, ['fields' => $this->_fields, 'extraparams' => $extraparams]);
+        }
     }
 
     /**
