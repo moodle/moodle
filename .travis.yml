@@ -16,30 +16,8 @@ services:
     - mysql
     - docker
 
-php:
-    # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
-    - 7.4
-    - 7.1.30 # Make this sticky because current default version (7.1.11) has a bug with redis-extension output (MDL-66062)
-
 addons:
   postgresql: "9.6"
-
-env:
-    # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
-    # start first so that the total run time is not too high.
-    #
-    # We only run MySQL on PHP 7.2, so run that first.
-    # CI Tests should be second-highest in priority as these only take <= 60 seconds to run under normal circumstances.
-    # Postgres is significantly is pretty reasonable in its run-time.
-
-    # Run CI Tests without running PHPUnit.
-    - DB=none     TASK=CITEST
-
-    # Run unit tests on Postgres
-    - DB=pgsql    TASK=PHPUNIT
-
-    # Perform an upgrade test too.
-    - DB=pgsql    TASK=UPGRADE
 
 jobs:
     # Enable fast finish.
@@ -48,12 +26,36 @@ jobs:
     fast_finish: true
 
     include:
-          # Run mysql only on highest - it's just too slow
-        - php: 7.4
+        # First all the lowest php ones (7.1.30)
+        # Make this sticky because current default version (7.1.11) has a bug with redis-extension output (MDL-66062)
+        - php: 7.1.30
+          env: DB=none     TASK=CITEST
+        - php: 7.1.30
+          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
+
+        - if: env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present
+          php: 7.1.30
+          env: DB=pgsql    TASK=PHPUNIT
+
+        - if: env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all"
+          php: 7.1.30
           env: DB=mysqli   TASK=PHPUNIT
-          # Run grunt/npm install on highest version too ('node' is an alias for the latest node.js version.)
-        - php: 7.4
-          env: DB=none     TASK=GRUNT   NVM_VERSION='lts/carbon'
+
+        # Then, conditionally, all the highest php ones (7.4)
+        - if: env(MOODLE_PHP) = "all"
+          php: 7.4
+          env: DB=none     TASK=CITEST
+        - if: env(MOODLE_PHP) = "all"
+          php: 7.4
+          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
+
+        - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present)
+          php: 7.4
+          env: DB=pgsql    TASK=PHPUNIT
+
+        - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all")
+          php: 7.4
+          env: DB=mysqli   TASK=PHPUNIT
 
 cache:
     directories:
@@ -113,7 +115,7 @@ install:
 before_script:
     - phpenv config-rm xdebug.ini
     - >
-      if [ "$TASK" = 'PHPUNIT' -o "$TASK" = 'UPGRADE' ];
+      if [ "$TASK" = 'PHPUNIT' ];
       then
         # Copy generic configuration in place.
         cp config-dist.php config.php ;
@@ -224,32 +226,6 @@ before_script:
         export phpcmd=`which php`;
       fi
 
-    ########################################################################
-    # Upgrade test
-    ########################################################################
-    - >
-      if [ "$TASK" = 'UPGRADE' ];
-      then
-        # We need the official upstream.
-        git remote add upstream https://github.com/moodle/moodle.git;
-
-        # Checkout 30 STABLE branch (the first version compatible with PHP 7.x)
-        git fetch upstream MOODLE_30_STABLE;
-        git checkout MOODLE_30_STABLE;
-
-        # Perform the upgrade
-        php admin/cli/install_database.php --agree-license --adminpass=Password --adminemail=admin@example.com --fullname="Upgrade test" --shortname=Upgrade;
-
-        # Return to the previous commit
-        git checkout -;
-
-        # Perform the upgrade
-        php admin/cli/upgrade.php --non-interactive --allow-unstable ;
-
-        # The local_ci repository can be used to check upgrade savepoints.
-        git clone https://github.com/moodlehq/moodle-local_ci.git local/ci ;
-      fi
-
 script:
     - >
       if [ "$TASK" = 'PHPUNIT' ];
@@ -273,23 +249,6 @@ script:
         git add . ;
         git reset -- npm-shrinkwrap.json ;
         git diff --cached --exit-code ;
-      fi
-
-    ########################################################################
-    # Upgrade test
-    ########################################################################
-    - >
-      if [ "$TASK" = 'UPGRADE' ];
-      then
-        cp local/ci/check_upgrade_savepoints/check_upgrade_savepoints.php ./check_upgrade_savepoints.php
-        result=`php check_upgrade_savepoints.php`;
-        # Check if there are problems
-        count=`echo "$result" | grep -P "ERROR|WARN" | wc -l` ;
-        if (($count > 0));
-        then
-          echo "$result"
-          exit 1 ;
-        fi
       fi
 
 after_script:
