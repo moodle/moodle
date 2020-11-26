@@ -387,7 +387,7 @@ class manager {
         if ($this->can_view_all_attempts()) {
             $user = core_user::get_user($userid);
         } else if ($this->can_view_own_attempts()) {
-            $user = $USER;
+            $user = core_user::get_user($USER->id);
             if ($userid && $user->id != $userid) {
                 return null;
             }
