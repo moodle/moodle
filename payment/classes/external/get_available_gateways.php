@@ -96,7 +96,7 @@ class get_available_gateways extends external_api {
                 new external_single_structure([
                     'shortname' => new external_value(PARAM_PLUGIN, 'Name of the plugin'),
                     'name' => new external_value(PARAM_TEXT, 'Human readable name of the gateway'),
-                    'description' => new external_value(PARAM_TEXT, 'description of the gateway'),
+                    'description' => new external_value(PARAM_RAW, 'description of the gateway'),
                     'surcharge' => new external_value(PARAM_INT, 'percentage of surcharge when using the gateway'),
                     'cost' => new external_value(PARAM_TEXT,
                         'Cost in human-readable form (amount plus surcharge with currency sign)'),
