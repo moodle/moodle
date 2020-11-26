@@ -123,7 +123,11 @@ class qtype_essay_renderer extends qtype_renderer {
 
         $fm = new form_filemanager($pickeroptions);
         $fm->options->maxbytes = get_user_max_upload_file_size(
-                $this->page->context, $CFG->maxbytes, $COURSE->maxbytes, $qa->get_question()->maxbytes);
+            $this->page->context,
+            $CFG->maxbytes,
+            $COURSE->maxbytes,
+            $qa->get_question()->maxbytes
+        );
         $filesrenderer = $this->page->get_renderer('core', 'files');
 
         $text = '';

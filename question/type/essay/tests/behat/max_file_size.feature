@@ -20,7 +20,7 @@ I need to choose the appropriate maxbytes for attachments
       | questioncategory | qtype | name          | template         | attachments | maxbytes |
       | Test questions   | essay | essay-1-512KB | editor           | 1           | 524288   |
       | Test questions   | essay | essay-1-max   | editor           | 1           | 0        |
-    Given I log in as "teacher1"
+    And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Question bank" in current page administration
 
@@ -28,7 +28,7 @@ I need to choose the appropriate maxbytes for attachments
   Scenario: Preview an Essay question and see the allowed maximum file sizes and number of attachments.
     When I choose "Preview" action for "essay-1-512KB" in the question bank
     And I switch to "questionpreview" window
-    And I should see "Please write a story about a frog."
+    Then I should see "Please write a story about a frog."
     And I should see "Maximum file size: 512KB, maximum number of files: 1"
     And I switch to the main window
 
@@ -36,6 +36,6 @@ I need to choose the appropriate maxbytes for attachments
   Scenario: Preview an Essay question with Course upload limit and see the allowed maximum file size.
     When I choose "Preview" action for "essay-1-max" in the question bank
     And I switch to "questionpreview" window
-    And I should see "Please write a story about a frog."
+    Then I should see "Please write a story about a frog."
     And I should see "Maximum file size: 1MB, maximum number of files: 1"
     And I switch to the main window
