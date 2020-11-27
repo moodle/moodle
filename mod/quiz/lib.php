@@ -1645,16 +1645,10 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
  */
 function quiz_attempt_summary_link_to_reports($quiz, $cm, $context, $returnzero = false,
         $currentgroup = 0) {
-    global $CFG;
-    $summary = quiz_num_attempt_summary($quiz, $cm, $returnzero, $currentgroup);
-    if (!$summary) {
-        return '';
-    }
+    global $PAGE;
 
-    require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
-    $url = new moodle_url('/mod/quiz/report.php', array(
-            'id' => $cm->id, 'mode' => quiz_report_default_report($context)));
-    return html_writer::link($url, $summary);
+    return $PAGE->get_renderer('mod_quiz')->quiz_attempt_summary_link_to_reports(
+            $quiz, $cm, $context, $returnzero, $currentgroup);
 }
 
 /**

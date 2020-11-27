@@ -969,6 +969,72 @@ function quiz_update_all_final_grades($quiz) {
 }
 
 /**
+ * Return summary of the number of settings override that exist.
+ *
+ * To get a nice display of this, see the quiz_override_summary_links()
+ * quiz renderer method.
+ *
+ * @param stdClass $quiz the quiz settings. Only $quiz->id is used at the moment.
+ * @param stdClass|cm_info $cm the cm object. Only $cm->course, $cm->groupmode and
+ *      $cm->groupingid fields are used at the moment.
+ * @param int $currentgroup if there is a concept of current group where this method is being called
+ *      (e.g. a report) pass it in here. Default 0 which means no current group.
+ * @return array like 'group' => 3, 'user' => 12] where 3 is the number of group overrides,
+ *      and 12 is the number of user ones.
+ */
+function quiz_override_summary(stdClass $quiz, stdClass $cm, int $currentgroup = 0): array {
+    global $DB;
+
+    if ($currentgroup) {
+        // Currently only interested in one group.
+        $groupcount = $DB->count_records('quiz_overrides', ['quiz' => $quiz->id, 'groupid' => $currentgroup]);
+        $usercount = $DB->count_records_sql("
+                SELECT COUNT(1)
+                  FROM {quiz_overrides} o
+                  JOIN {groups_members} gm ON o.userid = gm.userid
+                 WHERE o.quiz = ?
+                   AND gm.groupid = ?
+                    ", [$quiz->id, $currentgroup]);
+        return ['group' => $groupcount, 'user' => $usercount, 'mode' => 'onegroup'];
+    }
+
+    $quizgroupmode = groups_get_activity_groupmode($cm);
+    $accessallgroups = ($quizgroupmode == NOGROUPS) ||
+            has_capability('moodle/site:accessallgroups', context_module::instance($cm->id));
+
+    if ($accessallgroups) {
+        // User can see all groups.
+        $groupcount = $DB->count_records_select('quiz_overrides',
+                'quiz = ? AND groupid IS NOT NULL', [$quiz->id]);
+        $usercount = $DB->count_records_select('quiz_overrides',
+                'quiz = ? AND userid IS NOT NULL', [$quiz->id]);
+        return ['group' => $groupcount, 'user' => $usercount, 'mode' => 'allgroups'];
+
+    } else {
+        // User can only see groups they are in.
+        $groups = groups_get_activity_allowed_groups($cm);
+        if (!$groups) {
+            return ['group' => 0, 'user' => 0, 'mode' => 'somegroups'];
+        }
+
+        list($groupidtest, $params) = $DB->get_in_or_equal(array_keys($groups));
+        $params[] = $quiz->id;
+
+        $groupcount = $DB->count_records_select('quiz_overrides',
+                "groupid $groupidtest AND quiz = ?", $params);
+        $usercount = $DB->count_records_sql("
+                SELECT COUNT(1)
+                  FROM {quiz_overrides} o
+                  JOIN {groups_members} gm ON o.userid = gm.userid
+                 WHERE gm.groupid $groupidtest
+                   AND o.quiz = ?
+               ", $params);
+
+        return ['group' => $groupcount, 'user' => $usercount, 'mode' => 'somegroups'];
+    }
+}
+
+/**
  * Efficiently update check state time on all open attempts
  *
  * @param array $conditions optional restrictions on which attempts to update

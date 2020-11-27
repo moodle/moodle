@@ -839,4 +839,106 @@ class mod_quiz_locallib_testcase extends advanced_testcase {
 
         $this->assertEquals($formattedexptected, $actual);
     }
+
+    public function test_quiz_override_summary() {
+        global $DB, $PAGE;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        /** @var mod_quiz_generator $quizgenerator */
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        /** @var mod_quiz_renderer $renderer */
+        $renderer = $PAGE->get_renderer('mod_quiz');
+
+        // Course with quiz and a group - plus some others, to verify they don't get counted.
+        $course = $generator->create_course();
+        $quiz = $quizgenerator->create_instance(['course' => $course->id, 'groupmode' => SEPARATEGROUPS]);
+        $cm = get_coursemodule_from_id('quiz', $quiz->cmid, $course->id);
+        $group = $generator->create_group(['courseid' => $course->id]);
+        $othergroup = $generator->create_group(['courseid' => $course->id]);
+        $otherquiz = $quizgenerator->create_instance(['course' => $course->id]);
+
+        // Initial test (as admin) with no data.
+        $this->setAdminUser();
+        $this->assertEquals(['group' => 0, 'user' => 0, 'mode' => 'allgroups'],
+                quiz_override_summary($quiz, $cm));
+        $this->assertEquals(['group' => 0, 'user' => 0, 'mode' => 'onegroup'],
+                quiz_override_summary($quiz, $cm, $group->id));
+
+        // Editing teacher.
+        $teacher = $generator->create_user();
+        $generator->enrol_user($teacher->id, $course->id, 'editingteacher');
+
+        // Non-editing teacher.
+        $tutor = $generator->create_user();
+        $generator->enrol_user($tutor->id, $course->id, 'teacher');
+        $generator->create_group_member(['userid' => $tutor->id, 'groupid' => $group->id]);
+
+        // Three students.
+        $student1 = $generator->create_user();
+        $generator->enrol_user($student1->id, $course->id, 'student');
+        $generator->create_group_member(['userid' => $student1->id, 'groupid' => $group->id]);
+
+        $student2 = $generator->create_user();
+        $generator->enrol_user($student2->id, $course->id, 'student');
+        $generator->create_group_member(['userid' => $student2->id, 'groupid' => $othergroup->id]);
+
+        $student3 = $generator->create_user();
+        $generator->enrol_user($student3->id, $course->id, 'student');
+
+        // Initial test now users exist, but before overrides.
+        // Test as teacher.
+        $this->setUser($teacher);
+        $this->assertEquals(['group' => 0, 'user' => 0, 'mode' => 'allgroups'],
+                quiz_override_summary($quiz, $cm));
+        $this->assertEquals(['group' => 0, 'user' => 0, 'mode' => 'onegroup'],
+                quiz_override_summary($quiz, $cm, $group->id));
+
+        // Test as tutor.
+        $this->setUser($tutor);
+        $this->assertEquals(['group' => 0, 'user' => 0, 'mode' => 'somegroups'],
+                quiz_override_summary($quiz, $cm));
+        $this->assertEquals(['group' => 0, 'user' => 0, 'mode' => 'onegroup'],
+                quiz_override_summary($quiz, $cm, $group->id));
+        $this->assertEquals('', $renderer->quiz_override_summary_links($quiz, $cm));
+
+        // Quiz setting overrides for students 1 and 3.
+        $quizgenerator->create_override(['quiz' => $quiz->id, 'userid' => $student1->id, 'attempts' => 2]);
+        $quizgenerator->create_override(['quiz' => $quiz->id, 'userid' => $student3->id, 'attempts' => 2]);
+        $quizgenerator->create_override(['quiz' => $quiz->id, 'groupid' => $group->id, 'attempts' => 3]);
+        $quizgenerator->create_override(['quiz' => $quiz->id, 'groupid' => $othergroup->id, 'attempts' => 3]);
+        $quizgenerator->create_override(['quiz' => $otherquiz->id, 'userid' => $student2->id, 'attempts' => 2]);
+
+        // Test as teacher.
+        $this->setUser($teacher);
+        $this->assertEquals(['group' => 2, 'user' => 2, 'mode' => 'allgroups'],
+                quiz_override_summary($quiz, $cm));
+        $this->assertEquals('Settings overrides exist (Groups: 2, Users: 2)',
+                // Links checked by Behat, so strip them for these tests.
+                html_to_text($renderer->quiz_override_summary_links($quiz, $cm), 0, false));
+        $this->assertEquals(['group' => 1, 'user' => 1, 'mode' => 'onegroup'],
+                quiz_override_summary($quiz, $cm, $group->id));
+        $this->assertEquals('Settings overrides exist (Groups: 1, Users: 1) for this group',
+                html_to_text($renderer->quiz_override_summary_links($quiz, $cm, $group->id), 0, false));
+
+        // Test as tutor.
+        $this->setUser($tutor);
+        $this->assertEquals(['group' => 1, 'user' => 1, 'mode' => 'somegroups'],
+                quiz_override_summary($quiz, $cm));
+        $this->assertEquals('Settings overrides exist (Groups: 1, Users: 1) for your groups',
+                html_to_text($renderer->quiz_override_summary_links($quiz, $cm), 0, false));
+        $this->assertEquals(['group' => 1, 'user' => 1, 'mode' => 'onegroup'],
+                quiz_override_summary($quiz, $cm, $group->id));
+        $this->assertEquals('Settings overrides exist (Groups: 1, Users: 1) for this group',
+                html_to_text($renderer->quiz_override_summary_links($quiz, $cm, $group->id), 0, false));
+
+        // Now set the quiz to be group mode: no groups, and re-test as tutor.
+        // In this case, the tutor should see all groups.
+        $DB->set_field('course_modules', 'groupmode', NOGROUPS, ['id' => $cm->id]);
+        $cm = get_coursemodule_from_id('quiz', $quiz->cmid, $course->id);
+
+        $this->assertEquals(['group' => 2, 'user' => 2, 'mode' => 'allgroups'],
+                quiz_override_summary($quiz, $cm));
+        $this->assertEquals('Settings overrides exist (Groups: 2, Users: 2)',
+                html_to_text($renderer->quiz_override_summary_links($quiz, $cm), 0, false));
+    }
 }

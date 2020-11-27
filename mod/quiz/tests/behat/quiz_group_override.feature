@@ -82,8 +82,10 @@ Feature: Quiz group override
       | quiz      | group | attempts |
       | Test quiz | G1    | 2        |
       | Test quiz | G2    | 2        |
-    When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "teacher1"
-    Then "Group 1" "table_row" should exist
+    When I am on the "Test quiz" "mod_quiz > View" page logged in as "teacher1"
+    Then I should see "Settings overrides exist (Groups: 2)"
+    And I follow "Groups: 2"
+    And "Group 1" "table_row" should exist
     And "Group 2" "table_row" should exist
 
   Scenario: A teacher without accessallgroups permission should only see the group overrides within his/her groups, when the activity's group mode is "separate groups"
@@ -94,7 +96,9 @@ Feature: Quiz group override
       | quiz      | group | attempts |
       | Test quiz | G1    | 2        |
       | Test quiz | G2    | 2        |
-    When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "teacher1"
+    When I am on the "Test quiz" "mod_quiz > View" page logged in as "teacher1"
+    Then I should see "Settings overrides exist (Groups: 1) for your groups"
+    And I follow "Groups: 1"
     Then "Group 1" "table_row" should exist
     And "Group 2" "table_row" should not exist
 
