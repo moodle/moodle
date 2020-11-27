@@ -1271,10 +1271,7 @@ class mod_workshop_external extends external_api {
             if (!empty($formdata[$typeofdata])) {
                 $alldata = (array) $formdata[$typeofdata];
                 foreach ($alldata as $key => $val) {
-                    if (strpos($key, 'peercomment__idx_') === 0) {
-                        // Format reviewer comment.
-                        list($val, $format) = external_format_text($val, FORMAT_MOODLE, $context->id);
-                    } else if (strpos($key, 'description__idx_')) {
+                    if (strpos($key, 'description__idx_')) {
                         // Format dimension description.
                         $id = str_replace('description__idx_', '', $key);
                         list($val, $format) = external_format_text($val, $alldata['dimensionid__idx_' . $id . 'format'],
