@@ -1,6 +1,11 @@
 This files describes API changes in /auth/shibboleth/*,
 information provided here is intended especially for developers.
 
+=== 3.10.1 ===
+
+* The 'Data modification API' (convert_data) setting can no longer be configured to use files located within the
+  current site data directory ($CFG->dataroot), as it exposes the site to security risks.
+
 === 3.5.2 ===
 
 * Moved the public function unserializesession in auth/shibboleth/logout.php to auth/shibboleth/classes/helper.php and
