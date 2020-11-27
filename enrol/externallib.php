@@ -745,50 +745,50 @@ class core_enrol_external extends external_api {
         $sortdirection = 'ASC';
         foreach ($options as $option) {
             switch ($option['name']) {
-            case 'withcapability':
-                $withcapability = $option['value'];
-                break;
-            case 'groupid':
-                $groupid = (int)$option['value'];
-                break;
-            case 'onlyactive':
-                $onlyactive = !empty($option['value']);
-                break;
-            case 'onlysuspended':
-                $onlysuspended = !empty($option['value']);
-                break;
-            case 'userfields':
-                $thefields = explode(',', $option['value']);
-                foreach ($thefields as $f) {
-                    $userfields[] = clean_param($f, PARAM_ALPHANUMEXT);
-                }
-                break;
-            case 'limitfrom' :
-                $limitfrom = clean_param($option['value'], PARAM_INT);
-                break;
-            case 'limitnumber' :
-                $limitnumber = clean_param($option['value'], PARAM_INT);
-                break;
-            case 'sortby':
-                $sortallowedvalues = ['id', 'firstname', 'lastname', 'siteorder'];
-                if (!in_array($option['value'], $sortallowedvalues)) {
-                    throw new invalid_parameter_exception('Invalid value for sortby parameter (value: ' . $option['value'] . '),' .
-                        'allowed values are: ' . implode(',', $sortallowedvalues));
-                }
-                if ($option['value'] == 'siteorder') {
-                    list($sortby, $sortparams) = users_order_by_sql('us');
-                } else {
-                    $sortby = 'us.' . $option['value'];
-                }
-                break;
-            case 'sortdirection':
-                $sortdirection = strtoupper($option['value']);
-                $directionallowedvalues = ['ASC', 'DESC'];
-                if (!in_array($sortdirection, $directionallowedvalues)) {
-                    throw new invalid_parameter_exception('Invalid value for sortdirection parameter
+                case 'withcapability':
+                    $withcapability = $option['value'];
+                    break;
+                case 'groupid':
+                    $groupid = (int)$option['value'];
+                    break;
+                case 'onlyactive':
+                    $onlyactive = !empty($option['value']);
+                    break;
+                case 'onlysuspended':
+                    $onlysuspended = !empty($option['value']);
+                    break;
+                case 'userfields':
+                    $thefields = explode(',', $option['value']);
+                    foreach ($thefields as $f) {
+                        $userfields[] = clean_param($f, PARAM_ALPHANUMEXT);
+                    }
+                    break;
+                case 'limitfrom' :
+                    $limitfrom = clean_param($option['value'], PARAM_INT);
+                    break;
+                case 'limitnumber' :
+                    $limitnumber = clean_param($option['value'], PARAM_INT);
+                    break;
+                case 'sortby':
+                    $sortallowedvalues = ['id', 'firstname', 'lastname', 'siteorder'];
+                    if (!in_array($option['value'], $sortallowedvalues)) {
+                        throw new invalid_parameter_exception('Invalid value for sortby parameter (value: ' .
+                            $option['value'] . '), allowed values are: ' . implode(',', $sortallowedvalues));
+                    }
+                    if ($option['value'] == 'siteorder') {
+                        list($sortby, $sortparams) = users_order_by_sql('us');
+                    } else {
+                        $sortby = 'us.' . $option['value'];
+                    }
+                    break;
+                case 'sortdirection':
+                    $sortdirection = strtoupper($option['value']);
+                    $directionallowedvalues = ['ASC', 'DESC'];
+                    if (!in_array($sortdirection, $directionallowedvalues)) {
+                        throw new invalid_parameter_exception('Invalid value for sortdirection parameter
                         (value: ' . $sortdirection . '),' . 'allowed values are: ' . implode(',', $directionallowedvalues));
-                }
-                break;
+                    }
+                    break;
             }
         }
 
