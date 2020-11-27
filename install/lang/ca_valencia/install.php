@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -30,8 +29,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['clialreadyconfigured'] = 'El fitxer config.php ja existeix, feu servir dmin/cli/install_database.php si voleu instal·lar este lloc web.';
-$string['clialreadyinstalled'] = 'El fitxer config.php ja existeix, feu servir admin/cli/upgrade.php si voleu actualitzar este lloc web.';
+$string['clialreadyconfigured'] = 'El fitxer config.php ja existeix, feu servir admin/cli/install_database.php si voleu instal·lar el Moodle en este lloc web.';
+$string['clialreadyinstalled'] = 'El fitxer de configuració config.php ja existeix. Feu servir admin/cli/upgrade.php si voleu actualitzar Moodle per a este lloc web.';
 $string['cliinstallheader'] = 'Programa d\'instal·lació de línia d\'ordes de Moodle {$a}';
 $string['langdownloaderror'] = 'Dissortadament l\'idioma "{$a}" no es pot baixar. La instal·lació prosseguirà en anglés.';
 $string['memorylimithelp'] = '<p>El límit de memòria del PHP del vostre servidor actualment està definit en {$a}.</p>

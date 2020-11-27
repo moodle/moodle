@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -77,9 +76,12 @@ $string['pathsroparentdataroot'] = 'O directorio principal ({$a->parent}) non te
 $string['pathssubadmindir'] = 'Moi poucos enderezos web empregan /admin como URL especial para
 permitirlle acceder a un panel de control ou semellante. Desafortunadamente, isto entra en conflito coa localización estándar das páxinas de administración de Moodle. Vostede pode corrixir isto
 renomeando o directorio admin na súa instalación, e poñendo aquí ese novo nome.  Por exemplo: <em>moodleadmin</em>. Iso corrixirá as ligazóns admin en Moodle.';
-$string['pathssubdataroot'] = 'Necesitase un lugar no que Moodle poida gardar os ficheiros enviados. Este directorio debe ser lexíbel E ESCRIBÍBEL polo usuario do servidor web
-(normalmente «nobody», «apache», «www-data»), mais non debería ser accesíbel directamente desde o web. Se non existe o instalador tentará crealo.';
-$string['pathssubdirroot'] = 'Ruta completa do directorio de instalación de Moodle.';
+$string['pathssubdataroot'] = '<p>Necesitase un lugar no que Moodle poida gardar os ficheiros enviados polos usuarios</p>
+<p>Este directorio debe ser lexíbel E ESCRIBÍBEL polo usuario do servidor web
+(normalmente «nobody», «apache», «www-data»)</p>
+<p>Non debería ser accesíbel directamente desde o web.</p>
+<p>Se non existe o instalador tentará crealo.</p>';
+$string['pathssubdirroot'] = '<p>Ruta completa do directorio de instalación de Moodle.</p>';
 $string['pathssubwwwroot'] = 'Enderezo web completo para acceder a Moodle.
 Non é posíbel acceder a Moodle empregando enderezos múltiples.
 Se o seu sitio ten varios enderezos públicos debe configurar encamiñamentos permanentes en todos eles, agás neste.

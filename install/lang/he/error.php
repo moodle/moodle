@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -33,13 +32,13 @@ defined('MOODLE_INTERNAL') || die();
 $string['cannotcreatelangdir'] = 'לא ניתן ליצור סיפריית שפה.';
 $string['cannotcreatetempdir'] = 'לא ניתן ליצור סיפרייה זמנית.';
 $string['cannotdownloadcomponents'] = 'לא ניתן להוריד רכיבים.';
-$string['cannotdownloadzipfile'] = 'לא ניתן להוריד קובץ ZIP.';
+$string['cannotdownloadzipfile'] = 'לא ניתן להוריד קובץ 7Zip';
 $string['cannotfindcomponent'] = 'הרכיב לא נמצא.';
 $string['cannotsavemd5file'] = 'לא ניתן לשמור קובץ md5';
 $string['cannotsavezipfile'] = 'לא ניתן לשמור קובץ ZIP';
 $string['cannotunzipfile'] = 'לא ניתן לפתוח את קובץ ה-ZIP.';
 $string['componentisuptodate'] = 'הרכיב מעודכן.';
-$string['downloadedfilecheckfailed'] = 'נכשלה בדיקת הקובץ המורד.';
+$string['downloadedfilecheckfailed'] = 'הקובץ אשר ירד נמצא שגוי';
 $string['invalidmd5'] = 'md5 לא חוקי';
 $string['missingrequiredfield'] = 'חסר שדה נדרש כלשהו';
 $string['remotedownloaderror'] = 'הורדת הרכיב לשרת שלך כשלה, אנא וודא את הגדרות ה-proxy שלך. תוספת PHP cURL מומלצת מאוד להתקנה.
