@@ -2,8 +2,11 @@ This files describes API changes in analytics sub system,
 information provided here is intended especially for developers.
 
 === 3.11 ===
+
 * Final deprecation get_enabled_time_splitting_methods. Method has been removed. Use
   get_time_splitting_methods_for_evaluation instead.
+* Final deprecation - get_analysables(). Please see get_analysables_interator() instead.
+  get_analysables_iterator() needs to be overridden by the child class.
 
 === 3.8 ===
 
