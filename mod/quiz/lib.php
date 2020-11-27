@@ -1716,7 +1716,7 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
         $beforekey = $keys[$i + 1];
     }
 
-    if (has_capability('mod/quiz:manageoverrides', $PAGE->cm->context)) {
+    if (has_any_capability(['mod/quiz:manageoverrides', 'mod/quiz:viewoverrides'], $PAGE->cm->context)) {
         $url = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$PAGE->cm->id));
         $node = navigation_node::create(get_string('groupoverrides', 'quiz'),
                 new moodle_url($url, array('mode'=>'group')),
