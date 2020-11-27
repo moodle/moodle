@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -88,7 +87,7 @@ $string['phpversionhelp'] = '<p>Moodle 需要的PHP版本至少要4.3.0或是5.1
 <p>您目前執行的版本是{$a}</p>
 <p>您必須更新您的 PHP 或在有更新版本的主機上進行安裝！(若是5.0.x，你可以下降到4.4.x 版本)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = '這個頁面是提醒您已經成功安裝與啟動 <strong>{$a->packname} {$a->packversion}</strong> ，恭喜！';
+$string['welcomep20'] = '這個頁面是提醒您已經在您的電腦上成功安裝與啟動 <strong>{$a->packname} {$a->packversion}</strong> ，恭喜！';
 $string['welcomep30'] = '這一<strong>{$a->installername}</strong>的版本包含了一些可以建立<strong>Moodle</strong>執行環境的應用程序：';
 $string['welcomep40'] = '這個軟體還包含了<strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>。';
 $string['welcomep50'] = '使用本軟體包所包含的所有應用程序時，應遵循它們各自的授權協議。整個<strong>{$a->installername}</strong> 軟體都是<a href="http://www.opensource.org/docs/definition_plain.html">開放原始碼</a> ，並且是在 <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> 授權協議下發佈。';
