@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -79,13 +78,13 @@ $string['pathswrongadmindir'] = 'Ο φάκελος Admin δεν υπάρχει';
 $string['phpextension'] = 'Επέκταση {$a} της PHP';
 $string['phpversion'] = 'Έκδοση της PHP';
 $string['phpversionhelp'] = 'p>Το Moodle απαιτεί η έκδοση της PHP να είναι τουλάχιστον 5.6.5 ή 7.1 (η 7.0.x έχει κάποιους περιορισμούς στη μηχανή).</p>
-<p>Αυτή τη στιγμή έχετε την έκδοση {$a}</p>
+<p>Αυτή τη στιγμή εκτελείτε την έκδοση {$a}</p>
 <p>Πρέπει να αναβαθμίσετε την PHP ή να μεταφερθείτε σε έναν κεντρικό Η/Υ με μια νεότερη έκδοση της PHP!</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Βλέπετε αυτή τη σελίδα γιατί εγκαταστήσατε και ξεκινήσατε με επιτυχία το πακέτο <strong>{$a->packname} {$a->packversion}</strong> στον υπολογιστή σας. Συγχαρητήρια!';
 $string['welcomep30'] = 'Αυτή η έκδοση/διανομή <strong>{$a->installername}</strong> περιλαμβάνει τις εφαρμογές για τη δημιουργία ενός περιβάλλοντος μέσα στο οποίο θα λειτουργεί το <strong>Moodle</strong>, ονομαστικά:';
 $string['welcomep40'] = 'Το πακέτο περιλαμβάνει επίσης το <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Η χρήση όλων των εφαρμογών σε αυτό το πακέτο υπόκειται στις αντίστοιχες άδειες. Ολόκληρο το πακέτο <strong>{$a->installername}</strong> είναι <a href="https://www.opensource.org/docs/definition_plain.html">λογισμικό ανοικτού κώδικα</a> και διανέμεται με την <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a> άδεια.';
-$string['welcomep60'] = 'Οι παρακάτω σελίδες θα σας καθοδηγήσουν με εύκολα βήματα στην εγκατάσταση και ρύθμιση του <strong>Moodle</strong> στον Η/Υ σας. Μπορείτε να δεχθείτε τις προεπιλεγμένες ρυθμίσεις ή προαιρετικά, να τις τροποποιήσετε ανάλογα με τις ανάγκες σας.';
+$string['welcomep60'] = 'Οι παρακάτω σελίδες θα σας καθοδηγήσουν με εύκολα βήματα στην εγκατάσταση και ρύθμιση του <strong>Moodle</strong> στον υπολογιστή σας. Μπορείτε να δεχθείτε τις προεπιλεγμένες ρυθμίσεις ή προαιρετικά, να τις τροποποιήσετε ανάλογα με τις ανάγκες σας.';
 $string['welcomep70'] = 'Πατήστε το κουμπί «Συνέχεια» για να συνεχίσετε με την εγκατάσταση του <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Διεύθυνση ιστού';
