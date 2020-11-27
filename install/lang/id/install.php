@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -33,11 +32,11 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Direktori admin';
 $string['availablelangs'] = 'Paket bahasa yang tersedia';
 $string['chooselanguagehead'] = 'Pilih bahasa';
-$string['chooselanguagesub'] = 'Silakan pilih bahasa untuk instalasi. Bahasa ini juga akan digunakan sebagai bahasa default untuk situs, meskipun mungkin akan diubah kemudian.';
-$string['clialreadyconfigured'] = 'Berkas konfigurasi config.php sudah ada. Silakan gunakan admin /cli/install_database.php untuk menginstal Moodle untuk situs ini.';
-$string['clialreadyinstalled'] = 'File konfigurasi config.php sudah ada. Silakan gunakan admin/cli/install_database.php untuk menginstal Moodle untuk situs ini.';
+$string['chooselanguagesub'] = 'Sila pilih bahasa untuk instalasi. Bahasa ini juga akan digunakan sebagai bahasa bawaan untuk situs, meskipun mungkin akan diubah kemudian.';
+$string['clialreadyconfigured'] = 'Berkas konfigurasi config.php sudah ada. Sila gunakan admin /cli/install_database.php untuk memasang Moodle untuk situs ini.';
+$string['clialreadyinstalled'] = 'Berkas konfigurasi config.php sudah ada. Silakan gunakan admin/cli/install_database.php untuk menginstal Moodle untuk situs ini.';
 $string['cliinstallheader'] = 'Program pemasangan baris perintah Moodle {$a}';
-$string['databasehost'] = 'Host basis data';
+$string['databasehost'] = 'Hos basis data';
 $string['databasename'] = 'Nama basis data';
 $string['databasetypehead'] = 'Pilih pengandar basis data';
 $string['dataroot'] = 'Direktori data';
@@ -72,6 +71,6 @@ $string['welcomep20'] = 'Anda melihat halaman ini karena Anda telah berhasil mem
 $string['welcomep30'] = 'Rilis <strong> {$a->installername}</strong> ini mencakup aplikasi untuk menciptakan lingkungan tempat <strong> Moodle </strong> yang akan digunakan, yaitu:';
 $string['welcomep40'] = 'Paket juga termasuk <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Penggunaan semua aplikasi dalam paket ini diatur oleh lisensi masing-masing. Paket <strong>{$a->installername}</strong> lengkap adalah <a href="http://www.opensource.org/docs/definition_plain.html"> sumber terbuka </a> dan didistribusikan di bawah lisensi <a href="http://www.gnu.org/copyleft/gpl.html"> GPL </a>.';
-$string['welcomep60'] = 'Halaman-halaman berikut akan menuntun Anda melalui beberapa langkah yang mudah diikuti untuk mengonfigurasi dan menyiapkan <strong> Moodle </strong> di komputer Anda. Anda dapat menerima pengaturan bawaan atau, secara opsional, mengubahnya sesuai dengan kebutuhan Anda.';
-$string['welcomep70'] = 'Klik tombol "Selanjutnya" di bawah untuk melanjutkan dengan penyiapan <strong> Moodle </strong>.';
+$string['welcomep60'] = 'Halaman berikut akan menuntun Anda melalui beberapa langkah yang mudah diikuti untuk mengonfigurasi dan menyiapkan <strong> Moodle </strong> di komputer Anda. Anda dapat menerima pengaturan bawaan atau, secara opsional, mengubahnya sesuai dengan kebutuhan Anda.';
+$string['welcomep70'] = 'Klik tombol "Selanjutnya" di bawah untuk melanjutkan instalasi <strong> Moodle </strong>.';
 $string['wwwroot'] = 'Alamat web';
