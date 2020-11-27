@@ -182,7 +182,8 @@ How to customize the way the Shibboleth user data is used in Moodle
 Among the Shibboleth settings in Moodle there is a field that should contain a
 path to a php file that can be used as data manipulation hook.
 You can use this if you want to further process the way your Shibboleth
-attributes are used in Moodle.
+attributes are used in Moodle. Due to security reasons this file cannot be
+located within the current site data directory ($CFG->dataroot).
 
 Example 1: Your Shibboleth federation uses an attribute that specifies the
            user's preferred language, but the content of this attribute is not
