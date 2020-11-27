@@ -679,14 +679,14 @@ class core_enrol_external extends external_api {
      */
     public static function get_enrolled_users_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'courseid' => new external_value(PARAM_INT, 'course id'),
                 'options'  => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'name'  => new external_value(PARAM_ALPHANUMEXT, 'option name'),
                             'value' => new external_value(PARAM_RAW, 'option value')
-                        )
+                        ]
                     ), 'Option names:
                             * withcapability (string) return only users with this capability. This option requires \'moodle/role:review\' on the course context.
                             * groupid (integer) return only users in this group id. If the course has groups enabled and this param
@@ -705,8 +705,8 @@ class core_enrol_external extends external_api {
                             * limitnumber (integer) maximum number of returned users.
                             * sortby (string) sort by id, firstname or lastname. For ordering like the site does, use siteorder.
                             * sortdirection (string) ASC or DESC',
-                            VALUE_DEFAULT, array()),
-            )
+                            VALUE_DEFAULT, []),
+            ]
         );
     }
 
@@ -720,7 +720,7 @@ class core_enrol_external extends external_api {
      *                               }
      * @return array An array of users
      */
-    public static function get_enrolled_users($courseid, $options = array()) {
+    public static function get_enrolled_users($courseid, $options = []) {
         global $CFG, $USER, $DB;
 
         require_once($CFG->dirroot . '/course/lib.php');
@@ -728,20 +728,20 @@ class core_enrol_external extends external_api {
 
         $params = self::validate_parameters(
             self::get_enrolled_users_parameters(),
-            array(
+            [
                 'courseid'=>$courseid,
                 'options'=>$options
-            )
+            ]
         );
         $withcapability = '';
         $groupid        = 0;
         $onlyactive     = false;
         $onlysuspended  = false;
-        $userfields     = array();
+        $userfields     = [];
         $limitfrom = 0;
         $limitnumber = 0;
         $sortby = 'us.id';
-        $sortparams = array();
+        $sortparams = [];
         $sortdirection = 'ASC';
         foreach ($options as $option) {
             switch ($option['name']) {
@@ -770,7 +770,7 @@ class core_enrol_external extends external_api {
                 $limitnumber = clean_param($option['value'], PARAM_INT);
                 break;
             case 'sortby':
-                $sortallowedvalues = array('id', 'firstname', 'lastname', 'siteorder');
+                $sortallowedvalues = ['id', 'firstname', 'lastname', 'siteorder'];
                 if (!in_array($option['value'], $sortallowedvalues)) {
                     throw new invalid_parameter_exception('Invalid value for sortby parameter (value: ' . $option['value'] . '),' .
                         'allowed values are: ' . implode(',', $sortallowedvalues));
@@ -783,7 +783,7 @@ class core_enrol_external extends external_api {
                 break;
             case 'sortdirection':
                 $sortdirection = strtoupper($option['value']);
-                $directionallowedvalues = array('ASC', 'DESC');
+                $directionallowedvalues = ['ASC', 'DESC'];
                 if (!in_array($sortdirection, $directionallowedvalues)) {
                     throw new invalid_parameter_exception('Invalid value for sortdirection parameter
                         (value: ' . $sortdirection . '),' . 'allowed values are: ' . implode(',', $directionallowedvalues));
@@ -792,7 +792,7 @@ class core_enrol_external extends external_api {
             }
         }
 
-        $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+        $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
         $coursecontext = context_course::instance($courseid, IGNORE_MISSING);
         if ($courseid == SITEID) {
             $context = context_system::instance();
@@ -840,7 +840,7 @@ class core_enrol_external extends external_api {
                 $enrolledparams = array_merge($enrolledparams, $groupparams);
             } else {
                 // User doesn't belong to any group, so he can't see any user. Return an empty array.
-                return array();
+                return [];
             }
         }
         $sql = "SELECT us.*, COALESCE(ul.timeaccess, 0) AS lastcourseaccess
@@ -856,7 +856,7 @@ class core_enrol_external extends external_api {
         $enrolledparams['courseid'] = $courseid;
 
         $enrolledusers = $DB->get_recordset_sql($sql, $enrolledparams, $limitfrom, $limitnumber);
-        $users = array();
+        $users = [];
         foreach ($enrolledusers as $user) {
             context_helper::preload_from_record($user);
             if ($userdetails = user_get_user_details($user, $course, $userfields)) {
@@ -876,7 +876,7 @@ class core_enrol_external extends external_api {
     public static function get_enrolled_users_returns() {
         return new external_multiple_structure(
             new external_single_structure(
-                array(
+                [
                     'id'    => new external_value(PARAM_INT, 'ID of the user'),
                     'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config', VALUE_OPTIONAL),
                     'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
@@ -907,47 +907,47 @@ class core_enrol_external extends external_api {
                     'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version', VALUE_OPTIONAL),
                     'customfields' => new external_multiple_structure(
                         new external_single_structure(
-                            array(
+                            [
                                 'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field - text field, checkbox...'),
                                 'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
                                 'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
                                 'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field - to be able to build the field class in the code'),
-                            )
+                            ]
                         ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL),
                     'groups' => new external_multiple_structure(
                         new external_single_structure(
-                            array(
+                            [
                                 'id'  => new external_value(PARAM_INT, 'group id'),
                                 'name' => new external_value(PARAM_RAW, 'group name'),
                                 'description' => new external_value(PARAM_RAW, 'group description'),
                                 'descriptionformat' => new external_format_value('description'),
-                            )
+                            ]
                         ), 'user groups', VALUE_OPTIONAL),
                     'roles' => new external_multiple_structure(
                         new external_single_structure(
-                            array(
+                            [
                                 'roleid'       => new external_value(PARAM_INT, 'role id'),
                                 'name'         => new external_value(PARAM_RAW, 'role name'),
                                 'shortname'    => new external_value(PARAM_ALPHANUMEXT, 'role shortname'),
                                 'sortorder'    => new external_value(PARAM_INT, 'role sortorder')
-                            )
+                            ]
                         ), 'user roles', VALUE_OPTIONAL),
                     'preferences' => new external_multiple_structure(
                         new external_single_structure(
-                            array(
+                            [
                                 'name'  => new external_value(PARAM_RAW, 'The name of the preferences'),
                                 'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
-                            )
+                            ]
                     ), 'User preferences', VALUE_OPTIONAL),
                     'enrolledcourses' => new external_multiple_structure(
                         new external_single_structure(
-                            array(
+                            [
                                 'id'  => new external_value(PARAM_INT, 'Id of the course'),
                                 'fullname' => new external_value(PARAM_RAW, 'Fullname of the course'),
                                 'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
-                            )
+                            ]
                     ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL)
-                )
+                ]
             )
         );
     }
