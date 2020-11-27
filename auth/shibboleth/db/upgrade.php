@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool result
  */
 function xmldb_auth_shibboleth_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     if ($oldversion < 2017020700) {
         // Convert info in config plugins from auth/shibboleth to auth_shibboleth.
@@ -56,6 +56,28 @@ function xmldb_auth_shibboleth_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.8.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2019111801) {
+        // The 'Data modification API' setting in the Shibboleth authentication plugin can no longer be configured
+        // to use files located within the site data directory, as it exposes the site to security risks. Therefore,
+        // we need to find every existing case and reset the 'Data modification API' setting to its default value.
+
+        $convertdataconfig = get_config('auth_shibboleth', 'convert_data');
+
+        if (preg_match('/' . preg_quote($CFG->dataroot, '/') . '/', realpath($convertdataconfig))) {
+            set_config('convert_data', '', 'auth_shibboleth');
+
+            $warn = 'Your \'Data modification API\' setting in the Shibboleth authentication plugin is currently
+            configured to use a file located within the current site data directory ($CFG->dataroot). You are no
+            longer able to use files from within this directory for this purpose as it exposes your site to security
+            risks. This setting has been reset to its default value. Please reconfigure it by providing a path
+            to a file which is not located within the site data directory.';
+
+            echo $OUTPUT->notification($warn, 'notifyproblem');
+        }
+
+        upgrade_plugin_savepoint(true, 2019111801, 'auth', 'shibboleth');
+    }
 
     return true;
 }
