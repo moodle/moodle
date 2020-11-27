@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -40,7 +39,7 @@ $string['cliinstallheader'] = 'Програма за инсталирање на
 $string['databasehost'] = 'Домаќин на базата на податоци';
 $string['databasename'] = 'Име на базата на податоци';
 $string['databasetypehead'] = 'Одбери го двигателот на базата за податоци';
-$string['dataroot'] = 'Директориум';
+$string['dataroot'] = 'Директориум за податоци';
 $string['datarootpermission'] = 'Дозвола за директориумот за податоци';
 $string['dbprefix'] = 'Префикс на табели';
 $string['dirroot'] = 'Moodle директориум';

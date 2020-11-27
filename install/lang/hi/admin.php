@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -34,7 +33,7 @@ $string['clianswerno'] = 'एन';
 $string['cliansweryes'] = 'वाई';
 $string['cliincorrectvalueerror'] = 'त्रुटि, "{$a->option}" के लिए गलत मान  जो की  "{$a->value}" है';
 $string['cliincorrectvalueretry'] = 'ग़लत मान, कृपया पुनः प्रयास करें';
-$string['clitypevalue'] = 'टाइप मूल्य';
+$string['clitypevalue'] = 'वैल्यू टाइप करें';
 $string['clitypevaluedefault'] = 'वैल्यू टाइप करें, डिफ़ॉल्ट वैल्यू ({$ a}) का उपयोग करने के लिए Enter दबाएं';
 $string['cliunknowoption'] = 'अपरिचित विकल्प:
    {$a}

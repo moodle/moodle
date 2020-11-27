@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -32,14 +31,14 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'h';
 $string['cliansweryes'] = 'e';
-$string['cliincorrectvalueerror'] = 'Hata, "{$a->option}" için geçeriz değer ("{$a->value}")';
+$string['cliincorrectvalueerror'] = 'Hata, "{$a->option}" seçeneği için  geçersiz değer : "{$a->value}"';
 $string['cliincorrectvalueretry'] = 'Geçersiz değer, lütfen tekrar deneyin';
-$string['clitypevalue'] = 'değeri yazın';
+$string['clitypevalue'] = '';
 $string['clitypevaluedefault'] = 'değeri yazın, varsayılan değeri ({$a}) kullanmak için Enter tuşuna basın';
-$string['cliunknowoption'] = 'Tanınmayan seçenekler:
-{$a}
+$string['cliunknowoption'] = 'Tanımlanamauan seçenek:
+   {$a}
 Lütfen --help seçeneğini kullanın.';
-$string['cliyesnoprompt'] = 'e (evet) veya h (hayır) yazın';
+$string['cliyesnoprompt'] = 'e (evet) ya da h (hayır) yazın';
 $string['environmentrequireinstall'] = 'yüklenmiş ve etkinleştirilmiş olmalıdır';
 $string['environmentrequireversion'] = 'sürüm {$a->needed} gerekli ve şu anda {$a->current} çalışıyor';
 $string['upgradekeyset'] = 'Yükseltme tuşu (ayarlanmak istenmiyorsa boş bırakın)';
