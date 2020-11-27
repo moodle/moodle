@@ -2875,10 +2875,11 @@ EOD;
      * Note: \core\notification::add() may be more suitable for your usage.
      *
      * @param string $message The message to print out.
-     * @param string $type    The type of notification. See constants on \core\output\notification.
+     * @param ?string $type   The type of notification. See constants on \core\output\notification.
+     * @param bool $closebutton Whether to show a close icon to remove the notification (default true).
      * @return string the HTML to output.
      */
-    public function notification($message, $type = null) {
+    public function notification($message, $type = null, $closebutton = true) {
         $typemappings = [
             // Valid types.
             'success'           => \core\output\notification::NOTIFY_SUCCESS,
@@ -2922,7 +2923,7 @@ EOD;
             }
         }
 
-        $notification = new \core\output\notification($message, $type);
+        $notification = new \core\output\notification($message, $type, $closebutton);
         if (count($extraclasses)) {
             $notification->set_extra_classes($extraclasses);
         }
@@ -4886,9 +4887,10 @@ class core_renderer_cli extends core_renderer {
      *
      * @param string $message The message to print out.
      * @param string $type    The type of notification. See constants on \core\output\notification.
+     * @param bool $closebutton Whether to show a close icon to remove the notification (default true).
      * @return string A template fragment for a notification
      */
-    public function notification($message, $type = null) {
+    public function notification($message, $type = null, $closebutton = true) {
         $message = clean_text($message);
         if ($type === 'notifysuccess' || $type === 'success') {
             return "++ $message ++\n";
@@ -4972,8 +4974,10 @@ class core_renderer_ajax extends core_renderer {
      *
      * @param string $message The message to print out.
      * @param string $type    The type of notification. See constants on \core\output\notification.
+     * @param bool $closebutton Whether to show a close icon to remove the notification (default true).
      */
-    public function notification($message, $type = null) {}
+    public function notification($message, $type = null, $closebutton = true) {
+    }
 
     /**
      * Used to display a redirection message.
