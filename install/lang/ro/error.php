@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -31,22 +30,23 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatedboninstall'] = '<p>Nu se poate crea baza de date.</p>
-<p>Baza de date specificată nu există iar utilizatorul nu are permisiunea de a crea baza de date.</p>
-<p>Admistratorul site-ului trebuie să verfice configurarea bazei de date.</p>';
-$string['cannotcreatelangdir'] = 'Nu se poate crea un director lang';
-$string['cannotcreatetempdir'] = 'Nu se poate crea director temporar';
+<p>Baza de date specificată nu există și utilizatorul dat nu are permisiunea de a crea baza de date.</p>
+<p>Administratorul site-ului trebuie să verifice configurația bazei de date.</p>';
+$string['cannotcreatelangdir'] = 'Nu se poate crea directorul lang';
+$string['cannotcreatetempdir'] = 'Nu se poate crea directorul temporar';
 $string['cannotdownloadcomponents'] = 'Nu se pot descărca componente';
-$string['cannotdownloadzipfile'] = 'Fişierul arhivă ZIP nu poate fi descărcat';
-$string['cannotfindcomponent'] = 'Nu a fost găsită componenta';
-$string['cannotsavemd5file'] = 'Fişierul md5 nu poate fi salvat';
-$string['cannotsavezipfile'] = 'Arhiva ZIP nu poate fi salvată';
-$string['cannotunzipfile'] = 'Arhiva nu poate fi deschisă';
+$string['cannotdownloadzipfile'] = 'Nu se poate descărca fișierul ZIP';
+$string['cannotfindcomponent'] = 'Componenta nu poate fi găsită';
+$string['cannotsavemd5file'] = 'Nu se poate salva fișierul md5';
+$string['cannotsavezipfile'] = 'Nu se poate salva fișierul ZIP';
+$string['cannotunzipfile'] = 'Nu se poate dezarhiva fișierul';
 $string['componentisuptodate'] = 'Componenta este actualizată';
-$string['dmlexceptiononinstall'] = '<p>A apărut o problemă la baza de date [{$a->errorcode}].<br />{$a->debuginfo}</p>';
-$string['downloadedfilecheckfailed'] = 'Verificarea fişierului descărcat a eşuat';
-$string['invalidmd5'] = 'md5 incorect';
-$string['missingrequiredfield'] = 'Lipseşte un câmp obligatoriu';
-$string['remotedownloaderror'] = 'Operaţiunea de descărcare a componentei pe serverul dumneavoastră a eşuat, vă rugăm verificaţi setările proxy, se recomandă cu tărie folosirea extensiei PHP cURL.<br /><br />Va trebui să descărcaţi manual fişierul <a href="{$a->url}">{$a->url}</a>, să îl copiaţi în folderul "{$a->dest}" de pe serverul dumnevoastră şi să îl dezarhivaţi în acelaşi loc.';
-$string['wrongdestpath'] = 'Destinaţie greşită';
-$string['wrongsourcebase'] = 'Wrong source URL base';
-$string['wrongzipfilename'] = 'Nume incorect pentru arhiva zip';
+$string['dmlexceptiononinstall'] = '<p>A apărut o eroare în baza de date [{$a->errorcode}].<br />{$a->debuginfo}</p>';
+$string['downloadedfilecheckfailed'] = 'Verificarea fișierului descărcat a eșuat';
+$string['invalidmd5'] = 'Variabila de verificare a fost greșită - încercați din nou';
+$string['missingrequiredfield'] = 'Un câmp obligatoriu lipsește';
+$string['remotedownloaderror'] = '<p>Descărcarea componentei pe serverul dvs. nu a reușit. Vă rugăm să verificați setările proxy; extensia PHP cURL este foarte recomandată.</p>
+<p>Trebuie să descărcați manual fișierul <a href="{$a->url}">{$a->url}</a>, copiați-l în „{$a->dest}" de pe server și dezarhivați-l Acolo.</p>';
+$string['wrongdestpath'] = 'Cale de destinație greșită';
+$string['wrongsourcebase'] = 'Baza de adrese URL sursă este greșită';
+$string['wrongzipfilename'] = 'Numele fișierului ZIP greșit';
