@@ -366,12 +366,12 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         // Create the course and the users.
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = context_course::instance($course->id);
-        $user0 = $this->getDataGenerator()->create_user(array('username' => 'user0active'));
-        $user1 = $this->getDataGenerator()->create_user(array('username' => 'user1active'));
-        $user2 = $this->getDataGenerator()->create_user(array('username' => 'user2active'));
-        $user2su = $this->getDataGenerator()->create_user(array('username' => 'user2suspended')); // Suspended user.
-        $user3 = $this->getDataGenerator()->create_user(array('username' => 'user3active'));
-        $user3su = $this->getDataGenerator()->create_user(array('username' => 'user3suspended')); // Suspended user.
+        $user0 = $this->getDataGenerator()->create_user(['username' => 'user0active']);
+        $user1 = $this->getDataGenerator()->create_user(['username' => 'user1active']);
+        $user2 = $this->getDataGenerator()->create_user(['username' => 'user2active']);
+        $user2su = $this->getDataGenerator()->create_user(['username' => 'user2suspended']); // Suspended user.
+        $user3 = $this->getDataGenerator()->create_user(['username' => 'user3active']);
+        $user3su = $this->getDataGenerator()->create_user(['username' => 'user3suspended']); // Suspended user.
 
         // Enrol the users in the course.
         $this->getDataGenerator()->enrol_user($user0->id, $course->id);
@@ -392,10 +392,10 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         role_assign($roleid, $USER->id, $coursecontext);
 
         // Suspended users.
-        $options = array(
-            array('name' => 'onlysuspended', 'value' => true),
-            array('name' => 'userfields', 'value' => 'id,username')
-        );
+        $options = [
+            ['name' => 'onlysuspended', 'value' => true],
+            ['name' => 'userfields', 'value' => 'id,username']
+        ];
         $suspendedusers = core_enrol_external::get_enrolled_users($course->id, $options);
 
         // We need to execute the return values cleaning process to simulate the web service server.
@@ -407,10 +407,10 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         }
 
         // Active users.
-        $options = array(
-            array('name' => 'onlyactive', 'value' => true),
-            array('name' => 'userfields', 'value' => 'id,username')
-        );
+        $options = [
+            ['name' => 'onlyactive', 'value' => true],
+            ['name' => 'userfields', 'value' => 'id,username']
+        ];
         $activeusers = core_enrol_external::get_enrolled_users($course->id, $options);
 
         // We need to execute the return values cleaning process to simulate the web service server.
@@ -422,9 +422,9 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         }
 
         // All enrolled users.
-        $options = array(
-            array('name' => 'userfields', 'value' => 'id,username')
-        );
+        $options = [
+            ['name' => 'userfields', 'value' => 'id,username']
+        ];
         $allusers = core_enrol_external::get_enrolled_users($course->id, $options);
 
         // We need to execute the return values cleaning process to simulate the web service server.
