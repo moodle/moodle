@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -33,18 +32,18 @@ defined('MOODLE_INTERNAL') || die();
 $string['cannotcreatedboninstall'] = '<p>Ne mogu stvoriti bazu podataka.</p>
 <p>Navedena baza podataka ne postoji i korisnik nema prava stvaranja baze podataka.</p>
 <p>Administrator treba provjeriti postavke baze podataka.</p>';
-$string['cannotcreatelangdir'] = 'Nije moguće stvoriti lang mapu';
-$string['cannotcreatetempdir'] = 'Nije moguće stvoriti privremenu (TEMP) mapu';
-$string['cannotdownloadcomponents'] = 'Nije moguće preuzimanje komponenti';
+$string['cannotcreatelangdir'] = 'Nije moguće stvoriti jezičnu (<i>lang</i>) mapu';
+$string['cannotcreatetempdir'] = 'Nije moguće stvoriti privremenu (<i>temp</i>) mapu';
+$string['cannotdownloadcomponents'] = 'Nije moguće preuzeti komponente';
 $string['cannotdownloadzipfile'] = 'Nije moguće preuzeti ZIP datoteku';
 $string['cannotfindcomponent'] = 'Nije moguće pronaći komponentu';
-$string['cannotsavemd5file'] = 'Nije moguće pohraniti md5 datoteku';
+$string['cannotsavemd5file'] = 'Nije moguće pohraniti MD5 datoteku';
 $string['cannotsavezipfile'] = 'Nije moguće pohraniti ZIP datoteku';
 $string['cannotunzipfile'] = 'Nije moguće otpakirati datoteku';
 $string['componentisuptodate'] = 'Komponenta je dostupna u svojoj najnovijoj inačici.';
 $string['dmlexceptiononinstall'] = '<p>Dogodila se pogreška baze podataka [{$a->errorcode}].<br />{$a->debuginfo}';
 $string['downloadedfilecheckfailed'] = 'Došlo je do pogreške pri provjeri preuzete datoteke';
-$string['invalidmd5'] = 'Neispravna md5 datoteka';
+$string['invalidmd5'] = 'Neispravna md5 datoteka - pokušajte ponovno';
 $string['missingrequiredfield'] = 'Nedostaje neko obvezatno polje';
 $string['remotedownloaderror'] = 'Nije uspjelo preuzimanje komponente na poslužitelj, provjerite postavke proxyja. Preporuča se uporaba PHP cURL dodatka.<br /><br />Ručno preuzmite datoteku s <a href="{$a->url}">{$a->url}</a> iskopirajte ju u "{$a->dest}" na poslužitelju i raspakirajte.';
 $string['wrongdestpath'] = 'Pogrešna odredišna putanja.';

@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -80,7 +79,7 @@ $string['pathsunsecuredataroot'] = 'Dataroot локација није безб�
 $string['pathswrongadmindir'] = 'Админ директоријум не постоји';
 $string['phpextension'] = '{$a} PHP екстензија';
 $string['phpversion'] = 'PHP верзија';
-$string['phpversionhelp'] = '<p>Moodle захтева најмање PHP верзију 5.6.7 или 7.1 (7.0.x има нека ограничења).</p>
+$string['phpversionhelp'] = '<p>Moodle захтева најмање PHP верзију 5.6.5 или 7.1 (7.0.x има нека ограничења).</p>
 <p>Тренутно користите верзију {$a}</p>
 <p>Морате да надоградите PHP или да преместити Moodle на веб сервер са новијом верзијом PHP-a.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
