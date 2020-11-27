@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -33,18 +32,18 @@ defined('MOODLE_INTERNAL') || die();
 $string['cannotcreatedboninstall'] = '<p>Non é posíbel crear a base de datos.</p>
 <p>A base de datos especificada non existe e o usuario indicado non ten permiso para crear a base de datos.</p>
 <p>O administrador do sitio debería verificar a configuración da base de datos.</p>';
-$string['cannotcreatelangdir'] = 'Non se pode crear o directorio de idioma';
-$string['cannotcreatetempdir'] = 'Non se pode crear un directorio temporal';
-$string['cannotdownloadcomponents'] = 'Non foi posíbel descargar compoñentes';
-$string['cannotdownloadzipfile'] = 'Non foi posíbel descargar o ficheiro ZIP';
-$string['cannotfindcomponent'] = 'Non foi posíbel atopar o compoñente';
+$string['cannotcreatelangdir'] = 'Non é posíbel crear o directorio de idioma';
+$string['cannotcreatetempdir'] = 'Non é posíbel crear un directorio temporal';
+$string['cannotdownloadcomponents'] = 'Non é posíbel descargar compoñentes';
+$string['cannotdownloadzipfile'] = 'Non é posíbel descargar o arquivo ZIP';
+$string['cannotfindcomponent'] = 'Non é posíbel atopar o compoñente';
 $string['cannotsavemd5file'] = 'Non é posíbel gardar o ficheiro md5';
 $string['cannotsavezipfile'] = 'Non é posíbel gardar o arquivo ZIP';
 $string['cannotunzipfile'] = 'Non é posíbel descomprimir o ficheiro';
 $string['componentisuptodate'] = 'O compoñente está actualizado';
 $string['dmlexceptiononinstall'] = '<p>Produciuse un erro na base de datos [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'A comprobación do ficheiro descargado non foi satisfactoria';
-$string['invalidmd5'] = 'md5 non válido';
+$string['invalidmd5'] = 'A variábel de verificación non é correcta, ténteo de novo';
 $string['missingrequiredfield'] = 'Falta algún campo obrigatorio';
 $string['remotedownloaderror'] = '<p>Fallo a descarga do compoñente cara o seu servidor. Recomendase encarecidamente que verifiqoe os axustes do proxy, extensión PHP cURL.</p>
 <p>Debe descargar o ficheiro <a href="{$a->url}">{$a->url}</a> manualmente, copialo en «{$a->dest}» no seu servidor e descomprimilo alí.</p>';
