@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -38,9 +37,9 @@ $string['cannotcreatetempdir'] = 'لا يمكن إنشاء المجلد المؤ
 $string['cannotdownloadcomponents'] = 'تعذر تنزيل المُكونات';
 $string['cannotdownloadzipfile'] = 'لم يتم تحميل الملف المضغوط';
 $string['cannotfindcomponent'] = 'لم يتم العثور على المكون';
-$string['cannotsavemd5file'] = 'لم يتم حفظ ملف  md5';
-$string['cannotsavezipfile'] = 'لم يتم حفظ الملف المضغوط';
-$string['cannotunzipfile'] = 'لم يتم فك الملف المضغوط';
+$string['cannotsavemd5file'] = 'تعذر حفظ ملف md5';
+$string['cannotsavezipfile'] = 'تعذر حفظ الملف المضغوط';
+$string['cannotunzipfile'] = 'تعذر فك الملف المضغوط';
 $string['componentisuptodate'] = 'العنصر محدث';
 $string['dmlexceptiononinstall'] = '<p>حدث خطأ في قاعدة البيانات[{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'فشل التحقق من الملف الذي تم تنزيله';

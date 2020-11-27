@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -33,9 +32,9 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Admin mapa';
 $string['availablelangs'] = 'Popis dostupnih jezičnih paketa';
 $string['chooselanguagehead'] = 'Odaberite jezik';
-$string['chooselanguagesub'] = 'Molimo odaberite jezik instalacije. Ovaj jezik će biti korišten kao zadani jezik sustava, a kasnije to možete lagano promijeniti.';
+$string['chooselanguagesub'] = 'Molimo odaberite jezik instalacije. Ovaj jezik će biti korišten kao zadani jezik sustava, a kasnije to možete jednostavno promijeniti.';
 $string['clialreadyconfigured'] = 'Datoteka config.php već postoji. Upotrijebite naredbu admin/cli/install_database.php ako želite nastaviti instalaciju.';
-$string['clialreadyinstalled'] = 'Datoteka config.php već postoji. Upotrijebite naredbu admin/cli/upgrade.php ako želite nadograditi ovaj sustav.';
+$string['clialreadyinstalled'] = 'Datoteka config.php već postoji. Upotrijebite naredbu admin/cli/install_database.php ako želite nadograditi ovaj sustav.';
 $string['cliinstallheader'] = 'Moodle {$a} program za instalaciju iz naredbenog retka';
 $string['databasehost'] = 'Poslužitelj baze podataka (HOST)';
 $string['databasename'] = 'Naziv baze podataka';
