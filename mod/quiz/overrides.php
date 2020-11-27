@@ -102,6 +102,7 @@ if ($groupmode) {
         $overrides = $DB->get_records_sql($sql, $params);
     }
 } else {
+    // User overrides.
     $colname = get_string('user');
     list($sort, $params) = users_order_by_sql('u');
     $params['quizid'] = $quiz->id;

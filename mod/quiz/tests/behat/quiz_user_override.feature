@@ -121,3 +121,5 @@ Feature: Quiz user override
     And "Edit" "link" should not exist in the "Student One" "table_row"
     And "Copy" "link" should not exist in the "Student One" "table_row"
     And "Delete" "link" should not exist in the "Student One" "table_row"
+    And I am on the "Test quiz" "mod_quiz > View" page
+    And I should see "Settings overrides exist (Users: 2)"
