@@ -38,6 +38,7 @@ $string['auth_shibboleth_select_organization'] = 'For authentication via Shibbol
 $string['auth_shib_convert_data'] = 'Data modification API';
 $string['auth_shib_convert_data_description'] = 'You can use this API to further modify the data provided by Shibboleth. Read the <a href="{$a}">README</a> for further instructions.';
 $string['auth_shib_convert_data_warning'] = 'The file does not exist or is not readable by the webserver process!';
+$string['auth_shib_convert_data_filepath_warning'] = 'You cannot use a file that is located within the current site data directory ($CFG->dataroot) as the data modification API.';
 $string['auth_shib_changepasswordurl'] = 'Password-change URL';
 $string['auth_shib_idp_list'] = 'Identity providers';
 $string['auth_shib_idp_list_description'] = 'Provide a list of Identity Provider entityIDs to let the user choose from on the login page.<br />On each line there must be a comma-separated tuple for entityID of the IdP (see the Shibboleth metadata file) and Name of IdP as it shall be displayed in the drop-down list.<br />As an optional third parameter you can add the location of a Shibboleth session initiator that shall be used in case your Moodle installation is part of a multi federation setup.';
