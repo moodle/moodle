@@ -17,16 +17,19 @@ Feature: Edit quiz marks with no attempts
     And the following "activities" exist:
       | activity   | name   | course | idnumber | grade | decimalpoints | questiondecimalpoints |
       | quiz       | Quiz 1 | C1     | quiz1    | 20    | 2             | -1                    |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I add a "True/False" question to the "Quiz 1" quiz with:
-      | Question name | First question |
-      | Question text | Answer me      |
-      | Default mark  | 2.0            |
-    And I add a "True/False" question to the "Quiz 1" quiz with:
-      | Question name | Second question |
-      | Question text | Answer again    |
-      | Default mark  | 3.0             |
+
+    And the following "question categories" exist:
+      | contextlevel | reference | name           |
+      | Course       | C1        | Test questions |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name            | questiontext |
+      | Test questions   | truefalse | First question  | Answer me    |
+      | Test questions   | truefalse | Second question | Answer again |
+    And quiz "Quiz 1" contains the following questions:
+      | question        | page | maxmark |
+      | First question  | 1    | 2.0     |
+      | Second question | 1    | 3.0     |
+    And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
 
   @javascript
   Scenario: Set the max mark for a question.

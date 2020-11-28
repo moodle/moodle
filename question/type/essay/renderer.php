@@ -106,7 +106,7 @@ class qtype_essay_renderer extends qtype_renderer {
      */
     public function files_input(question_attempt $qa, $numallowed,
             question_display_options $options) {
-        global $CFG;
+        global $CFG, $COURSE;
         require_once($CFG->dirroot . '/lib/form/filemanager.php');
 
         $pickeroptions = new stdClass();
@@ -122,7 +122,12 @@ class qtype_essay_renderer extends qtype_renderer {
         $pickeroptions->accepted_types = $qa->get_question()->filetypeslist;
 
         $fm = new form_filemanager($pickeroptions);
-        $fm->options->maxbytes = $qa->get_question()->maxbytes;;
+        $fm->options->maxbytes = get_user_max_upload_file_size(
+            $this->page->context,
+            $CFG->maxbytes,
+            $COURSE->maxbytes,
+            $qa->get_question()->maxbytes
+        );
         $filesrenderer = $this->page->get_renderer('core', 'files');
 
         $text = '';

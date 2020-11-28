@@ -36,6 +36,8 @@ class user_add_filter_form extends moodleform {
      * Form definition.
      */
     public function definition() {
+        global $SESSION;
+
         $mform       =& $this->_form;
         $fields      = $this->_customdata['fields'];
         $extraparams = $this->_customdata['extraparams'];
@@ -54,8 +56,15 @@ class user_add_filter_form extends moodleform {
             }
         }
 
-        // Add button.
-        $mform->addElement('submit', 'addfilter', get_string('addfilter', 'filters'));
+        // Add buttons.
+        $replacefiltersbutton = $mform->createElement('submit', 'replacefilters', get_string('replacefilters', 'filters'));
+        $addfilterbutton = $mform->createElement('submit', 'addfilter', get_string('addfilter', 'filters'));
+        $buttons = array_filter([
+            empty($SESSION->user_filtering) ? null : $replacefiltersbutton,
+            $addfilterbutton,
+        ]);
+
+        $mform->addGroup($buttons);
     }
 }
 
