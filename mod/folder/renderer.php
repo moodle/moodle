@@ -72,7 +72,8 @@ class mod_folder_renderer extends plugin_renderer_base {
         if ($downloadable) {
             $downloadbutton = $this->output->single_button(
                 new moodle_url('/mod/folder/download_folder.php', array('id' => $cm->id)),
-                get_string('downloadfolder', 'folder')
+                get_string('downloadfolder', 'folder'),
+                'get'
             );
 
             $buttons .= $downloadbutton;
