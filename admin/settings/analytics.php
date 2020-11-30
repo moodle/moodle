@@ -144,5 +144,20 @@ if ($hassiteconfig && \core_analytics\manager::is_analytics_enabled()) {
         $settings->add(new admin_setting_configduration('analytics/modeltimelimit', new lang_string('modeltimelimit', 'analytics'),
             new lang_string('modeltimelimitinfo', 'analytics'), 20 * MINSECS));
 
+        $options = array(
+            0    => new lang_string('neverdelete', 'analytics'),
+            1000 => new lang_string('numdays', '', 1000),
+            365  => new lang_string('numdays', '', 365),
+            180  => new lang_string('numdays', '', 180),
+            150  => new lang_string('numdays', '', 150),
+            120  => new lang_string('numdays', '', 120),
+            90   => new lang_string('numdays', '', 90),
+            60   => new lang_string('numdays', '', 60),
+            35   => new lang_string('numdays', '', 35));
+        $settings->add(new admin_setting_configselect('analytics/calclifetime',
+            new lang_string('calclifetime', 'analytics'),
+            new lang_string('configlcalclifetime', 'analytics'), 35, $options));
+
+
     }
 }
