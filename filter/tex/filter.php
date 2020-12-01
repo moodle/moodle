@@ -189,6 +189,9 @@ class filter_tex extends moodle_text_filter {
                 continue;
             }
 
+            // Sanitize the decoded string, because filter_text_image() injects the final string between script tags.
+            $texexp = clean_param($texexp, PARAM_TEXT);
+
             $md5 = md5($texexp);
             if (!$DB->record_exists("cache_filters", array("filter"=>"tex", "md5key"=>$md5))) {
                 $texcache = new stdClass();
