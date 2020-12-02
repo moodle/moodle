@@ -1,0 +1,97 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template datafield_picture/picture
+
+    The purpose of this template is to enable the user to define a picture field.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * name string The field's name.
+    * description string The field's description.
+    * required bool The field's requiredness.
+    * param1 int The fields width in single view value.
+    * param2 int The fields height in single view value.
+    * param3 int The file's maximum size.
+    * param4 int The fields width in list view value.
+    * param5 int The fields height in list view value.
+    * filesizes array The field's file sizes.
+
+    Example context (json):
+    {
+        "name": "A name",
+        "description": "A description",
+        "required": true,
+        "param1": 100,
+        "param2": 200,
+        "param3": 67108864,
+        "param4": 300,
+        "param5": 400,
+        "options": [ { "name": "Site upload limit (64MB)", "value": "0", "selected": true },
+                     { "name": "64MB", "value": "67108864", "selected": false } ]
+    }
+}}
+
+<fieldset>
+    {{> mod_data/fields/basicfields }}
+    {{> mod_data/fields/requiredfield }}
+    <div class="form-group row fitem">
+        <div class="col-md-3">
+            <label for="param1">{{#str}}fieldwidthsingleview, data{{/str}}</label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <input class="picturefieldsize form-control" type="text" name="param1" id="param1" value="{{param1}}">
+        </div>
+    </div>
+    <div class="form-group row fitem">
+        <div class="col-md-3"><label for="param2">{{#str}}fieldheightsingleview, data{{/str}}</label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <input class="picturefieldsize form-control" type="text" name="param2" id="param2" value="{{param2}}">
+        </div>
+    </div>
+    <div class="form-group row fitem">
+        <div class="col-md-3"><label for="param4">{{#str}}fieldwidthlistview, data{{/str}}</label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <input class="picturefieldsize form-control" type="text" name="param4" id="param4" value="{{param4}}">
+        </div>
+    </div>
+    <div class="form-group row fitem">
+        <div class="col-md-3"><label for="param5">{{#str}}fieldheightlistview, data{{/str}}</label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <input class="picturefieldsize form-control" type="text" name="param5" id="param5" value="{{param5}}">
+        </div>
+    </div>
+    <div class="form-group row fitem">
+        <div class="col-md-3"><label for="param3" class="mb-0">
+            {{#str}}maxsize, data{{/str}}</label></div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <select id="param3" class="select custom-select form-control" name="param3">
+                {{#options}}
+                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                {{/options}}
+            </select>
+        </div>
+    </div>
+</fieldset>

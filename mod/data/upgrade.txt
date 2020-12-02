@@ -5,8 +5,10 @@ information provided here is intended especially for developers.
 * The following behat steps are now deprecated. Use data generators instead:
   - I add a ":fieldtype" field to ":activityname" database and I fill the form with:
   - I add an entry to ":activityname" database with:
+* Use of mustache templates for rendering add/modify fields forms. Elimination of all mod/data/field/*/mod.html files.
+* A function get_field_params() in data_field_base can be extended by datafield plugins to get their parameters.
 
-== 4.3 ==
+=== 4.3 ===
 * Function data_export_xls() has been deprecated and moved to deprecatedlib, because xls support has already been dropped.
 * Functions data_export_csv(), data_export_ods() and data_get_exportdata() have been deprecated due to a bigger
   refactoring of the way data is being exported. This is now being done by new exporter classes
@@ -26,7 +28,7 @@ information provided here is intended especially for developers.
   field type will have to implement the method import_file_value() doing the actual import of the file being passed.
 * The field types file and picture now are able to import the file/picture.
 
-== 4.2 ==
+=== 4.2 ===
 * The field base class now has a method validate(). Overwrite it in the field type to provide validation of field type's
   parameters in the field add/modify form.
 * New tags are added to the current mod_data\templates class: ##otherfields##, [[FIELD#name]],
