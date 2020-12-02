@@ -29,6 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = '';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Norsk';
+$string['language'] = 'اللغة';
+$string['next'] = 'التالي';
+$string['previous'] = 'السابق';
+$string['reload'] = 'إعادة تحميل';
