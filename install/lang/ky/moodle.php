@@ -29,6 +29,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = '';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Norsk';
+$string['language'] = 'Тил';
+$string['moodlelogo'] = 'Moodle логотиби';
+$string['next'] = 'Мындан ары';
+$string['previous'] = 'Артка';
+$string['reload'] = 'Жаңыртуу';
