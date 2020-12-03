@@ -127,7 +127,8 @@ class player {
             $url,
             $config,
             $this->factory,
-            $this->messages
+            $this->messages,
+            $this->preventredirect
         );
         if ($file) {
             $this->context = \context::instance_by_id($file->get_contextid());
