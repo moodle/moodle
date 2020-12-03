@@ -199,6 +199,19 @@ class helper {
     }
 
     /**
+     * Fetches the URL of the page the user should be redirected to from the related component
+     *
+     * @param string $component Name of the component that the paymentarea and itemid belong to
+     * @param string $paymentarea Payment area
+     * @param int $itemid An identifier that is known to the component
+     * @return \moodle_url
+     */
+    public static function get_success_url(string $component, string $paymentarea, int $itemid): \moodle_url {
+        $providerclass = static::get_service_provider_classname($component);
+        return component_class_callback($providerclass, 'get_success_url', [$paymentarea, $itemid]);
+    }
+
+    /**
      * Returns the gateway configuration for given component and gateway
      *
      * @param string $component Name of the component that the paymentarea and itemid belong to

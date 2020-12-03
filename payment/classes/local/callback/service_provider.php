@@ -45,6 +45,15 @@ interface service_provider {
     public static function get_payable(string $paymentarea, int $itemid): \core_payment\local\entities\payable;
 
     /**
+     * Callback function that returns the URL of the page the user should be redirected to in the case of a successful payment.
+     *
+     * @param string $paymentarea Payment area
+     * @param int $itemid An identifier that is known to the plugin
+     * @return \moodle_url
+     */
+    public static function get_success_url(string $paymentarea, int $itemid): \moodle_url;
+
+    /**
      * Callback function that delivers what the user paid for to them.
      *
      * @param string $paymentarea Payment area
