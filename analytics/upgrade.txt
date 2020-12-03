@@ -1,6 +1,10 @@
 This files describes API changes in analytics sub system,
 information provided here is intended especially for developers.
 
+=== 3.11 ===
+* Final deprecation get_enabled_time_splitting_methods. Method has been removed. Use
+  get_time_splitting_methods_for_evaluation instead.
+
 === 3.8 ===
 
 * "Time-splitting method" have been replaced by "Analysis interval" for the language strings that are

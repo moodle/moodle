@@ -300,18 +300,12 @@ class manager {
     }
 
     /**
-     * Returns the enabled time splitting methods.
-     *
-     * @deprecated since Moodle 3.7
-     * @todo MDL-65086 This will be deleted in Moodle 3.11
-     * @see \core_analytics\manager::get_time_splitting_methods_for_evaluation
-     * @return \core_analytics\local\time_splitting\base[]
+     * @deprecated since Moodle 3.7 use get_time_splitting_methods_for_evaluation instead
      */
     public static function get_enabled_time_splitting_methods() {
-        debugging('This function has been deprecated. You can use self::get_time_splitting_methods_for_evaluation if ' .
+        throw new coding_exception(__FUNCTION__ . '() has been removed. You can use self::get_time_splitting_methods_for_evaluation if ' .
             'you want to get the default time splitting methods for evaluation, or you can use self::get_all_time_splittings if ' .
             'you want to get all the time splitting methods available on this site.');
-        return self::get_time_splitting_methods_for_evaluation();
     }
 
     /**
