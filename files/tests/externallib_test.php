@@ -346,4 +346,41 @@ class core_files_externallib_testcase extends advanced_testcase {
         $files = external_api::clean_returnvalue(core_files_external::get_files_returns(), $files);
         $this->assertCount(0, $files['files']);
     }
+
+    /**
+     * Test get_unused_draft_itemid.
+     */
+    public function test_get_unused_draft_itemid() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Add files to user draft area.
+        $result = core_files\external\get\unused_draft::execute();
+        $result = external_api::clean_returnvalue(core_files\external\get\unused_draft::execute_returns(), $result);
+
+        $filerecordinline = [
+            'contextid' => $result['contextid'],
+            'component' => $result['component'],
+            'filearea'  => $result['filearea'],
+            'itemid'    => $result['itemid'],
+            'filepath'  => '/',
+            'filename'  => 'faketxt.txt',
+        ];
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecordinline, 'fake txt contents 1.');
+
+        // Now create a folder with a file inside.
+        $fs->create_directory($result['contextid'], $result['component'], $result['filearea'], $result['itemid'], '/fakefolder/');
+        $filerecordinline['filepath'] = '/fakefolder/';
+        $filerecordinline['filename'] = 'fakeimage.png';
+        $fs->create_file_from_string($filerecordinline, 'img...');
+
+        $context = context_user::instance($USER->id);
+        // Check two files were created (one file and one directory).
+        $files = core_files_external::get_files($context->id, 'user', 'draft', $result['itemid'], '/', '');
+        $files = external_api::clean_returnvalue(core_files_external::get_files_returns(), $files);
+        $this->assertCount(2, $files['files']);
+    }
 }
