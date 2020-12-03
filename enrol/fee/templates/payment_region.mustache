@@ -28,17 +28,20 @@
     * data-itemid
     * data-cost
     * data-description
+    * data-successurl
 
     Context variables required for this template:
     * cost - Human readable cost string including amount and currency
     * instanceid - Id of the enrolment instance
     * description - The description for this purchase
+    * successurl - The URL of the course
 
     Example context (json):
     {
         "cost": "$108.50",
         "instanceid": 11,
         "description": "Enrolment in course Introduction to algorithms",
+        "successurl": "https://moodlesite/course/view.php?id=2",
         "isguestuser": false
     }
 
@@ -63,6 +66,7 @@
             data-paymentarea="fee"
             data-itemid="{{instanceid}}"
             data-cost="{{cost}}"
+            data-successurl="{{successurl}}"
             data-description={{# quote }}{{description}}{{/ quote }}
         >
             {{# str }} sendpaymentbutton, enrol_fee {{/ str }}

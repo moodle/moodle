@@ -141,8 +141,8 @@ class helper {
     /**
      * Returns the attributes to place on a pay button.
      *
-     * @param string $component Name of the component that the itemid belongs to
-     * @param string $paymentarea
+     * @param string $component Name of the component that the paymentarea and itemid belong to
+     * @param string $paymentarea Payment area
      * @param int $itemid An internal identifier that is used by the component
      * @param string $description Description of the payment
      * @return array
@@ -151,6 +151,7 @@ class helper {
             string $description): array {
 
         $payable = static::get_payable($component, $paymentarea, $itemid);
+        $successurl = static::get_success_url($component, $paymentarea, $itemid);
 
         return [
             'id' => 'gateways-modal-trigger',
@@ -161,6 +162,7 @@ class helper {
             'data-itemid' => $itemid,
             'data-cost' => static::get_cost_as_string($payable->get_amount(), $payable->get_currency()),
             'data-description' => $description,
+            'data-successurl' => $successurl->out(false),
         ];
     }
 
