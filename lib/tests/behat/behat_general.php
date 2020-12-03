@@ -893,13 +893,7 @@ EOF;
      * @param string $selectortype The type of element where we are looking in.
      */
     public function the_element_should_be_disabled($element, $selectortype) {
-
-        // Transforming from steps definitions selector/locator format to Mink format and getting the NodeElement.
-        $node = $this->get_selected_node($selectortype, $element);
-
-        if (!$node->hasAttribute('disabled')) {
-            throw new ExpectationException('The element "' . $element . '" is not disabled', $this->getSession());
-        }
+        $this->the_attribute_of_should_be_set("disabled", $element, $selectortype, false);
     }
 
     /**
@@ -911,13 +905,7 @@ EOF;
      * @param string $selectortype The type of where we look
      */
     public function the_element_should_be_enabled($element, $selectortype) {
-
-        // Transforming from steps definitions selector/locator format to mink format and getting the NodeElement.
-        $node = $this->get_selected_node($selectortype, $element);
-
-        if ($node->hasAttribute('disabled')) {
-            throw new ExpectationException('The element "' . $element . '" is not enabled', $this->getSession());
-        }
+        $this->the_attribute_of_should_be_set("disabled", $element, $selectortype, true);
     }
 
     /**
@@ -929,12 +917,7 @@ EOF;
      * @param string $selectortype The type of element where we are looking in.
      */
     public function the_element_should_be_readonly($element, $selectortype) {
-        // Transforming from steps definitions selector/locator format to Mink format and getting the NodeElement.
-        $node = $this->get_selected_node($selectortype, $element);
-
-        if (!$node->hasAttribute('readonly')) {
-            throw new ExpectationException('The element "' . $element . '" is not readonly', $this->getSession());
-        }
+        $this->the_attribute_of_should_be_set("readonly", $element, $selectortype, false);
     }
 
     /**
@@ -946,12 +929,7 @@ EOF;
      * @param string $selectortype The type of element where we are looking in.
      */
     public function the_element_should_not_be_readonly($element, $selectortype) {
-        // Transforming from steps definitions selector/locator format to Mink format and getting the NodeElement.
-        $node = $this->get_selected_node($selectortype, $element);
-
-        if ($node->hasAttribute('readonly')) {
-            throw new ExpectationException('The element "' . $element . '" is readonly', $this->getSession());
-        }
+        $this->the_attribute_of_should_be_set("readonly", $element, $selectortype, true);
     }
 
     /**
@@ -1197,6 +1175,39 @@ EOF;
      */
     public function i_change_window_size_to($windowviewport, $windowsize) {
         $this->resize_window($windowsize, $windowviewport === 'viewport');
+    }
+
+    /**
+     * Checks whether there the specified attribute is set or not.
+     *
+     * @Then the :attribute attribute of :element :selectortype should be set
+     * @Then the :attribute attribute of :element :selectortype should :not be set
+     *
+     * @throws ExpectationException
+     * @param string $attribute Name of attribute
+     * @param string $element The locator of the specified selector
+     * @param string $selectortype The selector type
+     * @param string $not
+     */
+    public function the_attribute_of_should_be_set($attribute, $element, $selectortype, $not = null) {
+        // Get the container node (exception if it doesn't exist).
+        $containernode = $this->get_selected_node($selectortype, $element);
+        $hasattribute = $containernode->hasAttribute($attribute);
+
+        if ($not && $hasattribute) {
+            $value = $containernode->getAttribute($attribute);
+            // Should not be set but is.
+            throw new ExpectationException(
+                "The attribute \"{$attribute}\" should not be set but has a value of '{$value}'",
+                $this->getSession()
+            );
+        } else if (!$not && !$hasattribute) {
+            // Should be set but is not.
+            throw new ExpectationException(
+                "The attribute \"{$attribute}\" should be set but is not",
+                $this->getSession()
+            );
+        }
     }
 
     /**
