@@ -50,10 +50,17 @@ $systemcontext = context_system::instance();
 require_login();
 iomad::require_capability('block/iomad_company_admin:viewcourses', $systemcontext);
 
-if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+if (iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)
+    || iomad::has_capability('block/iomad_company_admin:manageallcourses', $systemcontext)) {
     $canedit = true;
 } else {
     $canedit = false;
+}
+
+if (iomad::has_capability('block/iomad_company_admin:manageallcourses', $systemcontext)) {
+    $caneditall = true;
+} else {
+    $caneditall = false;
 }
 
 // Set the url.
@@ -340,7 +347,7 @@ echo $OUTPUT->header();
 
 // Get the list of companies and display it as a drop down select..
 $companyids = company::get_companies_select(false);
-if ($canedit) {
+if ($caneditall) {
     $companyids = [
             'none' => get_string('nocompany', 'block_iomad_company_admin'),
             'all' => get_string('allcourses', 'block_iomad_company_admin')
