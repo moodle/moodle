@@ -2516,8 +2516,6 @@ class core_renderer extends renderer_base {
      * @return string
      */
     protected function render_user_picture(user_picture $userpicture) {
-        global $CFG, $DB;
-
         $user = $userpicture->user;
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $this->page->context);
 
@@ -2550,11 +2548,10 @@ class core_renderer extends renderer_base {
         $attributes = array('src' => $src, 'class' => $class, 'width' => $size, 'height' => $size);
         if (!$userpicture->visibletoscreenreaders) {
             $alt = '';
-            $attributes['aria-hidden'] = 'true';
         }
+        $attributes['alt'] = $alt;
 
         if (!empty($alt)) {
-            $attributes['alt'] = $alt;
             $attributes['title'] = $alt;
         }
 
