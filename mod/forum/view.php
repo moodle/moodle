@@ -179,9 +179,9 @@ switch ($forum->get_type()) {
                 $gradeobj = (object) [
                     'contextid' => $forum->get_context()->id,
                     'cmid' => $cmid,
-                    'name' => $forum->get_name(),
+                    'name' => format_string($forum->get_name()),
                     'courseid' => $course->id,
-                    'coursename' => $course->shortname,
+                    'coursename' => format_string($course->shortname),
                     'experimentaldisplaymode' => $displaymode == FORUM_MODE_NESTED_V2,
                     'groupid' => $groupid,
                     'gradingcomponent' => $forumgradeitem->get_grading_component_name(),
@@ -196,9 +196,9 @@ switch ($forum->get_type()) {
                 $gradeobj = (object) [
                     'contextid' => $forum->get_context()->id,
                     'cmid' => $cmid,
-                    'name' => $forum->get_name(),
+                    'name' => format_string($forum->get_name()),
                     'courseid' => $course->id,
-                    'coursename' => $course->shortname,
+                    'coursename' => format_string($course->shortname),
                     'groupid' => $groupid,
                     'userid' => $USER->id,
                     'gradingcomponent' => $forumgradeitem->get_grading_component_name(),
