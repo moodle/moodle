@@ -91,15 +91,29 @@ class company_user {
         */
 
         $sendemail = $user->sendnewpasswordemails;
-        $passwordentered = !empty($user->newpassword);
-        $createpassword = !$passwordentered;
-        $forcepasswordchange = $user->preference_auth_forcepasswordchange;
-        // Store temp password unless password was entered and it's not going to be send by
-        // email nor is it going to be forced to change.
-        $storetemppassword = !( $passwordentered && !$sendemail && !$forcepasswordchange );
 
-        if ($passwordentered) {
-            $user->password = $user->newpassword;   // Don't hash it, user_create_user will do that.
+        // We only need the password if it's an internal plugin.
+        if (empty($user->auth)) {
+            $user->auth = 'manual';
+        }
+
+        $authplugin = get_auth_plugin($user->auth);
+        if ($authplugin->is_internal()) {
+            $passwordentered = !empty($user->newpassword);
+            $createpassword = !$passwordentered;
+            $forcepasswordchange = $user->preference_auth_forcepasswordchange;
+            // Store temp password unless password was entered and it's not going to be send by
+            // email nor is it going to be forced to change.
+            $storetemppassword = !( $passwordentered && !$sendemail && !$forcepasswordchange );
+
+            if ($passwordentered) {
+                $user->password = $user->newpassword;   // Don't hash it, user_create_user will do that.
+            }
+        } else {
+            $createpassword = false;
+            $forcepasswordchange = false;
+            $storetemppassword = false;
+            unset($user->password);
         }
 
         $user->confirmed = 1;
