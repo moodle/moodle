@@ -97,6 +97,7 @@ $string['myattempts'] = 'My attempts';
 $string['no_compatible_track'] = 'This interaction ({$a}) does not provide tracking information or the tracking
         provided is not compatible with the current activity version.';
 $string['noparticipants'] = 'No participants to display';
+$string['opencontentbank'] = '<a href="{$a}" target="_blank">Access the H5P file in the content bank</a> (opens in a new window).';
 $string['outcome'] = 'Outcome';
 $string['package'] = 'Package file';
 $string['package_help'] = 'The package file is a h5p file containing H5P interactive content.';
