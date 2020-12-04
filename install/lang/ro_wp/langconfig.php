@@ -30,4 +30,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['parentlanguage'] = 'ro';
-$string['thislanguage'] = 'Workplace în limba română';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Română';
