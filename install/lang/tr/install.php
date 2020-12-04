@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Automatically generated strings for Moodle installer
@@ -30,21 +29,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Yönetici Dizini';
+$string['admindirname'] = 'Yönetici dizini';
 $string['availablelangs'] = 'Kullanılabilir dil paketleri';
-$string['chooselanguagehead'] = 'Bir dil seçin';
+$string['chooselanguagehead'] = 'Dil seçin';
 $string['chooselanguagesub'] = 'Lütfen, SADECE kurulum için bir dil seçin. Site ve kullanıcı dillerini sonraki ekranda seçebilirsiniz.';
 $string['clialreadyconfigured'] = 'config.php halihazırda mevcut, lütfen eğer bu siteyi yüklemek istiyorsanız şu dizini kullanın: admin/cli/install_database.php';
 $string['clialreadyinstalled'] = 'Config.php zaten var. Sitenizi güncellemek istiyorsanız bu adresi kullanın: admin/cli/install_database.php';
 $string['cliinstallheader'] = 'Moodle {$a} komut satırı kurulum programı';
 $string['databasehost'] = 'Veritabanı sunucusu';
 $string['databasename'] = 'Veritabanı adı';
-$string['databasetypehead'] = 'Veritabanı sürücünü seçin';
-$string['dataroot'] = 'Veri Dizini';
-$string['datarootpermission'] = 'Veri dizinleri izni';
+$string['databasetypehead'] = 'Veritabanı sürücüsü seçin';
+$string['dataroot'] = 'Veritabanı dizini';
+$string['datarootpermission'] = 'Veritabanı dizin izinleri';
 $string['dbprefix'] = 'Tablo öneki';
-$string['dirroot'] = 'Moodle Dizini';
-$string['environmenthead'] = 'Ortam kontrol ediliyor...';
+$string['dirroot'] = 'Moodle dizini';
+$string['environmenthead'] = 'Ortam kontrol ediliyor ...';
 $string['environmentsub2'] = 'Her Moodle dağıtımı, bazı PHP versiyon gereksinimi ve bir takım PHP uzantılarının yüklü olmalı zorunluluğuna sahiptir. Tüm ortam denetimi her yükleme ve güncellemeden önce yapılmalıdır. Eğer PHP \'nin yeni versiyonunu veya PHP uzantılarını nasıl yükleyeceğinizi bilmiyorsanız lütfen sunucu yöneticiniz ile iletişime geçiniz.';
 $string['errorsinenvironment'] = 'Ortam kontrolu başarısız oldu!';
 $string['installation'] = 'Kurulum';
@@ -72,10 +71,10 @@ için yapmasını isteyin.</li>
 (sayfanız altına baktığınızda bazı hatalar göreceksiniz)
 Böyle bir durumda .htaccess dosyasını silmeniz gerekiyor.</p></li>
 </ol>';
-$string['paths'] = 'Yollar';
+$string['paths'] = 'Dizin yolları';
 $string['pathserrcreatedataroot'] = 'Veri Klasörü ({$a->dataroot}) kurulum tarafından oluşturulamıyor.';
-$string['pathshead'] = 'Yolları doğrulayın';
-$string['pathsrodataroot'] = 'Veri yolu yazılabilir değil.';
+$string['pathshead'] = 'Dizin yollarını onayla';
+$string['pathsrodataroot'] = 'Veritabanı kök dizini yazılabilir değil.';
 $string['pathsroparentdataroot'] = 'Ana klasör ({$a->parent}) yazılabilir değil. Veri Klasörü ({$a->dataroot}) kurulum tarafından oluşturulamıyor.';
 $string['pathssubadmindir'] = 'Pek az web sunucusu /admin adresini kontrol paneline yada benzeri birşeye erişmek için kullanır. Ne yazık ki bu Moodle admin sayfalarının standart konumuyla bir karışıklık yaratır. Bu durumu düzeltmek için kurulumunuzdaki admin dizinini yeniden isimlendirip buraya yeni ismi yazınız. Örneğin: <em>moodleadmin</em>. Bu Moodle\'daki admin bağlantısını düzeltecektir.';
 $string['pathssubdataroot'] = '<p>Moodle\'ın yüklenen dosyaları kayıt etmesi için bir yere ihtiyacınız var. </p>
