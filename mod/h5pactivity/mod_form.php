@@ -76,11 +76,33 @@ class mod_h5pactivity_mod_form extends moodleform_mod {
 
         // Add a link to the Content Bank if the user can access.
         $course = $this->get_course();
-        $context = context_course::instance($course->id);
-        if (has_capability('moodle/contentbank:access', $context)) {
-            $url = new moodle_url('/contentbank/index.php', ['contextid' => $context->id]);
-            $msg = get_string('usecontentbank', 'mod_h5pactivity', $url->out());
-            $msg .= ' '.$OUTPUT->help_icon('contentbank', 'mod_h5pactivity');
+        $coursecontext = context_course::instance($course->id);
+        if (has_capability('moodle/contentbank:access', $coursecontext)) {
+            $msg = null;
+            $context = $this->get_context();
+            if ($context instanceof \context_module) {
+                // This is an existing activity. If the H5P file it's a referenced file from the content bank, a link for
+                // displaying this specific content will be used instead of the generic link to the main page of the content bank.
+                $fs = get_file_storage();
+                $files = $fs->get_area_files($context->id, 'mod_h5pactivity', 'package', 0, 'sortorder, itemid, filepath,
+                    filename', false);
+                $file = reset($files);
+                if ($file && $file->get_reference() != null) {
+                    $referencedfile = \repository::get_moodle_file($file->get_reference());
+                    if ($referencedfile->get_component() == 'contentbank') {
+                        // If the attached file is a referencedfile in the content bank, display a link to open this content.
+                        $url = new moodle_url('/contentbank/view.php', ['id' => $referencedfile->get_itemid()]);
+                        $msg = get_string('opencontentbank', 'mod_h5pactivity', $url->out());
+                        $msg .= ' '.$OUTPUT->help_icon('contentbank', 'mod_h5pactivity');
+                    }
+                }
+            }
+            if (!isset($msg)) {
+                $url = new moodle_url('/contentbank/index.php', ['contextid' => $coursecontext->id]);
+                $msg = get_string('usecontentbank', 'mod_h5pactivity', $url->out());
+                $msg .= ' '.$OUTPUT->help_icon('contentbank', 'mod_h5pactivity');
+            }
+
             $mform->addElement('static', 'contentbank', '', $msg);
         }
 
