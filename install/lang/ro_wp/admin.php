@@ -31,6 +31,13 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
+$string['cliincorrectvalueerror'] = 'Eroare, valoare incorectă "{$a->value}" pentru "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Valoarea nu este corectă, încercați din nou';
+$string['clitypevalue'] = 'introduceţi valoarea';
+$string['clitypevaluedefault'] = 'introduceţi valoarea, apăsaţi Enter pentru a folosi valoarea implicită ({$a})';
+$string['cliunknowoption'] = 'Opţiuni necunoscute:
+ {$a}
+Vă rugăm folosiţi --opţiunea Ajutor.';
+$string['cliyesnoprompt'] = 'tastați d (pentru \'da\') sau \'n\' (pentru \'nu\')';
 $string['environmentrequireinstall'] = 'trebuie să fie instalat și activat';
 $string['environmentrequireversion'] = 'versiunea {$a->needed} este necesară iar dumneavoastră rulați {$a->current}';
