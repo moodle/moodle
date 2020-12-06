@@ -29,13 +29,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['clianswerno'] = 'n';
-$string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'Fel, värdet "{$a->value}" för "{$a->option}" är inte korrekt.';
-$string['cliincorrectvalueretry'] = 'Felaktigt värde, var snäll och försök igen';
-$string['clitypevalue'] = 'Värde för typ';
-$string['clitypevaluedefault'] = 'skriv in värdet, klicka på "Enter" om du vill använda standardvärdet ({$a})';
-$string['cliunknowoption'] = 'Ej identifierade alternativ: {$a} Var snäll och använd alternativet Hjälp.';
-$string['cliyesnoprompt'] = 'skriv in y (betyder ja) eller n (betyder nej)';
-$string['environmentrequireinstall'] = 'måste vara installerat och aktiverat';
-$string['environmentrequireversion'] = 'version {$a->needed} krävs och du använder {$a->current}';
+$string['clianswerno'] = 'Жок';
+$string['cliansweryes'] = 'Ооба';
+$string['cliincorrectvalueerror'] = 'Ката, «{$a->option}» үчүн  «{$a->value}» туура эмес маани';
+$string['cliincorrectvalueretry'] = 'Туура эмес маани, кайрадан аракет кылып көрүңүз';
+$string['clitypevalue'] = 'Маанисин киргизгиле';
+$string['clitypevaluedefault'] = 'Маанисин киргизгиле, алгач белгиленген ({$a}) маанисин  колдонуу үчүн Enter баскычын баскыла';
+$string['cliunknowoption'] = 'Таанылбаган параметрлер {$a}
+
+Сураныч, --help параметрин колдонуңуз';
+$string['cliyesnoprompt'] = 'У киргизиңиз (Ооба дегенди билдирет) же n киргизиңиз (Жок дегенди билдирет)';
+$string['environmentrequireinstall'] = 'Орнотуу жана күйгүзүү зарыл';
+$string['environmentrequireversion'] = '{$a->needed} версиясы талап кылынат, сиз колдонгон версия {$a->current}';
