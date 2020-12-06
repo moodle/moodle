@@ -4240,9 +4240,17 @@ EOD;
       */
     protected function render_context_header(context_header $contextheader) {
 
+        // Generate the heading first and before everything else as we might have to do an early return.
+        if (!isset($contextheader->heading)) {
+            $heading = $this->heading($this->page->heading, $contextheader->headinglevel);
+        } else {
+            $heading = $this->heading($contextheader->heading, $contextheader->headinglevel);
+        }
+
         $showheader = empty($this->page->layout_options['nocontextheader']);
         if (!$showheader) {
-            return '';
+            // Return the heading wrapped in an sr-only element so it is only visible to screen-readers.
+            return html_writer::div($heading, 'sr-only');
         }
 
         // All the html stuff goes here.
@@ -4255,13 +4263,7 @@ EOD;
         }
 
         // Headings.
-        if (!isset($contextheader->heading)) {
-            $headings = $this->heading($this->page->heading, $contextheader->headinglevel);
-        } else {
-            $headings = $this->heading($contextheader->heading, $contextheader->headinglevel);
-        }
-
-        $html .= html_writer::tag('div', $headings, array('class' => 'page-header-headings'));
+        $html .= html_writer::tag('div', $heading, array('class' => 'page-header-headings'));
 
         // Buttons.
         if (isset($contextheader->additionalbuttons)) {
