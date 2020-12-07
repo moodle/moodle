@@ -97,24 +97,7 @@ H5PEmbedCommunicator = (function() {
     return (window.postMessage && window.addEventListener ? new Communicator() : undefined);
 })();
 
-document.onreadystatechange = function() {
-    // Wait for instances to be initialize.
-    if (document.readyState !== 'complete') {
-        return;
-    }
-
-    // Check for H5P iFrame.
-    var iFrame = document.querySelector('.h5p-iframe');
-    if (!iFrame || !iFrame.contentWindow) {
-        return;
-    }
-    var H5P = iFrame.contentWindow.H5P;
-
-    // Check for H5P instances.
-    if (!H5P || !H5P.instances || !H5P.instances[0]) {
-        return;
-    }
-
+function H5PEmbedCommunicatorInit(H5P, iFrame) {
     var resizeDelay;
     var instance = H5P.instances[0];
     var parentIsFriendly = false;
@@ -206,3 +189,32 @@ document.onreadystatechange = function() {
     // Trigger initial resize for instance.
     H5P.trigger(instance, 'resize');
 };
+
+function H5PEmbedCommunicatorTryToInit() {
+    // Retry function in case instances are not initialized yet
+    function retry() {
+        window.setTimeout(H5PEmbedCommunicatorTryToInit, 0);
+    }
+    // Wait for instances to be initialize.
+    if (document.readyState !== 'complete') {
+        retry();
+        return;
+    }
+
+    // Check for H5P iFrame.
+    var iFrame = document.querySelector('.h5p-iframe');
+    if (!iFrame || !iFrame.contentWindow) {
+        retry();
+        return;
+    }
+    var H5P = iFrame.contentWindow.H5P;
+
+    // Check for H5P instances.
+    if (!H5P || !H5P.instances || !H5P.instances[0]) {
+        retry();
+        return;
+    }
+    H5PEmbedCommunicatorInit(H5P, iFrame);
+}
+
+document.onreadystatechange = H5PEmbedCommunicatorTryToInit;
