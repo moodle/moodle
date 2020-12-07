@@ -58,13 +58,9 @@ $title .= ": ".$record->name;
 $PAGE->set_title($title);
 $PAGE->set_pagetype('contentbank');
 
-$contenttypeclass = "\\$record->contenttype\\contenttype";
-$contentclass = "\\$record->contenttype\\content";
-if (!class_exists($contenttypeclass) || !class_exists($contentclass)) {
-    print_error('contenttypenotfound', 'error', $returnurl, $record->contenttype);
-}
-$contenttype = new $contenttypeclass($context);
-$content = new $contentclass($record);
+$cb = new \core_contentbank\contentbank();
+$content = $cb->get_content_from_id($record->id);
+$contenttype = $content->get_content_type_instance();
 
 // Create the cog menu with all the secondary actions, such as delete, rename...
 $actionmenu = new action_menu();
