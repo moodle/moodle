@@ -106,7 +106,18 @@ class manager {
                 if ($deleteinfected) {
                     unlink($file);
                 }
-                throw new \core\antivirus\scanner_exception('virusfound', '', array('item' => $filename));
+
+                // Get custom message to display to user from antivirus engine.
+                $displaymessage = $antivirus->get_virus_found_message();
+                $placeholders = array_merge(['item' => $filename], $displaymessage['placeholders']);
+
+                throw new \core\antivirus\scanner_exception(
+                    $displaymessage['string'],
+                    '',
+                    $placeholders,
+                    null,
+                    $displaymessage['component']
+                );
             } else if ($result === $antivirus::SCAN_RESULT_ERROR) {
                 // Here we need to generate a different incident based on an error.
                 $incidentdetails = $antivirus->get_incident_details($file, $filename, $notice, false);
@@ -163,7 +174,17 @@ class manager {
                 $event = \core\event\virus_infected_data_detected::create($params);
                 $event->trigger();
 
-                throw new \core\antivirus\scanner_exception('virusfound', '', array('item' => get_string('datastream', 'antivirus')));
+                // Get custom message to display to user from antivirus engine.
+                $displaymessage = $antivirus->get_virus_found_message();
+                $placeholders = array_merge(['item' => get_string('datastream', 'antivirus')], $displaymessage['placeholders']);
+
+                throw new \core\antivirus\scanner_exception(
+                    $displaymessage['string'],
+                    '',
+                    $placeholders,
+                    null,
+                    $displaymessage['component']
+                );
             } else if ($result === $antivirus::SCAN_RESULT_ERROR) {
                 // Here we need to generate a different incident based on an error.
                 $incidentdetails = $antivirus->get_incident_details('', $filename, $notice, false);
