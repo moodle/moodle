@@ -275,6 +275,55 @@ class core_upgradelib_testcase extends advanced_testcase {
         $this->assertEquals(20150627, $CFG->{'gradebook_calculations_freeze_' . $course2->id});
     }
 
+    /**
+     * Test the upgrade function for final grade after setting grade max for category and grade item.
+     */
+    public function test_upgrade_update_category_grademax_regrade_final_grades() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+
+        // Create a new course.
+        $course = $generator->create_course();
+
+        // Set the course aggregation to weighted mean of grades.
+        $unitcategory = \grade_category::fetch_course_category($course->id);
+        $unitcategory->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN;
+        $unitcategory->update();
+
+        // Set grade max for category.
+        $gradecategoryitem = grade_item::fetch(array('iteminstance' => $unitcategory->id));
+        $gradecategoryitem->grademax = 50;
+        $gradecategoryitem->update();
+
+        // Make new grade item.
+        $gradeitem = new \grade_item($generator->create_grade_item([
+            'itemname'        => 'Grade item',
+            'idnumber'        => 'git1',
+            'courseid'        => $course->id,
+            'grademin'        => 0,
+            'grademax'        => 50,
+            'aggregationcoef' => 100.0,
+        ]));
+
+        // Set final grade.
+        $grade = $gradeitem->get_grade($user->id, true);
+        $grade->finalgrade = 20;
+        $grade->update();
+
+        $courseitem = \grade_item::fetch(['courseid' => $course->id, 'itemtype' => 'course']);
+        $gradeitem->force_regrading();
+
+        // Trigger regrade because the grade items needs to be updated.
+        grade_regrade_final_grades($course->id);
+
+        $coursegrade = new \grade_grade($courseitem->get_final($user->id), false);
+        $this->assertEquals(20, $coursegrade->finalgrade);
+    }
+
     function test_upgrade_calculated_grade_items_regrade() {
         global $DB, $CFG;
 
