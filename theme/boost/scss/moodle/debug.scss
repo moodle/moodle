@@ -40,6 +40,13 @@ body.behat-site {
             content: none;
         }
     }
+
+    // Workaround for MDL-70411.
+    // Pad the side of the message drawer out slightly to ensure that Firefox scroll bar does not cover controls at the
+    // edge of the screen.
+    [data-region="message-drawer"] {
+        padding-right: 10px;
+    }
 }
 
 .phpinfo table,
