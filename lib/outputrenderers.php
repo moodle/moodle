@@ -2526,14 +2526,11 @@ class core_renderer extends renderer_base {
         $user = $userpicture->user;
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $this->page->context);
 
+        $alt = '';
         if ($userpicture->alttext) {
             if (!empty($user->imagealt)) {
                 $alt = $user->imagealt;
-            } else {
-                $alt = get_string('pictureof', '', fullname($user, $canviewfullnames));
             }
-        } else {
-            $alt = '';
         }
 
         if (empty($userpicture->size)) {
@@ -2570,21 +2567,25 @@ class core_renderer extends renderer_base {
             $output .= fullname($userpicture->user, $canviewfullnames);
         }
 
-        // then wrap it in link if needed
-        if (!$userpicture->link) {
-            return $output;
-        }
-
         if (empty($userpicture->courseid)) {
             $courseid = $this->page->course->id;
         } else {
             $courseid = $userpicture->courseid;
         }
-
         if ($courseid == SITEID) {
             $url = new moodle_url('/user/profile.php', array('id' => $user->id));
         } else {
             $url = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $courseid));
+        }
+
+        // Then wrap it in link if needed. Also we don't wrap it in link if the link redirects to itself.
+        // It might not return page url in unit test.
+        if (PHPUNIT_TEST) {
+            if (!$userpicture->link ) {
+                return $output;
+            }
+        } else if (!$userpicture->link || $this->page->url == $url) {
+            return $output;
         }
 
         $attributes = array('href' => $url, 'class' => 'd-inline-block aabtn');
