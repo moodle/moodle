@@ -18605,6 +18605,9 @@ body.behat-site .custom-control-input {
 body.behat-site .custom-control-label::before, body.behat-site .custom-control-label::after {
   content: none; }
 
+body.behat-site [data-region="message-drawer"] {
+  padding-right: 10px; }
+
 .phpinfo table,
 .phpinfo th,
 .phpinfo h2 {
