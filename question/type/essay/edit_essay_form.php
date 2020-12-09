@@ -52,7 +52,7 @@ class qtype_essay_edit_form extends question_edit_form {
 
         $mform->addElement('select', 'responsefieldlines',
                 get_string('responsefieldlines', 'qtype_essay'), $qtype->response_sizes());
-        $mform->setDefault('responsefieldlines', 15);
+        $mform->setDefault('responsefieldlines', 10);
         $mform->hideIf('responsefieldlines', 'responseformat', 'eq', 'noinline');
 
         // Create a text box that can be enabled/disabled for max/min word limits options.

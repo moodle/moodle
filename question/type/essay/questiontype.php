@@ -136,7 +136,10 @@ class qtype_essay extends question_type {
      * @return array the choices that should be offered for the input box size.
      */
     public function response_sizes() {
-        $choices = array();
+        $choices = [
+            2 => get_string('nlines', 'qtype_essay', 2),
+            3 => get_string('nlines', 'qtype_essay', 3),
+        ];
         for ($lines = 5; $lines <= 40; $lines += 5) {
             $choices[$lines] = get_string('nlines', 'qtype_essay', $lines);
         }
