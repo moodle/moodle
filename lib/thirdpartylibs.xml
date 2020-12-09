@@ -179,7 +179,7 @@
     <location>horde</location>
     <name>Horde</name>
     <license>LGPL/BSD</license>
-    <version>5.2.22</version>
+    <version>5.2.23</version>
     <licenseversion>2.1</licenseversion>
   </library>
   <library>

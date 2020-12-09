@@ -12,10 +12,6 @@ Description of import of Horde libraries
 # Copy the following script and store it on /tmp, change it's execute bit(chmod 777), and run it,
   passing in your path to Horde (the directory you've cloned the repository):
     /tmp/copyhorde.sh ~/git/base/directory/from/step/2
-# Verify that these patches have been applied in the imported version. Apply them locally if not:
-    - https://github.com/horde/Mail/pull/1 (Mail component).
-    - https://github.com/horde/Imap_Client/pull/6 (IMAP Client component).
-    - https://github.com/horde/Crypt_Blowfish/pull/1 (PHP 7.4 compatibility, Crypt_Blowfish)
 
 ====
 #!/bin/sh
