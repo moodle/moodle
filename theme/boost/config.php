@@ -112,7 +112,8 @@ $THEME->layouts = [
     // Embeded pages, like iframe/object embeded in moodleform - it needs as much space as possible.
     'embedded' => array(
         'file' => 'embedded.php',
-        'regions' => array()
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
     ),
     // Used during upgrade and install, and for the 'This site is undergoing maintenance' message.
     // This must not have any blocks, links, or API calls that would lead to database or cache interaction.

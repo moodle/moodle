@@ -12989,6 +12989,27 @@ input[disabled] {
   border: 2px dashed #343a40;
   margin: 4px 0; }
 
+.pagelayout-embedded .has-fake-blocks {
+  padding: 1rem;
+  display: flex; }
+
+.pagelayout-embedded .has-fake-blocks .embedded-main {
+  order: 0;
+  width: calc(100% - 360px);
+  margin-right: 1rem; }
+
+.pagelayout-embedded .embedded-blocks {
+  order: 1;
+  width: 360px; }
+
+@media (max-width: 767.98px) {
+  .pagelayout-embedded .has-fake-blocks {
+    display: block; }
+  .pagelayout-embedded .has-fake-blocks .embedded-main {
+    width: 100%; }
+  .pagelayout-embedded .embedded-blocks {
+    width: 100%; } }
+
 .navbar {
   max-height: 50px; }
 

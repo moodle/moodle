@@ -1817,9 +1817,10 @@ class core_renderer extends renderer_base {
      * Output all the blocks in a particular region.
      *
      * @param string $region the name of a region on this page.
+     * @param boolean $fakeblocksonly Output fake block only.
      * @return string the HTML to be output.
      */
-    public function blocks_for_region($region) {
+    public function blocks_for_region($region, $fakeblocksonly = false) {
         $blockcontents = $this->page->blocks->get_content_for_region($region, $this);
         $lastblock = null;
         $zones = array();
@@ -1832,6 +1833,10 @@ class core_renderer extends renderer_base {
 
         foreach ($blockcontents as $bc) {
             if ($bc instanceof block_contents) {
+                if ($fakeblocksonly && !$bc->is_fake()) {
+                    // Skip rendering real blocks if we only want to show fake blocks.
+                    continue;
+                }
                 $output .= $this->block($bc, $region);
                 $lastblock = $bc->title;
             } else if ($bc instanceof block_move_target) {
@@ -3939,9 +3944,12 @@ EOD;
      *
      * @since Moodle 2.5.1 2.6
      * @param string $region The region to get HTML for.
+     * @param array $classes Wrapping tag classes.
+     * @param string $tag Wrapping tag.
+     * @param boolean $fakeblocksonly Include fake blocks only.
      * @return string HTML.
      */
-    public function blocks($region, $classes = array(), $tag = 'aside') {
+    public function blocks($region, $classes = array(), $tag = 'aside', $fakeblocksonly = false) {
         $displayregion = $this->page->apply_theme_region_manipulations($region);
         $classes = (array)$classes;
         $classes[] = 'block-region';
@@ -3952,7 +3960,7 @@ EOD;
             'data-droptarget' => '1'
         );
         if ($this->page->blocks->region_has_content($displayregion, $this)) {
-            $content = $this->blocks_for_region($displayregion);
+            $content = $this->blocks_for_region($displayregion, $fakeblocksonly);
         } else {
             $content = '';
         }
@@ -5084,9 +5092,10 @@ class core_renderer_maintenance extends core_renderer {
      * @param string $region
      * @param array $classes
      * @param string $tag
+     * @param boolean $fakeblocksonly
      * @return string
      */
-    public function blocks($region, $classes = array(), $tag = 'aside') {
+    public function blocks($region, $classes = array(), $tag = 'aside', $fakeblocksonly = false) {
         return '';
     }
 
@@ -5094,9 +5103,10 @@ class core_renderer_maintenance extends core_renderer {
      * Does nothing. The maintenance renderer cannot produce blocks.
      *
      * @param string $region
+     * @param boolean $fakeblocksonly Output fake block only.
      * @return string
      */
-    public function blocks_for_region($region) {
+    public function blocks_for_region($region, $fakeblocksonly = false) {
         return '';
     }
 
