@@ -53,59 +53,58 @@ function local_iomad_signup_user_created($user) {
         return true;
     }
 
-    // Get context
-    $context = context_system::instance();
+    //  Check if user is already in a company.
+    //  E.g. if this has already been handled.
+    if (!$company = company::by_userid($user->id, true)) {
 
-    // Check if we have a domain already for this users email address.
-    list($dump, $emaildomain) = explode('@', $user->email);
-    if ($domaininfo = $DB->get_record_sql("SELECT * FROM {company_domains} WHERE " . $DB->sql_compare_text('domain') . " = '" . $DB->sql_compare_text($emaildomain)."'")) {
-        // Get company.
-        $company = new company($domaininfo->companyid);
+        // Get context
+        $context = context_system::instance();
 
-        // assign the user to the company.
-        $company->assign_user_to_company($user->id);
+        // Check if we have a domain already for this users email address.
+        list($dump, $emaildomain) = explode('@', $user->email);
+        if ($domaininfo = $DB->get_record_sql("SELECT * FROM {company_domains} WHERE " . $DB->sql_compare_text('domain') . " = '" . $DB->sql_compare_text($emaildomain)."'")) {
+            // Get company.
+            $company = new company($domaininfo->companyid);
 
-        // Deal with company defaults
-        $defaults = $company->get_user_defaults();
-        foreach ($defaults as $index => $value) {
-            $user->$index = $value;
+            // assign the user to the company.
+            $company->assign_user_to_company($user->id);
+
+            // Deal with company defaults
+            $defaults = $company->get_user_defaults();
+            foreach ($defaults as $index => $value) {
+                $user->$index = $value;
+            }
+	    $DB->update_record('user', $user);
+            profile_save_data($user);
+        } else if (!empty($CFG->local_iomad_signup_company)) {
+            // Do we have a company to assign?
+            // Get company.
+            $company = new company($CFG->local_iomad_signup_company);
+
+            // assign the user to the company.
+            $company->assign_user_to_company($user->id);
+
+            // Deal with company defaults
+            $defaults = $company->get_user_defaults();
+            foreach ($defaults as $index => $value) {
+                $user->$index = $value;
+            }
+	    $DB->update_record('user', $user);
+            profile_save_data($user);
         }
-	$DB->update_record('user', $user);
-        profile_save_data($user);
-    } else if (!empty($CFG->local_iomad_signup_company)) {
-        // Do we have a company to assign?
-        // Get company.
-        $company = new company($CFG->local_iomad_signup_company);
 
-        // assign the user to the company.
-        $company->assign_user_to_company($user->id);
+        // Force the company theme in case it's not already been done.
+        $DB->set_field('user', 'theme', $company->get_theme(), array('id' => $user->id));
 
-        // Deal with company defaults
-        $defaults = $company->get_user_defaults();
-        foreach ($defaults as $index => $value) {
-            $user->$index = $value;
+        // Do we have a role to assign?
+        if (!empty($CFG->local_iomad_signup_role)) {
+            // Get role
+            if ($role = $DB->get_record('role', array('id' => $CFG->local_iomad_signup_role), '*', MUST_EXIST)) {
+
+                // assign the user to the role
+                role_assign($role->id, $user->id, $context->id);
+            }
         }
-	$DB->update_record('user', $user);
-        profile_save_data($user);
-    }
-
-    // Force the company theme in case it's not already been done.
-    $DB->set_field('user', 'theme', $company->get_theme(), array('id' => $user->id));
-
-    // Do we have a role to assign?
-    if (!empty($CFG->local_iomad_signup_role)) {
-        // Get role
-        if ($role = $DB->get_record('role', array('id' => $CFG->local_iomad_signup_role), '*', MUST_EXIST)) {
-
-            // assign the user to the role
-            role_assign($role->id, $user->id, $context->id);
-        }
-    }
-
-    // Deal with auto enrolments.
-    if ($CFG->local_iomad_signup_autoenrol) {
-        $user->companyid = $company->id;
-        $company->autoenrol($user);
     }
 
     return true;
