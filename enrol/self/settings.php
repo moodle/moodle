@@ -79,7 +79,10 @@ if ($ADMIN->fulltree) {
         $student = get_archetype_roles('student');
         $student = reset($student);
         $settings->add(new admin_setting_configselect('enrol_self/roleid',
-            get_string('defaultrole', 'enrol_self'), get_string('defaultrole_desc', 'enrol_self'), $student->id, $options));
+            get_string('defaultrole', 'enrol_self'),
+            get_string('defaultrole_desc', 'enrol_self'),
+            $student->id ?? null,
+            $options));
     }
 
     $settings->add(new admin_setting_configduration('enrol_self/enrolperiod',
