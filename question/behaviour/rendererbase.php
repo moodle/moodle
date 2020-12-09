@@ -101,7 +101,7 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                 question_utils::get_filepicker_options($options->context, $draftitemid));
 
         $commenteditor = html_writer::tag('div', html_writer::tag('textarea', s($commenttext),
-                array('id' => $id, 'name' => $inputname, 'rows' => 10, 'cols' => 60)));
+                array('id' => $id, 'name' => $inputname, 'rows' => 3, 'cols' => 60)));
 
         $attributes = ['type'  => 'hidden', 'name'  => $draftitemareainputname, 'value' => $draftitemid];
         $commenteditor .= html_writer::empty_tag('input', $attributes);
