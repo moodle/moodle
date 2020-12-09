@@ -12,6 +12,8 @@ information provided here is intended especially for developers.
   location in config.php if required. To get the best possible security for this feature, we
   recommend enabling the Sodium PHP extension.
 * Behat timeout constants behat_base::TIMEOUT, EXTENDED_TIMEOUT, and REDUCED_TIMEOUT, which were deprecated in 3.7, have been removed.
+* \core_table\local\filter\filterset::JOINTYPE_DEFAULT is being changed from 1 (ANY) to 2 (ALL). Filterset implementations
+  can override the default filterset join type by overriding \core_table\local\filter\filterset::get_join_type() instead.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:
