@@ -72,8 +72,8 @@ function theme_iomad_pluginfile($course, $cm, $context, $filearea, $args, $force
 
     $fs = get_file_storage();
     $relativepath = implode('/', $args);
-    $filename = $args[1];
-    $itemid = $args[0];
+    $filename = array_pop($args);
+    $itemid = array_pop($args);
     if ($filearea == 'logo') {
         $itemid = 0;
     }

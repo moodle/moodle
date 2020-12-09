@@ -870,6 +870,11 @@ class company {
     public function assign_user_to_company($userid, $departmentid = 0, $managertype = 0, $ws = false) {
         global $CFG, $DB;
 
+        // is the user valid?
+        if (!$user = $DB->get_record('user', array('id' => $userid, 'deleted' => 0, 'suspended' => 0))) {
+            return false;
+        }
+
         // Were we passed a departmentid?
         if (!empty($departmentid)) {
             // Check its a department in this company.
@@ -920,12 +925,18 @@ class company {
         } else {
             $educator = false;
         }
-        if(!self::upsert_company_user($userid, $this->id, $departmentid, $managertype, $educator, $ws)) {
+        if (!self::upsert_company_user($userid, $this->id, $departmentid, $managertype, $educator, $ws)) {
             if ($ws) {
                 return false;
             } else {
                 print_error(get_string('cantassignusersdb', 'block_iomad_company_admin'));
             }
+        }
+
+        // Deal with auto enrolments.
+        if ($CFG->local_iomad_signup_autoenrol) {
+            $user->companyid = $this->id;
+            $this->autoenrol($user);
         }
 
         return true;

@@ -52,107 +52,6 @@ require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
 class core_renderer extends \theme_boost\output\core_renderer {
 
     /**
-     * Override to inject the logo.
-     *
-     * @param array $headerinfo The header info.
-     * @param int $headinglevel What level the 'h' tag will be.
-     * @return string HTML for the header bar.
-     */
-    public function context_header($headerinfo = null, $headinglevel = 1) {
-        global $SITE;
-
-        // get appropriate logo
-        if (!$src = $this->get_iomad_logo(null, 150)) {
-            $src = $this->get_logo_url(null, 150);
-        }
-
-        if ($this->should_display_main_logo($headinglevel)) {
-            $sitename = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
-            return html_writer::div(html_writer::empty_tag('img', [
-                'src' => $src, 'alt' => $sitename]), 'logo');
-        }
-
-        return parent::context_header($headerinfo, $headinglevel);
-    }
-
-    /**
-     * Get the Iomad logo for the current user
-     * @return string logo url or false;
-     */
-    protected function get_iomad_logo($maxwidth = 100, $maxheight = 100) {
-        global $CFG, $DB;
-
-        $fs = get_file_storage();
-
-        $clientlogo = '';
-        $companyid = \iomad::get_my_companyid(\context_system::instance(), false);
-        if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
-            $context = \context_system::instance();
-            $files = $fs->get_area_files($context->id, 'theme_iomad', 'companylogo', $companyid );
-            if ($files) {
-                foreach ($files as $file) {
-                    $filename = $file->get_filename();
-                    $filepath = ((int) $maxwidth . 'x' . (int) $maxheight) . '/';
-                    if ($filename != '.') {
-                        $clientlogo = $CFG->wwwroot . "/pluginfile.php/{$context->id}/theme_iomad/companylogo/$companyid/$filename";
-                        return $clientlogo;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get the compact logo URL.
-     *
-     * @return string
-     */
-    public function get_compact_logo_url($maxwidth = 100, $maxheight = 100) {
-        global $CFG;
-
-        if ($url = $this->get_iomad_logo($maxwidth, $maxheight)) {
-            return $url;
-        } else {
-
-            // If that didn't work... try the original version
-            return parent::get_compact_logo_url($maxwidth, $maxheight);
-        }
-    }
-
-    /**
-     * Whether we should display the main logo.
-     *
-     * @return bool
-     */
-    public function should_display_main_logo($headinglevel = 1) {
-        global $PAGE;
-
-        // Only render the logo if we're on the front page or login page and the we have a logo.
-        $logo = $this->get_logo_url();
-        if ($headinglevel == 1 && !empty($logo)) {
-            if ($PAGE->pagelayout == 'frontpage' || $PAGE->pagelayout == 'login') {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Whether we should display the logo in the navbar.
-     *
-     * We will when there are no main logos, and we have compact logo.
-     *
-     * @return bool
-     */
-    public function should_display_navbar_logo() {
-        $logo = $this->get_compact_logo_url();
-        return !empty($logo) && !$this->should_display_main_logo();
-    }
-
-    /**
      * The standard tags that should be included in the <head> tag
      * including a meta description for the front page
      * We cheekily add un-cached CSS for Iomad here
@@ -293,5 +192,38 @@ class core_renderer extends \theme_boost\output\core_renderer {
             'data-target' => '.nav-collapse'
         ));
         return $button;
+    }
+
+    /**
+     * Returns URL to the stored file via pluginfile.php.
+     *
+     * Note the theme must also implement pluginfile.php handler,
+     * theme revision is used instead of the itemid.
+     *
+     * @param string $setting
+     * @param string $filearea
+     * @return string protocol relative URL or null if not present
+     */
+    public function setting_file_url($setting, $filearea) {
+        global $CFG;
+
+            return null;
+        if (empty($this->settings->$setting)) {
+            return null;
+        }
+
+        $component = 'theme_'.$this->name;
+        $itemid = theme_get_revision();
+        $filepath = $this->settings->$setting;
+        $syscontext = context_system::instance();
+
+        $url = moodle_url::make_file_url("$CFG->wwwroot/pluginfile.php", "/$syscontext->id/$component/$filearea/$itemid".$filepath);
+
+        // Now this is tricky because the we can not hardcode http or https here, lets use the relative link.
+        // Note: unfortunately moodle_url does not support //urls yet.
+
+        $url = preg_replace('|^https?://|i', '//', $url->out(false));
+
+        return $url;
     }
 }

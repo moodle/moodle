@@ -72,13 +72,16 @@ function theme_iomadboost_pluginfile($course, $cm, $context, $filearea, $args, $
 
     $fs = get_file_storage();
     $relativepath = implode('/', $args);
-    $filename = $args[1];
+    $filename = array_pop($args);
+    $filepath = $args ? '/'.implode('/', $args).'/' : '/';
+
     $itemid = $args[0];
     if ($filearea == 'logo') {
         $itemid = 0;
     }
+error_log( "filearea = $filearea itemid = $itemid filepath = $filepath filename = $filename");
 
-    if (!$file = $fs->get_file($context->id, 'theme_iomadboost', $filearea, $itemid, '/', $filename) or $file->is_directory()) {
+    if (!$file = $fs->get_file($context->id, 'theme_iomadboost', $filearea, $itemid, $filepath, $filename) or $file->is_directory()) {
         send_file_not_found();
     }
 
