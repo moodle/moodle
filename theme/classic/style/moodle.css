@@ -10898,11 +10898,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
   overflow: auto; }
 
-.moodle-dialogue-base .moodle-dialogue-fullscreen .closebutton {
-  width: 28px;
-  height: 16px;
-  background-size: 100%; }
-
 .moodle-dialogue-base .moodle-dialogue-wrap {
   background-color: #fff;
   border: 1px solid #ccc; }
