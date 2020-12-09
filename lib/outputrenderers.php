@@ -367,8 +367,6 @@ class renderer_base {
         $filepath = ((int) $maxwidth . 'x' . (int) $maxheight) . '/';
 
         // Use $CFG->themerev to prevent browser caching when the file changes.
-        echo  "logo = " .moodle_url::make_pluginfile_url(context_system::instance()->id, 'core_admin', 'logo', $filepath,
-            theme_get_revision(), $logo); die;
         return moodle_url::make_pluginfile_url(context_system::instance()->id, 'core_admin', 'logo', $filepath,
             theme_get_revision(), $logo);
     }
