@@ -61,7 +61,6 @@ abstract class CSSList implements Renderable, Commentable {
 				$oListItem->setComments($comments);
 				$oList->append($oListItem);
 			}
-			$oParserState->consumeWhiteSpace();
 		}
 		if(!$bIsRoot && !$bLenientParsing) {
 			throw new SourceException("Unexpected end of document", $oParserState->currentLine());
@@ -212,6 +211,20 @@ abstract class CSSList implements Renderable, Commentable {
 		array_splice($this->aContents, $iOffset, $iLength, $mReplacement);
 	}
 
+    /**
+     * Insert an item before its sibling.
+     *
+     * @param mixed $oItem The item.
+     * @param mixed $oSibling The sibling.
+     */
+    public function insert($oItem, $oSibling) {
+        $iIndex = array_search($oSibling, $this->aContents);
+        if ($iIndex === false) {
+            return $this->append($oItem);
+        }
+        array_splice($this->aContents, $iIndex, 0, array($oItem));
+    }
+
 	/**
 	 * Removes an item from the CSS list.
 	 * @param RuleSet|Import|Charset|CSSList $oItemToRemove May be a RuleSet (most likely a DeclarationBlock), a Import, a Charset or another CSSList (most likely a MediaQuery)
@@ -314,7 +327,7 @@ abstract class CSSList implements Renderable, Commentable {
 
 		return $sResult;
 	}
-	
+
 	/**
 	* Return true if the list can not be further outdented. Only important when rendering.
 	*/
