@@ -132,6 +132,15 @@ if ($mform_signup->is_cancelled()) {
         $user->username = $user->email;
     }
 
+    if (!empty($SESSION->company)) {
+        if (empty($user->city) && !empty($company->city)) {
+            $user->city = $company->city;
+        }
+        if (empty($user->country) && !empty($company->country)) {
+            $user->country = $company->country;
+        }
+    }
+
     // Add missing required fields.
     $user = signup_setup_new_user($user);
 
