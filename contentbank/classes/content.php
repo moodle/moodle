@@ -311,6 +311,24 @@ abstract class content {
     }
 
     /**
+     * Returns the places where the file associated to this content is used or an empty array if the content has no file.
+     *
+     * @return array of stored_file where current file content is used or empty array if it hasn't any file.
+     * @since 3.11
+     */
+    public function get_uses(): ?array {
+        $references = [];
+
+        $file = $this->get_file();
+        if ($file != null) {
+            $fs = get_file_storage();
+            $references = $fs->get_references_by_storedfile($file);
+        }
+
+        return $references;
+    }
+
+    /**
      * Returns the file url related to this content.
      *
      * @return string       URL of the file stored in content bank area related to the given itemid.
