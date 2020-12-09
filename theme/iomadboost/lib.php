@@ -79,7 +79,6 @@ function theme_iomadboost_pluginfile($course, $cm, $context, $filearea, $args, $
     if ($filearea == 'logo') {
         $itemid = 0;
     }
-error_log( "filearea = $filearea itemid = $itemid filepath = $filepath filename = $filename");
 
     if (!$file = $fs->get_file($context->id, 'theme_iomadboost', $filearea, $itemid, $filepath, $filename) or $file->is_directory()) {
         send_file_not_found();
