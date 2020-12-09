@@ -45,6 +45,7 @@
             margin-bottom: 0.5rem;
         }
         .cb-heading,
+        .cb-uses,
         .cb-date,
         .cb-size,
         .cb-type,
@@ -99,12 +100,13 @@
                 flex: 0 0 40%;
                 max-width: 40%;
             }
+            .cb-uses,
             .cb-date,
             .cb-size,
             .cb-type,
             .cb-author {
-                flex: 0 0 15%;
-                max-width: 15%;
+                flex: 0 0 12%;
+                max-width: 12%;
             }
             .cb-column.last {
                 border-right: 0;

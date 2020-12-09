@@ -92,6 +92,7 @@ class bankcontent implements renderable, templatable {
                 'title' => strtolower($name),
                 'link' => $contenttype->get_view_url($content),
                 'icon' => $contenttype->get_icon($content),
+                'uses' => count($content->get_uses()),
                 'timemodified' => $content->get_timemodified(),
                 'bytes' => $filesize,
                 'size' => display_size($filesize),
