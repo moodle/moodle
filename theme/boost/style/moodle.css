@@ -13135,6 +13135,7 @@ table.calendartable caption {
   margin-bottom: 0.5rem; }
 
 .content-bank-container.view-grid .cb-heading,
+.content-bank-container.view-grid .cb-uses,
 .content-bank-container.view-grid .cb-date,
 .content-bank-container.view-grid .cb-size,
 .content-bank-container.view-grid .cb-type,
@@ -13176,12 +13177,13 @@ table.calendartable caption {
   .content-bank-container.view-list .cb-file {
     flex: 0 0 40%;
     max-width: 40%; }
+  .content-bank-container.view-list .cb-uses,
   .content-bank-container.view-list .cb-date,
   .content-bank-container.view-list .cb-size,
   .content-bank-container.view-list .cb-type,
   .content-bank-container.view-list .cb-author {
-    flex: 0 0 15%;
-    max-width: 15%; }
+    flex: 0 0 12%;
+    max-width: 12%; }
   .content-bank-container.view-list .cb-column.last {
     border-right: 0; } }
 

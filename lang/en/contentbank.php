@@ -75,3 +75,4 @@ $string['timecreated'] = 'Time created';
 $string['type'] = 'Type';
 $string['unsupported'] = 'This content type is not supported.';
 $string['upload'] = 'Upload';
+$string['uses'] = 'Places linked';

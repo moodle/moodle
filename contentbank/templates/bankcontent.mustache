@@ -36,6 +36,7 @@
                 "title": "resume",
                 "timemodified": 1589792039,
                 "size": "699.3KB",
+                "uses": 3,
                 "bytes": 716126,
                 "type": "Archive (PDF)",
                 "author": "Admin user",
@@ -107,6 +108,15 @@ data-region="contentbank">
                                 <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
                             </button>
                         </div>
+                        <div class="cb-uses cb-column d-flex">
+                            <div class="title">{{#str}} uses, contentbank {{/str}}</div>
+                            <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="uses" data-action="sortuses"
+                            title="{{#str}} sortbyx, core, {{#str}} uses, contentbank {{/str}} {{/str}}">
+                                <span class="default">{{#pix}} t/sort, core, {{#str}}sort, core {{/str}} {{/pix}}</span>
+                                <span class="desc">{{#pix}} t/sort_desc, core, {{#str}}desc, core{{/str}} {{/pix}}</span>
+                                <span class="asc">{{#pix}} t/sort_asc, core, {{#str}}asc, core{{/str}} {{/pix}}</span>
+                            </button>
+                        </div>
                         <div class="cb-date cb-column d-flex">
                             <div class="title">{{#str}} lastmodified, contentbank {{/str}}</div>
                             <button class="btn btn-sm cb-btnsort dir-none ml-auto" data-string="lastmodified" data-action="sortdate"
@@ -149,6 +159,7 @@ data-region="contentbank">
                         data-file="{{ title }}"
                         data-name="{{ name }}"
                         data-bytes="{{ bytes }}"
+                        data-uses="{{ uses }}"
                         data-timemodified="{{ timemodified }}"
                         data-type="{{ type }}"
                         data-author="{{ author }}">
@@ -161,6 +172,9 @@ data-region="contentbank">
                                     {{{ name }}}
                                 </span>
                             </a>
+                        </div>
+                        <div class="cb-uses cb-column small">
+                            {{ uses }}
                         </div>
                         <div class="cb-date cb-column small">
                             {{#userdate}} {{ timemodified }}, {{#str}} strftimedatetimeshort, core_langconfig {{/str}} {{/userdate}}
