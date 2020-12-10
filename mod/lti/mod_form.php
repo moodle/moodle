@@ -104,12 +104,12 @@ class mod_lti_mod_form extends moodleform_mod {
 
         $mform->setAdvanced('showdescription');
 
-        $mform->addElement('checkbox', 'showtitlelaunch', '&nbsp;', ' ' . get_string('display_name', 'lti'));
+        $mform->addElement('checkbox', 'showtitlelaunch', get_string('display_name', 'lti'));
         $mform->setAdvanced('showtitlelaunch');
         $mform->setDefault('showtitlelaunch', true);
         $mform->addHelpButton('showtitlelaunch', 'display_name', 'lti');
 
-        $mform->addElement('checkbox', 'showdescriptionlaunch', '&nbsp;', ' ' . get_string('display_description', 'lti'));
+        $mform->addElement('checkbox', 'showdescriptionlaunch', get_string('display_description', 'lti'));
         $mform->setAdvanced('showdescriptionlaunch');
         $mform->addHelpButton('showdescriptionlaunch', 'display_description', 'lti');
 
@@ -281,17 +281,17 @@ class mod_lti_mod_form extends moodleform_mod {
         // Add privacy preferences fieldset where users choose whether to send their data.
         $mform->addElement('header', 'privacy', get_string('privacy', 'lti'));
 
-        $mform->addElement('advcheckbox', 'instructorchoicesendname', '&nbsp;', ' ' . get_string('share_name', 'lti'));
+        $mform->addElement('advcheckbox', 'instructorchoicesendname', get_string('share_name', 'lti'));
         $mform->setDefault('instructorchoicesendname', '1');
         $mform->addHelpButton('instructorchoicesendname', 'share_name', 'lti');
         $mform->disabledIf('instructorchoicesendname', 'typeid', 'in', $toolproxy);
 
-        $mform->addElement('advcheckbox', 'instructorchoicesendemailaddr', '&nbsp;', ' ' . get_string('share_email', 'lti'));
+        $mform->addElement('advcheckbox', 'instructorchoicesendemailaddr', get_string('share_email', 'lti'));
         $mform->setDefault('instructorchoicesendemailaddr', '1');
         $mform->addHelpButton('instructorchoicesendemailaddr', 'share_email', 'lti');
         $mform->disabledIf('instructorchoicesendemailaddr', 'typeid', 'in', $toolproxy);
 
-        $mform->addElement('advcheckbox', 'instructorchoiceacceptgrades', '&nbsp;', ' ' . get_string('accept_grades', 'lti'));
+        $mform->addElement('advcheckbox', 'instructorchoiceacceptgrades', get_string('accept_grades', 'lti'));
         $mform->setDefault('instructorchoiceacceptgrades', '1');
         $mform->addHelpButton('instructorchoiceacceptgrades', 'accept_grades', 'lti');
         $mform->disabledIf('instructorchoiceacceptgrades', 'typeid', 'in', $toolproxy);
