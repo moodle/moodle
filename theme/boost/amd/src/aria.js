@@ -49,15 +49,6 @@ const dropdownFix = () => {
                 setFocusEnd();
             }
 
-            // Escape key only closes the menu, it doesn't open it.
-            if (trigger == 'Escape') {
-                const expanded = e.target.getAttribute('aria-expanded');
-                e.preventDefault();
-                if (expanded == "false") {
-                    e.target.click();
-                }
-            }
-
             // Space key or Enter key opens the menu.
             if (trigger == ' ' || trigger == 'Enter') {
                 // Cancel random scroll.
