@@ -78,7 +78,7 @@ Feature: Edit capabilities
     Then I should see "Teacher >= editing (Teacher)" in the "Teacher 1" "table_row"
     And I should see "Teacher < \"editing\" (Non-editing teacher)" in the "Teaching Assistant" "table_row"
     And I should see "Studier & 'learner' (Student)" in the "Student One" "table_row"
-    And I navigate to "Permissions" in current page administration
+    And I navigate to "Users > Permissions" in current page administration
     And I should see "Teacher >= editing" in the "mod/forum:replypost" "table_row"
     And I should see "Teacher < \"editing\"" in the "mod/forum:replypost" "table_row"
     And I should see "Studier & 'learner'" in the "mod/forum:replypost" "table_row"
