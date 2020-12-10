@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {end, escape, arrowUp, arrowDown, arrowLeft, arrowRight, home, enter, space} from 'core/key_codes';
+import {end, arrowUp, arrowDown, arrowLeft, arrowRight, home, enter, space} from 'core/key_codes';
 import $ from 'jquery';
 import Pending from 'core/pending';
 
@@ -48,15 +48,6 @@ const dropdownFix = () => {
             if (trigger == arrowUp) {
                 // Focus the end of the menu, not the beginning.
                 setFocusEnd();
-            }
-
-            // Escape key only closes the menu, it doesn't open it.
-            if (trigger == escape) {
-                const expanded = e.target.getAttribute('aria-expanded');
-                e.preventDefault();
-                if (expanded == "false") {
-                    e.target.click();
-                }
             }
 
             // Space key or Enter key opens the menu.
