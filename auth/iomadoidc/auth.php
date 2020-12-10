@@ -126,7 +126,7 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
         if (!empty($noredirect)) {
             $iomadoidc = 0;
         }
-        if (!$this->config->forceredirect) {
+        if (empty($this->config->forceredirect)) {
             return false; // Never redirect if we haven't enabled the forceredirect setting
         }
         // Never redirect on POST.
