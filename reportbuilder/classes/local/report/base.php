@@ -116,6 +116,13 @@ abstract class base {
     abstract protected function initialise(): void;
 
     /**
+     * Output the report
+     *
+     * @return string
+     */
+    abstract public function output(): string;
+
+    /**
      * Get the report availability. Sub-classes should override this method to declare themselves unavailable, for example if
      * they require classes that aren't present due to missing plugin
      *

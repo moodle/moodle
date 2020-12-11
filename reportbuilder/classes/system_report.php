@@ -181,6 +181,23 @@ abstract class system_report extends base {
     }
 
     /**
+     * Output the report
+     *
+     * @uses \core_reportbuilder\output\renderer::render_system_report()
+     *
+     * @return string
+     */
+    final public function output(): string {
+        global $PAGE;
+
+        /** @var \core_reportbuilder\output\renderer $renderer */
+        $renderer = $PAGE->get_renderer('core_reportbuilder');
+        $report = new \core_reportbuilder\output\system_report($this->get_report_persistent(), $this, $this->parameters);
+
+        return $renderer->render($report);
+    }
+
+    /**
      * CSS classes to add to the row. Can be overridden by system reports do define class to be added to output according to
      * content of each row
      *

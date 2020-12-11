@@ -22,6 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['actions'] = 'Actions';
+$string['apply'] = 'Apply';
+$string['errorreportaccess'] = 'You can not view this report';
+$string['errorsourceinvalid'] = 'Could not find valid report source';
+$string['errorsourceunavailable'] = 'Report source is not available';
 $string['filtercontains'] = 'Contains';
 $string['filterdatefrom'] = 'Date from';
 $string['filterdateto'] = 'Date to';
@@ -43,5 +48,5 @@ $string['filterrange'] = 'Range';
 $string['filtersapplied'] = 'Filters applied';
 $string['filtersreset'] = 'Filters reset';
 $string['filterstartswith'] = 'Starts with';
-$string['privacy:metadata:preference:reportfilter'] = 'The stored report filters for this user';
+$string['resetall'] = 'Reset all';
 $string['selectcourses'] = 'Select courses';
