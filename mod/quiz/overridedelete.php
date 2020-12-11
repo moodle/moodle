@@ -92,13 +92,24 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($quiz->name, true, array('context' => $context)));
 
 if ($override->groupid) {
-    $group = $DB->get_record('groups', array('id' => $override->groupid), 'id, name');
+    $group = $DB->get_record('groups', ['id' => $override->groupid], 'id, name');
     $confirmstr = get_string("overridedeletegroupsure", "quiz", $group->name);
 } else {
     $namefields = get_all_user_name_fields(true);
-    $user = $DB->get_record('user', array('id' => $override->userid),
-            'id, ' . $namefields);
-    $confirmstr = get_string("overridedeleteusersure", "quiz", fullname($user));
+    $user = $DB->get_record('user', ['id' => $override->userid]);
+
+    $username = fullname($user);
+    $namefields = [];
+    foreach (get_extra_user_fields($context) as $field) {
+        if (isset($user->$field) && $user->$field !== '') {
+            $namefields[] = $user->$field;
+        }
+    }
+    if ($namefields) {
+        $username .= ' (' . implode(', ', $namefields) . ')';
+    }
+
+    $confirmstr = get_string('overridedeleteusersure', 'quiz', $username);
 }
 
 echo $OUTPUT->confirm($confirmstr, $confirmurl, $cancelurl);

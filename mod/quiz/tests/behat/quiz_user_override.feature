@@ -30,13 +30,13 @@ Feature: Quiz user override
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
-      | Override user        | Student1 |
-      | id_timeclose_enabled | 1        |
-      | timeclose[day]       | 1        |
-      | timeclose[month]     | January  |
-      | timeclose[year]      | 2020     |
-      | timeclose[hour]      | 08       |
-      | timeclose[minute]    | 00       |
+      | Override user        | Student One (student1@example.com) |
+      | id_timeclose_enabled | 1                                  |
+      | timeclose[day]       | 1                                  |
+      | timeclose[month]     | January                            |
+      | timeclose[year]      | 2020                               |
+      | timeclose[hour]      | 08                                 |
+      | timeclose[minute]    | 00                                 |
     And I press "Save"
     Then I should see "Wednesday, 1 January 2020, 8:00"
 
@@ -44,9 +44,11 @@ Feature: Quiz user override
     And I set the following fields to these values:
       | timeclose[year] | 2030 |
     And I press "Save"
-    And I should see "Tuesday, 1 January 2030, 8:00"
+    And I should see "Tuesday, 1 January 2030, 8:00" in the "Student One" "table_row"
+    And I should see "student1@example.com" in the "Student One" "table_row"
 
-    And I click on "Delete" "link"
+    And I click on "Delete" "link" in the "Student One" "table_row"
+    And I should see "Are you sure you want to delete the override for user Student One (student1@example.com)?"
     And I press "Continue"
     And I should not see "Student One"
 
@@ -58,10 +60,29 @@ Feature: Quiz user override
     When I am on the "Test quiz" "mod_quiz > User overrides" page logged in as "teacher"
     And I press "Add user override"
     And I set the following fields to these values:
-      | Override user    | Student1 |
-      | Attempts allowed | 1        |
+      | Override user    | Student One (student1@example.com) |
+      | Attempts allowed | 1                                  |
     And I press "Save"
     Then I should see "This override is inactive"
+    And "Edit" "icon" should exist in the "Student One" "table_row"
+    And "copy" "icon" should exist in the "Student One" "table_row"
+    And "Delete" "icon" should exist in the "Student One" "table_row"
+
+  @javascript
+  Scenario: Teacher without 'See full user identity in lists' can see and edit overrides
+    Given the following "permission overrides" exist:
+      | capability                   | permission | role           | contextlevel | reference |
+      | moodle/site:viewuseridentity | Prevent    | editingteacher | Course       | C1        |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber | visible |
+      | quiz       | Test quiz | C1     | quiz1    | 0       |
+    When I am on the "Test quiz" "mod_quiz > User overrides" page logged in as "teacher"
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user    | Student One |
+      | Attempts allowed | 1           |
+    And I press "Save"
+    And I should not see "student1@example.com"
     And "Edit" "icon" should exist in the "Student One" "table_row"
     And "copy" "icon" should exist in the "Student One" "table_row"
     And "Delete" "icon" should exist in the "Student One" "table_row"
@@ -85,8 +106,8 @@ Feature: Quiz user override
       | quiz     | Test quiz | C1     | quiz1    | 1         |
     When I am on the "Test quiz" "mod_quiz > User overrides" page logged in as "teacher"
     And I press "Add user override"
-    Then the "Override user" select box should contain "Student One, student1@example.com"
-    And the "Override user" select box should not contain "Student Two, student2@example.com"
+    Then the "Override user" select box should contain "Student One (student1@example.com)"
+    And the "Override user" select box should not contain "Student Two (student2@example.com)"
 
   Scenario: Override user in an activity with group mode set to "separate groups" as a teacher who is not a member in any group, and does not have accessallgroups permission
     Given the following "groups" exist:
