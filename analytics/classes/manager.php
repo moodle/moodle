@@ -603,8 +603,8 @@ class manager {
      */
     public static function add_builtin_models() {
 
-        debugging('core_analytics\manager::add_builtin_models() has been deprecated. Core models are now automatically '.
-            'updated according to their declaration in the lib/db/analytics.php file.', DEBUG_DEVELOPER);
+        throw new \coding_exception('core_analytics\manager::add_builtin_models() has been removed. Core models ' .
+                        'are now automatically updated according to their declaration in the lib/db/analytics.php file.');
     }
 
     /**

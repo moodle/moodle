@@ -707,7 +707,7 @@ Feature: Course participants can be filtered
     And I should not see "Student 4" in the "participants" "table"
     And I should not see "Teacher 1" in the "participants" "table"
     And I click on "Add condition" "button"
-    # Re-add a second filter and ensure the default (any) filterset match type is set.
+    # Re-add a second filter and ensure the default (All) filterset match type is set.
     And I set the field "Match" in the "Filter 2" "fieldset" to "All"
     And I set the field "type" in the "Filter 2" "fieldset" to "Role"
     And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 2" "fieldset"
@@ -716,7 +716,7 @@ Feature: Course participants can be filtered
     And I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should see "Student 4" in the "participants" "table"
+    And I should not see "Student 4" in the "participants" "table"
     And I should not see "Teacher 1" in the "participants" "table"
 
   @javascript

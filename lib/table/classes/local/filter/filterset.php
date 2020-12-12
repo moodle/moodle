@@ -40,8 +40,8 @@ use moodle_exception;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class filterset implements JsonSerializable {
-    /** @var in The default filter type (ANY) */
-    const JOINTYPE_DEFAULT = 1;
+    /** @var int The default filter type (ALL) */
+    const JOINTYPE_DEFAULT = 2;
 
     /** @var int None of the following match */
     const JOINTYPE_NONE = 0;
@@ -53,7 +53,7 @@ abstract class filterset implements JsonSerializable {
     const JOINTYPE_ALL = 2;
 
     /** @var int The join type currently in use */
-    protected $jointype = self::JOINTYPE_DEFAULT;
+    protected $jointype = null;
 
     /** @var array The list of combined filter types */
     protected $filtertypes = null;
@@ -90,6 +90,9 @@ abstract class filterset implements JsonSerializable {
      * @return int
      */
     public function get_join_type(): int {
+        if ($this->jointype === null) {
+            $this->jointype = self::JOINTYPE_DEFAULT;
+        }
         return $this->jointype;
     }
 
