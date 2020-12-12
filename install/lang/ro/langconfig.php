@@ -29,5 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Warning: this parentlanguage value is not a valid language code!
+// $string['parentlanguage'] = 'Limbă părinte';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Română';
