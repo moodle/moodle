@@ -59,10 +59,10 @@ class EmailVars {
 
         $this->course =& $course;
         if (!empty($course->id)) {
-            $this->course->url = new moodle_url('/course/view.php', array('id' => $this->course->id));
+            $this->course->url = new moodle_url($this->company->get_wwwroot() .'/course/view.php', array('id' => $this->course->id));
         }
         if (!empty($user->id)) {
-            $this->url = new moodle_url('/user/profile.php', array('id' => $this->user->id));
+            $this->url = new moodle_url($this->company->get_wwwroot() .'/user/profile.php', array('id' => $this->user->id));
         }
         $this->site = get_site();
     }
