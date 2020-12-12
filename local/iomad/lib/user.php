@@ -350,6 +350,12 @@ class company_user {
                 }
                 if ($shared || $grouped) {
                     if (!empty($companyid)) {
+                        // Did we get passed a group?
+                        if (empty($groupid)) {
+                            // If not get the default company group.
+                            $groupinfo = company::get_company_group($companyid, $courseid);
+                            $groupid = $groupinfi->id;
+                        }
                         company::add_user_to_shared_course($courseid, $user->id, $companyid, $groupid);
                     }
                 }
