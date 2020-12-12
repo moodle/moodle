@@ -195,15 +195,19 @@ class EmailVars {
     function SiteURL() {
         global $CFG;
 
+        // Get the company wwwroot.
+        $wwwroot = $this->company->get_wwwroot();
+
+        // Can we add the theme to the URL too?
         if (empty($CFG->allowthemechangeonurl)) {
-            return $CFG->wwwroot;
+            return $wwwroot;
         } else {
             // Get the company theme.
             if (method_exists($this->company,'get_theme')) {
                 $theme = $this->company->get_theme();
-                return new moodle_url($CFG->wwwroot, array('theme' => $theme));
+                return new moodle_url($wwwroot, array('theme' => $theme));
             } else {
-                return new moodle_url($CFG->wwwroot);
+                return new moodle_url($wwwroot);
             }
         }
     }

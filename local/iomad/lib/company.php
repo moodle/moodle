@@ -156,6 +156,29 @@ class company {
     }
 
     /**
+     * Gets the company wwwroot for the current instance
+     *
+     * @return URL
+     *
+     **/
+    public function get_wwwroot() {
+        global $CFG;
+
+        // Do we have a hostname for this company?
+        if (!empty($this->companyrecord->hostname)) {
+            // Parse the current wwwroot.
+            $u = parse_url($CFG->wwwroot);
+            $url = "$u[scheme]://".$this->companyrecord->hostname."$u[path]" . (isset($u["query"]) ? "?$u[query]" : "");
+
+            // Return the parse URL.
+            return $url;
+        } else {
+            // Return the default wwwroot.
+            return $CFG->wwwroot;
+        }
+    }
+
+    /**
      * Recurses up the company tree to get the parent company.
      *
      * @return int
