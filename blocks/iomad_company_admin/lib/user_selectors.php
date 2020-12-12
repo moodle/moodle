@@ -516,7 +516,7 @@ class potential_company_course_user_selector extends company_user_selector_base 
             $userfilter .= " AND u.id NOT IN (" . implode(',', $enrolledusers) . ") ";
         }
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM
@@ -1040,7 +1040,7 @@ class potential_license_user_selector extends user_selector_base {
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u').', u.email, d.shortname ';
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u').', u.email, d.shortname ';
         $countfields = 'SELECT COUNT(1)';
         $myusers = company::get_my_users($this->companyid);
 
@@ -1264,7 +1264,7 @@ class current_license_user_selector extends user_selector_base {
                 $coursesql = "";
             }
             $maxcount = $CFG->iomad_max_select_users;
-            $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, c.fullname, clu.isusing ';
+            $fields      = 'SELECT DISTINCT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, c.fullname, clu.isusing ';
             $countfields = 'SELECT COUNT(1)';
 
             $sql = " FROM
