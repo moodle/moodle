@@ -25,7 +25,7 @@
  */
 
 import $ from 'jquery';
-import Aria from './aria';
+import * as Aria from './aria';
 import Bootstrap from './bootstrap/index';
 import Pending from 'core/pending';
 import Scroll from './scroll';
@@ -43,9 +43,12 @@ const rememberTabs = () => {
             location.hash = hash;
         }
     });
-    var hash = window.location.hash;
+    const hash = window.location.hash;
     if (hash) {
-       $('.nav-link[href="' + hash + '"]').tab('show');
+        const tab = document.querySelector('.nav-link[href="' + hash + '"]');
+        if (tab) {
+            tab.click();
+        }
     }
 };
 
@@ -83,6 +86,9 @@ const pendingPromise = new Pending('theme_boost/loader:init');
 // Add pending promise event listeners to relevant Bootstrap custom events.
 setupBootstrapPendingChecks();
 
+// Setup Aria helpers for Bootstrap features.
+Aria.init();
+
 // Remember the last visited tabs.
 rememberTabs();
 
@@ -97,9 +103,6 @@ enableTooltips();
 
 // Disables flipping the dropdowns up and getting hidden behind the navbar.
 $.fn.dropdown.Constructor.Default.flip = false;
-
-// Setup Aria helpers for Bootstrap features.
-Aria.init();
 
 pendingPromise.resolve();
 
