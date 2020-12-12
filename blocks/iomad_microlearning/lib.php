@@ -498,7 +498,9 @@ class microlearning {
         if (empty($threadinfo->halt_until_fulfilled)) {
             $scheduleinfo = self::get_schedules($threadinfo, $nuggets);
         } else {
-            $scheduleinfo = self::get_schedules($threadinfo, $nuggets, time());
+            // We want midnight last night.
+            $starttime = time() - (time() % 86400);
+            $scheduleinfo = self::get_schedules($threadinfo, $nuggets, $starttime);
         }
 
         // insert the user schedule info.
