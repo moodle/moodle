@@ -27,7 +27,8 @@
     * action
 
     Context variables required for this template:
-    * rolename Name of the role rendered
+    * rolename Name of the role rendered - must have been prepared for output with format_string,
+                                           or more likely one of the role API functions like role_fix_names.
     * roleid Id of the role
     * action WEhich action is done on click
     * spanclass class attribute of span
@@ -43,7 +44,7 @@
      "linkclass": "preventlink",
      "adminurl" : "http://localhost/moodle/admin/"}
 }}
-<span style="display:inline-block;" class="{{spanclass}}">&nbsp;{{rolename}}&nbsp;
+<span style="display:inline-block;" class="{{spanclass}}">&nbsp;{{{rolename}}}&nbsp;
     <a href="{{adminurl}}roles/permissions.php" class="{{linkclass}}" data-role-id="{{roleid}}" data-action="{{action}}">
         {{#icon}}
             {{#pix}}{{icon}}, core, {{iconalt}}{{/pix}}
