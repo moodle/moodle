@@ -328,7 +328,6 @@ EOF;
             // The `before_subsequent_scenario_start_session` function will restart the session instead.
             return;
         }
-        self::$firstjavascriptscenarioseen = true;
 
         $docsurl = behat_command::DOCS_URL;
         $driverexceptionmsg = <<<EOF
@@ -473,6 +472,16 @@ EOF;
 
         // Run all test with medium (1024x768) screen size, to avoid responsive problems.
         $this->resize_window('medium');
+    }
+
+    /**
+     * Mark the first Javascript Scenario as have been seen.
+     *
+     * @BeforeScenario
+     * @param BeforeScenarioScope $scope scope passed by event fired before scenario.
+     */
+    public function mark_first_js_scenario_as_seen(BeforeScenarioScope $scope) {
+        self::$firstjavascriptscenarioseen = true;
     }
 
     /**
