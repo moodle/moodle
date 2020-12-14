@@ -512,6 +512,27 @@ class manager {
     }
 
     /**
+     * This function will return a list of all adhoc tasks that have a faildelay
+     *
+     * @param int $delay filter how long the task has been delayed
+     * @return \core\task\adhoc_task[]
+     */
+    public static function get_failed_adhoc_tasks(int $delay = 0): array {
+        global $DB;
+
+        $tasks = [];
+        $records = $DB->get_records_sql('SELECT * from {task_adhoc} WHERE faildelay > ?', [$delay]);
+
+        foreach ($records as $record) {
+            $task = self::adhoc_task_from_record($record);
+            if ($task) {
+                $tasks[] = $task;
+            }
+        }
+        return $tasks;
+    }
+
+    /**
      * Ensure quality of service for the ad hoc task queue.
      *
      * This reshuffles the adhoc tasks queue to balance by type to ensure a
