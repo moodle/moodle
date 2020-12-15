@@ -182,7 +182,7 @@ function cron_run_adhoc_tasks(int $timenow, $keepalive = 0, $checklimits = true)
 
         try {
             $task = \core\task\manager::get_next_adhoc_task(time(), $checklimits);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($adhoclock) {
                 // Release the adhoc task runner lock.
                 $adhoclock->release();
@@ -260,7 +260,7 @@ function cron_run_inner_scheduled_task(\core\task\task_base $task) {
         }
         mtrace('Scheduled task complete: ' . $fullname);
         \core\task\manager::scheduled_task_complete($task);
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         if ($DB && $DB->is_transaction_started()) {
             error_log('Database transaction aborted automatically in ' . get_class($task));
             $DB->force_transaction_rollback();
@@ -348,7 +348,7 @@ function cron_run_inner_adhoc_task(\core\task\adhoc_task $task) {
         }
         mtrace("Adhoc task complete: " . get_class($task));
         \core\task\manager::adhoc_task_complete($task);
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         if ($DB && $DB->is_transaction_started()) {
             error_log('Database transaction aborted automatically in ' . get_class($task));
             $DB->force_transaction_rollback();
