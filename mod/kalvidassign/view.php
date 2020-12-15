@@ -84,11 +84,6 @@ $height = 0;
 $param = array('vidassignid' => $kalvidassign->id, 'userid' => $USER->id);
 $submission = $DB->get_record('kalvidassign_submission', $param);
 
-// If the entry_id field is not empty but the source field is empty, then the data for this activity has not yet been migrated.
-if (!empty($submission->entry_id) && empty($submission->source)) {
-    notice(get_string('activity_not_migrated', 'kalvidassign'), new moodle_url('/course/view.php', array('id' => $course->id)));
-}
-
 echo $renderer->display_video_container_markup($submission, $course->id, $cm->id);
 
 if (kalvidassign_assignemnt_submission_expired($kalvidassign)) {
