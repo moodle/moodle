@@ -72,7 +72,7 @@ if ($forumform->is_cancelled()) {
         }
     }
 
-    redirect($redirect);
+    redirect($redirect, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
 // Display page header.
