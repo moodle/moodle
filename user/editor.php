@@ -52,7 +52,7 @@ if ($editorform->is_cancelled()) {
     // Trigger event.
     \core\event\user_updated::create_from_userid($user->id)->trigger();
 
-    redirect($redirect);
+    redirect($redirect, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
 // Display page header.

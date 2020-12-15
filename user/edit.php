@@ -299,7 +299,7 @@ if ($userform->is_cancelled()) {
     }
 
     if (!$emailchanged || !$CFG->emailchangeconfirmation) {
-        redirect($returnurl);
+        redirect($returnurl, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
     }
 }
 
