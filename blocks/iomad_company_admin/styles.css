@@ -180,6 +180,14 @@ border-radius: 10px;
     overflow-x: unset;
 }
 
+#page-blocks-iomad_company_admin-editusers .main, #page-blocks-iomad_company_admin-editusers #region-main, #page-blocks-iomad_company_admin-editusers #region-main > div {
+    height: 100%;
+}
+
+#page-blocks-iomad_company_admin-editusers .no-overflow {
+    min-height: 50%;
+}
+
 #page-blocks-iomad_company_admin-editusers .moodle-actionmenu[data-enhanced].show .menu.align-tl-bl {
     left: 50px;
     min-width: 150px;
