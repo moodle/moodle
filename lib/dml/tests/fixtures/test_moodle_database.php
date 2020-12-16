@@ -249,7 +249,7 @@ abstract class test_moodle_database extends moodle_database {
     /**
      * Default implementation, throws Exception
      * @param string $table
-     * @param StdObject $dataobject
+     * @param object|array $dataobject
      * @param bool $returnid
      * @param bool $bulk
      * @return bool|int true or new id
