@@ -1,9 +1,10 @@
 <?php
+
 /**
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2019 Setasign - Jan Slabon (https://www.setasign.com)
+ * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
  */
 
@@ -13,8 +14,6 @@ namespace setasign\Fpdi;
  * Trait FpdfTplTrait
  *
  * This class adds a templating feature to tFPDF.
- *
- * @package setasign\Fpdi
  */
 trait FpdfTplTrait
 {
@@ -61,7 +60,8 @@ trait FpdfTplTrait
 
         $size = $this->_getpagesize($size);
 
-        if ($orientation != $this->CurOrientation
+        if (
+            $orientation != $this->CurOrientation
             || $size[0] != $this->CurPageSize[0]
             || $size[1] != $this->CurPageSize[1]
         ) {
@@ -109,7 +109,7 @@ trait FpdfTplTrait
             unset($x['tpl']);
             \extract($x, EXTR_IF_EXISTS);
             /** @noinspection NotOptimalIfConditionsInspection */
-            /** @noinspection CallableParameterUseCaseInTypeContextInspection */
+            /** @noinspection PhpConditionAlreadyCheckedInspection */
             if (\is_array($x)) {
                 $x = 0;
             }
@@ -266,7 +266,7 @@ trait FpdfTplTrait
      */
     public function endTemplate()
     {
-        if (null === $this->currentTemplateId) {
+        if ($this->currentTemplateId === null) {
             return false;
         }
 
@@ -418,7 +418,11 @@ trait FpdfTplTrait
             $this->templates[$key]['objectNumber'] = $this->n;
 
             $this->_put('<</Type /XObject /Subtype /Form /FormType 1');
-            $this->_put(\sprintf('/BBox[0 0 %.2F %.2F]', $template['width'] * $this->k, $template['height'] * $this->k));
+            $this->_put(\sprintf(
+                '/BBox[0 0 %.2F %.2F]',
+                $template['width'] * $this->k,
+                $template['height'] * $this->k
+            ));
             $this->_put('/Resources 2 0 R'); // default resources dictionary of FPDF
 
             if ($this->compress) {

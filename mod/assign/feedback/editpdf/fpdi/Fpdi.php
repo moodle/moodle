@@ -1,9 +1,10 @@
 <?php
+
 /**
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2019 Setasign - Jan Slabon (https://www.setasign.com)
+ * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
  */
 
@@ -18,8 +19,6 @@ use setasign\Fpdi\PdfParser\Type\PdfNull;
  * Class Fpdi
  *
  * This class let you import pages of existing PDF documents into a reusable structure for FPDF.
- *
- * @package setasign\Fpdi
  */
 class Fpdi extends FpdfTpl
 {
@@ -30,7 +29,7 @@ class Fpdi extends FpdfTpl
      *
      * @string
      */
-    const VERSION = '2.2.0';
+    const VERSION = '2.3.5';
 
     protected function _enddoc()
     {
@@ -113,7 +112,6 @@ class Fpdi extends FpdfTpl
             while (($objectNumber = \array_pop($this->objectsToCopy[$readerId])) !== null) {
                 try {
                     $object = $parser->getIndirectObject($objectNumber);
-
                 } catch (CrossReferenceException $e) {
                     if ($e->getCode() === CrossReferenceException::OBJECT_NOT_FOUND) {
                         $object = PdfIndirectObject::create($objectNumber, 0, new PdfNull());

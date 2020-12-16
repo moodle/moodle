@@ -1,9 +1,10 @@
 <?php
+
 /**
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2019 Setasign - Jan Slabon (https://www.setasign.com)
+ * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
  */
 
@@ -13,8 +14,6 @@ use setasign\Fpdi\PdfParser\StreamReader;
 
 /**
  * Class representing a PDF string object
- *
- * @package setasign\Fpdi\PdfParser\Type
  */
 class PdfString extends PdfType
 {
@@ -47,7 +46,7 @@ class PdfString extends PdfType
         $result = \substr($buffer, $startPos, $openBrackets + $pos - $startPos - 1);
         $streamReader->setOffset($pos);
 
-        $v = new self;
+        $v = new self();
         $v->value = $result;
 
         return $v;
@@ -61,7 +60,7 @@ class PdfString extends PdfType
      */
     public static function create($value)
     {
-        $v = new self;
+        $v = new self();
         $v->value = $value;
 
         return $v;
@@ -138,22 +137,23 @@ class PdfString extends PdfType
                         $actualChar = \ord($s[$count]);
                         // ascii 48 = number 0
                         // ascii 57 = number 9
-                        if ($actualChar >= 48 &&
-                            $actualChar <= 57) {
+                        if ($actualChar >= 48 && $actualChar <= 57) {
                             $oct = '' . $s[$count];
 
                             /** @noinspection NotOptimalIfConditionsInspection */
-                            if ($count + 1 < $n &&
-                                \ord($s[$count + 1]) >= 48 &&
-                                \ord($s[$count + 1]) <= 57
+                            if (
+                                $count + 1 < $n
+                                && \ord($s[$count + 1]) >= 48
+                                && \ord($s[$count + 1]) <= 57
                             ) {
                                 $count++;
                                 $oct .= $s[$count];
 
                                 /** @noinspection NotOptimalIfConditionsInspection */
-                                if ($count + 1 < $n &&
-                                    \ord($s[$count + 1]) >= 48 &&
-                                    \ord($s[$count + 1]) <= 57
+                                if (
+                                    $count + 1 < $n
+                                    && \ord($s[$count + 1]) >= 48
+                                    && \ord($s[$count + 1]) <= 57
                                 ) {
                                     $oct .= $s[++$count];
                                 }

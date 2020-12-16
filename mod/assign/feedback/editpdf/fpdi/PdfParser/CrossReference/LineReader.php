@@ -1,9 +1,10 @@
 <?php
+
 /**
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2019 Setasign - Jan Slabon (https://www.setasign.com)
+ * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
  */
 
@@ -17,8 +18,6 @@ use setasign\Fpdi\PdfParser\StreamReader;
  *
  * This reader class read all cross-reference entries in a single run.
  * It supports reading cross-references with e.g. invalid data (e.g. entries with a length < or > 20 bytes).
- *
- * @package setasign\Fpdi\PdfParser\CrossReference
  */
 class LineReader extends AbstractReader implements ReaderInterface
 {
@@ -72,18 +71,16 @@ class LineReader extends AbstractReader implements ReaderInterface
      */
     protected function extract(StreamReader $reader)
     {
-        $cycles = -1;
         $bytesPerCycle = 100;
-
         $reader->reset(null, $bytesPerCycle);
 
-        while (
-            ($trailerPos = \strpos($reader->getBuffer(false), 'trailer', \max($bytesPerCycle * $cycles++, 0))) === false
-        ) {
-            if ($reader->increaseLength($bytesPerCycle) === false) {
-                break;
-            }
-        }
+        $cycles = 0;
+        do {
+            // 6 = length of "trailer" - 1
+            $pos = \max(($bytesPerCycle * $cycles) - 6, 0);
+            $trailerPos = \strpos($reader->getBuffer(false), 'trailer', $pos);
+            $cycles++;
+        } while ($trailerPos === false && $reader->increaseLength($bytesPerCycle) !== false);
 
         if ($trailerPos === false) {
             throw new CrossReferenceException(
@@ -127,44 +124,41 @@ class LineReader extends AbstractReader implements ReaderInterface
         }
 
         unset($differentLineEndings, $m);
-        $linesCount = \count($lines);
-        $start = null;
-        $entryCount = 0;
+        if (!\is_array($lines)) {
+            $this->offsets = [];
+            return;
+        }
 
+        $start = 0;
         $offsets = [];
 
-        /** @noinspection ForeachInvariantsInspection */
-        for ($i = 0; $i < $linesCount; $i++) {
-            $line = \trim($lines[$i]);
-            if ($line) {
-                $pieces = \explode(' ', $line);
+        // trim all lines and remove empty lines
+        $lines = \array_filter(\array_map('\trim', $lines));
+        foreach ($lines as $line) {
+            $pieces = \explode(' ', $line);
 
-                $c = \count($pieces);
-                switch ($c) {
-                    case 2:
-                        $start = (int) $pieces[0];
-                        $entryCount += (int) $pieces[1];
-                        break;
+            switch (\count($pieces)) {
+                case 2:
+                    $start = (int) $pieces[0];
+                    break;
 
-                    /** @noinspection PhpMissingBreakStatementInspection */
-                    case 3:
-                        switch ($pieces[2]) {
-                            case 'n':
-                                $offsets[$start] = [(int) $pieces[0], (int) $pieces[1]];
-                                $start++;
-                                break 2;
-                            case 'f':
-                                $start++;
-                                break 2;
-                        }
-                        // fall through if pieces doesn't match
+                case 3:
+                    switch ($pieces[2]) {
+                        case 'n':
+                            $offsets[$start] = [(int) $pieces[0], (int) $pieces[1]];
+                            $start++;
+                            break 2;
+                        case 'f':
+                            $start++;
+                            break 2;
+                    }
+                    // fall through if pieces doesn't match
 
-                    default:
-                        throw new CrossReferenceException(
-                            \sprintf('Unexpected data in xref table (%s)', \implode(' ', $pieces)),
-                            CrossReferenceException::INVALID_DATA
-                        );
-                }
+                default:
+                    throw new CrossReferenceException(
+                        \sprintf('Unexpected data in xref table (%s)', \implode(' ', $pieces)),
+                        CrossReferenceException::INVALID_DATA
+                    );
             }
         }
 
