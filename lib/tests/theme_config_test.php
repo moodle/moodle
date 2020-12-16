@@ -213,4 +213,16 @@ class core_theme_config_testcase extends advanced_testcase {
 
         $this->assertEquals($cssexpected, $cssactual);
     }
+
+    /**
+     * Test that {@see theme_config::get_all_block_regions()} returns localised list of region names.
+     */
+    public function test_get_all_block_regions() {
+        $this->resetAfterTest();
+
+        $theme = theme_config::load(theme_config::DEFAULT_THEME);
+        $regions = $theme->get_all_block_regions();
+
+        $this->assertEquals('Right', $regions['side-pre']);
+    }
 }
