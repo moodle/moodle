@@ -40,20 +40,29 @@ if (!$downloadable) {
     print_error('cannotdownloaddir', 'repository');
 }
 
+$fs = get_file_storage();
+$files = $fs->get_area_files($context->id, 'mod_folder', 'content');
+if (empty($files)) {
+    print_error('cannotdownloaddir', 'repository');
+}
+
+// Log zip as downloaded.
 folder_downloaded($folder, $course, $cm, $context);
 
-$fs = get_file_storage();
-$file = $fs->get_file($context->id, 'mod_folder', 'content', 0, '/', '.');
-if (!$file) {
-    print_error('cannotdownloaddir', 'repository');
-}
+// Close the session.
+\core\session\manager::write_close();
 
-$zipper   = get_file_packer('application/zip');
 $filename = shorten_filename(clean_filename($folder->name . "-" . date("Ymd")) . ".zip");
-$temppath = make_request_directory() . $filename;
+$zipwriter = \core_files\archive_writer::get_stream_writer($filename, \core_files\archive_writer::ZIP_WRITER);
 
-if ($zipper->archive_to_pathname(array('/' => $file), $temppath)) {
-    send_temp_file($temppath, $filename);
-} else {
-    print_error('cannotdownloaddir', 'repository');
+foreach ($files as $file) {
+    if ($file->is_directory()) {
+        continue;
+    }
+    $pathinzip = $file->get_filepath() . $file->get_filename();
+    $zipwriter->add_file_from_stored_file($pathinzip, $file);
 }
+
+// Finish the archive.
+$zipwriter->finish();
+exit();
