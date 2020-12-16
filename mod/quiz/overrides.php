@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot.'/mod/quiz/lib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
@@ -33,14 +32,17 @@ $cmid = required_param('cmid', PARAM_INT);
 $mode = optional_param('mode', '', PARAM_ALPHA); // One of 'user' or 'group', default is 'group'.
 
 list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'quiz');
-$quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
+$quiz = $DB->get_record('quiz', ['id' => $cm->instance], '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);
 
 // Check the user has the required capabilities to list overrides.
-require_capability('mod/quiz:manageoverrides', $context);
+$canedit = has_capability('mod/quiz:manageoverrides', $context);
+if (!$canedit) {
+    require_capability('mod/quiz:viewoverrides', $context);
+}
 
 $quizgroupmode = groups_get_activity_groupmode($cm);
 $accessallgroups = ($quizgroupmode == NOGROUPS) || has_capability('moodle/site:accessallgroups', $context);
@@ -58,16 +60,14 @@ if ($mode != "user" and $mode != "group") {
 }
 $groupmode = ($mode == "group");
 
-$url = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$cm->id, 'mode'=>$mode));
+$url = new moodle_url('/mod/quiz/overrides.php', ['cmid' => $cm->id, 'mode' => $mode]);
 
+$title = get_string('overridesforquiz', 'quiz',
+        format_string($quiz->name, true, ['context' => $context]));
 $PAGE->set_url($url);
-
-// Display a list of overrides.
 $PAGE->set_pagelayout('admin');
-$PAGE->set_title(get_string('overrides', 'quiz'));
+$PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($quiz->name, true, array('context' => $context)));
 
 // Delete orphaned group overrides.
 $sql = 'SELECT o.id
@@ -76,7 +76,7 @@ $sql = 'SELECT o.id
          WHERE o.groupid IS NOT NULL
                AND g.id IS NULL
                AND o.quiz = ?';
-$params = array($quiz->id);
+$params = [$quiz->id];
 $orphaned = $DB->get_records_sql($sql, $params);
 if (!empty($orphaned)) {
     $DB->delete_records_list('quiz_overrides', 'id', array_keys($orphaned));
@@ -131,16 +131,18 @@ if ($groupmode) {
 
 // Initialise table.
 $table = new html_table();
-$table->headspan = array(1, 2, 1);
-$table->colclasses = array('colname', 'colsetting', 'colvalue', 'colaction');
-$table->head = array(
-        $colname,
-        get_string('overrides', 'quiz'),
-        get_string('action'),
-);
+$table->headspan = [1, 2, 1];
+$table->colclasses = ['colname', 'colsetting', 'colvalue', 'colaction'];
+$table->head = [
+    $colname,
+    get_string('overrides', 'quiz'),
+];
+if ($canedit) {
+    $table->head[] = get_string('action');
+}
 
-$userurl = new moodle_url('/user/view.php', array());
-$groupurl = new moodle_url('/group/overview.php', array('id' => $cm->course));
+$userurl = new moodle_url('/user/view.php', []);
+$groupurl = new moodle_url('/group/overview.php', ['id' => $cm->course]);
 
 $overridedeleteurl = new moodle_url('/mod/quiz/overridedelete.php');
 $overrideediturl = new moodle_url('/mod/quiz/overrideedit.php');
@@ -149,11 +151,8 @@ $hasinactive = false; // Whether there are any inactive overrides.
 
 foreach ($overrides as $override) {
 
-    $fields = array();
-    $values = array();
+    // Check if this override is active.
     $active = true;
-
-    // Check for inactive overrides.
     if (!$groupmode) {
         if (!has_capability('mod/quiz:attempt', $context, $override->userid)) {
             // User not allowed to take the quiz.
@@ -163,6 +162,13 @@ foreach ($overrides as $override) {
             $active = false;
         }
     }
+    if (!$active) {
+        $hasinactive = true;
+    }
+
+    // Prepare the information about which settings are overridden.
+    $fields = [];
+    $values = [];
 
     // Format timeopen.
     if (isset($override->timeopen)) {
@@ -170,28 +176,24 @@ foreach ($overrides as $override) {
         $values[] = $override->timeopen > 0 ?
                 userdate($override->timeopen) : get_string('noopen', 'quiz');
     }
-
     // Format timeclose.
     if (isset($override->timeclose)) {
         $fields[] = get_string('quizcloses', 'quiz');
         $values[] = $override->timeclose > 0 ?
                 userdate($override->timeclose) : get_string('noclose', 'quiz');
     }
-
     // Format timelimit.
     if (isset($override->timelimit)) {
         $fields[] = get_string('timelimit', 'quiz');
         $values[] = $override->timelimit > 0 ?
                 format_time($override->timelimit) : get_string('none', 'quiz');
     }
-
     // Format number of attempts.
     if (isset($override->attempts)) {
         $fields[] = get_string('attempts', 'quiz');
         $values[] = $override->attempts > 0 ?
                 $override->attempts : get_string('unlimited');
     }
-
     // Format password.
     if (isset($override->password)) {
         $fields[] = get_string('requirepassword', 'quiz');
@@ -199,110 +201,130 @@ foreach ($overrides as $override) {
                 get_string('enabled', 'quiz') : get_string('none', 'quiz');
     }
 
-    // Icons.
-    $iconstr = '';
-
-    // Edit.
-    $editurlstr = $overrideediturl->out(true, array('id' => $override->id));
-    $iconstr = '<a title="' . get_string('edit') . '" href="'. $editurlstr . '">' .
-            $OUTPUT->pix_icon('t/edit', get_string('edit')) . '</a> ';
-    // Duplicate.
-    $copyurlstr = $overrideediturl->out(true,
-            array('id' => $override->id, 'action' => 'duplicate'));
-    $iconstr .= '<a title="' . get_string('copy') . '" href="' . $copyurlstr . '">' .
-            $OUTPUT->pix_icon('t/copy', get_string('copy')) . '</a> ';
-    // Delete.
-    $deleteurlstr = $overridedeleteurl->out(true,
-            array('id' => $override->id, 'sesskey' => sesskey()));
-    $iconstr .= '<a title="' . get_string('delete') . '" href="' . $deleteurlstr . '">' .
-                $OUTPUT->pix_icon('t/delete', get_string('delete')) . '</a> ';
-
+    // Prepare the information about who this override applies to.
     if ($groupmode) {
         $usergroupstr = '<a href="' . $groupurl->out(true,
-                array('group' => $override->groupid)) . '" >' . $override->name . '</a>';
+                        ['group' => $override->groupid]) . '" >' . $override->name . '</a>';
     } else {
         $usergroupstr = '<a href="' . $userurl->out(true,
-                array('id' => $override->userid)) . '" >' . fullname($override) . '</a>';
+                        ['id' => $override->userid]) . '" >' . fullname($override) . '</a>';
     }
-
-    $class = '';
     if (!$active) {
-        $class = "dimmed_text";
         $usergroupstr .= '*';
-        $hasinactive = true;
     }
-
     $usergroupcell = new html_table_cell();
     $usergroupcell->rowspan = count($fields);
     $usergroupcell->text = $usergroupstr;
-    $actioncell = new html_table_cell();
-    $actioncell->rowspan = count($fields);
-    $actioncell->text = $iconstr;
 
+    // Prepare the actions.
+    if ($canedit) {
+        // Icons.
+        $iconstr = '';
+
+        // Edit.
+        $editurlstr = $overrideediturl->out(true, ['id' => $override->id]);
+        $iconstr = '<a title="' . get_string('edit') . '" href="' . $editurlstr . '">' .
+                $OUTPUT->pix_icon('t/edit', get_string('edit')) . '</a> ';
+        // Duplicate.
+        $copyurlstr = $overrideediturl->out(true,
+                ['id' => $override->id, 'action' => 'duplicate']);
+        $iconstr .= '<a title="' . get_string('copy') . '" href="' . $copyurlstr . '">' .
+                $OUTPUT->pix_icon('t/copy', get_string('copy')) . '</a> ';
+        // Delete.
+        $deleteurlstr = $overridedeleteurl->out(true,
+                ['id' => $override->id, 'sesskey' => sesskey()]);
+        $iconstr .= '<a title="' . get_string('delete') . '" href="' . $deleteurlstr . '">' .
+                $OUTPUT->pix_icon('t/delete', get_string('delete')) . '</a> ';
+
+        $actioncell = new html_table_cell();
+        $actioncell->rowspan = count($fields);
+        $actioncell->text = $iconstr;
+    }
+
+    // Add the data to the table.
     for ($i = 0; $i < count($fields); ++$i) {
         $row = new html_table_row();
-        $row->attributes['class'] = $class;
+        if (!$active) {
+            $row->attributes['class'] = 'dimmed_text';
+        }
+
         if ($i == 0) {
             $row->cells[] = $usergroupcell;
         }
-        $cell1 = new html_table_cell();
-        $cell1->text = $fields[$i];
-        $row->cells[] = $cell1;
-        $cell2 = new html_table_cell();
-        $cell2->text = $values[$i];
-        $row->cells[] = $cell2;
-        if ($i == 0) {
+
+        $labelcell = new html_table_cell();
+        $labelcell->text = $fields[$i];
+        $row->cells[] = $labelcell;
+        $valuecell = new html_table_cell();
+        $valuecell->text = $values[$i];
+        $row->cells[] = $valuecell;
+
+        if ($canedit && $i == 0) {
             $row->cells[] = $actioncell;
         }
+
         $table->data[] = $row;
     }
 }
 
+// Display a list of overrides.
+echo $OUTPUT->header();
+echo $OUTPUT->heading($title);
+
 // Output the table and button.
-echo html_writer::start_tag('div', array('id' => 'quizoverrides'));
+echo html_writer::start_tag('div', ['id' => 'quizoverrides']);
 if (count($table->data)) {
     echo html_writer::table($table);
+} else {
+    if ($groupmode) {
+        echo $OUTPUT->notification(get_string('overridesnoneforgroups', 'quiz'), 'info', false);
+    } else {
+        echo $OUTPUT->notification(get_string('overridesnoneforusers', 'quiz'), 'info', false);
+    }
 }
 if ($hasinactive) {
-    echo $OUTPUT->notification(get_string('inactiveoverridehelp', 'quiz'), 'dimmed_text');
+    echo $OUTPUT->notification(get_string('inactiveoverridehelp', 'quiz'), 'info', false);
 }
 
-echo html_writer::start_tag('div', array('class' => 'buttons'));
-$options = array();
-if ($groupmode) {
-    if (empty($groups)) {
-        // There are no groups.
-        echo $OUTPUT->notification(get_string('groupsnone', 'quiz'), 'error');
-        $options['disabled'] = true;
-    }
-    echo $OUTPUT->single_button($overrideediturl->out(true,
-            array('action' => 'addgroup', 'cmid' => $cm->id)),
-            get_string('addnewgroupoverride', 'quiz'), 'post', $options);
-} else {
-    $users = array();
-    // See if there are any students in the quiz.
-    if ($accessallgroups) {
-        $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id');
-        $nousermessage = get_string('usersnone', 'quiz');
-    } else if ($groups) {
-        $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id', '', '', '', array_keys($groups));
-        $nousermessage = get_string('usersnone', 'quiz');
+if ($canedit) {
+    echo html_writer::start_tag('div', ['class' => 'buttons']);
+    $options = [];
+    if ($groupmode) {
+        if (empty($groups)) {
+            // There are no groups.
+            echo $OUTPUT->notification(get_string('groupsnone', 'quiz'), 'error');
+            $options['disabled'] = true;
+        }
+        echo $OUTPUT->single_button($overrideediturl->out(true,
+                ['action' => 'addgroup', 'cmid' => $cm->id]),
+                get_string('addnewgroupoverride', 'quiz'), 'post', $options);
     } else {
-        $nousermessage = get_string('groupsnone', 'quiz');
-    }
-    $info = new \core_availability\info_module($cm);
-    $users = $info->filter_user_list($users);
+        $users = [];
+        // See if there are any students in the quiz.
+        if ($accessallgroups) {
+            $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id');
+            $nousermessage = get_string('usersnone', 'quiz');
+        } else if ($groups) {
+            $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id', '', '', '', array_keys($groups));
+            $nousermessage = get_string('usersnone', 'quiz');
+        } else {
+            $nousermessage = get_string('groupsnone', 'quiz');
+        }
+        $info = new \core_availability\info_module($cm);
+        $users = $info->filter_user_list($users);
 
-    if (empty($users)) {
-        // There are no students.
-        echo $OUTPUT->notification($nousermessage, 'error');
-        $options['disabled'] = true;
+        if (empty($users)) {
+            // There are no students.
+            echo $OUTPUT->notification($nousermessage, 'error');
+            $options['disabled'] = true;
+        }
+        echo $OUTPUT->single_button($overrideediturl->out(true,
+                ['action' => 'adduser', 'cmid' => $cm->id]),
+                get_string('addnewuseroverride', 'quiz'), 'get', $options);
     }
-    echo $OUTPUT->single_button($overrideediturl->out(true,
-            array('action' => 'adduser', 'cmid' => $cm->id)),
-            get_string('addnewuseroverride', 'quiz'), 'get', $options);
+    echo html_writer::end_tag('div');
 }
-echo html_writer::end_tag('div');
+
 echo html_writer::end_tag('div');
 
 // Finish the page.
