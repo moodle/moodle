@@ -927,7 +927,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      *
      * @param object $quiz the quiz settings.
      * @param object $cm the course_module object.
-     * @param object $context the quiz context.
+     * @param context $context the quiz context.
      * @param array $messages any access messages that should be described.
      * @return string HTML to output.
      */
@@ -953,6 +953,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
                         array('class' => 'quizattemptcounts'));
             }
         }
+
+        if (has_any_capability(['mod/quiz:manageoverrides', 'mod/quiz:viewoverrides'], $context)) {
+            if ($overrideinfo = $this->quiz_override_summary_links($quiz, $cm)) {
+                $output .= html_writer::tag('div', $overrideinfo, ['class' => 'quizattemptcounts']);
+            }
+        }
+
         return $output;
     }
 
@@ -1216,15 +1223,14 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * Returns the same as {@link quiz_num_attempt_summary()} but wrapped in a link
      * to the quiz reports.
      *
-     * @param object $quiz the quiz object. Only $quiz->id is used at the moment.
-     * @param object $cm the cm object. Only $cm->course, $cm->groupmode and $cm->groupingid
+     * @param stdClass $quiz the quiz object. Only $quiz->id is used at the moment.
+     * @param stdClass $cm the cm object. Only $cm->course, $cm->groupmode and $cm->groupingid
      * fields are used at the moment.
-     * @param object $context the quiz context.
+     * @param context $context the quiz context.
      * @param bool $returnzero if false (default), when no attempts have been made '' is returned
-     * instead of 'Attempts: 0'.
+     *      instead of 'Attempts: 0'.
      * @param int $currentgroup if there is a concept of current group where this method is being
-     * called
-     *         (e.g. a report) pass it in here. Default 0 which means no current group.
+     *      called (e.g. a report) pass it in here. Default 0 which means no current group.
      * @return string HTML fragment for the link.
      */
     public function quiz_attempt_summary_link_to_reports($quiz, $cm, $context,
@@ -1239,6 +1245,49 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $url = new moodle_url('/mod/quiz/report.php', array(
                 'id' => $cm->id, 'mode' => quiz_report_default_report($context)));
         return html_writer::link($url, $summary);
+    }
+
+    /**
+     * Render a summary of the number of group and user overrides, with corresponding links.
+     *
+     * @param stdClass $quiz the quiz settings.
+     * @param stdClass|cm_info $cm the cm object.
+     * @param int $currentgroup currently selected group, if there is one.
+     * @return string HTML fragment for the link.
+     */
+    public function quiz_override_summary_links(stdClass $quiz, stdClass $cm, $currentgroup = 0): string {
+
+        $baseurl = new moodle_url('/mod/quiz/overrides.php', ['cmid' => $cm->id]);
+        $counts = quiz_override_summary($quiz, $cm, $currentgroup);
+
+        $links = [];
+        if ($counts['group']) {
+            $links[] = html_writer::link(new moodle_url($baseurl, ['mode' => 'group']),
+                    get_string('overridessummarygroup', 'quiz', $counts['group']));
+        }
+        if ($counts['user']) {
+            $links[] = html_writer::link(new moodle_url($baseurl, ['mode' => 'user']),
+                    get_string('overridessummaryuser', 'quiz', $counts['user']));
+        }
+
+        if (!$links) {
+            return '';
+        }
+
+        $links = implode(', ', $links);
+        switch ($counts['mode']) {
+            case 'onegroup':
+                return get_string('overridessummarythisgroup', 'quiz', $links);
+
+            case 'somegroups':
+                return get_string('overridessummaryyourgroups', 'quiz', $links);
+
+            case 'allgroups':
+                return get_string('overridessummary', 'quiz', $links);
+
+            default:
+                throw new coding_exception('Unexpected mode ' . $counts['mode']);
+        }
     }
 
     /**
