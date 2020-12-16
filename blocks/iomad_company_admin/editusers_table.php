@@ -136,7 +136,7 @@ class block_iomad_company_admin_editusers_table extends table_sql {
 
         if ((iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
              or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
-             and $row->id == $USER->id and !is_mnet_remote_user($row)) {
+             or $row->id == $USER->id and !is_mnet_remote_user($row)) {
             if ($row->id != $USER->id && $DB->get_record_select('company_users', 'companyid =:company AND managertype != 0 AND userid = :userid', array('company' => $row->companyid, 'userid' => $row->id))
                 && !iomad::has_capability('block/iomad_company_admin:editmanagers', $systemcontext)) {
                // This manager can't edit manager users.
