@@ -665,7 +665,12 @@ class observer {
         $finalgrade = $event->other['finalgrade'];
 
         // If this isn't a course, we don't care.
-        if (!$graderec = $DB->get_record('grade_items', array('id' => $itemid, 'itemtype' => 'course'))) {
+        if (!$DB->get_record('grade_items', array('id' => $itemid, 'itemtype' => 'course'))) {
+            return true;
+        }
+
+        // If this isn't a grade, we don't care.
+        if (!$graderec = $DB->get_record('grade_grades', array('itemid' => $itemid, 'userid' => $userid))) {
             return true;
         }
 
