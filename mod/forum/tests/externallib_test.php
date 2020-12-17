@@ -685,6 +685,72 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get forum posts (qanda forum)
+     */
+    public function test_mod_forum_get_discussion_posts_qanda() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        $record = new stdClass();
+        $user1 = self::getDataGenerator()->create_user($record);
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Set the first created user to the test user.
+        self::setUser($user1);
+
+        // Create course to add the module.
+        $course1 = self::getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+
+        // Forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->type = 'qanda';
+        $forum1 = self::getDataGenerator()->create_module('forum', $record);
+        $forum1context = context_module::instance($forum1->cmid);
+
+        // Add discussions to the forums.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user2->id;
+        $record->forum = $forum1->id;
+        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Add 1 reply (not the actual user).
+        $record = new stdClass();
+        $record->discussion = $discussion1->id;
+        $record->parent = $discussion1->firstpost;
+        $record->userid = $user2->id;
+        $discussion1reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        // We still see only the original post.
+        $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'DESC');
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $this->assertEquals(1, count($posts['posts']));
+
+        // Add a new reply, the user is going to be able to see only the original post and their new post.
+        $record = new stdClass();
+        $record->discussion = $discussion1->id;
+        $record->parent = $discussion1->firstpost;
+        $record->userid = $user1->id;
+        $discussion1reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'DESC');
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $this->assertEquals(2, count($posts['posts']));
+
+        // Now, we can fake the time of the user post, so he can se the rest of the discussion posts.
+        $discussion1reply2->created -= $CFG->maxeditingtime * 2;
+        $DB->update_record('forum_posts', $discussion1reply2);
+
+        $posts = mod_forum_external::get_discussion_posts($discussion1->id, 'modified', 'DESC');
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $this->assertEquals(3, count($posts['posts']));
+    }
+
+    /**
      * Test get forum discussions paginated
      */
     public function test_mod_forum_get_forum_discussions_paginated() {

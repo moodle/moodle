@@ -32,10 +32,9 @@ use mod_forum\local\entities\post as post_entity;
 use mod_forum\local\factories\legacy_data_mapper as legacy_data_mapper_factory;
 use mod_forum\local\factories\exporter as exporter_factory;
 use mod_forum\local\factories\vault as vault_factory;
-use context;
+use mod_forum\local\factories\manager as manager_factory;
 use core_tag_tag;
 use moodle_exception;
-use rating_manager;
 use renderer_base;
 use stdClass;
 
@@ -72,6 +71,9 @@ class exported_posts {
     /** @var rating_manager $ratingmanager Rating manager */
     private $ratingmanager;
 
+    /** @var manager_factory $managerfactory Manager factory */
+    private $managerfactory;
+
     /**
      * Constructor.
      *
@@ -79,20 +81,21 @@ class exported_posts {
      * @param legacy_data_mapper_factory $legacydatamapperfactory Legacy data mapper factory
      * @param exporter_factory $exporterfactory Exporter factory
      * @param vault_factory $vaultfactory Vault factory
-     * @param rating_manager $ratingmanager Rating manager
+     * @param manager_factory $managerfactory Manager factory
      */
     public function __construct(
         renderer_base $renderer,
         legacy_data_mapper_factory $legacydatamapperfactory,
         exporter_factory $exporterfactory,
         vault_factory $vaultfactory,
-        rating_manager $ratingmanager
+        manager_factory $managerfactory
     ) {
         $this->renderer = $renderer;
         $this->legacydatamapperfactory = $legacydatamapperfactory;
         $this->exporterfactory = $exporterfactory;
         $this->vaultfactory = $vaultfactory;
-        $this->ratingmanager = $ratingmanager;
+        $this->managerfactory = $managerfactory;
+        $this->ratingmanager = $managerfactory->get_rating_manager();
     }
 
     /**
@@ -153,6 +156,12 @@ class exported_posts {
                 'discussion' => $discussion,
                 'posts' => $groupedposts
             ] = $grouping;
+
+            // Exclude posts the user cannot see, such as certain posts in Q and A forums.
+            $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+            $groupedposts = array_filter($groupedposts, function($post) use ($capabilitymanager, $user, $discussion) {
+                return $capabilitymanager->can_view_post($user, $discussion, $post);
+            });
 
             $forumid = $forum->get_id();
             $courseid = $forum->get_course_record()->id;
