@@ -145,7 +145,7 @@ function email_reports_cron() {
             }
         }
         mtrace("Sending completion warning email to $user->email");
-        EmailTemplate::send('completion_warn_user', array('course' => $course, 'user' => $user, 'company' => $company));
+        EmailTemplate::send('completion_warn_user', array('course' => $course, 'user' => $user, 'company' => $companyobj));
 
         // Send the supervisor email too.
         mtrace("Sending completion warning email to $user->email supervisor");
@@ -307,7 +307,7 @@ function email_reports_cron() {
                         $course->reporttext = $summary;
                         $course->id = 0;
                         mtrace("Sending completion warning summary report to $user->email");
-                        EmailTemplate::send('completion_warn_manager', array('user' => $user, 'course' => $course, 'company' => $companyrec));
+                        EmailTemplate::send('completion_warn_manager', array('user' => $user, 'course' => $course, 'company' => $companyobj));
                     }
                 }
             }
@@ -389,7 +389,7 @@ function email_reports_cron() {
 
                         // Passed all checks, send the email.
                         mtrace("Sending not started warning email to $userrec->email");
-                        EmailTemplate::send('course_not_started_warning', array('user' => $userrec, 'course' => $courserec, 'company' => $companyrec));
+                        EmailTemplate::send('course_not_started_warning', array('user' => $userrec, 'course' => $courserec, 'company' => new company($companyrec->id)));
 
                         // Send the supervisor email too.
                         mtrace("Sending not started warning email to $userrec->email supervisor");
@@ -539,7 +539,7 @@ function email_reports_cron() {
             }
         }
         mtrace("Sending expiry warning email to $user->email");
-        EmailTemplate::send('expiry_warn_user', array('course' => $course, 'user' => $user, 'company' => $company));
+        EmailTemplate::send('expiry_warn_user', array('course' => $course, 'user' => $user, 'company' => $companyobj));
         // Send the supervisor email too.
         mtrace("Sending supervisor warning email for $user->email");
         company::send_supervisor_expiry_warning_email($user, $course);
@@ -693,7 +693,7 @@ function email_reports_cron() {
                         $course->reporttext = $summary;
                         $course->id = 0;
                         mtrace("Sending expiry summary report to $user->email");
-                        EmailTemplate::send('expiry_warn_manager', array('user' => $user, 'course' => $course, 'company' => $companyrec));
+                        EmailTemplate::send('expiry_warn_manager', array('user' => $user, 'course' => $course, 'company' => $companyobj));
                     }
                 }
             }
@@ -846,7 +846,7 @@ function email_reports_cron() {
                         $course->reporttext = $summary;
                         $course->id = 0;
                         mtrace("Sending completion summary report to $user->email");
-                        EmailTemplate::send('completion_digest_manager', array('user' => $user, 'course' => $course, 'company' => $company));
+                        EmailTemplate::send('completion_digest_manager', array('user' => $user, 'course' => $course, 'company' => $companyobj));
                     }
                 }
             }
