@@ -605,6 +605,86 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get forum posts
+     */
+    public function test_mod_forum_get_discussion_posts_deleted() {
+        global $CFG, $PAGE;
+
+        $this->resetAfterTest(true);
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_forum');
+
+        // Create a course and enrol some users in it.
+        $course1 = self::getDataGenerator()->create_course();
+
+        // Create users.
+        $user1 = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $user2 = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+
+        // Set the first created user to the test user.
+        self::setUser($user1);
+
+        // Create test data.
+        $forum1 = self::getDataGenerator()->create_module('forum', (object) [
+            'course' => $course1->id,
+        ]);
+        $forum1context = context_module::instance($forum1->cmid);
+
+        // Add discussions to the forum.
+        $discussion = $generator->create_discussion((object) [
+            'course' => $course1->id,
+            'userid' => $user1->id,
+            'forum' => $forum1->id,
+        ]);
+
+        $discussion2 = $generator->create_discussion((object) [
+            'course' => $course1->id,
+            'userid' => $user2->id,
+            'forum' => $forum1->id,
+        ]);
+
+        // Add replies to the discussion.
+        $discussionreply1 = $generator->create_post((object) [
+            'discussion' => $discussion->id,
+            'parent' => $discussion->firstpost,
+            'userid' => $user2->id,
+        ]);
+        $discussionreply2 = $generator->create_post((object) [
+            'discussion' => $discussion->id,
+            'parent' => $discussionreply1->id,
+            'userid' => $user2->id,
+            'subject' => '',
+            'message' => '',
+            'messageformat' => FORMAT_PLAIN,
+            'deleted' => 1,
+        ]);
+        $discussionreply3 = $generator->create_post((object) [
+            'discussion' => $discussion->id,
+            'parent' => $discussion->firstpost,
+            'userid' => $user2->id,
+        ]);
+
+        // Test where some posts have been marked as deleted.
+        $posts = mod_forum_external::get_discussion_posts($discussion->id, 'modified', 'DESC');
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_discussion_posts_returns(), $posts);
+        $deletedsubject = get_string('forumsubjectdeleted', 'mod_forum');
+        $deletedmessage = get_string('forumbodydeleted', 'mod_forum');
+
+        foreach ($posts['posts'] as $post) {
+            if ($post['id'] == $discussionreply2->id) {
+                $this->assertTrue($post['isdeleted']);
+                $this->assertEquals($deletedsubject, $post['subject']);
+                $this->assertEquals($deletedmessage, $post['message']);
+            } else {
+                $this->assertFalse($post['isdeleted']);
+                $this->assertNotEquals($deletedsubject, $post['subject']);
+                $this->assertNotEquals($deletedmessage, $post['message']);
+            }
+        }
+    }
+
+    /**
      * Test get forum discussions paginated
      */
     public function test_mod_forum_get_forum_discussions_paginated() {
