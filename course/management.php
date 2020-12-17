@@ -455,7 +455,7 @@ if ($viewmode === 'default' || $viewmode === 'combined') {
     }
 }
 if ($viewmode === 'default' || $viewmode === 'combined') {
-    $class .= ' viewmode-cobmined';
+    $class .= ' viewmode-combined';
 } else {
     $class .= ' viewmode-'.$viewmode;
 }
