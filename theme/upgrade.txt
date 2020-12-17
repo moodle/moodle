@@ -1,6 +1,9 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.11 ===
+* The classname 'viewmode-cobmined' in course/management.php has been changed to 'viewmode-combined'
+
 === 3.10 ===
 * The Bootstrap legacy css utilities from Bootstrap 2 and 4alpha have been removed.
 The syntax for the new Bootstrap 4.5 utility classes is {property}{sides}-{breakpoint}-{size} for sm, md, lg, and xl.
