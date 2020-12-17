@@ -2,12 +2,15 @@ This files describes API changes in analytics sub system,
 information provided here is intended especially for developers.
 
 === 3.11 ===
+
 * Final deprecation get_enabled_time_splitting_methods. Method has been removed. Use
   get_time_splitting_methods_for_evaluation instead.
 * Final deprecation add_builtin_models. Method has been removed. The functionality
   has been replaced with automatic update of models provided by the core moodle component.
   There is no need to call this method explicitly any more. Instead, adding new models can be achieved
   by updating the lib/db/analytics.php file and bumping the core version.
+* Final deprecation - get_analysables(). Please see get_analysables_interator() instead.
+  get_analysables_iterator() needs to be overridden by the child class.
 
 === 3.8 ===
 
