@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 3.11 ===
 
+* The get_forum_discussions_paginated web service has been deprecated in favour of get_forum_discussions.
 * The forum post exporter now includes a "timemodified" field for each post, which is included in several WS methods:
     * mod_forum_get_discussion_posts
     * get_discussion_posts_by_userid
@@ -35,7 +36,6 @@ information provided here is intended especially for developers.
   * External function get_forums_by_courses now returns two additional fields "duedate" and "cutoffdate" containing the due date and the cutoff date for posting to the forums respectively.
   * External function get_forum_discussion_posts now returns an additional field "tags" returning the post tags.
   * New external function mod_forum_external::get_forum_discussions returns a list of forum discussions optionally sorted and paginated.
-  * External function mod_forum_external::get_forum_discussions_paginated has been deprecated.
     Use mod_forum_external::get_forum_discussions instead.
   * External function mod_forum_external::add_discussion_post() has a new 'messageformat' param to be able to handle other formats different from FORMAT_HTML (that continues being the default one). Also a new 'topreferredformat' option enables the automatic conversion between any format and the preferred format (given the editor preference) before contents are saved.
 

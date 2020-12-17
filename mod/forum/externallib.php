@@ -505,6 +505,15 @@ class mod_forum_external extends external_api {
     }
 
     /**
+     * Mark the get_forum_discussions_paginated web service as deprecated.
+     *
+     * @return  bool
+     */
+    public static function get_forum_discussions_paginated_is_deprecated() {
+        return true;
+    }
+
+    /**
      * Describes the parameters for get_forum_discussions_paginated.
      *
      * @deprecated since 3.7
