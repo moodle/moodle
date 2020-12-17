@@ -49,7 +49,7 @@ Verificarea completă a mediului se face înainte de fiecare instalare și upgra
 $string['errorsinenvironment'] = 'Verificarea mediului eșuată!';
 $string['installation'] = 'Instalare';
 $string['langdownloaderror'] = 'Din păcate, limba "{$a}" nu a putut fi descărcată. Procesul de instalare va continua în limba engleză.';
-$string['memorylimithelp'] = '<p> Limita de memorie PHP pentru serverul dvs. este setată în prezent la {$ a}. </p>
+$string['memorylimithelp'] = '<p> Limita de memorie PHP pentru serverul dvs. este setată în prezent la {$a}. </p>
 
 <p> Acest lucru poate determina Moodle să aibă probleme de memorie mai târziu, în special
    dacă aveți o mulțime de module activate și / sau o mulțime de utilizatori. </p>
@@ -90,7 +90,7 @@ $string['pathswrongadmindir'] = 'Directorul admin nu există';
 $string['phpextension'] = 'extensie PHP {$a}';
 $string['phpversion'] = 'Versiune PHP';
 $string['phpversionhelp'] = '<p> Moodle necesită o versiune PHP de cel puțin 5.6.5 sau 7.1 (7.0.x are unele limitări ale motorului). </p>
-<p> În prezent executați versiunea {$ a}. </p>
+<p> În prezent executați versiunea {$a}. </p>
 <p> Trebuie să faceți upgrade PHP sau să vă mutați la o gazdă cu o versiune mai nouă de PHP. </p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Vedeți această pagină deoarece ați instalat și lansat cu succes pachetul  <strong>{$a->packname} {$a->packversion}</strong> în computerul dumneavoastră. Felicitări!';
