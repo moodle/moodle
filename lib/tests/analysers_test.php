@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../analytics/tests/fixtures/test_target_course_level_shortname.php');
 require_once(__DIR__ . '/../../analytics/tests/fixtures/test_target_shortname.php');
-require_once(__DIR__ . '/fixtures/deprecated_analyser.php');
 require_once(__DIR__ . '/../../lib/enrollib.php');
 
 /**
@@ -195,20 +194,6 @@ class core_analytics_analysers_testcase extends advanced_testcase {
         $course2 = $this->getDataGenerator()->create_course(['category' => $category1->id]);
         $course3 = $this->getDataGenerator()->create_course(['category' => $category2->id]);
         $this->assertCount(2, $analyser->get_analysables_iterator(false, [$category1context, $category2context]));
-    }
-
-    /**
-     * test_deprecated_analyser
-     *
-     * @return void
-     */
-    public function test_deprecated_analyser() {
-
-        $target = new test_target_shortname();
-        $analyser = new deprecated_analyser(1, $target, [], [], []);
-
-        $analysables = $analyser->get_analysables_iterator();
-        $this->assertDebuggingCalled();
     }
 
     /**
