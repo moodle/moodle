@@ -11,13 +11,13 @@ Feature: Course participants can be filtered
       | Course 2 | C2        |     0     | ##4 months ago## |
       | Course 3 | C3        |     0     | ##3 months ago## |
     And the following "users" exist:
-      | username | firstname | lastname | email                | idnumber | country | city   | maildisplay |
-      | student1 | Student   | 1        | student1@example.com | SID1     |         | SCITY1 | 0           |
-      | student2 | Student   | 2        | student2@example.com | SID2     | GB      | SCITY2 | 1           |
-      | student3 | Student   | 3        | student3@example.com | SID3     | AU      | SCITY3 | 0           |
-      | student4 | Student   | 4        | student4@moodle.com  | SID4     | AT      | SCITY4 | 0           |
-      | student5 | Trendy    | Learnson | trendy@learnson.com  | SID5     | AU      | SCITY5 | 0           |
-      | teacher1 | Teacher   | 1        | teacher1@example.org | TID1     | US      | TCITY1 | 0           |
+      | username | firstname | lastname | email                     | idnumber | country | city   | maildisplay |
+      | student1 | Student   | 1        | student1@example.com      | SID1     |         | SCITY1 | 0           |
+      | student2 | Student   | 2        | student2@example.com      | SID2     | GB      | SCITY2 | 1           |
+      | student3 | Student   | 3        | student3@example.com      | SID3     | AU      | SCITY3 | 0           |
+      | student4 | Student   | 4        | student4@moodle.com       | SID4     | AT      | SCITY4 | 0           |
+      | student5 | Trendy    | Learnson | trendy@learnson.com       | SID5     | AU      | SCITY5 | 0           |
+      | patricia | Patricia  | Pea      | patricia.pea1@example.org | TID1     | US      | TCITY1 | 0           |
     And the following "course enrolments" exist:
       | user     | course | role           | status | timeend       |
       | student1 | C1     | student        |    0   |               |
@@ -31,9 +31,9 @@ Feature: Course participants can be filtered
       | student1 | C3     | student        |    0   |               |
       | student2 | C3     | student        |    0   |               |
       | student3 | C3     | student        |    0   |               |
-      | teacher1 | C1     | editingteacher |    0   |               |
-      | teacher1 | C2     | editingteacher |    0   |               |
-      | teacher1 | C3     | editingteacher |    0   |               |
+      | patricia | C1     | editingteacher |    0   |               |
+      | patricia | C2     | editingteacher |    0   |               |
+      | patricia | C3     | editingteacher |    0   |               |
     And the following "last access times" exist:
       | user     | course | lastaccess      |
       | student1 | C1     | ##yesterday##   |
@@ -58,23 +58,22 @@ Feature: Course participants can be filtered
 
   @javascript
   Scenario: No filters applied
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should see "Teacher 1" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
 
   @javascript
   Scenario Outline: Filter users for a course with a single value
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
     And I set the field "Match" in the "Filter 1" "fieldset" to "<matchtype>"
     And I set the field "type" in the "Filter 1" "fieldset" to "<filtertype>"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "<filtervalue>" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "<filtervalue>"
     When I click on "Apply filters" "button"
     Then I should see "<expected1>" in the "participants" "table"
     And I should see "<expected2>" in the "participants" "table"
@@ -84,30 +83,28 @@ Feature: Course participants can be filtered
     # Note the 'XX-IGNORE-XX' elements are for when there is less than 2 'not expected' items.
 
     Examples:
-      | matchtype | filtertype             | filtervalue | expected1 | expected2 | expected3 | notexpected1 | notexpected2 |
-      | Any       | Groups                 | No group    | Student 1 | Student 4 | Teacher 1 | Student 2    | Student 3    |
-      | All       | Groups                 | No group    | Student 1 | Student 4 | Teacher 1 | Student 2    | Student 3    |
-      | None      | Groups                 | No group    | Student 2 | Student 3 |           | Student 1    | Teacher 1    |
-      | Any       | Role                   | Student     | Student 1 | Student 2 | Student 3 | Teacher 1    | XX-IGNORE-XX |
-      | All       | Role                   | Student     | Student 1 | Student 2 | Student 3 | Teacher 1    | XX-IGNORE-XX |
-      | None      | Role                   | Student     | Teacher 1 |           |           | Student 1    | Student 2    |
-      | Any       | Status                 | Active      | Student 1 | Student 3 | Teacher 1 | Student 2    | Student 4    |
-      | All       | Status                 | Active      | Student 1 | Student 3 | Teacher 1 | Student 2    | Student 4    |
-      | None      | Status                 | Active      | Student 2 | Student 4 |           | Student 1    | Student 3    |
-      | Any       | Inactive for more than | 1 week      | Student 3 | Student 4 |           | Student 1    | Student 2    |
-      | All       | Inactive for more than | 1 week      | Student 3 | Student 4 |           | Student 1    | Student 2    |
-      | None      | Inactive for more than | 1 week      | Student 1 | Student 2 | Teacher 1 | Student 3    | XX-IGNORE-XX |
+      | matchtype | filtertype             | filtervalue | expected1    | expected2 | expected3    | notexpected1 | notexpected2 |
+      | Any       | Groups                 | No group    | Student 1    | Student 4 | Patricia Pea | Student 2    | Student 3    |
+      | All       | Groups                 | No group    | Student 1    | Student 4 | Patricia Pea | Student 2    | Student 3    |
+      | None      | Groups                 | No group    | Student 2    | Student 3 |              | Student 1    | Patricia Pea |
+      | Any       | Role                   | Student     | Student 1    | Student 2 | Student 3    | Patricia Pea | XX-IGNORE-XX |
+      | All       | Role                   | Student     | Student 1    | Student 2 | Student 3    | Patricia Pea | XX-IGNORE-XX |
+      | None      | Role                   | Student     | Patricia Pea |           |              | Student 1    | Student 2    |
+      | Any       | Status                 | Active      | Student 1    | Student 3 | Patricia Pea | Student 2    | Student 4    |
+      | All       | Status                 | Active      | Student 1    | Student 3 | Patricia Pea | Student 2    | Student 4    |
+      | None      | Status                 | Active      | Student 2    | Student 4 |              | Student 1    | Student 3    |
+      | Any       | Inactive for more than | 1 week      | Student 3    | Student 4 |              | Student 1    | Student 2    |
+      | All       | Inactive for more than | 1 week      | Student 3    | Student 4 |              | Student 1    | Student 2    |
+      | None      | Inactive for more than | 1 week      | Student 1    | Student 2 | Patricia Pea | Student 3    | XX-IGNORE-XX |
 
   @javascript
   Scenario Outline: Filter users for a course with multiple values for a single filter
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
     And I set the field "Match" in the "Filter 1" "fieldset" to "<matchtype>"
     And I set the field "type" in the "Filter 1" "fieldset" to "<filtertype>"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "<filtervalue1>" "list_item"
-    And I click on "<filtervalue2>" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "<filtervalue1>,<filtervalue2>"
     When I click on "Apply filters" "button"
     Then I should see "<expected1>" in the "participants" "table"
     And I should see "<expected2>" in the "participants" "table"
@@ -120,16 +117,15 @@ Feature: Course participants can be filtered
       | matchtype | filtertype | filtervalue1 | filtervalue2 | expected1 | expected2 | expected3 | notexpected1 | notexpected2 |
       | Any       | Groups     | Group 1      | Group 2      | Student 2 | Student 3 |           | Student 1    | XX-IGNORE-XX |
       | All       | Groups     | Group 1      | Group 2      | Student 2 |           |           | Student 1    | Student 3    |
-      | None      | Groups     | Group 1      | Group 2      | Student 1 | Teacher 1 |           | Student 2    | Student 3    |
+      | None      | Groups     | Group 1      | Group 2      | Student 1 | Patricia Pea |           | Student 2    | Student 3    |
 
   @javascript
   Scenario Outline: Filter users which are group members in several courses
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And I am on "Course 3" course homepage
     And I navigate to course participants
     And I set the field "type" in the "Filter 1" "fieldset" to "<filtertype>"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "<filtervalue>" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "<filtervalue>"
     When I click on "Apply filters" "button"
     Then I should see "<expected1>" in the "participants" "table"
     And I should see "<expected2>" in the "participants" "table"
@@ -145,62 +141,84 @@ Feature: Course participants can be filtered
 
   @javascript
   Scenario: In separate groups mode, a student in a single group can only view and filter by users in their own group
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
+
     # Unsuspend student 2 for to improve coverage of this test.
     And I click on "Edit enrolment" "icon" in the "Student 2" "table_row"
     And I set the field "Status" to "Active"
     And I click on "Save changes" "button"
     And I log out
+
+    # Default view should have groups filter pre-set.
+    # Match:
+    #   Groups Any ["Group 2"].
+
     When I log in as "student3"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    # Default view should have groups filter pre-set.
+
     Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
     And I should see "Group 2" in the "Filter 1" "fieldset"
+    But I should not see "Student 1" in the "participants" "table"
     And I should not see "Group 1" in the "Filter 1" "fieldset"
-    And I should see "Student 2" in the "participants" "table"
-    And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+
     # Testing result of removing groups filter row.
-    And I click on "Remove filter row" "button" in the "Filter 1" "fieldset"
-    And I should see "Student 2" in the "participants" "table"
+    # Match any available user.
+    When I click on "Remove filter row" "button" in the "Filter 1" "fieldset"
+
+    Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
+
     # Testing result of applying groups filter manually.
-    And I set the field "Match" in the "Filter 1" "fieldset" to "Any"
+    # Match:
+    #   Group Any ["Group 2"].
+
+    # Match Groups Any ["Group 2"]
+    Given I set the field "Match" in the "Filter 1" "fieldset" to "Any"
     And I set the field "type" in the "Filter 1" "fieldset" to "Groups"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I should see "Group 2" in the ".form-autocomplete-suggestions" "css_element"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Group 2"
+
+    And I open the autocomplete suggestions list in the "Filter 1" "fieldset"
     And I should not see "Group 1" in the ".form-autocomplete-suggestions" "css_element"
-    And I click on "Group 2" "list_item"
+
     And I click on "Apply filters" "button"
-    And I should see "Student 2" in the "participants" "table"
+
+    Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
+
     # Testing result of removing groups filter by clearing all filters.
-    And I click on "Clear filters" "button"
-    And I should see "Student 2" in the "participants" "table"
+    # Match any available user.
+    When I click on "Clear filters" "button"
+
+    Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
 
   @javascript
   Scenario: In separate groups mode, a student in multiple groups can only view and filter by users in their own groups
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
+
     # Unsuspend student 2 for to improve coverage of this test.
     And I click on "Edit enrolment" "icon" in the "Student 2" "table_row"
     And I set the field "Status" to "Active"
     And I click on "Save changes" "button"
     And I log out
+
     When I log in as "student2"
     And I am on "Course 1" course homepage
     And I navigate to course participants
+
     # Default view should have groups filter pre-set.
+    # Match:
+    #   Groups Any ["Group 1", "Group 2"].
+
     Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should not see "Student 1" in the "participants" "table"
@@ -209,291 +227,416 @@ Feature: Course participants can be filtered
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should not see "Student 1" in the "participants" "table"
+
     # Testing result of removing groups filter row.
-    And I click on "Remove filter row" "button" in the "Filter 1" "fieldset"
-    And I should see "Student 2" in the "participants" "table"
+    # Match any available user.
+    When I click on "Remove filter row" "button" in the "Filter 1" "fieldset"
+
+    Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
+
     # Testing result of applying groups filter manually.
+    # Match:
+    #   Groups Any ["Group 1"].
+
+    # Match Groups Any ["Group 1"]
     And I set the field "Match" in the "Filter 1" "fieldset" to "Any"
     And I set the field "type" in the "Filter 1" "fieldset" to "Groups"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I should see "Group 1" in the ".form-autocomplete-suggestions" "css_element"
+
+    And I open the autocomplete suggestions list in the "Filter 1" "fieldset"
     And I should see "Group 2" in the ".form-autocomplete-suggestions" "css_element"
-    And I click on "Group 1" "list_item"
+    And I press the escape key
+
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Group 1"
+
     And I click on "Apply filters" "button"
     And I should see "Student 2" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
+
     # Testing result of removing groups filter by clearing all filters.
-    And I click on "Clear filters" "button"
-    And I should see "Student 2" in the "participants" "table"
+    # Match any available user.
+    When I click on "Clear filters" "button"
+
+    Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
 
   @javascript
   Scenario: Filter users who have no role in a course
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
+
+    # Remove the user role.
     And I click on "Student 1's role assignments" "link"
     And I click on ".form-autocomplete-selection [aria-selected=true]" "css_element"
     And I press the escape key
     And I click on "Save changes" "link"
-    And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "No roles" "list_item"
-    When I click on "Apply filters" "button"
+
+    # Match:
+    #   Roles All ["No roles"].
+
+    # Match Roles All ["No roles"].
+    When I set the field "type" in the "Filter 1" "fieldset" to "Roles"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "No roles"
+
+    And I click on "Apply filters" "button"
+
     Then I should see "Student 1" in the "participants" "table"
-    And I should not see "Student 2" in the "participants" "table"
+    But I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
 
   @javascript
   Scenario: Multiple filters applied (All filterset match type)
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I set the field "Match" in the "Filter 1" "fieldset" to "All"
+
+    # Match Any:
+    #   Roles All ["Student"] and
+    #   Status Any ["Active"].
+
+    # Match Roles All ["Student"].
+    When I set the field "Match" in the "Filter 1" "fieldset" to "All"
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "Student" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Student"
+
+    # Match Status All ["Active"].
     And I click on "Add condition" "button"
     # Set filterset to match all.
     And I set the field "Match" to "All"
     And I set the field "Match" in the "Filter 2" "fieldset" to "Any"
     And I set the field "type" in the "Filter 2" "fieldset" to "Status"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 2" "fieldset"
-    And I click on "Active" "list_item"
-    When I click on "Apply filters" "button"
+    And I set the field "Type or select..." in the "Filter 2" "fieldset" to "Active"
+
+    And I click on "Apply filters" "button"
+
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 2" in the "participants" "table"
+    But I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
-    # Add more filters.
-    And I click on "Add condition" "button"
+    And I should not see "Patricia Pea" in the "participants" "table"
+
+    # Match Any:
+    #   Roles All ["Student"]; and
+    #   Status Any ["Active"]; and
+    #   Enrolment method Any ["Manual"]; and
+    #   Groups Any ["Group 2"].
+
+    # Match enrolment method Any ["Manual"]
+    When I click on "Add condition" "button"
     And I set the field "Match" in the "Filter 3" "fieldset" to "Any"
     And I set the field "type" in the "Filter 3" "fieldset" to "Enrolment methods"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 3" "fieldset"
-    And I click on "Manual enrolments" "list_item"
+    And I set the field "Type or select..." in the "Filter 3" "fieldset" to "Manual enrolments"
+
+    # Match Groups Any ["Group 2"]
     And I click on "Add condition" "button"
     And I set the field "Match" in the "Filter 4" "fieldset" to "All"
     And I set the field "type" in the "Filter 4" "fieldset" to "Groups"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 4" "fieldset"
-    And I click on "Group 2" "list_item"
+    And I set the field "Type or select..." in the "Filter 4" "fieldset" to "Group 2"
     And I click on "Apply filters" "button"
-    And I should see "Student 3" in the "participants" "table"
-    But I should not see "Teacher 1" in the "participants" "table"
+
+    Then I should see "Student 3" in the "participants" "table"
+    But I should not see "Patricia Pea" in the "participants" "table"
     And I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
+
     # Change the active status filter to inactive.
+    # Match Any:
+    #   Roles All ["Student"]; and
+    #   Status Any ["Inactive"]; and
+    #   Enrolment method Any ["Manual"]; and
+    #   Groups Any ["Group 2"].
+
+    # Match Status All ["Inactive"].
     And I click on "Active" "autocomplete_selection"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 2" "fieldset"
-    And I click on "Inactive" "list_item"
+    And I set the field "Type or select..." in the "Filter 2" "fieldset" to "Inactive"
     And I click on "Apply filters" "button"
+
     Then I should see "Student 2" in the "participants" "table"
     But I should not see "Student 4" in the "participants" "table"
     And I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
+
     # Set both statuses (match any).
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 2" "fieldset"
-    And I click on "Active" "list_item"
+    # Match Any:
+    #   Roles All ["Student"]; and
+    #   Status Any ["Active", "Inactive"]; and
+    #   Enrolment method Any ["Manual"]; and
+    #   Groups Any ["Group 2"].
+
+    # Match Status Any ["Active", "Inactive"].
+    And I set the field "Type or select..." in the "Filter 2" "fieldset" to "Active,Inactive"
     And I click on "Apply filters" "button"
-    And I should see "Student 2" in the "participants" "table"
+
+    Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
-    # Switch to match all.
-    And I set the field "Match" in the "Filter 2" "fieldset" to "All"
+
+    # Set both statuses (match all).
+    # Match Any:
+    #   Roles All ["Student"]; and
+    #   Status Any ["Active", "Inactive"]; and
+    #   Enrolment method Any ["Manual"]; and
+    #   Groups Any ["Group 2"].
+
+    # Match Status All ["Active", "Inactive"].
+    When I set the field "Match" in the "Filter 2" "fieldset" to "All"
     And I click on "Apply filters" "button"
-    And I should see "Nothing to display"
+
+    Then I should see "Nothing to display"
 
   @javascript
   Scenario: Multiple filters applied (Any filterset match type)
-    Given I log in as "teacher1"
-    #Avoid 'Teacher' list item collisions with profile dropdown.
-    And I open my profile in edit mode
-    And I set the field "First name" to "Patricia"
-    And I press "Update profile"
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I set the field "Match" in the "Filter 1" "fieldset" to "All"
+
+    # Match Any:
+    #   Roles All ["Teacher"] and
+    #   Status Any ["Active"].
+
+    # Match Roles all Roles ["Teacher"].
+    When I set the field "Match" in the "Filter 1" "fieldset" to "All"
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "Teacher" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Teacher"
+
+    # Match Status Any ["Active"].
     And I click on "Add condition" "button"
-    # Set filterset to match any.
-    And I set the field "Match" to "Any"
     And I set the field "Match" in the "Filter 2" "fieldset" to "Any"
     And I set the field "type" in the "Filter 2" "fieldset" to "Status"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 2" "fieldset"
-    And I click on "Active" "list_item"
-    When I click on "Apply filters" "button"
-    Then I should see "Student 1" in the "participants" "table"
-    And I should see "Patricia 1" in the "participants" "table"
-    And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 2" in the "participants" "table"
-    And I should not see "Student 4" in the "participants" "table"
-    And I set the field "Match" in the "Filter 2" "fieldset" to "None"
+    And I set the field "Type or select..." in the "Filter 2" "fieldset" to "Active"
+
+    # Set filterset to match any.
+    And I set the field "Match" to "Any"
     And I click on "Apply filters" "button"
-    And I should see "Student 2" in the "participants" "table"
+
+    Then I should see "Student 1" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
+    And I should see "Student 3" in the "participants" "table"
+    But I should not see "Student 2" in the "participants" "table"
+    And I should not see "Student 4" in the "participants" "table"
+
+    # Match Any:
+    #   Roles All ["Teacher"] and
+    #   Status None ["Active"].
+
+    # Match Status Not ["Active"]
+    When I set the field "Match" in the "Filter 2" "fieldset" to "None"
+    And I click on "Apply filters" "button"
+
+    Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 4" in the "participants" "table"
-    And I should see "Patricia 1" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
+
     # Add a keyword filter.
-    And I click on "Add condition" "button"
+    # Match Any:
+    #   Roles All ["Teacher"]; and
+    #   Status None ["Active"]; and
+    #   Keyword Any ["patricia"].
+
+    # Match Keyword Any ["patricia"].
+    When I click on "Add condition" "button"
     And I set the field "Match" in the "Filter 3" "fieldset" to "Any"
     And I set the field "type" in the "Filter 3" "fieldset" to "Keyword"
-    And I set the field "Type..." to "teacher1"
-    And I press the enter key
+    And I set the field "Type..." in the "Filter 3" "fieldset" to "patricia"
+
     And I click on "Apply filters" "button"
-    And I should see "Student 2" in the "participants" "table"
+
+    Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 4" in the "participants" "table"
-    And I should see "Patricia 1" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
 
   @javascript
   Scenario: Multiple filters applied (None filterset match type)
-    Given I log in as "teacher1"
-    #Avoid 'Teacher' list item collisions with profile dropdown.
-    And I open my profile in edit mode
-    And I set the field "First name" to "Patricia"
-    And I press "Update profile"
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I set the field "Match" in the "Filter 1" "fieldset" to "All"
+
+    # Match None:
+    #   Roles All ["Teacher"] and
+    #   Status Any ["Active"].
+
+    # Set the Roles to "All" ["Teacher"].
+    When I set the field "Match" in the "Filter 1" "fieldset" to "All"
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "Teacher" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Teacher"
+
+    # Set the Status to "Any" ["Active"].
     And I click on "Add condition" "button"
-    # Set filterset to match none.
-    And I set the field "Match" to "None"
     And I set the field "Match" in the "Filter 2" "fieldset" to "Any"
     And I set the field "type" in the "Filter 2" "fieldset" to "Status"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 2" "fieldset"
-    And I click on "Active" "list_item"
-    When I click on "Apply filters" "button"
+    And I set the field "Type or select..." in the "Filter 2" "fieldset" to "Active"
+
+    # Set filterset to match None.
+    And I set the field "Match" to "None"
+    And I click on "Apply filters" "button"
+
     Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 4" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
-    And I should not see "Patricia 1" in the "participants" "table"
-    And I set the field "Match" in the "Filter 2" "fieldset" to "None"
+    And I should not see "Patricia Pea" in the "participants" "table"
+
+    # Match None:
+    #   Roles All ["Teacher"] and
+    #   Status None ["Active"]
+    # Set the Status to "None ["Active"]
+    When I set the field "Match" in the "Filter 2" "fieldset" to "None"
     And I click on "Apply filters" "button"
-    And I should see "Student 1" in the "participants" "table"
+    Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 2" in the "participants" "table"
+    But I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
-    And I should not see "Patricia 1" in the "participants" "table"
-    # Add a keyword filter.
-    And I click on "Add condition" "button"
-    And I set the field "Match" in the "Filter 3" "fieldset" to "Any"
+    And I should not see "Patricia Pea" in the "participants" "table"
+
+    # Match None:
+    #   Roles All ["Teacher"] and
+    #   Status None ["Active"] and
+    #   Keyword Any ["3@"]
+    # Set the Keyword to "Any" ["3@"]
+    When I click on "Add condition" "button"
+    Then I set the field "Match" in the "Filter 3" "fieldset" to "Any"
     And I set the field "type" in the "Filter 3" "fieldset" to "Keyword"
-    And I set the field "Type..." to "3@"
-    And I press the enter key
-    And I click on "Apply filters" "button"
-    And I should see "Student 1" in the "participants" "table"
+    And I set the field "Type..." in the "Filter 3" "fieldset" to "3@"
+
+    When I click on "Apply filters" "button"
+    Then I should see "Student 1" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
-    And I should not see "Patricia 1" in the "participants" "table"
-    And I set the field "Match" in the "Filter 3" "fieldset" to "None"
+    And I should not see "Patricia Pea" in the "participants" "table"
+
+    # Match None:
+    #   Roles All ["Teacher"] and
+    #   Status None ["Active"] and
+    #   Keyword None ["3@"].
+
+    # Set the Keyword to "None" ["3@"]
+    When I set the field "Match" in the "Filter 3" "fieldset" to "None"
     And I click on "Apply filters" "button"
-    And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+
+    Then I should see "Student 3" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
-    And I should not see "Patricia 1" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
 
   @javascript
   Scenario: Filter match by one or more keywords and modified match types
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I set the field "Match" in the "Filter 1" "fieldset" to "Any"
+
+    # Match:
+    #   Keyword Any ["1@example"].
+
+    # Set the Keyword to "Any" ["1@example"]
+    When I set the field "Match" in the "Filter 1" "fieldset" to "Any"
     And I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
-    And I set the field "Type..." to "1@example"
-    And I press the enter key
-    When I click on "Apply filters" "button"
+    And I set the field "Type..." in the "Filter 1" "fieldset" to "1@example"
+    And I click on "Apply filters" "button"
+
     Then I should see "Student 1" in the "participants" "table"
-    And I should see "Teacher 1" in the "participants" "table"
-    And I should not see "Student 2" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
+
+    But I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
-    And I set the field "Match" in the "Filter 1" "fieldset" to "None"
+
+    # Match:
+    #   Keyword All ["1@example"].
+    When I set the field "Match" in the "Filter 1" "fieldset" to "All"
     And I click on "Apply filters" "button"
-    And I should see "Student 2" in the "participants" "table"
-    And I should see "Student 3" in the "participants" "table"
-    And I should see "Student 4" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
-    And I set the field "Match" in the "Filter 1" "fieldset" to "All"
-    And I click on "Apply filters" "button"
-    And I should see "Student 1" in the "participants" "table"
-    And I should see "Teacher 1" in the "participants" "table"
-    And I should not see "Student 2" in the "participants" "table"
+
+    Then I should see "Student 1" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
+    But I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
-    And I set the field "Match" in the "Filter 1" "fieldset" to "None"
+
+    # Match:
+    #   Keyword None ["1@example"].
+    When I set the field "Match" in the "Filter 1" "fieldset" to "None"
     And I click on "Apply filters" "button"
-    And I should see "Student 2" in the "participants" "table"
+
+    Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should see "Student 4" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
-    # Add a second keyword filter value
-    And I set the field "Type..." to "moodle"
-    And I press the enter key
+    But I should not see "Student 1" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
+
+    # Set two keyword values.
+    # Match:
+    #   Keyword None ["1@example", "moodle"].
+    When I set the field "Type..." to "1@example, moodle"
     And I click on "Apply filters" "button"
-    And I should see "Student 2" in the "participants" "table"
+
+    Then I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
-    And I set the field "Match" in the "Filter 1" "fieldset" to "Any"
+
+    # Set two keyword values.
+    # Match:
+    #   Keyword Any ["1@example", "moodle"].
+    When I set the field "Match" in the "Filter 1" "fieldset" to "Any"
     And I click on "Apply filters" "button"
-    And I should see "Student 1" in the "participants" "table"
-    And I should see "Teacher 1" in the "participants" "table"
+
+    Then I should see "Student 1" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
     And I should see "Student 4" in the "participants" "table"
-    And I should not see "Student 2" in the "participants" "table"
+    But I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
-    And I set the field "Match" in the "Filter 1" "fieldset" to "All"
+
+    # Match:
+    #   Keyword All ["1@example", "moodle"].
+    When I set the field "Match" in the "Filter 1" "fieldset" to "All"
     And I click on "Apply filters" "button"
-    And I should see "Nothing to display"
+
+    Then I should see "Nothing to display"
 
   @javascript
   Scenario: Reorder users without losing filter
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "Student" "list_item"
+
+    When I set the field "type" in the "Filter 1" "fieldset" to "Roles"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Student"
     And I click on "Apply filters" "button"
+
     And I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should see "Student 4" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
+
     When I click on "Surname" "link"
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should see "Student 4" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    But I should not see "Patricia Pea" in the "participants" "table"
 
   @javascript
   Scenario: Only possible to add filter rows for the number of filters available
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
+    When I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
     And I click on "Add condition" "button"
     And I set the field "type" in the "Filter 2" "fieldset" to "Status"
     And I click on "Add condition" "button"
@@ -504,11 +647,12 @@ Feature: Course participants can be filtered
     And I set the field "type" in the "Filter 5" "fieldset" to "Groups"
     And I click on "Add condition" "button"
     And I set the field "type" in the "Filter 6" "fieldset" to "Inactive for more than"
-    And the "Add condition" "button" should be disabled
+
+    Then the "Add condition" "button" should be disabled
 
   @javascript
   Scenario: Rendering filter options for teachers in a course that don't support groups
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And I am on "Course 2" course homepage
     When I navigate to course participants
     Then I should see "Roles" in the "type" "field"
@@ -526,51 +670,76 @@ Feature: Course participants can be filtered
 
   @javascript
   Scenario: Filter by user identity fields
-    Given I log in as "teacher1"
+    Given I log in as "patricia"
     And the following config values are set as admin:
         | showuseridentity | idnumber,email,city,country |
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
-    # Search by email (only).
-    And I set the field "Type..." to "student1@example.com"
-    And I press the enter key
-    When I click on "Apply filters" "button"
+
+    # Search by email (only) - should only see visible email + own.
+    # Match:
+    #   Keyword Any ["student1@example.com"].
+
+    # Set the Keyword to "Any" ["student1@example.com"]
+    When I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
+    And I set the field "Type..." in the "Filter 1" "fieldset" to "student1@example.com"
+    And I click on "Apply filters" "button"
+
     Then I should see "Student 1" in the "participants" "table"
-    And I should not see "Student 2" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    But I should not see "Student 2" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
+
     # Search by idnumber (only).
+    # Match:
+    #   Keyword Any ["SID"].
+
+    # Set the Keyword to "Any" ["SID"]
     And I click on "student1@example.com" "autocomplete_selection"
-    And I set the field "Type..." to "SID"
-    And I press the enter key
+    And I set the field "Type..." in the "Filter 1" "fieldset" to "SID"
     And I click on "Apply filters" "button"
-    And I should see "Student 1" in the "participants" "table"
+
+    Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should see "Student 4" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    But I should not see "Patricia Pea" in the "participants" "table"
+
     # Search by city (only).
+    # Match:
+    #   Keyword Any ["SCITY"].
+
+    # Set the Keyword to "Any" ["SCITY"]
     And I click on "SID" "autocomplete_selection"
-    And I set the field "Type..." to "SCITY"
-    And I press the enter key
+    And I set the field "Type..." in the "Filter 1" "fieldset" to "SCITY"
     And I click on "Apply filters" "button"
-    And I should see "Student 1" in the "participants" "table"
+
+    Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should see "Student 4" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    But I should not see "Patricia Pea" in the "participants" "table"
+
     # Search by country text (only) - should not match.
+    # Match:
+    #   Keyword Any ["GB"].
+
+    # Set the Keyword to "Any" ["GB"]
     And I click on "SCITY" "autocomplete_selection"
-    And I set the field "Type..." to "GB"
-    And I press the enter key
+    And I set the field "Type..." in the "Filter 1" "fieldset" to "GB"
     And I click on "Apply filters" "button"
-    And I should see "Nothing to display"
+
+    Then I should see "Nothing to display"
+
     # Check no match.
+    # Match:
+    #   Keyword Any ["NOTHING"].
+
+    # Set the Keyword to "Any" ["NOTHING"]
     And I click on "GB" "autocomplete_selection"
-    And I set the field "Type..." to "NOTHING"
-    And I press the enter key
+    And I set the field "Type..." in the "Filter 1" "fieldset" to "NOTHING"
     And I click on "Apply filters" "button"
-    And I should see "Nothing to display"
+
+    Then I should see "Nothing to display"
 
   @javascript
   Scenario: Filter by user identity fields when cannot see the field data
@@ -580,215 +749,290 @@ Feature: Course participants can be filtered
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,city,country |
     And I log out
-    And I log in as "teacher1"
+
+    And I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
+
+    # Match:
+    #   Keyword Any ["@example.com"].
+
     # Search by email (only) - should only see visible email + own.
-    And I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
-    And I set the field "Type..." to "@example."
-    And I press the enter key
-    When I click on "Apply filters" "button"
-    Then I should not see "Student 1" in the "participants" "table"
-    And I should see "Student 2" in the "participants" "table"
+    # Set the Keyword to "Any" ["@example.com"]
+    When I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
+    And I set the field "Type..." in the "Filter 1" "fieldset" to "@example."
+    And I click on "Apply filters" "button"
+
+    Then I should see "Student 2" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
-    And I should see "Teacher 1" in the "participants" "table"
+
     # Search for other fields - should only see own results.
+
+    # Match:
+    #   Keyword Any ["SID"].
+    # Set the Keyword to "Any" ["SID"]
     And I click on "@example." "autocomplete_selection"
-    And I set the field "Type..." to "SID"
-    And I press the enter key
+    And I set the field "Type..." in the "Filter 1" "fieldset" to "SID"
     And I click on "Apply filters" "button"
-    And I should see "Nothing to display"
+
+    Then I should see "Nothing to display"
+
+    # Match:
+    #   Keyword Any ["TID"].
+
+    # Set the Keyword to "Any" ["TID"]
     And I click on "SID" "autocomplete_selection"
-    And I set the field "Type..." to "TID"
-    And I press the enter key
+    And I set the field "Type..." in the "Filter 1" "fieldset" to "TID"
     And I click on "Apply filters" "button"
-    And I should see "Teacher 1" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+
+    Then I should see "Patricia Pea" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
+
+    # Match:
+    #   Keyword Any ["CITY"].
+
+    # Set the Keyword to "Any" ["CITY"]
     And I click on "TID" "autocomplete_selection"
-    And I set the field "Type..." to "CITY"
-    And I press the enter key
+    And I set the field "Type..." in the "Filter 1" "fieldset" to "CITY"
     And I click on "Apply filters" "button"
-    And I should see "Teacher 1" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
-    # Check no match.
+
+    Then I should see "Patricia Pea" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
+
+    # No data matches regardless of capabilities.
+    # Match:
+    #   Keyword Any ["NOTHING"].
+
+    # Set the Keyword to "Any" ["NOTHING"]
     And I click on "CITY" "autocomplete_selection"
-    And I set the field "Type..." to "NOTHING"
-    And I press the enter key
+    And I set the field "Type..." in the "Filter 1" "fieldset" to "NOTHING"
     And I click on "Apply filters" "button"
-    And I should see "Nothing to display"
+
+    Then I should see "Nothing to display"
 
   @javascript
   Scenario: Individual filters can be removed, which will automatically refresh the participants list
-    Given I log in as "teacher1"
+    # Match All:
+    #   Roles All ["Student"]; and
+    #   Keyword Any ["@example.com"].
+
+    # Set the Roles to "All" ["Student"].
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
     And I set the field "Match" in the "Filter 1" "fieldset" to "All"
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "Student" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Student"
+
+    # Set the Keyword to "Any" ["@example.com"]
     And I click on "Add condition" "button"
-    # Set filterset to match all.
-    And I set the field "Match" to "All"
     And I set the field "Match" in the "Filter 2" "fieldset" to "Any"
     And I set the field "type" in the "Filter 2" "fieldset" to "Keyword"
-    And I set the field "Type..." to "@example"
-    And I press the enter key
+    And I set the field "Type..." in the "Filter 2" "fieldset" to "@example"
+
+    # Set filterset to match all.
+    And I set the field "Match" to "All"
     And I click on "Apply filters" "button"
-    And I should see "Student 1" in the "participants" "table"
+
+    Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 4" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    But I should not see "Student 4" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
+
+    # Match:
+    #   Keyword Any ["@example.com"].
     When I click on "Remove filter row" "button" in the "Filter 1" "fieldset"
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should see "Teacher 1" in the "participants" "table"
-    And I should not see "Student 4" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
+    But I should not see "Student 4" in the "participants" "table"
 
   @javascript
   Scenario: All filters can be cleared at once
-    Given I log in as "teacher1"
+    # Match All:
+    #   Roles All ["Student"]; and
+    #   Keyword Any ["@example.com"].
+
+    # Set the Roles to "All" ["Student"].
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I set the field "Match" in the "Filter 1" "fieldset" to "All"
+    When I set the field "Match" in the "Filter 1" "fieldset" to "All"
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "Student" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Student"
+
+    # Set the Keyword to "All" ["@example.com"].
     And I click on "Add condition" "button"
-    # Set filterset to match all.
-    And I set the field "Match" to "All"
     And I set the field "Match" in the "Filter 2" "fieldset" to "Any"
     And I set the field "type" in the "Filter 2" "fieldset" to "Keyword"
-    And I set the field "Type..." to "@example"
-    And I press the enter key
+    And I set the field "Type..." in the "Filter 2" "fieldset" to "@example"
+
+    # Set filterset to match all.
+    And I set the field "Match" to "All"
     And I click on "Apply filters" "button"
-    And I should see "Student 1" in the "participants" "table"
+
+    Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 4" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    But I should not see "Student 4" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
+
+    # Match Any.
     When I click on "Clear filters" "button"
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should see "Student 4" in the "participants" "table"
-    And I should see "Teacher 1" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
 
   @javascript
   Scenario: Filterset match type is reset when reducing to a single filter
-    Given I log in as "teacher1"
+    # Match None:
+    #   Keyword Any ["@example.com"]; and
+    #   Roles All ["Teacher"].
+    Given I log in as "patricia"
     And I am on "Course 1" course homepage
     And I navigate to course participants
-    And I set the field "Match" in the "Filter 1" "fieldset" to "Any"
+
+    # Set the Keyword to "Any" ["@example.com"]
+    When I set the field "Match" in the "Filter 1" "fieldset" to "Any"
     And I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
     And I set the field "Type..." to "@example.com"
-    And I press the enter key
+
+    # Set the Roles to "All" ["Student"].
     And I click on "Add condition" "button"
-    # Set filterset to match none.
-    And I set the field "Match" to "None"
     And I set the field "Match" in the "Filter 2" "fieldset" to "All"
     And I set the field "type" in the "Filter 2" "fieldset" to "Roles"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 2" "fieldset"
-    And I click on "Student" "list_item"
+    And I set the field "Type or select..." in the "Filter 2" "fieldset" to "Student"
+
     # Match none of student role and @example.com keyword.
+    And I set the field "Match" to "None"
     And I click on "Apply filters" "button"
-    And I should see "Teacher 1" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+
+    Then I should see "Patricia Pea" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
+
+    # Match:
+    #   Keyword Any ["@example.com"].
+    # When removing the pen-ultimate filter, the filterset match type is removed too.
     When I click on "Remove filter row" "button" in the "Filter 2" "fieldset"
-    # Filterset match type and role filter are removed, leaving keyword filter only.
+    Then I should see "Student 1" in the "participants" "table"
+    And I should see "Student 2" in the "participants" "table"
+    And I should see "Student 3" in the "participants" "table"
+    But I should not see "Student 4" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
+
+    # Match Any:
+    #   Keyword Any ["@example.com"]; and
+    #   Role All ["Student"].
+    # The default filterset match (Any) should apply.
+    # Set the Roles to "All" ["Student"].
+    When I click on "Add condition" "button"
+    And I set the field "Match" in the "Filter 2" "fieldset" to "All"
+    And I set the field "type" in the "Filter 2" "fieldset" to "Role"
+    And I set the field "Type or select..." in the "Filter 2" "fieldset" to "Student"
+    And I click on "Apply filters" "button"
+
     Then I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should not see "Student 4" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
-    And I click on "Add condition" "button"
-    # Re-add a second filter and ensure the default (All) filterset match type is set.
-    And I set the field "Match" in the "Filter 2" "fieldset" to "All"
-    And I set the field "type" in the "Filter 2" "fieldset" to "Role"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 2" "fieldset"
-    And I click on "Student" "list_item"
-    And I click on "Apply filters" "button"
-    And I should see "Student 1" in the "participants" "table"
-    And I should see "Student 2" in the "participants" "table"
-    And I should see "Student 3" in the "participants" "table"
-    And I should not see "Student 4" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    But I should not see "Patricia Pea" in the "participants" "table"
 
   @javascript
   Scenario: Filter users by first initial
-    Given I log in as "teacher1"
+    # Match:
+    #   No filters; and
+    # First initial "T".
+    Given I log in as "patricia"
     And I am on "Course 2" course homepage
     And I navigate to course participants
     And I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should see "Trendy Learnson" in the "participants" "table"
-    And I should see "Teacher 1" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
     When I click on "T" "link" in the ".firstinitial" "css_element"
     Then I should see "Trendy Learnson" in the "participants" "table"
-    And I should see "Teacher 1" in the "participants" "table"
+    But I should not see "Patricia Pea" in the "participants" "table"
     And I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
 
   @javascript
   Scenario: Filter users by last initial
-    Given I log in as "teacher1"
+    # Match:
+    #   No filters; and
+    # Last initial "L".
+    Given I log in as "patricia"
     And I am on "Course 2" course homepage
     And I navigate to course participants
     And I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should see "Trendy Learnson" in the "participants" "table"
-    And I should see "Teacher 1" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
     When I click on "L" "link" in the ".lastinitial" "css_element"
     Then I should see "Trendy Learnson" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
 
   @javascript
   Scenario: Filter users by first and last initials
-    Given I log in as "teacher1"
+    # Match:
+    #   No filters; and
+    # First initial "T"; and
+    # Last initial "L".
+    Given I log in as "patricia"
     And I am on "Course 2" course homepage
     And I navigate to course participants
     And I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should see "Trendy Learnson" in the "participants" "table"
-    And I should see "Teacher 1" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
     When I click on "T" "link" in the ".firstinitial" "css_element"
     And I click on "L" "link" in the ".lastinitial" "css_element"
     Then I should see "Trendy Learnson" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
 
   @javascript
   Scenario: Initials filtering is always applied in addition to any other filtering
-    Given I log in as "teacher1"
+    # Match:
+    #   Roles All ["Teacher"]; and
+    # First initial "T".
+    Given I log in as "patricia"
     And I am on "Course 2" course homepage
     And I navigate to course participants
     And I should see "Student 1" in the "participants" "table"
     And I should see "Student 2" in the "participants" "table"
     And I should see "Student 3" in the "participants" "table"
     And I should see "Trendy Learnson" in the "participants" "table"
-    And I should see "Teacher 1" in the "participants" "table"
+    And I should see "Patricia Pea" in the "participants" "table"
+
+    # Set the Role to "Any" ["Student"].
     When I set the field "Match" in the "Filter 1" "fieldset" to "Any"
     And I set the field "type" in the "Filter 1" "fieldset" to "Role"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Filter 1" "fieldset"
-    And I click on "Student" "list_item"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Student"
     And I click on "Apply filters" "button"
-    When I click on "T" "link" in the ".firstinitial" "css_element"
+
+    # Last initial "T".
+    And I click on "T" "link" in the ".firstinitial" "css_element"
     Then I should see "Trendy Learnson" in the "participants" "table"
-    And I should not see "Student 1" in the "participants" "table"
+    But I should not see "Student 1" in the "participants" "table"
     And I should not see "Student 2" in the "participants" "table"
     And I should not see "Student 3" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    And I should not see "Patricia Pea" in the "participants" "table"
