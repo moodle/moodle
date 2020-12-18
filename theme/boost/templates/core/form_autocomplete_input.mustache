@@ -36,10 +36,32 @@
     { "inputID": 1, "suggestionsId": 2, "selectionId": 3, "downArrowId": 4, "placeholder": "Select something" }
 }}
 {{#showSuggestions}}
-<input type="text" id="{{inputId}}" class="form-control" list="{{suggestionsId}}" placeholder="{{placeholder}}" role="combobox" aria-expanded="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-autocomplete="list" aria-owns="{{suggestionsId}} {{selectionId}}" {{#tags}}data-tags="1"{{/tags}}/><span class="form-autocomplete-downarrow" id="{{downArrowId}}">&#x25BC;</span>
+<input type="text"{{!
+    }} id="{{inputId}}"{{!
+    }} class="form-control"{{!
+    }} list="{{suggestionsId}}"{{!
+    }} placeholder="{{placeholder}}"{{!
+    }} role="combobox"{{!
+    }} aria-expanded="false"{{!
+    }} autocomplete="off"{{!
+    }} autocorrect="off"{{!
+    }} autocapitalize="off"{{!
+    }} aria-autocomplete="list"{{!
+    }} aria-owns="{{suggestionsId}} {{selectionId}}"{{!
+    }}{{#tags}} data-tags="1"{{/tags}}{{!
+    }}{{#multiple}} data-multiple="multiple"{{/multiple}}{{!
+    }}>
+    <span class="form-autocomplete-downarrow" id="{{downArrowId}}">&#x25BC;</span>
 {{/showSuggestions}}
 {{^showSuggestions}}
-<input type="text" id="{{inputId}}" placeholder="{{placeholder}}" role="textbox" aria-owns="{{selectionId}}" {{#tags}}data-tags="1"{{/tags}}/>
+<input type="text"{{!
+    }} id="{{inputId}}"{{!
+    }} placeholder="{{placeholder}}"{{!
+    }} role="textbox"{{!
+    }} aria-owns="{{selectionId}}"{{!
+    }}{{#tags}} data-tags="1"{{/tags}}{{!
+    }}{{#multiple}} data-multiple="multiple"{{/multiple}}{{!
+    }}>
 {{/showSuggestions}}
 
 {{#js}}
