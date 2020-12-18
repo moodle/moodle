@@ -1700,6 +1700,12 @@ class iomad {
     public static function check_redirect($wwwroot, $rurl) {
         global $CFG, $DB;
 
+        // If we are installing then do nothing.
+        if (during_initial_install()) {
+            return true;
+        }
+
+        // Otherwise we redirect when the URL doesn't match the company URL.
         if ($rurl['host'] !=  $wwwroot['host']) {
             if ($companyrec = $DB->get_record('company', array('hostname' => $rurl['host']))) {
                 $redirecturl = new moodle_url($CFG->wwwroot . '/login/index.php',
