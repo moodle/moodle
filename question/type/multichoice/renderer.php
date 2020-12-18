@@ -104,16 +104,16 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
                 ));
             }
 
-            $questionnumber = '';
+            $choicenumber = '';
             if ($question->answernumbering !== 'none') {
-                $questionnumber = html_writer::span(
+                $choicenumber = html_writer::span(
                         $this->number_in_style($value, $question->answernumbering), 'answernumber');
             }
-            $answertext = $question->format_text($ans->answer, $ans->answerformat, $qa, 'question', 'answer', $ansid);
-            $questionanswer = html_writer::div($answertext, 'flex-fill ml-1');
+            $choicetext = $question->format_text($ans->answer, $ans->answerformat, $qa, 'question', 'answer', $ansid);
+            $choice = html_writer::div($choicetext, 'flex-fill ml-1');
 
             $radiobuttons[] = $hidden . html_writer::empty_tag('input', $inputattributes) .
-                    html_writer::div($questionnumber . $questionanswer, 'd-flex w-100', [
+                    html_writer::div($choicenumber . $choice, 'd-flex w-100', [
                         'id' => $inputattributes['id'] . '_label',
                         'data-region' => 'answer-label',
                     ]);
