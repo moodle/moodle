@@ -1,5 +1,5 @@
-VideoJS 7.7.6
--------------
+VideoJS 7.10.0
+--------------
 https://github.com/videojs/video.js
 
 Instructions to import VideoJS player into Moodle:
