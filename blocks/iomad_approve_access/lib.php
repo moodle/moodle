@@ -54,6 +54,8 @@
             } else {
                 return false;
             }
+        } else {
+            return false;
         }
     }
     if ($approvaltype == 'both' || $approvaltype == 'manager') {

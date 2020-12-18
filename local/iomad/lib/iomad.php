@@ -408,7 +408,7 @@ class iomad {
                     $iomadcategories[ $id ] = $category;
                 } else {
                     // Is this company category in the path?
-                    if (true === strpos($categoryrec->path, "/".$user->company->category."/")) {
+                    if (!empty($user->company->category) && true === strpos($categoryrec->path, "/".$user->company->category."/")) {
                         $iomadcategories[ $id ] = $category;
                     }
                 }
