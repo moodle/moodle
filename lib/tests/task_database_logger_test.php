@@ -433,11 +433,12 @@ class task_database_logger_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        // Create sample log data - 2 tasks, once per hour for 3 days.
+        // Calculate date to be used for logs, starting from current time rounded down to nearest hour.
         $date = new DateTime();
         $date->setTime($date->format('G'), 0);
         $baselogtime = $date->getTimestamp();
 
+        // Create sample log data - 2 tasks, once per hour for 3 days.
         for ($i = 0; $i < 3 * 24; $i++) {
             $task = new \core\task\cache_cron_task();
             $logpath = __FILE__;
@@ -456,36 +457,35 @@ class task_database_logger_testcase extends advanced_testcase {
         $this->assertEquals(72, $DB->count_records('task_log', ['classname' => \core\task\badges_cron_task::class]));
 
         // Note: We set the retention time to a period like DAYSECS minus an adjustment.
-        // The adjustment is to account for the time taken during setup.
+        // The adjustment is to account for the difference between current time and baselogtime.
 
-        // With a retention period of 2 * DAYSECS, there should only be 94-96 left.
+        // With a retention period of 2 * DAYSECS, there should only be 96 left.
         // The run count is a higher number so it will have no effect.
-        set_config('task_logretention', (2 * DAYSECS) - (time() - $baselogtime));
+        set_config('task_logretention', time() - ($baselogtime - (2 * DAYSECS)) - 1);
         set_config('task_logretainruns', 50);
         \core\task\database_logger::cleanup();
-        $this->assertGreaterThanOrEqual(94, $DB->count_records('task_log'));
-        $this->assertLessThanOrEqual(96, $DB->count_records('task_log'));
-        $this->assertGreaterThanOrEqual(47, $DB->count_records('task_log', ['classname' => \core\task\cache_cron_task::class]));
-        $this->assertLessThanOrEqual(48, $DB->count_records('task_log', ['classname' => \core\task\cache_cron_task::class]));
-        $this->assertGreaterThanOrEqual(47, $DB->count_records('task_log', ['classname' => \core\task\badges_cron_task::class]));
-        $this->assertLessThanOrEqual(48, $DB->count_records('task_log', ['classname' => \core\task\badges_cron_task::class]));
 
-        // We should retain the most recent 48 so the oldest will be no more than 48 hours old.
-        $oldest = $DB->get_records('task_log', [], 'timestart DESC', 'timestart', 0, 1);
+        $this->assertEquals(96, $DB->count_records('task_log'));
+        $this->assertEquals(48, $DB->count_records('task_log', ['classname' => \core\task\cache_cron_task::class]));
+        $this->assertEquals(48, $DB->count_records('task_log', ['classname' => \core\task\badges_cron_task::class]));
+
+        // We should retain the most recent 48 of each task, so the oldest will be 47 hours old.
+        $oldest = $DB->get_records('task_log', [], 'timestart ASC', 'timestart', 0, 1);
         $oldest = reset($oldest);
-        $this->assertGreaterThan(time() - (48 * DAYSECS), $oldest->timestart);
+        $this->assertEquals($baselogtime - (47 * HOURSECS), $oldest->timestart);
 
         // Reducing the retain runs count to 10 should reduce the total logs to 20, overriding the time constraint.
         set_config('task_logretainruns', 10);
         \core\task\database_logger::cleanup();
+
         $this->assertEquals(20, $DB->count_records('task_log'));
         $this->assertEquals(10, $DB->count_records('task_log', ['classname' => \core\task\cache_cron_task::class]));
         $this->assertEquals(10, $DB->count_records('task_log', ['classname' => \core\task\badges_cron_task::class]));
 
-        // We should retain the most recent 10 so the oldeste will be no more than 10 hours old.
-        $oldest = $DB->get_records('task_log', [], 'timestart DESC', 'timestart', 0, 1);
+        // We should retain the most recent 10 of each task, so the oldest will be 9 hours old.
+        $oldest = $DB->get_records('task_log', [], 'timestart ASC', 'timestart', 0, 1);
         $oldest = reset($oldest);
-        $this->assertGreaterThan(time() - (10 * DAYSECS), $oldest->timestart);
+        $this->assertEquals($baselogtime - (9 * HOURSECS), $oldest->timestart);
     }
 
     /**
