@@ -53,9 +53,7 @@ Feature: Manage plearning plan
     And I follow "Home"
     And I navigate to "Competencies > Learning plan templates" in site administration
     And I click on ".template-cohorts" "css_element" in the "Science template cohort" "table_row"
-    And I click on ".form-autocomplete-downarrow" "css_element"
-    And I click on "cohort plan" item in the autocomplete list
-    And I press the escape key
+    And I set the field "Select cohorts to sync" to "cohort plan"
     When I click on "Add cohorts" "button"
     Then I should see "2 learning plans were created."
     And I follow "Learning plan templates"
