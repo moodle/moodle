@@ -130,18 +130,17 @@ Feature: Teacher can search and enrol users one by one into the course
   Scenario: Searching for a non-existing user
     Given I navigate to course participants
     And I press "Enrol users"
-    And I set the field "Select users" to "qwertyuiop"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
+    And I click on "Select users" "field"
+    And I type "qwertyuiop"
     Then I should see "No suggestions"
 
   @javascript
   Scenario: If there are less than 100 matching users, all are displayed for selection
     Given I navigate to course participants
     And I press "Enrol users"
-    When I set the field "Select users" to "example.com"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
-    And I click on "Student 099" item in the autocomplete list
-    Then I should see "Student 099"
+    When I click on "Select users" "field"
+    And I type "example.com"
+    Then "Student 099" "autocomplete_suggestions" should exist
 
   @javascript
   Scenario: If there are more than 100 matching users, inform there are too many.
@@ -151,8 +150,8 @@ Feature: Teacher can search and enrol users one by one into the course
       | student101  | Student   | 101      | student101@example.com  |
     And I navigate to course participants
     And I press "Enrol users"
-    When I set the field "Select users" to "example.com"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
+    When I click on "Select users" "field"
+    And I type "example.com"
     Then I should see "Too many users (>100) to show"
 
   @javascript
@@ -161,8 +160,8 @@ Feature: Teacher can search and enrol users one by one into the course
       | maxusersperpage | 5 |
     And I navigate to course participants
     And I press "Enrol users"
-    When I set the field "Select users" to "student00"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
+    When I click on "Select users" "field"
+    And I type "student00"
     Then I should see "Too many users (>5) to show"
 
   @javascript
@@ -177,18 +176,18 @@ Feature: Teacher can search and enrol users one by one into the course
     When I am on "Course 001" course homepage
     Then I navigate to course participants
     And I press "Enrol users"
-    When I set the field "Select users" to "student100@example.com"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
+    When I click on "Select users" "field"
+    And I type "student100@example.com"
     Then I should see "student100@example.com, CITY1, UK, 1234567892, 1234567893, ABC1, ABC2"
     # Remove identity field in setting User policies
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,phone1,phone2,department,institution |
-    When I am on "Course 001" course homepage
+    And I am on "Course 001" course homepage
     And I navigate to course participants
     And I press "Enrol users"
-    When I set the field "Select users" to "student100@example.com"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
-    Then I should see "student100@example.com, 1234567892, 1234567893, ABC1, ABC2"
+    And I click on "Select users" "field"
+    And I type "student100@example.com"
+    And I should see "student100@example.com, 1234567892, 1234567893, ABC1, ABC2"
 
 # The following tests are commented out as a result of MDL-66339.
 #  @javascript
