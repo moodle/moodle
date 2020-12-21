@@ -473,7 +473,7 @@ class client extends \oauth2_client {
 
         // Store the access token and, if provided by the server, the new refresh token.
         $this->store_token($receivedtokens['access_token']);
-        if (isset($receivedtokens['refreshtoken'])) {
+        if (isset($receivedtokens['refresh_token'])) {
             $systemaccount->set('refreshtoken', $receivedtokens['refresh_token']->token);
             $systemaccount->update();
         }
