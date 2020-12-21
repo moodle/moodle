@@ -116,7 +116,11 @@ class calendar_event_exporter extends event_exporter_base {
         $values['islastday'] = false;
         $today = $this->related['type']->timestamp_to_date_array($this->related['today']);
 
-        $values['popupname'] = $this->event->get_name();
+        if ($hascourse) {
+            $values['popupname'] = external_format_string($this->event->get_name(), \context_course::instance($course->id), true);
+        } else {
+            $values['popupname'] = external_format_string($this->event->get_name(), \context_system::instance(), true);
+        }
 
         $times = $this->event->get_times();
         if ($duration = $times->get_duration()) {
