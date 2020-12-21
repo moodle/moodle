@@ -691,4 +691,24 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         call_user_func_array([$this, 'assertNotEquals'], $args);
     }
+
+    /**
+     * Assert that the lastruntime column holds an original value after a scheduled task is reset.
+     */
+    public function test_reset_scheduled_tasks_for_component_keeps_original_lastruntime(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Set lastruntime for the scheduled task.
+        $DB->set_field('task_scheduled', 'lastruntime', 123456789, ['classname' => '\core\task\session_cleanup_task']);
+
+        // Reset the task.
+        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+
+        // Fetch the task again.
+        $taskafterreset = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+
+        // Confirm, that lastruntime is still in place.
+        $this->assertEquals(123456789, $taskafterreset->get_last_run_time());
+    }
 }
