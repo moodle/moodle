@@ -40,6 +40,22 @@ use tool_templatelibrary\api;
  */
 class list_templates_page implements renderable, templatable {
 
+    /** @var string $component The currently selected component */
+    protected $component;
+    /** @var string $search The current search */
+    protected $search;
+
+    /**
+     * Template page constructor
+     *
+     * @param string $component
+     * @param string $search
+     */
+    public function __construct(string $component = '', string $search = '') {
+        $this->component = $component;
+        $this->search = $search;
+    }
+
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
@@ -75,6 +91,7 @@ class list_templates_page implements renderable, templatable {
             $components[$type]->plugins[$component] = (object) [
                 'name' => $pluginname,
                 'component' => $component,
+                'selected' => ($component === $this->component),
             ];
         }
 
@@ -87,6 +104,7 @@ class list_templates_page implements renderable, templatable {
 
         return (object) [
             'allcomponents' => array_values($components),
+            'search' => $this->search,
         ];
     }
 }
