@@ -4206,4 +4206,54 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $output3 .= $assign->get_renderer()->render($summary);
         $this->assertStringContainsStringIgnoringCase('Friday, 7 June 2019, 5:37 PM', $output3);
     }
+
+    /**
+     * Test that cron task uses task API to get its last run time.
+     */
+    public function test_cron_use_task_api_to_get_lastruntime() {
+        global $DB;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create an assignment which allows submissions from 3 days ago.
+        $assign1 = $this->create_instance($course, [
+            'duedate' => time() + DAYSECS,
+            'alwaysshowdescription' => 0,
+            'allowsubmissionsfromdate' => time() - 3 * DAYSECS,
+            'intro' => 'This one should not be re-created',
+        ]);
+
+        // Create an assignment which allows submissions from 1 day ago.
+        $assign2 = $this->create_instance($course, [
+            'duedate' => time() + DAYSECS,
+            'alwaysshowdescription' => 0,
+            'allowsubmissionsfromdate' => time() - DAYSECS,
+            'intro' => 'This one should be re-created',
+        ]);
+
+        // Set last run time 2 days ago.
+        $DB->set_field('task_scheduled', 'lastruntime', time() - 2 * DAYSECS, ['classname' => '\mod_assign\task\cron_task']);
+
+        // Remove events to make sure cron will update calendar and re-create one of them.
+        $params = array('modulename' => 'assign', 'instance' => $assign1->get_instance()->id);
+        $DB->delete_records('event', $params);
+        $params = array('modulename' => 'assign', 'instance' => $assign2->get_instance()->id);
+        $DB->delete_records('event', $params);
+
+        // Run cron.
+        assign::cron();
+
+        // Assert that calendar hasn't been updated for the first assignment as it's supposed to be
+        // updated as part of previous cron runs (allowsubmissionsfromdate is less than lastruntime).
+        $params = array('modulename' => 'assign', 'instance' => $assign1->get_instance()->id);
+        $event1 = $DB->get_record('event', $params);
+        $this->assertEmpty($event1);
+
+        // Assert that calendar has been updated for the second assignment
+        // because its allowsubmissionsfromdate is greater than lastruntime.
+        $params = array('modulename' => 'assign', 'instance' => $assign2->get_instance()->id);
+        $event2 = $DB->get_record('event', $params);
+        $this->assertNotEmpty($event2);
+        $this->assertSame('This one should be re-created', $event2->description);
+    }
 }
