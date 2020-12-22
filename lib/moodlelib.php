@@ -3906,13 +3906,19 @@ function get_enabled_auth_plugins($fix=false) {
 
     if ($fix) {
         $auths = array_unique($auths);
+        $oldauthconfig = implode(',', $auths);
         foreach ($auths as $k => $authname) {
-            if (!exists_auth_plugin($authname) or in_array($authname, $default)) {
+            $authplugindoesnotexist = !exists_auth_plugin($authname);
+            if ($authplugindoesnotexist || in_array($authname, $default)) {
+                if ($authplugindoesnotexist) {
+                    debugging(get_string('authpluginnotfound', 'debug', $authname));
+                }
                 unset($auths[$k]);
             }
         }
         $newconfig = implode(',', $auths);
         if (!isset($CFG->auth) or $newconfig != $CFG->auth) {
+            add_to_config_log('auth', $oldauthconfig, $newconfig, 'core');
             set_config('auth', $newconfig);
         }
     }
