@@ -15989,13 +15989,34 @@ body.path-question-type {
   margin: 0 0 0.5em; }
 
 .que .correctness.correct {
+  color: #fff;
   background-color: #357a32; }
+  a.que .correctness.correct:hover, a.que .correctness.correct:focus {
+    color: #fff;
+    background-color: #255623; }
+  a.que .correctness.correct:focus, a.que .correctness.correct.focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(53, 122, 50, 0.5); }
 
 .que .correctness.partiallycorrect {
+  color: #212529;
   background-color: #f0ad4e; }
+  a.que .correctness.partiallycorrect:hover, a.que .correctness.partiallycorrect:focus {
+    color: #212529;
+    background-color: #ec971f; }
+  a.que .correctness.partiallycorrect:focus, a.que .correctness.partiallycorrect.focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(240, 173, 78, 0.5); }
 
 .que .correctness.notanswered, .que .correctness.incorrect {
+  color: #fff;
   background-color: #ca3120; }
+  a.que .correctness.notanswered:hover, a.que .correctness.notanswered:focus, .que .correctness.incorrect:hover, .que .correctness.incorrect:focus {
+    color: #fff;
+    background-color: #9e2619; }
+  a.que .correctness.notanswered:focus, a.que .correctness.notanswered.focus, .que .correctness.incorrect:focus, .que .correctness.incorrect.focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(202, 49, 32, 0.5); }
 
 .que .qtext {
   margin-bottom: 1.5em; }
