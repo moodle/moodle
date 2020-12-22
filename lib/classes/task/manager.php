@@ -679,7 +679,6 @@ class manager {
 
         $where = "(lastruntime IS NULL OR lastruntime < :timestart1)
                   AND (nextruntime IS NULL OR nextruntime < :timestart2)
-                  AND disabled = 0
                   ORDER BY lastruntime, id ASC";
         $params = array('timestart1' => $timestart, 'timestart2' => $timestart);
         $records = $DB->get_records_select('task_scheduled', $where, $params);
@@ -688,14 +687,15 @@ class manager {
 
         foreach ($records as $record) {
 
+            $task = self::scheduled_task_from_record($record);
+            // Safety check in case the task in the DB does not match a real class (maybe something was uninstalled).
+            // Also check to see if task is disabled or enabled after applying overrides.
+            if (!$task || $task->get_disabled()) {
+                continue;
+            }
+
             if ($lock = $cronlockfactory->get_lock(($record->classname), 0)) {
                 $classname = '\\' . $record->classname;
-                $task = self::scheduled_task_from_record($record);
-                // Safety check in case the task in the DB does not match a real class (maybe something was uninstalled).
-                if (!$task) {
-                    $lock->release();
-                    continue;
-                }
 
                 $task->set_lock($lock);
 

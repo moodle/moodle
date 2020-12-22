@@ -641,6 +641,47 @@ class core_scheduled_task_testcase extends advanced_testcase {
     }
 
     /**
+     * Check that an overridden task is sent to be processed.
+     */
+    public function test_scheduled_task_overridden_task_can_run(): void {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+
+        // Delete all existing scheduled tasks.
+        $DB->delete_records('task_scheduled');
+
+        // Add overrides to the config.
+        $CFG->scheduled_tasks = [
+            '\core\task\scheduled_test_task' => [
+                'disabled' => 1
+            ],
+            '\core\task\scheduled_test2_task' => [
+                'disabled' => 0
+            ],
+        ];
+
+        // A task that runs once per hour.
+        $record = new stdClass();
+        $record->component = 'test_scheduled_task';
+        $record->classname = '\core\task\scheduled_test_task';
+        $record->disabled = 0;
+        $DB->insert_record('task_scheduled', $record);
+
+        // And disabled test.
+        $record->classname = '\core\task\scheduled_test2_task';
+        $record->disabled = 1;
+        $DB->insert_record('task_scheduled', $record);
+
+        $now = time();
+
+        $scheduledtask = \core\task\manager::get_next_scheduled_task($now);
+        $this->assertInstanceOf('\core\task\scheduled_test2_task', $scheduledtask);
+        $scheduledtask->execute();
+        \core\task\manager::scheduled_task_complete($scheduledtask);
+    }
+
+    /**
      * Assert that the specified tasks are equal.
      *
      * @param   \core\task\task_base $task
