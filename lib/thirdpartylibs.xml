@@ -248,13 +248,13 @@
     <location>maxmind/GeoIp2</location>
     <name>GeoIP2 PHP API</name>
     <license>Apache 2.0</license>
-    <version>2.10.0</version>
+    <version>2.11.0</version>
   </library>
   <library>
     <location>maxmind/MaxMind</location>
     <name>MaxMind DB Reader API</name>
     <license>Apache 2.0</license>
-    <version>1.5.1</version>
+    <version>1.9.0</version>
   </library>
   <library>
     <location>ltiprovider</location>
