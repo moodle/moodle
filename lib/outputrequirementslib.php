@@ -319,20 +319,21 @@ class page_requirements_manager {
             }
 
             $this->M_cfg = array(
-                'wwwroot'             => $CFG->wwwroot,
-                'sesskey'             => sesskey(),
-                'sessiontimeout'      => $CFG->sessiontimeout,
-                'themerev'            => theme_get_revision(),
-                'slasharguments'      => (int)(!empty($CFG->slasharguments)),
-                'theme'               => $page->theme->name,
-                'iconsystemmodule'    => $iconsystem->get_amd_name(),
-                'jsrev'               => $this->get_jsrev(),
-                'admin'               => $CFG->admin,
-                'svgicons'            => $page->theme->use_svg_icons(),
-                'usertimezone'        => usertimezone(),
-                'contextid'           => $contextid,
-                'langrev'             => get_string_manager()->get_revision(),
-                'templaterev'         => $this->get_templaterev()
+                'wwwroot'               => $CFG->wwwroot,
+                'sesskey'               => sesskey(),
+                'sessiontimeout'        => $CFG->sessiontimeout,
+                'sessiontimeoutwarning' => $CFG->sessiontimeoutwarning,
+                'themerev'              => theme_get_revision(),
+                'slasharguments'        => (int)(!empty($CFG->slasharguments)),
+                'theme'                 => $page->theme->name,
+                'iconsystemmodule'      => $iconsystem->get_amd_name(),
+                'jsrev'                 => $this->get_jsrev(),
+                'admin'                 => $CFG->admin,
+                'svgicons'              => $page->theme->use_svg_icons(),
+                'usertimezone'          => usertimezone(),
+                'contextid'             => $contextid,
+                'langrev'               => get_string_manager()->get_revision(),
+                'templaterev'           => $this->get_templaterev()
             );
             if ($CFG->debugdeveloper) {
                 $this->M_cfg['developerdebug'] = true;
