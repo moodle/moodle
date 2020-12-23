@@ -1727,16 +1727,21 @@ class company {
             iomad::has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext) ||
             iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext) ||
             iomad::has_capability('block/iomad_company_admin:company_add_child', $systemcontext)) {
-            return self::get_company_parentnode($this->id);
+
+            $topdepartment = self::get_company_parentnode($this->id);
+            return array($topdepartment->id => $topdepartment);
         }
 
         // If not, get the department the user is assigned to in this company.
-        if ($userdepartment = $DB->get_record('company_users', array('userid' => $user->id, 'companyid' => $this->id))) {
-            $userlevel = $DB->get_record('department', array('id' => $userdepartment->departmentid));
-            return $userlevel;
+        if ($userdepartments = $DB->get_records_sql("SELECT d.* from {department} d
+                                                     JOIN {company_users} cu ON (d.company = cu.companyid AND d.id = cu.departmentid)
+                                                     WHERE cu.userid = :userid
+                                                     AND cu.companyid = :companyid",
+                                                     array('userid' => $user->id, 'companyid' => $this->id))) {
+            return $userdepartments;
         } else {
             // User doesn't exist in this company.
-            return false;
+            return array();
         }
     }
 
@@ -2084,7 +2089,7 @@ class company {
      *
      **/
     public static function get_all_subdepartments($parentnodeid) {
-
+echo "Parentnodeid = <pre>";print_r($parentnodeid);echo "</pre>";
         $parentnode = self::get_departmentbyid($parentnodeid);
         $parentlist = array();
         $parentlist[$parentnodeid] = $parentnode->name;
@@ -2136,13 +2141,18 @@ class company {
         if (empty($departmentid)) {
             if (is_siteadmin($USER->id)) {
                 $department = self::get_company_parentnode($companyid);
-                $departmentid = $department->id;
+                $departmentids = array($department->id);
             } else {
-                $department = $company->get_userlevel($USER);
-                $departmentid = $department->id;
+                $departments = $company->get_userlevel($USER);
+echo "departments = <pre>";print_r($departments);echo "</pre></br>";
+                $departmentids = array_keys($departments);
             }
         }
-        return self::get_recursive_department_users($departmentid);
+        $users = array();
+        foreach ($departmentids as $departmentid) { 
+            $users = $users + self::get_recursive_department_users($departmentid);
+        }
+        return $users;
     }
 
     /**
@@ -2412,8 +2422,11 @@ class company {
             $departmentrec = $DB->get_record('department', array('id' => $departmentid));
             $company = new company($departmentrec->company);
             // Get the list of departments at and below the user assignment.
-            $userhierarchylevel = $company->get_userlevel($USER);
-            $subhierarchytree = self::get_all_subdepartments($userhierarchylevel->id);
+            $userhierarchylevels = $company->get_userlevel($USER);
+            $subhierarchytree = array();
+            foreach ($userhierarchylevels as $userhierachylevl) {
+                $subhierarchies = $subhierarchies + self::get_all_subdepartments($userhierarchylevel->id);
+            }
             if (isset($subhierarchytree[$departmentid])) {
                 // Current department is a child of the users assignment.
                 return true;
