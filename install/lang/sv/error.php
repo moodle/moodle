@@ -45,7 +45,7 @@ $string['dmlexceptiononinstall'] = '<p>Ett databasfel har inträffat [{$a->error
 $string['downloadedfilecheckfailed'] = 'Det gick inte att kontrollera den nedladdade filen';
 $string['invalidmd5'] = 'Kontrollvariabeln var felaktig - försök igen';
 $string['missingrequiredfield'] = 'Det saknas några obligatoriska fält';
-$string['remotedownloaderror'] = 'Nedladdningen av en komponent till din server misslyckades, var snäll och verifiera inställningar för proxy. <br /><br />Du måste ladda ner <a href="{$a->url}">{$a->url}</a> filen manuellt, kopiera den till "{$a->dest}" på din server och packa upp den där.';
+$string['remotedownloaderror'] = 'Nedladdningen av en komponent till din server misslyckades. Vänligen verifiera inställningar för proxy. <br /><br />Du måste ladda ner <a href="{$a->url}">{$a->url}</a> filen manuellt, kopiera den till "{$a->dest}" på din server och packa upp den där.';
 $string['wrongdestpath'] = 'Fel sökväg';
 $string['wrongsourcebase'] = 'Fel bas-URL till källan';
 $string['wrongzipfilename'] = 'Fel namn på ZIP-filen';
