@@ -39,3 +39,4 @@ $string['cliunknowoption'] = 'Opsi tidak dikenali :
  {$a}
 Silahkan gunakan opsi --help';
 $string['cliyesnoprompt'] = 'ketik y (Ya) atau t (Tidak)';
+$string['environmentrequireinstall'] = 'harus dipasang dan diaktifkan';
