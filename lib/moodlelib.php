@@ -9284,7 +9284,7 @@ function remoteip_in_list($list) {
 function getremoteaddr($default='0.0.0.0') {
     global $CFG;
 
-    if (empty($CFG->getremoteaddrconf)) {
+    if (!isset($CFG->getremoteaddrconf)) {
         // This will happen, for example, before just after the upgrade, as the
         // user is redirected to the admin screen.
         $variablestoskip = GETREMOTEADDR_SKIP_DEFAULT;
