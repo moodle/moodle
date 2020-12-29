@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.11.3 ===
+* The signature of the get_name() function for grade_category and grade_item has been extended. The new parameter allows
+  callers to get the name without escaped characters.
+
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.
   For this reason, manually disabling emulateredirects will no longer have any effect (and will generate a debugging message).

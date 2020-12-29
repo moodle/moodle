@@ -181,7 +181,7 @@ abstract class grade_base_testcase extends advanced_testcase {
 
         $grade_category = new stdClass();
 
-        $grade_category->fullname    = 'unittestcategory1';
+        $grade_category->fullname    = 'unittestcategory1 &';
         $grade_category->courseid    = $this->course->id;
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
         $grade_category->aggregateonlygraded = 1;
@@ -324,7 +324,7 @@ abstract class grade_base_testcase extends advanced_testcase {
 
         $grade_item->courseid = $this->course->id;
         $grade_item->categoryid = $this->grade_categories[1]->id;
-        $grade_item->itemname = 'unittestgradeitem1';
+        $grade_item->itemname = 'unittestgradeitem1 &';
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = $this->course_module[0]->modname;
         $grade_item->iteminstance = $this->course_module[0]->instance;
