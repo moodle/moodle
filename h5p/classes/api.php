@@ -194,7 +194,10 @@ class api {
         global $DB;
 
         // Deconstruct the URL and get the pathname associated.
-        $pathnamehash = self::get_pluginfile_hash($url, $preventredirect);
+        if (self::can_access_pluginfile_hash($url, $preventredirect)) {
+            $pathnamehash = self::get_pluginfile_hash($url);
+        }
+
         if (!$pathnamehash) {
             return [false, false];
         }
@@ -337,22 +340,28 @@ class api {
      * @param factory $factory The \core_h5p\factory object
      */
     public static function delete_content_from_pluginfile_url(string $url, factory $factory): void {
+        global $DB;
+
         // Get the H5P to delete.
-        list($file, $h5p) = self::get_content_from_pluginfile_url($url);
+        $pathnamehash = self::get_pluginfile_hash($url);
+        $h5p = $DB->get_record('h5p', ['pathnamehash' => $pathnamehash]);
         if ($h5p) {
             self::delete_content($h5p, $factory);
         }
     }
 
     /**
-     * Get the pathnamehash from an H5P internal URL.
+     * If user can access pathnamehash from an H5P internal URL.
      *
      * @param  string $url H5P pluginfile URL poiting to an H5P file.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
      *
-     * @return string|false pathnamehash for the file in the internal URL.
+     * @return bool if user can access pluginfile hash.
+     * @throws \moodle_exception
+     * @throws \coding_exception
+     * @throws \require_login_exception
      */
-    protected static function get_pluginfile_hash(string $url, bool $preventredirect = true) {
+    protected static function can_access_pluginfile_hash(string $url, bool $preventredirect = true): bool {
         global $USER, $CFG;
 
         // Decode the URL before start processing it.
@@ -365,7 +374,6 @@ class api {
         // We only need the slasharguments.
         $path = substr($path, strpos($path, '.php/') + 5);
         $parts = explode('/', $path);
-        $filename = array_pop($parts);
 
         // If the request is made by tokenpluginfile.php we need to avoid userprivateaccesskey.
         if (strpos($url, '/tokenpluginfile.php')) {
@@ -376,11 +384,6 @@ class api {
         $contextid = array_shift($parts);
         $component = array_shift($parts);
         $filearea = array_shift($parts);
-
-        // Ignore draft files, because they are considered temporary files, so shouldn't be displayed.
-        if ($filearea == 'draft') {
-            return false;
-        }
 
         // Get the context.
         try {
@@ -415,7 +418,7 @@ class api {
                     $parentcontext = $context->get_parent_context();
                     if ($parentcontext->contextlevel === CONTEXT_COURSECAT) {
                         // Check if category is visible and user can view this category.
-                        if (!core_course_category::get($parentcontext->instanceid, IGNORE_MISSING)) {
+                        if (!\core_course_category::get($parentcontext->instanceid, IGNORE_MISSING)) {
                             send_file_not_found();
                         }
                     } else if ($parentcontext->contextlevel === CONTEXT_USER && $parentcontext->instanceid != $USER->id) {
@@ -431,7 +434,7 @@ class api {
             // For CONTEXT_MODULE and CONTEXT_COURSE check if the user is enrolled in the course.
             // And for CONTEXT_MODULE has permissions view this .h5p file.
             if ($context->contextlevel == CONTEXT_MODULE ||
-                    $context->contextlevel == CONTEXT_COURSE) {
+                $context->contextlevel == CONTEXT_COURSE) {
                 // Require login to the course first (without login to the module).
                 require_course_login($course, true, null, !$preventredirect, $preventredirect);
 
@@ -446,6 +449,54 @@ class api {
                     }
                 }
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the pathnamehash from an H5P internal URL.
+     *
+     * @param  string $url H5P pluginfile URL poiting to an H5P file.
+     *
+     * @return string|false pathnamehash for the file in the internal URL.
+     *
+     * @throws \moodle_exception
+     */
+    protected static function get_pluginfile_hash(string $url) {
+
+        // Decode the URL before start processing it.
+        $url = new \moodle_url(urldecode($url));
+
+        // Remove params from the URL (such as the 'forcedownload=1'), to avoid errors.
+        $url->remove_params(array_keys($url->params()));
+        $path = $url->out_as_local_url();
+
+        // We only need the slasharguments.
+        $path = substr($path, strpos($path, '.php/') + 5);
+        $parts = explode('/', $path);
+        $filename = array_pop($parts);
+
+        // If the request is made by tokenpluginfile.php we need to avoid userprivateaccesskey.
+        if (strpos($url, '/tokenpluginfile.php')) {
+            array_shift($parts);
+        }
+
+        // Get the contextid, component and filearea.
+        $contextid = array_shift($parts);
+        $component = array_shift($parts);
+        $filearea = array_shift($parts);
+
+        // Ignore draft files, because they are considered temporary files, so shouldn't be displayed.
+        if ($filearea == 'draft') {
+            return false;
+        }
+
+        // Get the context.
+        try {
+            list($context, $course, $cm) = get_context_info_array($contextid);
+        } catch (\moodle_exception $e) {
+            throw new \moodle_exception('invalidcontextid', 'core_h5p');
         }
 
         // Some components, such as mod_page or mod_resource, add the revision to the URL to prevent caching problems.
