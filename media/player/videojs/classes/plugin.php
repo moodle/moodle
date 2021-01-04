@@ -359,7 +359,7 @@ class media_videojs_plugin extends core_media_player_native {
             $this->language = key($candidates);
         } else {
             // Could not match, use default language of video player (English).
-            $this->language = null;
+            $this->language = 'en';
         }
     }
 
