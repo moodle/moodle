@@ -185,11 +185,11 @@ border-radius: 10px;
 }
 
 #page-blocks-iomad_company_admin-editusers .no-overflow {
-    min-height: 50%;
+    min-height: 472px;
 }
 
 #page-blocks-iomad_company_admin-editusers .moodle-actionmenu[data-enhanced].show .menu.align-tl-bl {
-    left: 50px;
+    left: -150px;
     min-width: 150px;
 }
 
