@@ -374,3 +374,33 @@ body.drawer-open-left #region-main.has-blocks {
     border: 2px dashed $gray-800;
     margin: 4px 0;
 }
+
+.pagelayout-embedded {
+    .has-fake-blocks {
+        padding: 1rem;
+        display: flex;
+    }
+
+    .has-fake-blocks .embedded-main {
+        order: 0;
+        width: calc(100% - #{$blocks-column-width});
+        margin-right: 1rem;
+    }
+
+    .embedded-blocks {
+        order: 1;
+        width: $blocks-column-width;
+    }
+
+    @media (max-width: 767.98px) {
+        .has-fake-blocks {
+            display: block;
+        }
+        .has-fake-blocks .embedded-main {
+            width: 100%;
+        }
+        .embedded-blocks {
+            width: 100%;
+        }
+    }
+}
