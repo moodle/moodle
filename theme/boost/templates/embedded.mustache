@@ -21,15 +21,24 @@
 
     Context variables required for this template:
     * output - The core renderer for the page
+    * hasfakeblocks - true if there are fake blocks on this page
+    * fakeblocks - HTML for the fake blocks
 
     Example context (json):
     {
         "output": {
             "doctype": "<!DOCTYPE html>",
+            "htmlattributes": "The attributes that should be added to the <html> tag",
             "page_title": "Test page",
             "favicon": "favicon.ico",
-            "main_content": "<h1>Headings make html validators happier</h1>"
-         }
+            "standard_head_html": "The standard tags that should be included in the <head> tag",
+            "body_attributes": "The attributes to use within the body tag",
+            "standard_top_of_body_html": "The standard tags that should be output just inside the start of the <body> tag",
+            "main_content": "<h1>Headings make html validators happier</h1>",
+            "standard_end_of_body_html": "The standard tags that should be output after everything else"
+         },
+         "hasfakeblocks": true,
+         "fakeblocks": "<h2>Fake blocks html goes here</h2>"
     }
 }}
 {{{ output.doctype }}}
@@ -45,10 +54,15 @@
 {{> core/local/toast/wrapper}}
 
 {{{ output.standard_top_of_body_html }}}
-<div id="page">
-    <div id="page-content" class="d-block">
+<div id="page" {{#hasfakeblocks}}class="has-fake-blocks"{{/hasfakeblocks}}>
+    {{#hasfakeblocks}}
+        <section class="embedded-blocks" aria-label="{{#str}}blocks{{/str}}">
+            {{{ fakeblocks }}}
+        </section>
+    {{/hasfakeblocks}}
+    <section class="embedded-main">
         {{{ output.main_content }}}
-    </div>
+    </section>
 </div>
 {{{ output.standard_end_of_body_html }}}
 </body>

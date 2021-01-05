@@ -650,4 +650,33 @@ EOF;
         $this->assertTrue(in_array(['name' => 'class', 'value' => $labelclass], $data->labelattributes));
         $this->assertTrue(in_array(['name' => 'style', 'value' => $labelstyle], $data->labelattributes));
     }
+
+    /**
+     * Data provider for test_block_contents_is_fake().
+     *
+     * @return array
+     */
+    public function block_contents_is_fake_provider() {
+        return [
+            'Null' => [null, false],
+            'Not set' => [false, false],
+            'Fake' => ['_fake', true],
+            'Real block' => ['activity_modules', false],
+        ];
+    }
+
+    /**
+     * Test block_contents is_fake() method.
+     *
+     * @dataProvider block_contents_is_fake_provider
+     * @param mixed $value Value for the data-block attribute
+     * @param boolean $expected The expected result
+     */
+    public function test_block_contents_is_fake($value, $expected) {
+        $bc = new block_contents(array());
+        if ($value !== false) {
+            $bc->attributes['data-block'] = $value;
+        }
+        $this->assertEquals($expected, $bc->is_fake());
+    }
 }
