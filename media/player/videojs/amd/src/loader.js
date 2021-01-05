@@ -90,6 +90,7 @@ const notifyVideoJS = (e, nodes) => {
             .then(([langJson, videojs]) => {
                 if (firstLoad) {
                     videojs.options.flash.swf = `${Config.wwwroot}/media/player/videojs/videojs/video-js.swf`;
+                    videojs.options.playbackRates = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
                     videojs.addLanguage(language, langJson);
 
                     firstLoad = false;
