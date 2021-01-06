@@ -72,6 +72,11 @@ class mustache_pix_helper {
         $text = strtok("");
         // Allow mustache tags in the last argument.
         $text = trim($helper->render($text));
+        // The $text has come from a template, so HTML special
+        // chars have been escaped. However, render_pix_icon
+        // assumes the alt arrives with no escaping. So we need
+        // ot un-escape here.
+        $text = htmlspecialchars_decode($text);
 
         return trim($this->renderer->pix_icon($key, $text, $component));
     }
