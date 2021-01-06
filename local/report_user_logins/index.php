@@ -250,12 +250,6 @@ $fwselectoutput = html_writer::tag('div', $output->render($select), array('id' =
 
 $departmenttree = company::get_all_subdepartments_raw($userhierarchylevel);
 $treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
-
-if (!(iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext) or
-      iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
-    print_error('nopermissions', 'error', '', 'report on users');
-}
-
 $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, true, true);
 
 // Create data for form.
