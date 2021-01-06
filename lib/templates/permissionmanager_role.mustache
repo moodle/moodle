@@ -30,24 +30,29 @@
     * rolename Name of the role rendered - must have been prepared for output with format_string,
                                            or more likely one of the role API functions like role_fix_names.
     * roleid Id of the role
-    * action WEhich action is done on click
+    * action Which action is done on click
     * spanclass class attribute of span
     * linkclass class attribute of link
     * adminurl moodle admin url
-    * imageurl moodle url for delete(x) image
+    * icon moodle icon for delete(x)
+    * iconalt alt text for the icon. Must have been HTML escaped.
 
     Example context (json):
-    {"rolename" : "Manager",
-     "roleid" : 1,
-     "action": "prevent",
-     "spanclass": "allowed",
-     "linkclass": "preventlink",
-     "adminurl" : "http://localhost/moodle/admin/"}
+    {
+        "rolename": "Manager",
+        "roleid": 1,
+        "action": "prevent",
+        "spanclass": "allowed",
+        "linkclass": "preventlink",
+        "adminurl": "http://localhost/moodle/admin/",
+        "icon": "t/delete",
+        "iconalt": "Delete Student role"
+    }
 }}
 <span style="display:inline-block;" class="{{spanclass}}">&nbsp;{{{rolename}}}&nbsp;
     <a href="{{adminurl}}roles/permissions.php" class="{{linkclass}}" data-role-id="{{roleid}}" data-action="{{action}}">
         {{#icon}}
-            {{#pix}}{{icon}}, core, {{iconalt}}{{/pix}}
+            {{#pix}}{{icon}}, core, {{{iconalt}}}{{/pix}}
         {{/icon}}
     </a>
 </span>
