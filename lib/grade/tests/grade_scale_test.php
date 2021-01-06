@@ -167,5 +167,10 @@ class core_grade_scale_testcase extends grade_base_testcase {
         $this->assertNotEmpty($grade_item->id);
         $this->assertEquals(1, $grade_item->grademin);
         $this->assertEquals(1, $grade_item->grademax);
+
+        $status = $scale->is_used();
+
+        $this->assertTrue($status);
+
     }
 }
