@@ -15,15 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Legacy file to avoid exceptions when scripts require it.
- * Please use classes from mod/assign/classes/output instead.
+ * This file contains mappings for classes that have been renamed.
  *
- * @deprecated since Moodle 4.0 - please do not include this file anymore.
- * @package   mod_assign
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_assign
+ * @copyright  2021 Catalyst IT Australia Pty Ltd
+ * @author     Cameron Ball <cameron@cameron1729.xyz>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-// TODO - MDL-72749 add debugging message.
+$renamedclasses = [
+    // Since Moodle 4.0.
+    'assign_header' => 'mod_assign\output\assign_header',
+    'assign_submission_status' => 'mod_assign\output\assign_submission_status'
+];

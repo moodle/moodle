@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use \mod_assign\output\assign_header;
+
 // File areas for file feedback assignment.
 define('ASSIGNFEEDBACK_FILE_FILEAREA', 'feedback_files');
 define('ASSIGNFEEDBACK_FILE_BATCH_FILEAREA', 'feedback_files_batch');

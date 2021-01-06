@@ -4308,7 +4308,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $_GET['group'] = $activegroup->id;
 
         /** @var assign $assign */
-        $header = new assign_header(
+        $header = new \mod_assign\output\assign_header(
             $assign->get_instance(),
             $assign->get_context(),
             false,
