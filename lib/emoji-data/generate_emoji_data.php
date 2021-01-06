@@ -24,7 +24,8 @@ define('CLI_SCRIPT', true);
 require(__DIR__.'/../../config.php');
 
 $categorysortorder = [
-    'Smileys & People',
+    'Smileys & Emotion',
+    'People & Body',
     'Animals & Nature',
     'Food & Drink',
     'Travel & Places',
