@@ -15604,6 +15604,10 @@ a.ygtvspacer:hover {
   #categoryquestions th {
     text-align: left;
     font-weight: normal; }
+  #categoryquestions > tbody > tr.r1 {
+    background-color: rgba(0, 0, 0, 0.05); }
+  #categoryquestions > tbody > tr.highlight {
+    border: 1px solid #008196; }
   #categoryquestions .checkbox {
     padding-left: 5px; }
   #categoryquestions .checkbox input[type="checkbox"] {
@@ -15885,12 +15889,6 @@ body.jsenabled .questionflag input[type=checkbox] {
 
 #page-mod-quiz-edit div.questionbank .categoryquestionscontainer {
   background: transparent; }
-
-#page-mod-quiz-edit #categoryquestions > thead {
-  background: #fff; }
-
-#page-mod-quiz-edit #categoryquestions > tbody > tr:nth-of-type(even) {
-  background: #e4e4e4; }
 
 #page-mod-quiz-edit .questionbankwindow div.header {
   color: #444;
