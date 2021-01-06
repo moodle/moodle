@@ -21,6 +21,7 @@ information provided here is intended especially for developers.
 * A new optional parameter `$sort` has been added to all `$context->get_capabilities()` methods to be able to define order of
   returned capability array.
 * Spout has been upgraded to the latest version - 3.1.0
+* emoji-data has been upgraded to 6.0.0.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:
