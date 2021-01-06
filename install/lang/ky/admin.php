@@ -29,6 +29,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = 'ro';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Română Workplace';
+$string['clianswerno'] = 'Жок';
+$string['cliansweryes'] = 'Ооба';
+$string['cliincorrectvalueerror'] = 'Ката, «{$a->option}» үчүн  «{$a->value}» туура эмес маани';
+$string['cliincorrectvalueretry'] = 'Туура эмес маани, кайрадан аракет кылып көрүңүз';
+$string['clitypevalue'] = 'Маанисин киргизгиле';
+$string['clitypevaluedefault'] = 'Маанисин киргизгиле, алгач белгиленген ({$a}) маанисин  колдонуу үчүн Enter баскычын баскыла';
+$string['cliunknowoption'] = 'Таанылбаган параметрлер {$a}
+
+Сураныч, --help параметрин колдонуңуз';
+$string['cliyesnoprompt'] = 'У киргизиңиз (Ооба дегенди билдирет) же n киргизиңиз (Жок дегенди билдирет)';
+$string['environmentrequireinstall'] = 'Орнотуу жана күйгүзүү зарыл';
+$string['environmentrequireversion'] = '{$a->needed} версиясы талап кылынат, сиз колдонгон версия {$a->current}';

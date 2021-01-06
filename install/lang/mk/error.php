@@ -29,18 +29,24 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatelangdir'] = 'Не може да се креира lang директориумот.';
-$string['cannotcreatetempdir'] = 'Не може да се креира temp директориумот.';
-$string['cannotdownloadcomponents'] = 'Не може да се преземат компонентите.';
-$string['cannotdownloadzipfile'] = 'Не може да се преземи ZIP датотеката.';
-$string['cannotfindcomponent'] = 'Не може да се најде компонентата.';
-$string['cannotsavemd5file'] = 'Не може да се сними md5 датотеката.';
-$string['cannotsavezipfile'] = 'Не може да се сними ZIP датотеката.';
-$string['cannotunzipfile'] = 'Не може да се отпакува датотеката.';
-$string['componentisuptodate'] = 'Компонентата е од последната верзија';
-$string['downloadedfilecheckfailed'] = 'Проверката на преземената датотека не заврши успешно.';
-$string['invalidmd5'] = 'невалидна md5';
-$string['missingrequiredfield'] = 'Некои задолжителни полиња недостасуваат';
-$string['wrongdestpath'] = 'Погрешна дестинација.';
-$string['wrongsourcebase'] = 'Погрешна изворна адреса.';
-$string['wrongzipfilename'] = 'Погрешна ZIP датотека.';
+$string['cannotcreatedboninstall'] = '<p>Не може да се креира базата со податоци.</p>
+<p>Посочената база со податоци не постои и корисникот нема овластувања да ја креира базата со податоци.</p>
+<p>Администраторот на сајтот треба да ја верификува конфигурацијата на базата со податоци.</p>';
+$string['cannotcreatelangdir'] = 'Lang именик не може да се креира';
+$string['cannotcreatetempdir'] = 'Не може да се креира привремена папка';
+$string['cannotdownloadcomponents'] = 'Не можете да ги симнете компонентите';
+$string['cannotdownloadzipfile'] = 'Не можете да спуштите ZIP фајл';
+$string['cannotfindcomponent'] = 'Компонентата не е пронајдена';
+$string['cannotsavemd5file'] = 'Не може да се сними md5 фајлот';
+$string['cannotsavezipfile'] = 'Не може да се сними ZIP фајл';
+$string['cannotunzipfile'] = 'Не можеше да се одзипува фајлот';
+$string['componentisuptodate'] = 'Компонентата е ажурирана.';
+$string['dmlexceptiononinstall'] = '<p>Настана грешка во базата на податоци [{$a->errorcode}].<br />{$a->debuginfo}</p>';
+$string['downloadedfilecheckfailed'] = 'Проверката на преземениот фајл не успеа';
+$string['invalidmd5'] = 'Променливата за проверка беше погрешна - обидете се повторно';
+$string['missingrequiredfield'] = 'Некое задолжително поле недостасува';
+$string['remotedownloaderror'] = '<p>Преземањето на компонентата на вашиот сервер не успеа. Проверете ги поставките за прокси; се препорачува екстензијата PHP cURL.</p>
+<p>Мора да го рачно да го симнете фајлот <a href="{$a->url}">{$a->url}</a>, копирајте го "{$a->dest}" во вашиот сервер и таму отпакувајте го.</p>';
+$string['wrongdestpath'] = 'Погрешна дестинациска патека';
+$string['wrongsourcebase'] = 'Погрешна URL на извор';
+$string['wrongzipfilename'] = 'Погрешно име на ZIP фајл';

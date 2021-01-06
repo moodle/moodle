@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Adminmappe';
 $string['availablelangs'] = 'Tilgjengelige språkpakker';
 $string['chooselanguagehead'] = 'Velg et språk';
-$string['chooselanguagesub'] = 'Velg språk (bare for INSTALLASJONEN). Du vil kunne velge språk for nettsted og bruker på et skjermbilde senere.';
+$string['chooselanguagesub'] = 'Velg et språk for installasjonen. Dette språket vil også bli brukt som standardspråk for nettstedet, men det kan endres senere.';
 $string['clialreadyconfigured'] = 'Konfigurasjonsfilen config.php finnes allerede. Vennligst bruk admin/cli/install_database.php hvis du vil installere Moodle på denne portalen.';
 $string['clialreadyinstalled'] = 'Filen config.php eksisterer allerede. Vennligst bruk admin/cli/install_database.php hvis du vil oppgradere Moodle på denne portalen.';
 $string['cliinstallheader'] = 'Moodle {$a} kommandolinje installasjonsprogram';
@@ -47,7 +47,7 @@ $string['environmenthead'] = 'Sjekker "omgivelsene" dine...';
 $string['environmentsub2'] = 'Hver Moodle-utgivelse har minimumskrav til PHP versjon og et sett med obligatoriske PHP-tillegg. En full sjekk av omgivelser gjøres før hver installering og oppgradering. Vær vennlig å kontakte serveradministrator hvis du ikke vet hvordan du skal installere nye versjoner eller slå på PHP-tillegg.';
 $string['errorsinenvironment'] = 'Omgivelseskontroll feilet!';
 $string['installation'] = 'Installasjon';
-$string['langdownloaderror'] = 'Beklageligvis ble ikke språkpakken "{$a}" installert. Installasjonsprosessen vil fortsette på Engelsk.';
+$string['langdownloaderror'] = 'Beklageligvis kunne ikke språkpakken "{$a}" lastes ned. Installasjonsprosessen vil fortsette på Engelsk.';
 $string['memorylimithelp'] = '<p>PHP minnegrensen for serveren din er nå satt til {$a}.</p>
 <p>Dette kan skape minneproblemer for Moodle senere, spesielt hvis du har mange moduler tillatt og/eller mange brukere.</p>
 <p>Vi anbefaler at du konfigurer PHP med en høyere grense enn mulig, for eksepmel 40M. Det er flere måter å gjøre dette på.:</p>

@@ -432,7 +432,7 @@ abstract class question_engine {
     public static function get_all_response_file_areas() {
         $variables = array();
         foreach (question_bank::get_all_qtypes() as $qtype) {
-            $variables += $qtype->response_file_areas();
+            $variables = array_merge($variables, $qtype->response_file_areas());
         }
 
         $areas = array();

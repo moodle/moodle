@@ -72,10 +72,10 @@
         {{/label}}
 
         {{$element}}
-            <select id="selectcomponent" class="form-control" data-field="component">
+            <select id="selectcomponent" name="component" class="form-control" data-field="component">
                 <option value="">{{#str}}all, tool_templatelibrary{{/str}}</option>
                 {{#allcomponents}}
-                    <option value="{{component}}">{{name}}</option>
+                    <option value="{{component}}" {{#selected}}selected{{/selected}}>{{name}}</option>
                 {{/allcomponents}}
             </select>
         {{/element}}
@@ -84,10 +84,10 @@
     {{< core_form/element-template }}
         {{$element}}
             {{< core/search_input_auto }}
-                {{$label}}{{{ searchstring }}}{{/label}}
-                {{$placeholder}}{{#str}}
-                    search, core
-                {{/str}}{{/placeholder}}
+                {{$label}}
+                    {{#str}} search, tool_templatelibrary {{/str}}
+                {{/label}}
+                {{$value}}{{ search }}{{/value}}
             {{/ core/search_input_auto }}
         {{/element}}
     {{/ core_form/element-template }}

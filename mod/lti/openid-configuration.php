@@ -51,7 +51,7 @@ $conf = [
     'https://purl.imsglobal.org/spec/lti-platform-configuration' => [
         'product_family_code' => 'moodle',
         'version' => $CFG->release,
-        'messages_supported' => ['LtiResourceLink', 'LtiDeepLinkingRequest'],
+        'messages_supported' => ['LtiResourceLinkRequest', 'LtiDeepLinkingRequest'],
         'placements' => ['AddContentMenu'],
         'variables' => array_keys(lti_get_capabilities())
     ]

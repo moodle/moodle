@@ -33,4 +33,4 @@ $string['language'] = 'Јазик';
 $string['moodlelogo'] = 'Moodle лого';
 $string['next'] = 'Следно';
 $string['previous'] = 'Претходно';
-$string['reload'] = 'Вчитај повторно';
+$string['reload'] = 'Вчитај одново';

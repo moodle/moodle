@@ -101,7 +101,6 @@ class behat_field_manager {
      * @return behat_form_field
      */
     public static function get_field_instance($type, NodeElement $fieldnode, Session $session) {
-
         global $CFG;
 
         // If the field is not part of a moodleform, we should still try to find out
@@ -152,6 +151,10 @@ class behat_field_manager {
             $type = $fieldnode->getAttribute('type');
             switch ($type) {
                 case 'text':
+                    if ($fieldtype = $fieldnode->getAttribute('data-fieldtype')) {
+                        return self::normalise_fieldtype($fieldtype);
+                    }
+                    return 'text';
                 case 'password':
                 case 'email':
                 case 'file':

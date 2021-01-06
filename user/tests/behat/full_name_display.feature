@@ -79,6 +79,6 @@ Feature: Users' names are displayed across the site according to the user policy
     And I am on "Course 1" course homepage
     When I navigate to course participants
     And I press "Enrol users"
-    And I set the field "Select users" to "three@example.com"
-    And I click on ".form-autocomplete-downarrow" "css_element" in the "Select users" "form_row"
+    And I click on "Select users" "field"
+    And I type "three@example.com"
     Then I should see "Sarah, Sev, Siobhan, Desforges"

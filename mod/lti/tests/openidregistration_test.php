@@ -162,6 +162,8 @@ EOD;
         $this->assertEquals(LTI_SETTING_DELEGATE, $config->lti_acceptgrades);
         $this->assertEquals(1, $config->ltiservice_memberships);
         $this->assertEquals(0, $config->ltiservice_toolsettings);
+        $this->assertEquals('client.example.org', $config->lti_tooldomain);
+        $this->assertEquals('https://client.example.org/lti', $config->lti_toolurl);
         $this->assertEquals(LTI_SETTING_ALWAYS, $config->lti_sendname);
         $this->assertEquals(LTI_SETTING_ALWAYS, $config->lti_sendemailaddr);
         $this->assertEquals(1, $config->lti_contentitem);
@@ -237,6 +239,51 @@ EOD;
     }
 
     /**
+     * Validation Test: no domain nor targetlinkuri is rejected.
+     */
+    public function test_validation_missing_domain_targetlinkuri() {
+        $registration = json_decode($this->registrationminimaljson, true);
+        $this->expectException(registration_exception::class);
+        $this->expectExceptionCode(400);
+        unset($registration['https://purl.imsglobal.org/spec/lti-tool-configuration']['domain']);
+        unset($registration['https://purl.imsglobal.org/spec/lti-tool-configuration']['target_link_uri']);
+        registration_helper::registration_to_config($registration, 'TheClientId');
+    }
+
+    /**
+     * Validation Test: mismatch between domain and targetlinkuri is rejected.
+     */
+    public function test_validation_domain_targetlinkuri_match() {
+        $registration = json_decode($this->registrationminimaljson, true);
+        $this->expectException(registration_exception::class);
+        $this->expectExceptionCode(400);
+        $registration['https://purl.imsglobal.org/spec/lti-tool-configuration']['domain'] = 'not.the.right.domain';
+        registration_helper::registration_to_config($registration, 'TheClientId');
+    }
+
+    /**
+     * Validation Test: domain is required.
+     */
+    public function test_validation_domain_targetlinkuri_onlylink() {
+        $registration = json_decode($this->registrationminimaljson, true);
+        unset($registration['https://purl.imsglobal.org/spec/lti-tool-configuration']['domain']);
+        $this->expectException(registration_exception::class);
+        $this->expectExceptionCode(400);
+        $config = registration_helper::registration_to_config($registration, 'TheClientId');
+    }
+
+    /**
+     * Validation Test: base url (targetlinkuri) is built from domain if not present.
+     */
+    public function test_validation_domain_targetlinkuri_onlydomain() {
+        $registration = json_decode($this->registrationminimaljson, true);
+        unset($registration['https://purl.imsglobal.org/spec/lti-tool-configuration']['target_link_uri']);
+        $config = registration_helper::registration_to_config($registration, 'TheClientId');
+        $this->assertEquals('client.example.org', $config->lti_tooldomain);
+        $this->assertEquals('https://client.example.org', $config->lti_toolurl);
+    }
+
+    /**
      * Test the transformation from lti config to OpenId LTI Client Registration response.
      */
     public function test_config_to_registration() {
@@ -265,5 +312,34 @@ EOD;
         $dlmsg = $lti['messages'][0];
         $this->assertEquals($dlmsgorig['type'], $dlmsg['type']);
         $this->assertEquals($dlmsgorig['target_link_uri'], $dlmsg['target_link_uri']);
+        $this->assertTrue(in_array('iss', $lti['claims']));
+        $this->assertTrue(in_array('sub', $lti['claims']));
+        $this->assertTrue(in_array('email', $lti['claims']));
+        $this->assertTrue(in_array('family_name', $lti['claims']));
+        $this->assertTrue(in_array('given_name', $lti['claims']));
+        $this->assertTrue(in_array('name', $lti['claims']));
     }
+
+    /**
+     * Test the transformation from lti config to OpenId LTI Client Registration response for the minimal version.
+     */
+    public function test_config_to_registration_minimal() {
+        $orig = json_decode($this->registrationminimaljson, true);
+        $reg = registration_helper::config_to_registration(registration_helper::registration_to_config($orig, 'clid'), 12);
+        $this->assertEquals('clid', $reg['client_id']);
+        $this->assertEquals($orig['response_types'], $reg['response_types']);
+        $this->assertEquals($orig['initiate_login_uri'], $reg['initiate_login_uri']);
+        $this->assertEquals($orig['redirect_uris'], $reg['redirect_uris']);
+        $this->assertEquals($orig['jwks_uri'], $reg['jwks_uri']);
+        $this->assertEquals('', $reg['scope']);
+        $ltiorig = $orig['https://purl.imsglobal.org/spec/lti-tool-configuration'];
+        $lti = $reg['https://purl.imsglobal.org/spec/lti-tool-configuration'];
+        $this->assertTrue(in_array('iss', $lti['claims']));
+        $this->assertTrue(in_array('sub', $lti['claims']));
+        $this->assertFalse(in_array('email', $lti['claims']));
+        $this->assertFalse(in_array('family_name', $lti['claims']));
+        $this->assertFalse(in_array('given_name', $lti['claims']));
+        $this->assertFalse(in_array('name', $lti['claims']));
+    }
+
 }

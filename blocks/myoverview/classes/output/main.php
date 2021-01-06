@@ -202,8 +202,9 @@ class main implements renderable, templatable {
         // Check and remember the given view.
         $this->view = $view ? $view : BLOCK_MYOVERVIEW_VIEW_CARD;
 
-        // Check and remember the given page size.
-        if ($paging == BLOCK_MYOVERVIEW_PAGING_ALL) {
+        // Check and remember the given page size, `null` indicates no page size set
+        // while a `0` indicates a paging size of `All`.
+        if (!is_null($paging) && $paging == BLOCK_MYOVERVIEW_PAGING_ALL) {
             $this->paging = BLOCK_MYOVERVIEW_PAGING_ALL;
         } else {
             $this->paging = $paging ? $paging : BLOCK_MYOVERVIEW_PAGING_12;

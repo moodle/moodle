@@ -52,9 +52,9 @@
             <a href="{{url}}"
                title={{#quote}}{{{name}}}{{/quote}}
                aria-label='{{#str}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{name}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/str}}'
-            ><h6 class="event-name text-truncate mb-0">{{#quote}}{{{name}}}{{/quote}}</h6></a>
+            ><h6 class="event-name text-truncate mb-0">{{{name}}}</h6></a>
             {{#course.fullnamedisplay}}
-            <small class="text-muted text-truncate mb-0">{{#quote}}{{{course.fullnamedisplay}}}{{/quote}}</small>
+            <small class="text-muted text-truncate mb-0">{{{course.fullnamedisplay}}}</small>
             {{/course.fullnamedisplay}}
             {{#action.actionable}}
             <h6 class="mb-0 pt-2">
