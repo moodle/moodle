@@ -154,6 +154,14 @@
         font-weight: normal;
     }
 
+    & > tbody > tr.r1 {
+        background-color: $table-accent-bg;
+    }
+
+    & > tbody > tr.highlight {
+        border: $border-width solid $info;
+    }
+
     .checkbox {
         padding-left: 5px;
     }
@@ -470,14 +478,6 @@ body.jsenabled .questionflag input[type=checkbox] {
 
 #page-mod-quiz-edit div.questionbank .categoryquestionscontainer {
     background: transparent;
-}
-
-#page-mod-quiz-edit #categoryquestions > thead {
-    background: #fff;
-}
-
-#page-mod-quiz-edit #categoryquestions > tbody > tr:nth-of-type(even) {
-    background: #e4e4e4;
 }
 
 #page-mod-quiz-edit .questionbankwindow div.header {
