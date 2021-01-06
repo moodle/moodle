@@ -954,7 +954,7 @@ function forum_scale_used_anywhere(int $scaleid): bool {
         return false;
     }
 
-    return $DB->record_exists('forum', ['scale' => $scaleid * -1]);
+    return $DB->record_exists('forum', ['scale' => $scaleid * -1, 'assessed' => 1]);
 }
 
 // SQL FUNCTIONS ///////////////////////////////////////////////////////////

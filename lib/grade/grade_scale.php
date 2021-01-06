@@ -344,7 +344,13 @@ class grade_scale extends grade_object {
         // count grade items excluding the
         $params = array($this->id);
         $sql = "SELECT COUNT(id) FROM {grade_items} WHERE scaleid = ? AND outcomeid IS NULL";
-        if ($DB->count_records_sql($sql, $params)) {
+
+        // Count the assessed items with the scale in forum.
+        $formsql = "SELECT COUNT(assessed) FROM {forum} WHERE scale = ? and assessed = 1";
+        $paramsforumassessed = array($this->id * -1);
+
+        if ($DB->count_records_sql($sql, $params) &&
+            $DB->count_records_sql($formsql, $paramsforumassessed)) {
             return true;
         }
 
