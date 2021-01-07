@@ -26,6 +26,10 @@
     width: 14px;
 }
 
+.que.multichoice .answer .answernumber {
+    min-width: 1.5em;
+}
+
 /* Editing form. */
 body#page-question-type-multichoice div[id^=fitem_id_][id*=answer_] {
     background: #eee;
