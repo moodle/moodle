@@ -26,7 +26,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
       | Online text | 1 |
       | File submissions | 0 |
       | Use marking workflow | Yes |
-      | Blind marking | Yes |
+      | Anonymous submissions | Yes |
     And I log out
     # Add a submission.
     And I log in as "student1"
