@@ -209,7 +209,7 @@ Feature: We can set the grade to pass value
       | Ratings > Grade to pass  | 90                 |
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
-    And I click on "Edit  forum Rating grade for Test Forum 1" "link"
+    And I click on "Edit  forum Test Forum 1 rating" "link"
     And I expand all fieldsets
     Then the field "Grade to pass" matches value "90"
     And I set the field "Grade to pass" to "80"
