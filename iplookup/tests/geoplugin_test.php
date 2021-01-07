@@ -51,8 +51,8 @@ class core_iplookup_geoplugin_testcase extends advanced_testcase {
 
         $this->assertEquals('array', gettype($result));
         $this->assertEquals('San Francisco', $result['city']);
-        $this->assertEquals(-122.3933, $result['longitude'], 'Coordinates are out of accepted tolerance', 0.01);
-        $this->assertEquals(37.7697, $result['latitude'], 'Coordinates are out of accepted tolerance', 0.01);
+        $this->assertEquals(-122.3933, $result['longitude'], 'Coordinates are out of accepted tolerance', 0.1);
+        $this->assertEquals(37.7697, $result['latitude'], 'Coordinates are out of accepted tolerance', 0.1);
         $this->assertNull($result['error']);
         $this->assertEquals('array', gettype($result['title']));
         $this->assertEquals('San Francisco', $result['title'][0]);
