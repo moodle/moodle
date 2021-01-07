@@ -166,40 +166,70 @@ function my_reset_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') 
  *
  * @param int $private Either MY_PAGE_PRIVATE or MY_PAGE_PUBLIC.
  * @param string $pagetype Either my-index or user-profile.
+ * @param progress_bar $progressbar A progress bar to update.
  * @return void
  */
-function my_reset_page_for_all_users($private = MY_PAGE_PRIVATE, $pagetype = 'my-index') {
+function my_reset_page_for_all_users($private = MY_PAGE_PRIVATE, $pagetype = 'my-index', $progressbar = null) {
     global $DB;
 
     // This may take a while. Raise the execution time limit.
     core_php_time_limit::raise();
 
-    // Find all the user pages and all block instances in them.
-    $sql = "SELECT bi.id
-        FROM {my_pages} p
-        JOIN {context} ctx ON ctx.instanceid = p.userid AND ctx.contextlevel = :usercontextlevel
-        JOIN {block_instances} bi ON bi.parentcontextid = ctx.id AND
-            bi.pagetypepattern = :pagetypepattern AND
-            (bi.subpagepattern IS NULL OR bi.subpagepattern = " . $DB->sql_concat("''", 'p.id') . ")
-        WHERE p.private = :private";
-    $params = array('private' => $private,
-        'usercontextlevel' => CONTEXT_USER,
-        'pagetypepattern' => $pagetype);
-    $blockids = $DB->get_fieldset_sql($sql, $params);
+    $users = $DB->get_fieldset_select(
+        'my_pages',
+        'DISTINCT(userid)',
+        'userid IS NOT NULL AND private = :private',
+        ['private' => $private]
+    );
+    $chunks = array_chunk($users, 20);
 
-    // Wrap the SQL queries in a transaction.
-    $transaction = $DB->start_delegated_transaction();
-
-    // Delete the block instances.
-    if (!empty($blockids)) {
-        blocks_delete_instances($blockids);
+    if (!empty($progressbar) && count($chunks) > 0) {
+        $count = count($chunks);
+        $message = get_string('inprogress');
+        $progressbar->update(0, $count, $message);
     }
 
-    // Finally delete the pages.
-    $DB->delete_records_select('my_pages', 'userid IS NOT NULL AND private = :private', ['private' => $private]);
+    foreach ($chunks as $key => $userchunk) {
+        list($infragment, $inparams) = $DB->get_in_or_equal($userchunk,  SQL_PARAMS_NAMED);
+        // Find all the user pages and all block instances in them.
+        $sql = "SELECT bi.id
+                  FROM {my_pages} p
+                  JOIN {context} ctx ON ctx.instanceid = p.userid AND ctx.contextlevel = :usercontextlevel
+                  JOIN {block_instances} bi ON bi.parentcontextid = ctx.id
+                   AND bi.pagetypepattern = :pagetypepattern
+                   AND (bi.subpagepattern IS NULL OR bi.subpagepattern = " . $DB->sql_concat("''", 'p.id') . ")
+                 WHERE p.private = :private
+                   AND p.userid $infragment";
 
-    // We should be good to go now.
-    $transaction->allow_commit();
+        $params = array_merge([
+            'private' => $private,
+            'usercontextlevel' => CONTEXT_USER,
+            'pagetypepattern' => $pagetype
+        ], $inparams);
+        $blockids = $DB->get_fieldset_sql($sql, $params);
+
+        // Wrap the SQL queries in a transaction.
+        $transaction = $DB->start_delegated_transaction();
+
+        // Delete the block instances.
+        if (!empty($blockids)) {
+            blocks_delete_instances($blockids);
+        }
+
+        // Finally delete the pages.
+        $DB->delete_records_select(
+            'my_pages',
+            "userid $infragment AND private = :private",
+            array_merge(['private' => $private], $inparams)
+        );
+
+        // We should be good to go now.
+        $transaction->allow_commit();
+
+        if (!empty($progressbar)) {
+            $progressbar->update(((int) $key + 1), $count, $message);
+        }
+    }
 
     // Trigger dashboard has been reset event.
     $eventparams = array(
@@ -211,6 +241,10 @@ function my_reset_page_for_all_users($private = MY_PAGE_PRIVATE, $pagetype = 'my
     );
     $event = \core\event\dashboards_reset::create($eventparams);
     $event->trigger();
+
+    if (!empty($progressbar)) {
+        $progressbar->update(1, 1, get_string('completed'));
+    }
 }
 
 class my_syspage_block_manager extends block_manager {
