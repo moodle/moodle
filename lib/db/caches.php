@@ -469,4 +469,12 @@ $definitions = array(
         'simplekeys' => true,
         'simpledata' => false,
     ],
+
+    // Cache the grade setting for faster retrieval.
+    'gradesetting' => [
+        'mode'                   => cache_store::MODE_REQUEST,
+        'simplekeys'             => true,
+        'staticacceleration'     => true,
+        'staticaccelerationsize' => 100
+    ],
 );

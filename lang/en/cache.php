@@ -88,6 +88,7 @@ $string['cachedef_user_favourite_course_content_items'] = 'User\'s starred items
 $string['cachedef_user_group_groupings'] = 'User\'s groupings and groups per course';
 $string['cachedef_user_course_content_items'] = 'User\'s content items (activities, resources and their subtypes) per course';
 $string['cachedef_yuimodules'] = 'YUI Module definitions';
+$string['cachedef_gradesetting'] = 'Course grade setting';
 $string['cachelock_file_default'] = 'Default file locking';
 $string['cachestores'] = 'Cache stores';
 $string['canuselocalstore'] = 'Can use local store';
