@@ -22,8 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_langimport\output;
-defined('MOODLE_INTERNAL') || die();
 
+use core_collator;
 use moodle_url;
 use renderable;
 use renderer_base;
@@ -95,6 +95,8 @@ class langimport_page implements renderable, templatable {
 
         if (!empty($this->availablelanguages)) {
             $data->toinstalloptions = [];
+
+            core_collator::asort($this->availablelanguages);
             foreach ($this->availablelanguages as $code => $language) {
                 $option = new stdClass();
                 $option->value = $code;
