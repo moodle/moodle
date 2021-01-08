@@ -37,9 +37,9 @@
         ]
     }
 }}
-<div class="simplesearchform {{{ extraclasses }}}">
+<div class="simplesearchform {{ extraclasses }}">
     {{^inform}}
-    <form autocomplete="off" action="{{{ action }}}" method="get" accept-charset="utf-8" class="mform form-inline simplesearchform">
+    <form autocomplete="off" action="{{ action }}" method="get" accept-charset="utf-8" class="mform form-inline simplesearchform">
     {{/inform}}
     {{#hiddenfields}}
         <input type="hidden" name="{{ name }}" value="{{ value }}">
@@ -51,17 +51,17 @@
         <input type="text"
            id="searchinput-{{uniqid}}"
            class="form-control"
-           placeholder="{{{ searchstring }}}"
-           aria-label="{{{ searchstring }}}"
-           name="{{{ inputname }}}"
+           placeholder="{{ searchstring }}"
+           aria-label="{{ searchstring }}"
+           name="{{ inputname }}"
            data-region="input"
            autocomplete="off"
-           value="{{{ query }}}"
+           value="{{ query }}"
         >
         <div class="input-group-append">
-            <button type="submit" class="btn {{^btnclass}}btn-submit{{/btnclass}} {{{ btnclass }}} search-icon">
+            <button type="submit" class="btn {{^btnclass}}btn-submit{{/btnclass}} {{ btnclass }} search-icon">
                 {{#pix}} a/search, core {{/pix}}
-                <span class="sr-only">{{{ searchstring }}}</span>
+                <span class="sr-only">{{ searchstring }}</span>
             </button>
         </div>
 
