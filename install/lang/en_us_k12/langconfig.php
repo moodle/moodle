@@ -29,5 +29,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['parentlanguage'] = 'en_us';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'American English K12';
+$string['thislanguage'] = 'English (United States) K12';
