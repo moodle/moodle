@@ -109,6 +109,12 @@ class File
      */
     public static function sysGetTempDir()
     {
+        // Moodle hack!
+        if (function_exists('make_temp_directory')) {
+            $temp = make_temp_directory('phpspreadsheet');
+            return realpath(dirname($temp));
+        }
+
         if (self::$useUploadTempDirectory) {
             //  use upload-directory when defined to allow running on environments having very restricted
             //      open_basedir configs

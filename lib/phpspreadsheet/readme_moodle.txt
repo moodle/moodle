@@ -4,20 +4,22 @@ Last release package can be found in https://github.com/PHPOffice/PhpSpreadsheet
 
 NOTICE:
  * Before running composer command, make sure you have the composer version updated.
- * Composer version 1.9.1 2019-11-01 17:20:17
+ * Composer version 2.0.8 2020-12-03 17:20:38
 
 STEPS:
  * Create a temporary folder outside your moodle installation
  * Execute `composer require phpoffice/phpspreadsheet`
  * Remove the old 'vendor' directory in lib/phpspreadsheet/
  * Copy contents of 'vendor' directory
+ * Create a commit with only the library changes
  * Update lib/thirdpartylibs.xml
  * Apply the modifications described in the CHANGES section
+ * Create another commit with the previous two steps of changes
  * Go to http://localhost/lib/tests/other/spreadsheettestpage.php and test the generated files
 
 
 CHANGES:
- * Remove the following folders (and their content):
+ * If the following exist, remove the following folders (and their content):
    - vendor/phpoffice/phpspreadsheet/bin
    - vendor/phpoffice/phpspreadsheet/docs
    - vendor/phpoffice/phpspreadsheet/samples
@@ -29,6 +31,7 @@ CHANGES:
   - .sami.php
   - .scrutinizer.yml
   - .travis.yml
+  - .phpcs.xml.dist
 
  * Add the next Moodle hack at the beginning of the function sysGetTempDir()
 located in vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
@@ -53,6 +56,10 @@ located in vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
    - PhpSpreadsheet/Writer/Xls.php
    - PhpSpreadsheet/Writer/Xls/*
 
-* Remove the next files in vendor/markbaker/ related to external testing that we don't need matrix/:
+ * Remove the next files in vendor/markbaker/ related to external testing that we don't need matrix/:
   - infection.json.dist (PHP mutation testing framework configuration file)
   - phpstan.neon (PHP static analyzer configuration file)
+
+ * Remove the following directories if they exist, These imported libraries already exist in Moodle core:
+   - /vendor/myclabs/*
+   - /vendor/maennchen/*
