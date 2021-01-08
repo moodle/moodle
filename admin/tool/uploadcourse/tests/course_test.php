@@ -119,6 +119,88 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertArrayHasKey('invalidvisibilitymode', $co->get_errors());
     }
 
+    /**
+     * Test setting 'downloadcontent' field when the feature is globally disabled
+     */
+    public function test_downloadcontent_disabled(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_config('downloadcoursecontentallowed', 0);
+
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+
+        $upload = new tool_uploadcourse_course($mode, $updatemode, [
+            'category' => 1,
+            'fullname' => 'Testing',
+            'shortname' => 'T101',
+            'downloadcontent' => DOWNLOAD_COURSE_CONTENT_ENABLED,
+        ]);
+
+        $this->assertFalse($upload->prepare());
+        $this->assertArrayHasKey('downloadcontentnotallowed', $upload->get_errors());
+    }
+
+    /**
+     * Test setting 'downloadcontent' field when user doesn't have required capability
+     */
+    public function test_downloadcontent_capability(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        set_config('downloadcoursecontentallowed', 1);
+
+        // Create category in which to create the new course.
+        $category = $this->getDataGenerator()->create_category();
+        $categorycontext = context_coursecat::instance($category->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Assign the user as a manager of the category, disable ability to configure course content download.
+        $roleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
+        role_assign($roleid, $user->id, $categorycontext);
+        role_change_permission($roleid, $categorycontext, 'moodle/course:configuredownloadcontent', CAP_PROHIBIT);
+
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+
+        $upload = new tool_uploadcourse_course($mode, $updatemode, [
+            'category' => $category->id,
+            'fullname' => 'Testing',
+            'shortname' => 'T101',
+            'downloadcontent' => DOWNLOAD_COURSE_CONTENT_ENABLED,
+        ]);
+
+        $this->assertFalse($upload->prepare());
+        $this->assertArrayHasKey('downloadcontentnotallowed', $upload->get_errors());
+    }
+
+    /**
+     * Test setting 'downloadcontent' field to an invalid value
+     */
+    public function test_downloadcontent_invalid(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_config('downloadcoursecontentallowed', 1);
+
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+
+        $upload = new tool_uploadcourse_course($mode, $updatemode, [
+            'category' => 1,
+            'fullname' => 'Testing',
+            'shortname' => 'T101',
+            'downloadcontent' => 42,
+        ]);
+
+        $this->assertFalse($upload->prepare());
+        $this->assertArrayHasKey('invaliddownloadcontent', $upload->get_errors());
+    }
+
     public function test_create() {
         global $DB;
         $this->resetAfterTest(true);
@@ -322,9 +404,11 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
 
     public function test_data_saved() {
         global $DB;
-        $this->resetAfterTest(true);
 
+        $this->resetAfterTest(true);
         $this->setAdminUser(); // To avoid warnings related to 'moodle/course:setforcedlanguage' capability check.
+
+        set_config('downloadcoursecontentallowed', 1);
 
         // Create.
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
@@ -334,6 +418,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'fullname' => 'Fullname',
             'category' => '1',
             'visible' => '0',
+            'downloadcontent' => DOWNLOAD_COURSE_CONTENT_DISABLED,
             'idnumber' => '123abc',
             'summary' => 'Summary',
             'format' => 'topics',
@@ -384,6 +469,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals($data['fullname'], $course->fullname);
         $this->assertEquals($data['category'], $course->category);
         $this->assertEquals($data['visible'], $course->visible);
+        $this->assertEquals($data['downloadcontent'], $course->downloadcontent);
         $this->assertEquals(mktime(0, 0, 0, 6, 8, 1990), $course->startdate);
         $this->assertEquals(mktime(0, 0, 0, 6, 18, 1990), $course->enddate);
         $this->assertEquals($data['idnumber'], $course->idnumber);
@@ -437,6 +523,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'fullname' => 'Fullname 2',
             'category' => $cat->id,
             'visible' => '1',
+            'downloadcontent' => DOWNLOAD_COURSE_CONTENT_ENABLED,
             'idnumber' => 'changeidn',
             'summary' => 'Summary 2',
             'format' => 'topics',
@@ -487,6 +574,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals($data['fullname'], $course->fullname);
         $this->assertEquals($data['category'], $course->category);
         $this->assertEquals($data['visible'], $course->visible);
+        $this->assertEquals($data['downloadcontent'], $course->downloadcontent);
         $this->assertEquals(mktime(0, 0, 0, 6, 11, 1984), $course->startdate);
         $this->assertEquals(mktime(0, 0, 0, 6, 31, 1984), $course->enddate);
         $this->assertEquals($data['idnumber'], $course->idnumber);
@@ -531,7 +619,11 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
 
     public function test_default_data_saved() {
         global $DB;
+
         $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        set_config('downloadcoursecontentallowed', 1);
 
         // Create.
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
@@ -543,6 +635,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'fullname' => 'Fullname',
             'category' => '1',
             'visible' => '0',
+            'downloadcontent' => DOWNLOAD_COURSE_CONTENT_DISABLED,
             'startdate' => 644803200,
             'enddate' => 645667200,
             'idnumber' => '123abc',
@@ -571,6 +664,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals($defaultdata['fullname'], $course->fullname);
         $this->assertEquals($defaultdata['category'], $course->category);
         $this->assertEquals($defaultdata['visible'], $course->visible);
+        $this->assertEquals($defaultdata['downloadcontent'], $course->downloadcontent);
         $this->assertEquals($defaultdata['startdate'], $course->startdate);
         $this->assertEquals($defaultdata['enddate'], $course->enddate);
         $this->assertEquals($defaultdata['idnumber'], $course->idnumber);
@@ -598,6 +692,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'fullname' => 'Fullname 2',
             'category' => $cat->id,
             'visible' => '1',
+            'downloadcontent' => DOWNLOAD_COURSE_CONTENT_ENABLED,
             'startdate' => 455760000,
             'enddate' => 457488000,
             'idnumber' => 'changedid',
@@ -626,6 +721,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals($defaultdata['fullname'], $course->fullname);
         $this->assertEquals($defaultdata['category'], $course->category);
         $this->assertEquals($defaultdata['visible'], $course->visible);
+        $this->assertEquals($defaultdata['downloadcontent'], $course->downloadcontent);
         $this->assertEquals($defaultdata['startdate'], $course->startdate);
         $this->assertEquals($defaultdata['enddate'], $course->enddate);
         $this->assertEquals($defaultdata['idnumber'], $course->idnumber);
