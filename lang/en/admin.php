@@ -503,7 +503,7 @@ $string['displayloginfailures'] = 'Display login failures';
 $string['divertallemails'] = 'Email diverting';
 $string['divertallemailsdetail'] = 'Used as a safeguard in development environments when testing emails and should not be used in production.';
 $string['divertallemailsexcept'] = 'Email diversion exceptions';
-$string['divertallemailsexcept_desc'] = 'A list of email exception rules separated by either commas or new lines. Each rule is interpreted as a regular expression, eg<pre>simone@acme.com
+$string['divertallemailsexcept_desc'] = 'A list of email exception rules separated by either commas or new lines. Each rule is interpreted as a regular expression e.g. <pre>simone@acme.com
 .*@acme.com
 fred(\\+.*)?@acme.com
 </pre>';
