@@ -136,7 +136,7 @@ In this area, you can select collections of badges from your backpack that you w
 $string['backpacksettings'] = 'Backpack settings';
 $string['backpackapiurl'] = 'Backpack API URL';
 $string['backpackweburl'] = 'Backpack URL';
-$string['backpackprovider'] = 'Backpack Provider';
+$string['backpackprovider'] = 'Backpack provider';
 $string['badges'] = 'Badges';
 $string['badgedetails'] = 'Badge details';
 $string['badgeimage'] = 'Image';
