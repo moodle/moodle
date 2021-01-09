@@ -32,10 +32,10 @@ defined('MOODLE_INTERNAL') || die();
 $string['cannotcreatedboninstall'] = '<p>Kan inte skapa databasen.</p>
 <p>Den specificerade databasen existerar inte och den givna användaren har inte rättighet att skapa databasen.</p>
 <p>Administratören för webbplatsen bör verifiera databaskonfigurationen.</p>';
-$string['cannotcreatelangdir'] = 'Det går inte att skapa en lang-katalog';
-$string['cannotcreatetempdir'] = 'Det går inte att skapa en temp-katalog';
-$string['cannotdownloadcomponents'] = 'Det går inte att ladda ner komponenter';
-$string['cannotdownloadzipfile'] = 'Det går inte att ladda ner ZIP-fil.';
+$string['cannotcreatelangdir'] = 'Det går inte att skapa lang-katalogen';
+$string['cannotcreatetempdir'] = 'Det går inte att skapa temp-katalogen';
+$string['cannotdownloadcomponents'] = 'Kan inte ladda ned komponenter';
+$string['cannotdownloadzipfile'] = 'Kan inte ladda ned ZIP-fil';
 $string['cannotfindcomponent'] = 'Det går inte att hitta komponent';
 $string['cannotsavemd5file'] = 'Det går inte att spara md5-fil';
 $string['cannotsavezipfile'] = 'Det går inte att spara ZIP-fil';
