@@ -60,6 +60,15 @@ if (!empty($add)) {
     // will be the closest match we have.
     navigation_node::override_active_url(course_get_url($course, $section));
 
+    // MDL-69431 Validate that $section (url param) does not exceed the maximum for this course / format.
+    // If too high (e.g. section *id* not number) non-sequential sections inserted in course_sections table.
+    // Then on import, backup fills 'gap' with empty sections (see restore_rebuild_course_cache). Avoid this.
+    $courseformat = course_get_format($course);
+    $maxsections = $courseformat->get_max_sections();
+    if ($section > $maxsections) {
+        print_error('maxsectionslimit', 'moodle', '', $maxsections);
+    }
+
     list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($course, $add, $section);
     $data->return = 0;
     $data->sr = $sectionreturn;
