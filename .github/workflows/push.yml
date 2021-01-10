@@ -48,7 +48,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-18.04
-            php: 7.2
+            php: 7.3
             db: mysqli
           - os: ubuntu-18.04
             php: 7.4
