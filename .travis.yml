@@ -26,18 +26,18 @@ jobs:
     fast_finish: true
 
     include:
-        # First all the lowest php ones (7.2)
-        - php: 7.2
+        # First all the lowest php ones (7.3)
+        - php: 7.3
           env: DB=none     TASK=CITEST
-        - php: 7.2
+        - php: 7.3
           env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
 
         - if: env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present
-          php: 7.2
+          php: 7.3
           env: DB=pgsql    TASK=PHPUNIT
 
         - if: env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all"
-          php: 7.2
+          php: 7.3
           env: DB=mysqli   TASK=PHPUNIT
 
         # Then, conditionally, all the highest php ones (7.4)
