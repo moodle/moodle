@@ -73,4 +73,12 @@ $functions = [
         'capabilities'  => 'mod/h5pactivity:view',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'mod_h5pactivity_log_report_viewed' => [
+        'classname'     => 'mod_h5pactivity\external\log_report_viewed',
+        'methodname'    => 'execute',
+        'classpath'     => '',
+        'description'   => 'Log that the h5pactivity was viewed.',
+        'type'          => 'write',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 ];
