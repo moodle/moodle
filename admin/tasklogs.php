@@ -32,6 +32,7 @@ $result = optional_param('result', null, PARAM_INT);
 
 $pageurl = new \moodle_url('/admin/tasklogs.php');
 $pageurl->param('filter', $filter);
+$pageurl->param('result', $result);
 
 $PAGE->set_url($pageurl);
 $PAGE->set_context(context_system::instance());
