@@ -54,4 +54,5 @@ $string['selectlangs'] = 'Select languages to uninstall';
 $string['uninstall'] = 'Uninstall selected language pack(s)';
 $string['uninstallconfirm'] = 'You are about to completely uninstall these language packs: <strong>{$a}</strong>. Are you sure?';
 $string['updatelangs'] = 'Update all installed language packs';
+$string['updatelangsnote'] = 'Updating all installed language packs by clicking the button can take a long time and lead to timeouts. It is recommended instead to make use of the scheduled task \'{$a->taskname}\' (which runs by default every day).';
 $string['privacy:metadata'] = 'The Language packs plugin does not store any personal data.';
