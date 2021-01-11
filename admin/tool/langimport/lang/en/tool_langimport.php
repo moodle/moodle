@@ -25,6 +25,10 @@
 
 $string['downloadnotavailable'] = 'Unable to connect to the download server. It is not possible to install or update the language packs automatically. Please download the appropriate ZIP file(s) from <a href="{$a->src}">{$a->src}</a> and unzip them manually to your data directory <code>{$a->dest}</code>';
 $string['install'] = 'Install selected language pack(s)';
+$string['installfailed'] = 'Language packs installation failed!';
+$string['installfinished'] = 'Language packs installation finished.';
+$string['installpending'] = 'The following language packs will be installed soon: {$a}.';
+$string['installscheduled'] = 'Language packs scheduled for installation.';
 $string['installedlangs'] = 'Installed language packs';
 $string['langimport'] = 'Language import utility';
 $string['langimportdisabled'] = 'Language import feature has been disabled. You have to update your language packs manually at the file-system level. Do not forget to purge string caches after you do so.';

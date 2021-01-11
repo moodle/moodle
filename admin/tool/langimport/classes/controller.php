@@ -82,7 +82,7 @@ class controller {
                     $a->url  = $this->installer->lang_pack_url($langcode);
                     $a->dest = $CFG->dataroot.'/lang';
                     $this->errors[] = get_string('remotedownloaderror', 'error', $a);
-                    throw new \moodle_exception('remotedownloaderror', 'error', $a);
+                    throw new \moodle_exception('remotedownloaderror', 'error', '', $a);
                     break;
                 case \lang_installer::RESULT_INSTALLED:
                     $updatedpacks++;
@@ -220,5 +220,24 @@ class controller {
      */
     public function lang_pack_url($langcode = '') {
         return $this->installer->lang_pack_url($langcode);
+    }
+
+    /**
+     * Schedule installation of the given language packs asynchronously via ad hoc task.
+     *
+     * @param string|array $langs array of langcodes or individual langcodes
+     */
+    public function schedule_languagepacks_installation($langs): void {
+        global $USER;
+
+        $task = new \tool_langimport\task\install_langpacks();
+        $task->set_userid($USER->id);
+        $task->set_custom_data([
+            'langs' => $langs,
+        ]);
+
+        \core\task\manager::queue_adhoc_task($task, true);
+
+        $this->info[] = get_string('installscheduled', 'tool_langimport');
     }
 }
