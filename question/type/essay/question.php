@@ -257,10 +257,12 @@ class qtype_essay_question extends question_with_responses {
             // Count the number of words in the response string.
             $responsewords = count_words($responsestring);
             if (isset($this->minwordlimit) && $this->minwordlimit > $responsewords) {
-                return get_string('minwordlimitboundary', 'qtype_essay', $this->minwordlimit);
+                return get_string('minwordlimitboundary', 'qtype_essay',
+                        ['limit' => $this->minwordlimit, 'count' => $responsewords]);
             }
             if (isset($this->maxwordlimit) && $this->maxwordlimit < $responsewords) {
-                return get_string('maxwordlimitboundary', 'qtype_essay', $this->maxwordlimit);
+                return get_string('maxwordlimitboundary', 'qtype_essay',
+                        ['limit' => $this->maxwordlimit, 'count' => $responsewords]);
             }
         }
         return null;

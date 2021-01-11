@@ -77,7 +77,7 @@ class qtype_essay_renderer extends qtype_renderer {
         // If there is a response and min/max word limit is set in the form then check the response word count.
         if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',
-                $question->get_validation_error(['answer' => $answer]), ['class' => 'validationerror']);
+                $question->get_validation_error($step->get_qt_data()), ['class' => 'validationerror']);
         }
         $result .= html_writer::tag('div', $files, array('class' => 'attachments'));
         $result .= html_writer::end_tag('div');
