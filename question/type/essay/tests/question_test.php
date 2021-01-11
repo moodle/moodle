@@ -308,10 +308,10 @@ class qtype_essay_question_test extends advanced_testcase {
         return [
             'text input required, min/max word limit not set'  => [1, 0, 0, ''],
             'text input required, min/max word limit valid (within the boundaries)'  => [1, 10, 25, ''],
-            'text input required, max word limit not reached'  => [1, 15, 25,
-                get_string('minwordlimitboundary', 'qtype_essay', 15)],
+            'text input required, min word limit not reached'  => [1, 15, 25,
+                get_string('minwordlimitboundary', 'qtype_essay', ['count' => 14, 'limit' => 15])],
             'text input required, max word limit is exceeded'  => [1, 5, 12,
-                get_string('maxwordlimitboundary', 'qtype_essay', 12)],
+                get_string('maxwordlimitboundary', 'qtype_essay', ['count' => 14, 'limit' => 12])],
             'text input not required, min/max word limit not set'  => [0, 5, 12, ''],
         ];
     }
