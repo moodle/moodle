@@ -45,10 +45,10 @@ if (!$canedit) {
 }
 
 $quizgroupmode = groups_get_activity_groupmode($cm);
-$accessallgroups = ($quizgroupmode == NOGROUPS) || has_capability('moodle/site:accessallgroups', $context);
+$showallgroups = ($quizgroupmode == NOGROUPS) || has_capability('moodle/site:accessallgroups', $context);
 
 // Get the course groups that the current user can access.
-$groups = $accessallgroups ? groups_get_all_groups($cm->course) : groups_get_activity_allowed_groups($cm);
+$groups = $showallgroups ? groups_get_all_groups($cm->course) : groups_get_activity_allowed_groups($cm);
 
 // Default mode is "group", unless there are no groups.
 if ($mode != "user" and $mode != "group") {
@@ -83,6 +83,8 @@ if (!empty($orphaned)) {
 }
 
 $overrides = [];
+$colclasses = [];
+$headers = [];
 
 // Fetch all overrides.
 if ($groupmode) {
@@ -101,46 +103,60 @@ if ($groupmode) {
 
         $overrides = $DB->get_records_sql($sql, $params);
     }
+
 } else {
     // User overrides.
-    $colname = get_string('user');
+    $colclasses[] = 'colname';
+    $headers[] = get_string('user');
+    $extrauserfields = get_extra_user_fields($context);
+    foreach ($extrauserfields as $field) {
+        $colclasses[] = 'col' . $field;
+        $headers[] = get_user_field_name($field);
+    }
+
     list($sort, $params) = users_order_by_sql('u');
     $params['quizid'] = $quiz->id;
+    $userfields = user_picture::fields('u', $extrauserfields, 'userid');
 
-    if ($accessallgroups) {
-        $sql = 'SELECT o.*, ' . get_all_user_name_fields(true, 'u') . '
-                  FROM {quiz_overrides} o
-                  JOIN {user} u ON o.userid = u.id
-                 WHERE o.quiz = :quizid
-              ORDER BY ' . $sort;
+    if ($showallgroups) {
+        $groupsjoin = '';
+        $groupswhere = '';
 
-        $overrides = $DB->get_records_sql($sql, $params);
     } else if ($groups) {
         list($insql, $inparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
+        $groupsjoin = 'JOIN {groups_members} gm ON u.id = gm.userid';
+        $groupswhere = ' AND gm.groupid ' . $insql;
         $params += $inparams;
 
-        $sql = 'SELECT o.*, ' . get_all_user_name_fields(true, 'u') . '
-                  FROM {quiz_overrides} o
-                  JOIN {user} u ON o.userid = u.id
-                  JOIN {groups_members} gm ON u.id = gm.userid
-                 WHERE o.quiz = :quizid AND gm.groupid ' . $insql . '
-              ORDER BY ' . $sort;
-
-        $overrides = $DB->get_records_sql($sql, $params);
+    } else {
+        // User cannot see any data.
+        $groupsjoin = '';
+        $groupswhere = ' AND 1 = 2';
     }
+
+    $overrides = $DB->get_records_sql("
+            SELECT o.*, $userfields
+              FROM {quiz_overrides} o
+              JOIN {user} u ON o.userid = u.id
+              $groupsjoin
+             WHERE o.quiz = :quizid
+               $groupswhere
+             ORDER BY $sort
+            ", $params);
 }
 
 // Initialise table.
 $table = new html_table();
-$table->headspan = [1, 2, 1];
-$table->colclasses = ['colname', 'colsetting', 'colvalue', 'colaction'];
-$table->head = [
-    $colname,
-    get_string('overrides', 'quiz'),
-];
-if ($canedit) {
-    $table->head[] = get_string('action');
-}
+$table->colclasses = $colclasses;
+$table->colclasses[] = 'colsetting';
+$table->colclasses[] = 'colvalue';
+$table->colclasses[] = 'colaction';
+$table->headspan = array_fill(0, count($headers), 1);
+$table->headspan[] = 2;
+$table->headspan[] = 1;
+$table->head = $headers;
+$table->head[] = get_string('overrides', 'quiz');
+$table->head[] = get_string('action');
 
 $userurl = new moodle_url('/user/view.php', []);
 $groupurl = new moodle_url('/group/overview.php', ['id' => $cm->course]);
@@ -203,19 +219,28 @@ foreach ($overrides as $override) {
     }
 
     // Prepare the information about who this override applies to.
+    $extranamebit = $active ? '' : '*';
+    $usercells = [];
     if ($groupmode) {
-        $usergroupstr = '<a href="' . $groupurl->out(true,
-                        ['group' => $override->groupid]) . '" >' . $override->name . '</a>';
+        $groupcell = new html_table_cell();
+        $groupcell->rowspan = count($fields);
+        $groupcell->text = html_writer::link(new moodle_url($groupurl, ['group' => $override->groupid]),
+                $override->name . $extranamebit);
+        $usercells[] = $groupcell;
     } else {
-        $usergroupstr = '<a href="' . $userurl->out(true,
-                        ['id' => $override->userid]) . '" >' . fullname($override) . '</a>';
+        $usercell = new html_table_cell();
+        $usercell->rowspan = count($fields);
+        $usercell->text = html_writer::link(new moodle_url($groupurl, ['id' => $override->userid]),
+                fullname($override) . $extranamebit);
+        $usercells[] = $usercell;
+
+        foreach ($extrauserfields as $field) {
+            $usercell = new html_table_cell();
+            $usercell->rowspan = count($fields);
+            $usercell->text = $override->$field;
+            $usercells[] = $usercell;
+        }
     }
-    if (!$active) {
-        $usergroupstr .= '*';
-    }
-    $usergroupcell = new html_table_cell();
-    $usergroupcell->rowspan = count($fields);
-    $usergroupcell->text = $usergroupstr;
 
     // Prepare the actions.
     if ($canedit) {
@@ -250,7 +275,7 @@ foreach ($overrides as $override) {
         }
 
         if ($i == 0) {
-            $row->cells[] = $usergroupcell;
+            $row->cells = $usercells;
         }
 
         $labelcell = new html_table_cell();
@@ -302,7 +327,7 @@ if ($canedit) {
     } else {
         $users = [];
         // See if there are any students in the quiz.
-        if ($accessallgroups) {
+        if ($showallgroups) {
             $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id');
             $nousermessage = get_string('usersnone', 'quiz');
         } else if ($groups) {
