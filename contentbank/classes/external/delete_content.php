@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/externallib.php');
 
+use core_contentbank\contentbank;
 use external_api;
 use external_function_parameters;
 use external_multiple_structure;
@@ -70,34 +71,31 @@ class delete_content extends external_api {
         $warnings = [];
 
         $params = self::validate_parameters(self::execute_parameters(), ['contentids' => $contentids]);
+        $cb = new contentbank();
         foreach ($params['contentids'] as $contentid) {
             try {
                 $record = $DB->get_record('contentbank_content', ['id' => $contentid], '*', MUST_EXIST);
-                $contenttypeclass = "\\$record->contenttype\\contenttype";
-                if (class_exists($contenttypeclass)) {
-                    $context = \context::instance_by_id($record->contextid, MUST_EXIST);
-                    self::validate_context($context);
-                    $contenttype = new $contenttypeclass($context);
-                    $contentclass = "\\$record->contenttype\\content";
-                    $content = new $contentclass($record);
-                    // Check capability.
-                    if ($contenttype->can_delete($content)) {
-                        // This content can be deleted.
-                        if (!$contenttype->delete_content($content)) {
-                            $warnings[] = [
-                                'item' => $contentid,
-                                'warningcode' => 'contentnotdeleted',
-                                'message' => get_string('contentnotdeleted', 'core_contentbank')
-                            ];
-                        }
-                    } else {
-                        // The user has no permission to delete this content.
+                $content = $cb->get_content_from_id($record->id);
+                $contenttype = $content->get_content_type_instance();
+                $context = \context::instance_by_id($record->contextid, MUST_EXIST);
+                self::validate_context($context);
+                // Check capability.
+                if ($contenttype->can_delete($content)) {
+                    // This content can be deleted.
+                    if (!$contenttype->delete_content($content)) {
                         $warnings[] = [
                             'item' => $contentid,
-                            'warningcode' => 'nopermissiontodelete',
-                            'message' => get_string('nopermissiontodelete', 'core_contentbank')
+                            'warningcode' => 'contentnotdeleted',
+                            'message' => get_string('contentnotdeleted', 'core_contentbank')
                         ];
                     }
+                } else {
+                    // The user has no permission to delete this content.
+                    $warnings[] = [
+                        'item' => $contentid,
+                        'warningcode' => 'nopermissiontodelete',
+                        'message' => get_string('nopermissiontodelete', 'core_contentbank')
+                    ];
                 }
             } catch (\moodle_exception $e) {
                 // The content or the context don't exist.
