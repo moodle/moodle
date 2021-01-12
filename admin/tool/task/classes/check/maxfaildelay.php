@@ -79,6 +79,19 @@ class maxfaildelay extends check {
             }
         }
 
+        $tasks = \core\task\manager::get_failed_adhoc_tasks();
+        foreach ($tasks as $task) {
+            $faildelay = $task->get_fail_delay();
+            if ($faildelay > $maxdelay) {
+                $maxdelay = $faildelay;
+            }
+            if ($faildelay > 0) {
+                $failures++;
+                $details .= get_string('faildelay', 'tool_task') . ': ' . format_time($faildelay);
+                $details .= ' - ' .get_class($task) . " ID = " . $task->get_id() ."<br>";
+            }
+        }
+
         if ($failures > 0) {
             // Intermittent failures are not yet a warning.
             $status = result::INFO;
