@@ -314,11 +314,11 @@ function h5pactivity_reset_gradebook(int $courseid, string $type=''): void {
  * Return a list of page types
  *
  * @param string $pagetype current page type
- * @param stdClass $parentcontext Block's parent context
+ * @param stdClass|null $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  * @return array array of page types and it's names
  */
-function h5pactivity_page_type_list(string $pagetype, stdClass $parentcontext, stdClass $currentcontext): array {
+function h5pactivity_page_type_list(string $pagetype, ?stdClass $parentcontext, stdClass $currentcontext): array {
     $modulepagetype = [
         'mod-h5pactivity-*' => get_string('page-mod-h5pactivity-x', 'h5pactivity'),
     ];
