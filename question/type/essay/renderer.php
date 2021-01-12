@@ -55,6 +55,8 @@ class qtype_essay_renderer extends qtype_renderer {
         } else {
             $answer = $responseoutput->response_area_read_only('answer', $qa,
                     $step, $question->responsefieldlines, $options->context);
+            $answer .= html_writer::nonempty_tag('p', $question->get_word_count_message_for_review($step->get_qt_data()));
+
         }
 
         $files = '';

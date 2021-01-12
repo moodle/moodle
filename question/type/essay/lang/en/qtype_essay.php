@@ -69,3 +69,6 @@ $string['responseisrequired'] = 'Require the student to enter text';
 $string['responsetemplate'] = 'Response template';
 $string['responsetemplateheader'] = 'Response Template';
 $string['responsetemplate_help'] = 'Any text entered here will be displayed in the response input box when a new attempt at the question starts.';
+$string['wordcount'] = 'Word count: {$a}';
+$string['wordcounttoofew'] = 'Word count: {$a->count}, less than the required {$a->limit} words.';
+$string['wordcounttoomuch'] = 'Word count: {$a->count}, more than the limit of {$a->limit} words.';
