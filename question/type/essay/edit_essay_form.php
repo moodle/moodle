@@ -48,12 +48,12 @@ class qtype_essay_edit_form extends question_edit_form {
         $mform->addElement('select', 'responserequired',
                 get_string('responserequired', 'qtype_essay'), $qtype->response_required_options());
         $mform->setDefault('responserequired', 1);
-        $mform->disabledIf('responserequired', 'responseformat', 'eq', 'noinline');
+        $mform->hideIf('responserequired', 'responseformat', 'eq', 'noinline');
 
         $mform->addElement('select', 'responsefieldlines',
                 get_string('responsefieldlines', 'qtype_essay'), $qtype->response_sizes());
         $mform->setDefault('responsefieldlines', 15);
-        $mform->disabledIf('responsefieldlines', 'responseformat', 'eq', 'noinline');
+        $mform->hideIf('responsefieldlines', 'responseformat', 'eq', 'noinline');
 
         // Create a text box that can be enabled/disabled for max/min word limits options.
         $wordlimitoptions = ['size' => '6', 'maxlength' => '6'];
@@ -64,7 +64,8 @@ class qtype_essay_edit_form extends question_edit_form {
         $mform->addGroup($mingrp, 'mingroup', get_string('minwordlimit', 'qtype_essay'), ' ', false);
         $mform->addHelpButton('mingroup', 'minwordlimit', 'qtype_essay');
         $mform->disabledIf('minwordlimit', 'minwordenabled', 'notchecked');
-        $mform->hideIf('mingroup', 'responserequired', '0');
+        $mform->hideIf('mingroup', 'responserequired', 'eq', '0');
+        $mform->hideIf('mingroup', 'responseformat', 'eq', 'noinline');
 
         $maxgrp[] = $mform->createElement('text', 'maxwordlimit', '', $wordlimitoptions);
         $mform->setType('maxwordlimit', PARAM_INT);
@@ -73,7 +74,8 @@ class qtype_essay_edit_form extends question_edit_form {
         $mform->addGroup($maxgrp, 'maxgroup', get_string('maxwordlimit', 'qtype_essay'), ' ', false);
         $mform->addHelpButton('maxgroup', 'maxwordlimit', 'qtype_essay');
         $mform->disabledIf('maxwordlimit', 'maxwordenabled', 'notchecked');
-        $mform->hideIf('maxgroup', 'responserequired', '0');
+        $mform->hideIf('maxgroup', 'responserequired', 'eq', '0');
+        $mform->hideIf('maxgroup', 'responseformat', 'eq', 'noinline');
 
         $mform->addElement('select', 'attachments',
                 get_string('allowattachments', 'qtype_essay'), $qtype->attachment_options());
@@ -83,15 +85,15 @@ class qtype_essay_edit_form extends question_edit_form {
                 get_string('attachmentsrequired', 'qtype_essay'), $qtype->attachments_required_options());
         $mform->setDefault('attachmentsrequired', 0);
         $mform->addHelpButton('attachmentsrequired', 'attachmentsrequired', 'qtype_essay');
-        $mform->disabledIf('attachmentsrequired', 'attachments', 'eq', 0);
+        $mform->hideIf('attachmentsrequired', 'attachments', 'eq', 0);
 
         $mform->addElement('filetypes', 'filetypeslist', get_string('acceptedfiletypes', 'qtype_essay'));
         $mform->addHelpButton('filetypeslist', 'acceptedfiletypes', 'qtype_essay');
-        $mform->disabledIf('filetypeslist', 'attachments', 'eq', 0);
+        $mform->hideIf('filetypeslist', 'attachments', 'eq', 0);
 
         $mform->addElement('select', 'maxbytes', get_string('maxbytes', 'qtype_essay'), $qtype->max_file_size_options());
         $mform->setDefault('maxbytes', '0');
-        $mform->disabledIf('maxbytes', 'attachments', 'eq', 0);
+        $mform->hideIf('maxbytes', 'attachments', 'eq', 0);
 
         $mform->addElement('header', 'responsetemplateheader', get_string('responsetemplateheader', 'qtype_essay'));
         $mform->addElement('editor', 'responsetemplate', get_string('responsetemplate', 'qtype_essay'),
