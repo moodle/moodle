@@ -53,7 +53,7 @@ class fetch_addable_blocks extends external_api {
         return new external_function_parameters(
             [
                 'pagecontextid' => new external_value(PARAM_INT, 'The context ID of the page.'),
-                'pagetype' => new external_value(PARAM_ALPHAEXT, 'The type of the page.'),
+                'pagetype' => new external_value(PARAM_ALPHANUMEXT, 'The type of the page.'),
                 'pagelayout' => new external_value(PARAM_ALPHA, 'The layout of the page.')
             ]
         );
