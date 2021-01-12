@@ -252,19 +252,52 @@ class qtype_essay_question extends question_with_responses {
         if (!$this->responserequired) {
             return null;
         }
-        if ((isset($this->minwordlimit) && $this->minwordlimit > 0) ||
-            (isset($this->maxwordlimit) && $this->maxwordlimit > 0)) {
-            // Count the number of words in the response string.
-            $responsewords = count_words($responsestring);
-            if (isset($this->minwordlimit) && $this->minwordlimit > $responsewords) {
-                return get_string('minwordlimitboundary', 'qtype_essay',
-                        ['limit' => $this->minwordlimit, 'count' => $responsewords]);
-            }
-            if (isset($this->maxwordlimit) && $this->maxwordlimit < $responsewords) {
-                return get_string('maxwordlimitboundary', 'qtype_essay',
-                        ['limit' => $this->maxwordlimit, 'count' => $responsewords]);
-            }
+        if (!$this->minwordlimit && !$this->maxwordlimit) {
+            // This question does not care about the word count.
+            return null;
         }
-        return null;
+
+        // Count the number of words in the response string.
+        $count = count_words($responsestring);
+        if ($this->maxwordlimit && $count > $this->maxwordlimit) {
+            return get_string('maxwordlimitboundary', 'qtype_essay',
+                    ['limit' => $this->maxwordlimit, 'count' => $count]);
+        } else if ($count < $this->minwordlimit) {
+            return get_string('minwordlimitboundary', 'qtype_essay',
+                    ['limit' => $this->minwordlimit, 'count' => $count]);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * If this question uses word counts, then return a display of the current
+     * count, and whether it is within limit, for when the question is being reviewed.
+     *
+     * @param array $response responses, as returned by
+     *      {@see question_attempt_step::get_qt_data()}.
+     * @return string If relevant to this question, a display of the word count.
+     */
+    public function get_word_count_message_for_review(array $response): string {
+        if (!$this->minwordlimit && !$this->maxwordlimit) {
+            // This question does not care about the word count.
+            return '';
+        }
+
+        if (!array_key_exists('answer', $response) || ($response['answer'] === '')) {
+            // No response.
+            return '';
+        }
+
+        $count = count_words($response['answer']);
+        if ($this->maxwordlimit && $count > $this->maxwordlimit) {
+            return get_string('wordcounttoomuch', 'qtype_essay',
+                    ['limit' => $this->maxwordlimit, 'count' => $count]);
+        } else if ($count < $this->minwordlimit) {
+            return get_string('wordcounttoofew', 'qtype_essay',
+                    ['limit' => $this->minwordlimit, 'count' => $count]);
+        } else {
+            return get_string('wordcount', 'qtype_essay', $count);
+        }
     }
 }

@@ -715,5 +715,17 @@ class qtype_essay_walkthrough_testcase extends qbehaviour_walkthrough_test_base 
                 'attempting to submit 8 words. Please shorten your response and try again.',
                 $this->currentoutput);
 
+        // Now submit all and finish.
+        $this->finish();
+
+        // Verify.
+        $this->check_current_state(question_state::$needsgrading);
+        $this->check_current_mark(null);
+        $this->render();
+        $this->check_current_output(
+                $this->get_contains_question_text_expectation($q),
+                $this->get_contains_general_feedback_expectation($q));
+        $this->assertStringContainsString('Word count: 8, more than the limit of 7 words.',
+                $this->currentoutput);
     }
 }
