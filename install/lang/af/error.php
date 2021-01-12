@@ -29,6 +29,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p>Kon nie die databasis skep nie.</p>
+<p>Die gespesifiseerde databasis bestaan nie en die aangetoonde gebruiker het nie toestemming om die databasis te skep nie.</p>
+<p>Die werf se administrateur moet die konfigurasie van databasisse verifieer.</p>';
+$string['cannotcreatelangdir'] = 'Kan nie taalgids skep nie';
+$string['cannotcreatetempdir'] = 'Kan nie tydelike gids skep nie';
 $string['cannotdownloadcomponents'] = 'Kan nie komponente aflaai nie';
 $string['cannotdownloadzipfile'] = 'Kan nie ZIP-lêer aflaai nie';
 $string['cannotfindcomponent'] = 'Kan nie komponent vind nie';
