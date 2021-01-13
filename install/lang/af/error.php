@@ -37,3 +37,5 @@ $string['cannotcreatetempdir'] = 'Kan nie tydelike gids skep nie';
 $string['cannotdownloadcomponents'] = 'Kan nie komponente aflaai nie';
 $string['cannotdownloadzipfile'] = 'Kan nie ZIP-lêer aflaai nie';
 $string['cannotfindcomponent'] = 'Kan nie komponent vind nie';
+$string['cannotsavemd5file'] = 'Kan nie md5-lêer stoor nie';
+$string['cannotsavezipfile'] = 'Kan nie ZIP-lêer stoor nie';
