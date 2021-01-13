@@ -223,7 +223,7 @@ abstract class WriterAbstract implements WriterInterface
 
         $this->closeWriter();
 
-        if (is_resource($this->filePointer)) {
+        if (\is_resource($this->filePointer)) {
             $this->globalFunctionsHelper->fclose($this->filePointer);
         }
 
@@ -243,7 +243,7 @@ abstract class WriterAbstract implements WriterInterface
 
         // remove output file if it was created
         if ($this->globalFunctionsHelper->file_exists($this->outputFilePath)) {
-            $outputFolderPath = dirname($this->outputFilePath);
+            $outputFolderPath = \dirname($this->outputFilePath);
             $fileSystemHelper = $this->helperFactory->createFileSystemHelper($outputFolderPath);
             $fileSystemHelper->deleteFile($this->outputFilePath);
         }

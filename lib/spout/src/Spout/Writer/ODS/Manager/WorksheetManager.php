@@ -61,7 +61,7 @@ class WorksheetManager implements WorksheetManagerInterface
      */
     public function startSheet(Worksheet $worksheet)
     {
-        $sheetFilePointer = fopen($worksheet->getFilePath(), 'w');
+        $sheetFilePointer = \fopen($worksheet->getFilePath(), 'w');
         $this->throwIfSheetFilePointerIsNotAvailable($sheetFilePointer);
 
         $worksheet->setFilePointer($sheetFilePointer);
@@ -134,7 +134,7 @@ class WorksheetManager implements WorksheetManagerInterface
 
         $data .= '</table:table-row>';
 
-        $wasWriteSuccessful = fwrite($worksheet->getFilePointer(), $data);
+        $wasWriteSuccessful = \fwrite($worksheet->getFilePointer(), $data);
         if ($wasWriteSuccessful === false) {
             throw new IOException("Unable to write data in {$worksheet->getFilePath()}");
         }
@@ -190,7 +190,7 @@ class WorksheetManager implements WorksheetManagerInterface
         if ($cell->isString()) {
             $data .= ' office:value-type="string" calcext:value-type="string">';
 
-            $cellValueLines = explode("\n", $cell->getValue());
+            $cellValueLines = \explode("\n", $cell->getValue());
             foreach ($cellValueLines as $cellValueLine) {
                 $data .= '<text:p>' . $this->stringsEscaper->escape($cellValueLine) . '</text:p>';
             }
@@ -204,10 +204,15 @@ class WorksheetManager implements WorksheetManagerInterface
             $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cell->getValue() . '">';
             $data .= '<text:p>' . $cell->getValue() . '</text:p>';
             $data .= '</table:table-cell>';
+        } elseif ($cell->isError() && is_string($cell->getValueEvenIfError())) {
+            // only writes the error value if it's a string
+            $data .= ' office:value-type="string" calcext:value-type="error" office:value="">';
+            $data .= '<text:p>' . $cell->getValueEvenIfError() . '</text:p>';
+            $data .= '</table:table-cell>';
         } elseif ($cell->isEmpty()) {
             $data .= '/>';
         } else {
-            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cell->getValue()));
+            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . \gettype($cell->getValue()));
         }
 
         return $data;
@@ -223,10 +228,10 @@ class WorksheetManager implements WorksheetManagerInterface
     {
         $worksheetFilePointer = $worksheet->getFilePointer();
 
-        if (!is_resource($worksheetFilePointer)) {
+        if (!\is_resource($worksheetFilePointer)) {
             return;
         }
 
-        fclose($worksheetFilePointer);
+        \fclose($worksheetFilePointer);
     }
 }

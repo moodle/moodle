@@ -124,7 +124,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     {
         $worksheets = $this->getWorksheets();
 
-        $newSheetIndex = count($worksheets);
+        $newSheetIndex = \count($worksheets);
         $sheetManager = $this->managerFactory->createSheetManager();
         $sheet = $this->entityFactory->createSheet($newSheetIndex, $this->workbook->getInternalId(), $sheetManager);
 
@@ -260,7 +260,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
         // update max num columns for the worksheet
         $currentMaxNumColumns = $worksheet->getMaxNumColumns();
         $cellsCount = $row->getNumCells();
-        $worksheet->setMaxNumColumns(max($currentMaxNumColumns, $cellsCount));
+        $worksheet->setMaxNumColumns(\max($currentMaxNumColumns, $cellsCount));
     }
 
     /**

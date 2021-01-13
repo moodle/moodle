@@ -80,7 +80,7 @@ class StyleManager implements StyleManagerInterface
             return $cellStyle;
         }
 
-        if ($cell->isString() && strpos($cell->getValue(), "\n") !== false) {
+        if ($cell->isString() && \strpos($cell->getValue(), "\n") !== false) {
             $cellStyle->setShouldWrapText();
         }
 

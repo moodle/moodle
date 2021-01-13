@@ -33,6 +33,6 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
      */
     public function getUsedFonts()
     {
-        return array_keys($this->usedFontsSet);
+        return \array_keys($this->usedFontsSet);
     }
 }

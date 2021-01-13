@@ -73,7 +73,7 @@ class XMLProcessor
     {
         $callbackObject = $callback[0];
         $callbackMethodName = $callback[1];
-        $reflectionMethod = new \ReflectionMethod(get_class($callbackObject), $callbackMethodName);
+        $reflectionMethod = new \ReflectionMethod(\get_class($callbackObject), $callbackMethodName);
         $reflectionMethod->setAccessible(true);
 
         return [
