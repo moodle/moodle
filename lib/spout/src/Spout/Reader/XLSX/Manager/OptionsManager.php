@@ -29,7 +29,7 @@ class OptionsManager extends OptionsManagerAbstract
      */
     protected function setDefaultOptions()
     {
-        $this->setOption(Options::TEMP_FOLDER, sys_get_temp_dir());
+        $this->setOption(Options::TEMP_FOLDER, \sys_get_temp_dir());
         $this->setOption(Options::SHOULD_FORMAT_DATES, false);
         $this->setOption(Options::SHOULD_PRESERVE_EMPTY_ROWS, false);
         $this->setOption(Options::SHOULD_USE_1904_DATES, false);

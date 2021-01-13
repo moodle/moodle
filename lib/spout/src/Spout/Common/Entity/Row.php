@@ -70,7 +70,7 @@ class Row
      */
     public function getCellAtIndex($cellIndex)
     {
-        return isset($this->cells[$cellIndex]) ? $this->cells[$cellIndex] : null;
+        return $this->cells[$cellIndex] ?? null;
     }
 
     /**
@@ -89,7 +89,13 @@ class Row
      */
     public function getNumCells()
     {
-        return count($this->cells);
+        // When using "setCellAtIndex", it's possible to
+        // have "$this->cells" contain holes.
+        if (empty($this->cells)) {
+            return 0;
+        }
+
+        return \max(\array_keys($this->cells)) + 1;
     }
 
     /**
@@ -116,7 +122,7 @@ class Row
      */
     public function toArray()
     {
-        return array_map(function (Cell $cell) {
+        return \array_map(function (Cell $cell) {
             return $cell->getValue();
         }, $this->cells);
     }

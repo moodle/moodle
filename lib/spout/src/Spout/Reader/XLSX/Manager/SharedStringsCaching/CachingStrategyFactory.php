@@ -103,14 +103,14 @@ class CachingStrategyFactory
     protected function getMemoryLimitInKB()
     {
         $memoryLimitFormatted = $this->getMemoryLimitFromIni();
-        $memoryLimitFormatted = strtolower(trim($memoryLimitFormatted));
+        $memoryLimitFormatted = \strtolower(\trim($memoryLimitFormatted));
 
         // No memory limit
         if ($memoryLimitFormatted === '-1') {
             return -1;
         }
 
-        if (preg_match('/(\d+)([bkmgt])b?/', $memoryLimitFormatted, $matches)) {
+        if (\preg_match('/(\d+)([bkmgt])b?/', $memoryLimitFormatted, $matches)) {
             $amount = (int) ($matches[1]);
             $unit = $matches[2];
 
@@ -133,6 +133,6 @@ class CachingStrategyFactory
      */
     protected function getMemoryLimitFromIni()
     {
-        return ini_get('memory_limit');
+        return \ini_get('memory_limit');
     }
 }

@@ -163,7 +163,7 @@ class CellValueFormatter
      */
     protected function formatStrCellValue($nodeValue)
     {
-        $escapedCellValue = trim($nodeValue);
+        $escapedCellValue = \trim($nodeValue);
         $cellValue = $this->escaper->unescape($escapedCellValue);
 
         return $cellValue;
@@ -248,8 +248,8 @@ class CellValueFormatter
         $baseDate = $this->shouldUse1904Dates ? '1904-01-01' : '1899-12-30';
 
         $daysSinceBaseDate = (int) $nodeValue;
-        $timeRemainder = fmod($nodeValue, 1);
-        $secondsRemainder = round($timeRemainder * self::NUM_SECONDS_IN_ONE_DAY, 0);
+        $timeRemainder = \fmod($nodeValue, 1);
+        $secondsRemainder = \round($timeRemainder * self::NUM_SECONDS_IN_ONE_DAY, 0);
 
         $dateObj = \DateTime::createFromFormat('|Y-m-d', $baseDate);
         $dateObj->modify('+' . $daysSinceBaseDate . 'days');
