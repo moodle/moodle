@@ -636,35 +636,7 @@ class CSS extends Minify
 
             return $placeholder;
         };
-        // Moodle-specific change MDL-68191 starts.
-        /* This was the old code:
         $this->registerPattern('/\n?\/\*(!|.*?@license|.*?@preserve).*?\*\/\n?/s', $callback);
-        */
-        // This is the new, more accurate and faster regex.
-        $this->registerPattern('/
-            # optional newline
-            \n?
-
-            # start comment
-            \/\*
-
-            # comment content
-            (?:
-                # either starts with an !
-                !
-            |
-                # or, after some number of characters which do not end the comment
-                (?:(?!\*\/).)*?
-
-                # there is either a @license or @preserve tag
-                @(?:license|preserve)
-            )
-
-            # then match to the end of the comment
-            .*?\*\/\n?
-
-            /ixs', $callback);
-        // Moodle-specific change MDL-68191.
 
         $this->registerPattern('/\/\*.*?\*\//s', '');
     }
@@ -736,7 +708,8 @@ class CSS extends Minify
             return $placeholder.$rest;
         };
 
-        $this->registerPattern('/calc(\(.+?)(?=$|;|calc\()/', $callback);
+        $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/', $callback);
+        $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/m', $callback);
     }
 
     /**
