@@ -133,7 +133,7 @@ class mod_forum_mod_form extends moodleform_mod {
             $choices[0] = get_string('none');
             $choices[1] = get_string('discussions', 'forum');
             $choices[2] = get_string('posts', 'forum');
-            $mform->addElement('select', 'rsstype', get_string('rsstype'), $choices);
+            $mform->addElement('select', 'rsstype', get_string('rsstype', 'forum'), $choices);
             $mform->addHelpButton('rsstype', 'rsstype', 'forum');
             if (isset($CFG->forum_rsstype)) {
                 $mform->setDefault('rsstype', $CFG->forum_rsstype);
