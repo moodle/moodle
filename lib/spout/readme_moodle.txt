@@ -1,8 +1,13 @@
-Description of Spout library import 3.0.1
+Description of Spout library import
 =========================================
 * Download / Clone from https://github.com/box/spout/
 * Only include the src/Spout directory.
 * Update lib/thirdpartylibs.xml with the latest version.
+
+2020/12/07
+----------
+Update to v3.1.0 (MDL-70302)
+by Peter Dias <peter@moodle.com>
 
 2019/06/17
 ----------

@@ -235,7 +235,7 @@
     <location>spout</location>
     <name>Spout</name>
     <license>Apache</license>
-    <version>3.0.1</version>
+    <version>3.1.0</version>
     <licenseversion>2.0</licenseversion>
   </library>
   <library>
