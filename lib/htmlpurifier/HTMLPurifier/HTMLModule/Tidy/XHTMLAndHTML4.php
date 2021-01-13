@@ -96,6 +96,7 @@ class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends HTMLPurifier_HTMLModule
 
         // @bgcolor for table, tr, td, th ---------------------------------
         $r['table@bgcolor'] =
+        $r['tr@bgcolor'] =
         $r['td@bgcolor'] =
         $r['th@bgcolor'] =
             new HTMLPurifier_AttrTransform_BgColor();
