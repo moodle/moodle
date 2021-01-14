@@ -20,6 +20,16 @@ Feature: Manage language packs
     And I should see "The language pack 'en_ar' was installed."
     And I log out
 
+  @javascript
+  Scenario: Search for available language pack
+    Given I log in as "admin"
+    And I navigate to "Language > Language packs" in site administration
+    When I set the field "Search available language packs" to "pirate"
+    Then the "Available language packs" select box should not contain "es"
+    And I set the field "Available language packs" to "en_ar"
+    And I press "Install selected language pack(s)"
+    And I should see "Language pack 'en_ar' was successfully installed"
+
   Scenario: Update language pack
     Given outdated langpack 'en_ar' is installed
     And I log in as "admin"
