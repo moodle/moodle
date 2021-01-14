@@ -255,6 +255,28 @@ class zip_archive extends file_archive {
     }
 
     /**
+     * Extract the archive contents to the given location.
+     *
+     * @param string $destination Path to the location where to extract the files.
+     * @param int $index Index of the archive entry.
+     * @return bool true on success or false on failure
+     */
+    public function extract_to($destination, $index) {
+
+        if (!isset($this->za)) {
+            return false;
+        }
+
+        $name = $this->za->getNameIndex($index);
+
+        if ($name === false) {
+            return false;
+        }
+
+        return $this->za->extractTo($destination, $name);
+    }
+
+    /**
      * Returns file information.
      *
      * @param int $index index of file
