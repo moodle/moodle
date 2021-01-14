@@ -63,5 +63,30 @@ function xmldb_qtype_essay_upgrade($oldversion) {
         // Essay savepoint reached.
         upgrade_plugin_savepoint(true, 2021052501, 'qtype', 'essay');
     }
+
+    if ($oldversion < 2021052502) {
+
+        // Define field minwordlimit to be added to qtype_essay_options.
+        $table = new xmldb_table('qtype_essay_options');
+        $field = new xmldb_field('minwordlimit', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'responsefieldlines');
+
+        // Conditionally launch add field minwordlimit.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field maxwordlimit to be added to qtype_essay_options.
+        $table = new xmldb_table('qtype_essay_options');
+        $field = new xmldb_field('maxwordlimit', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'minwordlimit');
+
+        // Conditionally launch add field maxwordlimit.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Essay savepoint reached.
+        upgrade_plugin_savepoint(true, 2021052502, 'qtype', 'essay');
+    }
+
     return true;
 }

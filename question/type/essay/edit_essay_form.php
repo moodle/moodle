@@ -48,12 +48,34 @@ class qtype_essay_edit_form extends question_edit_form {
         $mform->addElement('select', 'responserequired',
                 get_string('responserequired', 'qtype_essay'), $qtype->response_required_options());
         $mform->setDefault('responserequired', 1);
-        $mform->disabledIf('responserequired', 'responseformat', 'eq', 'noinline');
+        $mform->hideIf('responserequired', 'responseformat', 'eq', 'noinline');
 
         $mform->addElement('select', 'responsefieldlines',
                 get_string('responsefieldlines', 'qtype_essay'), $qtype->response_sizes());
         $mform->setDefault('responsefieldlines', 15);
-        $mform->disabledIf('responsefieldlines', 'responseformat', 'eq', 'noinline');
+        $mform->hideIf('responsefieldlines', 'responseformat', 'eq', 'noinline');
+
+        // Create a text box that can be enabled/disabled for max/min word limits options.
+        $wordlimitoptions = ['size' => '6', 'maxlength' => '6'];
+        $mingrp[] = $mform->createElement('text', 'minwordlimit', '', $wordlimitoptions);
+        $mform->setType('minwordlimit', PARAM_INT);
+        $mingrp[] = $mform->createElement('checkbox', 'minwordenabled', '', get_string('enable'));
+        $mform->setDefault('minwordenabled', 0);
+        $mform->addGroup($mingrp, 'mingroup', get_string('minwordlimit', 'qtype_essay'), ' ', false);
+        $mform->addHelpButton('mingroup', 'minwordlimit', 'qtype_essay');
+        $mform->disabledIf('minwordlimit', 'minwordenabled', 'notchecked');
+        $mform->hideIf('mingroup', 'responserequired', 'eq', '0');
+        $mform->hideIf('mingroup', 'responseformat', 'eq', 'noinline');
+
+        $maxgrp[] = $mform->createElement('text', 'maxwordlimit', '', $wordlimitoptions);
+        $mform->setType('maxwordlimit', PARAM_INT);
+        $maxgrp[] = $mform->createElement('checkbox', 'maxwordenabled', '', get_string('enable'));
+        $mform->setDefault('maxwordenabled', 0);
+        $mform->addGroup($maxgrp, 'maxgroup', get_string('maxwordlimit', 'qtype_essay'), ' ', false);
+        $mform->addHelpButton('maxgroup', 'maxwordlimit', 'qtype_essay');
+        $mform->disabledIf('maxwordlimit', 'maxwordenabled', 'notchecked');
+        $mform->hideIf('maxgroup', 'responserequired', 'eq', '0');
+        $mform->hideIf('maxgroup', 'responseformat', 'eq', 'noinline');
 
         $mform->addElement('select', 'attachments',
                 get_string('allowattachments', 'qtype_essay'), $qtype->attachment_options());
@@ -63,15 +85,15 @@ class qtype_essay_edit_form extends question_edit_form {
                 get_string('attachmentsrequired', 'qtype_essay'), $qtype->attachments_required_options());
         $mform->setDefault('attachmentsrequired', 0);
         $mform->addHelpButton('attachmentsrequired', 'attachmentsrequired', 'qtype_essay');
-        $mform->disabledIf('attachmentsrequired', 'attachments', 'eq', 0);
+        $mform->hideIf('attachmentsrequired', 'attachments', 'eq', 0);
 
         $mform->addElement('filetypes', 'filetypeslist', get_string('acceptedfiletypes', 'qtype_essay'));
         $mform->addHelpButton('filetypeslist', 'acceptedfiletypes', 'qtype_essay');
-        $mform->disabledIf('filetypeslist', 'attachments', 'eq', 0);
+        $mform->hideIf('filetypeslist', 'attachments', 'eq', 0);
 
         $mform->addElement('select', 'maxbytes', get_string('maxbytes', 'qtype_essay'), $qtype->max_file_size_options());
         $mform->setDefault('maxbytes', '0');
-        $mform->disabledIf('maxbytes', 'attachments', 'eq', 0);
+        $mform->hideIf('maxbytes', 'attachments', 'eq', 0);
 
         $mform->addElement('header', 'responsetemplateheader', get_string('responsetemplateheader', 'qtype_essay'));
         $mform->addElement('editor', 'responsetemplate', get_string('responsetemplate', 'qtype_essay'),
@@ -94,6 +116,10 @@ class qtype_essay_edit_form extends question_edit_form {
         $question->responseformat = $question->options->responseformat;
         $question->responserequired = $question->options->responserequired;
         $question->responsefieldlines = $question->options->responsefieldlines;
+        $question->minwordenabled = $question->options->minwordlimit ? 1 : 0;
+        $question->minwordlimit = $question->options->minwordlimit;
+        $question->maxwordenabled = $question->options->maxwordlimit ? 1 : 0;
+        $question->maxwordlimit = $question->options->maxwordlimit;
         $question->attachments = $question->options->attachments;
         $question->attachmentsrequired = $question->options->attachmentsrequired;
         $question->filetypeslist = $question->options->filetypeslist;
@@ -142,6 +168,36 @@ class qtype_essay_edit_form extends question_edit_form {
             $errors['attachmentsrequired']  = get_string('mustrequirefewer', 'qtype_essay');
         }
 
+        if ($fromform['responserequired']) {
+            if (isset($fromform['minwordenabled'])) {
+                if (!is_numeric($fromform['minwordlimit'])) {
+                    $errors['mingroup'] = get_string('err_numeric', 'form');
+                }
+                if ($fromform['minwordlimit'] < 0) {
+                    $errors['mingroup'] = get_string('err_minwordlimitnegative', 'qtype_essay');
+                }
+                if (!$fromform['minwordlimit']) {
+                    $errors['mingroup'] = get_string('err_minwordlimit', 'qtype_essay');
+                }
+            }
+            if (isset($fromform['maxwordenabled'])) {
+                if (!is_numeric($fromform['maxwordlimit'])) {
+                    $errors['maxgroup'] = get_string('err_numeric', 'form');
+                }
+                if ($fromform['maxwordlimit'] < 0) {
+                    $errors['maxgroup'] = get_string('err_maxwordlimitnegative', 'qtype_essay');
+                }
+                if (!$fromform['maxwordlimit']) {
+                    $errors['maxgroup'] = get_string('err_maxwordlimit', 'qtype_essay');
+                }
+            }
+            if (isset($fromform['maxwordenabled']) && isset($fromform['minwordenabled'])) {
+                if ($fromform['maxwordlimit'] < $fromform['minwordlimit'] &&
+                    $fromform['maxwordlimit'] > 0 && $fromform['minwordlimit'] > 0) {
+                    $errors['maxgroup'] = get_string('err_maxminmismatch', 'qtype_essay');
+                }
+            }
+        }
         return $errors;
     }
 
