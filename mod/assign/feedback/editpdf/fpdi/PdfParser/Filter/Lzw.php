@@ -1,9 +1,10 @@
 <?php
+
 /**
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2019 Setasign - Jan Slabon (https://www.setasign.com)
+ * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
  */
 
@@ -11,8 +12,6 @@ namespace setasign\Fpdi\PdfParser\Filter;
 
 /**
  * Class for handling LZW encoded data
- *
- * @package setasign\Fpdi\PdfParser\Filter
  */
 class Lzw implements FilterInterface
 {
@@ -103,7 +102,6 @@ class Lzw implements FilterInterface
 
                 $uncompData .= $this->sTable[$code];
                 $oldCode = $code;
-
             } else {
                 if ($code < $this->tIdx) {
                     $string = $this->sTable[$code];

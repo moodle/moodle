@@ -19,6 +19,12 @@ Installation
 3) Update mod/assign/feedback/editpdf/fpdi/Tcpdf/Fpdi.php(or whichever file it has been replaced with) to extend 'pdf' instead of 'TCPDF'.
 4) Make a note below of any changes made.
 
+2020/12/16
+----------
+1/ Updated to 2.3.5
+
+Updated by Paul Holden (MDL-70312)
+
 2019/06/18
 ----------
 1/ Updated to 2.2.0
