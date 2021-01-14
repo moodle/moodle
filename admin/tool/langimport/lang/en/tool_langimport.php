@@ -45,6 +45,7 @@ $string['noenglishuninstall'] = 'The English language pack cannot be uninstalled
 $string['nolangupdateneeded'] = 'All your language packs are up to date, no update is needed';
 $string['pluginname'] = 'Language packs';
 $string['purgestringcaches'] = 'Purge string caches';
+$string['search'] = 'Search available language packs';
 $string['selectlangs'] = 'Select languages to uninstall';
 $string['uninstall'] = 'Uninstall selected language pack(s)';
 $string['uninstallconfirm'] = 'You are about to completely uninstall these language packs: <strong>{$a}</strong>. Are you sure?';
