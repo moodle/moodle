@@ -87,7 +87,7 @@ class provider implements
      * @param   int         $userid The userid of the user whose data is to be exported.
      */
     public static function export_user_preferences(int $userid) {
-        $preferences = get_user_preferences();
+        $preferences = get_user_preferences(null, null, $userid);
         foreach ($preferences as $name => $value) {
             $prefname = null;
             $prefdescription = null;
