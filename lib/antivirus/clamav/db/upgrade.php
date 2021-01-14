@@ -32,9 +32,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 function xmldb_antivirus_clamav_upgrade($oldversion) {
 
-    // Automatically generated Moodle v3.5.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
 

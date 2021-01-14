@@ -32,8 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_qtype_essay_upgrade($oldversion) {
     global $CFG, $DB;
 
-    // Automatically generated Moodle v3.5.0 release upgrade line.
-    // Put any upgrade step following this.
+    $dbman = $DB->get_manager();
 
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
@@ -47,7 +46,6 @@ function xmldb_qtype_essay_upgrade($oldversion) {
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
-    $dbman = $DB->get_manager();
     if ($oldversion < 2020091600) {
 
         // Define field maxbytes to be added to qtype_essay_options.
