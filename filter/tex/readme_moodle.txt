@@ -16,6 +16,12 @@ Linux
 2/ go into directory with extracted source files
 3/ execute "cc -DAA mimetex.c gifsave.c -lm -o mimetex.linux"
 
+Linux aarch64
+=====
+1/ install gcc
+2/ go into directory with extracted source files
+3/ execute "cc -DAA mimetex.c gifsave.c -lm -o mimetex.linux.aarch64"
+
 FreeBSD
 =======
 1/ go into directory with extracted source files
