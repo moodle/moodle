@@ -292,9 +292,9 @@ class zip_archive extends file_archive {
             return false;
         }
 
-        // PHP 5.6 introduced encoding guessing logic, we need to fall back
-        // to raw ZIP_FL_ENC_RAW (== 64) to get consistent results as in PHP 5.5.
-        $result = $this->za->statIndex($index, 64);
+        // PHP 5.6 introduced encoding guessing logic for file names. To keep consistent behaviour with older versions,
+        // we fall back to obtaining file names as raw unmodified strings.
+        $result = $this->za->statIndex($index, ZipArchive::FL_ENC_RAW);
 
         if ($result === false) {
             return false;
