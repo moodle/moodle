@@ -180,4 +180,398 @@ class mod_h5pactivity_generator extends testing_module_generator {
 
         return $attempt;
     }
+
+    /**
+     * Create a H5P attempt.
+     *
+     * This method is user by behat generator.
+     *
+     * @param array $data the attempts data array
+     */
+    public function create_attempt(array $data): void {
+
+        if (!isset($data['h5pactivityid'])) {
+            throw new coding_exception('Must specify h5pactivityid when creating a H5P attempt.');
+        }
+
+        if (!isset($data['userid'])) {
+            throw new coding_exception('Must specify userid when creating a H5P attempt.');
+        }
+
+        // Defaults.
+        $data['attempt'] = $data['attempt'] ?? 1;
+        $data['rawscore'] = $data['rawscore'] ?? 0;
+        $data['maxscore'] = $data['maxscore'] ?? 0;
+        $data['duration'] = $data['duration'] ?? 0;
+        $data['completion'] = $data['completion'] ?? 1;
+        $data['success'] = $data['success'] ?? 0;
+
+        $data['attemptid'] = $this->get_attempt_object($data);
+
+        // Check interaction type and create a valid record for it.
+        $data['interactiontype'] = $data['interactiontype'] ?? 'compound';
+        $method = 'get_attempt_result_' . str_replace('-', '', $data['interactiontype']);
+        if (!method_exists($this, $method)) {
+            throw new Exception("Cannot create a {$data['interactiontype']} interaction statement");
+        }
+
+        $this->insert_statement($data, $this->$method($data));
+    }
+
+    /**
+     * Get or create an H5P attempt using the data array.
+     *
+     * @param array $attemptinfo the generator provided data
+     * @return int the attempt id
+     */
+    private function get_attempt_object($attemptinfo): int {
+        global $DB;
+        $result = $DB->get_record('h5pactivity_attempts', [
+            'userid' => $attemptinfo['userid'],
+            'h5pactivityid' => $attemptinfo['h5pactivityid'],
+            'attempt' => $attemptinfo['attempt'],
+        ]);
+        if ($result) {
+            return $result->id;
+        }
+        return $this->new_user_attempt($attemptinfo);
+    }
+
+    /**
+     * Creates a user attempt.
+     *
+     * @param array $attemptinfo the current attempt information.
+     * @return int the h5pactivity_attempt ID
+     */
+    private function new_user_attempt(array $attemptinfo): int {
+        global $DB;
+        $record = (object)[
+            'h5pactivityid' => $attemptinfo['h5pactivityid'],
+            'userid' => $attemptinfo['userid'],
+            'timecreated' => time(),
+            'timemodified' => time(),
+            'attempt' => $attemptinfo['attempt'],
+            'rawscore' => $attemptinfo['rawscore'],
+            'maxscore' => $attemptinfo['maxscore'],
+            'duration' => $attemptinfo['duration'],
+            'completion' => $attemptinfo['completion'],
+            'success' => $attemptinfo['success'],
+        ];
+        if (empty($record->maxscore)) {
+            $record->scaled = 0;
+        } else {
+            $record->scaled = $record->rawscore / $record->maxscore;
+        }
+        return $DB->insert_record('h5pactivity_attempts', $record);
+    }
+
+    /**
+     * Insert a new statement into an attempt.
+     *
+     * If the interaction type is "compound" it will also update the attempt general result.
+     *
+     * @param array $attemptinfo the current attempt information
+     * @param array $statement the statement tracking information
+     * @return int the h5pactivity_attempt_result ID
+     */
+    private function insert_statement(array $attemptinfo, array $statement): int {
+        global $DB;
+        $record = $statement + [
+            'attemptid' => $attemptinfo['attemptid'],
+            'interactiontype' => $attemptinfo['interactiontype'] ?? 'compound',
+            'timecreated' => time(),
+            'rawscore' => $attemptinfo['rawscore'],
+            'maxscore' => $attemptinfo['maxscore'],
+            'duration' => $attemptinfo['duration'],
+            'completion' => $attemptinfo['completion'],
+            'success' => $attemptinfo['success'],
+        ];
+        $result = $DB->insert_record('h5pactivity_attempts_results', $record);
+        if ($record['interactiontype'] == 'compound') {
+            $attempt = (object)[
+                'id' => $attemptinfo['attemptid'],
+                'rawscore' => $record['rawscore'],
+                'maxscore' => $record['maxscore'],
+                'duration' => $record['duration'],
+                'completion' => $record['completion'],
+                'success' => $record['success'],
+            ];
+            $DB->update_record('h5pactivity_attempts', $attempt);
+        }
+        return $result;
+    }
+
+    /**
+     * Generates a valid compound tracking result.
+     *
+     * @param array $attemptinfo the current attempt information.
+     * @return array with the required statement data
+     */
+    private function get_attempt_result_compound(array $attemptinfo): array {
+        $additionals = (object)[
+            "extensions" => (object)[
+                "http://h5p.org/x-api/h5p-local-content-id" => 1,
+            ],
+            "contextExtensions" => (object)[],
+        ];
+
+        return [
+            'subcontent' => '',
+            'description' => '',
+            'correctpattern' => '',
+            'response' => '',
+            'additionals' => json_encode($additionals),
+        ];
+    }
+
+    /**
+     * Generates a valid choice tracking result.
+     *
+     * @param array $attemptinfo the current attempt information.
+     * @return array with the required statement data
+     */
+    private function get_attempt_result_choice(array $attemptinfo): array {
+
+        $response = ($attemptinfo['rawscore']) ? '1[,]0' : '2[,]3';
+
+        $additionals = (object)[
+            "choices" => [
+                (object)[
+                    "id" => "3",
+                    "description" => (object)[
+                        "en-US" => "Another wrong answer\n",
+                    ],
+                ],
+                (object)[
+                    "id" => "2",
+                    "description" => (object)[
+                        "en-US" => "Wrong answer\n",
+                    ],
+                ],
+                (object)[
+                    "id" => "1",
+                    "description" => (object)[
+                        "en-US" => "This is also a correct answer\n",
+                    ],
+                ],
+                (object)[
+                    "id" => "0",
+                    "description" => (object)[
+                        "en-US" => "This is a correct answer\n",
+                    ],
+                ],
+            ],
+            "extensions" => (object)[
+                "http://h5p.org/x-api/h5p-local-content-id" => 1,
+                "http://h5p.org/x-api/h5p-subContentId" => "4367a919-ec47-43c9-b521-c22d9c0c0d8d",
+            ],
+            "contextExtensions" => (object)[],
+        ];
+
+        return [
+            'subcontent' => microtime(),
+            'description' => 'Select the correct answers',
+            'correctpattern' => '["1[,]0"]',
+            'response' => $response,
+            'additionals' => json_encode($additionals),
+        ];
+    }
+
+    /**
+     * Generates a valid matching tracking result.
+     *
+     * @param array $attemptinfo the current attempt information.
+     * @return array with the required statement data
+     */
+    private function get_attempt_result_matching(array $attemptinfo): array {
+
+        $response = ($attemptinfo['rawscore']) ? '0[.]0[,]1[.]1' : '1[.]0[,]0[.]1';
+
+        $additionals = (object)[
+            "source" => [
+                (object)[
+                    "id" => "0",
+                    "description" => (object)[
+                        "en-US" => "Drop item A\n",
+                    ],
+                ],
+                (object)[
+                    "id" => "1",
+                    "description" => (object)[
+                        "en-US" => "Drop item B\n",
+                    ],
+                ],
+            ],
+            "target" => [
+                (object)[
+                    "id" => "0",
+                    "description" => (object)[
+                        "en-US" => "Drop zone A\n",
+                    ],
+                ],
+                (object)[
+                    "id" => "1",
+                    "description" => (object)[
+                        "en-US" => "Drop zone B\n",
+                    ],
+                ],
+            ],
+            "extensions" => [
+                "http://h5p.org/x-api/h5p-local-content-id" => 1,
+                "http://h5p.org/x-api/h5p-subContentId" => "682f1c74-c819-4e9d-8c36-12d9dc5fcdbc",
+            ],
+            "contextExtensions" => (object)[],
+        ];
+
+        return [
+            'subcontent' => microtime(),
+            'description' => 'Drag and Drop example 1',
+            'correctpattern' => '["0[.]0[,]1[.]1"]',
+            'response' => $response,
+            'additionals' => json_encode($additionals),
+        ];
+    }
+
+    /**
+     * Generates a valid fill-in tracking result.
+     *
+     * @param array $attemptinfo the current attempt information.
+     * @return array with the required statement data
+     */
+    private function get_attempt_result_fillin(array $attemptinfo): array {
+
+        $response = ($attemptinfo['rawscore']) ? 'first[,]second' : 'something[,]else';
+
+        $additionals = (object)[
+            "extensions" => (object)[
+                "http://h5p.org/x-api/h5p-local-content-id" => 1,
+                "http://h5p.org/x-api/h5p-subContentId" => "1a3febd5-7edc-4336-8112-12756b945b62",
+                "https://h5p.org/x-api/case-sensitivity" => true,
+                "https://h5p.org/x-api/alternatives" => [
+                    ["first"],
+                    ["second"],
+                ],
+            ],
+            "contextExtensions" => (object)[
+                "https://h5p.org/x-api/h5p-reporting-version" => "1.1.0",
+            ],
+        ];
+
+        return [
+            'subcontent' => microtime(),
+            'description' => '<p>This an example of missing word text.</p>
+
+                    <p>The first answer if "first": the first answer is __________.</p>
+
+                    <p>The second is second is "second": the secons answer is __________</p>',
+            'correctpattern' => '["{case_matters=true}first[,]second"]',
+            'response' => $response,
+            'additionals' => json_encode($additionals),
+        ];
+    }
+
+    /**
+     * Generates a valid true-false tracking result.
+     *
+     * @param array $attemptinfo the current attempt information.
+     * @return array with the required statement data
+     */
+    private function get_attempt_result_truefalse(array $attemptinfo): array {
+
+        $response = ($attemptinfo['rawscore']) ? 'true' : 'false';
+
+        $additionals = (object)[
+            "extensions" => (object)[
+                "http://h5p.org/x-api/h5p-local-content-id" => 1,
+                "http://h5p.org/x-api/h5p-subContentId" => "5de9fb1e-aa03-4c9a-8cf0-3870b3f012ca",
+            ],
+            "contextExtensions" => (object)[],
+        ];
+
+        return [
+            'subcontent' => microtime(),
+            'description' => 'The correct answer is true.',
+            'correctpattern' => '["true"]',
+            'response' => $response,
+            'additionals' => json_encode($additionals),
+        ];
+    }
+
+    /**
+     * Generates a valid long-fill-in tracking result.
+     *
+     * @param array $attemptinfo the current attempt information.
+     * @return array with the required statement data
+     */
+    private function get_attempt_result_longfillin(array $attemptinfo): array {
+
+        $response = ($attemptinfo['rawscore']) ? 'The Hobbit is book' : 'Who cares?';
+
+        $additionals = (object)[
+            "extensions" => (object)[
+                "http://h5p.org/x-api/h5p-local-content-id" => 1,
+                "http://h5p.org/x-api/h5p-subContentId" => "5de9fb1e-aa03-4c9a-8cf0-3870b3f012ca",
+            ],
+            "contextExtensions" => (object)[],
+        ];
+
+        return [
+            'subcontent' => microtime(),
+            'description' => '<p>Please describe the novel The Hobbit',
+            'correctpattern' => '',
+            'response' => $response,
+            'additionals' => json_encode($additionals),
+        ];
+    }
+
+    /**
+     * Generates a valid sequencing tracking result.
+     *
+     * @param array $attemptinfo the current attempt information.
+     * @return array with the required statement data
+     */
+    private function get_attempt_result_sequencing(array $attemptinfo): array {
+
+        $response = ($attemptinfo['rawscore']) ? 'true' : 'false';
+
+        $additionals = (object)[
+            "extensions" => (object)[
+                "http://h5p.org/x-api/h5p-local-content-id" => 1,
+                "http://h5p.org/x-api/h5p-subContentId" => "5de9fb1e-aa03-4c9a-8cf0-3870b3f012ca",
+            ],
+            "contextExtensions" => (object)[],
+        ];
+
+        return [
+            'subcontent' => microtime(),
+            'description' => 'The correct answer is true.',
+            'correctpattern' => '["{case_matters=true}first[,]second"]',
+            'response' => $response,
+            'additionals' => json_encode($additionals),
+        ];
+    }
+
+    /**
+     * Generates a valid other tracking result.
+     *
+     * @param array $attemptinfo the current attempt information.
+     * @return array with the required statement data
+     */
+    private function get_attempt_result_other(array $attemptinfo): array {
+
+        $additionals = (object)[
+            "extensions" => (object)[
+                "http://h5p.org/x-api/h5p-local-content-id" => 1,
+            ],
+            "contextExtensions" => (object)[],
+        ];
+
+        return [
+            'subcontent' => microtime(),
+            'description' => '',
+            'correctpattern' => '',
+            'response' => '',
+            'additionals' => json_encode($additionals),
+        ];
+    }
 }
