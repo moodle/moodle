@@ -42,6 +42,13 @@ class qtype_essay_question extends question_with_responses {
     public $responserequired;
 
     public $responsefieldlines;
+
+    /** @var int indicates whether the minimum number of words required */
+    public $minwordlimit;
+
+    /** @var int indicates whether the maximum number of words required */
+    public $maxwordlimit;
+
     public $attachments;
 
     /** @var int maximum file size in bytes */
@@ -107,6 +114,13 @@ class qtype_essay_question extends question_with_responses {
     public function is_complete_response(array $response) {
         // Determine if the given response has online text and attachments.
         $hasinlinetext = array_key_exists('answer', $response) && ($response['answer'] !== '');
+
+        // If there is a response and min/max word limit is set in the form then validate the number of words in response.
+        if ($hasinlinetext) {
+            if ($this->check_input_word_count($response['answer'])) {
+                return false;
+            }
+        }
         $hasattachments = array_key_exists('attachments', $response)
             && $response['attachments'] instanceof question_response_files;
 
@@ -138,6 +152,20 @@ class qtype_essay_question extends question_with_responses {
 
         // The response is complete iff all of our requirements are met.
         return $hascontent && $meetsinlinereq && $meetsattachmentreq;
+    }
+
+    /**
+     * Return null if is_complete_response() returns true
+     * otherwise, return the minmax-limit error message
+     *
+     * @param array $response
+     * @return string
+     */
+    public function get_validation_error(array $response) {
+        if ($this->is_complete_response($response)) {
+            return '';
+        }
+        return $this->check_input_word_count($response['answer']);
     }
 
     public function is_gradable_response(array $response) {
@@ -211,5 +239,65 @@ class qtype_essay_question extends question_with_responses {
         ];
 
         return $settings;
+    }
+
+    /**
+     * Check the input word count and return a message to user
+     * when the number of words are outside the boundary settings.
+     *
+     * @param string $responsestring
+     * @return string|null
+     .*/
+    private function check_input_word_count($responsestring) {
+        if (!$this->responserequired) {
+            return null;
+        }
+        if (!$this->minwordlimit && !$this->maxwordlimit) {
+            // This question does not care about the word count.
+            return null;
+        }
+
+        // Count the number of words in the response string.
+        $count = count_words($responsestring);
+        if ($this->maxwordlimit && $count > $this->maxwordlimit) {
+            return get_string('maxwordlimitboundary', 'qtype_essay',
+                    ['limit' => $this->maxwordlimit, 'count' => $count]);
+        } else if ($count < $this->minwordlimit) {
+            return get_string('minwordlimitboundary', 'qtype_essay',
+                    ['limit' => $this->minwordlimit, 'count' => $count]);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * If this question uses word counts, then return a display of the current
+     * count, and whether it is within limit, for when the question is being reviewed.
+     *
+     * @param array $response responses, as returned by
+     *      {@see question_attempt_step::get_qt_data()}.
+     * @return string If relevant to this question, a display of the word count.
+     */
+    public function get_word_count_message_for_review(array $response): string {
+        if (!$this->minwordlimit && !$this->maxwordlimit) {
+            // This question does not care about the word count.
+            return '';
+        }
+
+        if (!array_key_exists('answer', $response) || ($response['answer'] === '')) {
+            // No response.
+            return '';
+        }
+
+        $count = count_words($response['answer']);
+        if ($this->maxwordlimit && $count > $this->maxwordlimit) {
+            return get_string('wordcounttoomuch', 'qtype_essay',
+                    ['limit' => $this->maxwordlimit, 'count' => $count]);
+        } else if ($count < $this->minwordlimit) {
+            return get_string('wordcounttoofew', 'qtype_essay',
+                    ['limit' => $this->minwordlimit, 'count' => $count]);
+        } else {
+            return get_string('wordcount', 'qtype_essay', $count);
+        }
     }
 }

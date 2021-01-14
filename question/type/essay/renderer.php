@@ -55,6 +55,8 @@ class qtype_essay_renderer extends qtype_renderer {
         } else {
             $answer = $responseoutput->response_area_read_only('answer', $qa,
                     $step, $question->responsefieldlines, $options->context);
+            $answer .= html_writer::nonempty_tag('p', $question->get_word_count_message_for_review($step->get_qt_data()));
+
         }
 
         $files = '';
@@ -73,6 +75,12 @@ class qtype_essay_renderer extends qtype_renderer {
 
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
         $result .= html_writer::tag('div', $answer, array('class' => 'answer'));
+
+        // If there is a response and min/max word limit is set in the form then check the response word count.
+        if ($qa->get_state() == question_state::$invalid) {
+            $result .= html_writer::nonempty_tag('div',
+                $question->get_validation_error($step->get_qt_data()), ['class' => 'validationerror']);
+        }
         $result .= html_writer::tag('div', $files, array('class' => 'attachments'));
         $result .= html_writer::end_tag('div');
 
