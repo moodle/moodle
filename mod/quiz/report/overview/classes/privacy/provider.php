@@ -59,7 +59,7 @@ class provider implements
      * @param   int         $userid The userid of the user whose data is to be exported.
      */
     public static function export_user_preferences(int $userid) {
-        $preference = get_user_preferences('quiz_overview_slotmarks', null);
+        $preference = get_user_preferences('quiz_overview_slotmarks', null, $userid);
         if (null !== $preference) {
             if (empty($preference)) {
                 $description = get_string('privacy:preference:slotmarks:no', 'quiz_overview');
