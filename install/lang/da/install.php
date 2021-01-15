@@ -48,7 +48,7 @@ $string['environmentsub2'] = 'Hver version af Moodle har nogle minimumskrav til 
 Installationsprogrammet udfører et tjek før hver installation og opgradering. Kontakt din serveradministrator hvis ikke du ved hvordan du installerer en ny version eller aktiverer PHP-extensions.';
 $string['errorsinenvironment'] = 'Systemtjekket mislykkedes!';
 $string['installation'] = 'Installation';
-$string['langdownloaderror'] = 'Sproget "{$a}" blev desværre ikke installeret. Installationen vil fortsætte på engelsk.';
+$string['langdownloaderror'] = 'Sproget "{$a}" blev desværre ikke downloadet. Installationen vil fortsætte på engelsk.';
 $string['memorylimithelp'] = '<p>Den mængde hukommelse PHP kan bruge, er sat til {$a}.</p>
 
 <p>Det kan forårsage at der opstår problemer senere, især hvis du har mange moduler aktiveret eller mange brugere.</p>
