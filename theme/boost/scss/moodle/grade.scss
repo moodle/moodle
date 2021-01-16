@@ -436,6 +436,14 @@
             background-color: $table-bg;
         }
     }
+
+    .column-contributiontocoursetotal,
+    .column-range,
+    .column-percentage,
+    .column-weight {
+        /*rtl:ignore*/
+        direction: ltr;
+    }
 }
 
 /**

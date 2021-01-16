@@ -18743,6 +18743,12 @@ p.arrow_button {
   border: none; }
   .path-grade-report-user .user-grade.generaltable .levelodd {
     background-color: rgba(0, 0, 0, 0.05); }
+  .path-grade-report-user .user-grade .column-contributiontocoursetotal,
+  .path-grade-report-user .user-grade .column-range,
+  .path-grade-report-user .user-grade .column-percentage,
+  .path-grade-report-user .user-grade .column-weight {
+    /*rtl:ignore*/
+    direction: ltr; }
 
 /**
  * Single view.
