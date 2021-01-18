@@ -28,6 +28,10 @@ class HTMLPurifier_HTMLModule_Forms extends HTMLPurifier_HTMLModule
      */
     public function setup($config)
     {
+        if ($config->get('HTML.Forms')) {
+            $this->safe = true;
+        }
+
         $form = $this->addElement(
             'form',
             'Form',
