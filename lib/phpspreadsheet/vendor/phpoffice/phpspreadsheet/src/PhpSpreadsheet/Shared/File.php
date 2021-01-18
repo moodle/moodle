@@ -19,7 +19,7 @@ class File
      *
      * @param bool $useUploadTempDir Use File Upload Temporary directory (true or false)
      */
-    public static function setUseUploadTempDirectory($useUploadTempDir)
+    public static function setUseUploadTempDirectory($useUploadTempDir): void
     {
         self::$useUploadTempDirectory = (bool) $useUploadTempDir;
     }
@@ -109,12 +109,6 @@ class File
      */
     public static function sysGetTempDir()
     {
-        // Moodle hack!
-        if (function_exists('make_temp_directory')) {
-            $temp = make_temp_directory('phpspreadsheet');
-            return realpath(dirname($temp));
-        }
-
         if (self::$useUploadTempDirectory) {
             //  use upload-directory when defined to allow running on environments having very restricted
             //      open_basedir configs
@@ -134,10 +128,8 @@ class File
      * Assert that given path is an existing file and is readable, otherwise throw exception.
      *
      * @param string $filename
-     *
-     * @throws InvalidArgumentException
      */
-    public static function assertFile($filename)
+    public static function assertFile($filename): void
     {
         if (!is_file($filename)) {
             throw new InvalidArgumentException('File "' . $filename . '" does not exist.');

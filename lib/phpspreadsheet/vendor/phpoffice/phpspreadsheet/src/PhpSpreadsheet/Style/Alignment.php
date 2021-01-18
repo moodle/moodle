@@ -28,6 +28,10 @@ class Alignment extends Supervisor
     const READORDER_LTR = 1;
     const READORDER_RTL = 2;
 
+    // Special value for Text Rotation
+    const TEXTROTATION_STACK_EXCEL = 255;
+    const TEXTROTATION_STACK_PHPSPREADSHEET = -165; // 90 - 255
+
     /**
      * Horizontal alignment.
      *
@@ -138,9 +142,7 @@ class Alignment extends Supervisor
      *
      * @param array $pStyles Array containing style information
      *
-     * @throws PhpSpreadsheetException
-     *
-     * @return Alignment
+     * @return $this
      */
     public function applyFromArray(array $pStyles)
     {
@@ -193,7 +195,7 @@ class Alignment extends Supervisor
      *
      * @param string $pValue see self::HORIZONTAL_*
      *
-     * @return Alignment
+     * @return $this
      */
     public function setHorizontal($pValue)
     {
@@ -230,7 +232,7 @@ class Alignment extends Supervisor
      *
      * @param string $pValue see self::VERTICAL_*
      *
-     * @return Alignment
+     * @return $this
      */
     public function setVertical($pValue)
     {
@@ -267,19 +269,17 @@ class Alignment extends Supervisor
      *
      * @param int $pValue
      *
-     * @throws PhpSpreadsheetException
-     *
-     * @return Alignment
+     * @return $this
      */
     public function setTextRotation($pValue)
     {
         // Excel2007 value 255 => PhpSpreadsheet value -165
-        if ($pValue == 255) {
-            $pValue = -165;
+        if ($pValue == self::TEXTROTATION_STACK_EXCEL) {
+            $pValue = self::TEXTROTATION_STACK_PHPSPREADSHEET;
         }
 
         // Set rotation
-        if (($pValue >= -90 && $pValue <= 90) || $pValue == -165) {
+        if (($pValue >= -90 && $pValue <= 90) || $pValue == self::TEXTROTATION_STACK_PHPSPREADSHEET) {
             if ($this->isSupervisor) {
                 $styleArray = $this->getStyleArray(['textRotation' => $pValue]);
                 $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
@@ -312,7 +312,7 @@ class Alignment extends Supervisor
      *
      * @param bool $pValue
      *
-     * @return Alignment
+     * @return $this
      */
     public function setWrapText($pValue)
     {
@@ -348,7 +348,7 @@ class Alignment extends Supervisor
      *
      * @param bool $pValue
      *
-     * @return Alignment
+     * @return $this
      */
     public function setShrinkToFit($pValue)
     {
@@ -384,14 +384,16 @@ class Alignment extends Supervisor
      *
      * @param int $pValue
      *
-     * @return Alignment
+     * @return $this
      */
     public function setIndent($pValue)
     {
         if ($pValue > 0) {
-            if ($this->getHorizontal() != self::HORIZONTAL_GENERAL &&
+            if (
+                $this->getHorizontal() != self::HORIZONTAL_GENERAL &&
                 $this->getHorizontal() != self::HORIZONTAL_LEFT &&
-                $this->getHorizontal() != self::HORIZONTAL_RIGHT) {
+                $this->getHorizontal() != self::HORIZONTAL_RIGHT
+            ) {
                 $pValue = 0; // indent not supported
             }
         }
@@ -424,7 +426,7 @@ class Alignment extends Supervisor
      *
      * @param int $pValue
      *
-     * @return Alignment
+     * @return $this
      */
     public function setReadOrder($pValue)
     {
@@ -462,5 +464,19 @@ class Alignment extends Supervisor
             $this->readOrder .
             __CLASS__
         );
+    }
+
+    protected function exportArray1(): array
+    {
+        $exportedArray = [];
+        $this->exportArray2($exportedArray, 'horizontal', $this->getHorizontal());
+        $this->exportArray2($exportedArray, 'indent', $this->getIndent());
+        $this->exportArray2($exportedArray, 'readOrder', $this->getReadOrder());
+        $this->exportArray2($exportedArray, 'shrinkToFit', $this->getShrinkToFit());
+        $this->exportArray2($exportedArray, 'textRotation', $this->getTextRotation());
+        $this->exportArray2($exportedArray, 'vertical', $this->getVertical());
+        $this->exportArray2($exportedArray, 'wrapText', $this->getWrapText());
+
+        return $exportedArray;
     }
 }
