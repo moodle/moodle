@@ -21,7 +21,7 @@ class HTMLPurifier_Config
      * HTML Purifier's version
      * @type string
      */
-    public $version = '4.12.0';
+    public $version = '4.13.0';
 
     /**
      * Whether or not to automatically finalize
@@ -408,7 +408,7 @@ class HTMLPurifier_Config
      *             maybeGetRawHTMLDefinition, which is more explicitly
      *             named, instead.
      *
-     * @return HTMLPurifier_HTMLDefinition
+     * @return HTMLPurifier_HTMLDefinition|null
      */
     public function getHTMLDefinition($raw = false, $optimized = false)
     {
@@ -427,7 +427,7 @@ class HTMLPurifier_Config
      *             maybeGetRawCSSDefinition, which is more explicitly
      *             named, instead.
      *
-     * @return HTMLPurifier_CSSDefinition
+     * @return HTMLPurifier_CSSDefinition|null
      */
     public function getCSSDefinition($raw = false, $optimized = false)
     {
@@ -446,7 +446,7 @@ class HTMLPurifier_Config
      *             maybeGetRawURIDefinition, which is more explicitly
      *             named, instead.
      *
-     * @return HTMLPurifier_URIDefinition
+     * @return HTMLPurifier_URIDefinition|null
      */
     public function getURIDefinition($raw = false, $optimized = false)
     {
@@ -468,7 +468,7 @@ class HTMLPurifier_Config
      *        maybe semantics is the "right thing to do."
      *
      * @throws HTMLPurifier_Exception
-     * @return HTMLPurifier_Definition
+     * @return HTMLPurifier_Definition|null
      */
     public function getDefinition($type, $raw = false, $optimized = false)
     {
@@ -647,7 +647,7 @@ class HTMLPurifier_Config
     }
 
     /**
-     * @return HTMLPurifier_HTMLDefinition
+     * @return HTMLPurifier_HTMLDefinition|null
      */
     public function maybeGetRawHTMLDefinition()
     {
@@ -655,7 +655,7 @@ class HTMLPurifier_Config
     }
     
     /**
-     * @return HTMLPurifier_CSSDefinition
+     * @return HTMLPurifier_CSSDefinition|null
      */
     public function maybeGetRawCSSDefinition()
     {
@@ -663,7 +663,7 @@ class HTMLPurifier_Config
     }
     
     /**
-     * @return HTMLPurifier_URIDefinition
+     * @return HTMLPurifier_URIDefinition|null
      */
     public function maybeGetRawURIDefinition()
     {
