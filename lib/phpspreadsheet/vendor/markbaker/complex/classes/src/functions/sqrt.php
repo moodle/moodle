@@ -16,7 +16,7 @@ namespace Complex;
  * @return    Complex          The Square root of the complex argument.
  * @throws    Exception        If argument isn't a valid real or complex number.
  */
-function sqrt($complex)
+function sqrt($complex): Complex
 {
     $complex = Complex::validateComplexArgument($complex);
 

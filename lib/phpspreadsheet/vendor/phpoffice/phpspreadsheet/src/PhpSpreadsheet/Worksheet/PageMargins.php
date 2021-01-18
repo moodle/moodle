@@ -68,7 +68,7 @@ class PageMargins
      *
      * @param float $pValue
      *
-     * @return PageMargins
+     * @return $this
      */
     public function setLeft($pValue)
     {
@@ -92,7 +92,7 @@ class PageMargins
      *
      * @param float $pValue
      *
-     * @return PageMargins
+     * @return $this
      */
     public function setRight($pValue)
     {
@@ -116,7 +116,7 @@ class PageMargins
      *
      * @param float $pValue
      *
-     * @return PageMargins
+     * @return $this
      */
     public function setTop($pValue)
     {
@@ -140,7 +140,7 @@ class PageMargins
      *
      * @param float $pValue
      *
-     * @return PageMargins
+     * @return $this
      */
     public function setBottom($pValue)
     {
@@ -164,7 +164,7 @@ class PageMargins
      *
      * @param float $pValue
      *
-     * @return PageMargins
+     * @return $this
      */
     public function setHeader($pValue)
     {
@@ -188,7 +188,7 @@ class PageMargins
      *
      * @param float $pValue
      *
-     * @return PageMargins
+     * @return $this
      */
     public function setFooter($pValue)
     {
@@ -210,5 +210,35 @@ class PageMargins
                 $this->$key = $value;
             }
         }
+    }
+
+    public static function fromCentimeters(float $value): float
+    {
+        return $value / 2.54;
+    }
+
+    public static function toCentimeters(float $value): float
+    {
+        return $value * 2.54;
+    }
+
+    public static function fromMillimeters(float $value): float
+    {
+        return $value / 25.4;
+    }
+
+    public static function toMillimeters(float $value): float
+    {
+        return $value * 25.4;
+    }
+
+    public static function fromPoints(float $value): float
+    {
+        return $value / 72;
+    }
+
+    public static function toPoints(float $value): float
+    {
+        return $value * 72;
     }
 }

@@ -16,7 +16,7 @@ namespace Complex;
  * @return    Complex          The exponential of the complex argument.
  * @throws    Exception        If argument isn't a valid real or complex number.
  */
-function exp($complex)
+function exp($complex): Complex
 {
     $complex = Complex::validateComplexArgument($complex);
 
