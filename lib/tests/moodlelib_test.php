@@ -3823,6 +3823,31 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test function {@see count_letters()}.
+     *
+     * @dataProvider count_letters_testcases
+     * @param int $expectedcount number of characters in $string.
+     * @param string $string the test string to count the letters of.
+     */
+    public function test_count_letters(int $expectedcount, string $string): void {
+        $this->assertEquals($expectedcount, count_letters($string));
+    }
+
+    /**
+     * Data provider for {@see count_letters_testcases}.
+     *
+     * @return array of test cases.
+     */
+    public function count_letters_testcases(): array {
+        return [
+            [0, ''],
+            [1, 'x'],
+            [1, '&amp;'],
+            [4, '<p>frog</p>'],
+        ];
+    }
+
+    /**
      * Tests the getremoteaddr() function.
      */
     public function test_getremoteaddr() {
