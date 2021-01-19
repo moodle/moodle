@@ -8375,11 +8375,12 @@ function count_words($string) {
  * Letters are defined as chars not in tags and different from whitespace.
  *
  * @category string
- * @param string $string The text to be searched for letters.
+ * @param string $string The text to be searched for letters. May be HTML.
  * @return int The count of letters in the specified text.
  */
 function count_letters($string) {
     $string = strip_tags($string); // Tags are out now.
+    $string = html_entity_decode($string);
     $string = preg_replace('/[[:space:]]*/', '', $string); // Whitespace are out now.
 
     return core_text::strlen($string);
