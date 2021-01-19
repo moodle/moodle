@@ -100,6 +100,15 @@ abstract class restore_activity_task extends restore_task {
         return $this->moduleid;
     }
 
+    /**
+     * Returns the old course module id (cmid of activity which will be restored)
+     *
+     * @return int
+     */
+    public function get_old_moduleid() {
+        return $this->oldmoduleid;
+    }
+
     public function get_old_moduleversion() {
         return $this->oldmoduleversion;
     }
