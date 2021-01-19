@@ -3745,7 +3745,7 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test function count_words().
+     * Test function {@see count_words()}.
      *
      * @dataProvider count_words_testcases
      * @param int $expectedcount number of words in $string.
@@ -3762,16 +3762,30 @@ class core_moodlelib_testcase extends advanced_testcase {
      */
     public function count_words_testcases(): array {
         return [
+            [0, ''],
+            [4, 'one two three four'],
             [3, "one two three'four"],
             [3, 'one+two three’four'],
             [2, 'one"two three-four'],
             [4, 'one@two three_four'],
             [4, 'one\two three/four'],
+            [4, '<p>one two<br></br>three four</p>'],
+            [4, '<p>one two<br>three four</p>'],
+            [4, '<p>one two<br />three four</p>'], // XHTML style.
             [4, ' one ... two &nbsp; three...four '],
             [4, 'one.2 3,four'],
             [4, '1³ £2 €3.45 $6,789'],
             [4, 'one—two ブルース カンベッル'],
             [4, 'one…two ブルース … カンベッル'],
+            [4, '<p>one two</p><p>three four</p>'],
+            [4, '<p>one two</p><p><br/></p><p>three four</p>'],
+            [4, '<p>one</p><ul><li>two</li><li>three</li></ul><p>four.</p>'],
+            [1, '<p>em<b>phas</b>is.</p>'],
+            [1, '<p>em<i>phas</i>is.</p>'],
+            [1, '<p>em<strong>phas</strong>is.</p>'],
+            [1, '<p>em<em>phas</em>is.</p>'],
+            [2, "one\ntwo"],
+            [1, "SO<sub>4</sub><sup>2-</sup>"],
         ];
     }
 
