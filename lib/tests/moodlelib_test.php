@@ -3793,38 +3793,35 @@ class core_moodlelib_testcase extends advanced_testcase {
 
     /**
      * Test function count_words().
+     *
+     * @dataProvider count_words_testcases
+     * @param int $expectedcount number of words in $string.
+     * @param string $string the test string to count the words of.
      */
-    public function test_count_words() {
-        $count = count_words("one two three'four");
-        $this->assertEquals(3, $count);
-
-        $count = count_words('one+two three’four');
-        $this->assertEquals(3, $count);
-
-        $count = count_words('one"two three-four');
-        $this->assertEquals(2, $count);
-
-        $count = count_words('one@two three_four');
-        $this->assertEquals(4, $count);
-
-        $count = count_words('one\two three/four');
-        $this->assertEquals(4, $count);
-
-        $count = count_words(' one ... two &nbsp; three...four ');
-        $this->assertEquals(4, $count);
-
-        $count = count_words('one.2 3,four');
-        $this->assertEquals(4, $count);
-
-        $count = count_words('1³ £2 €3.45 $6,789');
-        $this->assertEquals(4, $count);
-
-        $count = count_words('one—two ブルース カンベッル');
-        $this->assertEquals(4, $count);
-
-        $count = count_words('one…two ブルース … カンベッル');
-        $this->assertEquals(4, $count);
+    public function test_count_words(int $expectedcount, string $string): void {
+        $this->assertEquals($expectedcount, count_words($string));
     }
+
+    /**
+     * Data provider for {@see test_count_words}.
+     *
+     * @return array of test cases.
+     */
+    public function count_words_testcases(): array {
+        return [
+            [3, "one two three'four"],
+            [3, 'one+two three’four'],
+            [2, 'one"two three-four'],
+            [4, 'one@two three_four'],
+            [4, 'one\two three/four'],
+            [4, ' one ... two &nbsp; three...four '],
+            [4, 'one.2 3,four'],
+            [4, '1³ £2 €3.45 $6,789'],
+            [4, 'one—two ブルース カンベッル'],
+            [4, 'one…two ブルース … カンベッル'],
+        ];
+    }
+
     /**
      * Tests the getremoteaddr() function.
      */
