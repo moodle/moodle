@@ -2387,5 +2387,11 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021052500.42);
     }
 
+    if ($oldversion < 2021052500.53) {
+        $DB->delete_records_select('event', "eventtype = 'category' AND categoryid = 0 AND userid <> 0");
+
+        upgrade_main_savepoint(true, 2021052500.53);
+    }
+
     return true;
 }
