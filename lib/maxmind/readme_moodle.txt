@@ -16,15 +16,24 @@ Installation
 ------------
 
 1) Download the latest versions of GeoIP2-php and MaxMind-DB-Reader-php
-wget https://github.com/maxmind/GeoIP2-php/archive/v2.10.0.zip
-wget https://github.com/maxmind/MaxMind-DB-Reader-php/archive/v1.5.1.zip
+wget https://github.com/maxmind/GeoIP2-php/archive/vX.Y.Z.zip
+wget https://github.com/maxmind/MaxMind-DB-Reader-php/archive/vX.Y.Z.zip
 
 2) Unzip the archives
-unzip v2.10.0.zip
-unzip v1.5.1.zip
+unzip vX.Y.Z.zip
+unzip vX.Y.Z.zip
 
 3) Move the source code directories into place
-mv GeoIP2-php-2.10.0/src/ /path/to/moodle/lib/maxmind/GeoIp2/
-mv MaxMind-DB-Reader-php-1.5.1/src/MaxMind/ /path/to/moodle/lib/maxmind/MaxMind/
+mv GeoIP2-php-X.Y.Z/src/ /path/to/moodle/lib/maxmind/GeoIp2/
+mv MaxMind-DB-Reader-php-X.Y.Z/src/MaxMind/ /path/to/moodle/lib/maxmind/MaxMind/
 
-4) Run unit tests on iplookup/tests/geoip_test.php.
+4) Update other MaxMind related files:
+mv MaxMind-DB-Reader-php-X.Y.Z/LICENSE /path/to/moodle/lib/maxmind/MaxMind/
+mv MaxMind-DB-Reader-php-X.Y.Z/CHANGELOG.md /path/to/moodle/lib/maxmind/MaxMind/
+mv MaxMind-DB-Reader-php-X.Y.Z/README.md /path/to/moodle/lib/maxmind/MaxMind/
+mv MaxMind-DB-Reader-php-X.Y.Z/composer.json /path/to/moodle/lib/maxmind/MaxMind/
+mv MaxMind-DB-Reader-php-X.Y.Z/autoload.php /path/to/moodle/lib/maxmind/MaxMind/
+
+5) Run unit tests on iplookup/tests/geoip_test.php.
+
+6) Update maxmind/GeoIp2 and maxmind/MaxMin versions in lib/thirdpartylibs.xml
