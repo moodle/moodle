@@ -107,11 +107,7 @@ function xhprof_generate_image_by_dot($dot_script, $type) {
        2 => array("pipe", "w")
        );
 
-  // Start moodle modification: use $CFG->pathtodot for executing this.
-  // $cmd = " dot -T".$type;
-  global $CFG;
-  $cmd = (!empty($CFG->pathtodot) ? $CFG->pathtodot : 'dot') . ' -T' . $type;
-  // End moodle modification.
+  $cmd = " dot -T".$type;
 
   $process = proc_open( $cmd, $descriptorspec, $pipes, sys_get_temp_dir(), array( 'PATH' => getenv( 'PATH' ) ) );
   if (is_resource($process)) {
