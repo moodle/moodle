@@ -244,7 +244,7 @@ function imscp_recursive_href($manifestfilename, $imscp, $context) {
         }
     }
 
-    return $href;
+    return $manifestfilename;
 }
 
 function imscp_recursive_item($xmlitem, $level, $resources) {
