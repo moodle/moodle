@@ -217,7 +217,7 @@
     <location>php-css-parser</location>
     <name>PHP-CSS-Parser</name>
     <license>MIT</license>
-    <version>8.3.0</version>
+    <version>8.3.1</version>
   </library>
   <library>
     <location>rtlcss</location>
