@@ -874,11 +874,15 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function no_questions_message($canedit, $editurl) {
-        $output = '';
-        $output .= $this->notification(get_string('noquestions', 'quiz'));
+        $output = html_writer::start_tag('div', array('class' => 'card text-center mb-3'));
+        $output .= html_writer::start_tag('div', array('class' => 'card-body'));
+
+        $output .= $this->notification(get_string('noquestions', 'quiz'), 'warning', false);
         if ($canedit) {
             $output .= $this->single_button($editurl, get_string('editquiz', 'quiz'), 'get');
         }
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('div');
 
         return $output;
     }
