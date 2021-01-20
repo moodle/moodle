@@ -163,9 +163,9 @@
   </library>
   <library>
     <location>markdown</location>
-    <name>Markdown original+extra</name>
+    <name>Markdown original</name>
     <license>BSD</license>
-    <version>1.8.0</version>
+    <version>1.9.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
