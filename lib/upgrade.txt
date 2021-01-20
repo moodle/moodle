@@ -17,6 +17,7 @@ information provided here is intended especially for developers.
   can override the default filterset join type by overriding \core_table\local\filter\filterset::get_join_type() instead.
 * HTMLPurifier has been upgraded to the latest version - 4.13.0
 * Markdown lib has been upgraded to the latest version - 1.9.0
+* The minify lib has been upgraded to 1.3.63 and pathconvertor to 1.1.3
 * A new optional parameter `$sort` has been added to all `$context->get_capabilities()` methods to be able to define order of
   returned capability array.
 
