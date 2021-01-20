@@ -349,7 +349,7 @@
     <location>php-enum</location>
     <name>php-enum</name>
     <license>MIT</license>
-    <version>1.7.6</version>
+    <version>1.7.7</version>
   </library>
   <library>
     <location>http-message</location>
