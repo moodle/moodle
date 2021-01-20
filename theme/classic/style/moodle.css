@@ -14922,6 +14922,9 @@ a.ygtvspacer:hover {
   overflow: hidden; }
 
 .file-picker .yui3-datatable-header {
+  /*rtl:raw:
+    text-align: right;
+    */
   background: initial; }
 
 .fitem.disabled .filepicker-filelist,
@@ -14980,6 +14983,9 @@ a.ygtvspacer:hover {
 /* Override YUI default styling */
 /* stylelint-disable declaration-no-important */
 .filemanager .yui3-datatable-header {
+  /*rtl:raw:
+        text-align: right;
+        */
   background: #fff !important;
   border-bottom: 1px solid #ccc !important;
   border-left: 0 solid #fff !important;
