@@ -261,7 +261,7 @@ function h5pactivity_reset_course_form_defaults(stdClass $course): array {
  * @return array of reseting status
  */
 function h5pactivity_reset_userdata(stdClass $data): array {
-    global $CFG, $DB;
+    global $DB;
     $componentstr = get_string('modulenameplural', 'mod_h5pactivity');
     $status = [];
     if (!empty($data->reset_h5pactivity)) {
@@ -540,4 +540,284 @@ function h5pactivity_dndupload_handle($uploadinfo): int {
     $h5p->reference = $file->get_filename();
 
     return h5pactivity_add_instance($h5p, null);
+}
+
+/**
+ * Print recent activity from all h5pactivities in a given course
+ *
+ * This is used by the recent activity block
+ * @param mixed $course the course to print activity for
+ * @param bool $viewfullnames boolean to determine whether to show full names or not
+ * @param int $timestart the time the rendering started
+ * @return bool true if activity was printed, false otherwise.
+ */
+function h5pactivity_print_recent_activity($course, bool $viewfullnames, int $timestart): bool {
+    global $CFG, $DB, $OUTPUT, $USER;
+
+    $dbparams = [$timestart, $course->id, 'h5pactivity'];
+
+    $userfieldsapi = \core_user\fields::for_userpic();
+    $namefields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;;
+
+    $sql = "SELECT h5pa.id, h5pa.timemodified, cm.id as cmid, $namefields
+              FROM {h5pactivity_attempts} h5pa
+              JOIN {h5pactivity} h5p ON h5p.id = h5pa.h5pactivityid
+              JOIN {course_modules} cm ON cm.instance = h5p.id
+              JOIN {modules} md ON md.id = cm.module
+              JOIN {user} u ON u.id = h5pa.userid
+             WHERE h5pa.timemodified > ?
+               AND h5p.course = ?
+               AND md.name = ?
+          ORDER BY h5pa.timemodified ASC";
+
+    if (!$submissions = $DB->get_records_sql($sql, $dbparams)) {
+        return false;
+    }
+
+    $modinfo = get_fast_modinfo($course);
+
+    $recentactivity = h5pactivity_fetch_recent_activity($submissions, $course->id);
+
+    if (empty($recentactivity)) {
+        return false;
+    }
+
+    $cms = $modinfo->get_cms();
+
+    echo $OUTPUT->heading(get_string('newsubmissions', 'h5pactivity') . ':', 6);
+
+    foreach ($recentactivity as $submission) {
+        $cm = $cms[$submission->cmid];
+        $link = $CFG->wwwroot.'/mod/h5pactivity/view.php?id='.$cm->id;
+        print_recent_activity_note($submission->timemodified,
+            $submission,
+            $cm->name,
+            $link,
+            false,
+            $viewfullnames);
+    }
+
+    return true;
+}
+
+/**
+ * Returns all h5pactivities since a given time.
+ *
+ * @param array $activities The activity information is returned in this array
+ * @param int $index The current index in the activities array
+ * @param int $timestart The earliest activity to show
+ * @param int $courseid Limit the search to this course
+ * @param int $cmid The course module id
+ * @param int $userid Optional user id
+ * @param int $groupid Optional group id
+ * @return void
+ */
+function h5pactivity_get_recent_mod_activity(array &$activities, int &$index, int $timestart, int $courseid,
+            int $cmid, int $userid=0, int $groupid=0) {
+    global $CFG, $DB, $USER;
+
+    $course = get_course($courseid);
+    $modinfo = get_fast_modinfo($course);
+
+    $cm = $modinfo->get_cm($cmid);
+    $params = [];
+    if ($userid) {
+        $userselect = 'AND u.id = :userid';
+        $params['userid'] = $userid;
+    } else {
+        $userselect = '';
+    }
+
+    if ($groupid) {
+        $groupselect = 'AND gm.groupid = :groupid';
+        $groupjoin = 'JOIN {groups_members} gm ON gm.userid=u.id';
+        $params['groupid'] = $groupid;
+    } else {
+        $groupselect = '';
+        $groupjoin = '';
+    }
+
+    $params['cminstance'] = $cm->instance;
+    $params['timestart'] = $timestart;
+
+    $userfieldsapi = \core_user\fields::for_userpic();
+    $userfields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;
+
+    $sql = "SELECT h5pa.id, h5pa.timemodified, cm.id as cmid, $userfields
+              FROM {h5pactivity_attempts} h5pa
+              JOIN {h5pactivity} h5p ON h5p.id = h5pa.h5pactivityid
+              JOIN {course_modules} cm ON cm.instance = h5p.id
+              JOIN {modules} md ON md.id = cm.module
+              JOIN {user} u ON u.id = h5pa.userid $groupjoin
+             WHERE h5pa.timemodified > :timestart
+               AND h5p.id = :cminstance $userselect $groupselect
+          ORDER BY h5pa.timemodified ASC";
+
+    if (!$submissions = $DB->get_records_sql($sql, $params)) {
+        return;
+    }
+
+    $cmcontext = context_module::instance($cm->id);
+    $grader = has_capability('mod/h5pactivity:reviewattempts', $cmcontext);
+    $viewfullnames = has_capability('moodle/site:viewfullnames', $cmcontext);
+
+    $recentactivity = h5pactivity_fetch_recent_activity($submissions, $courseid);
+
+    if (empty($recentactivity)) {
+        return;
+    }
+
+    if ($grader) {
+        require_once($CFG->libdir.'/gradelib.php');
+        $userids = [];
+        foreach ($recentactivity as $id => $submission) {
+            $userids[] = $submission->userid;
+        }
+        $grades = grade_get_grades($courseid, 'mod', 'h5pactivity', $cm->instance, $userids);
+    }
+
+    $aname = format_string($cm->name, true);
+    foreach ($recentactivity as $submission) {
+        $activity = new stdClass();
+
+        $activity->type = 'h5pactivity';
+        $activity->cmid = $cm->id;
+        $activity->name = $aname;
+        $activity->sectionnum = $cm->sectionnum;
+        $activity->timestamp = $submission->timemodified;
+        $activity->user = new stdClass();
+        if ($grader) {
+            $activity->grade = $grades->items[0]->grades[$submission->userid]->str_long_grade;
+        }
+
+        $userfields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
+        foreach ($userfields as $userfield) {
+            if ($userfield == 'id') {
+                // Aliased in SQL above.
+                $activity->user->{$userfield} = $submission->userid;
+            } else {
+                $activity->user->{$userfield} = $submission->{$userfield};
+            }
+        }
+        $activity->user->fullname = fullname($submission, $viewfullnames);
+
+        $activities[$index++] = $activity;
+    }
+
+    return;
+}
+
+/**
+ * Print recent activity from all h5pactivities in a given course
+ *
+ * This is used by course/recent.php
+ * @param stdClass $activity
+ * @param int $courseid
+ * @param bool $detail
+ * @param array $modnames
+ */
+function h5pactivity_print_recent_mod_activity(stdClass $activity, int $courseid, bool $detail, array $modnames) {
+    global $OUTPUT;
+
+    $modinfo = [];
+    if ($detail) {
+        $modinfo['modname'] = $activity->name;
+        $modinfo['modurl'] = new moodle_url('/mod/h5pactivity/view.php', ['id' => $activity->cmid]);
+        $modinfo['modicon'] = $OUTPUT->image_icon('icon', $modnames[$activity->type], 'h5pactivity');
+    }
+
+    $userpicture = $OUTPUT->user_picture($activity->user);
+
+    $template = ['userpicture' => $userpicture,
+        'submissiontimestamp' => $activity->timestamp,
+        'modinfo' => $modinfo,
+        'userurl' => new moodle_url('/user/view.php', array('id' => $activity->user->id, 'course' => $courseid)),
+        'fullname' => $activity->user->fullname];
+    if (isset($activity->grade)) {
+        $template['grade'] = get_string('grade_h5p', 'h5pactivity', $activity->grade);
+    }
+
+    echo $OUTPUT->render_from_template('mod_h5pactivity/reviewattempts', $template);
+}
+
+/**
+ * Fetches recent activity for course module.
+ *
+ * @param array $submissions The activity submissions
+ * @param int $courseid Limit the search to this course
+ * @return array $recentactivity recent activity in a course.
+ */
+function h5pactivity_fetch_recent_activity(array $submissions, int $courseid) : array {
+    global $USER;
+
+    $course = get_course($courseid);
+    $modinfo = get_fast_modinfo($course);
+
+    $recentactivity = [];
+    $grader = [];
+
+    $cms = $modinfo->get_cms();
+
+    foreach ($submissions as $submission) {
+        if (!array_key_exists($submission->cmid, $cms)) {
+            continue;
+        }
+        $cm = $cms[$submission->cmid];
+        if (!$cm->uservisible) {
+            continue;
+        }
+
+        if ($USER->id == $submission->userid) {
+            $recentactivity[$submission->userid] = $submission;
+            continue;
+        }
+
+        $cmcontext = context_module::instance($cm->id);
+        // The act of submitting of attempt may be considered private -
+        // only graders will see it if specified.
+        if (!array_key_exists($cm->id, $grader)) {
+            $grader[$cm->id] = has_capability('mod/h5pactivity:reviewattempts', $cmcontext);
+        }
+        if (!$grader[$cm->id]) {
+            continue;
+        }
+
+        $groups = [];
+        $usersgroups = [];
+
+        $groupmode = groups_get_activity_groupmode($cm, $course);
+        $accessallgroups = has_capability('moodle/site:accessallgroups', $cmcontext);
+
+        if ($groupmode == SEPARATEGROUPS && !$accessallgroups) {
+
+            if (isguestuser()) {
+                // Shortcut - guest user does not belong into any group.
+                continue;
+            }
+
+            if (!isset($groups[$cm->groupingid])) {
+                $groups[$cm->groupingid] = $modinfo->get_groups($cm->groupingid);
+                if (!$groups[$cm->groupingid]) {
+                    continue;
+                }
+            }
+
+            if (!isset($usersgroups[$cm->groupingid][$submission->userid])) {
+                $usersgroups[$cm->groupingid][$submission->userid] =
+                    groups_get_all_groups($course->id, $submission->userid, $cm->groupingid);
+            }
+
+            if (is_array($usersgroups[$cm->groupingid][$submission->userid])) {
+                $usersgroupstmp = array_keys($usersgroups[$cm->groupingid][$submission->userid]);
+                $intersect = array_intersect($usersgroupstmp, $groups[$cm->groupingid]);
+                if (empty($intersect)) {
+                    continue;
+                }
+            }
+        }
+
+        $recentactivity[$submission->userid] = $submission;
+    }
+
+    return $recentactivity;
 }
