@@ -103,6 +103,7 @@ if ($contenttype->can_delete($content)) {
     $attributes = [
                 'data-action' => 'deletecontent',
                 'data-contentname' => $content->get_name(),
+                'data-uses' => count($content->get_uses()),
                 'data-contentid' => $content->get_id(),
                 'data-contextid' => $context->id,
             ];

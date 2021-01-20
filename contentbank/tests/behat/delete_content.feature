@@ -22,6 +22,7 @@ Feature: Delete H5P file from the content bank
     And I click on "Choose a file..." "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "filltheblanks.h5p" "link"
+    And I set the field "Save as" to "content2delete.h5p"
     And I click on "Select this file" "button"
     And I click on "Save changes" "button"
 
@@ -29,15 +30,16 @@ Feature: Delete H5P file from the content bank
     Given I open the action menu in "region-main-settings-menu" "region"
     And I should see "Delete"
     When I choose "Delete" in the open action menu
-    And I should see "Are you sure you want to delete the content 'filltheblanks.h5p'"
+    And I should see "Are you sure you want to delete the content 'content2delete.h5p'"
+    And I should not see "The content will only be deleted from the content bank"
     And I click on "Cancel" "button" in the "Delete content" "dialogue"
-    Then I should see "filltheblanks.h5p"
+    Then I should see "content2delete.h5p"
     And I open the action menu in "region-main-settings-menu" "region"
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete content" "dialogue"
     And I wait until the page is ready
     And I should see "The content has been deleted."
-    And I should not see "filltheblanks.h5p"
+    And I should not see "content2delete.h5p"
 
   Scenario: Users without the required capability can only delete their own content
     Given the following "permission overrides" exist:
@@ -56,8 +58,8 @@ Feature: Delete H5P file from the content bank
     And I click on "Save changes" "button"
     When I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Content bank" "link" in the "Navigation" "block"
-    And I should see "filltheblanks.h5p"
-    And I follow "filltheblanks.h5p"
+    And I should see "content2delete.h5p"
+    And I follow "content2delete.h5p"
     Then ".header-actions-container" "css_element" should not exist
     And I click on "Content bank" "link"
     And I click on "Upload" "link"
@@ -68,3 +70,23 @@ Feature: Delete H5P file from the content bank
     And I click on "Save changes" "button"
     And I open the action menu in "region-main-settings-menu" "region"
     And I should see "Delete"
+
+  Scenario: The number of times a content is used is displayed before removing it
+    Given I follow "Dashboard" in the user menu
+    And I follow "Manage private files..."
+    And I click on "Add..." "button"
+    And I select "Content bank" repository in file picker
+    And I click on "content2delete.h5p" "file" in repository content area
+    And I click on "Link to the file" "radio"
+    And I click on "Select this file" "button"
+    And I click on "Save changes" "button"
+    When I click on "Site pages" "list_item" in the "Navigation" "block"
+    And I click on "Content bank" "link" in the "Navigation" "block"
+    And I follow "content2delete.h5p"
+    And I open the action menu in "region-main-settings-menu" "region"
+    And I choose "Delete" in the open action menu
+    Then I should see "Are you sure you want to delete the content 'content2delete.h5p'"
+    And I should see "The content will only be deleted from the content bank"
+    And I click on "Delete" "button" in the "Delete content" "dialogue"
+    And I should see "The content has been deleted."
+    And I should not see "content2delete.h5p"
