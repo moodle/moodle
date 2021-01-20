@@ -298,4 +298,60 @@ class core_contenttype_content_testcase extends \advanced_testcase {
 
         $this->assertInstanceOf(get_class($type), $contenttype);
     }
+
+    /**
+     * Tests for 'get_uses' behaviour.
+     *
+     * @covers ::get_uses
+     */
+    public function test_get_uses() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $context = context_system::instance();
+
+        // Add some content to the content bank.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
+        $contents = $generator->generate_contentbank_data('contenttype_testable', 3, 0, $context);
+        $content1 = array_shift($contents);
+
+        // Check content has no references for now.
+        $this->assertCount(0, $content1->get_uses());
+
+        // Add a link to the previous content.
+        $cbfile = $content1->get_file();
+        $cbrecord = array(
+            'contextid' => $cbfile->get_contextid(),
+            'component' => $cbfile->get_component(),
+            'filearea'  => $cbfile->get_filearea(),
+            'itemid'    => $cbfile->get_itemid(),
+            'filepath'  => $cbfile->get_filepath(),
+            'filename'  => $cbfile->get_filename(),
+        );
+        $fs = get_file_storage();
+        $ref = $fs->pack_reference($cbrecord);
+
+        $aliasrecord = new stdClass();
+        $aliasrecord->contextid = $context->id;
+        $aliasrecord->component = 'core';
+        $aliasrecord->filearea = 'phpunit';
+        $aliasrecord->filepath = '/foo/';
+        $aliasrecord->filename = 'one.txt';
+        $aliasrecord->itemid = 0;
+
+        $repos = \repository::get_instances(['type' => 'contentbank']);
+        $cbrepo = reset($repos);
+        $this->assertInstanceOf('repository', $cbrepo);
+
+        $alias = $fs->create_file_from_reference($aliasrecord, $cbrepo->id, $ref);
+
+        // Check content now has one reference (the previous alias).
+        $contentuses1 = $content1->get_uses();
+        $this->assertCount(1, $contentuses1);
+        $reffile = reset($contentuses1);
+        $this->assertEquals($alias, $reffile);
+
+        // Check a different content hasn't any reference.
+        $content2 = array_shift($contents);
+        $this->assertCount(0, $content2->get_uses());
+    }
 }

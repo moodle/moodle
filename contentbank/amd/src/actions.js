@@ -57,6 +57,7 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
             e.preventDefault();
 
             var contentname = $(this).data('contentname');
+            var contentuses = $(this).data('uses');
             var contentid = $(this).data('contentid');
             var contextid = $(this).data('contextid');
 
@@ -73,6 +74,10 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                     }
                 },
                 {
+                    key: 'deletecontentconfirmlinked',
+                    component: 'core_contentbank',
+                },
+                {
                     key: 'delete',
                     component: 'core'
                 },
@@ -82,7 +87,10 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
             Str.get_strings(strings).then(function(langStrings) {
                 var modalTitle = langStrings[0];
                 var modalContent = langStrings[1];
-                deleteButtonText = langStrings[2];
+                if (contentuses > 0) {
+                    modalContent += ' ' + langStrings[2];
+                }
+                deleteButtonText = langStrings[3];
 
                 return ModalFactory.create({
                     title: modalTitle,
