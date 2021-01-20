@@ -2495,5 +2495,43 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021030500.01);
     }
 
+    if ($oldversion < 2021031200.01) {
+
+        // Define field type to be added to oauth2_issuer.
+        $table = new xmldb_table('oauth2_issuer');
+        $field = new xmldb_field('servicetype', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'requireconfirmation');
+
+        // Conditionally launch add field type.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Set existing values to the proper servicetype value.
+        // It's not critical if the servicetype column doesn't contain the proper value for Google, Microsoft, Facebook or
+        // Nextcloud services because, for now, this value is used for services using different discovery method.
+        // However, let's try to upgrade it using the default value for the baseurl or image. If any of these default values
+        // have been changed, the servicetype column will remain NULL.
+        $recordset = $DB->get_recordset('oauth2_issuer');
+        foreach ($recordset as $record) {
+            if ($record->baseurl == 'https://accounts.google.com/') {
+                $record->servicetype = 'google';
+                $DB->update_record('oauth2_issuer', $record);
+            } else if ($record->image == 'https://www.microsoft.com/favicon.ico') {
+                $record->servicetype = 'microsoft';
+                $DB->update_record('oauth2_issuer', $record);
+            } else if ($record->image == 'https://facebookbrand.com/wp-content/uploads/2016/05/flogo_rgb_hex-brc-site-250.png') {
+                $record->servicetype = 'facebook';
+                $DB->update_record('oauth2_issuer', $record);
+            } else if ($record->image == 'https://nextcloud.com/wp-content/themes/next/assets/img/common/favicon.png?x16328') {
+                $record->servicetype = 'nextcloud';
+                $DB->update_record('oauth2_issuer', $record);
+            }
+        }
+        $recordset->close();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021031200.01);
+    }
+
     return true;
 }
