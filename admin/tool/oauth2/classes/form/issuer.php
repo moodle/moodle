@@ -170,12 +170,15 @@ class issuer extends persistent {
         $mform->addElement('hidden', 'sortorder');
         $mform->setType('sortorder', PARAM_INT);
 
+        $mform->addElement('hidden', 'servicetype');
+        $mform->setType('servicetype', PARAM_ALPHANUM);
+
         if ($this->type) {
             $mform->addElement('hidden', 'action', 'savetemplate');
             $mform->setType('action', PARAM_ALPHA);
 
             $mform->addElement('hidden', 'type', $this->_customdata['type']);
-            $mform->setType('type', PARAM_ALPHA);
+            $mform->setType('type', PARAM_ALPHANUM);
         } else {
             $mform->addElement('hidden', 'action', 'edit');
             $mform->setType('action', PARAM_ALPHA);
@@ -190,5 +193,15 @@ class issuer extends persistent {
         $this->add_action_buttons(true, get_string('savechanges', 'tool_oauth2'));
     }
 
-}
+    /**
+     * This method implements changes to the form that need to be made once the form data is set.
+     */
+    public function definition_after_data() {
+        $mform = $this->_form;
 
+        if ($this->type) {
+            // Set servicetype if it's defined.
+            $mform->getElement('servicetype')->setValue($this->type);
+        }
+    }
+}
