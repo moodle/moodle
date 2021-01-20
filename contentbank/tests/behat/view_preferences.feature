@@ -37,6 +37,7 @@ Feature: Store the content bank view preference
 
   Scenario: There are several views for displaying contents into the content bank
     Given I am on site homepage
+    And I expand "Site pages" node
     And I click on "Content bank" "link"
     When I click on "Display content bank with file details" "button"
     Then I should see "Last modified"
