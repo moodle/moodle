@@ -121,8 +121,7 @@ class manager {
         $checks = [
             new environment\displayerrors(),
             new environment\unsecuredataroot(),
-            new environment\vendordir(),
-            new environment\nodemodules(),
+            new environment\publicpaths(),
             new environment\configrw(),
             new environment\preventexecpath(),
             new security\mediafilterswf(),
