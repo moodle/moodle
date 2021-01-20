@@ -412,6 +412,63 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Constructs 'IN()' or '=' sql fragment
+     *
+     * Method overriding {@see moodle_database::get_in_or_equal} to be able to use
+     * more than 65535 elements in $items array.
+     *
+     * @param mixed $items A single value or array of values for the expression.
+     * @param int $type Parameter bounding type : SQL_PARAMS_QM or SQL_PARAMS_NAMED.
+     * @param string $prefix Named parameter placeholder prefix (a unique counter value is appended to each parameter name).
+     * @param bool $equal True means we want to equate to the constructed expression, false means we don't want to equate to it.
+     * @param mixed $onemptyitems This defines the behavior when the array of items provided is empty. Defaults to false,
+     *              meaning throw exceptions. Other values will become part of the returned SQL fragment.
+     * @throws coding_exception | dml_exception
+     * @return array A list containing the constructed sql fragment and an array of parameters.
+     */
+    public function get_in_or_equal($items, $type=SQL_PARAMS_QM, $prefix='param', $equal=true, $onemptyitems=false): array {
+        // We only interfere if number of items in expression exceeds 16 bit value.
+        if (!is_array($items) || count($items) < 65535) {
+            return parent::get_in_or_equal($items, $type, $prefix,  $equal, $onemptyitems);
+        }
+
+        // Determine the type from the first value. We don't need to be very smart here,
+        // it is developer's responsibility to make sure that variable type is matching
+        // field type, if not the case, DB engine will hint. Also mixing types won't work
+        // here anyway, so we ignore NULL or boolean (unlikely you need 56k values of
+        // these types only).
+        $cast = is_string(current($items)) ? '::text' : '::bigint';
+
+        if ($type == SQL_PARAMS_QM) {
+            if ($equal) {
+                $sql = 'IN (VALUES ('.implode('),(', array_fill(0, count($items), '?'.$cast)).'))';
+            } else {
+                $sql = 'NOT IN (VALUES ('.implode('),(', array_fill(0, count($items), '?'.$cast)).'))';
+            }
+            $params = array_values($items);
+        } else if ($type == SQL_PARAMS_NAMED) {
+            if (empty($prefix)) {
+                $prefix = 'param';
+            }
+            $params = [];
+            $sql = [];
+            foreach ($items as $item) {
+                $param = $prefix.$this->inorequaluniqueindex++;
+                $params[$param] = $item;
+                $sql[] = ':'.$param.$cast;
+            }
+            if ($equal) {
+                $sql = 'IN (VALUES ('.implode('),(', $sql).'))';
+            } else {
+                $sql = 'NOT IN (VALUES ('.implode('),(', $sql).'))';
+            }
+        } else {
+            throw new dml_exception('typenotimplement');
+        }
+        return [$sql, $params];
+    }
+
+    /**
      * Return table indexes - everything lowercased.
      * @param string $table The table we want to get indexes from.
      * @return array of arrays
