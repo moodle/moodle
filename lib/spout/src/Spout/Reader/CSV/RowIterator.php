@@ -147,7 +147,7 @@ class RowIterator implements IteratorInterface
 
         if ($rowData !== false) {
             // str_replace will replace NULL values by empty strings
-            $rowDataBufferAsArray = str_replace(null, null, $rowData);
+            $rowDataBufferAsArray = \str_replace(null, null, $rowData);
             $this->rowBuffer = $this->entityFactory->createRowFromArray($rowDataBufferAsArray);
             $this->numReadRows++;
         } else {
@@ -193,13 +193,13 @@ class RowIterator implements IteratorInterface
                 case EncodingHelper::ENCODING_UTF16_LE:
                 case EncodingHelper::ENCODING_UTF32_LE:
                     // remove whitespace from the beginning of a string as fgetcsv() add extra whitespace when it try to explode non UTF-8 data
-                    $cellValue = ltrim($cellValue);
+                    $cellValue = \ltrim($cellValue);
                     break;
 
                 case EncodingHelper::ENCODING_UTF16_BE:
                 case EncodingHelper::ENCODING_UTF32_BE:
                     // remove whitespace from the end of a string as fgetcsv() add extra whitespace when it try to explode non UTF-8 data
-                    $cellValue = rtrim($cellValue);
+                    $cellValue = \rtrim($cellValue);
                     break;
             }
 
@@ -215,7 +215,7 @@ class RowIterator implements IteratorInterface
      */
     protected function isEmptyLine($lineData)
     {
-        return (is_array($lineData) && count($lineData) === 1 && $lineData[0] === null);
+        return (\is_array($lineData) && \count($lineData) === 1 && $lineData[0] === null);
     }
 
     /**

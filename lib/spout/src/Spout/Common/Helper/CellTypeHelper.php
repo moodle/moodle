@@ -23,7 +23,7 @@ class CellTypeHelper
      */
     public static function isNonEmptyString($value)
     {
-        return (gettype($value) === 'string' && $value !== '');
+        return (\gettype($value) === 'string' && $value !== '');
     }
 
     /**
@@ -35,7 +35,7 @@ class CellTypeHelper
      */
     public static function isNumeric($value)
     {
-        $valueType = gettype($value);
+        $valueType = \gettype($value);
 
         return ($valueType === 'integer' || $valueType === 'double');
     }
@@ -49,7 +49,7 @@ class CellTypeHelper
      */
     public static function isBoolean($value)
     {
-        return gettype($value) === 'boolean';
+        return \gettype($value) === 'boolean';
     }
 
     /**

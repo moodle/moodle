@@ -190,7 +190,7 @@ class SharedStringsManager
                 $textNodeValue = $textNode->nodeValue;
                 $shouldPreserveWhitespace = $this->shouldPreserveWhitespace($textNode);
 
-                $sharedStringValue .= ($shouldPreserveWhitespace) ? $textNodeValue : trim($textNodeValue);
+                $sharedStringValue .= ($shouldPreserveWhitespace) ? $textNodeValue : \trim($textNodeValue);
             }
         }
 

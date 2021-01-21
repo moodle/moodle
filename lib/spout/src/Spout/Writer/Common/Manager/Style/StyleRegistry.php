@@ -37,7 +37,7 @@ class StyleRegistry
         $serializedStyle = $this->serialize($style);
 
         if (!$this->hasStyleAlreadyBeenRegistered($style)) {
-            $nextStyleId = count($this->serializedStyleToStyleIdMappingTable);
+            $nextStyleId = \count($this->serializedStyleToStyleIdMappingTable);
             $style->setId($nextStyleId);
 
             $this->serializedStyleToStyleIdMappingTable[$serializedStyle] = $nextStyleId;
@@ -79,7 +79,7 @@ class StyleRegistry
      */
     public function getRegisteredStyles()
     {
-        return array_values($this->styleIdToStyleMappingTable);
+        return \array_values($this->styleIdToStyleMappingTable);
     }
 
     /**
@@ -105,7 +105,7 @@ class StyleRegistry
         $currentId = $style->getId();
         $style->setId(0);
 
-        $serializedStyle = serialize($style);
+        $serializedStyle = \serialize($style);
 
         $style->setId($currentId);
 
