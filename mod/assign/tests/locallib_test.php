@@ -3988,7 +3988,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $assign = $this->create_instance($course);
         $valid = $assign->get_filters();
 
-        $this->assertEquals(count($valid), 5);
+        $this->assertEquals(count($valid), 6);
     }
 
     /**

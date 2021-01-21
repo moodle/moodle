@@ -259,6 +259,7 @@ $string['feedbacksettings'] = 'Feedback settings';
 $string['feedbacktypes'] = 'Feedback types';
 $string['filesubmissions'] = 'File submissions';
 $string['filter'] = 'Filter';
+$string['filterdraft'] = 'Draft';
 $string['filtergrantedextension'] = 'Granted extension';
 $string['filternone'] = 'No filter';
 $string['filternotsubmitted'] = 'Not submitted';
