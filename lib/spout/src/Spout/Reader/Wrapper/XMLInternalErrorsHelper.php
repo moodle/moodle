@@ -20,8 +20,8 @@ trait XMLInternalErrorsHelper
      */
     protected function useXMLInternalErrors()
     {
-        libxml_clear_errors();
-        $this->initialUseInternalErrorsValue = libxml_use_internal_errors(true);
+        \libxml_clear_errors();
+        $this->initialUseInternalErrorsValue = \libxml_use_internal_errors(true);
     }
 
     /**
@@ -48,7 +48,7 @@ trait XMLInternalErrorsHelper
      */
     private function hasXMLErrorOccured()
     {
-        return (libxml_get_last_error() !== false);
+        return (\libxml_get_last_error() !== false);
     }
 
     /**
@@ -60,10 +60,10 @@ trait XMLInternalErrorsHelper
     private function getLastXMLErrorMessage()
     {
         $errorMessage = null;
-        $error = libxml_get_last_error();
+        $error = \libxml_get_last_error();
 
         if ($error !== false) {
-            $errorMessage = trim($error->message);
+            $errorMessage = \trim($error->message);
         }
 
         return $errorMessage;
@@ -74,6 +74,6 @@ trait XMLInternalErrorsHelper
      */
     protected function resetXMLInternalErrorsSetting()
     {
-        libxml_use_internal_errors($this->initialUseInternalErrorsValue);
+        \libxml_use_internal_errors($this->initialUseInternalErrorsValue);
     }
 }

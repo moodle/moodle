@@ -44,7 +44,7 @@ class WorkbookManager extends WorkbookManagerAbstract
     {
         $worksheetFilesFolder = $this->fileSystemHelper->getXlWorksheetsFolder();
 
-        return $worksheetFilesFolder . '/' . strtolower($sheet->getName()) . '.xml';
+        return $worksheetFilesFolder . '/' . \strtolower($sheet->getName()) . '.xml';
     }
 
     /**

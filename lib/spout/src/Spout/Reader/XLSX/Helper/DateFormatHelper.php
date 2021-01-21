@@ -62,13 +62,13 @@ class DateFormatHelper
         // Remove brackets potentially present at the beginning of the format string
         // and text portion of the format at the end of it (starting with ";")
         // See §18.8.31 of ECMA-376 for more detail.
-        $dateFormat = preg_replace('/^(?:\[\$[^\]]+?\])?([^;]*).*/', '$1', $excelDateFormat);
+        $dateFormat = \preg_replace('/^(?:\[\$[^\]]+?\])?([^;]*).*/', '$1', $excelDateFormat);
 
         // Double quotes are used to escape characters that must not be interpreted.
         // For instance, ["Day " dd] should result in "Day 13" and we should not try to interpret "D", "a", "y"
         // By exploding the format string using double quote as a delimiter, we can get all parts
         // that must be transformed (even indexes) and all parts that must not be (odd indexes).
-        $dateFormatParts = explode('"', $dateFormat);
+        $dateFormatParts = \explode('"', $dateFormat);
 
         foreach ($dateFormatParts as $partIndex => $dateFormatPart) {
             // do not look at odd indexes
@@ -77,19 +77,19 @@ class DateFormatHelper
             }
 
             // Make sure all characters are lowercase, as the mapping table is using lowercase characters
-            $transformedPart = strtolower($dateFormatPart);
+            $transformedPart = \strtolower($dateFormatPart);
 
             // Remove escapes related to non-format characters
-            $transformedPart = str_replace('\\', '', $transformedPart);
+            $transformedPart = \str_replace('\\', '', $transformedPart);
 
             // Apply general transformation first...
-            $transformedPart = strtr($transformedPart, self::$excelDateFormatToPHPDateFormatMapping[self::KEY_GENERAL]);
+            $transformedPart = \strtr($transformedPart, self::$excelDateFormatToPHPDateFormatMapping[self::KEY_GENERAL]);
 
             // ... then apply hour transformation, for 12-hour or 24-hour format
             if (self::has12HourFormatMarker($dateFormatPart)) {
-                $transformedPart = strtr($transformedPart, self::$excelDateFormatToPHPDateFormatMapping[self::KEY_HOUR_12]);
+                $transformedPart = \strtr($transformedPart, self::$excelDateFormatToPHPDateFormatMapping[self::KEY_HOUR_12]);
             } else {
-                $transformedPart = strtr($transformedPart, self::$excelDateFormatToPHPDateFormatMapping[self::KEY_HOUR_24]);
+                $transformedPart = \strtr($transformedPart, self::$excelDateFormatToPHPDateFormatMapping[self::KEY_HOUR_24]);
             }
 
             // overwrite the parts array with the new transformed part
@@ -97,16 +97,16 @@ class DateFormatHelper
         }
 
         // Merge all transformed parts back together
-        $phpDateFormat = implode('"', $dateFormatParts);
+        $phpDateFormat = \implode('"', $dateFormatParts);
 
         // Finally, to have the date format compatible with the DateTime::format() function, we need to escape
         // all characters that are inside double quotes (and double quotes must be removed).
         // For instance, ["Day " dd] should become [\D\a\y\ dd]
-        $phpDateFormat = preg_replace_callback('/"(.+?)"/', function ($matches) {
+        $phpDateFormat = \preg_replace_callback('/"(.+?)"/', function ($matches) {
             $stringToEscape = $matches[1];
-            $letters = preg_split('//u', $stringToEscape, -1, PREG_SPLIT_NO_EMPTY);
+            $letters = \preg_split('//u', $stringToEscape, -1, PREG_SPLIT_NO_EMPTY);
 
-            return '\\' . implode('\\', $letters);
+            return '\\' . \implode('\\', $letters);
         }, $phpDateFormat);
 
         return $phpDateFormat;
@@ -118,6 +118,6 @@ class DateFormatHelper
      */
     private static function has12HourFormatMarker($excelDateFormat)
     {
-        return (stripos($excelDateFormat, 'am/pm') !== false);
+        return (\stripos($excelDateFormat, 'am/pm') !== false);
     }
 }

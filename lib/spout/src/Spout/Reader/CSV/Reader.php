@@ -84,8 +84,8 @@ class Reader extends ReaderAbstract
      */
     protected function openReader($filePath)
     {
-        $this->originalAutoDetectLineEndings = ini_get('auto_detect_line_endings');
-        ini_set('auto_detect_line_endings', '1');
+        $this->originalAutoDetectLineEndings = \ini_get('auto_detect_line_endings');
+        \ini_set('auto_detect_line_endings', '1');
 
         $this->filePointer = $this->globalFunctionsHelper->fopen($filePath, 'r');
         if (!$this->filePointer) {
@@ -123,6 +123,6 @@ class Reader extends ReaderAbstract
             $this->globalFunctionsHelper->fclose($this->filePointer);
         }
 
-        ini_set('auto_detect_line_endings', $this->originalAutoDetectLineEndings);
+        \ini_set('auto_detect_line_endings', $this->originalAutoDetectLineEndings);
     }
 }

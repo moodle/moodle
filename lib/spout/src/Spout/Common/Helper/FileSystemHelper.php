@@ -19,7 +19,7 @@ class FileSystemHelper implements FileSystemHelperInterface
      */
     public function __construct($baseFolderPath)
     {
-        $this->baseFolderRealPath = realpath($baseFolderPath);
+        $this->baseFolderRealPath = \realpath($baseFolderPath);
     }
 
     /**
@@ -36,7 +36,7 @@ class FileSystemHelper implements FileSystemHelperInterface
 
         $folderPath = $parentFolderPath . '/' . $folderName;
 
-        $wasCreationSuccessful = mkdir($folderPath, 0777, true);
+        $wasCreationSuccessful = \mkdir($folderPath, 0777, true);
         if (!$wasCreationSuccessful) {
             throw new IOException("Unable to create folder: $folderPath");
         }
@@ -60,7 +60,7 @@ class FileSystemHelper implements FileSystemHelperInterface
 
         $filePath = $parentFolderPath . '/' . $fileName;
 
-        $wasCreationSuccessful = file_put_contents($filePath, $fileContents);
+        $wasCreationSuccessful = \file_put_contents($filePath, $fileContents);
         if ($wasCreationSuccessful === false) {
             throw new IOException("Unable to create file: $filePath");
         }
@@ -79,8 +79,8 @@ class FileSystemHelper implements FileSystemHelperInterface
     {
         $this->throwIfOperationNotInBaseFolder($filePath);
 
-        if (file_exists($filePath) && is_file($filePath)) {
-            unlink($filePath);
+        if (\file_exists($filePath) && \is_file($filePath)) {
+            \unlink($filePath);
         }
     }
 
@@ -102,13 +102,13 @@ class FileSystemHelper implements FileSystemHelperInterface
 
         foreach ($itemIterator as $item) {
             if ($item->isDir()) {
-                rmdir($item->getPathname());
+                \rmdir($item->getPathname());
             } else {
-                unlink($item->getPathname());
+                \unlink($item->getPathname());
             }
         }
 
-        rmdir($folderPath);
+        \rmdir($folderPath);
     }
 
     /**
@@ -122,8 +122,8 @@ class FileSystemHelper implements FileSystemHelperInterface
      */
     protected function throwIfOperationNotInBaseFolder($operationFolderPath)
     {
-        $operationFolderRealPath = realpath($operationFolderPath);
-        $isInBaseFolder = (strpos($operationFolderRealPath, $this->baseFolderRealPath) === 0);
+        $operationFolderRealPath = \realpath($operationFolderPath);
+        $isInBaseFolder = (\strpos($operationFolderRealPath, $this->baseFolderRealPath) === 0);
         if (!$isInBaseFolder) {
             throw new IOException("Cannot perform I/O operation outside of the base folder: {$this->baseFolderRealPath}");
         }

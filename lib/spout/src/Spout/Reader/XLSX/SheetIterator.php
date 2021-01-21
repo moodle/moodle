@@ -27,7 +27,7 @@ class SheetIterator implements IteratorInterface
         // Fetch all available sheets
         $this->sheets = $sheetManager->getSheets();
 
-        if (count($this->sheets) === 0) {
+        if (\count($this->sheets) === 0) {
             throw new NoSheetsFoundException('The file must contain at least one sheet.');
         }
     }
@@ -51,7 +51,7 @@ class SheetIterator implements IteratorInterface
      */
     public function valid()
     {
-        return ($this->currentSheetIndex < count($this->sheets));
+        return ($this->currentSheetIndex < \count($this->sheets));
     }
 
     /**

@@ -46,7 +46,7 @@ abstract class OptionsManagerAbstract implements OptionsManagerInterface
      */
     public function setOption($optionName, $optionValue)
     {
-        if (in_array($optionName, $this->supportedOptions)) {
+        if (\in_array($optionName, $this->supportedOptions)) {
             $this->options[$optionName] = $optionValue;
         }
     }
