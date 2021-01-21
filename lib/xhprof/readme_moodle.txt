@@ -1,11 +1,8 @@
-Description of XHProf 0.9.4 library/viewer import into Moodle
+Description of XHProf 2.2.3 library/viewer import into Moodle
 
 Removed (commit #1):
- * .arcconfig - Definitions for arcanist/phabricator removed completely
- * composer.json - Composer's definition removed completely
  * examples - examples dir removed completely
  * extension - extension dir removed completely
- * package.xml - PECL package definition removed completely
  * xhprof_html/docs - documentation dir removed completely
 
 Added (commit #2 - always taken from current moodle.git master):
@@ -19,7 +16,6 @@ Our changes:  Look for "moodle" in code (commit #3 - always mimic from current m
  * xhprof_html/typeahead.php -|
  * xhprof_html/css/xhprof.css: Minor tweaks to report styles
  * xhprof_lib/utils/callgraph_utils.php: Modified to use $CFG->pathtodot
- * xhprof_lib/utils/xhprof_runs.php: applied patch from https://github.com/phacility/xhprof/pull/99
 
 TODO:
  * improvements to the listing mode: various commodity details like:
@@ -42,4 +38,5 @@ TODO:
 20190314 - MDL-64543 - Brendan Heywood (brendanheywood): Add support for conditional slow profiling
 20191016 - MDL-65349 - Brendan Heywood (brendanheywood): Improved url matching behaviour
 20201012 - MDL-67081 - Brendan Heywood (brendanheywood): Support selective profiles from CLI
+20201210 - MDL-70297 - Ilya Tregubov (ilyatregubov): Upgrade to 2.2.3 release;
 
