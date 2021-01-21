@@ -1,8 +1,9 @@
 <?php
+
 /**
  * SCSSPHP
  *
- * @copyright 2012-2019 Leaf Corcoran
+ * @copyright 2012-2020 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
@@ -132,7 +133,7 @@ class SourceMapGenerator
     public function saveMap($content)
     {
         $file = $this->options['sourceMapWriteTo'];
-        $dir  = dirname($file);
+        $dir  = \dirname($file);
 
         // directory does not exist
         if (! is_dir($dir)) {
@@ -153,14 +154,16 @@ class SourceMapGenerator
     /**
      * Generates the JSON source map
      *
+     * @param string $prefix A prefix added in the output file, which needs to shift mappings
+     *
      * @return string
      *
      * @see https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit#
      */
-    public function generateJson()
+    public function generateJson($prefix = '')
     {
         $sourceMap = [];
-        $mappings  = $this->generateMappings();
+        $mappings  = $this->generateMappings($prefix);
 
         // File version (always the first entry in the object) and must be a positive integer.
         $sourceMap['version'] = self::VERSION;
@@ -201,7 +204,7 @@ class SourceMapGenerator
         }
 
         // less.js compat fixes
-        if (count($sourceMap['sources']) && empty($sourceMap['sourceRoot'])) {
+        if (\count($sourceMap['sources']) && empty($sourceMap['sourceRoot'])) {
             unset($sourceMap['sourceRoot']);
         }
 
@@ -231,13 +234,20 @@ class SourceMapGenerator
     /**
      * Generates the mappings string
      *
+     * @param string $prefix A prefix added in the output file, which needs to shift mappings
+     *
      * @return string
      */
-    public function generateMappings()
+    public function generateMappings($prefix = '')
     {
-        if (! count($this->mappings)) {
+        if (! \count($this->mappings)) {
             return '';
         }
+
+        $prefixLines = substr_count($prefix, "\n");
+        $lastPrefixNewLine = strrpos($prefix, "\n");
+        $lastPrefixLineStart = false === $lastPrefixNewLine ? 0 : $lastPrefixNewLine + 1;
+        $prefixColumn = strlen($prefix) - $lastPrefixLineStart;
 
         $this->sourceKeys = array_flip(array_keys($this->sources));
 
@@ -249,9 +259,16 @@ class SourceMapGenerator
         }
 
         ksort($groupedMap);
+
         $lastGeneratedLine = $lastOriginalIndex = $lastOriginalLine = $lastOriginalColumn = 0;
 
         foreach ($groupedMap as $lineNumber => $lineMap) {
+            if ($lineNumber > 1) {
+                // The prefix only impacts the column for the first line of the original output
+                $prefixColumn = 0;
+            }
+            $lineNumber += $prefixLines;
+
             while (++$lastGeneratedLine < $lineNumber) {
                 $groupedMapEncoded[] = ';';
             }
@@ -260,8 +277,10 @@ class SourceMapGenerator
             $lastGeneratedColumn = 0;
 
             foreach ($lineMap as $m) {
-                $mapEncoded = $this->encoder->encode($m['generated_column'] - $lastGeneratedColumn);
-                $lastGeneratedColumn = $m['generated_column'];
+                $generatedColumn = $m['generated_column'] + $prefixColumn;
+
+                $mapEncoded = $this->encoder->encode($generatedColumn - $lastGeneratedColumn);
+                $lastGeneratedColumn = $generatedColumn;
 
                 // find the index
                 if ($m['source_file']) {
@@ -313,8 +332,8 @@ class SourceMapGenerator
         $basePath = $this->options['sourceMapBasepath'];
 
         // "Trim" the 'sourceMapBasepath' from the output filename.
-        if (strlen($basePath) && strpos($filename, $basePath) === 0) {
-            $filename = substr($filename, strlen($basePath));
+        if (\strlen($basePath) && strpos($filename, $basePath) === 0) {
+            $filename = substr($filename, \strlen($basePath));
         }
 
         // Remove extra leading path separators.
