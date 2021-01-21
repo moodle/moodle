@@ -4144,6 +4144,8 @@ EOD;
         // Make sure to use the heading if it has been set.
         if (isset($headerinfo['heading'])) {
             $heading = $headerinfo['heading'];
+        } else {
+            $heading = $this->page->heading;
         }
 
         // The user context currently has images and buttons. Other contexts may follow.
@@ -4168,7 +4170,7 @@ EOD;
 
             if (user_can_view_profile($user, $course)) {
                 // Use the user's full name if the heading isn't set.
-                if (!isset($heading)) {
+                if (empty($heading)) {
                     $heading = fullname($user);
                 }
 
