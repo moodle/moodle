@@ -1,8 +1,9 @@
 <?php
+
 /**
  * SCSSPHP
  *
- * @copyright 2012-2019 Leaf Corcoran
+ * @copyright 2012-2020 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
@@ -17,6 +18,8 @@ use ScssPhp\ScssPhp\Formatter;
  * Compact formatter
  *
  * @author Leaf Corcoran <leafot@gmail.com>
+ *
+ * @deprecated since 1.4.0. Use the Compressed formatter instead.
  */
 class Compact extends Formatter
 {
@@ -25,6 +28,8 @@ class Compact extends Formatter
      */
     public function __construct()
     {
+        @trigger_error('The Compact formatter is deprecated since 1.4.0. Use the Compressed formatter instead.', E_USER_DEPRECATED);
+
         $this->indentLevel = 0;
         $this->indentChar = '';
         $this->break = '';
