@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2020-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,23 @@
 
 namespace MongoDB\Operation;
 
+use ArrayIterator;
+use Iterator;
 use MongoDB\Command\ListDatabases as ListDatabasesCommand;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnexpectedValueException;
-use MongoDB\Model\DatabaseInfoIterator;
-use MongoDB\Model\DatabaseInfoLegacyIterator;
+use function array_column;
 
 /**
- * Operation for the ListDatabases command.
+ * Operation for the ListDatabases command, returning only database names.
  *
  * @api
- * @see \MongoDB\Client::listDatabases()
+ * @see \MongoDB\Client::listDatabaseNames()
  * @see http://docs.mongodb.org/manual/reference/command/ListDatabases/
  */
-class ListDatabases implements Executable
+class ListDatabaseNames implements Executable
 {
     /** @var ListDatabasesCommand */
     private $listDatabases;
@@ -63,7 +64,7 @@ class ListDatabases implements Executable
      */
     public function __construct(array $options = [])
     {
-        $this->listDatabases = new ListDatabasesCommand(['nameOnly' => false] + $options);
+        $this->listDatabases = new ListDatabasesCommand(['nameOnly' => true] + $options);
     }
 
     /**
@@ -71,12 +72,14 @@ class ListDatabases implements Executable
      *
      * @see Executable::execute()
      * @param Server $server
-     * @return DatabaseInfoIterator
+     * @return Iterator
      * @throws UnexpectedValueException if the command response was malformed
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
-    public function execute(Server $server)
+    public function execute(Server $server) : Iterator
     {
-        return new DatabaseInfoLegacyIterator($this->listDatabases->execute($server));
+        $result = $this->listDatabases->execute($server);
+
+        return new ArrayIterator(array_column($result, 'name'));
     }
 }

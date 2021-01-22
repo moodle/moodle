@@ -42,6 +42,9 @@ class Explain implements Executable
     const VERBOSITY_QUERY = 'queryPlanner';
 
     /** @var integer */
+    private static $wireVersionForAggregate = 7;
+
+    /** @var integer */
     private static $wireVersionForDistinct = 4;
 
     /** @var integer */
@@ -105,6 +108,10 @@ class Explain implements Executable
         }
 
         if ($this->isFindAndModify($this->explainable) && ! server_supports_feature($server, self::$wireVersionForFindAndModify)) {
+            throw UnsupportedException::explainNotSupported();
+        }
+
+        if ($this->explainable instanceof Aggregate && ! server_supports_feature($server, self::$wireVersionForAggregate)) {
             throw UnsupportedException::explainNotSupported();
         }
 

@@ -28,6 +28,7 @@ use MongoDB\UpdateResult;
 use function is_array;
 use function is_bool;
 use function is_object;
+use function is_string;
 use function MongoDB\is_first_key_operator;
 use function MongoDB\is_pipeline;
 use function MongoDB\server_supports_feature;
@@ -51,6 +52,9 @@ class Update implements Executable, Explainable
 
     /** @var integer */
     private static $wireVersionForDocumentLevelValidation = 4;
+
+    /** @var integer */
+    private static $wireVersionForHintServerSideError = 5;
 
     /** @var string */
     private $databaseName;
@@ -87,6 +91,13 @@ class Update implements Executable, Explainable
      *  * collation (document): Collation specification.
      *
      *    This is not supported for server versions < 3.4 and will result in an
+     *    exception at execution time if used.
+     *
+     *  * hint (string|document): The index to use. Specify either the index
+     *    name as a string or the index key pattern as a document. If specified,
+     *    then the query system will only consider plans using the hinted index.
+     *
+     *    This is not supported for server versions < 4.2 and will result in an
      *    exception at execution time if used.
      *
      *  * multi (boolean): When true, updates all documents matching the query.
@@ -137,6 +148,10 @@ class Update implements Executable, Explainable
             throw InvalidArgumentException::invalidType('"collation" option', $options['collation'], 'array or object');
         }
 
+        if (isset($options['hint']) && ! is_string($options['hint']) && ! is_array($options['hint']) && ! is_object($options['hint'])) {
+            throw InvalidArgumentException::invalidType('"hint" option', $options['hint'], ['string', 'array', 'object']);
+        }
+
         if (! is_bool($options['multi'])) {
             throw InvalidArgumentException::invalidType('"multi" option', $options['multi'], 'boolean');
         }
@@ -185,6 +200,13 @@ class Update implements Executable, Explainable
 
         if (isset($this->options['collation']) && ! server_supports_feature($server, self::$wireVersionForCollation)) {
             throw UnsupportedException::collationNotSupported();
+        }
+
+        /* Server versions >= 3.4.0 raise errors for unknown update
+         * options. For previous versions, the CRUD spec requires a client-side
+         * error. */
+        if (isset($this->options['hint']) && ! server_supports_feature($server, self::$wireVersionForHintServerSideError)) {
+            throw UnsupportedException::hintNotSupported();
         }
 
         $inTransaction = isset($this->options['session']) && $this->options['session']->isInTransaction();
@@ -261,8 +283,10 @@ class Update implements Executable, Explainable
             'upsert' => $this->options['upsert'],
         ];
 
-        if (isset($this->options['arrayFilters'])) {
-            $updateOptions['arrayFilters'] = $this->options['arrayFilters'];
+        foreach (['arrayFilters', 'hint'] as $option) {
+            if (isset($this->options[$option])) {
+                $updateOptions[$option] = $this->options[$option];
+            }
         }
 
         if (isset($this->options['collation'])) {

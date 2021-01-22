@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2020-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,39 +17,31 @@
 
 namespace MongoDB\Operation;
 
-use MongoDB\Command\ListDatabases as ListDatabasesCommand;
+use Iterator;
+use MongoDB\Command\ListCollections as ListCollectionsCommand;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
-use MongoDB\Exception\UnexpectedValueException;
-use MongoDB\Model\DatabaseInfoIterator;
-use MongoDB\Model\DatabaseInfoLegacyIterator;
+use MongoDB\Model\CallbackIterator;
 
 /**
- * Operation for the ListDatabases command.
+ * Operation for the listCollectionNames helper.
  *
  * @api
- * @see \MongoDB\Client::listDatabases()
- * @see http://docs.mongodb.org/manual/reference/command/ListDatabases/
+ * @see \MongoDB\Database::listCollectionNames()
+ * @see http://docs.mongodb.org/manual/reference/command/listCollections/
  */
-class ListDatabases implements Executable
+class ListCollectionNames implements Executable
 {
-    /** @var ListDatabasesCommand */
-    private $listDatabases;
+    /** @var ListCollectionsCommand */
+    private $listCollections;
 
     /**
-     * Constructs a listDatabases command.
+     * Constructs a listCollections command.
      *
      * Supported options:
      *
-     *  * authorizedDatabases (boolean): Determines which databases are returned
-     *    based on the user privileges.
-     *
-     *    For servers < 4.0.5, this option is ignored.
-     *
-     *  * filter (document): Query by which to filter databases.
-     *
-     *    For servers < 3.6, this option is ignored.
+     *  * filter (document): Query by which to filter collections.
      *
      *  * maxTimeMS (integer): The maximum amount of time to allow the query to
      *    run.
@@ -58,12 +50,13 @@ class ListDatabases implements Executable
      *
      *    Sessions are not supported for server versions < 3.6.
      *
-     * @param array $options Command options
+     * @param string $databaseName Database name
+     * @param array  $options      Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct(array $options = [])
+    public function __construct($databaseName, array $options = [])
     {
-        $this->listDatabases = new ListDatabasesCommand(['nameOnly' => false] + $options);
+        $this->listCollections = new ListCollectionsCommand($databaseName, ['nameOnly' => true] + $options);
     }
 
     /**
@@ -71,12 +64,16 @@ class ListDatabases implements Executable
      *
      * @see Executable::execute()
      * @param Server $server
-     * @return DatabaseInfoIterator
-     * @throws UnexpectedValueException if the command response was malformed
+     * @return Iterator
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
-    public function execute(Server $server)
+    public function execute(Server $server) : Iterator
     {
-        return new DatabaseInfoLegacyIterator($this->listDatabases->execute($server));
+        return new CallbackIterator(
+            $this->listCollections->execute($server),
+            function (array $collectionInfo) {
+                return $collectionInfo['name'];
+            }
+        );
     }
 }
