@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2020-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,64 +15,68 @@
  * limitations under the License.
  */
 
-namespace MongoDB\Operation;
+namespace MongoDB\Command;
 
-use EmptyIterator;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Driver\Server;
 use MongoDB\Driver\Session;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Model\CachingIterator;
-use MongoDB\Model\IndexInfoIterator;
-use MongoDB\Model\IndexInfoIteratorIterator;
+use MongoDB\Operation\Executable;
+use function is_array;
+use function is_bool;
 use function is_integer;
+use function is_object;
 
 /**
- * Operation for the listIndexes command.
+ * Wrapper for the listCollections command.
  *
- * @api
- * @see \MongoDB\Collection::listIndexes()
- * @see http://docs.mongodb.org/manual/reference/command/listIndexes/
+ * @internal
+ * @see http://docs.mongodb.org/manual/reference/command/listCollections/
  */
-class ListIndexes implements Executable
+class ListCollections implements Executable
 {
-    /** @var integer */
-    private static $errorCodeDatabaseNotFound = 60;
-
-    /** @var integer */
-    private static $errorCodeNamespaceNotFound = 26;
-
     /** @var string */
     private $databaseName;
-
-    /** @var string */
-    private $collectionName;
 
     /** @var array */
     private $options;
 
     /**
-     * Constructs a listIndexes command.
+     * Constructs a listCollections command.
      *
      * Supported options:
      *
+     *  * filter (document): Query by which to filter collections.
+     *
      *  * maxTimeMS (integer): The maximum amount of time to allow the query to
      *    run.
+     *
+     *  * nameOnly (boolean): A flag to indicate whether the command should
+     *    return just the collection/view names and type or return both the name
+     *    and other information.
      *
      *  * session (MongoDB\Driver\Session): Client session.
      *
      *    Sessions are not supported for server versions < 3.6.
      *
-     * @param string $databaseName   Database name
-     * @param string $collectionName Collection name
-     * @param array  $options        Command options
+     * @param string $databaseName Database name
+     * @param array  $options      Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
-    public function __construct($databaseName, $collectionName, array $options = [])
+    public function __construct($databaseName, array $options = [])
     {
+        if (isset($options['filter']) && ! is_array($options['filter']) && ! is_object($options['filter'])) {
+            throw InvalidArgumentException::invalidType('"filter" option', $options['filter'], 'array or object');
+        }
+
         if (isset($options['maxTimeMS']) && ! is_integer($options['maxTimeMS'])) {
             throw InvalidArgumentException::invalidType('"maxTimeMS" option', $options['maxTimeMS'], 'integer');
+        }
+
+        if (isset($options['nameOnly']) && ! is_bool($options['nameOnly'])) {
+            throw InvalidArgumentException::invalidType('"nameOnly" option', $options['nameOnly'], 'boolean');
         }
 
         if (isset($options['session']) && ! $options['session'] instanceof Session) {
@@ -80,7 +84,6 @@ class ListIndexes implements Executable
         }
 
         $this->databaseName = (string) $databaseName;
-        $this->collectionName = (string) $collectionName;
         $this->options = $options;
     }
 
@@ -89,12 +92,29 @@ class ListIndexes implements Executable
      *
      * @see Executable::execute()
      * @param Server $server
-     * @return IndexInfoIterator
+     * @return CachingIterator
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
     public function execute(Server $server)
     {
-        return $this->executeCommand($server);
+        $cmd = ['listCollections' => 1];
+
+        if (! empty($this->options['filter'])) {
+            $cmd['filter'] = (object) $this->options['filter'];
+        }
+
+        if (isset($this->options['maxTimeMS'])) {
+            $cmd['maxTimeMS'] = $this->options['maxTimeMS'];
+        }
+
+        if (isset($this->options['nameOnly'])) {
+            $cmd['nameOnly'] = $this->options['nameOnly'];
+        }
+
+        $cursor = $server->executeReadCommand($this->databaseName, new Command($cmd), $this->createOptions());
+        $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
+
+        return new CachingIterator($cursor);
     }
 
     /**
@@ -115,40 +135,5 @@ class ListIndexes implements Executable
         }
 
         return $options;
-    }
-
-    /**
-     * Returns information for all indexes for this collection using the
-     * listIndexes command.
-     *
-     * @param Server $server
-     * @return IndexInfoIteratorIterator
-     * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
-     */
-    private function executeCommand(Server $server)
-    {
-        $cmd = ['listIndexes' => $this->collectionName];
-
-        if (isset($this->options['maxTimeMS'])) {
-            $cmd['maxTimeMS'] = $this->options['maxTimeMS'];
-        }
-
-        try {
-            $cursor = $server->executeReadCommand($this->databaseName, new Command($cmd), $this->createOptions());
-        } catch (DriverRuntimeException $e) {
-            /* The server may return an error if the collection does not exist.
-             * Check for possible error codes (see: SERVER-20463) and return an
-             * empty iterator instead of throwing.
-             */
-            if ($e->getCode() === self::$errorCodeNamespaceNotFound || $e->getCode() === self::$errorCodeDatabaseNotFound) {
-                return new IndexInfoIteratorIterator(new EmptyIterator());
-            }
-
-            throw $e;
-        }
-
-        $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
-
-        return new IndexInfoIteratorIterator(new CachingIterator($cursor), $this->databaseName . '.' . $this->collectionName);
     }
 }
