@@ -931,6 +931,7 @@ class behat_config_util {
         // In case user defined overrides respect them over our default ones.
         if (!empty($CFG->behat_config)) {
             foreach ($CFG->behat_config as $profile => $values) {
+                $values = $this->fix_legacy_profile_data($profile, $values);
                 $config = $this->merge_config($config, $this->get_behat_config_for_profile($profile, $values));
             }
         }
@@ -998,6 +999,35 @@ class behat_config_util {
         }
 
         return $config;
+    }
+
+    /**
+     * Check for and attempt to fix legacy profile data.
+     *
+     * The Mink Driver used for W3C no longer uses the `selenium2` naming but otherwise is backwards compatibly.
+     *
+     * Emit a warning that users should update their configuration.
+     *
+     * @param   string $profilename The name of this profile
+     * @param   array $data The profile data for this profile
+     * @return  array Th eamended profile data
+     */
+    protected function fix_legacy_profile_data(string $profilename, array $data): array {
+        // Check for legacy instaclick profiles.
+        if (!array_key_exists('Behat\MinkExtension', $data['extensions'])) {
+            return $data;
+        }
+        if (array_key_exists('selenium2', $data['extensions']['Behat\MinkExtension'])) {
+            echo("\n\n");
+            echo("=> Warning: Legacy selenium2 profileuration was found for {$profilename} profile.\n");
+            echo("=> This has been renamed from 'selenium2' to 'webdriver'.\n");
+            echo("=> You should update your Behat configuration.\n");
+            echo("\n");
+            $data['extensions']['Behat\MinkExtension']['webdriver'] = $data['extensions']['Behat\MinkExtension']['selenium2'];
+            unset($data['extensions']['Behat\MinkExtension']['selenium2']);
+        }
+
+        return $data;
     }
 
     /**
