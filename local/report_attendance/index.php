@@ -63,7 +63,7 @@ $companydepartment = $parentlevel->id;
 
 // Work out where the user sits in the company department tree.
 $userlevel = $company->get_userlevel($USER);
-$userhierarchylevel = $userlevel->id;
+$userhierarchylevel = key($userlevel);
 if ($departmentid == 0 ) {
     $departmentid = $userhierarchylevel;
 }

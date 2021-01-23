@@ -89,8 +89,10 @@ class tool_iomadmerge_logger {
             // Get the user id's which the user can see.
             $companyid = iomad::get_my_companyid(context_system::instance());
             $company = new company($companyid);
-            $userlevel = $company->get_userlevel($USER);
-            $departmentusers = company::get_recursive_department_users($userlevel->id);
+            $departmentusers = array();
+            foreach ($userlevels as $userlevelid => $userlevel) {
+                $departmentusers = $departmentusers + company::get_recursive_department_users($userlevelid);
+            }
             if (!empty($departmentusers)) {
                 $departmentids = "";
                 foreach ($departmentusers as $departmentuser) {

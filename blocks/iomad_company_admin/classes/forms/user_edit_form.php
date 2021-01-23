@@ -35,6 +35,7 @@ class user_edit_form extends \moodleform {
     protected $description = '';
     protected $context = null;
     protected $courseselector = null;
+    protected $company = null;
     protected $departmentid = 0;
     protected $companyname = '';
     protected $licenseid = 0;
@@ -47,6 +48,7 @@ class user_edit_form extends \moodleform {
         $this->departmentid = $departmentid;
         $this->licenseid = $licenseid;
         $company = new company($this->selectedcompany);
+        $this->company = $company;
         $this->companyname = $company->get_name();
         $parentlevel = company::get_company_parentnode($company->id);
         $this->companydepartment = $parentlevel->id;
@@ -56,7 +58,7 @@ class user_edit_form extends \moodleform {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevel = $company->get_userlevel($USER);
-            $userhierarchylevel = $userlevel->id;
+            $userhierarchylevel = key($userlevel);
         }
 
         $this->subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
@@ -160,19 +162,9 @@ class user_edit_form extends \moodleform {
 
         // Deal with company optional fields.
         $mform->addElement('header', 'category_id', get_string('advanced'));
-
-        $departmentslist = company::get_all_subdepartments($this->userdepartment);
-        $departmenttree = company::get_all_subdepartments_raw($this->userdepartment);
-        $treehtml = $output->department_tree($departmenttree, optional_param('userdepartment', 0, PARAM_INT));
-
-        $mform->addElement('html', $treehtml);
-        $mform->addElement('html', "<div style='display: none;'>");
-        // Department drop down.
-        $mform->addElement('select', 'userdepartment', get_string('department', 'block_iomad_company_admin'),
-                            $this->subhierarchieslist, $this->userdepartment);
-
-        $mform->addElement('html', "</div>");
-
+        $mform->addElement('static', 'departmenttext', get_string('department', 'block_iomad_company_admin'));
+        $output->display_tree_selector_form($this->company, $mform);
+        
         // Add in company/department manager checkboxes.
         $managerarray = array();
         if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $systemcontext)) {

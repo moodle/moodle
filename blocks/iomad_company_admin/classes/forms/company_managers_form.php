@@ -54,8 +54,8 @@ class company_managers_form extends moodleform {
         if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
             $userhierarchylevel = $parentlevel->id;
         } else {
-            $userlevel = $company->get_userlevel($USER);
-            $userhierarchylevel = $userlevel->id;
+            $userlevels = $company->get_userlevel($USER);
+            $userhierarchylevel = key($userlevels);
         }
 
         $this->subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
@@ -64,6 +64,7 @@ class company_managers_form extends moodleform {
         } else {
             $departmentid = $this->departmentid;
         }
+
         $options = array('context' => $this->context,
                          'companyid' => $this->selectedcompany,
                          'departmentid' => $departmentid,

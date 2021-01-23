@@ -32,7 +32,7 @@ require_once('lib.php');
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', company_user::companyid(), PARAM_INTEGER);
-$departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
+$departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $createdok = optional_param('createdok', 0, PARAM_INTEGER);
 $createcourses = optional_param_array('currentcourses', null, PARAM_INT);
 $licenseid = optional_param('licenseid', 0, PARAM_INTEGER);
@@ -69,7 +69,7 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Javascript for fancy select.
 // Parameter is name of proper select form element.
-$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('userdepartment', '', $departmentid));
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', '', $departmentid));
 if (empty($CFG->defaulthomepage)) {
     $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
 }
@@ -116,7 +116,7 @@ if ($mform->is_cancelled()) {
 
     // Check if we are assigning a different role to the user.
     if (!empty($data->managertype || !empty($data->educator))) {
-        company::upsert_company_user($userid, $companyid, $data->userdepartment, $data->managertype, $data->educator);
+        company::upsert_company_user($userid, $companyid, $data->deptid, $data->managertype, $data->educator);
     }
 
     // Assign the user to the default company department.

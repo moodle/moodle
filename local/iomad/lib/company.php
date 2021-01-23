@@ -1733,10 +1733,11 @@ class company {
         }
 
         // If not, get the department the user is assigned to in this company.
-        if ($userdepartments = $DB->get_records_sql("SELECT d.* from {department} d
+        if ($userdepartments = $DB->get_records_sql("SELECT d.* FROM {department} d
                                                      JOIN {company_users} cu ON (d.company = cu.companyid AND d.id = cu.departmentid)
                                                      WHERE cu.userid = :userid
-                                                     AND cu.companyid = :companyid",
+                                                     AND cu.companyid = :companyid
+                                                     ORDER BY  d.name",
                                                      array('userid' => $user->id, 'companyid' => $this->id))) {
             return $userdepartments;
         } else {
@@ -2089,7 +2090,6 @@ class company {
      *
      **/
     public static function get_all_subdepartments($parentnodeid) {
-echo "Parentnodeid = <pre>";print_r($parentnodeid);echo "</pre>";
         $parentnode = self::get_departmentbyid($parentnodeid);
         $parentlist = array();
         $parentlist[$parentnodeid] = $parentnode->name;
@@ -2144,7 +2144,6 @@ echo "Parentnodeid = <pre>";print_r($parentnodeid);echo "</pre>";
                 $departmentids = array($department->id);
             } else {
                 $departments = $company->get_userlevel($USER);
-echo "departments = <pre>";print_r($departments);echo "</pre></br>";
                 $departmentids = array_keys($departments);
             }
         }
@@ -3366,8 +3365,8 @@ echo "departments = <pre>";print_r($departments);echo "</pre></br>";
                                                                             'companyid' => $companyid,
                                                                             'userid' => $userid))) {
             return true;
-        } else if ($DB->get_record('company_users', array('companyid' => $companyid,
-                                                          'userid' => $userid))) {
+        } else if ($DB->get_records('company_users', array('companyid' => $companyid,
+                                                           'userid' => $userid))) {
             return true;
         } else {
             return false;

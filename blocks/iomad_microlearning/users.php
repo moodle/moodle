@@ -92,22 +92,10 @@ if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $sys
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = $company->get_userlevel($USER);
-    $userhierarchylevel = $userlevel->id;
+    $userhierarchylevel = key($userlevel);
 }
 
-$subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-if (empty($departmentid)) {
-    $departmentid = $userhierarchylevel;
-}
-
-$userdepartment = $company->get_userlevel($USER);
-$departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
-$treehtml = $output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
-
-$departmentselect = new single_select(new moodle_url($linkurl, $params), 'deptid', $subhierarchieslist, $departmentid);
-$departmentselect->label = get_string('department', 'block_iomad_company_admin') .
-                           $output->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
-
+// Set up the forms.
 $threadsform = new block_iomad_microlearning\forms\microlearning_threads_form($PAGE->url, $context, $companyid, $departmentid, $selectedthread, $parentlevel);
 $usersform = new block_iomad_microlearning\forms\microlearning_thread_users_form($PAGE->url, $context, $companyid, $departmentid, $threadid);
 echo $output->header();
@@ -126,12 +114,7 @@ if ($threadsform->is_cancelled() || $usersform->is_cancelled() ||
     }
 } else {
     echo html_writer::tag('h3', get_string('company_threads_for', 'block_iomad_microlearning', $company->get_name()));
-    echo html_writer::start_tag('div', array('class' => 'fitem'));
-    echo $treehtml;
-    echo html_writer::start_tag('div', array('style' => 'display:none'));
-    echo $output->render($departmentselect);
-    echo html_writer::end_tag('div');
-    echo html_writer::end_tag('div');
+    echo $output->display_tree_selector($company, $parentlevel, $linkurl, $params, $departmentid);
     echo html_writer::start_tag('div', array('class' => 'iomadclear'));
     if ($companyid > 0) {
         $threadsform->set_data($params);

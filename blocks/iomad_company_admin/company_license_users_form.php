@@ -94,7 +94,7 @@ $parentlevel = company::get_company_parentnode($companyid);
 
 $availablewarning = '';
 $licenselist = array();
-if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', context_system::instance())) {
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
     $userhierarchylevel = $parentlevel->id;
     // Get all the licenses.
     $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), 'expirydate DESC', 'id,name,startdate,expirydate');
@@ -113,7 +113,7 @@ if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', conte
 
 } else {
     $userlevel = $company->get_userlevel($USER);
-    $userhierarchylevel = $userlevel->id;
+    $userhierarchylevel = key($userlevel);
     if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
         $alllicenses = true;
     } else {

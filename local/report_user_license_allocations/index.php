@@ -38,7 +38,7 @@ $perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT)
 // Id of user to tweak mnet ACL (requires $access).
 $acl          = optional_param('acl', '0', PARAM_INT);
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
-$departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
+$departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $courseid = optional_param('courseid', 0, PARAM_INTEGER);
 $licenseid    = optional_param('licenseid', 0, PARAM_INTEGER);
 $download  = optional_param('download', '', PARAM_CLEAN);
@@ -75,7 +75,7 @@ if ($search) {
     $params['search'] = $search;
 }
 if ($departmentid) {
-    $params['departmentid'] = $departmentid;
+    $params['deptid'] = $departmentid;
 }
 if ($courseid) {
     $params['courseid'] = $courseid;
@@ -204,7 +204,7 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form
-$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('departmentid', 1, optional_param('departmentid', 0, PARAM_INT)));
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -215,8 +215,13 @@ $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
 
 // Work out where the user sits in the company department tree.
-$userlevel = $company->get_userlevel($USER);
-$userhierarchylevel = $userlevel->id;
+if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+    $userlevels = array($parentlevel->id => $parentlevel->id);
+} else {
+    $userlevels = $company->get_userlevel($USER);
+}
+
+$userhierarchylevel = key($userlevels);
 if ($departmentid == 0 ) {
     $departmentid = $userhierarchylevel;
 }
@@ -266,17 +271,6 @@ $courseselect = new single_select($selecturl, 'courseid', $courselist, $courseid
 $courseselect->label = get_string('course');
 $courseselect->formid = 'choosecourse';
 $courseselectoutput = html_writer::tag('div', $output->render($courseselect), array('id' => 'iomad_course_selector'));
-
-// Get the appropriate list of departments.
-$subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-$select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
-$select->label = get_string('department', 'block_iomad_company_admin');
-$select->formid = 'choosedepartment';
-$fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector'));
-
-$departmenttree = company::get_all_subdepartments_raw($userhierarchylevel);
-$treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
-
 $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, true, true);
 
 // Set up the table.
@@ -296,15 +290,8 @@ if (!$table->is_downloading()) {
     // Display the license selector and other control forms.
     if (!empty($companyid)) {
         if (empty($table->is_downloading())) {
-            echo html_writer::start_tag('div', array('class' => 'iomadclear'));
-            echo html_writer::start_tag('div', array('class' => 'fitem'));
-            echo $treehtml;
-            echo html_writer::start_tag('div', array('style' => 'display:none'));
-            echo $fwselectoutput;
-            echo html_writer::end_tag('div');
-            echo html_writer::end_tag('div');
-            echo html_writer::end_tag('div');
-
+            // Display the tree selector thing.
+            echo $output->display_tree_selector($company, $parentlevel, $baseurl, $params, $departmentid);
             echo html_writer::start_tag('div', array('class' => 'iomadclear controlitems'));
             echo $licenseselectoutput;
             echo $courseselectoutput;

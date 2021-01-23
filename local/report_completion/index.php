@@ -50,7 +50,7 @@ $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT);        // How many per page.
 $acl          = optional_param('acl', '0', PARAM_INT);           // Id of user to tweak mnet ACL (requires $access).
 $coursesearch = optional_param('coursesearch', '', PARAM_CLEAN);// Search string.
-$departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
+$departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $completiontype = optional_param('completiontype', 0, PARAM_INT);
 $charttype = optional_param('charttype', '', PARAM_CLEAN);
 $showchart = optional_param('showchart', false, PARAM_BOOL);
@@ -101,7 +101,7 @@ if ($courseid) {
     $params['courseid'] = $courseid;
 }
 if ($departmentid) {
-    $params['departmentid'] = $departmentid;
+    $params['deptid'] = $departmentid;
 }
 if ($departmentid) {
     $params['departmentid'] = $departmentid;
@@ -175,7 +175,7 @@ if (!empty($courseid)) {
 
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form
-$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('departmentid', 1, optional_param('departmentid', 0, PARAM_INT)));
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
 
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
@@ -377,8 +377,13 @@ $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
 
 // Work out where the user sits in the company department tree.
-$userlevel = $company->get_userlevel($USER);
-$userhierarchylevel = $userlevel->id;
+if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+    $userlevels = array($parentlevel->id => $parentlevel->id);
+} else {
+    $userlevels = $company->get_userlevel($USER);
+}
+
+$userhierarchylevel = key($userlevels);
 if ($departmentid == 0 ) {
     $departmentid = $userhierarchylevel;
 }
@@ -389,21 +394,8 @@ $idlist = $foundobj->idlist;
 $foundfields = $foundobj->foundfields;
 
 $url = new moodle_url('/local/report_completion/index.php', $params);
-
-// Get the appropriate list of departments.
-$userdepartment = $company->get_userlevel($USER);
-$departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
-$treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
 $selectparams = $params;
 $selecturl = new moodle_url('/local/report_completion/index.php', $selectparams);
-$subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-$select = new single_select($selecturl, 'departmentid', $subhierarchieslist, $departmentid);
-$select->label = get_string('department', 'block_iomad_company_admin') . "&nbsp";
-$select->formid = 'choosedepartment';
-
-$departmenttree = company::get_all_subdepartments_raw($userhierarchylevel);
-$treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
-$fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector', 'style' => 'display: none;'));
 
 // Set up the user search parameters.
 if ($courseid == 1) {
@@ -453,15 +445,9 @@ if (empty($courseid)) {
         }
 
         // Display the department selector.
-        echo html_writer::start_tag('div', array('class' => 'iomadclear'));
-        echo html_writer::start_tag('div', array('class' => 'fitem'));
-        echo $treehtml;
-        echo html_writer::start_tag('div', array('style' => 'display:none'));
-        echo $fwselectoutput;
-        echo html_writer::end_tag('div');
-        echo html_writer::end_tag('div');
-        echo html_writer::end_tag('div');
+        echo $output->display_tree_selector($company, $parentlevel, $selecturl, $selectparams, $departmentid);
         echo html_writer::start_tag('div', array('class' => 'reporttablecontrols'));
+
         $mform = new iomad_course_search_form($url, $params);
         $mform->set_data($params);
 
@@ -612,14 +598,7 @@ if (empty($courseid)) {
         // Display the search form and department picker.
         if (!empty($companyid)) {
             if (empty($table->is_downloading())) {
-                echo html_writer::start_tag('div', array('class' => 'iomadclear'));
-                echo html_writer::start_tag('div', array('class' => 'fitem'));
-                echo $treehtml;
-                echo html_writer::start_tag('div', array('style' => 'display:none'));
-                echo $fwselectoutput;
-                echo html_writer::end_tag('div');
-                echo html_writer::end_tag('div');
-                echo html_writer::end_tag('div');
+                echo $output->display_tree_selector($company, $parentlevel, $selecturl, $selectparams, $departmentid);
 
                 // Set up the filter form.
                 $options = $params;

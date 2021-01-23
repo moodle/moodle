@@ -69,8 +69,8 @@ $companydepartment = company::get_company_parentnode($companyid);
 if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
     $departmentid = $companydepartment->id;
 } else {
-    $userlevel = $company->get_userlevel($USER);
-    $departmentid = $userlevel->id;
+    $userlevels = $company->get_userlevel($USER);
+    $departmentid = key($userlevels);
 }
 
 if ($delete and confirm_sesskey()) {              // Delete a selected company, after confirmation.

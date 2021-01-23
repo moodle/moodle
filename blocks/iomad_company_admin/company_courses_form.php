@@ -67,7 +67,7 @@ if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $sys
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = $company->get_userlevel($USER);
-    $userhierarchylevel = $userlevel->id;
+    $userhierarchylevel = key($userlevel);
 }
 
 $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);

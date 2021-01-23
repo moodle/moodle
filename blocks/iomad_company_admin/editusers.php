@@ -40,7 +40,7 @@ $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT);        // How many per page.
 $acl          = optional_param('acl', '0', PARAM_INT);           // Id of user to tweak mnet ACL (requires $access).
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
-$departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
+$departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $firstname       = optional_param('firstname', 0, PARAM_CLEAN);
 $lastname      = optional_param('lastname', '', PARAM_CLEAN);   // Md5 confirmation hash.
 $email  = optional_param('email', 0, PARAM_CLEAN);
@@ -85,7 +85,7 @@ if ($email) {
     $params['email'] = $email;
 }
 if ($departmentid) {
-    $params['departmentid'] = $departmentid;
+    $params['deptid'] = $departmentid;
 }
 $params['usertype'] = $usertype;
 
@@ -121,7 +121,7 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form
-$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('departmentid', 1, optional_param('departmentid', 0, PARAM_INT)));
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
 
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
@@ -167,7 +167,7 @@ if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', cont
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = $company->get_userlevel($USER);
-    $userhierarchylevel = $userlevel->id;
+    $userhierarchylevel = key($userlevel);
 }
 if ($departmentid == 0) {
     $departmentid = $userhierarchylevel;
@@ -180,17 +180,8 @@ if (!(iomad::has_capability('block/iomad_company_admin:editusers', $systemcontex
 
 // If we are showing all users we can't use the departments.
 if (!$showall) {
-// Get the appropriate list of departments.
-    $userdepartment = $company->get_userlevel($USER);
-    $departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
-    $treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
-    echo $treehtml;
-
-    $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-    $select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
-    $select->label = get_string('department', 'block_iomad_company_admin');
-    $select->formid = 'choosedepartment';
-    $departmentselect = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector', 'style' => 'display: none;'));
+    // Show the department tree picker.
+    echo $output->display_tree_selector($company, $parentlevel, $baseurl, $params, $departmentid);
 }
 
 // Set up the filter form.
@@ -595,7 +586,6 @@ $countsql = "SELECT COUNT(DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("
 
 // Carry on with the user listing.
 if (!$showall) {
-    echo $departmentselect;
     $headers = array(get_string('fullname'),
                      get_string('email'),
                      get_string('department'));

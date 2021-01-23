@@ -36,22 +36,11 @@
  *
  * Available events: merging_sucess, merging_failed
  */
-if ($CFG->branch < 26) {
-    $handlers = array(
-        'merging_success' => array(
-            'handlerfile'      => '/admin/tool/iomadmerge/lib/events/olduser.php',
-            'handlerfunction'  => 'tool_iomadmerge_old_user_suspend',
-            'schedule'         => 'instant',
-            'internal'         => 1,
-        ),
-    );
-} else {
-    $observers = array(
-        array(
-            'eventname'     => 'tool_iomadmerge\event\user_merged_success',
-            'callback'      => 'tool_iomadmerge_old_user_suspend',
-            'includefile'   => '/admin/tool/iomadmerge/lib/events/olduser.php',
-            'internal'      => 1
-        )
-    );
-}
+$observers = array(
+    array(
+        'eventname'     => 'tool_iomadmerge\event\user_merged_success',
+        'callback'      => 'tool_iomadmerge_old_user_suspend',
+        'includefile'   => '/admin/tool/iomadmerge/lib/events/olduser.php',
+        'internal'      => 1
+    )
+);

@@ -38,7 +38,7 @@ $perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT)
 // Id of user to tweak mnet ACL (requires $access).
 $acl          = optional_param('acl', '0', PARAM_INT);
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
-$departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
+$departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 
 $params = array();
 
@@ -67,7 +67,7 @@ if ($search) {
     $params['search'] = $search;
 }
 if ($departmentid) {
-    $params['departmentid'] = $departmentid;
+    $params['deptid'] = $departmentid;
 }
 if ($showsuspended) {
     $params['showsuspended'] = $showsuspended;
@@ -95,7 +95,7 @@ $PAGE->set_title($linktext);
 
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form
-$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('departmentid', 1, optional_param('departmentid', 0, PARAM_INT)));
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
 
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
@@ -118,6 +118,18 @@ if (!empty($departmentid) && !company::check_valid_department($companyid, $depar
 $company = new company($companyid);
 $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
+
+// Work out where the user sits in the company department tree.
+if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+    $userlevels = array($parentlevel->id => $parentlevel->id);
+} else {
+    $userlevels = $company->get_userlevel($USER);
+}
+
+$userhierarchylevel = key($userlevels);
+if ($departmentid == 0 ) {
+    $departmentid = $userhierarchylevel;
+}
 
 // Get the company additional optional user parameter names.
 $fieldnames = array();
@@ -199,23 +211,6 @@ if (!empty($fieldnames)) {
 $baseurl = new moodle_url(basename(__FILE__), $urlparams);
 $returnurl = $baseurl;
 
-// Work out where the user sits in the company department tree.
-$userlevel = $company->get_userlevel($USER);
-$userhierarchylevel = $userlevel->id;
-if ($departmentid == 0 ) {
-    $departmentid = $userhierarchylevel;
-}
-
-// Get the appropriate list of departments.
-$userdepartment = $company->get_userlevel($USER);
-$departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
-$treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
-$subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-$select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
-$select->label = get_string('department', 'block_iomad_company_admin');
-$select->formid = 'choosedepartment';
-$fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector', 'style' => 'display: none'));
-
 // Set up the filter form.
 $mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
 $mform->set_data(array('departmentid' => $departmentid));
@@ -223,14 +218,7 @@ $mform->set_data($params);
 $mform->get_data();
 
 // Display the tree selector thing.
-echo html_writer::start_tag('div', array('class' => 'iomadclear'));
-echo html_writer::start_tag('div', array('class' => 'fitem'));
-echo $treehtml;
-echo html_writer::start_tag('div', array('style' => 'display:none'));
-echo $fwselectoutput;
-echo html_writer::end_tag('div');
-echo html_writer::end_tag('div');
-echo html_writer::end_tag('div');
+echo $output->display_tree_selector($company, $parentlevel, $baseurl, $params, $departmentid);
 echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
 
 // Display the user filter form.

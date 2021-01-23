@@ -135,11 +135,13 @@ class renderer extends plugin_renderer_base {
      * @param int $selected selected id (if any)
      * @return string HTML markup
      */
-    public function department_tree($tree, $selected) {
+    public function department_tree($trees, $selected) {
         $html = '';
         $html .= '<div class="dep_tree">';
         $html .= '<div role="tree" id="department_tree">';
-        $html .= $this->department_leaf($tree, 1, $selected);
+        foreach ($trees as $tree) {
+            $html .= $this->department_leaf($tree, 1, $selected);
+        }
         $html .= '</div></div>';
 
         return $html;
@@ -261,5 +263,87 @@ class renderer extends plugin_renderer_base {
                                              'id' => 'orig' . $id));
 
         return $html;
+    }
+
+    public function display_tree_selector($company, $parentlevel, $linkurl, $urlparams, $departmentid = 0) {
+        global $USER;
+
+        if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+            $userlevels = array($parentlevel->id => $parentlevel->id);
+        } else {
+            $userlevels = $company->get_userlevel($USER);
+        }
+
+        $subhierarchieslist = array();
+        $departmenttree = array();
+        foreach ($userlevels as $userlevelid => $userlevel) {
+            $subhierarchieslist = $subhierarchieslist + \company::get_all_subdepartments($userlevelid);
+            $departmenttree[] = \company::get_all_subdepartments_raw($userlevelid);
+        }
+        if (empty($departmentid)) {
+            $departmentid = key($userlevels);
+        }
+
+        $treehtml = $this->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
+        
+        $departmentselect = new \single_select(new \moodle_url($linkurl, $urlparams), 'deptid', $subhierarchieslist, $departmentid);
+        $departmentselect->label = get_string('department', 'block_iomad_company_admin') .
+                                   $this->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
+
+        $returnhtml = html_writer::tag('h4', get_string('department', 'block_iomad_company_admin'));
+        $returnhtml .=  \html_writer::start_tag('div', array('class' => 'iomadclear'));
+        $returnhtml .= \html_writer::start_tag('div', array('class' => 'fitem'));
+        $returnhtml .= $treehtml;
+        $returnhtml .= \html_writer::start_tag('div', array('style' => 'display:none'));
+        $returnhtml .= $this->render($departmentselect);
+        $returnhtml .= \html_writer::end_tag('div');
+        $returnhtml .= \html_writer::end_tag('div');
+        $returnhtml .= \html_writer::end_tag('div');
+
+        return $returnhtml;
+    }
+
+    public function display_tree_selector_form($company, &$mform, $parentid = 0, $before = '') {
+        global $USER;
+
+        // Get the available departments.
+        $parentlevel = \company::get_company_parentnode($company->id);
+        if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+            $userlevels = array($parentlevel->id => $parentlevel->id);
+        } else {
+            $userlevels = $company->get_userlevel($USER);
+        }
+
+        // Put them into a big list.
+        $subhierarchieslist = array();
+        $departmenttree = array();
+        foreach ($userlevels as $userlevelid => $userlevel) {
+            $subhierarchieslist = $subhierarchieslist + \company::get_all_subdepartments($userlevelid);
+            $departmenttree[] = \company::get_all_subdepartments_raw($userlevelid);
+        }
+
+        // Set up the tree HTML.        
+        if (empty($parentid)) {
+            $initialdepartment = optional_param('deptid', 0, PARAM_INT);
+        } else {
+            $initialdepartment = $parentid;
+        }
+        $treehtml = $this->department_tree($departmenttree, $initialdepartment);
+
+        // Add it to the form.
+        if (empty($before)) {
+            $mform->addElement('html', "<h4>" . get_string('department', 'block_iomad_company_admin') . "</h4>");
+            $mform->addElement('html', $treehtml);
+        } else {
+            $mform->insertElementBefore($mform->addElement('html', "<h4>" . get_string('department', 'block_iomad_company_admin') . "</h4>"), $before);
+            $mform->insertElementBefore($mform->addElement('html', $treehtml), $before);
+        }
+
+        // This is getting hidden anyway, so no need for label
+        $mform->addElement('html', '<div class="display:none;">');
+        $mform->addElement('select', 'deptid', ' ',
+                            $subhierarchieslist, array('class' => 'iomad_department_select', 'onchange' => 'this.form.submit()'));
+        $mform->disabledIf('deptid', 'action', 'eq', 1);
+        $mform->addElement('html', '</div>');
     }
 }

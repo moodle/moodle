@@ -86,7 +86,7 @@ class company_license_users_form extends \moodleform {
             $userhierarchylevel = $this->parentlevel->id;
         } else {
             $userlevel = $company->get_userlevel($USER);
-            $userhierarchylevel = $userlevel->id;
+            $userhierarchylevel = key($userlevel);
         }
 
         if ($departmentid == 0) {
@@ -142,7 +142,7 @@ class company_license_users_form extends \moodleform {
     }
 
     public function definition_after_data() {
-        global $USER, $OUTPUT;
+        global $USER, $output;
 
         $mform =& $this->_form;
 
@@ -161,20 +161,7 @@ class company_license_users_form extends \moodleform {
 
         $company = new \company($this->selectedcompany);
 
-        $subdepartmenthtml = "";
-        $userdepartment = $company->get_userlevel($USER);
-        $departmentslist = \company::get_all_subdepartments($userdepartment->id);
-        $departmenttree = \company::get_all_subdepartments_raw($userdepartment->id);
-        $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
-
-        $mform->addElement('html', $treehtml);
-
-        // This is getting hidden anyway, so no need for label
-        $mform->addElement('html', '<div class="display:none;">');
-        $mform->addElement('select', 'deptid', ' ',
-                            $departmentslist, array('class' => 'iomad_department_select', 'onchange' => 'this.form.submit()'));
-        $mform->disabledIf('deptid', 'action', 'eq', 1);
-        $mform->addElement('html', '</div>');
+        $output->display_tree_selector_form($company, $mform);
 
         if ($this->license->expirydate > time()) {
             // Add in the courses selector.
@@ -238,13 +225,13 @@ class company_license_users_form extends \moodleform {
                   </td>
                   <td id="buttonscell">
                       <p class="arrow_button">
-                        <input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('licenseallocate', 'block_iomad_company_admin') . '"
+                        <input name="add" id="add" type="submit" value="' . $output->larrow().'&nbsp;'.get_string('licenseallocate', 'block_iomad_company_admin') . '"
                                title="' . get_string('licenseallocate', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
-                        <input name="addall" id="addall" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('licenseallocateall', 'block_iomad_company_admin') . '"
+                        <input name="addall" id="addall" type="submit" value="' . $output->larrow().'&nbsp;'.get_string('licenseallocateall', 'block_iomad_company_admin') . '"
                                title="' . get_string('licenseallocateall', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
-                        <input name="remove" id="remove" type="submit" value="'. get_string('licenseremove', 'block_iomad_company_admin').'&nbsp;'.$OUTPUT->rarrow(). '"
+                        <input name="remove" id="remove" type="submit" value="'. get_string('licenseremove', 'block_iomad_company_admin').'&nbsp;'.$output->rarrow(). '"
                                title="'. get_string('licenseremove', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
-                        <input name="removeall" id="removeall" type="submit" value="'. get_string('licenseremoveall', 'block_iomad_company_admin').'&nbsp;'.$OUTPUT->rarrow(). '"
+                        <input name="removeall" id="removeall" type="submit" value="'. get_string('licenseremoveall', 'block_iomad_company_admin').'&nbsp;'.$output->rarrow(). '"
                                title="'. get_string('licenseremoveall', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />
                      </p>
                   </td>

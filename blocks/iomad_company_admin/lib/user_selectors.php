@@ -632,7 +632,7 @@ class potential_department_user_selector extends user_selector_base {
                     ORDER BY cu.id";
             if ($companies = $DB->get_records_sql($sql, array('companyid' => $this->companyid), 0, 1)) {
                 $company = array_shift($companies);
-                $userlist[$id]->email = $user->email." - ".$company->name;
+                $userlist[$id]->email = $userlist[$id]->email." - ".$company->name;
             }
         }
     }
@@ -652,7 +652,7 @@ class potential_department_user_selector extends user_selector_base {
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
 
-        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u') . ", u.email";
         $countfields = 'SELECT DISTINCT COUNT(u.id)';
 
         $departmentusers = $this->get_department_user_ids();
@@ -1013,14 +1013,17 @@ class potential_license_user_selector extends user_selector_base {
 
     protected function process_license_allocations(&$licenseusers) {
         global $CFG, $DB;
+
         foreach ($licenseusers as $id => $user) {
 
             $sql = "SELECT d.shortname FROM {department} d
                     INNER JOIN {company_users} cu ON cu.departmentid = d.id
                     WHERE
                     cu.userid = :userid
-                    AND cu.companyid = :companyid";
-            if ($department = $DB->get_record_sql($sql, array('userid'=> $id, 'companyid' => $this->companyid))) {
+                    AND cu.companyid = :companyid
+                    ORDER by cu.id ASC";
+            if ($departments = $DB->get_records_sql($sql, array('userid'=> $id, 'companyid' => $this->companyid))) {
+                $department = array_pop($departments);
                 $licenseusers[$id]->email = $user->email." (".$department->shortname.")";
             }
         }
@@ -1047,7 +1050,7 @@ class potential_license_user_selector extends user_selector_base {
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
 
-        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u').', u.email, d.shortname ';
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u').', u.email ';
         $countfields = 'SELECT COUNT(1)';
         $myusers = company::get_my_users($this->companyid);
 
@@ -1103,6 +1106,7 @@ class potential_license_user_selector extends user_selector_base {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
+
         $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
 
         if (empty($availableusers)) {

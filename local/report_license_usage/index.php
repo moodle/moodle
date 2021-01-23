@@ -33,7 +33,7 @@ $page         = optional_param('page', 0, PARAM_INT);
 // How many per page.
 $perpage      = optional_param('perpage', 30, PARAM_INT);
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
-$departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
+$departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $licenseid    = optional_param('licenseid', 0, PARAM_INTEGER);
 $fromraw = optional_param_array('compfromraw', null, PARAM_INT);
 $toraw = optional_param_array('comptoraw', null, PARAM_INT);
@@ -56,7 +56,7 @@ if ($search) {
     $params['search'] = $search;
 }
 if ($departmentid) {
-    $params['departmentid'] = $departmentid;
+    $params['deptid'] = $departmentid;
 }
 if ($licenseid) {
     $params['licenseid'] = $licenseid;
@@ -124,7 +124,7 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form
-$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('departmentid', 1, optional_param('departmentid', 0, PARAM_INT)));
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
 
 echo $output->header();
 
@@ -170,8 +170,12 @@ $baseurl = new moodle_url(basename(__FILE__), $urlparams);
 $returnurl = $baseurl;
 
 // Work out where the user sits in the company department tree.
-$userlevel = $company->get_userlevel($USER);
-$userhierarchylevel = $userlevel->id;
+if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+    $userlevels = array($parentlevel->id => $parentlevel->id);
+} else {
+    $userlevels = $company->get_userlevel($USER);
+}
+$userhierarchylevel = key($userlevels);
 if ($departmentid == 0 ) {
     $departmentid = $userhierarchylevel;
 }
@@ -196,16 +200,6 @@ $select->label = get_string('licenseselect', 'block_iomad_company_admin');
 $select->formid = 'chooselicense';
 $licenseselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_license_selector'));
 
-// Get the appropriate list of departments.
-$subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-$select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
-$select->label = get_string('department', 'block_iomad_company_admin');
-$select->formid = 'choosedepartment';
-$fwselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_department_selector'));
-
-$departmenttree = company::get_all_subdepartments_raw($userhierarchylevel);
-$treehtml = $output->department_tree($departmenttree, optional_param('departmentid', 0, PARAM_INT));
-
 // Set up the filter form.
 $mform = new iomad_date_filter_form($baseurl, $params);
 $mform->set_data(array('departmentid' => $departmentid));
@@ -216,14 +210,7 @@ $mform->set_data($options);
 $mform->get_data();
 
 // Display the tree selector thing.
-echo html_writer::start_tag('div', array('class' => 'iomadclear'));
-echo html_writer::start_tag('div', array('class' => 'fitem'));
-echo $treehtml;
-echo html_writer::start_tag('div', array('style' => 'display:none'));
-echo $fwselectoutput;
-echo html_writer::end_tag('div');
-echo html_writer::end_tag('div');
-echo html_writer::end_tag('div');
+echo $output->display_tree_selector($company, $parentlevel, $linkurl, $params, $departmentid);
 echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
 
 if (empty($licenselist)) {
@@ -336,7 +323,12 @@ $userlist = "";
 if (!empty($userrecords)) {
     $userlist = " u.id in (". implode(',', array_values($userrecords)).") ";
 }
-
+// Set the chart defaults
+$numstart = 0;
+$net = 0;
+$numunallocations = 0;
+$numallocations = 0;
+$total = 0;
 if (!empty($userlist)) {
     if (!empty($from)) {
         // We need to get the total allocated up to that date.
@@ -424,12 +416,6 @@ if (!empty($userlist)) {
     }
     $net = $numallocations - $numunallocations;
     $total = $numstart + $net;
-} else {
-    $numstart = 0;
-    $net = 0;
-    $numallocations = 0;
-    $numallocations = 0;
-    $total = 0;
 }
 
 // Display the current license overview.
