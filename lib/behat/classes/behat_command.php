@@ -179,7 +179,11 @@ class behat_command {
         }
 
         // Behat test command.
-        list($output, $code) = self::run(' --help');
+        $dirrootconfigpath = $CFG->dirroot . DIRECTORY_SEPARATOR . 'behat.yml';
+        if (file_exists($dirrootconfigpath)) {
+            self::output_msg(get_string('warndirrootconfigfound', 'tool_behat', $dirrootconfigpath));
+        }
+        list($output, $code) = self::run(" --help");
 
         if ($code != 0) {
 
