@@ -944,7 +944,7 @@ class company {
         $userrecord['managertype'] = $managertype;
         $userrecord['companyid'] = $this->id;
 
-        if ($DB->get_record('company_users', array('companyid' => $this->id, 'userid' => $userid))) {
+        if ($DB->get_record('company_users', array('companyid' => $this->id, 'userid' => $userid, 'departmentid' => $departmentid))) {
             // Already in this company.  Nothing left to do.
             return true;
         }
@@ -978,7 +978,8 @@ class company {
 
         $assign = [
             'companyid'=>$companyid,
-            'userid'=>$userid];
+            'userid'=>$userid,
+            'departmentid' => $departmentid];
 
         $success = true;
         $company = new company($companyid);
@@ -1444,8 +1445,8 @@ class company {
         $timestamp = time();
 
         // Moving a user.
-        if (!$userrecord = $DB->get_record('company_users', array('companyid' => $this->id,
-                                                                  'userid' => $userid))) {
+        if (!$userrecords = $DB->get_records('company_users', array('companyid' => $this->id,
+                                                                    'userid' => $userid))) {
             if ($ws) {
                 return false;
             } else {
@@ -1568,10 +1569,15 @@ class company {
         $DB->set_field('local_iomad_track', 'expiredstop', true, array('userid' => $userid, 'companyid' => $this->id));
         $DB->set_field('local_iomad_track', 'modifiedtime', time(), array('userid' => $userid, 'companyid' => $this->id));
 
-        // Are they something other than an ordinary user?
-        if ($userrecord->managertype > 0) {
-            // Deal with that.
-            self::upsert_company_user($userid, $this->id, $userrecord->departmentid, 0, 0, $ws);
+        // Delete the records.
+        foreach ($userrecords as $userrecord) {
+            // Are they something other than an ordinary user?
+            if ($userrecord->managertype > 0) {
+                // Deal with that.
+                self::upsert_company_user($userid, $this->id, $userrecord->departmentid, 0, 0, $ws);
+            }
+
+            $DB->delete_records('company_users', array('id' => $userrecord->id));
         }
 
         if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
@@ -1580,9 +1586,6 @@ class company {
             $user = $DB->get_record('user', array('id' => $userid));
             iomad_commerce::delete_user($user->username, $this->id);
         }
-
-        // Delete the record.
-        $DB->delete_records('company_users', array('id' => $userrecord->id));
 
         // Deal with the company theme.
         $DB->set_field('user', 'theme', '', array('id' => $userid));
@@ -2212,20 +2215,24 @@ class company {
      * Returns string
      *
      **/
-    public static function get_my_managers($userid, $managertype) {
+    public function get_my_managers($userid, $managertype) {
         global $DB, $USER;
 
         // Get the users department.
-        $usercompanyinfo = $DB->get_record('company_users', array('userid' => $userid));
+        $userdepartments = $DB->get_records('company_users', array('userid' => $userid, 'companyid' => $this->id));
 
         // Set the initial return array.
 
         $managers = array();
+        $departments = array();
         // Get the list of parent departments.
-        if ($userdepartment = self::get_departmentbyid($usercompanyinfo->departmentid)) {
-            $departmentlist = self::get_parentdepartments($userdepartment);
-            self::get_parents_list($departmentlist, $departments);
-
+        foreach ($userdepartments as $userdepartmentid => $junk) {
+            if ($userdepartment = $this->get_departmentbyid($userdepartmentid)) {
+                $departmentlist = $this->get_parentdepartments($userdepartment);
+                self::get_parents_list($departmentlist, $departments);
+            }
+        }
+        if (!empty($departments)) {
             // Get the managers in that list of departments.
             $managers = $DB->get_records_sql("SELECT userid FROM {company_users}
                                               WHERE managertype = :managertype
@@ -4151,8 +4158,10 @@ class company {
         $userid = $event->objectid;
         $timestamp = time();
 
-
-        $usercompanies = $DB->get_records('company_users', array('userid' => $userid));
+        $usercompanies = $DB->get_records_sql("SELECT DISTINCT companyid
+                                               FROM {company_users}
+                                               WHERE userid = :userid",
+                                               array('userid' => $userid));
 
         foreach ($usercompanies as $usercompany) {
             $company = new company($usercompany->companyid);

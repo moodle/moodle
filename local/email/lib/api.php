@@ -566,7 +566,7 @@ class EmailTemplate {
                 // Do we send to managers as well?
                 if (empty($template->disabledmanager)) {
                     // Get the users managers.
-                    if ($managers = company::get_my_managers($email->userid, 1)) {
+                    if ($managers = $company->get_my_managers($email->userid, 1)) {
                         foreach ($managers as $manager) {
                             if ($managerrec = $DB->get_record('user', array('deleted' => 0, 'suspended' => 0, 'id' => $manager->userid))) {
                                 if (!self::email_direct($managerrec->email,

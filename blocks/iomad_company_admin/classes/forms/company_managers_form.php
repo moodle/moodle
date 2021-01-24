@@ -84,7 +84,7 @@ class company_managers_form extends moodleform {
     }
 
     public function definition_after_data() {
-        global $USER, $OUTPUT;
+        global $USER, $output;
         $mform =& $this->_form;
 
         // Adding the elements in the definition_after_data function rather than in the definition function
@@ -114,9 +114,9 @@ class company_managers_form extends moodleform {
                   </td>
                   <td id="buttonscell">
                       <p class="arrow_button">
-                        <input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('add') . '"
+                        <input name="add" id="add" type="submit" value="' . $output->larrow().'&nbsp;'.get_string('add') . '"
                                title="' . print_string('add') .'" class="btn btn-secondary"/><br />
-                        <input name="remove" id="remove" type="submit" value="'. get_string('remove').'&nbsp;'.$OUTPUT->rarrow(). '"
+                        <input name="remove" id="remove" type="submit" value="'. get_string('remove').'&nbsp;'.$output->rarrow(). '"
                                title="'. print_string('remove') .'" class="btn btn-secondary"/><br />
                      </p>
                   </td>
@@ -163,7 +163,7 @@ class company_managers_form extends moodleform {
 
                     if (!$CFG->iomad_autoenrol_managers && $roletype != 3) {
                         // We have to be mindful of educator types here.
-                        $userrec = $DB->get_record('company_users', array('userid' => $adduser->id, 'companyid' => $this->selectedcompany));
+                        $userrec = $DB->get_record('company_users', array('userid' => $adduser->id, 'companyid' => $this->selectedcompany, 'departmentid' => $departmentid));
                         $educator = $userrec->educator;
                     } else if (!$CFG->iomad_autoenrol_managers && $roletype == 3) {
                         $educator = true;
@@ -192,15 +192,28 @@ class company_managers_form extends moodleform {
                         print_error('invaliduserdepartment', 'block_iomad_company_management');
                     }
 
+                    // Get the current company_users record.
+                    $userrec = $DB->get_record('company_users', array('userid' => $removeuser->id, 'companyid' => $this->selectedcompany, 'departmentid' => $departmentid));
                     if (!$CFG->iomad_autoenrol_managers && $roletype != 3) {
                         // We have to be mindful of educator types here.
-                        $userrec = $DB->get_record('company_users', array('userid' => $removeuser->id, 'companyid' => $this->selectedcompany));
+                        $userrec = $DB->get_record('company_users', array('userid' => $removeuser->id, 'companyid' => $this->selectedcompany, 'departmentid' => $departmentid));
                         $educator = $userrec->educator;
                     } else {
                         $educator = false;
                     }
-                    // Do the actual work.
+
+                    // Do the bulk of the work.
                     company::upsert_company_user($removeuser->id, $this->selectedcompany, $departmentid, 0, $educator);
+
+                    // Remove the current record.
+                    $DB->delete_records('company_users', array('id' => $userrec->id));
+
+                    // Does the user exist in the company still?
+                    if (!$DB->get_records('company_users', array('userid' => $removeuser->id, 'companyid' => $this->selectedcompany))) {
+                        // if not add them to the company top level.
+                        $companydepartment = company::get_company_parentnode($this->selectedcompany);
+                        company::upsert_company_user($removeuser->id, $this->selectedcompany, $companydepartment->id, 0, $educator);
+                    }
                 }
 
                 $this->potentialusers->invalidate_selected_users();
