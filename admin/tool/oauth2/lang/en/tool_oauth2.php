@@ -31,11 +31,6 @@ $string['connectsystemaccount'] = 'Connect to a system account';
 $string['createfromtemplate'] = 'Create an OAuth 2 service from a template';
 $string['createfromtemplatedesc'] = 'Choose one of the OAuth 2 service templates below to create an OAuth service with a valid configuration for one of the known service types. This will create the OAuth 2 service, with all the correct end points and parameters required for authentication, though you will still need to enter the client ID and secret for the new service before it can be used.';
 $string['createnewendpoint'] = 'Create new endpoint for issuer "{$a}"';
-$string['createnewfacebookissuer'] = 'Create new Facebook service';
-$string['createnewgoogleissuer'] = 'Create new Google service';
-$string['createnewissuer'] = 'Create new custom service';
-$string['createnewmicrosoftissuer'] = 'Create new Microsoft service';
-$string['createnewnextcloudissuer'] = 'Create new Nextcloud service';
 $string['createnewservice'] = 'Create new service: ';
 $string['createnewuserfieldmapping'] = 'Create new user field mapping for issuer "{$a}"';
 $string['custom_service'] = 'Custom';
@@ -113,3 +108,10 @@ $string['userfieldinternalfield'] = 'Internal field name';
 $string['userfieldmappingdeleted'] = 'User field mapping deleted';
 $string['userfieldmappingsforissuer'] = 'User field mappings for issuer: {$a}';
 $string['privacy:metadata'] = 'The OAuth 2 services plugin does not store any personal data.';
+
+// Deprecated since Moodle 3.11.
+$string['createnewfacebookissuer'] = 'Create new Facebook service';
+$string['createnewgoogleissuer'] = 'Create new Google service';
+$string['createnewissuer'] = 'Create new custom service';
+$string['createnewmicrosoftissuer'] = 'Create new Microsoft service';
+$string['createnewnextcloudissuer'] = 'Create new Nextcloud service';
