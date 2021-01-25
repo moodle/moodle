@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/iomad/db" VERSION="20200814" COMMENT="XMLDB file for Moodle local/iomad"
+<XMLDB PATH="local/iomad/db" VERSION="20210125" COMMENT="XMLDB file for Moodle local/iomad"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -208,8 +208,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="companyusers" UNIQUE="true" FIELDS="companyid, userid"/>
-        <INDEX NAME="departmentusers" UNIQUE="true" FIELDS="userid, departmentid"/>
+        <INDEX NAME="departmentusers" UNIQUE="true" FIELDS="companyid, userid, departmentid"/>
         <INDEX NAME="companymanagers" UNIQUE="false" FIELDS="companyid, managertype"/>
         <INDEX NAME="departmentmanagers" UNIQUE="false" FIELDS="departmentid, managertype"/>
       </INDEXES>
