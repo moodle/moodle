@@ -54,8 +54,10 @@ class block_iomad_company_admin_editusers_table extends table_sql {
                                              JOIN {company_users} cu
                                              ON (d.id = cu.departmentid)
                                              WHERE cu.userid = :userid
+                                             AND cu.companyid = :companyid
                                              ORDER BY d.name",
-                                             array('userid' => $row->id));
+                                             array('userid' => $row->id,
+                                                   'companyid' => $row->companyid));
         $returnstr = "";
         $count = count($departments);
         $current = 1;
@@ -133,7 +135,7 @@ class block_iomad_company_admin_editusers_table extends table_sql {
         if ((iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
              or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
              or $row->id == $USER->id and !is_mnet_remote_user($row)) {
-            if ($row->id != $USER->id && $DB->get_record_select('company_users', 'companyid =:company AND managertype != 0 AND userid = :userid', array('company' => $row->companyid, 'userid' => $row->id))
+            if ($row->id != $USER->id && $DB->get_records_select('company_users', 'companyid =:company AND managertype IN (1,2) AND userid = :userid', array('company' => $row->companyid, 'userid' => $row->id))
                 && !iomad::has_capability('block/iomad_company_admin:editmanagers', $systemcontext)) {
                // This manager can't edit manager users.
             } else {
