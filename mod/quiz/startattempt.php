@@ -44,6 +44,8 @@ if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
 $quizobj = quiz::create($cm->instance, $USER->id);
 // This script should only ever be posted to, so set page URL to the view page.
 $PAGE->set_url($quizobj->view_url());
+// During quiz attempts, the browser back/forwards buttons should force a reload.
+$PAGE->set_cacheable(false);
 
 // Check login and sesskey.
 require_login($quizobj->get_course(), false, $quizobj->get_cm());
