@@ -39,6 +39,7 @@ define('ASSIGN_FILTER_NOT_SUBMITTED', 'notsubmitted');
 define('ASSIGN_FILTER_SINGLE_USER', 'singleuser');
 define('ASSIGN_FILTER_REQUIRE_GRADING', 'requiregrading');
 define('ASSIGN_FILTER_GRANTED_EXTENSION', 'grantedextension');
+define('ASSIGN_FILTER_DRAFT', 'draft');
 
 // Marker filter for grading page.
 define('ASSIGN_MARKER_FILTER_NO_MARKER', -1);
@@ -9346,8 +9347,9 @@ class assign {
      */
     public function get_filters() {
         $filterkeys = [
-            ASSIGN_FILTER_SUBMITTED,
             ASSIGN_FILTER_NOT_SUBMITTED,
+            ASSIGN_FILTER_DRAFT,
+            ASSIGN_FILTER_SUBMITTED,
             ASSIGN_FILTER_REQUIRE_GRADING,
             ASSIGN_FILTER_GRANTED_EXTENSION
         ];
