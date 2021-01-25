@@ -2173,5 +2173,34 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019030113, 'local', 'iomad');
     }
 
+    if ($oldversion < 2021012500) {
+
+        // Define index departmentusers (unique) to be dropped form company_users.
+        $table = new xmldb_table('company_users');
+        $index = new xmldb_index('departmentusers', XMLDB_INDEX_UNIQUE, ['userid', 'departmentid']);
+
+        // Conditionally launch drop index departmentusers.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $index = new xmldb_index('companyusers', XMLDB_INDEX_UNIQUE, ['companyid', 'userid']);
+
+        // Conditionally launch drop index departmentusers.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $index = new xmldb_index('departmentusers', XMLDB_INDEX_UNIQUE, ['companyid', 'userid', 'departmentid']);
+
+        // Conditionally launch add index departmentusers.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2021012500, 'local', 'iomad');
+    }
+
     return $result;
 }

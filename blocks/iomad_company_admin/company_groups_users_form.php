@@ -36,7 +36,6 @@ class company_ccu_courses_form extends company_moodleform {
     protected $company = null;
     protected $courses = array();
 
-
     public function __construct($actionurl, $context, $companyid, $selectedcourse) {
         global $DB, $USER;
         $this->selectedcompany = $companyid;
@@ -48,12 +47,10 @@ class company_ccu_courses_form extends company_moodleform {
         parent::__construct($actionurl);
     }
 
-
     public function definition() {
         $this->_form->addElement('hidden', 'companyid', $this->selectedcompany);
         $this->_form->setType('companyid', PARAM_INT);
     }
-
 
     public function definition_after_data() {
         $mform =& $this->_form;
@@ -75,7 +72,6 @@ class company_ccu_courses_form extends company_moodleform {
         $mform->disable_form_change_checker();
     }
 }
-
 
 class course_group_display_form extends company_moodleform {
     protected $courseid = 0;
@@ -106,7 +102,6 @@ class course_group_display_form extends company_moodleform {
             $coursegroups = array();
         }
 
-
         // Then show the fields about where this block appears.
         $mform->addElement('header', 'header',
                             get_string('companygroupsusers', 'block_iomad_company_admin').
@@ -133,7 +128,7 @@ class course_group_display_form extends company_moodleform {
         if (!empty ($this->course)) {
             $options = array('context' => $this->context,
                              'companyid' => $this->selectedcompany,
-                             'courseid' => $this->course,
+                             'courseid' => $this->selectedcourse,
                              'departmentid' => $this->departmentid,
                              'subdepartments' => $this->subhierarchieslist,
                              'parentdepartmentid' => $this->parentlevel);
@@ -216,6 +211,7 @@ class course_group_users_form extends moodleform {
                              'departmentid' => $this->departmentid,
                              'subdepartments' => $this->subhierarchieslist,
                              'parentdepartmentid' => $this->parentlevel);
+
             if (empty($this->potentialusers)) {
                  $this->potentialusers = new potential_company_group_user_selector('potentialgroupusers', $options);
             }
@@ -225,7 +221,6 @@ class course_group_users_form extends moodleform {
         } else {
             return;
         }
-
     }
 
     public function definition() {

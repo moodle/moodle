@@ -34,8 +34,23 @@ abstract class company_user_selector_base extends user_selector_base {
     protected $courses;
     protected $company;
     protected $selectedcourses;
+    protected $searchoptionsoutput = false;
+    protected $profilefieldid = 0;
+
+    /** @var array JavaScript YUI3 Module definition */
+    protected static $jsmodule = array(
+                'name' => 'user_selector',
+                'fullpath' => '/blocks/iomad_company_admin/lib/module.js',
+                'requires'  => array('node', 'event-custom', 'datasource', 'json', 'moodle-core-notification'),
+                'strings' => array(
+                    array('previouslyselectedusers', 'moodle', '%%SEARCHTERM%%'),
+                    array('nomatchingusers', 'moodle', '%%SEARCHTERM%%'),
+                    array('none', 'moodle')
+                ));
 
     public function __construct($name, $options) {
+        global $DB;
+
         $this->companyid  = $options['companyid'];
         if (isset ( $options['courseid']) ) {
             $this->courseid = $options['courseid'];
@@ -52,6 +67,12 @@ abstract class company_user_selector_base extends user_selector_base {
         if (!empty($options['selectedcourses'])) {
             $this->selectedcourses = $options['selectedcourses'];
         }
+        if (!empty($options['profilefieldid'])) {
+            $profileid = $options['profilefieldid'];
+        } else {
+            $profileid = optional_param($name . '_profilefieldid', 0, PARAM_INT);
+        }
+        $this->profilefieldid = $profileid;
         $this->company = new company($this->companyid);
 
         parent::__construct($name, $options);
@@ -66,6 +87,15 @@ abstract class company_user_selector_base extends user_selector_base {
         }
         if (!empty($this->selectedcourses)) {
             $options['selectedcourses'] = $this->selectedcourses;
+        }
+        if (!empty($this->deparmentid)) {
+            $options['departmentid'] = $this->departmentid;
+        }
+        if (!empty($this->courseid)) {
+            $options['courseid'] = $this->courseid;
+        }
+        if (!empty($this->groupid)) {
+            $options['groupid'] = $this->groupid;
         }
 
         return $options;
@@ -85,6 +115,133 @@ abstract class company_user_selector_base extends user_selector_base {
             return array_keys($users);
         }
     }
+
+    /**
+     * Returns an array with SQL to perform a search and the params that go into it.
+     *
+     * @param string $search the text to search for.
+     * @param string $u the table alias for the user table in the query being
+     *      built. May be ''.
+     * @return array an array with two elements, a fragment of SQL to go in the
+     *      where clause the query, and an array containing any required parameters.
+     *      this uses ? style placeholders.
+     */
+    protected function search_sql($search, $u) {
+        global $DB;
+
+        if (empty($this->profilefieldid)) {
+            return users_search_sql($search, $u, $this->searchanywhere, $this->extrafields,
+                    $this->exclude, $this->validatinguserids);
+        } else {
+            $wheresqsl = "ui.fieldid = :profilefieldid AND " . $DB->sql_like('ui.data', ":profilesearch", false, false) . " AND ui.data!=''";
+            $params = array('profilefieldid' => $this->profilefieldid,
+                            'profilesearch' => "%".$search."%");
+            return array($wheresqsl, $params);
+        }
+    }
+
+
+    /**
+     * Initialises JS for this control.
+     *
+     * @param string $search
+     * @return string any HTML needed here.
+     */
+    protected function initialise_javascript($search) {
+        global $USER, $PAGE, $OUTPUT;
+        $output = '';
+
+        // Put the options into the session, to allow search.php to respond to the ajax requests.
+        $options = $this->get_options();
+        $hash = md5(serialize($options));
+        $USER->userselectors[$hash] = $options;
+
+        // Initialise the selector.
+        $PAGE->requires->js_init_call(
+            'M.core_user.init_user_selector',
+            array($this->name, $hash, $this->extrafields, $search),
+            false,
+            self::$jsmodule
+        );
+        return $output;
+    }
+
+    /**
+     * Output this user_selector as HTML.
+     *
+     * @param boolean $return if true, return the HTML as a string instead of outputting it.
+     * @return mixed if $return is true, returns the HTML as a string, otherwise returns nothing.
+     */
+    public function display($return = false) {
+        global $PAGE, $DB;
+
+        // Get the list of requested users.
+        $search = optional_param($this->name . '_searchtext', '', PARAM_RAW);
+        if (optional_param($this->name . '_clearbutton', false, PARAM_BOOL)) {
+            $search = '';
+        }
+        $groupedusers = $this->find_users($search);
+
+        // Get the company profile fields.
+        $companyprofilecategories = $DB->get_records_sql("SELECT uif.id,uif.name FROM {user_info_category} uic
+                                                          JOIN {user_info_field} uif ON (uic.id = uif.categoryid)
+                                                          WHERE uic.id NOT IN (
+                                                              SELECT profileid FROM {company}
+                                                              WHERE id != :companyid
+                                                          )
+                                                          ORDER BY uif.name DESC",
+                                                          array('companyid' => $this->companyid));
+
+        // Output the select.
+        $name = $this->name;
+        $multiselect = '';
+        if ($this->multiselect) {
+            $name .= '[]';
+            $multiselect = 'multiple="multiple" ';
+        }
+
+        // Create the profile field selectors.
+        $profilesearch = "<select name = '" . $name . "_profilefieldid' class=\"form-control custom_srch d-block col-12 my-2\" id=\"" .$name ."_custom_srch\">
+                          <option>" . get_string('user') . "</option>";
+        foreach ($companyprofilecategories as $companyprofilecategory) {
+            if (!empty($profileid) && $profileid == $companyprofilecategory->id) {
+                $profilesearch .= "<option value=" . $companyprofilecategory->id . " selected>" . format_string($companyprofilecategory->name) . "</option>";
+            } else {
+                $profilesearch .= "<option value=" . $companyprofilecategory->id .">" . format_string($companyprofilecategory->name) . "</option>";
+            }
+        }
+        $profilesearch .= "</select>";
+
+        $output = '<div class="userselector" id="' . $this->name . '_wrapper">' . "\n" .
+                '<select name="' . $name . '" id="' . $this->name . '" ' .
+                $multiselect . 'size="' . $this->rows . '" class="form-control no-overflow">' . "\n";
+
+        // Populate the select.
+        $output .= $this->output_options($groupedusers, $search);
+
+        // Output the search controls.
+        $output .= "</select>\n<div class=\"form-inline\">\n";
+        $output .= $profilesearch;
+        $output .= '<input type="text" name="' . $this->name . '_searchtext" id="' .
+                $this->name . '_searchtext" size="15" value="' . s($search) . '" class="form-control"/>';
+        $output .= '<input type="submit" name="' . $this->name . '_searchbutton" id="' .
+                $this->name . '_searchbutton" value="' . $this->search_button_caption() . '" class="btn btn-secondary"/>';
+        $output .= '<input type="submit" name="' . $this->name . '_clearbutton" id="' .
+                $this->name . '_clearbutton" value="' . get_string('clear') . '" class="btn btn-secondary"/>';
+
+        $output .= "</div>\n</div>\n\n";
+
+        // Initialise the ajax functionality.
+        $output .= $this->initialise_javascript($search);
+
+        // Return or output it.
+        if ($return) {
+            return $output;
+        } else {
+            echo $output;
+        }
+    }
+
 }
 
 class current_company_managers_user_selector extends company_user_selector_base {
@@ -102,8 +259,10 @@ class current_company_managers_user_selector extends company_user_selector_base 
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
         $sql = " FROM {user} u
-                JOIN {company_users} cu ON (u.id = cu.userid AND cu.companyid = :companyid)
-                WHERE $wherecondition AND u.suspended = 0 ";
+                 JOIN {company_users} cu ON (u.id = cu.userid AND cu.companyid = :companyid)
+                 LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = cu.userid)
+
+                 WHERE $wherecondition AND u.suspended = 0 ";
 
         $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
@@ -147,9 +306,11 @@ class potential_company_managers_user_selector extends company_user_selector_bas
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
-        $sql = " FROM
-                    {user} u INNER JOIN {company_users} cu ON (cu.userid = u.id AND cu.companyid = :companyid AND cu.managertype = 0)
-                WHERE $wherecondition AND u.suspended = 0 ";
+        $sql = " FROM {user} u
+                 JOIN {company_users} cu ON (cu.userid = u.id AND cu.companyid = :companyid AND cu.managertype = 0)
+                 LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = cu.userid)
+
+                 WHERE $wherecondition AND u.suspended = 0 ";
 
         $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
@@ -191,9 +352,11 @@ class current_company_users_user_selector extends company_user_selector_base {
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
-        $sql = " FROM
-                    {user} u INNER JOIN {company_users} cu ON (cu.companyid = :companyid AND cu.userid = u.id )
-                WHERE $wherecondition AND u.suspended = 0 ";
+        $sql = " FROM {user} u
+                 JOIN {company_users} cu ON (cu.companyid = :companyid AND cu.userid = u.id )
+                 LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = cu.userid)
+
+                 WHERE $wherecondition AND u.suspended = 0 ";
 
         $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
@@ -234,16 +397,16 @@ class potential_company_users_user_selector extends company_user_selector_base {
         $params['companyid'] = $this->companyid;
         $params['companyidforjoin'] = $this->companyid;
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
-        $sql = " FROM
-                    {user} u
-                WHERE $wherecondition AND u.suspended = 0
-                      AND u.id NOT IN (
-                        SELECT userid
-                        FROM
-                            {company_users} )";
+        $sql = " FROM {user} u
+                 LEFT JOIN {user_info_data} ui ON ui.userid = u.id
+
+                 WHERE $wherecondition AND u.suspended = 0
+                 AND u.id NOT IN (
+                   SELECT userid FROM {company_users}
+                 )";
 
         $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
@@ -305,19 +468,19 @@ class current_company_course_user_selector extends company_user_selector_base {
             $departmentsql = " AND cu.departmentid in (".implode(',', array_keys($departmentlist)).")";
         }
 
-        $fields      = 'SELECT ue.id as userenrolmentid, u.id as userid,' . $this->required_fields_sql('u') . ', u.email, c.id AS courseid, c.fullname';
+        $fields      = 'SELECT DISTINCT  ue.id as userenrolmentid, u.id as userid,' . $this->required_fields_sql('u') . ', u.email, c.id AS courseid, c.fullname';
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u
-                    JOIN {company_users} cu
-                    ON (cu.userid = u.id AND cu.managertype = 0 $departmentsql)
-                    JOIN {user_enrolments} ue ON (ue.userid = u.id)
-                    JOIN {enrol} e
-                    ON (ue.enrolid = e.id AND ".$DB->sql_compare_text('e.enrol')."='manual' AND e.status = 0)
-                    JOIN {course} c ON (e.courseid = c.id)
-                WHERE $wherecondition AND u.suspended = 0
-                    AND cu.companyid = :companyid
-                    $coursesql";
+                 JOIN {company_users} cu ON (cu.userid = u.id AND cu.managertype = 0 $departmentsql)
+                 LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = cu.userid)
+                 JOIN {user_enrolments} ue ON (ue.userid = u.id)
+                 JOIN {enrol} e ON (ue.enrolid = e.id AND ".$DB->sql_compare_text('e.enrol')."='manual' AND e.status = 0)
+                 JOIN {course} c ON (e.courseid = c.id)
+
+                 WHERE $wherecondition AND u.suspended = 0
+                 AND cu.companyid = :companyid
+                 $coursesql";
 
         $order = ' ORDER BY u.firstname, u.lastname, c.fullname ASC';
 
@@ -485,6 +648,7 @@ class potential_company_course_user_selector extends company_user_selector_base 
      */
     public function find_users($search, $all = false) {
         global $CFG, $DB;
+
         $companyrec = $DB->get_record('company', array('id' => $this->companyid));
         $company = new company($this->companyid);
 
@@ -498,6 +662,7 @@ class potential_company_course_user_selector extends company_user_selector_base 
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
         $params['courseid'] = $this->courseid;
+        $params['profilesearch'] = "%{$search}%";
 
         // Deal with departments.
         $departmentlist = company::get_all_subdepartments($this->departmentid);
@@ -526,12 +691,13 @@ class potential_company_course_user_selector extends company_user_selector_base 
         $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
-        $sql = " FROM
-                    {user} u INNER JOIN {company_users} cu ON cu.userid = u.id
-                WHERE $wherecondition  AND u.suspended = 0 $departmentsql
-                    AND
-                    cu.companyid = :companyid
-                    $userfilter";
+        $sql = " FROM {user} u
+                 JOIN {company_users} cu ON cu.userid = u.id
+                 LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = cu.userid)
+
+                 WHERE $wherecondition  AND u.suspended = 0 $departmentsql
+                 AND cu.companyid = :companyid
+                 $userfilter";
 
         $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
@@ -558,7 +724,7 @@ class potential_company_course_user_selector extends company_user_selector_base 
     }
 }
 
-class potential_department_user_selector extends user_selector_base {
+class potential_department_user_selector extends company_user_selector_base {
     /**
      * Company users enrolled into the selected company course
      * @param <type> $search
@@ -690,12 +856,13 @@ class potential_department_user_selector extends user_selector_base {
             return array();
         }
 
-        $sql = " FROM
-                    {user} u
-                    INNER JOIN {company_users} du ON du.userid = u.id
-                WHERE $wherecondition AND u.suspended = 0
-                    $departmentsql
-                    $userfilter";
+        $sql = " FROM {user} u
+                 JOIN {company_users} du ON du.userid = u.id
+                 LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = du.userid)
+
+                 WHERE $wherecondition AND u.suspended = 0
+                 $departmentsql
+                 $userfilter";
 
         $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
@@ -749,7 +916,7 @@ class potential_department_user_selector extends user_selector_base {
     }
 }
 
-class current_department_user_selector extends user_selector_base {
+class current_department_user_selector extends company_user_selector_base {
     /**
      * Company users enrolled into the selected company course
      * @param <type> $search
@@ -808,7 +975,7 @@ class current_department_user_selector extends user_selector_base {
         $params['companyid'] = $this->companyid;
         $params['thiscompanyid'] = $this->companyid;
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
         if ($this->roletype == 1 && !empty($parentcompanies)) {
@@ -826,14 +993,18 @@ class current_department_user_selector extends user_selector_base {
         }
 
         $sql = " FROM {user} u
-                 INNER JOIN {company_users} cu ON cu.userid = u.id
+                 JOIN {company_users} cu ON cu.userid = u.id
+                 LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = cu.userid)
+
                  WHERE $wherecondition $othermanagersql AND u.suspended = 0
                  $rolesql
-                 AND  u.id != ($USER->id)
-                    AND
-                    cu.departmentid = ($this->departmentid)";
+                 AND  u.id != :userid
+                 AND cu.departmentid = :departmentid";
 
         $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
+
+        $params['userid'] = $USER->id;
+        $params['departmentid'] = $this->departmentid;
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -875,7 +1046,7 @@ class current_department_user_selector extends user_selector_base {
     }
 }
 
-class potential_license_user_selector extends user_selector_base {
+class potential_license_user_selector extends company_user_selector_base {
     /**
      * Company users enrolled into the selected company course
      * @param <type> $search
@@ -1089,14 +1260,15 @@ class potential_license_user_selector extends user_selector_base {
             return array();
         }
 
-        $sql = " FROM
-                    {user} u
-                    INNER JOIN {company_users} du ON du.userid = u.id
-                    INNER JOIN {department} d ON d.id = du.departmentid
-                WHERE $wherecondition AND u.suspended = 0
-                    $departmentsql
-                    $userfilter
-                    $edusql";
+        $sql = " FROM {user} u
+                 JOIN {company_users} du ON du.userid = u.id
+                 LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = du.userid)
+
+                 JOIN {department} d ON d.id = du.departmentid
+                 WHERE $wherecondition AND u.suspended = 0
+                 $departmentsql
+                 $userfilter
+                 $edusql";
 
         $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
@@ -1124,7 +1296,7 @@ class potential_license_user_selector extends user_selector_base {
     }
 }
 
-class current_license_user_selector extends user_selector_base {
+class current_license_user_selector extends company_user_selector_base {
     /**
      * Company users enrolled into the selected company course
      * @param <type> $search
@@ -1278,14 +1450,16 @@ class current_license_user_selector extends user_selector_base {
             $fields      = 'SELECT DISTINCT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, c.fullname, clu.isusing ';
             $countfields = 'SELECT COUNT(1)';
 
-            $sql = " FROM
-                     {companylicense_users} clu LEFT JOIN {user} u ON (clu.userid = u.id), {course} c
+            $sql = " FROM {companylicense_users} clu
+                     LEFT JOIN {user} u ON (clu.userid = u.id)
+                     LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = clu.userid)
+                     JOIN {course} c ON (clu.licensecourseid = c.id)
+
                      WHERE $wherecondition AND u.suspended = 0
-                     AND clu.licensecourseid = c.id
                      AND clu.licenseid = :licenseid
                      $coursesql
                      AND clu.timecompleted IS NULL
-                     AND userid IN (
+                     AND clu.userid IN (
                         SELECT userid
                         FROM {company_users}
                         WHERE departmentid IN (" .
@@ -1297,12 +1471,14 @@ class current_license_user_selector extends user_selector_base {
             $fields      = 'SELECT clu.id as licenseid, ' . $this->required_fields_sql('u') . ', u.email, clu.isusing ';
             $countfields = 'SELECT COUNT(1)';
 
-            $sql = " FROM
-                     {companylicense_users} clu LEFT JOIN {user} u ON (clu.userid = u.id)
+            $sql = " FROM {companylicense_users} clu
+                     LEFT JOIN {user} u ON (clu.userid = u.id)
+                     LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = clu.userid)
+
                      WHERE $wherecondition AND u.suspended = 0
                      AND clu.licenseid = :licenseid
                      AND clu.timecompleted IS NULL
-                     AND userid IN (
+                     AND clu.userid IN (
                         SELECT userid
                         FROM {company_users}
                         WHERE departmentid IN (" .
@@ -1461,26 +1637,27 @@ class current_company_group_user_selector extends company_user_selector_base {
             $departmentsql = " AND cu.departmentid in (".implode(',', array_keys($departmentlist)).")";
         }
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
-        $sql = " FROM
-                    {user} u INNER JOIN {company_users} cu
-                    ON cu.userid = u.id AND managertype = 0 $departmentsql
-                WHERE $wherecondition AND u.suspended = 0
-                    AND cu.companyid = :companyid
-                    AND cu.userid IN (
-                      SELECT userid
-                      FROM {groups_members}
-                      WHERE groupid=:groupid
-                    )
-                    OR cu.userid IN (
-                      SELECT userid
-                      FROM {companylicense_users}
-                      WHERE isusing = 0
-                      AND licensecourseid = :liccourseid
-                      AND groupid = :licgroupid
-                    )";
+        $sql = " FROM {user} u
+                 JOIN {company_users} cu  ON ( cu.userid = u.id AND managertype = 0 $departmentsql )
+                 LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = cu.userid)
+
+                 WHERE $wherecondition AND u.suspended = 0
+                 AND cu.companyid = :companyid
+                 AND cu.userid IN (
+                   SELECT userid
+                   FROM {groups_members}
+                   WHERE groupid=:groupid
+                 )
+                 OR cu.userid IN (
+                   SELECT userid
+                   FROM {companylicense_users}
+                   WHERE isusing = 0
+                   AND licensecourseid = :liccourseid
+                   AND groupid = :licgroupid
+                 )";
 
         $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
@@ -1560,34 +1737,34 @@ class potential_company_group_user_selector extends company_user_selector_base {
             $userfilter = "";
         }
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
-        $sql = " FROM
-                    {user} u INNER JOIN {company_users} cu ON (cu.userid = u.id)
-                WHERE $wherecondition  AND u.suspended = 0 $departmentsql
-                    AND
-                    cu.companyid = :companyid
-                    $userfilter
-                    AND u.id NOT IN (
-                       SELECT userid from {groups_members}
-                       WHERE groupid = :groupid
-                    )
-                    AND (
-                      u.id IN (
-                        SELECT DISTINCT(ue.userid)
-                        FROM {user_enrolments} ue
-                        INNER JOIN {enrol} e
-                        ON ue.enrolid=e.id
-                        WHERE e.courseid=:courseid
-                      )
-                      OR u.id IN (
-                        SELECT userid
-                        FROM {companylicense_users}
-                        WHERE licensecourseid = :liccourseid
-                        AND groupid != :licgroupid
-                      )
-                    )";
+        $sql = " FROM {user} u
+                 JOIN {company_users} cu ON (cu.userid = u.id)
+                 LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = cu.userid)
+
+                 WHERE $wherecondition  AND u.suspended = 0 $departmentsql
+                 AND cu.companyid = :companyid
+                 $userfilter
+                 AND u.id NOT IN (
+                   SELECT userid from {groups_members}
+                   WHERE groupid = :groupid
+                 )
+                 AND (
+                   u.id IN (
+                     SELECT DISTINCT(ue.userid)
+                     FROM {user_enrolments} ue
+                     INNER JOIN {enrol} e ON ue.enrolid=e.id
+                     WHERE e.courseid=:courseid
+                   )
+                   OR u.id IN (
+                     SELECT userid
+                     FROM {companylicense_users}
+                     WHERE licensecourseid = :liccourseid
+                     AND groupid != :licgroupid
+                   )
+                 )";
 
         $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
@@ -1646,14 +1823,16 @@ class current_company_thread_user_selector extends company_user_selector_base {
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u
-                 INNER JOIN {company_users} cu
-                 ON (cu.userid = u.id $departmentsql)
-                WHERE $wherecondition AND u.suspended = 0
-                    AND cu.companyid = :companyid
-                    AND cu.userid IN
-                     (SELECT DISTINCT userid
-                     FROM {microlearning_thread_user}
-                     WHERE threadid=:threadid)";
+                 JOIN {company_users} cu ON (cu.userid = u.id $departmentsql)
+                 LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = cu.userid)
+
+                 WHERE $wherecondition AND u.suspended = 0
+                 AND cu.companyid = :companyid
+                 AND cu.userid IN (
+                   SELECT DISTINCT userid
+                   FROM {microlearning_thread_user}
+                   WHERE threadid=:threadid
+                 )";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
@@ -1748,17 +1927,20 @@ class potential_company_thread_user_selector extends company_user_selector_base 
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
-        $sql = " FROM {user} u INNER JOIN {company_users} cu ON cu.userid = u.id
-                WHERE $wherecondition  AND u.suspended = 0 $departmentsql
-                    AND
-                    cu.companyid = :companyid
-                    AND cu.managertype = 0
-                    AND cu.userid not in ( ". $CFG->siteadmins .")
-                    $userfilter
-                    AND u.id NOT IN
-                     (SELECT DISTINCT userid
-                     FROM {microlearning_thread_user}
-                     WHERE threadid=:threadid)";
+        $sql = " FROM {user} u
+                 JOIN {company_users} cu ON cu.userid = u.id
+                 LEFT JOIN {user_info_data} ui ON (ui.userid = u.id AND ui.userid = cu.userid)
+
+                 WHERE $wherecondition  AND u.suspended = 0 $departmentsql
+                 AND cu.companyid = :companyid
+                 AND cu.managertype = 0
+                 AND cu.userid not in ( ". $CFG->siteadmins .")
+                 $userfilter
+                 AND u.id NOT IN (
+                   SELECT DISTINCT userid
+                   FROM {microlearning_thread_user}
+                   WHERE threadid=:threadid
+                 )";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
