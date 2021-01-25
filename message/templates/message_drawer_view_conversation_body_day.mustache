@@ -27,14 +27,25 @@
     * All data attributes are required
 
     Context variables required for this template:
-    * userid The logged in user id
-    * urls The URLs for the popover
+    * timestamp
+    * currentyear
+    * messages
 
     Example context (json):
-    {}
-
+    {
+        "timestamp": 946684800,
+        "currentyear": false,
+        "messages": []
+    }
 }}
 <div class="mt-4" data-region="day-container" data-day-id="{{timestamp}}">
-    <h6 class="text-center mb-4 day">{{#userdate}} {{timestamp}}, {{#str}} strftimedateshort, core_langconfig  {{/str}} {{/userdate}}</h6>
+    <h6 class="text-center mb-4 day">
+        {{#currentyear}}
+            {{#userdate}} {{timestamp}}, {{#str}} strftimedateshort, core_langconfig {{/str}} {{/userdate}}
+        {{/currentyear}}
+        {{^currentyear}}
+            {{#userdate}} {{timestamp}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}
+        {{/currentyear}}
+    </h6>
     {{> core_message/message_drawer_view_conversation_body_messages }}
 </div>
