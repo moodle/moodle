@@ -327,6 +327,10 @@ class assign_grading_table extends table_sql implements renderable {
                 $userfilter = (int) array_pop(explode('=', $filter));
                 $where .= ' AND (u.id = :userid)';
                 $params['userid'] = $userfilter;
+            } else if ($filter == ASSIGN_FILTER_DRAFT) {
+                $where .= ' AND (s.timemodified IS NOT NULL AND
+                                 s.status = :draft) ';
+                $params['draft'] = ASSIGN_SUBMISSION_STATUS_DRAFT;
             }
         }
 
