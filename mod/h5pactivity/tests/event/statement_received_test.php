@@ -72,9 +72,6 @@ class statement_received_testcase extends advanced_testcase {
         $this->assertInstanceOf('\mod_h5pactivity\event\statement_received', $event);
         $this->assertEquals(context_module::instance($activity->cmid), $event->get_context());
         $this->assertEquals($activity->id, $event->objectid);
-        $expected = [$course->id, 'h5pactivity', 'statement received',
-            'grade.php?user=' . $USER->id, 0, $activity->cmid];
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 }
