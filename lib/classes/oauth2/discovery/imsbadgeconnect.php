@@ -16,7 +16,9 @@
 
 namespace core\oauth2\discovery;
 
+use curl;
 use stdClass;
+use moodle_exception;
 use core\oauth2\issuer;
 use core\oauth2\endpoint;
 
@@ -90,6 +92,80 @@ class imsbadgeconnect extends base_definition {
      */
     protected static function create_field_mappings(issuer $issuer): void {
         // In that case, there are no user fields to map.
+    }
+
+    /**
+     * Self-register the issuer if the 'registration' endpoint exists and client id and secret aren't defined.
+     *
+     * @param issuer $issuer The OAuth issuer to register.
+     * @return void
+     */
+    protected static function register(issuer $issuer): void {
+        global $CFG, $SITE;
+
+        $clientid = $issuer->get('clientid');
+        $clientsecret = $issuer->get('clientsecret');
+
+        // Registration request for getting client id and secret will be done only they are empty in the issuer.
+        // For now this can't be run from PHPUNIT (because IMS testing platform needs real URLs). In the future, this
+        // request can be moved to the moodle-exttests repository.
+        if (empty($clientid) && empty($clientsecret) && (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST)) {
+            $url = $issuer->get_endpoint_url('registration');
+            if ($url) {
+                $scopes = str_replace("\r", " ", $issuer->get('scopessupported'));
+
+                // Add slash at the end of the site URL.
+                $hosturl = $CFG->wwwroot;
+                $hosturl .= (substr($CFG->wwwroot, -1) == '/' ? '' : '/');
+
+                // Create the registration request following the format defined in the IMS OBv2.1 specification.
+                $request = [
+                    'client_name' => $SITE->fullname,
+                    'client_uri' => $hosturl,
+                    'logo_uri' => $hosturl . 'pix/f/moodle-256.png',
+                    'tos_uri' => $hosturl,
+                    'policy_uri' => $hosturl,
+                    'software_id' => 'moodle',
+                    'software_version' => $CFG->version,
+                    'redirect_uris' => [
+                        $hosturl . 'admin/oauth2callback.php'
+                    ],
+                    'token_endpoint_auth_method' => 'client_secret_basic',
+                    'grant_types' => [
+                      'authorization_code',
+                      'refresh_token'
+                    ],
+                    'response_types' => [
+                        'code'
+                    ],
+                    'scope' => $scopes
+                ];
+                $jsonrequest = json_encode($request);
+
+                $curl = new curl();
+                $curl->setHeader(['Content-type: application/json']);
+                $curl->setHeader(['Accept: application/json']);
+
+                // Send the registration request.
+                if (!$jsonresponse = $curl->post($url, $jsonrequest)) {
+                    $msg = 'Could not self-register identity issuer: ' . $issuer->get('name') .
+                        ". Wrong URL or JSON data [URL: $url]";
+                    throw new moodle_exception($msg);
+                }
+
+                // Process the response and update client id and secret if they are valid.
+                $response = json_decode($jsonresponse);
+                if (property_exists($response, 'client_id')) {
+                    $issuer->set('clientid', $response->client_id);
+                    $issuer->set('clientsecret', $response->client_secret);
+                    $issuer->update();
+                } else {
+                    $msg = 'Could not self-register identity issuer: ' . $issuer->get('name') .
+                        '. Invalid response ' . $jsonresponse;
+                    throw new moodle_exception($msg);
+                }
+            }
+        }
     }
 
 }
