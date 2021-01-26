@@ -769,7 +769,7 @@ class company {
             $gone=true;
         } else {
             // Check if it belongs to a company now?
-            if (!$DB->get_records_sql("SELECT id FROM {company_courses}
+            if (!$DB->get_records_sql("SELECT id FROM {company_course}
                                        WHERE courseid = :courseid
                                        AND companyid != :companyid",
                                        array('courseid' => $courseid,
