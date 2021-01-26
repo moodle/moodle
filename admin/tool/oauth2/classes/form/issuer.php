@@ -103,13 +103,11 @@ class issuer extends persistent {
 
         // Client ID.
         $mform->addElement('text', 'clientid', get_string('issuerclientid', 'tool_oauth2'));
-        $mform->addRule('clientid', null, 'required', null, 'client');
         $mform->addRule('clientid', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('clientid', 'issuerclientid', 'tool_oauth2');
 
         // Client Secret.
         $mform->addElement('text', 'clientsecret', get_string('issuerclientsecret', 'tool_oauth2'));
-        $mform->addRule('clientsecret', null, 'required', null, 'client');
         $mform->addRule('clientsecret', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('clientsecret', 'issuerclientsecret', 'tool_oauth2');
 
@@ -165,6 +163,13 @@ class issuer extends persistent {
             // Require confirmation email for new accounts.
             $mform->addElement('advcheckbox', 'requireconfirmation', get_string('issuerrequireconfirmation', 'tool_oauth2'));
             $mform->addHelpButton('requireconfirmation', 'issuerrequireconfirmation', 'tool_oauth2');
+        }
+
+        if ($this->type == 'imsobv2p1' || $issuer->get('servicetype') == 'imsobv2p1') {
+            $mform->addRule('baseurl', null, 'required', null, 'client');
+        } else {
+            $mform->addRule('clientid', null, 'required', null, 'client');
+            $mform->addRule('clientsecret', null, 'required', null, 'client');
         }
 
         $mform->addElement('hidden', 'sortorder');

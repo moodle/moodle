@@ -59,6 +59,14 @@ abstract class base_definition {
     protected abstract static function create_field_mappings(issuer $issuer): void;
 
     /**
+     * Self-register the issuer if the 'registration' endpoint exists and client id and secret aren't defined.
+     *
+     * @param issuer $issuer The OAuth issuer to register.
+     * @return void
+     */
+    protected abstract static function register(issuer $issuer): void;
+
+    /**
      * Create endpoints for this issuer.
      *
      * @param issuer $issuer Issuer the endpoints should be created for.
@@ -127,6 +135,7 @@ abstract class base_definition {
 
         static::process_configuration_json($issuer, $info);
         static::create_field_mappings($issuer);
+        static::register($issuer);
 
         return endpoint::count_records(['issuerid' => $issuer->get('id')]);
     }

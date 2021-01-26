@@ -112,4 +112,14 @@ class openidconnect extends base_definition {
         }
     }
 
+    /**
+     * Self-register the issuer if the 'registration' endpoint exists and client id and secret aren't defined.
+     *
+     * @param issuer $issuer The OAuth issuer to register.
+     * @return void
+     */
+    protected static function register(issuer $issuer): void {
+        // Registration not supported (at least for now).
+    }
+
 }
