@@ -48,48 +48,20 @@ class behat_groups extends behat_base {
      * @param string $groupname
      */
     public function i_add_user_to_group_members($userfullname, $groupname) {
+        // Select the group in the select.
+        $this->execute('behat_forms::i_set_the_field_to', [get_string('groups', 'core'), $this->escape($groupname)]);
 
-        $userfullname = behat_context_helper::escape($userfullname);
+        // Press "Add/remove users".
+        $this->execute('behat_general::i_click_on', [get_string('adduserstogroup', 'group'), "button"]);
 
-        // Using a xpath liternal to avoid problems with quotes and double quotes.
-        $groupname = behat_context_helper::escape($groupname);
-
-        // We don't know the option text as it contains the number of users in the group.
-        $select = $this->find_field('groups');
-        $xpath = "//select[@id='groups']/descendant::option[contains(., $groupname)]";
-        $groupoption = $this->find('xpath', $xpath);
-        $fulloption = $groupoption->getText();
-        $select->selectOption($fulloption);
-
-        // This is needed by some drivers to ensure relevant event is triggred and button is enabled.
-        $driver = $this->getSession()->getDriver();
-        if ($driver instanceof \Moodle\BehatExtension\Driver\MoodleSelenium2Driver) {
-            $script = "Syn.trigger('change', {}, {{ELEMENT}})";
-            $driver->triggerSynScript($select->getXpath(), $script);
-        }
-        $this->getSession()->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
-
-        // Here we don't need to wait for the AJAX response.
-        $this->find_button(get_string('adduserstogroup', 'group'))->click();
-
-        // Wait for add/remove members page to be loaded.
-        $this->getSession()->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
-
-        // Getting the option and selecting it.
-        $select = $this->find_field('addselect');
-        $xpath = "//select[@id='addselect']/descendant::option[contains(., $userfullname)]";
-        $memberoption = $this->find('xpath', $xpath);
-        $fulloption = $memberoption->getText();
-        $select->selectOption($fulloption);
+        // Select the user.
+        $this->execute('behat_forms::i_set_the_field_to', ["addselect", $this->escape($userfullname)]);
 
         // Click add button.
-        $this->find_button(get_string('add'))->click();
-
-        // Wait for the page to load.
-        $this->getSession()->wait(self::get_timeout() * 1000, self::PAGE_READY_JS);
+        $this->execute('behat_general::i_click_on', [get_string('add', 'core'), "button"]);
 
         // Returning to the main groups page.
-        $this->find_button(get_string('backtogroups', 'group'))->click();
+        $this->execute('behat_general::i_click_on', [get_string('backtogroups', 'group'), "button"]);
     }
 
     /**
