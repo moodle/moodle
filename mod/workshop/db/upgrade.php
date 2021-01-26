@@ -95,5 +95,21 @@ function xmldb_workshop_upgrade($oldversion) {
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2020061501) {
+
+        $table = new xmldb_table('workshop_grades');
+        $field = new xmldb_field('grade');
+
+        if ($dbman->field_exists($table, $field) && ($field->getNotNull() == XMLDB_NOTNULL)) {
+            $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, false, false,
+                null, null);
+            $dbman->change_field_notnull($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_mod_savepoint(true, 2020061501, 'workshop');
+
+    }
+
     return true;
 }
