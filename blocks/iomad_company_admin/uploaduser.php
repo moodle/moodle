@@ -627,8 +627,12 @@ if ($mform->is_cancelled()) {
                     } else if ($updatetype == 2 or $updatetype == 3) {
                         $allowed = array_merge($stdfields, $prffields);
                     }
-                    foreach ($allowed as $column) {
+                    if (!$updatepasswords) {
+                        $temppasswordhandler = $existinguser->password;
+                    } else {
                         $temppasswordhandler = '';
+                    }
+                    foreach ($allowed as $column) {
                         if ($column == 'username') {
                             continue;
                         }
@@ -720,7 +724,7 @@ if ($mform->is_cancelled()) {
                         $userserrors++;
                         $erroredusers[] = $line;
                         continue;
-                    } else {
+                    } else if ($updatepasswords) {
                         $forcechangepassword = true;
                     }
 
@@ -733,7 +737,6 @@ if ($mform->is_cancelled()) {
                     } else {
                         $existinguser->password = $temppasswordhandler;
                     }
-
                     $DB->update_record('user', $existinguser);
 
                     // Remove user preference.
@@ -801,6 +804,7 @@ if ($mform->is_cancelled()) {
                 }
 
             } else {
+echo "Got a new user - stopping";die;
                 // Save the user to the database.
                 $user->confirmed = 1;
                 $user->timemodified = time();
