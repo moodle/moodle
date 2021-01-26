@@ -235,7 +235,7 @@ XPATH
 .//descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]/ancestor::*[@data-fieldtype = 'autocomplete']
 XPATH
         , 'iframe' => <<<XPATH
-.//iframe[contains(concat(' ', normalize-space(@class), ' '), %locator% )]
+.//iframe[(%idOrNameMatch% or (contains(concat(' ', normalize-space(@class), ' '), %locator% )))]
 XPATH
     );
 

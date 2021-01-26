@@ -159,49 +159,30 @@ class behat_general extends behat_base {
      * Switches to the specified iframe.
      *
      * @Given /^I switch to "(?P<iframe_name_string>(?:[^"]|\\")*)" iframe$/
-     * @param string $iframename
-     */
-    public function switch_to_iframe($iframename) {
-
-        // We spin to give time to the iframe to be loaded.
-        // Using extended timeout as we don't know about which
-        // kind of iframe will be loaded.
-        $this->spin(
-            function($context, $iframename) {
-                $context->getSession()->switchToIFrame($iframename);
-
-                // If no exception we are done.
-                return true;
-            },
-            $iframename,
-            behat_base::get_extended_timeout()
-        );
-    }
-
-    /**
-     * Switches to the iframe containing specified class.
-     *
      * @Given /^I switch to "(?P<iframe_name_string>(?:[^"]|\\")*)" class iframe$/
-     * @param string $classname
+     * @param string $name The name of the iframe
      */
-    public function switch_to_class_iframe($classname) {
+    public function switch_to_iframe($name) {
         // We spin to give time to the iframe to be loaded.
         // Using extended timeout as we don't know about which
         // kind of iframe will be loaded.
         $this->spin(
-            function($context, $classname) {
-                $iframe = $this->find('iframe', $classname);
-                if (!empty($iframe->getAttribute('id'))) {
-                    $iframename = $iframe->getAttribute('id');
-                } else {
+            function($context) use ($name){
+                $iframe = $context->find('iframe', $name);
+                if ($iframe->hasAttribute('name')) {
                     $iframename = $iframe->getAttribute('name');
+                } else {
+                    if (!$this->running_javascript()) {
+                        throw new \coding_exception('iframe must have a name attribute to use the switchTo command.');
+                    }
+                    $iframename = uniqid();
+                    $this->execute_js_on_node($iframe, "{{ELEMENT}}.name = '{$iframename}';");
                 }
                 $context->getSession()->switchToIFrame($iframename);
 
                 // If no exception we are done.
                 return true;
             },
-            $classname,
             behat_base::get_extended_timeout()
         );
     }
@@ -222,13 +203,11 @@ class behat_general extends behat_base {
      * @param string $windowname
      */
     public function switch_to_window($windowname) {
-        // In Behat, some browsers (e.g. Chrome) are unable to switch to a
-        // window without a name, and by default the main browser window does
-        // not have a name. To work-around this, when we switch away from an
-        // unnamed window (presumably the main window) to some other named
-        // window, then we first set the main window name to a conventional
-        // value that we can later use this name to switch back.
-        $this->execute_script('if (window.name == "") window.name = "' . self::MAIN_WINDOW_NAME . '"');
+        if ($windowname === self::MAIN_WINDOW_NAME) {
+            // When switching to the main window normalise the window name to null.
+            // This is normalised further in the Mink driver to the root window ID.
+            $windowname = null;
+        }
 
         $this->getSession()->switchToWindow($windowname);
     }
@@ -239,7 +218,7 @@ class behat_general extends behat_base {
      * @Given /^I switch to the main window$/
      */
     public function switch_to_the_main_window() {
-        $this->getSession()->switchToWindow(self::MAIN_WINDOW_NAME);
+        $this->switch_to_window(self::MAIN_WINDOW_NAME);
     }
 
     /**
@@ -271,7 +250,7 @@ class behat_general extends behat_base {
      * @Given /^I accept the currently displayed dialog$/
      */
     public function accept_currently_displayed_alert_dialog() {
-        $this->getSession()->getDriver()->getWebDriverSession()->accept_alert();
+        $this->getSession()->getDriver()->getWebDriver()->switchTo()->alert()->accept();
     }
 
     /**
@@ -279,7 +258,7 @@ class behat_general extends behat_base {
      * @Given /^I dismiss the currently displayed dialog$/
      */
     public function dismiss_currently_displayed_alert_dialog() {
-        $this->getSession()->getDriver()->getWebDriverSession()->dismiss_alert();
+        $this->getSession()->getDriver()->getWebDriver()->switchTo()->alert()->dismiss();
     }
 
     /**
@@ -367,9 +346,9 @@ class behat_general extends behat_base {
      * @param string $selectortype The type of what we look for
      */
     public function i_hover($element, $selectortype) {
-
         // Gets the node based on the requested selector type and locator.
         $node = $this->get_selected_node($selectortype, $element);
+        $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
         $node->mouseOver();
     }
 
@@ -418,7 +397,8 @@ class behat_general extends behat_base {
      */
     public function i_click_on_confirming_the_dialogue($element, $selectortype) {
         $this->i_click_on($element, $selectortype);
-        $this->accept_currently_displayed_alert_dialog();
+        $this->execute('behat_general::accept_currently_displayed_alert_dialog', []);
+        $this->wait_until_the_page_is_ready();
     }
 
     /**
@@ -431,7 +411,8 @@ class behat_general extends behat_base {
      */
     public function i_click_on_dismissing_the_dialogue($element, $selectortype) {
         $this->i_click_on($element, $selectortype);
-        $this->dismiss_currently_displayed_alert_dialog();
+        $this->execute('behat_general::dismiss_currently_displayed_alert_dialog', []);
+        $this->wait_until_the_page_is_ready();
     }
 
     /**
@@ -1802,16 +1783,16 @@ EOF;
         $modifier = trim($key);
         switch (strtoupper($key)) {
             case 'UP':
-                $keys[] = behat_keys::UP_ARROW;
+                $keys[] = behat_keys::ARROW_UP;
                 break;
             case 'DOWN':
-                $keys[] = behat_keys::DOWN_ARROW;
+                $keys[] = behat_keys::ARROW_DOWN;
                 break;
             case 'LEFT':
-                $keys[] = behat_keys::LEFT_ARROW;
+                $keys[] = behat_keys::ARROW_LEFT;
                 break;
             case 'RIGHT':
-                $keys[] = behat_keys::RIGHT_ARROW;
+                $keys[] = behat_keys::ARROW_RIGHT;
                 break;
             case 'HOME':
                 $keys[] = behat_keys::HOME;
@@ -1851,9 +1832,6 @@ EOF;
             default:
                 throw new \coding_exception("Unknown key '$key'}");
         }
-
-        // Always send the NULL key as the last key.
-        $keys[] = behat_keys::NULL_KEY;
 
         behat_base::type_keys($this->getSession(), $keys);
     }
