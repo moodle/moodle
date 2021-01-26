@@ -475,12 +475,12 @@ class behat_config_util {
             $parallelruns = $this->get_number_of_parallel_run();
         }
 
-        $selenium2wdhost = array('wd_host' => 'http://localhost:4444/wd/hub');
+        $webdriverwdhost = array('wd_host' => 'http://localhost:4444/wd/hub');
         // If parallel run, then set wd_host if specified.
         if (!empty($currentrun) && !empty($parallelruns)) {
-            // Set proper selenium2 wd_host if defined.
+            // Set proper webdriver wd_host if defined.
             if (!empty($CFG->behat_parallel_run[$currentrun - 1]['wd_host'])) {
-                $selenium2wdhost = array('wd_host' => $CFG->behat_parallel_run[$currentrun - 1]['wd_host']);
+                $webdriverwdhost = array('wd_host' => $CFG->behat_parallel_run[$currentrun - 1]['wd_host']);
             }
         }
 
@@ -525,7 +525,7 @@ class behat_config_util {
                     'Behat\MinkExtension' => array(
                         'base_url' => $CFG->behat_wwwroot,
                         'goutte' => null,
-                        'selenium2' => $selenium2wdhost
+                        'webdriver' => $webdriverwdhost
                     ),
                     'Moodle\BehatExtension' => array(
                         'moodledirroot' => $CFG->dirroot,
@@ -634,20 +634,21 @@ class behat_config_util {
         // We also need to disable web security, otherwise it can't make CSS requests to the server
         // on localhost due to CORS restrictions.
         if (!empty($values['browser']) && $values['browser'] === 'chrome') {
-            if (!isset($values['capabilities'])) {
-                $values['capabilities'] = [];
-            }
-            if (!isset($values['capabilities']['extra_capabilities'])) {
-                $values['capabilities']['extra_capabilities'] = [];
-            }
-            if (!isset($values['capabilities']['extra_capabilities']['chromeOptions'])) {
-                $values['capabilities']['extra_capabilities']['chromeOptions'] = [];
-            }
-            if (!isset($values['capabilities']['extra_capabilities']['chromeOptions']['args'])) {
-                $values['capabilities']['extra_capabilities']['chromeOptions']['args'] = [];
-            }
-            $values['capabilities']['extra_capabilities']['chromeOptions']['args'][] = '--unlimited-storage';
-            $values['capabilities']['extra_capabilities']['chromeOptions']['args'][] = '--disable-web-security';
+            $values = array_merge_recursive(
+                [
+                    'capabilities' => [
+                        'extra_capabilities' => [
+                            'chromeOptions' => [
+                                'args' => [
+                                    'unlimited-storage',
+                                    'disable-web-security',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                $values
+            );
 
             // If the mobile app is enabled, check its version and add appropriate tags.
             if ($mobiletags = $this->get_mobile_version_tags()) {
@@ -657,6 +658,14 @@ class behat_config_util {
                     $values['tags'] = $mobiletags;
                 }
             }
+
+            $values['capabilities']['extra_capabilities']['chromeOptions']['args'] = array_map(function($arg): string {
+                if (substr($arg, 0, 2) === '--') {
+                    return substr($arg, 2);
+                }
+                return $arg;
+            }, $values['capabilities']['extra_capabilities']['chromeOptions']['args']);
+            sort($values['capabilities']['extra_capabilities']['chromeOptions']['args']);
         }
 
         // Fill tags information.
@@ -688,7 +697,7 @@ class behat_config_util {
             $behatprofileextension = array(
                 'extensions' => array(
                     'Behat\MinkExtension' => array(
-                        'selenium2' => $seleniumconfig,
+                        'webdriver' => $seleniumconfig,
                     )
                 )
             );
@@ -922,6 +931,7 @@ class behat_config_util {
         // In case user defined overrides respect them over our default ones.
         if (!empty($CFG->behat_config)) {
             foreach ($CFG->behat_config as $profile => $values) {
+                $values = $this->fix_legacy_profile_data($profile, $values);
                 $config = $this->merge_config($config, $this->get_behat_config_for_profile($profile, $values));
             }
         }
@@ -948,11 +958,11 @@ class behat_config_util {
         $oldconfigvalues = array();
         if (isset($values['extensions']['Behat\MinkExtension\Extension'])) {
             $extensionvalues = $values['extensions']['Behat\MinkExtension\Extension'];
-            if (isset($extensionvalues['selenium2']['browser'])) {
-                $oldconfigvalues['browser'] = $extensionvalues['selenium2']['browser'];
+            if (isset($extensionvalues['webdriver']['browser'])) {
+                $oldconfigvalues['browser'] = $extensionvalues['webdriver']['browser'];
             }
-            if (isset($extensionvalues['selenium2']['wd_host'])) {
-                $oldconfigvalues['wd_host'] = $extensionvalues['selenium2']['wd_host'];
+            if (isset($extensionvalues['webdriver']['wd_host'])) {
+                $oldconfigvalues['wd_host'] = $extensionvalues['webdriver']['wd_host'];
             }
             if (isset($extensionvalues['capabilities'])) {
                 $oldconfigvalues['capabilities'] = $extensionvalues['capabilities'];
@@ -989,6 +999,35 @@ class behat_config_util {
         }
 
         return $config;
+    }
+
+    /**
+     * Check for and attempt to fix legacy profile data.
+     *
+     * The Mink Driver used for W3C no longer uses the `selenium2` naming but otherwise is backwards compatibly.
+     *
+     * Emit a warning that users should update their configuration.
+     *
+     * @param   string $profilename The name of this profile
+     * @param   array $data The profile data for this profile
+     * @return  array Th eamended profile data
+     */
+    protected function fix_legacy_profile_data(string $profilename, array $data): array {
+        // Check for legacy instaclick profiles.
+        if (!array_key_exists('Behat\MinkExtension', $data['extensions'])) {
+            return $data;
+        }
+        if (array_key_exists('selenium2', $data['extensions']['Behat\MinkExtension'])) {
+            echo("\n\n");
+            echo("=> Warning: Legacy selenium2 profileuration was found for {$profilename} profile.\n");
+            echo("=> This has been renamed from 'selenium2' to 'webdriver'.\n");
+            echo("=> You should update your Behat configuration.\n");
+            echo("\n");
+            $data['extensions']['Behat\MinkExtension']['webdriver'] = $data['extensions']['Behat\MinkExtension']['selenium2'];
+            unset($data['extensions']['Behat\MinkExtension']['selenium2']);
+        }
+
+        return $data;
     }
 
     /**

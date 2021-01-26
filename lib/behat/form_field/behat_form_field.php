@@ -218,12 +218,15 @@ class behat_form_field implements behat_session_interface {
      * @return int
      */
     protected function get_internal_field_id() {
-
         if (!$this->running_javascript()) {
             throw new coding_exception('You can only get an internal ID using the selenium driver.');
         }
 
-        return $this->session->getDriver()->getWebDriverSession()->element('xpath', $this->field->getXPath())->getID();
+        return $this->getSession()
+            ->getDriver()
+            ->getWebDriver()
+            ->findElement(WebDriverBy::xpath($node->getXpath()))
+            ->getID();
     }
 
     /**

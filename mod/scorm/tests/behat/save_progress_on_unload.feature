@@ -15,6 +15,7 @@ Feature: Confirm progress gets saved on unload events
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And I change window size to "large"
 
   @javascript
   Scenario: Test progress gets saved correctly when the user navigates away from the scorm activity

@@ -67,9 +67,11 @@ class behat_forms extends behat_base {
         // Ensures the button is present, before pressing.
         $buttonnode = $this->find_button($button);
         $buttonnode->press();
+        $this->wait_for_pending_js();
+        $this->look_for_exceptions();
 
         // Switch to main window.
-        $this->getSession()->switchToWindow(behat_general::MAIN_WINDOW_NAME);
+        $this->execute('behat_general::switch_to_the_main_window');
     }
 
     /**
