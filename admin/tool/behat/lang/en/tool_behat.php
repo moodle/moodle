@@ -46,6 +46,7 @@ $string['stepsdefinitionstype'] = 'Type';
 $string['theninfo'] = 'Then. Checkings to ensure the outcomes are the expected ones';
 $string['unknownexceptioninfo'] = 'There was a problem with Selenium or your browser. Please ensure you are using the latest version of Selenium. Error:';
 $string['viewsteps'] = 'Filter';
+$string['warndirrootconfigfound'] = 'A configuration file was found at {$a}. This file is not automatically updated and may become stale. We recommend removing this file.';
 $string['wheninfo'] = 'When. Action that provokes an event';
 $string['wrongbehatsetup'] = 'Something is wrong with the behat setup and so step definitions cannot be listed: <b>{$a->errormsg}</b><br/><br/>Please check:<ul>
 <li>$CFG->behat_dataroot, $CFG->behat_prefix and $CFG->behat_wwwroot are set in config.php with different values from $CFG->dataroot, $CFG->prefix and $CFG->wwwroot.</li>
