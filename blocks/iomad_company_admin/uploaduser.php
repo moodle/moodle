@@ -804,7 +804,6 @@ if ($mform->is_cancelled()) {
                 }
 
             } else {
-echo "Got a new user - stopping";die;
                 // Save the user to the database.
                 $user->confirmed = 1;
                 $user->timemodified = time();
