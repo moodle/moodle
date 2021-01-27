@@ -44,9 +44,6 @@ class core_oauth2_testcase extends advanced_testcase {
         \core\oauth2\api::create_standard_issuer('microsoft');
         \core\oauth2\api::create_standard_issuer('nextcloud', 'https://dummy.local/nextcloud/');
 
-        $this->expectException(\moodle_exception::class);
-        \core\oauth2\api::create_standard_issuer('nextcloud');
-
         $issuers = \core\oauth2\api::get_all_issuers();
 
         $this->assertEquals($issuers[0]->get('name'), 'Google');
@@ -70,6 +67,17 @@ class core_oauth2_testcase extends advanced_testcase {
         $this->assertEquals($issuers[0]->get('name'), 'Facebook');
         $this->assertEquals($issuers[1]->get('name'), 'Microsoft');
         $this->assertEquals($issuers[2]->get('name'), 'Nextcloud');
+    }
+
+    /**
+     * Tests the crud operations on oauth2 issuers.
+     */
+    public function test_create_nextcloud_without_url() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->expectException(\moodle_exception::class);
+        \core\oauth2\api::create_standard_issuer('nextcloud');
     }
 
     /**
