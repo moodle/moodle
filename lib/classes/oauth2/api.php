@@ -41,85 +41,6 @@ use moodle_exception;
 class api {
 
     /**
-     * Build a facebook ready OAuth 2 service.
-     * @return \core\oauth2\issuer
-     */
-    private static function init_facebook() {
-        // Facebook is a custom setup.
-        $record = (object) [
-            'name' => 'Facebook',
-            'image' => 'https://facebookbrand.com/wp-content/uploads/2016/05/flogo_rgb_hex-brc-site-250.png',
-            'baseurl' => '',
-            'loginscopes' => 'public_profile email',
-            'loginscopesoffline' => 'public_profile email',
-            'showonloginpage' => true,
-            'servicetype' => 'facebook',
-        ];
-
-        $issuer = new issuer(0, $record);
-        return $issuer;
-    }
-
-    /**
-     * Create endpoints for facebook issuers.
-     * @param issuer $issuer issuer the endpoints should be created for.
-     * @return mixed
-     * @throws \coding_exception
-     * @throws \core\invalid_persistent_exception
-     */
-    private static function create_endpoints_for_facebook($issuer) {
-        // The Facebook API version.
-        $apiversion = '2.12';
-        // The Graph API URL.
-        $graphurl = 'https://graph.facebook.com/v' . $apiversion;
-        // User information fields that we want to fetch.
-        $infofields = [
-            'id',
-            'first_name',
-            'last_name',
-            'link',
-            'picture.type(large)',
-            'name',
-            'email',
-        ];
-        $endpoints = [
-            'authorization_endpoint' => sprintf('https://www.facebook.com/v%s/dialog/oauth', $apiversion),
-            'token_endpoint' => $graphurl . '/oauth/access_token',
-            'userinfo_endpoint' => $graphurl . '/me?fields=' . implode(',', $infofields)
-        ];
-
-        foreach ($endpoints as $name => $url) {
-            $record = (object) [
-                'issuerid' => $issuer->get('id'),
-                'name' => $name,
-                'url' => $url
-            ];
-            $endpoint = new endpoint(0, $record);
-            $endpoint->create();
-        }
-
-        // Create the field mappings.
-        $mapping = [
-            'name' => 'alternatename',
-            'last_name' => 'lastname',
-            'email' => 'email',
-            'first_name' => 'firstname',
-            'picture-data-url' => 'picture',
-            'link' => 'url',
-        ];
-        foreach ($mapping as $external => $internal) {
-            $record = (object) [
-                'issuerid' => $issuer->get('id'),
-                'externalfield' => $external,
-                'internalfield' => $internal
-            ];
-            $userfieldmapping = new user_field_mapping(0, $record);
-            $userfieldmapping->create();
-        }
-        return $issuer;
-    }
-
-    /**
      * Build a microsoft ready OAuth 2 service.
      * @return \core\oauth2\issuer
      */
@@ -267,8 +188,6 @@ class api {
         // TODO: Move these methods to new service classes (to make this API easier to understand and maintain).
         if ($type == 'microsoft') {
             return self::init_microsoft();
-        } else if ($type == 'facebook') {
-            return self::init_facebook();
         } else if ($type == 'nextcloud') {
             return self::init_nextcloud();
         } else {
@@ -292,8 +211,6 @@ class api {
         // TODO: Move these methods to new service classes (to make this API easier to understand and maintain).
         if ($type == 'microsoft') {
             return self::create_endpoints_for_microsoft($issuer);
-        } else if ($type == 'facebook') {
-            return self::create_endpoints_for_facebook($issuer);
         } else if ($type == 'nextcloud') {
             return self::create_endpoints_for_nextcloud($issuer);
         } else {
@@ -322,6 +239,7 @@ class api {
                     throw new moodle_exception('IMS OBv2.1 service type requires the baseurl parameter.');
                 }
             case 'google':
+            case 'facebook':
                 $classname = self::get_service_classname($type);
                 $issuer = $classname::init();
                 if ($baseurl) {
@@ -334,11 +252,6 @@ class api {
                 $issuer = self::init_microsoft();
                 $issuer->create();
                 return self::create_endpoints_for_microsoft($issuer);
-
-            case 'facebook':
-                $issuer = self::init_facebook();
-                $issuer->create();
-                return self::create_endpoints_for_facebook($issuer);
 
             case 'nextcloud':
                 if (!$baseurl) {
