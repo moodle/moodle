@@ -95,7 +95,7 @@ class tool_uploadcourse_course {
     /** @var array fields allowed as course data. */
     static protected $validfields = array('fullname', 'shortname', 'idnumber', 'category', 'visible', 'startdate', 'enddate',
         'summary', 'format', 'theme', 'lang', 'newsitems', 'showgrades', 'showreports', 'legacyfiles', 'maxbytes',
-        'groupmode', 'groupmodeforce', 'enablecompletion');
+        'groupmode', 'groupmodeforce', 'enablecompletion', 'downloadcontent');
 
     /** @var array fields required on course creation. */
     static protected $mandatoryfields = array('fullname', 'category');
@@ -412,7 +412,8 @@ class tool_uploadcourse_course {
      * @return bool false is any error occured.
      */
     public function prepare() {
-        global $DB, $SITE;
+        global $DB, $SITE, $CFG;
+
         $this->prepared = true;
 
         // Validate the shortname.
@@ -766,6 +767,26 @@ class tool_uploadcourse_course {
         if (!empty($coursedata['visible']) AND !($coursedata['visible'] == 0 OR $coursedata['visible'] == 1)) {
             $this->error('invalidvisibilitymode', new lang_string('invalidvisibilitymode', 'tool_uploadcourse'));
             return false;
+        }
+
+        // Ensure that user is allowed to configure course content download and the field contains a valid value.
+        if (isset($coursedata['downloadcontent'])) {
+            if (!$CFG->downloadcoursecontentallowed ||
+                    !has_capability('moodle/course:configuredownloadcontent', $context)) {
+
+                $this->error('downloadcontentnotallowed', new lang_string('downloadcontentnotallowed', 'tool_uploadcourse'));
+                return false;
+            }
+
+            $downloadcontentvalues = [
+                DOWNLOAD_COURSE_CONTENT_DISABLED,
+                DOWNLOAD_COURSE_CONTENT_ENABLED,
+                DOWNLOAD_COURSE_CONTENT_SITE_DEFAULT,
+            ];
+            if (!in_array($coursedata['downloadcontent'], $downloadcontentvalues)) {
+                $this->error('invaliddownloadcontent', new lang_string('invaliddownloadcontent', 'tool_uploadcourse'));
+                return false;
+            }
         }
 
         // Saving data.
