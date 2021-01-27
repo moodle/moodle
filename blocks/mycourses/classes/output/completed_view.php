@@ -107,8 +107,16 @@ class completed_view implements renderable, templatable {
             }
             $exportedcourse->progress = 100;
             $exportedcourse->hasprogress = true;
+            $exportedcourse->certificates = array();
+            $certificateimage = $output->image_url('f/pdf-32');
             $exportedcourse->finalscore = intval($completed->finalgrade);
-            $exportedcourse->certificate = $completed->certificate;
+            foreach ($completed->certificates as $certificate) {
+                $certout = new \stdclass();
+                $certout->certificateurl = $certificate->certificateurl;
+                $certout->certificatename = $certificate->certificatename;
+                $certout->certificateimage = $certificateimage;
+                $exportedcourse->certificates[] = $certout;
+            }
             $completedview['courses'][] = $exportedcourse;
         }
         return $completedview;

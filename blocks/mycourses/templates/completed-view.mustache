@@ -54,11 +54,11 @@
                                         <strong>{{#str}} finalscore, block_mycourses,  {{ finalscore }}</strong> {{/str}}
                                     </div>
                                 </div>
-                                {{#certificate}}
+                                {{#certificates}}
                                     <div class = "certificatediv">
-                                        <a class="btn btn-secondary" href="{{ certificate }}">{{#str}} downloadcert, block_mycourses {{/str}}</a></p>
+                                        <b>{{#str}} downloadcert, block_mycourses {{/str}}: </b><a href="{{ certificateurl }}" title="{{ certificatename }}"><img src="{{ certificateimage }}" alt="{{ certificatename }}"></a></p>
                                     </div>
-                                {{/certificate}}
+                                {{/certificates}}
                             </div>
                         </div>
                     </div>

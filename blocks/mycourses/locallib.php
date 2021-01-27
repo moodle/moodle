@@ -120,36 +120,27 @@ function mycourses_get_my_completion($datefrom = 0) {
 
     // Deal with completed course scores and links for certificates.
     foreach ($mycompleted as $id => $completed) {
-	$mycompleted[$id]->coursefullname = format_string($completed->coursefullname);
+        $mycompleted[$id]->coursefullname = format_string($completed->coursefullname);
+        $mycompleted[$id]->certificates = array();
         // Deal with the iomadcertificate info.
         if ($hasiomadcertificate) {
             if ($iomadcertificateinfo = $DB->get_record('iomadcertificate',
                                                          array('course' => $completed->courseid))) {
+                $coursecontext = context_course::instance($completed->courseid);
                 // Get the certificate from the download files thing.
-                if ($traccertrec = $DB->get_record('local_iomad_track_certs', array('trackid' => $id))) {
-                    // create the file download link.
-                    $coursecontext = context_course::instance($completed->courseid);
-
-                    $certstring = moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename);
-                } else {
-                    $certcminfo = $DB->get_record('course_modules',
-                                                   array('course' => $completed->courseid,
-                                                         'instance' => $iomadcertificateinfo->id,
-                                                         'module' => $certmodule->id));
-                    $certstring = new moodle_url('/mod/iomadcertificate/view.php',
-                                                 array('id' => $certcminfo->id,
-                                                 'action' => 'get',
-                                                 'userid' => $USER->id,
-                                                 'sesskey' => sesskey()));
+                $certificates = array();
+                if ($traccertrecs = $DB->get_records('local_iomad_track_certs', array('trackid' => $id))) {
+                    foreach ($traccertrecs as $traccertrec) {
+                        $certout = new stdclass();
+                        // create the file download link.
+                        $certout->certificateurl = moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename);
+                        $certout->certificatename = format_string($traccertrec->filename);
+                        $certificates[] = $certout;
+                    }
                 }
-            } else {
-                $certstring = '';
+                $mycompleted[$id]->certificates = $certificates;
             }
-        } else {
-            $certstring = '';
         }
-        $mycompleted[$id]->certificate = $certstring;
-
     }
 
     // Put them into alpahbetical order.

@@ -280,13 +280,18 @@ class local_report_user_completion_table extends table_sql {
         }
 
         if (!empty($row->timecompleted) && $certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
-            if ($traccertrec = $DB->get_record('local_iomad_track_certs', array('trackid' => $row->certsource))) {
+            if ($traccertrecs = $DB->get_records('local_iomad_track_certs', array('trackid' => $row->certsource))) {
                 if (empty($SESSION->iomadeditingreports) || !iomad::has_capability('local/report_users:redocertificates', context_system::instance())) {
-                    // create the file download link.
                     $coursecontext = context_course::instance($row->courseid);
+                    $returntext = "";
+                    foreach ($traccertrecs as $traccertrec) {
+                        // create the file download link.
 
-                    $certurl = moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename);
-                    return '<a class="btn btn-secondary" href="' . $certurl . '">' . get_string('downloadcert', 'local_report_users') . '</a>';
+                        $certurl = moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename);
+                        $returntext .= '<a href="' . $certurl . '" title="' . format_string($traccertrec->filename) .'">
+                                        <img src="' . $output->image_url('f/pdf-32') . '" alt="' . format_string($traccertrec->filename) . '"></a>&nbsp';
+                    }
+                    return $returntext;
                 } else {
                     $certurl = new moodle_url($CFG->wwwroot . '/local/report_users/userdisplay.php',
                                               array('sesskey' => sesskey(),
