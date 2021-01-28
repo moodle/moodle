@@ -290,11 +290,24 @@ EOF;
         if ($session->isStarted()) {
             $session->restart();
         } else {
-            $session->start();
+            $this->start_session();
         }
         if ($this->running_javascript() && $this->getSession()->getDriver()->getWebDriverSessionId() === 'session') {
             throw new DriverException('Unable to create a valid session');
         }
+    }
+
+    /**
+     * Start the Session, applying any initial configuratino required.
+     */
+    protected function start_session(): void {
+        $this->getSession()->start();
+
+        $this->getSession()->getDriver()->setTimeouts([
+            // The standard script timeout is 30000 ms.
+            // Use `get_real_timeout` to multiply this by the behat increased timeout factor.
+            'script' => self::get_real_timeout(30000),
+        ]);
     }
 
     /**
