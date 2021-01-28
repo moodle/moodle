@@ -35,20 +35,32 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('NO_OUTPUT_BUFFERING', true);
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/my/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$resetall = optional_param('resetall', null, PARAM_BOOL);
+$resetall = optional_param('resetall', false, PARAM_BOOL);
 
 $header = "$SITE->shortname: ".get_string('myhome')." (".get_string('mypage', 'admin').")";
 
 $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');
 admin_externalpage_setup('mypage', '', null, '', array('pagelayout' => 'mydashboard'));
 
+// If we are resetting all, just output a progress bar.
 if ($resetall && confirm_sesskey()) {
-    my_reset_page_for_all_users(MY_PAGE_PRIVATE, 'my-index');
-    redirect($PAGE->url, get_string('alldashboardswerereset', 'my'));
+    echo $OUTPUT->header($header);
+    echo $OUTPUT->heading(get_string('resettingdashboards', 'my'), 3);
+
+    $progressbar = new progress_bar();
+    $progressbar->create();
+
+    \core\session\manager::write_close();
+    my_reset_page_for_all_users(MY_PAGE_PRIVATE, 'my-index', $progressbar);
+    core\notification::success(get_string('alldashboardswerereset', 'my'));
+    echo $OUTPUT->continue_button($PAGE->url);
+    echo $OUTPUT->footer();
+    die();
 }
 
 // Override pagetype to show blocks properly.
@@ -65,7 +77,8 @@ if (!$currentpage = my_get_page(null, MY_PAGE_PRIVATE)) {
 $PAGE->set_subpage($currentpage->id);
 
 // Display a button to reset everyone's dashboard.
-$url = new moodle_url($PAGE->url, array('resetall' => 1));
+$url = $PAGE->url;
+$url->params(['resetall' => true, 'sesskey' => sesskey()]);
 $button = $OUTPUT->single_button($url, get_string('reseteveryonesdashboard', 'my'));
 $PAGE->set_button($button . $PAGE->button);
 
