@@ -12,10 +12,12 @@ Feature: In an assignment, students can comment in their submissions
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 1 | student2@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+      | student2 | C1 | student |
 
   Scenario: Student comments an assignment submission
     Given the following "activities" exist:
@@ -44,6 +46,57 @@ Feature: In an assignment, students can comment in their submissions
     And I click on ".comment-link" "css_element"
     And I should see "Second student comment"
     And I should not see "First student comment"
+
+  Scenario: Teacher updated the comment box and clicked the save changes to reflect the comment
+    Given the following "activities" exist:
+      | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled |
+      | assign   | C1     | assign1  | Test assignment name | Test assignment description | 1 |
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    And I press "Add submission"
+    And I set the following fields to these values:
+      | Online text | I'm the student submission |
+    And I press "Save changes"
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    And I navigate to "View all submissions" in current page administration
+    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I click on ".comment-link" "css_element"
+    When I set the field "content" to "Teacher feedback first comment"
+    And I press "Save changes"
+    And I should see "Comments (1)" in the ".comment-link" "css_element"
+    And I click on ".comment-link" "css_element"
+    Then I should see "Teacher feedback first comment" in the ".comment-list" "css_element"
+
+  Scenario: Teacher updated the comment box and clicked on save and show next to reflect the comment
+    Given the following "activities" exist:
+      | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled |
+      | assign   | C1     | assign1  | Test assignment name | Test assignment description | 1 |
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    And I press "Add submission"
+    And I set the following fields to these values:
+      | Online text | I'm the student submission |
+    And I press "Save changes"
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    And I navigate to "View all submissions" in current page administration
+    And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I click on ".comment-link" "css_element"
+    When I set the field "content" to "Teacher feedback first comment"
+    # click the save and show next twice as we have only 2 students
+    # so the second time you click we reach the same student who made
+    # the change
+    And I press "Save and show next"
+    And I press "Save and show next"
+    And I click on ".comment-link" "css_element"
+    Then I should see "Teacher feedback first comment" in the ".comment-list" "css_element"
 
   Scenario: Teacher can comment on an offline assignment
     Given the following "activities" exist:
