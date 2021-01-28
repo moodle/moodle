@@ -898,7 +898,7 @@ $CFG->admin = 'admin';
 //           ),
 //           'extensions' => array(
 //               'Behat\MinkExtension' => array(
-//                   'selenium2' => array(
+//                   'webddriver' => array(
 //                       'browser' => 'firefox',
 //                       'capabilities' => array(
 //                           'platform' => 'OS X 10.6',
@@ -911,7 +911,7 @@ $CFG->admin = 'admin';
 //       'Mac-Safari' => array(
 //           'extensions' => array(
 //               'Behat\MinkExtension' => array(
-//                   'selenium2' => array(
+//                   'webddriver' => array(
 //                       'browser' => 'safari',
 //                       'capabilities' => array(
 //                           'platform' => 'OS X 10.8',
