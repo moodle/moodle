@@ -39,6 +39,13 @@ require_once($CFG->libdir . '/oauthlib.php');
 class dropbox extends \oauth2_client {
 
     /**
+     * @var array Custom continue endpoints that differ from the standard.
+     */
+    private $mappedcontinueoverides = [
+        'files/search_v2' => 'files/search/continue_v2'
+    ];
+
+    /**
      * Create the DropBox API Client.
      *
      * @param   string      $key        The API key
@@ -88,13 +95,36 @@ class dropbox extends \oauth2_client {
     }
 
     /**
+     * Get the continue endpoint for the provided endpoint.
+     *
+     * @param string $endpoint The original endpoint
+     * @return string $endpoint The generated/mapped continue link
+     */
+    protected function get_endpoint_for_continue(string $endpoint) {
+        // Any API endpoint returning 'has_more' will provide a cursor, and also have a matching endpoint suffixed
+        // with /continue which takes that cursor.
+        if (preg_match('_/continue$_', $endpoint) === 0) {
+            // First check if the API call uses a custom mapped continue endpoint.
+            if (isset($this->mappedcontinueoverides[$endpoint])) {
+                $endpoint = $this->mappedcontinueoverides[$endpoint];
+            } else {
+                // Only add /continue if it is not already present.
+                $endpoint .= '/continue';
+            }
+        }
+
+        return $endpoint;
+    }
+
+    /**
      * Make an API call against the specified endpoint with supplied data.
      *
      * @param   string      $endpoint   The endpoint to be contacted
      * @param   array       $data       Any data to pass to the endpoint
+     * @param   string      $resultnode The name of the node that contains the data
      * @return  object                  Content decoded from the endpoint
      */
-    protected function fetch_dropbox_data($endpoint, $data = []) {
+    protected function fetch_dropbox_data($endpoint, $data = [], string $resultnode = 'entries') {
         $url = $this->get_api_endpoint($endpoint);
         $this->cleanopt();
         $this->resetHeader();
@@ -114,20 +144,15 @@ class dropbox extends \oauth2_client {
         $this->check_and_handle_api_errors($result);
 
         if ($this->has_additional_results($result)) {
-            // Any API endpoint returning 'has_more' will provide a cursor, and also have a matching endpoint suffixed
-            // with /continue which takes that cursor.
-            if (preg_match('_/continue$_', $endpoint) === 0) {
-                // Only add /continue if it is not already present.
-                $endpoint .= '/continue';
-            }
+            $endpoint = $this->get_endpoint_for_continue($endpoint);
 
             // Fetch the next page of results.
             $additionaldata = $this->fetch_dropbox_data($endpoint, [
                     'cursor' => $result->cursor,
-                ]);
+                ], $resultnode);
 
             // Merge the list of entries.
-            $result->entries = array_merge($result->entries, $additionaldata->entries);
+            $result->$resultnode = array_merge($result->$resultnode, $additionaldata->$resultnode);
         }
 
         if (isset($result->has_more)) {
@@ -240,10 +265,18 @@ class dropbox extends \oauth2_client {
      * @return  object                  The returned directory listing, or null on failure
      */
     public function search($query = '') {
-        $data = $this->fetch_dropbox_data('files/search', [
-                'path' => '',
+        // There is nothing to be searched. Return an empty array to mimic the response from Dropbox.
+        if (!$query) {
+            return [];
+        }
+
+        $data = $this->fetch_dropbox_data('files/search_v2', [
+                'options' => [
+                    'path' => '',
+                    'filename_only' => true,
+                ],
                 'query' => $query,
-            ]);
+            ], 'matches');
 
         return $data;
     }
