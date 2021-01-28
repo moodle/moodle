@@ -60,7 +60,7 @@ class group_details implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
 
-        if (!empty($this->group->description) || (!empty($this->group->picture) && empty($this->group->hidepicture))) {
+        if (!empty($this->group->description) || (!empty($this->group->picture))) {
             $context = context_course::instance($this->group->courseid);
             $description = file_rewrite_pluginfile_urls($this->group->description,
                                                         'pluginfile.php',
