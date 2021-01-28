@@ -290,11 +290,24 @@ EOF;
         if ($session->isStarted()) {
             $session->restart();
         } else {
-            $session->start();
+            $this->start_session();
         }
         if ($this->running_javascript() && $this->getSession()->getDriver()->getWebDriverSessionId() === 'session') {
             throw new DriverException('Unable to create a valid session');
         }
+    }
+
+    /**
+     * Start the Session, applying any initial configuratino required.
+     */
+    protected function start_session(): void {
+        $this->getSession()->start();
+
+        $this->getSession()->getDriver()->setTimeouts([
+            // The standard script timeout is 30000 ms.
+            // Use `get_real_timeout` to multiply this by the behat increased timeout factor.
+            'script' => self::get_real_timeout(30000),
+        ]);
     }
 
     /**
@@ -660,7 +673,24 @@ EOF;
      * @AfterScenario
      */
     public function reset_webdriver_between_scenarios(AfterScenarioScope $scope) {
-        $this->getSession()->stop();
+        try {
+            $this->getSession()->stop();
+        } catch (Exception $e) {
+            $error = <<<EOF
+
+Error while stopping WebDriver: %s (%d) '%s'
+Attempting to continue with test run. Stacktrace follows:
+
+%s
+EOF;
+            error_log(sprintf(
+                $error,
+                get_class($e),
+                $e->getCode(),
+                $e->getMessage(),
+                format_backtrace($e->getTrace(), true)
+            ));
+        }
     }
 
     /**
