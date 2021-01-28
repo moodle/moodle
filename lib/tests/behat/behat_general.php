@@ -1575,7 +1575,7 @@ EOF;
 
         if ($content !== $expectedcontent) {
             throw new ExpectationException('Image is not identical to the fixture. Received ' .
-            strlen($content) . ' bytes and expected ' . strlen($expectedcontent) . ' bytes');
+            strlen($content) . ' bytes and expected ' . strlen($expectedcontent) . ' bytes', $this->getSession());
         }
     }
 
@@ -1860,7 +1860,8 @@ EOF;
             list($modifier, $char) = preg_split('/-/', $key, 2);
             $modifier = strtolower($modifier);
             if (!in_array($modifier, $validmodifiers)) {
-                throw new ExpectationException(sprintf('Unknown key modifier: %s.', $modifier));
+                throw new ExpectationException(sprintf('Unknown key modifier: %s.', $modifier),
+                    $this->getSession());
             }
         }
         if (is_numeric($char)) {

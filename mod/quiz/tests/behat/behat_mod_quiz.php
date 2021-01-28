@@ -417,7 +417,8 @@ class behat_mod_quiz extends behat_question_base {
         } else if (preg_match('~Page (\d+)~', $pageorlast, $matches)) {
             $xpath = "//li[@id = 'page-{$matches[1]}']//a[contains(@data-toggle, 'dropdown') and contains(., 'Add')]";
         } else {
-            throw new ExpectationException("The I open the add to quiz menu step must specify either 'Page N' or 'last'.");
+            throw new ExpectationException("The I open the add to quiz menu step must specify either 'Page N' or 'last'.",
+                $this->getSession());
         }
         $this->find('xpath', $xpath)->click();
     }
