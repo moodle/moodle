@@ -179,8 +179,7 @@ class discussion extends exporter {
                 ];
 
                 // If not hiding the group picture, and the group has a picture then use it. Fallback to generic group image.
-                if (!$group->hidepicture &&
-                        ($url = get_group_picture_url($group, $forum->get_course_id(), true))) {
+                if ($url = get_group_picture_url($group, $forum->get_course_id(), true)) {
 
                     $groupdata['urls']['picture'] = $url;
                 } else {
