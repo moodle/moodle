@@ -303,11 +303,13 @@ EOF;
     protected function start_session(): void {
         $this->getSession()->start();
 
-        $this->getSession()->getDriver()->setTimeouts([
-            // The standard script timeout is 30000 ms.
-            // Use `get_real_timeout` to multiply this by the behat increased timeout factor.
-            'script' => self::get_real_timeout(30000),
-        ]);
+        if ($this->running_javascript()) { // Goutte driver doesn't implement this.
+            $this->getSession()->getDriver()->setTimeouts([
+                // The standard script timeout is 30000 ms. (aka, 30 seconds).
+                // Use `get_real_timeout` to multiply this by the behat increased timeout factor.
+                'script' => self::get_real_timeout(30) * 1000,
+            ]);
+        }
     }
 
     /**
