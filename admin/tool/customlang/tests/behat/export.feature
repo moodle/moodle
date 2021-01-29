@@ -4,6 +4,10 @@ Feature: Within a moodle instance, an administrator should be able to export mod
   As an admin
   I need to be able to export the php-files of the language customisation of a language.
 
+  Background:
+    # This is a very slow running feature and on slow databases can take minutes to complete.
+    Given I mark this test as slow setting a timeout factor of 4
+
   @javascript
   Scenario: Export button should not appear if no customization is made
     Given I log in as "admin"
