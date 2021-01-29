@@ -1191,6 +1191,13 @@ class restore_groups_structure_step extends restore_structure_step {
 
         $restorefiles = false; // Only if we end creating the group
 
+        // This is for backwards compatibility with old backups. If the backup data for a group contains a non-empty value of
+        // hidepicture, then we'll exclude this group's picture from being restored.
+        if (!empty($data->hidepicture)) {
+            // Exclude the group picture from being restored if hidepicture is set to 1 in the backup data.
+            unset($data->picture);
+        }
+
         // Search if the group already exists (by name & description) in the target course
         $description_clause = '';
         $params = array('courseid' => $this->get_courseid(), 'grname' => $data->name);
@@ -1212,6 +1219,12 @@ class restore_groups_structure_step extends restore_structure_step {
         }
         // Save the id mapping
         $this->set_mapping('group', $oldid, $newitemid, $restorefiles);
+
+        // Add the related group picture file if it's available at this point.
+        if (!empty($data->picture)) {
+            $this->add_related_files('group', 'icon', 'group', null, $oldid);
+        }
+
         // Invalidate the course group data cache just in case.
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
     }
@@ -1271,8 +1284,7 @@ class restore_groups_structure_step extends restore_structure_step {
     }
 
     protected function after_execute() {
-        // Add group related files, matching with "group" mappings
-        $this->add_related_files('group', 'icon', 'group');
+        // Add group related files, matching with "group" mappings.
         $this->add_related_files('group', 'description', 'group');
         // Add grouping related files, matching with "grouping" mappings
         $this->add_related_files('grouping', 'description', 'grouping');
