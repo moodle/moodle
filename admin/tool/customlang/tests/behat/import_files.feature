@@ -5,7 +5,10 @@ Feature: Within a moodle instance, an administrator should be able to import mod
   I need to be able to import the zips and php files of the language customisation of a language.
 
   Background:
-    Given I log in as "admin"
+    # This is a very slow running test and on slow databases can take minutes to complete.
+    Given I mark this test as slow setting a timeout factor of 4
+
+    And I log in as "admin"
     And I navigate to "Language > Language customisation" in site administration
     And I set the field "lng" to "en"
     And I click on "Import custom strings" "button"

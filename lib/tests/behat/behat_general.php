@@ -2065,4 +2065,15 @@ EOF;
         $localurl = new moodle_url($localurl);
         $this->getSession()->visit($this->locate_path($localurl->out_as_local_url(false)));
     }
+
+    /**
+     * Increase the webdriver timeouts.
+     *
+     * This should be reset between scenarios, or can be called again to decrease the timeouts.
+     *
+     * @Given I mark this test as slow setting a timeout factor of :factor
+     */
+    public function i_mark_this_test_as_long_running(int $factor = 2): void {
+        $this->set_test_timeout_factor($factor);
+    }
 }
