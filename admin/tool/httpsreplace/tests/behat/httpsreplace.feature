@@ -5,7 +5,10 @@ Feature: View the httpsreplace report
   I need to be able to automatically replace http links
 
   Background: Create some http links
-    Given I am on site homepage
+    # This is a slow running feature and on slow databases can take over 30 seconds to complete.
+    Given I mark this test as slow setting a timeout factor of 2
+
+    And I am on site homepage
     And the following "courses" exist:
       | fullname | shortname | category | summary                                                                                                     |
       | Course 1 | C1        | 0        | <img src="http://intentionally.unavailable/test.png"> <img src="http://download.moodle.org/unittest/test.jpg"> |

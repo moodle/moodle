@@ -5,8 +5,11 @@ Feature: Within a moodle instance, an administrator should be able to import lan
   I need to be able to import only some language customisation strings depending on some conditions.
 
   Background:
+    # This is a very slow running feature and on slow databases can take minutes to complete.
+    Given I mark this test as slow setting a timeout factor of 4
+
     # Add one customization.
-    Given I log in as "admin"
+    And I log in as "admin"
     And I navigate to "Language > Language customisation" in site administration
     And I set the field "lng" to "en"
     And I press "Open language pack for editing"
