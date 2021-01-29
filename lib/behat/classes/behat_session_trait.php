@@ -1355,4 +1355,25 @@ EOF;
 
         return $this->evaluate_script($script);
     }
+
+    /**
+     * Set the timeout factor for the remaining lifetime of the session.
+     *
+     * @param   int $factor A multiplication factor to use when calculating the timeout
+     */
+    public function set_test_timeout_factor(int $factor = 1): void {
+        $driver = $this->getSession()->getDriver();
+
+        if (!$driver instanceof \OAndreyev\Mink\Driver\WebDriver) {
+            // This is a feature of the OAndreyev MinkWebDriver.
+            return;
+        }
+
+        // Use `get_real_timeout` to multiply the timeout by the global behat_increasetimeout value, and again by the
+        // factor specified.
+        $this->getSession()->getDriver()->setTimeouts([
+            // The standard script timeout is 30000 ms. (aka, 30 seconds).
+            'script' => self::get_real_timeout(30) * 1000 * $factor,
+        ]);
+    }
 }
