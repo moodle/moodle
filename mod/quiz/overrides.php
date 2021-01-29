@@ -147,17 +147,20 @@ if ($groupmode) {
 
 // Initialise table.
 $table = new html_table();
+$table->head = $headers;
 $table->colclasses = $colclasses;
+$table->headspan = array_fill(0, count($headers), 1);
+
+$table->head[] = get_string('overrides', 'quiz');
 $table->colclasses[] = 'colsetting';
 $table->colclasses[] = 'colvalue';
-$table->colclasses[] = 'colaction';
-$table->headspan = array_fill(0, count($headers), 1);
 $table->headspan[] = 2;
-$table->headspan[] = 1;
-$table->head = $headers;
-$table->head[] = get_string('overrides', 'quiz');
-$table->head[] = get_string('action');
 
+if ($canedit) {
+    $table->head[] = get_string('action');
+    $table->colclasses[] = 'colaction';
+    $table->headspan[] = 1;
+}
 $userurl = new moodle_url('/user/view.php', []);
 $groupurl = new moodle_url('/group/overview.php', ['id' => $cm->course]);
 
