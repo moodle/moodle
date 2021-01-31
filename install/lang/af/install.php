@@ -29,4 +29,29 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['availablelangs'] = 'Beskikbare taal pakkette';
+$string['admindirname'] = 'Admingids';
+$string['availablelangs'] = 'Beskikbare taalpakkette';
+$string['chooselanguagehead'] = 'Kies \'n taal';
+$string['chooselanguagesub'] = 'Kies asseblief \'n taal vir die installasie. Hierdie taal sal ook as die verstektaal vir die webwerf gebruik word, alhoewel dit later verander kan word.';
+$string['clialreadyconfigured'] = 'Die konfigurasielêer config.php bestaan reeds. Gebruik admin/cli/install_database.php asseblief om Moodle vir hierdie webwerf te installeer.';
+$string['clialreadyinstalled'] = 'Die konfigurasielêer config.php bestaan reeds. Gebruik admin/cli/install_database.php asseblief om Moodle vir hierdie webwerf by te werk.';
+$string['cliinstallheader'] = 'Installasieprogram vir Moodle-{$a}-opdraglyn';
+$string['databasehost'] = 'Databasisgasheer';
+$string['databasename'] = 'Databasisnaam';
+$string['databasetypehead'] = 'Kies databasisdrywer';
+$string['dataroot'] = 'Datagids';
+$string['datarootpermission'] = 'Datagidstoestemming';
+$string['dbprefix'] = 'Tabelvoorvoegsel';
+$string['dirroot'] = 'Moodle-gids';
+$string['environmenthead'] = 'Gaan tans jou omgewing na ...';
+$string['installation'] = 'Installasie';
+$string['langdownloaderror'] = 'Jammer, die taal "{$a}" kon nie afgelaai word nie. Die installasieproses sal in Engels voortgesit word.';
+$string['paths'] = 'Roetes';
+$string['pathshead'] = 'Bevestig roetes';
+$string['pathssubdirroot'] = '<p>Die volledige roete na die gids wat die Moodle-kode bevat.</p>';
+$string['pathswrongadmindir'] = 'Admingids bestaan nie';
+$string['phpextension'] = '{$a} PHP-uitbreiding';
+$string['phpversion'] = 'PHP-weergawe';
+$string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
+$string['welcomep40'] = 'Die pakket sluit ook <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong> in.';
+$string['wwwroot'] = 'Webadres';
