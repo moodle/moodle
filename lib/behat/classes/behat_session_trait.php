@@ -1369,11 +1369,9 @@ EOF;
             return;
         }
 
-        // Use `get_real_timeout` to multiply the timeout by the global behat_increasetimeout value, and again by the
-        // factor specified.
-        $this->getSession()->getDriver()->setTimeouts([
-            // The standard script timeout is 30000 ms. (aka, 30 seconds).
-            'script' => self::get_real_timeout(30) * 1000 * $factor,
-        ]);
+        // The standard curl timeout is 30 seconds.
+        // Use get_real_timeout and multiply by the timeout factor to get the final timeout.
+        $timeout = self::get_real_timeout(30) * 1000 * $factor;
+        $driver->getWebDriver()->getCommandExecutor()->setRequestTimeout($timeout);
     }
 }
