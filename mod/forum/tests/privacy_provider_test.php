@@ -1996,4 +1996,55 @@ class mod_forum_privacy_provider_testcase extends \core_privacy\tests\provider_t
 
         $this->assertEquals($expected, $actual);
     }
+
+    /**
+     * Test exporting plugin user preferences
+     */
+    public function test_export_user_preferences(): void {
+        $this->setAdminUser();
+
+        // Create a user with some forum preferences.
+        $user = $this->getDataGenerator()->create_user([
+            'maildigest' => 2,
+            'autosubscribe' => 1,
+            'trackforums' => 0,
+        ]);
+
+        set_user_preference('markasreadonnotification', 0, $user);
+        set_user_preference('forum_discussionlistsortorder', \mod_forum\local\vaults\discussion_list::SORTORDER_STARTER_ASC,
+            $user);
+
+        // Export test users preferences.
+        provider::export_user_preferences($user->id);
+
+        $writer = \core_privacy\local\request\writer::with_context(\context_system::instance());
+        $this->assertTrue($writer->has_any_data());
+
+        $preferences = (array) $writer->get_user_preferences('mod_forum');
+
+        $this->assertEquals((object) [
+            'value' => 2,
+            'description' => get_string('emaildigestsubjects'),
+        ], $preferences['maildigest']);
+
+        $this->assertEquals((object) [
+            'value' => 1,
+            'description' => get_string('autosubscribeyes'),
+        ], $preferences['autosubscribe']);
+
+        $this->assertEquals((object) [
+            'value' => 0,
+            'description' => get_string('trackforumsno'),
+        ], $preferences['trackforums']);
+
+        $this->assertEquals((object) [
+            'value' => 0,
+            'description' => get_string('markasreadonnotificationno', 'mod_forum'),
+        ], $preferences['markasreadonnotification']);
+
+        $this->assertEquals((object) [
+            'value' => \mod_forum\local\vaults\discussion_list::SORTORDER_STARTER_ASC,
+            'description' => get_string('discussionlistsortbystarterasc', 'mod_forum'),
+        ], $preferences['forum_discussionlistsortorder']);
+    }
 }
