@@ -930,6 +930,8 @@ if ($mform->is_cancelled()) {
                 }
                 $user->id = company_user::create($user);
 
+                // Save the vew profile information.
+                profile_save_data($user);
 
                 $info = ': ' . $user->username .' (ID = ' . $user->id . ')';
                 $upt->track('status', $struseradded);
