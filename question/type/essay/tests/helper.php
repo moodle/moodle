@@ -51,11 +51,12 @@ class qtype_essay_test_helper extends question_test_helper {
         $q->responseformat = 'editor';
         $q->responserequired = 1;
         $q->responsefieldlines = 10;
-        $q->minwordlimit = 0;
-        $q->maxwordlimit = 0;
+        $q->minwordlimit = null;
+        $q->maxwordlimit = null;
         $q->attachments = 0;
         $q->attachmentsrequired = 0;
-        $q->filetypeslist = '';
+        $q->maxbytes = 0;
+        $q->filetypeslist = null;
         $q->graderinfo = '';
         $q->graderinfoformat = FORMAT_HTML;
         $q->qtype = question_bank::get_qtype('essay');
@@ -88,12 +89,10 @@ class qtype_essay_test_helper extends question_test_helper {
         $fromform->responseformat = 'editor';
         $fromform->responserequired = 1;
         $fromform->responsefieldlines = 10;
-        $fromform->minwordlimit = 0;
-        $fromform->maxwordlimit = 0;
         $fromform->attachments = 0;
         $fromform->attachmentsrequired = 0;
-        $fromform->filetypeslist = '';
         $fromform->maxbytes = 0;
+        $fromform->filetypeslist = '';
         $fromform->graderinfo = array('text' => '', 'format' => FORMAT_HTML);
         $fromform->responsetemplate = array('text' => '', 'format' => FORMAT_HTML);
 
@@ -142,12 +141,10 @@ class qtype_essay_test_helper extends question_test_helper {
         $fromform->responseformat = 'editorfilepicker';
         $fromform->responserequired = 1;
         $fromform->responsefieldlines = 10;
-        $fromform->minwordlimit = 0;
-        $fromform->maxwordlimit = 0;
         $fromform->attachments = 3;
         $fromform->attachmentsrequired = 0;
-        $fromform->filetypeslist = '';
         $fromform->maxbytes = 0;
+        $fromform->filetypeslist = '';
         $fromform->graderinfo = array('text' => '', 'format' => FORMAT_HTML);
         $fromform->responsetemplate = array('text' => '', 'format' => FORMAT_HTML);
 
@@ -181,12 +178,10 @@ class qtype_essay_test_helper extends question_test_helper {
         $fromform->responseformat = 'plain';
         $fromform->responserequired = 1;
         $fromform->responsefieldlines = 10;
-        $fromform->minwordlimit = 0;
-        $fromform->maxwordlimit = 0;
         $fromform->attachments = 0;
         $fromform->attachmentsrequired = 0;
-        $fromform->filetypeslist = '';
         $fromform->maxbytes = 0;
+        $fromform->filetypeslist = '';
         $fromform->graderinfo = array('text' => '', 'format' => FORMAT_HTML);
         $fromform->responsetemplate = array('text' => '', 'format' => FORMAT_HTML);
 
