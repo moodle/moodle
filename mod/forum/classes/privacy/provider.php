@@ -444,7 +444,7 @@ class provider implements
         $vaultfactory = \mod_forum\local\container::get_vault_factory();
         $discussionlistvault = $vaultfactory->get_discussions_in_forum_vault();
         $discussionlistsortorder = get_user_preferences('forum_discussionlistsortorder',
-            $discussionlistvault::SORTORDER_LASTPOST_DESC);
+            $discussionlistvault::SORTORDER_LASTPOST_DESC, $user->id);
         switch ($discussionlistsortorder) {
             case $discussionlistvault::SORTORDER_LASTPOST_DESC:
                 $discussionlistsortorderdescription = get_string('discussionlistsortbylastpostdesc',
@@ -468,6 +468,30 @@ class provider implements
                 break;
             case $discussionlistvault::SORTORDER_REPLIES_ASC:
                 $discussionlistsortorderdescription = get_string('discussionlistsortbyrepliesasc',
+                    'mod_forum');
+                break;
+            case $discussionlistvault::SORTORDER_DISCUSSION_DESC:
+                $discussionlistsortorderdescription = get_string('discussionlistsortbydiscussiondesc',
+                    'mod_forum');
+                break;
+            case $discussionlistvault::SORTORDER_DISCUSSION_ASC:
+                $discussionlistsortorderdescription = get_string('discussionlistsortbydiscussionasc',
+                    'mod_forum');
+                break;
+            case $discussionlistvault::SORTORDER_STARTER_DESC:
+                $discussionlistsortorderdescription = get_string('discussionlistsortbystarterdesc',
+                    'mod_forum');
+                break;
+            case $discussionlistvault::SORTORDER_STARTER_ASC:
+                $discussionlistsortorderdescription = get_string('discussionlistsortbystarterasc',
+                    'mod_forum');
+                break;
+            case $discussionlistvault::SORTORDER_GROUP_DESC:
+                $discussionlistsortorderdescription = get_string('discussionlistsortbygroupdesc',
+                    'mod_forum');
+                break;
+            case $discussionlistvault::SORTORDER_GROUP_ASC:
+                $discussionlistsortorderdescription = get_string('discussionlistsortbygroupasc',
                     'mod_forum');
                 break;
         }
