@@ -68,7 +68,7 @@ class qtype_essay extends question_type {
         $options->attachments = $formdata->attachments;
         $options->attachmentsrequired = $formdata->attachmentsrequired;
         if (!isset($formdata->filetypeslist)) {
-            $options->filetypeslist = "";
+            $options->filetypeslist = null;
         } else {
             $options->filetypeslist = $formdata->filetypeslist;
         }
