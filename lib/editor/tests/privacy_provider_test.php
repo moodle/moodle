@@ -53,14 +53,19 @@ class core_editor_privacy_provider_testcase extends \core_privacy\tests\provider
      * When preference exists but is empty, there should be no export.
      */
     public function test_empty_preference() {
-        global $USER;
-
         $this->resetAfterTest();
+
+        // Create test user, add some preferences.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        set_user_preference('htmleditor', '', $user);
+
+        // Switch to admin user (so we can validate preferences of the correct user are being exported).
         $this->setAdminUser();
 
-        set_user_preference('htmleditor', '');
-
-        provider::export_user_preferences($USER->id);
+        // Export test users preferences.
+        provider::export_user_preferences($user->id);
         $this->assertFalse(writer::with_context(\context_system::instance())->has_any_data());
     }
 
@@ -68,13 +73,19 @@ class core_editor_privacy_provider_testcase extends \core_privacy\tests\provider
      * When an editor is set, the name of that editor will be reported.
      */
     public function test_editor_atto() {
-        global $USER;
         $this->resetAfterTest();
-        $this->setAdminUser();
+
+        // Create test user, add some preferences.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
 
         set_user_preference('htmleditor', 'atto');
 
-        provider::export_user_preferences($USER->id);
+        // Switch to admin user (so we can validate preferences of the correct user are being exported).
+        $this->setAdminUser();
+
+        // Export test users preferences.
+        provider::export_user_preferences($user->id);
         $this->assertTrue(writer::with_context(\context_system::instance())->has_any_data());
 
         $prefs = writer::with_context(\context_system::instance())->get_user_preferences('core_editor');
