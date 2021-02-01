@@ -88,7 +88,7 @@ $headers = [];
 
 // Fetch all overrides.
 if ($groupmode) {
-    $colname = get_string('group');
+    $headers[] = get_string('group');
     // To filter the result by the list of groups that the current user has access to.
     if ($groups) {
         $params = ['quizid' => $quiz->id];
