@@ -71,6 +71,8 @@
     <responsefieldlines>10</responsefieldlines>
     <attachments>0</attachments>
     <attachmentsrequired>0</attachmentsrequired>
+    <maxbytes>0</maxbytes>
+    <filetypeslist></filetypeslist>
     <graderinfo format="html">
       <text></text>
     </graderinfo>

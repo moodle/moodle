@@ -519,7 +519,7 @@ class qtype_essay_walkthrough_testcase extends qbehaviour_walkthrough_test_base 
 
         // Start attempt at the question.
         $q = question_bank::load_question($question->id);
-        $q->filetypeslist = ("pdf, docx");
+        $q->filetypeslist = '.pdf,.docx';
         $this->start_attempt_at_question($q, 'deferredfeedback', 1);
 
         $this->check_current_state(question_state::$todo);
@@ -578,7 +578,7 @@ class qtype_essay_walkthrough_testcase extends qbehaviour_walkthrough_test_base 
 
         // Start attempt at the question.
         $q = question_bank::load_question($question->id);
-        $q->filetypeslist = ("txt, docx");
+        $q->filetypeslist = '.txt,.docx';
         $this->start_attempt_at_question($q, 'deferredfeedback', 1);
 
         $this->check_current_state(question_state::$todo);

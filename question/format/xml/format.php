@@ -774,6 +774,10 @@ class qformat_xml extends qformat_default {
                 array('#', 'attachments', 0, '#'), 0);
         $qo->attachmentsrequired = $this->getpath($question,
                 array('#', 'attachmentsrequired', 0, '#'), 0);
+        $qo->filetypeslist = $this->getpath($question,
+                array('#', 'filetypeslist', 0, '#'), null);
+        $qo->maxbytes = $this->getpath($question,
+                array('#', 'maxbytes', 0, '#'), null);
         $qo->graderinfo = $this->import_text_with_files($question,
                 array('#', 'graderinfo', 0), '', $this->get_format($qo->questiontextformat));
         $qo->responsetemplate['text'] = $this->getpath($question,
@@ -1168,7 +1172,6 @@ class qformat_xml extends qformat_default {
      * @return string xml segment
      */
     public function writequestion($question) {
-        global $CFG, $OUTPUT;
 
         $invalidquestion = false;
         $fs = get_file_storage();
@@ -1352,6 +1355,10 @@ class qformat_xml extends qformat_default {
                         "</attachments>\n";
                 $expout .= "    <attachmentsrequired>" . $question->options->attachmentsrequired .
                         "</attachmentsrequired>\n";
+                $expout .= "    <maxbytes>" . $question->options->maxbytes .
+                        "</maxbytes>\n";
+                $expout .= "    <filetypeslist>" . $question->options->filetypeslist .
+                        "</filetypeslist>\n";
                 $expout .= "    <graderinfo " .
                         $this->format($question->options->graderinfoformat) . ">\n";
                 $expout .= $this->writetext($question->options->graderinfo, 3);
