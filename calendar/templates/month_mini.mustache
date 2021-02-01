@@ -32,7 +32,7 @@
     }
 }}
 <div{{!
-    }} id="month-mini-{{date.year}}-{{date.month}}-{{uniqid}}"{{!
+    }} id="month-mini-{{date.year}}-{{date.mon}}-{{uniqid}}"{{!
     }} class="calendarwrapper"{{!
     }} data-courseid="{{courseid}}"{{!
     }} data-categoryid="{{categoryid}}"{{!
@@ -174,7 +174,7 @@ require([
         M.util.js_pending("month-mini-{{uniqid}}-filterChanged");
         // A filter value has been changed.
         // Find all matching cells in the popover data, and hide them.
-        $("#month-mini-{{date.year}}-{{date.month}}-{{uniqid}}")
+        $("#month-mini-{{date.year}}-{{date.mon}}-{{uniqid}}")
             .find(CalendarSelectors.popoverType[data.type])
             .toggleClass('hidden', !!data.hidden);
         M.util.js_complete("month-mini-{{uniqid}}-filterChanged");
