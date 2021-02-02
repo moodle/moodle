@@ -178,8 +178,12 @@ class Watch implements Executable, /* @internal */ CommandSubscriber
             'readPreference' => new ReadPreference(ReadPreference::RP_PRIMARY),
         ];
 
-        if (isset($options['fullDocument']) && ! is_string($options['fullDocument'])) {
+        if (! is_string($options['fullDocument'])) {
             throw InvalidArgumentException::invalidType('"fullDocument" option', $options['fullDocument'], 'string');
+        }
+
+        if (! $options['readPreference'] instanceof ReadPreference) {
+            throw InvalidArgumentException::invalidType('"readPreference" option', $options['readPreference'], ReadPreference::class);
         }
 
         if (isset($options['resumeAfter']) && ! is_array($options['resumeAfter']) && ! is_object($options['resumeAfter'])) {
