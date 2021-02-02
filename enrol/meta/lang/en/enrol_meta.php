@@ -39,3 +39,7 @@ $string['pluginname_desc'] = 'Course meta link enrolment plugin synchronises enr
 $string['syncall'] = 'Synchronise all enrolled users';
 $string['syncall_desc'] = 'If enabled all enrolled users are synchronised even if they have no role in parent course, if disabled only users that have at least one synchronised role are enrolled in child course.';
 $string['privacy:metadata:core_group'] = 'Enrol meta plugin can create a new group or use an existing group to add all the participants of the course linked.';
+$string['wscannotcreategroup'] = 'No permission to create group in linked course id = {$a}.';
+$string['wsinvalidcourse'] = 'Course id = {$a} does not exist or no permission to link in meta enrolment.';
+$string['wsinvalidmetacourse'] = 'Meta course id = {$a} does not exist or no permission to add enrolment instance.';
+$string['wsnoinstancesspecified'] = 'No instances specified';
