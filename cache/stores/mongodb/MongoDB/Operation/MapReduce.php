@@ -40,6 +40,8 @@ use function is_string;
 use function MongoDB\create_field_path_type_map;
 use function MongoDB\is_mapreduce_output_inline;
 use function MongoDB\server_supports_feature;
+use function trigger_error;
+use const E_USER_DEPRECATED;
 
 /**
  * Operation for the mapReduce command.
@@ -88,8 +90,14 @@ class MapReduce implements Executable
      *  * map (MongoDB\BSON\Javascript): A JavaScript function that associates
      *    or "maps" a value with a key and emits the key and value pair.
      *
+     *    Passing a Javascript instance with a scope is deprecated. Put all
+     *    scope variables in the "scope" option of the MapReduce operation.
+     *
      *  * reduce (MongoDB\BSON\Javascript): A JavaScript function that "reduces"
      *    to a single object all the values associated with a particular key.
+     *
+     *    Passing a Javascript instance with a scope is deprecated. Put all
+     *    scope variables in the "scope" option of the MapReduce operation.
      *
      *  * out (string|document): Specifies where to output the result of the
      *    map-reduce operation. You can either output to a collection or return
@@ -113,6 +121,9 @@ class MapReduce implements Executable
      *
      *  * finalize (MongoDB\BSON\JavascriptInterface): Follows the reduce method
      *    and modifies the output.
+     *
+     *    Passing a Javascript instance with a scope is deprecated. Put all
+     *    scope variables in the "scope" option of the MapReduce operation.
      *
      *  * jsMode (boolean): Specifies whether to convert intermediate data into
      *    BSON format between the execution of the map and reduce functions.
@@ -242,6 +253,21 @@ class MapReduce implements Executable
             unset($options['writeConcern']);
         }
 
+        // Handle deprecation of CodeWScope
+        if ($map->getScope() !== null) {
+            @trigger_error('Use of Javascript with scope in "$map" argument for MapReduce is deprecated. Put all scope variables in the "scope" option of the MapReduce operation.', E_USER_DEPRECATED);
+        }
+
+        if ($reduce->getScope() !== null) {
+            @trigger_error('Use of Javascript with scope in "$reduce" argument for MapReduce is deprecated. Put all scope variables in the "scope" option of the MapReduce operation.', E_USER_DEPRECATED);
+        }
+
+        if (isset($options['finalize']) && $options['finalize']->getScope() !== null) {
+            @trigger_error('Use of Javascript with scope in "finalize" option for MapReduce is deprecated. Put all scope variables in the "scope" option of the MapReduce operation.', E_USER_DEPRECATED);
+        }
+
+        $this->checkOutDeprecations($out);
+
         $this->databaseName = (string) $databaseName;
         $this->collectionName = (string) $collectionName;
         $this->map = $map;
@@ -308,6 +334,27 @@ class MapReduce implements Executable
         $getIterator = $this->createGetIteratorCallable($result, $server);
 
         return new MapReduceResult($getIterator, $result);
+    }
+
+    /**
+     * @param string|array|object $out
+     * @return void
+     */
+    private function checkOutDeprecations($out)
+    {
+        if (is_string($out)) {
+            return;
+        }
+
+        $out = (array) $out;
+
+        if (isset($out['nonAtomic']) && ! $out['nonAtomic']) {
+            @trigger_error('Specifying false for "out.nonAtomic" is deprecated.', E_USER_DEPRECATED);
+        }
+
+        if (isset($out['sharded']) && ! $out['sharded']) {
+            @trigger_error('Specifying false for "out.sharded" is deprecated.', E_USER_DEPRECATED);
+        }
     }
 
     /**

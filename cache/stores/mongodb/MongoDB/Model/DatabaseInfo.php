@@ -45,7 +45,7 @@ class DatabaseInfo implements ArrayAccess
     }
 
     /**
-     * Return the collection info as an array.
+     * Return the database info as an array.
      *
      * @see http://php.net/oop5.magic#language.oop5.magic.debuginfo
      * @return array
