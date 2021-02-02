@@ -44,7 +44,9 @@ switch ($action) {
         $key = array_search($auth, $authsenabled);
         if ($key !== false) {
             unset($authsenabled[$key]);
-            set_config('auth', implode(',', $authsenabled));
+            $value = implode(',', $authsenabled);
+            add_to_config_log('auth', $CFG->auth, $value, 'core');
+            set_config('auth', $value);
         }
 
         if ($auth == $CFG->registerauth) {
@@ -59,8 +61,11 @@ switch ($action) {
         if (!in_array($auth, $authsenabled)) {
             $authsenabled[] = $auth;
             $authsenabled = array_unique($authsenabled);
-            set_config('auth', implode(',', $authsenabled));
+            $value = implode(',', $authsenabled);
+            add_to_config_log('auth', $CFG->auth, $value, 'core');
+            set_config('auth', $value);
         }
+
         \core\session\manager::gc(); // Remove stale sessions.
         core_plugin_manager::reset_caches();
         break;
@@ -76,7 +81,9 @@ switch ($action) {
             $fsave = $authsenabled[$key];
             $authsenabled[$key] = $authsenabled[$key + 1];
             $authsenabled[$key + 1] = $fsave;
-            set_config('auth', implode(',', $authsenabled));
+            $value = implode(',', $authsenabled);
+            add_to_config_log('auth', $CFG->auth, $value, 'core');
+            set_config('auth', $value);
         }
         break;
 
@@ -91,7 +98,9 @@ switch ($action) {
             $fsave = $authsenabled[$key];
             $authsenabled[$key] = $authsenabled[$key - 1];
             $authsenabled[$key - 1] = $fsave;
-            set_config('auth', implode(',', $authsenabled));
+            $value = implode(',', $authsenabled);
+            add_to_config_log('auth', $CFG->auth, $value, 'core');
+            set_config('auth', $value);
         }
         break;
 
