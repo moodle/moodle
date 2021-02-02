@@ -121,7 +121,9 @@ class auth extends base {
         }
         if (($key = array_search($this->name, $auths)) !== false) {
             unset($auths[$key]);
-            set_config('auth', implode(',', $auths));
+            $value = implode(',', $auths);
+            add_to_config_log('auth', $CFG->auth, $value, 'core');
+            set_config('auth', $value);
         }
 
         if (!empty($CFG->registerauth) and $CFG->registerauth === $this->name) {
