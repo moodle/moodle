@@ -230,7 +230,7 @@ foreach ($overrides as $override) {
     } else {
         $usercell = new html_table_cell();
         $usercell->rowspan = count($fields);
-        $usercell->text = html_writer::link(new moodle_url($groupurl, ['id' => $override->userid]),
+        $usercell->text = html_writer::link(new moodle_url($userurl, ['id' => $override->userid]),
                 fullname($override) . $extranamebit);
         $usercells[] = $usercell;
 
