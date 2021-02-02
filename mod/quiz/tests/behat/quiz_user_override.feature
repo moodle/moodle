@@ -67,6 +67,9 @@ Feature: Quiz user override
     And "Edit" "icon" should exist in the "Student One" "table_row"
     And "copy" "icon" should exist in the "Student One" "table_row"
     And "Delete" "icon" should exist in the "Student One" "table_row"
+    And I follow "Student One"
+    And I should see "Student One"
+    And I should see "User details"
 
   @javascript
   Scenario: Teacher without 'See full user identity in lists' can see and edit overrides
