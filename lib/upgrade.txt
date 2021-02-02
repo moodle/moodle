@@ -115,6 +115,9 @@ information provided here is intended especially for developers.
   those fields. This replaces existing functions get_extra_user_fields(), get_extra_user_fields_sql(),
   get_user_field_name(), get_all_user_name_fields(), and user_picture::fields(), which have all been
   deprecated.
+* Allow plugins to augment the curl security helper via callback. The plugin's function has to be defined as
+  plugintype_pluginname_curl_security_helper in pluginname/lib.php file and the function should return a plugin's security
+  helper instance.
 * The behat transformation 'string time to timestamp' no longer supports datetime format. If provided, the format must
   be strftime compatible. Example:
     - I should see "##tomorrow noon##%A, %d %B %Y, %I:%M %p##"
