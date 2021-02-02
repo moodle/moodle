@@ -280,7 +280,7 @@
     <location>amd/src/adapter.js</location>
     <name>WebRTC adapter</name>
     <license>BSD</license>
-    <version>7.3.0</version>
+    <version>7.4.0</version>
     <licenseversion>3-Clause</licenseversion>
   </library>
   <library>
