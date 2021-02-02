@@ -276,7 +276,7 @@ class mod_lti_edit_types_form extends moodleform {
             $mform->setDefault('lti_acceptgrades', '2');
             $mform->addHelpButton('lti_acceptgrades', 'accept_grades_admin', 'lti');
 
-            $mform->addElement('checkbox', 'lti_forcessl', '&nbsp;', ' ' . get_string('force_ssl', 'lti'), $options);
+            $mform->addElement('checkbox', 'lti_forcessl', get_string('force_ssl', 'lti'), '', $options);
             $mform->setType('lti_forcessl', PARAM_BOOL);
             if (!empty($CFG->mod_lti_forcessl)) {
                 $mform->setDefault('lti_forcessl', '1');

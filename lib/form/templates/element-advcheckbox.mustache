@@ -8,7 +8,6 @@
     </div>
     <div class="col-md-9 checkbox">
         <div class="form-check d-flex">
-            <label>
             {{^element.hardfrozen}}
                 {{^element.frozen}}
                     <input type="hidden" name="{{element.name}}" value="{{element.deselectedvalue}}">
@@ -25,19 +24,27 @@
                 {{/element.selectedvalue}}
                 id="{{element.id}}" {{#element.checked}}checked{{/element.checked}}
                 {{#error}}
-                    autofocus aria-describedby="{{element.iderror}}"
+                    autofocus aria-describedby="{{#text}}{{element.id}}_description {{/text}}{{element.iderror}}"
+                {{/error}}
+                {{^error}}
+                    {{#text}}
+                        aria-describedby="{{element.id}}_description"
+                    {{/text}}
                 {{/error}}
                 {{#element.frozen}}
                     disabled
                 {{/element.frozen}}
                 {{{element.attributes}}} >
-                {{#text}}
+            {{#text}}
+                <span id="{{element.id}}_description">
                     {{{.}}}
-                {{/text}}
-                {{^text}}
+                </span>
+            {{/text}}
+            {{^text}}
+                <label for="{{element.id}}">
                     {{{label}}}
-                {{/text}}
-            </label>
+                </label>
+            {{/text}}
             <div class="ml-2 d-flex align-items-center align-self-start">
                 {{#required}}
                     <div class="text-danger" title="{{#str}}required{{/str}}">
