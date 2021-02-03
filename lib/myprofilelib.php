@@ -158,8 +158,18 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
         ))
         or (isset($identityfields['email']) and $canviewuseridentity)
        ) {
-        $node = new core_user\output\myprofile\node('contact', 'email', get_string('email'), null, null,
-            obfuscate_mailto($user->email, ''));
+        $maildisplay = obfuscate_mailto($user->email, '');
+        if ($iscurrentuser) {
+            if ($user->maildisplay == core_user::MAILDISPLAY_EVERYONE) {
+                $maildisplay .= ' ' . get_string('emaildisplayeveryone');
+            } else if ($user->maildisplay == core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY) {
+                $maildisplay .= ' ' . get_string('emaildisplaycoursemembersonly');
+            } else {
+                $maildisplay .= ' ' . get_string('emaildisplayhide');
+            }
+        }
+        $node = new core_user\output\myprofile\node('contact', 'email', get_string('email'),
+            null, null, $maildisplay);
         $tree->add_node($node);
     }
 
