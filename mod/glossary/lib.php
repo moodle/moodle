@@ -3191,7 +3191,7 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds) && $glossary->rsstype && $glossary->rssarticles && has_capability('mod/glossary:view', $PAGE->cm->context)) {
         require_once("$CFG->libdir/rsslib.php");
 
-        $string = get_string('rsstype','forum');
+        $string = get_string('rsstype', 'glossary');
 
         $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $USER->id, 'mod_glossary', $glossary->id));
         $glossarynode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
