@@ -454,7 +454,6 @@ class quizaccess_seb extends quiz_access_rule_base {
      */
     public function setup_attempt_page($page) {
         $page->set_title($this->quizobj->get_course()->shortname . ': ' . $page->title);
-        $page->set_cacheable(false);
         $page->set_popup_notification_allowed(false); // Prevent message notifications.
         $page->set_heading($page->title);
         $page->set_pagelayout('secure');

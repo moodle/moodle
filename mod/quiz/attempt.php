@@ -44,6 +44,8 @@ $cmid = optional_param('cmid', null, PARAM_INT);
 $attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
 $page = $attemptobj->force_page_number_into_range($page);
 $PAGE->set_url($attemptobj->attempt_url(null, $page));
+// During quiz attempts, the browser back/forwards buttons should force a reload.
+$PAGE->set_cacheable(false);
 
 // Check login.
 require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
