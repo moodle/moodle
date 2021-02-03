@@ -21,11 +21,13 @@ MDL-52826 - Remove onsubmit events pointing to the global validation functions a
 MDL-50484 - _getPersistantData() returns id with _persistant prefixed to element id.
 MDL-55123 - corrected call to non-static functions in HTML_QuickForm to be PHP7.1-compliant
 MDL-60281 - replaced deprecated create_function() with lambda functions for PHP7.2 compatibility
-
+MDL-70711 - removed unnecessary if-else conditional block in HTML_QuickForm as the given
+            condition always evaluates to false due to the deprecated get_magic_quotes_gpc()
+            which always returns false
 
 Pear
 ====
-It was decided that we will not upgrade this library from upstream  any more, see MDL-52465
+It was decided that we will not upgrade this library from upstream any more, see MDL-52465
 
 Changed constructors in classes PEAR and PEAR_ERROR to be __construct().
 MDL-60281 - replaced deprecated function each() with foreach loop for PHP7.2 compatibility
