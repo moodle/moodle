@@ -53,7 +53,7 @@ function tool_capability_calculate_role_data($capability, array $roles) {
     $sql = 'SELECT DISTINCT con.path, 1
               FROM {context} con
               JOIN {role_capabilities} rc ON rc.contextid = con.id
-             WHERE capability = ?' .
+             WHERE capability = ? ' .
             $sqlroletest .
             // Context path should never be null, but can happen in old database with
             // bad data (e.g. a course_module where the corresponding course no longer exists).
