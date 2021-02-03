@@ -16,6 +16,8 @@ Feature: Students can use the recent blog entries block to view recent entries o
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Blog menu" block
@@ -27,13 +29,13 @@ Feature: Students can use the recent blog entries block to view recent entries o
     And I am on "Course 1" course homepage
     And I follow "Add an entry about this course"
     When I set the following fields to these values:
-      | Entry title | S1 First Blog |
+      | Entry title | S1 First Blog <span lang="RU" class="multilang">RUSSIAN</span><span lang="EN" class="multilang">ENGLISH</span> |
       | Blog entry body | This is my awesome blog! |
     And I press "Save changes"
-    Then I should see "S1 First Blog"
+    Then I should see "S1 First Blog ENGLISH"
     And I should see "This is my awesome blog!"
     And I am on "Course 1" course homepage
-    And I should see "S1 First Blog"
+    And I should see "S1 First Blog ENGLISH"
     And I follow "S1 First Blog"
     And I should see "This is my awesome blog!"
 
