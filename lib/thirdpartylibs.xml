@@ -319,7 +319,7 @@
     <location>polyfills</location>
     <name>mdn-polyfill</name>
     <license>MIT</license>
-    <version>5.19.0</version>
+    <version>5.20.0</version>
   </library>
   <library>
     <location>emoji-data</location>
@@ -331,7 +331,7 @@
     <location>polyfills</location>
     <name>url-polyfill</name>
     <license>MIT</license>
-    <version>1.1.8</version>
+    <version>1.1.12</version>
   </library>
   <library>
     <location>plist</location>
