@@ -4777,6 +4777,22 @@ EOD;
     }
 
     /**
+     * Renders an update to a progress bar.
+     *
+     * Note: This does not cleanly map to a renderable class and should
+     * never be used directly.
+     *
+     * @param  string $id
+     * @param  float $percent
+     * @param  string $msg Message
+     * @param  string $estimate time remaining message
+     * @return string ascii fragment
+     */
+    public function render_progress_bar_update(string $id, float $percent, string $msg, string $estimate) : string {
+        return html_writer::script(js_writer::function_call('updateProgressBar', [$id, $percent, $msg, $estimate]));
+    }
+
+    /**
      * Renders element for a toggle-all checkbox.
      *
      * @param \core\output\checkbox_toggleall $element
@@ -4799,6 +4815,12 @@ EOD;
  * @category output
  */
 class core_renderer_cli extends core_renderer {
+
+    /**
+     * @var array $progressmaximums stores the largest percentage for a progress bar.
+     * @return string ascii fragment
+     */
+    private $progressmaximums = [];
 
     /**
      * Returns the page header.
@@ -4842,6 +4864,99 @@ class core_renderer_cli extends core_renderer {
      */
     public function check_result(core\check\result $result) {
         return $this->render_check_result($result);
+    }
+
+    /**
+     * Renders a progress bar.
+     *
+     * Do not use $OUTPUT->render($bar), instead use progress_bar::create().
+     *
+     * @param  progress_bar $bar The bar.
+     * @return string ascii fragment
+     */
+    public function render_progress_bar(progress_bar $bar) {
+        global $CFG;
+
+        $size = 55; // The width of the progress bar in chars.
+        $ascii = "\n";
+
+        if (stream_isatty(STDOUT)) {
+            require_once($CFG->libdir.'/clilib.php');
+
+            $ascii .= "[" . str_repeat(' ', $size) . "] 0% \n";
+            return cli_ansi_format($ascii);
+        }
+
+        $this->progressmaximums[$bar->get_id()] = 0;
+        $ascii .= '[';
+        return $ascii;
+    }
+
+    /**
+     * Renders an update to a progress bar.
+     *
+     * Note: This does not cleanly map to a renderable class and should
+     * never be used directly.
+     *
+     * @param  string $id
+     * @param  float $percent
+     * @param  string $msg Message
+     * @param  string $estimate time remaining message
+     * @return string ascii fragment
+     */
+    public function render_progress_bar_update(string $id, float $percent, string $msg, string $estimate) : string {
+        $size = 55; // The width of the progress bar in chars.
+        $ascii = '';
+
+        // If we are rendering to a terminal then we can safely use ansii codes
+        // to move the cursor and redraw the complete progress bar each time
+        // it is updated.
+        if (stream_isatty(STDOUT)) {
+            $colour = $percent == 100 ? 'green' : 'blue';
+
+            $done = $percent * $size * 0.01;
+            $whole = floor($done);
+            $bar = "<colour:$colour>";
+            $bar .= str_repeat('█', $whole);
+
+            if ($whole < $size) {
+                // By using unicode chars for partial blocks we can have higher
+                // precision progress bar.
+                $fraction = floor(($done - $whole) * 8);
+                $bar .= core_text::substr(' ▏▎▍▌▋▊▉', $fraction, 1);
+
+                // Fill the rest of the empty bar.
+                $bar .= str_repeat(' ', $size - $whole - 1);
+            }
+
+            $bar .= '<colour:normal>';
+
+            if ($estimate) {
+                $estimate = "- $estimate";
+            }
+
+            $ascii .= '<cursor:up>';
+            $ascii .= '<cursor:up>';
+            $ascii .= sprintf("[$bar] %3.1f%% %-22s\n", $percent, $estimate);
+            $ascii .= sprintf("%-80s\n", $msg);
+            if ($percent == 100) {
+                $ascii .= "\n";
+            }
+            return cli_ansi_format($ascii);
+        }
+
+        // If we are not rendering to a tty, ie when piped to another command
+        // or on windows we need to progressively render the progress bar
+        // which can only ever go forwards.
+        $done = round($percent * $size * 0.01);
+        $delta = max(0, $done - $this->progressmaximums[$id]);
+        $this->progressmaximums[$id] += $delta;
+
+        $ascii .= str_repeat('#', $delta);
+        if ($percent >= 100) {
+            $ascii .= sprintf("] %3.1f%%\n$msg\n", $percent);
+        }
+        return $ascii;
     }
 
     /**
