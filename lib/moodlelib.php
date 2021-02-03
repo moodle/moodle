@@ -6318,8 +6318,10 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
             // The absolute (real) path is also fetched to ensure that comparisons to allowed paths are compared equally.
             $attachpath = str_replace('\\', '/', realpath($attachment));
 
-            // Add allowed paths to an array (also check if it's not empty).
-            $allowedpaths = array_filter([
+            // Build an array of all filepaths from which attachments can be added (normalised slashes, absolute/real path).
+            $allowedpaths = array_map(function(string $path): string {
+                return str_replace('\\', '/', realpath($path));
+            }, [
                 $CFG->cachedir,
                 $CFG->dataroot,
                 $CFG->dirroot,
@@ -6327,12 +6329,12 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
                 $CFG->tempdir,
                 $CFG->localrequestdir,
             ]);
+
             // Set addpath to true.
             $addpath = true;
+
             // Check if attachment includes one of the allowed paths.
-            foreach ($allowedpaths as $allowedpath) {
-                // Make sure both variables are normalised before comparing.
-                $allowedpath = str_replace('\\', '/', realpath($allowedpath));
+            foreach (array_filter($allowedpaths) as $allowedpath) {
                 // Set addpath to false if the attachment includes one of the allowed paths.
                 if (strpos($attachpath, $allowedpath) === 0) {
                     $addpath = false;
