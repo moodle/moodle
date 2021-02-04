@@ -255,7 +255,7 @@ class zipwriter {
         $templatedata->global = (object) [
             'righttoleft' => right_to_left(),
             'language' => str_replace('_', '-', current_language()),
-            'sitename' => $SITE->fullname,
+            'sitename' => format_string($SITE->fullname, true, ['context' => context_system::instance()]),
             'siteurl' => $CFG->wwwroot,
             'pathtotop' => $this->get_relative_context_path($context, $this->rootcontext, '/'),
             'contentexportfooter' => get_string('contentexport_footersummary', 'core', (object) [
