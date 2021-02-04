@@ -68,7 +68,16 @@ $string['pathserrcreatedataroot'] = 'Datagids ({$a->dataroot}) kan nie deur inst
 $string['pathshead'] = 'Bevestig roetes';
 $string['pathsrodataroot'] = 'Datastamgids is nie skryfbaar nie.';
 $string['pathsroparentdataroot'] = 'Moedergids ({$a->parent}) is nie skryfbaar nie. Datagids ({$a->dataroot}) kan nie deur installeerder geskep word nie.';
+$string['pathssubadmindir'] = 'Slegs \'n paar webgashere gebruik /admin \'n spesiale URL sodat jy toegang tot \'n kontrolepaneel of iets dergliks kan verkry. Ongelukkig bots dit met die standaardligging vir die Moodle-adminblaaie. Jy kan dit regstel deur die admingids in jou installasie te herbenaam, en daardie nuwe naam hier aan te bring. Byvoorbeeld: <em>moodleadmin</em>. Dit sal die adminskakels in Moodle regstel.';
+$string['pathssubdataroot'] = '<p>\'n Gids waar Moodle alle lêerinhoud wat deur gebruikers opgelaai is, sal stoor.</p>
+<p>Hierdie gids moet vir die gebruiker van die webbediener (gewoonlik \'www-data\', \'niemand\' of \'apache\') leesbaar en skryfbaar wees.</p>
+</p>Dit moet nie regstreeks via die web toeganklik wees nie.</p>
+<p>As die gids nie tans bestaan nie, sal die installasieproses probeer om dit te skep.</p>';
 $string['pathssubdirroot'] = '<p>Die volledige roete na die gids wat die Moodle-kode bevat.</p>';
+$string['pathssubwwwroot'] = '<p>Die volledige adres waar toegang tot Moodle verkry sal word, d.w.s. die adres wat gebruikers in die adresbalk van hul blaaier sal intik om toegang tot Moodle te verkry.</p>
+<p>Dit is nie moontlik om toegang tot Moodle te verkry deur van veelvoudige adresse gebruik te maak nie. As jou webwerf via veelvoudige adresse toeganklik is, kies dan die maklikste een en stel \'n permanente heradressering vir elk van die ander adresse op.</p>
+<p>As jou webwerf beide via die Internet en \'n interne netwerk (soms bekend as \'n Intranet) toeganklik is, gebruik dan die publieke adres hier.</p>
+<p>As die huidige adres nie korrek is nie, verander asseblief die URL in jou blaaier se adresbalk en herbegin die installasie.</p>';
 $string['pathsunsecuredataroot'] = 'Ligging van datastam is nie veilig nie';
 $string['pathswrongadmindir'] = 'Admingids bestaan nie';
 $string['phpextension'] = '{$a} PHP-uitbreiding';
