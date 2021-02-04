@@ -3761,22 +3761,27 @@ class core_moodlelib_testcase extends advanced_testcase {
      * @return array of test cases.
      */
     public function count_words_testcases(): array {
+        // The counts here should match MS Word and Libre Office.
         return [
             [0, ''],
             [4, 'one two three four'],
-            [3, "one two three'four"],
-            [3, 'one+two three’four'],
-            [2, 'one"two three-four'],
-            [4, 'one@two three_four'],
-            [4, 'one\two three/four'],
+            [1, "a'b"],
+            [1, '1+1=2'],
+            [1, ' one-sided '],
+            [2, 'one&nbsp;two'],
+            [1, 'email@example.com'],
+            [2, 'first\part second/part'],
             [4, '<p>one two<br></br>three four</p>'],
             [4, '<p>one two<br>three four</p>'],
             [4, '<p>one two<br />three four</p>'], // XHTML style.
-            [4, ' one ... two &nbsp; three...four '],
-            [4, 'one.2 3,four'],
+            [3, ' one ... three '],
+            [1, 'just...one'],
+            [3, ' one & three '],
+            [1, 'just&one'],
+            [2, 'em—dash'],
+            [2, 'en–dash'],
             [4, '1³ £2 €3.45 $6,789'],
-            [4, 'one—two ブルース カンベッル'],
-            [4, 'one…two ブルース … カンベッル'],
+            [2, 'ブルース カンベッル'], // MS word counts this as 11, but we don't handle that yet.
             [4, '<p>one two</p><p>three four</p>'],
             [4, '<p>one two</p><p><br/></p><p>three four</p>'],
             [4, '<p>one</p><ul><li>two</li><li>three</li></ul><p>four.</p>'],
@@ -3785,7 +3790,12 @@ class core_moodlelib_testcase extends advanced_testcase {
             [1, '<p>em<strong>phas</strong>is.</p>'],
             [1, '<p>em<em>phas</em>is.</p>'],
             [2, "one\ntwo"],
+            [2, "one\rtwo"],
+            [2, "one\ttwo"],
+            [2, "one\vtwo"],
+            [2, "one\ftwo"],
             [1, "SO<sub>4</sub><sup>2-</sup>"],
+            [6, '4+4=8 i.e. O(1) a,b,c,d I’m black&blue_really'],
         ];
     }
 
