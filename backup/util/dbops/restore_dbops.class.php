@@ -1078,8 +1078,8 @@ abstract class restore_dbops {
                                 $localpath = $filesystem->get_local_path_from_storedfile($storedfile);
                                 $fs->create_file_from_pathname($file, $localpath);
                             } else if ($filesystem->is_file_readable_remotely_by_storedfile($storedfile)) {
-                                $url = $filesystem->get_remote_path_from_storedfile($storedfile);
-                                $fs->create_file_from_url($file, $url);
+                                $remotepath = $filesystem->get_remote_path_from_storedfile($storedfile);
+                                $fs->create_file_from_pathname($file, $remotepath);
                             } else if ($filesystem->is_file_readable_locally_by_storedfile($storedfile, true)) {
                                 $localpath = $filesystem->get_local_path_from_storedfile($storedfile, true);
                                 $fs->create_file_from_pathname($file, $localpath);
