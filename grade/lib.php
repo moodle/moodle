@@ -887,6 +887,15 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         $plugin_info['export'] = $exports;
     }
 
+    // Let other plugins add plugins here so that we get extra tabs
+    // in the gradebook.
+    $callbacks = get_plugins_with_function('extend_gradebook_plugininfo', 'lib.php');
+    foreach ($callbacks as $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $plugin_info = $pluginfunction($plugin_info, $courseid);
+        }
+    }
+
     foreach ($plugin_info as $plugin_type => $plugins) {
         if (!empty($plugins->id) && $active_plugin == $plugins->id) {
             $plugin_info['strings']['active_plugin_str'] = $plugins->string;
