@@ -29,5 +29,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Afrikaans';
+$string['thislanguage'] = 'Tetun Dili';
