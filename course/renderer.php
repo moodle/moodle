@@ -2135,6 +2135,19 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Renders the activity information.
+     *
+     * Defer to template.
+     *
+     * @param \core_course\output\activity_information $page
+     * @return string html for the page
+     */
+    public function render_activity_information(\core_course\output\activity_information $page) {
+        $data = $page->export_for_template($this->output);
+        return $this->output->render_from_template('core_course/activity_info', $data);
+    }
+
+    /**
      * Renders the activity navigation.
      *
      * Defer to template.
