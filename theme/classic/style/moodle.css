@@ -14335,6 +14335,9 @@ span.editinstructions {
 .activity-navigation #next-activity-link {
   white-space: pre-wrap; }
 
+.automatic-completion-conditions .badge {
+  font-size: 100%; }
+
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target::before {
   content: " ";
@@ -16978,6 +16981,12 @@ textarea[data-auto-rows] {
 /* modules.less */
 select {
   width: auto; }
+
+.path-mod div.activity-information {
+  border-bottom: 1px solid #dee2e6;
+  padding-top: 0.5rem;
+  padding-bottom: 1rem;
+  margin-bottom: 0.5rem; }
 
 .path-mod-choice .horizontal .choices .option {
   display: inline-block; }

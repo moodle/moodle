@@ -1,0 +1,122 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Provides the functionality for toggling the manual completion state of a course module through
+ * the manual completion button.
+ *
+ * @module      core_course/manual_completion_toggle
+ * @package     core_course
+ * @copyright   2021 Jun Pataleta <jun@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+import Templates from 'core/templates';
+import Notification from 'core/notification';
+import {toggleManualCompletion} from 'core_course/repository';
+
+/**
+ * Selectors in the manual completion template.
+ *
+ * @type {{MANUAL_TOGGLE: string}}
+ */
+const SELECTORS = {
+    MANUAL_TOGGLE: 'button[data-action=toggle-manual-completion]',
+};
+
+/**
+ * Toggle type values for the data-toggletype attribute in the core_course/completion_manual template.
+ *
+ * @type {{TOGGLE_UNDO: string, TOGGLE_MARK_DONE: string}}
+ */
+const TOGGLE_TYPES = {
+    TOGGLE_MARK_DONE: 'manual:mark-done',
+    TOGGLE_UNDO: 'manual:undo',
+};
+
+/**
+ * Whether the event listener has already been registered for this module.
+ *
+ * @type {boolean}
+ */
+let registered = false;
+
+/**
+ * Registers the click event listener for the manual completion toggle button.
+ */
+export const init = () => {
+    if (registered) {
+        return;
+    }
+    document.addEventListener('click', (e) => {
+        const toggleButton = e.target.closest(SELECTORS.MANUAL_TOGGLE);
+        if (toggleButton) {
+            e.preventDefault();
+            toggleManualCompletionState(toggleButton).catch(Notification.exception);
+        }
+    });
+    registered = true;
+};
+
+/**
+ * Toggles the manual completion state of the module for the given user.
+ *
+ * @param {HTMLElement} toggleButton
+ * @returns {Promise<void>}
+ */
+const toggleManualCompletionState = async(toggleButton) => {
+    // Make a copy of the original content of the button.
+    const originalInnerHtml = toggleButton.innerHTML;
+
+    // Disable the button to prevent double clicks.
+    toggleButton.setAttribute('disabled', 'disabled');
+
+    // Get button data.
+    const toggleType = toggleButton.getAttribute('data-toggletype');
+    const cmid = toggleButton.getAttribute('data-cmid');
+    const activityname = toggleButton.getAttribute('data-activityname');
+    // Get the target completion state.
+    const completed = toggleType === TOGGLE_TYPES.TOGGLE_MARK_DONE;
+
+    // Replace the button contents with the loading icon.
+    const loadingHtml = await Templates.render('core/loading', {});
+    await Templates.replaceNodeContents(toggleButton, loadingHtml, '');
+
+    try {
+        // Call the webservice to update the manual completion status.
+        await toggleManualCompletion(cmid, completed);
+
+        // All good so far. Refresh the manual completion button to reflect its new state by re-rendering the template.
+        const templateContext = {
+            cmid: cmid,
+            activityname: activityname,
+            overallcomplete: completed,
+            overallincomplete: !completed,
+            istrackeduser: true, // We know that we're tracking completion for this user given the presence of this button.
+        };
+        const renderObject = await Templates.renderForPromise('core_course/completion_manual', templateContext);
+
+        // Replace the toggle button with the newly loaded template.
+        await Templates.replaceNode(toggleButton, renderObject.html, renderObject.js);
+
+    } catch (exception) {
+        // In case of an error, revert the original state and appearance of the button.
+        toggleButton.removeAttribute('disabled');
+        toggleButton.innerHTML = originalInnerHtml;
+
+        // Show the exception.
+        Notification.exception(exception);
+    }
+};
