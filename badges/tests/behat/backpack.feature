@@ -120,7 +120,7 @@ Feature: Backpack badges
     And I click on "Delete" "button" in the "Delete site backpack" "dialogue"
     Then I should see "The site backpack has been deleted."
     And I should not see "https://dc.imsglobal.org"
-    And "Delete" "button" should not exist
+    And "Delete" "button" should not be visible
 
   @javascript
   Scenario: Add a new site backpack with authentication details checkbox
@@ -131,27 +131,27 @@ Feature: Backpack badges
     And I set the field "backpackapiurl" to "http://backpackapiurl.cat"
     And I set the field "backpackweburl" to "http://backpackweburl.cat"
     And I set the field "apiversion" to "2.1"
-    Then "Include authentication details with the backpack" "checkbox" should not exist
+    Then "Include authentication details with the backpack" "checkbox" should not be visible
     And I should not see "Badge issuer email address"
     And I should not see "Badge issuer password"
     And I set the field "apiversion" to "1"
-    And "Include authentication details with the backpack" "checkbox" should exist
+    And "Include authentication details with the backpack" "checkbox" should be visible
     And I click on "includeauthdetails" "checkbox"
     And I should see "Badge issuer email address"
     And I should not see "Badge issuer password"
     And I set the field "apiversion" to "2"
-    And "Include authentication details with the backpack" "checkbox" should exist
+    And "Include authentication details with the backpack" "checkbox" should be visible
     And I should see "Badge issuer email address"
     And I should see "Badge issuer password"
     And I set the field "backpackemail" to "test@test.com"
     And I set the field "password" to "123456"
     And I press "Save changes"
     And I click on "Edit" "link" in the "http://backpackweburl.cat" "table_row"
-    And "input[name=includeauthdetails][type=checkbox][value=1]" "css_element" should exist
+    And the field "Include authentication details with the backpack" matches value "1"
     And I click on "includeauthdetails" "checkbox"
     And I press "Save changes"
     And I click on "Edit" "link" in the "http://backpackweburl.cat" "table_row"
-    And "input[name=includeauthdetails][type=checkbox][value=1]" "css_element" should not exist
+    And the field "Include authentication details with the backpack" matches value "0"
     And I click on "includeauthdetails" "checkbox"
     And I should not see "test@test.com"
     And I log out
