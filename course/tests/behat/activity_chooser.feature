@@ -51,8 +51,8 @@ Feature: Display and choose from the available activities in course
     And I should see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback." in the "help" "core_course > Activity chooser screen"
     And I should see "Back" in the "help" "core_course > Activity chooser screen"
     When I click on "Back" "button" in the "help" "core_course > Activity chooser screen"
-    Then "modules" "core_course > Activity chooser screen" should exist
-    And "help" "core_course > Activity chooser screen" should not exist
+    Then "modules" "core_course > Activity chooser screen" should be visible
+    And "help" "core_course > Activity chooser screen" should not be visible
     And "Back" "button" should not exist in the "modules" "core_course > Activity chooser screen"
     And I should not see "The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback." in the "Add an activity or resource" "dialogue"
 
@@ -123,24 +123,26 @@ Feature: Display and choose from the available activities in course
     And I should see "Lesson" in the "Add an activity or resource" "dialogue"
     When I set the field "search" to ""
     And I should not see "1 results found" in the "Add an activity or resource" "dialogue"
-    Then ".searchresultscontainer" "css_element" should not exist
+    Then ".searchresultscontainer" "css_element" should not be visible
     And ".optionscontainer" "css_element" should exist
 
   Scenario: Teacher can not see a "clear" button if a search query is not entered in the activity chooser search bar
     When I click on "Add an activity or resource" "button" in the "Topic 1" "section"
-    Then "Clear search input" "button" should not exist
+    Then "Clear search input" "button" should not be visible
 
   Scenario: Teacher can see a "clear" button after entering a search query in the activity chooser search bar
     Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
     When I set the field "search" to "Search query"
-    Then "Clear search input" "button" should not exist
+    Then "Clear search input" "button" should not be visible
 
   Scenario: Teacher can not see a "clear" button if the search query is removed in the activity chooser search bar
     Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
     And I set the field "search" to "Search query"
     And "Clear search input" "button" should exist
     When I set the field "search" to ""
-    Then "Clear search input" "button" should not exist
+    # Waiting for the animation to hide the button to finish.
+    And I wait "1" seconds
+    Then "Clear search input" "button" should not be visible
 
   Scenario: Teacher can instantly remove the search query from the activity search bar by clicking on the "clear" button
     Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
@@ -148,7 +150,7 @@ Feature: Display and choose from the available activities in course
     And I should see "results found" in the "Add an activity or resource" "dialogue"
     When I click on "Clear search input" "button"
     Then I should not see "Search query"
-    And ".searchresultscontainer" "css_element" should not exist
+    And ".searchresultscontainer" "css_element" should not be visible
     And ".optionscontainer" "css_element" should exist
 
   Scenario: Teacher gets the base case for the Activity Chooser tab mode

@@ -60,7 +60,7 @@ Feature: Delete H5P file from the content bank
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I should see "content2delete.h5p"
     And I follow "content2delete.h5p"
-    Then ".header-actions-container" "css_element" should not exist
+    Then "Delete" "link" should not exist in the "region-main-settings-menu" "region"
     And I click on "Content bank" "link"
     And I click on "Upload" "link"
     And I click on "Choose a file..." "button"
