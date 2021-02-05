@@ -114,7 +114,7 @@
                     </tr>
                 {{/fields}}
                 {{^fields}}
-                    <tr class="nofields"><td colspan="4">{{# str }} therearenofields, core_customfield {{/ str }}</td></tr>
+                    {{> core_customfield/nofields }}
                 {{/fields}}
                 </tbody>
             </table>
