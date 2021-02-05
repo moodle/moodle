@@ -120,4 +120,4 @@ Feature: Backpack badges
     And I click on "Delete" "button" in the "Delete site backpack" "dialogue"
     Then I should see "The site backpack has been deleted."
     And I should not see "https://dc.imsglobal.org"
-    And "Delete" "button" should not exist
+    And "Delete" "button" should not be visible
