@@ -1265,7 +1265,7 @@ function quiz_update_events($quiz, $override = null) {
         // Events module won't show user events when the courseid is nonzero.
         $event->courseid    = ($userid) ? 0 : $quiz->course;
         $event->groupid     = $groupid;
-        $event->userid      = $userid;
+        $event->userid      = 0;
         $event->modulename  = 'quiz';
         $event->instance    = $quiz->id;
         $event->timestart   = $timeopen;
@@ -1298,6 +1298,8 @@ function quiz_update_events($quiz, $override = null) {
             $params = new stdClass();
             $params->quiz = $quiz->name;
             $eventname = get_string('overrideusereventname', 'quiz', $params);
+            // Only set userid for override events.
+            $event->userid = $userid;
             // Set user override priority.
             $event->priority = CALENDAR_EVENT_USER_OVERRIDE_PRIORITY;
         } else {
