@@ -379,7 +379,7 @@ class report_loglive_table_log extends table_sql {
                     $userfieldsapi->get_sql('', false, '', '', false)->selects . " FROM {user} WHERE id " . $usql,
                     $uparams);
             foreach ($users as $userid => $user) {
-                $this->userfullnames[$userid] = fullname($user);
+                $this->userfullnames[$userid] = fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context()));
             }
         }
 

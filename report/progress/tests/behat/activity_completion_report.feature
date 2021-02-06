@@ -56,14 +56,10 @@ Feature: Teacher can view and override users' activity completion data via the p
     # Student can now complete the activities again, via normal means.
     Then I log in as "student1"
     And I am on "Course 1" course homepage
-    And the manual completion button of "my assignment" overridden by "Teacher One" is displayed as "Mark as done"
-    And the "View" completion condition of "my assignment 2" overridden by "Teacher One" is displayed as "todo"
+    And the manual completion button of "my assignment" overridden by "Teacher" is displayed as "Mark as done"
+    And the "View" completion condition of "my assignment 2" overridden by "Teacher" is displayed as "todo"
     And I toggle the manual completion state of "my assignment"
     And the manual completion button of "my assignment" is displayed as "Done"
-    And "Not completed: my assignment (set by Teacher). Select to mark as complete." "icon" should exist in the "my assignment" "list_item"
-    And "Not completed: my assignment 2 (set by Teacher)" "icon" should exist in the "my assignment 2" "list_item"
-    And I click on "Not completed: my assignment (set by Teacher). Select to mark as complete." "icon"
-    And "Completed: my assignment. Select to mark as not complete." "icon" should exist in the "my assignment" "list_item"
     And I click on "my assignment 2" "link"
     And I am on "Course 1" course homepage
     And the "View" completion condition of "my assignment 2" is displayed as "done"
@@ -96,8 +92,7 @@ Feature: Teacher can view and override users' activity completion data via the p
     # Then as a student, confirm that automatic completion checks are no longer triggered (such as after an assign submission).
     Then I log in as "student1"
     And I am on "Course 1" course homepage
-    And the "Receive a grade" completion condition of "my assignment 3" overridden by "Teacher One" is displayed as "done"
-    And "Completed: my assignment 3 (set by Teacher)" "icon" should exist in the "my assignment 3" "list_item"
+    And the "Receive a grade" completion condition of "my assignment 3" overridden by "Teacher" is displayed as "done"
     And I click on "my assignment 3" "link"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -105,16 +100,10 @@ Feature: Teacher can view and override users' activity completion data via the p
     And I press "Save changes"
     And I should see "Submitted for grading"
     And I am on "Course 1" course homepage
-    And the "Receive a grade" completion condition of "my assignment 3" overridden by "Teacher One" is displayed as "done"
+    And the "Receive a grade" completion condition of "my assignment 3" overridden by "Teacher" is displayed as "done"
     # And Confirm that manual completion changes are still allowed.
     And I am on "Course 1" course homepage
-    And the manual completion button of "my assignment" overridden by "Teacher One" is displayed as "Done"
+    And the manual completion button of "my assignment" overridden by "Teacher" is displayed as "Done"
     And I toggle the manual completion state of "my assignment"
     And the manual completion button of "my assignment" is displayed as "Mark as done"
-    And "Completed: my assignment 3 (set by Teacher)" "icon" should exist in the "my assignment 3" "list_item"
-    # And Confirm that manual completion changes are still allowed.
-    And I am on "Course 1" course homepage
-    And "Completed: my assignment (set by Teacher). Select to mark as not complete." "icon" should exist in the "my assignment" "list_item"
-    And I click on "Completed: my assignment (set by Teacher). Select to mark as not complete." "icon"
-    And "Not completed: my assignment. Select to mark as complete." "icon" should exist in the "my assignment" "list_item"
     And I log out
