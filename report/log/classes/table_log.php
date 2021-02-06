@@ -132,7 +132,7 @@ class report_log_table_log extends table_sql {
             return false;
         }
 
-        $this->userfullnames[$userid] = fullname($user);
+        $this->userfullnames[$userid] = fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context()));
         return $this->userfullnames[$userid];
     }
 
@@ -596,7 +596,7 @@ class report_log_table_log extends table_sql {
                     " FROM {user} WHERE id " . $usql,
                     $uparams);
             foreach ($users as $userid => $user) {
-                $this->userfullnames[$userid] = fullname($user);
+                $this->userfullnames[$userid] = fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context()));
                 unset($userids[$userid]);
             }
 
