@@ -19,6 +19,7 @@ $PAGE->set_url($url);
 if (! $cm = get_coursemodule_from_id('choice', $id)) {
     print_error('invalidcoursemodule');
 }
+$cm = cm_info::create($cm);
 
 if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
     print_error('coursemisconf');
@@ -98,6 +99,11 @@ choice_view($choice, $course, $cm, $context);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($choice->name), 2, null);
+
+// Render the activity information.
+$completiondetails = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
+$activitydates = \core\activity_dates::get_dates_for_module($cm, $USER->id);
+echo $OUTPUT->activity_information($cm, $completiondetails, $activitydates);
 
 if ($notify and confirm_sesskey()) {
     if ($notify === 'choicesaved') {
