@@ -15468,9 +15468,8 @@ a.ygtvspacer:hover {
 #page-message-index #region-main {
   height: 100%;
   margin-top: 0; }
-  #page-message-index #region-main .conversationcontainer {
-    max-height: calc(100vh - 50px);
-    overflow: auto; }
+  #page-message-index #region-main .conversationcontainer .section {
+    max-height: calc(100vh - 50px); }
   #page-message-index #region-main div[role="main"] {
     height: 100%; }
     #page-message-index #region-main div[role="main"] #maincontent {
