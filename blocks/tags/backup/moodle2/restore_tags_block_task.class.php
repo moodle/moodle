@@ -57,7 +57,7 @@ class restore_tags_block_task extends restore_block_task {
 
         // Extract block configdata and remove tag collection reference if this is another site. Also map contextid.
         if ($configdata = $DB->get_field('block_instances', 'configdata', array('id' => $blockid))) {
-            $config = unserialize(base64_decode($configdata));
+            $config = $this->decode_configdata($configdata);
             $changed = false;
             if (!empty($config->tagcoll) && $config->tagcoll > 1 && !$this->is_samesite()) {
                 $config->tagcoll = 0;
