@@ -43,7 +43,7 @@ class content extends \core_search\base_block {
                 $this->componentname, $this->areaname);
 
         // Get stdclass object with data from DB.
-        $data = unserialize(base64_decode($record->configdata));
+        $data = unserialize_object(base64_decode($record->configdata));
 
         // Get content.
         $content = content_to_text($data->text, $data->format);

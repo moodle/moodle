@@ -73,7 +73,7 @@ class restore_activity_results_block_task extends restore_block_task {
         $blockid = $this->get_blockid();
 
         if ($configdata = $DB->get_field('block_instances', 'configdata', array('id' => $blockid))) {
-            $config = unserialize(base64_decode($configdata));
+            $config = $this->decode_configdata($configdata);
             if (!empty($config->activityparentid)) {
                 // Get the mapping and replace it in config.
                 if ($mapping = restore_dbops::get_backup_ids_record($this->get_restoreid(),
