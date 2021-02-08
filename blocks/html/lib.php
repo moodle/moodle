@@ -100,7 +100,7 @@ function block_html_global_db_replace($search, $replace) {
     $instances = $DB->get_recordset('block_instances', array('blockname' => 'html'));
     foreach ($instances as $instance) {
         // TODO: intentionally hardcoded until MDL-26800 is fixed
-        $config = unserialize(base64_decode($instance->configdata));
+        $config = unserialize_object(base64_decode($instance->configdata));
         if (isset($config->text) and is_string($config->text)) {
             $config->text = str_replace($search, $replace, $config->text);
             $DB->update_record('block_instances', ['id' => $instance->id,

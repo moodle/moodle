@@ -66,8 +66,7 @@ class restore_quiz_results_block_task extends restore_block_task {
 
         // The block was configured.
         if (!empty($configdata)) {
-
-            $config = unserialize(base64_decode($configdata));
+            $config = $this->decode_configdata($configdata);
             $config->activityparent = 'quiz';
             $config->activityparentid = 0;
             $config->gradeformat = isset($config->gradeformat) ? $config->gradeformat : 1;

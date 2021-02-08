@@ -36,7 +36,7 @@ class backup_rss_client_block_structure_step extends backup_block_structure_step
         // Get the block
         $block = $DB->get_record('block_instances', array('id' => $this->task->get_blockid()));
         // Extract configdata
-        $config = unserialize(base64_decode($block->configdata));
+        $config = unserialize_object(base64_decode($block->configdata));
         // Get array of used rss feeds
         if (!empty($config->rssid)) {
             $feedids = $config->rssid;
