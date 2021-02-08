@@ -19,7 +19,7 @@ Feature: Updating a file in the content bank after using in a course
       | page     | PageName1  | PageDesc1  | 1           | C1     | H5Ptest  | 1             | 1        |
     And I log in as "admin"
 
-  Scenario: Referenced files updates alias as well
+  Scenario: Referenced files is the default option and updates alias as well
     Given I am on "Course1" course homepage
     And I follow "PageName1"
     And I navigate to "Edit settings" in current page administration
@@ -27,7 +27,6 @@ Feature: Updating a file in the content bank after using in a course
     And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
     And I select "Content bank" repository in file picker
     And I click on "package.h5p" "file" in repository content area
-    And I click on "Link to the file" "radio"
     And I click on "Select this file" "button"
     And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
     And I wait until the page is ready
@@ -69,6 +68,7 @@ Feature: Updating a file in the content bank after using in a course
     And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
     And I select "Content bank" repository in file picker
     And I click on "package.h5p" "file" in repository content area
+    And I click on "Make a copy of the file" "radio"
     And I click on "Select this file" "button"
     And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
     And I wait until the page is ready
