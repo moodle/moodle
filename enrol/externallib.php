@@ -295,11 +295,15 @@ class core_enrol_external extends external_api {
         global $CFG, $USER, $DB;
 
         require_once($CFG->dirroot . '/course/lib.php');
+        require_once($CFG->dirroot . '/user/lib.php');
 
         // Do basic automatic PARAM checks on incoming data, using params description
         // If any problems are found then exceptions are thrown with helpful error messages
         $params = self::validate_parameters(self::get_users_courses_parameters(), array('userid'=>$userid));
         $userid = $params['userid'];
+
+        // Get user data including last access to courses.
+        $user = get_complete_user_data('id', $userid);
         $sameuser = $USER->id == $userid;
 
         $courses = enrol_get_users_courses($params['userid'], true, 'id, shortname, fullname, idnumber, visible,
@@ -315,8 +319,8 @@ class core_enrol_external extends external_api {
                 continue;
             }
 
-            if (!$sameuser and !course_can_view_participants($context)) {
-                // we need capability to view participants
+            // If viewing details of another user, then we must be able to view participants as well as profile of that user.
+            if (!$sameuser && (!course_can_view_participants($context) || !user_can_view_profile($user, $course))) {
                 continue;
             }
 
