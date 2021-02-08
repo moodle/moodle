@@ -49,9 +49,8 @@ class block_rss_client_edit_form extends block_edit_form {
 
         $insql = '';
         $params = array('userid' => $USER->id);
-        $rssconfig = unserialize(base64_decode($this->block->instance->configdata));
-        if ($rssconfig && !empty($rssconfig->rssid)) {
-            list($insql, $inparams) = $DB->get_in_or_equal($rssconfig->rssid, SQL_PARAMS_NAMED);
+        if (!empty($this->block->config) && !empty($this->block->config->rssid)) {
+            list($insql, $inparams) = $DB->get_in_or_equal($this->block->config->rssid, SQL_PARAMS_NAMED);
             $insql = "OR id $insql ";
             $params += $inparams;
         }

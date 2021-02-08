@@ -470,7 +470,7 @@ class block_base {
      */
     function _load_instance($instance, $page) {
         if (!empty($instance->configdata)) {
-            $this->config = unserialize(base64_decode($instance->configdata));
+            $this->config = unserialize_object(base64_decode($instance->configdata));
         }
         $this->instance = $instance;
         $this->context = context_block::instance($instance->id);
