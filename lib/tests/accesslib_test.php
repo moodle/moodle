@@ -1737,34 +1737,37 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         $roles = get_user_roles_in_course($user1->id, $course->id);
-        $this->assertEquals(1, preg_match_all('/,/', $roles, $matches));
-        $this->assertTrue(strpos($roles, role_get_name($teacherrole, $coursecontext)) !== false);
+        $this->assertEquals([
+            role_get_name($teacherrole, $coursecontext),
+            role_get_name($studentrole, $coursecontext),
+        ], array_map('strip_tags', explode(', ', $roles)));
 
         $roles = get_user_roles_in_course($user2->id, $course->id);
-        $this->assertEquals(0, preg_match_all('/,/', $roles, $matches));
-        $this->assertTrue(strpos($roles, role_get_name($studentrole, $coursecontext)) !== false);
+        $this->assertEquals([
+            role_get_name($studentrole, $coursecontext),
+        ], array_map('strip_tags', explode(', ', $roles)));
 
         $roles = get_user_roles_in_course($user3->id, $course->id);
-        $this->assertSame('', $roles);
+        $this->assertEmpty($roles);
 
         // Managers should be able to see a link to their own role type, given they can assign it in the context.
         $this->setUser($user4);
         $roles = get_user_roles_in_course($user4->id, $course->id);
-        $this->assertNotEmpty($roles);
-        $this->assertEquals(1, count(explode(',', $roles)));
-        $this->assertTrue(strpos($roles, role_get_name($managerrole, $coursecontext)) !== false);
+        $this->assertEquals([
+            role_get_name($managerrole, $coursecontext),
+        ], array_map('strip_tags', explode(', ', $roles)));
 
         // Managers should see 2 roles if viewing a user who has been enrolled as a student and a teacher in the course.
         $roles = get_user_roles_in_course($user1->id, $course->id);
-        $this->assertEquals(2, count(explode(',', $roles)));
-        $this->assertTrue(strpos($roles, role_get_name($studentrole, $coursecontext)) !== false);
-        $this->assertTrue(strpos($roles, role_get_name($teacherrole, $coursecontext)) !== false);
+        $this->assertEquals([
+            role_get_name($teacherrole, $coursecontext),
+            role_get_name($studentrole, $coursecontext),
+        ], array_map('strip_tags', explode(', ', $roles)));
 
         // Students should not see the manager role if viewing a manager's profile.
         $this->setUser($user2);
         $roles = get_user_roles_in_course($user4->id, $course->id);
         $this->assertEmpty($roles); // Should see 0 roles on the manager's profile.
-        $this->assertFalse(strpos($roles, role_get_name($managerrole, $coursecontext)) !== false);
     }
 
     /**
