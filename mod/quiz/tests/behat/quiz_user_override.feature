@@ -44,6 +44,7 @@ Feature: Quiz user override
     And I set the following fields to these values:
       | timeclose[year] | 2030 |
     And I press "Save"
+    And I should see "Action"
     And I should see "Tuesday, 1 January 2030, 8:00" in the "Student One" "table_row"
     And I should see "student1@example.com" in the "Student One" "table_row"
 
@@ -64,6 +65,7 @@ Feature: Quiz user override
       | Attempts allowed | 1                                  |
     And I press "Save"
     Then I should see "This override is inactive"
+    And I should see "Action"
     And "Edit" "icon" should exist in the "Student One" "table_row"
     And "copy" "icon" should exist in the "Student One" "table_row"
     And "Delete" "icon" should exist in the "Student One" "table_row"
@@ -82,6 +84,7 @@ Feature: Quiz user override
       | Override user    | Student One |
       | Attempts allowed | 1           |
     And I press "Save"
+    And I should see "Action"
     And I should not see "student1@example.com"
     And "Edit" "icon" should exist in the "Student One" "table_row"
     And "copy" "icon" should exist in the "Student One" "table_row"
@@ -139,6 +142,7 @@ Feature: Quiz user override
     Then "Student One" "table_row" should exist
     And "Student Two" "table_row" should exist
     And "Add user override" "button" should not exist
+    And I should not see "Action"
     And "Edit" "link" should not exist in the "Student One" "table_row"
     And "Copy" "link" should not exist in the "Student One" "table_row"
     And "Delete" "link" should not exist in the "Student One" "table_row"
