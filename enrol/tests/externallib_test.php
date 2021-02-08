@@ -522,6 +522,81 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test that get_users_courses respects the capability to view participants when viewing courses of other user
+     */
+    public function test_get_users_courses_can_view_participants(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $this->setUser($user1);
+
+        $courses = core_enrol_external::clean_returnvalue(
+            core_enrol_external::get_users_courses_returns(),
+            core_enrol_external::get_users_courses($user2->id, false)
+        );
+
+        $this->assertCount(1, $courses);
+        $this->assertEquals($course->id, reset($courses)['id']);
+
+        // Prohibit the capability for viewing course participants.
+        $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        assign_capability('moodle/course:viewparticipants', CAP_PROHIBIT, $studentrole, $context->id);
+
+        $courses = core_enrol_external::clean_returnvalue(
+            core_enrol_external::get_users_courses_returns(),
+            core_enrol_external::get_users_courses($user2->id, false)
+        );
+        $this->assertEmpty($courses);
+    }
+
+    /*
+     * Test that get_users_courses respects the capability to view a users profile when viewing courses of other user
+     */
+    public function test_get_users_courses_can_view_profile(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course([
+            'groupmode' => VISIBLEGROUPS,
+        ]);
+
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create separate groups for each of our students.
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        groups_add_member($group1, $user1);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        groups_add_member($group2, $user2);
+
+        $this->setUser($user1);
+
+        $courses = core_enrol_external::clean_returnvalue(
+            core_enrol_external::get_users_courses_returns(),
+            core_enrol_external::get_users_courses($user2->id, false)
+        );
+
+        $this->assertCount(1, $courses);
+        $this->assertEquals($course->id, reset($courses)['id']);
+
+        // Change to separate groups mode, so students can't view information about each other in different groups.
+        $course->groupmode = SEPARATEGROUPS;
+        update_course($course);
+
+        $courses = core_enrol_external::clean_returnvalue(
+            core_enrol_external::get_users_courses_returns(),
+            core_enrol_external::get_users_courses($user2->id, false)
+        );
+        $this->assertEmpty($courses);
+    }
+
+    /**
      * Test get_users_courses with mathjax in the name.
      */
     public function test_get_users_courses_with_mathjax() {
