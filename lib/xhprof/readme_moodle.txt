@@ -41,4 +41,5 @@ TODO:
 20171002 - MDL-60313 - Marina Glancy (marinaglancy): Upgrade to 0.9.4 release; patched for PHP7.2
 20190314 - MDL-64543 - Brendan Heywood (brendanheywood): Add support for conditional slow profiling
 20191016 - MDL-65349 - Brendan Heywood (brendanheywood): Improved url matching behaviour
+20210209 - MDL-70525 - Tomo Tsuyuki (tomotsuyuki): Allow huge number of values
 
