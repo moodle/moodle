@@ -26,23 +26,30 @@
 require(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('reportconfiglog', '', null, '', array('pagelayout'=>'report'));
+// Allow searching by setting when providing parameter directly.
+$search = optional_param('search', '', PARAM_TEXT);
+
+admin_externalpage_setup('reportconfiglog', '', ['search' => $search], '', ['pagelayout' => 'report']);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('configlog', 'report_configlog'));
 
-$mform = new \report_configlog\form\search();
-
 /** @var cache_session $cache */
 $cache = cache::make_from_params(cache_store::MODE_SESSION, 'report_customlog', 'search');
-if ($cachedata = $cache->get('data')) {
-    $mform->set_data($cachedata);
+
+if (!empty($search)) {
+    $searchdata = (object) ['setting' => $search];
+} else {
+    $searchdata = $cache->get('data');
 }
+
+$mform = new \report_configlog\form\search();
+$mform->set_data($searchdata);
 
 $searchclauses = [];
 
 // Check if we have a form submission, or a cached submission.
-$data = ($mform->is_submitted() ? $mform->get_data() : fullclone($cachedata));
+$data = ($mform->is_submitted() ? $mform->get_data() : fullclone($searchdata));
 if ($data instanceof stdClass) {
     if (!empty($data->value)) {
         $searchclauses[] = $data->value;
