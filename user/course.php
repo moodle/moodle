@@ -44,7 +44,7 @@ if ($courseform->is_cancelled()) {
     useredit_update_user_preference(['id' => $user->id,
         'preference_usemodchooser' => $data->enableactivitychooser]);
 
-    redirect($redirect);
+    redirect($redirect, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
 }
 
 // Display page header.
