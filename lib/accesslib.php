@@ -2778,7 +2778,7 @@ function get_user_roles_in_course($userid, $courseid) {
                 $rolenames[] = '<a href="' . $url . '">' . $viewableroles[$roleid] . '</a>';
             }
         }
-        $rolestring = implode(',', $rolenames);
+        $rolestring = implode(', ', $rolenames);
     }
 
     return $rolestring;
