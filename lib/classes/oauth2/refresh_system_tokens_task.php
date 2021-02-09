@@ -85,6 +85,7 @@ class refresh_system_tokens_task extends scheduled_task {
      */
     public function execute() {
         $issuers = \core\oauth2\api::get_all_issuers();
+        $tasksuccess = true;
         foreach ($issuers as $issuer) {
             if ($issuer->is_system_account_connected()) {
                 try {
@@ -92,12 +93,18 @@ class refresh_system_tokens_task extends scheduled_task {
                     // Returns false or throws a moodle_exception on error.
                     $success = \core\oauth2\api::get_system_oauth_client($issuer);
                 } catch (moodle_exception $e) {
+                    mtrace($e->getMessage());
                     $success = false;
                 }
                 if ($success === false) {
                     $this->notify_admins($issuer);
+                    $tasksuccess = false;
                 }
             }
+        }
+
+        if (!$tasksuccess) {
+             throw new moodle_exception('oauth2refreshtokentaskerror', 'core_error');
         }
     }
 
