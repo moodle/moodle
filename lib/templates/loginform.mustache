@@ -101,10 +101,13 @@
 <div class="card">
     <div class="card-block">
         {{#logourl}}
-            <h2 class="card-header text-center" ><img src="{{logourl}}" class="img-fluid" title="{{sitename}}" alt="{{sitename}}"/></h2>
+            <h1 class="h2 card-header text-center" >
+                <span class="sr-only">{{sitename}}: {{#str}} login {{/str}}</span>
+                <img src="{{logourl}}" class="img-fluid" alt=""/>
+            </h1>
         {{/logourl}}
         {{^logourl}}
-            <h2 class="card-header text-center">{{sitename}}</h2>
+            <h1 class="h2 card-header text-center" aria-label="{{sitename}}: {{#str}} login {{/str}}">{{sitename}}</h1>
         {{/logourl}}
         <div class="card-body">
             {{#cansignup}}
@@ -181,7 +184,7 @@
                     {{/canloginasguest}}
 
                 {{#hasidentityproviders}}
-                    <h3 class="h6 mt-2">{{#str}} potentialidps, auth {{/str}}</h3>
+                    <h2 class="h6 mt-2">{{#str}} potentialidps, auth {{/str}}</h2>
                     <div class="potentialidplist mt-3">
                         {{#identityproviders}}
                             <div class="potentialidp">
