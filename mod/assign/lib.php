@@ -1552,8 +1552,8 @@ function mod_assign_core_calendar_provide_event_action(calendar_event $event,
             'id' => $cm->id,
             'action' => 'grader'
         ]);
-        $itemcount = $assign->count_submissions_need_grading();
         $actionable = $assign->can_grade($userid) && (time() >= $assign->get_instance()->allowsubmissionsfromdate);
+        $itemcount = $actionable ? $assign->count_submissions_need_grading() : 0;
     } else {
         $usersubmission = $assign->get_user_submission($userid, false);
         if ($usersubmission && $usersubmission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
