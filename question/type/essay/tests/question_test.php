@@ -43,11 +43,62 @@ class qtype_essay_question_test extends advanced_testcase {
         $this->assertEquals('Hello [world]', $essay->get_question_summary());
     }
 
-    public function test_summarise_response() {
-        $longstring = str_repeat('0123456789', 50);
+    /**
+     * Test summarise_response() when teachers view quiz attempts and then
+     * review them to see what has been saved in the response history table.
+     *
+     * @dataProvider summarise_response_provider
+     * @param int $responserequired
+     * @param int $attachmentsrequired
+     * @param string $answertext
+     * @param int $attachmentuploaded
+     * @param string $expected
+     */
+    public function test_summarise_response(int $responserequired, int $attachmentsrequired,
+                                            string $answertext, int $attachmentuploaded, string $expected): void {
+        $this->resetAfterTest();
+
+        // If number of allowed attachments is set to 'Unlimited', generate 10 attachments for testing purpose.
+        $numberofattachments = ($attachmentsrequired === -1) ? 10 : $attachmentsrequired;
+
+        // Create sample attachments.
+        $attachments = $this->create_user_and_sample_attachments($numberofattachments);
+
+        // Create the essay question under test.
         $essay = test_question_maker::make_an_essay_question();
-        $this->assertEquals($longstring, $essay->summarise_response(
-                array('answer' => $longstring, 'answerformat' => FORMAT_HTML)));
+        $essay->start_attempt(new question_attempt_step(), 1);
+
+        $essay->responseformat = 'editor';
+        $essay->responserequired = $responserequired;
+        $essay->attachmentsrequired = $attachmentsrequired;
+
+        $this->assertEquals($expected, $essay->summarise_response(
+            ['answer' => $answertext, 'answerformat' => FORMAT_HTML,  'attachments' => $attachments[$attachmentuploaded]]));
+    }
+
+    /**
+     * Data provider for summarise_response() test cases.
+     *
+     * @return array List of data sets (test cases)
+     */
+    public function summarise_response_provider(): array {
+        return [
+            'text input required, not attachments required'  =>
+                [1, 0, 'This is the text input for this essay.', 0, 'This is the text input for this essay.'],
+            'Text input required, one attachments required, one uploaded'  =>
+                [1, 1, 'This is the text input for this essay.', 1, 'This is the text input for this essay.Attachments: 0 (1 bytes)'],
+            'Text input is optional, four attachments required, one uploaded'  => [0, 4, '', 1, 'Attachments: 0 (1 bytes)'],
+            'Text input is optional, four attachments required, two uploaded'  => [0, 4, '', 2, 'Attachments: 0 (1 bytes), 1 (1 bytes)'],
+            'Text input is optional, four attachments required, three uploaded'  => [0, 4, '', 3, 'Attachments: 0 (1 bytes), 1 (1 bytes), 2 (1 bytes)'],
+            'Text input is optional, four attachments required, four uploaded'  => [0, 4, 'I have attached 4 files.', 4,
+                'I have attached 4 files.Attachments: 0 (1 bytes), 1 (1 bytes), 2 (1 bytes), 3 (1 bytes)'],
+            'Text input is optional, unlimited attachments required, one uploaded'  => [0, -1, '', 1, 'Attachments: 0 (1 bytes)'],
+            'Text input is optional, unlimited attachments required, five uploaded'  => [0, -1, 'I have attached 5 files.', 5,
+                'I have attached 5 files.Attachments: 0 (1 bytes), 1 (1 bytes), 2 (1 bytes), 3 (1 bytes), 4 (1 bytes)'],
+            'Text input is optional, unlimited attachments required, ten uploaded'  =>
+                [0, -1, '', 10, 'Attachments: 0 (1 bytes), 1 (1 bytes), 2 (1 bytes), 3 (1 bytes), 4 (1 bytes), ' .
+                    '5 (1 bytes), 6 (1 bytes), 7 (1 bytes), 8 (1 bytes), 9 (1 bytes)']
+        ];
     }
 
     public function test_is_same_response() {
@@ -141,22 +192,14 @@ class qtype_essay_question_test extends advanced_testcase {
     public function test_is_complete_response() {
         $this->resetAfterTest(true);
 
-        // Create a new logged-in user, so we can test responses with attachments.
-        $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
-
-        // Create sample attachments to use in testing.
-        $helper = test_question_maker::get_test_helper('essay');
-        $attachments = array();
-        for ($i = 0; $i < 4; ++$i) {
-            $attachments[$i] = $helper->make_attachments_saver($i);
-        }
+        // Create sample attachments.
+        $attachments = $this->create_user_and_sample_attachments();
 
         // Create the essay question under test.
         $essay = test_question_maker::make_an_essay_question();
         $essay->start_attempt(new question_attempt_step(), 1);
 
-        // Test the "traditional" case, where we must recieve a response from the user.
+        // Test the "traditional" case, where we must receive a response from the user.
         $essay->responserequired = 1;
         $essay->attachmentsrequired = 0;
         $essay->responseformat = 'editor';
@@ -261,5 +304,24 @@ class qtype_essay_question_test extends advanced_testcase {
         $this->assertNull($options['filetypeslist']);
         $this->assertEquals('', $options['responsetemplate']);
         $this->assertEquals(FORMAT_MOODLE, $options['responsetemplateformat']);
+    }
+
+    /**
+     * Create sample attachemnts and retun generated attachments.
+     * @param int $numberofattachments
+     * @return array
+     */
+    private function create_user_and_sample_attachments($numberofattachments = 4) {
+        // Create a new logged-in user, so we can test responses with attachments.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Create sample attachments to use in testing.
+        $helper = test_question_maker::get_test_helper('essay');
+        $attachments = [];
+        for ($i = 0; $i < ($numberofattachments + 1); ++$i) {
+            $attachments[$i] = $helper->make_attachments_saver($i);
+        }
+        return $attachments;
     }
 }
