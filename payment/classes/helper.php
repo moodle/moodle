@@ -60,9 +60,9 @@ class helper {
     /**
      * Returns the list of gateways that can process payments in the given currency.
      *
-     * @param string $component
-     * @param string $paymentarea
-     * @param int $itemid
+     * @param string $component Name of the component that the paymentarea and itemid belong to
+     * @param string $paymentarea Payment area
+     * @param int $itemid An identifier that is known to the component
      * @return string[]
      */
     public static function get_available_gateways(string $component, string $paymentarea, int $itemid): array {
@@ -165,7 +165,9 @@ class helper {
     }
 
     /**
-     * @param string $component
+     * Get the name of the service provider class
+     *
+     * @param string $component The component
      * @return string
      * @throws \coding_exception
      */
@@ -185,8 +187,8 @@ class helper {
     /**
      * Asks the payable from the related component.
      *
-     * @param string $component Name of the component that the itemid belongs to
-     * @param string $paymentarea
+     * @param string $component Name of the component that the paymentarea and itemid belong to
+     * @param string $paymentarea Payment area
      * @param int $itemid An internal identifier that is used by the component
      * @return local\entities\payable
      */
@@ -199,10 +201,10 @@ class helper {
     /**
      * Returns the gateway configuration for given component and gateway
      *
-     * @param string $component
-     * @param string $paymentarea
-     * @param int $itemid
-     * @param string $gatewayname
+     * @param string $component Name of the component that the paymentarea and itemid belong to
+     * @param string $paymentarea Payment area
+     * @param int $itemid An identifier that is known to the component
+     * @param string $gatewayname The gateway name
      * @return array
      * @throws \moodle_exception
      */
@@ -225,8 +227,8 @@ class helper {
      *
      * @uses \core_payment\local\callback\service_provider::deliver_order()
      *
-     * @param string $component Name of the component that the itemid belongs to
-     * @param string $paymentarea
+     * @param string $component Name of the component that the paymentarea and itemid belong to
+     * @param string $paymentarea Payment area
      * @param int $itemid An internal identifier that is used by the component
      * @param int $paymentid payment id as inserted into the 'payments' table, if needed for reference
      * @param int $userid The userid the order is going to deliver to
@@ -244,8 +246,8 @@ class helper {
      * Each payment gateway may then store the additional information their way.
      *
      * @param int $accountid Account id
-     * @param string $component Name of the component that the itemid belongs to
-     * @param string $paymentarea
+     * @param string $component Name of the component that the paymentarea and itemid belong to
+     * @param string $paymentarea Payment area
      * @param int $itemid An internal identifier that is used by the component
      * @param int $userid Id of the user who is paying
      * @param float $amount Amount of payment

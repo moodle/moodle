@@ -37,7 +37,7 @@ class service_provider implements \core_payment\local\callback\service_provider 
      * Callback function that returns the enrolment cost and the accountid
      * for the course that $instanceid enrolment instance belongs to.
      *
-     * @param string $paymentarea
+     * @param string $paymentarea Payment area
      * @param int $instanceid The enrolment instance id
      * @return \core_payment\local\entities\payable
      */

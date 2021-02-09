@@ -35,14 +35,19 @@ namespace core_payment\local\callback;
 interface service_provider {
 
     /**
-     * @param string $paymentarea
+     * Callback function that returns the cost of the given item in the specified payment area,
+     * along with the accountid that payments are paid to.
+     *
+     * @param string $paymentarea Payment area
      * @param int $itemid An identifier that is known to the plugin
      * @return \core_payment\local\entities\payable
      */
     public static function get_payable(string $paymentarea, int $itemid): \core_payment\local\entities\payable;
 
     /**
-     * @param string $paymentarea
+     * Callback function that delivers what the user paid for to them.
+     *
+     * @param string $paymentarea Payment area
      * @param int $itemid An identifier that is known to the plugin
      * @param int $paymentid payment id as inserted into the 'payments' table, if needed for reference
      * @param int $userid The userid the order is going to deliver to
