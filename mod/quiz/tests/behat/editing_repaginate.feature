@@ -107,7 +107,7 @@ Feature: Edit quiz page - pagination
     # Repaginate one question per page.
     When I press "Repaginate"
     And I set the field "menuquestionsperpage" to "1"
-    And I press "Go"
+    And I click on "Go" "button" in the "Repaginate" "dialogue"
     Then I should see "Essay 01 new" on quiz page "1"
     And I should see "Essay 02 new" on quiz page "2"
     And I should see "Essay 03 new" on quiz page "3"
@@ -136,7 +136,7 @@ Feature: Edit quiz page - pagination
     # Repaginate with 2 questions per page.
     When I press "Repaginate"
     And I set the field "menuquestionsperpage" to "2"
-    And I press "Go"
+    And I click on "Go" "button" in the "Repaginate" "dialogue"
     Then I should see "Essay 01 new" on quiz page "1"
     And I should see "Essay 02 new" on quiz page "1"
     And I should see "Essay 03 new" on quiz page "2"
@@ -145,7 +145,7 @@ Feature: Edit quiz page - pagination
     # Repaginate with unlimited questions per page (All questions on Page 1).
     When I press "Repaginate"
     And I set the field "menuquestionsperpage" to "Unlimited"
-    And I press "Go"
+    And I click on "Go" "button" in the "Repaginate" "dialogue"
     Then I should see "Essay 01 new" on quiz page "1"
     And I should see "Essay 02 new" on quiz page "1"
     And I should see "Essay 03 new" on quiz page "1"
