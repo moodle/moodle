@@ -2511,8 +2511,6 @@ class core_renderer extends renderer_base {
      * @return string
      */
     protected function render_user_picture(user_picture $userpicture) {
-        global $CFG, $DB;
-
         $user = $userpicture->user;
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $this->page->context);
 
@@ -2545,11 +2543,10 @@ class core_renderer extends renderer_base {
         $attributes = array('src' => $src, 'class' => $class, 'width' => $size, 'height' => $size);
         if (!$userpicture->visibletoscreenreaders) {
             $alt = '';
-            $attributes['aria-hidden'] = 'true';
         }
+        $attributes['alt'] = $alt;
 
         if (!empty($alt)) {
-            $attributes['alt'] = $alt;
             $attributes['title'] = $alt;
         }
 
@@ -4147,6 +4144,8 @@ EOD;
         // Make sure to use the heading if it has been set.
         if (isset($headerinfo['heading'])) {
             $heading = $headerinfo['heading'];
+        } else {
+            $heading = $this->page->heading;
         }
 
         // The user context currently has images and buttons. Other contexts may follow.
@@ -4171,7 +4170,7 @@ EOD;
 
             if (user_can_view_profile($user, $course)) {
                 // Use the user's full name if the heading isn't set.
-                if (!isset($heading)) {
+                if (empty($heading)) {
                     $heading = fullname($user);
                 }
 
@@ -4245,9 +4244,17 @@ EOD;
       */
     protected function render_context_header(context_header $contextheader) {
 
+        // Generate the heading first and before everything else as we might have to do an early return.
+        if (!isset($contextheader->heading)) {
+            $heading = $this->heading($this->page->heading, $contextheader->headinglevel);
+        } else {
+            $heading = $this->heading($contextheader->heading, $contextheader->headinglevel);
+        }
+
         $showheader = empty($this->page->layout_options['nocontextheader']);
         if (!$showheader) {
-            return '';
+            // Return the heading wrapped in an sr-only element so it is only visible to screen-readers.
+            return html_writer::div($heading, 'sr-only');
         }
 
         // All the html stuff goes here.
@@ -4260,13 +4267,7 @@ EOD;
         }
 
         // Headings.
-        if (!isset($contextheader->heading)) {
-            $headings = $this->heading($this->page->heading, $contextheader->headinglevel);
-        } else {
-            $headings = $this->heading($contextheader->heading, $contextheader->headinglevel);
-        }
-
-        $html .= html_writer::tag('div', $headings, array('class' => 'page-header-headings'));
+        $html .= html_writer::tag('div', $heading, array('class' => 'page-header-headings'));
 
         // Buttons.
         if (isset($contextheader->additionalbuttons)) {
