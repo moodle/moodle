@@ -338,7 +338,7 @@ class qtype_essay_question_test extends advanced_testcase {
     public function test_get_validation_error(int $responserequired,
                                               int $minwordlimit, int $maxwordlimit, string $expected): void {
         $question = test_question_maker::make_an_essay_question();
-        $response = ['answer' => 'In this essay, I will be testing a function called check_input_word_count().'];
+        $response = ['answer' => 'One two three four five six seven eight nine ten eleven twelve thirteen fourteen.'];
         $question->responserequired = $responserequired;
         $question->minwordlimit = $minwordlimit;
         $question->maxwordlimit = $maxwordlimit;
