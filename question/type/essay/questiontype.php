@@ -65,12 +65,12 @@ class qtype_essay extends question_type {
         $options->responseformat = $formdata->responseformat;
         $options->responserequired = $formdata->responserequired;
         $options->responsefieldlines = $formdata->responsefieldlines;
-        $options->minwordlimit = isset($formdata->minwordenabled) ? $formdata->minwordlimit : 0;
-        $options->maxwordlimit = isset($formdata->maxwordenabled) ? $formdata->maxwordlimit : 0;
+        $options->minwordlimit = isset($formdata->minwordenabled) ? $formdata->minwordlimit : null;
+        $options->maxwordlimit = isset($formdata->maxwordenabled) ? $formdata->maxwordlimit : null;
         $options->attachments = $formdata->attachments;
         $options->attachmentsrequired = $formdata->attachmentsrequired;
         if (!isset($formdata->filetypeslist)) {
-            $options->filetypeslist = "";
+            $options->filetypeslist = null;
         } else {
             $options->filetypeslist = $formdata->filetypeslist;
         }
