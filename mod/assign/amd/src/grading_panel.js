@@ -104,6 +104,16 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
      * @method _submitForm
      */
     GradingPanel.prototype._submitForm = function(event, nextUserId, nextUser) {
+        // If the form has data in comment-area, then we need to save that comment
+        var commentAreaElement = document.querySelector('.comment-area');
+        if (commentAreaElement) {
+            var commentTextAreaElement = commentAreaElement.querySelector('.db > textarea');
+            if (commentTextAreaElement.value !== '') {
+                var commentActionPostElement = commentAreaElement.querySelector('.fd a[id^="comment-action-post-"]');
+                commentActionPostElement.click();
+            }
+        }
+
         // The form was submitted - send it via ajax instead.
         var form = $(this._region.find('form.gradeform'));
 
