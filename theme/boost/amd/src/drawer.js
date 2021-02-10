@@ -129,7 +129,11 @@ define(['jquery', 'core/custom_interaction_events', 'core/log', 'core/pubsub'],
             body.removeClass('drawer-open-' + side);
             trigger.attr('aria-expanded', 'false');
             drawer.addClass('closed').delay(500).queue(function() {
-                $(this).attr('aria-hidden', 'true').dequeue();
+                // Ensure that during the delay, the drawer wasn't re-opened.
+                if ($(this).hasClass('closed')) {
+                    $(this).attr('aria-hidden', 'true');
+                }
+                $(this).dequeue();
             });
             if (!small) {
                 M.util.set_user_preference(preference, 'false');
