@@ -39,7 +39,7 @@ class tool_customlang_utils {
     const ROUGH_NUMBER_OF_STRINGS = 16500;
 
     /** @var array cache of {@link self::list_components()} results */
-    protected static $components = null;
+    private static $components = null;
 
     /**
      * This class can not be instantiated
@@ -54,28 +54,30 @@ class tool_customlang_utils {
      */
     public static function list_components() {
 
-        $list['moodle'] = 'core';
+        if (self::$components === null) {
+            $list['moodle'] = 'core';
 
-        $coresubsystems = core_component::get_core_subsystems();
-        ksort($coresubsystems); // should be but just in case
-        foreach ($coresubsystems as $name => $location) {
-            $list[$name] = 'core_'.$name;
-        }
+            $coresubsystems = core_component::get_core_subsystems();
+            ksort($coresubsystems); // Should be but just in case.
+            foreach ($coresubsystems as $name => $location) {
+                $list[$name] = 'core_' . $name;
+            }
 
-        $plugintypes = core_component::get_plugin_types();
-        foreach ($plugintypes as $type => $location) {
-            $pluginlist = core_component::get_plugin_list($type);
-            foreach ($pluginlist as $name => $ununsed) {
-                if ($type == 'mod') {
-                    // Plugin names are now automatically validated.
-                    $list[$name] = $type.'_'.$name;
-                } else {
-                    $list[$type.'_'.$name] = $type.'_'.$name;
+            $plugintypes = core_component::get_plugin_types();
+            foreach ($plugintypes as $type => $location) {
+                $pluginlist = core_component::get_plugin_list($type);
+                foreach ($pluginlist as $name => $ununsed) {
+                    if ($type == 'mod') {
+                        // Plugin names are now automatically validated.
+                        $list[$name] = $type . '_' . $name;
+                    } else {
+                        $list[$type . '_' . $name] = $type . '_' . $name;
+                    }
                 }
             }
+            self::$components = $list;
         }
-
-        return $list;
+        return self::$components;
     }
 
     /**
@@ -211,14 +213,18 @@ class tool_customlang_utils {
             return false;
         }
 
-        // get all customized strings from updated components
+        list($insql, $inparams) = $DB->get_in_or_equal(self::list_components());
+
+        // Get all customized strings from updated valid components.
         $sql = "SELECT s.*, c.name AS component
                   FROM {tool_customlang} s
                   JOIN {tool_customlang_components} c ON s.componentid = c.id
                  WHERE s.lang = ?
                        AND (s.local IS NOT NULL OR s.modified = 1)
+                       AND c.name $insql
               ORDER BY componentid, stringid";
-        $strings = $DB->get_records_sql($sql, array($lang));
+        array_unshift($inparams, $lang);
+        $strings = $DB->get_records_sql($sql, $inparams);
 
         $files = array();
         foreach ($strings as $string) {
@@ -336,11 +342,9 @@ EOF
      * @return string|boolean filename eg 'moodle.php' or 'workshop.php', false if not found
      */
     protected static function get_component_filename($component) {
-        if (is_null(self::$components)) {
-            self::$components = self::list_components();
-        }
+
         $return = false;
-        foreach (self::$components as $legacy => $normalized) {
+        foreach (self::list_components() as $legacy => $normalized) {
             if ($component === $normalized) {
                 $return = $legacy.'.php';
                 break;
