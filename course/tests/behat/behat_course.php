@@ -1360,7 +1360,8 @@ class behat_course extends behat_base {
         try {
             return $DB->get_field('course_categories', 'id', array('idnumber' => $idnumber), MUST_EXIST);
         } catch (dml_missing_record_exception $ex) {
-            throw new ExpectationException(sprintf("There is no category in the database with the idnumber '%s'", $idnumber));
+            throw new ExpectationException(sprintf("There is no category in the database with the idnumber '%s'", $idnumber),
+                $this->getSession());
         }
     }
 
@@ -1378,7 +1379,8 @@ class behat_course extends behat_base {
         try {
             return $DB->get_field('course', 'id', array('idnumber' => $idnumber), MUST_EXIST);
         } catch (dml_missing_record_exception $ex) {
-            throw new ExpectationException(sprintf("There is no course in the database with the idnumber '%s'", $idnumber));
+            throw new ExpectationException(sprintf("There is no course in the database with the idnumber '%s'", $idnumber),
+                $this->getSession());
         }
     }
 
