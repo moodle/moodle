@@ -1143,6 +1143,60 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertTrue(completion_can_view_data($student->id, $this->course->id));
         $this->assertFalse(completion_can_view_data($this->user->id, $this->course->id));
     }
+
+    /**
+     * Data provider for test_get_grade_completion().
+     *
+     * @return array[]
+     */
+    public function get_grade_completion_provider() {
+        return [
+            'Grade not required' => [false, false, null, moodle_exception::class, null],
+            'Grade required, but has no grade yet' => [true, false, null, null, COMPLETION_INCOMPLETE],
+            'Grade required, grade received' => [true, true, null, null, COMPLETION_COMPLETE],
+            'Grade required, passing grade received' => [true, true, 70, null, COMPLETION_COMPLETE_PASS],
+            'Grade required, failing grade received' => [true, true, 80, null, COMPLETION_COMPLETE_FAIL],
+        ];
+    }
+
+    /**
+     * Test for \completion_info::get_grade_completion().
+     *
+     * @dataProvider get_grade_completion_provider
+     * @param bool $completionusegrade Whether the test activity has grade completion requirement.
+     * @param bool $hasgrade Whether to set grade for the user in this activity.
+     * @param int|null $passinggrade Passing grade to set for the test activity.
+     * @param string|null $expectedexception Expected exception.
+     * @param int|null $expectedresult The expected completion status.
+     */
+    public function test_get_grade_completion(bool $completionusegrade, bool $hasgrade, ?int $passinggrade, ?string $expectedexception,
+            ?int $expectedresult) {
+        $this->setup_data();
+
+        /** @var \mod_assign_generator $assigngenerator */
+        $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assign = $assigngenerator->create_instance([
+            'course' => $this->course->id,
+            'completion' => COMPLETION_ENABLED,
+            'completionusegrade' => $completionusegrade,
+            'gradepass' => $passinggrade,
+        ]);
+
+        $cm = cm_info::create(get_coursemodule_from_instance('assign', $assign->id));
+        if ($completionusegrade && $hasgrade) {
+            $assigninstance = new assign($cm->context, $cm, $this->course);
+            $grade = $assigninstance->get_user_grade($this->user->id, true);
+            $grade->grade = 75;
+            $assigninstance->update_grade($grade);
+        }
+
+        $completioninfo = new completion_info($this->course);
+        if ($expectedexception) {
+            $this->expectException($expectedexception);
+        }
+        $gradecompletion = $completioninfo->get_grade_completion($cm, $this->user->id);
+        $this->assertEquals($expectedresult, $gradecompletion);
+    }
 }
 
 class core_completionlib_fake_recordset implements Iterator {

@@ -643,7 +643,7 @@ class completion_info {
      * @return mixed
      */
     public function internal_get_state($cm, $userid, $current) {
-        global $USER, $DB, $CFG;
+        global $USER, $DB;
 
         // Get user ID
         if (!$userid) {
@@ -657,55 +657,81 @@ class completion_info {
             return COMPLETION_INCOMPLETE;
         }
 
-        // Modname hopefully is provided in $cm but just in case it isn't, let's grab it
-        if (!isset($cm->modname)) {
-            $cm->modname = $DB->get_field('modules', 'name', array('id'=>$cm->module));
+        if ($cm instanceof stdClass) {
+            // Modname hopefully is provided in $cm but just in case it isn't, let's grab it.
+            if (!isset($cm->modname)) {
+                $cm->modname = $DB->get_field('modules', 'name', array('id' => $cm->module));
+            }
+            // Some functions call this method and pass $cm as an object with ID only. Make sure course is set as well.
+            if (!isset($cm->course)) {
+                $cm->course = $this->course_id;
+            }
         }
+        // Make sure we're using a cm_info object.
+        $cminfo = cm_info::create($cm, $userid);
 
         $newstate = COMPLETION_COMPLETE;
 
         // Check grade
-        if (!is_null($cm->completiongradeitemnumber)) {
-            require_once($CFG->libdir.'/gradelib.php');
-            $item = grade_item::fetch(array('courseid'=>$cm->course, 'itemtype'=>'mod',
-                'itemmodule'=>$cm->modname, 'iteminstance'=>$cm->instance,
-                'itemnumber'=>$cm->completiongradeitemnumber));
-            if ($item) {
-                // Fetch 'grades' (will be one or none)
-                $grades = grade_grade::fetch_users_grades($item, array($userid), false);
-                if (empty($grades)) {
-                    // No grade for user
-                    return COMPLETION_INCOMPLETE;
-                }
-                if (count($grades) > 1) {
-                    $this->internal_systemerror("Unexpected result: multiple grades for
-                        item '{$item->id}', user '{$userid}'");
-                }
-                $newstate = self::internal_get_grade_state($item, reset($grades));
-                if ($newstate == COMPLETION_INCOMPLETE) {
-                    return COMPLETION_INCOMPLETE;
-                }
-
-            } else {
-                $this->internal_systemerror("Cannot find grade item for '{$cm->modname}'
-                    cm '{$cm->id}' matching number '{$cm->completiongradeitemnumber}'");
+        if (!is_null($cminfo->completiongradeitemnumber)) {
+            $newstate = $this->get_grade_completion($cminfo, $userid);
+            if ($newstate == COMPLETION_INCOMPLETE) {
+                return COMPLETION_INCOMPLETE;
             }
         }
 
-        if (plugin_supports('mod', $cm->modname, FEATURE_COMPLETION_HAS_RULES)) {
-            $function = $cm->modname.'_get_completion_state';
+        if (plugin_supports('mod', $cminfo->modname, FEATURE_COMPLETION_HAS_RULES)) {
+            $function = $cminfo->modname . '_get_completion_state';
             if (!function_exists($function)) {
-                $this->internal_systemerror("Module {$cm->modname} claims to support
+                $this->internal_systemerror("Module {$cminfo->modname} claims to support
                     FEATURE_COMPLETION_HAS_RULES but does not have required
                     {$cm->modname}_get_completion_state function");
             }
-            if (!$function($this->course, $cm, $userid, COMPLETION_AND)) {
+            if (!$function($this->course, $cminfo, $userid, COMPLETION_AND)) {
                 return COMPLETION_INCOMPLETE;
             }
         }
 
         return $newstate;
 
+    }
+
+    /**
+     * Fetches the completion state for an activity completion's require grade completion requirement.
+     *
+     * @param cm_info $cm The course module information.
+     * @param int $userid The user ID.
+     * @return int The completion state.
+     */
+    public function get_grade_completion(cm_info $cm, int $userid): int {
+        global $CFG;
+
+        require_once($CFG->libdir . '/gradelib.php');
+        $item = grade_item::fetch([
+            'courseid' => $cm->course,
+            'itemtype' => 'mod',
+            'itemmodule' => $cm->modname,
+            'iteminstance' => $cm->instance,
+            'itemnumber' => $cm->completiongradeitemnumber
+        ]);
+        if ($item) {
+            // Fetch 'grades' (will be one or none).
+            $grades = grade_grade::fetch_users_grades($item, [$userid], false);
+            if (empty($grades)) {
+                // No grade for user.
+                return COMPLETION_INCOMPLETE;
+            }
+            if (count($grades) > 1) {
+                $this->internal_systemerror("Unexpected result: multiple grades for
+                        item '{$item->id}', user '{$userid}'");
+            }
+            return self::internal_get_grade_state($item, reset($grades));
+        } else {
+            $this->internal_systemerror("Cannot find grade item for '{$cm->modname}'
+                    cm '{$cm->id}' matching number '{$cm->completiongradeitemnumber}'");
+        }
+
+        return COMPLETION_INCOMPLETE;
     }
 
     /**
