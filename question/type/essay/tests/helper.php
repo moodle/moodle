@@ -53,7 +53,7 @@ class qtype_essay_test_helper extends question_test_helper {
         $q->responsefieldlines = 10;
         $q->attachments = 0;
         $q->attachmentsrequired = 0;
-        $q->filetypeslist = '';
+        $q->filetypeslist = null;
         $q->graderinfo = '';
         $q->graderinfoformat = FORMAT_HTML;
         $q->qtype = question_bank::get_qtype('essay');
