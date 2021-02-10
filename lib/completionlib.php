@@ -26,6 +26,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_completion\activity_custom_completion;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -681,14 +683,24 @@ class completion_info {
         }
 
         if (plugin_supports('mod', $cminfo->modname, FEATURE_COMPLETION_HAS_RULES)) {
-            $function = $cminfo->modname . '_get_completion_state';
-            if (!function_exists($function)) {
-                $this->internal_systemerror("Module {$cminfo->modname} claims to support
+            $cmcompletionclass = activity_custom_completion::get_cm_completion_class($cminfo->modname);
+            if ($cmcompletionclass) {
+                /** @var activity_custom_completion $cmcompletion */
+                $cmcompletion = new $cmcompletionclass($cminfo, $userid);
+                if ($cmcompletion->get_overall_completion_state() == COMPLETION_INCOMPLETE) {
+                    return COMPLETION_INCOMPLETE;
+                }
+            } else {
+                // Fallback to the get_completion_state callback.
+                $function = $cminfo->modname . '_get_completion_state';
+                if (!function_exists($function)) {
+                    $this->internal_systemerror("Module {$cminfo->modname} claims to support
                     FEATURE_COMPLETION_HAS_RULES but does not have required
-                    {$cm->modname}_get_completion_state function");
-            }
-            if (!$function($this->course, $cminfo, $userid, COMPLETION_AND)) {
-                return COMPLETION_INCOMPLETE;
+                    {$cminfo->modname}_get_completion_state function");
+                }
+                if (!$function($this->course, $cminfo, $userid, COMPLETION_AND)) {
+                    return COMPLETION_INCOMPLETE;
+                }
             }
         }
 
@@ -953,7 +965,7 @@ class completion_info {
      * Obtains completion data for a particular activity and user (from the
      * completion cache if available, or by SQL query)
      *
-     * @param stcClass|cm_info $cm Activity; only required field is ->id
+     * @param stdClass|cm_info $cm Activity; only required field is ->id
      * @param bool $wholecourse If true (default false) then, when necessary to
      *   fill the cache, retrieves information from the entire course not just for
      *   this one activity
@@ -962,10 +974,12 @@ class completion_info {
      *   testing and so that it can be called recursively from within
      *   get_fast_modinfo. (Needs only list of all CMs with IDs.)
      *   Otherwise the method calls get_fast_modinfo itself.
-     * @return object Completion data (record from course_modules_completion)
+     * @return object Completion data. Record from course_modules_completion plus other completion statuses such as
+     *                  - Completion status for 'must-receive-grade' completion rule.
+     *                  - Custom completion statuses defined by the activity module plugin.
      */
     public function get_data($cm, $wholecourse = false, $userid = 0, $modinfo = null) {
-        global $USER, $CFG, $DB;
+        global $USER, $DB;
         $completioncache = cache::make('core', 'completion');
 
         // Get user ID
@@ -991,7 +1005,27 @@ class completion_info {
             }
         }
 
-        // Not there, get via SQL
+        // Some call completion_info::get_data and pass $cm as an object with ID only. Make sure course is set as well.
+        if ($cm instanceof stdClass && !isset($cm->course)) {
+            $cm->course = $this->course_id;
+        }
+        // Make sure we're working on a cm_info object.
+        $cminfo = cm_info::create($cm, $userid);
+
+        // Default data to return when no completion data is found.
+        $defaultdata = [
+            'id' => 0,
+            'coursemoduleid' => $cminfo->id,
+            'userid' => $userid,
+            'completionstate' => 0,
+            'viewed' => 0,
+            'overrideby' => null,
+            'timemodified' => 0,
+        ];
+
+        // If cached completion data is not found, fetch via SQL.
+        // Fetch completion data for all of the activities in the course ONLY if we're caching the fetched completion data.
+        // If we're not caching the completion data, then just fetch the completion data for the user in this course module.
         if ($usecache && $wholecourse) {
             // Get whole course data for cache
             $alldatabycmc = $DB->get_records_sql("
@@ -1017,49 +1051,85 @@ class completion_info {
                 if (isset($alldata[$othercm->id])) {
                     $data = $alldata[$othercm->id];
                 } else {
-                    // Row not present counts as 'not complete'
-                    $data = array();
-                    $data['id'] = 0;
+                    // Row not present counts as 'not complete'.
+                    $data = $defaultdata;
                     $data['coursemoduleid'] = $othercm->id;
-                    $data['userid'] = $userid;
-                    $data['completionstate'] = 0;
-                    $data['viewed'] = 0;
-                    $data['overrideby'] = null;
-                    $data['timemodified'] = 0;
                 }
-                $cacheddata[$othercm->id] = $data;
+                // Make sure we're working on a cm_info object.
+                $othercminfo = cm_info::create($othercm, $userid);
+                // Add the other completion data for this user in this module instance.
+                $data += $this->get_other_cm_completion_data($othercminfo, $userid);
+                $cacheddata[$othercminfo->id] = $data;
             }
 
-            if (!isset($cacheddata[$cm->id])) {
-                $this->internal_systemerror("Unexpected error: course-module {$cm->id} could not be found on course {$this->course->id}");
+            if (!isset($cacheddata[$cminfo->id])) {
+                $errormessage = "Unexpected error: course-module {$cminfo->id} could not be found on course {$this->course->id}";
+                $this->internal_systemerror($errormessage);
             }
 
         } else {
             // Get single record
-            $data = $DB->get_record('course_modules_completion', array('coursemoduleid'=>$cm->id, 'userid'=>$userid));
+            $data = $DB->get_record('course_modules_completion', array('coursemoduleid' => $cminfo->id, 'userid' => $userid));
             if ($data) {
                 $data = (array)$data;
             } else {
-                // Row not present counts as 'not complete'
-                $data = array();
-                $data['id'] = 0;
-                $data['coursemoduleid'] = $cm->id;
-                $data['userid'] = $userid;
-                $data['completionstate'] = 0;
-                $data['viewed'] = 0;
-                $data['overrideby'] = null;
-                $data['timemodified'] = 0;
+                // Row not present counts as 'not complete'.
+                $data = $defaultdata;
             }
+            // Fill the other completion data for this user in this module instance.
+            $data += $this->get_other_cm_completion_data($cminfo, $userid);
 
             // Put in cache
-            $cacheddata[$cm->id] = $data;
+            $cacheddata[$cminfo->id] = $data;
         }
 
         if ($usecache) {
             $cacheddata['cacherev'] = $this->course->cacherev;
             $completioncache->set($key, $cacheddata);
         }
-        return (object)$cacheddata[$cm->id];
+        return (object)$cacheddata[$cminfo->id];
+    }
+
+    /**
+     * Adds the user's custom completion data on the given course module.
+     *
+     * @param cm_info $cm The course module information.
+     * @param int $userid The user ID.
+     * @return array The additional completion data.
+     */
+    protected function get_other_cm_completion_data(cm_info $cm, int $userid): array {
+        $data = [];
+
+        // Include in the completion info the grade completion, if necessary.
+        if (!is_null($cm->completiongradeitemnumber)) {
+            $data['completiongrade'] = $this->get_grade_completion($cm, $userid);
+        }
+
+        // Custom activity module completion data.
+
+        // Return early if the plugin does not define custom completion rules.
+        if (empty($cm->customdata['customcompletionrules'])) {
+            return [];
+        }
+
+        // Return early if the activity modules doe not implement the activity_custom_completion class.
+        $cmcompletionclass = activity_custom_completion::get_cm_completion_class($cm->modname);
+        if (!$cmcompletionclass) {
+            return [];
+        }
+
+        /** @var activity_custom_completion $customcmcompletion */
+        $customcmcompletion = new $cmcompletionclass($cm, $userid);
+        foreach ($cm->customdata['customcompletionrules'] as $rule => $enabled) {
+            if (!$enabled) {
+                // Skip inactive completion rules.
+                continue;
+            }
+            // Get this custom completion rule's completion state.
+            $data['customcompletion'][$rule] = $customcmcompletion->get_state($rule);
+        }
+
+        return $data;
     }
 
     /**
@@ -1089,11 +1159,17 @@ class completion_info {
         }
         $transaction->allow_commit();
 
-        $cmcontext = context_module::instance($data->coursemoduleid, MUST_EXIST);
-        $coursecontext = $cmcontext->get_parent_context();
+        $cmcontext = context_module::instance($data->coursemoduleid);
 
         $completioncache = cache::make('core', 'completion');
         if ($data->userid == $USER->id) {
+            // Fetch other completion data to cache (e.g. require grade completion status, custom completion rule statues).
+            $cminfo = cm_info::create($cm, $data->userid); // Make sure we're working on a cm_info object.
+            $otherdata = $this->get_other_cm_completion_data($cminfo, $data->userid);
+            foreach ($otherdata as $key => $value) {
+                $data->$key = $value;
+            }
+
             // Update module completion in user's cache.
             if (!($cachedata = $completioncache->get($data->userid . '_' . $cm->course))
                     || $cachedata['cacherev'] != $this->course->cacherev) {
