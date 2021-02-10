@@ -3143,7 +3143,6 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             if (count($this->_collapsibleElements) > 1) {
                 $this->_collapseButtons = $this->_collapseButtonsTemplate;
                 $this->_collapseButtons = str_replace('{strexpandall}', get_string('expandall'), $this->_collapseButtons);
-                $PAGE->requires->strings_for_js(array('collapseall', 'expandall'), 'moodle');
             }
             $PAGE->requires->yui_module('moodle-form-shortforms', 'M.form.shortforms', array(array('formid' => $formid)));
         }
