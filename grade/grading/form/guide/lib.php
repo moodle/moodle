@@ -657,10 +657,12 @@ class gradingform_guide_controller extends gradingform_controller {
         }
         $returnvalue['maxscore'] = $maxscore;
         $returnvalue['minscore'] = 0;
-        $fieldname = \core_grades\component_gradeitems::get_field_name_for_itemname($this->component, $this->area, 'grade');
-        if (!empty($this->moduleinstance->{$fieldname})) {
-            $graderange = make_grades_menu($this->moduleinstance->{$fieldname});
-            $returnvalue['modulegrade'] = count($graderange) - 1;
+        if (!$this->is_shared_template()) {
+            $fieldname = \core_grades\component_gradeitems::get_field_name_for_itemname($this->component, $this->area, 'grade');
+            if (!empty($this->moduleinstance->{$fieldname})) {
+                $graderange = make_grades_menu($this->moduleinstance->{$fieldname});
+                $returnvalue['modulegrade'] = count($graderange) - 1;
+            }
         }
         return $returnvalue;
     }
