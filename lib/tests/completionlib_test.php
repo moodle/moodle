@@ -325,42 +325,106 @@ class core_completionlib_testcase extends advanced_testcase {
         $c->get_data($cm, false, 100);
     }
 
-    public function test_internal_get_state() {
-        global $DB;
-        $this->mock_setup();
+    /**
+     * Data provider for test_internal_get_state().
+     *
+     * @return array[]
+     */
+    public function internal_get_state_provider() {
+        return [
+            'View required, but not viewed yet' => [
+                COMPLETION_VIEW_REQUIRED, 1, '', COMPLETION_INCOMPLETE
+            ],
+            'View not required and not viewed yet' => [
+                COMPLETION_VIEW_NOT_REQUIRED, 1, '', COMPLETION_INCOMPLETE
+            ],
+            'View not required, grade required but no grade yet, $cm->modname not set' => [
+                COMPLETION_VIEW_NOT_REQUIRED, 1, 'modname', COMPLETION_INCOMPLETE
+            ],
+            'View not required, grade required but no grade yet, $cm->course not set' => [
+                COMPLETION_VIEW_NOT_REQUIRED, 1, 'course', COMPLETION_INCOMPLETE
+            ],
+            'View not required, grade not required' => [
+                COMPLETION_VIEW_NOT_REQUIRED, 0, '', COMPLETION_COMPLETE
+            ],
+        ];
+    }
 
-        $mockbuilder = $this->getMockBuilder('completion_info');
-        $mockbuilder->setMethods(array('internal_get_grade_state'));
-        $mockbuilder->setConstructorArgs(array((object)array('id' => 42)));
-        $c = $mockbuilder->getMock();
+    /**
+     * Test for completion_info::get_state().
+     *
+     * @dataProvider internal_get_state_provider
+     * @param int $completionview
+     * @param int $completionusegrade
+     * @param string $unsetfield
+     * @param int $expectedstate
+     */
+    public function test_internal_get_state(int $completionview, int $completionusegrade, string $unsetfield, int $expectedstate) {
+        $this->setup_data();
 
-        $cm = (object)array('id'=>13, 'course'=>42, 'completiongradeitemnumber'=>null);
+        /** @var \mod_assign_generator $assigngenerator */
+        $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assign = $assigngenerator->create_instance([
+            'course' => $this->course->id,
+            'completion' => COMPLETION_ENABLED,
+            'completionview' => $completionview,
+            'completionusegrade' => $completionusegrade,
+        ]);
 
+        $userid = $this->user->id;
+        $this->setUser($userid);
+
+        $cm = get_coursemodule_from_instance('assign', $assign->id);
+        if ($unsetfield) {
+            unset($cm->$unsetfield);
+        }
         // If view is required, but they haven't viewed it yet.
-        $cm->completionview = COMPLETION_VIEW_REQUIRED;
-        $current = (object)array('viewed'=>COMPLETION_NOT_VIEWED);
-        $this->assertEquals(COMPLETION_INCOMPLETE, $c->internal_get_state($cm, 123, $current));
+        $current = (object)['viewed' => COMPLETION_NOT_VIEWED];
 
-        // OK set view not required.
-        $cm->completionview = COMPLETION_VIEW_NOT_REQUIRED;
+        $completioninfo = new completion_info($this->course);
+        $this->assertEquals($expectedstate, $completioninfo->internal_get_state($cm, $userid, $current));
+    }
 
-        // Test not getting module name.
-        $cm->modname='label';
-        $this->assertEquals(COMPLETION_COMPLETE, $c->internal_get_state($cm, 123, $current));
+    /**
+     * Covers the case where internal_get_state() is being called for a user different from the logged in user.
+     */
+    public function test_internal_get_state_with_different_user() {
+        $this->setup_data();
 
-        // Test getting module name.
-        $cm->module = 13;
-        unset($cm->modname);
-        /** @var $DB PHPUnit_Framework_MockObject_MockObject */
-        $DB->expects($this->once())
-            ->method('get_field')
-            ->with('modules', 'name', array('id'=>13))
-            ->will($this->returnValue('lable'));
-        $this->assertEquals(COMPLETION_COMPLETE, $c->internal_get_state($cm, 123, $current));
+        /** @var \mod_assign_generator $assigngenerator */
+        $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assign = $assigngenerator->create_instance([
+            'course' => $this->course->id,
+            'completion' => COMPLETION_ENABLED,
+            'completionusegrade' => 1,
+        ]);
 
-        // Note: This function is not fully tested (including kind of the main part) because:
-        // * the grade_item/grade_grade calls are static and can't be mocked,
-        // * the plugin_supports call is static and can't be mocked.
+        $userid = $this->user->id;
+
+        $cm = get_coursemodule_from_instance('assign', $assign->id);
+        $usercm = cm_info::create($cm, $userid);
+
+        // Create a teacher account.
+        $teacher = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($teacher->id, $this->course->id, 'editingteacher');
+        // Log in as the teacher.
+        $this->setUser($teacher);
+
+        // Grade the student for this assignment.
+        $assign = new assign($usercm->context, $cm, $cm->course);
+        $data = (object)[
+            'sendstudentnotifications' => false,
+            'attemptnumber' => 1,
+            'grade' => 90,
+        ];
+        $assign->save_grade($userid, $data);
+
+        // The target user already received a grade, so internal_get_state should be already complete.
+        $completioninfo = new completion_info($this->course);
+        $this->assertEquals(COMPLETION_COMPLETE, $completioninfo->internal_get_state($cm, $userid, null));
+
+        // As the teacher which does not have a grade in this cm, internal_get_state should return incomplete.
+        $this->assertEquals(COMPLETION_INCOMPLETE, $completioninfo->internal_get_state($cm, $teacher->id, null));
     }
 
     public function test_set_module_viewed() {
@@ -488,77 +552,114 @@ class core_completionlib_testcase extends advanced_testcase {
         $c->reset_all_state($cm);
     }
 
-    public function test_get_data() {
+    /**
+     * Data provider for test_get_data().
+     *
+     * @return array[]
+     */
+    public function get_data_provider() {
+        return [
+            'No completion record' => [
+                false, false, false, COMPLETION_INCOMPLETE
+            ],
+            'Not completed' => [
+                false, false, true, COMPLETION_INCOMPLETE
+            ],
+            'Completed' => [
+                false, false, true, COMPLETION_COMPLETE
+            ],
+            'Whole course, complete' => [
+                true, false, true, COMPLETION_COMPLETE
+            ],
+            'Get data for another user, result should be not cached' => [
+                false, true, true,  COMPLETION_INCOMPLETE
+            ],
+        ];
+    }
+
+    /**
+     * Tests for completion_info::get_data().
+     *
+     * @dataProvider get_data_provider
+     * @param bool $wholecourse Whole course parameter for get_data().
+     * @param bool $sameuser Whether the user calling get_data() is the user itself.
+     * @param bool $hasrecord Whether to create a course_modules_completion record.
+     * @param int $completion The completion state expected.
+     */
+    public function test_get_data(bool $wholecourse, bool $sameuser, bool $hasrecord, int $completion) {
         global $DB;
-        $this->mock_setup();
 
+        $this->setup_data();
+        $user = $this->user;
+
+        /** @var \mod_choice_generator $choicegenerator */
+        $choicegenerator = $this->getDataGenerator()->get_plugin_generator('mod_choice');
+        $choice = $choicegenerator->create_instance([
+            'course' => $this->course->id,
+            'completion' => true,
+            'completionview' => true,
+        ]);
+
+        $cm = get_coursemodule_from_instance('choice', $choice->id);
+
+        // Let's manually create a course completion record instead of going thru the hoops to complete an activity.
+        if ($hasrecord) {
+            $cmcompletionrecord = (object)[
+                'coursemoduleid' => $cm->id,
+                'userid' => $user->id,
+                'completionstate' => $completion,
+                'viewed' => 0,
+                'overrideby' => null,
+                'timemodified' => 0,
+            ];
+            $DB->insert_record('course_modules_completion', $cmcompletionrecord);
+        }
+
+        // Whether we expect for the returned completion data to be stored in the cache.
+        $iscached = true;
+
+        if (!$sameuser) {
+            $iscached = false;
+            $this->setAdminUser();
+        } else {
+            $this->setUser($user);
+        }
+
+        // Mock other completion data.
+        $completioninfo = new completion_info($this->course);
+
+        $result = $completioninfo->get_data($cm, $wholecourse, $user->id);
+        // Course module ID of the returned completion data must match this activity's course module ID.
+        $this->assertEquals($cm->id, $result->coursemoduleid);
+        // User ID of the returned completion data must match the user's ID.
+        $this->assertEquals($user->id, $result->userid);
+        // The completion state of the returned completion data must match the expected completion state.
+        $this->assertEquals($completion, $result->completionstate);
+
+        // If the user has no completion record, then the default record should be returned.
+        if (!$hasrecord) {
+            $iscached = false;
+            $this->assertEquals(0, $result->id);
+        }
+
+        // Check caching.
+        $key = "{$user->id}_{$this->course->id}";
         $cache = cache::make('core', 'completion');
+        if ($iscached) {
+            // If we expect this to be cached, then fetching the result must match the cached data.
+            $this->assertEquals($result, (object)$cache->get($key)[$cm->id]);
 
-        $c = new completion_info((object)array('id'=>42, 'cacherev'=>1));
-        $cm = (object)array('id'=>13, 'course'=>42);
-
-        // 1. Not current user, record exists.
-        $sillyrecord = (object)array('frog'=>'kermit');
-
-        /** @var $DB PHPUnit_Framework_MockObject_MockObject */
-        $DB->expects($this->at(0))
-            ->method('get_record')
-            ->with('course_modules_completion', array('coursemoduleid'=>13, 'userid'=>123))
-            ->will($this->returnValue($sillyrecord));
-        $result = $c->get_data($cm, false, 123);
-        $this->assertEquals($sillyrecord, $result);
-        $this->assertEquals(false, $cache->get('123_42')); // Not current user is not cached.
-
-        // 2. Not current user, default record, whole course.
-        $cache->purge();
-        $DB->expects($this->at(0))
-            ->method('get_records_sql')
-            ->will($this->returnValue(array()));
-        $modinfo = new stdClass();
-        $modinfo->cms = array((object)array('id'=>13));
-        $result=$c->get_data($cm, true, 123, $modinfo);
-        $this->assertEquals((object)array(
-            'id' => '0', 'coursemoduleid' => 13, 'userid' => 123, 'completionstate' => 0,
-            'viewed' => 0, 'timemodified' => 0, 'overrideby' => 0), $result);
-        $this->assertEquals(false, $cache->get('123_42')); // Not current user is not cached.
-
-        // 3. Current user, single record, not from cache.
-        $DB->expects($this->at(0))
-            ->method('get_record')
-            ->with('course_modules_completion', array('coursemoduleid'=>13, 'userid'=>314159))
-            ->will($this->returnValue($sillyrecord));
-        $result = $c->get_data($cm);
-        $this->assertEquals($sillyrecord, $result);
-        $cachevalue = $cache->get('314159_42');
-        $this->assertEquals((array)$sillyrecord, $cachevalue[13]);
-
-        // 4. Current user, 'whole course', but from cache.
-        $result = $c->get_data($cm, true);
-        $this->assertEquals($sillyrecord, $result);
-
-        // 5. Current user, 'whole course' and record not in cache.
-        $cache->purge();
-
-        // Scenario: Completion data exists for one CMid.
-        $basicrecord = (object)array('coursemoduleid'=>13);
-        $DB->expects($this->at(0))
-            ->method('get_records_sql')
-            ->will($this->returnValue(array('1'=>$basicrecord)));
-
-        // There are two CMids in total, the one we had data for and another one.
-        $modinfo = new stdClass();
-        $modinfo->cms = array((object)array('id'=>13), (object)array('id'=>14));
-        $result = $c->get_data($cm, true, 0, $modinfo);
-
-        // Check result.
-        $this->assertEquals($basicrecord, $result);
-
-        // Check the cache contents.
-        $cachevalue = $cache->get('314159_42');
-        $this->assertEquals($basicrecord, (object)$cachevalue[13]);
-        $this->assertEquals(array('id' => '0', 'coursemoduleid' => 14,
-            'userid' => 314159, 'completionstate' => 0, 'viewed' => 0, 'overrideby' => 0, 'timemodified' => 0),
-            $cachevalue[14]);
+            // Check cached data for other course modules in the course.
+            // The sample module created in setup_data() should suffice to confirm this.
+            if ($wholecourse) {
+                $this->assertArrayHasKey($this->module1->id, $cache->get($key));
+            } else {
+                $this->assertArrayNotHasKey($this->module1->id, $cache->get($key));
+            }
+        } else {
+            // Otherwise, this should not be cached.
+            $this->assertFalse($cache->get($key));
+        }
     }
 
     public function test_internal_set_data() {
