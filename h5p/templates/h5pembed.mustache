@@ -35,10 +35,3 @@
    allowfullscreen="allowfullscreen" class="h5p-player w-100 border-0"
    style="height: 0px;" id="{{uniqid}}-h5player">
 </iframe>
-{{#js}}
-window.onload=function(){
-    setTimeout(() => {
-        document.getElementById('{{uniqid}}-h5player').style.minHeight = '230px';
-    }, 1000);
-};
-{{/js}}
