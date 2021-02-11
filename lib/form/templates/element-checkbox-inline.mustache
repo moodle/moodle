@@ -1,4 +1,4 @@
-<label class="form-check {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
+<label data-fieldtype="checkbox" class="form-check {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
 {{^element.hardfrozen}}
     {{#element.frozen}}
         <input type="hidden" name="{{element.name}}" value="{{element.frozenvalue}}">
