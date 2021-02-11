@@ -170,6 +170,9 @@ class quiz_grading_renderer extends plugin_renderer_base {
         ]), ['class' => 'mdl-align']);
         $output .= html_writer::end_tag('div') . html_writer::end_tag('form');
 
+        $this->page->requires->string_for_js('changesmadereallygoaway', 'moodle');
+        $this->page->requires->yui_module('moodle-core-formchangechecker',
+                'M.core_formchangechecker.init', [['formid' => 'manualgradingform']]);
         return $output;
     }
 
