@@ -29,5 +29,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = 'it';
-$string['thislanguage'] = 'Italiano';
+$string['thislanguage'] = 'Yorùbá';
