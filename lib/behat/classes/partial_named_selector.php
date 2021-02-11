@@ -267,6 +267,9 @@ XPATH
 .//descendant::span[@data-inplaceeditable][descendant::a[%titleMatch%]]
 XPATH
         ,
+            'date_time' => <<<XPATH
+.//fieldset[(%idMatch% or ./legend[%tagTextMatch%]) and (@data-fieldtype='date' or @data-fieldtype='date_time')]
+XPATH
         ],
     ];
 
