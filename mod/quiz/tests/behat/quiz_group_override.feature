@@ -76,6 +76,9 @@ Feature: Quiz group override
       | Attempts allowed | 2       |
     And I press "Save"
     Then "Group 1" "table_row" should exist
+    # Check all column headers are present.
+    And I should see "Group" in the "Overrides" "table_row"
+    And I should see "Action" in the "Overrides" "table_row"
 
   Scenario: A teacher with accessallgroups permission should see all group overrides
     Given the following "mod_quiz > group overrides" exist:
