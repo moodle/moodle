@@ -136,6 +136,11 @@ class behat_field_manager {
      */
     public static function guess_field_type(NodeElement $fieldnode, Session $session) {
 
+        // If the type is explicitly set on the element pointed to by the label - use it.
+        if ($fieldtype = $fieldnode->getAttribute('data-fieldtype')) {
+            return self::normalise_fieldtype($fieldtype);
+        }
+
         // Textareas are considered text based elements.
         $tagname = strtolower($fieldnode->getTagName());
         if ($tagname == 'textarea') {
@@ -151,10 +156,6 @@ class behat_field_manager {
             $type = $fieldnode->getAttribute('type');
             switch ($type) {
                 case 'text':
-                    if ($fieldtype = $fieldnode->getAttribute('data-fieldtype')) {
-                        return self::normalise_fieldtype($fieldtype);
-                    }
-                    return 'text';
                 case 'password':
                 case 'email':
                 case 'file':
