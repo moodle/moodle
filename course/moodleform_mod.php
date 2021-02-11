@@ -379,6 +379,8 @@ abstract class moodleform_mod extends moodleform {
 
         // Freeze admin defaults if required (and not different from default)
         $this->apply_admin_locked_flags();
+
+        $this->plugin_extend_coursemodule_definition_after_data();
     }
 
     // form verification
@@ -891,6 +893,18 @@ abstract class moodleform_mod extends moodleform {
             foreach ($plugins as $plugin => $pluginfunction) {
                 // We have exposed all the important properties with public getters - and the callback can manipulate the mform
                 // directly.
+                $pluginfunction($this, $this->_form);
+            }
+        }
+    }
+
+    /**
+     * Plugins can extend the coursemodule settings form after the data is set.
+     */
+    protected function plugin_extend_coursemodule_definition_after_data() {
+        $callbacks = get_plugins_with_function('coursemodule_definition_after_data', 'lib.php');
+        foreach ($callbacks as $type => $plugins) {
+            foreach ($plugins as $plugin => $pluginfunction) {
                 $pluginfunction($this, $this->_form);
             }
         }
