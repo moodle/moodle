@@ -25,7 +25,7 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__  . '/behat_form_date_selector.php');
+require_once(__DIR__  . '/behat_form_date.php');
 
 /**
  * Date time form field.
@@ -38,5 +38,18 @@ require_once(__DIR__  . '/behat_form_date_selector.php');
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_form_date_time_selector extends behat_form_date_selector {
+class behat_form_date_time extends behat_form_date {
+
+    /**
+     * Returns the date field identifiers and the values that should be assigned to them.
+     *
+     * @param int $timestamp The UNIX timestamp
+     * @return array
+     */
+    protected function get_mapped_fields(int $timestamp): array {
+        return array_merge(parent::get_mapped_fields($timestamp), [
+            'hour' => date('G', $timestamp),
+            'minute' => (int) date('i', $timestamp)
+        ]);
+    }
 }
