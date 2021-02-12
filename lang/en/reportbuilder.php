@@ -24,6 +24,12 @@
 
 $string['actions'] = 'Actions';
 $string['apply'] = 'Apply';
+$string['coursefullnamewithlink'] = 'Course full name with link';
+$string['courseidnumberewithlink'] = 'Course ID number with link';
+$string['courseshortnamewithlink'] = 'Course short name with link';
+$string['customfieldcolumn'] = '{$a}';
+$string['entitycourse'] = 'Course';
+$string['entityuser'] = 'User';
 $string['errorreportaccess'] = 'You can not view this report';
 $string['errorsourceinvalid'] = 'Could not find valid report source';
 $string['errorsourceunavailable'] = 'Report source is not available';
@@ -50,3 +56,7 @@ $string['filtersreset'] = 'Filters reset';
 $string['filterstartswith'] = 'Starts with';
 $string['resetall'] = 'Reset all';
 $string['selectcourses'] = 'Select courses';
+$string['userfullnamewithlink'] = 'Full name with link';
+$string['userfullnamewithpicture'] = 'Full name with picture';
+$string['userfullnamewithpicturelink'] = 'Full name with picture and link';
+$string['userpicture'] = 'User picture';
