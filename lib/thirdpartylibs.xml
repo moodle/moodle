@@ -144,7 +144,7 @@
     <location>jquery</location>
     <name>jQuery</name>
     <license>MIT</license>
-    <version>3.4.1</version>
+    <version>3.5.1</version>
     <licenseversion></licenseversion>
   </library>
   <library>
