@@ -297,7 +297,9 @@ function(
         });
 
         var closebutton = root.find(SELECTORS.CLOSE_BUTTON);
-        closebutton.on(CustomEvents.events.activate, function() {
+        closebutton.on(CustomEvents.events.activate, function(e, data) {
+            data.originalEvent.preventDefault();
+
             var button = $(SELECTORS.DRAWER).attr('data-origin');
             if (button) {
                 $('#' + button).focus();
