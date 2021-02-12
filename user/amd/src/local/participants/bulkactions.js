@@ -26,6 +26,7 @@ import * as Repository from 'core_user/repository';
 import * as Str from 'core/str';
 import ModalEvents from 'core/modal_events';
 import ModalFactory from 'core/modal_factory';
+import Notification from 'core/notification';
 import Templates from 'core/templates';
 import {add as notifyUser} from 'core/toast';
 
@@ -151,8 +152,15 @@ export const showSendMessage = users => {
         removeOnClose: true,
     })
     .then(modal => {
-        modal.getRoot().on(ModalEvents.save, () => {
-            submitSendMessage(modal, users);
+        modal.getRoot().on(ModalEvents.save, (e) => {
+            const text = modal.getRoot().find('form textarea').val();
+            if (text.trim() === '') {
+                modal.getRoot().find('[data-role="messagetextrequired"]').removeAttr('hidden');
+                e.preventDefault();
+                return;
+            }
+
+            submitSendMessage(modal, users, text);
         });
 
         modal.show();
@@ -166,11 +174,10 @@ export const showSendMessage = users => {
  *
  * @param {Modal} modal
  * @param {Number[]} users
+ * @param {String} text
  * @return {Promise}
  */
-const submitSendMessage = (modal, users) => {
-    const text = modal.getRoot().find('form textarea').val();
-
+const submitSendMessage = (modal, users, text) => {
     const messages = users.map(touserid => {
         return {
             touserid,
