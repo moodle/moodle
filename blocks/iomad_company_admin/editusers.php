@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once(dirname(__FILE__) . '/../../config.php'); // Creates $PAGE.
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/filters/lib.php');
@@ -640,6 +647,10 @@ if (iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
     $columns[] = 'actions';
 
 }
+
+// Display the totals found.
+$usercount = $DB->count_records_sql($countsql, $sqlparams);
+echo $output->heading(get_string('totalusers', 'block_iomad_company_admin', $usercount));
 
 // Actually create and display the table.
 $table = new block_iomad_company_admin_editusers_table('block_iomad_company_admin_editusers_table');
