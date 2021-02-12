@@ -16,16 +16,16 @@
 
 /**
  * @package    Block Iomad Approve Access
- * @copyright  2021 Derick Turner
- * @author     Derick Turner
+ * @copyright  2011 onwards E-Learn Design Limited
+ * @author    Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/tablelib.php');
 require_once($CFG->libdir.'/formslib.php');
+require_once('approve_form.php');
 require_once($CFG->dirroot."/local/email/lib.php");
-require_once($CFG->dirroot."/blocks/iomad_approve_access/lib.php");
 
 // Set up PAGE stuff.
 require_login();
@@ -72,7 +72,7 @@ if ($approvaltype == 'none') {
     die;
 }
 // Set up the form.
-$callform = new \block_iomad_approve_access\forms\approve_form();
+$callform = new approve_form();
 if ($data = $callform->get_data()) {
     foreach ($data as $key => $dataresult) {
 
@@ -253,7 +253,7 @@ if ($data = $callform->get_data()) {
                                                                                'user' => $approveuser,
                                                                                'classroom' => $location));
                         //  Update the attendance at the event.
-                        iomad_approve_access::register_user($approveuser, $event);
+                        approve_enrol_register_user($approveuser, $event);
 
                         // Fire an event for this.
                         $moodleevent = \block_iomad_approve_access\event\request_granted::create(array('context' => context_module::instance($cmidinfo->id),

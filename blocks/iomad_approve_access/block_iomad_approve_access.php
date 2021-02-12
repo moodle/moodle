@@ -18,8 +18,8 @@
  * block approve access
  *
  * @package    Block Iomad Approve Access
- * @copyright  2021 Derick Turner
- * @author     Derick Turner
+ * @copyright  2011 onwards E-Learn Design Limited
+ * @author    Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -46,7 +46,7 @@ class block_iomad_approve_access extends block_base {
 
         $this->content = new stdClass;
 
-        if (iomad_approve_access::has_users()) {
+        if (approve_enrol_has_users()) {
             $this->content->text   = '<a href="'.new moodle_url('/blocks/iomad_approve_access/approve.php').'">'.
                                       get_string('userstoapprove', 'block_iomad_approve_access').'</a>';
         } else {

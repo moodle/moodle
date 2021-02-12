@@ -180,7 +180,7 @@ class block_iomad_company_admin_external extends external_api {
                      'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
                      'customcss' => new external_value(PARAM_TEXT, 'Company custom css'),
                      'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp', VALUE_DEFAULT, null),
-                     'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),
+                     'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),,
                      'companyterminated' => new external_value(PARAM_INT, 'Company contract is terminated when <> 0', VALUE_DEFAULT, 0),
                      'theme' => new external_value(PARAM_TEXT, 'Company theme', VALUE_DEFAULT, ''),
                      'hostname' => new external_value(PARAM_TEXT, 'Company hostname', VALUE_DEFAULT, ''),
@@ -716,16 +716,7 @@ class block_iomad_company_admin_external extends external_api {
                 $succeeded = false;
                 continue;
             }
-
-            // Set up the company.
             $company = new company($userrecord['companyid']);
-
-            // Did we get passed a departmentid?
-            if (empty($userrecord['departmentid'])) {
-                // Get the top level department.
-                $toplevel = company::get_company_parentnode($company->id);
-                $userrecord['departmentid'] = $toplevel->id;
-            }
 
             // Check if the company has gone over the user quota.
             if (!$company->check_usercount(1)) {
@@ -733,14 +724,12 @@ class block_iomad_company_admin_external extends external_api {
                 $errormessage = get_string('maxuserswarning', 'block_iomad_company_admin', $maxusers);
             }
 
-            if (!company::upsert_company_user($userrecord['userid'],
-                                              $company->id,
-                                               $userrecord['departmentid'],
-                                               $userrecord['managertype'],
-                                               null,
-                                               true)) {
-                 $succeeded = false;
-                 $errormessage = "Unable to assign user";
+            if (!$company->assign_user_to_company($userrecord['userid'],
+                                                  $userrecord['departmentid'],
+                                                  $userrecord['managertype'],
+                                                  true)) {
+                $succeeded = false;
+                $errormessage = "Unable to assign user";
             } else {
 
                 // Create an event for this.
@@ -1534,8 +1523,6 @@ class block_iomad_company_admin_external extends external_api {
                              'program' => new external_value(PARAM_INT, 'Program pf courses 0 = no, 1 = yes'),
                              'reference' => new external_value(PARAM_TEXT, 'License reference'),
                              'instant' => new external_value(PARAM_INT, 'Instant access - 0 = no, 1 = yes'),
-                             'clearonexpire' => new external_value(PARAM_INT, 'Clear license assignments on expire - 0 = no, 1 = yes'),
-                             'cutoffdate' => new external_value(PARAM_INT, 'License cut off date (int = timestamp)'),
                              'courses' => new external_multiple_structure(
                                  new external_single_structure(
                                         array(
@@ -1628,8 +1615,6 @@ class block_iomad_company_admin_external extends external_api {
                      'program' => new external_value(PARAM_INT, 'Program pf courses 0 = no, 1 = yes'),
                      'reference' => new external_value(PARAM_TEXT, 'License reference'),
                      'instant' => new external_value(PARAM_INT, 'Instant access - 0 = no, 1 = yes'),
-                     'clearonexpire' => new external_value(PARAM_INT, 'Clear license assignments on expire - 0 = no, 1 = yes'),
-                     'cutoffdate' => new external_value(PARAM_INT, 'License cut off date (int = timestamp)'),
                      'courses' => new external_multiple_structure(
                          new external_single_structure(
                                 array(

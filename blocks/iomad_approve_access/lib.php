@@ -17,6 +17,7 @@
 /**
  * @package    Block Iomad Approve Access
  * @copyright  2011 onwards E-Learn Design Limited
+ * @author    Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

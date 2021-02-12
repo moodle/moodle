@@ -15,18 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    block_iomad_approve_access
- * @copyright  20210 Derick Turner
- * @author     Derick Turner
+ * @package    Block Iomad Approve Access
+ * @copyright  2011 onwards E-Learn Design Limited
+ * @author    Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_iomad_approve_access\forms;
-
-use \moodleform;
-use \moodle_url;
-use \block_iomad_approve_access;
-
+require_once(dirname(__FILE__) . '/../../config.php');
+require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/tablelib.php');
+require_once('lib.php');
 
 class approve_form extends moodleform {
     public function definition() {
@@ -43,7 +41,7 @@ class approve_form extends moodleform {
         }
 
         $selectarr = array();
-        if ($results = iomad_approve_access::get_my_users()) {
+        if ($results = approve_enroll_get_my_users()) {
             $mform->addElement('html', '<h2>'.get_string('approveuserstitle', 'block_iomad_approve_access').'</h2>');
 
             if (!$department) {

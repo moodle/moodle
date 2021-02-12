@@ -15,18 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Infected file report
+ * Definition of Forum scheduled tasks.
  *
- * @package    report_infectedfiles
- * @author     Nathan Nguyen <nathannguyen@catalyst-au.net>
- * @copyright  Catalyst IT
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_email
+ * @category  task
+ * @copyright 2015 E-Learn Design
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$ADMIN->add('reports', new admin_externalpage('reportinfectedfiles',
-    get_string('infectedfiles', 'report_infectedfiles'),
-    "$CFG->wwwroot/report/infectedfiles/index.php"));
-
-$settings = null;
+$tasks = array(
+    array(
+        'classname' => 'local_email\task\cron_task',
+        'blocking' => 0,
+        'minute' => '*/5',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    )
+);
