@@ -189,11 +189,6 @@ define(['jquery', 'core/str', 'core/ajax', 'core/notification', 'core/templates'
         };
 
         DataRegistry.prototype.clearForm = function() {
-            // For the previously loaded form.
-            Y.use('moodle-core-formchangechecker', function() {
-                M.core_formchangechecker.reset_form_dirty_state();
-            });
-
             // Remove previous listeners.
             $(SELECTORS.FORM_CONTAINER).off('submit', 'form');
         };

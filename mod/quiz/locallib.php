@@ -1970,14 +1970,13 @@ function quiz_get_js_module() {
         'name' => 'mod_quiz',
         'fullpath' => '/mod/quiz/module.js',
         'requires' => array('base', 'dom', 'event-delegate', 'event-key',
-                'core_question_engine', 'moodle-core-formchangechecker'),
+                'core_question_engine'),
         'strings' => array(
             array('cancel', 'moodle'),
             array('flagged', 'question'),
             array('functiondisabledbysecuremode', 'quiz'),
             array('startattempt', 'quiz'),
             array('timesup', 'quiz'),
-            array('changesmadereallygoaway', 'moodle'),
         ),
     );
 }

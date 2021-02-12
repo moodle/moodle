@@ -71,12 +71,17 @@ class feedback_edit_use_template_form extends moodleform {
                 $options[get_string('public', 'feedback')] = $publicoptions;
             }
 
-            $attributes = 'onChange="M.core_formchangechecker.set_form_submitted(); this.form.submit()"';
-            $elementgroup[] = $mform->createElement('selectgroups',
-                                                     'templateid',
-                                                     get_string('using_templates', 'feedback'),
-                                                     $options,
-                                                     $attributes);
+            $attributes = [
+                'onChange="this.form.submit()"',
+                'data-form-change-checker-override="1"',
+            ];
+            $elementgroup[] = $mform->createElement(
+                'selectgroups',
+                'templateid',
+                get_string('using_templates', 'feedback'),
+                $options,
+                implode(' ', $attributes)
+            );
 
             $elementgroup[] = $mform->createElement('submit',
                                                      'use_template',
