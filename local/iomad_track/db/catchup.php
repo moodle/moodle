@@ -15,12 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This script fixed incorrectly deleted users.
- *
- * @package    core
- * @subpackage cli
- * @copyright  2013 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_iomad_signup
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('CLI_SCRIPT', true);

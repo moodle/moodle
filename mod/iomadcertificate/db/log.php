@@ -16,11 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of log events
- *
- * @package    mod_iomadcertificate
- * @copyright  2010 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_iomadcertificate
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   mod_certificate by Mark Nelson <markn@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

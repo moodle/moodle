@@ -15,7 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'local_course_selector', language 'en'
+ * @package   local_course_selector
+ * @based on  standard Moodle course_selector
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['courseselectortoomany'] = 'course_selector got more than one selected course, even though multiselect is false.';

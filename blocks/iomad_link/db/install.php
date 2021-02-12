@@ -16,6 +16,13 @@
 
 // This script is run after the link block has been installed.
 
+/**
+ * @package   block_iomad_link
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 function xmldb_block_iomad_link_install() {
     global $SITE;
 

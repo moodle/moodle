@@ -14,12 +14,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Certificate module data generator.
- *
  * @package   mod_iomadcertificate
- * @copyright 2014 Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   mod_certificate by Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author    Petr Skoda <petr.skoda@totaralms.com>
  */
 
 defined('MOODLE_INTERNAL') || die();

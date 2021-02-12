@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for the table used by a {@link quiz_attempts_report}.
+ * Base class for the table used by iomad_company_admin/editusers.php.
  *
- * @package   local_report_user_license_allocations
- * @copyright 2019 E-Learn Design Ltd. (https://www.e-learndesign.co.uk)
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
  * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,13 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
 
-/**
- * Base class for the table used by local_report_user_license_allocations
- *
- * @copyright 2019 E-Learn Design Ltd. (https://www.e-learndesign.co.uk)
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class block_iomad_company_admin_editusers_table extends table_sql {
 
     /**
@@ -283,5 +276,4 @@ class block_iomad_company_admin_editusers_table extends table_sql {
         echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/company_user_create_form.php'),
                                     get_string('createuser', 'block_iomad_company_admin'));
     }
-
 }

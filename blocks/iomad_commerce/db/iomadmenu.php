@@ -16,6 +16,13 @@
 
 // Define the Iomad menu items that are defined by this plugin
 
+/**
+ * @package   block_iomad_commerce
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 function block_iomad_commerce_menu() {
 
     return array(

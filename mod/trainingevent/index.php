@@ -15,12 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library of functions and constants for module label
- *
- * @package    mod
- * @subpackage label
- * @copyright  2003 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_trainingevent
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once("../../config.php");

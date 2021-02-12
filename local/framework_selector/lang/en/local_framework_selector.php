@@ -15,6 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * @package   local_framework_selector
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   standard Moodle framework_selector
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
  * Strings for component 'local_framework_selector', language 'en'
  */
 

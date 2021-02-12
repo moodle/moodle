@@ -18,8 +18,9 @@
  *
  * @package    mod_iomadcertificate
  * @category   test
- * @author     Russell England <russell.england@catalyst-eu.net>
- * @copyright  Catalyst IT Ltd 2013 <http://catalyst-eu.net>
+ * @author     Derick Turner
+ * @copyright  Derick Turner
+ * @basedon    mod_certificate code of Russell England <russell.england@catalyst-eu.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  */
 

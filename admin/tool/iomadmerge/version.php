@@ -19,6 +19,9 @@
  *
  * @package    tool
  * @subpackage iomadmerge
+ * @copyright  Derick Turner
+ * @author     Derick Turner
+ * @basedon    admin tool merge by:
  * @author     Nicolas Dunand <Nicolas.Dunand@unil.ch>
  * @author     Mike Holzer
  * @author     Forrest Gaston

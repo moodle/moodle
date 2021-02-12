@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package   block_iomad_microlearning
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 $string['actions'] = 'Actions';
 $string['active'] = 'Active';
 $string['active_help'] = 'If the thread is not active then there will be no messages sent to the users and it will not be visible on their dashboard';

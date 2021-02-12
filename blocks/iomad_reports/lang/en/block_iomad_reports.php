@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package   block_iomad_reports
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 $string['iomad_reports:addinstance'] = 'Add a new Iomad Reports block';
 $string['iomad_reports:myaddinstance'] = 'Add a new Iomad Reports block to the users dashboard';
 $string['iomad_reports:view'] = 'Access to Iomad Reports';

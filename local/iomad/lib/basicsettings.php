@@ -19,6 +19,13 @@
 // is set up, as the order in which local plugins are called cannot be
 // relied upon
 
+/**
+ * @package   local_iomad
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 if (is_null($ADMIN->locate('iomad'))) {
     $ADMIN->add( 'root', new admin_category( 'iomad', get_string('iomad', 'local_iomad')));
 }

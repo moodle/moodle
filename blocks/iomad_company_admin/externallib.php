@@ -17,9 +17,10 @@
 /**
  * Iomad External Web Services
  *
- * @package block_iomad_company_admin
- * @copyright 2017 E-LearnDesign Limited
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->libdir . "/externallib.php");
@@ -179,7 +180,14 @@ class block_iomad_company_admin_external extends external_api {
                      'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
                      'customcss' => new external_value(PARAM_TEXT, 'Company custom css'),
                      'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp', VALUE_DEFAULT, null),
-                     'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),
+                     'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),,
+                     'companyterminated' => new external_value(PARAM_INT, 'Company contract is terminated when <> 0', VALUE_DEFAULT, 0),
+                     'theme' => new external_value(PARAM_TEXT, 'Company theme', VALUE_DEFAULT, ''),
+                     'hostname' => new external_value(PARAM_TEXT, 'Company hostname', VALUE_DEFAULT, ''),
+                     'maxusers' => new external_value(PARAM_INT, 'Company maximum number of users', VALUE_DEFAULT, 0),
+                     'maincolor' => new external_value(PARAM_TEXT, 'Company main color', VALUE_DEFAULT, ''),
+                     'headingcolor' => new external_value(PARAM_TEXT, 'Company heading color', VALUE_DEFAULT, ''),
+                     'linkcolor' => new external_value(PARAM_TEXT, 'Company ink color', VALUE_DEFAULT, ''),
                 )
             )
         );

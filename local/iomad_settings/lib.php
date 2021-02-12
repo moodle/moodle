@@ -19,6 +19,7 @@
  *
  * @package local_iomad_settings
  * @copyright  2017 Derick Tuner
+ * @author     Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

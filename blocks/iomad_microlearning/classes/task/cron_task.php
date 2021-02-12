@@ -21,6 +21,7 @@
  *
  * @package    block_iomad_microlearning
  * @copyright  2019 E-Learn Design
+ * @author    Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace block_iomad_microlearning\task;

@@ -15,16 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Process ajax requests
- *
- * @copyright Andreas Grabs
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   mod_feedback
+ * @writtenby Andreas Grabs
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-
-/*if (!defined('AJAX_SCRIPT')) {
-    define('AJAX_SCRIPT', true);
-}*/
 
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once('../lib.php');

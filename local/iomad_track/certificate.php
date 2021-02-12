@@ -18,6 +18,13 @@
 // TODO: This really needs some checks that the current user
 // has the right to see the certificate but I'm unsure how that's done :(
 
+/**
+ * @package   local_iomad_track
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once(dirname(__FILE__) . '/../../config.php');
 
 $id = required_param('id', PARAM_INT);

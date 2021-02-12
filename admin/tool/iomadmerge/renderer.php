@@ -16,10 +16,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @author Jordi Pujol-Ahulló <jordi.pujol@urv.cat>
- * @author John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
- * @copyright 2013 Servei de Recursos Educatius (http://www.sre.urv.cat)
+ * Version information
+ *
+ * @package    tool
+ * @subpackage iomadmerge
+ * @copyright  Derick Turner
+ * @author     Derick Turner
+ * @basedon    admin tool merge by:
+ * @author     Nicolas Dunand <Nicolas.Dunand@unil.ch>
+ * @author     Mike Holzer
+ * @author     Forrest Gaston
+ * @author     Juan Pablo Torres Herrera
+ * @author     Jordi Pujol-Ahulló, SREd, Universitat Rovira i Virgili
+ * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once __DIR__ . '/select_form.php';

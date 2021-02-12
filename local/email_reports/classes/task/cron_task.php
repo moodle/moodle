@@ -15,14 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A scheduled task for forum cron.
- *
- * @todo MDL-44734 This job will be split up properly.
- *
  * @package    local_email
  * @copyright  2014 E-Learn Design
+ * @author    Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace local_email_reports\task;
 
 class cron_task extends \core\task\scheduled_task {

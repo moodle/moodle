@@ -15,12 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The user_merged_failure event.
+ * Version information
  *
- * @package tool
+ * @package    tool
  * @subpackage iomadmerge
- * @author Gerard Cuello Adell <gerard.urv@gmail.com>
- * @copyright 2016 Servei de Recursos Educatius (http://www.sre.urv.cat)
+ * @copyright  Derick Turner
+ * @author     Derick Turner
+ * @basedon    admin tool merge by:
+ * @author     Nicolas Dunand <Nicolas.Dunand@unil.ch>
+ * @author     Mike Holzer
+ * @author     Forrest Gaston
+ * @author     Juan Pablo Torres Herrera
+ * @author     Jordi Pujol-Ahulló, SREd, Universitat Rovira i Virgili
+ * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

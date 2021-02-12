@@ -14,8 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-//
-// Capability definitions for the rss_client block.
+/**
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+// Capability definitions for the iomad_company_admin block.
 //
 // The capabilities are loaded into the database table when the block is
 // installed or updated. Whenever the capability definitions are updated,

@@ -15,12 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code to search for courses in response to an ajax call from a course selector.
- *
- * @copyright 1999 Martin Dougiamas  http://dougiamas.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package course
+ * @package   local_course_selector
+ * @based on  standard Moodle course_selector
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/local/course_selector/lib.php');

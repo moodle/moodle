@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form for editing a users profile
- *
- * @copyright 1999 Martin Dougiamas  http://dougiamas.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package core_user
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -28,12 +27,6 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
-/**
- * Class user_editadvanced_form.
- *
- * @copyright 1999 Martin Dougiamas  http://dougiamas.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class user_editadvanced_form extends moodleform {
 
     /**

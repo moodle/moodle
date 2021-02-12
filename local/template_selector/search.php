@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code to search for templates in response to an ajax call from a template selector.
- *
- * @copyright 1999 Martin Dougiamas  http://dougiamas.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package template
+ * @package   local_template_selector
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   Standard Moodle template selector
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');

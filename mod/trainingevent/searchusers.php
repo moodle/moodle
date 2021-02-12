@@ -20,6 +20,7 @@
  * @package    mod
  * @subpackage trainingevent
  * @copyright  2013 onwards E-Learn Design Ltd.  {@link http://www.e-learndesign.co.uk}
+ * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

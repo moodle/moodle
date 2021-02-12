@@ -317,6 +317,7 @@ $string['iomad_company_admin:assign_department_manager'] = 'Assign a department 
 $string['iomad_company_admin:assign_educator'] = 'Assign a course educator';
 $string['iomad_company_admin:allcompany_user_profiles'] = 'Manage all user profiles for all companies';
 $string['iomad_company_admin:allocate_licenses'] = 'Allocate licenses to users';
+$string['iomad_company_admin:block'] = 'Block iomad_company_admin';
 $string['iomad_company_admin:classrooms'] = 'Access teaching location menus';
 $string['iomad_company_admin:classrooms_add'] = 'Add teaching locations';
 $string['iomad_company_admin:classrooms_delete'] = 'Remove teaching locations';

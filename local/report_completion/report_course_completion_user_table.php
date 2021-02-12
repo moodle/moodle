@@ -15,10 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for the table used by a {@link quiz_attempts_report}.
- *
- * @package   local_report_user_license_allocations
- * @copyright 2019 E-Learn Design Ltd. (https://www.e-learndesign.co.uk)
+ * @package   local_report_completion
+ * @copyright 2021 Derick Turner
  * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package   local_iomad
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once(dirname(__FILE__) . '/company.php');
 require_once(dirname(__FILE__) . '/user.php');

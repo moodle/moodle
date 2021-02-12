@@ -16,9 +16,10 @@
 
 /**
  * @package auth_iomadoidc
- * @author James McQuillan <james.mcquillan@remote-learner.net>
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
 defined('MOODLE_INTERNAL') || die();

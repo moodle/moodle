@@ -16,9 +16,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    mod_iomadcertificate
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @package   mod_iomadcertificate
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   mod_certificate by Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

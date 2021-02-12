@@ -15,24 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the form element for handling the colour picker.
- *
- * @package    mod_customcert
- * @copyright  2013 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   mod_customcert
+ * @by        2013 Mark Nelson <markn@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->dirroot . '/lib/form/editor.php');
 
-/**
- * Form element for handling the colour picker.
- *
- * @package    block_iomad_company_admin
- * @copyright  2013 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class moodlequickform_iomad_colourpicker extends moodlequickform_editor {
 
     /**

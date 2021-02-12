@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the lib functions for local_iomad
- *
- * @package local_iomad
- * @copyright  2019 Daniel Thies <dethies@gmail.com>
+ * @package   local_iomad
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

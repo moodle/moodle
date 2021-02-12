@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code to search for frameworks in response to an ajax call from a framework selector.
- *
- * @copyright 1999 Martin Dougiamas  http://dougiamas.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package framework
+ * @package   local_framework_selector
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   standard Moodle framework_selector
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');

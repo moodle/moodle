@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'block_online_users', language 'en', branch 'MOODLE_20_STABLE'
- *
- * @package   block_online_users
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package   block_iomad_company_selector
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

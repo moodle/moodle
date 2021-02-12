@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Book module capability definition
- *
  * @package    mod
  * @subpackage trainingevent
  * @copyright  2011- E-Learn Design Ltd.
+ * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

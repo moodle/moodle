@@ -13,11 +13,12 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Code for ajax framework selectors.
- *
- * @package   framework
- * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @package   local_framework_selector
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   standard Moodle framework_selector
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

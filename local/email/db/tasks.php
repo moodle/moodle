@@ -20,6 +20,7 @@
  * @package   local_email
  * @category  task
  * @copyright 2015 E-Learn Design
+ * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

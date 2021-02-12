@@ -16,12 +16,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A4_embedded iomadcertificate type
- *
- * @package    mod
- * @subpackage iomadcertificate
- * @copyright  Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_iomadcertificate
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (!defined('MOODLE_INTERNAL')) {

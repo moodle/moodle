@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package   local_email_reports
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 $plugin->version  = 2016040601;   // The (date) version of this plugin.
 $plugin->requires = 2019052000;   // Requires this Moodle version.
 $plugin->release  = '3.8.4 (Build: 20200713)'; // Human-friendly version name

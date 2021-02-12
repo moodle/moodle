@@ -13,11 +13,12 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Code for ajax course selectors.
- *
- * @package   course
- * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @package   local_course_selector
+ * @based on  standard Moodle course_selector
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

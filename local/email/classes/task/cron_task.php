@@ -21,8 +21,10 @@
  *
  * @package    local_email
  * @copyright  2014 E-Learn Design
+ * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace local_email\task;
 
 class cron_task extends \core\task\scheduled_task {

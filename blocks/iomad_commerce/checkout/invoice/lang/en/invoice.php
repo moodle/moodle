@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package   block_iomad_commerce
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 $string['pp_invoice_name'] = 'Invoice';
 $string['pp_invoice_review_instructions'] = 'You are about to buy the items in your basket. Click the "confirm" button to confirm and an invoice will be created for you.';
 $string['pp_invoice_confirmation'] = 'Your order is now complete. Invoice #{$a->reference} has been sent by email to {$a->email}.';

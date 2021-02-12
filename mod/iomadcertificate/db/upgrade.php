@@ -14,13 +14,12 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * This file keeps track of upgrades to the iomadcertificate module
- *
- * @package    mod_iomadcertificate
- * @copyright  Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_iomadcertificate
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   mod_certificate by Mark Nelson <markn@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 function xmldb_iomadcertificate_upgrade($oldversion=0) {

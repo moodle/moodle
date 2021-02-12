@@ -15,6 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * @package   local_template_selector
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   Standard Moodle template selector
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
  * Strings for component 'local_template_selector', language 'en'
  */
 

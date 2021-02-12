@@ -19,12 +19,15 @@
  *
  * @package    tool
  * @subpackage iomadmerge
+ * @copyright  Derick Turner
+ * @author     Derick Turner
+ * @basedon    admin tool merge by:
  * @author     Nicolas Dunand <Nicolas.Dunand@unil.ch>
  * @author     Mike Holzer
  * @author     Forrest Gaston
  * @author     Juan Pablo Torres Herrera
- * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @author     Jordi Pujol-Ahulló, SREd, Universitat Rovira i Virgili
+ * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

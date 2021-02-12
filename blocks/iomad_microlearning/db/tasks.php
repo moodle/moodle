@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Task definition for block_recent_activity.
- * @author    Farhan Karmali <farhan6318@gmail.com>
- * @copyright Farhan Karmali 2018
- * @package   block_recent_activity
+ * @package   block_iomad_microlearning
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

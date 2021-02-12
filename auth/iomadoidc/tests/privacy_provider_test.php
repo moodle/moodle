@@ -15,12 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy test for auth_iomadoidc
- *
  * @package auth_iomadoidc
- * @author Remote-Learner.net Inc
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @copyright (C) 2019 Remote Learner.net Inc http://www.remote-learner.net
  */
 
 defined('MOODLE_INTERNAL') || die();
