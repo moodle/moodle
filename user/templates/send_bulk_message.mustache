@@ -33,6 +33,9 @@
 </label>
 <textarea id="bulk-message" rows="3" data-max-rows="10" data-auto-rows="true" cols="30" class="form-control"></textarea>
 </p>
+<div class="text-danger" data-role="messagetextrequired" hidden>
+    {{#str}} messagetextrequired, core_message {{/str}}
+</div>
 </form>
 {{#js}}
 require(['core/auto_rows'], function(AutoRows) {
