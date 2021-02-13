@@ -14,13 +14,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Custom form error event handler to manipulate the bootstrap markup and show
- * nicely styled errors in an mform.
- *
- * @module     theme_iomad/form-display-errors
- * @copyright  2016 Damyon Wiese <damyon@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   theme_iomad
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 define(['jquery', 'core/event'], function($, Event) {
     return {
         enhance: function(elementid) {

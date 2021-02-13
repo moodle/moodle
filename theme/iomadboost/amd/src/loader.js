@@ -14,15 +14,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Template renderer for Moodle. Load and render Moodle templates with Mustache.
- *
- * @module     core/templates
- * @package    core
- * @class      templates
- * @copyright  2015 Damyon Wiese <damyon@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      2.9
+ * @package   theme_iomadboost
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 define(['jquery', './tether', 'core/event', 'core/custom_interaction_events'], function(jQuery, Tether, Event, customEvents) {
 
     window.jQuery = jQuery;

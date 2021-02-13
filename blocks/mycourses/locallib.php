@@ -19,6 +19,7 @@
  *
  * @package    block_mycourses
  * @copyright  2015 E-Learn Design http://www.e-learndesign.co.uk
+ * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

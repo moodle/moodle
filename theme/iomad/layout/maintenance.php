@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A maintenance layout for the iomad theme.
- *
  * @package   theme_iomad
- * @copyright 2016 Damyon Wiese
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

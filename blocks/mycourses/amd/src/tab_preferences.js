@@ -14,12 +14,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Javascript used to save the user's tab preference.
- *
- * @package    block_mycourses
- * @copyright  2017 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   block_mycourses
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 define(['jquery', 'core/ajax', 'core/custom_interaction_events',
     'core/notification'], function($, Ajax, CustomEvents, Notification) {

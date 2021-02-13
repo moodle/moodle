@@ -15,13 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Overridden fontawesome icons.
- *
- * @package     theme_iomadbootstrap
- * @copyright   2019 Moodle
- * @author      Bas Brands <bas@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   theme_iomadbootstrap
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace theme_iomadbootstrap\output;
 
 defined('MOODLE_INTERNAL') || die();

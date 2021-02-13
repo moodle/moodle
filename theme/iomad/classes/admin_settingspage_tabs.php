@@ -16,17 +16,13 @@
 
 /**
  * @package   theme_iomad
- * @copyright 2016 Ryan Wyllie
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * @package   theme_iomad
- * @copyright 2016 Ryan Wyllie
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class theme_iomad_admin_settingspage_tabs extends admin_settingpage {
 
     /** @var The tabs */

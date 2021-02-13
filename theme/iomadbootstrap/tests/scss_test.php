@@ -15,24 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the unittests for iomadbootstrap's scss compilation.
- *
  * @package   theme_iomadbootstrap
- * @category  test
- * @copyright 2019 Michael Hawkins
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Unit tests for scss compilation.
- *
- * @package   theme_iomadbootstrap
- * @category  test
- * @copyright 2019 Michael Hawkins
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class theme_iomadbootstrap_scss_testcase extends advanced_testcase {
     /**
      * Test that iomadbootstrap can be compiled using SassC (the defacto implemention).

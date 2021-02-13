@@ -1,3 +1,10 @@
+/**
+ * @package   block_mycourses
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 .block_course_overview, section.block_myoverview {
     display:none;
 }

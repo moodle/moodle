@@ -14,12 +14,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Enhancements to Bootstrap components for accessibility.
- *
- * @module     theme_iomadboost/aria
- * @copyright  2018 Damyon Wiese <damyon@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   theme_iomadboost
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 define(['jquery', 'core/pending'], function($, Pending) {
     return {
         init: function() {

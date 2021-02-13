@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the unittests for iomadboost's scss compilation.
- *
  * @package   theme_iomadboost
- * @copyright 2018 Cameron Ball <cameron@cameron1729.xyz>
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
