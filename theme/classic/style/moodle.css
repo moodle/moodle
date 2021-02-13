@@ -18725,10 +18725,12 @@ p.arrow_button {
   width: 100%;
   clear: both; }
 
-.path-grade-report-grader span.gradepass {
+.path-grade-report-grader .gradepass,
+.path-grade-report-user .gradepass {
   color: #357a32; }
 
-.path-grade-report-grader span.gradefail {
+.path-grade-report-grader .gradefail,
+.path-grade-report-user .gradefail {
   color: #ca3120; }
 
 #page-grade-grading-manage #activemethodselector label {

@@ -52,11 +52,12 @@
     }
 }
 
-.path-grade-report-grader {
-    span.gradepass {
+.path-grade-report-grader,
+.path-grade-report-user {
+    .gradepass {
         color: $success;
     }
-    span.gradefail {
+    .gradefail {
         color: $danger;
     }
 }
