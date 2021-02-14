@@ -6,7 +6,7 @@
     "homepage": "https://moodle.org",
     "require-dev": {
         "phpunit/phpunit": "8.5.*",
-        "moodlehq/behat-extension": "3.311.3",
+        "moodlehq/behat-extension": "3.311.4",
         "mikey179/vfsstream": "^1.6"
     },
     "minimum-stability": "dev",
