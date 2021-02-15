@@ -195,6 +195,8 @@ class participants extends \table_sql implements dynamic_table {
             $this->no_sorting('groups');
         }
 
+        $this->set_default_per_page(20);
+
         $this->set_attribute('id', 'participants');
 
         $this->countries = get_string_manager()->get_list_of_countries(true);
