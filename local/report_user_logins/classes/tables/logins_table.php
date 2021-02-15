@@ -18,23 +18,23 @@
  * Base class for the table used by a {@link quiz_attempts_report}.
  *
  * @package   local_report_user_logins
- * @copyright 2019 E-Learn Design Ltd. (https://www.e-learndesign.co.uk)
+ * @copyright 2012 Derick Turner
  * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace local_report_user_logins\tables;
+
+use \table_sql;
+use \iomad;
+use \context_system;
+use \moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
 
-/**
- * Base class for the table used by local_report_users_login
- *
- * @copyright 2019 E-Learn Design Ltd. (https://www.e-learndesign.co.uk)
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class local_report_user_logins_table extends table_sql {
+class logins_table extends table_sql {
 
     /**
      * Generate the display of the user's firstname
