@@ -25,118 +25,6 @@ require_once(dirname(__FILE__) . '/../../config.php'); // Creates $PAGE.
 require_once('lib.php');
 require_once($CFG->libdir . '/formslib.php');
 
-class company_templates_form extends moodleform {
-    protected $context = null;
-    protected $selectedcompany = 0;
-    protected $potentialtemplates = null;
-    protected $currenttemplates = null;
-
-    public function __construct($actionurl, $context, $companyid) {
-        global $USER;
-        $this->selectedcompany = $companyid;
-        $this->context = $context;
-
-        $company = new company($this->selectedcompany);
-        $syscontext = context_system::instance();
-
-        $options = array('context' => $this->context,
-                         'companyid' => $this->selectedcompany,
-                         'shared' => false,
-                         'partialshared' => true);
-        $this->potentialtemplates = new potential_company_templates_selector('potentialtemplates',
-                                                                         $options);
-        $this->currenttemplates = new current_company_templates_selector('currenttemplates', $options);
-
-        parent::__construct($actionurl);
-    }
-
-    public function definition() {
-        $this->_form->addElement('hidden', 'companyid', $this->selectedcompany);
-        $this->_form->setType('companyid', PARAM_INT);
-    }
-
-    public function definition_after_data() {
-        global $OUTPUT;
-
-        $mform =& $this->_form;
-
-        // Adding the elements in the definition_after_data function rather than in the
-        // definition function  so that when the currenttemplates or potentialtemplates get changed
-        // in the process function, the changes get displayed, rather than the lists as they
-        // are before processing.
-
-        $context = context_system::instance();
-        $company = new company($this->selectedcompany);
-        $mform->addElement('header', 'header', get_string('company_templates_for',
-                                                          'block_iomad_company_admin',
-                                                          $company->get_name() ));
-
-        $mform->addElement('html', '<table summary="" class="companytemplatetable addremovetable'.
-                                   ' generaltable generalbox boxaligncenter" cellspacing="0">
-            <tr>
-              <td id="existingcell">');
-
-        $mform->addElement('html', $this->currenttemplates->display(true));
-
-        $mform->addElement('html', '
-              </td>
-              <td id="buttonscell">
-                  <p class="arrow_button">
-                    <input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('add') . '"
-                           title="' . print_string('add') .'" class="btn btn-secondary"/><br />
-                    <input name="remove" id="remove" type="submit" value="'. get_string('remove').'&nbsp;'.$OUTPUT->rarrow(). '"
-                           title="'. print_string('remove') .'" class="btn btn-secondary"/><br />
-                 </p>
-              </td>
-              <td id="potentialcell">');
-
-        $mform->addElement('html', $this->potentialtemplates->display(true));
-
-        $mform->addElement('html', '
-              </td>
-            </tr>
-          </table>');
-    }
-
-    public function process() {
-        global $DB;
-
-        $context = context_system::instance();
-
-        // Process incoming assignments.
-        if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
-            $templatestoassign = $this->potentialtemplates->get_selected_templates();
-            if (!empty($templatestoassign)) {
-
-                $company = new company($this->selectedcompany);
-
-                foreach ($templatestoassign as $addtemplate) {
-                    company::add_competency_template($this->selectedcompany, $addtemplate->id);
-                }
-
-                $this->potentialtemplates->invalidate_selected_templates();
-                $this->currenttemplates->invalidate_selected_templates();
-            }
-        }
-
-        // Process incoming unassignments.
-        if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
-            $templatestounassign = $this->currenttemplates->get_selected_templates();
-            if (!empty($templatestounassign)) {
-
-                $company = new company($this->selectedcompany);
-
-                foreach ($templatestounassign as $removetemplate) {
-                    company::remove_competency_template($this->selectedcompany, $removetemplate->id);
-                }
-
-                $this->potentialtemplates->invalidate_selected_templates();
-                $this->currenttemplates->invalidate_selected_templates();
-            }
-        }
-    }
-}
-
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 
@@ -171,7 +59,7 @@ $PAGE->navbar->add($linktext, $linkurl);
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 
-$mform = new company_templates_form($PAGE->url, $context, $companyid);
+$mform = new \block_iomad_company_admin\forms\company_competency_templates_form($PAGE->url, $context, $companyid);
 
 if ($mform->is_cancelled()) {
     if ($returnurl) {

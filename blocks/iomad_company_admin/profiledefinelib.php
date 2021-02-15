@@ -499,8 +499,7 @@ function profile_edit_field($id, $datatype, $redirect, $companyid) {
     $field->description = clean_text($field->description, $field->descriptionformat);
     $field->description = array('text' => $field->description, 'format' => $field->descriptionformat, 'itemid' => 0);
 
-    require_once('company_field_form.php');
-    $fieldform = new field_form(null, $field->datatype, $companyid);
+    $fieldform = new \block_iomad_company_admin\forms\field_form(null, $field->datatype, $companyid);
 
     // Convert the data format for.
     if (is_array($fieldform->editors())) {

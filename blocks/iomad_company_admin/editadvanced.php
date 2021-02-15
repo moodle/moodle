@@ -25,7 +25,6 @@ require_once('../../config.php');
 require_once($CFG->libdir.'/gdlib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
-require_once('editadvanced_form.php');
 require_once($CFG->dirroot.'/user/editlib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once('lib.php');
@@ -150,7 +149,7 @@ if ($user->id !== -1) {
                                 'accepted_types' => 'web_image');
 }
 // Create form.
-$userform = new user_editadvanced_form(null, array('editoroptions' => $editoroptions,
+$userform = new \block_iomad_company_admin\forms\user_editadvanced_form(null, array('editoroptions' => $editoroptions,
                                                    'companyid' => $companyid,
                                                    'user' => $user,
                                                    'filemanageroptions' => $filemanageroptions));

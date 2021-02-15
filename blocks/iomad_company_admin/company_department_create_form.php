@@ -30,109 +30,6 @@ require_once($CFG->libdir . '/formslib.php');
 require_once('lib.php');
 require_once(dirname(__FILE__) . '/../../course/lib.php');
 
-class department_edit_form extends company_moodleform {
-    protected $selectedcompany = 0;
-    protected $context = null;
-    protected $company = null;
-    protected $deptid = 0;
-    protected $output = null;
-
-    public function __construct($actionurl, $companyid, $departmentid, $output, $chosenid=0, $action=0) {
-        global $CFG;
-
-        $this->selectedcompany = $companyid;
-        $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
-        $this->departmentid = $departmentid;
-        $this->output = $output;
-        $this->chosenid = $chosenid;
-        $this->action = $action;
-        parent::__construct($actionurl);
-    }
-
-    public function definition() {
-        global $CFG, $USER;
-
-        $mform =& $this->_form;
-        $company = new company($this->selectedcompany);
-
-        if (!empty($this->departmentid)) {
-            $ignorecurrentbranch = $this->departmentid;
-        } else {
-            $ignorecurrentbranch = false;
-        }
-        $userdepartment = $company->get_userlevel($USER);
-        $departmentslist = company::get_all_subdepartments($userdepartment->id);
-        $departmenttree = company::get_all_subdepartments_raw($userdepartment->id, $ignorecurrentbranch);
-        $department = company::get_departmentbyid($this->departmentid);
-        $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
-
-        // Then show the fields about where this block appears.
-        if ($this->action == 0) {
-            $mform->addElement('header', 'header',
-                                get_string('createdepartment', 'block_iomad_company_admin'));
-        } else {
-            $mform->addElement('header', 'header',
-                                get_string('editdepartments', 'block_iomad_company_admin'));
-        }
-        $mform->addElement('hidden', 'departmentid', $this->departmentid);
-        $mform->setType('departmentid', PARAM_INT);
-        $mform->addElement('hidden', 'action', $this->action);
-        $mform->setType('action', PARAM_INT);
-
-        // Display department select html (create only)
-        //if ($this->action == 0) {
-            $mform->addElement('html', '<p>' . get_string('parentdepartment', 'block_iomad_company_admin') . '</p>');
-            $mform->addElement('html', $treehtml);
-        //}
-
-        // This is getting hidden anyway, so no need for label
-        $mform->addElement('html', "<div style='display:none;'>");
-        $mform->addElement('select', 'deptid', ' ',
-                            $departmentslist, array('class' => 'iomad_department_select'));
-        $mform->addElement('html', "</div></br>");
-
-        $mform->addElement('text', 'fullname',
-                            get_string('fullnamedepartment', 'block_iomad_company_admin'),
-                            'maxlength = "254" size = "50"');
-        $mform->addHelpButton('fullname', 'fullnamedepartment', 'block_iomad_company_admin');
-        $mform->addRule('fullname',
-                        get_string('missingfullnamedepartment', 'block_iomad_company_admin'),
-                        'required', null, 'client');
-        $mform->setType('fullname', PARAM_MULTILANG);
-
-        $mform->addElement('text', 'shortname',
-                            get_string('shortnamedepartment', 'block_iomad_company_admin'),
-                            'maxlength = "100" size = "20"');
-        $mform->addHelpButton('shortname', 'shortnamedepartment', 'block_iomad_company_admin');
-        $mform->addRule('shortname',
-                         get_string('missingshortnamedepartment', 'block_iomad_company_admin'),
-                         'required', null, 'client');
-        $mform->setType('shortname', PARAM_MULTILANG);
-
-        if (!$this->departmentid) {
-            $mform->addElement('hidden', 'chosenid', $this->chosenid);
-        } else {
-            $mform->addElement('hidden', 'chosenid', $this->departmentid);
-        }
-        $mform->setType('chosenid', PARAM_INT);
-
-        $this->add_action_buttons();
-    }
-
-    public function validation($data, $files) {
-        global $DB;
-
-        $errors = array();
-
-        if ($departmentbyname = $DB->get_record('department', array('company' => $this->selectedcompany, 'shortname' => trim($data['shortname'])))) {
-            if ($departmentbyname->id != $this->departmentid) {
-                $errors['shortname'] = get_string('departmentnameinuse', 'block_iomad_company_admin');
-            }
-        }
-        return $errors;
-    }
-}
-
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $departmentid = optional_param('departmentid', 0, PARAM_INT);
 $deptid = optional_param('deptid', 0, PARAM_INT);
@@ -190,10 +87,10 @@ if (!empty($departmentid)) {
     $department = $DB->get_record('department', array('id' => $departmentid));
     $department->fullname = $department->name;
     $department->deptid = $department->parent;
-    $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output);
+    $editform = new \block_iomad_company_admin\forms\department_edit_form($PAGE->url, $companyid, $departmentid, $output);
     $editform->set_data($department);
 } else {
-    $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $output);
+    $editform = new \block_iomad_company_admin\forms\department_edit_form($PAGE->url, $companyid, $departmentid, $output);
     $editform->set_data(array('deptid' => $deptid));
 }
 

@@ -15,25 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of Forum scheduled tasks.
- *
- * @package   local_email
- * @category  task
- * @copyright 2015 E-Learn Design
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
  * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace block_iomad_company_admin\forms;
 
-$tasks = array(
-    array(
-        'classname' => 'local_email\task\cron_task',
-        'blocking' => 0,
-        'minute' => '*/5',
-        'hour' => '*',
-        'day' => '*',
-        'month' => '*',
-        'dayofweek' => '*'
-    )
-);
+use \moodleform;
+
+/**
+ * Script to let a user import departments to a particular company.
+ */
+
+class company_department_import_form extends moodleform {
+
+    function definition() {
+        global $CFG;
+
+        // thing you have to do
+        $mform =& $this->_form;
+
+        // header for main bit
+        $mform->addElement( 'header', 'general', get_string('departmentimport','block_iomad_company_admin'));
+
+        // file picker
+        $mform->addElement('filepicker', 'importfile', get_string('file'), null, array( 'accepted_types'=>'json'));
+        $mform->addRule('importfile', null, 'required');
+
+        // buttons
+        $this->add_action_buttons();
+    }
+}

@@ -25,118 +25,6 @@ require_once(dirname(__FILE__) . '/../../config.php'); // Creates $PAGE.
 require_once('lib.php');
 require_once($CFG->libdir . '/formslib.php');
 
-class company_frameworks_form extends moodleform {
-    protected $context = null;
-    protected $selectedcompany = 0;
-    protected $potentialframeworks = null;
-    protected $currentframeworks = null;
-
-    public function __construct($actionurl, $context, $companyid) {
-        global $USER;
-        $this->selectedcompany = $companyid;
-        $this->context = $context;
-
-        $company = new company($this->selectedcompany);
-        $syscontext = context_system::instance();
-
-        $options = array('context' => $this->context,
-                         'companyid' => $this->selectedcompany,
-                         'shared' => false,
-                         'partialshared' => true);
-        $this->potentialframeworks = new potential_company_frameworks_selector('potentialframeworks',
-                                                                         $options);
-        $this->currentframeworks = new current_company_frameworks_selector('currentframeworks', $options);
-
-        parent::__construct($actionurl);
-    }
-
-    public function definition() {
-        $this->_form->addElement('hidden', 'companyid', $this->selectedcompany);
-        $this->_form->setType('companyid', PARAM_INT);
-    }
-
-    public function definition_after_data() {
-        global $OUTPUT;
-
-        $mform =& $this->_form;
-
-        // Adding the elements in the definition_after_data function rather than in the
-        // definition function  so that when the currentframeworks or potentialframeworks get changed
-        // in the process function, the changes get displayed, rather than the lists as they
-        // are before processing.
-
-        $context = context_system::instance();
-        $company = new company($this->selectedcompany);
-        $mform->addElement('header', 'header', get_string('company_frameworks_for',
-                                                          'block_iomad_company_admin',
-                                                          $company->get_name() ));
-
-        $mform->addElement('html', '<table summary="" class="companyframeworktable addremovetable'.
-                                   ' generaltable generalbox boxaligncenter" cellspacing="0">
-            <tr>
-              <td id="existingcell">');
-
-        $mform->addElement('html', $this->currentframeworks->display(true));
-
-        $mform->addElement('html', '
-              </td>
-              <td id="buttonscell">
-                  <p class="arrow_button">
-                    <input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('add') . '"
-                           title="' . print_string('add') .'" class="btn btn-secondary"/><br />
-                    <input name="remove" id="remove" type="submit" value="'. get_string('remove').'&nbsp;'.$OUTPUT->rarrow(). '"
-                           title="'. print_string('remove') .'" class="btn btn-secondary"/><br />
-                 </p>
-              </td>
-              <td id="potentialcell">');
-
-        $mform->addElement('html', $this->potentialframeworks->display(true));
-
-        $mform->addElement('html', '
-              </td>
-            </tr>
-          </table>');
-    }
-
-    public function process() {
-        global $DB;
-
-        $context = context_system::instance();
-
-        // Process incoming assignments.
-        if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
-            $frameworkstoassign = $this->potentialframeworks->get_selected_frameworks();
-            if (!empty($frameworkstoassign)) {
-
-                $company = new company($this->selectedcompany);
-
-                foreach ($frameworkstoassign as $addframework) {
-                    company::add_competency_framework($this->selectedcompany, $addframework->id);
-                }
-
-                $this->potentialframeworks->invalidate_selected_frameworks();
-                $this->currentframeworks->invalidate_selected_frameworks();
-            }
-        }
-
-        // Process incoming unassignments.
-        if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
-            $frameworkstounassign = $this->currentframeworks->get_selected_frameworks();
-            if (!empty($frameworkstounassign)) {
-
-                $company = new company($this->selectedcompany);
-
-                foreach ($frameworkstounassign as $removeframework) {
-                    company::remove_competency_framework($this->selectedcompany,$removeframework->id);
-                }
-
-                $this->potentialframeworks->invalidate_selected_frameworks();
-                $this->currentframeworks->invalidate_selected_frameworks();
-            }
-        }
-    }
-}
-
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 
@@ -171,7 +59,7 @@ $PAGE->navbar->add($linktext, $linkurl);
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 
-$mform = new company_frameworks_form($PAGE->url, $context, $companyid);
+$mform = new \block_iomad_company_admin\forms\company_frameworks_form($PAGE->url, $context, $companyid);
 
 if ($mform->is_cancelled()) {
     if ($returnurl) {

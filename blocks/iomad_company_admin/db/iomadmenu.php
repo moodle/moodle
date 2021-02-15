@@ -269,6 +269,28 @@ function block_iomad_company_admin_menu() {
                 'icon' => 'fa-list',
                 'iconsmall' => 'fa-cog'
             ),
+            'iomadtemplatesettings' => array(
+                'category' => 'CompetencyAdmin',
+                'tab' => 5,
+                'name' => get_string('templatesettings', 'block_iomad_company_admin'),
+                'url' => 'iomad_templates_form.php',
+                'cap' => 'block/iomad_company_admin:managetemplates',
+                'icondefault' => 'competency',
+                'style' => 'competency',
+                'icon' => 'fa-cubes',
+                'iconsmall' => 'fa-cog'
+            ),
+            'companyframeworks' => array(
+                'category' => 'CompetencyAdmin',
+                'tab' => 5,
+                'name' => get_string('companyframeworks', 'block_iomad_company_admin'),
+                'url' => 'company_competency_frameworks_form.php',
+                'cap' => 'block/iomad_company_admin:company_framework',
+                'icondefault' => 'assigntocompany',
+                'style' => 'competency',
+                'icon' => 'fa-list',
+                'iconsmall' => 'fa-chevron-circle-right'
+            ),
             'companytemplates' => array(
                 'category' => 'CompetencyAdmin',
                 'tab' => 5,
@@ -279,28 +301,6 @@ function block_iomad_company_admin_menu() {
                 'style' => 'competency',
                 'icon' => 'fa-cubes',
                 'iconsmall' => 'fa-chevron-circle-right'
-            ),
-            'iomadtemplatesettings' => array(
-                'category' => 'CompetencyAdmin',
-                'tab' => 5,
-                'name' => get_string('templatesettings', 'block_iomad_company_admin'),
-                'url' => 'iomad_templates_form.php',
-                'cap' => 'block/iomad_company_admin:managetemplates',
-                'icondefault' => 'managecoursesettings',
-                'style' => 'competency',
-                'icon' => 'fa-cubes',
-                'iconsmall' => 'fa-cog'
-            ),
-            'edittemplates' => array(
-                'category' => 'CompetencyAdmin',
-                'tab' => 5,
-                'name' => get_string('templates', 'tool_lp'),
-                'url' => '/admin/tool/lp/learningplans.php?pagecontextid=1',
-                'cap' => 'block/iomad_company_admin:templateview',
-                'icondefault' => 'userenrolements',
-                'style' => 'competency',
-                'icon' => 'fa-cubes',
-                'iconsmall' => 'fa-eye'
             )
         );
 }
