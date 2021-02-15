@@ -1159,7 +1159,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
  * @param string $extrasql
  * @return array|bool Array of posts found or false
  */
-function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=50,
+function forum_search_posts($searchterms, $courseid, $limitfrom, $limitnum,
                             &$totalcount, $extrasql='') {
     global $CFG, $DB, $USER;
     require_once($CFG->libdir.'/searchlib.php');

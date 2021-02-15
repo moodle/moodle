@@ -812,7 +812,7 @@ function scorm_get_available_children($sco) {
     }
 }
 
-function scorm_get_available_descendent($descend = array(), $sco) {
+function scorm_get_available_descendent($descend, $sco) {
     if ($sco == null) {
         return $descend;
     } else {

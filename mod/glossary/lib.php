@@ -2467,7 +2467,7 @@ function glossary_end_tag($tag,$level=0,$endline=true) {
  * @param string $content
  * @return string
  */
-function glossary_full_tag($tag,$level=0,$endline=true,$content) {
+function glossary_full_tag($tag, $level, $endline, $content) {
         global $CFG;
 
         $st = glossary_start_tag($tag,$level,$endline);

@@ -2080,7 +2080,7 @@ class mod_assign_external extends external_api {
      * @return null
      * @since Moodle 2.7
      */
-    public static function save_grades($assignmentid, $applytoall = false, $grades) {
+    public static function save_grades($assignmentid, $applytoall, $grades) {
         global $CFG, $USER;
 
         $params = self::validate_parameters(self::save_grades_parameters(),
