@@ -1310,10 +1310,7 @@ function(
 
     /**
      * We should show the contact request sent message if the user just sent
-     * a contact request to the other user and there are no messages in the
-     * conversation.
-     *
-     * The messages should be hidden when there are messages in the conversation.
+     * a contact request to the other user
      *
      * @param  {Object} state The current state.
      * @param  {Object} newState The new state.
@@ -1331,17 +1328,13 @@ function(
         });
         var oldRequest = oldSentRequests.length > 0;
         var newRequest = newSentRequests.length > 0;
-        var hadMessages = state.messages.length > 0;
-        var hasMessages = state.messages.length > 0;
 
-        if (!oldRequest && newRequest && !newOtherUser.iscontact && !hasMessages) {
+        if (!oldRequest && newRequest && !newOtherUser.iscontact) {
             return newOtherUser.fullname;
         } else if (oldOtherUser && !oldOtherUser.iscontact && newRequest && newOtherUser.iscontact) {
             // Contact request accepted.
             return false;
         } else if (oldRequest && !newRequest) {
-            return false;
-        } else if (!hadMessages && hasMessages) {
             return false;
         } else {
             return null;
