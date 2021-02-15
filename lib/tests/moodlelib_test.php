@@ -2225,6 +2225,39 @@ class core_moodlelib_testcase extends advanced_testcase {
         $COURSE->lang = $originallang;
     }
 
+    public function test_lang_string_var_export() {
+
+        // Call var_export() on a newly generated lang_string.
+        $str = new lang_string('no');
+
+        $expected1 = <<<EOF
+lang_string::__set_state(array(
+   'identifier' => 'no',
+   'component' => 'moodle',
+   'a' => NULL,
+   'lang' => NULL,
+   'string' => NULL,
+   'forcedstring' => false,
+))
+EOF;
+
+        $v = var_export($str, true);
+        $this->assertEquals($expected1, $v);
+
+        // Now execute the code that was returned - it should produce a correct string.
+        $str = lang_string::__set_state(array(
+            'identifier' => 'no',
+            'component' => 'moodle',
+            'a' => NULL,
+            'lang' => NULL,
+            'string' => NULL,
+            'forcedstring' => false,
+        ));
+
+        $this->assertInstanceOf(lang_string::class, $str);
+        $this->assertEquals('No', $str);
+    }
+
     public function test_get_string_limitation() {
         // This is one of the limitations to the lang_string class. It can't be
         // used as a key.
