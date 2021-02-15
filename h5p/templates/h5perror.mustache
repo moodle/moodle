@@ -19,6 +19,8 @@
 
     This template will render the embed code shown in the H5P content embed popup.
 
+    Note: this mustache is part of the H5P player and requires '/h5p/js/embed.js' already loaded.
+
     Variables required for this template:
     * h5picon - The icon
     * message - The error messages to display.
@@ -56,3 +58,10 @@
       {{/error}}
    </div>
 </div>
+{{#js}}
+(function() {
+   H5PEmbedCommunicator.send('resize', {
+      scrollHeight: document.body.scrollHeight
+   });
+})();
+{{/js}}
