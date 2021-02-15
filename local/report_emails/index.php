@@ -22,7 +22,6 @@
  */
 
 require_once(dirname(__FILE__).'/../../config.php');
-require_once(dirname(__FILE__).'/report_emails_table.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
 require_once($CFG->dirroot."/lib/tablelib.php");
 require_once($CFG->dirroot."/local/email/local_lib.php");
@@ -384,7 +383,7 @@ if ($allemails and confirm_sesskey()) {
 $customdata = null;
 
 // Set up the table.
-$table = new local_report_emails_table('user_report_logins');
+$table = new \local_report_emails\tables\emails_table('user_report_logins');
 $table->is_downloading($download, 'user_report_logins', 'user_report_logins123');
 
 if (!$table->is_downloading()) {
