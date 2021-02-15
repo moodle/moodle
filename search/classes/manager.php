@@ -480,7 +480,7 @@ class manager {
 
             // Sort categories by order.
             uasort($categories, function($category1, $category2) {
-                return $category1->get_order() > $category2->get_order();
+                return $category1->get_order() <=> $category2->get_order();
             });
 
             static::$searchareacategories = $categories;

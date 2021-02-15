@@ -225,7 +225,7 @@ class content_item_service {
 
         // Sort by title for return.
         usort($exported->content_items, function($a, $b) {
-            return $a->title > $b->title;
+            return strcmp($a->title, $b->title);
         });
 
         return $exported->content_items;
@@ -301,7 +301,7 @@ class content_item_service {
 
         // Sort by title for return.
         usort($exported->content_items, function($a, $b) {
-            return $a->title > $b->title;
+            return strcmp($a->title, $b->title);
         });
 
         return $exported->content_items;
