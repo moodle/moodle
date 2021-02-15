@@ -2904,7 +2904,7 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
      * @return  bool
      */
     protected static function sort_messages($a, $b) {
-        return $a->message > $b->message;
+        return strcmp($a->message, $b->message);
     }
 
     /**
@@ -2915,7 +2915,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
      * @return  bool
      */
     protected static function sort_contacts($a, $b) {
-        return $a->contact > $b->contact;
+        // Contact attribute contains user id.
+        return $a->contact <=> $b->contact;
     }
 
     /**

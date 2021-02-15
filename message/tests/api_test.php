@@ -1327,7 +1327,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $conversations = \core_message\api::get_conversations($user1->id);
 
         usort($conversations, function($first, $second){
-            return $first->id > $second->id;
+            return $first->id <=> $second->id;
         });
 
         // Consider first conversations is self-conversation.
