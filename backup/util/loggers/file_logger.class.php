@@ -50,11 +50,18 @@ class file_logger extends base_logger {
     }
 
     public function __destruct() {
-        @fclose($this->fhandle); // Blindy close the file handler (no exceptions in destruct)
+        if (is_resource($this->fhandle)) {
+            // Blindy close the file handler (no exceptions in destruct).
+            @fclose($this->fhandle);
+        }
     }
 
     public function __sleep() {
-        @fclose($this->fhandle); // Blindy close the file handler before serialization
+        if (is_resource($this->fhandle)) {
+            // Blindy close the file handler before serialization.
+            @fclose($this->fhandle);
+            $this->fhandle = null;
+        }
         return array('level', 'showdate', 'showlevel', 'next', 'fullpath');
     }
 
