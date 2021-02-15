@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    Block Approve access
- * @copyright  2011 onwards E-Learn Design Limited
+ * @package    block_iomad_approve_access
+ * @copyright  2021 Derick Turner
  * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $plugin->component  = 'block_iomad_approve_access';
-$plugin->version = 2020052500;  // YYYYMMDDHH (year, month, day, 24-hr time).
+$plugin->version = 2021021500;  // YYYYMMDDHH (year, month, day, 24-hr time).
 $plugin->release  = '3.8.4 (Build: 20200713)'; // Human-friendly version name
 $plugin->requires = 2019052000; // YYYYMMDDHH (This is the release version for Moodle 2.0).
