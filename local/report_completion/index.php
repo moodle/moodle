@@ -23,14 +23,12 @@
 
 require_once(dirname(__FILE__).'/../../config.php');
 require_once($CFG->libdir.'/completionlib.php');
-require_once($CFG->libdir.'/excellib.class.php');
-require_once(dirname(__FILE__).'/report_course_completion_course_table.php');
-require_once(dirname(__FILE__).'/report_course_completion_user_table.php');
+//require_once($CFG->libdir.'/excellib.class.php');
 require_once($CFG->dirroot.'/local/iomad_track/lib.php');
 require_once($CFG->dirroot.'/local/iomad_track/db/install.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
-require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(__FILE__).'/locallib.php');
+//require_once(dirname(__FILE__).'/lib.php');
+//require_once(dirname(__FILE__).'/locallib.php');
 
 // chart stuff
 define('PCHART_SIZEX', 500);
@@ -425,7 +423,7 @@ if (!empty($departmentid) && !company::check_valid_department($companyid, $depar
 // Are we showing the overview table?
 if (empty($courseid)) {
     // Set up the course display table.
-    $coursetable = new local_report_course_completion_course_table('local_report_completion_course_table');
+    $coursetable = new \local_report_completion\tables\course_table('local_report_completion_course_table');
     $coursetable->is_downloading($download, 'local_report_course_completion_course', 'local_report_coursecompletion_course123');
 
     if (!$coursetable->is_downloading()) {
@@ -600,7 +598,7 @@ if (empty($courseid)) {
     }
 
     // Set up the display table.
-    $table = new local_report_course_completion_user_table('local_report_course_completion_user_table');
+    $table = new \local_report_completion\tables\user_table('local_report_course_completion_user_table');
     $table->is_downloading($download, 'local_report_course_completion_user', 'local_report_coursecompletion_user123');
 
     // Deal with sort by course for all courses if sort is empty.
