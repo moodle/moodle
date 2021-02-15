@@ -25,7 +25,7 @@ require_once($CFG->dirroot.'/local/iomad/lib/company.php');
 require_once($CFG->dirroot.'/local/iomad/lib/user.php');
 require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
 
-class block_iomad_approve_access {
+class iomad_approve_access {
     /**
      * Checks if the current user has any outstanding approvals.
      *

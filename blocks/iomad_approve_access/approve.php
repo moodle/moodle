@@ -253,7 +253,7 @@ if ($data = $callform->get_data()) {
                                                                                'user' => $approveuser,
                                                                                'classroom' => $location));
                         //  Update the attendance at the event.
-                        block_iomad_approve_access::register_user($approveuser, $event);
+                        iomad_approve_access::register_user($approveuser, $event);
 
                         // Fire an event for this.
                         $moodleevent = \block_iomad_approve_access\event\request_granted::create(array('context' => context_module::instance($cmidinfo->id),

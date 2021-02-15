@@ -43,7 +43,7 @@ class approve_form extends moodleform {
         }
 
         $selectarr = array();
-        if ($results = block_iomad_approve_access::get_my_users()) {
+        if ($results = iomad_approve_access::get_my_users()) {
             $mform->addElement('html', '<h2>'.get_string('approveuserstitle', 'block_iomad_approve_access').'</h2>');
 
             if (!$department) {
