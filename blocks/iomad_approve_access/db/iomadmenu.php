@@ -29,7 +29,7 @@ function block_iomad_approve_access_menu() {
     global $CFG;
 
     // Show any manager approval messages.
-    if (block_iomad_approve_access::has_users()) {
+    if (iomad_approve_access::has_users()) {
         \core\notification::info(get_string('userstoapprove', 'block_iomad_approve_access'));
     }
 
