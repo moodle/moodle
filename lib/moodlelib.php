@@ -1457,6 +1457,8 @@ function set_config($name, $value, $plugin=null) {
  *
  * NOTE: this function is called from lib/db/upgrade.php
  *
+ * @static string|false $siteidentifier The site identifier is not cached. We use this static cache so
+ *     that we need only fetch it once per request.
  * @param string $plugin full component name
  * @param string $name default null
  * @return mixed hash-like object or single value, return false no config found
@@ -1465,29 +1467,52 @@ function set_config($name, $value, $plugin=null) {
 function get_config($plugin, $name = null) {
     global $CFG, $DB;
 
+    static $siteidentifier = null;
+
     if ($plugin === 'moodle' || $plugin === 'core' || empty($plugin)) {
         $forced =& $CFG->config_php_settings;
-        $table = 'config';
-        $filter = [];
+        $iscore = true;
         $plugin = 'core';
     } else {
         if (array_key_exists($plugin, $CFG->forced_plugin_settings)) {
             $forced =& $CFG->forced_plugin_settings[$plugin];
         } else {
-            $forced = [];
+            $forced = array();
         }
-        $table = 'config_plugins';
-        $filter = ['plugin' => $plugin];
+        $iscore = false;
     }
 
-    if (!empty($name) && array_key_exists($name, $forced)) {
-        return (string)$forced[$name];
+    if ($siteidentifier === null) {
+        try {
+            // This may fail during installation.
+            // If you have a look at {@link initialise_cfg()} you will see that this is how we detect the need to
+            // install the database.
+            $siteidentifier = $DB->get_field('config', 'value', array('name' => 'siteidentifier'));
+        } catch (dml_exception $ex) {
+            // Set siteidentifier to false. We don't want to trip this continually.
+            $siteidentifier = false;
+            throw $ex;
+        }
+    }
+
+    if (!empty($name)) {
+        if (array_key_exists($name, $forced)) {
+            return (string)$forced[$name];
+        } else if ($name === 'siteidentifier' && $plugin == 'core') {
+            return $siteidentifier;
+        }
     }
 
     $cache = cache::make('core', 'config');
     $result = $cache->get($plugin);
     if ($result === false) {
-        $result = $DB->get_records_menu($table, $filter, '', 'name,value');
+        // The user is after a recordset.
+        if (!$iscore) {
+            $result = $DB->get_records_menu('config_plugins', array('plugin' => $plugin), '', 'name,value');
+        } else {
+            // This part is not really used any more, but anyway...
+            $result = $DB->get_records_menu('config', array(), '', 'name,value');;
+        }
         $cache->set($plugin, $result);
     }
 
@@ -1496,6 +1521,10 @@ function get_config($plugin, $name = null) {
             return $result[$name];
         }
         return false;
+    }
+
+    if ($plugin === 'core') {
+        $result['siteidentifier'] = $siteidentifier;
     }
 
     foreach ($forced as $key => $value) {
