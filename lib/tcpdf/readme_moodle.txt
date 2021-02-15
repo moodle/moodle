@@ -5,11 +5,17 @@ Description of TCPDF library import 6.3.5
 * remove tcpdf_import.php from composer.json
 * remove all fonts that were not already present
 * visit http://127.0.0.1/lib/tests/other/pdflibtestpage.php and view the pdf
+* modify getTCPDFProducer lib/tcpdf/include/tcpdf_static.php to remove the version number
 
 Important
 ---------
 A new version of the libray is being developed @ https://github.com/tecnickcom/tc-lib-pdf . Check periodically when it's ready
 and if it's a drop-in replacement for the legacy tcpdf one.
+
+2021/02/11
+----------
+Reduce PDF metadata disclosure (MDL-70735)
+by Brendan Heywood <brendan@catalyst-au.net>
 
 2020/12/15
 ----------
