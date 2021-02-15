@@ -22,9 +22,6 @@
  */
 
 require_once(dirname(__FILE__).'/../../config.php');
-require_once( dirname('__FILE__').'/lib.php');
-require_once( dirname('__FILE__').'/report_users_table.php');
-require_once(dirname(__FILE__) . '/../../config.php'); // Creates $PAGE.
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/filters/lib.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
@@ -274,7 +271,7 @@ if (!empty($CFG->iomad_report_fields)) {
 $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, true, true);
 
 // Set up the table.
-$table = new local_report_users_table('user_report_logins');
+$table = new \local_report_users\tables\users_table('user_report_logins');
 
 // Deal with where we are on the department tree.
 $currentdepartment = company::get_departmentbyid($departmentid);

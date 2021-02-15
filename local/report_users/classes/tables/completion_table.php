@@ -18,23 +18,26 @@
  * Base class for the table used by a {@link quiz_attempts_report}.
  *
  * @package   local_report_user_license_allocations
- * @copyright 2019 E-Learn Design Ltd. (https://www.e-learndesign.co.uk)
+ * @copyright 2021 Derick Turner
  * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace local_report_users\tables;
+
+use \table_sql;
+use \moodle_url;
+use \html_writer;
+use \completion_info;
+use \iomad;
+use \context_system;
+use \context_course;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
 
-/**
- * Base class for the table used by local_report_user_license_allocations
- *
- * @copyright 2019 E-Learn Design Ltd. (https://www.e-learndesign.co.uk)
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class local_report_user_completion_table extends table_sql {
+class completion_table extends table_sql {
 
     /**
      * Generate the display of the user's firstname

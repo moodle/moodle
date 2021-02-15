@@ -26,8 +26,6 @@ require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
 require_once($CFG->dirroot.'/local/iomad_track/lib.php');
 require_once($CFG->dirroot.'/local/iomad_track/db/install.php');
-require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(__FILE__).'/report_user_completion_table.php');
 
 // Params.
 $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -344,7 +342,7 @@ if (!empty($action)) {
 }
 
 // Set up the table.
-$table = new local_report_user_completion_table('user_report_completion');
+$table = new \local_report_users\tables\completion_table('user_report_completion');
 $table->is_downloading($download, 'user_report_completion', 'user_report_completion123');
 
 if (!$table->is_downloading()) {
