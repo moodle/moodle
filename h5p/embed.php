@@ -87,6 +87,9 @@ if (empty($messages->error) && empty($messages->exception)) {
     $PAGE->add_body_class('h5p-embed');
     $PAGE->set_pagelayout('embedded');
 
+    // Load the embed.js to allow communication with the parent window.
+    $PAGE->requires->js(new moodle_url('/h5p/js/embed.js'));
+
     echo $OUTPUT->header();
 
     // Print all the errors.
