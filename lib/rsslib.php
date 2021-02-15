@@ -488,7 +488,7 @@ function rss_end_tag($tag,$level=0,$endline=true) {
  * @param array  $attributes the attributes of the xml tag
  * @return string the whole xml element
  */
-function rss_full_tag($tag,$level=0,$endline=true,$content,$attributes=null) {
+function rss_full_tag($tag, $level, $endline, $content, $attributes = null) {
     $st = rss_start_tag($tag,$level,$endline,$attributes);
     $co="";
     $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));

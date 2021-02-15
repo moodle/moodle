@@ -341,7 +341,7 @@ class repository_flickr_public extends repository {
      * @param int $page
      * @return array
      */
-    private function build_list($photos, $page = 1, &$ret) {
+    private function build_list($photos, $page, &$ret) {
         global $OUTPUT;
 
         if (!empty($this->nsid)) {
