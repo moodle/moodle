@@ -107,7 +107,7 @@ class block_iomad_company_admin extends block_base {
 
         // Deal with Access approval notifications.
         require_once($CFG->dirroot . '/blocks/iomad_approve_access/lib.php');
-        if (approve_enrol_has_users() && empty($SESSION->approveaccesswarningshown)) {
+        if (iomad_approve_access::has_users() && empty($SESSION->approveaccesswarningshown)) {
            \core\notification::add(get_string('userstoapprove', 'block_iomad_approve_access'), 'info');
            $SESSION->approveaccesswarningshown = true;
         }
