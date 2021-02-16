@@ -1384,6 +1384,10 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
  * several times (e.g. as manual enrolment, and as self enrolment). You may
  * need to use a SELECT DISTINCT in your query (see get_enrolled_sql for example).
  *
+ * In case is guaranteed some of the joins never match any rows, the resulting
+ * join_sql->cannotmatchanyrows will be true. This happens when the capability
+ * is prohibited.
+ *
  * @param context $context
  * @param string $prefix optional, a prefix to the user id column
  * @param string|array $capability optional, may include a capability name, or array of names.
@@ -1393,24 +1397,27 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
  * @param int $enrolid The enrolment ID. If not 0, only users enrolled using this enrolment method will be returned.
- * @return \core\dml\sql_join Contains joins, wheres, params
+ * @return \core\dml\sql_join Contains joins, wheres, params and cannotmatchanyrows
  */
 function get_enrolled_with_capabilities_join(context $context, $prefix = '', $capability = '', $group = 0,
         $onlyactive = false, $onlysuspended = false, $enrolid = 0) {
     $uid = $prefix . 'u.id';
     $joins = array();
     $wheres = array();
+    $cannotmatchanyrows = false;
 
     $enrolledjoin = get_enrolled_join($context, $uid, $onlyactive, $onlysuspended, $enrolid);
     $joins[] = $enrolledjoin->joins;
     $wheres[] = $enrolledjoin->wheres;
     $params = $enrolledjoin->params;
+    $cannotmatchanyrows = $cannotmatchanyrows || $enrolledjoin->cannotmatchanyrows;
 
     if (!empty($capability)) {
         $capjoin = get_with_capability_join($context, $capability, $uid);
         $joins[] = $capjoin->joins;
         $wheres[] = $capjoin->wheres;
         $params = array_merge($params, $capjoin->params);
+        $cannotmatchanyrows = $cannotmatchanyrows || $capjoin->cannotmatchanyrows;
     }
 
     if ($group) {
@@ -1420,13 +1427,14 @@ function get_enrolled_with_capabilities_join(context $context, $prefix = '', $ca
         if (!empty($groupjoin->wheres)) {
             $wheres[] = $groupjoin->wheres;
         }
+        $cannotmatchanyrows = $cannotmatchanyrows || $groupjoin->cannotmatchanyrows;
     }
 
     $joins = implode("\n", $joins);
     $wheres[] = "{$prefix}u.deleted = 0";
     $wheres = implode(" AND ", $wheres);
 
-    return new \core\dml\sql_join($joins, $wheres, $params);
+    return new \core\dml\sql_join($joins, $wheres, $params, $cannotmatchanyrows);
 }
 
 /**
