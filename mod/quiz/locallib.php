@@ -1739,6 +1739,10 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
     $a->quizreviewlink  = '<a href="' . $a->quizreviewurl . '">' .
             format_string($quiz->name) . ' review</a>';
     $a->attemptid       = $attempt->id;
+    $a->sumgrades = $attempt->sumgrades;
+    $a->grade = $quiz->sumgrades;
+    $a->gradepercent = number_format((100*($attempt->sumgrades/ $quiz->sumgrades)),0).' %';
+
     // Student who sat the quiz info.
     $a->studentidnumber = $submitter->idnumber;
     $a->studentname     = fullname($submitter);
