@@ -41,7 +41,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             var selectedFilters = el.val();
             $.each(originalOptions, function(index, option) {
                 // Skip option if it does not contain the query string.
-                if ($.trim(query) !== '' && option.label.toLocaleLowerCase().indexOf(query.toLocaleLowerCase()) === -1) {
+                if (query.trim() !== '' && option.label.toLocaleLowerCase().indexOf(query.toLocaleLowerCase()) === -1) {
                     return true;
                 }
                 // Skip filters that have already been selected.
