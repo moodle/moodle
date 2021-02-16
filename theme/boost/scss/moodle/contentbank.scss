@@ -18,6 +18,10 @@
             margin-bottom: 0.5rem;
         }
 
+        .cb-listitem.cb-unlisted {
+            position: relative;
+        }
+
         @include media-breakpoint-down(sm) {
             .cb-listitem {
                 flex-basis: 50%;
@@ -44,6 +48,24 @@
             margin-right: auto;
             margin-bottom: 0.5rem;
         }
+
+        .cb-unlisted .cb-thumbnail {
+            opacity: .3;
+        }
+
+        /* Display a centered eye slash on top of unlisted content icons. */
+        .cb-unlisted::after {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            content: $fa-var-eye-slash;
+            font-family: FontAwesome;
+            font-size: 26px;
+            text-align: center;
+            opacity: 0.8;
+        }
+
         .cb-heading,
         .cb-uses,
         .cb-date,
@@ -80,6 +102,15 @@
 
         .cb-column {
             border-right: $border-width solid $border-color;
+        }
+
+        .cb-listitem.cb-unlisted .cb-thumbnail {
+            opacity: .3;
+        }
+
+        .cb-listitem.cb-unlisted .cb-column,
+        .cb-listitem.cb-unlisted .cb-column a {
+            color: $text-muted;
         }
 
         @include media-breakpoint-down(sm) {

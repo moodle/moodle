@@ -40,6 +40,17 @@ use core\event\contentbank_content_updated;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class content {
+    /**
+     * @var int Visibility value. Public content is visible to all users with access to the content bank of the
+     * appropriate context.
+     */
+    public const VISIBILITY_PUBLIC = 1;
+
+    /**
+     * @var int Visibility value. Unlisted content is only visible to the author and to users with
+     * moodle/contentbank:viewunlistedcontent capability.
+     */
+    public const VISIBILITY_UNLISTED = 2;
 
     /** @var stdClass $content The content of the current instance. **/
     protected $content  = null;
@@ -251,6 +262,30 @@ abstract class content {
     }
 
     /**
+     * Sets a new content visibility and saves it to database.
+     *
+     * @param int $visibility Must be self::PUBLIC or self::UNLISTED
+     * @return bool
+     * @throws coding_exception
+     */
+    public function set_visibility(int $visibility): bool {
+        if (!in_array($visibility, [self::VISIBILITY_PUBLIC, self::VISIBILITY_UNLISTED])) {
+            return false;
+        }
+        $this->content->visibility = $visibility;
+        return $this->update_content();
+    }
+
+    /**
+     * Return true if the content may be shown to other users in the content bank.
+     *
+     * @return boolean
+     */
+    public function get_visibility(): int {
+        return $this->content->visibility;
+    }
+
+    /**
      * Import a file as a valid content.
      *
      * By default, all content has a public file area to interact with the content bank
@@ -356,8 +391,12 @@ abstract class content {
      * @return bool     True if content could be accessed. False otherwise.
      */
     public function is_view_allowed(): bool {
-        // There's no capability at content level to check,
-        // but plugins can overwrite this method in case they want to check something related to content properties.
-        return true;
+        // Plugins can overwrite this method in case they want to check something related to content properties.
+        global $USER;
+        $context = \context::instance_by_id($this->get_contextid());
+
+        return $USER->id == $this->content->usercreated ||
+            $this->get_visibility() == self::VISIBILITY_PUBLIC ||
+            has_capability('moodle/contentbank:viewunlistedcontent', $context);
     }
 }

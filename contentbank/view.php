@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_contentbank\content;
+
 require('../config.php');
 
 require_login();
@@ -50,22 +52,61 @@ if ($PAGE->course) {
     require_login($PAGE->course->id);
 }
 
-$PAGE->set_url(new \moodle_url('/contentbank/view.php', ['id' => $id]));
-$PAGE->set_context($context);
-$PAGE->navbar->add($record->name);
-$PAGE->set_heading($record->name);
-$title .= ": ".$record->name;
-$PAGE->set_title($title);
-$PAGE->set_pagetype('contentbank');
-
 $cb = new \core_contentbank\contentbank();
 $content = $cb->get_content_from_id($record->id);
 $contenttype = $content->get_content_type_instance();
+$pageheading = $record->name;
+
+if (!$content->is_view_allowed()) {
+    print_error('notavailable', 'contentbank');
+}
+
+if ($content->get_visibility() == content::VISIBILITY_UNLISTED) {
+    $pageheading = get_string('visibilitytitleunlisted', 'contentbank', $record->name);
+}
+
+$PAGE->set_url(new \moodle_url('/contentbank/view.php', ['id' => $id]));
+$PAGE->set_context($context);
+$PAGE->navbar->add($record->name);
+$PAGE->set_heading($pageheading);
+$title .= ": ".$record->name;
+$PAGE->set_title($title);
+$PAGE->set_pagetype('contentbank');
 
 // Create the cog menu with all the secondary actions, such as delete, rename...
 $actionmenu = new action_menu();
 $actionmenu->set_alignment(action_menu::TR, action_menu::BR);
 if ($contenttype->can_manage($content)) {
+    // Add the visibility item to the menu.
+    switch($content->get_visibility()) {
+        case content::VISIBILITY_UNLISTED:
+            $visibilitylabel = get_string('visibilitysetpublic', 'core_contentbank');
+            $newvisibility = content::VISIBILITY_PUBLIC;
+            $visibilityicon = 't/hide';
+            break;
+        case content::VISIBILITY_PUBLIC:
+            $visibilitylabel = get_string('visibilitysetunlisted', 'core_contentbank');
+            $newvisibility = content::VISIBILITY_UNLISTED;
+            $visibilityicon = 't/show';
+            break;
+        default:
+            print_error('contentvisibilitynotfound', 'error', $returnurl, $content->get_visibility());
+            break;
+    }
+
+    $attributes = [
+        'data-action' => 'setcontentvisibility',
+        'data-visibility' => $newvisibility,
+        'data-contentid' => $content->get_id(),
+    ];
+    $actionmenu->add_secondary_action(new action_menu_link(
+        new moodle_url('#'),
+        new pix_icon($visibilityicon, $visibilitylabel),
+        $visibilitylabel,
+        false,
+        $attributes
+    ));
+
     // Add the rename content item to the menu.
     $attributes = [
         'data-action' => 'renamecontent',
@@ -130,7 +171,22 @@ if ($errormsg !== '' && get_string_manager()->string_exists($errormsg, 'core_con
     $errormsg = get_string($errormsg, 'core_contentbank');
     echo $OUTPUT->notification($errormsg);
 } else if ($statusmsg !== '' && get_string_manager()->string_exists($statusmsg, 'core_contentbank')) {
-    $statusmsg = get_string($statusmsg, 'core_contentbank');
+    if ($statusmsg == 'contentvisibilitychanged') {
+        switch ($content->get_visibility()) {
+            case content::VISIBILITY_PUBLIC:
+                $visibilitymsg = get_string('public', 'core_contentbank');
+                break;
+            case content::VISIBILITY_UNLISTED:
+                $visibilitymsg = get_string('unlisted', 'core_contentbank');
+                break;
+            default:
+                print_error('contentvisibilitynotfound', 'error', $returnurl, $content->get_visibility());
+                break;
+        }
+        $statusmsg = get_string($statusmsg, 'core_contentbank', $visibilitymsg);
+    } else {
+        $statusmsg = get_string($statusmsg, 'core_contentbank');
+    }
     echo $OUTPUT->notification($statusmsg, 'notifysuccess');
 }
 if ($contenttype->can_access()) {
