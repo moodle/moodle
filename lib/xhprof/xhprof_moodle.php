@@ -823,10 +823,10 @@ function profiling_get_import_run_schema() {
         <xs:element type="xs:int" name="runreference"/>
         <xs:element type="xs:string" name="runcomment"/>
         <xs:element type="xs:int" name="timecreated"/>
-        <xs:element type="xs:int" name="totalexecutiontime"/>
-        <xs:element type="xs:int" name="totalcputime"/>
-        <xs:element type="xs:int" name="totalcalls"/>
-        <xs:element type="xs:int" name="totalmemory"/>
+        <xs:element type="xs:integer" name="totalexecutiontime"/>
+        <xs:element type="xs:integer" name="totalcputime"/>
+        <xs:element type="xs:integer" name="totalcalls"/>
+        <xs:element type="xs:integer" name="totalmemory"/>
         <xs:element type="xs:string" name="data"/>
       </xs:sequence>
     </xs:complexType>
