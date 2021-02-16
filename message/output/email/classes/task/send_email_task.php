@@ -137,7 +137,7 @@ class send_email_task extends scheduled_task {
         // now this will have to do before 3.7 code freeze.
         // See related MDL-63814.
         $sql = "SELECT DISTINCT mc.id, mc.name, c.id as courseid, c.fullname as coursename, g.id as groupid,
-                                g.picture, g.hidepicture
+                                g.picture
                   FROM {message_conversations} mc
                   JOIN {groups} g
                     ON mc.itemid = g.id

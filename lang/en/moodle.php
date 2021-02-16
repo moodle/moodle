@@ -993,7 +993,6 @@ $string['hideadvancedsettings'] = 'Hide advanced settings';
 $string['hidechartdata'] = 'Hide chart data';
 $string['hidefromstudents'] = 'Hide from students';
 $string['hideoncoursepage'] = 'Make available but not shown on course page';
-$string['hidepicture'] = 'Hide picture';
 $string['hidesection'] = 'Hide section {$a}';
 $string['hidesettings'] = 'Hide settings';
 $string['hideshowblocks'] = 'Hide or show blocks';
@@ -2314,3 +2313,6 @@ $string['deprecatedeventname'] = '{$a} (no longer in use)';
 // Deprecated since Moodle 3.9.
 $string['participantscount'] = 'Number of participants: {$a}';
 $string['userfilterplaceholder'] = 'Search keyword or select filter';
+
+// Deprecated since Moodle 3.11.
+$string['hidepicture'] = 'Hide picture';
