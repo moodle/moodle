@@ -138,9 +138,19 @@ class data_field_textarea extends data_field_base {
             $link_options->env = 'editor';
             $link_options->itemid = $draftitemid;
 
+            // H5P plugin.
+            $args->accepted_types = ['h5p'];
+            $h5poptions = initialise_filepicker($args);
+            $h5poptions->context = $this->context;
+            $h5poptions->client_id = uniqid();
+            $h5poptions->maxbytes  = $options['maxbytes'];
+            $h5poptions->env = 'editor';
+            $h5poptions->itemid = $draftitemid;
+
             $fpoptions['image'] = $image_options;
             $fpoptions['media'] = $media_options;
             $fpoptions['link'] = $link_options;
+            $fpoptions['h5p'] = $h5poptions;
         }
 
         $editor = editors_get_preferred_editor($format);
