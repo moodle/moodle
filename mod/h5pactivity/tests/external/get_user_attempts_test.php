@@ -151,25 +151,25 @@ class get_user_attempts_testcase extends externallib_advanced_testcase {
             'Teacher checking students with attempts' => [
                 'editingteacher',
                 ['student1', 'student2', 'student3', 'student4', 'student5'],
-                ['editingteacher'],
+                [],
                 ['student1', 'student2', 'student3', 'student4', 'student5'],
             ],
             'Teacher checking 2 students with atempts and one not' => [
                 'editingteacher',
                 ['student1', 'student2', 'noattempts'],
-                ['editingteacher'],
+                [],
                 ['student1', 'student2', 'noattempts'],
             ],
             'Teacher checking no students' => [
                 'editingteacher',
                 [],
-                ['editingteacher'],
+                [],
                 [],
             ],
             'Teacher checking one student and a no enrolled user' => [
                 'editingteacher',
                 ['student1', 'noenrolled'],
-                ['editingteacher'],
+                [],
                 ['student1'],
             ],
 
