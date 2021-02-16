@@ -1647,6 +1647,9 @@ function quiz_send_notification($recipient, $submitter, $a) {
     $eventdata->userto            = $recipient;
     $eventdata->subject           = get_string('emailnotifysubject', 'quiz', $a);
     $eventdata->fullmessage       = get_string('emailnotifybody', 'quiz', $a);
+    if (isset($CFG->showgradeinquiznotification) && $CFG->showgradeinquiznotification) {
+        $eventdata->fullmessage   = get_string('emailnotifybodywithgrade', 'quiz', $a);
+    }
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml   = '';
 
