@@ -180,7 +180,7 @@ class block_iomad_company_admin_external extends external_api {
                      'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
                      'customcss' => new external_value(PARAM_TEXT, 'Company custom css'),
                      'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp', VALUE_DEFAULT, null),
-                     'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),,
+                     'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),
                      'companyterminated' => new external_value(PARAM_INT, 'Company contract is terminated when <> 0', VALUE_DEFAULT, 0),
                      'theme' => new external_value(PARAM_TEXT, 'Company theme', VALUE_DEFAULT, ''),
                      'hostname' => new external_value(PARAM_TEXT, 'Company hostname', VALUE_DEFAULT, ''),
