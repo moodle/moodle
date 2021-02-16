@@ -18,12 +18,33 @@ Feature: Backpack badges
     And I log out
 
   @javascript
+  Scenario: If external backpack connection is disabled, backpack settings should not be displayed
+    Given I am on homepage
+    And I log in as "admin"
+    And I navigate to "Badges > Badges settings" in site administration
+    And I set the following fields to these values:
+      | External backpack connection | 0                        |
+    And I press "Save changes"
+    When I navigate to "Badges" in site administration
+    Then I should not see "Manage backpacks"
+    And I navigate to "Badges > Badges settings" in site administration
+    And I set the following fields to these values:
+      | External backpack connection | 1                        |
+    And I press "Save changes"
+    And I am on homepage
+    And I navigate to "Badges" in site administration
+    And I should see "Manage backpacks"
+
+  @javascript
   Scenario: Verify backback settings
     Given I am on homepage
     And I log in as "admin"
-    And I navigate to "Badges > Backpack settings" in site administration
+    And I navigate to "Badges > Badges settings" in site administration
     And I set the following fields to these values:
       | External backpack connection | 1                        |
+    And I press "Save changes"
+    And I navigate to "Badges > Backpack settings" in site administration
+    And I set the following fields to these values:
       | Active external backpack     | https://dc.imsglobal.org |
     And I press "Save changes"
     And I navigate to "Badges > Add a new badge" in site administration
@@ -57,9 +78,12 @@ Feature: Backpack badges
   Scenario: User has been connected backpack
     Given I am on homepage
     And I log in as "admin"
-    And I navigate to "Badges > Backpack settings" in site administration
+    And I navigate to "Badges > Badges settings" in site administration
     And I set the following fields to these values:
       | External backpack connection | 1                        |
+    And I press "Save changes"
+    And I navigate to "Badges > Backpack settings" in site administration
+    And I set the following fields to these values:
       | Active external backpack     | https://dc.imsglobal.org |
     And I press "Save changes"
     And I navigate to "Badges > Add a new badge" in site administration
