@@ -3831,6 +3831,49 @@ class core_moodlelib_testcase extends advanced_testcase {
         global $CFG;
 
         $this->resetAfterTest();
+
+        $CFG->getremoteaddrconf = null; // Use default value, GETREMOTEADDR_SKIP_DEFAULT.
+        $noip = getremoteaddr('1.1.1.1');
+        $this->assertEquals('1.1.1.1', $noip);
+
+        $remoteaddr = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null;
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+        $singleip = getremoteaddr();
+        $this->assertEquals('127.0.0.1', $singleip);
+
+        $_SERVER['REMOTE_ADDR'] = $remoteaddr; // Restore server value.
+
+        $CFG->getremoteaddrconf = 0; // Don't skip any source.
+        $noip = getremoteaddr('1.1.1.1');
+        $this->assertEquals('1.1.1.1', $noip);
+
+        // Populate all $_SERVER values to review order.
+        $ipsources = [
+            'HTTP_CLIENT_IP' => '2.2.2.2',
+            'HTTP_X_FORWARDED_FOR' => '3.3.3.3',
+            'REMOTE_ADDR' => '4.4.4.4',
+        ];
+        $originalvalues = [];
+        foreach ($ipsources as $source => $ip) {
+            $originalvalues[$source] = isset($_SERVER[$source]) ? $_SERVER[$source] : null; // Saving data to restore later.
+            $_SERVER[$source] = $ip;
+        }
+
+        foreach ($ipsources as $source => $expectedip) {
+            $ip = getremoteaddr();
+            $this->assertEquals($expectedip, $ip);
+            unset($_SERVER[$source]); // Removing the value so next time we get the following ip.
+        }
+
+        // Restore server values.
+        foreach ($originalvalues as $source => $ip) {
+            $_SERVER[$source] = $ip;
+        }
+
+        // All $_SERVER values have been removed, we should get the default again.
+        $noip = getremoteaddr('1.1.1.1');
+        $this->assertEquals('1.1.1.1', $noip);
+
         $CFG->getremoteaddrconf = GETREMOTEADDR_SKIP_HTTP_CLIENT_IP;
         $xforwardedfor = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : null;
 
