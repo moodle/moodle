@@ -87,6 +87,14 @@ if ($hassiteconfig
         $choices['1'] = new lang_string('trackforumsyes');
         $temp->add(new admin_setting_configselect('defaultpreference_trackforums', new lang_string('trackforums'),
             '', 0, $choices));
+
+        $choices = [];
+        $choices[\core_contentbank\content::VISIBILITY_PUBLIC] = new lang_string('visibilitychoicepublic', 'core_contentbank');
+        $choices[\core_contentbank\content::VISIBILITY_UNLISTED] = new lang_string('visibilitychoiceunlisted', 'core_contentbank');
+        $temp->add(new admin_setting_configselect('defaultpreference_core_contentbank_visibility',
+            new lang_string('visibilitypref', 'core_contentbank'),
+            new lang_string('visibilitypref_help', 'core_contentbank'),
+            \core_contentbank\content::VISIBILITY_PUBLIC, $choices));
     }
     $ADMIN->add('accounts', $temp);
 

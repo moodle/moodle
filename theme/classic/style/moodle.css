@@ -13323,38 +13323,48 @@ table.calendartable caption {
   background-position: center;
   background-size: cover; }
 
-.content-bank-container.view-grid .cb-listitem {
-  margin-bottom: 0.5rem; }
-
-@media (max-width: 767.98px) {
+.content-bank-container.view-grid {
+  /* Display a centered eye slash on top of unlisted content icons. */ }
   .content-bank-container.view-grid .cb-listitem {
-    flex-basis: 50%; } }
-
-@media (min-width: 576px) {
-  .content-bank-container.view-grid .cb-listitem {
-    max-width: 120px;
-    min-width: 120px; } }
-
-.content-bank-container.view-grid .cb-name {
-  text-align: center; }
-
-.content-bank-container.view-grid .cb-file {
-  padding: 0.5rem; }
-
-.content-bank-container.view-grid .cb-thumbnail {
-  width: 64px;
-  height: 64px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 0.5rem; }
-
-.content-bank-container.view-grid .cb-heading,
-.content-bank-container.view-grid .cb-uses,
-.content-bank-container.view-grid .cb-date,
-.content-bank-container.view-grid .cb-size,
-.content-bank-container.view-grid .cb-type,
-.content-bank-container.view-grid .cb-author {
-  display: none; }
+    margin-bottom: 0.5rem; }
+  .content-bank-container.view-grid .cb-listitem.cb-unlisted {
+    position: relative; }
+  @media (max-width: 767.98px) {
+    .content-bank-container.view-grid .cb-listitem {
+      flex-basis: 50%; } }
+  @media (min-width: 576px) {
+    .content-bank-container.view-grid .cb-listitem {
+      max-width: 120px;
+      min-width: 120px; } }
+  .content-bank-container.view-grid .cb-name {
+    text-align: center; }
+  .content-bank-container.view-grid .cb-file {
+    padding: 0.5rem; }
+  .content-bank-container.view-grid .cb-thumbnail {
+    width: 64px;
+    height: 64px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.5rem; }
+  .content-bank-container.view-grid .cb-unlisted .cb-thumbnail {
+    opacity: .3; }
+  .content-bank-container.view-grid .cb-unlisted::after {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    content: "";
+    font-family: FontAwesome;
+    font-size: 26px;
+    text-align: center;
+    opacity: 0.8; }
+  .content-bank-container.view-grid .cb-heading,
+  .content-bank-container.view-grid .cb-uses,
+  .content-bank-container.view-grid .cb-date,
+  .content-bank-container.view-grid .cb-size,
+  .content-bank-container.view-grid .cb-type,
+  .content-bank-container.view-grid .cb-author {
+    display: none; }
 
 .content-bank-container.view-list .cb-content-wrapper {
   padding: 0 0.5rem;
@@ -13377,6 +13387,13 @@ table.calendartable caption {
 
 .content-bank-container.view-list .cb-column {
   border-right: 1px solid #dee2e6; }
+
+.content-bank-container.view-list .cb-listitem.cb-unlisted .cb-thumbnail {
+  opacity: .3; }
+
+.content-bank-container.view-list .cb-listitem.cb-unlisted .cb-column,
+.content-bank-container.view-list .cb-listitem.cb-unlisted .cb-column a {
+  color: #6c757d; }
 
 @media (max-width: 767.98px) {
   .content-bank-container.view-list .cb-column {
