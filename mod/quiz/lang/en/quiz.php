@@ -313,6 +313,8 @@ $string['emailnotifybody'] = 'Hi {$a->username},
 
 {$a->studentname} has completed \'{$a->quizname}\' ({$a->quizurl}) in course \'{$a->coursename}\'.
 
+The exam has been graded and the following grade was achieved: {$a->grade}/{$a->sumgrades} | {$a->gradepercent}%
+
 You can review this attempt at {$a->quizreviewurl}.';
 $string['emailnotifysmall'] = '{$a->studentname} has completed {$a->quizname}. See {$a->quizreviewurl}';
 $string['emailnotifysubject'] = '{$a->studentname} has completed {$a->quizname}';
