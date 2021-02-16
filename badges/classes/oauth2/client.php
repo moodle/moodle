@@ -173,7 +173,7 @@ class client extends \core\oauth2\client {
      * @return moodle_url url of callback
      */
     public static function callback_url() {
-        return new moodle_url('/badges/oauth2callback.php');
+        return new moodle_url('/admin/oauth2callback.php');
     }
 
     /**
