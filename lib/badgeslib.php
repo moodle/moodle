@@ -772,8 +772,9 @@ function badges_create_site_backpack($data) {
     $context = context_system::instance();
     require_capability('moodle/badges:manageglobalsettings', $context);
 
-    $count = $DB->count_records('badge_external_backpack');
-    $data->sortorder = $count;
+    $max = $DB->get_field_sql('SELECT MAX(sortorder) FROM {badge_external_backpack}');
+    $data->sortorder = $max + 1;
+
     return badges_save_external_backpack($data);
 }
 
@@ -983,7 +984,7 @@ function badges_get_site_primary_backpack() {
 function badges_get_site_backpacks() {
     global $DB, $CFG;
 
-    $all = $DB->get_records('badge_external_backpack');
+    $all = $DB->get_records('badge_external_backpack', null, 'sortorder ASC');
 
     foreach ($all as $key => $bp) {
         if ($bp->id == $CFG->badges_site_backpack) {

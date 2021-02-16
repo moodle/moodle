@@ -1145,6 +1145,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $data['password'] = 'test';
         if ($isadmin || $updatetest) {
             $this->setAdminUser();
+            $lastmax = $DB->get_field_sql('SELECT MAX(sortorder) FROM {badge_external_backpack}');
             $backpack = badges_create_site_backpack((object) $data);
         }
 
@@ -1156,8 +1157,9 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
                 badges_update_site_backpack($backpack, (object)$data);
             }
             $record = $DB->get_record('badge_external_backpack', ['id' => $backpack]);
-            $this->assertEquals($record->backpackweburl, $data['backpackweburl']);
-            $this->assertEquals($record->backpackapiurl, $data['backpackapiurl']);
+            $this->assertEquals($data['backpackweburl'], $record->backpackweburl);
+            $this->assertEquals($data['backpackapiurl'], $record->backpackapiurl);
+            $this->assertEquals($lastmax + 1, $record->sortorder);
             $record = $DB->get_record('badge_backpack', ['userid' => 0]);
             $this->assertNotEmpty($record);
         } else {
