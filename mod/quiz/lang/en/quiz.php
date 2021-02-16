@@ -309,11 +309,16 @@ This message confirms that your answers have been saved.
 You can access this quiz at {$a->quizurl}.';
 $string['emailconfirmsmall'] = 'Thank you for submitting your answers to \'{$a->quizname}\'';
 $string['emailconfirmsubject'] = 'Submission confirmation: {$a->quizname}';
-$string['emailnotifybody'] = 'Hi {$a->username},
+$string['emailnotifybodywithgrade'] = 'Hi {$a->username},
 
 {$a->studentname} has completed \'{$a->quizname}\' ({$a->quizurl}) in course \'{$a->coursename}\'.
 
 The exam has been graded and the following grade was achieved: {$a->grade}/{$a->sumgrades} | {$a->gradepercent}%
+
+You can review this attempt at {$a->quizreviewurl}.';
+$string['emailnotifybody'] = 'Hi {$a->username},
+
+{$a->studentname} has completed \'{$a->quizname}\' ({$a->quizurl}) in course \'{$a->coursename}\'.
 
 You can review this attempt at {$a->quizreviewurl}.';
 $string['emailnotifysmall'] = '{$a->studentname} has completed {$a->quizname}. See {$a->quizreviewurl}';
