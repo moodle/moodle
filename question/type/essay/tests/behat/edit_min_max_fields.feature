@@ -18,7 +18,7 @@ I need to choose the appropriate minimum and/or maximum number of words for inpu
       | Course       | C1        | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype | name          | template | minwordlimit | maxwordlimit |
-      | Test questions   | essay | essay-min-max | editor   | null         | null         |
+      | Test questions   | essay | essay-min-max | editor   | 0            | 0            |
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Question bank" in current page administration
@@ -56,3 +56,27 @@ I need to choose the appropriate minimum and/or maximum number of words for inpu
     When I set the field "Require text" to "Text input is optional"
     Then I should not see "Minimum word limit"
     And I should not see "Minimum word limit"
+
+  @javascript
+  Scenario: Minimum/Maximum word limit can be unset after being set.
+    Given I choose "Edit question" action for "essay-min-max" in the question bank
+    When I set the following fields to these values:
+      | minwordenabled  | 1   |
+      | id_minwordlimit | 100 |
+      | maxwordenabled  | 1   |
+      | id_maxwordlimit | 200 |
+    And I click on "Save changes and continue editing" "button"
+    Then the following fields match these values:
+      | minwordenabled  | 1   |
+      | id_minwordlimit | 100 |
+      | maxwordenabled  | 1   |
+      | id_maxwordlimit | 200 |
+    And I set the following fields to these values:
+      | minwordenabled  | 0 |
+      | maxwordenabled  | 0 |
+    And I click on "Save changes and continue editing" "button"
+    And the following fields match these values:
+      | minwordenabled  | 0 |
+      | id_minwordlimit |   |
+      | maxwordenabled  | 0 |
+      | id_maxwordlimit |   |
