@@ -26,6 +26,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+use core\navigation\views\primary;
 use core\navigation\views\secondary;
 
 /**
@@ -82,6 +83,7 @@ use core\navigation\views\secondary;
  * @property-read navbar $navbar The navbar object used to display the navbar
  * @property-read secondary $secondarynav The secondary navigation object
  *      used to display the secondarynav in boost
+ * @property-read primary $primarynav The primary navigation object used to display the primary nav in boost
  * @property-read global_navigation $navigation The navigation structure for this page.
  * @property-read xhtml_container_stack $opencontainers Tracks XHTML tags on this page that have been opened but not closed.
  *      mainly for internal use by the rendering code.
@@ -302,6 +304,12 @@ class moodle_page {
      * in the secondary navigation.
      */
     protected $_secondarynav = null;
+
+    /**
+     * @var primary Contains the nav nodes that will appear
+     * in the primary navigation.
+     */
+    protected $_primarynav = null;
 
     /**
      * @var navbar Contains the navbar structure.
@@ -802,6 +810,18 @@ class moodle_page {
             $this->_secondarynav->initialise();
         }
         return $this->_secondarynav;
+    }
+
+    /**
+     * Returns the primary navigation object
+     * @return primary
+     */
+    protected function magic_get_primarynav() {
+        if ($this->_primarynav === null) {
+            $this->_primarynav = new primary($this);
+            $this->_primarynav->initialise();
+        }
+        return $this->_primarynav;
     }
 
     /**
