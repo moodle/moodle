@@ -119,7 +119,7 @@ class get_user_attempts extends external_api {
 
         $coursecontext = \context_course::instance($course->id);
 
-        $users = get_enrolled_users($coursecontext, '', 0, 'u.id, u.firstname, u.lastname',
+        $users = self::get_active_users($manager, 'u.id, u.firstname, u.lastname',
             $sortorder, $page * $perpage, $perpage);
 
         $usersattempts = [];
@@ -158,6 +158,39 @@ class get_user_attempts extends external_api {
         ];
 
         return $result;
+    }
+
+    /**
+     * Generate the active users list
+     *
+     * @param manager $manager the h5pactivity manager
+     * @param string $userfields the user fields to get
+     * @param string $sortorder the SQL sortorder
+     * @param int $limitfrom SQL limit from
+     * @param int $limitnum SQL limit num
+     */
+    private static function get_active_users(
+        manager $manager,
+        string $userfields = 'u.*',
+        string $sortorder = null,
+        int $limitfrom = 0,
+        int $limitnum = 0
+    ): array {
+
+        global $DB;
+
+        $capjoin = $manager->get_active_users_join(true);
+
+        // Final SQL.
+        $sql = "SELECT DISTINCT {$userfields}
+                  FROM {user} u {$capjoin->joins}
+                WHERE {$capjoin->wheres}";
+
+        if (!empty($sortorder)) {
+            $sql .= " ORDER BY {$sortorder}";
+        }
+
+        return $DB->get_records_sql($sql, $capjoin->params, $limitfrom, $limitnum);
     }
 
     /**
