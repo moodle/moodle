@@ -171,4 +171,43 @@ class emails_table extends table_sql {
             return;
         }
     }
+
+    /**
+     * Generate the display of the user's departments
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_department($row) {
+        global $DB;
+
+        $departments = $DB->get_records_sql("SELECT d.name FROM {department} d
+                                             JOIN {company_users} cu
+                                             ON (d.id = cu.departmentid)
+                                             WHERE cu.userid = :userid
+                                             AND cu.companyid = :companyid
+                                             ORDER BY d.name",
+                                             array('userid' => $row->id,
+                                                   'companyid' => $row->companyid));
+        $returnstr = "";
+        $count = count($departments);
+        $current = 1;
+        if ($count > 5) {
+            $returnstr = "<details><summary>" . get_string('show') . "</summary>";
+        }
+
+        foreach($departments as $department) {
+            $returnstr .= format_string($department->name);
+            if ($current < $count) {
+                $returnstr .= ",</br>";
+            }
+            $current++;
+        }
+
+        if ($count > 5) {
+            $returnstr .= "</details>";
+        }
+
+        return $returnstr;
+
+    }
 }
