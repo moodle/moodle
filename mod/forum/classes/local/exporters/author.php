@@ -163,12 +163,8 @@ class author extends exporter {
                 ];
             } else {
                 $groups = array_map(function($group) use ($urlfactory, $context, $output) {
-                    $imageurl = null;
                     $groupurl = null;
-
-                    if (!$group->hidepicture) {
-                        $imageurl = get_group_picture_url($group, $group->courseid, true);
-                    }
+                    $imageurl = get_group_picture_url($group, $group->courseid, true);
 
                     if (course_can_view_participants($context)) {
                         $groupurl = $urlfactory->get_author_group_url($group);

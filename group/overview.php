@@ -152,7 +152,6 @@ $groups[OVERVIEW_NO_GROUP] = (object)array(
     'descriptionformat' => FORMAT_HTML,
     'enrolmentkey' => '',
     'picture' => 0,
-    'hidepicture' => 0,
     'timecreated' => 0,
     'timemodified' => 0,
 );
