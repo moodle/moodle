@@ -292,9 +292,10 @@ $showdepartments[$departmentid] = $departmentid;
 $departmentsql = " AND d.id IN (" . implode(',', array_keys($showdepartments)) . ")";
 
 // Set up the initial SQL for the form.
-$selectsql = "u.id,u.firstname,u.lastname,d.name as department,u.email,url.created,url.firstlogin,url.lastlogin,url.logincount";
+$selectsql = "DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", "d.id")) . " AS dindex,u.id,u.firstname,u.lastname,cu.companyid,u.email,url.created,url.firstlogin,url.lastlogin,url.logincount";
 $fromsql = "{user} u JOIN {local_report_user_logins} url ON (u.id = url.userid) JOIN {company_users} cu ON (u.id = cu.userid) JOIN {department} d ON (cu.departmentid = d.id)";
 $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql";
+$countsql = "SELECT COUNT( DISTINCT u.id ) FROM $fromsql WHERE $wheresql";
 $sqlparams = array('companyid' => $companyid) + $searchinfo->searchparams;
 
 // Set up the headers for the form.
@@ -342,6 +343,7 @@ $columns[] = 'lastlogin';
 $columns[] = 'logincount';
 
 $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
+$table->set_count_sql($countsql, $sqlparams);
 $table->define_baseurl($url);
 $table->define_columns($columns);
 $table->define_headers($headers);
