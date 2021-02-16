@@ -445,8 +445,7 @@ class quiz_grading_report extends quiz_default_report {
             $attempt = $attempts[$qubaid];
             $quba = question_engine::load_questions_usage_by_activity($qubaid);
             $displayoptions = quiz_get_review_options($this->quiz, $attempt, $this->context);
-            $displayoptions->hide_all_feedback();
-            $displayoptions->rightanswer = question_display_options::VISIBLE;
+            $displayoptions->generalfeedback = question_display_options::HIDDEN;
             $displayoptions->history = question_display_options::HIDDEN;
             $displayoptions->manualcomment = question_display_options::EDITABLE;
 
