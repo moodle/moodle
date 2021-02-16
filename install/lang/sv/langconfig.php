@@ -29,7 +29,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// Warning: this parentlanguage value is not a valid language code!
-// $string['parentlanguage'] = 'Överliggande språk';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Svenska';
