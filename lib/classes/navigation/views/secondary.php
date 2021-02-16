@@ -192,10 +192,28 @@ class secondary extends view {
     protected function load_admin_navigation(): void {
         $settingsnav = $this->page->settingsnav;
         $node = $settingsnav->find('root', self::TYPE_SITE_ADMIN);
+        // We need to know if we are on the main site admin search page. Here the navigation between tabs are done via
+        // anchors and page reload doesn't happen. On every nested admin settings page, the secondary nav needs to
+        // exist as links with anchors appended in order to redirect back to the admin search page and the corresponding
+        // tab.
+        $isadminsearchpage = $this->page->pagetype === 'admin-search';
         if ($node) {
             $siteadminnode = $this->add($node->text, "#link$node->key", null, null, 'siteadminnode');
+            if ($isadminsearchpage) {
+                $siteadminnode->action = false;
+                $siteadminnode->tab = "#link$node->key";
+            } else {
+                $siteadminnode->action = new \moodle_url("/admin/search.php", [], "link$node->key");
+            }
             foreach ($node->children as $child) {
                 if ($child->display && !$child->is_short_branch()) {
+                    // Mimic the current boost behaviour and pass down anchors for the tabs.
+                    if ($isadminsearchpage) {
+                        $child->action = false;
+                        $child->tab = "#link$child->key";
+                    } else {
+                        $child->action = new \moodle_url("/admin/search.php", [], "link$child->key");
+                    }
                     $this->add_node($child);
                 } else {
                     $siteadminnode->add_node($child);
