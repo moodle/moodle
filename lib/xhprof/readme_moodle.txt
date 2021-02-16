@@ -39,4 +39,5 @@ TODO:
 20191016 - MDL-65349 - Brendan Heywood (brendanheywood): Improved url matching behaviour
 20201012 - MDL-67081 - Brendan Heywood (brendanheywood): Support selective profiles from CLI
 20201210 - MDL-70297 - Ilya Tregubov (ilyatregubov): Upgrade to 2.2.3 release;
+20210209 - MDL-70525 - Tomo Tsuyuki (tomotsuyuki): Allow huge number of values
 
