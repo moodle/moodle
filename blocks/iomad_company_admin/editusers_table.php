@@ -164,7 +164,7 @@ class block_iomad_company_admin_editusers_table extends table_sql {
         if ($row->id != $USER->id) {
             if ((iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
                  or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
-                if ($DB->get_record_select('company_users', 'companyid =:company AND managertype != 0 AND userid = :userid', array('company' => $companyid, 'userid' => $row->id))
+                if ($DB->get_records_select('company_users', 'companyid =:company AND managertype != 0 AND userid = :userid', array('company' => $companyid, 'userid' => $row->id))
                 && !iomad::has_capability('block/iomad_company_admin:editmanagers', $systemcontext)) {
                     // Do nothing.
                 } else {
