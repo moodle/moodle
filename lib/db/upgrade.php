@@ -2487,5 +2487,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021022600.02);
     }
 
+    if ($oldversion < 2021030500.01) {
+        // The $CFG->badges_site_backpack setting has been removed because it's not required anymore. From now, the default backpack
+        // will be the one with lower sortorder value.
+        unset_config('badges_site_backpack');
+
+        upgrade_main_savepoint(true, 2021030500.01);
+    }
+
     return true;
 }

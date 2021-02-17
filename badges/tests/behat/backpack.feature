@@ -43,10 +43,8 @@ Feature: Backpack badges
     And I set the following fields to these values:
       | External backpack connection | 1                        |
     And I press "Save changes"
-    And I navigate to "Badges > Backpack settings" in site administration
-    And I set the following fields to these values:
-      | Active external backpack     | https://dc.imsglobal.org |
-    And I press "Save changes"
+    And I navigate to "Badges > Manage backpacks" in site administration
+    And I click on "Move up" "link" in the "https://dc.imsglobal.org" "table_row"
     And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name          | Test badge verify backpack |
@@ -82,10 +80,8 @@ Feature: Backpack badges
     And I set the following fields to these values:
       | External backpack connection | 1                        |
     And I press "Save changes"
-    And I navigate to "Badges > Backpack settings" in site administration
-    And I set the following fields to these values:
-      | Active external backpack     | https://dc.imsglobal.org |
-    And I press "Save changes"
+    And I navigate to "Badges > Manage backpacks" in site administration
+    And I click on "Move up" "link" in the "https://dc.imsglobal.org" "table_row"
     And I navigate to "Badges > Add a new badge" in site administration
     And I set the following fields to these values:
       | Name           | Test badge verify backpack |

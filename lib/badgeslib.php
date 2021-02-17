@@ -808,13 +808,14 @@ function badges_update_site_backpack($id, $data) {
  * @return boolean
  */
 function badges_delete_site_backpack($id) {
-    global $DB, $CFG;
+    global $DB;
 
     $context = context_system::instance();
     require_capability('moodle/badges:manageglobalsettings', $context);
 
     // Only remove site backpack if it's not the default one.
-    if ($CFG->badges_site_backpack != $id && $DB->record_exists('badge_external_backpack', ['id' => $id])) {
+    $defaultbackpack = badges_get_site_primary_backpack();
+    if ($defaultbackpack->id != $id && $DB->record_exists('badge_external_backpack', ['id' => $id])) {
         $transaction = $DB->start_delegated_transaction();
 
         // Remove connections for users to this backpack.
@@ -917,11 +918,11 @@ function badges_save_backpack_credentials(stdClass $data) {
  */
 function badges_open_badges_backpack_api(?int $backpackid = null) {
     if (!$backpackid) {
-        global $CFG;
-        $backpackid = $CFG->badges_site_backpack;
+        $backpack = badges_get_site_primary_backpack();
+    } else {
+        $backpack = badges_get_site_backpack($backpackid);
     }
 
-    $backpack = badges_get_site_backpack($backpackid);
     if (empty($backpack->apiversion)) {
         return OPEN_BADGES_V2;
     }
@@ -974,9 +975,15 @@ function badges_get_user_backpack(?int $userid = 0) {
  * @return array(stdClass)
  */
 function badges_get_site_primary_backpack() {
-    global $CFG;
+    global $DB;
 
-    return badges_get_site_backpack($CFG->badges_site_backpack);
+    $sql = 'SELECT *
+              FROM {badge_external_backpack}
+             WHERE sortorder = (SELECT MIN(sortorder)
+                                  FROM {badge_external_backpack} b2)';
+    $firstbackpack = $DB->get_record_sql($sql, null, MUST_EXIST);
+
+    return badges_get_site_backpack($firstbackpack->id);
 }
 
 /**
@@ -985,17 +992,18 @@ function badges_get_site_primary_backpack() {
  * @return array(stdClass)
  */
 function badges_get_site_backpacks() {
-    global $DB, $CFG;
+    global $DB;
 
+    $defaultbackpack = badges_get_site_primary_backpack();
     $all = $DB->get_records('badge_external_backpack', null, 'sortorder ASC');
-
     foreach ($all as $key => $bp) {
-        if ($bp->id == $CFG->badges_site_backpack) {
+        if ($bp->id == $defaultbackpack->id) {
             $all[$key]->sitebackpack = true;
         } else {
             $all[$key]->sitebackpack = false;
         }
     }
+
     return $all;
 }
 
@@ -1333,9 +1341,8 @@ function badge_assemble_notification(stdClass $badge) {
  * @return string
  */
 function badges_verify_site_backpack() {
-    global $CFG;
-
-    return badges_verify_backpack($CFG->badges_site_backpack);
+    $defaultbackpack = badges_get_site_primary_backpack();
+    return badges_verify_backpack($defaultbackpack->id);
 }
 
 /**

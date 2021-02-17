@@ -47,9 +47,6 @@ function badges_install_default_backpacks() {
         $bpid = $DB->insert_record('badge_external_backpack', $record);
     }
 
-    set_config('badges_site_backpack', $bpid);
-
     // Set external backpack to v2.
     $DB->set_field('badge_backpack', 'externalbackpackid', $bpid);
 }
-
