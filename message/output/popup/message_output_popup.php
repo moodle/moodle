@@ -49,12 +49,15 @@ class message_output_popup extends message_output {
         global $DB;
 
         // Prevent users from getting popup notifications from themselves (happens with forum notifications).
-        if ($eventdata->userfrom->id != $eventdata->userto->id && $eventdata->notification) {
-            if (!$DB->record_exists('message_popup_notifications', ['notificationid' => $eventdata->savedmessageid])) {
-                $record = new stdClass();
-                $record->notificationid = $eventdata->savedmessageid;
+        if ($eventdata->notification) {
+            if (($eventdata->userfrom->id != $eventdata->userto->id) ||
+                (isset($eventdata->anonymous) && $eventdata->anonymous)) {
+                if (!$DB->record_exists('message_popup_notifications', ['notificationid' => $eventdata->savedmessageid])) {
+                    $record = new stdClass();
+                    $record->notificationid = $eventdata->savedmessageid;
 
-                $DB->insert_record('message_popup_notifications', $record);
+                    $DB->insert_record('message_popup_notifications', $record);
+                }
             }
         }
 
