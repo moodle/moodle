@@ -103,7 +103,7 @@ class MoodleQuickForm_defaultcustom extends MoodleQuickForm_group {
      */
     protected function timestamp_to_date_array($value) {
         $calendartype = \core_calendar\type_factory::get_calendar_instance();
-        $currentdate = $calendartype->timestamp_to_date_array($value, $this->_options['timezone']);
+        $currentdate = $calendartype->timestamp_to_date_array((int)$value, $this->_options['timezone']);
         return array(
             'minute' => $currentdate['minutes'],
             'hour' => $currentdate['hours'],

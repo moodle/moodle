@@ -1317,6 +1317,12 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame(356, $yday);
         $this->assertSame('Wednesday', $weekday);
         $this->assertSame('December', $month);
+
+        // Edge cases - 0 and null - they all mean 1st Jan 1970. Null shows debugging message.
+        $this->assertSame(1970, usergetdate(0)['year']);
+        $this->assertDebuggingNotCalled();
+        $this->assertSame(1970, usergetdate(null)['year']);
+        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
     }
 
     public function test_mark_user_preferences_changed() {
