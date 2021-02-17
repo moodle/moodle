@@ -4,6 +4,12 @@ information provided here is intended especially for developers.
 === 3.10.1 ===
 * New optional parameter $extracontent for print_collapsible_region_start(). This allows developers to add interactive HTML elements
   (e.g. a help icon) after the collapsible region's toggle link.
+* Behat now supports date selection from the date form element. Examples:
+    - I set the field "<field_string>" to "##15 March 2021##"
+    - I set the field "<field_string>" to "##first day of January last year##"
+* Behat now supports date and time selection from the datetime form element. Examples:
+    - I set the field "<field_string>" to "##15 March 2021 08:15##"
+    - I set the field "<field_string>" to "##first day of January last year noon##"
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:

@@ -114,13 +114,8 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
-      | Override user      | Student |
-      | id_duedate_enabled | 1 |
-      | duedate[day]       | 1 |
-      | duedate[month]     | January |
-      | duedate[year]      | 2030 |
-      | duedate[hour]      | 08 |
-      | duedate[minute]    | 00 |
+      | Override user | Student              |
+      | Due date      | ##2030-01-01 08:00## |
     And I press "Save"
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I follow "Test assignment name"
