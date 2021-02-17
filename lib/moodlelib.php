@@ -2354,6 +2354,14 @@ function date_format_string($date, $format, $tz = 99) {
  * @return array An array that represents the date in user time
  */
 function usergetdate($time, $timezone=99) {
+    if ($time === null) {
+        // PHP8 and PHP7 return different results when getdate(null) is called.
+        // Display warning and cast to 0 to make sure the usergetdate() behaves consistently on all versions of PHP.
+        // In the future versions of Moodle we may consider adding a strict typehint.
+        debugging('usergetdate() expects parameter $time to be int, null given', DEBUG_DEVELOPER);
+        $time = 0;
+    }
+
     date_default_timezone_set(core_date::get_user_timezone($timezone));
     $result = getdate($time);
     core_date::set_default_server_timezone();
