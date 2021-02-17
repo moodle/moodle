@@ -43,7 +43,6 @@ use externallib_advanced_testcase;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class log_report_viewed_testcase extends externallib_advanced_testcase {
-
     /**
      * Test the behaviour of log_report_viewed.
      *
@@ -53,9 +52,7 @@ class log_report_viewed_testcase extends externallib_advanced_testcase {
      * @param string $loginuser the user which calls the webservice
      * @param string|null $participant the user to log the data
      */
-    public function test_execute(int $enabletracking, int $reviewmode, string $loginuser,
-                                 ?string $participant): void {
-
+    public function test_execute(int $enabletracking, int $reviewmode, string $loginuser, ?string $participant): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -106,7 +103,6 @@ class log_report_viewed_testcase extends externallib_advanced_testcase {
         $this->assertEquals($cm->instance, $event->other['instanceid']);
         $this->assertEquals($user->id, $event->other['userid']);
         $this->assertEquals($attemptid, $event->other['attemptid']);
-
     }
 
     /**
@@ -124,5 +120,4 @@ class log_report_viewed_testcase extends externallib_advanced_testcase {
             ],
         ];
     }
-
 }
