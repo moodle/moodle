@@ -26,33 +26,21 @@ Feature: Assignment with no calendar capabilites
     Given I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
     When I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Test assignment description |
-      | id_allowsubmissionsfromdate_enabled | 1 |
-      | id_allowsubmissionsfromdate_day | 1 |
-      | id_allowsubmissionsfromdate_month | 1 |
-      | id_allowsubmissionsfromdate_year | 2017 |
-      | id_duedate_enabled | 1 |
-      | id_duedate_day | 1 |
-      | id_duedate_month | 2 |
-      | id_duedate_year | 2017 |
-      | id_cutoffdate_enabled | 1 |
-      | id_cutoffdate_day | 2 |
-      | id_cutoffdate_month | 2 |
-      | id_cutoffdate_year | 2017 |
-      | id_gradingduedate_enabled | 1 |
-      | id_gradingduedate_day | 1 |
-      | id_gradingduedate_month | 3 |
-      | id_gradingduedate_year | 2017 |
+      | Assignment name        | Test assignment name        |
+      | Description            | Test assignment description |
+      | Allow submissions from | ##1 January 2017##          |
+      | Due date               | ##1 February 2017##         |
+      | Cut-off date           | ##2 February 2017##         |
+      | Remind me to grade by  | ##1 March 2017##            |
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test assignment name"
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-      | id_allowsubmissionsfromdate_year | 2018 |
-      | id_duedate_year | 2018 |
-      | id_cutoffdate_year | 2018 |
-      | id_gradingduedate_year | 2018 |
+      | Allow submissions from | ##1 January 2018##  |
+      | Due date               | ##1 February 2018## |
+      | Cut-off date           | ##2 February 2018## |
+      | Remind me to grade by  | ##1 March 2018##    |
     And I press "Save and return to course"
     Then I should see "Test assignment name"

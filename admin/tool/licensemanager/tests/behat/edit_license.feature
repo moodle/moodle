@@ -9,12 +9,10 @@ Feature: Custom licences
     And I navigate to "Licence > Licence manager" in site administration
     And I click on "Create licence" "link"
     And I set the following fields to these values:
-      | shortname      | MIT                                 |
-      | fullname       | MIT Licence                         |
-      | source         | https://opensource.org/licenses/MIT |
-      | version[day]   | 1                                   |
-      | version[month] | January                             |
-      | version[year]  | 2020                                |
+      | shortname       | MIT                                 |
+      | fullname        | MIT Licence                         |
+      | source          | https://opensource.org/licenses/MIT |
+      | Licence version | ##first day of January 2020##       |
     When I press "Save changes"
     Then I should see "Licence manager"
     And I should see "MIT Licence" in the "MIT" "table_row"
@@ -25,12 +23,10 @@ Feature: Custom licences
     And I navigate to "Licence > Licence manager" in site administration
     And I click on "Create licence" "link"
     And I set the following fields to these values:
-      | shortname      | MIT                                 |
-      | fullname       | MIT Licence                         |
-      | source         | opensource.org/licenses/MIT         |
-      | version[day]   | 1                                   |
-      | version[month] | January                             |
-      | version[year]  | 2020                                |
+      | shortname       | MIT                         |
+      | fullname        | MIT Licence                 |
+      | source          | opensource.org/licenses/MIT |
+      | Licence version | ##2020-01-01##              |
     When I press "Save changes"
     Then I should see "Invalid source URL"
     And I set the following fields to these values:
@@ -49,12 +45,10 @@ Feature: Custom licences
     And I navigate to "Licence > Licence manager" in site administration
     And I click on "Create licence" "link"
     And I set the following fields to these values:
-      | shortname      | MIT                                 |
-      | fullname       | MIT Licence                         |
-      | source         | https://opensource.org/licenses/MIT |
-      | version[day]   | 1                                   |
-      | version[month] | March                               |
-      | version[year]  | 2019                                |
+      | shortname       | MIT                                 |
+      | fullname        | MIT Licence                         |
+      | source          | https://opensource.org/licenses/MIT |
+      | Licence version | ##1 March 2019##                    |
     When I press "Save changes"
     Then I should see "Licence manager"
     And I should see "2019030100" in the "MIT" "table_row"
@@ -65,12 +59,10 @@ Feature: Custom licences
     And I navigate to "Licence > Licence manager" in site administration
     And I click on "Create licence" "link"
     And I set the following fields to these values:
-      | shortname      | MIT                                 |
-      | fullname       | MIT Licence                         |
-      | source         | https://opensource.org/licenses/MIT |
-      | version[day]   | 1                                   |
-      | version[month] | March                               |
-      | version[year]  | 2019                                |
+      | shortname       | MIT                                 |
+      | fullname        | MIT Licence                         |
+      | source          | https://opensource.org/licenses/MIT |
+      | Licence version | ##1 Mar 2019##                      |
     And I press "Save changes"
     And I should see "Licence manager"
     And I should see "MIT Licence" in the "MIT" "table_row"
