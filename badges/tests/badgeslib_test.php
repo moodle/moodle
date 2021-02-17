@@ -1196,6 +1196,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
             'apiversion' => 2,
             'backpackapiurl' => 'https://api.ca.badgr.io/v2',
             'backpackweburl' => 'https://ca.badgr.io',
+            'sortorder' => 2,
         ];
 
         // Given a complete set of unique data, a new backpack and auth records should exist in the tables.
@@ -1204,10 +1205,13 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $backpack1 = badges_save_external_backpack((object) $data);
         $data['backpackweburl'] = 'https://eu.badgr.io';
         $data['backpackapiurl'] = 'https://api.eu.badgr.io/v2';
-        $data['apiversion'] = 2.1;
+        $data['apiversion'] = '2.1';
+        $data['sortorder'] = 3;
         $backpack2 = badges_save_external_backpack((object) $data);
 
-        set_config('badges_site_backpack', $backpack2);
+        // Move backpack2 to the first position to set it as primary site backpack.
+        $this->move_backpack_to_first_position($backpack2);
+
         // The default response should check the default site backpack api version.
         $this->assertEquals(2.1, badges_open_badges_backpack_api());
         // Check the api version for the other backpack created.
@@ -1308,6 +1312,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
             'apiversion' => '2',
             'backpackapiurl' => 'https://api.ca.badgr.io/v2',
             'backpackweburl' => 'https://ca.badgr.io',
+            'sortorder' => '2',
         ];
         if ($withauth) {
             $data = array_merge($data, [
@@ -1317,7 +1322,13 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         }
         $backpack = badges_save_external_backpack((object) $data);
 
-        set_config('badges_site_backpack', $backpack);
+        // Check the backpack created is not the primary one.
+        $sitebackpack = badges_get_site_primary_backpack();
+        $this->assertNotEquals($backpack, $sitebackpack->id);
+
+        // Move backpack to the first position to set it as primary site backpack.
+        $this->move_backpack_to_first_position($backpack);
+
         $sitebackpack = badges_get_site_primary_backpack();
         $this->assertEquals($backpack, $sitebackpack->id);
 
@@ -1511,5 +1522,18 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
                 1234, 4321, 1234, 'internalid'
             ]
         ];
+    }
+
+    /**
+     * Move the backpack to the first position, to set it as primary site backpack.
+     *
+     * @param int $backpackid The backpack identifier.
+     */
+    private function move_backpack_to_first_position(int $backpackid): void {
+        $backpack = badges_get_site_backpack($backpackid);
+        while ($backpack->sortorder > 1) {
+            badges_change_sortorder_backpacks($backpackid, BACKPACK_MOVE_UP);
+            $backpack = badges_get_site_backpack($backpackid);
+        }
     }
 }

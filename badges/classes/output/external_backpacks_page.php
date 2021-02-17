@@ -56,7 +56,7 @@ class external_backpacks_page implements \renderable {
      * @return stdClass
      */
     public function export_for_template(\renderer_base $output) {
-        global $CFG, $PAGE;
+        global $PAGE;
 
         $PAGE->requires->js_call_amd('core_badges/backpackactions', 'init');
 
@@ -71,7 +71,6 @@ class external_backpacks_page implements \renderable {
             $exporter = new backpack_exporter($backpack);
             $backpack = $exporter->export($output);
             $backpack->cantest = ($backpack->apiversion == OPEN_BADGES_V2);
-            $backpack->iscurrent = ($backpack->id == $CFG->badges_site_backpack);
             $backpack->canmoveup = $rownumber > 0;
             $backpack->canmovedown = $rownumber < $rowcount - 1;
 
