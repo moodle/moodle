@@ -93,7 +93,7 @@ class create_xml_file extends XMLDBAction {
         $c.= '        </KEYS>' . "\n";
         $c.= '      </TABLE>' . "\n";
         $c.= '    </TABLES>' . "\n";
-        $c.= '  </XMLDB>';
+        $c.= '  </XMLDB>' . "\n";
 
         if (!file_put_contents($file, $c)) {
             $errormsg = 'Error creando fichero ' . $file;
