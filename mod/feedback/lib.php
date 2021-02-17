@@ -2639,6 +2639,7 @@ function feedback_send_email($cm, $feedback, $course, $user, $completed = null) 
             ];
             if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
                 $eventdata = new \core\message\message();
+                $eventdata->anonymous        = false;
                 $eventdata->courseid         = $course->id;
                 $eventdata->name             = 'submission';
                 $eventdata->component        = 'mod_feedback';
@@ -2661,6 +2662,7 @@ function feedback_send_email($cm, $feedback, $course, $user, $completed = null) 
                 message_send($eventdata);
             } else {
                 $eventdata = new \core\message\message();
+                $eventdata->anonymous        = true;
                 $eventdata->courseid         = $course->id;
                 $eventdata->name             = 'submission';
                 $eventdata->component        = 'mod_feedback';
@@ -2726,6 +2728,7 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
             }
 
             $eventdata = new \core\message\message();
+            $eventdata->anonymous        = true;
             $eventdata->courseid         = $course->id;
             $eventdata->name             = 'submission';
             $eventdata->component        = 'mod_feedback';
