@@ -24,6 +24,12 @@ information provided here is intended especially for developers.
 * emoji-data has been upgraded to 6.0.0.
 * The final deprecation of /message/defaultoutputs.php file and admin_page_defaultmessageoutputs.
   All their settings moved to admin/message.php (see MDL-64495). Please use admin_page_managemessageoutputs class instead.
+* Behat now supports date selection from the date form element. Examples:
+    - I set the field "<field_string>" to "##15 March 2021##"
+    - I set the field "<field_string>" to "##first day of January last year##"
+* Behat now supports date and time selection from the datetime form element. Examples:
+    - I set the field "<field_string>" to "##15 March 2021 08:15##"
+    - I set the field "<field_string>" to "##first day of January last year noon##"
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:

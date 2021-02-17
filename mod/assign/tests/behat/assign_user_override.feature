@@ -30,18 +30,13 @@ Feature: Assign user override
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
-      | Override user      | Student1 |
-      | id_duedate_enabled | 1 |
-      | duedate[day]       | 1 |
-      | duedate[month]     | January |
-      | duedate[year]      | 2020 |
-      | duedate[hour]      | 08 |
-      | duedate[minute]    | 00 |
+      | Override user | Student1                            |
+      | Due date      | ##first day of January 2020 08:00## |
     And I press "Save"
     And I should see "Wednesday, 1 January 2020, 8:00"
     Then I click on "Edit" "link" in the "Sam1 Student1" "table_row"
     And I set the following fields to these values:
-      | duedate[year] | 2030 |
+      | Due date      | ##first day of January 2030 08:00## |
     And I press "Save"
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I click on "Delete" "link"
@@ -56,19 +51,14 @@ Feature: Assign user override
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
-      | Override user      | Student1 |
-      | id_duedate_enabled | 1 |
-      | duedate[day]       | 1 |
-      | duedate[month]     | January |
-      | duedate[year]      | 2020 |
-      | duedate[hour]      | 08 |
-      | duedate[minute]    | 00 |
+      | Override user | Student1             |
+      | Due date      | ##2020-01-01 08:00## |
     And I press "Save"
     And I should see "Wednesday, 1 January 2020, 8:00"
     Then I click on "copy" "link"
     And I set the following fields to these values:
-      | Override user  | Student2  |
-      | duedate[year] | 2030 |
+      | Override user | Student2             |
+      | Due date      | ##2030-01-01 08:00## |
     And I press "Save"
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I should see "Sam2 Student2"
@@ -80,25 +70,15 @@ Feature: Assign user override
     When I follow "Test assignment name"
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-      | id_duedate_enabled | 1 |
-      | id_allowsubmissionsfromdate_enabled | 0 |
-      | id_cutoffdate_enabled | 0 |
-      | duedate[day]       | 1 |
-      | duedate[month]     | January |
-      | duedate[year]      | 2000 |
-      | duedate[hour]      | 08 |
-      | duedate[minute]    | 00 |
+      | Allow submissions from | disabled             |
+      | Due date               | ##1 Jan 2000 08:00## |
+      | Cut-off date           | disabled             |
     And I press "Save and display"
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
-      | Override user       | Student1 |
-      | id_duedate_enabled | 1 |
-      | duedate[day]       | 1 |
-      | duedate[month]     | January |
-      | duedate[year]      | 2020 |
-      | duedate[hour]      | 08 |
-      | duedate[minute]    | 00 |
+      | Override user | Student1             |
+      | Due date      | ##1 Jan 2020 08:00## |
     And I press "Save"
     And I should see "Wednesday, 1 January 2020, 8:00"
     And I log out
@@ -119,25 +99,15 @@ Feature: Assign user override
     When I follow "Test assignment name"
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-      | id_duedate_enabled | 0 |
-      | id_allowsubmissionsfromdate_enabled | 0 |
-      | id_cutoffdate_enabled | 1 |
-      | cutoffdate[day]       | 1 |
-      | cutoffdate[month]     | January |
-      | cutoffdate[year]      | 2000 |
-      | cutoffdate[hour]      | 08 |
-      | cutoffdate[minute]    | 00 |
+      | Due date               | disabled             |
+      | Allow submissions from | disabled             |
+      | Cut-off date           | ##1 Jan 2000 08:00## |
     And I press "Save and display"
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
-      | Override user       | Student1 |
-      | id_cutoffdate_enabled | 1 |
-      | cutoffdate[day]       | 1 |
-      | cutoffdate[month]     | January |
-      | cutoffdate[year]      | 2030 |
-      | cutoffdate[hour]      | 08 |
-      | cutoffdate[minute]    | 00 |
+      | Override user       | Student1             |
+      | Cut-off date        | ##1 Jan 2030 08:00## |
     And I press "Save"
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I log out
@@ -158,25 +128,15 @@ Feature: Assign user override
     When I follow "Test assignment name"
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-      | id_duedate_enabled | 0 |
-      | id_allowsubmissionsfromdate_enabled | 1 |
-      | id_cutoffdate_enabled | 0 |
-      | allowsubmissionsfromdate[day]       | 1 |
-      | allowsubmissionsfromdate[month]     | January |
-      | allowsubmissionsfromdate[year]      | 2030 |
-      | allowsubmissionsfromdate[hour]      | 08 |
-      | allowsubmissionsfromdate[minute]    | 00 |
+      | Due date               | disabled                 |
+      | Allow submissions from | ##1 January 2030 08:00## |
+      | Cut-off date           | disabled                 |
     And I press "Save and display"
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
-      | Override user        | Student1 |
-      | id_allowsubmissionsfromdate_enabled | 1 |
-      | allowsubmissionsfromdate[day]       | 1 |
-      | allowsubmissionsfromdate[month]     | January |
-      | allowsubmissionsfromdate[year]      | 2015 |
-      | allowsubmissionsfromdate[hour]      | 08 |
-      | allowsubmissionsfromdate[minute]    | 00 |
+      | Override user          | Student1             |
+      | Allow submissions from | ##1 Jan 2015 08:00## |
     And I press "Save"
     And I should see "Thursday, 1 January 2015, 8:00"
     And I log out
@@ -253,22 +213,12 @@ Feature: Assign user override
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
-      | Override user                       | Student1 |
-      | id_allowsubmissionsfromdate_enabled | 1       |
-      | allowsubmissionsfromdate[day]       | 1       |
-      | allowsubmissionsfromdate[month]     | January |
-      | allowsubmissionsfromdate[year]      | 2015    |
-      | allowsubmissionsfromdate[hour]      | 08      |
-      | allowsubmissionsfromdate[minute]    | 00      |
+      | Override user          | Student1                            |
+      | Allow submissions from | ##first day of January 2015 08:00## |
     And I press "Save and enter another override"
     And I set the following fields to these values:
-      | Override user                       | Student2 |
-      | id_allowsubmissionsfromdate_enabled | 1        |
-      | allowsubmissionsfromdate[day]       | 1        |
-      | allowsubmissionsfromdate[month]     | January  |
-      | allowsubmissionsfromdate[year]      | 2015     |
-      | allowsubmissionsfromdate[hour]      | 08       |
-      | allowsubmissionsfromdate[minute]    | 00       |
+      | Override user          | Student2                            |
+      | Allow submissions from | ##first day of January 2015 08:00## |
     And I press "Save"
     And I log out
     When I log in as "teacher1"
@@ -290,13 +240,8 @@ Feature: Assign user override
     When I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
-      | Override user                       | Student1 |
-      | id_allowsubmissionsfromdate_enabled | 1       |
-      | allowsubmissionsfromdate[day]       | 1       |
-      | allowsubmissionsfromdate[month]     | January |
-      | allowsubmissionsfromdate[year]      | 2015    |
-      | allowsubmissionsfromdate[hour]      | 08      |
-      | allowsubmissionsfromdate[minute]    | 00      |
+      | Override user          | Student1             |
+      | Allow submissions from | ##1 Jan 2015 08:00## |
     And I press "Save"
     Then I should see "This override is inactive"
     And "Edit" "icon" should exist in the "Sam1 Student1" "table_row"
