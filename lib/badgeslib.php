@@ -127,6 +127,9 @@ define('OPEN_BADGES_V2_TYPE_ISSUER', 'Issuer');
 define('OPEN_BADGES_V2_TYPE_ENDORSEMENT', 'Endorsement');
 define('OPEN_BADGES_V2_TYPE_AUTHOR', 'Author');
 
+define('BACKPACK_MOVE_UP', -1);
+define('BACKPACK_MOVE_DOWN', 1);
+
 // Global badge class has been moved to the component namespace.
 class_alias('\core_badges\badge', 'badge');
 
@@ -994,6 +997,40 @@ function badges_get_site_backpacks() {
         }
     }
     return $all;
+}
+
+/**
+ * Moves the backpack in the list one position up or down.
+ *
+ * @param int $backpackid The backpack identifier to be moved.
+ * @param int $direction The direction (BACKPACK_MOVE_UP/BACKPACK_MOVE_DOWN) where to move the backpack.
+ *
+ * @throws \moodle_exception if attempting to use invalid direction value.
+ */
+function badges_change_sortorder_backpacks(int $backpackid, int $direction): void {
+    global $DB;
+
+    if ($direction != BACKPACK_MOVE_UP && $direction != BACKPACK_MOVE_DOWN) {
+        throw new \coding_exception(
+            'Must use a valid backpack API move direction constant (BACKPACK_MOVE_UP or BACKPACK_MOVE_DOWN)');
+    }
+
+    $backpacks = badges_get_site_backpacks();
+    $backpacktoupdate = $backpacks[$backpackid];
+
+    $currentsortorder = $backpacktoupdate->sortorder;
+    $targetsortorder = $currentsortorder + $direction;
+    if ($targetsortorder > 0 && $targetsortorder <= count($backpacks) ) {
+        foreach ($backpacks as $backpack) {
+            if ($backpack->sortorder == $targetsortorder) {
+                $backpack->sortorder = $backpack->sortorder - $direction;
+                $DB->update_record('badge_external_backpack', $backpack);
+                break;
+            }
+        }
+        $backpacktoupdate->sortorder = $targetsortorder;
+        $DB->update_record('badge_external_backpack', $backpacktoupdate);
+    }
 }
 
 /**
