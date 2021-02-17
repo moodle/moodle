@@ -409,6 +409,7 @@ $functions = array(
         'description' => 'Update completion status for the current user in an activity, only for activities with manual tracking.',
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true,
     ),
     'core_completion_override_activity_completion_status' => array(
         'classname'     => 'core_completion_external',
