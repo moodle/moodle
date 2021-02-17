@@ -39,6 +39,6 @@ $string['cliunknowoption'] = 'Onerkende opsies:
   {$a}
 Gebruik asseblief die --help opsie.';
 $string['cliyesnoprompt'] = 'Tik j (beteken ja) of n (beteken nee)';
-$string['environmentrequireinstall'] = 'moet geïnstalleer en geaktiveer wees';
-$string['environmentrequireversion'] = 'weergawe {$a->needed} word benodig en jy het tans {$a->current}';
+$string['environmentrequireinstall'] = 'moet geïnstalleer en ontsper wees';
+$string['environmentrequireversion'] = 'weergawe {$a->needed} word benodig en jy hardloop tans {$a->current}';
 $string['upgradekeyset'] = 'Opgradering sleutel (los skoon om nie te stel nie)';
