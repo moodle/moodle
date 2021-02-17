@@ -58,8 +58,11 @@ class log_report_viewed extends external_api {
         return new external_function_parameters(
             [
                 'h5pactivityid' => new external_value(PARAM_INT, 'h5p activity instance id'),
-                'userid' => new external_value(PARAM_INT,
-                    'The user id to log attempt (null means only current user)', VALUE_DEFAULT),
+                'userid' => new external_value(
+                    PARAM_INT,
+                    'The user id to log attempt (null means only current user)',
+                    VALUE_DEFAULT
+                ),
                 'attemptid' => new external_value(PARAM_INT, 'The attempt id', VALUE_DEFAULT),
             ]
         );
@@ -75,7 +78,6 @@ class log_report_viewed extends external_api {
      * @return array of warnings and status result
      */
     public static function execute(int $h5pactivityid, int $userid = null, int $attemptid = null): stdClass {
-
         $params = external_api::validate_parameters(self::execute_parameters(), [
             'h5pactivityid' => $h5pactivityid,
             'userid' => $userid,
