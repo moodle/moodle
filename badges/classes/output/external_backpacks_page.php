@@ -60,6 +60,9 @@ class external_backpacks_page implements \renderable {
 
         $PAGE->requires->js_call_amd('core_badges/backpackactions', 'init');
 
+        $rownumber = 0;
+        $rowcount = count($this->backpacks);
+
         $data = new \stdClass();
         $data->baseurl = $this->url;
         $data->backpacks = array();
@@ -69,8 +72,11 @@ class external_backpacks_page implements \renderable {
             $backpack = $exporter->export($output);
             $backpack->cantest = ($backpack->apiversion == OPEN_BADGES_V2);
             $backpack->iscurrent = ($backpack->id == $CFG->badges_site_backpack);
+            $backpack->canmoveup = $rownumber > 0;
+            $backpack->canmovedown = $rownumber < $rowcount - 1;
 
             $data->backpacks[] = $backpack;
+            $rownumber++;
         }
 
         return $data;

@@ -1345,6 +1345,84 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test badges_change_sortorder_backpacks().
+     *
+     * @dataProvider badges_change_sortorder_backpacks_provider
+     * @covers ::badges_change_sortorder_backpacks
+     *
+     * @param int $backpacktomove Backpack index to move (from 0 to 5).
+     * @param int $direction Direction to move the backpack.
+     * @param int|null $expectedsortorder Expected sortorder or null if an exception is expected.
+     */
+    public function test_badges_change_sortorder_backpacks(int $backpacktomove, int $direction, ?int $expectedsortorder): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create 5 more backpacks.
+        for ($i = 0; $i < 5; $i++) {
+            $data = new \stdClass();
+            $data->apiversion = OPEN_BADGES_V2P1;
+            $data->backpackapiurl = "https://myurl$i.cat/ob/v2p1";
+            $data->backpackweburl = "https://myurl$i.cat";
+            badges_create_site_backpack($data);
+        }
+
+        // Check there are 6 backpacks (1 pre-existing + 5 news).
+        $total = $DB->count_records('badge_external_backpack');
+        $this->assertEquals(6, $total);
+        $backpacks = array_values(badges_get_site_backpacks());
+
+        if (is_null($expectedsortorder)) {
+            $this->expectException('moodle_exception');
+        }
+
+        // Move the backpack.
+        badges_change_sortorder_backpacks($backpacks[$backpacktomove]->id, $direction);
+
+        if (!is_null($expectedsortorder)) {
+            $backpack = badges_get_site_backpack($backpacks[$backpacktomove]->id);
+            $this->assertEquals($expectedsortorder, $backpack->sortorder);
+        }
+    }
+
+    /**
+     * Provider for test_badges_change_sortorder_backpacks.
+     *
+     * @return array
+     */
+    public function badges_change_sortorder_backpacks_provider(): array {
+        return [
+            "Test up" => [
+                'backpacktomove' => 1,
+                'direction' => BACKPACK_MOVE_UP,
+                'expectedsortorder' => 1,
+            ],
+            "Test down" => [
+                'backpacktomove' => 1,
+                'direction' => BACKPACK_MOVE_DOWN,
+                'expectedsortorder' => 3,
+            ],
+            "Test up the very first element" => [
+                'backpacktomove' => 0,
+                'direction' => BACKPACK_MOVE_UP,
+                'expectedsortorder' => 1,
+            ],
+            "Test down the very last element" => [
+                'backpacktomove' => 5,
+                'direction' => BACKPACK_MOVE_DOWN,
+                'expectedsortorder' => 6,
+            ],
+            "Test with an invalid direction value" => [
+                'backpacktomove' => 1,
+                'direction' => 10,
+                'expectedsortorder' => null,
+            ],
+        ];
+    }
+
+    /**
      * Test the Badgr URL generator function
      *
      * @param mixed $type Type corresponding to the badge entites

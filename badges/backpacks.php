@@ -56,6 +56,17 @@ if ($action == 'delete' && $confirm && confirm_sesskey()) {
     } else {
         $msg = get_string('sitebackpacknotdeleted', 'badges');
     }
+} else if ($action == 'moveup' || $action == 'movedown') {
+    // If no backpack has been selected, there isn't anything to move.
+    if (empty($id)) {
+        redirect($url);
+    }
+
+    $direction = BACKPACK_MOVE_DOWN;
+    if ($action == 'moveup') {
+        $direction = BACKPACK_MOVE_UP;
+    }
+    badges_change_sortorder_backpacks($id, $direction);
 }
 
 if ($action == 'edit') {
