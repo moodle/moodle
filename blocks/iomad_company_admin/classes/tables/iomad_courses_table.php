@@ -27,6 +27,8 @@ namespace block_iomad_company_admin\tables;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir.'/tablelib.php');
+
 use \table_sql;
 use \iomad;
 use \moodle_url;
