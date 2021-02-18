@@ -464,6 +464,7 @@ class core_contenttype_contenttype_testcase extends \advanced_testcase {
             'Too long name' => [str_repeat('a', 300), str_repeat('a', 255), true],
             'Empty name' => ['', 'Test content ', false],
             'Blanks only' => ['  ', 'Test content ', false],
+            'Zero name' => ['0', '0', true],
         ];
     }
 
