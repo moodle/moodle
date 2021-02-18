@@ -17,10 +17,10 @@ Feature: View licence links
   @javascript @_file_upload
   Scenario: Altering a file should display licence list modal
     Given I log in as "admin"
-    And I follow "Manage private files..."
+    And I follow "Private files"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I press "Save changes"
-    And I follow "Manage private files..."
+    And I follow "Private files"
     And I click on "empty.txt" "link"
     And I click on "Help with Choose licence" "icon"
     Then I should see "Follow these links for further information on the available licence options:"

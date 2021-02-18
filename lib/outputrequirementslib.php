@@ -1684,6 +1684,9 @@ class page_requirements_manager {
             'error',
             'file',
             'url',
+            // TODO MDL-70830 shortforms should preload the collapseall/expandall strings properly.
+            'collapseall',
+            'expandall',
         ), 'moodle');
         $this->strings_for_js(array(
             'debuginfo',

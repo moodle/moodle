@@ -30,6 +30,8 @@ information provided here is intended especially for developers.
 * Behat now supports date and time selection from the datetime form element. Examples:
     - I set the field "<field_string>" to "##15 March 2021 08:15##"
     - I set the field "<field_string>" to "##first day of January last year noon##"
+* Added new class, AMD modules and WS that allow displaying forms in modal popups or load and submit in AJAX requests.
+  See https://docs.moodle.org/dev/Modal_and_AJAX_forms for more details.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:

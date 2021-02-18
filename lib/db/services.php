@@ -837,6 +837,13 @@ $functions = array(
         'loginrequired' => false,
         'ajax' => true,
     ),
+    'core_form_dynamic_form' => array(
+        'classname' => 'core_form\external\dynamic_form',
+        'methodname' => 'execute',
+        'description' => 'Process submission of a dynamic (modal) form',
+        'type' => 'write',
+        'ajax' => true,
+    ),
     'core_get_component_strings' => array(
         'classname' => 'core_external',
         'methodname' => 'get_component_strings',

@@ -60,6 +60,7 @@ $string['mustbeoverriden'] = 'Abstract form_definition() method in class {$a} mu
 $string['newvaluefor'] = 'New value for {$a}';
 $string['nomethodforaddinghelpbutton'] = 'There is no method for adding a help button to form element {$a->name} (class {$a->classname})';
 $string['nonexistentformelements'] = 'Trying to add help buttons to non-existent form elements : {$a}';
+$string['nopermissionform'] = 'You don\'t have permission to access this form.';
 $string['noselection'] = 'No selection';
 $string['nosuggestions'] = 'No suggestions';
 $string['novalue'] = 'Nothing entered';
