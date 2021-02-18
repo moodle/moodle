@@ -47,15 +47,18 @@ abstract class dynamic_form extends \moodleform {
      * @param array $ajaxformdata Forms submitted via ajax, must pass their data here, instead of relying on _GET and _POST.
      * @param bool $isajaxsubmission whether the form is called from WS and it needs to validate user access and set up context
      */
-    final public function __construct(?string $action = null,
-                                      ?array $customdata = null,
-                                      string $method = 'post',
-                                      string $target = '',
-                                      ?array $attributes = [],
-                                      bool $editable = true,
-                                      ?array $ajaxformdata = null,
-                                      bool $isajaxsubmission = false) {
+    final public function __construct(
+        ?string $action = null,
+        ?array $customdata = null,
+        string $method = 'post',
+        string $target = '',
+        ?array $attributes = [],
+        bool $editable = true,
+        ?array $ajaxformdata = null,
+        bool $isajaxsubmission = false
+    ) {
         global $PAGE, $CFG;
+
         $this->_ajaxformdata = $ajaxformdata;
         if ($isajaxsubmission) {
             require_once($CFG->libdir . '/externallib.php');
@@ -73,7 +76,7 @@ abstract class dynamic_form extends \moodleform {
     /**
      * Returns context where this form is used
      *
-     * This context is validated in {@link \external_api::validate_context()}
+     * This context is validated in {@see \external_api::validate_context()}
      *
      * If context depends on the form data, it is available in $this->_ajaxformdata or
      * by calling $this->optional_param()
