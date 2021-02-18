@@ -86,7 +86,7 @@ class phpunit_constraint_object_is_equal_with_exceptions extends PHPUnit\Framewo
      * @return mixed
      * @throws PHPUnit\Framework\ExpectationFailedException
      */
-    public function evaluate($other, $description = '', $shouldreturnesult = false) {
+    public function evaluate($other, string $description = '', bool $shouldreturnesult = false): ?bool {
         foreach ($this->keys as $key => $comparison) {
             if (isset($other->$key) || isset($this->capturedvalue->$key)) {
                 // One of the keys is present, therefore run the comparison.
