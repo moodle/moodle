@@ -131,7 +131,6 @@ class core_customfield_external extends external_api {
                                         'name' => new external_value(PARAM_NOTAGS, 'name'),
                                         'shortname' => new external_value(PARAM_NOTAGS, 'shortname'),
                                         'type' => new external_value(PARAM_NOTAGS, 'type'),
-                                        'editfieldurl' => new external_value(PARAM_URL, 'edit field url'),
                                         'id' => new external_value(PARAM_INT, 'id'),
                                     )
                                 )

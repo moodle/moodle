@@ -1,4 +1,4 @@
-@core @core_course @core_customfield
+@core @core_course @core_customfield @javascript
 Feature: The visibility of fields control where they are displayed
   In order to display custom fields on course listing
   As a manager
@@ -28,7 +28,7 @@ Feature: The visibility of fields control where they are displayed
       | Name       | Test field |
       | Short name | testfield  |
       | Visible to | Everyone   |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I log out
     Then I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -48,7 +48,7 @@ Feature: The visibility of fields control where they are displayed
       | Name       | Test field  |
       | Short name | testfield   |
       | Visible to | Nobody      |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -68,7 +68,7 @@ Feature: The visibility of fields control where they are displayed
       | Name       | Test field     |
       | Short name | testfield      |
       | Visible to | Teachers       |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage

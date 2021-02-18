@@ -179,18 +179,6 @@ abstract class handler {
     }
 
     /**
-     * The form to create or edit a field
-     *
-     * @param field_controller $field
-     * @return field_config_form
-     */
-    public function get_field_config_form(field_controller $field) : field_config_form {
-         $form = new field_config_form(null, ['field' => $field]);
-         $form->set_data(api::prepare_field_for_config_form($field));
-         return $form;
-    }
-
-    /**
      * Generates a name for the new category
      *
      * @param int $suffix
@@ -797,53 +785,5 @@ abstract class handler {
         foreach ($fielddata as $data) {
             $data->delete();
         }
-    }
-
-    /**
-     * Set up page customfield/edit.php
-     *
-     * Handler should override this method and set page context
-     *
-     * @param field_controller $field
-     * @return string page heading
-     */
-    public function setup_edit_page(field_controller $field) : string {
-        global $PAGE;
-
-        // Page context.
-        $context = $this->get_configuration_context();
-        if ($context->contextlevel == CONTEXT_MODULE) {
-            list($course, $cm) = get_course_and_cm_from_cmid($context->instanceid, '', $context->get_course_context()->instanceid);
-            require_login($course, false, $cm);
-        } else if ($context->contextlevel == CONTEXT_COURSE) {
-            require_login($context->instanceid, false);
-        } else {
-            $PAGE->set_context(null); // This will set to system context only if the context was not set before.
-            if ($PAGE->context->id != $context->id) {
-                // In case of user or block context level this method must be overridden.
-                debugging('Handler must override setup_edit_page() and set the page context before calling parent method.',
-                    DEBUG_DEVELOPER);
-            }
-        }
-
-        // Set up url and title.
-        if ($field->get('id')) {
-            $field = $this->validate_field($field);
-        } else {
-            $this->validate_category($field->get_category());
-        }
-        $url = new \moodle_url('/customfield/edit.php',
-            ['id' => $field->get('id'), 'type' => $field->get('type'), 'categoryid' => $field->get('categoryid')]);
-
-        $PAGE->set_url($url);
-        $typestr = get_string('pluginname', 'customfield_' . $field->get('type'));
-        if ($field->get('id')) {
-            $title = get_string('editingfield', 'core_customfield',
-                $field->get_formatted_name());
-        } else {
-            $title = get_string('addingnewcustomfield', 'core_customfield', $typestr);
-        }
-        $PAGE->set_title($title);
-        return $title;
     }
 }

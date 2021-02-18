@@ -21,9 +21,10 @@
  * @copyright  2018 Toni Barbera
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates', 'core/sortable_list', 'core/inplace_editable'],
+define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates', 'core/sortable_list',
+        'core_form/modalform', 'core/inplace_editable'],
     function(
-        $, Str, Notification, Ajax, Templates, SortableList) {
+        $, Str, Notification, Ajax, Templates, SortableList, ModalForm) {
 
     /**
      * Display confirmation dialogue
@@ -84,6 +85,48 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
         }).fail(Notification.exception);
     };
 
+    /**
+     * Create new custom field
+     *
+     * @param {HTMLElement} element
+     */
+    var createNewField = function(element) {
+        const returnFocus = element.closest(".action-menu").querySelector(".dropdown-toggle");
+        const form = new ModalForm({
+            formClass: "core_customfield\\field_config_form",
+            args: {
+                categoryid: element.getAttribute('data-categoryid'),
+                type: element.getAttribute('data-type'),
+            },
+            modalConfig: {
+                title: Str.get_string('addingnewcustomfield', 'core_customfield', element.getAttribute('data-typename')),
+            },
+            returnFocus,
+        });
+        form.addEventListener(form.events.FORM_SUBMITTED, () => window.location.reload());
+        form.show();
+    };
+
+    /**
+     * Edit custom field
+     *
+     * @param {HTMLElement} element
+     */
+    var editField = function(element) {
+        const form = new ModalForm({
+            formClass: "core_customfield\\field_config_form",
+            args: {
+                id: element.getAttribute('data-id'),
+            },
+            modalConfig: {
+                title: Str.get_string('editingfield', 'core_customfield', element.getAttribute('data-name')),
+            },
+            returnFocus: element,
+        });
+        form.addEventListener(form.events.FORM_SUBMITTED, () => window.location.reload());
+        form.show();
+    };
+
     return {
         /**
          * Initialise the custom fields manager
@@ -103,6 +146,14 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
             });
             $('[data-role=addnewcategory]').on('click', function() {
                 createNewCategory(component, area, itemid);
+            });
+            $('[data-role=addfield]').on('click', function(e) {
+                createNewField(e.currentTarget);
+                e.preventDefault();
+            });
+            $('[data-role=editfield]').on('click', function(e) {
+                editField(e.currentTarget);
+                e.preventDefault();
             });
 
             var categoryName = function(element) {

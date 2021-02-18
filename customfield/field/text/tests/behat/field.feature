@@ -1,4 +1,4 @@
-@customfield @customfield_text
+@customfield @customfield_text @javascript
 Feature: Managers can manage course custom fields text
   In order to have additional data on the course
   As a manager
@@ -17,7 +17,7 @@ Feature: Managers can manage course custom fields text
     And I set the following fields to these values:
       | Name       | Test field |
       | Short name | testfield  |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     Then I should see "Test field"
     And I log out
 
@@ -27,24 +27,23 @@ Feature: Managers can manage course custom fields text
     And I set the following fields to these values:
       | Name       | Test field |
       | Short name | testfield  |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I click on "Edit" "link" in the "Test field" "table_row"
     And I set the following fields to these values:
       | Name | Edited field |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Updating Test field" "dialogue"
     Then I should see "Edited field"
     And I navigate to "Reports > Logs" in site administration
     And I press "Get these logs"
     And I log out
 
-  @javascript
   Scenario: Delete a custom course text field
     When I click on "Add a new custom field" "link"
     And I click on "Short text" "link"
     And I set the following fields to these values:
       | Name       | Test field |
       | Short name | testfield  |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I click on "Delete" "link" in the "Test field" "table_row"
     And I click on "Yes" "button" in the "Confirm" "dialogue"
     And I wait until the page is ready
@@ -70,7 +69,7 @@ Feature: Managers can manage course custom fields text
       | Short name | testfield                 |
       | Visible to | Everyone                  |
       | Link       | https://www.moodle.org/$$ |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I log out
     Then I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -99,7 +98,7 @@ Feature: Managers can manage course custom fields text
       | Name       | Test field |
       | Short name | testfield  |
       | Maximum number of characters | 3          |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I log out
     Then I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -126,7 +125,7 @@ Feature: Managers can manage course custom fields text
       | Name          | Test field  |
       | Short name    | testfield   |
       | Default value | testdefault |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
     And I log out
     Then I log in as "teacher1"
     When I am on site homepage
