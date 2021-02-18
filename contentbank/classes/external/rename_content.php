@@ -79,7 +79,7 @@ class rename_content extends external_api {
         $params['name'] = clean_param($params['name'], PARAM_TEXT);
 
         // If name is empty don't try to rename and return a more detailed message.
-        if (empty(trim($params['name']))) {
+        if (trim($params['name']) === '') {
             $warnings[] = [
                 'item' => $contentid,
                 'warningcode' => 'emptynamenotallowed',
