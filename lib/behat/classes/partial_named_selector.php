@@ -268,7 +268,7 @@ XPATH
 XPATH
         ,
             'date_time' => <<<XPATH
-.//fieldset[(%idMatch% or ./legend[%tagTextMatch%]) and (@data-fieldtype='date' or @data-fieldtype='date_time')]
+.//fieldset[(%idMatch% or ./legend[%exactTagTextMatch%]) and (@data-fieldtype='date' or @data-fieldtype='date_time')]
 XPATH
         ],
     ];
@@ -286,6 +286,12 @@ XPATH
         ],
         '%ariaLabelMatch%' => [
             'moodle' => 'contains(./@aria-label, %locator%)',
+        ],
+        '%exactTagTextMatch%' => [
+            // This is based upon the upstream tagTextMatch but performs an exact match rather than a loose match using
+            // contains().
+            // If possible we should only use exact matches for any new form fields that we add.
+            'moodle' => 'normalize-space(text())=%locator%',
         ],
     ];
 
