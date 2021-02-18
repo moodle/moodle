@@ -4940,9 +4940,6 @@ class core_renderer_cli extends core_renderer {
             $ascii .= '<cursor:up>';
             $ascii .= sprintf("[$bar] %3.1f%% %-22s\n", $percent, $estimate);
             $ascii .= sprintf("%-80s\n", $msg);
-            if ($percent == 100) {
-                $ascii .= "\n";
-            }
             return cli_ansi_format($ascii);
         }
 
@@ -4951,12 +4948,12 @@ class core_renderer_cli extends core_renderer {
         // which can only ever go forwards.
         $done = round($percent * $size * 0.01);
         $delta = max(0, $done - $this->progressmaximums[$id]);
-        $this->progressmaximums[$id] += $delta;
 
         $ascii .= str_repeat('#', $delta);
-        if ($percent >= 100) {
+        if ($percent >= 100 && $delta > 0) {
             $ascii .= sprintf("] %3.1f%%\n$msg\n", $percent);
         }
+        $this->progressmaximums[$id] += $delta;
         return $ascii;
     }
 
