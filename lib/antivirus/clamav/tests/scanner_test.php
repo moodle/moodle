@@ -49,7 +49,7 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
 
         // Test specifying file that does not exist.
         $nonexistingfile = $this->tempfile . '_';
-        $this->assertFileNotExists($nonexistingfile);
+        $this->assertFileDoesNotExist($nonexistingfile);
         // Run mock scanning, we expect SCAN_RESULT_ERROR.
         $this->assertEquals(2, $antivirus->scan_file($nonexistingfile, ''));
         $this->assertDebuggingCalled();
@@ -263,7 +263,7 @@ class antivirus_clamav_scanner_testcase extends advanced_testcase {
         $this->expectException(\core\antivirus\scanner_exception::class);
         $antivirus->scan_file($this->tempfile, '');
         $this->assertEquals('antivirusfailed', $this->getExpectedExceptionCode());
-        $this->assertFileNotExists($this->tempfile);
+        $this->assertFileDoesNotExist($this->tempfile);
     }
 
     public function test_scan_data_no_virus() {

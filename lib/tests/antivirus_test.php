@@ -82,7 +82,7 @@ class core_antivirus_testcase extends advanced_testcase {
         $this->expectException(\core\antivirus\scanner_exception::class);
         $this->assertEmpty(\core\antivirus\manager::scan_file($this->tempfile, 'FOUND', true));
         // File expected to be deleted.
-        $this->assertFileNotExists($this->tempfile);
+        $this->assertFileDoesNotExist($this->tempfile);
     }
 
     public function test_manager_send_message_to_user_email_scan_file_virus() {
