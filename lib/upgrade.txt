@@ -48,6 +48,9 @@ information provided here is intended especially for developers.
   those fields. This replaces existing functions get_extra_user_fields(), get_extra_user_fields_sql(),
   get_user_field_name(), get_all_user_name_fields(), and user_picture::fields(), which have all been
   deprecated.
+* The behat transformation 'string time to timestamp' no longer supports datetime format. If provided, the format must
+  be strftime compatible. Example:
+    - I should see "##tomorrow noon##%A, %d %B %Y, %I:%M %p##"
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:
