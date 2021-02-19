@@ -167,8 +167,8 @@ class behat_transformations extends behat_base {
 
         $count = count($timepassed);
         if ($count === 2) {
-            // If timestamp with spcified format, then retrun date.
-            return date($timepassed[1], $timestamp);
+            // If timestamp with specified strftime format, then return formatted date string.
+            return userdate($timestamp, $timepassed[1]);
         } else if ($count === 1) {
             return $timestamp;
         } else {
