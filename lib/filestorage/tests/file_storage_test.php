@@ -86,7 +86,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         // Tests that missing content file is recreated.
 
         unlink($location);
-        $this->assertFileNotExists($location);
+        $this->assertFileDoesNotExist($location);
 
         $filerecord['filename'] = 'testfile2.txt';
         $file2 = $fs->create_file_from_string($filerecord, $content);
@@ -158,7 +158,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         // Tests that missing content file is recreated.
 
         unlink($location);
-        $this->assertFileNotExists($location);
+        $this->assertFileDoesNotExist($location);
 
         $filerecord['filename'] = 'testfile2.jpg';
         $file2 = $fs->create_file_from_pathname($filerecord, $filepath);

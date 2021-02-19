@@ -251,8 +251,8 @@ class core_plugin_manager_testcase extends advanced_testcase {
         $this->assertFileExists("$CFG->dirroot/mod/assign", 'assign module is not present');
         $this->assertFileExists("$CFG->dirroot/mod/forum", 'forum module is not present');
         $this->assertFileExists("$CFG->dirroot/$CFG->admin/tool/phpunit", 'phpunit tool is not present');
-        $this->assertFileNotExists("$CFG->dirroot/mod/xxxxxxx");
-        $this->assertFileNotExists("$CFG->dirroot/enrol/autorize");
+        $this->assertFileDoesNotExist("$CFG->dirroot/mod/xxxxxxx");
+        $this->assertFileDoesNotExist("$CFG->dirroot/enrol/autorize");
 
         // Ready for upgrade.
         $assignversion = get_config('mod_assign', 'version');

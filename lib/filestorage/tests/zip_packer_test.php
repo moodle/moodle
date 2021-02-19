@@ -143,7 +143,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
         $packer = get_file_packer('application/zip');
         $archive = "$CFG->tempdir/archive.zip";
 
-        $this->assertFileNotExists($archive);
+        $this->assertFileDoesNotExist($archive);
         $result = $packer->archive_to_pathname($this->files, $archive);
         $this->assertTrue($result);
         $this->assertFileExists($archive);
@@ -157,15 +157,15 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
 
         // Test invalid files parameter.
         $archive = "$CFG->tempdir/archive2.zip";
-        $this->assertFileNotExists($archive);
+        $this->assertFileDoesNotExist($archive);
 
-        $this->assertFileNotExists(__DIR__.'/xx/yy/ee.txt');
+        $this->assertFileDoesNotExist(__DIR__.'/xx/yy/ee.txt');
         $files = array('xtest.txt'=>__DIR__.'/xx/yy/ee.txt');
 
         $result = $packer->archive_to_pathname($files, $archive, false);
         $this->assertFalse($result);
         $this->assertDebuggingCalled();
-        $this->assertFileNotExists($archive);
+        $this->assertFileDoesNotExist($archive);
 
         $result = $packer->archive_to_pathname($files, $archive);
         $this->assertTrue($result);
@@ -175,7 +175,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
         $this->assertSame(array(), $archivefiles);
         unlink($archive);
 
-        $this->assertFileNotExists(__DIR__.'/xx/yy/ee.txt');
+        $this->assertFileDoesNotExist(__DIR__.'/xx/yy/ee.txt');
         $this->assertFileExists(__DIR__.'/fixtures/test.txt');
         $files = array('xtest.txt'=>__DIR__.'/xx/yy/ee.txt', 'test.txt'=>__DIR__.'/fixtures/test.txt', 'ytest.txt'=>__DIR__.'/xx/yy/yy.txt');
         $result = $packer->archive_to_pathname($files, $archive);
@@ -338,7 +338,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
         }
         foreach ($donotextract as $file) {
             $this->assertFalse(isset($result[$file]));
-            $this->assertFileNotExists($target.$file);
+            $this->assertFileDoesNotExist($target.$file);
         }
 
     }
@@ -429,7 +429,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
         $packer = get_file_packer('application/zip');
         $archive = "$CFG->tempdir/archive.zip";
 
-        $this->assertFileNotExists($archive);
+        $this->assertFileDoesNotExist($archive);
         $packer->archive_to_pathname(array(), $archive);
         $this->assertFileExists($archive);
 
@@ -469,7 +469,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
         $textfile = "$CFG->tempdir/textfile.txt";
         touch($textfile);
 
-        $this->assertFileNotExists($archive);
+        $this->assertFileDoesNotExist($archive);
         $this->assertFileExists($textfile);
 
         // Create archive and close it without files.
@@ -524,7 +524,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
             $this->assertInstanceOf('PHPUnit\Framework\ExpectationFailedException', $e);
             $this->assertTrue($result);
         }
-        $this->assertFileNotExists($archive);
+        $this->assertFileDoesNotExist($archive);
     }
 
     /**
@@ -537,7 +537,7 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
 
         $archive = "$CFG->tempdir/archive.zip";
 
-        $this->assertFileNotExists($archive);
+        $this->assertFileDoesNotExist($archive);
 
         $zip_archive = new zip_archive();
         $result = $zip_archive->open($archive, file_archive::OPEN);
