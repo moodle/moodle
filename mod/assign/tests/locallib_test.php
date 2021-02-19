@@ -2307,7 +2307,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         // No feedback should be available because this student has not been graded.
         $this->setUser($student);
         $output = $assign->view_student_summary($student, true);
-        $this->assertNotRegexp('/Feedback/', $output, 'Do not show feedback if there is no grade');
+        $this->assertDoesNotMatchRegularExpression('/Feedback/', $output, 'Do not show feedback if there is no grade');
 
         // Simulate adding a grade.
         $this->add_submission($student, $assign);
@@ -2317,7 +2317,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         // Now we should see the feedback.
         $this->setUser($student);
         $output = $assign->view_student_summary($student, true);
-        $this->assertRegexp('/Feedback/', $output, 'Show feedback if there is a grade');
+        $this->assertMatchesRegularExpression('/Feedback/', $output, 'Show feedback if there is a grade');
 
         // Now hide the grade in gradebook.
         $this->setUser($teacher);
@@ -2333,7 +2333,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         // No feedback should be available because the grade is hidden.
         $this->setUser($student);
         $output = $assign->view_student_summary($student, true);
-        $this->assertNotRegexp('/Feedback/', $output, 'Do not show feedback if the grade is hidden in the gradebook');
+        $this->assertDoesNotMatchRegularExpression('/Feedback/', $output, 'Do not show feedback if the grade is hidden in the gradebook');
     }
 
     public function test_show_student_summary_with_feedback() {
@@ -2353,7 +2353,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         // No feedback should be available because this student has not been graded.
         $this->setUser($student);
         $output = $assign->view_student_summary($student, true);
-        $this->assertNotRegexp('/Feedback/', $output);
+        $this->assertDoesNotMatchRegularExpression('/Feedback/', $output);
 
         // Simulate adding a grade.
         $this->add_submission($student, $assign);
@@ -2368,10 +2368,10 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         // Should have feedback but no grade.
         $this->setUser($student);
         $output = $assign->view_student_summary($student, true);
-        $this->assertRegexp('/Feedback/', $output);
-        $this->assertRegexp('/Tomato sauce/', $output);
-        $this->assertNotRegexp('/Grade/', $output, 'Do not show grade when there is no grade.');
-        $this->assertNotRegexp('/Graded on/', $output, 'Do not show graded date when there is no grade.');
+        $this->assertMatchesRegularExpression('/Feedback/', $output);
+        $this->assertMatchesRegularExpression('/Tomato sauce/', $output);
+        $this->assertDoesNotMatchRegularExpression('/Grade/', $output, 'Do not show grade when there is no grade.');
+        $this->assertDoesNotMatchRegularExpression('/Graded on/', $output, 'Do not show graded date when there is no grade.');
 
         // Add a grade now.
         $this->mark_submission($teacher, $assign, $student, 50.0, [
@@ -2384,10 +2384,10 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         // Should have feedback but no grade.
         $this->setUser($student);
         $output = $assign->view_student_summary($student, true);
-        $this->assertNotRegexp('/Tomato sauce/', $output);
-        $this->assertRegexp('/Bechamel sauce/', $output);
-        $this->assertRegexp('/Grade/', $output);
-        $this->assertRegexp('/Graded on/', $output);
+        $this->assertDoesNotMatchRegularExpression('/Tomato sauce/', $output);
+        $this->assertMatchesRegularExpression('/Bechamel sauce/', $output);
+        $this->assertMatchesRegularExpression('/Grade/', $output);
+        $this->assertMatchesRegularExpression('/Graded on/', $output);
 
         // Now hide the grade in gradebook.
         $this->setUser($teacher);
@@ -2402,7 +2402,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         // No feedback should be available because the grade is hidden.
         $this->setUser($student);
         $output = $assign->view_student_summary($student, true);
-        $this->assertNotRegexp('/Feedback/', $output, 'Do not show feedback if the grade is hidden in the gradebook');
+        $this->assertDoesNotMatchRegularExpression('/Feedback/', $output, 'Do not show feedback if the grade is hidden in the gradebook');
     }
 
     /**
@@ -2574,7 +2574,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         // Check that the student now has a button for Add a new attempt.
         $this->setUser($student);
         $output = $assign->view_student_summary($student, true);
-        $this->assertRegexp('/' . get_string('addnewattempt', 'assign') . '/', $output);
+        $this->assertMatchesRegularExpression('/' . get_string('addnewattempt', 'assign') . '/', $output);
         $this->assertNotEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
     }
 

@@ -133,14 +133,14 @@ class media_youtube_testcase extends advanced_testcase {
         $this->assertTrue($manager->can_embed_url($url, $embedoptions));
         $content = $manager->embed_url($url, 'Test & file', 0, 0, $embedoptions);
 
-        $this->assertRegExp('~mediaplugin_youtube~', $content);
-        $this->assertRegExp('~</iframe>~', $content);
-        $this->assertRegExp('~width="' . $CFG->media_default_width . '" height="' .
+        $this->assertMatchesRegularExpression('~mediaplugin_youtube~', $content);
+        $this->assertMatchesRegularExpression('~</iframe>~', $content);
+        $this->assertMatchesRegularExpression('~width="' . $CFG->media_default_width . '" height="' .
             $CFG->media_default_height . '"~', $content);
 
         // Repeat sending the specific size to the manager.
         $content = $manager->embed_url($url, 'New file', 123, 50, $embedoptions);
-        $this->assertRegExp('~width="123" height="50"~', $content);
+        $this->assertMatchesRegularExpression('~width="123" height="50"~', $content);
     }
 
     /**
@@ -154,9 +154,9 @@ class media_youtube_testcase extends advanced_testcase {
         $text = html_writer::link($url, 'Watch this one');
         $content = format_text($text, FORMAT_HTML);
 
-        $this->assertRegExp('~mediaplugin_youtube~', $content);
-        $this->assertRegExp('~</iframe>~', $content);
-        $this->assertRegExp('~width="' . $CFG->media_default_width . '" height="' .
+        $this->assertMatchesRegularExpression('~mediaplugin_youtube~', $content);
+        $this->assertMatchesRegularExpression('~</iframe>~', $content);
+        $this->assertMatchesRegularExpression('~width="' . $CFG->media_default_width . '" height="' .
             $CFG->media_default_height . '"~', $content);
     }
 
@@ -173,21 +173,21 @@ class media_youtube_testcase extends advanced_testcase {
             '<track src="'.$trackurl.'">Unsupported text</video>';
         $content = format_text($text, FORMAT_HTML);
 
-        $this->assertRegExp('~mediaplugin_youtube~', $content);
-        $this->assertRegExp('~</iframe>~', $content);
-        $this->assertRegExp('~width="' . $CFG->media_default_width . '" height="' .
+        $this->assertMatchesRegularExpression('~mediaplugin_youtube~', $content);
+        $this->assertMatchesRegularExpression('~</iframe>~', $content);
+        $this->assertMatchesRegularExpression('~width="' . $CFG->media_default_width . '" height="' .
             $CFG->media_default_height . '"~', $content);
         // Video tag, unsupported text and tracks are removed.
-        $this->assertNotRegExp('~</video>~', $content);
-        $this->assertNotRegExp('~<source\b~', $content);
-        $this->assertNotRegExp('~Unsupported text~', $content);
-        $this->assertNotRegExp('~<track\b~i', $content);
+        $this->assertDoesNotMatchRegularExpression('~</video>~', $content);
+        $this->assertDoesNotMatchRegularExpression('~<source\b~', $content);
+        $this->assertDoesNotMatchRegularExpression('~Unsupported text~', $content);
+        $this->assertDoesNotMatchRegularExpression('~<track\b~i', $content);
 
         // Video with dimensions and source specified as src attribute without <source> tag.
         $text = '<video controls="true" width="123" height="35" src="'.$url.'">Unsupported text</video>';
         $content = format_text($text, FORMAT_HTML);
-        $this->assertRegExp('~mediaplugin_youtube~', $content);
-        $this->assertRegExp('~</iframe>~', $content);
-        $this->assertRegExp('~width="123" height="35"~', $content);
+        $this->assertMatchesRegularExpression('~mediaplugin_youtube~', $content);
+        $this->assertMatchesRegularExpression('~</iframe>~', $content);
+        $this->assertMatchesRegularExpression('~width="123" height="35"~', $content);
     }
 }

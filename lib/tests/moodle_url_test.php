@@ -271,7 +271,7 @@ class core_moodle_url_testcase extends advanced_testcase {
 
         $CFG->slasharguments = $slashargs;
         $url = call_user_func_array('moodle_url::make_pluginfile_url', $args);
-        $this->assertRegexp($expected, $url->out(true));
+        $this->assertMatchesRegularExpression($expected, $url->out(true));
     }
 
     /**

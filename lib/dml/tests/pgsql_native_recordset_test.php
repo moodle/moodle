@@ -423,7 +423,7 @@ class pgsql_native_recordset_testcase extends basic_testcase {
             if (!array_key_exists($index, $expected)) {
                 $this->fail('More queries than expected');
             }
-            $this->assertRegExp($expected[$index++], $line);
+            $this->assertMatchesRegularExpression($expected[$index++], $line);
         }
         if (array_key_exists($index, $expected)) {
             $this->fail('Fewer queries than expected');

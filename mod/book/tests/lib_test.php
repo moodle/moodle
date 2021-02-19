@@ -461,30 +461,30 @@ class mod_book_lib_testcase extends advanced_testcase {
         // Admin can see everything.
         $res = mod_book_get_tagged_chapters($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$chapter = */0);
-        $this->assertRegExp('/'.$chapter11->title.'</', $res->content);
-        $this->assertRegExp('/'.$chapter12->title.'</', $res->content);
-        $this->assertRegExp('/'.$chapter13->title.'</', $res->content);
-        $this->assertNotRegExp('/'.$chapter14->title.'</', $res->content);
-        $this->assertRegExp('/'.$chapter15->title.'</', $res->content);
-        $this->assertRegExp('/'.$chapter16->title.'</', $res->content);
-        $this->assertNotRegExp('/'.$chapter21->title.'</', $res->content);
-        $this->assertNotRegExp('/'.$chapter22->title.'</', $res->content);
-        $this->assertNotRegExp('/'.$chapter23->title.'</', $res->content);
-        $this->assertNotRegExp('/'.$chapter31->title.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter11->title.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter12->title.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter13->title.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter14->title.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter15->title.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter16->title.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter21->title.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter22->title.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter23->title.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter31->title.'</', $res->content);
         $this->assertEmpty($res->prevpageurl);
         $this->assertNotEmpty($res->nextpageurl);
         $res = mod_book_get_tagged_chapters($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$chapter = */1);
-        $this->assertNotRegExp('/'.$chapter11->title.'</', $res->content);
-        $this->assertNotRegExp('/'.$chapter12->title.'</', $res->content);
-        $this->assertNotRegExp('/'.$chapter13->title.'</', $res->content);
-        $this->assertNotRegExp('/'.$chapter14->title.'</', $res->content);
-        $this->assertNotRegExp('/'.$chapter15->title.'</', $res->content);
-        $this->assertNotRegExp('/'.$chapter16->title.'</', $res->content);
-        $this->assertRegExp('/'.$chapter21->title.'</', $res->content);
-        $this->assertRegExp('/'.$chapter22->title.'</', $res->content);
-        $this->assertRegExp('/'.$chapter23->title.'</', $res->content);
-        $this->assertRegExp('/'.$chapter31->title.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter11->title.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter12->title.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter13->title.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter14->title.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter15->title.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter16->title.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter21->title.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter22->title.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter23->title.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter31->title.'</', $res->content);
         $this->assertNotEmpty($res->prevpageurl);
         $this->assertEmpty($res->nextpageurl);
 
@@ -499,25 +499,25 @@ class mod_book_lib_testcase extends advanced_testcase {
         // User can not see chapters in course 3 because he is not enrolled.
         $res = mod_book_get_tagged_chapters($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$chapter = */1);
-        $this->assertRegExp('/'.$chapter22->title.'/', $res->content);
-        $this->assertRegExp('/'.$chapter23->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$chapter31->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter22->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter23->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter31->title.'/', $res->content);
 
         // User can search book chapters inside a course.
         $coursecontext = context_course::instance($course1->id);
         $res = mod_book_get_tagged_chapters($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */$coursecontext->id, /*$rec = */1, /*$chapter = */0);
-        $this->assertRegExp('/'.$chapter11->title.'/', $res->content);
-        $this->assertRegExp('/'.$chapter12->title.'/', $res->content);
-        $this->assertRegExp('/'.$chapter13->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$chapter14->title.'/', $res->content);
-        $this->assertRegExp('/'.$chapter15->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$chapter21->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$chapter22->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$chapter23->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter11->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter12->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter13->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter14->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$chapter15->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter21->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter22->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter23->title.'/', $res->content);
         $this->assertEmpty($res->nextpageurl);
 
         // User cannot see hidden chapters.
-        $this->assertNotRegExp('/'.$chapter16->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$chapter16->title.'/', $res->content);
     }
 }

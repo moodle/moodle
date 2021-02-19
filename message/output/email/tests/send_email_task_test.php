@@ -130,7 +130,7 @@ class core_message_send_email_task_testcase extends advanced_testcase {
         $this->assertStringContainsString('Group 1', $emailbody);
         $this->assertStringContainsString('Group 2', $emailbody);
         // 5 unread messages per conversation, this will be listed twice.
-        $this->assertRegExp("/<span\b[^>]*>5<\/span> <span\b[^>]*>Unread message\w+/", $emailbody);
+        $this->assertMatchesRegularExpression("/<span\b[^>]*>5<\/span> <span\b[^>]*>Unread message\w+/", $emailbody);
 
         // Confirm table was emptied after task was run.
         $this->assertEquals(0, $DB->count_records('message_email_messages'));

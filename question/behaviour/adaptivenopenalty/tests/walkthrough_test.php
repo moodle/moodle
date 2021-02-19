@@ -92,7 +92,7 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
                 $this->get_contains_incorrect_expectation(),
                 $this->get_does_not_contain_penalty_info_expectation(),
                 $this->get_does_not_contain_total_penalty_expectation());
-        $this->assertRegExp('/B|C/',
+        $this->assertMatchesRegularExpression('/B|C/',
                 $this->quba->get_response_summary($this->slot));
 
         // Process a change of answer to the right one, but not sumbitted.
@@ -106,7 +106,7 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
                 $this->get_contains_mc_radio_expectation($rightindex, true, true),
                 $this->get_contains_mc_radio_expectation(($rightindex + 1) % 3, true, false),
                 $this->get_contains_mc_radio_expectation(($rightindex + 2) % 3, true, false));
-        $this->assertRegExp('/B|C/',
+        $this->assertMatchesRegularExpression('/B|C/',
                 $this->quba->get_response_summary($this->slot));
 
         // Now submit the right answer.

@@ -74,7 +74,7 @@ class availability_grouping_condition_testcase extends advanced_testcase {
         // Check if available (when not available).
         $this->assertFalse($cond->is_available(false, $info, true, $user->id));
         $information = $cond->get_description(false, false, $info);
-        $this->assertRegExp('~belong to a group in.*Grouping!~', $information);
+        $this->assertMatchesRegularExpression('~belong to a group in.*Grouping!~', $information);
         $this->assertTrue($cond->is_available(true, $info, true, $user->id));
 
         // Add user to grouping and refresh cache.
@@ -85,7 +85,7 @@ class availability_grouping_condition_testcase extends advanced_testcase {
         $this->assertTrue($cond->is_available(false, $info, true, $user->id));
         $this->assertFalse($cond->is_available(true, $info, true, $user->id));
         $information = $cond->get_description(false, true, $info);
-        $this->assertRegExp('~do not belong to a group in.*Grouping!~', $information);
+        $this->assertMatchesRegularExpression('~do not belong to a group in.*Grouping!~', $information);
 
         // Admin user doesn't belong to the grouping, but they can access it
         // either way (positive or NOT) because of accessallgroups.
@@ -98,7 +98,7 @@ class availability_grouping_condition_testcase extends advanced_testcase {
         $cond = new condition((object)array('id' => $grouping->id + 1000));
         $this->assertFalse($cond->is_available(false, $info, true, $user->id));
         $information = $cond->get_description(false, false, $info);
-        $this->assertRegExp('~belong to a group in.*(Missing grouping)~', $information);
+        $this->assertMatchesRegularExpression('~belong to a group in.*(Missing grouping)~', $information);
 
         // We need an actual cm object to test the 'grouping from cm' option.
         $pagegen = $generator->get_plugin_generator('mod_page');
@@ -118,7 +118,7 @@ class availability_grouping_condition_testcase extends advanced_testcase {
         groups_remove_member($group, $user);
         get_fast_modinfo($course->id, 0, true);
         $this->assertFalse($info->is_available($information, false, $user->id));
-        $this->assertRegExp('~belong to a group in.*Grouping!~', $information);
+        $this->assertMatchesRegularExpression('~belong to a group in.*Grouping!~', $information);
     }
 
     /**

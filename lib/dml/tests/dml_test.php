@@ -4495,7 +4495,7 @@ EOD;
             $this->assertInstanceOf('coding_exception', $e);
         } catch (Error $error) {
             // PHP 7.1 throws Error even earlier.
-            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
+            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
         }
 
         // Cover the function using placeholders in all positions.

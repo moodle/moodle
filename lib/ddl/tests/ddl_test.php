@@ -2228,7 +2228,7 @@ class core_ddl_testcase extends database_driver_testcase {
             $result1 = $gen->getNameForObject($table, $fields, $suffix);
 
             // Make sure we end up with _fl2_ in the result.
-            $this->assertRegExp('/_fl2_/', $result1);
+            $this->assertMatchesRegularExpression('/_fl2_/', $result1);
 
             // Now, use a field that would result in the same key if it wasn't already taken.
             $fields = "fl2";
@@ -2237,7 +2237,7 @@ class core_ddl_testcase extends database_driver_testcase {
             // - _fl2_ (removing the original 2, and adding a counter 2)
             // - then settle on _fl3_.
             $result2 = $gen->getNameForObject($table, $fields, $suffix);
-            $this->assertRegExp('/_fl3_/', $result2);
+            $this->assertMatchesRegularExpression('/_fl3_/', $result2);
 
             // Make sure they don't match.
             $this->assertNotEquals($result1, $result2);
@@ -2249,7 +2249,7 @@ class core_ddl_testcase extends database_driver_testcase {
             $result3 = $gen->getNameForObject($table, $fields, $suffix);
 
             $this->assertNotEquals($result2, $result3);
-            $this->assertRegExp('/_fl4_/', $result3);
+            $this->assertMatchesRegularExpression('/_fl4_/', $result3);
         }
     }
 

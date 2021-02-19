@@ -888,7 +888,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->assertEquals(2, count($messages));
 
         foreach ($messages as $message) {
-            $this->assertRegExp('/Reply-To: moodlemoodle123\+[^@]*@example.com/', $message->header);
+            $this->assertMatchesRegularExpression('/Reply-To: moodlemoodle123\+[^@]*@example.com/', $message->header);
         }
     }
 
@@ -1255,10 +1255,10 @@ class mod_forum_mail_testcase extends advanced_testcase {
                 }
                 foreach ($foundexpectation['contents'] as $content) {
                     if (strpos($content, '~') !== 0) {
-                        $this->assertRegexp('#' . $content . '#m', $mail->body);
+                        $this->assertMatchesRegularExpression('#' . $content . '#m', $mail->body);
                     } else {
                         preg_match('#' . substr($content, 1) . '#m', $mail->body, $matches);
-                        $this->assertNotRegexp('#' . substr($content, 1) . '#m', $mail->body);
+                        $this->assertDoesNotMatchRegularExpression('#' . substr($content, 1) . '#m', $mail->body);
                     }
                 }
             }

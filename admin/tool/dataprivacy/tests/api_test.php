@@ -133,7 +133,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $result = api::update_request_status($requestid, api::DATAREQUEST_STATUS_AWAITING_APPROVAL, 0, $secondcomment);
         $this->assertTrue($result);
         $datarequest = new data_request($requestid);
-        $this->assertRegExp("/.*{$comment}.*{$secondcomment}/s", $datarequest->get('dpocomment'));
+        $this->assertMatchesRegularExpression("/.*{$comment}.*{$secondcomment}/s", $datarequest->get('dpocomment'));
 
         // Update with a valid status.
         $result = api::update_request_status($requestid, api::DATAREQUEST_STATUS_DOWNLOAD_READY);
