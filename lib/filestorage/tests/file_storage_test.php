@@ -393,7 +393,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->assertEquals($userrepository->id, $newstoredfile->get_repository_id());
         $this->assertEquals($originalfile->get_contenthash(), $newstoredfile->get_contenthash());
         $this->assertEquals($originalfile->get_filesize(), $newstoredfile->get_filesize());
-        $this->assertRegExp('#' . $filename. '$#', $newstoredfile->get_reference_details());
+        $this->assertMatchesRegularExpression('#' . $filename. '$#', $newstoredfile->get_reference_details());
 
         // Test looking for references.
         $count = $fs->get_references_count_by_storedfile($originalfile);
@@ -485,7 +485,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->assertEquals($userrepository->id, $newstoredfile->get_repository_id());
         $this->assertEquals($originalfile->get_contenthash(), $newstoredfile->get_contenthash());
         $this->assertEquals($originalfile->get_filesize(), $newstoredfile->get_filesize());
-        $this->assertRegExp('#' . $filename . '$#', $newstoredfile->get_reference_details());
+        $this->assertMatchesRegularExpression('#' . $filename . '$#', $newstoredfile->get_reference_details());
     }
 
     private function setup_three_private_files() {

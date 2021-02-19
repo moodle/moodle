@@ -92,7 +92,7 @@ class core_media_player_native_testcase extends advanced_testcase {
         $title = 'Some Filename Video';
         $content = $player->embed($urls, $title, 0, 0, []);
 
-        $this->assertRegExp('~title="' . $title . '"~', $content);
+        $this->assertMatchesRegularExpression('~title="' . $title . '"~', $content);
         $this->assertEquals($title, media_test_native_plugin::get_attribute($content, 'title'));
     }
 
@@ -112,27 +112,27 @@ class core_media_player_native_testcase extends advanced_testcase {
 
         // Add attributes.
         $content = media_test_native_plugin::add_attributes($content, ['preload' => 'none', 'controls' => 'true']);
-        $this->assertRegExp('~title="' . $title . '"~', $content);
-        $this->assertRegExp('~preload="none"~', $content);
-        $this->assertRegExp('~controls="true"~', $content);
+        $this->assertMatchesRegularExpression('~title="' . $title . '"~', $content);
+        $this->assertMatchesRegularExpression('~preload="none"~', $content);
+        $this->assertMatchesRegularExpression('~controls="true"~', $content);
 
         // Change existing attribute.
         $content = media_test_native_plugin::add_attributes($content, ['controls' => 'false']);
-        $this->assertRegExp('~title="' . $title . '"~', $content);
-        $this->assertRegExp('~preload="none"~', $content);
-        $this->assertRegExp('~controls="false"~', $content);
+        $this->assertMatchesRegularExpression('~title="' . $title . '"~', $content);
+        $this->assertMatchesRegularExpression('~preload="none"~', $content);
+        $this->assertMatchesRegularExpression('~controls="false"~', $content);
 
         // Remove attributes.
         $content = media_test_native_plugin::remove_attributes($content, ['title']);
-        $this->assertNotRegExp('~title="' . $title . '"~', $content);
-        $this->assertRegExp('~preload="none"~', $content);
-        $this->assertRegExp('~controls="false"~', $content);
+        $this->assertDoesNotMatchRegularExpression('~title="' . $title . '"~', $content);
+        $this->assertMatchesRegularExpression('~preload="none"~', $content);
+        $this->assertMatchesRegularExpression('~controls="false"~', $content);
 
         // Remove another one.
         $content = media_test_native_plugin::remove_attributes($content, ['preload']);
-        $this->assertNotRegExp('~title="' . $title . '"~', $content);
-        $this->assertNotRegExp('~preload="none"~', $content);
-        $this->assertRegExp('~controls="false"~', $content);
+        $this->assertDoesNotMatchRegularExpression('~title="' . $title . '"~', $content);
+        $this->assertDoesNotMatchRegularExpression('~preload="none"~', $content);
+        $this->assertMatchesRegularExpression('~controls="false"~', $content);
     }
 
     /**

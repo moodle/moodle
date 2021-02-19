@@ -684,28 +684,28 @@ class mod_wiki_lib_testcase extends advanced_testcase {
         // Admin can see everything.
         $res = mod_wiki_get_tagged_pages($tag, /*$exclusivemode = */false,
                 /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$page = */0);
-        $this->assertRegExp('/'.$page11->title.'/', $res->content);
-        $this->assertRegExp('/'.$page12->title.'/', $res->content);
-        $this->assertRegExp('/'.$page13->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page14->title.'/', $res->content);
-        $this->assertRegExp('/'.$page15->title.'/', $res->content);
-        $this->assertRegExp('/'.$page21->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page22->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page23->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page31->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page11->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page12->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page13->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page14->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page15->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page21->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page22->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page23->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page31->title.'/', $res->content);
         $this->assertEmpty($res->prevpageurl);
         $this->assertNotEmpty($res->nextpageurl);
         $res = mod_wiki_get_tagged_pages($tag, /*$exclusivemode = */false,
                 /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$page = */1);
-        $this->assertNotRegExp('/'.$page11->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page12->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page13->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page14->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page15->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page21->title.'/', $res->content);
-        $this->assertRegExp('/'.$page22->title.'/', $res->content);
-        $this->assertRegExp('/'.$page23->title.'/', $res->content);
-        $this->assertRegExp('/'.$page31->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page11->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page12->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page13->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page14->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page15->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page21->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page22->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page23->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page31->title.'/', $res->content);
         $this->assertNotEmpty($res->prevpageurl);
         $this->assertEmpty($res->nextpageurl);
 
@@ -720,22 +720,22 @@ class mod_wiki_lib_testcase extends advanced_testcase {
         // User can not see pages in course 3 because he is not enrolled.
         $res = mod_wiki_get_tagged_pages($tag, /*$exclusivemode = */false,
                 /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$page = */1);
-        $this->assertRegExp('/'.$page22->title.'/', $res->content);
-        $this->assertRegExp('/'.$page23->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page31->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page22->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page23->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page31->title.'/', $res->content);
 
         // User can search wiki pages inside a course.
         $coursecontext = context_course::instance($course1->id);
         $res = mod_wiki_get_tagged_pages($tag, /*$exclusivemode = */false,
                 /*$fromctx = */0, /*$ctx = */$coursecontext->id, /*$rec = */1, /*$page = */0);
-        $this->assertRegExp('/'.$page11->title.'/', $res->content);
-        $this->assertRegExp('/'.$page12->title.'/', $res->content);
-        $this->assertRegExp('/'.$page13->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page14->title.'/', $res->content);
-        $this->assertRegExp('/'.$page15->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page21->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page22->title.'/', $res->content);
-        $this->assertNotRegExp('/'.$page23->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page11->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page12->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page13->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page14->title.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$page15->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page21->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page22->title.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$page23->title.'/', $res->content);
         $this->assertEmpty($res->nextpageurl);
     }
 

@@ -173,7 +173,7 @@ class core_theme_config_testcase extends advanced_testcase {
         theme_set_sub_revision_for_theme($themename, $themesubrevision);
         $url = $theme->editor_css_url();
 
-        $this->assertRegExp("/{$themerevision}_{$themesubrevision}/", $url->out(false));
+        $this->assertMatchesRegularExpression("/{$themerevision}_{$themesubrevision}/", $url->out(false));
     }
 
     /**

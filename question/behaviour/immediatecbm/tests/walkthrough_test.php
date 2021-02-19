@@ -60,7 +60,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
                 $this->get_does_not_contain_feedback_expectation());
         $this->assertEquals('A [' . question_cbm::get_short_string(question_cbm::HIGH) . ']',
                 $this->quba->get_right_answer_summary($this->slot));
-        $this->assertRegExp('/' . preg_quote($mc->questiontext, '/') . '/',
+        $this->assertMatchesRegularExpression('/' . preg_quote($mc->questiontext, '/') . '/',
                 $this->quba->get_question_summary($this->slot));
         $this->assertNull($this->quba->get_response_summary($this->slot));
 

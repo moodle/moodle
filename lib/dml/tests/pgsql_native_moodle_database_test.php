@@ -144,7 +144,7 @@ class pgsql_native_moodle_database_testcase extends advanced_testcase {
         list($usql, $params) = $DB->get_in_or_equal($invalues, SQL_PARAMS_NAMED);
         $regex = '/^'.
             preg_quote('IN (VALUES (:param'.$index.'::bigint),(:param'.++$index.'::bigint),(:param'.++$index.'::bigint)').'/';
-        $this->assertRegExp($regex, $usql);
+        $this->assertMatchesRegularExpression($regex, $usql);
         foreach ($params as $value) {
             $this->assertEquals(current($invalues), $value);
             next($invalues);
@@ -160,7 +160,7 @@ class pgsql_native_moodle_database_testcase extends advanced_testcase {
         // We are in same DBI instance, expect uniqie param indexes.
         $regex = '/^'.
             preg_quote('IN (VALUES (:ppp'.$index.'::bigint),(:ppp'.++$index.'::bigint),(:ppp'.++$index.'::bigint)').'/';
-        $this->assertRegExp($regex, $usql);
+        $this->assertMatchesRegularExpression($regex, $usql);
         foreach ($params as $value) {
             $this->assertEquals(current($invalues), $value);
             next($invalues);
@@ -172,7 +172,7 @@ class pgsql_native_moodle_database_testcase extends advanced_testcase {
         // 65535 values, string.
         $invalues = array_fill(1, 65535, 'abc');
         list($usql, $params) = $DB->get_in_or_equal($invalues);
-        $this->assertRegExp('/^' . preg_quote('IN (VALUES (?::text),(?::text),(?::text)') . '/', $usql);
+        $this->assertMatchesRegularExpression('/^' . preg_quote('IN (VALUES (?::text),(?::text),(?::text)') . '/', $usql);
         foreach ($params as $value) {
             $this->assertEquals(current($invalues), $value);
             next($invalues);

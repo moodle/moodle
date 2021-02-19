@@ -240,7 +240,7 @@ class qbehaviour_immediatefeedback_walkthrough_test extends qbehaviour_walkthrou
                 $this->get_contains_mc_radio_expectation(($wrongindex + 1) % 3, false, false),
                 $this->get_contains_mc_radio_expectation(($wrongindex + 1) % 3, false, false),
                 $this->get_contains_incorrect_expectation());
-        $this->assertRegExp('/B|C/',
+        $this->assertMatchesRegularExpression('/B|C/',
                 $this->quba->get_response_summary($this->slot));
     }
 }

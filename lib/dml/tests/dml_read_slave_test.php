@@ -81,7 +81,7 @@ class core_dml_read_slave_testcase extends base_testcase {
      * @return void
      */
     private function assert_readonly_handle($handle) : void {
-        $this->assertRegExp('/^test_ro\d:\d:test\d:test\d$/', $handle);
+        $this->assertMatchesRegularExpression('/^test_ro\d:\d:test\d:test\d$/', $handle);
     }
 
     /**

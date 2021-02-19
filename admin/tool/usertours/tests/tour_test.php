@@ -828,7 +828,7 @@ class tour_testcase extends advanced_testcase {
             set_user_preference(\tool_usertours\tour::TOUR_REQUESTED_BY_USER . $id, $userpref);
         }
 
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
                 '/' . $expectation . '/',
                 $tour->get_tour_key()
             );

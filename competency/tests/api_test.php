@@ -455,7 +455,7 @@ class core_competency_api_testcase extends advanced_testcase {
             $plan = api::update_plan($record);
             $this->fail('Updating the status is not allowed.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/To change the status of a plan use the appropriate methods./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/To change the status of a plan use the appropriate methods./', $e->getMessage());
         }
 
         // Test when user with manage own plan capability try to edit other user plan.
@@ -909,7 +909,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_request_review($tplplan);
             $this->fail('The plan is based on a template.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/Template plans cannot be reviewed./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Template plans cannot be reviewed./', $e->getMessage());
         }
 
         // Can not send for review when not draft.
@@ -919,7 +919,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_request_review($plan);
             $this->fail('The plan cannot be sent for review at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan cannot be sent for review at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan cannot be sent for review at this stage./', $e->getMessage());
         }
 
         // Can not send for review when not draft.
@@ -929,7 +929,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_request_review($plan);
             $this->fail('The plan cannot be sent for review at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan cannot be sent for review at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan cannot be sent for review at this stage./', $e->getMessage());
         }
 
         // Can not send for review when not draft.
@@ -939,7 +939,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_request_review($plan);
             $this->fail('The plan cannot be sent for review at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan cannot be sent for review at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan cannot be sent for review at this stage./', $e->getMessage());
         }
 
         // Can not send for review when not draft.
@@ -949,7 +949,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_request_review($plan);
             $this->fail('The plan cannot be sent for review at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan cannot be sent for review at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan cannot be sent for review at this stage./', $e->getMessage());
         }
 
         // Sending for review as a reviewer.
@@ -1010,7 +1010,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_cancel_review_request($tplplan);
             $this->fail('The plan is based on a template.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/Template plans cannot be reviewed./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Template plans cannot be reviewed./', $e->getMessage());
         }
 
         // Can not cancel review request when not waiting for review.
@@ -1020,7 +1020,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_cancel_review_request($plan);
             $this->fail('The plan cannot be sent for review at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan review cannot be cancelled at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan review cannot be cancelled at this stage./', $e->getMessage());
         }
 
         // Can not cancel review request when not waiting for review.
@@ -1030,7 +1030,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_cancel_review_request($plan);
             $this->fail('The plan review cannot be cancelled at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan review cannot be cancelled at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan review cannot be cancelled at this stage./', $e->getMessage());
         }
 
         // Can not cancel review request when not waiting for review.
@@ -1040,7 +1040,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_cancel_review_request($plan);
             $this->fail('The plan review cannot be cancelled at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan review cannot be cancelled at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan review cannot be cancelled at this stage./', $e->getMessage());
         }
 
         // Can not cancel review request when not waiting for review.
@@ -1050,7 +1050,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_cancel_review_request($plan);
             $this->fail('The plan review cannot be cancelled at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan review cannot be cancelled at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan review cannot be cancelled at this stage./', $e->getMessage());
         }
 
         // Cancelling as a reviewer.
@@ -1111,7 +1111,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_start_review($tplplan);
             $this->fail('The plan is based on a template.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/Template plans cannot be reviewed./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Template plans cannot be reviewed./', $e->getMessage());
         }
 
         // Can not start a review when not waiting for review.
@@ -1121,7 +1121,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_start_review($plan);
             $this->fail('The plan review cannot be started at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan review cannot be started at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan review cannot be started at this stage./', $e->getMessage());
         }
 
         // Can not start a review when not waiting for review.
@@ -1131,7 +1131,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_start_review($plan);
             $this->fail('The plan review cannot be started at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan review cannot be started at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan review cannot be started at this stage./', $e->getMessage());
         }
 
         // Can not start a review when not waiting for review.
@@ -1141,7 +1141,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_start_review($plan);
             $this->fail('The plan review cannot be started at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan review cannot be started at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan review cannot be started at this stage./', $e->getMessage());
         }
 
         // Can not start a review when not waiting for review.
@@ -1151,7 +1151,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_start_review($plan);
             $this->fail('The plan review cannot be started at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan review cannot be started at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan review cannot be started at this stage./', $e->getMessage());
         }
 
         // Starting as the owner.
@@ -1215,7 +1215,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_stop_review($tplplan);
             $this->fail('The plan is based on a template.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/Template plans cannot be reviewed./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Template plans cannot be reviewed./', $e->getMessage());
         }
 
         // Can not stop a review whe not in review.
@@ -1225,7 +1225,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_stop_review($plan);
             $this->fail('The plan review cannot be stopped at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan review cannot be stopped at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan review cannot be stopped at this stage./', $e->getMessage());
         }
 
         // Can not stop a review whe not in review.
@@ -1235,7 +1235,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_stop_review($plan);
             $this->fail('The plan review cannot be stopped at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan review cannot be stopped at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan review cannot be stopped at this stage./', $e->getMessage());
         }
 
         // Can not stop a review whe not in review.
@@ -1245,7 +1245,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_stop_review($plan);
             $this->fail('The plan review cannot be stopped at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan review cannot be stopped at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan review cannot be stopped at this stage./', $e->getMessage());
         }
 
         // Can not stop a review whe not in review.
@@ -1255,7 +1255,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::plan_stop_review($plan);
             $this->fail('The plan review cannot be stopped at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan review cannot be stopped at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan review cannot be stopped at this stage./', $e->getMessage());
         }
 
         // Stopping as the owner.
@@ -1316,7 +1316,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::approve_plan($tplplan);
             $this->fail('The plan is based on a template.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/Template plans are already approved./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Template plans are already approved./', $e->getMessage());
         }
 
         // Can not approve a plan already approved.
@@ -1326,7 +1326,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::approve_plan($plan);
             $this->fail('The plan cannot be approved at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan cannot be approved at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan cannot be approved at this stage./', $e->getMessage());
         }
 
         // Can not approve a plan already approved.
@@ -1336,7 +1336,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::approve_plan($plan);
             $this->fail('The plan cannot be approved at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan cannot be approved at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan cannot be approved at this stage./', $e->getMessage());
         }
 
         // Approve as the owner.
@@ -1411,7 +1411,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::unapprove_plan($tplplan);
             $this->fail('The plan is based on a template.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/Template plans are always approved./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Template plans are always approved./', $e->getMessage());
         }
 
         // Can not unapprove a non-draft plan.
@@ -1421,7 +1421,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::unapprove_plan($plan);
             $this->fail('The plan cannot be sent back to draft at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan cannot be sent back to draft at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan cannot be sent back to draft at this stage./', $e->getMessage());
         }
 
         // Can not unapprove a non-draft plan.
@@ -1431,7 +1431,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::unapprove_plan($plan);
             $this->fail('The plan cannot be sent back to draft at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan cannot be sent back to draft at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan cannot be sent back to draft at this stage./', $e->getMessage());
         }
 
         // Can not unapprove a non-draft plan.
@@ -1441,7 +1441,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::unapprove_plan($plan);
             $this->fail('The plan cannot be sent back to draft at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan cannot be sent back to draft at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan cannot be sent back to draft at this stage./', $e->getMessage());
         }
 
         // Can not unapprove a non-draft plan.
@@ -1451,7 +1451,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::unapprove_plan($plan);
             $this->fail('The plan cannot be sent back to draft at this stage.');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/The plan cannot be sent back to draft at this stage./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/The plan cannot be sent back to draft at this stage./', $e->getMessage());
         }
 
         // Unapprove as the owner.
@@ -2074,7 +2074,7 @@ class core_competency_api_testcase extends advanced_testcase {
                 'error', null, false, null, 1);
             $this->fail('A grade can not be set');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/grade MUST NOT be set/', $e->getMessage());
+            $this->assertMatchesRegularExpression('/grade MUST NOT be set/', $e->getMessage());
         }
     }
 
@@ -2170,7 +2170,7 @@ class core_competency_api_testcase extends advanced_testcase {
             api::add_evidence($u1->id, $c2->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE, 'invaliddata',
                 'error', null, false, null, 1);
         } catch (coding_exception $e) {
-            $this->assertRegExp('/grade MUST NOT be set/', $e->getMessage());
+            $this->assertMatchesRegularExpression('/grade MUST NOT be set/', $e->getMessage());
         }
     }
 
@@ -4063,7 +4063,7 @@ class core_competency_api_testcase extends advanced_testcase {
         } catch (moodle_exception $e) {
             $raised = true;
             $this->assertInstanceOf($exceptiontype, $e);
-            $this->assertRegExp('@' . $exceptiontext . '@', $e->getMessage());
+            $this->assertMatchesRegularExpression('@' . $exceptiontext . '@', $e->getMessage());
         }
 
         if (!$raised) {

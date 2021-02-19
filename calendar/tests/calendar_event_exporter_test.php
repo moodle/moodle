@@ -265,7 +265,7 @@ class core_calendar_event_exporter_testcase extends advanced_testcase {
 
         $exportedevent = $exporter->export($renderer);
         // Links should always be stripped from the course short name.
-        $this->assertRegExp("/$nolinkshortname/", $exportedevent->popupname);
+        $this->assertMatchesRegularExpression("/$nolinkshortname/", $exportedevent->popupname);
     }
 
     /**

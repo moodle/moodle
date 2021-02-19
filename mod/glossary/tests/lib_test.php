@@ -408,33 +408,33 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         // Get first page of tagged entries (first 5 entries).
         $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$entry = */0);
-        $this->assertRegExp('/'.$entry11->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry12->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry13->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry14->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry15->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry16->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry17->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry21->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry22->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry23->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry31->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry11->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry12->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry13->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry14->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry15->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry16->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry17->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry21->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry22->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry23->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry31->concept.'</', $res->content);
         $this->assertEmpty($res->prevpageurl);
         $this->assertNotEmpty($res->nextpageurl);
         // Get second page of tagged entries (second 5 entries).
         $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$entry = */1);
-        $this->assertNotRegExp('/'.$entry11->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry12->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry13->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry14->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry15->concept.'</', $res->content);
-        $this->assertNotRegExp('/'.$entry16->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry17->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry21->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry22->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry23->concept.'</', $res->content);
-        $this->assertRegExp('/'.$entry31->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry11->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry12->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry13->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry14->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry15->concept.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry16->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry17->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry21->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry22->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry23->concept.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry31->concept.'</', $res->content);
         $this->assertNotEmpty($res->prevpageurl);
         $this->assertEmpty($res->nextpageurl);
 
@@ -444,27 +444,27 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         // User can not see entries in course 3 because he is not enrolled.
         $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$entry = */1);
-        $this->assertRegExp('/'.$entry22->concept.'/', $res->content);
-        $this->assertRegExp('/'.$entry23->concept.'/', $res->content);
-        $this->assertNotRegExp('/'.$entry31->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry22->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry23->concept.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry31->concept.'/', $res->content);
 
         // User can search glossary entries inside a course.
         $coursecontext = context_course::instance($course1->id);
         $res = mod_glossary_get_tagged_entries($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */$coursecontext->id, /*$rec = */1, /*$entry = */0);
-        $this->assertRegExp('/'.$entry11->concept.'/', $res->content);
-        $this->assertRegExp('/'.$entry12->concept.'/', $res->content);
-        $this->assertRegExp('/'.$entry13->concept.'/', $res->content);
-        $this->assertNotRegExp('/'.$entry14->concept.'/', $res->content);
-        $this->assertRegExp('/'.$entry15->concept.'/', $res->content);
-        $this->assertNotRegExp('/'.$entry21->concept.'/', $res->content);
-        $this->assertNotRegExp('/'.$entry22->concept.'/', $res->content);
-        $this->assertNotRegExp('/'.$entry23->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry11->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry12->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry13->concept.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry14->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry15->concept.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry21->concept.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry22->concept.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry23->concept.'/', $res->content);
         $this->assertEmpty($res->nextpageurl);
 
         // User cannot see unapproved entries unless he is an author.
-        $this->assertNotRegExp('/'.$entry16->concept.'/', $res->content);
-        $this->assertRegExp('/'.$entry17->concept.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$entry16->concept.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$entry17->concept.'/', $res->content);
     }
 
     public function test_glossary_get_entries_search() {
