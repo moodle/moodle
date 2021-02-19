@@ -33,14 +33,15 @@ $string['admindirname'] = 'Katalog/mapp för administration';
 $string['availablelangs'] = 'Tillgängliga språkpaket';
 $string['chooselanguagehead'] = 'Välj ett språk';
 $string['chooselanguagesub'] = 'Vänligen välj ett språk för installationen. Du kommer att ha möjlighet att välja språk för webbplatsen och användarna på en senare skärm.';
+$string['clialreadyconfigured'] = 'Filen <em>config.php</em> finns redan. Använd <code>admin/cli/install_database.php</code> för att installera Moodle på denna server.';
 $string['clialreadyinstalled'] = 'Filen config.php finns redan. Vänligen använd admin/cli/upgrade.php om Du vill uppgradera Din webbplats.';
 $string['cliinstallheader'] = 'Installationsprogram av typ kommandorad {$a} för Moodle ';
 $string['databasehost'] = 'Värd för databas';
 $string['databasename'] = 'Namn på databas';
 $string['databasetypehead'] = 'Välj drivrutin för databasen';
-$string['dataroot'] = 'katalog för data';
+$string['dataroot'] = 'Datakatalog';
 $string['dbprefix'] = 'Prefix för tabeller';
-$string['dirroot'] = 'Katalogen för Moodle';
+$string['dirroot'] = 'Moodle-katalog';
 $string['environmenthead'] = 'Undersöker din miljö...';
 $string['errorsinenvironment'] = 'Kontrollen av miljön misslyckades';
 $string['installation'] = 'Installation';
@@ -62,12 +63,12 @@ $string['pathsunsecuredataroot'] = 'Placeringen av dataroot är inte säker';
 $string['pathswrongadmindir'] = 'Katalogen för admin saknas';
 $string['phpextension'] = '{$a} PHP tillägg';
 $string['phpversion'] = 'PHP-version';
-$string['phpversionhelp'] = '<p>Moodle kräver minst PHP 4.3.0 eller 5.1.0 (det finns ett antal kända problem med 5.0.x)</p>
-<p>Du använder f n version {$a}</p>
-<p>Du måste uppgradera PHP eller flytta till en värd som har en nyare version av PHP! Om Du har 5.0.x så bör Du nedgradera till 4.4.x.</p>';
+$string['phpversionhelp'] = '<p>Moodle kräver minst PHP-version 5.6.5 eller 7.1 (7.0.x har vissa motorbegränsningar).</p>
+<p>Du använder för närvarande version {$a}.</p>
+<p>Du måste uppgradera PHP eller flytta till en server med en nyare version av PHP.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Du ser detta eftersom du framgångsrikt har installerat och börjat använda språkpaketet <strong>{$a->packname} {$a->packversion}</strong> på din dator. Gratulerar!';
-$string['welcomep30'] = 'I den här versionen av <strong>{$a->installername}</strong> ingår de applikationer som kan skapa en miljö som <strong>Moodle</strong> kan fungera i, nämligen:';
+$string['welcomep30'] = 'Den här versionen av <strong>{$a->installername}</strong> innehåller program för att skapa en miljö där <strong>Moodle</strong> kommer att fungera, nämligen:';
 $string['welcomep40'] = 'I paketet ingår även <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Användningen av alla applikationerna i det här paketet regleras av deras respektive licenser. Det kompletta paketet <strong>{$a->installername}</strong>  är <a href="http://www.opensource.org/docs/definition_plain.html">Öppen källkod </a> och distribueras
 under <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licensen.';
