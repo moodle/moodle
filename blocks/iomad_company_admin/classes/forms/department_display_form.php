@@ -43,14 +43,14 @@ class department_display_form extends company_moodleform {
         $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
         $syscontext = context_system::instance();
 
-        $company = new company($this->selectedcompany);
-        $parentlevel = company::get_company_parentnode($company->id);
+        $this->company = new company($this->selectedcompany);
+        $parentlevel = company::get_company_parentnode($this->company->id);
         $this->companydepartment = $parentlevel->id;
         if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
             $userhierarchylevel = $parentlevel->id;
         } else {
-            $userlevel = $company->get_userlevel($USER);
-            $userhierarchylevel = $userlevel->id;
+            $userlevels = $this->company->get_userlevel($USER);
+            $userhierarchylevel = key($userlevels);
         }
 
         $this->departmentid = $userhierarchylevel;
@@ -65,23 +65,18 @@ class department_display_form extends company_moodleform {
     }
 
     public function definition() {
-        global $CFG;
+        global $CFG, $output;
 
         $mform =& $this->_form;
-        $company = new company($this->selectedcompany);
-        if (!$parentnode = company::get_company_parentnode($company->id)) {
+        if (!$parentnode = company::get_company_parentnode($this->company->id)) {
             // Company has not been set up, possibly from before an upgrade.
-            company::initialise_departments($company->id);
+            company::initialise_departments($this->company->id);
         }
 
         if (!empty($this->departmentid)) {
             $departmentslist = company::get_all_subdepartments($this->departmentid);
-            $departmenttree = company::get_all_subdepartments_raw($this->departmentid);
-            $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
         } else {
-            $departmentslist = company::get_all_departments($company->id);
-            $departmenttree = company::get_all_departments_raw($company->id);
-            $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
+            $departmentslist = company::get_all_departments($this->company->id);
         }
 
         if (!empty($this->departmentid)) {
@@ -108,7 +103,7 @@ class department_display_form extends company_moodleform {
         // Then show the fields about where this block appears.
         $mform->addElement('header', 'header',
                             get_string('companydepartment', 'block_iomad_company_admin').
-                           $company->get_name());
+                           $this->company->get_name());
 
         if (count($departmentslist) == 1) {
             $mform->addElement('html', "<h3>" . get_string('nodepartments', 'block_iomad_company_admin') . "</h3></br>");
@@ -121,14 +116,7 @@ class department_display_form extends company_moodleform {
             $mform->addElement('html', $this->notice . '</div>');
         }
 
-        $mform->addElement('html', $treehtml);
-        //$mform->addElement('html', $subdepartmenthtml);
-
-        // This is getting hidden anyway, so no need for label
-        $mform->addElement('html', "<div style='display:none;'>");
-        $mform->addElement('select', 'deptid', ' ',
-                            $departmentslist, array('class' => 'iomad_department_select'));
-        $mform->addElement('html', "</div></br>");
+        $output->display_tree_selector_form($this->company, $mform);
 
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'create',
@@ -149,7 +137,7 @@ class department_display_form extends company_moodleform {
             }
         }
         $mform->addGroup($buttonarray, 'buttonarray', '', array(' '), false);
-        }
+    }
 
     public function get_data() {
         $data = parent::get_data();
