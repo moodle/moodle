@@ -42,4 +42,13 @@ class core_renderer extends \core_renderer {
         return $this->render_single_button($button);
     }
 
+    /**
+     * Renders the "breadcrumb" for all pages in boost.
+     *
+     * @return string the HTML for the navbar.
+     */
+    public function navbar(): string {
+        $newnav = new \theme_boost\boostnavbar($this->page->navbar);
+        return $this->render_from_template('core/navbar', $newnav);
+    }
 }
