@@ -933,7 +933,12 @@ if ($mform->is_cancelled()) {
                     }
                 }
                 $user->departmentid = $department->id;
-                $user->newpassword = $user->password;
+                if (!empty($user->password)) {
+                    $user->newpassword = $user->password;
+                } else {
+                    $user->newpassword = null;
+                }
+
                 unset($user->password);
                 $user->sendnewpasswordemails = $formdata->sendnewpasswordemails;
                 $user->due = $today;
