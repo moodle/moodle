@@ -36,6 +36,9 @@ class block_iomad_company_admin_editusers_table extends table_sql {
      */
     public function col_fullname($row) {
         $name = fullname($row, has_capability('moodle/site:viewfullnames', $this->get_context()));
+        if (!empty($row->suspended)) {
+            $name .= "&nbsp(S)";
+        }
         return $name;
     }
 

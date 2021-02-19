@@ -587,7 +587,7 @@ if (!empty($showall)) {
     }
 }
 
-$selectsql = "DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", "c.id")) . " AS cindex, u.*, c.id AS companyid, c.name AS companyname";
+$selectsql = "DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", "c.id")) . " AS cindex, u.*, c.id AS companyid, c.name AS companyname, u.suspended";
 $fromsql = "{user} u JOIN {company_users} cu ON (u.id = cu.userid) JOIN {department} d ON (cu.departmentid = d.id AND cu.companyid = d.company) JOIN {company} c ON (cu.companyid = c.id AND d.company = c.id)";
 $wheresql = $searchinfo->sqlsearch . " $sqlsearch $companysql $managertypesql";
 $sqlparams = $searchinfo->searchparams + $params + array('companyid' => $companyid);
