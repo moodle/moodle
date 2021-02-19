@@ -71,6 +71,7 @@ $string['comments'] = 'Comments';
 $string['commentsaved'] = 'Comment saved';
 $string['commentsn'] = '{$a} comment(s)';
 $string['commentsoff'] = 'Comments feature is not enabled';
+$string['completiondetail:entries'] = 'Make entries: {$a}';
 $string['completionentries'] = 'Require entries';
 $string['completionentriescount'] = 'Count of entries';
 $string['completionentriesdesc'] = 'Minimum number of entries required: {$a}';
