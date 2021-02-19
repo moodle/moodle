@@ -2,6 +2,7 @@
     "features": [
         "lib/tests/behat/action_menu.feature",
         "blocks/tests/behat/hide_blocks.feature",
-        "blocks/tests/behat/move_blocks.feature"
+        "blocks/tests/behat/move_blocks.feature",
+        "repository/upload/tests/behat/upload_file.feature"
     ]
 }
