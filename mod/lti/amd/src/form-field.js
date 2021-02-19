@@ -79,7 +79,7 @@ define(['jquery'],
                     }
                     break;
                 case FormField.TYPES.EDITOR:
-                    if ($.type(value.text) !== 'undefined') {
+                    if (typeof value.text !== 'undefined') {
                         /* global tinyMCE:false */
 
                         // Set text in editor's editable content, if applicable.
