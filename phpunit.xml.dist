@@ -16,7 +16,6 @@
         stopOnSkipped="false"
         beStrictAboutTestsThatDoNotTestAnything="false"
         beStrictAboutOutputDuringTests="true"
-        testSuiteLoaderClass="phpunit_autoloader"
         >
 
     <php>
@@ -45,7 +44,7 @@
         </testsuite>
         <testsuite name="core_testsuite">
             <directory suffix="_test.php">lib/tests</directory>
-            <directory suffix="_test.php">lib/ajax/tests</directory>
+            <!-- <directory suffix="_test.php">lib/ajax/tests</directory> -->
         </testsuite>
         <testsuite name="core_favourites_testsuite">
             <directory suffix="_test.php">favourites/tests</directory>
