@@ -212,7 +212,8 @@ class external extends external_api {
                 $warnings[] = [
                     'item' => $dpo->id,
                     'warningcode' => 'errorsendingtodpo',
-                    'message' => get_string('errorsendingmessagetodpo', 'tool_dataprivacy')
+                    'message' => get_string('errorsendingmessagetodpo', 'tool_dataprivacy',
+                        fullname($dpo))
                 ];
             }
         }
