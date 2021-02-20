@@ -538,10 +538,7 @@ class filterset_test extends advanced_testcase {
      * @param array $mockedmethods anonymous array containing the list of mocked methods
      * @return filterset Mock of the filterset
      */
-    protected function get_mocked_filterset(array $mockedmethods = null): filterset {
-        if (empty($mockedmethods)) {
-            $mockedmethods = null;
-        }
+    protected function get_mocked_filterset(array $mockedmethods = []): filterset {
 
         return $this->getMockForAbstractClass(filterset::class, [], '', true, true, true, $mockedmethods);
     }
