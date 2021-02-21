@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/authlib.php');
+require_once($CFG->dirroot.'/vendor/autoload.php');
 
 /**
  * Email authentication plugin.
@@ -37,6 +38,12 @@ class auth_plugin_email extends auth_plugin_base {
     public function __construct() {
         $this->authtype = 'email';
         $this->config = get_config('auth_email');
+
+        $this->mailchimp = new MailchimpMarketing\ApiClient();
+        $this->mailchimp->setConfig([
+            'apiKey' => $this->config->mailchimp_api_key,
+            'server' => $this->config->mailchimp_server_prefix
+        ]);
     }
 
     /**
@@ -189,6 +196,16 @@ class auth_plugin_email extends auth_plugin_base {
                     $SESSION->wantsurl = $wantsurl;
                     unset_user_preference('auth_email_wantsurl', $user);
                 }
+
+                // Add the user to MailChimp
+                $this->mailchimp->lists->addListMember($this->config->mailchimp_audience_list_id, [
+                    "email_address" => $user->email,
+                    "status" => "subscribed",
+                    "merge_fields" => [
+                      "FNAME" => $user->firstname,
+                      "LNAME" => $user->lastname
+                    ]
+                ]);
 
                 return AUTH_CONFIRM_OK;
             }

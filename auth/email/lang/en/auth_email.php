@@ -29,3 +29,7 @@ $string['auth_emailrecaptcha_key'] = 'Enable reCAPTCHA element';
 $string['auth_emailsettings'] = 'Settings';
 $string['pluginname'] = 'Email-based self-registration';
 $string['privacy:metadata'] = 'The Email-based self-registration authentication plugin does not store any personal data.';
+
+$string['auth_emailmailchimp_api_key'] = 'MailChimp API Key';
+$string['auth_emailmailchimp_server_prefix'] = 'MailChimp Server Prefix';
+$string['auth_emailmailchimp_audience_list_id'] = 'MailChimp Audience List ID';

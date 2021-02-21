@@ -10,5 +10,8 @@
         "mikey179/vfsstream": "^1.6"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require": {
+        "mailchimp/marketing": "^3.0"
+    }
 }

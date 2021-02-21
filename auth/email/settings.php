@@ -39,6 +39,18 @@ if ($ADMIN->fulltree) {
         new lang_string('auth_emailrecaptcha_key', 'auth_email'),
         new lang_string('auth_emailrecaptcha', 'auth_email'), 0, $options));
 
+    $settings->add(new admin_setting_configtext('auth_email/mailchimp_api_key',
+        new lang_string('auth_emailmailchimp_api_key', 'auth_email'),
+        '', ''));
+
+    $settings->add(new admin_setting_configtext('auth_email/mailchimp_server_prefix',
+        new lang_string('auth_emailmailchimp_server_prefix', 'auth_email'),
+        '', ''));
+
+    $settings->add(new admin_setting_configtext('auth_email/mailchimp_audience_list_id',
+        new lang_string('auth_emailmailchimp_audience_list_id', 'auth_email'),
+        '', ''));
+
     // Display locking / mapping of profile fields.
     $authplugin = get_auth_plugin('email');
     display_auth_lock_options($settings, $authplugin->authtype, $authplugin->userfields,
