@@ -1126,7 +1126,7 @@ END;
                     'format' => FORMAT_HTML),
             array('text' => 'Completely wrong.',
                     'format' => FORMAT_HTML));
-        $expectedq->tolerance = array(0.001, 1, 0);
+        $expectedq->tolerance = array(0.001, 1, '');
 
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }
