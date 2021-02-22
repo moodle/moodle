@@ -1,0 +1,10 @@
+{
+    "name": "ucla/moodle-mod_zoom",
+    "type": "moodle-mod",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "installer-name": "zoom"
+    }
+}

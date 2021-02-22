@@ -1,0 +1,9 @@
+.zoom-info {
+    padding: 0.2em 0.6em 0.3em;
+    color: #fff;
+    border-radius: 0.25em;
+}
+
+#page-mod-zoom-view a .btn-primary .icon {
+    color: white;
+}

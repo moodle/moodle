@@ -1,0 +1,71 @@
+{{=<% %>=}}
+<div>
+    <core-course-module-description description="<% zoom.intro %>" component="mod_zoom" componentId="<% cmid %>"></core-course-module-description>
+
+    <ion-list>
+        <%#available%>
+            <ion-item>
+                <button ion-button block color="light" core-site-plugins-call-ws name="mod_zoom_grade_item_update" [params]="{zoomid: <% cmid %>}" [preSets]="{getFromCache: 0, saveToCache: 0}" (onSuccess)="loadMeeting($event)">
+                    {{ 'plugin.mod_zoom.join_meeting' | translate }}
+                </button>
+            </ion-item>
+        <%/available%>
+        <%^available%>
+            <ion-item>
+                <p>{{ 'plugin.mod_zoom.unavailable' | translate }}</p>
+            </ion-item>
+        <%/available%>
+
+        <%#zoom.recurring%>
+            <ion-item>
+                <p class="item-heading">{{ 'plugin.mod_zoom.recurringmeetinglong' | translate }}</p>
+            </ion-item>
+        <%/zoom.recurring%>
+        <%^zoom.recurring%>
+            <ion-item>
+                <p class="item-heading">{{ 'plugin.mod_zoom.meeting_time' | translate }}</p>
+                <p><% start_time %></p>
+            </ion-item>
+            <ion-item>
+                <p class="item-heading">{{ 'plugin.mod_zoom.duration' | translate }}</p>
+                <p><% duration %></p>
+            </ion-item>
+        <%/zoom.recurring%>
+
+        <ion-item>
+            <p class="item-heading">{{ 'plugin.mod_zoom.passwordprotected' | translate }}</p>
+            <%#zoom.password%><p>{{ 'core.yes' | translate }}</p><%/zoom.password%>
+            <%^zoom.password%><p>{{ 'core.no' | translate }}</p><%/zoom.password%>
+        </ion-item>
+
+        <%^zoom.webinar%>
+            <ion-item>
+                <p class="item-heading">{{ 'plugin.mod_zoom.joinbeforehost' | translate }}</p>
+                <%#zoom.option_jbh%><p>{{ 'core.yes' | translate }}</p><%/zoom.option_jbh%>
+                <%^zoom.option_jbh%><p>{{ 'core.no' | translate }}</p><%/zoom.option_jbh%>
+            </ion-item>
+            <ion-item>
+                <p class="item-heading">{{ 'plugin.mod_zoom.starthostjoins' | translate }}</p>
+                <%#zoom.option_host_video%><p>{{ 'core.yes' | translate }}</p><%/zoom.option_host_video%>
+                <%^zoom.option_host_video%><p>{{ 'core.no' | translate }}</p><%/zoom.option_host_video%>
+            </ion-item>
+            <ion-item>
+                <p class="item-heading">{{ 'plugin.mod_zoom.startpartjoins' | translate }}</p>
+                <%#zoom.option_participants_video%><p>{{ 'core.yes' | translate }}</p><%/zoom.option_participants_video%>
+                <%^zoom.option_participants_video%><p>{{ 'core.no' | translate }}</p><%/zoom.option_participants_video%>
+            </ion-item>
+        <%/zoom.webinar%>
+
+        <ion-item>
+            <p class="item-heading">{{ 'plugin.mod_zoom.option_audio' | translate }}</p>
+            <p><% option_audio %></p>
+        </ion-item>
+
+        <%^zoom.recurring%>
+            <ion-item>
+                <p class="item-heading">{{ 'plugin.mod_zoom.status' | translate }}</p>
+                <p><% status %></p>
+            </ion-item>
+        <%/zoom.recurring%>
+    </ion-list>
+</div>
