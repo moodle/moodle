@@ -376,7 +376,7 @@ class core_badges_assertion {
                         $this->_data->imageauthorurl ||
                         $this->_data->imagecaption) {
                     $storage = get_file_storage();
-                    $imagefile = $storage->get_file($context->id, 'badges', 'badgeimage', $this->_data->id, '/', 'f1.png');
+                    $imagefile = $storage->get_file($context->id, 'badges', 'badgeimage', $this->_data->id, '/', 'f3.png');
                     if ($imagefile) {
                         $imagedata = base64_encode($imagefile->get_content());
                     } else {

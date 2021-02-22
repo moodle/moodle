@@ -41,7 +41,7 @@ if ($badge->status != BADGE_STATUS_INACTIVE) {
         } else {
             $context = context_course::instance($badge->courseid);
         }
-        $urlimage = moodle_url::make_pluginfile_url($context->id, 'badges', 'badgeimage', $badge->id, '/', 'f1')->out(false);
+        $urlimage = moodle_url::make_pluginfile_url($context->id, 'badges', 'badgeimage', $badge->id, '/', 'f3')->out(false);
 
         $url = new moodle_url('/badges/badge_json.php', array('id' => $badge->id));
 
@@ -52,7 +52,7 @@ if ($badge->status != BADGE_STATUS_INACTIVE) {
                 $badge->imageauthorurl ||
                 $badge->imagecaption) {
             $urlimage = moodle_url::make_pluginfile_url($context->id,
-                'badges', 'badgeimage', $badge->id, '/', 'f1')->out(false);
+                'badges', 'badgeimage', $badge->id, '/', 'f3')->out(false);
             $json['image'] = array();
             $json['image']['id'] = $urlimage;
             if ($badge->imageauthorname || $badge->imageauthoremail || $badge->imageauthorurl) {
