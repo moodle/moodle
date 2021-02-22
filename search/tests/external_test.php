@@ -24,8 +24,6 @@
 
 namespace core_search;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * External function unit tests.
  *
@@ -55,16 +53,24 @@ class external_testcase extends \advanced_testcase {
 
         // As student 3, search for the other two.
         $this->setUser($student3);
-        $result = external::get_relevant_users('Amelia', 0);
-        $this->assertCount(2, $result);
+        $result = external::clean_returnvalue(
+            external::get_relevant_users_returns(),
+            external::get_relevant_users('Amelia', 0)
+        );
+
+        // Check we got the two expected users back.
+        $this->assertEquals([
+            $student1->id,
+            $student2->id,
+        ], array_column($result, 'id'));
 
         // Check that the result contains all the expected fields.
-        $this->assertEquals($student1->id, $result[0]->id);
-        $this->assertEquals('Amelia Aardvark', $result[0]->fullname);
-        $this->assertStringContainsString('/u/f2', $result[0]->profileimageurlsmall);
+        $this->assertEquals($student1->id, $result[0]['id']);
+        $this->assertEquals('Amelia Aardvark', $result[0]['fullname']);
+        $this->assertStringContainsString('/u/f2', $result[0]['profileimageurlsmall']);
 
         // Check we aren't leaking information about user email address (for instance).
-        $this->assertObjectNotHasAttribute('email', $result[0]);
+        $this->assertArrayNotHasKey('email', $result[0]);
 
         // Note: We are not checking search permissions, search by different fields, etc. as these
         // are covered by the core_user::search unit test.
