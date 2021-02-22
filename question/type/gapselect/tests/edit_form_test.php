@@ -49,6 +49,10 @@ class qtype_gapselect_edit_form_base_testable extends qtype_gapselect_edit_form_
     public function set_allowed_tags(array $allowed) {
         $this->allowedhtmltags = $allowed;
     }
+
+    public function qtype() {
+        return 'gapselect';
+    }
 }
 
 

@@ -114,6 +114,21 @@ abstract class question_edit_form extends question_wizard_form {
     }
 
     /**
+     * Return default value for a given form element either from user_preferences table or $default.
+     *
+     * To make use of user_preferences in your qtype default settings, you need to replace
+     * $mform->setDefault({elementname}, {defaultvalue}); in edit_{qtypename}_form.php with
+     * $mform->setDefault({elementname}, $this->get_default_value({elementname}, {defaultvalue}));
+     *
+     * @param string $name the name of the form field.
+     * @param mixed $default default value.
+     * @return string|null default value for a given form element.
+     */
+    protected function get_default_value(string $name, $default): ?string {
+        return question_bank::get_qtype($this->qtype())->get_default_value($name, $default);
+    }
+
+    /**
      * Build the form definition.
      *
      * This adds all the form fields that the default question type supports.
@@ -121,10 +136,7 @@ abstract class question_edit_form extends question_wizard_form {
      * override this method and remove the ones you don't want with $mform->removeElement().
      */
     protected function definition() {
-        global $COURSE, $CFG, $DB, $PAGE;
-
-        $qtype = $this->qtype();
-        $langfile = "qtype_{$qtype}";
+        global $DB, $PAGE;
 
         $mform = $this->_form;
 
@@ -189,7 +201,7 @@ abstract class question_edit_form extends question_wizard_form {
 
         $mform->addElement('float', 'defaultmark', get_string('defaultmark', 'question'),
                 array('size' => 7));
-        $mform->setDefault('defaultmark', 1);
+        $mform->setDefault('defaultmark', $this->get_default_value('defaultmark', 1));
         $mform->addRule('defaultmark', null, 'required', null, 'client');
 
         $mform->addElement('editor', 'generalfeedback', get_string('generalfeedback', 'question'),
@@ -497,7 +509,7 @@ abstract class question_edit_form extends question_wizard_form {
         $mform->addElement('select', 'penalty',
                 get_string('penaltyforeachincorrecttry', 'question'), $penaltyoptions);
         $mform->addHelpButton('penalty', 'penaltyforeachincorrecttry', 'question');
-        $mform->setDefault('penalty', 0.3333333);
+        $mform->setDefault('penalty', $this->get_default_value('penalty',  0.3333333));
 
         if (isset($this->question->hints)) {
             $counthints = count($this->question->hints);
