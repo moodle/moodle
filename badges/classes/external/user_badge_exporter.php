@@ -282,7 +282,7 @@ class user_badge_exporter extends exporter {
 
         $values = array(
             'badgeurl' => moodle_url::make_webservice_pluginfile_url($context->id, 'badges', 'badgeimage', $this->data->id, '/',
-                'f1')->out(false),
+                'f3')->out(false),
             'alignment' => array(),
             'relatedbadges' => array(),
         );
