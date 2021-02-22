@@ -437,5 +437,15 @@ function xmldb_zoom_upgrade($oldversion) {
         set_config('calls_left', null, 'mod_zoom');
     }
 
+    if ($oldversion < 2021022100) {
+        // Define field option_approval_type to be added to zoom.
+        $table = new xmldb_table('zoom');
+        $field = new xmldb_field('option_approval_type', XMLDB_TYPE_INTEGER, '1', null, null, null, '2', 'option_authenticated_users');
+
+        // Define field option_registration_type to be added to zoom.
+        $table = new xmldb_table('zoom');
+        $field = new xmldb_field('option_registration_type', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'option_authenticated_users');
+    }
+
     return true;
 }

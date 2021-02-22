@@ -491,6 +491,12 @@ class mod_zoom_webservice {
         if (isset($zoom->option_authenticated_users)) {
             $data['settings']['meeting_authentication'] = (bool) $zoom->option_authenticated_users;
         }
+        if (isset($zoom->option_approval_type)) {
+            $data['settings']['approval_type'] = (int) $zoom->option_approval_type;
+        }
+        if (isset($zoom->option_registration_type)) {
+            $data['settings']['registration_type'] = (int) $zoom->option_registration_type;
+        }
 
         if ($zoom->webinar) {
             $data['type'] = $zoom->recurring ? ZOOM_RECURRING_WEBINAR : ZOOM_SCHEDULED_WEBINAR;

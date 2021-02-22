@@ -94,6 +94,14 @@ $strauthenticatedusers = get_string('option_authenticated_users', 'mod_zoom');
 $strhost = get_string('host', 'mod_zoom');
 $strmeetinginvite = get_string('meeting_invite', 'mod_zoom');
 $strmeetinginviteshow = get_string('meeting_invite_show', 'mod_zoom');
+$strapprovaltype = get_string('option_approval_type', 'mod_zoom');
+$strapprovaltypeautomatic = get_string('approval_type_automatic', 'mod_zoom');
+$strapprovaltypemanual = get_string('approval_type_manual', 'mod_zoom');
+$strapprovaltypenone = get_string('approval_type_none', 'mod_zoom');
+$strregistrationtype = get_string('option_registration_type', 'mod_zoom');
+$strregistrationtypeanyoccurrence = get_string('registration_type_any_occurrence', 'mod_zoom');
+$strregistrationtypeeachoccurrence = get_string('registration_type_each_occurrence', 'mod_zoom');
+$strregistrationtypeoneormoreoccurrence = get_string('registration_type_one_or_more_occurrence', 'mod_zoom');
 
 // Output starts here.
 echo $OUTPUT->header();
@@ -213,6 +221,22 @@ if (!$zoom->webinar) {
 $table->data[] = array($straudioopt, get_string('audio_' . $zoom->option_audio, 'mod_zoom'));
 $table->data[] = array($strmuteuponentry, ($zoom->option_mute_upon_entry) ? $stryes : $strno);
 $table->data[] = array($strauthenticatedusers, ($zoom->option_authenticated_users) ? $stryes : $strno);
+
+if ($zoom->option_approval_type === ZOOM_APPROVAL_TYPE_AUTOMATIC) {
+    $table->data[] = array($strapprovaltype, $strapprovaltypeautomatic);
+} else if ($zoom->option_approval_type === ZOOM_APPROVAL_TYPE_MANUAL) {
+    $table->data[] = array($strapprovaltype, $strapprovaltypemanual);
+} else if ($zoom->option_approval_type === ZOOM_APPROVAL_TYPE_NONE) {
+    $table->data[] = array($strapprovaltype, $strapprovaltypenone);
+}
+
+if ($zoom->option_registration_type === ZOOM_REGISTRATION_TYPE_ANY_OCCURRENCE) {
+    $table->data[] = array($strregistrationtype, $strregistrationtypeanyoccurrence);
+} else if ($zoom->option_registration_type === ZOOM_REGISTRATION_TYPE_EACH_OCCURRENCE) {
+    $table->data[] = array($strregistrationtype, $strregistrationtypeeachoccurrence);
+} else if ($zoom->option_registration_type === ZOOM_REGISTRATION_TYPE_ONE_OR_MORE_OCCURRENCE) {
+    $table->data[] = array($strregistrationtype, $strregistrationtypeoneormoreoccurrence);
+}
 
 if (!$zoom->recurring) {
     if (!$zoom->exists_on_zoom) {

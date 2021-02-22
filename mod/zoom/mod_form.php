@@ -261,6 +261,22 @@ class mod_zoom_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'option_authenticated_users', get_string('option_authenticated_users', 'mod_zoom'));
         $mform->setDefault('option_authenticated_users', $config->defaultauthusersoption);
 
+        // Add approval options.
+        $mform->addGroup(array(
+            $mform->createElement('radio', 'option_approval_type', '', get_string('approval_type_automatic', 'zoom'), ZOOM_APPROVAL_TYPE_AUTOMATIC),
+            $mform->createElement('radio', 'option_approval_type', '', get_string('approval_type_manual', 'zoom'), ZOOM_APPROVAL_TYPE_MANUAL),
+            $mform->createElement('radio', 'option_approval_type', '', get_string('approval_type_none', 'zoom'), ZOOM_APPROVAL_TYPE_NONE)
+        ), null, get_string('option_approval_type', 'zoom'));
+        $mform->setDefault('option_approval_type', $config->defaultapprovaltypeoption);
+
+        // Add registration options.
+        $mform->addGroup(array(
+            $mform->createElement('radio', 'option_registration_type', '', get_string('registration_type_any_occurrence', 'zoom'), ZOOM_REGISTRATION_TYPE_ANY_OCCURRENCE),
+            $mform->createElement('radio', 'option_registration_type', '', get_string('registration_type_each_occurrence', 'zoom'), ZOOM_REGISTRATION_TYPE_EACH_OCCURRENCE),
+            $mform->createElement('radio', 'option_registration_type', '', get_string('registration_type_one_or_more_occurrence', 'zoom'), ZOOM_REGISTRATION_TYPE_ONE_OR_MORE_OCCURRENCE)
+        ), null, get_string('option_registration_type', 'zoom'));
+        $mform->setDefault('option_registration_type', $config->defaultregistrationtypeoption);
+
         // Add Schedule for if current user is able to.
         // Check if the size is greater than 1 because we add the editing/creating user by default.
         if (count($scheduleusers) > 1 && $allowschedule) {

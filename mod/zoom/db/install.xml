@@ -32,6 +32,8 @@
         <FIELD NAME="option_mute_upon_entry" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="option_waiting_room" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="option_authenticated_users" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="option_approval_type" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="2" SEQUENCE="false"/>
+        <FIELD NAME="option_registration_type" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="exists_on_zoom" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Whether the meeting can be found on Zoom servers. Usually should be true, should only be false if API call returned that meeting can't be found."/>
         <FIELD NAME="alternative_hosts" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>

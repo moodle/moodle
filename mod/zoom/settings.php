@@ -147,6 +147,22 @@ if ($ADMIN->fulltree) {
             '', 0, 1, 0);
     $settings->add($defaultauthusersoption);
 
+    $approvalchoices = array(ZOOM_APPROVAL_TYPE_AUTOMATIC => get_string('approval_type_automatic', 'zoom'),
+                          ZOOM_APPROVAL_TYPE_MANUAL => get_string('approval_type_manual', 'zoom'),
+                          ZOOM_APPROVAL_TYPE_NONE => get_string('approval_type_none', 'zoom'));
+    $defaultapprovaltypeoption = new admin_setting_configselect('mod_zoom/defaultapprovaltypeoption',
+            get_string('option_approval_type', 'zoom'),
+            '', ZOOM_APPROVAL_TYPE_NONE, $approvalchoices);
+    $settings->add($defaultapprovaltypeoption);
+
+    $registrationchoices = array(ZOOM_REGISTRATION_TYPE_ANY_OCCURRENCE => get_string('registration_type_any_occurrence', 'zoom'),
+                          ZOOM_REGISTRATION_TYPE_EACH_OCCURRENCE => get_string('registration_type_each_occurrence', 'zoom'),
+                          ZOOM_REGISTRATION_TYPE_ONE_OR_MORE_OCCURRENCE => get_string('registration_type_one_or_more_occurrence', 'zoom'));
+    $defaultregistrationtypeoption = new admin_setting_configselect('mod_zoom/defaultregistrationtypeoption',
+            get_string('option_registration_type', 'zoom'),
+            '', ZOOM_REGISTRATION_TYPE_ANY_OCCURRENCE, $registrationchoices);
+    $settings->add($defaultregistrationtypeoption);
+
     $defaultmuteuponentryoption = new admin_setting_configcheckbox('mod_zoom/defaultmuteuponentryoption',
             get_string('option_mute_upon_entry', 'mod_zoom'),
             '', 1, 1, 0);

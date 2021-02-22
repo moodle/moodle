@@ -203,6 +203,12 @@ function populate_zoom_from_response(stdClass $zoom, stdClass $response) {
     if (isset($response->settings->meeting_authentication)) {
         $newzoom->option_authenticated_users = $response->settings->meeting_authentication;
     }
+    if (isset($response->settings->approval_type)) {
+        $newzoom->option_approval_type = $response->settings->approval_type;
+    }
+    if (isset($response->settings->registration_type)) {
+        $newzoom->option_registration_type = $response->settings->registration_type;
+    }
     if (isset($response->settings->waiting_room)) {
         $newzoom->option_waiting_room = $response->settings->waiting_room;
     }
