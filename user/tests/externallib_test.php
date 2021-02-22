@@ -679,7 +679,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Data provider for {@link self::test_create_users_invalid_parameter()}.
+     * Data provider for {@see self::test_create_users_invalid_parameter()}.
      *
      * @return array
      */
