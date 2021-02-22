@@ -78,8 +78,8 @@ $functions = [
         'methodname'    => 'execute',
         'classpath'     => '',
         'description'   => 'Log that the h5pactivity was viewed.',
-	'type'          => 'write',
-	'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+        'type'          => 'write',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'mod_h5pactivity_get_user_attempts' => [
         'classname'     => 'mod_h5pactivity\external\get_user_attempts',
