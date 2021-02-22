@@ -259,7 +259,7 @@ class sync_members_testcase extends advanced_testcase {
      * Enable auth_lti plugin.
      */
     protected function enable_auth() {
-        $auths = get_enabled_auth_plugins(true);
+        $auths = get_enabled_auth_plugins();
         if (!in_array('lti', $auths)) {
             $auths[] = 'lti';
         }

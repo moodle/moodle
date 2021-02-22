@@ -82,7 +82,7 @@ if (!empty($SESSION->has_timed_out)) {
 $frm  = false;
 $user = false;
 
-$authsequence = get_enabled_auth_plugins(true); // auths, in sequence
+$authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
 foreach($authsequence as $authname) {
     $authplugin = get_auth_plugin($authname);
     // The auth plugin's loginpage_hook() can eventually set $frm and/or $user.

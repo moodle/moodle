@@ -101,7 +101,7 @@ class block_login extends block_base {
                 $this->content->text .= '<div><a href="'.$forgot.'">'.get_string('forgotaccount').'</a></div>';
             }
 
-            $authsequence = get_enabled_auth_plugins(true); // Get all auths, in sequence.
+            $authsequence = get_enabled_auth_plugins(); // Get all auths, in sequence.
             $potentialidps = array();
             foreach ($authsequence as $authname) {
                 $authplugin = get_auth_plugin($authname);
