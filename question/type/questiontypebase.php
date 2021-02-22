@@ -296,6 +296,45 @@ class question_type {
     }
 
     /**
+     * Return default value for a given form element either from user_preferences table or $default.
+     *
+     * @param string $name the name of the form element.
+     * @param mixed $default default value.
+     * @return string|null default value for a given  form element.
+     */
+    public function get_default_value(string $name, $default): ?string {
+        return get_user_preferences($this->plugin_name() . '_' . $name, $default ?? '0');
+    }
+
+    /**
+     * Save the default value for a given form element in user_preferences table.
+     *
+     * @param string $name the name of the value to set.
+     * @param string $value the setting value.
+     */
+    public function set_default_value(string $name, string $value): void {
+        set_user_preference($this->plugin_name() . '_' . $name, $value);
+    }
+
+    /**
+     * Save question defaults when creating new questions.
+     *
+     * @param stdClass $fromform data from the form.
+     */
+    public function save_defaults_for_new_questions(stdClass $fromform): void {
+        // Some question types may not make use of the certain form elements, so
+        // we need to do a check on the following generic form elements. For instance,
+        // 'defaultmark' is not use in qtype_multianswer and 'penalty' in not used in
+        // qtype_essay and qtype_recordrtc.
+        if (isset($fromform->defaultmark)) {
+            $this->set_default_value('defaultmark', $fromform->defaultmark);
+        }
+        if (isset($fromform->penalty)) {
+            $this->set_default_value('penalty', $fromform->penalty);
+        }
+    }
+
+    /**
      * Saves (creates or updates) a question.
      *
      * Given some question info and some data about the answers
