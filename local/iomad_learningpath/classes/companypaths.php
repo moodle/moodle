@@ -18,7 +18,8 @@
  * "Business" class for Iomad Learning Paths
  *
  * @package    local_iomadlearninpath
- * @copyright  2018 Howard Miller (howardsmiller@gmail.com)
+ * @copyright  2021 Derick Turner
+ * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -655,25 +656,75 @@ class companypaths {
     public function get_prospective_users($pathid, $filter) {
         global $DB;
 
-        $sql = "SELECT u.*
+        // Set up some defaults for the SQL.
+        $companyprofjoin = "";
+        $companyprofwhere = "";
+        $sqlparams = array('companyid' => $this->companyid);
+
+        // Build company profile search.
+        if ($companyprofileids = $DB->get_records_sql("SELECT id 
+                                                       FROM {user_info_field}
+                                                       WHERE
+                                                       categoryid IN (
+                                                        SELECT profileid FROM {company}
+                                                        WHERE id = :companyid)
+                                                       OR
+                                                       categoryid IN (
+                                                        SELECT id FROM {user_info_category}
+                                                        WHERE id NOT IN (
+                                                         SELECT profileid FROM {company}
+                                                        )
+                                                       )",
+                                                       array('companyid' => $this->companyid))) {
+            $companyprofjoin = "LEFT JOIN {user_info_data} uid ON (u.id = uid.userid AND uid.fieldid IN (" . implode(',', array_keys($companyprofileids)) . "))";
+            $companyprofwhere = " OR " . $DB->sql_like("uid.data", ':profsearch', false, false);
+            $sqlparams['profsearch'] = "%".$filter."%"; 
+        }
+
+        // Get any users who are already assigned to the learning path.
+        $excludeids = $this->get_users($pathid, true);
+        if (!empty($excludeids)) {
+            // Add SQL to remove them from the list.
+            $excludesql = " AND u.id NOT IN (" . implode(',', array_keys($excludeids)) . ")";
+
+        } else {
+            $excludesql = "";
+        }
+
+        // Did we get passed anything to filter?
+        if (!empty($filter)) {
+            $filtersql = " AND (
+                            " . $DB->sql_like("u.firstname", ':firstname', false, false) . "
+                            OR " . $DB->sql_like("u.lastname", ':lastname', false, false) . "
+                            OR " . $DB->sql_like("u.email", ':email', false, false) . "
+                            $companyprofwhere
+                           )";
+            $sqlparams['firstname'] = "%" . $filter . "%";
+            $sqlparams['lastname'] = "%" . $filter . "%";
+            $sqlparams['email'] = "%" . $filter . "%";
+
+        } else {
+            $filtersql = "";
+        }
+
+        // Build the SQL.
+        $sql = "SELECT DISTINCT u.*
             FROM {user} u JOIN {company_users} cu ON cu.userid = u.id
+            $companyprofjoin
             WHERE u.deleted = 0
             AND u.suspended = 0
             AND cu.companyid = :companyid
+            $excludesql
+            $filtersql
             ORDER BY u.lastname, u.firstname ASC";
-        $allusers = $DB->get_records_sql($sql, ['companyid' => $this->companyid]);
-        $excludeids = $this->get_users($pathid, true);
 
-        // Exclude ids and filter
+        // Get the users.
+        $allusers = $DB->get_records_sql($sql, $sqlparams);
+
+        // Build the return array.
         $users = [];
         foreach ($allusers as $user) {
-            if (in_array($user->id, $excludeids)) {
-                continue;
-            }
             $user->fullname = fullname($user);
-            if ($filter && (stripos($user->fullname, $filter) === false)) {
-                continue;
-            }
             $users[] = $user;
         }
 

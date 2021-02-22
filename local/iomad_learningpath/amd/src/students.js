@@ -20,6 +20,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                     $('#noprospective').hide();
                 } else {
                     $('#noprospective').show();
+                    $('#toomanyprospective').hide();
                     return;
                 }
 
