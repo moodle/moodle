@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\report_helper;
+
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
@@ -152,7 +154,15 @@ if ($model->get_analyser()::one_sample_per_analysable()) {
         redirect($redirecturl);
     }
 }
+
 echo $OUTPUT->header();
+
+if ($course) {
+    report_helper::save_selected_report($course->id, $url);
+    // Print selected drop down.
+    $pluginname = get_string('pluginname', 'report_insights');
+    report_helper::print_report_selector($pluginname);
+}
 
 $renderable = new \report_insights\output\insights_list($model, $context, $othermodels, $page, $perpage);
 echo $renderer->render($renderable);
