@@ -10,7 +10,7 @@ require(__DIR__.'/../../config.php');
 
 $PAGE->set_context(context_system::instance());
 
-$authsequence = get_enabled_auth_plugins(true); // auths, in sequence
+$authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
 if (!in_array('ldap', $authsequence, true)) {
     print_error('ldap_isdisabled', 'auth');
 }
