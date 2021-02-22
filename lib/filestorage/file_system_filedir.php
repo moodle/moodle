@@ -395,7 +395,10 @@ class file_system_filedir extends file_system {
         }
         rename($hashfile.'.tmp', $hashfile);
         chmod($hashfile, $this->filepermissions); // Fix permissions if needed.
-        @unlink($hashfile.'.tmp'); // Just in case anything fails in a weird way.
+        if (file_exists($hashfile.'.tmp')) {
+            // Just in case anything fails in a weird way.
+            @unlink($hashfile.'.tmp');
+        }
         ignore_user_abort($prev);
 
         return array($contenthash, $filesize, $newfile);
