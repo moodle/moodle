@@ -233,6 +233,14 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
 
     $icon = array('contextid'=>$context->id, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>'/');
 
+    if ($imagefnc === 'imagejpeg') {
+        // Function imagejpeg() accepts less arguments than imagepng() but we need to make $imagefnc accept the same
+        // number of arguments, otherwise PHP8 throws an error.
+        $imagefnc = function($image, $filename, $quality, $unused) {
+            return imagejpeg($image, $filename, $quality);
+        };
+    }
+
     ob_start();
     if (!$imagefnc($im1, NULL, $quality, $filters)) {
         // keep old icons
@@ -383,6 +391,14 @@ function resize_image_from_image($original, $imageinfo, $width, $height, $forcec
     }
 
     imagecopybicubic($newimage, $original, $dstx, $dsty, 0, 0, $targetwidth, $targetheight, $originalwidth, $originalheight);
+
+    if ($imagefnc === 'imagejpeg') {
+        // Function imagejpeg() accepts less arguments than imagepng() but we need to make $imagefnc accept the same
+        // number of arguments, otherwise PHP8 throws an error.
+        $imagefnc = function($image, $filename, $quality, $unused) {
+            return imagejpeg($image, $filename, $quality);
+        };
+    }
 
     // Capture the image as a string object, rather than straight to file.
     ob_start();
