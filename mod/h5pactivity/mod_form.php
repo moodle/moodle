@@ -118,7 +118,7 @@ class mod_h5pactivity_mod_form extends moodleform_mod {
         $options = manager::get_review_modes();
         $mform->addElement('select', 'reviewmode', get_string('review_mode', 'mod_h5pactivity'), $options);
         $mform->setType('reviewmode', PARAM_INT);
-        $mform->hideIf('reviewmode', 'enabletracking', 'notchecked');
+        $mform->hideIf('reviewmode', 'enabletracking', 'neq', 1);
 
         // Add standard elements.
         $this->standard_coursemodule_elements();
