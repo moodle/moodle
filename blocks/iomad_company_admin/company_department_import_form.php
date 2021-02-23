@@ -29,27 +29,6 @@ require_once('../../config.php');
 require_once($CFG->libdir.'/formslib.php');
 require_once('lib.php');
 
-/*class department_import_form extends moodleform {
-
-    function definition() {
-        global $CFG;
-
-        // thing you have to do
-        $mform =& $this->_form;
-
-        // header for main bit
-        $mform->addElement( 'header', 'general', get_string('departmentimport','block_iomad_company_admin'));
-
-        // file picker
-        $mform->addElement('filepicker', 'importfile', get_string('file'), null, array( 'accepted_types'=>'json'));
-        $mform->addRule('importfile', null, 'required');
-
-        // buttons
-        $this->add_action_buttons();
-    }
-}
-
-*/
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $departmentid = optional_param('departmentid', 0, PARAM_INT);
 $deptid = optional_param('deptid', 0, PARAM_INT);
