@@ -1824,6 +1824,19 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Return SQL for performing group concatenation on given field/expression
+     *
+     * @param string $field
+     * @param string $separator
+     * @param string $sort
+     * @return string
+     */
+    public function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string {
+        $fieldsort = $sort ? "ORDER BY {$sort}" : '';
+        return "GROUP_CONCAT({$field} {$fieldsort} SEPARATOR '{$separator}')";
+    }
+
+    /**
      * Returns the SQL text to be used to calculate the length in characters of one expression.
      * @param string fieldname or expression to calculate its length in characters.
      * @return string the piece of SQL code to be used in the statement.
