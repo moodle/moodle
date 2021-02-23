@@ -11168,10 +11168,13 @@ ul.badges {
   position: relative; }
 
 .badges li .expireimage {
+  background-image: url([[pix:i/expired]]);
+  background-repeat: no-repeat;
+  background-size: 100px 100px;
   width: 100px;
   height: 100px;
   left: 25px;
-  top: 0;
+  top: 15px;
   position: absolute;
   z-index: 10;
   opacity: 0.85; }
@@ -11187,6 +11190,9 @@ ul.badges {
   margin-top: 17px;
   margin-bottom: 20px; }
   #badge-image .expireimage {
+    background-image: url([[pix:i/expired]]);
+    background-repeat: no-repeat;
+    background-size: 100px 100px;
     width: 100px;
     height: 100px;
     left: 0;
