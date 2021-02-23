@@ -19,7 +19,7 @@ use Matrix\Operators\Subtraction;
  * @return Matrix
  * @throws Exception
  */
-function subtract(...$matrixValues)
+function subtract(...$matrixValues): Matrix
 {
     if (count($matrixValues) < 2) {
         throw new Exception('Subtraction operation requires at least 2 arguments');

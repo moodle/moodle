@@ -15,7 +15,7 @@ class Division extends Multiplication
      * @throws Exception If the provided argument is not appropriate for the operation
      * @return $this The operation object, allowing multiple divisions to be chained
      **/
-    public function execute($value)
+    public function execute($value): Operator
     {
         if (is_array($value)) {
             $value = new Matrix($value);

@@ -176,8 +176,11 @@ class Complex
                 list($realPart, $imaginaryPart, $suffix) = self::parseComplex($realPart);
             }
         }
-        if ($imaginaryPart <> 0.0 && empty($suffix)) {
+
+        if ($imaginaryPart != 0.0 && empty($suffix)) {
             $suffix = 'i';
+        } elseif ($imaginaryPart == 0.0 && !empty($suffix)) {
+            $suffix = '';
         }
 
         // Set parsed values in our properties
@@ -191,7 +194,7 @@ class Complex
      *
      * @return Float
      */
-    public function getReal()
+    public function getReal(): float
     {
         return $this->realPart;
     }
@@ -201,7 +204,7 @@ class Complex
      *
      * @return Float
      */
-    public function getImaginary()
+    public function getImaginary(): float
     {
         return $this->imaginaryPart;
     }
@@ -211,7 +214,7 @@ class Complex
      *
      * @return String
      */
-    public function getSuffix()
+    public function getSuffix(): string
     {
         return $this->suffix;
     }
@@ -221,7 +224,7 @@ class Complex
      *
      * @return Bool
      */
-    public function isReal()
+    public function isReal(): bool
     {
         return $this->imaginaryPart == 0.0;
     }
@@ -231,12 +234,12 @@ class Complex
      *
      * @return Bool
      */
-    public function isComplex()
+    public function isComplex(): bool
     {
         return !$this->isReal();
     }
 
-    public function format()
+    public function format(): string
     {
         $str = "";
         if ($this->imaginaryPart != 0.0) {
@@ -259,7 +262,7 @@ class Complex
         return $str;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->format();
     }
@@ -271,7 +274,7 @@ class Complex
      * @return    Complex
      * @throws    Exception    If the argument isn't a Complex number or cannot be converted to one
      */
-    public static function validateComplexArgument($complex)
+    public static function validateComplexArgument($complex): Complex
     {
         if (is_scalar($complex) || is_array($complex)) {
             $complex = new Complex($complex);
@@ -287,7 +290,7 @@ class Complex
      *
      * @return    Complex
      */
-    public function reverse()
+    public function reverse(): Complex
     {
         return new Complex(
             $this->imaginaryPart,
@@ -296,7 +299,7 @@ class Complex
         );
     }
 
-    public function invertImaginary()
+    public function invertImaginary(): Complex
     {
         return new Complex(
             $this->realPart,
@@ -305,7 +308,7 @@ class Complex
         );
     }
 
-    public function invertReal()
+    public function invertReal(): Complex
     {
         return new Complex(
             $this->realPart * -1,
@@ -373,15 +376,15 @@ class Complex
         $functionName = strtolower(str_replace('_', '', $functionName));
 
         // Test for function calls
-        if (in_array($functionName, self::$functions)) {
+        if (in_array($functionName, self::$functions, true)) {
             $functionName = "\\" . __NAMESPACE__ . "\\{$functionName}";
             return $functionName($this, ...$arguments);
         }
         // Test for operation calls
-        if (in_array($functionName, self::$operations)) {
+        if (in_array($functionName, self::$operations, true)) {
             $functionName = "\\" . __NAMESPACE__ . "\\{$functionName}";
             return $functionName($this, ...$arguments);
         }
-        throw new Exception('Function or Operation does not exist');
+        throw new Exception('Complex Function or Operation does not exist');
     }
 }

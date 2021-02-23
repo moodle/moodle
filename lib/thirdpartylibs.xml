@@ -32,7 +32,7 @@
     <location>phpspreadsheet</location>
     <name>PhpSpreadsheet</name>
     <license>MIT</license>
-    <version>1.10.1</version>
+    <version>1.16.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>

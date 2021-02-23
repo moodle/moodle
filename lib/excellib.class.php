@@ -489,7 +489,7 @@ class MoodleExcelWorksheet {
  */
 class MoodleExcelFormat {
     /** @var array */
-    protected $format = array('font'=>array('size'=>10, 'name'=>'Arial'));
+    protected $format = array();
 
     /**
      * Constructs one Moodle Format.

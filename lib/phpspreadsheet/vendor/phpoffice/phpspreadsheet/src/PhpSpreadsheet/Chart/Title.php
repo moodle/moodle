@@ -22,9 +22,8 @@ class Title
      * Create a new Title.
      *
      * @param null|mixed $caption
-     * @param null|Layout $layout
      */
-    public function __construct($caption = null, Layout $layout = null)
+    public function __construct($caption = null, ?Layout $layout = null)
     {
         $this->caption = $caption;
         $this->layout = $layout;
@@ -45,7 +44,7 @@ class Title
      *
      * @param string $caption
      *
-     * @return Title
+     * @return $this
      */
     public function setCaption($caption)
     {
