@@ -228,6 +228,10 @@ class qtype_multichoice extends question_type {
         $DB->delete_records('qtype_multichoice_options', array('questionid' => $questionid));
 
         parent::delete_question($questionid, $contextid);
+        
+        $DB->delete_records('question', array('id' => $questionid));
+
+        
     }
 
     public function get_random_guess_score($questiondata) {
