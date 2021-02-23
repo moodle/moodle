@@ -100,11 +100,6 @@ define('BADGRIO_BACKPACKAPIURL', 'https://api.badgr.io/v2');
 define('BADGRIO_BACKPACKWEBURL', 'https://badgr.io');
 
 /*
- * @deprecated since 3.7. Use the urls in the badge_external_backpack table instead.
- */
-define('BADGE_BACKPACKURL', 'https://backpack.openbadges.org');
-
-/*
  * @deprecated since 3.9 (MDL-66357).
  */
 define('BADGE_BACKPACKAPIURL', 'https://backpack.openbadges.org');
@@ -640,49 +635,15 @@ function badges_download($userid) {
 /**
  * Checks if badges can be pushed to external backpack.
  *
+ * @deprecated Since Moodle 3.11.
  * @return string Code of backpack accessibility status.
  */
 function badges_check_backpack_accessibility() {
-    if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
-        // For behat sites, do not poll the remote badge site.
-        // Behat sites should not be available, but we should pretend as though they are.
-        return 'available';
-    }
+    // This method was used for OBv1.0. It can be deprecated because OBv1.0 support will be removed.
+    // When this method will be removed, badges/ajax.php can be removed too (if it keeps containing only a call to it).
+    debugging('badges_check_backpack_accessibility() can not be used any more, it was only used for OBv1.0', DEBUG_DEVELOPER);
 
-    if (badges_open_badges_backpack_api() == OPEN_BADGES_V2) {
-        return 'available';
-    }
-
-    global $CFG;
-    include_once $CFG->libdir . '/filelib.php';
-
-    // Using fake assertion url to check whether backpack can access the web site.
-    $fakeassertion = new moodle_url('/badges/assertion.php', array('b' => 'abcd1234567890'));
-
-    // Curl request to backpack baker.
-    $curl = new curl();
-    $options = array(
-        'FRESH_CONNECT' => true,
-        'RETURNTRANSFER' => true,
-        'HEADER' => 0,
-        'CONNECTTIMEOUT' => 2,
-    );
-    // BADGE_BACKPACKURL and the "baker" API is deprecated and should never be used in future.
-    $location = BADGE_BACKPACKURL . '/baker';
-    $out = $curl->get($location, array('assertion' => $fakeassertion->out(false)), $options);
-
-    $data = json_decode($out);
-    if (!empty($curl->error)) {
-        return 'curl-request-timeout';
-    } else {
-        if (isset($data->code) && $data->code == 'http-unreachable') {
-            return 'http-unreachable';
-        } else {
-            return 'available';
-        }
-    }
-
-    return false;
+    return 'curl-request-timeout';
 }
 
 /**
@@ -729,39 +690,25 @@ function badges_handle_course_deletion($courseid) {
 /**
  * Loads JS files required for backpack support.
  *
- * @uses   $CFG, $PAGE
+ * @deprecated Since Moodle 3.11.
  * @return void
  */
 function badges_setup_backpack_js() {
-    global $CFG, $PAGE;
-    if (!empty($CFG->badges_allowexternalbackpack)) {
-        if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
-            $PAGE->requires->string_for_js('error:backpackproblem', 'badges');
-            // The issuer.js API is deprecated and should not be used in future.
-            $PAGE->requires->js(new moodle_url(BADGE_BACKPACKURL . '/issuer.js'), true);
-            // The backpack.js file is deprecated and should not be used in future.
-            $PAGE->requires->js('/badges/backpack.js', true);
-        }
-    }
+    // This method was used for OBv1.0. It can be deprecated because OBv1.0 support will be removed.
+    debugging('badges_setup_backpack_js() can not be used any more, it was only used for OBv1.0.', DEBUG_DEVELOPER);
 }
 
 /**
  * No js files are required for backpack support.
  * This only exists to directly support the custom V1 backpack api.
  *
+ * @deprecated Since Moodle 3.11.
  * @param boolean $checksite Call check site function.
  * @return void
  */
 function badges_local_backpack_js($checksite = false) {
-    global $CFG, $PAGE;
-    if (!empty($CFG->badges_allowexternalbackpack)) {
-        if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
-            $PAGE->requires->js('/badges/backpack.js', true);
-            if ($checksite) {
-                $PAGE->requires->js_init_call('check_site_access', null, false);
-            }
-        }
-    }
+    // This method was used for OBv1.0. It can be deprecated because OBv1.0 support will be removed.
+    debugging('badges_local_backpack_js() can not be used any more, it was only used for OBv1.0.', DEBUG_DEVELOPER);
 }
 
 /**
