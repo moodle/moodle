@@ -24,7 +24,8 @@ CHANGES:
    - vendor/phpoffice/phpspreadsheet/docs
    - vendor/phpoffice/phpspreadsheet/samples
 
-* Remove the hidden folders and files in vendor/phpoffice/phpspreadsheet/:
+* Remove all the hidden folders and files in vendor/phpoffice/phpspreadsheet/ (find . -name ".*"):
+  - .DS_Store
   - .gitattributes
   - .gitignore
   - .php_cs.dist
@@ -32,6 +33,9 @@ CHANGES:
   - .scrutinizer.yml
   - .travis.yml
   - .phpcs.xml.dist
+  - vendor/psr/simple-cache/.editorconfig
+  - vendor/psr/http-factory/.gitignore
+  - vendor/psr/http-factory/.pullapprove.yml
 
  * Add the next Moodle hack at the beginning of the function sysGetTempDir()
 located in vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
