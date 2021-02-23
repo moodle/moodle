@@ -115,9 +115,7 @@ class DataSeriesValues
      *                                    DataSeriesValues::DATASERIES_TYPE_NUMBER
      *                                        Normally used for chart data values
      *
-     * @throws Exception
-     *
-     * @return DataSeriesValues
+     * @return $this
      */
     public function setDataType($dataType)
     {
@@ -144,7 +142,7 @@ class DataSeriesValues
      *
      * @param string $dataSource
      *
-     * @return DataSeriesValues
+     * @return $this
      */
     public function setDataSource($dataSource)
     {
@@ -168,7 +166,7 @@ class DataSeriesValues
      *
      * @param string $marker
      *
-     * @return DataSeriesValues
+     * @return $this
      */
     public function setPointMarker($marker)
     {
@@ -192,7 +190,7 @@ class DataSeriesValues
      *
      * @param string $formatCode
      *
-     * @return DataSeriesValues
+     * @return $this
      */
     public function setFormatCode($formatCode)
     {
@@ -247,8 +245,6 @@ class DataSeriesValues
      *
      * @param string $color value for color
      *
-     * @throws \Exception thrown if color is invalid
-     *
      * @return bool true if validation was successful
      */
     private function validateColor($color)
@@ -275,7 +271,7 @@ class DataSeriesValues
      *
      * @param int $width
      *
-     * @return DataSeriesValues
+     * @return $this
      */
     public function setLineWidth($width)
     {
@@ -346,7 +342,7 @@ class DataSeriesValues
      *
      * @param array $dataValues
      *
-     * @return DataSeriesValues
+     * @return $this
      */
     public function setDataValues($dataValues)
     {
@@ -356,7 +352,7 @@ class DataSeriesValues
         return $this;
     }
 
-    public function refresh(Worksheet $worksheet, $flatten = true)
+    public function refresh(Worksheet $worksheet, $flatten = true): void
     {
         if ($this->dataSource !== null) {
             $calcEngine = Calculation::getInstance($worksheet->getParent());

@@ -240,7 +240,7 @@ class Rule
      *
      * @param Column $pParent
      */
-    public function __construct(Column $pParent = null)
+    public function __construct(?Column $pParent = null)
     {
         $this->parent = $pParent;
     }
@@ -260,9 +260,7 @@ class Rule
      *
      * @param string $pRuleType see self::AUTOFILTER_RULETYPE_*
      *
-     * @throws PhpSpreadsheetException
-     *
-     * @return Rule
+     * @return $this
      */
     public function setRuleType($pRuleType)
     {
@@ -290,9 +288,7 @@ class Rule
      *
      * @param string|string[] $pValue
      *
-     * @throws PhpSpreadsheetException
-     *
-     * @return Rule
+     * @return $this
      */
     public function setValue($pValue)
     {
@@ -334,17 +330,17 @@ class Rule
      *
      * @param string $pOperator see self::AUTOFILTER_COLUMN_RULE_*
      *
-     * @throws PhpSpreadsheetException
-     *
-     * @return Rule
+     * @return $this
      */
     public function setOperator($pOperator)
     {
         if (empty($pOperator)) {
             $pOperator = self::AUTOFILTER_COLUMN_RULE_EQUAL;
         }
-        if ((!in_array($pOperator, self::$operators)) &&
-            (!in_array($pOperator, self::$topTenValue))) {
+        if (
+            (!in_array($pOperator, self::$operators)) &&
+            (!in_array($pOperator, self::$topTenValue))
+        ) {
             throw new PhpSpreadsheetException('Invalid operator for column AutoFilter Rule.');
         }
         $this->operator = $pOperator;
@@ -367,16 +363,16 @@ class Rule
      *
      * @param string $pGrouping
      *
-     * @throws PhpSpreadsheetException
-     *
-     * @return Rule
+     * @return $this
      */
     public function setGrouping($pGrouping)
     {
-        if (($pGrouping !== null) &&
+        if (
+            ($pGrouping !== null) &&
             (!in_array($pGrouping, self::$dateTimeGroups)) &&
             (!in_array($pGrouping, self::$dynamicTypes)) &&
-            (!in_array($pGrouping, self::$topTenType))) {
+            (!in_array($pGrouping, self::$topTenType))
+        ) {
             throw new PhpSpreadsheetException('Invalid rule type for column AutoFilter Rule.');
         }
         $this->grouping = $pGrouping;
@@ -391,9 +387,7 @@ class Rule
      * @param string|string[] $pValue
      * @param string $pGrouping
      *
-     * @throws PhpSpreadsheetException
-     *
-     * @return Rule
+     * @return $this
      */
     public function setRule($pOperator, $pValue, $pGrouping = null)
     {
@@ -424,9 +418,9 @@ class Rule
      *
      * @param Column $pParent
      *
-     * @return Rule
+     * @return $this
      */
-    public function setParent(Column $pParent = null)
+    public function setParent(?Column $pParent = null)
     {
         $this->parent = $pParent;
 

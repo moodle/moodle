@@ -17,7 +17,7 @@ namespace Complex;
  * @throws    Exception        If argument isn't a valid real or complex number.
  * @throws    \InvalidArgumentException  If the real and the imaginary parts are both zero
  */
-function log2($complex)
+function log2($complex): Complex
 {
     $complex = Complex::validateComplexArgument($complex);
 

@@ -16,7 +16,7 @@ namespace Complex;
  * @return    Complex          The cosine of the complex argument.
  * @throws    Exception        If argument isn't a valid real or complex number.
  */
-function cos($complex)
+function cos($complex): Complex
 {
     $complex = Complex::validateComplexArgument($complex);
 

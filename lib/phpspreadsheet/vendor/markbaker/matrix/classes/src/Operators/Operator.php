@@ -46,7 +46,7 @@ abstract class Operator
      * @param Matrix $matrix The second Matrix object on which the operation will be performed
      * @throws Exception
      */
-    protected function validateMatchingDimensions(Matrix $matrix)
+    protected function validateMatchingDimensions(Matrix $matrix): void
     {
         if (($this->rows != $matrix->rows) || ($this->columns != $matrix->columns)) {
             throw new Exception('Matrices have mismatched dimensions');
@@ -59,7 +59,7 @@ abstract class Operator
      * @param Matrix $matrix The second Matrix object on which the operation will be performed
      * @throws Exception
      */
-    protected function validateReflectingDimensions(Matrix $matrix)
+    protected function validateReflectingDimensions(Matrix $matrix): void
     {
         if ($this->columns != $matrix->rows) {
             throw new Exception('Matrices have mismatched dimensions');
@@ -71,7 +71,7 @@ abstract class Operator
      *
      * @return Matrix
      */
-    public function result()
+    public function result(): Matrix
     {
         return new Matrix($this->matrix);
     }

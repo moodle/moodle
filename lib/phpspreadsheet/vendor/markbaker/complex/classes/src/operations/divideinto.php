@@ -15,7 +15,7 @@ namespace Complex;
  * @param     array of string|integer|float|Complex    $complexValues   The numbers to divide
  * @return    Complex
  */
-function divideinto(...$complexValues)
+function divideinto(...$complexValues): Complex
 {
     if (count($complexValues) < 2) {
         throw new \Exception('This function requires at least 2 arguments');
