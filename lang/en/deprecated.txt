@@ -131,3 +131,6 @@ sitebackpack,core_badges
 sitebackpack_help,core_badges
 usernameoridnousererror,core_webservice
 usernameoridoccurenceerror,core_webservice
+addbackpack,core_badges
+error:backpacknotavailable,core_badges
+error:backpackproblem,core_badges
