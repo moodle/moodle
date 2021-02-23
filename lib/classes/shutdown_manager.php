@@ -144,7 +144,7 @@ class core_shutdown_manager {
             error_log('Invalid custom shutdown function detected '.var_export($callback, true));
             // @codingStandardsIgnoreEnd
         }
-        self::$callbacks[] = [$callback, $params ?? []];
+        self::$callbacks[] = [$callback, $params ? array_values($params) : []];
     }
 
     /**

@@ -1426,7 +1426,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         for ($n = count($elements) - 1; $n > 0; $n--) {
             array_splice($elements, $n, 0, $separator);
         }
-        return call_user_func_array(array($this, 'sql_concat'), $elements);
+        return call_user_func_array(array($this, 'sql_concat'), array_values($elements));
     }
 
     public function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
