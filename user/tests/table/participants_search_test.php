@@ -758,6 +758,172 @@ class participants_search_test extends advanced_testcase {
     }
 
     /**
+     * Test participant search country filter
+     *
+     * @param array $usersdata
+     * @param array $countries
+     * @param int $jointype
+     * @param array $expectedusers
+     *
+     * @dataProvider country_provider
+     */
+    public function test_country_filter(array $usersdata, array $countries, int $jointype, array $expectedusers): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $users = [];
+
+        foreach ($usersdata as $username => $country) {
+            $users[$username] = $this->getDataGenerator()->create_and_enrol($course, 'student', (object) [
+                'username' => $username,
+                'country' => $country,
+            ]);
+        }
+
+        // Add filters (courseid is required).
+        $filterset = new participants_filterset();
+        $filterset->add_filter(new integer_filter('courseid', null, [(int) $course->id]));
+        $filterset->add_filter(new string_filter('country', $jointype, $countries));
+
+        // Run the search, assert count matches the number of expected users.
+        $search = new participants_search($course, context_course::instance($course->id), $filterset);
+        $this->assertEquals(count($expectedusers), $search->get_total_participants_count());
+
+        $rs = $search->get_participants();
+        $this->assertInstanceOf(moodle_recordset::class, $rs);
+
+        // Assert that each expected user is within the participant records.
+        $records = $this->convert_recordset_to_array($rs);
+        foreach ($expectedusers as $expecteduser) {
+            $this->assertArrayHasKey($users[$expecteduser]->id, $records);
+        }
+    }
+
+    /**
+     * Data provider for {@see test_country_filter}
+     *
+     * @return array
+     */
+    public function country_provider(): array {
+        $tests = [
+            'users' => [
+                'user1' => 'DE',
+                'user2' => 'ES',
+                'user3' => 'ES',
+                'user4' => 'GB',
+            ],
+            'expects' => [
+                // Tests for jointype: ANY.
+                'ANY: No filter' => (object) [
+                    'countries' => [],
+                    'jointype' => filter::JOINTYPE_ANY,
+                    'expectedusers' => [
+                        'user1',
+                        'user2',
+                        'user3',
+                        'user4',
+                    ],
+                ],
+                'ANY: Matching filters' => (object) [
+                    'countries' => [
+                        'DE',
+                        'GB',
+                    ],
+                    'jointype' => filter::JOINTYPE_ANY,
+                    'expectedusers' => [
+                        'user1',
+                        'user4',
+                    ],
+                ],
+                'ANY: Non-matching filters' => (object) [
+                    'countries' => [
+                        'RU',
+                    ],
+                    'jointype' => filter::JOINTYPE_ANY,
+                    'expectedusers' => [],
+                ],
+
+                // Tests for jointype: ALL.
+                'ALL: No filter' => (object) [
+                    'countries' => [],
+                    'jointype' => filter::JOINTYPE_ALL,
+                    'expectedusers' => [
+                        'user1',
+                        'user2',
+                        'user3',
+                        'user4',
+                    ],
+                ],
+                'ALL: Matching filters' => (object) [
+                    'countries' => [
+                        'DE',
+                        'GB',
+                    ],
+                    'jointype' => filter::JOINTYPE_ALL,
+                    'expectedusers' => [
+                        'user1',
+                        'user4',
+                    ],
+                ],
+                'ALL: Non-matching filters' => (object) [
+                    'countries' => [
+                        'RU',
+                    ],
+                    'jointype' => filter::JOINTYPE_ALL,
+                    'expectedusers' => [],
+                ],
+
+                // Tests for jointype: NONE.
+                'NONE: No filter' => (object) [
+                    'countries' => [],
+                    'jointype' => filter::JOINTYPE_NONE,
+                    'expectedusers' => [
+                        'user1',
+                        'user2',
+                        'user3',
+                        'user4',
+                    ],
+                ],
+                'NONE: Matching filters' => (object) [
+                    'countries' => [
+                        'DE',
+                        'GB',
+                    ],
+                    'jointype' => filter::JOINTYPE_NONE,
+                    'expectedusers' => [
+                        'user2',
+                        'user3',
+                    ],
+                ],
+                'NONE: Non-matching filters' => (object) [
+                    'countries' => [
+                        'RU',
+                    ],
+                    'jointype' => filter::JOINTYPE_NONE,
+                    'expectedusers' => [
+                        'user1',
+                        'user2',
+                        'user3',
+                        'user4',
+                    ],
+                ],
+            ],
+        ];
+
+        $finaltests = [];
+        foreach ($tests['expects'] as $testname => $test) {
+            $finaltests[$testname] = [
+                'users' => $tests['users'],
+                'countries' => $test->countries,
+                'jointype' => $test->jointype,
+                'expectedusers' => $test->expectedusers,
+            ];
+        }
+
+        return $finaltests;
+    }
+
+    /**
      * Ensure that the keywords filter works as expected with the provided test cases.
      *
      * @param array $usersdata The list of users to create
