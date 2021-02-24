@@ -35,6 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @package    core_h5p
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_h5p\api
  */
 class api_testcase extends \advanced_testcase {
 
@@ -502,5 +503,99 @@ class api_testcase extends \advanced_testcase {
             \core_h5p\file_storage::COMPONENT,
             \core_h5p\file_storage::EXPORT_FILEAREA);
         $this->assertNull($exportfile);
+    }
+
+    /**
+     * Test the behaviour of set_library_enabled().
+     *
+     * @covers ::set_library_enabled
+     * @dataProvider set_library_enabled_provider
+     *
+     * @param string $libraryname Library name to enable/disable.
+     * @param string $action Action to be done with the library. Supported values: enable, disable.
+     * @param int $expected Expected value for the enabled library field. -1 will be passed if the library doesn't exist.
+     */
+    public function test_set_library_enabled(string $libraryname, string $action, int $expected): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create libraries.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        $generator->generate_h5p_data();
+
+        // Check by default the library is enabled.
+        $library = $DB->get_record('h5p_libraries', ['machinename' => $libraryname]);
+        if ($expected >= 0) {
+            $this->assertEquals(1, $library->enabled);
+            $libraryid = (int) $library->id;
+        } else {
+            // Unexisting library. Set libraryid to some unexisting id.
+            $libraryid = -1;
+            $this->expectException('dml_missing_record_exception');
+        }
+
+        \core_h5p\api::set_library_enabled($libraryid, ($action == 'enable'));
+
+        // Check the value of the "enabled" field after calling enable/disable method.
+        $libraries = $DB->get_records('h5p_libraries');
+        foreach ($libraries as $libraryid => $library) {
+            if ($library->machinename == $libraryname) {
+                $this->assertEquals($expected, $library->enabled);
+            } else {
+                // Check that only $libraryname has been enabled/disabled.
+                $this->assertEquals(1, $library->enabled);
+            }
+        }
+    }
+
+    /**
+     * Data provider for test_set_library_enabled().
+     *
+     * @return array
+     */
+    public function set_library_enabled_provider(): array {
+        return [
+            'Disable existing library' => [
+                'libraryname' => 'MainLibrary',
+                'action' => 'disable',
+                'expected' => 0,
+            ],
+            'Enable existing library' => [
+                'libraryname' => 'MainLibrary',
+                'action' => 'enable',
+                'expected' => 1,
+            ],
+            'Disable existing library (not main)' => [
+                'libraryname' => 'Library1',
+                'action' => 'disable',
+                'expected' => 0,
+            ],
+            'Enable existing library (not main)' => [
+                'libraryname' => 'Library1',
+                'action' => 'enable',
+                'expected' => 1,
+            ],
+            'Disable existing library (not runnable)' => [
+                'libraryname' => 'Library3',
+                'action' => 'disable',
+                'expected' => 1, // Not runnable libraries can't be disabled.
+            ],
+            'Enable existing library (not runnable)' => [
+                'libraryname' => 'Library3',
+                'action' => 'enable',
+                'expected' => 1,
+            ],
+            'Enable unexisting library' => [
+                'libraryname' => 'Unexisting library',
+                'action' => 'enable',
+                'expected' => -1,
+            ],
+            'Disable unexisting library' => [
+                'libraryname' => 'Unexisting library',
+                'action' => 'disable',
+                'expected' => -1,
+            ],
+        ];
     }
 }
