@@ -8,6 +8,8 @@ information provided here is intended especially for developers.
    - Course nodes added will also be appended and appear within the 'More' option/page.
 * The core/event events have been renamed and now fire native events, in addition to the legacy YUI and jQuery events.
   The following events have been renamed:
+  - The EDITOR_CONTENT_RESTORED event has been replaced with a new native event in the `core_editor/events` AMD module
+    eventTypes.editorContentRestored.
   - The FORM_FIELD_VALIDATION event has been replaced with a new native event in the `core_form/events` AMD module
     eventTypes.formFieldValidationFailed.
   - The FORM_SUBMIT_AJAX event has been replaced with a new native event in the `core_form/events` AMD module
