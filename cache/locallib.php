@@ -68,6 +68,7 @@ class cache_config_writer extends cache_config {
      */
     protected function config_save() {
         global $CFG;
+        static $confighash = '';
         $cachefile = static::get_config_file_path();
         $directory = dirname($cachefile);
         if ($directory !== $CFG->dataroot && !file_exists($directory)) {
@@ -85,6 +86,15 @@ class cache_config_writer extends cache_config {
 
         // Prepare the file content.
         $content = "<?php defined('MOODLE_INTERNAL') || die();\n \$configuration = ".var_export($configuration, true).";";
+
+        // Do both file content and hash based detection because this might be called
+        // many times within a single request.
+        $hash = sha1($content);
+        if (($hash === $confighash) || (file_exists($cachefile) && $content === file_get_contents($cachefile))) {
+            // Config is unchanged so don't bother locking and writing.
+            $confighash = $hash;
+            return;
+        }
 
         // We need to create a temporary cache lock instance for use here. Remember we are generating the config file
         // it doesn't exist and thus we can't use the normal API for this (it'll just try to use config).
