@@ -138,7 +138,7 @@ class manager {
             self::$sessionactive = true; // Set here, so the session can be cleared if the security check fails.
             self::check_security();
 
-            if (!$requireslock || $CFG->debugdeveloper || isset($CFG->enable_read_only_sessions_debug)) {
+            if (!$requireslock || isset($CFG->enable_read_only_sessions_debug)) {
                 self::$priorsession = (array) $_SESSION['SESSION'];
             }
             if (!empty($CFG->enable_read_only_sessions) && isset($_SESSION['SESSION']->cachestore_session)) {
@@ -705,7 +705,7 @@ class manager {
             self::sessionlock_debugging();
 
             $requireslock = self::$handler->requires_write_lock();
-            if (!$requireslock || $CFG->debugdeveloper || isset($CFG->enable_read_only_sessions_debug)) {
+            if (!$requireslock || isset($CFG->enable_read_only_sessions_debug)) {
                 // Compare the array of the earlier session data with the array now, if
                 // there is a difference then a lock is required.
                 $arraydiff = self::array_session_diff(
