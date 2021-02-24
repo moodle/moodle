@@ -41,14 +41,17 @@ Feature: The activity results block displays student in separate groups scores
       | student4 | G2 |
       | student5 | G3 |
       | student6 | G3 |
+    And the following "activity" exists:
+      | activity                      | assign          |
+      | course                        | C1              |
+      | idnumber                      | 0001            |
+      | name                          | Test assignment |
+      | intro                         | Offline text    |
+      | section                       | 1               |
+      | assignsubmission_file_enabled | 0               |
+      | groupmode                     | 1               |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-      | Group mode | Separate groups |
-    And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"

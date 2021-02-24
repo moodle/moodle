@@ -14,7 +14,24 @@ Feature: Completion with no calendar capabilites
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activity" exists:
+      | activity    | forum                       |
+      | course      | C1                          |
+      | idnumber    | 00001                       |
+      | name        | Test forum name             |
+      | intro       | Test forum name description |
+      | section     | 1                           |
+      | completion  | 2                           |
     And I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I follow "Test forum name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
+      | id_completionexpected_enabled | 1    |
+      | id_completionexpected_day     | 1    |
+      | id_completionexpected_month   | 1    |
+      | id_completionexpected_year    | 2017 |
+    And I press "Save and return to course"
     And I am on "Course 1" course homepage
     And I navigate to "Users > Permissions" in current page administration
     And I override the system permissions of "Teacher" role with:
@@ -23,17 +40,6 @@ Feature: Completion with no calendar capabilites
     And I log out
 
   Scenario: Editing completion date
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    When I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
-      | Completion tracking | Show activity as complete when conditions are met |
-      | id_completionexpected_enabled | 1 |
-      | id_completionexpected_day | 1 |
-      | id_completionexpected_month | 1 |
-      | id_completionexpected_year | 2017 |
-    And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test forum name"

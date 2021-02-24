@@ -49,10 +49,14 @@ Feature: Edit capabilities
 
   Scenario: Module capabilities overrides
     Given I log in as "teacher1"
+    And the following "activity" exists:
+      | activity | forum                |
+      | course   | C1                   |
+      | idnumber | 00001                |
+      | name     | I'm the name         |
+      | intro    | I'm the introduction |
+      | section  | 1                    |
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | I'm the name |
-      | Description | I'm the introduction |
     And I follow "I'm the name"
     And I navigate to "Permissions" in current page administration
     And I override the system permissions of "Student" role with:

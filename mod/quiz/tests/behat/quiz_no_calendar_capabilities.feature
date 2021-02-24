@@ -14,20 +14,18 @@ Feature: Quiz with no calendar capabilites
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activity" exists:
+      | activity | quiz                  |
+      | course   | C1                    |
+      | idnumber | 00001                 |
+      | name     | Test quiz name        |
+      | intro    | Test quiz description |
+      | section  | 1                     |
     And I log in as "admin"
     And I am on "Course 1" course homepage
-    And I navigate to "Users > Permissions" in current page administration
-    And I override the system permissions of "Teacher" role with:
-      | capability | permission |
-      | moodle/calendar:manageentries | Prohibit |
-    And I log out
-
-  Scenario: Editing a quiz
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    When I add a "Quiz" to section "1" and I fill the form with:
-      | Name | Test quiz name |
-      | Description | Test quiz description |
+    And I follow "Test quiz name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | id_timeopen_enabled | 1 |
       | id_timeopen_day | 1 |
       | id_timeopen_month | 1 |
@@ -36,7 +34,15 @@ Feature: Quiz with no calendar capabilites
       | id_timeclose_day | 1 |
       | id_timeclose_month | 2 |
       | id_timeclose_year | 2017 |
+    And I press "Save and return to course"
+    And I am on "Course 1" course homepage
+    And I navigate to "Users > Permissions" in current page administration
+    And I override the system permissions of "Teacher" role with:
+      | capability | permission |
+      | moodle/calendar:manageentries | Prohibit |
     And I log out
+
+  Scenario: Editing a quiz
     When I am on the "Test quiz name" "mod_quiz > View" page logged in as "teacher1"
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:

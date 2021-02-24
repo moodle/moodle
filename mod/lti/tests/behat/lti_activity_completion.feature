@@ -16,6 +16,9 @@ Feature: View activity completion information in the LTI activity
       | user | course | role           |
       | student1 | C1 | student        |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity | name          | course | idnumber |
+      | lti      | Music history | C1     | lti1     |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Edit settings" in current page administration
@@ -25,11 +28,13 @@ Feature: View activity completion information in the LTI activity
       | Show completion conditions | Yes |
     And I press "Save and display"
     And I turn editing mode on
-    And I add a "External tool" to section "1" and I fill the form with:
-      | Activity name       | Music history                                     |
+    And I follow "Music history"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Completion tracking | Show activity as complete when conditions are met |
       | Require view        | 1                                                 |
       | Require grade       | 1                                                 |
+    And I press "Save and return to course"
     And I log out
 
   Scenario: View automatic completion items as a teacher

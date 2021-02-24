@@ -18,14 +18,12 @@ Feature: View an outline report
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
+    And the following "activities" exist:
+      | activity   | name                      | intro                    | course | idnumber |
+      | forum      | Forum name                | Forum description        | C1     | forum1   |
+      | book       | Book name                 | Book description         | C1     | book1    |
     When I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Forum name |
-      | Description | Forum description |
-    And I add a "Book" to section "1" and I fill the form with:
-      | Name | Book name |
-      | Description | Book description |
+    And I am on "Course 1" course homepage
 
   Scenario: View the outline report when only the legacy log reader is enabled
     Given I navigate to "Plugins > Logging > Manage log stores" in site administration

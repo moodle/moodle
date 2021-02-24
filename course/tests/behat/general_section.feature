@@ -14,12 +14,12 @@ Feature: General section does not show in navigation when empty
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity | name            | intro                        | course | idnumber | section |
+      | forum    | Test forum name | Test forum name description  | C1     | forum1   | 1       |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Navigation" block if not present
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
 
   Scenario: General section is visible in navigation when it is not empty
     When I move "Test forum name" activity to section "0"

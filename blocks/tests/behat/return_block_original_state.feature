@@ -8,6 +8,10 @@ Feature: The context of a block can always be returned to it's original state.
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
+    And the following "activities" exist:
+      | activity   | name           | intro         | course | section | idnumber |
+      | assign     | Assignment1    | Description   | C1     | 1       | assign1 |
+      | assign     | Assignment2    | Description   | C1     | 1       | assign1 |
     And I log in as "admin"
     When I am on "Course 1" course homepage with editing mode on
     And I add the "Tags" block
@@ -18,9 +22,6 @@ Feature: The context of a block can always be returned to it's original state.
       | Display on page types | Any page |
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Assignment1 |
-      | Description | Description |
     And I follow "Assignment1"
     And I configure the "Tags" block
     And I set the following fields to these values:
@@ -32,9 +33,6 @@ Feature: The context of a block can always be returned to it's original state.
     And I navigate to course participants
     And "Tags" "block" should not exist
     And I am on "Course 1" course homepage
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Assignment2 |
-      | Description | Description |
     And I follow "Assignment2"
     And I should see "Tags" in the "Tags" "block"
     And I configure the "Tags" block

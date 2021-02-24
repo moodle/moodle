@@ -46,14 +46,18 @@ Feature: We can set the grade to pass value
     And I press "Cancel"
 
   Scenario: Set a valid grade to pass for an assignment activity using points
-    When I turn editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test Assignment 1 |
-      | Description | Submit your online text |
+    Given the following "activities" exist:
+      | activity   | name                | intro                      | course | section | idnumber |
+      | assign     | Test Assignment 1   | Submit your online text    | C1     | 1       | assign1  |
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test Assignment 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | assignsubmission_onlinetext_enabled | 1 |
       | grade[modgrade_type] | Point |
       | grade[modgrade_point] | 50 |
       | Grade to pass | 25 |
+    And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  assign Test Assignment 1" "link"
@@ -69,13 +73,17 @@ Feature: We can set the grade to pass value
     And the field "Grade to pass" matches value "30"
 
   Scenario: Set a valid grade to pass for an assignment activity using scales
-    When I turn editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test Assignment 1 |
-      | Description | Submit your online text |
+    Given the following "activities" exist:
+      | activity   | name                | intro                      | course | section | idnumber |
+      | assign     | Test Assignment 1   | Submit your online text    | C1     | 1       | assign1  |
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test Assignment 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | grade[modgrade_type] | Scale |
       | grade[modgrade_scale] | Test Scale 1 |
       | Grade to pass | 3 |
+    And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  assign Test Assignment 1" "link"
@@ -89,24 +97,32 @@ Feature: We can set the grade to pass value
     And the field "Grade to pass" matches value "4"
 
   Scenario: Set a invalid grade to pass for an assignment activity using scales
-    When I turn editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test Assignment 1 |
-      | Description | Submit your online text |
+    Given the following "activities" exist:
+      | activity   | name                | intro                      | course | section | idnumber |
+      | assign     | Test Assignment 1   | Submit your online text    | C1     | 1       | assign1  |
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test Assignment 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | grade[modgrade_type] | Scale |
       | grade[modgrade_scale] | Test Scale 1 |
       | Grade to pass | 10 |
+    And I press "Save and return to course"
     Then I should see "The grade to pass can not be greater than the maximum possible grade 4"
 
   Scenario: Set a valid grade to pass for workshop activity
-    When I turn editing mode on
-    And I add a "Workshop" to section "1" and I fill the form with:
-      | Workshop name | Test Workshop 1 |
-      | Description | Test workshop |
+    Given the following "activities" exist:
+      | activity   | name              | intro         | course | section | idnumber  |
+      | workshop   | Test Workshop 1   | Test workshop | C1     | 1       | workshop1 |
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test Workshop 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | grade | 80 |
       | Submission grade to pass | 40 |
       | gradinggrade | 20 |
       | Assessment grade to pass | 10 |
+    And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  workshop Test Workshop 1 (submission)" "link"
@@ -126,22 +142,31 @@ Feature: We can set the grade to pass value
     And the field "Assessment grade to pass" matches value "15"
 
   Scenario: Set an invalid grade to pass for workshop activity
-    When I turn editing mode on
-    And I add a "Workshop" to section "1" and I fill the form with:
-      | Workshop name | Test Workshop 1 |
-      | Description | Test workshop |
+    Given the following "activities" exist:
+      | activity   | name              | intro            | course | section | idnumber  |
+      | workshop   | Test Workshop 1   | Test workshop    | C1     | 1       | workshop1 |
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test Workshop 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | grade | 80 |
       | Submission grade to pass | 90 |
       | gradinggrade | 20 |
       | Assessment grade to pass | 30 |
+    And I press "Save and return to course"
     Then "The grade to pass can not be greater than the maximum possible grade 80" "text" should exist in the "Submission grade to pass" "form_row"
     Then "The grade to pass can not be greater than the maximum possible grade 20" "text" should exist in the "Assessment grade to pass" "form_row"
 
   Scenario: Set a valid grade to pass for quiz activity
-    When I turn editing mode on
-    And I add a "Quiz" to section "1" and I fill the form with:
-      | Name | Test Quiz 1 |
+    Given the following "activities" exist:
+      | activity   | name          | course | section | idnumber  |
+      | quiz       | Test Quiz 1   | C1     | 1       | quiz1     |
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test Quiz 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Grade to pass | 9.5 |
+    And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  quiz Test Quiz 1" "link"
@@ -155,11 +180,15 @@ Feature: We can set the grade to pass value
     And the field "Grade to pass" matches value "8.00"
 
   Scenario: Set a valid grade to pass for lesson activity
-    When I turn editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name          | Test Lesson 1 |
-      | Description   | Test          |
+    Given the following "activities" exist:
+      | activity   | name          | intro       | course | section | idnumber  |
+      | lesson     | Test Lesson 1 | Test        | C1     | 1       | lesson1   |
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test Lesson 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Grade to pass | 90            |
+    And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  lesson Test Lesson 1" "link"
@@ -173,12 +202,18 @@ Feature: We can set the grade to pass value
     And the field "Grade to pass" matches value "80"
 
   Scenario: Set a valid grade to pass for database activity
-    When I turn editing mode on
-    And I add a "Database" to section "1" and I fill the form with:
-      | Name           | Test Database 1    |
-      | Description    | Test               |
-      | Aggregate type | Average of ratings |
-      | Grade to pass  | 90                 |
+    Given the following "activities" exist:
+      | activity   | name            | intro       | course | section | idnumber  |
+      | data       | Test Database 1 | Test        | C1     | 1       | data1     |
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test Database 1"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Ratings > Aggregate type | Average of ratings |
+      | id_scale_modgrade_type   | Point              |
+      | Ratings > Grade to pass  | 90                 |
+    And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  data Test Database 1" "link"
@@ -191,22 +226,34 @@ Feature: We can set the grade to pass value
     And the field "Grade to pass" matches value "80"
 
   Scenario: Set an invalid grade to pass for forum activity
-    When I turn editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name     | Test Forum 1    |
-      | Description    | Test               |
-      | Ratings > Aggregate type | Average of ratings |
-      | Ratings > Grade to pass  | 90                 |
-      | Ratings > scale[modgrade_point] | 60 |
+    Given the following "activities" exist:
+      | activity    | name         | intro       | course | section | idnumber  |
+      | forum       | Test Forum 1 | Test        | C1     | 1       | forum1    |
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test Forum 1"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Ratings > Aggregate type        | Average of ratings |
+      | id_scale_modgrade_type          | Point              |
+      | Ratings > Grade to pass         | 90                 |
+      | Ratings > scale[modgrade_point] | 60                 |
+    And I press "Save and return to course"
     Then I should see "The grade to pass can not be greater than the maximum possible grade 60"
 
   Scenario: Set a valid grade to pass for forum activity
-    When I turn editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name     | Test Forum 1    |
-      | Description    | Test               |
+    Given the following "activities" exist:
+      | activity    | name         | intro | course | section | idnumber  |
+      | forum       | Test Forum 1 | Test  | C1     | 1       | forum1    |
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test Forum 1"
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And I set the following fields to these values:
       | Ratings > Aggregate type | Average of ratings |
+      | id_scale_modgrade_type   | Point              |
       | Ratings > Grade to pass  | 90                 |
+    And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  forum Test Forum 1 rating" "link"
@@ -220,12 +267,17 @@ Feature: We can set the grade to pass value
     And the field "Ratings > Grade to pass" matches value "80"
 
   Scenario: Set a valid grade to pass for glossary activity
-    When I turn editing mode on
-    And I add a "Glossary" to section "1" and I fill the form with:
-      | Name           | Test Glossary 1    |
-      | Description    | Test               |
-      | Aggregate type | Average of ratings |
-      | Grade to pass  | 90                 |
+    Given the following "activities" exist:
+      | activity    | name            | intro       | course | section | idnumber  |
+      | glossary    | Test Glossary 1 | Test        | C1     | 1       | glossary1 |
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test Glossary 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
+      | Ratings > Aggregate type | Average of ratings |
+      | id_scale_modgrade_type   | Point              |
+      | Ratings > Grade to pass  | 90                 |
+    And I press "Save and return to course"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  glossary Test Glossary 1" "link"

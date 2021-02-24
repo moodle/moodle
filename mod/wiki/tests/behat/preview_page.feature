@@ -16,14 +16,13 @@ Feature: Edited wiki pages may be previewed before saving
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Wiki" to section "1" and I fill the form with:
-      | Wiki name | Test wiki name |
-      | Description | Test wiki description |
-      | First page name | First page |
-      | Wiki mode | Collaborative wiki |
-    And I log out
+    And the following "activity" exists:
+      | activity      | wiki                  |
+      | course        | C1                    |
+      | idnumber      | 0001                  |
+      | name          | Test wiki name        |
+      | intro         | Test wiki description |
+      | wikimode      | collaborative         |
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test wiki name"

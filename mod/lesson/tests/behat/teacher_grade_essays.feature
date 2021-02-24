@@ -33,12 +33,17 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
       | student1 | G1 |
       | student2 | G2 |
       | student3 | G3 |
+    And the following "activities" exist:
+      | activity | name             | intro                    | course | idnumber | section |
+      | lesson   | Test lesson name | Test lesson description  | C1     | lesson1   | 1      |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
+    And I am on "Course 1" course homepage
+    And I follow "Test lesson name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Group mode | Separate groups |
+    And I press "Save and return to course"
+    And I am on "Course 1" course homepage with editing mode on
     And I follow "Test lesson name"
     And I follow "Add a question page"
     And I set the field "Select a question type" to "Essay"

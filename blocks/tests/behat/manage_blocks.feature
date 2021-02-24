@@ -14,15 +14,18 @@ Feature: Block appearances
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity | name             | description              | course | idnumber | section |
+      | survey   | Test survey name | Test survey description  | C1     | survey1  | 1       |
+      | book     | Test book name   | Test book description    | C1     | book1    | 1       |
     And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Survey" to section "1" and I fill the form with:
-      | Name | Test survey name |
+    And I am on "Course 1" course homepage
+    And I follow "Test survey name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Survey type | ATTLS (20 item version) |
-      | Description | Test survey description |
-    And I add a "Book" to section "1" and I fill the form with:
-      | Name | Test book name |
-      | Description | Test book description |
+    And I press "Save and return to course"
+    And I am on "Course 1" course homepage with editing mode on
     And I follow "Test book name"
     And I set the following fields to these values:
       | Chapter title | Book title |

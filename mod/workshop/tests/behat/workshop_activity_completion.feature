@@ -18,6 +18,9 @@ Feature: View activity completion information in the Workshop activity
       | student1 | C1 | student        |
       | student2 | C1 | student        |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity | name          | intro                     | course | idnumber  | submissiontypefile |
+      | workshop | Music history | Test workshop description | C1     | workshop1 | 1                  |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Edit settings" in current page administration
@@ -27,11 +30,13 @@ Feature: View activity completion information in the Workshop activity
       | Show completion conditions | Yes |
     And I press "Save and display"
     And I turn editing mode on
-    And I add a "Workshop" to section "1" and I fill the form with:
-      | Workshop name       | Music history                                     |
+    And I follow "Music history"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Completion tracking | Show activity as complete when conditions are met |
       | Require view        | 1                                                 |
       | Require grade       | Submission                                        |
+    And I press "Save and return to course"
     And I edit assessment form in workshop "Music history" as:"
       | id_description__idx_0_editor | Aspect1 |
     And I change phase in workshop "Music history" to "Submission phase"

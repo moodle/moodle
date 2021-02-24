@@ -14,12 +14,17 @@ Feature: Reuse my rubrics in other activities
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity   | name                      | intro                           | course | section | idnumber |
+      | assign     | Test assignment 1 name    | Test assignment 1 description   | C1     | 1       | assign1  |
+      | assign     | Test assignment 2 name    | Test assignment 2 description   | C1     | 1       | assign1  |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment 1 name |
-      | Description | Test assignment 1 description |
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Grading method | Rubric |
+    And I press "Save and return to course"
     And I go to "Test assignment 1 name" advanced grading definition page
     And I set the following fields to these values:
       | Name | Assignment 1 rubric |
@@ -30,10 +35,12 @@ Feature: Reuse my rubrics in other activities
       | Criterion 3 | Level 31 | 31 | Level 32 | 32 |         |    |
     And I press "Save rubric and make it ready"
     And I am on "Course 1" course homepage
-    When I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment 2 name |
-      | Description | Test assignment 2 description |
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment 2"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Grading method | Rubric |
+    And I press "Save and return to course"
     And I set "Test assignment 2 name" activity to use "Assignment 1 rubric" grading form
     Then I should see "Ready for use"
     And I should see "Criterion 1"

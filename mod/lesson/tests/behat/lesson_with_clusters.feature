@@ -16,13 +16,13 @@ Feature: In a lesson activity, students can see questions in random order
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity | name                 | intro                    | course | idnumber | section |
+      | lesson   | Lesson with clusters | Test lesson description  | C1     | lesson1  | 1       |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Lesson with two clusters
-    Given I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Lesson with clusters |
-      | Description | Test lesson description |
+    Given I am on "Course 1" course homepage with editing mode on
     And I follow "Lesson with clusters"
     And I follow "Add a content page"
     And I set the following fields to these values:
