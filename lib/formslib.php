@@ -2488,7 +2488,7 @@ require(["core/event", "jquery"], function(Event, $) {
                 }
             }
             // This handles both randomised (MDL-65217) and non-randomised IDs.
-            $errorid = preg_replace('/^id_/', 'id_error_', $this->_attributes['id']);
+            $errorid = preg_replace('/^id_/', 'id_error_', $elem->_attributes['id']);
             $validateJS .= '
       ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\'], \''.$escapedElementName.'\') && ret;
       if (!ret && !first_focus) {
