@@ -28,6 +28,7 @@ Feature: Restrict activities availability
     Then I should see "Test glossary name"
     And I should see "Test chat name"
 
+  @javascript
   Scenario: Activities can not be added when the admin restricts the permissions
     Given I log in as "admin"
     And I set the following system permissions of "Teacher" role:
@@ -39,5 +40,6 @@ Feature: Restrict activities availability
     And I log out
     And I log in as "teacher1"
     When I am on "Course 1" course homepage with editing mode on
-    Then the "Add a resource to section 'Topic 1'" select box should not contain "Chat"
-    Then the "Add an activity to section 'Topic 1'" select box should not contain "Glossary"
+    And I press "Add an activity or resource"
+    Then "Add a new Chat" "link" should not exist in the "Add an activity or resource" "dialogue"
+    Then "Add a new Glossary" "link" should not exist in the "Add an activity or resource" "dialogue"

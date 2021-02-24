@@ -14,6 +14,13 @@ Feature: Lesson with no calendar capabilites
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    Given the following "activity" exists:
+      | activity      | lesson                  |
+      | course        | C1                      |
+      | idnumber      | 0001                    |
+      | name          | Test lesson name        |
+      | intro         | Test lesson description |
+      | section       | 1                       |
     And I log in as "admin"
     And I am on "Course 1" course homepage
     And I navigate to "Users > Permissions" in current page administration
@@ -25,9 +32,9 @@ Feature: Lesson with no calendar capabilites
   Scenario: Editing a lesson
     Given I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    When I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
+    And I follow "Test lesson name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | id_available_enabled | 1 |
       | id_available_day | 1 |
       | id_available_month | 1 |
@@ -36,6 +43,7 @@ Feature: Lesson with no calendar capabilites
       | id_deadline_day | 1 |
       | id_deadline_month | 2 |
       | id_deadline_year | 2017 |
+    And I press "Save and return to course"
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on

@@ -289,12 +289,11 @@ Feature: A user can control their own subscription preferences for a discussion
     And the field "Discussion subscription" matches value "I don't want to be notified of new posts in this discussion"
 
   Scenario: A guest should not be able to subscribe to a discussion
-    Given I am on site homepage
+    Given the following "activities" exist:
+      | activity    | name            | intro                  | course               | section | idnumber  | type    |
+      | forum       | Test forum name | Test forum description | Acceptance test site | 1       | forum1    | general |
+    And I am on site homepage
     And I turn editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-     | Forum name        | Test forum name |
-     | Forum type        | Standard forum for general use |
-     | Description       | Test forum description |
     And I add a new discussion to "Test forum name" forum with:
      | Subject | Test post subject one |
      | Message | Test post message one |
@@ -308,12 +307,11 @@ Feature: A user can control their own subscription preferences for a discussion
     And "Unsubscribe from this discussion" "checkbox" should not exist
 
   Scenario: A user who is not logged in should not be able to subscribe to a discussion
-    Given I am on site homepage
+    Given the following "activities" exist:
+      | activity    | name            | intro                  | course               | section | idnumber  | type    |
+      | forum       | Test forum name | Test forum description | Acceptance test site | 1       | forum1    | general |
+    And I am on site homepage
     And I turn editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-     | Forum name        | Test forum name |
-     | Forum type        | Standard forum for general use |
-     | Description       | Test forum description |
     And I add a new discussion to "Test forum name" forum with:
      | Subject | Test post subject one |
      | Message | Test post message one |

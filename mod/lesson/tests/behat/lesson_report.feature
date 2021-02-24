@@ -16,14 +16,11 @@ Feature: In a lesson activity, teachers can review student attempts
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity   | name             | intro | course | section | idnumber    | retake |
+      | lesson     | Test lesson name | Test  | C1     | 1       | lesson1     | 1      |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1"
-    And I set the following fields to these values:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
-      | Re-takes allowed | Yes |
-    And I press "Save and return to course"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
 
   Scenario: View student attempts in a lesson containing both content and question pages

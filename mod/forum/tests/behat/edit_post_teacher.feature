@@ -16,11 +16,11 @@ Feature: Teachers can edit or delete any forum post
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity   | name              | intro                    | course | section | idnumber |
+      | forum      | Test forum name   | Test forum description   | C1     | 1       | forum1   |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
+    And I am on "Course 1" course homepage
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Teacher post subject |
       | Message | Teacher post message |

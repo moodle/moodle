@@ -43,10 +43,14 @@ Feature: Basic recycle bin functionality
 
   Scenario: Restore a deleted assignment
     Given I log in as "teacher1"
+    And the following "activity" exists:
+      | activity    | assign                      |
+      | name        | Test assign                 |
+      | intro       | Test                        |
+      | course      | C1                          |
+      | idnumber    | 0001                        |
+      | section     | 1                           |
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assign |
-      | Description | Test |
     And I delete "Test assign" activity
     When I navigate to "Recycle bin" in current page administration
     Then I should see "Test assign"

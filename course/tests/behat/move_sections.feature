@@ -15,38 +15,40 @@ Feature: Sections can be moved
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Move up and down a section with Javascript disabled in a single page course
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
+    Given the following "activities" exist:
+      | activity | name            | intro                        | course | idnumber | section |
+      | forum    | Test forum name | Test forum name description  | C1     | forum1   | 1       |
+    And I am on "Course 1" course homepage with editing mode on
     When I move down section "1"
     Then I should see "Test forum name" in the "Topic 2" "section"
     And I move up section "2"
     And I should see "Test forum name" in the "Topic 1" "section"
 
   Scenario: Move up and down a section with Javascript disabled in the course home of a course using paged mode
-    Given I navigate to "Edit settings" in current page administration
+    Given the following "activities" exist:
+      | activity | name            | intro                        | course | idnumber | section |
+      | forum    | Test forum name | Test forum name description  | C1     | forum1   | 1       |
+    And I am on "Course 1" course homepage with editing mode on
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
     When I move down section "1"
     Then I should see "Test forum name" in the "Topic 2" "section"
     And I move up section "2"
     And I should see "Test forum name" in the "Topic 1" "section"
 
   Scenario: Sections can not be moved with Javascript disabled in a section page of a course using paged mode
-    Given I navigate to "Edit settings" in current page administration
+    Given the following "activities" exist:
+      | activity | name            | intro                        | course | idnumber | section |
+      | forum    | Test forum name | Test forum name description  | C1     | forum1   | 2       |
+    And I am on "Course 1" course homepage with editing mode on
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"
-    And I add a "Forum" to section "2" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
     When I follow "Topic 2"
     Then "Topic 1" "section" should not exist
     And "Topic 3" "section" should not exist
