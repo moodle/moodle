@@ -598,4 +598,148 @@ class api_testcase extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test the behaviour of is_library_enabled().
+     *
+     * @covers ::is_library_enabled
+     * @dataProvider is_library_enabled_provider
+     *
+     * @param string $libraryname Library name to check.
+     * @param bool $expected Expected result after calling the method.
+     * @param bool $exception Exception expected or not.
+     * @param bool $useid Whether to use id for calling is_library_enabled method.
+     * @param bool $uselibraryname Whether to use libraryname for calling is_library_enabled method.
+     */
+    public function test_is_library_enabled(string $libraryname, bool $expected, bool $exception = false,
+        bool $useid = false, bool $uselibraryname = true): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create the following libraries:
+        // - H5P.Lib1: 1 version enabled, 1 version disabled.
+        // - H5P.Lib2: 2 versions enabled.
+        // - H5P.Lib3: 2 versions disabled.
+        // - H5P.Lib4: 1 version disabled.
+        // - H5P.Lib5: 1 version enabled.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        $libraries = [
+            'H5P.Lib1.1' => $generator->create_library_record('H5P.Lib1', 'Lib1', 1, 1, 0, '', null, null, null, false),
+            'H5P.Lib1.2' => $generator->create_library_record('H5P.Lib1', 'Lib1', 1, 2),
+            'H5P.Lib2.1' => $generator->create_library_record('H5P.Lib2', 'Lib2', 2, 1),
+            'H5P.Lib2.2' => $generator->create_library_record('H5P.Lib2', 'Lib2', 2, 2),
+            'H5P.Lib3.1' => $generator->create_library_record('H5P.Lib3', 'Lib3', 3, 1, 0, '', null, null, null, false),
+            'H5P.Lib3.2' => $generator->create_library_record('H5P.Lib3', 'Lib3', 3, 2, 0, '', null, null, null, false),
+            'H5P.Lib4.1' => $generator->create_library_record('H5P.Lib4', 'Lib4', 4, 1, 0, '', null, null, null, false),
+            'H5P.Lib5.1' => $generator->create_library_record('H5P.Lib5', 'Lib5', 5, 1),
+        ];
+
+        $countenabledlibraries = $DB->count_records('h5p_libraries', ['enabled' => 1]);
+        $this->assertEquals(4, $countenabledlibraries);
+
+        if ($useid) {
+            $librarydata = ['id' => $libraries[$libraryname]->id];
+        } else if ($uselibraryname) {
+            $librarydata = ['machinename' => $libraryname];
+        } else {
+            $librarydata = ['invalid' => true];
+        }
+
+        if ($exception) {
+            $this->expectException(\moodle_exception::class);
+        }
+
+        $result = api::is_library_enabled((object) $librarydata);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Data provider for test_is_library_enabled().
+     *
+     * @return array
+     */
+    public function is_library_enabled_provider(): array {
+        return [
+            'Library with 2 versions, one of them disabled' => [
+                'libraryname' => 'H5P.Lib1',
+                'expected' => false,
+            ],
+            'Library with 2 versions, all enabled' => [
+                'libraryname' => 'H5P.Lib2',
+                'expected' => true,
+            ],
+            'Library with 2 versions, all disabled' => [
+                'libraryname' => 'H5P.Lib3',
+                'expected' => false,
+            ],
+            'Library with only one version, disabled' => [
+                'libraryname' => 'H5P.Lib4',
+                'expected' => false,
+            ],
+            'Library with only one version, enabled' => [
+                'libraryname' => 'H5P.Lib5',
+                'expected' => true,
+            ],
+            'Library with 2 versions, one of them disabled (using id) - 1.1 (disabled)' => [
+                'libraryname' => 'H5P.Lib1.1',
+                'expected' => false,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with 2 versions, one of them disabled (using id) - 1.2 (enabled)' => [
+                'libraryname' => 'H5P.Lib1.2',
+                'expected' => true,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with 2 versions, all enabled (using id) - 2.1' => [
+                'libraryname' => 'H5P.Lib2.1',
+                'expected' => true,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with 2 versions, all enabled (using id) - 2.2' => [
+                'libraryname' => 'H5P.Lib2.2',
+                'expected' => true,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with 2 versions, all disabled (using id) - 3.1' => [
+                'libraryname' => 'H5P.Lib3.1',
+                'expected' => false,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with 2 versions, all disabled (using id) - 3.2' => [
+                'libraryname' => 'H5P.Lib3.2',
+                'expected' => false,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with only one version, disabled (using id)' => [
+                'libraryname' => 'H5P.Lib4.1',
+                'expected' => false,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Library with only one version, enabled (using id)' => [
+                'libraryname' => 'H5P.Lib5.1',
+                'expected' => true,
+                'exception' => false,
+                'useid' => true,
+            ],
+            'Unexisting library' => [
+                'libraryname' => 'H5P.Unexisting',
+                'expected' => true,
+            ],
+            'Missing required parameters' => [
+                'libraryname' => 'H5P.Unexisting',
+                'expected' => false,
+                'exception' => true,
+                'useid' => false,
+                'uselibraryname' => false,
+            ],
+        ];
+    }
 }

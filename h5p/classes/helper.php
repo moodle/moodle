@@ -67,6 +67,13 @@ class helper {
         // Check if the h5p file is valid before saving it.
         $h5pvalidator = $factory->get_validator();
         if ($h5pvalidator->isValidPackage($skipcontent, $onlyupdatelibs)) {
+            // If the main library of the package is disabled, the H5P content won't be saved.
+            $mainlibrary = (object) ['machinename' => $h5pvalidator->h5pC->mainJsonData['mainLibrary']];
+            if (!api::is_library_enabled($mainlibrary)) {
+                $core->h5pF->setErrorMessage(get_string('mainlibrarydisabled', 'core_h5p'));
+                return false;
+            }
+
             $h5pstorage = $factory->get_storage();
 
             $content = [

@@ -181,3 +181,53 @@ Feature: Render H5P content using filters
     And I switch to "h5p-iframe" class iframe
     Then I should not see "missing-required-library"
     And I should see "Lorum ipsum"
+
+  @javascript
+  Scenario: Render local H5P file with a disabled main library
+    Given I log in as "admin"
+# Upload H5P file to private files.
+    And I follow "Private files"
+    And I upload "h5p/tests/fixtures/ipsums.h5p" file to "Files" filemanager
+    And I click on "Save changes" "button"
+# Upload manually the H5P content-type library and disable it.
+    And I navigate to "H5P > Manage H5P content types" in site administration
+    And I upload "h5p/tests/fixtures/ipsums.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
+    And I click on "Disable" "link" in the "Accordion" "table_row"
+# Add H5P content to the page.
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "PageName1"
+    And I navigate to "Edit settings" in current page administration
+    When I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
+    And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
+    And I click on "ipsums.h5p" "link"
+    And I click on "Select this file" "button"
+    And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
+    And I click on "Save and display" "button"
+    And I switch to "h5p-iframe" class iframe
+#   Library is disabled, so an error should be displayed.
+    Then I should see "This file can't be displayed because its content-type is disabled."
+    And I should not see "Lorum ipsum"
+    And I switch to the main frame
+    And I navigate to "H5P > Manage H5P content types" in site administration
+    And I click on "Enable" "link" in the "Accordion" "table_row"
+    And I am on "Course 1" course homepage
+#   Content should be deployed now that main library is enabled.
+    And I follow "PageName1"
+#   Switch to iframe created by filter.
+    And I switch to "h5p-iframe" class iframe
+#   Switch to iframe created by embed.php page.
+    And I switch to "h5p-iframe" class iframe
+    And I should see "Lorum ipsum"
+    And I should not see "This file can't be displayed because its content-type is disabled."
+    And I switch to the main frame
+    And I navigate to "H5P > Manage H5P content types" in site administration
+    And I click on "Disable" "link" in the "Accordion" "table_row"
+    And I am on "Course 1" course homepage
+#   Library is disabled again, so an error should be displayed.
+    And I follow "PageName1"
+    And I switch to "h5p-iframe" class iframe
+    And I should see "This file can't be displayed because its content-type is disabled."
+    And I should not see "Lorum ipsum"
+    And I switch to the main frame
