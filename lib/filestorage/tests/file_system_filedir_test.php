@@ -154,7 +154,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
         // This should generate an exception.
         $this->expectException('file_exception');
         $this->expectExceptionMessageRegExp(
-            '/Can not create local file pool directories, please verify permissions in dataroot./');
+            '/Cannot create local file pool directories. Please verify permissions in dataroot./');
 
         new file_system_filedir();
     }
@@ -178,7 +178,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
         // This should generate an exception.
         $this->expectException('file_exception');
         $this->expectExceptionMessageRegExp(
-            '/Can not create local file pool directories, please verify permissions in dataroot./');
+            '/Cannot create local file pool directories. Please verify permissions in dataroot./');
 
         new file_system_filedir();
     }
@@ -835,7 +835,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
 
         $this->expectException('file_exception');
         $this->expectExceptionMessageRegExp(
-            "/Can not create local file pool directories, please verify permissions in dataroot./");
+            "/Cannot create local file pool directories. Please verify permissions in dataroot./");
 
         // Attempt to add the file to the file pool.
         $fs = new file_system_filedir();
@@ -893,7 +893,7 @@ class core_files_file_system_filedir_testcase extends advanced_testcase {
 
         $this->expectException('file_exception');
         $this->expectExceptionMessageRegExp(
-            "/Can not create local file pool directories, please verify permissions in dataroot./");
+            "/Cannot create local file pool directories. Please verify permissions in dataroot./");
 
         // Attempt to add the file to the file pool.
         $fs = new file_system_filedir();
