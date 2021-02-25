@@ -8,6 +8,8 @@ information provided here is intended especially for developers.
    - Course nodes added will also be appended and appear within the 'More' option/page.
 * The core/event events have been renamed and now fire native events, in addition to the legacy YUI and jQuery events.
   The following events have been renamed:
+  - The BLOCK_CONTENT_UPDATED event has been replaced with a new native event in the `core_block/events` AMD module
+    eventTypes.blockContentUpdated.
   - The EDITOR_CONTENT_RESTORED event has been replaced with a new native event in the `core_editor/events` AMD module
     eventTypes.editorContentRestored.
   - The FILTER_CONTENT_UPDATED event has been replaced with a new native event in the `core_filters/events` AMD module
@@ -16,6 +18,7 @@ information provided here is intended especially for developers.
     eventTypes.formFieldValidationFailed.
   - The FORM_SUBMIT_AJAX event has been replaced with a new native event in the `core_form/events` AMD module
     eventTypes.formSubmittedByJavascript.
+* The block template now includues a block-instanceid data attribute.
 
 === 3.11 ===
 * PHPUnit has been upgraded to 9.5 (see MDL-71036 for details).
