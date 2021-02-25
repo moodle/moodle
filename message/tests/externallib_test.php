@@ -2828,14 +2828,14 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $members = $result['members'];
         $this->assertCount(3, $members);
         $membersid = [$members[0]['id'], $members[1]['id'], $members[2]['id']];
-        $this->assertContains($user1->id, $membersid);
-        $this->assertContains($user2->id, $membersid);
-        $this->assertContains($user3->id, $membersid);
+        $this->assertContainsEquals($user1->id, $membersid);
+        $this->assertContainsEquals($user2->id, $membersid);
+        $this->assertContainsEquals($user3->id, $membersid);
 
         $membersfullnames = [$members[0]['fullname'], $members[1]['fullname'], $members[2]['fullname']];
-        $this->assertContains(fullname($user1), $membersfullnames);
-        $this->assertContains(fullname($user2), $membersfullnames);
-        $this->assertContains(fullname($user3), $membersfullnames);
+        $this->assertContainsEquals(fullname($user1), $membersfullnames);
+        $this->assertContainsEquals(fullname($user2), $membersfullnames);
+        $this->assertContainsEquals(fullname($user3), $membersfullnames);
 
         // Confirm the messages data is correct.
         $messages = $result['messages'];
@@ -2957,9 +2957,9 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $members = $result['members'];
         $this->assertCount(3, $members);
         $membersid = [$members[0]['id'], $members[1]['id'], $members[2]['id']];
-        $this->assertContains($user1->id, $membersid);
-        $this->assertContains($user2->id, $membersid);
-        $this->assertContains($user3->id, $membersid);
+        $this->assertContainsEquals($user1->id, $membersid);
+        $this->assertContainsEquals($user2->id, $membersid);
+        $this->assertContainsEquals($user3->id, $membersid);
 
         // Confirm the message data is correct.
         $messages = $result['messages'];

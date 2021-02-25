@@ -175,10 +175,10 @@ class assignsubmission_comments_privacy_testcase extends \mod_assign\tests\mod_a
         $userids = $userlist->get_userids();
         $this->assertCount(3, $userids);
         // User 1,2 and 3 are the expected ones in the array. User 4 isn't.
-        $this->assertContains($user1->id, $userids);
-        $this->assertContains($user2->id, $userids);
-        $this->assertContains($user3->id, $userids);
-        $this->assertNotContains($user4->id, $userids);
+        $this->assertContainsEquals($user1->id, $userids);
+        $this->assertContainsEquals($user2->id, $userids);
+        $this->assertContainsEquals($user3->id, $userids);
+        $this->assertNotContainsEquals($user4->id, $userids);
     }
 
     /**

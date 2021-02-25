@@ -885,7 +885,7 @@ class quizaccess_seb_rule__testcase extends advanced_testcase {
             'filemanager_sebconfigfile' => 0,
         ], [], $form);
 
-        $this->assertContains(get_string('filenotpresent', 'quizaccess_seb'), $errors);
+        $this->assertContainsEquals(get_string('filenotpresent', 'quizaccess_seb'), $errors);
     }
 
     /**

@@ -68,10 +68,10 @@ class core_contentbank_privacy_testcase extends provider_testcase {
         $contextlistids = $contextlist->get_contextids();
         $this->assertCount(3, $contextlistids);
         // Check the list against the expected list of contexts.
-        $this->assertContains($scenario->systemcontext->id, $contextlistids);
-        $this->assertContains($scenario->coursecategorycontext->id,
+        $this->assertContainsEquals($scenario->systemcontext->id, $contextlistids);
+        $this->assertContainsEquals($scenario->coursecategorycontext->id,
             $contextlistids);
-        $this->assertContains($scenario->coursecontext->id, $contextlistids);
+        $this->assertContainsEquals($scenario->coursecontext->id, $contextlistids);
 
         // Testing againts Teacher who has content in the one context.
         $contextlist = provider::get_contexts_for_userid($scenario->teacher->id);
@@ -79,10 +79,10 @@ class core_contentbank_privacy_testcase extends provider_testcase {
         $contextlistids = $contextlist->get_contextids();
         $this->assertCount(1, $contextlistids);
         // Check the againts Course Context.
-        $this->assertContains($scenario->coursecontext->id, $contextlistids);
+        $this->assertContainsEquals($scenario->coursecontext->id, $contextlistids);
         // And there is not a System and Course Category Context.
-        $this->assertNotContains($scenario->systemcontext->id, $contextlistids);
-        $this->assertNotContains($scenario->coursecategorycontext->id, $contextlistids);
+        $this->assertNotContainsEquals($scenario->systemcontext->id, $contextlistids);
+        $this->assertNotContainsEquals($scenario->coursecategorycontext->id, $contextlistids);
     }
 
     /**
