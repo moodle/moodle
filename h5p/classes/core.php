@@ -179,6 +179,11 @@ class core extends \H5PCore {
         $framework = $factory->get_framework();
 
         foreach ($contenttypes->contentTypes as $type) {
+            // Don't fetch content types if any of the versions is disabled.
+            $librarydata = (object) ['machinename' => $type->id];
+            if (!api::is_library_enabled($librarydata)) {
+                continue;
+            }
             // Don't fetch content types that require a higher H5P core API version.
             if (!$this->is_required_core_api($type->coreApiVersionNeeded)) {
                 continue;
