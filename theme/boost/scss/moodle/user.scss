@@ -310,3 +310,9 @@
 [data-filterverb="2"] [data-filterverbfor="2"] {
     display: block;
 }
+
+[data-filterregion="value"] {
+    div:first-of-type {
+        @extend .align-top;
+    }
+}
