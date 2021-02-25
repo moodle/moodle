@@ -156,7 +156,7 @@ Feature: Set up contextual data for tests
     And I log in as "user5"
     And I should see "You are logged in as"
     And I am on "Course 1" course homepage
-    And I should see "You can not enrol yourself in this course."
+    And I should see "You cannot enrol yourself in this course."
 
   Scenario: Add modules
     Given the following "courses" exist:
