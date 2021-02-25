@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_h5p\api
  */
-class api_testcase extends \advanced_testcase {
+class api_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of delete_library().
@@ -739,6 +739,103 @@ class api_testcase extends \advanced_testcase {
                 'exception' => true,
                 'useid' => false,
                 'uselibraryname' => false,
+            ],
+        ];
+    }
+
+    /**
+     * Test the behaviour of is_valid_package().
+     * @runInSeparateProcess
+     *
+     * @covers ::is_valid_package
+     * @dataProvider is_valid_package_provider
+     *
+     * @param string $filename The H5P content to validate.
+     * @param bool $expected Expected result after calling the method.
+     * @param bool $isadmin Whether the user calling the method will be admin or not.
+     * @param bool $onlyupdatelibs Whether new libraries can be installed or only the existing ones can be updated.
+     * @param bool $skipcontent Should the content be skipped (so only the libraries will be saved)?
+     */
+    public function test_is_valid_package(string $filename, bool $expected, bool $isadmin = false, bool $onlyupdatelibs = false,
+            bool $skipcontent = false): void {
+        global $USER;
+
+        $this->resetAfterTest();
+
+        if ($isadmin) {
+            $this->setAdminUser();
+            $user = $USER;
+        } else {
+            // Create a user.
+            $user = $this->getDataGenerator()->create_user();
+            $this->setUser($user);
+        }
+
+        // Prepare the file.
+        $path = __DIR__ . $filename;
+        $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
+
+        // Check if the H5P content is valid or not.
+        $result = api::is_valid_package($file, $onlyupdatelibs, $skipcontent);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Data provider for test_is_valid_package().
+     *
+     * @return array
+     */
+    public function is_valid_package_provider(): array {
+        return [
+            'Valid H5P file (as admin)' => [
+                'filename' => '/fixtures/greeting-card-887.h5p',
+                'expected' => true,
+                'isadmin' => true,
+            ],
+            'Valid H5P file (as user) without library update and checking content' => [
+                'filename' => '/fixtures/greeting-card-887.h5p',
+                'expected' => false, // Libraries are missing and user hasn't the right permissions to upload them.
+                'isadmin' => false,
+                'onlyupdatelibs' => false,
+                'skipcontent' => false,
+            ],
+            'Valid H5P file (as user) with library update and checking content' => [
+                'filename' => '/fixtures/greeting-card-887.h5p',
+                'expected' => false, // Libraries are missing and user hasn't the right permissions to upload them.
+                'isadmin' => false,
+                'onlyupdatelibs' => true,
+                'skipcontent' => false,
+            ],
+            'Valid H5P file (as user) without library update and skipping content' => [
+                'filename' => '/fixtures/greeting-card-887.h5p',
+                'expected' => true, // Content check is skipped so the package will be considered valid.
+                'isadmin' => false,
+                'onlyupdatelibs' => false,
+                'skipcontent' => true,
+            ],
+            'Valid H5P file (as user) with library update and skipping content' => [
+                'filename' => '/fixtures/greeting-card-887.h5p',
+                'expected' => true, // Content check is skipped so the package will be considered valid.
+                'isadmin' => false,
+                'onlyupdatelibs' => true,
+                'skipcontent' => true,
+            ],
+            'Invalid H5P file (as admin)' => [
+                'filename' => '/fixtures/h5ptest.zip',
+                'expected' => false,
+                'isadmin' => true,
+            ],
+            'Invalid H5P file (as user)' => [
+                'filename' => '/fixtures/h5ptest.zip',
+                'expected' => false,
+                'isadmin' => false,
+            ],
+            'Invalid H5P file (as user) skipping content' => [
+                'filename' => '/fixtures/h5ptest.zip',
+                'expected' => true, // Content check is skipped so the package will be considered valid.
+                'isadmin' => false,
+                'onlyupdatelibs' => false,
+                'skipcontent' => true,
             ],
         ];
     }

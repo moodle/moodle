@@ -1,6 +1,17 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.11 ===
+* Added $skipcapcheck parameter to H5P constructor, api::create_content_from_pluginfile_url() and
+api::get_content_from_pluginfile_url() to let skip capabilities check to get the pluginfile URL.
+* Added new field "enabled" to h5p_libraries to let define if a content type is enabled (1) or not (0).
+For now, only runnable content-types can be disabled/enabled. When a content-type is disabled, their
+contents are not displayed and no new contents using it can be created/uploaded.
+Some extra methods have been added to the api too in order to support this field:
+- set_library_enabled
+- is_library_enabled
+- is_valid_package
+
 === 3.10 ===
 * Added a new cache for h5p_library_files (MDL-69207)
 

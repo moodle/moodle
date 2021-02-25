@@ -58,7 +58,8 @@ $contenttype = $content->get_content_type_instance();
 $pageheading = $record->name;
 
 if (!$content->is_view_allowed()) {
-    print_error('notavailable', 'contentbank');
+    $cburl = new \moodle_url('/contentbank/index.php', ['contextid' => $context->id, 'errormsg' => 'notavailable']);
+    redirect($cburl);
 }
 
 if ($content->get_visibility() == content::VISIBILITY_UNLISTED) {

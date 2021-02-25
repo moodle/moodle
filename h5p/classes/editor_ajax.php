@@ -51,7 +51,8 @@ class editor_ajax implements H5PEditorAjaxInterface {
         global $DB;
 
         $sql = "SELECT hl2.id, hl2.machinename as machine_name, hl2.title, hl2.majorversion as major_version,
-                       hl2.minorversion AS minor_version, hl2.patchversion as patch_version, '' as has_icon, 0 as restricted
+                       hl2.minorversion AS minor_version, hl2.patchversion as patch_version, '' as has_icon, 0 as restricted,
+                       hl2.enabled
                   FROM {h5p_libraries} hl2
              LEFT JOIN {h5p_libraries} hl1
                         ON hl1.machinename = hl2.machinename
