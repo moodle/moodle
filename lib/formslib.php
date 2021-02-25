@@ -2464,11 +2464,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         $js = '
 
 require([
-    "core/event",
     "core_form/events",
     "jquery",
 ], function(
-    Event,
     FormEvents,
     $
 ) {
@@ -2591,11 +2589,11 @@ require([
       ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\'], \''.$escapedElementName.'\') && ret;
       if (!ret && !first_focus) {
         first_focus = true;
-        Y.use(\'moodle-core-event\', function() {
-            Y.Global.fire(M.core.globalEvents.FORM_ERROR, {formid: \'' . $this->_attributes['id'] . '\',
-                                                           elementid: \'' . $errorid. '\'});
-            document.getElementById(\'' . $errorid . '\').focus();
-        });
+        const element = document.getElementById("' . $errorid . '");
+        if (element) {
+          FormEvents.notifyFormError(element);
+          element.focus();
+        }
       }
 ';
 
