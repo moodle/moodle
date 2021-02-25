@@ -3388,23 +3388,23 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         // Get shared group members for students 0 and 1.
         $groupmembers = $assign->get_shared_group_members($cm, $student1->id);
         $this->assertCount(2, $groupmembers);
-        $this->assertContains($student1->id, $groupmembers);
-        $this->assertContains($student2->id, $groupmembers);
+        $this->assertContainsEquals($student1->id, $groupmembers);
+        $this->assertContainsEquals($student2->id, $groupmembers);
 
         $groupmembers = $assign->get_shared_group_members($cm, $student2->id);
         $this->assertCount(2, $groupmembers);
-        $this->assertContains($student1->id, $groupmembers);
-        $this->assertContains($student2->id, $groupmembers);
+        $this->assertContainsEquals($student1->id, $groupmembers);
+        $this->assertContainsEquals($student2->id, $groupmembers);
 
         $groupmembers = $assign->get_shared_group_members($cm, $student3->id);
         $this->assertCount(2, $groupmembers);
-        $this->assertContains($student3->id, $groupmembers);
-        $this->assertContains($student4->id, $groupmembers);
+        $this->assertContainsEquals($student3->id, $groupmembers);
+        $this->assertContainsEquals($student4->id, $groupmembers);
 
         $groupmembers = $assign->get_shared_group_members($cm, $student4->id);
         $this->assertCount(2, $groupmembers);
-        $this->assertContains($student3->id, $groupmembers);
-        $this->assertContains($student4->id, $groupmembers);
+        $this->assertContainsEquals($student3->id, $groupmembers);
+        $this->assertContainsEquals($student4->id, $groupmembers);
     }
 
     /**
@@ -3447,25 +3447,25 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         // Get shared group members for students 0 and 1.
         $groupmembers = $assign->get_shared_group_members($cm, $student1->id);
         $this->assertCount(4, $groupmembers);
-        $this->assertContains($student1->id, $groupmembers);
-        $this->assertContains($student2->id, $groupmembers);
-        $this->assertContains($student3->id, $groupmembers);
-        $this->assertContains($student4->id, $groupmembers);
+        $this->assertContainsEquals($student1->id, $groupmembers);
+        $this->assertContainsEquals($student2->id, $groupmembers);
+        $this->assertContainsEquals($student3->id, $groupmembers);
+        $this->assertContainsEquals($student4->id, $groupmembers);
 
         $groupmembers = $assign->get_shared_group_members($cm, $student2->id);
         $this->assertCount(2, $groupmembers);
-        $this->assertContains($student1->id, $groupmembers);
-        $this->assertContains($student2->id, $groupmembers);
+        $this->assertContainsEquals($student1->id, $groupmembers);
+        $this->assertContainsEquals($student2->id, $groupmembers);
 
         $groupmembers = $assign->get_shared_group_members($cm, $student3->id);
         $this->assertCount(2, $groupmembers);
-        $this->assertContains($student3->id, $groupmembers);
-        $this->assertContains($student4->id, $groupmembers);
+        $this->assertContainsEquals($student3->id, $groupmembers);
+        $this->assertContainsEquals($student4->id, $groupmembers);
 
         $groupmembers = $assign->get_shared_group_members($cm, $student4->id);
         $this->assertCount(2, $groupmembers);
-        $this->assertContains($student3->id, $groupmembers);
-        $this->assertContains($student4->id, $groupmembers);
+        $this->assertContainsEquals($student3->id, $groupmembers);
+        $this->assertContainsEquals($student4->id, $groupmembers);
     }
 
     /**

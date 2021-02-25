@@ -950,8 +950,8 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
                 $forumlist = $userlist->get_userlist_for_component('mod_forum');
                 $userids = $forumlist->get_userids();
                 $this->assertCount(1, $userids);
-                $this->assertContains($student->id, $userids);
-                $this->assertNotContains($teacher->id, $userids);
+                $this->assertContainsEquals($student->id, $userids);
+                $this->assertNotContainsEquals($teacher->id, $userids);
                 return true;
             }));
 
@@ -1038,8 +1038,8 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
                 $forumlist = $userlist->get_userlist_for_component('mod_forum');
                 $userids = $forumlist->get_userids();
                 $this->assertCount(1, $userids);
-                $this->assertContains($student->id, $userids);
-                $this->assertNotContains($teacher->id, $userids);
+                $this->assertContainsEquals($student->id, $userids);
+                $this->assertNotContainsEquals($teacher->id, $userids);
                 return true;
             }));
 
@@ -1127,8 +1127,8 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
                 $forumlist = $userlist->get_userlist_for_component('mod_forum');
                 $userids = $forumlist->get_userids();
                 $this->assertCount(1, $userids);
-                $this->assertContains($student->id, $userids);
-                $this->assertNotContains($teacher->id, $userids);
+                $this->assertContainsEquals($student->id, $userids);
+                $this->assertNotContainsEquals($teacher->id, $userids);
                 return true;
             }));
 
@@ -1223,8 +1223,8 @@ class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
                 $forumlist = $userlist->get_userlist_for_component('mod_forum');
                 $userids = $forumlist->get_userids();
                 $this->assertCount(2, $userids);
-                $this->assertContains($student->id, $userids);
-                $this->assertContains($teacher->id, $userids);
+                $this->assertContainsEquals($student->id, $userids);
+                $this->assertContainsEquals($teacher->id, $userids);
                 return true;
             }));
 

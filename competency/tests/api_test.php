@@ -4395,7 +4395,7 @@ class core_competency_api_testcase extends advanced_testcase {
         $leastarray = array($comp4->get('id'), $comp6->get('id'));
         foreach ($result as $one) {
             $this->assertInstanceOf('\core_competency\competency', $one);
-            $this->assertContains($one->get('id'), $leastarray);
+            $this->assertContainsEquals($one->get('id'), $leastarray);
         }
     }
 

@@ -388,7 +388,7 @@ class core_blog_privacy_testcase extends provider_testcase {
 
         // Generate list of contexts for user.
         $contexts = provider::get_contexts_for_userid($user->id);
-        $this->assertContains($context->id, $contexts->get_contextids());
+        $this->assertContainsEquals($context->id, $contexts->get_contextids());
 
         // Now delete the blog entry.
         $entry->delete();

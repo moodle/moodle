@@ -53,7 +53,7 @@ class core_files_testcase extends provider_testcase {
 
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertCount(1, (array) $contextlist->get_contextids());
-        $this->assertContains($userctx->id, $contextlist->get_contextids());
+        $this->assertContainsEquals($userctx->id, $contextlist->get_contextids());
     }
 
     /**
