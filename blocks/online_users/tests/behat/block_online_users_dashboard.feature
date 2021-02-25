@@ -1,5 +1,6 @@
 @block @block_online_users
 Feature: The online users block allow you to see who is currently online on dashboard
+  There should be some commonality for the users to show up
   In order to use the online users block on the dashboard
   As a user
   I can view the online users block on my dashboard
@@ -10,6 +11,14 @@ Feature: The online users block allow you to see who is currently online on dash
       | teacher1 | Teacher   | 1        | teacher1@example.com |
       | student1 | Student   | 1        | student1@example.com |
       | student2 | Student   | 2        | student2@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 1 | C1        | 0        |
+    And the following "course enrolments" exist:
+      | user | course | role           |
+      | teacher1 | C1 | editingteacher |
+      | student1 | C1 | student        |
+      | student2 | C1 | student        |
 
   Scenario: View the online users block on the dashboard and see myself
     Given I log in as "teacher1"
