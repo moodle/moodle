@@ -105,8 +105,11 @@ class player {
      * @param stdClass $config Configuration for H5P buttons.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
      * @param string $component optional moodle component to sent xAPI tracking
+     * @param bool $skipcapcheck Whether capabilities should be checked or not to get the pluginfile URL because sometimes they
+     *     might be controlled before calling this method.
      */
-    public function __construct(string $url, \stdClass $config, bool $preventredirect = true, string $component = '') {
+    public function __construct(string $url, \stdClass $config, bool $preventredirect = true, string $component = '',
+            bool $skipcapcheck = false) {
         if (empty($url)) {
             throw new \moodle_exception('h5pinvalidurl', 'core_h5p');
         }
@@ -128,7 +131,8 @@ class player {
             $config,
             $this->factory,
             $this->messages,
-            $this->preventredirect
+            $this->preventredirect,
+            $skipcapcheck
         );
         if ($file) {
             $this->context = \context::instance_by_id($file->get_contextid());

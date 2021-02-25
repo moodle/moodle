@@ -185,16 +185,20 @@ class api {
      *
      * @param string $url H5P pluginfile URL.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
+     * @param bool $skipcapcheck Whether capabilities should be checked or not to get the pluginfile URL because sometimes they
+     *     might be controlled before calling this method.
      *
      * @return array of [file, stdClass|false]:
      *             - file local file for this $url.
      *             - stdClass is an H5P object or false if there isn't any H5P with this URL.
      */
-    public static function get_content_from_pluginfile_url(string $url, bool $preventredirect = true): array {
+    public static function get_content_from_pluginfile_url(string $url, bool $preventredirect = true,
+        bool $skipcapcheck = false): array {
+
         global $DB;
 
         // Deconstruct the URL and get the pathname associated.
-        if (self::can_access_pluginfile_hash($url, $preventredirect)) {
+        if ($skipcapcheck || self::can_access_pluginfile_hash($url, $preventredirect)) {
             $pathnamehash = self::get_pluginfile_hash($url);
         }
 
@@ -223,17 +227,19 @@ class api {
      * @param factory $factory The \core_h5p\factory object
      * @param stdClass $messages The error, exception and info messages, raised while preparing and running an H5P content.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
+     * @param bool $skipcapcheck Whether capabilities should be checked or not to get the pluginfile URL because sometimes they
+     *     might be controlled before calling this method.
      *
      * @return array of [file, h5pid]:
      *             - file local file for this $url.
      *             - h5pid is the H5P identifier or false if there isn't any H5P with this URL.
      */
     public static function create_content_from_pluginfile_url(string $url, \stdClass $config, factory $factory,
-        \stdClass &$messages, bool $preventredirect = true): array {
+        \stdClass &$messages, bool $preventredirect = true, bool $skipcapcheck = false): array {
         global $USER;
 
         $core = $factory->get_core();
-        list($file, $h5p) = self::get_content_from_pluginfile_url($url, $preventredirect);
+        list($file, $h5p) = self::get_content_from_pluginfile_url($url, $preventredirect, $skipcapcheck);
 
         if (!$file) {
             $core->h5pF->setErrorMessage(get_string('h5pfilenotfound', 'core_h5p'));
@@ -656,5 +662,61 @@ class api {
         }
 
         return true;
+    }
+
+    /**
+     * Check whether an H5P package is valid or not.
+     *
+     * @param \stored_file $file The file with the H5P content.
+     * @param bool $onlyupdatelibs Whether new libraries can be installed or only the existing ones can be updated
+     * @param bool $skipcontent Should the content be skipped (so only the libraries will be saved)?
+     * @param factory|null $factory The \core_h5p\factory object
+     * @param bool $deletefiletree Should the temporary files be deleted before returning?
+     * @return bool True if the H5P file is valid (expected format, valid libraries...); false otherwise.
+     */
+    public static function is_valid_package(\stored_file $file, bool $onlyupdatelibs, bool $skipcontent = false,
+            ?factory $factory = null, bool $deletefiletree = true): bool {
+
+        // This may take a long time.
+        \core_php_time_limit::raise();
+
+        $isvalid = false;
+
+        if (empty($factory)) {
+            $factory = new factory();
+        }
+        $core = $factory->get_core();
+        $h5pvalidator = $factory->get_validator();
+
+        // Set the H5P file path.
+        $core->h5pF->set_file($file);
+        $path = $core->fs->getTmpPath();
+        $core->h5pF->getUploadedH5pFolderPath($path);
+        // Add manually the extension to the file to avoid the validation fails.
+        $path .= '.h5p';
+        $core->h5pF->getUploadedH5pPath($path);
+        // Copy the .h5p file to the temporary folder.
+        $file->copy_content_to($path);
+
+        if ($h5pvalidator->isValidPackage($skipcontent, $onlyupdatelibs)) {
+            if ($skipcontent) {
+                $isvalid = true;
+            } else if (!empty($h5pvalidator->h5pC->mainJsonData['mainLibrary'])) {
+                $mainlibrary = (object) ['machinename' => $h5pvalidator->h5pC->mainJsonData['mainLibrary']];
+                if (self::is_library_enabled($mainlibrary)) {
+                    $isvalid = true;
+                } else {
+                    // If the main library of the package is disabled, the H5P content will be considered invalid.
+                    $core->h5pF->setErrorMessage(get_string('mainlibrarydisabled', 'core_h5p'));
+                }
+            }
+        }
+
+        if ($deletefiletree) {
+            // Remove temp content folder.
+            \H5PCore::deleteFileTree($path);
+        }
+
+        return $isvalid;
     }
 }

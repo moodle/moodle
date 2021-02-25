@@ -36,7 +36,7 @@ use core_contentbank\contentbank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core\event\contentbank_content_uploaded
  */
-class contentbank_content_uploaded_testcase extends \advanced_testcase {
+class contentbank_content_uploaded_test extends \advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.
@@ -54,7 +54,7 @@ class contentbank_content_uploaded_testcase extends \advanced_testcase {
      * @covers ::create_from_record
      */
     public function test_content_created() {
-        global $USER;
+        global $USER, $CFG;
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -69,8 +69,8 @@ class contentbank_content_uploaded_testcase extends \advanced_testcase {
             'filepath' => '/',
             'filename' => 'dummy_h5p.h5p'
         );
-        $fs = get_file_storage();
-        $dummyh5pfile = $fs->create_file_from_string($dummyh5p, 'Dummy H5Pcontent');
+        $path = $CFG->dirroot . '/h5p/tests/fixtures/greeting-card-887.h5p';
+        $dummyh5pfile = \core_h5p\helper::create_fake_stored_file_from_path($path);
 
         // Trigger and capture the event when creating content from a file.
         $sink = $this->redirectEvents();
