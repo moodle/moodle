@@ -22,6 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['activitydate:submissionsdue'] = 'Submissions due:';
+$string['activitydate:submissionsopen'] = 'Submissions open:';
+$string['activitydate:submissionsopened'] = 'Submissions opened:';
 $string['activityoverview'] = 'You have assignments that need attention';
 $string['addsubmission'] = 'Add submission';
 $string['addsubmission_help'] = 'You have not made a submission yet.';
