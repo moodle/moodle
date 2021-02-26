@@ -2397,8 +2397,8 @@ class company {
             // Get the list of departments at and below the user assignment.
             $userhierarchylevels = $company->get_userlevel($USER);
             $subhierarchytree = array();
-            foreach ($userhierarchylevels as $userhierachylevl) {
-                $subhierarchies = $subhierarchies + self::get_all_subdepartments($userhierarchylevel->id);
+            foreach ($userhierarchylevels as $userhierarchylevel) {
+                $subhierarchytree = $subhierarchytree + self::get_all_subdepartments($userhierarchylevel->id);
             }
             if (isset($subhierarchytree[$departmentid])) {
                 // Current department is a child of the users assignment.
