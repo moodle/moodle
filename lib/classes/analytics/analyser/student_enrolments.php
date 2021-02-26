@@ -122,7 +122,7 @@ class student_enrolments extends \core_analytics\local\analyser\by_course {
         foreach ($enrolments as $userenrolmentid => $user) {
 
             if (empty($studentids[$user->id])) {
-                // Not a student.
+                // Not a student or an analysed one.
                 continue;
             }
 
@@ -146,6 +146,9 @@ class student_enrolments extends \core_analytics\local\analyser\by_course {
             unset($user->uemodifierid);
             unset($user->uetimecreated);
             unset($user->uetimemodified);
+
+            // This student has been already analysed. We analyse each student once.
+            unset($studentids[$user->id]);
 
             $samplesdata[$sampleid]['course'] = $course->get_course_data();
             $samplesdata[$sampleid]['context'] = $course->get_context();
