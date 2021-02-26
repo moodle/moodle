@@ -41,4 +41,4 @@ Gebruik asseblief die --help opsie.';
 $string['cliyesnoprompt'] = 'Tik j (beteken ja) of n (beteken nee)';
 $string['environmentrequireinstall'] = 'moet geïnstalleer en ontsper wees';
 $string['environmentrequireversion'] = 'weergawe {$a->needed} word benodig en jy hardloop tans {$a->current}';
-$string['upgradekeyset'] = 'Opgradering sleutel (los skoon om nie te stel nie)';
+$string['upgradekeyset'] = 'Opgradering sleutel (los oop om nie in te stel nie)';
