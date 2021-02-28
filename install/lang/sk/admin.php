@@ -40,3 +40,4 @@ Prosím, použite možnosť --help.';
 $string['cliyesnoprompt'] = 'Zvolte A (Áno) alebo N (Nie)';
 $string['environmentrequireinstall'] = 'musí by byť nainštalované a povolené';
 $string['environmentrequireversion'] = 'vyžadovaná je verzia {$a->needed}, teraz používate verziu {$a->current}';
+$string['upgradekeyset'] = 'Kľúč pre aktualizáciu (nechajte prázdne, ak nechcete nastaviť)';
