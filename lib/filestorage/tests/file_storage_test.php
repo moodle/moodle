@@ -324,7 +324,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         // Try break it.
         $this->expectException('file_exception');
-        $this->expectExceptionMessage('Can not create file "1/core/unittest/0/test/newtest.txt" (file exists, cannot rename)');
+        $this->expectExceptionMessage('Cannot create file 1/core/unittest/0/test/newtest.txt (file exists, cannot rename)');
         // This shall throw exception.
         $originalfile->rename($newpath, $newname);
     }
@@ -1466,7 +1466,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
     /**
      * @expectedException        stored_file_creation_exception
-     * @expectedExceptionMessage Can not create file "1/core/phpunit/0/testfile.txt"
+     * @expectedExceptionMessage Cannot create file 1/core/phpunit/0/testfile.txt
      * @covers ::create_file_from_storedfile
      */
     public function test_create_file_from_storedfile_duplicate() {
@@ -1822,7 +1822,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
     /**
      * @expectedException        stored_file_creation_exception
-     * @expectedExceptionMessage Can not create file "1/core/phpunit/0/testfile.txt"
+     * @expectedExceptionMessage Cannot create file 1/core/phpunit/0/testfile.txt
      * @covers ::create_file_from_pathname
      */
     public function test_create_file_from_pathname_duplicate_file() {
