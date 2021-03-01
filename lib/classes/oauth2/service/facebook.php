@@ -42,7 +42,7 @@ class facebook extends openidconnect implements issuer_interface {
             'baseurl' => '',
             'loginscopes' => 'public_profile email',
             'loginscopesoffline' => 'public_profile email',
-            'showonloginpage' => true,
+            'showonloginpage' => issuer::EVERYWHERE,
             'servicetype' => 'facebook',
         ];
 
