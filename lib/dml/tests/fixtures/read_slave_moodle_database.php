@@ -200,7 +200,7 @@ class read_slave_moodle_database extends test_moodle_database {
      * @param string $dbh
      * @return void
      */
-    protected function set_db_handle($dbh) {
+    protected function set_db_handle($dbh): void {
         $this->handle = $dbh;
     }
 
