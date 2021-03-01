@@ -2462,5 +2462,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021021600.00);
     }
 
+    if ($oldversion < 2021022600.01) {
+        // Get all the external backpacks and update the sortorder column, to avoid repeated/wrong values. As sortorder was not
+        // used since now, the id column will be the criteria to follow for re-ordering them with a valid value.
+        $i = 1;
+        $records = $DB->get_records('badge_external_backpack', null, 'id ASC');
+        foreach ($records as $record) {
+            $record->sortorder = $i++;
+            $DB->update_record('badge_external_backpack', $record);
+        }
+
+        upgrade_main_savepoint(true, 2021022600.01);
+    }
+
     return true;
 }
