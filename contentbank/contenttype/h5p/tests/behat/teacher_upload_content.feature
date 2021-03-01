@@ -37,7 +37,14 @@ Feature: H5P file upload to content bank for non admins
     Then I should see "Content bank"
 
   Scenario: Teachers can upload .h5p extension files to course content bank
-    Given I am on "Course 1" course homepage with editing mode on
+    Given I log out
+    And I log in as "admin"
+    And I navigate to "H5P > Manage H5P content types" in site administration
+    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Navigation" block if not present
     When I expand "Site pages" node
     And I click on "Content bank" "link"
@@ -52,7 +59,14 @@ Feature: H5P file upload to content bank for non admins
     And I should see "filltheblanks.h5p"
 
   Scenario: Other teachers can see uploaded H5P contents
-    Given I am on "Course 1" course homepage with editing mode on
+    Given I log out
+    And I log in as "admin"
+    And I navigate to "H5P > Manage H5P content types" in site administration
+    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Navigation" block if not present
     When I expand "Site pages" node
     And I click on "Content bank" "link"
