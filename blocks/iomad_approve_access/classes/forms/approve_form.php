@@ -25,7 +25,7 @@ namespace block_iomad_approve_access\forms;
 
 use \moodleform;
 use \moodle_url;
-use \block_iomad_approve_access;
+use \iomad_approve_access;
 
 
 class approve_form extends moodleform {
