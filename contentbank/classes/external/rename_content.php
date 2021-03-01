@@ -81,13 +81,13 @@ class rename_content extends external_api {
         // If name is empty don't try to rename and return a more detailed message.
         if (empty(trim($params['name']))) {
             $warnings[] = [
-                'item' => $contentid,
+                'item' => $params['contentid'],
                 'warningcode' => 'emptynamenotallowed',
                 'message' => get_string('emptynamenotallowed', 'core_contentbank')
             ];
         } else {
             try {
-                $record = $DB->get_record('contentbank_content', ['id' => $contentid], '*', MUST_EXIST);
+                $record = $DB->get_record('contentbank_content', ['id' => $params['contentid']], '*', MUST_EXIST);
                 $cb = new contentbank();
                 $content = $cb->get_content_from_id($record->id);
                 $contenttype = $content->get_content_type_instance();
@@ -100,7 +100,7 @@ class rename_content extends external_api {
                         $result = true;
                     } else {
                         $warnings[] = [
-                            'item' => $contentid,
+                            'item' => $params['contentid'],
                             'warningcode' => 'contentnotrenamed',
                             'message' => get_string('contentnotrenamed', 'core_contentbank')
                         ];
@@ -108,7 +108,7 @@ class rename_content extends external_api {
                 } else {
                     // The user has no permission to manage this content.
                     $warnings[] = [
-                        'item' => $contentid,
+                        'item' => $params['contentid'],
                         'warningcode' => 'nopermissiontomanage',
                         'message' => get_string('nopermissiontomanage', 'core_contentbank')
                     ];
@@ -116,7 +116,7 @@ class rename_content extends external_api {
             } catch (\moodle_exception $e) {
                 // The content or the context don't exist.
                 $warnings[] = [
-                    'item' => $contentid,
+                    'item' => $params['contentid'],
                     'warningcode' => 'exception',
                     'message' => $e->getMessage()
                 ];
