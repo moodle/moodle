@@ -81,11 +81,11 @@ class core_renderer extends \theme_boost\output\core_renderer {
             }
             $headingcolor = $company->headingcolor;
             if ($headingcolor) {
-                $css .= '.navbar {background-color: ' . $headingcolor . '} ';
+                $css .= '.navbar {background-color: ' . $headingcolor . '!important} ';
             }
             $maincolor = $company->maincolor;
             if ($maincolor) {
-                $css .= 'body, #nav-drawer {background-color: ' . $maincolor . '} ';
+                $css .= 'body, #nav-drawer {background-color: ' . $maincolor . '!important} ';
             }
 
             $css .= $company->customcss;
