@@ -1,4 +1,4 @@
-@core @core_contentbank @contentbank_h5p @_file_upload @javascript
+@core @core_contentbank @core_h5p @contentbank_h5p @_file_upload @javascript
 Feature: Delete H5P file from the content bank
   In order remove H5P content from the content bank
   As an admin

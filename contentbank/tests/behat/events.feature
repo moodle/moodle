@@ -1,4 +1,4 @@
-@core @core_contentbank @_file_upload @_switch_iframe @javascript
+@core @core_contentbank @core_h5p @contentbank_h5p @_file_upload @_switch_iframe @javascript
 Feature: Confirm content bank events are triggered
   In order to log content bank actions
   As an admin

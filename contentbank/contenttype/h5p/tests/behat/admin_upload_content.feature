@@ -1,4 +1,4 @@
-@core @core_contentbank @contenttype_h5p @_file_upload @_switch_iframe @javascript
+@core @core_contentbank @core_h5p @contenttype_h5p @_file_upload @_switch_iframe @javascript
 Feature: H5P file upload to content bank for admins
   In order import new H5P content to content bank
   As an admin
