@@ -191,7 +191,7 @@ class mod_feedback_responses_table extends table_sql {
             $itemobj = feedback_get_item_class($items[$matches[1]]->typ);
             return trim($itemobj->get_printval($items[$matches[1]], (object) ['value' => $row->$column] ));
         }
-        return $row->$column;
+        return parent::other_cols($column, $row);
     }
 
     /**

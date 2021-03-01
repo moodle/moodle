@@ -135,7 +135,7 @@ class quiz_last_responses_table extends quiz_attempts_report_table {
             return $this->data_col($matches[1], 'rightanswer', $attempt);
 
         } else {
-            return null;
+            return parent::other_cols($colname, $attempt);
         }
     }
 
