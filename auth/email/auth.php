@@ -198,14 +198,16 @@ class auth_plugin_email extends auth_plugin_base {
                 }
 
                 // Add the user to MailChimp
-                $this->mailchimp->lists->addListMember($this->config->mailchimp_audience_list_id, [
-                    "email_address" => $user->email,
-                    "status" => "subscribed",
-                    "merge_fields" => [
-                      "FNAME" => $user->firstname,
-                      "LNAME" => $user->lastname
-                    ]
-                ]);
+                if ($this->config->mailchimp_api_key && $this->config->mailchimp_server_prefix) {
+                    $this->mailchimp->lists->addListMember($this->config->mailchimp_audience_list_id, [
+                        "email_address" => $user->email,
+                        "status" => "subscribed",
+                        "merge_fields" => [
+                        "FNAME" => $user->firstname,
+                        "LNAME" => $user->lastname
+                        ]
+                    ]);
+                }
 
                 return AUTH_CONFIRM_OK;
             }
