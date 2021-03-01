@@ -324,7 +324,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         // Try break it.
         $this->expectException('file_exception');
-        $this->expectExceptionMessage('Can not create file "1/core/unittest/0/test/newtest.txt" (file exists, cannot rename)');
+        $this->expectExceptionMessage('Cannot create file 1/core/unittest/0/test/newtest.txt (file exists, cannot rename)');
         // This shall throw exception.
         $originalfile->rename($newpath, $newname);
     }
@@ -1478,7 +1478,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         // Creating a file validating unique constraint.
         $this->expectException(stored_file_creation_exception::class);
-        $this->expectExceptionMessage('Can not create file "1/core/phpunit/0/testfile.txt"');
+        $this->expectExceptionMessage('Cannot create file 1/core/phpunit/0/testfile.txt');
         $fs->create_file_from_storedfile($filerecord, $file1->get_id());
     }
 
@@ -1835,7 +1835,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         // Creating a file validating unique constraint.
         $this->expectException(stored_file_creation_exception::class);
-        $this->expectExceptionMessage('Can not create file "1/core/phpunit/0/testfile.txt"');
+        $this->expectExceptionMessage('Cannot create file 1/core/phpunit/0/testfile.txt');
         $file2 = $fs->create_file_from_pathname($filerecord, $path);
     }
 

@@ -183,7 +183,7 @@ $string['formquestionnotinids'] = 'Form contained question that is not in questi
 $string['fractionsnomax'] = 'One of the answers should have a score of 100% so it is possible to get full marks for this question.';
 $string['getcategoryfromfile'] = 'Get category from file';
 $string['getcontextfromfile'] = 'Get context from file';
-$string['changepublishstatuscat'] = '<a href="{$a->caturl}">Category "{$a->name}"</a> in course "{$a->coursename}" will have it\'s sharing status changed from <strong>{$a->changefrom} to {$a->changeto}</strong>.';
+$string['changepublishstatuscat'] = '<a href="{$a->caturl}">Category "{$a->name}"</a> in course "{$a->coursename}" will have its sharing status changed from {$a->changefrom} to {$a->changeto}.';
 $string['chooseqtypetoadd'] = 'Choose a question type to add';
 $string['editquestions'] = 'Edit questions';
 $string['idnumber'] = 'ID number';
