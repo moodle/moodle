@@ -4,8 +4,7 @@ Feature: Users can add entries to database activities
   As a user
   I need to add entries to databases
 
-  @javascript
-  Scenario: Students can add entries to a database
+  Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@example.com |
@@ -20,7 +19,10 @@ Feature: Users can add entries to database activities
     And the following "activities" exist:
       | activity | name               | intro | course | idnumber |
       | data     | Test database name | n     | C1     | data1    |
-    And I log in as "teacher1"
+
+  @javascript
+  Scenario: Students can add entries to a database
+    Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
@@ -76,3 +78,14 @@ Feature: Users can add entries to database activities
     And I press "Delete selected"
     And I press "Delete"
     And I should see "No entries in database"
+
+  @javascript @editor @editor_atto @atto @atto_h5p
+  Scenario: If a new text area entry is added, the filepicker is displayed in the H5P Atto button
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I add a "Text area" field to "Test database name" database and I fill the form with:
+      | Field name | Textarea field name |
+    When I add an entry to "Test database name" database with:
+      | Textarea field name | This is the content |
+    And I click on "Insert H5P" "button"
+    Then I should see "Browse repositories..."
