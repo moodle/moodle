@@ -87,7 +87,7 @@ class rename_content extends external_api {
                 $content = new $contentclass($record);
                 // Check capability.
                 if ($contenttype->can_manage($content)) {
-                    if (empty(trim($name))) {
+                    if (trim($params['name']) === '') {
                         // If name is empty don't try to rename and return a more detailed message.
                         $warnings[] = [
                             'item' => $params['contentid'],

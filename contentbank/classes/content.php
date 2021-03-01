@@ -128,7 +128,7 @@ abstract class content {
      */
     public function set_name(string $name): bool {
         $name = trim($name);
-        if (empty($name)) {
+        if ($name === '') {
             return false;
         }
 
