@@ -1466,7 +1466,7 @@ class assign_grading_table extends table_sql implements renderable {
     public function other_cols($colname, $row) {
         // For extra user fields the result is already in $row.
         if (empty($this->plugincache[$colname])) {
-            return $row->$colname;
+            return parent::other_cols($colname, $row);
         }
 
         // This must be a plugin field.
