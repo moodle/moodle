@@ -512,6 +512,10 @@ class block_activity_results extends block_base {
                 $fields = implode(',', $fields);
                 $users = $DB->get_records_list('user', 'id', $userids, '', $fields);
 
+                // If configured to view user idnumber, ensure current user can see it.
+                $extrafields = get_extra_user_fields($this->context);
+                $canviewidnumber = (array_search('idnumber', $extrafields) !== false);
+
                 // Ready for output!
                 if ($activity->gradetype == GRADE_TYPE_SCALE) {
                     // We must display the results using scales.
@@ -537,10 +541,14 @@ class block_activity_results extends block_base {
                     }
                     $this->content->text .= '</h6></caption><colgroup class="number" />';
                     $this->content->text .= '<colgroup class="name" /><colgroup class="grade" /><tbody>';
+
                     foreach ($best as $userid => $gradeid) {
                         switch ($nameformat) {
                             case B_ACTIVITYRESULTS_NAME_FORMAT_ID:
-                                $thisname = get_string('user').' '.$users[$userid]->idnumber;
+                                $thisname = get_string('user');
+                                if ($canviewidnumber) {
+                                    $thisname .= ' ' . s($users[$userid]->idnumber);
+                                }
                             break;
                             case B_ACTIVITYRESULTS_NAME_FORMAT_ANON:
                                 $thisname = get_string('user');
@@ -603,7 +611,10 @@ class block_activity_results extends block_base {
                     foreach ($worst as $userid => $gradeid) {
                         switch ($nameformat) {
                             case B_ACTIVITYRESULTS_NAME_FORMAT_ID:
-                                $thisname = get_string('user').' '.$users[$userid]->idnumber;
+                                $thisname = get_string('user');
+                                if ($canviewidnumber) {
+                                    $thisname .= ' ' . s($users[$userid]->idnumber);
+                                };
                             break;
                             case B_ACTIVITYRESULTS_NAME_FORMAT_ANON:
                                 $thisname = get_string('user');
