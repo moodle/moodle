@@ -772,8 +772,10 @@ class qformat_xml extends qformat_default {
                 array('#', 'responserequired', 0, '#'), 1);
         $qo->minwordlimit = $this->getpath($question,
                 array('#', 'minwordlimit', 0, '#'), null);
+        $qo->minwordenabled = !empty($qo->minwordlimit);
         $qo->maxwordlimit = $this->getpath($question,
                 array('#', 'maxwordlimit', 0, '#'), null);
+        $qo->maxwordenabled = !empty($qo->maxwordlimit);
         $qo->attachments = $this->getpath($question,
                 array('#', 'attachments', 0, '#'), 0);
         $qo->attachmentsrequired = $this->getpath($question,
