@@ -5019,4 +5019,98 @@ EOF;
         $result = display_size($size);
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * Test that the get_list_of_plugins function includes/excludes directories as appropriate.
+     *
+     * @dataProvider get_list_of_plugins_provider
+     * @param   array $expectedlist The expected list of folders
+     * @param   array $content The list of file content to set up in the virtual file root
+     * @param   string $dir The base dir to look at in the virtual file root
+     * @param   string $exclude Any additional folder to exclude
+     */
+    public function test_get_list_of_plugins(array $expectedlist, array $content, string $dir, string $exclude): void {
+        $vfileroot = \org\bovigo\vfs\vfsStream::setup('root', null, $content);
+        $base = \org\bovigo\vfs\vfsStream::url('root');
+
+        $this->assertEquals($expectedlist, get_list_of_plugins($dir, $exclude, $base));
+    }
+
+    /**
+     * Data provider for get_list_of_plugins checks.
+     *
+     * @return  array
+     */
+    public function get_list_of_plugins_provider(): array {
+        return [
+            'Standard excludes' => [
+                ['amdd', 'class', 'local', 'test'],
+                [
+                    '.' => [],
+                    '..' => [],
+                    'amd' => [],
+                    'amdd' => [],
+                    'class' => [],
+                    'classes' => [],
+                    'local' => [],
+                    'test' => [],
+                    'tests' => [],
+                    'yui' => [],
+                ],
+                '',
+                '',
+            ],
+            'Standard excludes with addition' => [
+                ['amdd', 'local', 'test'],
+                [
+                    '.' => [],
+                    '..' => [],
+                    'amd' => [],
+                    'amdd' => [],
+                    'class' => [],
+                    'classes' => [],
+                    'local' => [],
+                    'test' => [],
+                    'tests' => [],
+                    'yui' => [],
+                ],
+                '',
+                'class',
+            ],
+            'Files excluded' => [
+                ['def'],
+                [
+                    '.' => [],
+                    '..' => [],
+                    'abc' => 'File with filename abc',
+                    'def' => [
+                        '.' => [],
+                        '..' => [],
+                        'example.txt' => 'In a directory called "def"',
+                    ],
+                ],
+                '',
+                '',
+            ],
+            'Subdirectories only' => [
+                ['abc'],
+                [
+                    '.' => [],
+                    '..' => [],
+                    'foo' => [
+                        '.' => [],
+                        '..' => [],
+                        'abc' => [],
+                    ],
+                    'bar' => [
+                        '.' => [],
+                        '..' => [],
+                        'def' => [],
+                    ],
+                ],
+                'foo',
+                '',
+            ],
+        ];
+    }
 }
