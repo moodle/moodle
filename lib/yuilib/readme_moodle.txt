@@ -3,6 +3,8 @@ Description of import of various YUI libraries into Moodle:
 1/ YUI2 version 2.9.0:
 * copy of 2in3 without older version
 * exact version specified in lib/setup.php
+* Accessibility change. Which folder or file has no children, remove unnecessary tab stop.
+  lib/yuilib/2in3/2.9.0/build/yui2-treeview/yui2-treeview.js
 
 2/ YUI3 version 3.17.2:
 * full copy of the "build" directory. Unit test code coverage files (*-coverage.js)
