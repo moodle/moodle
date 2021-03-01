@@ -116,7 +116,7 @@ class default_bulk_actions {
      *
      * @return array
      */
-    private static final function bulk_action_base_attrs() {
+    private static function bulk_action_base_attrs() {
         return [
             'disabled' => 'disabled',
             'data-toggle' => 'action',
