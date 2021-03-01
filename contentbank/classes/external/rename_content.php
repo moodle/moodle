@@ -77,7 +77,7 @@ class rename_content extends external_api {
         ]);
         $params['name'] = clean_param($params['name'], PARAM_TEXT);
         try {
-            $record = $DB->get_record('contentbank_content', ['id' => $contentid], '*', MUST_EXIST);
+            $record = $DB->get_record('contentbank_content', ['id' => $params['contentid']], '*', MUST_EXIST);
             $contenttypeclass = "\\$record->contenttype\\contenttype";
             if (class_exists($contenttypeclass)) {
                 $context = \context::instance_by_id($record->contextid, MUST_EXIST);
@@ -90,7 +90,7 @@ class rename_content extends external_api {
                     if (empty(trim($name))) {
                         // If name is empty don't try to rename and return a more detailed message.
                         $warnings[] = [
-                            'item' => $contentid,
+                            'item' => $params['contentid'],
                             'warningcode' => 'emptynamenotallowed',
                             'message' => get_string('emptynamenotallowed', 'core_contentbank')
                         ];
@@ -100,7 +100,7 @@ class rename_content extends external_api {
                             $result = true;
                         } else {
                             $warnings[] = [
-                                'item' => $contentid,
+                                'item' => $params['contentid'],
                                 'warningcode' => 'contentnotrenamed',
                                 'message' => get_string('contentnotrenamed', 'core_contentbank')
                             ];
@@ -109,7 +109,7 @@ class rename_content extends external_api {
                 } else {
                     // The user has no permission to manage this content.
                     $warnings[] = [
-                        'item' => $contentid,
+                        'item' => $params['contentid'],
                         'warningcode' => 'nopermissiontomanage',
                         'message' => get_string('nopermissiontomanage', 'core_contentbank')
                     ];
@@ -118,7 +118,7 @@ class rename_content extends external_api {
         } catch (\moodle_exception $e) {
             // The content or the context don't exist.
             $warnings[] = [
-                'item' => $contentid,
+                'item' => $params['contentid'],
                 'warningcode' => 'exception',
                 'message' => $e->getMessage()
             ];
