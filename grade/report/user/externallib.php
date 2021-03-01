@@ -480,7 +480,8 @@ class gradereport_user_external extends external_api {
                             'courseid' => new external_value(PARAM_INT, 'course id'),
                             'userid'   => new external_value(PARAM_INT, 'user id'),
                             'userfullname' => new external_value(PARAM_TEXT, 'user fullname'),
-                            'useridnumber' => new external_value(PARAM_TEXT, 'user idnumber'),
+                            'useridnumber' => new external_value(
+                                core_user::get_property_type('idnumber'), 'user idnumber'),
                             'maxdepth'   => new external_value(PARAM_INT, 'table max depth (needed for printing it)'),
                             'gradeitems' => new external_multiple_structure(
                                 new external_single_structure(
