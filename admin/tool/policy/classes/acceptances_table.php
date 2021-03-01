@@ -641,6 +641,6 @@ class acceptances_table extends \table_sql {
             }
             return ''; // User agreed by themselves.
         }
-        return null;
+        return parent::other_cols($column, $row);
     }
 }

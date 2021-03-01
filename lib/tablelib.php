@@ -841,6 +841,12 @@ class flexible_table {
      * build_table which calls this method.
      */
     function other_cols($column, $row) {
+        if (isset($row->$column) && ($column === 'email' || $column === 'idnumber') &&
+                (!$this->is_downloading() || $this->export_class_instance()->supports_html())) {
+            // Columns email and idnumber may potentially contain malicious characters, escape them by default.
+            // This function will not be executed if the child class implements col_email() or col_idnumber().
+            return s($row->$column);
+        }
         return NULL;
     }
 

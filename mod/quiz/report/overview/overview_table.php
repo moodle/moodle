@@ -273,7 +273,7 @@ class quiz_overview_table extends quiz_attempts_report_table {
      */
     public function other_cols($colname, $attempt) {
         if (!preg_match('/^qsgrade(\d+)$/', $colname, $matches)) {
-            return null;
+            return parent::other_cols($colname, $attempt);
         }
         $slot = $matches[1];
 
