@@ -39,7 +39,7 @@ class google extends openidconnect implements issuer_interface {
             'image' => 'https://accounts.google.com/favicon.ico',
             'baseurl' => 'https://accounts.google.com/',
             'loginparamsoffline' => 'access_type=offline&prompt=consent',
-            'showonloginpage' => true,
+            'showonloginpage' => issuer::EVERYWHERE,
             'servicetype' => 'google',
         ];
         $issuer = new issuer(0, $record);

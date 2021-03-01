@@ -54,7 +54,9 @@ class renderer extends plugin_renderer_base {
         $table->head  = [
             get_string('name'),
             get_string('configuredstatus', 'tool_oauth2'),
-            get_string('loginissuer', 'tool_oauth2'),
+            get_string('issuerusedforlogin', 'tool_oauth2'),
+            get_string('issuerdisplayas', 'tool_oauth2'),
+            get_string('issuerusedforinternal', 'tool_oauth2'),
             get_string('discoverystatus', 'tool_oauth2') . ' ' . $this->help_icon('discovered', 'tool_oauth2'),
             get_string('systemauthstatus', 'tool_oauth2') . ' ' . $this->help_icon('systemaccountconnected', 'tool_oauth2'),
             get_string('edit'),
@@ -93,12 +95,22 @@ class renderer extends plugin_renderer_base {
             $configuredstatuscell = new html_table_cell($configured);
 
             // Login issuer.
-            if (!empty($issuer->get('showonloginpage'))) {
+            if ((int)$issuer->get('showonloginpage') != issuer::SERVICEONLY) {
+                $loginissuer = $this->pix_icon('yes', get_string('loginissuer', 'tool_oauth2'), 'tool_oauth2');
+                $logindisplayas = s($issuer->get_display_name());
+            } else {
+                $loginissuer = $this->pix_icon('no', get_string('notloginissuer', 'tool_oauth2'), 'tool_oauth2');
+                $logindisplayas = '';
+            }
+            $loginissuerstatuscell = new html_table_cell($loginissuer);
+
+            // Internal services issuer.
+            if ((int)$issuer->get('showonloginpage') != issuer::LOGINONLY) {
                 $loginissuer = $this->pix_icon('yes', get_string('loginissuer', 'tool_oauth2'), 'tool_oauth2');
             } else {
                 $loginissuer = $this->pix_icon('no', get_string('notloginissuer', 'tool_oauth2'), 'tool_oauth2');
             }
-            $loginissuerstatuscell = new html_table_cell($loginissuer);
+            $internalissuerstatuscell = new html_table_cell($loginissuer);
 
             // Discovered.
             if (!empty($issuer->get('scopessupported'))) {
@@ -188,6 +200,8 @@ class renderer extends plugin_renderer_base {
                 $namecell,
                 $configuredstatuscell,
                 $loginissuerstatuscell,
+                $logindisplayas,
+                $internalissuerstatuscell,
                 $discoverystatuscell,
                 $systemauthstatuscell,
                 $editcell,

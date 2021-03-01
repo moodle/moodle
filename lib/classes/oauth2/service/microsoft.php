@@ -42,7 +42,7 @@ class microsoft extends openidconnect implements issuer_interface {
             'baseurl' => '',
             'loginscopes' => 'openid profile email user.read',
             'loginscopesoffline' => 'openid profile email user.read offline_access',
-            'showonloginpage' => true,
+            'showonloginpage' => issuer::EVERYWHERE,
             'servicetype' => 'microsoft',
         ];
 
