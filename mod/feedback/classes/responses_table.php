@@ -200,7 +200,7 @@ class mod_feedback_responses_table extends table_sql {
             }
             return trim($printval);
         }
-        return $row->$column;
+        return parent::other_cols($column, $row);
     }
 
     /**
