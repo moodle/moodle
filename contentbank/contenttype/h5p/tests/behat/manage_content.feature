@@ -1,4 +1,4 @@
-@core @core_contentbank @contenttype_h5p @_file_upload @javascript
+@core @core_contentbank @core_h5p @contenttype_h5p @_file_upload @javascript
 Feature: Manage H5P content from the content bank
   In order to manage H5P content in the content bank
   As an admin

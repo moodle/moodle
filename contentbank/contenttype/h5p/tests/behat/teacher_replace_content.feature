@@ -1,4 +1,4 @@
-@core @core_contentbank @contenttype_h5p @_file_upload @_switch_iframe @javascript
+@core @core_contentbank @core_h5p @contenttype_h5p @_file_upload @_switch_iframe @javascript
 Feature: Replace H5P file from an existing content requires special capabilities
   In order replace an H5P content from the content bank
   As a teacher

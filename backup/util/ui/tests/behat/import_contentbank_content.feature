@@ -1,4 +1,4 @@
-@core @core_backup @core_contentbank @_file_upload @javascript
+@core @core_backup @core_contentbank @core_h5p @contenttype_h5p @_file_upload @javascript
 Feature: Import course content bank content
   In order to import content from a course contentbank
   As a teacher
