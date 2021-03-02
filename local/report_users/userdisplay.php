@@ -480,7 +480,6 @@ if (!$table->is_downloading()){
         echo "<input type = 'submit' id='purge_all_selected' name='purge_selected_entries' value = '" . get_string('purgeselectedentries', 'block_iomad_company_admin') . "' class='btn btn-secondary'>";
         echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
-        echo html_writer::end_tag('div');
         echo html_writer::start_tag('div', array('class' => 'iomadclear'));
 
     }
