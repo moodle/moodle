@@ -124,10 +124,9 @@ function behat_get_error_string($errtype) {
  * @param string $errstr
  * @param string $errfile
  * @param int $errline
- * @param array $errcontext
  * @return bool
  */
-function behat_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
+function behat_error_handler($errno, $errstr, $errfile, $errline) {
 
     // If is preceded by an @ we don't show it.
     if (!error_reporting()) {
@@ -149,7 +148,7 @@ function behat_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
     }
 
     // Using the default one in case there is a fatal catchable error.
-    default_error_handler($errno, $errstr, $errfile, $errline, $errcontext);
+    default_error_handler($errno, $errstr, $errfile, $errline);
 
     $errnostr = behat_get_error_string($errno);
 

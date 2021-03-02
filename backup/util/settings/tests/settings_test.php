@@ -504,10 +504,9 @@ class mock_course_backup_setting extends course_backup_setting {
  * @param string $errstr
  * @param string $errfile
  * @param int $errline
- * @param array $errcontext
  * @return null
  */
-function backup_setting_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
+function backup_setting_error_handler($errno, $errstr, $errfile, $errline) {
     if ($errno !== E_RECOVERABLE_ERROR) {
         // Currently we only want to deal with type hinting errors
         return false;
