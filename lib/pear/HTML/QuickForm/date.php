@@ -308,7 +308,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
         $locale    =& $this->_locale[$this->_options['language']];
         $backslash =  false;
         for ($i = 0, $length = strlen($this->_options['format']); $i < $length; $i++) {
-            $sign = $this->_options['format']{$i};
+            $sign = $this->_options['format'][$i];
             if ($backslash) {
                 $backslash  = false;
                 $separator .= $sign;
