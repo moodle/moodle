@@ -12,6 +12,10 @@ Quickforms
 Full of our custom hacks, no way to upgrade to latest upstream.
 Most probably we will stop using this library in the future.
 
+Just dropping a couple of links here, for whenever we update/switch or whatever:
+- QF2: https://github.com/pear/HTML_QuickForm2 (https://moodle.org/mod/forum/discuss.php?d=200124)
+- Quickform (fork): https://github.com/openpsa/quickform
+
 MDL-20876 - replaced split() with explode() or preg_split() where appropriate
 MDL-40267 - Moodle core_text strlen functions used for range rule rule to be utf8 safe.
 MDL-46467 - $mform->hardfreeze causes labels to loose their for HTML attribute
@@ -24,6 +28,7 @@ MDL-60281 - replaced deprecated create_function() with lambda functions for PHP7
 MDL-70711 - removed unnecessary if-else conditional block in HTML_QuickForm as the given
             condition always evaluates to false due to the deprecated get_magic_quotes_gpc()
             which always returns false
+MDL-70457 - PHP 7.4 curly brackets string access fix.
 
 Pear
 ====
