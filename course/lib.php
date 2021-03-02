@@ -2016,10 +2016,17 @@ function course_get_cm_move(cm_info $mod, $sr = null) {
             $pixicon = 't/move';
         }
 
+        $attributes = [
+            'class' => 'editing_move',
+            'data-action' => 'move',
+            'data-sectionreturn' => $sr,
+            'title' => $str->move,
+            'aria-label' => $str->move,
+        ];
         return html_writer::link(
-            new moodle_url($baseurl, array('copy' => $mod->id)),
-            $OUTPUT->pix_icon($pixicon, $str->move, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-            array('class' => 'editing_move', 'data-action' => 'move', 'data-sectionreturn' => $sr)
+            new moodle_url($baseurl, ['copy' => $mod->id]),
+            $OUTPUT->pix_icon($pixicon, '', 'moodle', ['class' => 'iconsmall']),
+            $attributes
         );
     }
     return '';
