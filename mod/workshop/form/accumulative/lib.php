@@ -269,7 +269,9 @@ class workshop_accumulative_strategy implements workshop_strategy {
             $grade->assessmentid = $assessment->id;
             $grade->strategy = 'accumulative';
             $grade->dimensionid = $data->{'dimensionid__idx_' . $i};
-            $grade->grade = $data->{'grade__idx_' . $i};
+            if (isset($data->{'grade__idx_' . $i})) {
+                $grade->grade = $data->{'grade__idx_' . $i};
+            }
             $grade->peercomment = $data->{'peercomment__idx_' . $i};
             $grade->peercommentformat = FORMAT_MOODLE;
             if (empty($grade->id)) {
