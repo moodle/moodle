@@ -54,6 +54,9 @@ $PAGE->navbar->add(get_string('learningpathedit', 'local_iomad_learningpath'), $
 // Attempt to locate path
 $path = $companypaths->get_path($id);
 
+// Check for default group
+$companypaths->check_group($id);
+
 // Set up picture draft area
 $picturedraftid = file_get_submitted_draft_itemid('picture');
 file_prepare_draft_area($picturedraftid, $context->id, 'local_iomad_learningpath', 'picture', $id,
