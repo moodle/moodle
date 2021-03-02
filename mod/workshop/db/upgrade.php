@@ -98,5 +98,18 @@ function xmldb_workshop_upgrade($oldversion) {
     // Automatically generated Moodle v3.10.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2020110901) {
+
+        // Changing nullability of field grade on table workshop_grades to null.
+        $table = new xmldb_table('workshop_grades');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, 'dimensionid');
+
+        // Launch change of nullability for field grade.
+        $dbman->change_field_notnull($table, $field);
+
+        // Main savepoint reached.
+        upgrade_mod_savepoint(true, 2020110901, 'workshop');
+    }
+
     return true;
 }
