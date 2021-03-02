@@ -30,41 +30,6 @@ require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/lib.php');
 require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/locallib.php');
 
 function xmldb_local_iomad_track_install() {
-    global $DB;
-
-    set_time_limit(0);
-    // Capture the initial set of information from the completion tables.
-    // yes, I know this isn't really what this is for!!
-    $comprecords = $DB->get_records_select('course_completions', 'timecompleted IS NOT NULL');
-    foreach ($comprecords as $comprecord) {
-        // is it a valid user?
-        if (!$DB->record_exists('user', array('id'=>$comprecord->userid))) {
-            continue;
-        }
-
-        // Is it a valid course?
-        if (!$DB->record_exists('course', array('id'=>$comprecord->course))) {
-            continue;
-        }
-
-        $graderec = $DB->get_record_sql("SELECT gg.* FROM {grade_grades} gg
-                                         JOIN {grade_items} gi ON (gg.itemid = gi.id)
-                                         WHERE gi.itemtype = 'course'
-                                         AND gi.courseid = :courseid
-                                         AND gg.userid = :userid", array('courseid' => $comprecord->course,
-                                                                           'userid' => $comprecord->userid));
-
-        if (empty($graderec->finalgrade)) {
-            $finalgrade = 0;
-        } else {
-            $finalgrade = $graderec->finalgrade;
-        }
-
-        $comprecord->finalscore = $finalgrade;
-        $comprecord->courseid = $comprecord->course;
-        $comptrackid = $DB->insert_record('local_iomad_track', $comprecord);
-        xmldb_local_iomad_track_record_certificates($comprecord->courseid, $comprecord->userid, $comptrackid);
-    }
 
     return true;
 }

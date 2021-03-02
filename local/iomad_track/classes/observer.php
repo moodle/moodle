@@ -122,7 +122,7 @@ class observer {
     /**
      * Process (any) certificates in the course
      */
-    private static function record_certificates($courseid, $userid, $trackid) {
+    public static function record_certificates($courseid, $userid, $trackid) {
         global $DB;
 
         // Get course.
@@ -212,13 +212,13 @@ class observer {
         }
 
         // Is this a duplicate event?
-        if (!empty($enrolrec->timestart) &&
+        if (!empty($enrolrec->timecreated) &&
              $DB->get_record_sql("SELECT id FROM {local_iomad_track}
                                  WHERE userid = :userid
                                  AND courseid = :courseid
                                  AND timeenrolled = :timeenrolled
                                  AND timecompleted IS NOT NULL",
-                                 array('userid' => $userid, 'courseid' => $courseid, 'timeenrolled' => $enrolrec->timestart))) {
+                                 array('userid' => $userid, 'courseid' => $courseid, 'timeenrolled' => $enrolrec->timecreated))) {
 
             // It is so we don't record it.
             return true;
@@ -240,12 +240,12 @@ class observer {
         $broken = false;
         if (empty($comprec->timeenrolled)) {
             $broken = true;
-            $comprec->timeenrolled = $enrolrec->timestart;
+            $comprec->timeenrolled = $enrolrec->timecreated;
         }
 
         if (empty($comprec->timestarted)) {
             $broken = true;
-            $comprec->timestarted = $enrolrec->timestart;
+            $comprec->timestarted = $enrolrec->timecreated;
         }
 
         if ($broken) {
@@ -286,7 +286,7 @@ class observer {
             $completion = new \StdClass();
             $completion->courseid = $courseid;
             $completion->userid = $userid;
-            $completion->timeenrolled = $enrolrec->timestart;
+            $completion->timeenrolled = $enrolrec->timecreated;
             $completion->timestarted = $comprec->timestarted;
             $completion->timecompleted = $comprec->timecompleted;
             $completion->finalscore = $finalscore;
@@ -322,7 +322,7 @@ class observer {
                                                      AND e.status = 0",
                                                      array('userid' => $userid,
                                                            'courseid' => $courseid));
-                    $comprec->timeenrolled = $enrolrec->starttime;
+                    $comprec->timeenrolled = $enrolrec->timecreated;
                 }
                 $current->timeenrolled = $comprec->timeenrolled;
             }
@@ -340,7 +340,7 @@ class observer {
                                                          array('userid' => $userid,
                                                                'courseid' => $courseid));
                     }
-                    $comprec->timestarted = $enrolrec->starttime;
+                    $comprec->timestarted = $enrolrec->timecreated;
                 }
                 $current->timestarted = $comprec->timestarted;
             }

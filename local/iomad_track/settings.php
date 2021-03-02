@@ -15,21 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   local_iomad_signup
+ * @package   local_iomad_track
  * @copyright 2021 Derick Turner
  * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$capabilities = array(
-    'local/iomad_track:importfrommoodle' => array(
-        'riskbitmask' => RISK_SPAM | RISK_XSS,
+defined('MOODLE_INTERNAL') || die;
 
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        ),
-    ),
-);
+// Basic navigation settings
+require($CFG->dirroot . '/local/iomad/lib/basicsettings.php');
 
+$url = new moodle_url( '/local/iomad_track/import.php' );
+$ADMIN->add( 'iomad', new admin_externalpage('importcompletionrecords',
+                               get_string('importcompletionrecords',
+                               'local_iomad_track'),
+                               $url,
+                               'local/report_attendance:view'));
