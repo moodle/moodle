@@ -596,4 +596,45 @@ class core_repositorylib_testcase extends advanced_testcase {
         delete_user($user);
         $this->assertEquals(0, $DB->count_records('repository_instances', array('contextid' => $usercontext->id)));
     }
+
+    /**
+     * Create test file in user private files
+     *
+     * @param string $filepath file path
+     * @param string $filename file name
+     */
+    private function create_user_private_file(string $filepath, string $filename): void {
+        global $USER;
+
+        $filerecord = [];
+        $filerecord['contextid'] = context_user::instance($USER->id)->id;
+        $filerecord['component'] = 'user';
+        $filerecord['filearea'] = 'private';
+        $filerecord['itemid'] = 0;
+        $filerecord['filepath'] = $filepath;
+        $filerecord['filename'] = $filename;
+        $filerecord['userid'] = $USER->id;
+
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecord, hash("md5", $filepath . $filename));
+    }
+
+    public function test_listing_and_filter() {
+        $this->resetAfterTest(true);
+        $this->setUser($this->getDataGenerator()->create_user());
+        $repoid = $this->getDataGenerator()->create_repository('user')->id;
+        $this->create_user_private_file('/', 'image1.jpg');
+        $this->create_user_private_file('/', 'file1.txt');
+        $this->create_user_private_file('/folder/', 'image2.jpg');
+        $this->create_user_private_file('/folder/', 'file2.txt');
+        $this->create_user_private_file('/ftexts/', 'file3.txt');
+
+        // Listing without filters returns 4 records (2 files and 2 directories).
+        $repo = repository::get_repository_by_id($repoid, context_system::instance());
+        $this->assertCount(4,  $repo->get_listing()['list']);
+
+        // Listing with filters returns 3 records (1 files and 2 directories).
+        $_POST['accepted_types'] = ['.jpg'];
+        $this->assertCount(3,  $repo->get_listing()['list']);
+    }
 }
