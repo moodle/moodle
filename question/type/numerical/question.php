@@ -357,7 +357,7 @@ class qtype_numerical_answer extends question_answer {
 
     public function __construct($id, $answer, $fraction, $feedback, $feedbackformat, $tolerance) {
         parent::__construct($id, $answer, $fraction, $feedback, $feedbackformat);
-        $this->tolerance = abs($tolerance);
+        $this->tolerance = abs((float)$tolerance);
     }
 
     public function get_tolerance_interval() {
