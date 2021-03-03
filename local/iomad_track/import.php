@@ -26,11 +26,17 @@
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
+require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir.'/csvlib.class.php');
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
-$completions = optional_param('completions', 0, PARAM_INT);
+$completions = optional_param('completions', 0, PARAM_BOOL);
 $confirm = optional_param('confirm', null, PARAM_ALPHANUM);
 $submit = optional_param('submitbutton', '', PARAM_ALPHANUM);
+$fileimport = optional_param('fileimport', 0, PARAM_BOOL);
+$iid         = optional_param('iid', '', PARAM_INT);
+$previewrows = optional_param('previewrows', 10, PARAM_INT);
+$readcount   = optional_param('readcount', 0, PARAM_INT);
 
 $context = context_system::instance();
 require_login();
@@ -52,6 +58,10 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
+// Array of all valid fields for validation.
+$stdfields = array('username', 'userid', 'courseid', 'coursename', 'timeenrolled', 'timestarted', 'timecompleted',
+        'finalscore', 'licensename', 'licenseallocated', 'licenseid', 'companyid', 'company', 'departmentid', 'department');
+
 // Process current completions.
 if (!empty($completions)) {
     if (confirm_sesskey() && $confirm == md5($completions)) {
@@ -68,6 +78,238 @@ if (!empty($completions)) {
     }
 }
 
+if (!empty($fileimport)) {
+    if (empty($iid)) {
+        $mform = new local_iomad_track\forms\completion_import_form();
+        if ($mform->is_cancelled()) {
+            redirect($linkurl);
+        }
+        if ($importdata = $mform->get_data()) {
+            // Verification moved to two places: after upload and into form2.
+            $userserrors  = 0;
+            $erroredusers = array();
+            $errorstr = get_string('error');
+
+
+            $iid = csv_import_reader::get_new_iid('uploadcompletion');
+            $cir = new csv_import_reader($iid, 'uploadcompletion');
+
+            $content = $mform->get_file_content('importfile');
+            $readcount = $cir->load_csv_content($content,
+                                                $importdata->encoding,
+                                                $importdata->delimiter_name,
+                                                'validate_uploadcompletion_columns');
+
+            if (!$columns = $cir->get_columns()) {
+               print_error('cannotreadtmpfile', 'error', $returnurl);
+            }
+
+            unset($content);
+
+            echo $OUTPUT->header();
+            echo $OUTPUT->heading(get_string('uploadcompletionresult', 'local_iomad_track'));
+
+            $cir->init();
+            $runtime = time();
+            $linenum = 1; // Column header is first line.
+
+            // Init upload progress tracker.
+            $upt = new upload_progress_tracker();
+            $upt->init(); // Start table.
+            while ($line = $cir->next()) {
+                $upt->flush();
+                $linenum++;
+                $errornum = 1;
+                $completionrec = new stdclass();
+                $upt->track('line', $linenum);
+                foreach ($line as $key => $value) {
+                    if ($value !== '') {
+                        $key = $columns[$key];
+
+                        if (strpos($key, 'username') !== false) {
+                            if (!$userrec = $DB->get_record('user', array('username' => $value))) {
+                                $upt->track('status', get_string('missingfield', 'error', 'username'), 'error');
+                                $upt->track('username', $errorstr, 'error');
+                                $line[] = get_string('missingfield', 'error', 'username');
+                                $userserrors++;
+                                $errornum++;
+                                $erroredusers[] = $line;
+                                continue 2;
+                            }
+                            $completionrec->userid = $userrec->id;
+                            $upt->track($key, $userrec->username);
+                            
+                        } else if (strpos($key, 'userid') !== false) {
+                            if (!$userrec = $DB->get_record('user', array('id' => $value))) {
+                                $upt->track('status', get_string('missingfield', 'error', 'userid'), 'error');
+                                $upt->track('username', $errorstr, 'error');
+                                $line[] = get_string('missingfield', 'error', 'userid');
+                                $userserrors++;
+                                $errornum++;
+                                $erroredusers[] = $line;
+                                continue 2;
+                            }
+                            $completionrec->userid = $userrec->id;
+                            $upt->track('username', $userrec->username);
+                        } else if (strpos($key, 'coursename') !== false) {
+                            if (!$courserec = $DB->get_record('course', array('shortname' => $value))) {
+                                $upt->track('status', get_string('missingfield', 'error', 'coursename'), 'error');
+                                $upt->track('course', $errorstr, 'error');
+                                $line[] = get_string('missingfield', 'error', 'coursename');
+                                $userserrors++;
+                                $errornum++;
+                                $erroredusers[] = $line;
+                                continue 2;
+                            }
+                            $completionrec->courseid = $courserec->id;
+                            $completionrec->coursename = $courserec->fullname;
+                            $upt->track('course', $courserec->fullname);
+                        } else if (strpos($key, 'courseid') !== false) {
+                            if (!$courserec = $DB->get_record('course', array('id' => $value))) {
+                                $upt->track('status', get_string('missingfield', 'error', 'courseid'), 'error');
+                                $upt->track('course', $errorstr, 'error');
+                                $line[] = get_string('missingfield', 'error', 'courseid');
+                                $userserrors++;
+                                $errornum++;
+                                $erroredusers[] = $line;
+                                continue 2;
+                            }
+                            $completionrec->courseid = $courserec->id;
+                            $completionrec->coursename = $courserec->fullname;
+                            $upt->track('course', $courserec->fullname);
+                        } else if (strpos($key, 'time') !== false) {
+                            $completionrec->$key = strtotime($value);
+                            $upt->track($key, date($CFG->iomad_date_format, $completionrec->$key));
+                        } else if (strpos($key, 'licenseallocated') !== false) {
+                            $completionrec->$key = strtotime($value);
+                            $upt->track($key, date($CFG->iomad_date_format, $completionrec->$key));
+                        } else {
+                            $completionrec->$key = $value;
+                            if (in_array($key, $upt->columns)) {
+                                $upt->track($key, $value);
+                            }
+                        }
+                    }
+                }
+
+                // We should by now have a user record and a course record.
+                if (empty($userrec) || empty($courserec)) {
+                    $userserrors++;
+                    $errornum++;
+                    $erroredusers[] = $line;
+                    continue;
+                }
+
+                // Do we have everything?
+                if (empty(($completionrec->companyid))) {
+                    if (!$company = company::by_userid($completionrec->userid)) {
+                        $upt->track('status', get_string('missingfield', 'error', 'companyid'), 'error');
+                        $upt->track('company', $errorstr, 'error');
+                        $line[] = get_string('missingfield', 'error', 'companyid');
+                        $userserrors++;
+                        $errornum++;
+                        $erroredusers[] = $line;
+                        continue;
+                    } else {
+                        $completionrec->companyid = $company->id;
+                        $upt->track('company', $company->get_name());
+                    }
+                } else {
+                    if (!$usercompany = $DB->get_record('company', array('id', $completionrec->companyid))) {
+                        $upt->track('status', get_string('missingfield', 'error', 'companyid'), 'error');
+                        $upt->track('company', $errorstr, 'error');
+                        $line[] = get_string('missingfield', 'error', 'companyid');
+                        $userserrors++;
+                        $errornum++;
+                        $erroredusers[] = $line;
+                        continue;
+                    } else {
+                        $completionrec->companyid = $usercompany->id;
+                        $company = new company($usercompany->id);
+                        $upt->track('company', $usercompany->name);
+                    }
+                }
+                if (empty($completionrec->departmentid)) {
+                    $departments = $company->get_userlevel($userrec);
+                    if (empty($departments)) {
+                        $upt->track('status', get_string('missingfield', 'error', 'departmentid'), 'error');
+                        $upt->track('department', $errorstr, 'error');
+                        $line[] = get_string('missingfield', 'error', 'departmentid');
+                        $userserrors++;
+                        $errornum++;
+                        $erroredusers[] = $line;
+                        continue;
+                    } else {
+                        $completionrec->departmentid = key($departments);
+                        $upt->track('department', $departments[$completionrec->departmentid]->name);
+                    }
+                }
+                if (empty($completionrec->timeenrolled)) {
+                    $completionrec->timeenrolled = $completionrec->timecompleted;
+                    $upt->track('timeenrolled', date($CFG->iomad_date_format, $completionrec->timeenrolled));
+                }
+                if (empty($completionrec->timestarted)) {
+                    $completionrec->timestarted = $completionrec->timecompleted;
+                    $upt->track('timestarted', date($CFG->iomad_date_format, $completionrec->timestarted));
+                }
+                if ($DB->get_record('iomad_courses', array('courseid' => $courserec->id, 'licensed' => 1))) {
+                    if (empty($completionrec->licensename)) {
+                        $upt->track('status', get_string('missingfield', 'error', 'licensename'), 'error');
+                        $upt->track('licensename', $errorstr, 'error');
+                        $line[] = get_string('missingfield', 'error', 'licensename');
+                        $userserrors++;
+                        $errornum++;
+                        $erroredusers[] = $line;
+                        continue;
+                    }
+                }
+                if (empty($completionrec->licenseallocated) && !empty($completionrec->licensename)) {
+                    $completionrec->licenseallocated = $completionrec->timecompleted;
+                    $upt->track('licenseallocated', date($CFG->iomad_date_format, $completionrec->timeenrolled));
+                }
+                $completionrec->modifiedtime = $runtime;
+                $completionrec->coursecleared = 1;
+
+                // Write the info to the db.
+                $trackid = $DB->insert_record('local_iomad_track', $completionrec);
+                $upt->track('id', $trackid);
+                $upt->track('status', get_string('ok'));
+
+                \local_iomad_track\observer::record_certificates($courserec->id, $userrec->id, $trackid, false);
+            }
+
+            $upt->flush();
+            $upt->close(); // Close table.
+
+            $cir->close();
+            $cir->cleanup(true);
+
+            // Deal with any erroring users.
+            if (!empty($erroredusers)) {
+                echo get_string('erroredusers', 'block_iomad_company_admin');
+                $erroredtable = new html_table();
+                foreach ($erroredusers as $erroreduser) {
+                    $erroredtable->data[] = $erroreduser;
+                }
+                echo html_writer::table($erroredtable);
+
+            }
+                echo html_writer::tag('a',
+                                      get_string('continue'),
+                                      array('class' => 'btn-primary',
+                                      'href' => $linkurl));
+
+            echo $OUTPUT->footer();
+            die;
+        } else {
+            $mform->set_data(array('fileimport' => $fileimport));
+            echo $OUTPUT->header();
+            $mform->display();
+            echo $OUTPUT->footer();
+        }
+    }
+
+}
 // Display the page.
 echo $OUTPUT->header();
 
@@ -78,4 +320,151 @@ echo html_writer::tag('a',
                                                      array('completions' => true,
                                                            'sesskey' => sesskey()))));
 
+echo html_writer::empty_tag('/br');
+echo html_writer::tag('a',
+                      get_string('importcompletionsfromfile', 'local_iomad_track'),
+                      array('class' => 'btn-primary',
+                            'href' => new moodle_url('/local/iomad_track/import.php',
+                                                     array('fileimport' => true,
+                                                           'sesskey' => sesskey()))));
+
 echo $OUTPUT->footer();
+
+/*
+* Utility functions and classes
+*/
+
+class upload_progress_tracker {
+    public $_row;
+    public $columns = array('status',
+                            'line',
+                            'id',
+                            'username',
+                            'company',
+                            'department',
+                            'course',
+                            'timeenrolled',
+                            'timestarted',
+                            'timecompleted',
+                            'finalscore',
+                            'licensename',
+                            'licenseallocated');
+
+    public function __construct() {
+    }
+
+    public function init() {
+        $ci = 0;
+        echo '<table id="uploadresults" class="generaltable boxaligncenter flexible-wrap" summary="'.
+               get_string('uploadcompletionresult', 'local_iomad_track').'">';
+        echo '<tr class="heading r0">';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('status').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('uucsvline', 'tool_uploaduser').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">ID</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('username').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('company', 'block_iomad_company_admin').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('department').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('course').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('dateenrolled', 'local_report_completion').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('datestarted', 'local_report_completion').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('datecompleted', 'local_report_completion').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('grade').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('licensename', 'block_iomad_company_admin').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('licensedateallocated', 'block_iomad_company_admin').'</th>';
+        echo '</tr>';
+        $this->_row = null;
+    }
+
+    public function flush() {
+        if (empty($this->_row) or empty($this->_row['line']['normal'])) {
+            $this->_row = array();
+            foreach ($this->columns as $col) {
+                $this->_row[$col] = array('normal' => '', 'info' => '', 'warning' => '', 'error' => '');
+            }
+            return;
+        }
+        $ci = 0;
+        $ri = 1;
+        echo '<tr class="r'.$ri.'">';
+        foreach ($this->_row as $key => $field) {
+            foreach ($field as $type => $content) {
+                if ($field[$type] !== '') {
+                    $field[$type] = '<span class="uu'.$type.'">'.$field[$type].'</span>';
+                } else {
+                    unset($field[$type]);
+                }
+            }
+            echo '<td class="cell c'.$ci++.'">';
+            if (!empty($field)) {
+                echo implode('<br />', $field);
+            } else {
+                echo '&nbsp;';
+            }
+            echo '</td>';
+        }
+        echo '</tr>';
+        foreach ($this->columns as $col) {
+            $this->_row[$col] = array('normal' => '', 'info' => '', 'warning' => '', 'error' => '');
+        }
+    }
+
+    public function track($col, $msg, $level= 'normal', $merge=true) {
+        if (empty($this->_row)) {
+            $this->flush(); // Init arrays.
+        }
+        if (!in_array($col, $this->columns)) {
+            debugging('Incorrect column:'.$col);
+            return;
+        }
+        if ($merge) {
+            if ($this->_row[$col][$level] != '') {
+                $this->_row[$col][$level] .= '<br />';
+            }
+            $this->_row[$col][$level] .= s($msg);
+        } else {
+            $this->_row[$col][$level] = s($msg);
+        }
+    }
+
+    public function close() {
+        echo '</table>';
+    }
+}
+
+/**
+ * Validation callback function - verified the column line of csv file.
+ * Converts column names to lowercase too.
+ */
+function validate_uploadcompletion_columns(&$columns) {
+    global $stdfields;
+
+    if (count($columns) < 3) {
+        return get_string('csvfewcolumns', 'error');
+    }
+    // Test columns.
+    $processed = array();
+    foreach ($columns as $key => $unused) {
+        $field = $columns[$key];
+        if (!in_array($field, $stdfields)) {
+            // If not a standard field and not an enrolment field, then we have an error!
+            return get_string('invalidfieldname', 'error', $field);
+        }
+        if (in_array($field, $processed)) {
+            return get_string('csvcolumnduplicates', 'error');
+        }
+        $processed[] = $field;
+    }
+    if (!(in_array('username', $processed) || in_array('userid', $processed))) {
+        return get_string('missingusername', 'local_iomad_track');
+    }
+    if (!(in_array('coursename', $processed) || in_array('courseid', $processed))) {
+        return get_string('missingcoursename', 'local_iomad_track');
+    }
+    if (!in_array('timecompleted', $processed)) {
+        return get_string('missingtimecompleted', 'local_iomad_track');
+    }
+
+    return true;
+}
+
+

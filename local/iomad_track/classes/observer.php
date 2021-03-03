@@ -122,7 +122,7 @@ class observer {
     /**
      * Process (any) certificates in the course
      */
-    public static function record_certificates($courseid, $userid, $trackid) {
+    public static function record_certificates($courseid, $userid, $trackid, $showdebug = true) {
         global $DB;
 
         // Get course.
@@ -171,7 +171,9 @@ class observer {
             self::save_certificate($trackid, $filename);
 
             // Debugging
-            mtrace('local_iomad_track: certificate recorded for ' . $user->username . ' in course ' . $courseid . ' filename "' . $filename . '"');
+            if ($showdebug) {
+                mtrace('local_iomad_track: certificate recorded for ' . $user->username . ' in course ' . $courseid . ' filename "' . $filename . '"');
+            }
         }
     }
 

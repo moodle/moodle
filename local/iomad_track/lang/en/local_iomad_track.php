@@ -50,3 +50,6 @@ $string['fixenrolleddatetask'] = 'Adhoc task to update the stored completion inf
 $string['fixcourseclearedtask'] = 'Adhoc task to update the coursecleared field in the stored completion records';
 $string['fixtracklicensetask'] = 'Adhoc task to fix stored records license information';
 $string['importcompletionrecords'] = 'Import completion records';
+$string['uploadcompletionresult'] = 'Upload completion file result';
+$string['completionimportfromfile'] = 'Completion import from file';
+$string['importcompletionsfromfile'] = 'Import completion information from file';
