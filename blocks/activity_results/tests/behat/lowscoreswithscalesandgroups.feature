@@ -108,7 +108,9 @@ Feature: The activity results block displays students in groups low scores as sc
     And I should see "Good" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple high scores using ID numbers
-    Given I add the "Activity results" block
+    Given the following config values are set as admin:
+      | showuseridentity | idnumber,email |
+    And I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 0 |
@@ -120,11 +122,13 @@ Feature: The activity results block displays students in groups low scores as sc
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
     And I log out
+    # Students cannot see user identity fields.
     And I log in as "student5"
     And I am on "Course 1" course homepage
-    And I should see "User S5" in the "Activity results" "block"
+    And I should see "User" in the "Activity results" "block"
+    And I should not see "User S5" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
-    And I should see "User S6" in the "Activity results" "block"
+    And I should not see "User S6" in the "Activity results" "block"
     And I should see "Average" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple high scores using anonymous names
