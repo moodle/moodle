@@ -32,3 +32,4 @@ defined('MOODLE_INTERNAL') || die();
 $string['language'] = 'Tokples';
 $string['moodlelogo'] = 'Moodle logo';
 $string['next'] = 'Narap\'la';
+$string['previous'] = 'Bipo';
