@@ -178,7 +178,9 @@ Feature: The activity results block displays students in separate groups scores
     And I should see "70.00" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple low scores using ID numbers
-    Given I add the "Activity results" block
+    Given the following config values are set as admin:
+      | showuseridentity | idnumber,email |
+    And I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 0 |
@@ -191,11 +193,13 @@ Feature: The activity results block displays students in separate groups scores
     And I should see "85.00%" in the "Activity results" "block"
     And I should see "75.00%" in the "Activity results" "block"
     And I log out
+    # Students cannot see user identity fields.
     And I log in as "student1"
     And I am on "Course 1" course homepage
-    And I should see "User S1" in the "Activity results" "block"
+    And I should see "User" in the "Activity results" "block"
+    And I should not see "User S1" in the "Activity results" "block"
     And I should see "100.00%" in the "Activity results" "block"
-    And I should see "User S2" in the "Activity results" "block"
+    And I should not see "User S2" in the "Activity results" "block"
     And I should see "90.00%" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple low scores using anonymous names
