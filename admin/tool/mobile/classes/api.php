@@ -221,7 +221,7 @@ class api {
         }
 
         // Identity providers.
-        $authsequence = get_enabled_auth_plugins(true);
+        $authsequence = get_enabled_auth_plugins();
         $identityproviders = \auth_plugin_base::get_identity_providers($authsequence);
         $identityprovidersdata = \auth_plugin_base::prepare_identity_providers_for_output($identityproviders, $OUTPUT);
         if (!empty($identityprovidersdata)) {

@@ -6127,7 +6127,7 @@ class admin_setting_special_registerauth extends admin_setting_configselect {
         $this->choices = array();
         $this->choices[''] = get_string('disable');
 
-        $authsenabled = get_enabled_auth_plugins(true);
+        $authsenabled = get_enabled_auth_plugins();
 
         foreach ($authsenabled as $auth) {
             $authplugin = get_auth_plugin($auth);

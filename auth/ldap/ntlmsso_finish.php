@@ -8,7 +8,7 @@ $PAGE->set_context(context_system::instance());
 // Define variables used in page
 $site = get_site();
 
-$authsequence = get_enabled_auth_plugins(true); // auths, in sequence
+$authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
 if (!in_array('ldap', $authsequence, true)) {
     print_error('ldap_isdisabled', 'auth');
 }
