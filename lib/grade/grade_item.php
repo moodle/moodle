@@ -258,6 +258,11 @@ class grade_item extends grade_object {
     public $dependson_cache = null;
 
     /**
+     * @var bool If we regrade this item should we mark it as overridden?
+     */
+    public $markasoverriddenwhengraded = true;
+
+    /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from the database
      *
      * @param array $params An array with required parameters for this grade object.
@@ -1830,7 +1835,7 @@ class grade_item extends grade_object {
 
         // changed grade?
         if ($finalgrade !== false) {
-            if ($this->is_overridable_item()) {
+            if ($this->is_overridable_item() && $this->markasoverriddenwhengraded) {
                 $grade->overridden = time();
             }
 
