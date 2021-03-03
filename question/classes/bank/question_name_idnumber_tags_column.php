@@ -57,7 +57,7 @@ class question_name_idnumber_tags_column extends question_name_column {
         if ($question->idnumber !== null && $question->idnumber !== '') {
             echo ' ' . \html_writer::span(
                             \html_writer::span(get_string('idnumber', 'question'), 'accesshide') . ' ' .
-                            \html_writer::span($question->idnumber, 'badge badge-primary'), 'ml-1');
+                            \html_writer::span(s($question->idnumber), 'badge badge-primary'), 'ml-1');
         }
 
         // Question tags.
