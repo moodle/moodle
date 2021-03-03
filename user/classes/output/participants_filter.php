@@ -224,7 +224,7 @@ class participants_filter implements renderable, templatable {
             array_map(function($group) {
                 return (object) [
                     'value' => $group->id,
-                    'title' => $group->name,
+                    'title' => format_string($group->name, true, ['context' => $this->context]),
                 ];
             }, array_values($groups))
         );
