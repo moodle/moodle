@@ -2725,7 +2725,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             }
 
             // Give auth plugins an opportunity to authenticate or redirect to an external login page
-            $authsequence = get_enabled_auth_plugins(true); // auths, in sequence
+            $authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
             foreach($authsequence as $authname) {
                 $authplugin = get_auth_plugin($authname);
                 $authplugin->pre_loginpage_hook();
@@ -3919,7 +3919,7 @@ function get_auth_plugin($auth) {
 /**
  * Returns array of active auth plugins.
  *
- * @param bool $fix fix $CFG->auth if needed
+ * @param bool $fix fix $CFG->auth if needed. Only set if logged in as admin.
  * @return array
  */
 function get_enabled_auth_plugins($fix=false) {
@@ -3933,13 +3933,21 @@ function get_enabled_auth_plugins($fix=false) {
         $auths = explode(',', $CFG->auth);
     }
 
-    if ($fix) {
-        $auths = array_unique($auths);
-        foreach ($auths as $k => $authname) {
-            if (!exists_auth_plugin($authname) or in_array($authname, $default)) {
-                unset($auths[$k]);
-            }
+    $auths = array_unique($auths);
+    $oldauthconfig = implode(',', $auths);
+    foreach ($auths as $k => $authname) {
+        if (in_array($authname, $default)) {
+            // The manual and nologin plugin never need to be stored.
+            unset($auths[$k]);
+        } else if (!exists_auth_plugin($authname)) {
+            debugging(get_string('authpluginnotfound', 'debug', $authname));
+            unset($auths[$k]);
         }
+    }
+
+    // Ideally only explicit interaction from a human admin should trigger a
+    // change in auth config, see MDL-70424 for details.
+    if ($fix) {
         $newconfig = implode(',', $auths);
         if (!isset($CFG->auth) or $newconfig != $CFG->auth) {
             set_config('auth', $newconfig);
