@@ -2139,12 +2139,9 @@ abstract class repository implements cacheable_object {
      * @param array $value
      * @return bool
      */
-    public function filter(&$value) {
+    public function filter($value) {
         $accepted_types = optional_param_array('accepted_types', '', PARAM_RAW);
         if (isset($value['children'])) {
-            if (!empty($value['children'])) {
-                $value['children'] = array_filter($value['children'], array($this, 'filter'));
-            }
             return true; // always return directories
         } else {
             if ($accepted_types == '*' or empty($accepted_types)
