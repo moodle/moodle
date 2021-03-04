@@ -18,8 +18,8 @@
  * Privacy Subsystem implementation for local_report_user_logins.
  *
  * @package    local_report_user_logins
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
- * @author    Derick Turner
+ * @copyright  2021 Derick Turner
+ * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -34,15 +34,11 @@ use \core_privacy\local\request\userlist;
 use \core_privacy\local\request\approved_contextlist;
 use \core_privacy\local\request\approved_userlist;
 use \core_privacy\local\request\writer;
+use \context_system;
+use \context_user;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Privacy Subsystem for local_report_user_logins implementing null_provider.
- *
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class provider implements
         \core_privacy\local\metadata\provider,
         \core_privacy\local\request\core_userlist_provider,
@@ -110,12 +106,26 @@ class provider implements
 
         $user = $contextlist->get_user();
 
-        $context = \context_system::instance();
+        $context = context_system::instance();
 
         if ($tracks = $DB->get_records('local_report_user_logins', array('userid' => $user->id))) {
-            foreach ($tracks as $track) {
-                writer::with_context($context)->export_data(array(get_string('pluginname', 'local_report_users')), $track);
+            $trackout = (object) [];
+            foreach ($tracks as $id => $track) {
+                if (!empty($track->created)) {
+                    $tracks[$id]->created = transform::datetime($track->created);
+                }
+                if (!empty($track->firstlogin)) {
+                    $tracks[$id]->firstlogin = transform::datetime($track->firstlogin);
+                }
+                if (!empty($track->lastlogin)) {
+                    $tracks[$id]->lastlogin = transform::datetime($track->lastlogin);
+                }
+                if (!empty($track->modifiedtime)) {
+                    $tracks[$id]->modifiedtime = transform::datetime($track->modifiedtime);
+                }
             }
+            $trackout->tracks = $tracks;
+            writer::with_context($context)->export_data(array(get_string('pluginname', 'local_report_user_logins')), $trackout);
         }
 
     }
@@ -159,7 +169,7 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!$context instanceof \context_user) {
+        if (!$context instanceof context_user) {
             return;
         }
 
@@ -188,7 +198,7 @@ class provider implements
 
         $context = $userlist->get_context();
 
-        if ($context instanceof \context_user) {
+        if ($context instanceof context_user) {
             $DB->delete_records('local_report_user_logins', array('userid' => $context->id));
         }
     }

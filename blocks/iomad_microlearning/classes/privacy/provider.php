@@ -18,7 +18,7 @@
  * Privacy Subsystem implementation for block_iomad_microlearning.
  *
  * @package    block_iomad_microlearning
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
+ * @copyright  2021 Derick Turner
  * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,15 +34,11 @@ use \core_privacy\local\request\userlist;
 use \core_privacy\local\request\approved_contextlist;
 use \core_privacy\local\request\approved_userlist;
 use \core_privacy\local\request\writer;
+use \context_system;
+use \context_user;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Implementation of the privacy subsystem plugin provider for the choice activity module.
- *
- * @copyright  2018 E-Learn Design (http://www.e-learndesign.co.uk)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class provider implements
         \core_privacy\local\metadata\provider,
         \core_privacy\local\request\core_userlist_provider,
@@ -136,10 +132,30 @@ class provider implements
         $context = context_system::instance();
 
         // Get the invoice information.
-        if ($invoices = $DB->get_records('invoice', array('userid' => $user->id))) {
-            foreach ($invoices as $invoice) {
-                writer::with_context($context)->export_data($context, $invoice);
+        if ($microlearnings = $DB->get_records('microlearning_thread_user', array('userid' => $user->id))) {
+            $microlearningout = (object) [];
+            foreach ($microlearnings as $id => $microlearning) {
+                if (!empty($microlearning->schedule_date)) {
+                    $microlearnings[$id]->schedule_date = transform::datetime($microlearning->schedule_date);
+                }
+                if (!empty($microlearning->due_date)) {
+                    $microlearnings[$id]->due_date = transform::datetime($microlearning->due_date);
+                }
+                if (!empty($microlearning->reminder1_date)) {
+                    $microlearnings[$id]->reminder1_date = transform::datetime($microlearning->reminder1_date);
+                }
+                if (!empty($microlearning->reminder2_date)) {
+                    $microlearnings[$id]->reminder2_date = transform::datetime($microlearning->reminder2_date);
+                }
+                if (!empty($microlearning->timecompleted)) {
+                    $microlearnings[$id]->timecompleted = transform::datetime($microlearning->timecompleted);
+                }
+                if (!empty($microlearning->timecreated)) {
+                    $microlearnings[$id]->timecreated = transform::datetime($microlearning->timecreated);
+                }
             }
+            $microlearningout->microlearning = $microlearnings;
+            writer::with_context($context)->export_data(iarray(get_string('pluginname', 'block_iomad_microlearning')), $microlearningout);
         }
     }
 
@@ -182,7 +198,7 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!$context instanceof \context_user) {
+        if (!$context instanceof context_user) {
             return;
         }
 
@@ -211,7 +227,7 @@ class provider implements
 
         $context = $userlist->get_context();
 
-        if ($context instanceof \context_user) {
+        if ($context instanceof context_user) {
             $DB->delete_records('invoice', array('userid' => $context->id));
         }
     }

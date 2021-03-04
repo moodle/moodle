@@ -18,7 +18,7 @@
  * Privacy Subsystem implementation for block_iomad_commerce.
  *
  * @package    block_iomad_commerce
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
+ * @copyright  2021 Derick Turner
  * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,15 +34,11 @@ use \core_privacy\local\request\userlist;
 use \core_privacy\local\request\approved_contextlist;
 use \core_privacy\local\request\approved_userlist;
 use \core_privacy\local\request\writer;
+use \context_system;
+use \context_user;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Implementation of the privacy subsystem plugin provider for the choice activity module.
- *
- * @copyright  2018 E-Learn Design (http://www.e-learndesign.co.uk)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class provider implements
         \core_privacy\local\metadata\provider,
         \core_privacy\local\request\core_userlist_provider,
@@ -133,13 +129,13 @@ class provider implements
 
         $user = $contextlist->get_user();
 
-        $context = \context_system::instance();
+        $context = context_system::instance();
 
         // Get the invoice information.
         if ($invoices = $DB->get_records('invoice', array('userid' => $user->id))) {
-            foreach ($invoices as $invoice) {
-                writer::with_context($context)->export_data($context, $invoice);
-            }
+            $invoicesout = (object) [];
+            $invoicesout->invoices = $invoices;
+            writer::with_context($context)->export_data(array(get_string('pluginname', 'block_iomad_commerce')), $invoicesout);
         }
     }
 
@@ -182,7 +178,7 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!$context instanceof \context_user) {
+        if (!$context instanceof context_user) {
             return;
         }
 
@@ -211,7 +207,7 @@ class provider implements
 
         $context = $userlist->get_context();
 
-        if ($context instanceof \context_user) {
+        if ($context instanceof context_user) {
             $DB->delete_records('invoice', array('userid' => $context->id));
         }
     }

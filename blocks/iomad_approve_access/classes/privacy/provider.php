@@ -18,7 +18,7 @@
  * Privacy Subsystem implementation for block_iomad_approve_access.
  *
  * @package    block_iomad_approve_access
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
+ * @copyright  2021 Derick Turner
  * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,13 +34,9 @@ use \core_privacy\local\request\userlist;
 use \core_privacy\local\request\approved_contextlist;
 use \core_privacy\local\request\approved_userlist;
 use \core_privacy\local\request\writer;
+use \context_system;
+use \context_user;
 
-/**
- * Implementation of the privacy subsystem plugin provider for the Iomad approve access module.
- *
- * @copyright  2018 E-Learn Design (http://www.e-learndesign.co.uk)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class provider implements
         \core_privacy\local\metadata\provider,
         \core_privacy\local\request\core_userlist_provider,
@@ -106,16 +102,16 @@ class provider implements
 
         $user = $contextlist->get_user();
 
-        $context = \context_system::instance();
+        $context = context_system::instance();
 
         // Get the emails information.
         $sql = "SELECT * FROM {block_iomad_approve_access}
                      WHERE userid = :userid";
         $params = array('userid' => $user->id);
         if ($approvals = $DB->get_records_sql($sql, $params)) {
-            foreach ($approvals as $approval) {
-                writer::with_context($context)->export_data($context, $approval);
-            }
+            $approvalsout = (object) [];
+            $approvalsout->approvals = $approvals;
+            writer::with_context($context)->export_data(iarray(get_string('pluginname', 'block_iomad_approve_access')), $approvalsout);
         }
     }
 
@@ -166,7 +162,7 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!$context instanceof \context_user) {
+        if (!$context instanceof context_user) {
             return;
         }
 
@@ -195,7 +191,7 @@ class provider implements
 
         $context = $userlist->get_context();
 
-        if ($context instanceof \context_user) {
+        if ($context instanceof context_user) {
             $DB->delete_records('block_iomad_approve_access', array('userid' => $context->id));
         }
     }

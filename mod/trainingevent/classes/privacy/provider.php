@@ -18,7 +18,7 @@
  * Privacy Subsystem implementation for mod_trainingevent.
  *
  * @package    mod_trainingevent
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
+ * @copyright  2021 Derick Turner
  * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,15 +33,12 @@ use core_privacy\local\request\deletion_criteria;
 use core_privacy\local\request\helper;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
+use \context_system;
+use \context_module;
+use \context_user;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Privacy Subsystem for mod_trainingevent implementing null_provider.
- *
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class provider implements
         // This plugin stores personal data.
         \core_privacy\local\metadata\provider,
@@ -107,7 +104,7 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!$context instanceof \context_module) {
+        if (!$context instanceof context_module) {
             return;
         }
 
@@ -154,11 +151,9 @@ class provider implements
         $params = ['userid' => $user->id] + $contextparams;
 
         $trainingevents = $DB->get_recordset_sql($sql, $params);
-        foreach ($trainingevents as $trainingevent) {
-            foreach ($trainingevents as $trainingevent) {
-                writer::with_context($context)->export_data($context, $trainingevent);
-            }
-        }
+        $trainingeventsout = (object) [];
+        $trainingeventsout->trainingevents = $trainingevents;
+        writer::with_context($context)->export_data(array(get_string('pluginname', 'trainingevent')), $trainingevent);
         $trainintevents->close();
 
     }
@@ -167,16 +162,16 @@ class provider implements
      * Export the supplied personal data for a single trainingevent activity, along with any generic data or area files.
      *
      * @param array $trainingeventdata the personal data to export for the trainingevent.
-     * @param \context_module $context the context of the trainingevent.
+     * @param context_module $context the context of the trainingevent.
      * @param \stdClass $user the user record
      */
-    protected static function export_trainingevent_data_for_user(array $trainingeventdata, \context_module $context, \stdClass $user) {
+    protected static function export_trainingevent_data_for_user(array $trainingeventdata, context_module $context, \stdClass $user) {
         // Fetch the generic module data for the trainingevent.
         $contextdata = helper::get_context_data($context, $user);
 
         // Merge with trainingevent data and write it.
         $contextdata = (object)array_merge((array)$contextdata, $trainingeventdata);
-        writer::with_context($context)->export_data([], $contextdata);
+        writer::with_context($context)->export_data(array(get_string('pluginname', 'trainingevent')), $contextdata);
 
         // Write generic module intro files.
         helper::export_context_files($context, $user);
@@ -225,7 +220,7 @@ class provider implements
 
         $context = $userlist->get_context();
 
-        if (!$context instanceof \context_module) {
+        if (!$context instanceof context_module) {
             return;
         }
 

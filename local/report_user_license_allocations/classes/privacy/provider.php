@@ -18,7 +18,7 @@
  * Privacy Subsystem implementation for local_report_user_license_allocations.
  *
  * @package    local_report_user_license_allocations
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
+ * @copyright  2021 Derick Turner
  * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,15 +34,11 @@ use \core_privacy\local\request\userlist;
 use \core_privacy\local\request\approved_contextlist;
 use \core_privacy\local\request\approved_userlist;
 use \core_privacy\local\request\writer;
+use \context_system;
+use \context_user;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Privacy Subsystem for local_report_user_license_allocations implementing null_provider.
- *
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class provider implements
         \core_privacy\local\metadata\provider,
         \core_privacy\local\request\core_userlist_provider,
@@ -104,20 +100,23 @@ class provider implements
             return;
         }
 
-        if (empty($contextlist->count())) {
-            return;
-        }
-
         $user = $contextlist->get_user();
 
-        $context = \context_system::instance();
+        $context = context_system::instance();
 
         if ($tracks = $DB->get_records('local_report_user_lic_allocs', array('userid' => $user->id))) {
-            foreach ($tracks as $ctrack) {
-                writer::with_context($context)->export_data($context, $track);
+            $trackout = (object) [];
+            foreach ($tracks as $id => $track) {
+                if (!empty($track->issuedate)) {
+                    $tracks[$id]->issuedate = transform::datetime($track->issuedate);
+                }
+                if (!empty($track->modifiedtime)) {
+                    $tracks[$id]->modifiedtime = transform::datetime($track->modifiedtime);
+                }
             }
+            $trackout->license_allocations = $tracks;
+            writer::with_context($context)->export_data(array(get_string('pluginname', 'local_report_user_license_allocations')), $trackout);
         }
-
     }
 
     /**
@@ -159,7 +158,7 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!$context instanceof \context_user) {
+        if (!$context instanceof context_user) {
             return;
         }
 
@@ -188,7 +187,7 @@ class provider implements
 
         $context = $userlist->get_context();
 
-        if ($context instanceof \context_user) {
+        if ($context instanceof context_user) {
             $DB->delete_records('local_report_user_lic_allocs', array('userid' => $context->id));
         }
     }

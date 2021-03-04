@@ -18,7 +18,7 @@
  * Privacy Subsystem implementation for local_iomad_track.
  *
  * @package    local_iomad_track
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
+ * @copyright  2021 Derick Turner
  * @author     Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,15 +34,11 @@ use \core_privacy\local\request\userlist;
 use \core_privacy\local\request\approved_contextlist;
 use \core_privacy\local\request\approved_userlist;
 use \core_privacy\local\request\writer;
+use \context_system;
+use \context_user;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Privacy Subsystem for local_iomad_track implementing null_provider.
- *
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class provider implements
         \core_privacy\local\metadata\provider,
         \core_privacy\local\request\core_userlist_provider,
@@ -120,23 +116,43 @@ class provider implements
             return;
         }
 
-        if (empty($contextlist->count())) {
-            return;
-        }
-
         $user = $contextlist->get_user();
 
-        $context = \context_system::instance();
+        $context = context_system::instance();
 
         if ($tracks = $DB->get_records('local_iomad_track', array('userid' => $user->id))) {
-            foreach ($tracks as $ctrack) {
-                writer::with_context($context)->export_data($context, $track);
-                if ($certinfo = $DB->get_record('local_iomad_track_certs', array('trackid' => $track->id))) {
-                    // Export the track info
-                    writer::with_context($context)->export_data($context, $certinfo);
-
+            $trackout = (object) [];
+            $trackout->tracks = [];
+            $trackout->certs = [];
+            foreach ($tracks as $track) {
+                if (!empty($track->timeenrolled)) {
+                    $track->timeenrolled = transform::datetime($track->timeenrolled);
+                }
+                if (!empty($track->timestarted)) {
+                    $track->timestarted = transform::datetime($track->timestarted);
+                }
+                if (!empty($track->timecompleted)) {
+                    $track->timecompleted = transform::datetime($track->timecompleted);
+                }
+                if (!empty($track->timeexpires)) {
+                    $track->timeexpires = transform::datetime($track->timeexpires);
+                }
+                if (!empty($track->licenseallocated)) {
+                    $track->licenseallocated = transform::datetime($track->licenseallocated);
+                }
+                if (!empty($track->modifiedtime)) {
+                    $track->modifiedtime = transform::datetime($track->modifiedtime);
+                }
+                $trackout->tracks[$track->id] = $track;
+                if ($certinfos = $DB->get_records('local_iomad_track_certs', array('trackid' => $track->id))) {
+                    foreach ($certinfos as $certinfo) {
+                        // Export the track info
+                        $trackout->certs[$cert->id] = $certinfo;
+                        //writer::with_context($context)->export_data([], $certinfo);
+                    }
                 }
             }
+            writer::with_context($context)->export_data([get_string('pluginname', 'local_iomad_track')], $trackout);
         }
 
     }
@@ -214,7 +230,7 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!$context instanceof \context_user) {
+        if (!$context instanceof context_user) {
             return;
         }
 
@@ -243,7 +259,7 @@ class provider implements
 
         $context = $userlist->get_context();
 
-        if ($context instanceof \context_user) {
+        if ($context instanceof context_user) {
             $DB->delete_records('local_iomad_track', array('userid' => $context->id));
 
             // Get the certs.
