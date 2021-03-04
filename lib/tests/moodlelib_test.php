@@ -2132,6 +2132,11 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertInstanceOf('lang_string', $yes);
         $this->assertSame($yesexpected, (string)$yes);
 
+        // Test lazy loading (returning lang_string) correctly interpolates 0 being used as args.
+        $numdays = get_string('numdays', 'moodle', 0, true);
+        $this->assertInstanceOf(lang_string::class, $numdays);
+        $this->assertSame('0 days', (string) $numdays);
+
         // Test using a lang_string object as the $a argument for a normal
         // get_string call (returning string).
         $test = new lang_string('yes', null, null, true);
