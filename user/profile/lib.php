@@ -390,6 +390,15 @@ class profile_field_base {
     }
 
     /**
+     * Return field short name
+     *
+     * @return string
+     */
+    public function get_shortname(): string {
+        return $this->field->shortname;
+    }
+
+    /**
      * Returns the name of the profile category where this field is
      *
      * @return string
@@ -724,27 +733,15 @@ function profile_display_fields($userid) {
  * @since Moodle 3.2
  */
 function profile_get_signup_fields() {
-    global $CFG, $DB;
-
     $profilefields = array();
-    // Only retrieve required custom fields (with category information)
-    // results are sort by categories, then by fields.
-    $sql = "SELECT uf.id as fieldid, ic.id as categoryid, ic.name as categoryname, uf.datatype
-                FROM {user_info_field} uf
-                JOIN {user_info_category} ic
-                ON uf.categoryid = ic.id AND uf.signup = 1 AND uf.visible<>0
-                ORDER BY ic.sortorder ASC, uf.sortorder ASC";
-
-    if ($fields = $DB->get_records_sql($sql)) {
-        foreach ($fields as $field) {
-            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-            $newfield = 'profile_field_'.$field->datatype;
-            $fieldobject = new $newfield($field->fieldid);
-
+    $fieldobjects = profile_get_user_fields_with_data(0);
+    foreach ($fieldobjects as $fieldobject) {
+        $field = (object)$fieldobject->get_field_config_for_external();
+        if ($fieldobject->get_category_name() !== null && $fieldobject->is_signup_field() && $field->visible <> 0) {
             $profilefields[] = (object) array(
                 'categoryid' => $field->categoryid,
-                'categoryname' => $field->categoryname,
-                'fieldid' => $field->fieldid,
+                'categoryname' => $fieldobject->get_category_name(),
+                'fieldid' => $field->id,
                 'datatype' => $field->datatype,
                 'object' => $fieldobject
             );
@@ -807,33 +804,15 @@ function profile_user_record($userid, $onlyinuserobject = true) {
  * @return array Array of field objects from database (indexed by id)
  * @since Moodle 2.7.1
  */
-function profile_get_custom_fields($onlyinuserobject = false) {
-    global $DB, $CFG;
-
-    // Get all the fields.
-    $fields = $DB->get_records('user_info_field', null, 'id ASC');
-
-    // If only doing the user object ones, unset the rest.
-    if ($onlyinuserobject) {
-        foreach ($fields as $id => $field) {
-            require_once($CFG->dirroot . '/user/profile/field/' .
-                    $field->datatype . '/field.class.php');
-            $newfield = 'profile_field_' . $field->datatype;
-            $formfield = new $newfield();
-            if (!$formfield->is_user_object_data()) {
-                unset($fields[$id]);
-            }
+function profile_get_custom_fields(bool $onlyinuserobject = false): array {
+    $fieldobjects = profile_get_user_fields_with_data(0);
+    $fields = [];
+    foreach ($fieldobjects as $fieldobject) {
+        if (!$onlyinuserobject || $fieldobject->is_user_object_data()) {
+            $fields[$fieldobject->fieldid] = (object)$fieldobject->get_field_config_for_external();
         }
     }
-
-    foreach ($fields as $index => $field) {
-        $component = 'profilefield_' . $field->datatype;
-        $classname = "\\$component\\helper";
-        if (class_exists($classname) && method_exists($classname, 'get_fieldname')) {
-            $fields[$index]->name = $classname::get_fieldname($field->name);
-        }
-    }
-
+    ksort($fields);
     return $fields;
 }
 
@@ -855,8 +834,10 @@ function profile_load_custom_fields($user) {
 function profile_save_custom_fields($userid, $profilefields) {
     global $DB;
 
-    if ($fields = $DB->get_records('user_info_field')) {
-        foreach ($fields as $field) {
+    $fields = profile_get_user_fields_with_data(0);
+    if ($fields) {
+        foreach ($fields as $fieldobject) {
+            $field = (object)$fieldobject->get_field_config_for_external();
             if (isset($profilefields[$field->shortname])) {
                 $conditions = array('fieldid' => $field->id, 'userid' => $userid);
                 $id = $DB->get_field('user_info_data', 'id', $conditions);
@@ -877,25 +858,21 @@ function profile_save_custom_fields($userid, $profilefields) {
  * current request for all fields so that it can be used quickly.
  *
  * @param string $shortname Shortname of custom profile field
- * @return array Array with id, name, and visible fields
+ * @return stdClass Object with properties id, shortname, name, visible, datatype, categoryid, etc
  */
-function profile_get_custom_field_data_by_shortname(string $shortname): array {
-    global $DB;
-
+function profile_get_custom_field_data_by_shortname(string $shortname): ?stdClass {
     $cache = \cache::make_from_params(cache_store::MODE_REQUEST, 'core_profile', 'customfields',
             [], ['simplekeys' => true, 'simpledata' => true]);
     $data = $cache->get($shortname);
-    if (!$data) {
+    if ($data === false) {
         // If we don't have data, we get and cache it for all fields to avoid multiple DB requests.
-        $fields = $DB->get_records('user_info_field', null, '', 'id, shortname, name, visible');
+        $fields = profile_get_custom_fields();
+        $data = null;
         foreach ($fields as $field) {
-            $cache->set($field->shortname, (array)$field);
+            $cache->set($field->shortname, $field);
             if ($field->shortname === $shortname) {
-                $data = (array)$field;
+                $data = $field;
             }
-        }
-        if (!$data) {
-            throw new \coding_exception('Unknown custom field: ' . $shortname);
         }
     }
 
@@ -946,15 +923,12 @@ function profile_view($user, $context, $course = null) {
  * @return bool
  */
 function profile_has_required_custom_fields_set($userid) {
-    global $DB;
-
-    $sql = "SELECT f.id
-              FROM {user_info_field} f
-         LEFT JOIN {user_info_data} d ON (d.fieldid = f.id AND d.userid = ?)
-             WHERE f.required = 1 AND f.visible > 0 AND f.locked = 0 AND d.id IS NULL";
-
-    if ($DB->record_exists_sql($sql, [$userid])) {
-        return false;
+    $profilefields = profile_get_user_fields_with_data($userid);
+    foreach ($profilefields as $profilefield) {
+        if ($profilefield->is_required() && !$profilefield->is_locked() &&
+            $profilefield->is_empty() && $profilefield->get_field_config_for_external()['visible']) {
+            return false;
+        }
     }
 
     return true;

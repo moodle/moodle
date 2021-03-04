@@ -1691,7 +1691,9 @@ class restore_section_structure_step extends restore_structure_step {
      * @param stdClass $data Record data
      */
     public function process_availability_field($data) {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+
         $data = (object)$data;
         // Mark it is as passed by default
         $passed = true;
@@ -1704,9 +1706,8 @@ class restore_section_structure_step extends restore_structure_step {
             // If one is null but the other isn't something clearly went wrong and we'll skip this condition.
             $passed = false;
         } else if (!is_null($data->customfield)) {
-            $params = array('shortname' => $data->customfield, 'datatype' => $data->customfieldtype);
-            $customfieldid = $DB->get_field('user_info_field', 'id', $params);
-            $passed = ($customfieldid !== false);
+            $field = profile_get_custom_field_data_by_shortname($data->customfield);
+            $passed = $field && $field->datatype == $data->customfieldtype;
         }
 
         if ($passed) {
@@ -4534,7 +4535,9 @@ class restore_module_structure_step extends restore_structure_step {
      * @param stdClass $data Record data
      */
     protected function process_availability_field($data) {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+
         $data = (object)$data;
         // Mark it is as passed by default
         $passed = true;
@@ -4547,9 +4550,8 @@ class restore_module_structure_step extends restore_structure_step {
             // If one is null but the other isn't something clearly went wrong and we'll skip this condition.
             $passed = false;
         } else if (!empty($data->customfield)) {
-            $params = array('shortname' => $data->customfield, 'datatype' => $data->customfieldtype);
-            $customfieldid = $DB->get_field('user_info_field', 'id', $params);
-            $passed = ($customfieldid !== false);
+            $field = profile_get_custom_field_data_by_shortname($data->customfield);
+            $passed = $field && $field->datatype == $data->customfieldtype;
         }
 
         if ($passed) {

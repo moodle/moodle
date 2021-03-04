@@ -213,7 +213,8 @@ if ($hassiteconfig
                 new lang_string('showuseridentity', 'admin'),
                 new lang_string('showuseridentity_desc', 'admin'), ['email' => 1],
                 function() {
-                    global $DB;
+                    global $CFG;
+                    require_once($CFG->dirroot.'/user/profile/lib.php');
 
                     // Basic fields available in user table.
                     $fields = [
@@ -229,7 +230,7 @@ if ($hassiteconfig
                     ];
 
                     // Custom profile fields.
-                    $profilefields = $DB->get_records('user_info_field', ['datatype' => 'text'], 'sortorder ASC');
+                    $profilefields = profile_get_custom_fields();
                     foreach ($profilefields as $key => $field) {
                         // Only reasonable-length fields can be used as identity fields.
                         if ($field->param2 > 255) {

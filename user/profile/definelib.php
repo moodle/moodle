@@ -138,7 +138,7 @@ class profile_define_base {
                 $err['shortname'] = get_string('profileshortnameinvalid', 'admin');
             } else {
                 // Fetch field-record from DB.
-                $field = $DB->get_record('user_info_field', array('shortname' => $data->shortname));
+                $field = profile_get_custom_field_data_by_shortname($data->shortname);
                 // Check the shortname is unique.
                 if ($field and $field->id <> $data->id) {
                     $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
@@ -204,6 +204,7 @@ class profile_define_base {
         } else {
             \core\event\user_info_field_created::create_from_field($field)->trigger();
         }
+        profile_purge_user_fields_cache();
     }
 
     /**
@@ -251,6 +252,7 @@ function profile_reorder_fields() {
                 }
             }
         }
+        profile_purge_user_fields_cache();
     }
 }
 
@@ -268,6 +270,7 @@ function profile_reorder_categories() {
             $c->sortorder = $i++;
             $DB->update_record('user_info_category', $c);
         }
+        profile_purge_user_fields_cache();
     }
 }
 
@@ -326,6 +329,7 @@ function profile_delete_category($id) {
     profile_reorder_categories();
 
     \core\event\user_info_category_deleted::create_from_category($category)->trigger();
+    profile_purge_user_fields_cache();
 
     return true;
 }
@@ -355,6 +359,7 @@ function profile_delete_field($id) {
     $DB->delete_records('user_info_field', array('id' => $id));
 
     \core\event\user_info_field_deleted::create_from_field($field)->trigger();
+    profile_purge_user_fields_cache();
 
     // Reorder the remaining fields in the same category.
     profile_reorder_fields();
@@ -445,6 +450,7 @@ function profile_move_category($id, $move) {
 
         \core\event\user_info_category_updated::create_from_category($category)->trigger();
         \core\event\user_info_category_updated::create_from_category($swapcategory)->trigger();
+        profile_purge_user_fields_cache();
 
         return true;
     }
@@ -513,6 +519,7 @@ function profile_edit_category($id, $redirect) {
                 \core\event\user_info_category_updated::create_from_category($updatedcateogry)->trigger();
             }
             profile_reorder_categories();
+            profile_purge_user_fields_cache();
             redirect($redirect);
 
         }
@@ -578,6 +585,7 @@ function profile_edit_field($id, $datatype, $redirect) {
         if ($data = $fieldform->get_data()) {
             require_once($CFG->dirroot.'/user/profile/field/'.$datatype.'/define.class.php');
             $newfield = 'profile_define_'.$datatype;
+            /** @var profile_define_base $formfield */
             $formfield = new $newfield();
 
             // Collect the description and format back into the proper data structure from the editor.
@@ -626,4 +634,11 @@ function profile_edit_field($id, $datatype, $redirect) {
     }
 }
 
-
+/**
+ * Purge the cache for the user profile fields
+ */
+function profile_purge_user_fields_cache() {
+    $cache = \cache::make_from_params(cache_store::MODE_REQUEST, 'core_profile', 'customfields',
+        [], ['simplekeys' => true, 'simpledata' => true]);
+    $cache->purge();
+}

@@ -598,14 +598,16 @@ class auth_plugin_base {
      * @return array list of custom fields.
      */
     public function get_custom_user_profile_fields() {
-        global $DB;
+        global $CFG;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+
         // If already retrieved then return.
         if (!is_null($this->customfields)) {
             return $this->customfields;
         }
 
         $this->customfields = array();
-        if ($proffields = $DB->get_records('user_info_field')) {
+        if ($proffields = profile_get_custom_fields()) {
             foreach ($proffields as $proffield) {
                 $this->customfields[] = 'profile_field_'.$proffield->shortname;
             }
@@ -1159,7 +1161,8 @@ function signup_is_enabled() {
  * @since Moodle 3.3
  */
 function display_auth_lock_options($settings, $auth, $userfields, $helptext, $mapremotefields, $updateremotefields, $customfields = array()) {
-    global $DB;
+    global $CFG;
+    require_once($CFG->dirroot . '/user/profile/lib.php');
 
     // Introductory explanation and help text.
     if ($mapremotefields) {
@@ -1180,7 +1183,8 @@ function display_auth_lock_options($settings, $auth, $userfields, $helptext, $ma
     // Generate the list of profile fields to allow updates / lock.
     if (!empty($customfields)) {
         $userfields = array_merge($userfields, $customfields);
-        $customfieldname = $DB->get_records('user_info_field', null, '', 'shortname, name');
+        $allcustomfields = profile_get_custom_fields();
+        $customfieldname = array_combine(array_column($allcustomfields, 'shortname'), $allcustomfields);
     }
 
     foreach ($userfields as $field) {
