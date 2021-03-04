@@ -3330,14 +3330,10 @@ abstract class grade_helper {
         // Sets the list of custom profile fields
         $customprofilefields = array_map('trim', explode(',', $CFG->grade_export_customprofilefields));
         if ($includecustomfields && !empty($customprofilefields)) {
-            list($wherefields, $whereparams) = $DB->get_in_or_equal($customprofilefields);
-            $customfields = $DB->get_records_sql("SELECT f.*
-                                                    FROM {user_info_field} f
-                                                    JOIN {user_info_category} c ON f.categoryid=c.id
-                                                    WHERE f.shortname $wherefields
-                                                    ORDER BY c.sortorder ASC, f.sortorder ASC", $whereparams);
+            $customfields = profile_get_user_fields_with_data(0);
 
-            foreach ($customfields as $field) {
+            foreach ($customfields as $fieldobj) {
+                $field = (object)$fieldobj->get_field_config_for_external();
                 // Make sure we can display this custom field
                 if (!in_array($field->shortname, $customprofilefields)) {
                     continue;

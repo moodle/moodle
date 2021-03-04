@@ -261,17 +261,17 @@ class core_user_profilelib_testcase extends advanced_testcase {
 
         // Get the first field data and check it is correct.
         $data = profile_get_custom_field_data_by_shortname('speciality');
-        $this->assertEquals('Speciality', $data['name']);
-        $this->assertEquals(PROFILE_VISIBLE_ALL, $data['visible']);
-        $this->assertEquals($field1->id, $data['id']);
+        $this->assertEquals('Speciality', $data->name);
+        $this->assertEquals(PROFILE_VISIBLE_ALL, $data->visible);
+        $this->assertEquals($field1->id, $data->id);
 
         // Get the second field data, checking there is no database query this time.
         $before = $DB->perf_get_queries();
         $data = profile_get_custom_field_data_by_shortname('veggie');
         $this->assertEquals($before, $DB->perf_get_queries());
-        $this->assertEquals('Vegetarian', $data['name']);
-        $this->assertEquals(PROFILE_VISIBLE_PRIVATE, $data['visible']);
-        $this->assertEquals($field2->id, $data['id']);
+        $this->assertEquals('Vegetarian', $data->name);
+        $this->assertEquals(PROFILE_VISIBLE_PRIVATE, $data->visible);
+        $this->assertEquals($field2->id, $data->id);
     }
 
     /**
@@ -281,7 +281,6 @@ class core_user_profilelib_testcase extends advanced_testcase {
         global $CFG;
         require_once($CFG->dirroot . '/user/profile/lib.php');
 
-        $this->expectExceptionMessage('Unknown custom field: speciality');
-        profile_get_custom_field_data_by_shortname('speciality');
+        $this->assertNull(profile_get_custom_field_data_by_shortname('speciality'));
     }
 }

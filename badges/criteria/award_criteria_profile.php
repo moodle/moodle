@@ -44,7 +44,8 @@ class award_criteria_profile extends award_criteria {
      *
      */
     public function get_options(&$mform) {
-        global $DB;
+        global $CFG;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
 
         $none = true;
         $existing = array();
@@ -54,17 +55,11 @@ class award_criteria_profile extends award_criteria {
         $dfields = array('firstname', 'lastname', 'email', 'address', 'phone1', 'phone2',
                          'department', 'institution', 'description', 'picture', 'city', 'country');
 
-        $sql = "SELECT uf.id as fieldid, uf.name as name, ic.id as categoryid, ic.name as categoryname, uf.datatype
-                FROM {user_info_field} uf
-                JOIN {user_info_category} ic
-                ON uf.categoryid = ic.id AND uf.visible <> 0
-                ORDER BY ic.sortorder ASC, uf.sortorder ASC";
-
         // Get custom fields.
-        $cfields = $DB->get_records_sql($sql);
-        $cfids = array_map(function($o) {
-            return $o->fieldid;
-        }, $cfields);
+        $cfields = array_filter(profile_get_custom_fields(), function($field) {
+            return $field->visible <> 0;
+        });
+        $cfids = array_keys($cfields);
 
         if ($this->id !== 0) {
             $existing = array_keys($this->params);
@@ -101,7 +96,7 @@ class award_criteria_profile extends award_criteria {
                     $mform->addElement('header', 'category_' . $currentcat, format_string($field->categoryname));
                 }
                 $checked = false;
-                if (in_array($field->fieldid, $existing)) {
+                if (in_array($field->id, $existing)) {
                     $checked = true;
                 }
                 $this->config_options($mform, array('id' => $field->fieldid, 'checked' => $checked, 'name' => $field->name, 'error' => false));
@@ -133,11 +128,14 @@ class award_criteria_profile extends award_criteria {
      * @return string
      */
     public function get_details($short = '') {
-        global $DB, $OUTPUT;
+        global $OUTPUT, $CFG;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+
         $output = array();
         foreach ($this->params as $p) {
             if (is_numeric($p['field'])) {
-                $str = $DB->get_field('user_info_field', 'name', array('id' => $p['field']));
+                $fields = profile_get_custom_fields();
+                $str = $fields[$p['field']]->name ?? $p['field'];
             } else {
                 $str = \core_user\fields::get_display_name($p['field']);
             }
