@@ -114,8 +114,27 @@ const getEnrolledUsersFromCourseModuleID = (cmid, groupID) => {
     return Ajax.call([request])[0];
 };
 
+/**
+ * Toggle the completion state of an activity with manual completion.
+ *
+ * @param {Number} cmid The course module ID.
+ * @param {Boolean} completed Whether to set as complete or not.
+ * @returns {object} jQuery promise
+ */
+const toggleManualCompletion = (cmid, completed) => {
+    const request = {
+        methodname: 'core_completion_update_activity_completion_status_manually',
+        args: {
+            cmid,
+            completed,
+        }
+    };
+    return Ajax.call([request])[0];
+};
+
 export default {
     getEnrolledCoursesByTimelineClassification,
     getLastAccessedCourses,
     getUsersFromCourseModuleID: getEnrolledUsersFromCourseModuleID,
+    toggleManualCompletion,
 };
