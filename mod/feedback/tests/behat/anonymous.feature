@@ -110,10 +110,8 @@ Feature: Anonymous feedback
     And I log out
 
   Scenario: Complete fully anonymous feedback on the front page as a guest
-    And I log in as "admin"
-    And I set the following administration settings values:
+    Given the following config values are set as admin:
       | feedback_allowfullanonymous | 1 |
-    And I log out
     When I follow "Site feedback"
     And I follow "Preview"
     And I should see "Do you like our site?"
@@ -128,9 +126,9 @@ Feature: Anonymous feedback
 
   @javascript
   Scenario: Complete fully anonymous feedback and view analyze on the front page as a guest
-    And I log in as "admin"
-    And I set the following administration settings values:
+    Given the following config values are set as admin:
       | feedback_allowfullanonymous | 1 |
+    And I log in as "admin"
     And I set the following system permissions of "Guest" role:
       | capability                   | permission |
       | mod/feedback:viewanalysepage | Allow      |

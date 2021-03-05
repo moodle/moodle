@@ -41,10 +41,8 @@ Feature: Authentication
     Then I should see "You are not logged in" in the "page-footer" "region"
 
   Scenario Outline: Checking the display of the Remember username checkbox
-    Given I log in as "admin"
-    And I set the following administration settings values:
+    Given the following config values are set as admin:
       | rememberusername | <settingvalue> |
-    And I log out
     And I am on homepage
     When I click on "Log in" "link" in the ".logininfo" "css_element"
     Then I should <expect> "Remember username"

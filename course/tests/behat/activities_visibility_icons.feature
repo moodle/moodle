@@ -131,10 +131,8 @@ Feature: Toggle activities visibility from the course page
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I set the following administration settings values:
+    And the following config values are set as admin:
       | allowstealth | 1 |
-    And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block
