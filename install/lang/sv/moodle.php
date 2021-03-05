@@ -32,5 +32,5 @@ defined('MOODLE_INTERNAL') || die();
 $string['language'] = 'Språk';
 $string['moodlelogo'] = 'Moodie-logotyp';
 $string['next'] = 'Nästa';
-$string['previous'] = 'Tidigare';
+$string['previous'] = 'Föregående';
 $string['reload'] = 'Uppdatera';

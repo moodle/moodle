@@ -33,9 +33,12 @@ $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
 $string['cliincorrectvalueerror'] = 'Fel, värdet "{$a->value}" för "{$a->option}" är inte korrekt.';
 $string['cliincorrectvalueretry'] = 'Felaktigt värde, var snäll och försök igen';
-$string['clitypevalue'] = 'Värde för typ';
-$string['clitypevaluedefault'] = 'skriv in värdet, klicka på "Enter" om du vill använda standardvärdet ({$a})';
-$string['cliunknowoption'] = 'Ej identifierade alternativ: {$a} Var snäll och använd alternativet Hjälp.';
-$string['cliyesnoprompt'] = 'skriv in y (betyder ja) eller n (betyder nej)';
+$string['clitypevalue'] = 'ange värde';
+$string['clitypevaluedefault'] = 'ange värde. Tryck på <em>Enter</em> för att använda standardvärdet ({$a})';
+$string['cliunknowoption'] = 'Okända alternativ:
+  {$a}
+Vänligen använd <code>--help</code> för hjälp med möjliga alternativ.';
+$string['cliyesnoprompt'] = 'ange <em>y</em> (betyder ja) eller <em>n</em> (betyder nej)';
 $string['environmentrequireinstall'] = 'måste vara installerat och aktiverat';
 $string['environmentrequireversion'] = 'version {$a->needed} krävs och du använder {$a->current}';
+$string['upgradekeyset'] = 'Uppgraderingsnyckel (lämna tom för att inte ange någon)';
