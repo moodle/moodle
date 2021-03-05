@@ -81,7 +81,7 @@ class company_license_form extends \company_moodleform {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevel = $company->get_userlevel($USER);
-            $userhierarchylevel = key($userlevel->id);
+            $userhierarchylevel = key($userlevel);
         }
 
         $this->subhierarchieslist = \company::get_all_subdepartments($userhierarchylevel);

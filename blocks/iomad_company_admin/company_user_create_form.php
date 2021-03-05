@@ -125,7 +125,7 @@ if ($mform->is_cancelled()) {
         $userhierarchylevel = $parentnode->id;
     } else {
         $userlevel = $company->get_userlevel($USER);
-        $userhierarchylevel = $userlevel->id;
+        $userhierarchylevel = key($userlevel);
     }
     company::assign_user_to_department($data->userdepartment, $userid);
 

@@ -129,7 +129,7 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
             }
         } else {
             $userlevel = $company->get_userlevel($USER);
-            $userhierarchylevel = $userlevel->id;
+            $userhierarchylevel = key($userlevel);
             if (!empty($userid) && $DB->get_record('company_users', array('userid' => $userid, 'educator' => 1))) {
                 $educator = true;
             } else {
