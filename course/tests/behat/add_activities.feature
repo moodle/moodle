@@ -11,16 +11,16 @@ Feature: Add activities to courses
       | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
-      | Course 1 | C1 | topics |
+      | Course 1 | Course 1 | topics |
     And the following "course enrolments" exist:
       | user | course | role |
-      | student1 | C1 | student |
-      | student2 | C1 | student |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
+      | student1 | Course 1 | student |
+      | student2 | Course 1 | student |
 
   @javascript
   Scenario: Add an activity to a course
+    Given I am on the "Course 1" Course page logged in as admin
+    And I am on "Course 1" course homepage with editing mode on
     When I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
       | Description | Test database description |
@@ -38,15 +38,18 @@ Feature: Add activities to courses
 
   @javascript
   Scenario: Add an activity supplying only the name
+    Given I am on the "Course 1" Course page logged in as admin
+    And I am on "Course 1" course homepage with editing mode on
     When I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
     Then I should see "Test name"
 
   @javascript
   Scenario: Set activity description to required then add an activity supplying only the name
-    Given I set the following administration settings values:
-      | requiremodintro | Yes |
-    When I am on "Course 1" course homepage
+    Given the following config values are set as admin:
+      | requiremodintro | 1 |
+    And I am on the "Course 1" Course page logged in as admin
+    And I am on "Course 1" course homepage with editing mode on
     And I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
     Then I should see "Required"
