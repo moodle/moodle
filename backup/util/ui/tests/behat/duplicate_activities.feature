@@ -17,10 +17,8 @@ Feature: Duplicate activities
     And the following "activities" exist:
       | activity | name               | intro                     | course | idnumber   | section |
       | data     | Test database name | Test database description | C1     | database1  | 1       |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | backup_import_activities    | 0 |
-    And I log out
+    And the following config values are set as admin:
+      | backup_import_activities | 0 | backup |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I duplicate "Test database name" activity
