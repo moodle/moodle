@@ -168,9 +168,12 @@ class media_videojs_player_testcase extends advanced_testcase {
         $this->assertMatchesRegularExpression('~<source src="http://example.org/2.webm"~', $content);
         $this->assertMatchesRegularExpression('~<source src="http://example.org/3.ogv"~', $content);
         // Links to all files are included.
-        $this->assertMatchesRegularExpression('~<a class="mediafallbacklink" href="http://example.org/1.rv">1.rv</a>~', $content);
-        $this->assertMatchesRegularExpression('~<a class="mediafallbacklink" href="http://example.org/2.webm">2.webm</a>~', $content);
-        $this->assertMatchesRegularExpression('~<a class="mediafallbacklink" href="http://example.org/3.ogv">3.ogv</a>~', $content);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="http://example.org/1.rv">1.rv</a>~', $content);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="http://example.org/2.webm">2.webm</a>~', $content);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="http://example.org/3.ogv">3.ogv</a>~', $content);
     }
 
     /**
@@ -185,7 +188,8 @@ class media_videojs_player_testcase extends advanced_testcase {
         $this->assertMatchesRegularExpression('~mediaplugin_videojs~', $content);
         $this->assertEquals(1, substr_count($content, '</video>'));
         $this->assertDoesNotMatchRegularExpression('~mediaplugin_html5video~', $content);
-        $this->assertMatchesRegularExpression('~<a class="mediafallbacklink" href="http://example.org/some_filename.webm">Apply one player only</a>~', $content);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="http://example.org/some_filename.webm">Apply one player only</a>~', $content);
     }
 
     /**
@@ -343,14 +347,16 @@ class media_videojs_player_testcase extends advanced_testcase {
         $this->flash_plugin_engaged($t);
         $this->assertMatchesRegularExpression('~</video>~', $t);
         $this->assertMatchesRegularExpression('~<source src="http://example.org/some_filename.flv"~', $t);
-        $this->assertMatchesRegularExpression('~<a class="mediafallbacklink" href="http://example.org/some_filename.flv">some_filename.flv</a>~', $t);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="http://example.org/some_filename.flv">some_filename.flv</a>~', $t);
 
         // Flash disabled.
         set_config('useflash', 0, 'media_videojs');
         $url = new moodle_url('http://example.org/some_filename.flv');
         $t = $manager->embed_url($url);
         $this->assertStringNotContainsString('mediaplugin_videojs', $t);
-        $this->assertMatchesRegularExpression('~<a class="mediafallbacklink" href="http://example.org/some_filename.flv">some_filename.flv</a>~', $t);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="http://example.org/some_filename.flv">some_filename.flv</a>~', $t);
     }
 
     /**
@@ -365,7 +371,8 @@ class media_videojs_player_testcase extends advanced_testcase {
         $url = new moodle_url('rtmp://example.com/fms&mp4:path/to/file.mp4');
         $t = $manager->embed_url($url);
         $this->assertStringNotContainsString('mediaplugin_videojs', $t);
-        $this->assertMatchesRegularExpression('~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
 
         // RTMP enabled, flash disabled.
         set_config('useflash', 0, 'media_videojs');
@@ -373,7 +380,8 @@ class media_videojs_player_testcase extends advanced_testcase {
         $url = new moodle_url('rtmp://example.com/fms&mp4:path/to/file.mp4');
         $t = $manager->embed_url($url);
         $this->assertStringNotContainsString('mediaplugin_videojs', $t);
-        $this->assertMatchesRegularExpression('~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
 
         // RTMP enabled, flash enabled, rtmp/mp4 type expected.
         set_config('useflash', 1, 'media_videojs');
@@ -382,8 +390,10 @@ class media_videojs_player_testcase extends advanced_testcase {
         $t = $manager->embed_url($url);
         $this->flash_plugin_engaged($t);
         $this->assertMatchesRegularExpression('~</video>~', $t);
-        $this->assertMatchesRegularExpression('~<source src="rtmp://example.com/fms&mp4:path/to/file.mp4" type="rtmp/mp4"~', $t);
-        $this->assertMatchesRegularExpression('~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
+        $this->assertMatchesRegularExpression(
+            '~<source src="rtmp://example.com/fms&mp4:path/to/file.mp4" type="rtmp/mp4"~', $t);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="rtmp://example.com/fms&mp4:path/to/file.mp4">file.mp4</a>~', $t);
 
         // RTMP enabled, flash enabled, rtmp/flv type expected.
         set_config('useflash', 1, 'media_videojs');
@@ -392,7 +402,9 @@ class media_videojs_player_testcase extends advanced_testcase {
         $t = $manager->embed_url($url);
         $this->flash_plugin_engaged($t);
         $this->assertMatchesRegularExpression('~</video>~', $t);
-        $this->assertMatchesRegularExpression('~<source src="rtmp://example.com/fms&flv:path/to/file.flv" type="rtmp/flv"~', $t);
-        $this->assertMatchesRegularExpression('~<a class="mediafallbacklink" href="rtmp://example.com/fms&flv:path/to/file.flv">file.flv</a>~', $t);
+        $this->assertMatchesRegularExpression(
+            '~<source src="rtmp://example.com/fms&flv:path/to/file.flv" type="rtmp/flv"~', $t);
+        $this->assertMatchesRegularExpression(
+            '~<a class="mediafallbacklink" href="rtmp://example.com/fms&flv:path/to/file.flv">file.flv</a>~', $t);
     }
 }

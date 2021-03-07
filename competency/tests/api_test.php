@@ -455,7 +455,8 @@ class core_competency_api_testcase extends advanced_testcase {
             $plan = api::update_plan($record);
             $this->fail('Updating the status is not allowed.');
         } catch (coding_exception $e) {
-            $this->assertMatchesRegularExpression('/To change the status of a plan use the appropriate methods./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/To change the status of a plan use the appropriate methods./',
+                $e->getMessage());
         }
 
         // Test when user with manage own plan capability try to edit other user plan.
@@ -2101,8 +2102,8 @@ class core_competency_api_testcase extends advanced_testcase {
         $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
 
         // Creating an evidence with minimal information.
-        $evidence = api::add_evidence($u1->id, $c1->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE, 'invaliddata',
-            'error');
+        $evidence = api::add_evidence($u1->id, $c1->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE,
+            'invaliddata', 'error');
         $evidence->read();
         $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get('id')));
         $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get('status'));
@@ -2119,8 +2120,8 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertSame(null, $evidence->get('actionuserid'));
 
         // Creating an evidence complete on competency with custom scale.
-        $evidence = api::add_evidence($u1->id, $c2->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE, 'invaliddata',
-            'error');
+        $evidence = api::add_evidence($u1->id, $c2->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE,
+            'invaliddata', 'error');
         $evidence->read();
         $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get('id')));
         $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get('status'));
@@ -2141,8 +2142,8 @@ class core_competency_api_testcase extends advanced_testcase {
             'proficiency' => 0));
         $this->assertEquals(1, $uc->get('grade'));
         $this->assertEquals(0, $uc->get('proficiency'));
-        $evidence = api::add_evidence($u1->id, $c3->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE, 'invaliddata',
-            'error');
+        $evidence = api::add_evidence($u1->id, $c3->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE,
+            'invaliddata', 'error');
         $evidence->read();
         $uc->read();
         $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get('status'));
@@ -2159,8 +2160,8 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertSame(null, $evidence->get('actionuserid'));
 
         // Creating a standard evidence and send for review.
-        $evidence = api::add_evidence($u1->id, $c2->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE, 'invaliddata',
-            'error', null, true);
+        $evidence = api::add_evidence($u1->id, $c2->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_COMPLETE,
+            'invaliddata', 'error', null, true);
         $evidence->read();
         $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get('id')));
         $this->assertEquals(\core_competency\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get('status'));
@@ -2185,8 +2186,8 @@ class core_competency_api_testcase extends advanced_testcase {
         $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
 
         // Creating an evidence with minimal information.
-        $evidence = api::add_evidence($u1->id, $c1->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_OVERRIDE, 'invaliddata',
-            'error');
+        $evidence = api::add_evidence($u1->id, $c1->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_OVERRIDE,
+            'invaliddata', 'error');
         $evidence->read();
         $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get('id')));
         $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get('status'));
@@ -2203,8 +2204,8 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertSame(null, $evidence->get('actionuserid'));
 
         // Creating an evidence with a grade information.
-        $evidence = api::add_evidence($u1->id, $c1->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_OVERRIDE, 'invaliddata',
-            'error', null, false, null, 3);
+        $evidence = api::add_evidence($u1->id, $c1->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_OVERRIDE,
+            'invaliddata', 'error', null, false, null, 3);
         $evidence->read();
         $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get('id')));
         $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get('status'));
@@ -2221,8 +2222,8 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertSame(null, $evidence->get('actionuserid'));
 
         // Creating an evidence with another grade information.
-        $evidence = api::add_evidence($u1->id, $c1->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_OVERRIDE, 'invaliddata',
-            'error', null, false, null, 1);
+        $evidence = api::add_evidence($u1->id, $c1->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_OVERRIDE,
+            'invaliddata', 'error', null, false, null, 1);
         $evidence->read();
         $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get('id')));
         $this->assertEquals(\core_competency\user_competency::STATUS_IDLE, $uc->get('status'));
@@ -2239,8 +2240,8 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertSame(null, $evidence->get('actionuserid'));
 
         // Creating reverting the grade and send for review.
-        $evidence = api::add_evidence($u1->id, $c1->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_OVERRIDE, 'invaliddata',
-            'error', null, true);
+        $evidence = api::add_evidence($u1->id, $c1->get('id'), $u1ctx->id, \core_competency\evidence::ACTION_OVERRIDE,
+            'invaliddata', 'error', null, true);
         $evidence->read();
         $uc = \core_competency\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get('id')));
         $this->assertSame(null, $uc->get('grade'));
@@ -2407,7 +2408,8 @@ class core_competency_api_testcase extends advanced_testcase {
         api::add_evidence($u1->id, $c1a, $ctxid, evidence::ACTION_LOG, 'commentincontext', 'core');
         $uc1a = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1a->get('id')));
         $this->assertSame(null, $uc1a->get('proficiency'));
-        $this->assertFalse(user_competency::record_exists_select('userid = ? AND competencyid = ?', array($u1->id, $c1->get('id'))));
+        $this->assertFalse(user_competency::record_exists_select('userid = ? AND competencyid = ?',
+            array($u1->id, $c1->get('id'))));
 
         // Now let's try complete a competency but the rule won't match (not all children are complete).
         // The parent (the thing with the rule) will be created but won't have any evidence attached, and not
@@ -2450,7 +2452,8 @@ class core_competency_api_testcase extends advanced_testcase {
         api::add_evidence($u1->id, $c4a, $ctxid, evidence::ACTION_COMPLETE, 'commentincontext', 'core');
         $uc4a = user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c4a->get('id')));
         $this->assertEquals(true, $uc1a->get('proficiency'));
-        $this->assertFalse(user_competency::record_exists_select('userid = ? AND competencyid = ?', array($u1->id, $c4->get('id'))));
+        $this->assertFalse(user_competency::record_exists_select('userid = ? AND competencyid = ?',
+            array($u1->id, $c4->get('id'))));
 
         // Check marking on something that has no parent. This just checks that nothing breaks.
         api::add_evidence($u1->id, $c5, $ctxid, evidence::ACTION_COMPLETE, 'commentincontext', 'core');
@@ -2791,7 +2794,8 @@ class core_competency_api_testcase extends advanced_testcase {
         $this->assertTrue(api::set_course_competency_ruleoutcome($recordscc[0]['coursecompetency']->get('id'),
             \core_competency\course_competency::OUTCOME_NONE));
         $recordscc = api::list_course_competencies($course->id);
-        $this->assertEquals(\core_competency\course_competency::OUTCOME_NONE, $recordscc[0]['coursecompetency']->get('ruleoutcome'));
+        $this->assertEquals(\core_competency\course_competency::OUTCOME_NONE,
+            $recordscc[0]['coursecompetency']->get('ruleoutcome'));
     }
 
     /**
