@@ -2582,7 +2582,8 @@ EOF;
 
         // Max username length is 100 chars. Select up to limit - (length of current time + 1 [period character]) from users email.
         $expectedemail = core_text::substr($user->email, 0, 100 - ($timestrlength + 1));
-        $this->assertMatchesRegularExpression('/^' . preg_quote($expectedemail) . '\.\d{' . $timestrlength . '}$/', $usernamedeleted);
+        $this->assertMatchesRegularExpression('/^' . preg_quote($expectedemail) . '\.\d{' . $timestrlength . '}$/',
+            $usernamedeleted);
     }
 
     /**

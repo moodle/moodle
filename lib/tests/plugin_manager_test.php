@@ -93,7 +93,8 @@ class core_plugin_manager_testcase extends advanced_testcase {
             $installed = core_plugin_manager::instance()->get_installed_plugins($type);
             foreach ($installed as $plugin => $version) {
                 $this->assertMatchesRegularExpression('/^[a-z]+[a-z0-9_]*$/', $plugin);
-                $this->assertTrue(is_numeric($version), 'All plugins should have a version, plugin '.$type.'_'.$plugin.' does not have version info.');
+                $this->assertTrue(is_numeric($version),
+                    'All plugins should have a version, plugin '.$type.'_'.$plugin.' does not have version info.');
             }
         }
     }
@@ -119,9 +120,11 @@ class core_plugin_manager_testcase extends advanced_testcase {
             $present = core_plugin_manager::instance()->get_present_plugins($type);
             if (is_array($present)) {
                 foreach ($present as $plugin => $version) {
-                    $this->assertMatchesRegularExpression('/^[a-z]+[a-z0-9_]*$/', $plugin, 'All plugins are supposed to have version.php file.');
+                    $this->assertMatchesRegularExpression('/^[a-z]+[a-z0-9_]*$/', $plugin,
+                        'All plugins are supposed to have version.php file.');
                     $this->assertIsObject($version);
-                    $this->assertTrue(is_numeric($version->version), 'All plugins should have a version, plugin '.$type.'_'.$plugin.' does not have version info.');
+                    $this->assertTrue(is_numeric($version->version),
+                        'All plugins should have a version, plugin '.$type.'_'.$plugin.' does not have version info.');
                 }
             } else {
                 // No plugins of this type exist.

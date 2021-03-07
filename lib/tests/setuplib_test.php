@@ -43,8 +43,10 @@ class core_setuplib_testcase extends advanced_testcase {
         } else {
             $docroot = $CFG->docroot;
         }
-        $this->assertMatchesRegularExpression('~^' . preg_quote($docroot, '') . '/\d{2,3}/' . current_language() . '/course/editing$~',
-                get_docs_url('course/editing'));
+        $this->assertMatchesRegularExpression(
+            '~^' . preg_quote($docroot, '') . '/\d{2,3}/' . current_language() . '/course/editing$~',
+            get_docs_url('course/editing')
+        );
     }
 
     /**
@@ -92,8 +94,10 @@ class core_setuplib_testcase extends advanced_testcase {
         $exception     = new moodle_exception('generalexceptionmessage', 'error', '', $fixture, $fixture);
         $exceptioninfo = get_exception_info($exception);
 
-        $this->assertStringContainsString($expected, $exceptioninfo->message, 'Exception message does not contain system paths');
-        $this->assertStringContainsString($expected, $exceptioninfo->debuginfo, 'Exception debug info does not contain system paths');
+        $this->assertStringContainsString($expected, $exceptioninfo->message,
+            'Exception message does not contain system paths');
+        $this->assertStringContainsString($expected, $exceptioninfo->debuginfo,
+            'Exception debug info does not contain system paths');
     }
 
     public function test_localcachedir() {
