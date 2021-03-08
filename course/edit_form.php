@@ -278,6 +278,11 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('showreports', 'showreports');
         $mform->setDefault('showreports', $courseconfig->showreports);
 
+        // Show activity dates.
+        $mform->addElement('selectyesno', 'showactivitydates', get_string('showactivitydates'));
+        $mform->addHelpButton('showactivitydates', 'showactivitydates');
+        $mform->setDefault('showactivitydates', $courseconfig->showactivitydates);
+
         // Files and uploads.
         $mform->addElement('header', 'filehdr', get_string('filesanduploads'));
 
