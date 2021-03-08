@@ -317,6 +317,12 @@ class course_edit_form extends moodleform {
             $mform->addElement('selectyesno', 'enablecompletion', get_string('enablecompletion', 'completion'));
             $mform->setDefault('enablecompletion', $courseconfig->enablecompletion);
             $mform->addHelpButton('enablecompletion', 'enablecompletion', 'completion');
+
+            $showcompletionconditions = $courseconfig->showcompletionconditions ?? COMPLETION_SHOW_CONDITIONS;
+            $mform->addElement('selectyesno', 'showcompletionconditions', get_string('showcompletionconditions', 'completion'));
+            $mform->addHelpButton('showcompletionconditions', 'showcompletionconditions', 'completion');
+            $mform->setDefault('showcompletionconditions', $showcompletionconditions);
+            $mform->hideIf('showcompletionconditions', 'enablecompletion', 'eq', COMPLETION_HIDE_CONDITIONS);
         } else {
             $mform->addElement('hidden', 'enablecompletion');
             $mform->setType('enablecompletion', PARAM_INT);

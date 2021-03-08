@@ -104,6 +104,7 @@
         <FIELD NAME="cacherev" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Incrementing revision for validating the course content cache"/>
         <FIELD NAME="originalcourseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the id of the source course when a new course originates from a restore of another course on the same site."/>
         <FIELD NAME="showactivitydates" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether to display activity dates to user. 0 = do not display, 1 = display activity dates"/>
+        <FIELD NAME="showcompletionconditions" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Whether to display completion conditions to user. 0 = do not display, 1 = display conditions"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
