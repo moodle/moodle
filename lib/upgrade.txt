@@ -33,6 +33,15 @@ information provided here is intended especially for developers.
 * New DML driver method `$DB->sql_group_concat` for performing group concatenation of a field within a SQL query
 * Added new class, AMD modules and WS that allow displaying forms in modal popups or load and submit in AJAX requests.
   See https://docs.moodle.org/dev/Modal_and_AJAX_forms for more details.
+* New base class for defining an activity's custom completion requirements: \core_completion\activity_custom_completion.
+  Activity module plugins that define custom completion conditions should implement a mod_[modname]\completion\custom_completion
+  subclass and the following methods:
+  - get_state(): Provides the completion state for a given custom completion rule.
+  - get_defined_custom_rules(): Returns an array of the activity module's custom completion rules.
+    e.g. ['completionsubmit']
+  - get_custom_rule_descriptions(): Returns an associative array with values containing the user-facing textual description
+    of the custom completion rules (which serve as the keys to these values).
+    e.g. ['completionsubmit' => 'Must submit']
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:
