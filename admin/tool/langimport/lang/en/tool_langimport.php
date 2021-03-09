@@ -25,6 +25,10 @@
 
 $string['downloadnotavailable'] = 'Unable to connect to the download server. It is not possible to install or update the language packs automatically. Please download the appropriate ZIP file(s) from <a href="{$a->src}">{$a->src}</a> and unzip them manually to your data directory <code>{$a->dest}</code>';
 $string['install'] = 'Install selected language pack(s)';
+$string['installfailed'] = 'Language packs installation failed!';
+$string['installfinished'] = 'Language packs installation finished.';
+$string['installpending'] = 'The following language packs will be installed soon: {$a}.';
+$string['installscheduled'] = 'Language packs scheduled for installation.';
 $string['installedlangs'] = 'Installed language packs';
 $string['langimport'] = 'Language import utility';
 $string['langimportdisabled'] = 'Language import feature has been disabled. You have to update your language packs manually at the file-system level. Do not forget to purge string caches after you do so.';
@@ -50,4 +54,5 @@ $string['selectlangs'] = 'Select languages to uninstall';
 $string['uninstall'] = 'Uninstall selected language pack(s)';
 $string['uninstallconfirm'] = 'You are about to completely uninstall these language packs: <strong>{$a}</strong>. Are you sure?';
 $string['updatelangs'] = 'Update all installed language packs';
+$string['updatelangsnote'] = 'Updating all installed language packs by clicking the button can take a long time and lead to timeouts. It is recommended instead to make use of the scheduled task \'{$a->taskname}\' (which runs by default every day).';
 $string['privacy:metadata'] = 'The Language packs plugin does not store any personal data.';
