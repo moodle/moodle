@@ -427,6 +427,34 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertEquals(COMPLETION_INCOMPLETE, $completioninfo->internal_get_state($cm, $teacher->id, null));
     }
 
+    /**
+     * Test for internal_get_state() for an activity that supports custom completion.
+     */
+    public function test_internal_get_state_with_custom_completion() {
+        $this->setup_data();
+
+        $choicerecord = [
+            'course' => $this->course,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC,
+            'completionsubmit' => COMPLETION_ENABLED,
+        ];
+        $choice = $this->getDataGenerator()->create_module('choice', $choicerecord);
+        $cminfo = cm_info::create(get_coursemodule_from_instance('choice', $choice->id));
+
+        $completioninfo = new completion_info($this->course);
+
+        // Fetch completion for the user who hasn't made a choice yet.
+        $completion = $completioninfo->internal_get_state($cminfo, $this->user->id, COMPLETION_INCOMPLETE);
+        $this->assertEquals(COMPLETION_INCOMPLETE, $completion);
+
+        // Have the user make a choice.
+        $choicewithoptions = choice_get_choice($choice->id);
+        $optionids = array_keys($choicewithoptions->option);
+        choice_user_submit_response($optionids[0], $choice, $this->user->id, $this->course, $cminfo);
+        $completion = $completioninfo->internal_get_state($cminfo, $this->user->id, COMPLETION_INCOMPLETE);
+        $this->assertEquals(COMPLETION_COMPLETE, $completion);
+    }
+
     public function test_set_module_viewed() {
         $this->mock_setup();
 
