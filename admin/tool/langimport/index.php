@@ -66,8 +66,15 @@ get_string_manager()->reset_caches();
 $controller = new tool_langimport\controller();
 
 if (($mode == INSTALLATION_OF_SELECTED_LANG) and confirm_sesskey() and !empty($pack)) {
-    core_php_time_limit::raise();
-    $controller->install_languagepacks($pack);
+    if (is_array($pack) && count($pack) > 1) {
+        // Installing multiple languages can take a while - perform it asynchronously in the background.
+        $controller->schedule_languagepacks_installation($pack);
+
+    } else {
+        // Single language pack to be installed synchronously. It should be reasonably quick and can be used for debugging, too.
+        core_php_time_limit::raise();
+        $controller->install_languagepacks($pack);
+    }
 }
 
 if ($mode == DELETION_OF_SELECTED_LANG and (!empty($uninstalllang) or !empty($confirmtounistall))) {
@@ -168,6 +175,15 @@ if ($controller->info) {
 if ($controller->errors) {
     $info = implode('<br />', $controller->errors);
     \core\notification::error($info);
+}
+
+// Inform about pending language packs installations.
+foreach (\core\task\manager::get_adhoc_tasks('\tool_langimport\task\install_langpacks') as $installtask) {
+    $installtaskdata = $installtask->get_custom_data();
+
+    if (!empty($installtaskdata->langs)) {
+        \core\notification::info(get_string('installpending', 'tool_langimport', implode(', ', $installtaskdata->langs)));
+    }
 }
 
 if ($missingparents) {

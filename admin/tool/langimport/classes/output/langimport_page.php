@@ -107,6 +107,11 @@ class langimport_page implements renderable, templatable {
             $data->caninstall = true;
         }
 
+        if (count($this->installedlanguages) > 3) {
+            $data->hasmanyinstalledlanguages = true;
+            $data->updatelangstaskname = get_string('updatelangs', 'tool_langimport');
+        }
+
         return $data;
     }
 }
