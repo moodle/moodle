@@ -25,7 +25,13 @@
     Example context (json):
     {
         "backpacks": [
-            {"backpackweburl": "http://localhost/", "sitebackpack": true, "cantest": true}
+            {
+                "backpackweburl": "http://localhost/",
+                "sitebackpack": true,
+                "cantest": true,
+                "canmoveup": true,
+                "canmovedown": false
+            }
         ]
     }
 }}
@@ -40,7 +46,7 @@
     <thead>
         <tr>
             <th scope="col">{{#str}}backpackweburl, core_badges{{/str}}</th>
-            <th scope="col">{{#str}}sitebackpack, core_badges{{/str}}</th>
+            <th scope="col">{{#str}}order{{/str}}</th>
             <th scope="col">{{#str}}actions, core_badges{{/str}}</th>
         </tr>
     </thead>
@@ -48,14 +54,27 @@
         {{#backpacks}}
         <tr data-backpackurl="{{{backpackweburl}}}">
             <td> {{{backpackweburl}}} </td>
-            <td> {{#sitebackpack}}Yes{{/sitebackpack}} </td>
+            <td>
+                {{#canmoveup}}
+                    <a href="{{baseurl}}?id={{id}}&action=moveup">{{#pix}}t/up, core,{{#str}}moveup{{/str}}{{/pix}}</a>
+                {{/canmoveup}}
+                {{^canmoveup}}
+                    {{#pix}}spacer, moodle{{/pix}}
+                {{/canmoveup}}
+                {{#canmovedown}}
+                    <a href="{{baseurl}}?id={{id}}&action=movedown">{{#pix}}t/down, core,{{#str}}movedown{{/str}}{{/pix}}</a>
+                {{/canmovedown}}
+                {{^canmovedown}}
+                    {{#pix}}spacer, moodle{{/pix}}
+                {{/canmovedown}}
+            </td>
             <td>
                 <a href="{{baseurl}}?id={{id}}&action=edit">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
-            {{^iscurrent}}
+            {{^sitebackpack}}
                 <a href="{{baseurl}}?id={{id}}&action=delete" role="button" data-action="deletebackpack">
                     {{#pix}}t/delete, core,{{#str}}delete{{/str}}{{/pix}}
                 </a>
-            {{/iscurrent}}
+            {{/sitebackpack}}
             {{#cantest}}
                 <a href="{{baseurl}}?id={{id}}&action=test">{{#pix}}t/check, core,{{#str}}testsettings, core_badges{{/str}}{{/pix}}</a>
             {{/cantest}}

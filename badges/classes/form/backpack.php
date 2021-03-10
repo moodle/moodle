@@ -78,7 +78,8 @@ class backpack extends external_backpack {
             }
             $mform->addElement('select', 'externalbackpackid', get_string('backpackprovider', 'badges'), $choices);
             $mform->setType('externalbackpackid', PARAM_INT);
-            $mform->setDefault('externalbackpackid', $CFG->badges_site_backpack);
+            $defaultbackpack = badges_get_site_primary_backpack();
+            $mform->setDefault('externalbackpackid', $defaultbackpack->id);
             $mform->hideIf('password', 'externalbackpackid', 'in', $restrictedoptions);
             $mform->hideIf('backpackemail', 'externalbackpackid', 'in', $restrictedoptions);
 

@@ -127,6 +127,9 @@ define('OPEN_BADGES_V2_TYPE_ISSUER', 'Issuer');
 define('OPEN_BADGES_V2_TYPE_ENDORSEMENT', 'Endorsement');
 define('OPEN_BADGES_V2_TYPE_AUTHOR', 'Author');
 
+define('BACKPACK_MOVE_UP', -1);
+define('BACKPACK_MOVE_DOWN', 1);
+
 // Global badge class has been moved to the component namespace.
 class_alias('\core_badges\badge', 'badge');
 
@@ -805,13 +808,14 @@ function badges_update_site_backpack($id, $data) {
  * @return boolean
  */
 function badges_delete_site_backpack($id) {
-    global $DB, $CFG;
+    global $DB;
 
     $context = context_system::instance();
     require_capability('moodle/badges:manageglobalsettings', $context);
 
     // Only remove site backpack if it's not the default one.
-    if ($CFG->badges_site_backpack != $id && $DB->record_exists('badge_external_backpack', ['id' => $id])) {
+    $defaultbackpack = badges_get_site_primary_backpack();
+    if ($defaultbackpack->id != $id && $DB->record_exists('badge_external_backpack', ['id' => $id])) {
         $transaction = $DB->start_delegated_transaction();
 
         // Remove connections for users to this backpack.
@@ -914,11 +918,11 @@ function badges_save_backpack_credentials(stdClass $data) {
  */
 function badges_open_badges_backpack_api(?int $backpackid = null) {
     if (!$backpackid) {
-        global $CFG;
-        $backpackid = $CFG->badges_site_backpack;
+        $backpack = badges_get_site_primary_backpack();
+    } else {
+        $backpack = badges_get_site_backpack($backpackid);
     }
 
-    $backpack = badges_get_site_backpack($backpackid);
     if (empty($backpack->apiversion)) {
         return OPEN_BADGES_V2;
     }
@@ -971,9 +975,15 @@ function badges_get_user_backpack(?int $userid = 0) {
  * @return array(stdClass)
  */
 function badges_get_site_primary_backpack() {
-    global $CFG;
+    global $DB;
 
-    return badges_get_site_backpack($CFG->badges_site_backpack);
+    $sql = 'SELECT *
+              FROM {badge_external_backpack}
+             WHERE sortorder = (SELECT MIN(sortorder)
+                                  FROM {badge_external_backpack} b2)';
+    $firstbackpack = $DB->get_record_sql($sql, null, MUST_EXIST);
+
+    return badges_get_site_backpack($firstbackpack->id);
 }
 
 /**
@@ -982,18 +992,53 @@ function badges_get_site_primary_backpack() {
  * @return array(stdClass)
  */
 function badges_get_site_backpacks() {
-    global $DB, $CFG;
+    global $DB;
 
+    $defaultbackpack = badges_get_site_primary_backpack();
     $all = $DB->get_records('badge_external_backpack', null, 'sortorder ASC');
-
     foreach ($all as $key => $bp) {
-        if ($bp->id == $CFG->badges_site_backpack) {
+        if ($bp->id == $defaultbackpack->id) {
             $all[$key]->sitebackpack = true;
         } else {
             $all[$key]->sitebackpack = false;
         }
     }
+
     return $all;
+}
+
+/**
+ * Moves the backpack in the list one position up or down.
+ *
+ * @param int $backpackid The backpack identifier to be moved.
+ * @param int $direction The direction (BACKPACK_MOVE_UP/BACKPACK_MOVE_DOWN) where to move the backpack.
+ *
+ * @throws \moodle_exception if attempting to use invalid direction value.
+ */
+function badges_change_sortorder_backpacks(int $backpackid, int $direction): void {
+    global $DB;
+
+    if ($direction != BACKPACK_MOVE_UP && $direction != BACKPACK_MOVE_DOWN) {
+        throw new \coding_exception(
+            'Must use a valid backpack API move direction constant (BACKPACK_MOVE_UP or BACKPACK_MOVE_DOWN)');
+    }
+
+    $backpacks = badges_get_site_backpacks();
+    $backpacktoupdate = $backpacks[$backpackid];
+
+    $currentsortorder = $backpacktoupdate->sortorder;
+    $targetsortorder = $currentsortorder + $direction;
+    if ($targetsortorder > 0 && $targetsortorder <= count($backpacks) ) {
+        foreach ($backpacks as $backpack) {
+            if ($backpack->sortorder == $targetsortorder) {
+                $backpack->sortorder = $backpack->sortorder - $direction;
+                $DB->update_record('badge_external_backpack', $backpack);
+                break;
+            }
+        }
+        $backpacktoupdate->sortorder = $targetsortorder;
+        $DB->update_record('badge_external_backpack', $backpacktoupdate);
+    }
 }
 
 /**
@@ -1296,9 +1341,8 @@ function badge_assemble_notification(stdClass $badge) {
  * @return string
  */
 function badges_verify_site_backpack() {
-    global $CFG;
-
-    return badges_verify_backpack($CFG->badges_site_backpack);
+    $defaultbackpack = badges_get_site_primary_backpack();
+    return badges_verify_backpack($defaultbackpack->id);
 }
 
 /**
