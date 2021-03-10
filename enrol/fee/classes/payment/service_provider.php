@@ -37,7 +37,7 @@ class service_provider implements \core_payment\local\callback\service_provider 
      * Callback function that returns the enrolment cost and the accountid
      * for the course that $instanceid enrolment instance belongs to.
      *
-     * @param string $paymentarea
+     * @param string $paymentarea Payment area
      * @param int $instanceid The enrolment instance id
      * @return \core_payment\local\entities\payable
      */
@@ -47,6 +47,21 @@ class service_provider implements \core_payment\local\callback\service_provider 
         $instance = $DB->get_record('enrol', ['enrol' => 'fee', 'id' => $instanceid], '*', MUST_EXIST);
 
         return new \core_payment\local\entities\payable($instance->cost, $instance->currency, $instance->customint1);
+    }
+
+    /**
+     * Callback function that returns the URL of the page the user should be redirected to in the case of a successful payment.
+     *
+     * @param string $paymentarea Payment area
+     * @param int $instanceid The enrolment instance id
+     * @return \moodle_url
+     */
+    public static function get_success_url(string $paymentarea, int $instanceid): \moodle_url {
+        global $DB;
+
+        $courseid = $DB->get_field('enrol', 'courseid', ['enrol' => 'fee', 'id' => $instanceid], MUST_EXIST);
+
+        return new \moodle_url('/course/view.php', ['id' => $courseid]);
     }
 
     /**

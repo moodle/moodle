@@ -212,6 +212,7 @@ class enrol_fee_plugin extends enrol_plugin {
                 'instanceid' => $instance->id,
                 'description' => get_string('purchasedescription', 'enrol_fee',
                     format_string($course->fullname, true, ['context' => $context])),
+                'successurl' => \enrol_fee\payment\service_provider::get_success_url('fee', $instance->id)->out(false),
             ];
             echo $OUTPUT->render_from_template('enrol_fee/payment_region', $data);
         }
