@@ -3083,8 +3083,10 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
     $joins = array('FROM {user} u');
     $wheres = array();
 
-    $userfields = get_extra_user_fields($context);
-    $userfieldssql = user_picture::fields('u', $userfields);
+    // TODO Does not support custom user profile fields (MDL-70456).
+    $userfields = \core\user_fields::get_identity_fields($context, false);
+    $userfieldsapi = \core\user_fields::for_userpic()->including(...$userfields);
+    $userfieldssql = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
     if ($isfrontpage) {
         $select = "SELECT $userfieldssql, u.lastaccess";
@@ -3171,9 +3173,10 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
             }
             $conditions[] = $idnumber;
 
-            if (!empty($CFG->showuseridentity)) {
+            // TODO Does not support custom user profile fields (MDL-70456).
+            $extrasearchfields = \core\user_fields::get_identity_fields($context, false);
+            if (!empty($extrasearchfields)) {
                 // Search all user identify fields.
-                $extrasearchfields = explode(',', $CFG->showuseridentity);
                 foreach ($extrasearchfields as $extrasearchfield) {
                     if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
                         // Already covered above. Search by country not supported.
@@ -3309,4 +3312,125 @@ function make_categories_options() {
     debugging($deprecatedtext, DEBUG_DEVELOPER);
 
     return core_course_category::make_categories_list('', 0, ' / ');
+}
+
+/**
+ * Checks if current user is shown any extra fields when listing users.
+ *
+ * Does not include any custom profile fields.
+ *
+ * @param object $context Context
+ * @param array $already Array of fields that we're going to show anyway
+ *   so don't bother listing them
+ * @return array Array of field names from user table, not including anything
+ *   listed in $already
+ * @deprecated since Moodle 3.11 MDL-45242
+ * @see \core\user_fields
+ */
+function get_extra_user_fields($context, $already = array()) {
+    debugging('get_extra_user_fields() is deprecated. Please use the \core\user_fields API instead.', DEBUG_DEVELOPER);
+
+    $fields = \core\user_fields::for_identity($context, false)->excluding(...$already);
+    return $fields->get_required_fields();
+}
+
+/**
+ * If the current user is to be shown extra user fields when listing or
+ * selecting users, returns a string suitable for including in an SQL select
+ * clause to retrieve those fields.
+ *
+ * Does not include any custom profile fields.
+ *
+ * @param context $context Context
+ * @param string $alias Alias of user table, e.g. 'u' (default none)
+ * @param string $prefix Prefix for field names using AS, e.g. 'u_' (default none)
+ * @param array $already Array of fields that we're going to include anyway so don't list them (default none)
+ * @return string Partial SQL select clause, beginning with comma, for example ',u.idnumber,u.department' unless it is blank
+ * @deprecated since Moodle 3.11 MDL-45242
+ * @see \core\user_fields
+ */
+function get_extra_user_fields_sql($context, $alias='', $prefix='', $already = array()) {
+    debugging('get_extra_user_fields_sql() is deprecated. Please use the \core\user_fields API instead.', DEBUG_DEVELOPER);
+
+    $fields = \core\user_fields::for_identity($context, false)->excluding(...$already);
+    // Note: There will never be any joins or join params because we turned off profile fields.
+    $selects = $fields->get_sql($alias, false, $prefix)->selects;
+
+    return $selects;
+}
+
+/**
+ * Returns the display name of a field in the user table. Works for most fields that are commonly displayed to users.
+ *
+ * Also works for custom fields.
+ *
+ * @param string $field Field name, e.g. 'phone1'
+ * @return string Text description taken from language file, e.g. 'Phone number'
+ * @deprecated since Moodle 3.11 MDL-45242
+ * @see \core\user_fields
+ */
+function get_user_field_name($field) {
+    debugging('get_user_field_name() is deprecated. Please use \core\user_fields::get_display_name() instead', DEBUG_DEVELOPER);
+
+    return \core\user_fields::get_display_name($field);
+}
+
+/**
+ * A centralised location for the all name fields. Returns an array / sql string snippet.
+ *
+ * @param bool $returnsql True for an sql select field snippet.
+ * @param string $tableprefix table query prefix to use in front of each field.
+ * @param string $prefix prefix added to the name fields e.g. authorfirstname.
+ * @param string $fieldprefix sql field prefix e.g. id AS userid.
+ * @param bool $order moves firstname and lastname to the top of the array / start of the string.
+ * @return array|string All name fields.
+ * @deprecated since Moodle 3.11 MDL-45242
+ * @see \core\user_fields
+ */
+function get_all_user_name_fields($returnsql = false, $tableprefix = null, $prefix = null, $fieldprefix = null, $order = false) {
+    debugging('get_all_user_name_fields() is deprecated. Please use the \core\user_fields API instead', DEBUG_DEVELOPER);
+
+    // This array is provided in this order because when called by fullname() (above) if firstname is before
+    // firstnamephonetic str_replace() will change the wrong placeholder.
+    $alternatenames = [];
+    foreach (\core\user_fields::get_name_fields() as $field) {
+        $alternatenames[$field] = $field;
+    }
+
+    // Let's add a prefix to the array of user name fields if provided.
+    if ($prefix) {
+        foreach ($alternatenames as $key => $altname) {
+            $alternatenames[$key] = $prefix . $altname;
+        }
+    }
+
+    // If we want the end result to have firstname and lastname at the front / top of the result.
+    if ($order) {
+        // Move the last two elements (firstname, lastname) off the array and put them at the top.
+        for ($i = 0; $i < 2; $i++) {
+            // Get the last element.
+            $lastelement = end($alternatenames);
+            // Remove it from the array.
+            unset($alternatenames[$lastelement]);
+            // Put the element back on the top of the array.
+            $alternatenames = array_merge(array($lastelement => $lastelement), $alternatenames);
+        }
+    }
+
+    // Create an sql field snippet if requested.
+    if ($returnsql) {
+        if ($tableprefix) {
+            if ($fieldprefix) {
+                foreach ($alternatenames as $key => $altname) {
+                    $alternatenames[$key] = $tableprefix . '.' . $altname . ' AS ' . $fieldprefix . $altname;
+                }
+            } else {
+                foreach ($alternatenames as $key => $altname) {
+                    $alternatenames[$key] = $tableprefix . '.' . $altname;
+                }
+            }
+        }
+        $alternatenames = implode(',', $alternatenames);
+    }
+    return $alternatenames;
 }

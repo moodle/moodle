@@ -4118,9 +4118,8 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
 function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $sortorder) {
     global $DB;
 
-    $namefields = user_picture::fields('u');
-    // Remove the id from the string. This already exists in the sql statement.
-    $namefields = str_replace('u.id,', '', $namefields);
+    $userfieldsapi = \core\user_fields::for_userpic()->excluding('id');
+    $namefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
     if ($sort == 0) {
         $nestselectsql = 'SELECT r.id, r.approved, r.timecreated, r.timemodified, r.userid, ' . $namefields . '

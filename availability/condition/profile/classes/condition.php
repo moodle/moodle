@@ -197,7 +197,7 @@ class condition extends \core_availability\condition {
                         $this->customfield);
             }
         } else {
-            $translatedfieldname = get_user_field_name($this->standardfield);
+            $translatedfieldname = \core\user_fields::get_display_name($this->standardfield);
         }
         $context = \context_course::instance($course->id);
         $a = new \stdClass();

@@ -88,7 +88,8 @@ class award_criteria_profile extends award_criteria {
                 if (in_array($field, $existing)) {
                     $checked = true;
                 }
-                $this->config_options($mform, array('id' => $field, 'checked' => $checked, 'name' => get_user_field_name($field), 'error' => false));
+                $this->config_options($mform, array('id' => $field, 'checked' => $checked,
+                        'name' => \core\user_fields::get_display_name($field), 'error' => false));
                 $none = false;
             }
         }
@@ -138,7 +139,7 @@ class award_criteria_profile extends award_criteria {
             if (is_numeric($p['field'])) {
                 $str = $DB->get_field('user_info_field', 'name', array('id' => $p['field']));
             } else {
-                $str = get_user_field_name($p['field']);
+                $str = \core\user_fields::get_display_name($p['field']);
             }
             if (!$str) {
                 $output[] = $OUTPUT->error_text(get_string('error:nosuchfield', 'badges'));

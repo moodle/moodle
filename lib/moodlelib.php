@@ -3540,7 +3540,7 @@ function fullname($user, $override=false) {
     }
 
     // Get all of the name fields.
-    $allnames = get_all_user_name_fields();
+    $allnames = \core\user_fields::get_name_fields();
     if ($CFG->debugdeveloper) {
         foreach ($allnames as $allname) {
             if (!property_exists($user, $allname)) {
@@ -3633,64 +3633,6 @@ function fullname($user, $override=false) {
 }
 
 /**
- * A centralised location for the all name fields. Returns an array / sql string snippet.
- *
- * @param bool $returnsql True for an sql select field snippet.
- * @param string $tableprefix table query prefix to use in front of each field.
- * @param string $prefix prefix added to the name fields e.g. authorfirstname.
- * @param string $fieldprefix sql field prefix e.g. id AS userid.
- * @param bool $order moves firstname and lastname to the top of the array / start of the string.
- * @return array|string All name fields.
- */
-function get_all_user_name_fields($returnsql = false, $tableprefix = null, $prefix = null, $fieldprefix = null, $order = false) {
-    // This array is provided in this order because when called by fullname() (above) if firstname is before
-    // firstnamephonetic str_replace() will change the wrong placeholder.
-    $alternatenames = array('firstnamephonetic' => 'firstnamephonetic',
-                            'lastnamephonetic' => 'lastnamephonetic',
-                            'middlename' => 'middlename',
-                            'alternatename' => 'alternatename',
-                            'firstname' => 'firstname',
-                            'lastname' => 'lastname');
-
-    // Let's add a prefix to the array of user name fields if provided.
-    if ($prefix) {
-        foreach ($alternatenames as $key => $altname) {
-            $alternatenames[$key] = $prefix . $altname;
-        }
-    }
-
-    // If we want the end result to have firstname and lastname at the front / top of the result.
-    if ($order) {
-        // Move the last two elements (firstname, lastname) off the array and put them at the top.
-        for ($i = 0; $i < 2; $i++) {
-            // Get the last element.
-            $lastelement = end($alternatenames);
-            // Remove it from the array.
-            unset($alternatenames[$lastelement]);
-            // Put the element back on the top of the array.
-            $alternatenames = array_merge(array($lastelement => $lastelement), $alternatenames);
-        }
-    }
-
-    // Create an sql field snippet if requested.
-    if ($returnsql) {
-        if ($tableprefix) {
-            if ($fieldprefix) {
-                foreach ($alternatenames as $key => $altname) {
-                    $alternatenames[$key] = $tableprefix . '.' . $altname . ' AS ' . $fieldprefix . $altname;
-                }
-            } else {
-                foreach ($alternatenames as $key => $altname) {
-                    $alternatenames[$key] = $tableprefix . '.' . $altname;
-                }
-            }
-        }
-        $alternatenames = implode(',', $alternatenames);
-    }
-    return $alternatenames;
-}
-
-/**
  * Reduces lines of duplicated code for getting user name fields.
  *
  * See also {@link user_picture::unalias()}
@@ -3703,7 +3645,10 @@ function get_all_user_name_fields($returnsql = false, $tableprefix = null, $pref
  * @return object User name fields.
  */
 function username_load_fields_from_object($addtoobject, $secondobject, $prefix = null, $additionalfields = null) {
-    $fields = get_all_user_name_fields(false, null, $prefix);
+    $fields = [];
+    foreach (\core\user_fields::get_name_fields() as $field) {
+        $fields[$field] = $prefix . $field;
+    }
     if ($additionalfields) {
         // Additional fields can specify their own 'alias' such as 'id' => 'userid'. This checks to see if
         // the key is a number and then sets the key to the array value.
@@ -3750,119 +3695,6 @@ function order_in_string($values, $stringformat) {
     }
     ksort($valuearray);
     return $valuearray;
-}
-
-/**
- * Checks if current user is shown any extra fields when listing users.
- *
- * @param object $context Context
- * @param array $already Array of fields that we're going to show anyway
- *   so don't bother listing them
- * @return array Array of field names from user table, not including anything
- *   listed in $already
- */
-function get_extra_user_fields($context, $already = array()) {
-    global $CFG;
-
-    // Only users with permission get the extra fields.
-    if (!has_capability('moodle/site:viewuseridentity', $context)) {
-        return array();
-    }
-
-    // Split showuseridentity on comma (filter needed in case the showuseridentity is empty).
-    $extra = array_filter(explode(',', $CFG->showuseridentity));
-
-    foreach ($extra as $key => $field) {
-        if (in_array($field, $already)) {
-            unset($extra[$key]);
-        }
-    }
-
-    // If the identity fields are also among hidden fields, make sure the user can see them.
-    $hiddenfields = array_filter(explode(',', $CFG->hiddenuserfields));
-    $hiddenidentifiers = array_intersect($extra, $hiddenfields);
-
-    if ($hiddenidentifiers) {
-        if ($context->get_course_context(false)) {
-            // We are somewhere inside a course.
-            $canviewhiddenuserfields = has_capability('moodle/course:viewhiddenuserfields', $context);
-
-        } else {
-            // We are not inside a course.
-            $canviewhiddenuserfields = has_capability('moodle/user:viewhiddendetails', $context);
-        }
-
-        if (!$canviewhiddenuserfields) {
-            // Remove hidden identifiers from the list.
-            $extra = array_diff($extra, $hiddenidentifiers);
-        }
-    }
-
-    // Re-index the entries.
-    $extra = array_values($extra);
-
-    return $extra;
-}
-
-/**
- * If the current user is to be shown extra user fields when listing or
- * selecting users, returns a string suitable for including in an SQL select
- * clause to retrieve those fields.
- *
- * @param context $context Context
- * @param string $alias Alias of user table, e.g. 'u' (default none)
- * @param string $prefix Prefix for field names using AS, e.g. 'u_' (default none)
- * @param array $already Array of fields that we're going to include anyway so don't list them (default none)
- * @return string Partial SQL select clause, beginning with comma, for example ',u.idnumber,u.department' unless it is blank
- */
-function get_extra_user_fields_sql($context, $alias='', $prefix='', $already = array()) {
-    $fields = get_extra_user_fields($context, $already);
-    $result = '';
-    // Add punctuation for alias.
-    if ($alias !== '') {
-        $alias .= '.';
-    }
-    foreach ($fields as $field) {
-        $result .= ', ' . $alias . $field;
-        if ($prefix) {
-            $result .= ' AS ' . $prefix . $field;
-        }
-    }
-    return $result;
-}
-
-/**
- * Returns the display name of a field in the user table. Works for most fields that are commonly displayed to users.
- * @param string $field Field name, e.g. 'phone1'
- * @return string Text description taken from language file, e.g. 'Phone number'
- */
-function get_user_field_name($field) {
-    // Some fields have language strings which are not the same as field name.
-    switch ($field) {
-        case 'url' : {
-            return get_string('webpage');
-        }
-        case 'icq' : {
-            return get_string('icqnumber');
-        }
-        case 'skype' : {
-            return get_string('skypeid');
-        }
-        case 'aim' : {
-            return get_string('aimid');
-        }
-        case 'yahoo' : {
-            return get_string('yahooid');
-        }
-        case 'msn' : {
-            return get_string('msnid');
-        }
-        case 'picture' : {
-            return get_string('pictureofuser');
-        }
-    }
-    // Otherwise just use the same lang string.
-    return get_string($field);
 }
 
 /**

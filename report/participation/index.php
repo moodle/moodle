@@ -225,7 +225,8 @@ if (!empty($instanceid) && !empty($roleid)) {
         $params = array_merge($params, $crudparams);
     }
 
-    $usernamefields = get_all_user_name_fields(true, 'u');
+    $userfieldsapi = \core\user_fields::for_name();
+    $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     $users = array();
     // If using legacy log then get users from old table.
     if ($uselegacyreader || $onlyuselegacyreader) {

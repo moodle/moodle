@@ -1321,7 +1321,8 @@ function groups_user_groups_visible($course, $userid, $cm = null) {
 function groups_get_groups_members($groupsids, $extrafields=null, $sort='lastname ASC') {
     global $DB;
 
-    $userfields = user_picture::fields('u', $extrafields);
+    $userfieldsapi = \core\user_fields::for_userpic()->including(...($extrafields ?? []));
+    $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     list($insql, $params) = $DB->get_in_or_equal($groupsids);
 
     return $DB->get_records_sql("SELECT $userfields

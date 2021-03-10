@@ -2065,9 +2065,9 @@ class assign {
      */
     private function get_grading_sort_sql() {
         $usersort = flexible_table::get_sort_for_table('mod_assign_grading');
-        $extrauserfields = get_extra_user_fields($this->get_context());
-
-        $userfields = explode(',', user_picture::fields('', $extrauserfields));
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $userfieldsapi = \core\user_fields::for_identity($this->context, false)->with_userpic();
+        $userfields = $userfieldsapi->get_required_fields();
         $orderfields = explode(',', $usersort);
         $validlist = [];
 
@@ -4148,7 +4148,8 @@ class assign {
                                                    $viewfullnames,
                                                    $this->is_blind_marking(),
                                                    $this->get_uniqueid_for_user($user->id),
-                                                   get_extra_user_fields($this->get_context()),
+                                                   // TODO Does not support custom user profile fields (MDL-70456).
+                                                   \core\user_fields::get_identity_fields($this->get_context(), false),
                                                    !$this->is_active_user($userid));
             $o .= $this->get_renderer()->render($usersummary);
         }
@@ -4997,7 +4998,8 @@ class assign {
         $usershtml = '';
 
         $usercount = 0;
-        $extrauserfields = get_extra_user_fields($this->get_context());
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $extrauserfields = \core\user_fields::get_identity_fields($this->get_context(), false);
         $viewfullnames = has_capability('moodle/site:viewfullnames', $this->get_context());
         foreach ($userlist as $userid) {
             if ($usercount >= 5) {
@@ -5061,7 +5063,8 @@ class assign {
         $usershtml = '';
 
         $usercount = 0;
-        $extrauserfields = get_extra_user_fields($this->get_context());
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $extrauserfields = \core\user_fields::get_identity_fields($this->get_context(), false);
         $viewfullnames = has_capability('moodle/site:viewfullnames', $this->get_context());
         foreach ($userlist as $userid) {
             if ($usercount >= 5) {

@@ -62,7 +62,8 @@ $presets = data_get_available_presets($context);
 $strdelete = get_string('deleted', 'data');
 foreach ($presets as &$preset) {
     if (!empty($preset->userid)) {
-        $namefields = get_all_user_name_fields(true);
+        $userfieldsapi = \core\user_fields::for_name();
+        $namefields = $userfieldsapi->get_sql('', false, '', '', false)->selects;
         $presetuser = $DB->get_record('user', array('id' => $preset->userid), 'id, ' . $namefields, MUST_EXIST);
         $preset->description = $preset->name.' ('.fullname($presetuser, true).')';
     } else {

@@ -474,7 +474,8 @@ class assign_feedback_file extends assign_feedback_plugin {
                                                    $this->assignment->get_course_context()),
                                                    $this->assignment->is_blind_marking(),
                                                    $this->assignment->get_uniqueid_for_user($user->id),
-                                                   get_extra_user_fields($this->assignment->get_context()));
+                                                   // TODO Does not support custom user profile fields (MDL-70456).
+                                                   \core\user_fields::get_identity_fields($this->assignment->get_context(), false));
             $usershtml .= $this->assignment->get_renderer()->render($usersummary);
             $usercount += 1;
         }

@@ -99,7 +99,8 @@ if ($editform->is_cancelled()) {
     // Display only active users if the option was selected or they do not have the capability to view suspended users.
     $onlyactive = !empty($data->includeonlyactiveenrol) || !has_capability('moodle/course:viewsuspendedusers', $context);
 
-    $extrafields = get_extra_user_fields($context);
+    // TODO Does not support custom user profile fields (MDL-70456).
+    $extrafields = \core\user_fields::get_identity_fields($context, false);
     $users = groups_get_potential_members($data->courseid, $data->roleid, $source, $orderby, !empty($data->notingroup),
         $onlyactive, $extrafields);
     $usercnt = count($users);

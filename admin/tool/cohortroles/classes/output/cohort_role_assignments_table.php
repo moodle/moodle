@@ -126,7 +126,8 @@ class cohort_role_assignments_table extends table_sql {
      * Setup the headers for the table.
      */
     protected function define_table_columns() {
-        $extrafields = get_extra_user_fields($this->context);
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $extrafields = \core\user_fields::get_identity_fields($this->context, false);
 
         // Define headers and columns.
         $cols = array(
@@ -170,14 +171,12 @@ class cohort_role_assignments_table extends table_sql {
     protected function get_sql_and_params($count = false) {
         $fields = 'uca.id, uca.cohortid, uca.userid, uca.roleid, ';
         $fields .= 'c.name as cohortname, c.idnumber as cohortidnumber, c.contextid as cohortcontextid, ';
-        $fields .= 'c.visible as cohortvisible, c.description as cohortdescription, c.theme as cohorttheme, ';
+        $fields .= 'c.visible as cohortvisible, c.description as cohortdescription, c.theme as cohorttheme';
 
         // Add extra user fields that we need for the graded user.
-        $extrafields = get_extra_user_fields($this->context);
-        foreach ($extrafields as $field) {
-            $fields .= 'u.' . $field . ', ';
-        }
-        $fields .= get_all_user_name_fields(true, 'u');
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $userfieldsapi = \core\user_fields::for_identity($this->context, false)->with_name();
+        $fields .= $userfieldsapi->get_sql('u')->selects;
 
         if ($count) {
             $select = "COUNT(1)";

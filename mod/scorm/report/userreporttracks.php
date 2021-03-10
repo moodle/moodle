@@ -40,7 +40,7 @@ $url = new moodle_url('/mod/scorm/report/userreporttracks.php', array('id' => $i
 $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
 $course = get_course($cm->course);
 $scorm = $DB->get_record('scorm', array('id' => $cm->instance), '*', MUST_EXIST);
-$user = $DB->get_record('user', array('id' => $userid), user_picture::fields(), MUST_EXIST);
+$user = $DB->get_record('user', array('id' => $userid), implode(',', \core\user_fields::get_picture_fields()), MUST_EXIST);
 $selsco = $DB->get_record('scorm_scoes', array('id' => $scoid), '*', MUST_EXIST);
 
 $PAGE->set_url($url);

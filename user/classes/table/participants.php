@@ -141,9 +141,9 @@ class participants extends \table_sql implements dynamic_table {
         $headers[] = get_string('fullname');
         $columns[] = 'fullname';
 
-        $extrafields = get_extra_user_fields($this->context);
+        $extrafields = \core\user_fields::get_identity_fields($this->context);
         foreach ($extrafields as $field) {
-            $headers[] = get_user_field_name($field);
+            $headers[] = \core\user_fields::get_display_name($field);
             $columns[] = $field;
         }
 
