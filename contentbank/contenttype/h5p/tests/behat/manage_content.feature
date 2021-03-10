@@ -44,4 +44,4 @@ Feature: Manage H5P content from the content bank
     And I expand "Site pages" node
     And I click on "Content bank" "link"
     When I follow "filltheblanks.h5p"
-    Then "region-main-settings-menu" "region" should not exist
+    Then "Rename" "link" should not exist in the "region-main-settings-menu" "region"
