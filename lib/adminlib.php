@@ -3066,34 +3066,46 @@ class admin_setting_configcheckbox extends admin_setting {
 class admin_setting_configmulticheckbox extends admin_setting {
     /** @var array Array of choices value=>label */
     public $choices;
+    /** @var callable|null Loader function for choices */
+    protected $choiceloader = null;
 
     /**
      * Constructor: uses parent::__construct
+     *
+     * The $choices parameter may be either an array of $value => $label format,
+     * e.g. [1 => get_string('yes')], or a callback function which takes no parameters and
+     * returns an array in that format.
      *
      * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param array $defaultsetting array of selected
-     * @param array $choices array of $value=>$label for each checkbox
+     * @param array|callable $choices array of $value => $label for each checkbox, or a callback
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
-        $this->choices = $choices;
+        if (is_array($choices)) {
+            $this->choices = $choices;
+        }
+        if (is_callable($choices)) {
+            $this->choiceloader = $choices;
+        }
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
 
     /**
-     * This public function may be used in ancestors for lazy loading of choices
+     * This function may be used in ancestors for lazy loading of choices
      *
-     * @todo Check if this function is still required content commented out only returns true
+     * Override this method if loading of choices is expensive, such
+     * as when it requires multiple db requests.
+     *
      * @return bool true if loaded, false if error
      */
     public function load_choices() {
-        /*
-        if (is_array($this->choices)) {
-            return true;
+        if ($this->choiceloader) {
+            if (!is_array($this->choices)) {
+                $this->choices = call_user_func($this->choiceloader);
+            }
         }
-        .... load choices here
-        */
         return true;
     }
 
@@ -4299,7 +4311,8 @@ class admin_setting_users_with_capability extends admin_setting_configmultiselec
                     'This is unexpected, and a problem because there is no way to pass these ' .
                     'parameters to get_users_by_capability. See MDL-34657.');
         }
-        $userfields = 'u.id, u.username, ' . get_all_user_name_fields(true, 'u');
+        $userfieldsapi = \core\user_fields::for_name();
+        $userfields = 'u.id, u.username, ' . $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $users = get_users_by_capability(context_system::instance(), $this->capability, $userfields, $sort);
         $this->choices = array(
             '$@NONE@$' => get_string('nobody'),

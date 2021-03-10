@@ -134,9 +134,11 @@ class assign_grading_table extends table_sql implements renderable {
         $params['assignmentid3'] = (int)$this->assignment->get_instance()->id;
         $params['newstatus'] = ASSIGN_SUBMISSION_STATUS_NEW;
 
-        $extrauserfields = get_extra_user_fields($this->assignment->get_context());
-
-        $fields = user_picture::fields('u', $extrauserfields) . ', ';
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $userfieldsapi = \core\user_fields::for_identity($this->assignment->get_context(), false)->with_userpic();
+        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+        $extrauserfields = $userfieldsapi->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]);
+        $fields = $userfields . ', ';
         $fields .= 'u.id as userid, ';
         $fields .= 's.status as status, ';
         $fields .= 's.id as submissionid, ';
@@ -406,7 +408,7 @@ class assign_grading_table extends table_sql implements renderable {
 
             foreach ($extrauserfields as $extrafield) {
                 $columns[] = $extrafield;
-                $headers[] = get_user_field_name($extrafield);
+                $headers[] = \core\user_fields::get_display_name($extrafield);
             }
         } else {
             // Record ID.

@@ -58,7 +58,8 @@ class external_badge implements renderable {
         global $DB;
         // At this point a user has connected a backpack. So, we are going to get
         // their backpack email rather than their account email.
-        $namefields = get_all_user_name_fields(true, 'u');
+        $userfieldsapi = \core\user_fields::for_name();
+        $namefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $user = $DB->get_record_sql("SELECT {$namefields}, b.email
                     FROM {user} u INNER JOIN {badge_backpack} b ON u.id = b.userid
                     WHERE b.userid = :userid", array('userid' => $recipient), IGNORE_MISSING);

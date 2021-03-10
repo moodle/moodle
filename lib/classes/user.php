@@ -251,25 +251,11 @@ class core_user {
         $extrasql = '';
         $extraparams = [];
 
-        if (empty($CFG->showuseridentity)) {
-            // Explode gives wrong result with empty string.
-            $extra = [];
-        } else {
-            $extra = explode(',', $CFG->showuseridentity);
-        }
-
-        // We need the username just to skip guests.
-        $extrafieldlist = $extra;
-        if (!in_array('username', $extra)) {
-            $extrafieldlist[] = 'username';
-        }
-        // The deleted flag will always be false because users_search_sql excludes deleted users,
-        // but it must be present or it causes PHP warnings in some functions below.
-        if (!in_array('deleted', $extra)) {
-            $extrafieldlist[] = 'deleted';
-        }
-        $selectfields = \user_picture::fields('u',
-                array_merge(get_all_user_name_fields(), $extrafieldlist));
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $userfieldsapi = \core\user_fields::for_identity(null, false)->with_userpic()->with_name()
+            ->including('username', 'deleted');
+        $selectfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+        $extra = $userfieldsapi->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]);
 
         $index = 1;
         foreach ($extra as $fieldname) {

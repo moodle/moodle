@@ -393,7 +393,8 @@ class quiz_overview_report extends quiz_attempts_report {
         global $DB;
         $this->unlock_session();
 
-        $sql = "SELECT quiza.*, " . get_all_user_name_fields(true, 'u') . "
+        $userfieldsapi = \core\user_fields::for_name();
+        $sql = "SELECT quiza.*, " . $userfieldsapi->get_sql('u', false, '', '', false)->selects . "
                   FROM {quiz_attempts} quiza
                   JOIN {user} u ON u.id = quiza.userid";
         $where = "quiz = :qid AND preview = 0";
@@ -460,8 +461,9 @@ class quiz_overview_report extends quiz_attempts_report {
         }
 
         list($uniqueidcondition, $params) = $DB->get_in_or_equal(array_keys($attemptquestions));
+        $userfieldsapi = \core\user_fields::for_name();
         $attempts = $DB->get_records_sql("
-                SELECT quiza.*, " . get_all_user_name_fields(true, 'u') . "
+                SELECT quiza.*, " . $userfieldsapi->get_sql('u', false, '', '', false)->selects . "
                   FROM {quiz_attempts} quiza
                   JOIN {user} u ON u.id = quiza.userid
                  WHERE quiza.uniqueid $uniqueidcondition

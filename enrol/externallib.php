@@ -558,9 +558,20 @@ class core_enrol_external extends external_api {
 
         $results = array();
         // Add also extra user fields.
+        $identityfields = \core\user_fields::get_identity_fields($context, true);
+        $customprofilefields = [];
+        foreach ($identityfields as $key => $value) {
+            if ($fieldname = \core\user_fields::match_custom_field($value)) {
+                unset($identityfields[$key]);
+                $customprofilefields[$fieldname] = true;
+            }
+        }
+        if ($customprofilefields) {
+            $identityfields[] = 'customfields';
+        }
         $requiredfields = array_merge(
             ['id', 'fullname', 'profileimageurl', 'profileimageurlsmall'],
-            get_extra_user_fields($context)
+            $identityfields
         );
         foreach ($users['users'] as $id => $user) {
             // Note: We pass the course here to validate that the current user can at least view user details in this course.
@@ -568,6 +579,15 @@ class core_enrol_external extends external_api {
             // user records, and the user has been validated to have course:enrolreview in this course. Otherwise
             // there is no way to find users who aren't in the course in order to enrol them.
             if ($userdetails = user_get_user_details($user, $course, $requiredfields)) {
+                // For custom fields, only return the ones we actually need.
+                if ($customprofilefields && array_key_exists('customfields', $userdetails)) {
+                    foreach ($userdetails['customfields'] as $key => $data) {
+                        if (!array_key_exists($data['shortname'], $customprofilefields)) {
+                            unset($userdetails['customfields'][$key]);
+                        }
+                    }
+                    $userdetails['customfields'] = array_values($userdetails['customfields']);
+                }
                 $results[] = $userdetails;
             }
         }
@@ -652,7 +672,8 @@ class core_enrol_external extends external_api {
         // Add also extra user fields.
         $requiredfields = array_merge(
                 ['id', 'fullname', 'profileimageurl', 'profileimageurlsmall'],
-                get_extra_user_fields($context)
+                // TODO Does not support custom user profile fields (MDL-70456).
+                \core\user_fields::get_identity_fields($context, false)
         );
         foreach ($users['users'] as $user) {
             if ($userdetails = user_get_user_details($user, $course, $requiredfields)) {

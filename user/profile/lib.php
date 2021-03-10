@@ -849,6 +849,36 @@ function profile_save_custom_fields($userid, $profilefields) {
 }
 
 /**
+ * Gets basic data about custom profile fields. This is minimal data that is cached within the
+ * current request for all fields so that it can be used quickly.
+ *
+ * @param string $shortname Shortname of custom profile field
+ * @return array Array with id, name, and visible fields
+ */
+function profile_get_custom_field_data_by_shortname(string $shortname): array {
+    global $DB;
+
+    $cache = \cache::make_from_params(cache_store::MODE_REQUEST, 'core_profile', 'customfields',
+            [], ['simplekeys' => true, 'simpledata' => true]);
+    $data = $cache->get($shortname);
+    if (!$data) {
+        // If we don't have data, we get and cache it for all fields to avoid multiple DB requests.
+        $fields = $DB->get_records('user_info_field', null, '', 'id, shortname, name, visible');
+        foreach ($fields as $field) {
+            $cache->set($field->shortname, (array)$field);
+            if ($field->shortname === $shortname) {
+                $data = (array)$field;
+            }
+        }
+        if (!$data) {
+            throw new \coding_exception('Unknown custom field: ' . $shortname);
+        }
+    }
+
+    return $data;
+}
+
+/**
  * Trigger a user profile viewed event.
  *
  * @param stdClass  $user user  object

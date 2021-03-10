@@ -377,7 +377,9 @@ class report_log_renderable implements renderable {
         $context = context_course::instance($courseid);
         $limitfrom = empty($this->showusers) ? 0 : '';
         $limitnum  = empty($this->showusers) ? COURSE_MAX_USERS_PER_DROPDOWN + 1 : '';
-        $courseusers = get_enrolled_users($context, '', $this->groupid, 'u.id, ' . get_all_user_name_fields(true, 'u'),
+        $userfieldsapi = \core\user_fields::for_name();
+        $courseusers = get_enrolled_users($context, '', $this->groupid, 'u.id, ' .
+                $userfieldsapi->get_sql('u', false, '', '', false)->selects,
                 null, $limitfrom, $limitnum);
 
         if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$this->showusers) {

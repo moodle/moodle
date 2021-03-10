@@ -120,8 +120,10 @@ class mod_feedback_responses_table extends table_sql {
             get_string('groups')
         );
 
-        $extrafields = get_extra_user_fields($this->get_context());
-        $ufields = user_picture::fields('u', $extrafields, $this->useridfield);
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $userfieldsapi = \core\user_fields::for_identity($this->get_context(), false)->with_userpic();
+        $ufields = $userfieldsapi->get_sql('u', false, '', $this->useridfield, false)->selects;
+        $extrafields = $userfieldsapi->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]);
         $fields = 'c.id, c.timemodified as completed_timemodified, c.courseid, '.$ufields;
         $from = '{feedback_completed} c '
                 . 'JOIN {user} u ON u.id = c.userid AND u.deleted = :notdeleted';
@@ -141,7 +143,7 @@ class mod_feedback_responses_table extends table_sql {
             foreach ($extrafields as $field) {
                 $fields .= ", u.{$field}";
                 $tablecolumns[] = $field;
-                $tableheaders[] = get_user_field_name($field);
+                $tableheaders[] = \core\user_fields::get_display_name($field);
             }
         }
 

@@ -294,9 +294,8 @@
                 echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');
             }
         } else {   // Print a confirmation page
-            $allnamefields = user_picture::fields('u');
-            // Remove the id from the string. This already exists in the sql statement.
-            $allnamefields = str_replace('u.id,', '', $allnamefields);
+            $userfieldsapi = \core\user_fields::for_userpic()->excluding('id');
+            $allnamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
             $dbparams = array($delete);
             if ($deleterecord = $DB->get_record_sql("SELECT dr.*, $allnamefields
                                                        FROM {data_records} dr
@@ -332,9 +331,8 @@
             $validrecords = array();
             $recordids = array();
             foreach ($multidelete as $value) {
-                $allnamefields = user_picture::fields('u');
-                // Remove the id from the string. This already exists in the sql statement.
-                $allnamefields = str_replace('u.id,', '', $allnamefields);
+                $userfieldsapi = \core\user_fields::for_userpic()->excluding('id');
+                $allnamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
                 $dbparams = array('id' => $value);
                 if ($deleterecord = $DB->get_record_sql("SELECT dr.*, $allnamefields
                                                            FROM {data_records} dr

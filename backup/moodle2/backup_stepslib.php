@@ -1369,7 +1369,7 @@ class backup_users_structure_step extends backup_structure_step {
             'phone2', 'institution', 'department', 'address',
             'city', 'country', 'lastip', 'picture',
             'url', 'description', 'descriptionformat', 'imagealt', 'auth');
-        $anonfields = array_merge($anonfields, get_all_user_name_fields());
+        $anonfields = array_merge($anonfields, \core\user_fields::get_name_fields());
 
         // Add anonymized fields to $userfields with custom final element
         foreach ($anonfields as $field) {

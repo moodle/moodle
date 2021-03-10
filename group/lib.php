@@ -848,7 +848,8 @@ function groups_get_potential_members($courseid, $roleid = null, $source = null,
         }
     }
 
-    $allusernamefields = user_picture::fields('u', $extrafields);
+    $userfieldsapi = \core\user_fields::for_userpic()->including(...$extrafields);
+    $allusernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     $sql = "SELECT DISTINCT u.id, u.username, $allusernamefields, u.idnumber
               FROM {user} u
               JOIN ($esql) e ON e.id = u.id
