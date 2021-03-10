@@ -1055,7 +1055,8 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         $this->assertArrayHasKey('customint2', $errors);
 
         // Test with valid data.
-        $validgroup = reset($groups);
+        reset($groups);
+        $validgroup = key($groups);
         $data = [
             'customint1' => [$metacourse2->id],
             'customint2' => $validgroup
