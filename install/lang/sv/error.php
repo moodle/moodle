@@ -46,6 +46,6 @@ $string['downloadedfilecheckfailed'] = 'Kontrollen av den nedladdade filen missl
 $string['invalidmd5'] = 'Kontrollvariabeln var felaktig - försök igen';
 $string['missingrequiredfield'] = 'Det saknas några obligatoriska fält';
 $string['remotedownloaderror'] = 'Nedladdningen av en komponent till din server misslyckades. Vänligen verifiera inställningar för proxy. <br /><br />Du måste ladda ner <a href="{$a->url}">{$a->url}</a> filen manuellt, kopiera den till "{$a->dest}" på din server och packa upp den där.';
-$string['wrongdestpath'] = 'Fel sökväg';
+$string['wrongdestpath'] = 'Fel målsökväg';
 $string['wrongsourcebase'] = 'Fel bas-URL till källan';
 $string['wrongzipfilename'] = 'Fel namn på ZIP-filen';
