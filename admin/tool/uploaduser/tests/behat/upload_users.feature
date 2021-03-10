@@ -132,12 +132,12 @@ Feature: Upload users
     # Boost check.
     And I log in as "jonest"
     And I am on "Maths" course homepage
-    And "Turn editing on" "button" should not exist
+    And "Calendar" "link" should be visible
     And I log out
     # Classic check.
     And I log in as "reznor"
     And I am on "Maths" course homepage
-    And "Turn editing on" "button" should exist
+    And "Calendar" "link" should not be visible
 
   @javascript
   Scenario: Upload users setting their user theme when allowuserthemes is false
