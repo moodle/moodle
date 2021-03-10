@@ -127,3 +127,5 @@ modeloutputdirinfo,core_analytics
 backpackneedsupdate,core_badges
 hidepicture,core_group
 hidepicture,core_moodle
+sitebackpack,core_badges
+sitebackpack_help,core_badges
