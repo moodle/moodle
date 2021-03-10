@@ -123,4 +123,65 @@ class api {
 
         return true;
     }
+
+    /**
+     * Mark users who completed course based on activity criteria.
+     * @param array $userdata If set only marks specified user in given course else checks all courses/users.
+     * @return int Completion record id if $userdata is set, 0 else.
+     * @since Moodle 4.0
+     */
+    public static function mark_course_completions_activity_criteria($userdata = null): int {
+        global $DB;
+
+        // Get all users who meet this criteria
+        $sql = "SELECT DISTINCT c.id AS course,
+                                cr.id AS criteriaid,
+                                ra.userid AS userid,
+                                mc.timemodified AS timecompleted
+                  FROM {course_completion_criteria} cr
+            INNER JOIN {course} c ON cr.course = c.id
+            INNER JOIN {context} con ON con.instanceid = c.id
+            INNER JOIN {role_assignments} ra ON ra.contextid = con.id
+            INNER JOIN {course_modules_completion} mc ON mc.coursemoduleid = cr.moduleinstance AND mc.userid = ra.userid
+             LEFT JOIN {course_completion_crit_compl} cc ON cc.criteriaid = cr.id AND cc.userid = ra.userid
+                 WHERE cr.criteriatype = :criteriatype
+                       AND con.contextlevel = :contextlevel
+                       AND c.enablecompletion = 1
+                       AND cc.id IS NULL
+                       AND (
+                            mc.completionstate = :completionstate
+                            OR mc.completionstate = :completionstatepass
+                            OR mc.completionstate = :completionstatefail
+                            )";
+
+        $params = [
+            'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY,
+            'contextlevel' => CONTEXT_COURSE,
+            'completionstate' => COMPLETION_COMPLETE,
+            'completionstatepass' => COMPLETION_COMPLETE_PASS,
+            'completionstatefail' => COMPLETION_COMPLETE_FAIL
+        ];
+
+        if ($userdata) {
+            $params['courseid'] = $userdata['courseid'];
+            $params['userid'] = $userdata['userid'];
+            $sql .= " AND c.id = :courseid AND ra.userid = :userid";
+            // Mark as complete.
+            $record = $DB->get_record_sql($sql, $params);
+            if ($record) {
+                $completion = new \completion_criteria_completion((array) $record, DATA_OBJECT_FETCH_BY_KEY);
+                $result = $completion->mark_complete($record->timecompleted);
+                return $result;
+            }
+        } else {
+            // Loop through completions, and mark as complete.
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $record) {
+                $completion = new \completion_criteria_completion((array) $record, DATA_OBJECT_FETCH_BY_KEY);
+                $completion->mark_complete($record->timecompleted);
+            }
+            $rs->close();
+        }
+        return 0;
+    }
 }

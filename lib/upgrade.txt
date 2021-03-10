@@ -26,6 +26,36 @@ information provided here is intended especially for developers.
   should no longer be used.
 * The completion_info function print_help_icon() which has been deprecated since Moodle 2.0 should no longer be used.
 * @babel/polyfill has been removed in favour of corejs@3
+* A new parameter $isbulkupdate has been added to the following functions:
+  - grade_category::update()
+  - grade_category::insert()
+  - grade_grade::update()
+  - grade_grade::insert()
+  - grade_grade::notify_changed()
+  - grade_item::insert()
+  - grade_item::update()
+  - grade_item::update_final_grade()
+  - grade_item::update_raw_grade()
+  - grade_object::update()
+  - grade_object::insert()
+  - grade_outcome::update()
+  - grade_outcome::insert()
+  - grade_scale::update()
+  - grade_scale::insert()
+  - grade_update()
+  - completion_info::inform_grade_changed()
+  - completion_info::update_state()
+  - completion_info::internal_set_data()
+  All functions except completion_info::internal_set_data() are only passing this parameter from very beginning of
+  workflow (like grade report page where bulk grade update is possible) so this parameter is used in
+  completion_info::internal_set_data() to decide if we need to mark completions instantly without waiting for cron.
+* Following methods now return an int instead of bool:
+  - completion_completion::_save()
+  - completion_completion::mark_enrolled()
+  - completion_completion::mark_inprogress()
+  - completion_completion::mark_complete()
+  which is needed to store id of completion record on successful update which is later beeing used by
+  completion_info::internal_set_data() to reaggregate completions that have been marked for instant course completion.
 
 === 3.11 ===
 * PHPUnit has been upgraded to 9.5 (see MDL-71036 for details).

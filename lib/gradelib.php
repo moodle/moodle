@@ -58,9 +58,11 @@ require_once($CFG->libdir . '/grade/grade_outcome.php');
  * @param int    $itemnumber Most probably 0. Modules can use other numbers when having more than one grade for each user
  * @param mixed  $grades Grade (object, array) or several grades (arrays of arrays or objects), NULL if updating grade_item definition only
  * @param mixed  $itemdetails Object or array describing the grading item, NULL if no change
+ * @param bool   $isbulkupdate If bulk grade update is happening.
  * @return int Returns GRADE_UPDATE_OK, GRADE_UPDATE_FAILED, GRADE_UPDATE_MULTIPLE or GRADE_UPDATE_ITEM_LOCKED
  */
-function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades=NULL, $itemdetails=NULL) {
+function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades = null,
+        $itemdetails = null, $isbulkupdate = false) {
     global $USER, $CFG, $DB;
 
     // only following grade_item properties can be changed in this function
@@ -127,7 +129,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
             }
         }
         $grade_item = new grade_item($params);
-        $grade_item->insert();
+        $grade_item->insert(null, $isbulkupdate);
 
     } else {
         if ($grade_item->is_locked()) {
@@ -157,7 +159,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
                 }
             }
             if ($update) {
-                $grade_item->update();
+                $grade_item->update(null, $isbulkupdate);
             }
         }
     }
@@ -289,7 +291,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 
         // update or insert the grade
         if (!$grade_item->update_raw_grade($userid, $rawgrade, $source, $feedback, $feedbackformat, $usermodified,
-                $dategraded, $datesubmitted, $grade_grade, $feedbackfiles)) {
+                $dategraded, $datesubmitted, $grade_grade, $feedbackfiles, $isbulkupdate)) {
             $failed = true;
         }
     }

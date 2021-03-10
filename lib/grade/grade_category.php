@@ -227,9 +227,10 @@ class grade_category extends grade_object {
      * In addition to update() as defined in grade_object, call force_regrading of parent categories, if applicable.
      *
      * @param string $source from where was the object updated (mod/forum, manual, etc.)
+     * @param bool $isbulkupdate If bulk grade update is happening.
      * @return bool success
      */
-    public function update($source=null) {
+    public function update($source = null, $isbulkupdate = false) {
         // load the grade item or create a new one
         $this->load_grade_item();
 
@@ -352,9 +353,10 @@ class grade_category extends grade_object {
      * This method also creates an associated grade_item if this wasn't done during construction.
      *
      * @param string $source from where was the object inserted (mod/forum, manual, etc.)
+     * @param bool $isbulkupdate If bulk grade update is happening.
      * @return int PK ID if successful, false otherwise
      */
-    public function insert($source=null) {
+    public function insert($source = null, $isbulkupdate = false) {
 
         if (empty($this->courseid)) {
             print_error('cannotinsertgrade');
