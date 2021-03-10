@@ -95,7 +95,7 @@ const show = async(rootNode, {
                     message: message,
                     type: 'success',
                 });
-                location.reload();
+                location.href = rootNode.dataset.successurl;
 
                 // The following return statement is never reached. It is put here just to make eslint happy.
                 return message;
