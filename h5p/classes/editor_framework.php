@@ -265,7 +265,22 @@ class editor_framework implements H5peditorStorage {
      *     minorVersion as properties.
      */
     public function alterLibraryFiles(&$files, $libraries): void {
-        // This is to be implemented when the renderer is used.
+        global $PAGE;
+
+        // Refactor dependency list.
+        $librarylist = [];
+        foreach ($libraries as $dependency) {
+            $librarylist[$dependency['machineName']] = [
+                'majorVersion' => $dependency['majorVersion'],
+                'minorVersion' => $dependency['minorVersion']
+            ];
+        }
+
+        $renderer = $PAGE->get_renderer('core_h5p');
+
+        $embedtype = 'editor';
+        $renderer->h5p_alter_scripts($files['scripts'], $librarylist, $embedtype);
+        $renderer->h5p_alter_styles($files['styles'], $librarylist, $embedtype);
     }
 
     /**
