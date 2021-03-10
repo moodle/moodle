@@ -76,10 +76,10 @@ Feature: Apply accessibility to a tour
     And "input[tabindex],button[tabindex]" "css_element" should exist
     When I click on "Next" "button"
     Then "input[aria-describedby^='tour-step-tool_usertours'],button[aria-describedby^='tour-step-tool_usertours']" "css_element" should not exist
-    And "input[tabindex],button[tabindex]" "css_element" should not exist
+    And "input[tabindex]:not([tabindex='-1']),button[tabindex]:not([tabindex='-1'])" "css_element" should not exist
     When I click on "Previous" "button"
     Then "input[aria-describedby^='tour-step-tool_usertours'],button[aria-describedby^='tour-step-tool_usertours']" "css_element" should exist
     And "input[tabindex],button[tabindex]" "css_element" should exist
     When I click on "End tour" "button"
     Then "input[aria-describedby^='tour-step-tool_usertours'],button[aria-describedby^='tour-step-tool_usertours']" "css_element" should not exist
-    And "input[tabindex],button[tabindex]" "css_element" should not exist
+    And "input[tabindex]:not([tabindex='0']),button[tabindex]:not([tabindex='0'])" "css_element" should not exist
