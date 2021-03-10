@@ -96,8 +96,9 @@ abstract class activity_custom_completion {
     public function get_available_custom_rules(): array {
         $rules = static::get_defined_custom_rules();
         $availablerules = [];
+        $customdata = (array)$this->cm->customdata;
         foreach ($rules as $rule) {
-            $customrule = $this->cm->customdata['customcompletionrules'][$rule] ?? false;
+            $customrule = $customdata['customcompletionrules'][$rule] ?? false;
             if (!empty($customrule)) {
                 $availablerules[] = $rule;
             }

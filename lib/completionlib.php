@@ -1107,8 +1107,10 @@ class completion_info {
 
         // Custom activity module completion data.
 
+        // Cast custom data to array before checking for custom completion rules.
+        $customdata = (array)$cm->customdata;
         // Return early if the plugin does not define custom completion rules.
-        if (empty($cm->customdata['customcompletionrules'])) {
+        if (empty($customdata['customcompletionrules'])) {
             return [];
         }
 
@@ -1120,7 +1122,7 @@ class completion_info {
 
         /** @var activity_custom_completion $customcmcompletion */
         $customcmcompletion = new $cmcompletionclass($cm, $userid);
-        foreach ($cm->customdata['customcompletionrules'] as $rule => $enabled) {
+        foreach ($customdata['customcompletionrules'] as $rule => $enabled) {
             if (!$enabled) {
                 // Skip inactive completion rules.
                 continue;
