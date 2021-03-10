@@ -10530,10 +10530,14 @@ class lang_string {
     /**
      * Magic __set_state method used for var_export
      *
-     * @return string
+     * @param array $array
+     * @return self
      */
-    public function __set_state() {
-        return $this->get_string();
+    public static function __set_state(array $array): self {
+        $tmp = new lang_string($array['identifier'], $array['component'], $array['a'], $array['lang']);
+        $tmp->string = $array['string'];
+        $tmp->forcedstring = $array['forcedstring'];
+        return $tmp;
     }
 
     /**
