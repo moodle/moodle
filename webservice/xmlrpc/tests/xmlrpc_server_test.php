@@ -57,7 +57,7 @@ class xmlrpc_server_test extends advanced_testcase {
      */
     public function test_parse_request($input, $expectfunction, $expectparams) {
         $server = $this->getMockBuilder('\webservice_xmlrpc_server')
-                       ->setMethods(['fetch_input_content'])
+                       ->onlyMethods(['fetch_input_content'])
                        ->disableOriginalConstructor()
                        ->getMock();
 

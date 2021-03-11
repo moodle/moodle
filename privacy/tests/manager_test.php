@@ -57,7 +57,7 @@ class privacy_manager_testcase extends advanced_testcase {
      */
     protected function get_mock_manager_with_core_components($componentnames) {
         $mock = $this->getMockBuilder(\core_privacy\manager::class)
-            ->setMethods(['get_component_list'])
+            ->onlyMethods(['get_component_list'])
             ->getMock();
         $mock->expects($this->any())
             ->method('get_component_list')
@@ -336,7 +336,7 @@ class privacy_manager_testcase extends advanced_testcase {
         $mockman = $this->get_mock_manager_with_core_components(['mod_component_broken', 'mod_component_a']);
 
         $observer = $this->getMockBuilder(\core_privacy\manager_observer::class)
-            ->setMethods(['handle_component_failure'])
+            ->onlyMethods(['handle_component_failure'])
             ->getMock();
         $mockman->set_observer($observer);
 
@@ -374,7 +374,7 @@ class privacy_manager_testcase extends advanced_testcase {
         $contextid = $context->id;
 
         $observer = $this->getMockBuilder(\core_privacy\manager_observer::class)
-            ->setMethods(['handle_component_failure'])
+            ->onlyMethods(['handle_component_failure'])
             ->getMock();
         $mockman->set_observer($observer);
 
@@ -409,7 +409,7 @@ class privacy_manager_testcase extends advanced_testcase {
         $contextid = $context->id;
 
         $observer = $this->getMockBuilder(\core_privacy\manager_observer::class)
-            ->setMethods(['handle_component_failure'])
+            ->onlyMethods(['handle_component_failure'])
             ->getMock();
         $mockman->set_observer($observer);
 
@@ -443,7 +443,7 @@ class privacy_manager_testcase extends advanced_testcase {
         $context = \context_system::instance();
 
         $observer = $this->getMockBuilder(\core_privacy\manager_observer::class)
-            ->setMethods(['handle_component_failure'])
+            ->onlyMethods(['handle_component_failure'])
             ->getMock();
         $mockman->set_observer($observer);
 
@@ -473,7 +473,7 @@ class privacy_manager_testcase extends advanced_testcase {
         $context = \context_system::instance();
 
         $observer = $this->getMockBuilder(\core_privacy\manager_observer::class)
-            ->setMethods(['handle_component_failure'])
+            ->onlyMethods(['handle_component_failure'])
             ->getMock();
         $mockman->set_observer($observer);
 

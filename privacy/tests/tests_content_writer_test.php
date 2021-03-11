@@ -523,7 +523,7 @@ class tests_content_writer_test extends advanced_testcase {
         $contenthash = file_storage::hash_from_string($filecontent);
 
         $file = $this->getMockBuilder(stored_file::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->setConstructorArgs([
                 get_file_storage(),
                 (object) [
