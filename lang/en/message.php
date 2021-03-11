@@ -118,6 +118,7 @@ $string['messagedrawerviewsettings'] = 'Message settings';
 $string['messagepreferences'] = 'Message preferences';
 $string['messages'] = 'Messages';
 $string['messagesselected:'] = 'Messages selected:';
+$string['messagetextrequired'] = 'Please enter message text';
 $string['messagingdatahasnotbeenmigrated'] = 'Your messages are temporarily unavailable due to upgrades in the messaging infrastructure. Please wait for them to be migrated.';
 $string['muteconversation'] = 'Mute';
 $string['mutedconversation'] = 'Muted conversation';
