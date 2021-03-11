@@ -330,7 +330,7 @@ class quizacces_seb_access_manager_testcase extends advanced_testcase {
     public function test_should_validate_basic_header($type, $expected) {
         $accessmanager = $this->getMockBuilder(access_manager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['get_seb_use_type'])
+            ->onlyMethods(['get_seb_use_type'])
             ->getMock();
         $accessmanager->method('get_seb_use_type')->willReturn($type);
 
@@ -364,7 +364,7 @@ class quizacces_seb_access_manager_testcase extends advanced_testcase {
     public function test_should_validate_config_key($type, $expected) {
         $accessmanager = $this->getMockBuilder(access_manager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['get_seb_use_type'])
+            ->onlyMethods(['get_seb_use_type'])
             ->getMock();
         $accessmanager->method('get_seb_use_type')->willReturn($type);
 
@@ -397,7 +397,7 @@ class quizacces_seb_access_manager_testcase extends advanced_testcase {
     public function test_should_validate_browser_exam_key($type, $expected) {
         $accessmanager = $this->getMockBuilder(access_manager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['get_seb_use_type'])
+            ->onlyMethods(['get_seb_use_type'])
             ->getMock();
         $accessmanager->method('get_seb_use_type')->willReturn($type);
 

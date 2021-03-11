@@ -104,7 +104,7 @@ class task_database_logger_testcase extends advanced_testcase {
         file_put_contents($logpath, 'Example content');
 
         $task = $this->getMockBuilder(\core\task\adhoc_task::class)
-            ->setMethods(['get_component', 'execute'])
+            ->onlyMethods(['get_component', 'execute'])
             ->getMock();
 
         $task->method('get_component')->willReturn('core_test');
@@ -165,7 +165,7 @@ class task_database_logger_testcase extends advanced_testcase {
         file_put_contents($logpath, 'Example content');
 
         $task = $this->getMockBuilder(\core\task\adhoc_task::class)
-            ->setMethods(['get_component', 'execute'])
+            ->onlyMethods(['get_component', 'execute'])
             ->getMock();
 
         $task->method('get_component')->willReturn('core_test');
@@ -197,7 +197,7 @@ class task_database_logger_testcase extends advanced_testcase {
         file_put_contents($logpath, 'Example content');
 
         $task = $this->getMockBuilder(\core\task\adhoc_task::class)
-            ->setMethods(['get_component', 'execute', 'get_userid'])
+            ->onlyMethods(['get_component', 'execute', 'get_userid'])
             ->getMock();
 
         $task->method('get_component')->willReturn('core_test');

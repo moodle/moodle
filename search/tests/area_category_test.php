@@ -42,7 +42,7 @@ class search_area_category_testcase extends advanced_testcase {
     protected function get_mocked_area($areaid) {
         $builder = $this->getMockBuilder('\core_search\base');
         $builder->disableOriginalConstructor();
-        $builder->setMethods(array('get_area_id'));
+        $builder->onlyMethods(array('get_area_id'));
         $area = $builder->getMockForAbstractClass();
         $area->method('get_area_id')->willReturn($areaid);
 

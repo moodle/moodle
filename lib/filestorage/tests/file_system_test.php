@@ -70,14 +70,14 @@ class core_files_file_system_testcase extends advanced_testcase {
      *                  If no methods are specified, only abstract functions are mocked.
      * @return stored_file
      */
-    protected function get_stored_file($filecontent, $filename = null, $mockedmethods = null) {
+    protected function get_stored_file($filecontent, $filename = null, $mockedmethods = []) {
         $contenthash = file_storage::hash_from_string($filecontent);
         if (empty($filename)) {
             $filename = $contenthash;
         }
 
         $file = $this->getMockBuilder(stored_file::class)
-            ->setMethods($mockedmethods)
+            ->onlyMethods($mockedmethods)
             ->setConstructorArgs([
                 get_file_storage(),
                 (object) [
@@ -100,7 +100,7 @@ class core_files_file_system_testcase extends advanced_testcase {
      */
     protected function get_testable_mock($mockedmethods = []) {
         $fs = $this->getMockBuilder(file_system::class)
-            ->setMethods($mockedmethods)
+            ->onlyMethods($mockedmethods)
             ->getMockForAbstractClass();
 
         return $fs;
@@ -514,7 +514,7 @@ class core_files_file_system_testcase extends advanced_testcase {
         $contenthash = file_storage::hash_from_string($filecontent);
 
         $DB = $this->getMockBuilder(\moodle_database::class)
-            ->setMethods(['record_exists'])
+            ->onlyMethods(['record_exists'])
             ->getMockForAbstractClass();
         $DB->method('record_exists')->willReturn(true);
 
@@ -538,7 +538,7 @@ class core_files_file_system_testcase extends advanced_testcase {
         $contenthash = file_storage::hash_from_string($filecontent);
 
         $DB = $this->getMockBuilder(\moodle_database::class)
-            ->setMethods(['record_exists'])
+            ->onlyMethods(['record_exists'])
             ->getMockForAbstractClass();
         $DB->method('record_exists')->willReturn(false);
 
@@ -615,7 +615,7 @@ class core_files_file_system_testcase extends advanced_testcase {
             ->willReturn(__FILE__);
 
         $packer = $this->getMockBuilder(file_packer::class)
-            ->setMethods(['list_files'])
+            ->onlyMethods(['list_files'])
             ->getMockForAbstractClass();
 
         $packer->expects($this->once())
@@ -648,7 +648,7 @@ class core_files_file_system_testcase extends advanced_testcase {
             ->willReturn(__FILE__);
 
         $packer = $this->getMockBuilder(file_packer::class)
-            ->setMethods(['extract_to_pathname'])
+            ->onlyMethods(['extract_to_pathname'])
             ->getMockForAbstractClass();
 
         $packer->expects($this->once())
@@ -681,7 +681,7 @@ class core_files_file_system_testcase extends advanced_testcase {
             ->willReturn(__FILE__);
 
         $packer = $this->getMockBuilder(file_packer::class)
-            ->setMethods(['extract_to_storage'])
+            ->onlyMethods(['extract_to_storage'])
             ->getMockForAbstractClass();
 
         $packer->expects($this->once())
@@ -720,7 +720,7 @@ class core_files_file_system_testcase extends advanced_testcase {
             ->willReturn(__FILE__);
 
         $archive = $this->getMockBuilder(file_archive::class)
-            ->setMethods([
+            ->onlyMethods([
                 'add_directory',
                 'add_file_from_pathname',
             ])
@@ -757,7 +757,7 @@ class core_files_file_system_testcase extends advanced_testcase {
             ->willReturn($filepath);
 
         $archive = $this->getMockBuilder(file_archive::class)
-            ->setMethods([
+            ->onlyMethods([
                 'add_directory',
                 'add_file_from_pathname',
             ])
