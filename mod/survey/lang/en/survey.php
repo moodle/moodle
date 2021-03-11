@@ -82,6 +82,7 @@ $string['attls9short'] = 'argue with authors';
 $string['cannotfindanswer'] = 'There are no answers for this survey yet.';
 $string['cannotfindquestion'] = 'Question doesn\'t exist';
 $string['cannotfindsurveytmpt'] = 'No survey templates found!';
+$string['completiondetail:submit'] = 'Submit answers';
 $string['completionsubmit'] = 'Student must submit to this activity to complete it';
 $string['ciqintro'] = 'While thinking about recent events in this class, answer the questions below.';
 $string['ciqname'] = 'Critical incidents';
