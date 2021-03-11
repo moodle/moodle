@@ -29,15 +29,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatelangdir'] = 'Nie je možné vytvoriť adresár pre jazykové súbory.';
+$string['cannotcreatedboninstall'] = '<p>Nie je možné vytvoriť databázu.</p>
+<p>Zadaná databáza neexistuje a používateľ nemá oprávnenie pre vytvorenie databázy.</p>
+<p>Administrátor portálu by mal overiť konfiguráciu databázy.</p>';
+$string['cannotcreatelangdir'] = 'Nie je možné vytvoriť priečinok pre jazykové súbory';
 $string['cannotcreatetempdir'] = 'Nie je možné vytvoriť dočasný adresár.';
 $string['cannotdownloadcomponents'] = 'Nie je možné stiahnuť komponenty.';
 $string['cannotdownloadzipfile'] = 'Nie je možné stiahnuť súbor ZIP.';
 $string['cannotfindcomponent'] = 'Komponent nenájdený.';
 $string['cannotsavemd5file'] = 'Nie je možné uložiť súbor MD5.';
 $string['cannotsavezipfile'] = 'Nie je možné uložiť súbor ZIP.';
-$string['cannotunzipfile'] = 'Nie je možné dekomprimovať súbor.';
+$string['cannotunzipfile'] = 'Nie je možné dekomprimovať súbor';
 $string['componentisuptodate'] = 'Komponent je aktuálny.';
+$string['dmlexceptiononinstall'] = '<p>Došlo k chybe databázy [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'Kontrola stiahnutého súboru bola neúspešná';
 $string['invalidmd5'] = 'Kontrolovaná premenná bola nesprávna - skúste znova';
 $string['missingrequiredfield'] = 'Chýba niektoré z povinných polí';
