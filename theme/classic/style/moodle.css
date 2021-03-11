@@ -6510,7 +6510,8 @@ a.close.disabled {
   max-width: 350px;
   overflow: hidden;
   font-size: 0.875rem;
-  background-color: rgba(255, 255, 255, 0.85);
+  color: #fff;
+  background-color: rgba(33, 37, 41, 0.95);
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
@@ -6531,8 +6532,8 @@ a.close.disabled {
   display: flex;
   align-items: center;
   padding: 0.25rem 0.75rem;
-  color: #6c757d;
-  background-color: rgba(255, 255, 255, 0.85);
+  color: #f8f9fa;
+  background-color: rgba(255, 255, 255, 0.1);
   background-clip: padding-box;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
 
@@ -19858,6 +19859,67 @@ div.editor_atto_content:hover .atto_control {
 
 div.editor_atto_toolbar button .icon {
   color: #495057; }
+
+.toast {
+  border-radius: 0.25rem; }
+  .toast.toast-success {
+    background-color: rgba(215, 228, 214, 0.95);
+    color: #1c3f1a; }
+    .toast.toast-success .toast-header {
+      color: #1c3f1a; }
+    .toast.toast-success .toast-body:before {
+      display: inline-block;
+      font: normal normal normal 14px/1 FontAwesome;
+      font-size: inherit;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      margin: 2px 5px 0 0;
+      content: ""; }
+  .toast.toast-danger {
+    background-color: rgba(244, 214, 210, 0.95);
+    color: #691911; }
+    .toast.toast-danger .toast-header {
+      color: #691911; }
+    .toast.toast-danger .toast-body:before {
+      display: inline-block;
+      font: normal normal normal 14px/1 FontAwesome;
+      font-size: inherit;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      margin: 2px 5px 0 0;
+      content: ""; }
+  .toast.toast-info {
+    background-color: rgba(204, 230, 234, 0.95);
+    color: #00434e; }
+    .toast.toast-info .toast-header {
+      color: #00434e; }
+    .toast.toast-info .toast-body:before {
+      display: inline-block;
+      font: normal normal normal 14px/1 FontAwesome;
+      font-size: inherit;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      margin: 2px 5px 0 0;
+      content: ""; }
+  .toast.toast-warning {
+    background-color: rgba(252, 239, 220, 0.95);
+    color: #7d5a29; }
+    .toast.toast-warning .toast-header {
+      color: #7d5a29; }
+    .toast.toast-warning .toast-body:before {
+      display: inline-block;
+      font: normal normal normal 14px/1 FontAwesome;
+      font-size: inherit;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      margin: 2px 5px 0 0;
+      content: ""; }
+  .toast .close {
+    color: inherit; }
 
 body {
   -webkit-font-smoothing: antialiased;
