@@ -828,7 +828,12 @@ class core_course_renderer extends plugin_renderer_base {
     public function course_section_cm_list_item($course, &$completioninfo, cm_info $mod, $sectionreturn, $displayoptions = array()) {
         $output = '';
         if ($modulehtml = $this->course_section_cm($course, $completioninfo, $mod, $sectionreturn, $displayoptions)) {
-            $modclasses = 'activity ' . $mod->modname . ' modtype_' . $mod->modname . ' ' . $mod->extraclasses;
+            $infoclass = '';
+            if (($course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS) || !empty($course->showactivitydates)) {
+                // This will apply styles to the course homepage when the activity information output component is displayed.
+                $infoclass = 'hasinfo';
+            }
+            $modclasses = 'activity ' . $mod->modname . ' modtype_' . $mod->modname . ' ' . $mod->extraclasses . ' ' . $infoclass;
             $output .= html_writer::tag('li', $modulehtml, array('class' => $modclasses, 'id' => 'module-' . $mod->id));
         }
         return $output;
@@ -844,7 +849,6 @@ class core_course_renderer extends plugin_renderer_base {
      * {@link core_course_renderer::course_section_cm_name()}
      * {@link core_course_renderer::course_section_cm_text()}
      * {@link core_course_renderer::course_section_cm_availability()}
-     * {@link core_course_renderer::course_section_cm_completion()}
      * {@link course_get_cm_edit_actions()}
      * {@link core_course_renderer::course_section_cm_edit_actions()}
      *
@@ -856,6 +860,8 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     public function course_section_cm($course, &$completioninfo, cm_info $mod, $sectionreturn, $displayoptions = array()) {
+        global $USER;
+
         $output = '';
         // We return empty string (because course module will not be displayed at all)
         // if:
@@ -925,11 +931,13 @@ class core_course_renderer extends plugin_renderer_base {
             $modicons .= $mod->afterediticons;
         }
 
-        $modicons .= $this->course_section_cm_completion($course, $completioninfo, $mod, $displayoptions);
-
         if (!empty($modicons)) {
             $output .= html_writer::div($modicons, 'actions');
         }
+
+        $completiondetails = \core_completion\cm_completion_details::get_instance($mod, $USER->id);
+        $activitydates = \core\activity_dates::get_dates_for_module($mod, $USER->id);
+        $output .= $this->output->activity_information($mod, $completiondetails, $activitydates);
 
         // Show availability info (if module is not available).
         $output .= $this->course_section_cm_availability($mod, $displayoptions);
