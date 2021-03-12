@@ -205,8 +205,19 @@ body:not(.editing)  .sitetopic ul.section {
 }
 
 .section li.activity {
-    padding: .2em;
+    padding: 0.2em;
     clear: both;
+
+    &.hasinfo {
+        border-bottom: $border-width solid $table-border-color;
+        padding-top: map-get($spacers, 3);
+        padding-bottom: map-get($spacers, 3);
+
+        &:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+    }
 }
 
 .section .activity .activityinstance .groupinglabel {
