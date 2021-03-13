@@ -40,9 +40,12 @@ $string['databasehost'] = 'Databasserver';
 $string['databasename'] = 'Namn på databas';
 $string['databasetypehead'] = 'Välj drivrutin för databasen';
 $string['dataroot'] = 'Datakatalog';
+$string['datarootpermission'] = 'Behörigheter för datakataloger';
 $string['dbprefix'] = 'Prefix för tabeller';
 $string['dirroot'] = 'Moodle-katalog';
 $string['environmenthead'] = 'Kontrollerar miljön...';
+$string['environmentsub2'] = 'Varje Moodle-utgåva har ett lägsta PHP-versionskrav samt krav på ett antal obligatoriska PHP-tillägg.
+Fullständig miljökontroll görs före varje installation och uppgradering. Kontakta serveradministratören om du inte vet hur du installerar en ny version eller aktiverar PHP-tillägg.';
 $string['errorsinenvironment'] = 'Kontrollen av miljön misslyckades';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Språket "{$a}" gick tyvärr inte att ladda ner. Installationen kommer att fullföljas på engelska.';
@@ -63,11 +66,22 @@ $string['memorylimithelp'] = '<p>PHP-minnesgränsen för servern är för närva
 <p>Dock kan detta för vissa servrar resultera i att <b>alla</b> PHP-sidor slutar fungera (du får felmeddelande då du försöker visa dem). I dessa fall behöver du ta bort .htaccess-filen.</p></li>
 </ol>';
 $string['paths'] = 'Sökvägar';
-$string['pathserrcreatedataroot'] = 'Datakatalogen ({$a->dataroot}) går inte att skapa med hjälp av installeraren.';
+$string['pathserrcreatedataroot'] = 'Installationsprogrammet kan inte skapa datakatalogen <code>{$a->dataroot}</code>.';
 $string['pathshead'] = 'Bekräfta sökvägar';
 $string['pathsrodataroot'] = 'Det går inte att skriva till dataroot-katalogen.';
 $string['pathsroparentdataroot'] = 'Överliggande katalog ({$a->parent}) är inte skrivbar. Installationsprogrammet kan inte skapa dataroot-katalogen ({$a->dataroot}).';
+$string['pathssubadmindir'] = 'Ett fåtal webbhotell använder <var>/admin</var> som en speciell URL för att ge möjlighet att komma åt en
+kontrollpanel eller liknande. Tyvärr står detta i konflikt med standardplatsen för Moodle-administratörssidorna.  Du kan åtgärda detta genom att
+byta namn på administratörskatalogen i installationen och ange det nya namnet här. Till exempel: <var>moodleadmin</var>. Detta kommer att korrigera administratörslänkarna i Moodle.';
+$string['pathssubdataroot'] = '<p>En katalog där Moodle lagrar allt filinnehåll som laddas upp av användare.</p>
+<p>Den här katalogen ska vara både skriv- och läsbar av webbserveranvändaren (vanligtvis "www-data", "nobody" eller "apache").</p>
+<p>Den får inte vara direkt tillgängligt över internet.</p>
+<p>Om katalogen inte finns kommer installationsprogrammet försöka skapa den.</p>';
 $string['pathssubdirroot'] = '<p>Fullständig sökväg till katalogen som innehåller Moodle-koden.</p>';
+$string['pathssubwwwroot'] = '<p>Den fullständiga webadressen där Moodle finns, dvs. adressen som användarna kommer att ange i adressfältet i sin webbläsare för att komma åt Moodle.</p>
+<p>Det går inte att komma åt Moodle med flera adresser. Om din webbplats är tillgänglig via flera adresser väljer du den enklaste och ställer in en permanent omdirigering för var och en av de andra adresserna.</p>
+<p>Om webbplatsen är tillgänglig både från Internet och från ett internt nätverk (kallas ibland intranät) använder du den publika adressen här.</p>
+<p>Om den aktuella adressen inte är korrekt ändrar du URL:en i webbläsarens adressfält och startar om installationen.</p>';
 $string['pathsunsecuredataroot'] = 'Platsen för dataroot är inte säker';
 $string['pathswrongadmindir'] = 'Admin-katalogen saknas';
 $string['phpextension'] = '{$a} PHP-tillägg';
