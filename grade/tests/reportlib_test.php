@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/grade/report/lib.php');
 /**
  * A test class used to test grade_report, the abstract grade report parent class
  */
-class grade_report_test extends grade_report {
+class grade_report_mock extends grade_report {
     public function __construct($courseid, $gpr, $context, $user) {
         parent::__construct($courseid, $gpr, $context);
         $this->user = $user;
@@ -61,7 +61,7 @@ class grade_report_test extends grade_report {
 /**
  * Tests grade_report, the parent class for all grade reports.
  */
-class core_grade_reportlib_testcase extends advanced_testcase {
+class reportlib_test extends advanced_testcase {
 
     /**
      * Tests grade_report::blank_hidden_total_and_adjust_bounds()
@@ -117,7 +117,7 @@ class core_grade_reportlib_testcase extends advanced_testcase {
         set_coursemodule_visible($datacm->id, 0);
 
         $gpr = new grade_plugin_return(array('type' => 'report', 'courseid' => $course->id));
-        $report = new grade_report_test($course->id, $gpr, $coursecontext, $student);
+        $report = new grade_report_mock($course->id, $gpr, $coursecontext, $student);
 
         // Should return the supplied student total grade regardless of hiding.
         $report->showtotalsifcontainhidden = array($course->id => GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN);
@@ -193,7 +193,7 @@ class core_grade_reportlib_testcase extends advanced_testcase {
         set_coursemodule_visible($forumcm->id, 0);
 
         $gpr = new grade_plugin_return(array('type' => 'report', 'courseid' => $course->id));
-        $report = new grade_report_test($course->id, $gpr, $coursecontext, $student);
+        $report = new grade_report_mock($course->id, $gpr, $coursecontext, $student);
 
         // Should return the supplied student total grade regardless of hiding.
         $report->showtotalsifcontainhidden = array($course->id => GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN);
