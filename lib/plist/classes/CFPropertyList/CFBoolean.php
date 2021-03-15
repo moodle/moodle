@@ -48,86 +48,27 @@ use \DOMDocument;
 use \Iterator;
 use \ArrayAccess;
 
-/**
- *Base-Class of all CFTypes used by CFPropertyList.
- * @example example-create-01.php Using the CFPropertyList API
- * @example example-create-02.php Using CFPropertyList::guess()
- * @example example-create-03.php Using CFPropertyList::guess() with {@link CFDate} and {@link CFData}
- */
-abstract class CFType
+class CFBoolean extends CFType
 {
-  /**
-   * CFType nodes
-   * @var array
-   */
-    protected $value = null;
-
-  /**
-   * Create new CFType.
-   * @param mixed $value Value of CFType
-   */
-    public function __construct($value = null)
-    {
-        $this->setValue($value);
-    }
-
-  /************************************************************************************************
-   *    M A G I C   P R O P E R T I E S
-   ************************************************************************************************/
-
-  /**
-   * Get the CFType's value
-   * @return mixed CFType's value
-   */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-  /**
-   * Set the CFType's value
-   * @return void
-   */
-    public function setValue($value)
-    {
-        $this->value = $value;
-    }
-
-  /************************************************************************************************
-   *    S E R I A L I Z I N G
-   ************************************************************************************************/
-
-  /**
-   * Get XML-Node.
-   * @param DOMDocument $doc DOMDocument to create DOMNode in
-   * @param string $nodeName Name of element to create
-   * @return DOMNode Node created based on CType
-   * @uses $value as nodeValue
-   */
+   /**
+    * Get XML-Node.
+    * Returns &lt;true&gt; if $value is a true, &lt;false&gt; if $value is false.
+    * @param DOMDocument $doc DOMDocument to create DOMNode in
+    * @param string $nodeName For compatibility reasons; just ignore it
+    * @return DOMNode &lt;true&gt; or &lt;false&gt;-Element
+    */
     public function toXML(DOMDocument $doc, $nodeName = "")
     {
-        $node = $doc->createElement($nodeName);
-        $text = $doc->createTextNode($this->value);
-        $node->appendChild($text);
-        return $node;
+        return $doc->createElement($this->value ? 'true' : 'false');
     }
 
-  /**
-   * convert value to binary representation
-   * @param CFBinaryPropertyList The binary property list object
-   * @return The offset in the object table
-   */
-    abstract public function toBinary(CFBinaryPropertyList &$bplist);
-
-  /**
-   * Get CFType's value.
-   * @return mixed primitive value
-   * @uses $value for retrieving primitive of CFType
-   */
-    public function toArray()
+   /**
+    * convert value to binary representation
+    * @param CFBinaryPropertyList The binary property list object
+    * @return The offset in the object table
+    */
+    public function toBinary(CFBinaryPropertyList &$bplist)
     {
-        return $this->getValue();
+        return $bplist->boolToBinary($this->value);
     }
 }
-
-# eof

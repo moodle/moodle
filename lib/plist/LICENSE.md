@@ -1,6 +1,8 @@
-The MIT License
+# The MIT License
 
-Copyright (c) 2009 Christian Kruse, Rodney Rehm
+Copyright © 2018 Teclib'
+
+Copyright © 2009 Christian Kruse, Rodney Rehm
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
