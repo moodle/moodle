@@ -55,7 +55,7 @@ Feature: Self conversation
     And I select "Student 1" conversation in messaging
     And I send "Hi!" message in the message area
     And I should see "Hi!" in the "Student 1" "core_message > Message conversation"
-    And I should see "##today##j F##" in the "Student 1" "core_message > Message conversation"
+    And I should see "##today##%d %B##" in the "Student 1" "core_message > Message conversation"
 
   Scenario: Send a message to a self-conversation via user profile
     Given I log in as "student1"
@@ -64,4 +64,4 @@ Feature: Self conversation
     And I click on "Message" "icon"
     And I send "Hi!" message in the message area
     And I should see "Hi!" in the "Student 1" "core_message > Message conversation"
-    And I should see "##today##j F##" in the "Student 1" "core_message > Message conversation"
+    And I should see "##today##%d %B##" in the "Student 1" "core_message > Message conversation"
