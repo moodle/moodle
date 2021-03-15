@@ -129,3 +129,19 @@ Feature: Access to full profiles of users
     And I log in as "student1"
     And I view the "Student 2" contact in the message area
     Then I should see "First access to site"
+
+  @javascript
+  Scenario: Accessibility, users can not click on profile image when on user's profile page.
+    Given I log in as "admin"
+    And I am on "Course 1" course homepage
+    When I navigate to course participants
+    Then "//img[contains(@class, 'userpicture')]" "xpath_element" should exist
+    And "//a/child::img[contains(@class, 'userpicture')]" "xpath_element" should exist
+    When I follow "Teacher 1"
+    Then I should see "Teacher 1"
+    And "//img[contains(@class, 'userpicture')]" "xpath_element" should exist
+    And "//a/child::img[contains(@class, 'userpicture')]" "xpath_element" should not exist
+    When I follow "Full profile"
+    And I should see "Teacher 1"
+    Then "//img[contains(@class, 'userpicture')]" "xpath_element" should exist
+    And "//a/child::img[contains(@class, 'userpicture')]" "xpath_element" should not exist
