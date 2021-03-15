@@ -2579,12 +2579,8 @@ class core_renderer extends renderer_base {
         }
 
         // Then wrap it in link if needed. Also we don't wrap it in link if the link redirects to itself.
-        // It might not return page url in unit test.
-        if (PHPUNIT_TEST) {
-            if (!$userpicture->link ) {
-                return $output;
-            }
-        } else if (!$userpicture->link || $this->page->url == $url) {
+        if (!$userpicture->link ||
+                ($this->page->has_set_url() && $this->page->url == $url)) { // Protect against unset page->url.
             return $output;
         }
 
