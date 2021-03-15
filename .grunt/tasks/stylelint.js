@@ -170,6 +170,7 @@ module.exports = grunt => {
                 excludes: [
                     '**/moodle.css',
                     '**/editor.css',
+                    'jsdoc/styles/*.css',
                 ],
                 tasks: ['rawcss']
             },
