@@ -588,19 +588,22 @@ class core_completionlib_testcase extends advanced_testcase {
     public function get_data_provider() {
         return [
             'No completion record' => [
-                false, false, false, COMPLETION_INCOMPLETE
+                false, true, false, COMPLETION_INCOMPLETE
             ],
             'Not completed' => [
-                false, false, true, COMPLETION_INCOMPLETE
+                false, true, true, COMPLETION_INCOMPLETE
             ],
             'Completed' => [
-                false, false, true, COMPLETION_COMPLETE
+                false, true, true, COMPLETION_COMPLETE
             ],
             'Whole course, complete' => [
-                true, false, true, COMPLETION_COMPLETE
+                true, true, true, COMPLETION_COMPLETE
             ],
             'Get data for another user, result should be not cached' => [
-                false, true, true,  COMPLETION_INCOMPLETE
+                false, false, true,  COMPLETION_INCOMPLETE
+            ],
+            'Get data for another user, including whole course, result should be not cached' => [
+                true, false, true,  COMPLETION_INCOMPLETE
             ],
         ];
     }
@@ -666,7 +669,6 @@ class core_completionlib_testcase extends advanced_testcase {
 
         // If the user has no completion record, then the default record should be returned.
         if (!$hasrecord) {
-            $iscached = false;
             $this->assertEquals(0, $result->id);
         }
 
@@ -679,10 +681,11 @@ class core_completionlib_testcase extends advanced_testcase {
 
             // Check cached data for other course modules in the course.
             // The sample module created in setup_data() should suffice to confirm this.
+            $othercm = get_coursemodule_from_instance('forum', $this->module1->id);
             if ($wholecourse) {
-                $this->assertArrayHasKey($this->module1->id, $cache->get($key));
+                $this->assertArrayHasKey($othercm->id, $cache->get($key));
             } else {
-                $this->assertArrayNotHasKey($this->module1->id, $cache->get($key));
+                $this->assertArrayNotHasKey($othercm->id, $cache->get($key));
             }
         } else {
             // Otherwise, this should not be cached.
