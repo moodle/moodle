@@ -44,23 +44,23 @@ class frontend extends \core_availability\frontend {
             \section_info $section = null) {
         // Standard user fields.
         $standardfields = array(
-            'firstname' => \core\user_fields::get_display_name('firstname'),
-            'lastname' => \core\user_fields::get_display_name('lastname'),
-            'email' => \core\user_fields::get_display_name('email'),
-            'city' => \core\user_fields::get_display_name('city'),
-            'country' => \core\user_fields::get_display_name('country'),
-            'url' => \core\user_fields::get_display_name('url'),
-            'icq' => \core\user_fields::get_display_name('icq'),
-            'skype' => \core\user_fields::get_display_name('skype'),
-            'aim' => \core\user_fields::get_display_name('aim'),
-            'yahoo' => \core\user_fields::get_display_name('yahoo'),
-            'msn' => \core\user_fields::get_display_name('msn'),
-            'idnumber' => \core\user_fields::get_display_name('idnumber'),
-            'institution' => \core\user_fields::get_display_name('institution'),
-            'department' => \core\user_fields::get_display_name('department'),
-            'phone1' => \core\user_fields::get_display_name('phone1'),
-            'phone2' => \core\user_fields::get_display_name('phone2'),
-            'address' => \core\user_fields::get_display_name('address')
+            'firstname' => \core_user\fields::get_display_name('firstname'),
+            'lastname' => \core_user\fields::get_display_name('lastname'),
+            'email' => \core_user\fields::get_display_name('email'),
+            'city' => \core_user\fields::get_display_name('city'),
+            'country' => \core_user\fields::get_display_name('country'),
+            'url' => \core_user\fields::get_display_name('url'),
+            'icq' => \core_user\fields::get_display_name('icq'),
+            'skype' => \core_user\fields::get_display_name('skype'),
+            'aim' => \core_user\fields::get_display_name('aim'),
+            'yahoo' => \core_user\fields::get_display_name('yahoo'),
+            'msn' => \core_user\fields::get_display_name('msn'),
+            'idnumber' => \core_user\fields::get_display_name('idnumber'),
+            'institution' => \core_user\fields::get_display_name('institution'),
+            'department' => \core_user\fields::get_display_name('department'),
+            'phone1' => \core_user\fields::get_display_name('phone1'),
+            'phone2' => \core_user\fields::get_display_name('phone2'),
+            'address' => \core_user\fields::get_display_name('address')
         );
         \core_collator::asort($standardfields);
 

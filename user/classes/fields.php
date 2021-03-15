@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core;
+namespace core_user;
 
 /**
  * Class for retrieving information about user fields that are needed for displaying user identity.
  *
- * @package core
+ * @package core_user
  */
-class user_fields {
+class fields {
     /** @var string Prefix used to identify custom profile fields */
     const PROFILE_FIELD_PREFIX = 'profile_field_';
     /** @var string Regular expression used to match a field name against the prefix */
@@ -82,10 +82,10 @@ class user_fields {
      *
      * You can add fields to retrieve with the including() function.
      *
-     * @return user_fields User fields object ready for use
+     * @return fields User fields object ready for use
      */
-    public static function empty(): user_fields {
-        return new user_fields();
+    public static function empty(): fields {
+        return new fields();
     }
 
     /**
@@ -101,14 +101,14 @@ class user_fields {
      * Note: After constructing the object you can use the ->with_xx, ->including, and ->excluding
      * functions to control the required fields in more detail. For example:
      *
-     * $fields = user_fields::for_identity($context)->with_userpic()->excluding('email');
+     * $fields = fields::for_identity($context)->with_userpic()->excluding('email');
      *
      * @param \context|null $context Context; if supplied, includes only fields the current user should see
      * @param bool $allowcustom If true, custom profile fields may be included
-     * @return user_fields User fields object ready for use
+     * @return fields User fields object ready for use
      */
-    public static function for_identity(?\context $context, bool $allowcustom = true): user_fields {
-        $fields = new user_fields(self::PURPOSE_IDENTITY);
+    public static function for_identity(?\context $context, bool $allowcustom = true): fields {
+        $fields = new fields(self::PURPOSE_IDENTITY);
         $fields->context = $context;
         $fields->allowcustom = $allowcustom;
         return $fields;
@@ -120,12 +120,12 @@ class user_fields {
      * Note: After constructing the object you can use the ->with_xx, ->including, and ->excluding
      * functions to control the required fields in more detail. For example:
      *
-     * $fields = user_fields::for_userpic()->with_name()->excluding('email');
+     * $fields = fields::for_userpic()->with_name()->excluding('email');
      *
-     * @return user_fields User fields object ready for use
+     * @return fields User fields object ready for use
      */
-    public static function for_userpic(): user_fields {
-        return new user_fields(self::PURPOSE_USERPIC);
+    public static function for_userpic(): fields {
+        return new fields(self::PURPOSE_USERPIC);
     }
 
     /**
@@ -134,36 +134,36 @@ class user_fields {
      * Note: After constructing the object you can use the ->with_xx, ->including, and ->excluding
      * functions to control the required fields in more detail. For example:
      *
-     * $fields = user_fields::for_name()->with_userpic()->excluding('email');
+     * $fields = fields::for_name()->with_userpic()->excluding('email');
      *
-     * @return user_fields User fields object ready for use
+     * @return fields User fields object ready for use
      */
-    public static function for_name(): user_fields {
-        return new user_fields(self::PURPOSE_NAME);
+    public static function for_name(): fields {
+        return new fields(self::PURPOSE_NAME);
     }
 
     /**
-     * On an existing user_fields object, adds the fields required for displaying user pictures.
+     * On an existing fields object, adds the fields required for displaying user pictures.
      *
      * @return $this Same object for chaining function calls
      */
-    public function with_userpic(): user_fields {
+    public function with_userpic(): fields {
         $this->purposes[self::PURPOSE_USERPIC] = true;
         return $this;
     }
 
     /**
-     * On an existing user_fields object, adds the fields required for displaying user full names.
+     * On an existing fields object, adds the fields required for displaying user full names.
      *
      * @return $this Same object for chaining function calls
      */
-    public function with_name(): user_fields {
+    public function with_name(): fields {
         $this->purposes[self::PURPOSE_NAME] = true;
         return $this;
     }
 
     /**
-     * On an existing user_fields object, adds the fields required for displaying user identity.
+     * On an existing fields object, adds the fields required for displaying user identity.
      *
      * The function does all the required capability checks to see if the current user is allowed
      * to see them in the specified context. You can pass context null to get all the fields without
@@ -176,7 +176,7 @@ class user_fields {
      * @param bool $allowcustom If true, custom profile fields may be included
      * @return $this Same object for chaining function calls
      */
-    public function with_identity(?\context $context, bool $allowcustom = true): user_fields {
+    public function with_identity(?\context $context, bool $allowcustom = true): fields {
         $this->context = $context;
         $this->allowcustom = $allowcustom;
         $this->purposes[self::PURPOSE_IDENTITY] = true;
@@ -184,19 +184,19 @@ class user_fields {
     }
 
     /**
-     * On an existing user_fields object, adds extra fields to be retrieved. You can specify either
+     * On an existing fields object, adds extra fields to be retrieved. You can specify either
      * fields from the user table e.g. 'email', or profile fields e.g. 'profile_field_height'.
      *
      * @param string ...$include One or more fields to add
      * @return $this Same object for chaining function calls
      */
-    public function including(string ...$include): user_fields {
+    public function including(string ...$include): fields {
         $this->include = array_merge($this->include, $include);
         return $this;
     }
 
     /**
-     * On an existing user_fields object, excludes fields from retrieval. You can specify either
+     * On an existing fields object, excludes fields from retrieval. You can specify either
      * fields from the user table e.g. 'email', or profile fields e.g. 'profile_field_height'.
      *
      * This is useful when constructing queries where your query already explicitly references
@@ -205,7 +205,7 @@ class user_fields {
      * @param string ...$exclude One or more fields to exclude
      * @return $this Same object for chaining function calls
      */
-    public function excluding(...$exclude): user_fields {
+    public function excluding(...$exclude): fields {
         $this->exclude = array_merge($this->exclude, $exclude);
         return $this;
     }
@@ -445,7 +445,7 @@ class user_fields {
      * refer to the aliases used in the SELECT list there.
      *
      * The leading comma is included because this makes it work in the pattern above even if there
-     * are no fields from the user_fields data (which can happen if doing identity fields and none
+     * are no fields from the get_sql() data (which can happen if doing identity fields and none
      * are selected). If you want the result without a leading comma, set $leadingcomma to false.
      *
      * If the 'id' field is included then it will always be first in the list. Otherwise, you

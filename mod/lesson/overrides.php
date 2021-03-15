@@ -106,7 +106,7 @@ if ($groupmode) {
     list($sort, $params) = users_order_by_sql('u');
     $params['lessonid'] = $lesson->id;
 
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
     if ($accessallgroups) {
         $sql = 'SELECT o.*, ' . $userfieldsapi->get_sql('u', false, '', '', false)->selects . '
                   FROM {lesson_overrides} o

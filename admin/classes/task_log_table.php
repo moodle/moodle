@@ -125,7 +125,7 @@ class task_log_table extends \table_sql {
         }
 
         // TODO Does not support custom user profile fields (MDL-70456).
-        $userfieldsapi = \core\user_fields::for_identity(\context_system::instance(), false)->with_userpic();
+        $userfieldsapi = \core_user\fields::for_identity(\context_system::instance(), false)->with_userpic();
         $userfields = $userfieldsapi->get_sql('u', false, 'user', 'userid2', false)->selects;
 
         $where = '';

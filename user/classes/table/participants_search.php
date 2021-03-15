@@ -30,7 +30,7 @@ use core_table\local\filter\filterset;
 use core_user;
 use moodle_recordset;
 use stdClass;
-use core\user_fields;
+use core_user\fields;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -77,7 +77,7 @@ class participants_search {
         $this->context = $context;
         $this->filterset = $filterset;
 
-        $this->userfields = user_fields::get_identity_fields($this->context);
+        $this->userfields = fields::get_identity_fields($this->context);
     }
 
     /**
@@ -194,7 +194,7 @@ class participants_search {
 
         // Get the fields for all contexts because there is a special case later where it allows
         // matches of fields you can't access if they are on your own account.
-        $userfields = user_fields::for_identity(null)->with_userpic();
+        $userfields = fields::for_identity(null)->with_userpic();
         ['selects' => $userfieldssql, 'joins' => $userfieldsjoin, 'params' => $userfieldsparams, 'mappings' => $mappings] =
                 (array)$userfields->get_sql('u', true);
         if ($userfieldsjoin) {
@@ -1014,7 +1014,7 @@ class participants_search {
             $conditions[] = $idnumber;
 
             // Search all user identify fields.
-            $extrasearchfields = user_fields::get_identity_fields(null);
+            $extrasearchfields = fields::get_identity_fields(null);
             foreach ($extrasearchfields as $fieldindex => $extrasearchfield) {
                 if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
                     // Already covered above.

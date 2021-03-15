@@ -252,10 +252,10 @@ class core_user {
         $extraparams = [];
 
         // TODO Does not support custom user profile fields (MDL-70456).
-        $userfieldsapi = \core\user_fields::for_identity(null, false)->with_userpic()->with_name()
+        $userfieldsapi = \core_user\fields::for_identity(null, false)->with_userpic()->with_name()
             ->including('username', 'deleted');
         $selectfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-        $extra = $userfieldsapi->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]);
+        $extra = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
 
         $index = 1;
         foreach ($extra as $fieldname) {

@@ -141,7 +141,7 @@ class tablelog extends \table_sql implements \renderable {
      */
     protected function define_table_columns() {
         // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = \core\user_fields::get_identity_fields($this->context, false);
+        $extrafields = \core_user\fields::get_identity_fields($this->context, false);
 
         // Define headers and columns.
         $cols = array(
@@ -396,11 +396,11 @@ class tablelog extends \table_sql implements \renderable {
 
         // Add extra user fields that we need for the graded user.
         // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = \core\user_fields::get_identity_fields($this->context, false);
+        $extrafields = \core_user\fields::get_identity_fields($this->context, false);
         foreach ($extrafields as $field) {
             $fields .= 'u.' . $field . ', ';
         }
-        $userfieldsapi = \core\user_fields::for_name();
+        $userfieldsapi = \core_user\fields::for_name();
         $gradeduserfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $fields .= $gradeduserfields . ', ';
         $groupby = $fields;

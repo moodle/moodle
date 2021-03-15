@@ -921,7 +921,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
     $params['timestart'] = $timestart;
     $params['quizid'] = $quiz->id;
 
-    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfieldsapi = \core_user\fields::for_userpic();
     $ufields = $userfieldsapi->get_sql('u', false, '', 'useridagain', false)->selects;
     if (!$attempts = $DB->get_records_sql("
               SELECT qa.*,

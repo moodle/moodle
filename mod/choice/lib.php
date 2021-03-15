@@ -799,7 +799,7 @@ function choice_get_response_data($choice, $cm, $groupmode, $onlyactive) {
 /// First get all the users who have access here
 /// To start with we assume they are all "unanswered" then move them later
     // TODO Does not support custom user profile fields (MDL-70456).
-    $userfieldsapi = \core\user_fields::for_identity($context, false)->with_userpic();
+    $userfieldsapi = \core_user\fields::for_identity($context, false)->with_userpic();
     $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     $allresponses[0] = get_enrolled_users($context, 'mod/choice:choose', $currentgroup,
             $userfields, null, 0, 0, $onlyactive);

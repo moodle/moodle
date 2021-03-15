@@ -96,7 +96,7 @@
     $users = choice_get_response_data($choice, $cm, $groupmode, $onlyactive);
 
     // TODO Does not support custom user profile fields (MDL-70456).
-    $extrafields = \core\user_fields::get_identity_fields($context, false);
+    $extrafields = \core_user\fields::get_identity_fields($context, false);
 
     if ($download == "ods" && has_capability('mod/choice:downloadresponses', $context)) {
         require_once("$CFG->libdir/odslib.class.php");
@@ -119,7 +119,7 @@
 
         // Add headers for extra user fields.
         foreach ($extrafields as $field) {
-            $myxls->write_string(0, $i++, \core\user_fields::get_display_name($field));
+            $myxls->write_string(0, $i++, \core_user\fields::get_display_name($field));
         }
 
         $myxls->write_string(0, $i++, get_string("group"));
@@ -180,7 +180,7 @@
 
         // Add headers for extra user fields.
         foreach ($extrafields as $field) {
-            $myxls->write_string(0, $i++, \core\user_fields::get_display_name($field));
+            $myxls->write_string(0, $i++, \core_user\fields::get_display_name($field));
         }
 
         $myxls->write_string(0, $i++, get_string("group"));
@@ -236,7 +236,7 @@
 
         // Add headers for extra user fields.
         foreach ($extrafields as $field) {
-            echo \core\user_fields::get_display_name($field) . "\t";
+            echo \core_user\fields::get_display_name($field) . "\t";
         }
 
         echo get_string("group"). "\t";

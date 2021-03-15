@@ -155,7 +155,7 @@ class process {
             'interests',
         );
         // Include all name fields.
-        $this->standardfields = array_merge($this->standardfields, \core\user_fields::get_name_fields());
+        $this->standardfields = array_merge($this->standardfields, \core_user\fields::get_name_fields());
     }
 
     /**

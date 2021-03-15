@@ -1295,7 +1295,7 @@ class completion_info {
                 'moodle/course:isincompletionreports', $groupid, true);
 
         // TODO Does not support custom user profile fields (MDL-70456).
-        $userfieldsapi = \core\user_fields::for_identity($extracontext, false)->with_name();
+        $userfieldsapi = \core_user\fields::for_identity($extracontext, false)->with_name();
         $allusernames = $userfieldsapi->get_sql('u')->selects;
         $sql = 'SELECT u.id, u.idnumber ' . $allusernames;
         $sql .= ' FROM (' . $enrolledsql . ') eu JOIN {user} u ON u.id = eu.id';

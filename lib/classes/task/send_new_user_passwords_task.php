@@ -47,7 +47,7 @@ class send_new_user_passwords_task extends scheduled_task {
         // Generate new password emails for users - ppl expect these generated asap.
         if ($DB->count_records('user_preferences', array('name' => 'create_password', 'value' => '1'))) {
             mtrace('Creating passwords for new users...');
-            $userfieldsapi = \core\user_fields::for_name();
+            $userfieldsapi = \core_user\fields::for_name();
             $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
             $newusers = $DB->get_recordset_sql("SELECT u.id as id, u.email, u.auth, u.deleted,
                                                      u.suspended, u.emailstop, u.mnethostid, u.mailformat,

@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core;
+namespace core_user;
 
 /**
- * Unit tests for \core\user_fields
+ * Unit tests for \core_user\fields
  *
  * @package core
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_fields_testcase extends \advanced_testcase {
+class fields_testcase extends \advanced_testcase {
 
     /**
      * Tests getting the user picture fields.
@@ -31,7 +31,7 @@ class user_fields_testcase extends \advanced_testcase {
     public function test_get_picture_fields() {
         $this->assertEquals(['id', 'picture', 'firstname', 'lastname', 'firstnamephonetic',
                 'lastnamephonetic', 'middlename', 'alternatename', 'imagealt', 'email'],
-                user_fields::get_picture_fields());
+                fields::get_picture_fields());
     }
 
     /**
@@ -40,11 +40,11 @@ class user_fields_testcase extends \advanced_testcase {
     public function test_get_name_fields() {
         $this->assertEquals(['firstnamephonetic', 'lastnamephonetic', 'middlename', 'alternatename',
                 'firstname', 'lastname'],
-                user_fields::get_name_fields());
+                fields::get_name_fields());
 
         $this->assertEquals(['firstname', 'lastname',
                 'firstnamephonetic', 'lastnamephonetic', 'middlename', 'alternatename'],
-                user_fields::get_name_fields(true));
+                fields::get_name_fields(true));
     }
 
     /**
@@ -75,69 +75,69 @@ class user_fields_testcase extends \advanced_testcase {
 
         // When no context is provided, it does no access checks and should return all specified.
         $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b'],
-                user_fields::get_identity_fields(null));
+                fields::get_identity_fields(null));
 
         // If you turn off custom profile fields, you don't get those.
-        $this->assertEquals(['email', 'department'], user_fields::get_identity_fields(null, false));
+        $this->assertEquals(['email', 'department'], fields::get_identity_fields(null, false));
 
         // Request in context as an administator.
         $this->setAdminUser();
         $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b'],
-                user_fields::get_identity_fields($coursecontext));
+                fields::get_identity_fields($coursecontext));
         $this->assertEquals(['email', 'department'],
-                user_fields::get_identity_fields($coursecontext, false));
+                fields::get_identity_fields($coursecontext, false));
 
         // Request in context as a student - they don't have any of the capabilities to see identity
         // fields or profile fields.
         $this->setUser($user);
-        $this->assertEquals([], user_fields::get_identity_fields($coursecontext));
+        $this->assertEquals([], fields::get_identity_fields($coursecontext));
 
         // Give the student the basic identity fields permission.
         $roleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
         role_change_permission($roleid, $coursecontext, 'moodle/site:viewuseridentity', CAP_ALLOW);
         $this->assertEquals(['department', 'profile_field_a'],
-                user_fields::get_identity_fields($coursecontext));
+                fields::get_identity_fields($coursecontext));
         $this->assertEquals(['department'],
-                user_fields::get_identity_fields($coursecontext, false));
+                fields::get_identity_fields($coursecontext, false));
 
         // Give them permission to view hidden user fields.
         role_change_permission($roleid, $coursecontext, 'moodle/course:viewhiddenuserfields', CAP_ALLOW);
         $this->assertEquals(['email', 'department', 'profile_field_a'],
-                user_fields::get_identity_fields($coursecontext));
+                fields::get_identity_fields($coursecontext));
         $this->assertEquals(['email', 'department'],
-                user_fields::get_identity_fields($coursecontext, false));
+                fields::get_identity_fields($coursecontext, false));
 
         // Also give them permission to view all profile fields.
         role_change_permission($roleid, $coursecontext, 'moodle/user:viewalldetails', CAP_ALLOW);
         $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b'],
-                user_fields::get_identity_fields($coursecontext));
+                fields::get_identity_fields($coursecontext));
         $this->assertEquals(['email', 'department'],
-                user_fields::get_identity_fields($coursecontext, false));
+                fields::get_identity_fields($coursecontext, false));
 
         // Even if we give them student role in the user context they can't view anything...
         $generator->role_assign($roleid, $user->id, $usercontext->id);
-        $this->assertEquals([], user_fields::get_identity_fields($usercontext));
+        $this->assertEquals([], fields::get_identity_fields($usercontext));
 
         // Give them basic permission.
         role_change_permission($roleid, $usercontext, 'moodle/site:viewuseridentity', CAP_ALLOW);
         $this->assertEquals(['department', 'profile_field_a'],
-                user_fields::get_identity_fields($usercontext));
+                fields::get_identity_fields($usercontext));
         $this->assertEquals(['department'],
-                user_fields::get_identity_fields($usercontext, false));
+                fields::get_identity_fields($usercontext, false));
 
         // Give them the hidden user fields permission (it's a different one).
         role_change_permission($roleid, $usercontext, 'moodle/user:viewhiddendetails', CAP_ALLOW);
         $this->assertEquals(['email', 'department', 'profile_field_a'],
-                user_fields::get_identity_fields($usercontext));
+                fields::get_identity_fields($usercontext));
         $this->assertEquals(['email', 'department'],
-                user_fields::get_identity_fields($usercontext, false));
+                fields::get_identity_fields($usercontext, false));
 
         // Also give them permission to view all profile fields.
         role_change_permission($roleid, $usercontext, 'moodle/user:viewalldetails', CAP_ALLOW);
         $this->assertEquals(['email', 'department', 'profile_field_a', 'profile_field_b'],
-                user_fields::get_identity_fields($usercontext));
+                fields::get_identity_fields($usercontext));
         $this->assertEquals(['email', 'department'],
-                user_fields::get_identity_fields($usercontext, false));
+                fields::get_identity_fields($usercontext, false));
     }
 
     /**
@@ -157,40 +157,40 @@ class user_fields_testcase extends \advanced_testcase {
         set_config('showuseridentity', 'email,department,profile_field_a');
 
         // What happens if you don't ask for anything?
-        $fields = user_fields::empty();
+        $fields = fields::empty();
         $this->assertEquals([], $fields->get_required_fields());
 
         // Try each invidual purpose.
-        $fields = user_fields::for_identity(null);
+        $fields = fields::for_identity(null);
         $this->assertEquals(['email', 'department', 'profile_field_a'], $fields->get_required_fields());
-        $fields = user_fields::for_userpic();
-        $this->assertEquals(user_fields::get_picture_fields(), $fields->get_required_fields());
-        $fields = user_fields::for_name();
-        $this->assertEquals(user_fields::get_name_fields(), $fields->get_required_fields());
+        $fields = fields::for_userpic();
+        $this->assertEquals(fields::get_picture_fields(), $fields->get_required_fields());
+        $fields = fields::for_name();
+        $this->assertEquals(fields::get_name_fields(), $fields->get_required_fields());
 
         // Try combining them all. There should be no duplicates (e.g. email), and the 'id' field
         // should be moved to the start.
-        $fields = user_fields::for_identity(null)->with_name()->with_userpic();
+        $fields = fields::for_identity(null)->with_name()->with_userpic();
         $this->assertEquals(['id', 'email', 'department', 'profile_field_a', 'picture',
                 'firstname', 'lastname', 'firstnamephonetic', 'lastnamephonetic', 'middlename',
                 'alternatename', 'imagealt'], $fields->get_required_fields());
 
         // Add some specified fields to a default result.
-        $fields = user_fields::for_identity(null, true)->including('city', 'profile_field_b');
+        $fields = fields::for_identity(null, true)->including('city', 'profile_field_b');
         $this->assertEquals(['email', 'department', 'profile_field_a', 'city', 'profile_field_b'],
                 $fields->get_required_fields());
 
         // Remove some fields, one of which actually is in the list.
-        $fields = user_fields::for_identity(null, true)->excluding('email', 'city');
+        $fields = fields::for_identity(null, true)->excluding('email', 'city');
         $this->assertEquals(['department', 'profile_field_a'], $fields->get_required_fields());
 
         // Add and remove fields.
-        $fields = user_fields::for_identity(null, true)->including('city', 'profile_field_b')->excluding('city', 'department');
+        $fields = fields::for_identity(null, true)->including('city', 'profile_field_b')->excluding('city', 'department');
         $this->assertEquals(['email', 'profile_field_a', 'profile_field_b'],
                 $fields->get_required_fields());
 
         // Request the list without profile fields, check that still works with both sources.
-        $fields = user_fields::for_identity(null, false)->including('city', 'profile_field_b')->excluding('city', 'department');
+        $fields = fields::for_identity(null, false)->including('city', 'profile_field_b')->excluding('city', 'department');
         $this->assertEquals(['email'], $fields->get_required_fields());
     }
 
@@ -206,41 +206,41 @@ class user_fields_testcase extends \advanced_testcase {
         $generator->create_custom_profile_field(['datatype' => 'text', 'shortname' => 'b', 'name' => 'B']);
         set_config('showuseridentity', 'email,department,profile_field_a');
 
-        // Create a user_fields object with all three purposes, plus included and excluded fields.
-        $fields = user_fields::for_identity(null, true)->with_name()->with_userpic()
+        // Create a fields object with all three purposes, plus included and excluded fields.
+        $fields = fields::for_identity(null, true)->with_name()->with_userpic()
             ->including('city', 'profile_field_b')->excluding('firstnamephonetic', 'middlename', 'alternatename');
 
         // Check the result with all purposes.
         $this->assertEquals(['id', 'email', 'department', 'profile_field_a', 'picture',
                 'firstname', 'lastname', 'lastnamephonetic', 'imagealt', 'city',
                 'profile_field_b'],
-                $fields->get_required_fields([user_fields::PURPOSE_IDENTITY, user_fields::PURPOSE_NAME,
-                user_fields::PURPOSE_USERPIC, user_fields::CUSTOM_INCLUDE]));
+                $fields->get_required_fields([fields::PURPOSE_IDENTITY, fields::PURPOSE_NAME,
+                fields::PURPOSE_USERPIC, fields::CUSTOM_INCLUDE]));
 
         // Limit to identity and custom includes.
         $this->assertEquals(['email', 'department', 'profile_field_a', 'city', 'profile_field_b'],
-                $fields->get_required_fields([user_fields::PURPOSE_IDENTITY, user_fields::CUSTOM_INCLUDE]));
+                $fields->get_required_fields([fields::PURPOSE_IDENTITY, fields::CUSTOM_INCLUDE]));
 
         // Limit to name fields.
         $this->assertEquals(['firstname', 'lastname', 'lastnamephonetic'],
-                $fields->get_required_fields([user_fields::PURPOSE_NAME]));
+                $fields->get_required_fields([fields::PURPOSE_NAME]));
     }
 
     /**
      * There should be an exception if you try to 'limit' purposes to one that wasn't even included.
      */
     public function test_get_required_fields_limitpurposes_not_in_constructor() {
-        $fields = user_fields::for_identity(null);
+        $fields = fields::for_identity(null);
         $this->expectExceptionMessage('$limitpurposes can only include purposes defined in object');
-        $fields->get_required_fields([user_fields::PURPOSE_USERPIC]);
+        $fields->get_required_fields([fields::PURPOSE_USERPIC]);
     }
 
     /**
-     * Sets up data and a user_fields object for all the get_sql tests.
+     * Sets up data and a fields object for all the get_sql tests.
      *
-     * @return user_fields Constructed user_fields for testing
+     * @return fields Constructed fields object for testing
      */
-    protected function init_for_sql_tests(): user_fields {
+    protected function init_for_sql_tests(): fields {
         $generator = self::getDataGenerator();
         $generator->create_custom_profile_field(['datatype' => 'text', 'shortname' => 'a', 'name' => 'A']);
         $generator->create_custom_profile_field(['datatype' => 'text', 'shortname' => 'b', 'name' => 'B']);
@@ -255,7 +255,7 @@ class user_fields_testcase extends \advanced_testcase {
 
         // It doesn't matter how we construct it (we already tested get_required_fields which is
         // where all those values are actually used) so let's just list the fields we want manually.
-        return user_fields::empty()->including('department', 'city', 'profile_field_a', 'profile_field_b');
+        return fields::empty()->including('department', 'city', 'profile_field_a', 'profile_field_b');
     }
 
     /**
@@ -266,7 +266,7 @@ class user_fields_testcase extends \advanced_testcase {
         $this->resetAfterTest();
 
         $fields = $this->init_for_sql_tests();
-        user_fields::reset_unique_identifier();
+        fields::reset_unique_identifier();
 
         // Basic SQL.
         ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams, 'mappings' => $mappings] =
@@ -343,7 +343,7 @@ class user_fields_testcase extends \advanced_testcase {
 
         // Renaming the id field. We need to use a different set of fields so it actually has the
         // id field.
-        $fields = user_fields::for_userpic();
+        $fields = fields::for_userpic();
         ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams] =
                 (array)$fields->get_sql('', false, '', 'userid');
         $sql = "SELECT idnumber
@@ -421,7 +421,7 @@ class user_fields_testcase extends \advanced_testcase {
         ['selects' => $selects1, 'joins' => $joins1, 'params' => $joinparams1] =
                 (array)$fields->get_sql('u1', true);
         // Outer SQL.
-        $fields2 = user_fields::empty()->including('profile_field_a', 'email');
+        $fields2 = fields::empty()->including('profile_field_a', 'email');
         ['selects' => $selects2, 'joins' => $joins2, 'params' => $joinparams2] =
                 (array)$fields2->get_sql('u2', true);
 
@@ -452,7 +452,7 @@ class user_fields_testcase extends \advanced_testcase {
      * Tests the get_sql function when there are no fields to retrieve.
      */
     public function test_get_sql_nothing() {
-        $fields = user_fields::empty();
+        $fields = fields::empty();
         ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams] = (array)$fields->get_sql();
         $this->assertEquals('', $selects);
         $this->assertEquals('', $joins);
@@ -464,7 +464,7 @@ class user_fields_testcase extends \advanced_testcase {
      * are always blank.
      */
     public function test_get_sql_no_custom_fields() {
-        $fields = user_fields::empty()->including('city', 'country');
+        $fields = fields::empty()->including('city', 'country');
         ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams, 'mappings' => $mappings] =
                 (array)$fields->get_sql('u');
         $this->assertEquals(', u.city, u.country', $selects);
@@ -481,13 +481,13 @@ class user_fields_testcase extends \advanced_testcase {
         global $DB;
 
         $this->resetAfterTest();
-        user_fields::reset_unique_identifier();
+        fields::reset_unique_identifier();
 
         $generator = self::getDataGenerator();
         $generator->create_custom_profile_field(['datatype' => 'text', 'shortname' => 'a', 'name' => 'A']);
 
         // When we list fields that include custom profile fields...
-        $fields = user_fields::empty()->including('id', 'profile_field_a');
+        $fields = fields::empty()->including('id', 'profile_field_a');
 
         // Supplying an alias: all fields have alias.
         $selects = $fields->get_sql('u')->selects;
@@ -498,7 +498,7 @@ class user_fields_testcase extends \advanced_testcase {
         $this->assertEquals(', {user}.id, ' . $DB->sql_compare_text('uf2d_1.data', 255) . ' AS profile_field_a', $selects);
 
         // When the list doesn't include custom profile fields...
-        $fields = user_fields::empty()->including('id', 'city');
+        $fields = fields::empty()->including('id', 'city');
 
         // Supplying an alias: all fields have alias.
         $selects = $fields->get_sql('u')->selects;

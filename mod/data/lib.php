@@ -4118,7 +4118,7 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
 function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $sortorder) {
     global $DB;
 
-    $userfieldsapi = \core\user_fields::for_userpic()->excluding('id');
+    $userfieldsapi = \core_user\fields::for_userpic()->excluding('id');
     $namefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
     if ($sort == 0) {

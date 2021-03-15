@@ -77,7 +77,7 @@ class recent_form extends moodleform {
             $options[0] = get_string('allparticipants');
             $options[$CFG->siteguest] = get_string('guestuser');
 
-            $userfieldsapi = \core\user_fields::for_userpic();
+            $userfieldsapi = \core_user\fields::for_userpic();
             $ufields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
             if (isset($groupoptions[0])) {

@@ -372,7 +372,7 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
                 $groupselect = "";
             }
 
-            $userfieldsapi = \core\user_fields::for_userpic();
+            $userfieldsapi = \core_user\fields::for_userpic();
             $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
             if (!$users = $DB->get_records_sql("SELECT $userfields
                                                   FROM {course_modules} cm
@@ -514,7 +514,7 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0) {
         $groupingjoin = '';
     }
 
-    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfieldsapi = \core_user\fields::for_userpic();
     $ufields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     return $DB->get_records_sql("SELECT DISTINCT $ufields, c.lastmessageping, c.firstping
                                    FROM {chat_users} c
@@ -907,7 +907,7 @@ function chat_format_message($message, $courseid, $currentuser, $chatlastrow=nul
 
     if (isset($users[$message->userid])) {
         $user = $users[$message->userid];
-    } else if ($user = $DB->get_record('user', ['id' => $message->userid], implode(',', \core\user_fields::get_picture_fields()))) {
+    } else if ($user = $DB->get_record('user', ['id' => $message->userid], implode(',', \core_user\fields::get_picture_fields()))) {
         $users[$message->userid] = $user;
     } else {
         return null;
@@ -939,7 +939,7 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     if (isset($users[$message->userid])) {
         $sender = $users[$message->userid];
     } else if ($sender = $DB->get_record('user', array('id' => $message->userid),
-            implode(',', \core\user_fields::get_picture_fields()))) {
+            implode(',', \core_user\fields::get_picture_fields()))) {
         $users[$message->userid] = $sender;
     } else {
         return null;

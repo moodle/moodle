@@ -63,7 +63,7 @@ class token_filter extends moodleform {
                 global $DB, $OUTPUT;
 
                 $context = \context_system::instance();
-                $fields = \core\user_fields::for_name()->with_identity($context, false);
+                $fields = \core_user\fields::for_name()->with_identity($context, false);
                 $record = \core_user::get_user($userid, 'id' . $fields->get_sql()->selects, MUST_EXIST);
 
                 $user = (object)[
@@ -72,7 +72,7 @@ class token_filter extends moodleform {
                     'extrafields' => [],
                 ];
 
-                foreach ($fields->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]) as $extrafield) {
+                foreach ($fields->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]) as $extrafield) {
                     $user->extrafields[] = (object)[
                         'name' => $extrafield,
                         'value' => s($record->$extrafield)

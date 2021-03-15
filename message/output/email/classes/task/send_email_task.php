@@ -161,7 +161,7 @@ class send_email_task extends scheduled_task {
     protected function get_users_messages_for_conversation(int $conversationid, int $userid) : moodle_recordset {
         global $DB;
 
-        $userfieldsapi = \core\user_fields::for_userpic();
+        $userfieldsapi = \core_user\fields::for_userpic();
         $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $sql = "SELECT $usernamefields, m.*
                   FROM {messages} m

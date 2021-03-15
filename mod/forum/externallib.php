@@ -674,7 +674,7 @@ class mod_forum_external extends external_api {
                     $discussion->usermodifiedfullname = null;
                     $discussion->usermodifiedpictureurl = null;
                 } else {
-                    $picturefields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
+                    $picturefields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
 
                     // Load user objects from the results of the query.
                     $user = new stdclass();
