@@ -37,7 +37,7 @@ Feature: Message delete conversations
     And I should not see "Delete"
     And I should not see "Hi!" in the "Student 1" "core_message > Message conversation"
     And I should not see "What do you need?" in the "Student 1" "core_message > Message conversation"
-    And I should not see "##today##j F##" in the "Student 1" "core_message > Message conversation"
+    And I should not see "##today##%d %B##" in the "Student 1" "core_message > Message conversation"
 #   Check user is deleting private conversation only for them
     And I log out
     And I log in as "student1"
@@ -45,7 +45,7 @@ Feature: Message delete conversations
     And I select "Student 2" conversation in the "messages" conversations list
     And I should see "Hi!" in the "Student 2" "core_message > Message conversation"
     And I should see "What do you need?" in the "Student 2" "core_message > Message conversation"
-    And I should see "##today##j F##" in the "Student 2" "core_message > Message conversation"
+    And I should see "##today##%d %B##" in the "Student 2" "core_message > Message conversation"
 
   Scenario: Cancel deleting a private conversation
     Given I log in as "student1"
@@ -58,7 +58,7 @@ Feature: Message delete conversations
     And I click on "//button[@data-action='cancel-confirm']" "xpath_element"
     And I should not see "Cancel"
     And I should see "Hi!" in the "Student 2" "core_message > Message conversation"
-    And I should see "##today##j F##" in the "Student 2" "core_message > Message conversation"
+    And I should see "##today##%d %B##" in the "Student 2" "core_message > Message conversation"
 
   Scenario: Delete a starred conversation
     Given the following "favourite conversations" exist:
@@ -75,7 +75,7 @@ Feature: Message delete conversations
     And I should not see "Delete"
     And I should not see "Hi!" in the "Student 2" "core_message > Message conversation"
     And I should not see "What do you need?" in the "Student 2" "core_message > Message conversation"
-    And I should not see "##today##j F##" in the "Student 2" "core_message > Message conversation"
+    And I should not see "##today##%d %B##" in the "Student 2" "core_message > Message conversation"
 #   Check user is deleting private conversation only for them
     And I log out
     And I log in as "student2"
@@ -83,7 +83,7 @@ Feature: Message delete conversations
     And I select "Student 1" conversation in the "messages" conversations list
     And I should see "Hi!" in the "Student 1" "core_message > Message conversation"
     And I should see "What do you need?" in the "Student 1" "core_message > Message conversation"
-    And I should see "##today##j F##" in the "Student 1" "core_message > Message conversation"
+    And I should see "##today##%d %B##" in the "Student 1" "core_message > Message conversation"
 
   Scenario: Cancel deleting a starred conversation
     Given the following "favourite conversations" exist:
@@ -93,7 +93,7 @@ Feature: Message delete conversations
     And I open messaging
     And I select "Student 2" conversation in the "favourites" conversations list
     Then I should see "Hi!" in the "Student 2" "core_message > Message conversation"
-    And I should see "##today##j F##" in the "Student 2" "core_message > Message conversation"
+    And I should see "##today##%d %B##" in the "Student 2" "core_message > Message conversation"
     And I open contact menu
     And I click on "Delete conversation" "link" in the "//div[@data-region='header-container']" "xpath_element"
 #   Cancel deletion, so conversation should be there
@@ -101,7 +101,7 @@ Feature: Message delete conversations
     And I click on "//button[@data-action='cancel-confirm']" "xpath_element"
     And I should not see "Cancel"
     And I should see "Hi!" in the "Student 2" "core_message > Message conversation"
-    And I should see "##today##j F##" in the "Student 2" "core_message > Message conversation"
+    And I should see "##today##%d %B##" in the "Student 2" "core_message > Message conversation"
 
   Scenario: Check a deleted starred conversation is still starred
     Given the following "favourite conversations" exist:
