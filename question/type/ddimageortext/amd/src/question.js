@@ -17,7 +17,6 @@
  * JavaScript to allow dragging options to slots (using mouse down or touch) or tab through slots using keyboard.
  *
  * @module     qtype_ddimageortext/question
- * @package    qtype_ddimageortext
  * @copyright  2018 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

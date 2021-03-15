@@ -17,7 +17,6 @@
  * This module handles the creation of a Modal that shows the user's post in context of the entire discussion.
  *
  * @module     mod_forum/grades/expandconversation
- * @package    mod_forum
  * @copyright  2019 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

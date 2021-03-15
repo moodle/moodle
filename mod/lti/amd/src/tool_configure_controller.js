@@ -20,7 +20,6 @@
  *
  * @module     mod_lti/tool_configure_controller
  * @class      tool_configure_controller
- * @package    mod_lti
  * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1

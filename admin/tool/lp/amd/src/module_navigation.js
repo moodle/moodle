@@ -16,7 +16,6 @@
 /**
  * Module to navigation between users in a course.
  *
- * @package    tool_lp
  * @copyright  2019 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -51,11 +50,11 @@ define(['jquery'], function($) {
         document.location = this._baseUrl + queryStr;
     };
 
-    /** @type {Number} The id of the course. */
+    /** @property {Number} The id of the course. */
     ModuleNavigation.prototype._courseId = null;
-    /** @type {Number} The id of the module. */
+    /** @property {Number} The id of the module. */
     ModuleNavigation.prototype._moduleId = null;
-    /** @type {String} Plugin base url. */
+    /** @property {String} Plugin base url. */
     ModuleNavigation.prototype._baseUrl = null;
 
     return /** @alias module:tool_lp/module_navigation */ ModuleNavigation;

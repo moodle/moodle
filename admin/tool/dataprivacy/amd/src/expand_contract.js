@@ -18,7 +18,6 @@
  *
  * @module     tool_dataprivacy/expand_contract
  * @class      page-expand-contract
- * @package    tool_dataprivacy
  * @copyright  2018 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

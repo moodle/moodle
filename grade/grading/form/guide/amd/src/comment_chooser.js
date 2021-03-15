@@ -18,7 +18,6 @@
  *
  * @module     gradingform_guide/comment_chooser
  * @class      comment_chooser
- * @package    core
  * @copyright  2015 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
   */

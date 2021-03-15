@@ -17,7 +17,6 @@
  * Define all of the selectors we will be using on the backpack interface.
  *
  * @module     core_badges/selectors
- * @package    core_badges
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

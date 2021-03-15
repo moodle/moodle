@@ -17,7 +17,6 @@
  * Base Filter class for a filter type in the participants filter UI.
  *
  * @module     core_user/local/participantsfilter/filter
- * @package    core_user
  * @copyright  2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

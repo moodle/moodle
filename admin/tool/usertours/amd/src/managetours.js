@@ -3,7 +3,6 @@
  *
  * @module     tool_usertours/managetours
  * @class      managetours
- * @package    tool_usertours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  */
 define(

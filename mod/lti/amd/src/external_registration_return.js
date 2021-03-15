@@ -21,7 +21,6 @@
  *
  * @module     mod_lti/external_registration_return
  * @class      external_registration_return
- * @package    mod_lti
  * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1

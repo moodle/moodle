@@ -21,7 +21,6 @@
  * This will receive a object with either a single 'competencyId', or an array in 'competencyIds'
  * depending on the value of multiSelect.
  *
- * @package    tool_lp
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,13 +54,13 @@ define(['jquery',
     };
     Picker.prototype = Object.create(PickerBase.prototype);
 
-    /** @type {Array} The list of plans fetched. */
+    /** @property {Array} The list of plans fetched. */
     Picker.prototype._plans = null;
-    /** @type {Number} The current plan ID. */
+    /** @property {Number} The current plan ID. */
     Picker.prototype._planId = null;
-    /** @type {Boolean} Whether we can browse plans or not. */
+    /** @property {Boolean} Whether we can browse plans or not. */
     Picker.prototype._singlePlan = false;
-    /** @type {Number} The user the plans belongs to. */
+    /** @property {Number} The user the plans belongs to. */
     Picker.prototype._userId = null;
 
     /**

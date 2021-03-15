@@ -18,7 +18,6 @@
  *
  * @module     tool_analytics/log_info
  * @class      log_info
- * @package    tool_analytics
  * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

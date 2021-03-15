@@ -18,7 +18,6 @@
  *
  * @module     core_message/toggle_contact_button
  * @class      toggle_contact_button
- * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

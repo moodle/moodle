@@ -16,7 +16,6 @@
 /**
  * Event click on selecting competency in the competency autocomplete.
  *
- * @package    tool_lp
  * @copyright  2016 Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -58,15 +57,15 @@ define(['jquery'], function($) {
         document.location = this._baseUrl + queryStr;
     };
 
-    /** @type {Number} The id of the competency. */
+    /** @property {Number} The id of the competency. */
     CompetencyPlanNavigation.prototype._competencyId = null;
-    /** @type {Number} The id of the user. */
+    /** @property {Number} The id of the user. */
     CompetencyPlanNavigation.prototype._userId = null;
-    /** @type {Number} The id of the plan. */
+    /** @property {Number} The id of the plan. */
     CompetencyPlanNavigation.prototype._planId = null;
-    /** @type {String} Plugin base url. */
+    /** @property {String} Plugin base url. */
     CompetencyPlanNavigation.prototype._baseUrl = null;
-    /** @type {Boolean} Ignore the first change event for competencies. */
+    /** @property {Boolean} Ignore the first change event for competencies. */
     CompetencyPlanNavigation.prototype._ignoreFirstCompetency = null;
 
     return /** @alias module:tool_lp/competency_plan_navigation */ CompetencyPlanNavigation;

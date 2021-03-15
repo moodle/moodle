@@ -17,7 +17,6 @@
  * A javascript module to handle user ajax actions.
  *
  * @module     block_recentlyaccesseditems/repository
- * @package    block_recentlyaccesseditems
  * @copyright  2018 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

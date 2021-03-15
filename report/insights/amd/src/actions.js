@@ -16,7 +16,6 @@
 /**
  * Module to manage report insights actions that are executed using AJAX.
  *
- * @package    report_insights
  * @copyright  2017 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

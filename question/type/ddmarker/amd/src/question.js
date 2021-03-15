@@ -16,7 +16,6 @@
 /**
  * Question class for drag and drop marker question type, used to support the question and preview pages.
  *
- * @package    qtype_ddmarker
  * @subpackage question
  * @copyright  2018 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

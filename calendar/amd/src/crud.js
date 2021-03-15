@@ -17,7 +17,6 @@
  * A module to handle CRUD operations within the UI.
  *
  * @module     core_calendar/crud
- * @package    core_calendar
  * @copyright  2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
