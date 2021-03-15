@@ -131,7 +131,7 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
 
         list($sort, $moreparams) = users_order_by_sql('u');
         $moreparams['courseid'] = $course->id;
-        $userfieldsapi = \core\user_fields::for_userpic()->including('idnumber');
+        $userfieldsapi = \core_user\fields::for_userpic()->including('idnumber');
         $fields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $sql = "SELECT DISTINCT $fields
                   FROM {stats_user_{$param->table}} s

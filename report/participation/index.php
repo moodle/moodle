@@ -225,7 +225,7 @@ if (!empty($instanceid) && !empty($roleid)) {
         $params = array_merge($params, $crudparams);
     }
 
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
     $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     $users = array();
     // If using legacy log then get users from old table.

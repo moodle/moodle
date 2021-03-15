@@ -111,7 +111,7 @@ class api {
         global $DB;
 
         // Get the user fields we want.
-        $userfieldsapi = \core\user_fields::for_userpic()->including('lastaccess');
+        $userfieldsapi = \core_user\fields::for_userpic()->including('lastaccess');
         $ufields = $userfieldsapi->get_sql('u', false, 'userfrom_', '', false)->selects;
         $ufields2 = $userfieldsapi->get_sql('u2', false, 'userto_', '', false)->selects;
         // Add the uniqueid column to make each row unique and avoid SQL errors.
@@ -1023,7 +1023,7 @@ class api {
         debugging('\core_message\api::get_contacts_with_unread_message_count is deprecated and no longer used',
             DEBUG_DEVELOPER);
 
-        $userfieldsapi = \core\user_fields::for_userpic()->including('lastaccess');
+        $userfieldsapi = \core_user\fields::for_userpic()->including('lastaccess');
         $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $unreadcountssql = "SELECT $userfields, count(m.id) as messagecount
                               FROM {message_contacts} mc
@@ -1065,7 +1065,7 @@ class api {
         debugging('\core_message\api::get_non_contacts_with_unread_message_count is deprecated and no longer used',
             DEBUG_DEVELOPER);
 
-        $userfieldsapi = \core\user_fields::for_userpic()->including('lastaccess');
+        $userfieldsapi = \core_user\fields::for_userpic()->including('lastaccess');
         $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $unreadcountssql = "SELECT $userfields, count(m.id) as messagecount
                               FROM {user} u
@@ -1888,7 +1888,7 @@ class api {
     public static function get_blocked_users($userid) {
         global $DB;
 
-        $userfieldsapi = \core\user_fields::for_userpic()->including('lastaccess');
+        $userfieldsapi = \core_user\fields::for_userpic()->including('lastaccess');
         $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $blockeduserssql = "SELECT $userfields
                               FROM {message_users_blocked} mub

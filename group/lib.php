@@ -848,7 +848,7 @@ function groups_get_potential_members($courseid, $roleid = null, $source = null,
         }
     }
 
-    $userfieldsapi = \core\user_fields::for_userpic()->including(...$extrafields);
+    $userfieldsapi = \core_user\fields::for_userpic()->including(...$extrafields);
     $allusernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     $sql = "SELECT DISTINCT u.id, u.username, $allusernamefields, u.idnumber
               FROM {user} u

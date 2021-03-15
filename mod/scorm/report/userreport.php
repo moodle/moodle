@@ -39,7 +39,7 @@ $tracksurl = new moodle_url('/mod/scorm/report/userreporttracks.php', array('id'
 $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
 $course = get_course($cm->course);
 $scorm = $DB->get_record('scorm', array('id' => $cm->instance), '*', MUST_EXIST);
-$user = $DB->get_record('user', array('id' => $userid), implode(',', \core\user_fields::get_picture_fields()), MUST_EXIST);
+$user = $DB->get_record('user', array('id' => $userid), implode(',', \core_user\fields::get_picture_fields()), MUST_EXIST);
 // Get list of attempts this user has made.
 $attemptids = scorm_get_all_attempts($scorm->id, $userid);
 

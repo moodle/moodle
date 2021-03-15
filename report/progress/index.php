@@ -53,7 +53,7 @@ $start   = optional_param('start', 0, PARAM_INT);
 
 // Whether to show extra user identity information
 // TODO Does not support custom user profile fields (MDL-70456).
-$extrafields = \core\user_fields::get_identity_fields($context, false);
+$extrafields = \core_user\fields::get_identity_fields($context, false);
 $leftcols = 1 + count($extrafields);
 
 function csv_quote($value) {
@@ -301,11 +301,11 @@ if (!$csv) {
     // Print user identity columns
     foreach ($extrafields as $field) {
         echo '<th scope="col" class="completion-identifyfield">' .
-                \core\user_fields::get_display_name($field) . '</th>';
+                \core_user\fields::get_display_name($field) . '</th>';
     }
 } else {
     foreach ($extrafields as $field) {
-        echo $sep . csv_quote(\core\user_fields::get_display_name($field));
+        echo $sep . csv_quote(\core_user\fields::get_display_name($field));
     }
 }
 

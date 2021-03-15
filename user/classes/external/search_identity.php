@@ -59,8 +59,8 @@ class search_identity extends \external_api {
 
         $hasviewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
-        $fields = \core\user_fields::for_name()->with_identity($context, false);
-        $extrafields = $fields->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]);
+        $fields = \core_user\fields::for_name()->with_identity($context, false);
+        $extrafields = $fields->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
 
         list($searchsql, $searchparams) = users_search_sql($query, '', true, $extrafields);
         list($sortsql, $sortparams) = users_order_by_sql('', $query, $context);

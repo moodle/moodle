@@ -64,7 +64,7 @@ if (count($cohorts) < 2) {
 }
 
 $countries = get_string_manager()->get_list_of_countries(true);
-$userfieldsapi = \core\user_fields::for_name();
+$userfieldsapi = \core_user\fields::for_name();
 $namefields = $userfieldsapi->get_sql('', false, '', '', false)->selects;
 foreach ($users as $key => $id) {
     $user = $DB->get_record('user', array('id' => $id), 'id, ' . $namefields . ', username,

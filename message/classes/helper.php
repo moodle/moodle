@@ -429,7 +429,7 @@ class helper {
         }
 
         list($useridsql, $usersparams) = $DB->get_in_or_equal($userids);
-        $userfieldsapi = \core\user_fields::for_userpic()->including('lastaccess');
+        $userfieldsapi = \core_user\fields::for_userpic()->including('lastaccess');
         $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $userssql = "SELECT $userfields, u.deleted, mc.id AS contactid, mub.id AS blockedid
                        FROM {user} u

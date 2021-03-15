@@ -93,7 +93,7 @@ if ($override->groupid) {
     $group = $DB->get_record('groups', array('id' => $override->groupid), 'id, name');
     $confirmstr = get_string("overridedeletegroupsure", "lesson", $group->name);
 } else {
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
     $namefields = $userfieldsapi->get_sql('', false, '', '', false)->selects;
     $user = $DB->get_record('user', array('id' => $override->userid),
             'id, ' . $namefields);

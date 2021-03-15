@@ -100,7 +100,7 @@ if ($editform->is_cancelled()) {
     $onlyactive = !empty($data->includeonlyactiveenrol) || !has_capability('moodle/course:viewsuspendedusers', $context);
 
     // TODO Does not support custom user profile fields (MDL-70456).
-    $extrafields = \core\user_fields::get_identity_fields($context, false);
+    $extrafields = \core_user\fields::get_identity_fields($context, false);
     $users = groups_get_potential_members($data->courseid, $data->roleid, $source, $orderby, !empty($data->notingroup),
         $onlyactive, $extrafields);
     $usercnt = count($users);

@@ -3827,7 +3827,7 @@ EOF;
 
         // User information for showing a picture.
         $user = new stdClass();
-        $additionalfields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
+        $additionalfields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
         $user = username_load_fields_from_object($user, $userinfo, null, $additionalfields);
         $user->id = $userinfo->userid;
         $expectedarray = new stdClass();
@@ -3856,7 +3856,7 @@ EOF;
 
         // Return an object with user picture information.
         $user = new stdClass();
-        $additionalfields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
+        $additionalfields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
         $user = username_load_fields_from_object($user, $userinfo, 'author', $additionalfields);
         $user->id = $userinfo->userid;
         $expectedarray = new stdClass();

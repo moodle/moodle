@@ -169,7 +169,7 @@ class grading_app implements templatable, renderable {
         $export->larrow = $output->larrow();
         // List of identity fields to display (the user info will not contain any fields the user cannot view anyway).
         // TODO Does not support custom user profile fields (MDL-70456).
-        $export->showuseridentity = implode(',', \core\user_fields::get_identity_fields(null, false));
+        $export->showuseridentity = implode(',', \core_user\fields::get_identity_fields(null, false));
         $export->currentuserid = $USER->id;
         $helpicon = new \help_icon('sendstudentnotifications', 'assign');
         $export->helpicon = $helpicon->export_for_template($output);

@@ -55,7 +55,7 @@ class modifier_name_column extends column_base {
     }
 
     public function get_required_fields() {
-        $allnames = \core\user_fields::get_name_fields();
+        $allnames = \core_user\fields::get_name_fields();
         $requiredfields = array();
         foreach ($allnames as $allname) {
             $requiredfields[] = 'um.' . $allname . ' AS modifier' . $allname;

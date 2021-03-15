@@ -393,7 +393,7 @@ class subscriptions {
         global $CFG, $DB;
 
         if (empty($fields)) {
-            $userfieldsapi = \core\user_fields::for_name();
+            $userfieldsapi = \core_user\fields::for_name();
             $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
             $fields ="u.id,
                       u.username,

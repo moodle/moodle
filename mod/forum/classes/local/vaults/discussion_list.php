@@ -131,7 +131,7 @@ class discussion_list extends db_table_vault {
         // - Most recent editor.
         $thistable = new dml_table(self::TABLE, $alias, $alias);
         $posttable = new dml_table('forum_posts', 'fp', 'p_');
-        $userfieldsapi = \core\user_fields::for_userpic()->including('deleted');
+        $userfieldsapi = \core_user\fields::for_userpic()->including('deleted');
         $firstauthorfields = $userfieldsapi->get_sql('fa', false,
                 self::FIRST_AUTHOR_ALIAS, self::FIRST_AUTHOR_ID_ALIAS, false)->selects;
         $latestuserfields = $userfieldsapi->get_sql('la', false,
@@ -274,7 +274,7 @@ class discussion_list extends db_table_vault {
                     $nameformat = get_string('fullnamedisplay', '', (object)['firstname' => 'firstname', 'lastname' => 'lastname']);
                 }
                 // Fetch all the available user name fields.
-                $availablefields = order_in_string(\core\user_fields::get_name_fields(), $nameformat);
+                $availablefields = order_in_string(\core_user\fields::get_name_fields(), $nameformat);
                 // We'll default to the first name if there's no available name field.
                 $returnfield = 'firstname';
                 if (!empty($availablefields)) {

@@ -508,12 +508,12 @@ class block_activity_results extends block_base {
 
                 // Now grab all the users from the database.
                 $userids = array_merge(array_keys($best), array_keys($worst));
-                $fields = array_merge(array('id', 'idnumber'), \core\user_fields::get_name_fields());
+                $fields = array_merge(array('id', 'idnumber'), \core_user\fields::get_name_fields());
                 $fields = implode(',', $fields);
                 $users = $DB->get_records_list('user', 'id', $userids, '', $fields);
 
                 // If configured to view user idnumber, ensure current user can see it.
-                $extrafields = \core\user_fields::for_identity($this->context)->get_required_fields();
+                $extrafields = \core_user\fields::for_identity($this->context)->get_required_fields();
                 $canviewidnumber = (array_search('idnumber', $extrafields) !== false);
 
                 // Ready for output!

@@ -118,10 +118,10 @@ class report extends \mod_scorm\report {
             $columns[] = 'fullname';
             $headers[] = get_string('name');
             // TODO Does not support custom user profile fields (MDL-70456).
-            $extrafields = \core\user_fields::get_identity_fields($coursecontext, false);
+            $extrafields = \core_user\fields::get_identity_fields($coursecontext, false);
             foreach ($extrafields as $field) {
                 $columns[] = $field;
-                $headers[] = \core\user_fields::get_display_name($field);
+                $headers[] = \core_user\fields::get_display_name($field);
             }
 
             $columns[] = 'attempt';
@@ -269,7 +269,7 @@ class report extends \mod_scorm\report {
             // Construct the SQL.
             $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
             // TODO Does not support custom user profile fields (MDL-70456).
-            $userfields = \core\user_fields::for_identity($coursecontext, false)->with_userpic()->including('idnumber');
+            $userfields = \core_user\fields::for_identity($coursecontext, false)->with_userpic()->including('idnumber');
             $selectfields = $userfields->get_sql('u', false, '', 'userid')->selects;
             $select .= 'st.scormid AS scormid, st.attempt AS attempt ' . $selectfields . ' ';
 
@@ -379,7 +379,7 @@ class report extends \mod_scorm\report {
                     }
                     if (in_array('picture', $columns)) {
                         $user = new \stdClass();
-                        $additionalfields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
+                        $additionalfields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
                         $user = username_load_fields_from_object($user, $scouser, null, $additionalfields);
                         $user->id = $scouser->userid;
                         $row[] = $OUTPUT->user_picture($user, array('courseid' => $course->id));

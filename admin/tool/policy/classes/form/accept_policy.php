@@ -128,7 +128,7 @@ class accept_policy extends \moodleform {
         $usernames = [];
         list($sql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         $params['usercontextlevel'] = CONTEXT_USER;
-        $userfieldsapi = \core\user_fields::for_name();
+        $userfieldsapi = \core_user\fields::for_name();
         $users = $DB->get_records_sql("SELECT u.id" . $userfieldsapi->get_sql('u')->selects . ", " .
                 \context_helper::get_preload_record_columns_sql('ctx') .
             " FROM {user} u JOIN {context} ctx ON ctx.contextlevel=:usercontextlevel AND ctx.instanceid = u.id

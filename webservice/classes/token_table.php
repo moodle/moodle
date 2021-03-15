@@ -70,7 +70,7 @@ class token_table extends \table_sql {
         $this->hasviewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
         // List of user identity fields.
-        $this->userextrafields = \core\user_fields::get_identity_fields(\context_system::instance(), false);
+        $this->userextrafields = \core_user\fields::get_identity_fields(\context_system::instance(), false);
 
         // Filter form values.
         $this->filterdata = $filterdata;
@@ -258,7 +258,7 @@ class token_table extends \table_sql {
             debugging('Initial bar not implemented yet. Call out($pagesize, false)');
         }
 
-        $userfieldsapi = \core\user_fields::for_name();
+        $userfieldsapi = \core_user\fields::for_name();
         $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $creatorfields = $userfieldsapi->get_sql('c', false, 'creator', '', false)->selects;
 
