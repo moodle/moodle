@@ -17,7 +17,6 @@
  * A javascript module to enhance the event form.
  *
  * @module     core_calendar/event_form
- * @package    core_calendar
  * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

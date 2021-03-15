@@ -40,7 +40,8 @@ export const eventTypes = {
      *
      * @event filterContentUpdated
      * @type {CustomEvent}
-     * @property {Array} nodes The list of parent nodes which were updated
+     * @property {object} detail
+     * @property {NodeElement[]} detail.nodes The list of parent nodes which were updated
      */
     filterContentUpdated: 'core_filters/contentUpdated',
 };

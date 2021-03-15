@@ -16,7 +16,6 @@
 /**
  * Grade dialogue.
  *
- * @package    tool_lp
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,9 +38,9 @@ define(['jquery',
     };
     Grade.prototype = Object.create(EventBase.prototype);
 
-    /** @type {Dialogue} The dialogue. */
+    /** @property {Dialogue} The dialogue. */
     Grade.prototype._popup = null;
-    /** @type {Array} Array of objects containing, 'value', 'name' and optionally 'selected'. */
+    /** @property {Array} Array of objects containing, 'value', 'name' and optionally 'selected'. */
     Grade.prototype._ratingOptions = null;
 
     /**

@@ -17,7 +17,6 @@
  * Edit items in feedback module
  *
  * @module     mod_feedback/edit
- * @package    mod_feedback
  * @copyright  2016 Marina Glancy
  */
 define(['jquery', 'core/ajax', 'core/str', 'core/notification'],

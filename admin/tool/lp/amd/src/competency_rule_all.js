@@ -16,7 +16,6 @@
 /**
  * Competency rule all module.
  *
- * @package    tool_lp
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

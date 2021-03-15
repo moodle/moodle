@@ -17,7 +17,6 @@
  * JavaScript for the add_random_form class.
  *
  * @module    mod_quiz/add_random_form
- * @package   mod_quiz
  * @copyright 2018 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

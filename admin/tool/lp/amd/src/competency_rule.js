@@ -16,7 +16,6 @@
 /**
  * Competency rule base module.
  *
- * @package    tool_lp
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,13 +39,13 @@ define(['jquery'], function($) {
         this._tree = tree;
     };
 
-    /** @type {Object} The current competency. */
+    /** @property {Object} The current competency. */
     Rule.prototype._competency = null;
-    /** @type {Node} The node we attach the events to. */
+    /** @property {Node} The node we attach the events to. */
     Rule.prototype._eventNode = null;
-    /** @type {Promise} Resolved when the object is ready. */
+    /** @property {Promise} Resolved when the object is ready. */
     Rule.prototype._ready = null;
-    /** @type {Tree} The competency tree. */
+    /** @property {Tree} The competency tree. */
     Rule.prototype._tree = null;
 
     /**

@@ -17,7 +17,6 @@
  * Grading panel frequently used comments selector.
  *
  * @module     gradingform_guide/grades/grader/gradingpanel/comments
- * @package    gradingform_guide
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

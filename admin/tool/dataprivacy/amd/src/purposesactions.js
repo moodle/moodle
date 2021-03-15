@@ -17,7 +17,6 @@
  * AMD module for purposes actions.
  *
  * @module     tool_dataprivacy/purposesactions
- * @package    tool_dataprivacy
  * @copyright  2018 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

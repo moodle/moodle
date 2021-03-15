@@ -17,7 +17,6 @@
  * Template renderer for Moodle. Load and render Moodle templates with Mustache.
  *
  * @module     core/templates
- * @package    core
  * @class      templates
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
