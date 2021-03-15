@@ -17,7 +17,6 @@
  * Load the site admin nav tree via ajax and render the response.
  *
  * @module     block_navigation/site_admin_loader
- * @package    core
  * @copyright  2015 John Okely <john@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

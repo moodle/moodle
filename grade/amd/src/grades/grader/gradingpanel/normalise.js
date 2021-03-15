@@ -17,7 +17,6 @@
  * Error handling and normalisation of provided data.
  *
  * @module     core_grades/grades/grader/gradingpanel/normalise
- * @package    core_grades
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

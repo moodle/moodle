@@ -19,7 +19,6 @@
  * This takes care of applying the filter on content which was dynamically loaded.
  *
  * @module     media_videojs/loader
- * @package    media_videojs
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

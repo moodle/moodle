@@ -17,7 +17,6 @@
  * Module containing the selectors for user filters.
  *
  * @module     core_user/local/user_filter/selectors
- * @package    core_user
  * @copyright  2020 Michael Hawkins <michaelh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

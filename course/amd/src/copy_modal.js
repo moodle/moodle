@@ -18,7 +18,6 @@
  * category management screen.
  *
  * @module     course
- * @package    core
  * @copyright  2020 onward The Moodle Users Association <https://moodleassociation.org/>
  * @author     Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

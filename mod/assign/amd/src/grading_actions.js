@@ -17,7 +17,6 @@
  * Javascript controller for the "Actions" panel at the bottom of the page.
  *
  * @module     mod_assign/grading_actions
- * @package    mod_assign
  * @class      GradingActions
  * @copyright  2016 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -38,13 +37,13 @@ define(['jquery', 'mod_assign/grading_events'], function($, GradingEvents) {
         this.registerEventListeners();
     };
 
-    /** @type {String} Selector for the page region containing the user navigation. */
+    /** @property {String} Selector for the page region containing the user navigation. */
     GradingActions.prototype._regionSelector = null;
 
-    /** @type {Integer} Remember the last user id to prevent unnessecary reloads. */
+    /** @property {Integer} Remember the last user id to prevent unnessecary reloads. */
     GradingActions.prototype._lastUserId = 0;
 
-    /** @type {JQuery} JQuery node for the page region containing the user navigation. */
+    /** @property {JQuery} JQuery node for the page region containing the user navigation. */
     GradingActions.prototype._region = null;
 
     /**

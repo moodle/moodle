@@ -16,7 +16,6 @@
 /**
  * Module to enable inline editing of a comptency grade.
  *
- * @package    report_competency
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -136,9 +135,9 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/log', 'cor
         .catch(notification.exception);
     };
 
-    /** @type {String} The selector for the region with the user competencies */
+    /** @property {String} The selector for the region with the user competencies */
     GradingPopup.prototype._regionSelector = null;
-    /** @type {String} The selector for the region with a single user competencies */
+    /** @property {String} The selector for the region with a single user competencies */
     GradingPopup.prototype._userCompetencySelector = null;
 
     return /** @alias module:report_competency/grading_popup */ GradingPopup;

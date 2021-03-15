@@ -16,7 +16,6 @@
 /**
  * Module to get the scale values.
  *
- * @package    tool_lp
  * @copyright  2016 Serge Gauthier
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

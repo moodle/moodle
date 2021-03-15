@@ -17,7 +17,6 @@
  * JS module for the course homepage.
  *
  * @module      core_course/view
- * @package     core_course
  * @copyright   2021 Jun Pataleta <jun@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

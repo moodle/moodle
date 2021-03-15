@@ -18,7 +18,6 @@
  *
  * @module     core_message/preferences_processor_form
  * @class      preferences_processor_form
- * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
