@@ -148,7 +148,7 @@ class section_format implements renderable, templatable {
                 $data->controlmenu = $controlmenu->export_for_template($output);
             }
             if (empty($data->isstealth)) {
-                $data->cmcontrols = $output->course_section_add_cm_control($course, $thissection->section, 0);
+                $data->cmcontrols = $output->course_section_add_cm_control($course, $thissection->section, $singlesection);
             }
         }
 
