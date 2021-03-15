@@ -33,7 +33,7 @@ require_once($CFG->dirroot. '/course/format/lib.php');
  * @copyright  2012 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_social extends format_base {
+class format_social extends core_course\course_format {
 
     /**
      * The URL to use for the specified course

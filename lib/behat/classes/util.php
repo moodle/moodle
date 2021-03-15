@@ -411,10 +411,7 @@ class behat_util extends testing_util {
         filter_manager::reset_caches();
 
         // Reset course and module caches.
-        if (class_exists('format_base')) {
-            // If file containing class is not loaded, there is no cache there anyway.
-            format_base::reset_course_cache(0);
-        }
+        core_course\course_format::reset_course_cache(0);
         get_fast_modinfo(0, 0, true);
 
         // Inform data generator.

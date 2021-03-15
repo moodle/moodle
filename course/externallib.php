@@ -3521,8 +3521,11 @@ class core_course_external extends external_api {
         $modcontext = context_module::instance($cm->id);
         $coursecontext = context_course::instance($course->id);
         self::validate_context($modcontext);
-        $courserenderer = $PAGE->get_renderer('core', 'course');
-        $completioninfo = new completion_info($course);
+        $format = course_get_format($course);
+        if ($sectionreturn) {
+            $format->set_section_number($sectionreturn);
+        }
+        $renderer = $format->get_renderer($PAGE);
 
         switch($action) {
             case 'hide':
@@ -3542,10 +3545,15 @@ class core_course_external extends external_api {
                     throw new moodle_exception('No permission to create that activity');
                 }
                 if ($newcm = duplicate_module($course, $cm)) {
-                    $cm = get_fast_modinfo($course)->get_cm($id);
-                    $newcm = get_fast_modinfo($course)->get_cm($newcm->id);
-                    return $courserenderer->course_section_cm_list_item($course, $completioninfo, $cm, $sectionreturn) .
-                        $courserenderer->course_section_cm_list_item($course, $completioninfo, $newcm, $sectionreturn);
+
+                    $modinfo = $format->get_modinfo();
+                    $section = $modinfo->get_section_info($newcm->sectionnum);
+                    $cm = $modinfo->get_cm($id);
+
+                    // Get both original and new element html.
+                    $result = $renderer->course_section_updated_cm_item($format, $section, $cm);
+                    $result .= $renderer->course_section_updated_cm_item($format, $section, $newcm);
+                    return $result;
                 }
                 break;
             case 'groupsseparate':
@@ -3580,8 +3588,10 @@ class core_course_external extends external_api {
                 throw new coding_exception('Unrecognised action');
         }
 
-        $cm = get_fast_modinfo($course)->get_cm($id);
-        return $courserenderer->course_section_cm_list_item($course, $completioninfo, $cm, $sectionreturn);
+        $modinfo = $format->get_modinfo();
+        $section = $modinfo->get_section_info($cm->sectionnum);
+        $cm = $modinfo->get_cm($id);
+        return $renderer->course_section_updated_cm_item($format, $section, $cm);
     }
 
     /**
@@ -3639,9 +3649,15 @@ class core_course_external extends external_api {
         list($course, $cm) = get_course_and_cm_from_cmid($id);
         self::validate_context(context_course::instance($course->id));
 
-        $courserenderer = $PAGE->get_renderer('core', 'course');
-        $completioninfo = new completion_info($course);
-        return $courserenderer->course_section_cm_list_item($course, $completioninfo, $cm, $sectionreturn);
+        $format = course_get_format($course);
+        if ($sectionreturn) {
+            $format->set_section_number($sectionreturn);
+        }
+        $renderer = $format->get_renderer($PAGE);
+
+        $modinfo = $format->get_modinfo();
+        $section = $modinfo->get_section_info($cm->sectionnum);
+        return $renderer->course_section_updated_cm_item($format, $section, $cm);
     }
 
     /**

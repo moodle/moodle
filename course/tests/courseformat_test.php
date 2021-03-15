@@ -210,7 +210,7 @@ class core_course_courseformat_testcase extends advanced_testcase {
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_testformat extends format_base {
+class format_testformat extends core_course\course_format {
     /**
      * Returns the list of blocks to be automatically added for the newly created course.
      *
@@ -232,7 +232,7 @@ class format_testformat extends format_base {
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_testlegacy extends format_base {
+class format_testlegacy extends core_course\course_format {
     /**
      * Returns the list of blocks to be automatically added for the newly created course.
      *

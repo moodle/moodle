@@ -592,9 +592,7 @@ function course_set_marker($courseid, $marker) {
     if ($COURSE && $COURSE->id == $courseid) {
         $COURSE->marker = $marker;
     }
-    if (class_exists('format_base')) {
-        format_base::reset_course_cache($courseid);
-    }
+    core_course\course_format::reset_course_cache($courseid);
     course_modinfo::clear_instance_cache($courseid);
 }
 
@@ -2149,7 +2147,7 @@ function move_courses($courseids, $categoryid) {
  * Returns the display name of the given section that the course prefers
  *
  * Implementation of this function is provided by course format
- * @see format_base::get_section_name()
+ * @see core_course\course_format::get_section_name()
  *
  * @param int|stdClass $courseorid The course to get the section name for (object or just course id)
  * @param int|stdClass $section Section object from database or just field course_sections.section
@@ -3422,12 +3420,15 @@ function mod_duplicate_activity($course, $cm, $sr = null) {
 
     $resp = new stdClass();
     if ($newcm) {
-        $courserenderer = $PAGE->get_renderer('core', 'course');
-        $completioninfo = new completion_info($course);
-        $modulehtml = $courserenderer->course_section_cm($course, $completioninfo,
-                $newcm, null, array());
 
-        $resp->fullcontent = $courserenderer->course_section_cm_list_item($course, $completioninfo, $newcm, $sr);
+        $format = course_get_format($course);
+        $renderer = $format->get_renderer($PAGE);
+        $modinfo = $format->get_modinfo();
+        $section = $modinfo->get_section_info($newcm->sectionnum);
+
+        // Get the new element html content.
+        $resp->fullcontent = $renderer->course_section_updated_cm_item($format, $section, $newcm);
+
         $resp->cmid = $newcm->id;
     } else {
         // Trigger a redirect.

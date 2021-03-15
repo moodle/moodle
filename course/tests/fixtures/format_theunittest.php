@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/course/format/lib.php');
-
 /**
  * Fixture for fake course format testing course format API.
  *
@@ -25,7 +21,7 @@ require_once($CFG->dirroot . '/course/format/lib.php');
  * @copyright  2014 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_theunittest extends format_base {
+class format_theunittest extends core_course\course_format {
 
     /**
      * Definitions of the additional options that format uses

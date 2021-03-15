@@ -5011,9 +5011,7 @@ function delete_course($courseorid, $showfeedback = true) {
     $DB->delete_records("course_format_options", array("courseid" => $courseid));
 
     // Reset all course related caches here.
-    if (class_exists('format_base', false)) {
-        format_base::reset_course_cache($courseid);
-    }
+    core_course\course_format::reset_course_cache($courseid);
 
     // Tell search that we have deleted the course so it can delete course data from the index.
     \core_search\manager::course_deleting_finish($courseid);

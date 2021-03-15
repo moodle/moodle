@@ -1,0 +1,107 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/local/section_format
+
+    Displays a course section.
+
+    Example context (json):
+    {
+        "num": 3,
+        "id": 35,
+        "controlmenu": "[tools menu]",
+        "header": {
+            "name": "Section title",
+            "url": "#",
+            "ishidden": true
+        },
+        "cmlist": {
+            "cms": [
+                {
+                    "cmitem": {
+                        "cmformat": {
+                            "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Forum example</span></a>",
+                            "hasname": "true"
+                        },
+                        "id": 3,
+                        "module": "forum",
+                        "extraclasses": "newmessages"
+                    }
+                },
+                {
+                    "cmitem": {
+                        "cmformat": {
+                            "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Assign example</span></a>",
+                            "hasname": "true"
+                        },
+                        "id": 4,
+                        "module": "assign",
+                        "extraclasses": ""
+                    }
+                }
+            ],
+            "hascms": true
+        },
+        "ishidden": false,
+        "iscurrent": true,
+        "currentlink": "<span class=\"accesshide\">This topic</span>",
+        "completioninfo": "<span class=\"badge badge-primary\">Completion Info</span>",
+        "availability": {
+            "info": "<span class=\"badge badge-info\">Hidden from students</span>",
+            "hasavailability": true
+        },
+        "summary": {
+            "summarytext": "Summary text!"
+        },
+        "controlmenu": {
+            "menu": "<a href=\"#\" class=\"d-inline-block dropdown-toggle icon-no-margin\">Edit<b class=\"caret\"></b></a>",
+            "hasmenu": true
+        },
+        "cmcontrols": "[Add an activity or resource]"
+    }
+}}
+<li id="section-{{num}}"
+        class="section main {{#onlysummary}} section-summary {{/onlysummary}} clearfix
+              {{#ishidden}} hidden {{/ishidden}} {{#iscurrent}} current {{/iscurrent}}
+              {{#isstealth}} orphaned {{/isstealth}}"
+        role="region"
+        aria-labelledby="sectionid-{{id}}-title"
+        data-sectionid="{{num}}"
+        data-sectionreturnid="{{sectionreturnid}}">
+    {{#singleheader}} {{> core_course/local/section_format/header }} {{/singleheader}}
+    <div class="left side">{{#iscurrent}} {{{currentlink}}} {{/iscurrent}}</div>
+    <div class="right side">
+    {{#controlmenu}}
+            {{> core_course/local/section_format/controlmenu }}
+    {{/controlmenu}}
+    </div>
+    <div class="content">
+        {{#header}} {{> core_course/local/section_format/header }} {{/header}}
+        {{{completioninfo}}}
+        {{#availability}}
+            {{> core_course/local/section_format/availability }}
+        {{/availability}}
+        <div class="summary">
+        {{#summary}}
+            {{> core_course/local/section_format/summary }}
+        {{/summary}}
+        </div>
+        {{#cmsummary}} {{> core_course/local/section_format/cmsummary }} {{/cmsummary}}
+        {{#cmlist}} {{> core_course/local/section_format/cmlist }} {{/cmlist}}
+        {{{cmcontrols}}}
+    </div>
+</li>

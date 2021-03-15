@@ -50,33 +50,6 @@ class format_topics_renderer extends format_section_renderer_base {
     }
 
     /**
-     * Generate the starting container html for a list of sections.
-     *
-     * @return string HTML to output.
-     */
-    protected function start_section_list() {
-        return html_writer::start_tag('ul', ['class' => 'topics']);
-    }
-
-    /**
-     * Generate the closing container html for a list of sections.
-     *
-     * @return string HTML to output.
-     */
-    protected function end_section_list() {
-        return html_writer::end_tag('ul');
-    }
-
-    /**
-     * Generate the title for this section page.
-     *
-     * @return string the page title
-     */
-    protected function page_title() {
-        return get_string('topicoutline');
-    }
-
-    /**
      * Generate the section title, wraps it in a link to the section page if page is to be displayed on a separate page.
      *
      * @param section_info|stdClass $section The course_section entry from DB
@@ -98,77 +71,4 @@ class format_topics_renderer extends format_section_renderer_base {
         return $this->render(course_get_format($course)->inplace_editable_render_section_name($section, false));
     }
 
-    /**
-     * Generate the edit control items of a section.
-     *
-     * @param int|stdClass $course The course entry from DB
-     * @param section_info|stdClass $section The course_section entry from DB
-     * @param bool $onsectionpage true if being printed on a section page
-     * @return array of edit control items
-     */
-    protected function section_edit_control_items($course, $section, $onsectionpage = false) {
-        if (!$this->page->user_is_editing()) {
-            return [];
-        }
-
-        $coursecontext = context_course::instance($course->id);
-
-        if ($onsectionpage) {
-            $url = course_get_url($course, $section->section);
-        } else {
-            $url = course_get_url($course);
-        }
-        $url->param('sesskey', sesskey());
-
-        $controls = [];
-        if ($section->section && has_capability('moodle/course:setcurrentsection', $coursecontext)) {
-            if ($course->marker == $section->section) {  // Show the "light globe" on/off.
-                $url->param('marker', 0);
-                $highlightoff = get_string('highlightoff');
-                $controls['highlight'] = [
-                    'url' => $url,
-                    'icon' => 'i/marked',
-                    'name' => $highlightoff,
-                    'pixattr' => ['class' => ''],
-                    'attr' => [
-                        'class' => 'editing_highlight',
-                        'data-action' => 'removemarker'
-                    ],
-                ];
-            } else {
-                $url->param('marker', $section->section);
-                $highlight = get_string('highlight');
-                $controls['highlight'] = [
-                    'url' => $url,
-                    'icon' => 'i/marker',
-                    'name' => $highlight,
-                    'pixattr' => ['class' => ''],
-                    'attr' => [
-                        'class' => 'editing_highlight',
-                        'data-action' => 'setmarker'
-                    ],
-                ];
-            }
-        }
-
-        $parentcontrols = parent::section_edit_control_items($course, $section, $onsectionpage);
-
-        // If the edit key exists, we are going to insert our controls after it.
-        if (array_key_exists("edit", $parentcontrols)) {
-            $merged = [];
-            // We can't use splice because we are using associative arrays.
-            // Step through the array and merge the arrays.
-            foreach ($parentcontrols as $key => $action) {
-                $merged[$key] = $action;
-                if ($key == "edit") {
-                    // If we have come to the edit key, merge these controls here.
-                    $merged = array_merge($merged, $controls);
-                }
-            }
-
-            return $merged;
-        } else {
-            return array_merge($controls, $parentcontrols);
-        }
-    }
 }

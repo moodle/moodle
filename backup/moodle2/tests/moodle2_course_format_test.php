@@ -58,7 +58,7 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
                 'enablecompletion' => COMPLETION_ENABLED),
             array('createsections' => true));
 
-        $courseobject = format_base::instance($course->id);
+        $courseobject = core_course\course_format::instance($course->id);
         $section = $DB->get_record('course_sections',
             array('course' => $course->id, 'section' => 1), '*', MUST_EXIST);
         $data = array('id' => $section->id,
@@ -91,7 +91,7 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
                     'enablecompletion' => COMPLETION_ENABLED),
                 array('createsections' => true));
 
-        $courseobject = format_base::instance($course->id);
+        $courseobject = core_course\course_format::instance($course->id);
         $section = $DB->get_record('course_sections',
             array('course' => $course->id, 'section' => 1), '*', MUST_EXIST);
         $data = array('id' => $section->id,
@@ -134,7 +134,7 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
             array('createsections' => true));
 
         // Set section 2 to have both options, and a name.
-        $courseobject = format_base::instance($course->id);
+        $courseobject = core_course\course_format::instance($course->id);
         $section = $DB->get_record('course_sections',
             array('course' => $course->id, 'section' => 2), '*', MUST_EXIST);
         $data = array('id' => $section->id,
@@ -151,7 +151,7 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
         // Check that the section contains the options suitable for the new
         // format and that even the one with the same name as from the old format
         // has NOT been set.
-        $newcourseobject = format_base::instance($newcourse->id);
+        $newcourseobject = core_course\course_format::instance($newcourse->id);
         $sectionoptions = $newcourseobject->get_format_options(2);
         $this->assertArrayHasKey('numdaystocomplete', $sectionoptions);
         $this->assertArrayNotHasKey('secondparameter', $sectionoptions);
