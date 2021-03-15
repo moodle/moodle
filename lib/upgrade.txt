@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.9.6 ===
+* The behat transformation 'string time to timestamp' no longer supports datetime format. If provided, the format must
+  be strftime compatible. Example:
+    - I should see "##tomorrow noon##%A, %d %B %Y, %I:%M %p##"
+
 === 3.9.4 ===
 * New optional parameter $extracontent for print_collapsible_region_start(). This allows developers to add interactive HTML elements
   (e.g. a help icon) after the collapsible region's toggle link.
