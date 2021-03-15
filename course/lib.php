@@ -2551,6 +2551,9 @@ function update_course($data, $editoroptions = NULL) {
     // make sure the modinfo cache is reset
     rebuild_course_cache($data->id);
 
+    // Purge course image cache in case if course image has been updated.
+    \cache::make('core', 'course_image')->delete($data->id);
+
     // update course format options with full course data
     course_get_format($data->id)->update_course_format_options($data, $oldcourse);
 
