@@ -352,6 +352,13 @@ module.exports = function(grunt) {
                 }]
             }
         },
+        jsdoc: {
+            dist: {
+                options: {
+                    configure: ".grunt/jsdoc/jsdoc.conf.js",
+                },
+            },
+        },
         sass: {
             dist: {
                 files: {
@@ -836,6 +843,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-eslint');
     grunt.loadNpmTasks('grunt-stylelint');
     grunt.loadNpmTasks('grunt-babel');
+    grunt.loadNpmTasks('grunt-jsdoc');
 
     // Rename the grunt-contrib-watch "watch" task because we're going to wrap it.
     grunt.renameTask('watch', 'watch-grunt');
