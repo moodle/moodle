@@ -222,6 +222,7 @@ class client extends \core\oauth2\client {
         $callbackurl = self::callback_url();
 
         if ($granttype == 'authorization_code') {
+            $this->basicauth = true;
             $params = array('code' => $code,
                 'grant_type' => $granttype,
                 'redirect_uri' => $callbackurl->out(false),
@@ -236,7 +237,7 @@ class client extends \core\oauth2\client {
             );
         }
         if ($this->basicauth) {
-            $idsecret = urlencode($this->clientid) . ':' . urlencode($this->clientsecret);
+            $idsecret = $this->clientid . ':' . $this->clientsecret;
             $this->setHeader('Authorization: Basic ' . base64_encode($idsecret));
         } else {
             $params['client_id'] = $this->clientid;
