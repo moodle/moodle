@@ -83,7 +83,7 @@ class behat_grading extends behat_base {
     public function i_go_to_activity_advanced_grading_page($userfullname, $activityname) {
 
         // Step to access the user grade page from the grading page.
-        $gradetext = get_string('grade');
+        $gradetext = get_string('gradeverb');
 
         $this->execute('behat_general::click_link', $this->escape($activityname));
 
