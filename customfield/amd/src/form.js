@@ -21,9 +21,16 @@
  * @copyright  2018 Toni Barbera
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates', 'core/sortable_list', 'core/inplace_editable'],
-    function(
-        $, Str, Notification, Ajax, Templates, SortableList) {
+define([
+    'jquery',
+    'core/str',
+    'core/notification',
+    'core/ajax',
+    'core/templates',
+    'core/sortable_list',
+    'core/pending',
+    'core/inplace_editable',
+], function($, Str, Notification, Ajax, Templates, SortableList, Pending) {
 
     /**
      * Display confirmation dialogue
@@ -35,25 +42,36 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
      * @param {Number} itemid
      */
     var confirmDelete = function(id, type, component, area, itemid) {
+        var pendingPromise = new Pending('core_customfield/form:confirmDelete');
         Str.get_strings([
             {'key': 'confirm'},
             {'key': 'confirmdelete' + type, component: 'core_customfield'},
             {'key': 'yes'},
             {'key': 'no'},
-        ]).done(function(s) {
+        ])
+        .then(function(s) {
             Notification.confirm(s[0], s[1], s[2], s[3], function() {
+                var pendingDeletePromise = new Pending('core_customfield/form:confirmDelete');
                 var func = (type === 'field') ? 'core_customfield_delete_field' : 'core_customfield_delete_category';
                 Ajax.call([
                     {methodname: func, args: {id: id}},
                     {methodname: 'core_customfield_reload_template', args: {component: component, area: area, itemid: itemid}}
-                ])[1].then(function(response) {
+                ])[1]
+                .then(function(response) {
                     return Templates.render('core_customfield/list', response);
-                }).then(function(html, js) {
+                })
+                .then(function(html, js) {
                     Templates.replaceNode($('[data-region="list-page"]'), html, js);
                     return null;
-                }).fail(Notification.exception);
+                })
+                .then(pendingDeletePromise.resolve)
+                .catch(Notification.exception);
             });
-        }).fail(Notification.exception);
+
+            return;
+        })
+        .then(pendingPromise.resolve)
+        .catch(Notification.exception);
     };
 
     /**
@@ -64,24 +82,31 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
      * @param {Number} itemid
      */
     var createNewCategory = function(component, area, itemid) {
+        var pendingPromise = new Pending('core_customfield/form:confirmDelete');
         var promises = Ajax.call([
-                {methodname: 'core_customfield_create_category', args: {component: component, area: area, itemid: itemid}},
-                {methodname: 'core_customfield_reload_template', args: {component: component, area: area, itemid: itemid}}
-            ]),
-            categoryid;
+            {methodname: 'core_customfield_create_category', args: {component: component, area: area, itemid: itemid}},
+            {methodname: 'core_customfield_reload_template', args: {component: component, area: area, itemid: itemid}}
+        ]);
+        var categoryid;
 
         promises[0].then(function(response) {
             categoryid = response;
             return null;
-        }).fail(Notification.exception);
+        }).catch(Notification.exception);
 
         promises[1].then(function(response) {
             return Templates.render('core_customfield/list', response);
-        }).then(function(html, js) {
+        })
+        .then(function(html, js) {
             Templates.replaceNode($('[data-region="list-page"]'), html, js);
             window.location.href = '#category-' + categoryid;
             return null;
-        }).fail(Notification.exception);
+        })
+        .catch(Notification.exception);
+
+        Promise.all(promises)
+        .then(pendingPromise.resolve)
+        .catch();
     };
 
     return {
@@ -89,18 +114,21 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
          * Initialise the custom fields manager
          */
         init: function() {
-            var mainlist = $('#customfield_catlist'),
-                component = mainlist.attr('data-component'),
-                area = mainlist.attr('data-area'),
-                itemid = mainlist.attr('data-itemid');
+            var mainlist = $('#customfield_catlist');
+            var component = mainlist.attr('data-component');
+            var area = mainlist.attr('data-area');
+            var itemid = mainlist.attr('data-itemid');
+
             $("[data-role=deletefield]").on('click', function(e) {
                 confirmDelete($(this).attr('data-id'), 'field', component, area, itemid);
                 e.preventDefault();
             });
+
             $("[data-role=deletecategory]").on('click', function(e) {
                 confirmDelete($(this).attr('data-id'), 'category', component, area, itemid);
                 e.preventDefault();
             });
+
             $('[data-role=addnewcategory]').on('click', function() {
                 createNewCategory(component, area, itemid);
             });
@@ -124,7 +152,8 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
 
             $('[data-category-id]').on('sortablelist-drop', function(evt, info) {
                 if (info.positionChanged) {
-                    var promises = Ajax.call([
+                    var pendingPromise = new Pending('core_customfield/form:categoryid:on:sortablelist-drop');
+                    Ajax.call([
                         {
                             methodname: 'core_customfield_move_category',
                             args: {
@@ -133,8 +162,9 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
                             }
 
                         },
-                    ]);
-                    promises[0].fail(Notification.exception);
+                    ])[0]
+                    .then(pendingPromise.resolve)
+                    .catch(Notification.exception);
                 }
                 evt.stopPropagation(); // Important for nested lists to prevent multiple targets.
             });
@@ -158,7 +188,8 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
             $('[data-field-name]').on('sortablelist-drop', function(evt, info) {
                 evt.stopPropagation(); // Important for nested lists to prevent multiple targets.
                 if (info.positionChanged) {
-                    var promises = Ajax.call([
+                    var pendingPromise = new Pending('core_customfield/form:fieldname:on:sortablelist-drop');
+                    Ajax.call([
                         {
                             methodname: 'core_customfield_move_field',
                             args: {
@@ -167,11 +198,17 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
                                 categoryid: Number(info.targetList.closest('[data-category-id]').attr('data-category-id'))
                             },
                         },
-                    ]);
-                    promises[0].fail(Notification.exception);
+                    ])[0]
+                    .then(pendingPromise.resolve)
+                    .catch(Notification.exception);
                 }
-            }).on('sortablelist-drag', function(evt) {
+            });
+
+            $('[data-field-name]').on('sortablelist-drag', function(evt) {
+                var pendingPromise = new Pending('core_customfield/form:fieldname:on:sortablelist-drag');
+
                 evt.stopPropagation(); // Important for nested lists to prevent multiple targets.
+
                 // Refreshing fields tables.
                 Str.get_string('therearenofields', 'core_customfield').then(function(s) {
                     $('#customfield_catlist .categorieslist').children().each(function() {
@@ -187,7 +224,9 @@ define(['jquery', 'core/str', 'core/notification', 'core/ajax', 'core/templates'
                         }
                     });
                     return null;
-                }).fail(Notification.exception);
+                })
+                .then(pendingPromise.resolve)
+                .catch(Notification.exception);
             });
 
             $('[data-category-id], [data-field-name]').on('sortablelist-dragstart',
