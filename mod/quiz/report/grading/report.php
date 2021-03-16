@@ -588,7 +588,7 @@ class quiz_grading_report extends quiz_default_report {
         $a = new stdClass();
         $a->attempt = $attempt->attempt;
         $a->fullname = fullname($attempt);
-        $a->idnumber = $attempt->idnumber;
+        $a->idnumber = s($attempt->idnumber);
 
         $showidnumbers = $showidnumbers && !empty($attempt->idnumber);
 
