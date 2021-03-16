@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace webservice;
+namespace core_webservice;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -44,11 +44,22 @@ class token_table extends \table_sql {
      */
     protected $showalltokens;
 
+    /** @var bool $hasviewfullnames Does the user have the viewfullnames capability. */
+    protected $hasviewfullnames;
+
+    /** @var array */
+    protected $userextrafields;
+
+    /** @var object */
+    protected $filterdata;
+
     /**
      * Sets up the table.
+     *
      * @param int $id The id of the table
+     * @param object $filterdata The data submitted by the {@see token_filter}.
      */
-    public function __construct($id) {
+    public function __construct($id, $filterdata = null) {
         parent::__construct($id);
 
         // Get the context.
@@ -56,6 +67,13 @@ class token_table extends \table_sql {
 
         // Can we see tokens created by all users?
         $this->showalltokens = has_capability('moodle/webservice:managealltokens', $context);
+        $this->hasviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+
+        // List of user identity fields.
+        $this->userextrafields = \core\user_fields::get_identity_fields(\context_system::instance(), false);
+
+        // Filter form values.
+        $this->filterdata = $filterdata;
 
         // Define the headers and columns.
         $headers = [];
@@ -66,7 +84,7 @@ class token_table extends \table_sql {
         $headers[] = get_string('user');
         $columns[] = 'fullname';
         $headers[] = get_string('service', 'webservice');
-        $columns[] = 'name';
+        $columns[] = 'servicename';
         $headers[] = get_string('iprestriction', 'webservice');
         $columns[] = 'iprestriction';
         $headers[] = get_string('validuntil', 'webservice');
@@ -130,20 +148,33 @@ class token_table extends \table_sql {
     public function col_fullname($data) {
         global $OUTPUT;
 
+        $identity = [];
+
+        foreach ($this->userextrafields as $userextrafield) {
+            $identity[] = $data->$userextrafield;
+        }
+
         $userprofilurl = new \moodle_url('/user/profile.php', ['id' => $data->userid]);
-        $content = \html_writer::link($userprofilurl, fullname($data));
+        $content = \html_writer::link($userprofilurl, fullname($data, $this->hasviewfullnames));
+
+        if ($identity) {
+            $content .= \html_writer::div('<small>' . implode(', ', $identity) . '</small>', 'useridentity text-muted');
+        }
 
         // Make up list of capabilities that the user is missing for the given webservice.
         $webservicemanager = new \webservice();
         $usermissingcaps = $webservicemanager->get_missing_capabilities_by_users([['id' => $data->userid]], $data->serviceid);
 
-        if (!is_siteadmin($data->userid) && array_key_exists($data->userid, $usermissingcaps)) {
-            $missingcapabilities = implode(', ', $usermissingcaps[$data->userid]);
-            if (!empty($missingcapabilities)) {
-                $capabilitiesstring = get_string('usermissingcaps', 'webservice', $missingcapabilities) . '&nbsp;' .
-                        $OUTPUT->help_icon('missingcaps', 'webservice');
-                $content .= \html_writer::div($capabilitiesstring, 'missingcaps');
-            }
+        if ($data->serviceshortname <> MOODLE_OFFICIAL_MOBILE_SERVICE && !is_siteadmin($data->userid)
+                && array_key_exists($data->userid, $usermissingcaps)) {
+            $count = \html_writer::span(count($usermissingcaps[$data->userid]), 'badge badge-danger');
+            $links = array_map(function($capname) {
+                return get_capability_docs_link((object)['name' => $capname]) . \html_writer::div($capname, 'text-muted');
+            }, $usermissingcaps[$data->userid]);
+            $list = \html_writer::alist($links);
+            $help = $OUTPUT->help_icon('missingcaps', 'webservice');
+            $content .= print_collapsible_region(\html_writer::div($list . $help, 'missingcaps'), 'small mt-2',
+                \html_writer::random_id('usermissingcaps'), get_string('usermissingcaps', 'webservice', $count), '', true, true);
         }
 
         return $content;
@@ -159,7 +190,7 @@ class token_table extends \table_sql {
         global $USER;
         // Hide the token if it wasn't created by the current user.
         if ($data->creatorid != $USER->id) {
-            return '-';
+            return \html_writer::tag('small', get_string('onlyseecreatedtokens', 'core_webservice'), ['class' => 'text-muted']);
         }
 
         return $data->token;
@@ -183,7 +214,17 @@ class token_table extends \table_sql {
         }
 
         $creatorprofileurl = new \moodle_url('/user/profile.php', ['id' => $data->creatorid]);
-        return \html_writer::link($creatorprofileurl, fullname((object)$user));
+        return \html_writer::link($creatorprofileurl, fullname((object)$user, $this->hasviewfullnames));
+    }
+
+    /**
+     * Format the service name column.
+     *
+     * @param \stdClass $data
+     * @return string
+     */
+    public function col_servicename($data) {
+        return \html_writer::div(s($data->servicename)) . \html_writer::div(s($data->serviceshortname), 'small text-muted');
     }
 
     /**
@@ -221,41 +262,59 @@ class token_table extends \table_sql {
         $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $creatorfields = $userfieldsapi->get_sql('c', false, 'creator', '', false)->selects;
 
-        $params = ["tokenmode" => EXTERNAL_TOKEN_PERMANENT];
+        if (!empty($this->userextrafields)) {
+            $usernamefields .= ',u.' . implode(',u.', $this->userextrafields);
+        }
 
-        // TODO: in order to let the administrator delete obsolete token, split the request in multiple request or use LEFT JOIN.
+        $params = ['tokenmode' => EXTERNAL_TOKEN_PERMANENT];
 
-        if ($this->showalltokens) {
-            // Show all tokens.
-            $sql = "SELECT t.id, t.token, u.id AS userid, $usernamefields, s.name, t.iprestriction, t.validuntil, s.id AS serviceid,
-                           t.creatorid, $creatorfields
-                      FROM {external_tokens} t, {user} u, {external_services} s, {user} c
-                     WHERE t.tokentype = :tokenmode AND s.id = t.externalserviceid AND t.userid = u.id AND c.id = t.creatorid";
-            $countsql = "SELECT COUNT(t.id)
-                           FROM {external_tokens} t, {user} u, {external_services} s, {user} c
-                          WHERE t.tokentype = :tokenmode AND s.id = t.externalserviceid AND t.userid = u.id AND c.id = t.creatorid";
-        } else {
+        $selectfields = "SELECT t.id, t.token, t.iprestriction, t.validuntil, t.creatorid,
+                                u.id AS userid, $usernamefields,
+                                s.id AS serviceid, s.name AS servicename, s.shortname AS serviceshortname,
+                                $creatorfields ";
+
+        $selectcount = "SELECT COUNT(t.id) ";
+
+        $sql = "  FROM {external_tokens} t
+                  JOIN {user} u ON u.id = t.userid
+                  JOIN {external_services} s ON s.id = t.externalserviceid
+                  JOIN {user} c ON c.id = t.creatorid
+                 WHERE t.tokentype = :tokenmode";
+
+        if (!$this->showalltokens) {
             // Only show tokens created by the current user.
-            $sql = "SELECT t.id, t.token, u.id AS userid, $usernamefields, s.name, t.iprestriction, t.validuntil, s.id AS serviceid,
-                           t.creatorid, $creatorfields
-                      FROM {external_tokens} t, {user} u, {external_services} s, {user} c
-                     WHERE t.creatorid=:userid AND t.tokentype = :tokenmode AND s.id = t.externalserviceid AND t.userid = u.id AND
-                           c.id = t.creatorid";
-            $countsql = "SELECT COUNT(t.id)
-                           FROM {external_tokens} t, {user} u, {external_services} s, {user} c
-                          WHERE t.creatorid=:userid AND t.tokentype = :tokenmode AND s.id = t.externalserviceid AND
-                                t.userid = u.id AND c.id = t.creatorid";
-            $params["userid"] = $USER->id;
+            $sql .= " AND t.creatorid = :userid";
+            $params['userid'] = $USER->id;
+        }
+
+        if ($this->filterdata->token !== '') {
+            $sql .= " AND " . $DB->sql_like("t.token", ":token");
+            $params['token'] = "%" . $DB->sql_like_escape($this->filterdata->token) . "%";
+        }
+
+        if (!empty($this->filterdata->users)) {
+            list($sqlusers, $paramsusers) = $DB->get_in_or_equal($this->filterdata->users, SQL_PARAMS_NAMED, 'user');
+            $sql .= " AND t.userid {$sqlusers}";
+            $params += $paramsusers;
+        }
+
+        if (!empty($this->filterdata->services)) {
+            list($sqlservices, $paramsservices) = $DB->get_in_or_equal($this->filterdata->services, SQL_PARAMS_NAMED, 'service');
+            $sql .= " AND s.id {$sqlservices}";
+            $params += $paramsservices;
         }
 
         $sort = $this->get_sql_sort();
+        $sortsql = '';
+
         if ($sort) {
-            $sql = $sql . ' ORDER BY ' . $sort;
+            $sortsql = " ORDER BY {$sort}";
         }
 
-        $total = $DB->count_records_sql($countsql, $params);
+        $total = $DB->count_records_sql($selectcount . $sql, $params);
         $this->pagesize($pagesize, $total);
 
-        $this->rawdata = $DB->get_recordset_sql($sql, $params, $this->get_page_start(), $this->get_page_size());
+        $this->rawdata = $DB->get_recordset_sql($selectfields . $sql . $sortsql, $params, $this->get_page_start(),
+            $this->get_page_size());
     }
 }

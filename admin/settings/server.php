@@ -546,4 +546,67 @@ if ($hassiteconfig) {
             new lang_string('updatenotifybuilds_desc', 'core_admin'), 0));
         $ADMIN->add('server', $temp);
     }
+
+    // Web services.
+    $ADMIN->add('server', new admin_category('webservicesettings', new lang_string('webservices', 'webservice')));
+
+    // Web services > Overview.
+    $temp = new admin_settingpage('webservicesoverview', new lang_string('webservicesoverview', 'webservice'));
+    $temp->add(new admin_setting_webservicesoverview());
+    $ADMIN->add('webservicesettings', $temp);
+
+    // Web services > API documentation.
+    $ADMIN->add('webservicesettings', new admin_externalpage('webservicedocumentation', new lang_string('wsdocapi', 'webservice'),
+        "{$CFG->wwwroot}/{$CFG->admin}/webservice/documentation.php", 'moodle/site:config', false));
+
+    // Web services > External services.
+    $temp = new admin_settingpage('externalservices', new lang_string('externalservices', 'webservice'));
+
+    $temp->add(new admin_setting_heading('manageserviceshelpexplaination', new lang_string('information', 'webservice'),
+        new lang_string('servicehelpexplanation', 'webservice')));
+
+    $temp->add(new admin_setting_manageexternalservices());
+
+    $ADMIN->add('webservicesettings', $temp);
+
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalservice', new lang_string('editaservice', 'webservice'),
+        "{$CFG->wwwroot}/{$CFG->admin}/webservice/service.php", 'moodle/site:config', true));
+
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalservicefunctions',
+        new lang_string('externalservicefunctions', 'webservice'), "{$CFG->wwwroot}/{$CFG->admin}/webservice/service_functions.php",
+        'moodle/site:config', true));
+
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalserviceusers',
+        new lang_string('externalserviceusers', 'webservice'), "{$CFG->wwwroot}/{$CFG->admin}/webservice/service_users.php",
+        'moodle/site:config', true));
+
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalserviceusersettings',
+        new lang_string('serviceusersettings', 'webservice'), "{$CFG->wwwroot}/{$CFG->admin}/webservice/service_user_settings.php",
+        'moodle/site:config', true));
+
+    // Web services > Manage protocols.
+    $temp = new admin_settingpage('webserviceprotocols', new lang_string('manageprotocols', 'webservice'));
+    $temp->add(new admin_setting_managewebserviceprotocols());
+    if (empty($CFG->enablewebservices)) {
+        $temp->add(new admin_setting_heading('webservicesaredisabled', '', new lang_string('disabledwarning', 'webservice')));
+    }
+
+    // We cannot use $OUTPUT->doc_link() this early, we would lose the ability to set the page layout on all admin pages.
+    $url = new moodle_url(get_docs_url('How_to_get_a_security_key'));
+    $wsdoclink = html_writer::link($url, new lang_string('supplyinfo', 'webservice'), ['target' => '_blank']);
+    $temp->add(new admin_setting_configcheckbox('enablewsdocumentation', new lang_string('enablewsdocumentation', 'admin'),
+        new lang_string('configenablewsdocumentation', 'admin', $wsdoclink), false));
+
+    $ADMIN->add('webservicesettings', $temp);
+
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('webservice');
+    core_collator::asort_objects_by_property($plugins, 'displayname');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\webservice $plugin */
+        $plugin->load_settings($ADMIN, 'webservicesettings', $hassiteconfig);
+    }
+
+    // Web services > Manage tokens.
+    $ADMIN->add('webservicesettings', new admin_externalpage('webservicetokens', new lang_string('managetokens', 'webservice'),
+        new moodle_url('/admin/webservice/tokens.php')));
 }
