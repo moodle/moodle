@@ -144,12 +144,12 @@ class grade_report_overview extends grade_report {
         if ($this->showrank['any']) {
             $tablecolumns = array('coursename', 'grade', 'rank');
             $tableheaders = array($this->get_lang_string('coursename', 'grades'),
-                                  $this->get_lang_string('grade'),
+                                  $this->get_lang_string('gradenoun'),
                                   $this->get_lang_string('rank', 'grades'));
         } else {
             $tablecolumns = array('coursename', 'grade');
             $tableheaders = array($this->get_lang_string('coursename', 'grades'),
-                                  $this->get_lang_string('grade'));
+                                  $this->get_lang_string('gradenoun'));
         }
         $this->table = new flexible_table('grade-report-overview-'.$this->user->id);
 

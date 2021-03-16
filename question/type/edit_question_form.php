@@ -307,7 +307,7 @@ abstract class question_edit_form extends question_wizard_form {
         $answeroptions[] = $mform->createElement('text', 'answer',
                 $label, array('size' => 40));
         $answeroptions[] = $mform->createElement('select', 'fraction',
-                get_string('grade'), $gradeoptions);
+                get_string('gradenoun'), $gradeoptions);
         $repeated[] = $mform->createElement('group', 'answeroptions',
                  $label, $answeroptions, null, false);
         $repeated[] = $mform->createElement('editor', 'feedback',

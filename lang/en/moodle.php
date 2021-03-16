@@ -945,8 +945,9 @@ This program is free software: you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the Moodle License information page for full details: https://docs.moodle.org/dev/License';
-$string['grade'] = 'Grade';
 $string['grades'] = 'Grades';
+$string['gradenoun'] = 'Grade';
+$string['gradeverb'] = 'Grade';
 $string['gravatarenabled'] = '<a href="https://www.gravatar.com/">Gravatar</a> has been enabled for this site. If you don\'t upload a profile picture Moodle will attempt to load a profile picture for you from Gravatar.';
 $string['group'] = 'Group';
 $string['groupadd'] = 'Add new group';
@@ -2322,3 +2323,4 @@ $string['userfilterplaceholder'] = 'Search keyword or select filter';
 
 // Deprecated since Moodle 3.11.
 $string['hidepicture'] = 'Hide picture';
+$string['grade'] = 'Grade';

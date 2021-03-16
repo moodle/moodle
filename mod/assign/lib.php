@@ -880,7 +880,7 @@ function assign_print_recent_mod_activity($activity, $courseid, $detail, $modnam
 
     if (isset($activity->grade)) {
         echo '<div class="grade">';
-        echo get_string('grade').': ';
+        echo get_string('gradenoun') . ': ';
         echo $activity->grade;
         echo '</div>';
     }
@@ -1286,7 +1286,7 @@ function assign_user_outline($course, $user, $coursemodule, $assignment) {
     if (!$gradingitem->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
         $result->info = get_string('outlinegrade', 'assign', $gradebookgrade->str_long_grade);
     } else {
-        $result->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
+        $result->info = get_string('gradenoun') . ': ' . get_string('hidden', 'grades');
     }
     $result->time = $gradebookgrade->dategraded;
 
@@ -1549,7 +1549,7 @@ function mod_assign_core_calendar_provide_event_action(calendar_event $event,
     $assign->update_effective_access($userid);
 
     if ($event->eventtype == ASSIGN_EVENT_TYPE_GRADINGDUE) {
-        $name = get_string('grade');
+        $name = get_string('gradeverb');
         $url = new \moodle_url('/mod/assign/view.php', [
             'id' => $cm->id,
             'action' => 'grader'

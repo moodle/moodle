@@ -198,7 +198,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'timeclose', get_string("scormclose", "scorm"), array('optional' => true));
 
         // Grade Settings.
-        $mform->addElement('header', 'gradesettings', get_string('grade'));
+        $mform->addElement('header', 'gradesettings', get_string('gradenoun'));
 
         // Grade Method.
         $mform->addElement('select', 'grademethod', get_string('grademethod', 'scorm'), scorm_get_grade_method_array());

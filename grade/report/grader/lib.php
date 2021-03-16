@@ -658,7 +658,6 @@ class grade_report_grader extends grade_report {
         $viewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
 
         $strfeedback  = $this->get_lang_string("feedback");
-        $strgrade     = $this->get_lang_string('grade');
 
         // TODO Does not support custom user profile fields (MDL-70456).
         $extrafields = \core_user\fields::get_identity_fields($this->context, false);
@@ -813,7 +812,7 @@ class grade_report_grader extends grade_report {
         $numusers = count($this->users);
         $gradetabindex = 1;
         $columnstounset = array();
-        $strgrade = $this->get_lang_string('grade');
+        $strgrade = $this->get_lang_string('gradenoun');
         $strfeedback  = $this->get_lang_string("feedback");
         $arrows = $this->get_sort_arrows();
 
