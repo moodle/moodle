@@ -24,6 +24,7 @@
 namespace core_user\output;
 
 use context_course;
+use core\user_fields;
 use renderable;
 use renderer_base;
 use stdClass;
@@ -86,6 +87,10 @@ class participants_filter implements renderable, templatable {
         }
 
         if ($filtertype = $this->get_accesssince_filter()) {
+            $filtertypes[] = $filtertype;
+        }
+
+        if ($filtertype = $this->get_country_filter()) {
             $filtertypes[] = $filtertype;
         }
 
@@ -319,6 +324,34 @@ class participants_filter implements renderable, templatable {
             false,
             null,
             $values
+        );
+    }
+
+    /**
+     * Get data for the country filter
+     *
+     * @return stdClass|null
+     */
+    protected function get_country_filter(): ?stdClass {
+        $extrauserfields = user_fields::get_identity_fields($this->context, false);
+        if (array_search('country', $extrauserfields) === false) {
+            return null;
+        }
+
+        $countries = get_string_manager()->get_list_of_countries(true);
+
+        return $this->get_filter_object(
+            'country',
+            get_string('country'),
+            false,
+            true,
+            'core_user/local/participantsfilter/filtertypes/country',
+            array_map(function(string $code, string $name): stdClass {
+                return (object) [
+                    'value' => $code,
+                    'title' => $name,
+                ];
+            }, array_keys($countries), array_values($countries))
         );
     }
 

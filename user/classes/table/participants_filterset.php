@@ -27,7 +27,6 @@ declare(strict_types=1);
 
 namespace core_user\table;
 
-use core_table\local\filter\boolean_filter;
 use core_table\local\filter\filterset;
 use core_table\local\filter\integer_filter;
 use core_table\local\filter\string_filter;
@@ -61,6 +60,7 @@ class participants_filterset extends filterset {
      * - enrolments;
      * - groups;
      * - keywords;
+     * - country;
      * - roles; and
      * - status.
      *
@@ -72,6 +72,7 @@ class participants_filterset extends filterset {
             'enrolments' => integer_filter::class,
             'groups' => integer_filter::class,
             'keywords' => string_filter::class,
+            'country' => string_filter::class,
             'roles' => integer_filter::class,
             'status' => integer_filter::class,
         ];

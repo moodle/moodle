@@ -257,6 +257,22 @@ class participants_search {
             }
         }
 
+        // Apply any country filtering.
+        if ($this->filterset->has_filter('country')) {
+            [
+                'where' => $countrywhere,
+                'params' => $countryparams,
+            ] = $this->get_country_sql();
+
+            if (!empty($countrywhere)) {
+                $wheres[] = "($countrywhere)";
+            }
+
+            if (!empty($countryparams)) {
+                $params = array_merge($params, $countryparams);
+            }
+        }
+
         // Apply any keyword text searches.
         if ($this->filterset->has_filter('keywords')) {
             [
@@ -878,6 +894,32 @@ class participants_search {
     }
 
     /**
+     * Prepare SQL where clause and associated parameters for country filtering
+     *
+     * @return array SQL query data in the format ['where' => '', 'params' => []].
+     */
+    protected function get_country_sql(): array {
+        global $DB;
+
+        $where = '';
+        $params = [];
+
+        $countryfilter = $this->filterset->get_filter('country');
+        if ($countrycodes = $countryfilter->get_filter_values()) {
+            // If filter type is "None", then we negate the comparison.
+            [$countrywhere, $params] = $DB->get_in_or_equal($countrycodes, SQL_PARAMS_NAMED, 'country',
+                $countryfilter->get_join_type() !== $countryfilter::JOINTYPE_NONE);
+
+            $where = "(u.country {$countrywhere})";
+        }
+
+        return [
+            'where' => $where,
+            'params' => $params,
+        ];
+    }
+
+    /**
      * Prepare SQL where clause and associated parameters for any keyword searches being performed.
      *
      * @param array $mappings Array of field mappings (fieldname => SQL code for the value)
@@ -975,7 +1017,7 @@ class participants_search {
             $extrasearchfields = user_fields::get_identity_fields(null);
             foreach ($extrasearchfields as $fieldindex => $extrasearchfield) {
                 if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
-                    // Already covered above. Search by country not supported.
+                    // Already covered above.
                     continue;
                 }
                 // The param must be short (max 32 characters) so don't include field name.
