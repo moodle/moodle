@@ -44,11 +44,9 @@ class create_and_clean_temp_stuff extends backup_execution_step {
 }
 
 /**
- * Delete the temp dir used by backup/restore (conditionally),
- * delete old directories and drop temp ids table. Note we delete
- * the directory but not the corresponding log file that will be
- * there for, at least, 1 week - only delete_old_backup_dirs() or cron
- * deletes log files (for easier access to them).
+ * Delete the temp dir used by backup/restore (conditionally) and drop temp ids table.
+ * Note we delete the directory but not the corresponding log file that will be
+ * there until cron cleans it up.
  */
 class drop_and_clean_temp_stuff extends backup_execution_step {
 
@@ -58,7 +56,6 @@ class drop_and_clean_temp_stuff extends backup_execution_step {
         global $CFG;
 
         backup_controller_dbops::drop_backup_ids_temp_table($this->get_backupid()); // Drop ids temp table
-        backup_helper::delete_old_backup_dirs(strtotime('-1 week'));                // Delete > 1 week old temp dirs.
         // Delete temp dir conditionally:
         // 1) If $CFG->keeptempdirectoriesonbackup is not enabled
         // 2) If backup temp dir deletion has been marked to be avoided
