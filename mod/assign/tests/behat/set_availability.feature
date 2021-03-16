@@ -57,10 +57,12 @@ Feature: Set availability dates for an assignment
     # Set 'Due date' to the second day of this month at noon.
     And I set the field "Due date" to "##first day of this month noon +24 hours##"
     And I press "Save and return to course"
+    And I turn editing mode on
+    And I add the "Calendar" block
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
-    And I follow "Calendar"
+    And I follow "This month"
     When I hover over day "2" of this month in the calendar
     Then I should see "C1: Assignment name is due"
 
