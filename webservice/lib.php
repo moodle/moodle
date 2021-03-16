@@ -285,9 +285,16 @@ class webservice {
      */
     public function get_ws_authorised_users($serviceid) {
         global $DB, $CFG;
+
         $params = array($CFG->siteguest, $serviceid);
-        $sql = " SELECT u.id as id, esu.id as serviceuserid, u.email as email, u.firstname as firstname,
-                        u.lastname as lastname,
+
+        $namefields = get_all_user_name_fields(true, 'u');
+
+        foreach (get_extra_user_fields(context_system::instance()) as $extrafield) {
+            $namefields .= ',u.' . $extrafield;
+        }
+
+        $sql = " SELECT u.id as id, esu.id as serviceuserid, {$namefields},
                         esu.iprestriction as iprestriction, esu.validuntil as validuntil,
                         esu.timecreated as timecreated
                    FROM {user} u, {external_services_users} esu
@@ -296,6 +303,7 @@ class webservice {
                         AND esu.externalserviceid = ?";
 
         $users = $DB->get_records_sql($sql, $params);
+
         return $users;
     }
 
@@ -623,11 +631,16 @@ class webservice {
      * as the front end does not display it itself. In pratice,
      * admins would like the info, for more info you can follow: MDL-29962
      *
+     * @deprecated since Moodle 3.11 in MDL-67748 without a replacement.
+     * @todo MDL-70187 Please delete this method completely in Moodle 4.3, thank you.
      * @param int $userid user id
      * @return array
      */
     public function get_user_capabilities($userid) {
         global $DB;
+
+        debugging('webservice::get_user_capabilities() has been deprecated.', DEBUG_DEVELOPER);
+
         //retrieve the user capabilities
         $sql = "SELECT DISTINCT rc.id, rc.capability FROM {role_capabilities} rc, {role_assignments} ra
             WHERE rc.roleid=ra.roleid AND ra.userid= ? AND rc.permission = ?";
@@ -640,45 +653,97 @@ class webservice {
     }
 
     /**
-     * Get missing user capabilities for a given service
-     * WARNING: do not use this "broken" function. It was created in the goal to display some capabilities
-     * required by users. In theory we should not need to display this kind of information
-     * as the front end does not display it itself. In pratice,
-     * admins would like the info, for more info you can follow: MDL-29962
+     * Get missing user capabilities for the given service's functions.
      *
-     * @param array $users users
-     * @param int $serviceid service id
-     * @return array of missing capabilities, keys being the user ids
+     * Every external function can declare some required capabilities to allow for easier setup of the web services.
+     * However, that is supposed to be used for informational admin report only. There is no automatic evaluation of
+     * the declared capabilities and the context of the capability evaluation is ignored. Also, actual capability
+     * evaluation is much more complex as it allows for overrides etc.
+     *
+     * Returned are capabilities that the given users do not seem to have assigned anywhere at the site and that should
+     * be checked by the admin.
+     *
+     * Do not use this method for anything else, particularly not for any security related checks. See MDL-29962 for the
+     * background of why we have this - there are arguments for dropping this feature completely.
+     *
+     * @param array $users List of users to check, consisting of objects, arrays or integer ids.
+     * @param int $serviceid The id of the external service to check.
+     * @return array List of missing capabilities: (int)userid => array of (string)capabilitynames
      */
-    public function get_missing_capabilities_by_users($users, $serviceid) {
+    public function get_missing_capabilities_by_users(array $users, int $serviceid): array {
         global $DB;
-        $usersmissingcaps = array();
 
-        //retrieve capabilities required by the service
-        $servicecaps = $this->get_service_required_capabilities($serviceid);
+        // The following are default capabilities for all authenticated users and we will assume them granted.
+        $commoncaps = get_default_capabilities('user');
 
-        //retrieve users missing capabilities
-        foreach ($users as $user) {
-            //cast user array into object to be a bit more flexible
-            if (is_array($user)) {
-                $user = (object) $user;
-            }
-            $usercaps = $this->get_user_capabilities($user->id);
-
-            //detect the missing capabilities
-            foreach ($servicecaps as $functioname => $functioncaps) {
-                foreach ($functioncaps as $functioncap) {
-                    if (!array_key_exists($functioncap, $usercaps)) {
-                        if (!isset($usersmissingcaps[$user->id])
-                                or array_search($functioncap, $usersmissingcaps[$user->id]) === false) {
-                            $usersmissingcaps[$user->id][] = $functioncap;
-                        }
-                    }
+        // Get the list of additional capabilities required by the service.
+        $servicecaps = [];
+        foreach ($this->get_service_required_capabilities($serviceid) as $service => $caps) {
+            foreach ($caps as $cap) {
+                if (empty($commoncaps[$cap])) {
+                    $servicecaps[$cap] = true;
                 }
             }
         }
 
-        return $usersmissingcaps;
+        if (empty($servicecaps)) {
+            return [];
+        }
+
+        // Prepare a list of user ids we want to check.
+        $userids = [];
+        foreach ($users as $user) {
+            if (is_object($user) && isset($user->id)) {
+                $userids[$user->id] = true;
+            } else if (is_array($user) && isset($user['id'])) {
+                $userids[$user['id']] = true;
+            } else {
+                throw new coding_exception('Unexpected format of users list in webservice::get_missing_capabilities_by_users().');
+            }
+        }
+
+        // Prepare a matrix of missing capabilities x users - consider them all missing by default.
+        foreach (array_keys($userids) as $userid) {
+            foreach (array_keys($servicecaps) as $capname) {
+                $matrix[$userid][$capname] = true;
+            }
+        }
+
+        list($capsql, $capparams) = $DB->get_in_or_equal(array_keys($servicecaps), SQL_PARAMS_NAMED, 'paramcap');
+        list($usersql, $userparams) = $DB->get_in_or_equal(array_keys($userids), SQL_PARAMS_NAMED, 'paramuser');
+
+        $sql = "SELECT c.name AS capability, u.id AS userid
+                  FROM {capabilities} c
+                  JOIN {role_capabilities} rc ON c.name = rc.capability
+                  JOIN {role_assignments} ra ON ra.roleid = rc.roleid
+                  JOIN {user} u ON ra.userid = u.id
+                 WHERE rc.permission = :capallow
+                   AND c.name {$capsql}
+                   AND u.id {$usersql}";
+
+        $params = $capparams + $userparams + [
+            'capallow' => CAP_ALLOW,
+        ];
+
+        $rs = $DB->get_recordset_sql($sql, $params);
+
+        foreach ($rs as $record) {
+            // If there was a potential role assignment found that might grant the user the given capability,
+            // remove it from the matrix. Again, we ignore all the contexts, prohibits, prevents and other details
+            // of the permissions evaluations. See the function docblock for details.
+            unset($matrix[$record->userid][$record->capability]);
+        }
+
+        $rs->close();
+
+        foreach ($matrix as $userid => $caps) {
+            $matrix[$userid] = array_keys($caps);
+            if (empty($matrix[$userid])) {
+                unset($matrix[$userid]);
+            }
+        }
+
+        return $matrix;
     }
 
     /**
@@ -1416,7 +1481,7 @@ abstract class webservice_base_server extends webservice_server {
                      7. The function is called with username/password (no user token is sent)
                      and none of the services has the function to allow the user.
                      These settings can be found in Administration > Site administration
-                     > Plugins > Web services > External services and Manage tokens.');
+                     > Server > Web services > External services and Manage tokens.');
         }
 
         // we have all we need now

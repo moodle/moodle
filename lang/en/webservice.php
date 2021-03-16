@@ -118,7 +118,7 @@ $string['loginrequired'] = 'Restricted to logged-in users';
 $string['manageprotocols'] = 'Manage protocols';
 $string['managetokens'] = 'Manage tokens';
 $string['missingcaps'] = 'Missing capabilities';
-$string['missingcaps_help'] = 'List of required capabilities for the service which the selected user does not have. Missing capabilities must be added to the user\'s role in order to use the service.';
+$string['missingcaps_help'] = 'List of capabilities declared by the service which the user does not have. Some service functionality may not be available without these capabilities.';
 $string['missingpassword'] = 'Missing password';
 $string['missingrequiredcapability'] = 'The capability {$a} is required.';
 $string['missingusername'] = 'Missing username';
@@ -130,7 +130,7 @@ $string['norequiredcapability'] = 'No required capability';
 $string['notoken'] = 'The token list is empty.';
 $string['onesystemcontrolling'] = 'Allow an external system to control Moodle';
 $string['onesystemcontrollingdescription'] = 'The following steps help you to set up the Moodle web services to allow an external system to interact with Moodle. This includes setting up a token (security key) authentication method.';
-$string['onlyseecreatedtokens'] = 'Any token can be deleted, though you can only view tokens that you created.';
+$string['onlyseecreatedtokens'] = 'You can only view tokens that you created.';
 $string['operation'] = 'Operation';
 $string['optional'] = 'Optional';
 $string['passwordisexpired'] = 'Password is expired.';
@@ -205,6 +205,9 @@ $string['token'] = 'Token';
 $string['tokenauthlog'] = 'Token authentication';
 $string['tokencreatedbyadmin'] = 'Can only be reset by administrator (*)';
 $string['tokencreator'] = 'Creator';
+$string['tokenfilter'] = 'Tokens filter';
+$string['tokenfiltersubmit'] = 'Show only matching tokens';
+$string['tokenfilterreset'] = 'Show all tokens';
 $string['unknownoptionkey'] = 'Unknown option key ({$a})';
 $string['unnamedstringparam'] = 'A string parameter is unnamed.';
 $string['updateusersettings'] = 'Update';
@@ -215,8 +218,6 @@ $string['userasclientsdescription'] = 'The following steps help you to set up th
 $string['usermissingcaps'] = 'Missing capabilities: {$a}';
 $string['usernameorid'] = 'Username / User id';
 $string['usernameorid_help'] = 'Enter a username or a user id.';
-$string['usernameoridnousererror'] = 'No users were found with this username/user id.';
-$string['usernameoridoccurenceerror'] = 'More than one user was found with this username. Please enter the user id.';
 $string['usernotallowed'] = 'The user is not allowed for this service. First you need to allow this user on the {$a}\'s allowed users administration page.';
 $string['userservices'] = 'User services: {$a}';
 $string['usersettingssaved'] = 'User settings saved';
@@ -243,3 +244,7 @@ $string['wsusername'] = 'Web service username';
 
 // Deprecated since Moodle 3.9.
 $string['documentation'] = 'web service documentation';
+
+// Deprecated since Moodle 3.11.
+$string['usernameoridnousererror'] = 'No users were found with this username/user id.';
+$string['usernameoridoccurenceerror'] = 'More than one user was found with this username. Please enter the user id.';

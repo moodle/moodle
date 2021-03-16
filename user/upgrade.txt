@@ -1,5 +1,13 @@
 This files describes API changes for code that uses the user API.
 
+=== 3.11 ===
+
+* Added new core_user/form_user_selector JS module that can be used as the 'ajax' handler for the autocomplete form
+  element implementing the user selector.
+* Added new external function core_user_external::search_identity(). The main purpose of this external function is to
+  provide data for asynchronous user selectors and similar widgets. It allows to search users matching the given query
+  in their name or other available identity fields.
+
 === 3.9 ===
 
 * The unified filter has been replaced by the participants filter. The following have therefore been deprecated:

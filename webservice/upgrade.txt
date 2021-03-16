@@ -3,6 +3,12 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
+=== 3.11 ===
+
+* The method webservice::get_user_capabilities() is deprecated now without a replacement. It has been used
+  internally only to populate the list of missing capabilities. That functionality has been improved so that
+  it no longer needs this standalone method.
+
 === 3.10 ===
 
 * The class externallib_advanced_testcase, used in unit tests, has a new function called "configure_filters" to easily configure filters for external functions testing.
