@@ -171,8 +171,6 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         new lang_string('enablecompletion_help', 'completion'), 1, array(0 => new lang_string('no'), 1 => new lang_string('yes'))));
 
     // Display completion conditions.
-    $temp->add(new admin_setting_heading('showcompletionconditions',
-        new lang_string('showcompletionconditions', 'completion'), ''));
     $temp->add(new admin_setting_configselect('moodlecourse/showcompletionconditions',
         new lang_string('showcompletionconditions', 'completion'),
         new lang_string('showcompletionconditions_help', 'completion'), 1, [
