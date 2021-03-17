@@ -103,13 +103,11 @@ class issuer extends persistent {
 
         // Client ID.
         $mform->addElement('text', 'clientid', get_string('issuerclientid', 'tool_oauth2'));
-        $mform->addRule('clientid', null, 'required', null, 'client');
         $mform->addRule('clientid', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('clientid', 'issuerclientid', 'tool_oauth2');
 
         // Client Secret.
         $mform->addElement('text', 'clientsecret', get_string('issuerclientsecret', 'tool_oauth2'));
-        $mform->addRule('clientsecret', null, 'required', null, 'client');
         $mform->addRule('clientsecret', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('clientsecret', 'issuerclientsecret', 'tool_oauth2');
 
@@ -167,15 +165,25 @@ class issuer extends persistent {
             $mform->addHelpButton('requireconfirmation', 'issuerrequireconfirmation', 'tool_oauth2');
         }
 
+        if ($this->type == 'imsobv2p1' || $issuer->get('servicetype') == 'imsobv2p1') {
+            $mform->addRule('baseurl', null, 'required', null, 'client');
+        } else {
+            $mform->addRule('clientid', null, 'required', null, 'client');
+            $mform->addRule('clientsecret', null, 'required', null, 'client');
+        }
+
         $mform->addElement('hidden', 'sortorder');
         $mform->setType('sortorder', PARAM_INT);
+
+        $mform->addElement('hidden', 'servicetype');
+        $mform->setType('servicetype', PARAM_ALPHANUM);
 
         if ($this->type) {
             $mform->addElement('hidden', 'action', 'savetemplate');
             $mform->setType('action', PARAM_ALPHA);
 
             $mform->addElement('hidden', 'type', $this->_customdata['type']);
-            $mform->setType('type', PARAM_ALPHA);
+            $mform->setType('type', PARAM_ALPHANUM);
         } else {
             $mform->addElement('hidden', 'action', 'edit');
             $mform->setType('action', PARAM_ALPHA);
@@ -190,5 +198,15 @@ class issuer extends persistent {
         $this->add_action_buttons(true, get_string('savechanges', 'tool_oauth2'));
     }
 
-}
+    /**
+     * This method implements changes to the form that need to be made once the form data is set.
+     */
+    public function definition_after_data() {
+        $mform = $this->_form;
 
+        if ($this->type) {
+            // Set servicetype if it's defined.
+            $mform->getElement('servicetype')->setValue($this->type);
+        }
+    }
+}
