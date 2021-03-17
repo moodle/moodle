@@ -117,11 +117,11 @@ function imscp_parse_structure($imscp, $context) {
  */
 function imscp_parse_manifestfile($manifestfilecontents, $imscp, $context) {
     $doc = new DOMDocument();
-    $oldentities = libxml_disable_entity_loader(true);
+    $oldentities = imscp_libxml_disable_entity_loader(true);
     if (!$doc->loadXML($manifestfilecontents, LIBXML_NONET)) {
         return null;
     }
-    libxml_disable_entity_loader($oldentities);
+    imscp_libxml_disable_entity_loader($oldentities);
 
     // We put this fake URL as base in order to detect path changes caused by xml:base attributes.
     $doc->documentURI = 'http://grrr/';
@@ -221,11 +221,11 @@ function imscp_recursive_href($manifestfilename, $imscp, $context) {
     }
 
     $doc = new DOMDocument();
-    $oldentities = libxml_disable_entity_loader(true);
+    $oldentities = imscp_libxml_disable_entity_loader(true);
     if (!$doc->loadXML($manifestfile->get_content(), LIBXML_NONET)) {
         return null;
     }
-    libxml_disable_entity_loader($oldentities);
+    imscp_libxml_disable_entity_loader($oldentities);
 
     $xmlresources = $doc->getElementsByTagName('resource');
     foreach ($xmlresources as $res) {
@@ -272,6 +272,23 @@ function imscp_recursive_item($xmlitem, $level, $resources) {
                  'level'    => $level,
                  'subitems' => $subitems,
                 );
+}
+
+/**
+ * Wrapper for function libxml_disable_entity_loader() deprecated in PHP 8
+ *
+ * Method was deprecated in PHP 8 and it shows deprecation message. However it is still
+ * required in the previous versions on PHP. While Moodle supports both PHP 7 and 8 we need to keep it.
+ * @see https://php.watch/versions/8.0/libxml_disable_entity_loader-deprecation
+ *
+ * @param bool $value
+ * @return bool
+ */
+function imscp_libxml_disable_entity_loader(bool $value): bool {
+    if (PHP_VERSION_ID < 80000) {
+        return (bool)libxml_disable_entity_loader($value);
+    }
+    return true;
 }
 
 /**
