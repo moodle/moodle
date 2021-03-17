@@ -378,7 +378,9 @@ class file_system_filedir extends file_system {
         // Let's try to prevent some race conditions.
 
         $prev = ignore_user_abort(true);
-        @unlink($hashfile.'.tmp');
+        if (file_exists($hashfile.'.tmp')) {
+            @unlink($hashfile.'.tmp');
+        }
         if (!copy($pathname, $hashfile.'.tmp')) {
             // Borked permissions or out of disk space.
             @unlink($hashfile.'.tmp');
@@ -393,7 +395,10 @@ class file_system_filedir extends file_system {
         }
         rename($hashfile.'.tmp', $hashfile);
         chmod($hashfile, $this->filepermissions); // Fix permissions if needed.
-        @unlink($hashfile.'.tmp'); // Just in case anything fails in a weird way.
+        if (file_exists($hashfile.'.tmp')) {
+            // Just in case anything fails in a weird way.
+            @unlink($hashfile.'.tmp');
+        }
         ignore_user_abort($prev);
 
         return array($contenthash, $filesize, $newfile);
@@ -467,7 +472,10 @@ class file_system_filedir extends file_system {
         }
         rename($hashfile.'.tmp', $hashfile);
         chmod($hashfile, $this->filepermissions); // Fix permissions if needed.
-        @unlink($hashfile.'.tmp'); // Just in case anything fails in a weird way.
+        if (file_exists($hashfile.'.tmp')) {
+            // Just in case anything fails in a weird way.
+            @unlink($hashfile.'.tmp');
+        }
         ignore_user_abort($prev);
 
         return array($contenthash, $filesize, $newfile);

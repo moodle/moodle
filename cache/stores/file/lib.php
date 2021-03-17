@@ -399,7 +399,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     public function delete($key) {
         $filename = $key.'.cache';
         $file = $this->file_path_for_key($key);
-        if (@unlink($file)) {
+        if (file_exists($file) && @unlink($file)) {
             unset($this->keys[$filename]);
             return true;
         }
