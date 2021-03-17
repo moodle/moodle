@@ -3074,7 +3074,7 @@ class course_request {
      * @param string $message
      * @param int|null $courseid
      */
-    protected function notify($touser, $fromuser, $name='courserequested', $subject, $message, $courseid = null) {
+    protected function notify($touser, $fromuser, $name, $subject, $message, $courseid = null) {
         $eventdata = new \core\message\message();
         $eventdata->courseid          = empty($courseid) ? SITEID : $courseid;
         $eventdata->component         = 'moodle';

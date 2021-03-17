@@ -395,7 +395,7 @@ class pdf extends TcpdfFpdi {
      * @param string $imagefolder - Folder containing stamp images.
      * @return bool true if successful (always)
      */
-    public function add_annotation($sx, $sy, $ex, $ey, $colour = 'yellow', $type = 'line', $path, $imagefolder) {
+    public function add_annotation($sx, $sy, $ex, $ey, $colour, $type, $path, $imagefolder) {
         global $CFG;
         if (!$this->filename) {
             return false;

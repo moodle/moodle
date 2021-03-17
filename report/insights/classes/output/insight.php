@@ -64,7 +64,7 @@ class insight implements \renderable, \templatable {
      * @param \context $context
      * @return void
      */
-    public function __construct(\core_analytics\prediction $prediction, \core_analytics\model $model, $includedetailsaction = false,
+    public function __construct(\core_analytics\prediction $prediction, \core_analytics\model $model, $includedetailsaction,
             \context $context) {
 
         $this->prediction = $prediction;

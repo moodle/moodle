@@ -2920,7 +2920,7 @@ class core_message_external extends external_api {
      * @throws moodle_exception
      * @since 3.2
      */
-    public static function get_message_processor($userid = 0, $name) {
+    public static function get_message_processor($userid, $name) {
         global $USER, $PAGE, $CFG;
 
         // Check if messaging is enabled.

@@ -49,7 +49,7 @@ class mnet_peer {
      * @param int $application - table id - what kind of peer are we talking to
      * @return bool - indication of success or failure
      */
-    function bootstrap($wwwroot, $pubkey = null, $application) {
+    function bootstrap($wwwroot, $pubkey, $application) {
         global $DB;
 
         if (substr($wwwroot, -1, 1) == '/') {

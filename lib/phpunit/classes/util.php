@@ -913,7 +913,7 @@ class phpunit_util extends testing_util {
      *        or the name of the static class when calling a static method.
      * @return mixed the respective return value of the method.
      */
-    public static function call_internal_method($object, $methodname, array $params = array(), $classname) {
+    public static function call_internal_method($object, $methodname, array $params, $classname) {
         $reflection = new \ReflectionClass($classname);
         $method = $reflection->getMethod($methodname);
         $method->setAccessible(true);
