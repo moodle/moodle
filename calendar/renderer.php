@@ -316,7 +316,7 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @param string $importresults
      * @return string
      */
-    public function subscription_details($unused = null, $subscriptions, $importresults = '') {
+    public function subscription_details($unused, $subscriptions, $importresults = '') {
         $table = new html_table();
         $table->head  = array(
             get_string('colcalendar', 'calendar'),

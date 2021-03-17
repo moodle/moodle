@@ -66,7 +66,7 @@ class category_condition extends condition {
      * @param \stdClass   $course        Course record
      * @param integer    $maxinfolength The maximum displayed length of the category info.
      */
-    public function __construct($cat = null, $recurse = false, $contexts, $baseurl, $course, $maxinfolength = null) {
+    public function __construct($cat, $recurse, $contexts, $baseurl, $course, $maxinfolength = null) {
         $this->cat = $cat;
         $this->recurse = $recurse;
         $this->contexts = $contexts;

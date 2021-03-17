@@ -1016,7 +1016,7 @@ class mod_data_search_test extends advanced_testcase {
      * @param mod_data $data
      * @return void
      */
-    protected function create_default_data_fields($fieldtypes = array(), $data) {
+    protected function create_default_data_fields($fieldtypes, $data) {
         $count = 1;
 
         // Creating test Fields with default parameter values.
