@@ -252,4 +252,118 @@ class core_oauth2_testcase extends advanced_testcase {
         $this->assertTrue($issuer->is_valid_login_domain('longer.example@sub.example.com'));
     }
 
+    /**
+     * Test endpoints creation for issuers.
+     * @dataProvider create_endpoints_for_standard_issuer_provider
+     *
+     * @covers ::create_endpoints_for_standard_issuer
+     *
+     * @param string $type Issuer type to create.
+     * @param string|null $discoveryurl Expected discovery URL or null if this endpoint doesn't exist.
+     * @param bool $hasmappingfields True if it's expected the issuer to create has mapping fields.
+     * @param string|null $baseurl The service URL (mandatory parameter for some issuers, such as NextCloud or IMS OBv2.1).
+     * @param string|null $expectedexception Name of the expected expection or null if no exception will be thrown.
+     */
+    public function test_create_endpoints_for_standard_issuer(string $type, ?string $discoveryurl = null,
+        bool $hasmappingfields = true, ?string $baseurl = null, ?string $expectedexception = null): void {
+
+        $this->resetAfterTest();
+
+        // Mark test as long because it connects with external services.
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
+
+        $this->setAdminUser();
+
+        // Method create_endpoints_for_standard_issuer is called internally from create_standard_issuer.
+        if ($expectedexception) {
+            $this->expectException($expectedexception);
+        }
+        $issuer = \core\oauth2\api::create_standard_issuer($type, $baseurl);
+
+        // Check endpoints have been created.
+        $endpoints = \core\oauth2\api::get_endpoints($issuer);
+        $this->assertNotEmpty($endpoints);
+        $this->assertNotEmpty($issuer->get('image'));
+        // Check discovery URL.
+        if ($discoveryurl) {
+            $this->assertStringContainsString($discoveryurl, $issuer->get_endpoint_url('discovery'));
+        } else {
+            $this->assertFalse($issuer->get_endpoint_url('discovery'));
+        }
+        // Check userfield mappings.
+        $userfieldmappings = core\oauth2\api::get_user_field_mappings($issuer);
+        if ($hasmappingfields) {
+            $this->assertNotEmpty($userfieldmappings);
+        } else {
+            $this->assertEmpty($userfieldmappings);
+        }
+    }
+
+    /**
+     * Data provider for test_create_endpoints_for_standard_issuer.
+     *
+     * @return array
+     */
+    public function create_endpoints_for_standard_issuer_provider(): array {
+        return [
+            'Google' => [
+                'type' => 'google',
+                'discoveryurl' => '.well-known/openid-configuration',
+            ],
+            'Google will work too with a valid baseurl parameter' => [
+                'type' => 'google',
+                'discoveryurl' => '.well-known/openid-configuration',
+                'hasmappingfields' => true,
+                'baseurl' => 'https://accounts.google.com/',
+            ],
+            'IMS OBv2.1' => [
+                'type' => 'imsobv2p1',
+                'discoveryurl' => '.well-known/badgeconnect.json',
+                'hasmappingfields' => false,
+                'baseurl' => 'https://dc.imsglobal.org/',
+            ],
+            'IMS OBv2.1 without slash in baseurl should work too' => [
+                'type' => 'imsobv2p1',
+                'discoveryurl' => '.well-known/badgeconnect.json',
+                'hasmappingfields' => false,
+                'baseurl' => 'https://dc.imsglobal.org',
+            ],
+            'IMS OBv2.1 with empty baseurl should return an exception' => [
+                'type' => 'imsobv2p1',
+                'discoveryurl' => null,
+                'hasmappingfields' => false,
+                'baseurl' => null,
+                'expectedexception' => \moodle_exception::class,
+            ],
+            'Microsoft' => [
+                'type' => 'microsoft',
+            ],
+            'Facebook' => [
+                'type' => 'facebook',
+            ],
+            'NextCloud' => [
+                'type' => 'nextcloud',
+                'discoveryurl' => null,
+                'hasmappingfields' => true,
+                'baseurl' => 'https://dummy.local/nextcloud/',
+            ],
+            'NextCloud with empty baseurl should return an exception' => [
+                'type' => 'nextcloud',
+                'discoveryurl' => null,
+                'hasmappingfields' => true,
+                'baseurl' => null,
+                'expectedexception' => \moodle_exception::class,
+            ],
+            'Invalid type should return an exception' => [
+                'type' => 'fictitious',
+                'discoveryurl' => null,
+                'hasmappingfields' => true,
+                'baseurl' => null,
+                'expectedexception' => \moodle_exception::class,
+            ],
+        ];
+    }
+
 }

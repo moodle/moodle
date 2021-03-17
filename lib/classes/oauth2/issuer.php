@@ -109,7 +109,12 @@ class issuer extends persistent {
             'requireconfirmation' => array(
                 'type' => PARAM_BOOL,
                 'default' => true
-            )
+            ),
+            'servicetype' => array(
+                'type' => PARAM_TEXT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ),
         );
     }
 
