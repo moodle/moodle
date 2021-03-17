@@ -108,16 +108,16 @@ class media_html5audio_testcase extends advanced_testcase {
         $this->assertTrue($manager->can_embed_url($url, $embedoptions));
         $content = $manager->embed_url($url, 'Test & file', 0, 0, $embedoptions);
 
-        $this->assertRegExp('~mediaplugin_html5audio~', $content);
-        $this->assertRegExp('~</audio>~', $content);
-        $this->assertRegExp('~title="Test &amp; file"~', $content);
+        $this->assertMatchesRegularExpression('~mediaplugin_html5audio~', $content);
+        $this->assertMatchesRegularExpression('~</audio>~', $content);
+        $this->assertMatchesRegularExpression('~title="Test &amp; file"~', $content);
         // Do not set default width/height (it's an audio after all).
-        $this->assertNotRegExp('~width=~', $content);
-        $this->assertNotRegExp('~height=~', $content);
+        $this->assertDoesNotMatchRegularExpression('~width=~', $content);
+        $this->assertDoesNotMatchRegularExpression('~height=~', $content);
 
         // This plugin ignores size settings.
-        $this->assertNotRegExp('~width=~', $content);
-        $this->assertNotRegExp('~height=~', $content);
+        $this->assertDoesNotMatchRegularExpression('~width=~', $content);
+        $this->assertDoesNotMatchRegularExpression('~height=~', $content);
     }
 
     /**
@@ -130,10 +130,10 @@ class media_html5audio_testcase extends advanced_testcase {
         $text = html_writer::link($url, 'Watch this one');
         $content = format_text($text, FORMAT_HTML);
 
-        $this->assertRegExp('~mediaplugin_html5audio~', $content);
-        $this->assertRegExp('~</audio>~', $content);
-        $this->assertRegExp('~title="Watch this one"~', $content);
-        $this->assertNotRegExp('~<track\b~i', $content);
+        $this->assertMatchesRegularExpression('~mediaplugin_html5audio~', $content);
+        $this->assertMatchesRegularExpression('~</audio>~', $content);
+        $this->assertMatchesRegularExpression('~title="Watch this one"~', $content);
+        $this->assertDoesNotMatchRegularExpression('~<track\b~i', $content);
     }
 
     /**
@@ -146,7 +146,7 @@ class media_html5audio_testcase extends advanced_testcase {
             '<track src="'.$trackurl.'">Unsupported text</audio>';
         $content = format_text($text, FORMAT_HTML);
 
-        $this->assertNotRegExp('~mediaplugin_html5audio~', $content);
+        $this->assertDoesNotMatchRegularExpression('~mediaplugin_html5audio~', $content);
         $this->assertEquals(clean_text($text, FORMAT_HTML), $content);
     }
 }

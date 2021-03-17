@@ -210,7 +210,7 @@ class quizaccess_seb_quiz_settings_testcase extends advanced_testcase {
         $quizsettings->set('allowedbrowserexamkeys', $bek);
         $quizsettings->validate();
         $errors = $quizsettings->get_errors();
-        $this->assertContains($expectederrorstring, $errors);
+        $this->assertContainsEquals($expectederrorstring, $errors);
     }
 
     /**

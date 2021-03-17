@@ -133,7 +133,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         $result = api::update_request_status($requestid, api::DATAREQUEST_STATUS_AWAITING_APPROVAL, 0, $secondcomment);
         $this->assertTrue($result);
         $datarequest = new data_request($requestid);
-        $this->assertRegExp("/.*{$comment}.*{$secondcomment}/s", $datarequest->get('dpocomment'));
+        $this->assertMatchesRegularExpression("/.*{$comment}.*{$secondcomment}/s", $datarequest->get('dpocomment'));
 
         // Update with a valid status.
         $result = api::update_request_status($requestid, api::DATAREQUEST_STATUS_DOWNLOAD_READY);
@@ -237,9 +237,9 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
         // There should only be one PO role.
         $this->assertCount(1, $roleids);
         // Confirm it contains the manager role.
-        $this->assertContains($managerroleid, $roleids);
+        $this->assertContainsEquals($managerroleid, $roleids);
         // And it does not contain the editing teacher role.
-        $this->assertNotContains($editingteacherroleid, $roleids);
+        $this->assertNotContainsEquals($editingteacherroleid, $roleids);
     }
 
     /**
@@ -838,7 +838,7 @@ class tool_dataprivacy_api_testcase extends advanced_testcase {
             $this->assertCount($filteredcount, $filteredrequests);
             // Confirm the filtered requests match the status filter(s).
             foreach ($filteredrequests as $request) {
-                $this->assertContains($request->get('status'), $statuses);
+                $this->assertContainsEquals($request->get('status'), $statuses);
             }
 
             if ($numstatus > 1) {

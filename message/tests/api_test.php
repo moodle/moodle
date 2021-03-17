@@ -1545,7 +1545,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $conversations = \core_message\api::get_conversations($user1->id);
         // Consider first conversations is self-conversation.
         $this->assertCount(7, $conversations);
-        $this->assertContains($gc2->id, array_column($conversations, 'id'));
+        $this->assertContainsEquals($gc2->id, array_column($conversations, 'id'));
 
         // Delete all messages from an individual conversation the user is in - it should not be returned.
         $this->assertTrue(\core_message\api::is_user_in_conversation($user1->id, $ic1->id));
@@ -1557,7 +1557,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $conversations = \core_message\api::get_conversations($user1->id);
         // Consider first conversations is self-conversation.
         $this->assertCount(6, $conversations);
-        $this->assertNotContains($ic1->id, array_column($conversations, 'id'));
+        $this->assertNotContainsEquals($ic1->id, array_column($conversations, 'id'));
     }
 
     /**
@@ -5580,8 +5580,8 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // however, we can still determine the number and ids of any recipients this way.
         $this->assertCount(1, $events);
         $userids = array_column($events, 'userid');
-        $this->assertNotContains($user1->id, $userids);
-        $this->assertContains($user2->id, $userids);
+        $this->assertNotContainsEquals($user1->id, $userids);
+        $this->assertContainsEquals($user2->id, $userids);
     }
 
     /**
@@ -5629,9 +5629,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // however, we can still determine the number and ids of any recipients this way.
         $this->assertCount(2, $events);
         $userids = array_column($events, 'userid');
-        $this->assertNotContains($user1->id, $userids);
-        $this->assertContains($user3->id, $userids);
-        $this->assertContains($user4->id, $userids);
+        $this->assertNotContainsEquals($user1->id, $userids);
+        $this->assertContainsEquals($user3->id, $userids);
+        $this->assertContainsEquals($user4->id, $userids);
     }
 
     /**

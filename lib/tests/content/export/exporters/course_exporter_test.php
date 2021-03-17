@@ -149,7 +149,7 @@ class course_exporter_test extends advanced_testcase {
     protected function get_mocked_zipwriter(?array $methods = []): zipwriter {
         return $this->getMockBuilder(zipwriter::class)
             ->setConstructorArgs([$this->getMockBuilder(\ZipStream\ZipStream::class)->getmock()])
-            ->setMethods($methods)
+            ->onlyMethods($methods)
             ->getMock();
     }
 }

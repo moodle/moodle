@@ -2,6 +2,67 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 3.11 ===
+* PHPUnit has been upgraded to 9.5 (see MDL-71036 for details).
+  That comes with a few changes:
+  - Breaking: All the changes that were deprecated with PHPUnit 8.5
+    are now removed (see the 3.10 section below).
+  - Breaking: assertContains() now performs stricter comparison (like assertSame()
+    does). New assertContainsEquals() has been created to provide the old
+    behavior.
+  - Deprecation: A number of file-related assertions have been deprecated, will
+    be removed with PHPUnit 10. Alternatives for all them have been created:
+      - assertNotIsReadable()         -> assertIsNotReadable()
+      - assertNotIsWritable()         -> assertIsNotWritable()
+      - assertDirectoryNotExists()    -> assertDirectoryDoesNotExist()
+      - assertDirectoryNotIsReadable()-> assertDirectoryIsNotReadable()
+      - assertDirectoryNotIsWritable()-> assertDirectoryIsNotWritable()
+      - assertFileNotExists()         -> assertFileDoesNotExist()
+      - assertFileNotIsReadable()     -> assertFileIsNotReadable()
+      - assertFileNotIsWritable()     -> assertFileIsNotWritable()
+  - Deprecation: Regexp-related assertions have been deprecated, will be
+    removed with PHPUnit 10. Alternatives for all them have been created:
+      - assertRegExp()     -> assertMatchesRegularExpression()
+      - assertNotRegExp()  -> assertDoesNotMatchRegularExpression()
+  - Deprecation: The expectException() for Notice, Warning, Deprecation and
+    Error is deprecated, will be removed with PHPUnit 10. New expectations
+    have been created to better define the expectation:
+      - expectDeprecation() for E_DEPRECATED and E_USER_DEPRECATED.
+      - expectNotice() for E_NOTICE, E_USER_NOTICE, and E_STRICT.
+      - expectWarning() for E_WARNING and E_USER_WARNING.
+      - expectError() for everything else.
+   - Deprecation: The Mock->at() matcher has been deprecated and will be
+     removed with PHPUnit 10. Switch to better, more deterministic and clearer
+     matchers is recommended (->once(), ->exactly(), ->never()...).
+   - Deprecation: The Mock->setMethods() method has been *silently* deprecated
+     and will be removed in the future. Change uses to the new Mock->onlyMethods()
+     alternative. Also, it doesn't accept "null" anymore, new default must
+     be [] (empty array).
+   - Mostly internal: With the raise to PHP 7.3 as lower version supported,
+     various internal bits perform now stricter type checking in params and
+     return values. If your tests have own-created comparators, assertions...
+     they may need to be adjusted.
+   - Mostly internal: The phpunit.xml schema has changed, basically removing
+     the old <filter> section and replacing it with a new, less confusing
+     <coverage> section. Also the elements within them have been changed:
+       - <whitelist> has been replaced by <include>.
+       - <exclude> is not a child of <whitelist> anymore, but of <coverage>.
+     Note that this only will affect if you've custom phpunit.xml files
+     instead of using the automatically generated ones by Moodle.
+   - Deprecation: Related to the previous point, the $whitelistxxx properties
+     used by the coverage.php files have been deprecated (will continue
+     working until Moodle 4.3) to follow the same pattern:
+       - whitelistfolders -> includelistfolders
+       - whitelistfiles   -> includelistfiles
+   - Internal: Custom autoloaders are deprecated and will be removed with
+     PHPUnit 10. Hence we have removed our one already.
+     Note that it was not useful since PHPUnit 8.5, where the ability
+     to run tests by class name was removed.
+   - Warning: Because of some new restrictions about how test files and
+     test classes must be named (that Moodle haven't followed ever) it's not
+     possible to run individual test files any more. Use any of the alternative
+     execution methods (filter, suite, config) to specify which tests
+     you want to run. This will be hopefully fixed in MDL-71049
+     once it has been agreed which the best way to proceed is.
 * The horde library has been updated to version 5.2.23.
 * New optional parameter $extracontent for print_collapsible_region_start(). This allows developers to add interactive HTML elements
   (e.g. a help icon) after the collapsible region's toggle link.

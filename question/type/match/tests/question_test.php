@@ -140,12 +140,12 @@ class qtype_match_question_test extends advanced_testcase {
         $match = test_question_maker::make_question('match');
         $match->start_attempt(new question_attempt_step(), 1);
         $qsummary = $match->get_question_summary();
-        $this->assertRegExp('/' . preg_quote($match->questiontext, '/') . '/', $qsummary);
+        $this->assertMatchesRegularExpression('/' . preg_quote($match->questiontext, '/') . '/', $qsummary);
         foreach ($match->stems as $stem) {
-            $this->assertRegExp('/' . preg_quote($stem, '/') . '/', $qsummary);
+            $this->assertMatchesRegularExpression('/' . preg_quote($stem, '/') . '/', $qsummary);
         }
         foreach ($match->choices as $choice) {
-            $this->assertRegExp('/' . preg_quote($choice, '/') . '/', $qsummary);
+            $this->assertMatchesRegularExpression('/' . preg_quote($choice, '/') . '/', $qsummary);
         }
     }
 
@@ -155,8 +155,8 @@ class qtype_match_question_test extends advanced_testcase {
 
         $summary = $match->summarise_response($match->prepare_simulated_post_data(array('Dog' => 'Amphibian', 'Frog' => 'Mammal')));
 
-        $this->assertRegExp('/Dog -> Amphibian/', $summary);
-        $this->assertRegExp('/Frog -> Mammal/', $summary);
+        $this->assertMatchesRegularExpression('/Dog -> Amphibian/', $summary);
+        $this->assertMatchesRegularExpression('/Frog -> Mammal/', $summary);
     }
 
     public function test_classify_response() {

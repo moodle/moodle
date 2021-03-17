@@ -914,7 +914,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         // Note: Use the actual test class here rather than the abstract because are testing concrete methods.
         $this->DB = $DB;
         $DB = $this->getMockBuilder(get_class($DB))
-            ->setMethods(['set_field'])
+            ->onlyMethods(['set_field'])
             ->getMock();
 
         $DB->expects($this->exactly((int) $expectupdate))

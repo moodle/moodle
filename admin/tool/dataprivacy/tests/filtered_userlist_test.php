@@ -42,7 +42,7 @@ class tool_dataprivacy_filtered_userlist_testcase extends advanced_testcase {
     public function test_apply_expired_contexts_filters(array $initial, array $expired, array $unexpired, array $expected) {
         $userlist = $this->getMockBuilder(\tool_dataprivacy\filtered_userlist::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
 
         $rc = new \ReflectionClass(\tool_dataprivacy\filtered_userlist::class);

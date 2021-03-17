@@ -497,14 +497,14 @@ class core_user_testcase extends advanced_testcase {
         try {
             core_user::get_property_definition('fullname');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/Invalid property requested./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Invalid property requested./', $e->getMessage());
         }
 
         // Empty parameter.
         try {
             core_user::get_property_definition('');
         } catch (coding_exception $e) {
-            $this->assertRegExp('/Invalid property requested./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Invalid property requested./', $e->getMessage());
         }
     }
 

@@ -319,7 +319,7 @@ class core_filterlib_testcase extends advanced_testcase {
     }
 
     protected function setup_available_in_context_tests() {
-        $course = $this->getDataGenerator()->create_course(array('category'=>1));
+        $course = $this->getDataGenerator()->create_course(array('category' => 1));
 
         $childcontext = context_coursecat::instance(1);
         $childcontext2 = context_course::instance($course->id);
@@ -704,7 +704,7 @@ class core_filterlib_testcase extends advanced_testcase {
 
         $this->assertFileExists("$CFG->dirroot/filter/emailprotect"); // Any standard filter.
         $this->assertFileExists("$CFG->dirroot/filter/tidy");         // Any standard filter.
-        $this->assertFileNotExists("$CFG->dirroot/filter/grgrggr");   // Any non-existent filter
+        $this->assertFileDoesNotExist("$CFG->dirroot/filter/grgrggr");   // Any non-existent filter.
 
         // Setup fixture.
         set_config('filterall', 0);

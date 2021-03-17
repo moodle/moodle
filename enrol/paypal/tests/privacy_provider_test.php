@@ -263,8 +263,8 @@ class enrol_paypal_privacy_provider_testcase extends \core_privacy\tests\provide
         $this->assertCount(2, $contextlist);
 
         $contextids = $contextlist->get_contextids();
-        $this->assertContains($coursecontext1->id, $contextids);
-        $this->assertContains($coursecontext2->id, $contextids);
+        $this->assertContainsEquals($coursecontext1->id, $contextids);
+        $this->assertContainsEquals($coursecontext2->id, $contextids);
     }
 
     /**

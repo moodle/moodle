@@ -130,12 +130,12 @@ class qtype_randomsamatch_question_test extends advanced_testcase {
         $question = test_question_maker::make_question('randomsamatch');
         $question->start_attempt(new question_attempt_step(), 1);
         $qsummary = $question->get_question_summary();
-        $this->assertRegExp('/' . preg_quote($question->questiontext, '/') . '/', $qsummary);
+        $this->assertMatchesRegularExpression('/' . preg_quote($question->questiontext, '/') . '/', $qsummary);
         foreach ($question->stems as $stem) {
-            $this->assertRegExp('/' . preg_quote($stem, '/') . '/', $qsummary);
+            $this->assertMatchesRegularExpression('/' . preg_quote($stem, '/') . '/', $qsummary);
         }
         foreach ($question->choices as $choice) {
-            $this->assertRegExp('/' . preg_quote($choice, '/') . '/', $qsummary);
+            $this->assertMatchesRegularExpression('/' . preg_quote($choice, '/') . '/', $qsummary);
         }
     }
 
@@ -146,7 +146,7 @@ class qtype_randomsamatch_question_test extends advanced_testcase {
 
         $summary = $question->summarise_response(array('sub0' => 2, 'sub1' => 1));
 
-        $this->assertRegExp('/Dog -> \w+; Frog -> \w+/', $summary);
+        $this->assertMatchesRegularExpression('/Dog -> \w+; Frog -> \w+/', $summary);
     }
 
 

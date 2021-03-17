@@ -558,7 +558,7 @@ class core_contentbank_testcase extends advanced_testcase {
             // Mock core_plugin_manager class and the method get_plugins_of_type.
             $pluginmanager = $this->getMockBuilder(\core_plugin_manager::class)
                 ->disableOriginalConstructor()
-                ->setMethods(['get_plugins_of_type'])
+                ->onlyMethods(['get_plugins_of_type'])
                 ->getMock();
 
             // Replace protected singletoninstance reference (core_plugin_manager property) with mock object.

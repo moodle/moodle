@@ -33,40 +33,71 @@ defined('MOODLE_INTERNAL') || die();
  */
 class phpunit_coverage_info {
 
-    /** @var array The list of folders relative to the plugin root to whitelist in coverage generation. */
+    /**
+     * @var array The list of folders relative to the plugin root to whitelist in coverage generation.
+     * @deprecated since Moodle 3.11 MDL-70745 - please don't use this property any more.
+     * @todo MDL-71067 - remove in Moodle 4.3
+     */
     protected $whitelistfolders = [];
 
-    /** @var array The list of files relative to the plugin root to whitelist in coverage generation. */
+    /**
+     * @var array The list of files relative to the plugin root to whitelist in coverage generation.
+     * @deprecated since Moodle 3.11 MDL-70745 - please don't use this property any more.
+     * @todo MDL-71067 - remove in Moodle 4.3
+     */
     protected $whitelistfiles = [];
 
-    /** @var array The list of folders relative to the plugin root to excludelist in coverage generation. */
+    /** @var array The list of folders relative to the plugin root to include in coverage generation. */
+    protected $includelistfolders = [];
+
+    /** @var array The list of files relative to the plugin root to include in coverage generation. */
+    protected $includelistfiles = [];
+
+    /** @var array The list of folders relative to the plugin root to exclude from coverage generation. */
     protected $excludelistfolders = [];
 
-    /** @var array The list of files relative to the plugin root to excludelist in coverage generation. */
+    /** @var array The list of files relative to the plugin root to exclude from coverage generation. */
     protected $excludelistfiles = [];
 
     /**
-     * Get the formatted XML list of files and folders to whitelist.
+     * Get the formatted XML list of files and folders to include.
      *
      * @param   string  $plugindir The root of the plugin, relative to the dataroot.
      * @return  array
      */
-    final public function get_whitelists(string $plugindir) : array {
-        $filters = [];
+    final public function get_includelists(string $plugindir) : array {
+        $coverages = [];
 
         if (!empty($plugindir)) {
             $plugindir .= "/";
+
+            // TODO: MDL-71067 - remove this whole block once these properties deprecation period ends.
+            if (!empty($this->whitelistfolders) || !empty($this->whitelistfiles)) {
+                // Warning if the deprecated (whitelist) properties are found.
+                echo "Warning: \$whitelistfolders and \$whitelistfiles in " .
+                    "coverage.php files are deprecated since Moodle 3.11. " .
+                    "Please, replace them with \$includelistfolders and " .
+                    "\$includelistfiles in {$plugindir}tests/coverage.php\n";
+
+                foreach ($this->whitelistfolders as $folder) {
+                    $coverages[] = html_writer::tag('directory', "{$plugindir}{$folder}", ['suffix' => '.php']);
+                }
+
+                foreach ($this->whitelistfiles as $file) {
+                    $coverages[] = html_writer::tag('file', "{$plugindir}{$file}");
+                }
+            }
         }
 
-        foreach ($this->whitelistfolders as $folder) {
-            $filters[] = html_writer::tag('directory', "{$plugindir}{$folder}", ['suffix' => '.php']);
+        foreach ($this->includelistfolders as $folder) {
+            $coverages[] = html_writer::tag('directory', "{$plugindir}{$folder}", ['suffix' => '.php']);
         }
 
-        foreach ($this->whitelistfiles as $file) {
-            $filters[] = html_writer::tag('file', "{$plugindir}{$file}");
+        foreach ($this->includelistfiles as $file) {
+            $coverages[] = html_writer::tag('file', "{$plugindir}{$file}");
         }
 
-        return $filters;
+        return $coverages;
     }
 
     /**
@@ -76,20 +107,20 @@ class phpunit_coverage_info {
      * @return  array
      */
     final public function get_excludelists(string $plugindir) : array {
-        $filters = [];
+        $coverages = [];
 
         if (!empty($plugindir)) {
             $plugindir .= "/";
         }
 
         foreach ($this->excludelistfolders as $folder) {
-            $filters[] = html_writer::tag('directory', "{$plugindir}{$folder}", ['suffix' => '.php']);
+            $coverages[] = html_writer::tag('directory', "{$plugindir}{$folder}", ['suffix' => '.php']);
         }
 
         foreach ($this->excludelistfiles as $file) {
-            $filters[] = html_writer::tag('file', "{$plugindir}{$file}");
+            $coverages[] = html_writer::tag('file', "{$plugindir}{$file}");
         }
 
-        return $filters;
+        return $coverages;
     }
 }

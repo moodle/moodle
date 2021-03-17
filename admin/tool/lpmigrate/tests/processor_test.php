@@ -347,13 +347,13 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertEquals($this->c1->id, $warning['courseid']);
         $this->assertEquals($this->f1comps['A1']->get('id'), $warning['competencyid']);
         $this->assertEquals(null, $warning['cmid']);
-        $this->assertRegexp('/competency already exists/', $warning['message']);
+        $this->assertMatchesRegularExpression('/competency already exists/', $warning['message']);
 
         $warning = array_shift($warnings);
         $this->assertEquals($this->c2->id, $warning['courseid']);
         $this->assertEquals($this->f1comps['A2']->get('id'), $warning['competencyid']);
         $this->assertEquals($this->cms[$this->c2->id]['F1']->cmid, $warning['cmid']);
-        $this->assertRegexp('/competency already exists/', $warning['message']);
+        $this->assertMatchesRegularExpression('/competency already exists/', $warning['message']);
 
         $this->assertCourseCompetencyExists($this->c1, $this->f1comps['A1']);
         $this->assertModuleCompetencyExists($this->cms[$this->c2->id]['F1'], $this->f1comps['A2']);
@@ -436,7 +436,8 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertEquals($this->c1->id, $errors[0]['courseid']);
         $this->assertEquals($this->f1comps['A1']->get('id'), $errors[0]['competencyid']);
         $this->assertEquals(null, $errors[0]['cmid']);
-        $this->assertRegexp('/Sorry, but you do not currently have permissions to do that/', $errors[0]['message']);
+        $this->assertMatchesRegularExpression('/Sorry, but you do not currently have permissions to do that/',
+            $errors[0]['message']);
         $this->assertEquals($this->f1comps['A3']->get('id'), $errors[1]['competencyid']);
 
         $this->assertCourseCompetencyNotMigrated($this->c1, $this->f1comps['A1'], $this->f2comps['A1']);
@@ -465,7 +466,8 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertEquals($this->c2->id, $errors[0]['courseid']);
         $this->assertEquals($this->f1comps['A2']->get('id'), $errors[0]['competencyid']);
         $this->assertEquals($this->cms[$this->c2->id]['F1']->cmid, $errors[0]['cmid']);
-        $this->assertRegexp('/Sorry, but you do not currently have permissions to do that/', $errors[0]['message']);
+        $this->assertMatchesRegularExpression('/Sorry, but you do not currently have permissions to do that/',
+            $errors[0]['message']);
         $this->assertEquals($this->f1comps['A3']->get('id'), $errors[1]['competencyid']);
 
         // The new competencies were added to the course, but the old ones were not removed because they are still in modules.
@@ -616,5 +618,4 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertEquals($before->get('sortorder'), $after->get('sortorder'));
         $this->assertEquals($before->get('ruleoutcome'), $after->get('ruleoutcome'));
     }
-
 }

@@ -60,9 +60,9 @@ class webservice_xmlrpc_locallib_testcase extends advanced_testcase {
      */
     public function test_prepare_response($returnsdesc, $returns, $expected) {
         $server = $this->getMockBuilder('webservice_xmlrpc_server')
-                       ->disableOriginalConstructor()
-                       ->setMethods(null)
-                       ->getMock();
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
 
         $rc = new \ReflectionClass('webservice_xmlrpc_server');
         $rcm = $rc->getMethod('prepare_response');
@@ -96,9 +96,9 @@ class webservice_xmlrpc_locallib_testcase extends advanced_testcase {
      */
     public function test_generate_error($exception, $code, $expected) {
         $server = $this->getMockBuilder('webservice_xmlrpc_server')
-                ->disableOriginalConstructor()
-                ->setMethods(null)
-                ->getMock();
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
 
         $rc = new \ReflectionClass('webservice_xmlrpc_server');
         $rcm = $rc->getMethod('generate_error');

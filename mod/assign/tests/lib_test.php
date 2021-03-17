@@ -173,7 +173,7 @@ class mod_assign_lib_testcase extends advanced_testcase {
 
         $result = assign_user_outline($course, $student, $assign->get_course_module(), $assign->get_instance());
 
-        $this->assertRegExp('/50.5/', $result->info);
+        $this->assertMatchesRegularExpression('/50.5/', $result->info);
     }
 
     /**

@@ -135,7 +135,7 @@ class filterset_test extends advanced_testcase {
     public function test_add_filter_validated_type(): void {
         $namefilter = $this->getMockBuilder(filter::class)
             ->setConstructorArgs(['name'])
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
         $namefilter->add_filter_value('rosie');
 
@@ -188,7 +188,7 @@ class filterset_test extends advanced_testcase {
         // Add a filter to the list.
         // This is the 'name' filter.
         $namefilter = $this->getMockBuilder(filter::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->setConstructorArgs([$filtername])
             ->getMock();
 
@@ -207,7 +207,7 @@ class filterset_test extends advanced_testcase {
     public function test_add_filter_from_params(): void {
         $filtername = "name";
         $otherfilter = $this->getMockBuilder(filter::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->setConstructorArgs([$filtername])
             ->getMock();
 
@@ -254,7 +254,7 @@ class filterset_test extends advanced_testcase {
     public function test_add_filter_from_params_invalid(): void {
         $filtername = "name";
         $otherfilter = $this->getMockBuilder(filter::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->setConstructorArgs([$filtername])
             ->getMock();
 
@@ -538,10 +538,7 @@ class filterset_test extends advanced_testcase {
      * @param array $mockedmethods anonymous array containing the list of mocked methods
      * @return filterset Mock of the filterset
      */
-    protected function get_mocked_filterset(array $mockedmethods = null): filterset {
-        if (empty($mockedmethods)) {
-            $mockedmethods = null;
-        }
+    protected function get_mocked_filterset(array $mockedmethods = []): filterset {
 
         return $this->getMockForAbstractClass(filterset::class, [], '', true, true, true, $mockedmethods);
     }

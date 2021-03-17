@@ -221,7 +221,7 @@ class tree_testcase extends \advanced_testcase {
         list ($available, $information) = $this->get_available_results(
                 $structure, $info, $USER->id);
         $this->assertFalse($available);
-        $this->assertRegExp('~any of.*no.*way~', $information);
+        $this->assertMatchesRegularExpression('~any of.*no.*way~', $information);
 
         // Two conditions, OR, resolving as false, no display.
         $structure->show = false;
@@ -257,7 +257,7 @@ class tree_testcase extends \advanced_testcase {
         list ($available, $information) = $this->get_available_results(
                 $structure, $info, $USER->id);
         $this->assertFalse($available);
-        $this->assertRegExp('~wom.*bat~', $information);
+        $this->assertMatchesRegularExpression('~wom.*bat~', $information);
 
         // Two conditions, AND, both false, show turned off for one. When
         // show is turned off, that means if you don't have that condition
@@ -287,7 +287,7 @@ class tree_testcase extends \advanced_testcase {
         list ($available, $information) = $this->get_available_results(
                 $structure, $info, $USER->id);
         $this->assertFalse($available);
-        $this->assertRegExp('~!wom.*!bat~', $information);
+        $this->assertMatchesRegularExpression('~!wom.*!bat~', $information);
 
         // Two conditions, NOT AND, both true.
         $structure->op = '!&';
@@ -296,7 +296,7 @@ class tree_testcase extends \advanced_testcase {
         list ($available, $information) = $this->get_available_results(
                 $structure, $info, $USER->id);
         $this->assertFalse($available);
-        $this->assertRegExp('~any of.*!wom.*!bat~', $information);
+        $this->assertMatchesRegularExpression('~any of.*!wom.*!bat~', $information);
 
         // Two conditions, NOT AND, one true.
         $structure->c[1]->a = false;
@@ -330,7 +330,7 @@ class tree_testcase extends \advanced_testcase {
         list ($available, $information) = $this->get_available_results(
                 $structure, $info, $USER->id);
         $this->assertFalse($available);
-        $this->assertRegExp('~<ul.*<ul.*<li.*1.*<li.*2.*</ul>.*<li.*3~', $information);
+        $this->assertMatchesRegularExpression('~<ul.*<ul.*<li.*1.*<li.*2.*</ul>.*<li.*3~', $information);
     }
 
     /**
@@ -424,7 +424,7 @@ class tree_testcase extends \advanced_testcase {
                     self::mock(array('m' => '2'))), tree::OP_AND),
                 self::mock(array('m' => 3)));
         $tree = new tree($structure);
-        $this->assertRegExp('~<ul.*<ul.*<li.*1.*<li.*2.*</ul>.*<li.*3~',
+        $this->assertMatchesRegularExpression('~<ul.*<ul.*<li.*1.*<li.*2.*</ul>.*<li.*3~',
                 $renderer->render($tree->get_full_information($info)));
 
         // Test intro messages before list. First, OR message.
@@ -433,13 +433,13 @@ class tree_testcase extends \advanced_testcase {
                 self::mock(array('m' => '2'))
         );
         $tree = new tree($structure);
-        $this->assertRegExp('~Not available unless any of:.*<ul>~',
+        $this->assertMatchesRegularExpression('~Not available unless any of:.*<ul>~',
                 $renderer->render($tree->get_full_information($info)));
 
         // Now, OR message when not shown.
         $structure->show = false;
         $tree = new tree($structure);
-        $this->assertRegExp('~hidden.*<ul>~',
+        $this->assertMatchesRegularExpression('~hidden.*<ul>~',
                 $renderer->render($tree->get_full_information($info)));
 
         // AND message.
@@ -447,11 +447,11 @@ class tree_testcase extends \advanced_testcase {
         unset($structure->show);
         $structure->showc = array(false, false);
         $tree = new tree($structure);
-        $this->assertRegExp('~Not available unless:.*<ul>~',
+        $this->assertMatchesRegularExpression('~Not available unless:.*<ul>~',
                 $renderer->render($tree->get_full_information($info)));
 
         // Hidden markers on items.
-        $this->assertRegExp('~1.*hidden.*2.*hidden~',
+        $this->assertMatchesRegularExpression('~1.*hidden.*2.*hidden~',
                 $renderer->render($tree->get_full_information($info)));
 
         // Hidden markers on child tree and items.
@@ -459,11 +459,11 @@ class tree_testcase extends \advanced_testcase {
                 self::mock(array('m' => '2')),
                 self::mock(array('m' => '3'))), tree::OP_AND);
         $tree = new tree($structure);
-        $this->assertRegExp('~1.*hidden.*All of \(hidden.*2.*3~',
+        $this->assertMatchesRegularExpression('~1.*hidden.*All of \(hidden.*2.*3~',
                 $renderer->render($tree->get_full_information($info)));
         $structure->c[1]->op = '|';
         $tree = new tree($structure);
-        $this->assertRegExp('~1.*hidden.*Any of \(hidden.*2.*3~',
+        $this->assertMatchesRegularExpression('~1.*hidden.*Any of \(hidden.*2.*3~',
                 $renderer->render($tree->get_full_information($info)));
 
         // Hidden markers on single-item display, AND and OR.
@@ -472,14 +472,14 @@ class tree_testcase extends \advanced_testcase {
                 self::mock(array('m' => '1'))
         );
         $tree = new tree($structure);
-        $this->assertRegExp('~1.*hidden~',
+        $this->assertMatchesRegularExpression('~1.*hidden~',
                 $tree->get_full_information($info));
 
         unset($structure->showc);
         $structure->show = false;
         $structure->op = '|';
         $tree = new tree($structure);
-        $this->assertRegExp('~1.*hidden~',
+        $this->assertMatchesRegularExpression('~1.*hidden~',
                 $tree->get_full_information($info));
 
         // Hidden marker if single item is tree.
@@ -487,13 +487,13 @@ class tree_testcase extends \advanced_testcase {
                 self::mock(array('m' => '1')),
                 self::mock(array('m' => '2'))), tree::OP_AND);
         $tree = new tree($structure);
-        $this->assertRegExp('~Not available \(hidden.*1.*2~',
+        $this->assertMatchesRegularExpression('~Not available \(hidden.*1.*2~',
                 $renderer->render($tree->get_full_information($info)));
 
         // Single item tree containing single item.
         unset($structure->c[0]->c[1]);
         $tree = new tree($structure);
-        $this->assertRegExp('~SA.*1.*hidden~',
+        $this->assertMatchesRegularExpression('~SA.*1.*hidden~',
                 $tree->get_full_information($info));
     }
 

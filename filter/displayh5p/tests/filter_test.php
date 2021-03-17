@@ -60,7 +60,7 @@ class filter_displayh5p_testcase extends advanced_testcase {
         $filterplugin = new filter_displayh5p(null, array());
 
         $filteredtext = $filterplugin->filter($text);
-        $this->assertRegExp($filteredtextpattern, $filteredtext);
+        $this->assertMatchesRegularExpression($filteredtextpattern, $filteredtext);
     }
 
     /**
