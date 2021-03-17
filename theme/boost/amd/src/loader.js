@@ -26,7 +26,7 @@
 
 import $ from 'jquery';
 import * as Aria from './aria';
-import Bootstrap from './bootstrap/index';
+import Bootstrap from './index';
 import Pending from 'core/pending';
 import Scroll from './scroll';
 import setupBootstrapPendingChecks from './pending';

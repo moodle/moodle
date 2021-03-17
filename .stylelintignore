@@ -84,7 +84,6 @@ theme/boost/amd/src/bootstrap/button.js
 theme/boost/amd/src/bootstrap/carousel.js
 theme/boost/amd/src/bootstrap/collapse.js
 theme/boost/amd/src/bootstrap/dropdown.js
-theme/boost/amd/src/bootstrap/index.js
 theme/boost/amd/src/bootstrap/modal.js
 theme/boost/amd/src/bootstrap/popover.js
 theme/boost/amd/src/bootstrap/tools/sanitizer.js
@@ -93,4 +92,5 @@ theme/boost/amd/src/bootstrap/tab.js
 theme/boost/amd/src/bootstrap/toast.js
 theme/boost/amd/src/bootstrap/tooltip.js
 theme/boost/amd/src/bootstrap/util.js
+theme/boost/amd/src/index.js
 theme/boost/scss/fontawesome/
