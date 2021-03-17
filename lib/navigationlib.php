@@ -4470,7 +4470,7 @@ class settings_navigation extends navigation_node {
         if ($adminoptions->editcompletion) {
             // Add the course completion settings link
             $url = new moodle_url('/course/completion.php', array('id' => $course->id));
-            $coursenode->add(get_string('coursecompletion', 'completion'), $url, self::TYPE_SETTING, null, null,
+            $coursenode->add(get_string('coursecompletion', 'completion'), $url, self::TYPE_SETTING, null, 'coursecompletion',
                              new pix_icon('i/settings', ''));
         }
 

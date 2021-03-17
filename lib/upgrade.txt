@@ -33,6 +33,10 @@ information provided here is intended especially for developers.
 * New DML driver method `$DB->sql_group_concat` for performing group concatenation of a field within a SQL query
 * Added new class, AMD modules and WS that allow displaying forms in modal popups or load and submit in AJAX requests.
   See https://docs.moodle.org/dev/Modal_and_AJAX_forms for more details.
+* New navigation classes to mimic the new navigation project. The existing navigation callbacks are still available and
+  will be called. The following behaviour will be the new standard for nodes added via callbacks:
+   - Module nodes added will be appended to the end and will appear within the hamburger option.
+   - Course nodes added will also be appended and appear within the 'More' option/page.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:

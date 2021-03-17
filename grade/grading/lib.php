@@ -460,7 +460,7 @@ class grading_manager {
             $this->set_area($areaname);
             $method = $this->get_active_method();
             $managementnode = $modulenode->add(get_string('gradingmanagement', 'core_grading'),
-                $this->get_management_url(), settings_navigation::TYPE_CUSTOM);
+                $this->get_management_url(), settings_navigation::TYPE_CUSTOM, null, 'advgrading');
             if ($method) {
                 $controller = $this->get_controller($method);
                 $controller->extend_settings_navigation($settingsnav, $managementnode);
@@ -469,7 +469,7 @@ class grading_manager {
         } else {
             // make management screen node for each area
             $managementnode = $modulenode->add(get_string('gradingmanagement', 'core_grading'),
-                null, settings_navigation::TYPE_CUSTOM);
+                null, settings_navigation::TYPE_CUSTOM, null, 'advgrading');
             foreach ($areas as $areaname => $areatitle) {
                 $this->set_area($areaname);
                 $method = $this->get_active_method();
