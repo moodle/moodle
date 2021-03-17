@@ -56,7 +56,7 @@ class core_course_category_hooks_testcase extends \advanced_testcase {
         // Setup mock object for \core_course_category.
         // Disable original constructor, since we can't use it directly since it is private.
         $mockcategory = $this->getMockBuilder(\core_course_category::class)
-            ->setMethods(['get_plugins_callback_function'])
+            ->onlyMethods(['get_plugins_callback_function'])
             ->disableOriginalConstructor()
             ->getMock();
 

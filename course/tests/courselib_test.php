@@ -1517,9 +1517,9 @@ class core_course_courselib_testcase extends advanced_testcase {
         $modinfo = get_fast_modinfo($course);
 
         // Verify that forum and page have been moved to the hidden section and quiz has not.
-        $this->assertContains($forum->cmid, $modinfo->sections[3]);
-        $this->assertContains($page->cmid, $modinfo->sections[3]);
-        $this->assertNotContains($quiz->cmid, $modinfo->sections[3]);
+        $this->assertContainsEquals($forum->cmid, $modinfo->sections[3]);
+        $this->assertContainsEquals($page->cmid, $modinfo->sections[3]);
+        $this->assertNotContainsEquals($quiz->cmid, $modinfo->sections[3]);
 
         // Verify that forum has been made invisible.
         $forumcm = $modinfo->cms[$forum->cmid];
@@ -3070,11 +3070,11 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->setAdminUser();
         $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
                 /*$exclusivemode = */false, /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$page = */0);
-        $this->assertRegExp('/'.$cm11->name.'/', $res->content);
-        $this->assertRegExp('/'.$cm12->name.'/', $res->content);
-        $this->assertRegExp('/'.$cm13->name.'/', $res->content);
-        $this->assertRegExp('/'.$cm21->name.'/', $res->content);
-        $this->assertRegExp('/'.$cm31->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm11->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm12->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm13->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm21->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm31->name.'/', $res->content);
         // Results from course1 are returned before results from course2.
         $this->assertTrue(strpos($res->content, $cm11->name) < strpos($res->content, $cm21->name));
 
@@ -3096,21 +3096,21 @@ class core_course_courselib_testcase extends advanced_testcase {
         $context = context_course::instance($course1->id);
         $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
                 /*$exclusivemode = */false, /*$fromctx = */0, /*$ctx = */$context->id, /*$rec = */1, /*$page = */0);
-        $this->assertRegExp('/'.$cm11->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm12->name.'/', $res->content);
-        $this->assertRegExp('/'.$cm13->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm21->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm31->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm11->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm12->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm13->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm21->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm31->name.'/', $res->content);
 
         // Searching FROM the course context returns visible modules in all courses.
         $context = context_course::instance($course2->id);
         $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
                 /*$exclusivemode = */false, /*$fromctx = */$context->id, /*$ctx = */0, /*$rec = */1, /*$page = */0);
-        $this->assertRegExp('/'.$cm11->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm12->name.'/', $res->content);
-        $this->assertRegExp('/'.$cm13->name.'/', $res->content);
-        $this->assertRegExp('/'.$cm21->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm31->name.'/', $res->content); // No access to course3.
+        $this->assertMatchesRegularExpression('/'.$cm11->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm12->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm13->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm21->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm31->name.'/', $res->content); // No access to course3.
         // Results from course2 are returned before results from course1.
         $this->assertTrue(strpos($res->content, $cm21->name) < strpos($res->content, $cm11->name));
 
@@ -3121,7 +3121,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $context = context_course::instance($course1->id);
         $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
                 /*$exclusivemode = */false, /*$fromctx = */$context->id, /*$ctx = */0, /*$rec = */1, /*$page = */0);
-        $this->assertRegExp('/'.$cm12->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm12->name.'/', $res->content);
 
         // Create more modules and try pagination.
         $cm14 = $this->getDataGenerator()->create_module('assign', array('course' => $course1->id,
@@ -3134,27 +3134,27 @@ class core_course_courselib_testcase extends advanced_testcase {
         $context = context_course::instance($course1->id);
         $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
                 /*$exclusivemode = */false, /*$fromctx = */0, /*$ctx = */$context->id, /*$rec = */1, /*$page = */0);
-        $this->assertRegExp('/'.$cm11->name.'/', $res->content);
-        $this->assertRegExp('/'.$cm12->name.'/', $res->content);
-        $this->assertRegExp('/'.$cm13->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm21->name.'/', $res->content);
-        $this->assertRegExp('/'.$cm14->name.'/', $res->content);
-        $this->assertRegExp('/'.$cm15->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm16->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm31->name.'/', $res->content); // No access to course3.
+        $this->assertMatchesRegularExpression('/'.$cm11->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm12->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm13->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm21->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm14->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm15->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm16->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm31->name.'/', $res->content); // No access to course3.
         $this->assertEmpty($res->prevpageurl);
         $this->assertNotEmpty($res->nextpageurl);
 
         $res = course_get_tagged_course_modules(core_tag_tag::get_by_name(0, 'Cat'),
                 /*$exclusivemode = */false, /*$fromctx = */0, /*$ctx = */$context->id, /*$rec = */1, /*$page = */1);
-        $this->assertNotRegExp('/'.$cm11->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm12->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm13->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm21->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm14->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm15->name.'/', $res->content);
-        $this->assertRegExp('/'.$cm16->name.'/', $res->content);
-        $this->assertNotRegExp('/'.$cm31->name.'/', $res->content); // No access to course3.
+        $this->assertDoesNotMatchRegularExpression('/'.$cm11->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm12->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm13->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm21->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm14->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm15->name.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$cm16->name.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$cm31->name.'/', $res->content); // No access to course3.
         $this->assertNotEmpty($res->prevpageurl);
         $this->assertEmpty($res->nextpageurl);
     }

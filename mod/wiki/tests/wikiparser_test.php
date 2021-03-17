@@ -228,8 +228,8 @@ class mod_wiki_wikiparser_test extends basic_testcase {
             'link_callback' => '/mod/wiki/locallib.php:wiki_parser_link',
             'link_callback_args' => array('swid' => 1)
         ));
-        $this->assertRegExp($regexpoutput, $actual['parsed_text']);
-        $this->assertRegExp($regexptoc, $actual['toc']);
+        $this->assertMatchesRegularExpression($regexpoutput, $actual['parsed_text']);
+        $this->assertMatchesRegularExpression($regexptoc, $actual['toc']);
 
         // Now going to test Creole markup.
         // Note that Creole uses links to the escaped version of the section.

@@ -71,8 +71,8 @@ class core_cohort_testcase extends provider_testcase {
         // User is member of 2 cohorts.
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertCount(2, (array) $contextlist->get_contextids());
-        $this->assertContains($coursecategoryctx->id, $contextlist->get_contextids());
-        $this->assertContains($systemctx->id, $contextlist->get_contextids());
+        $this->assertContainsEquals($coursecategoryctx->id, $contextlist->get_contextids());
+        $this->assertContainsEquals($systemctx->id, $contextlist->get_contextids());
     }
 
     /**

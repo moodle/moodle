@@ -76,7 +76,7 @@ class analytics_indicator_testcase extends advanced_testcase {
 
         $indicator = new $indicatorclass();
         $indicatormock = $this->getMockBuilder(get_class($indicator))
-            ->setMethods(['calculate_sample'])
+            ->onlyMethods(['calculate_sample'])
             ->getMock();
         $indicatormock->method('calculate_sample')->willReturn($willreturn);
         $this->expectException(coding_exception::class);

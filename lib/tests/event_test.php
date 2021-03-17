@@ -857,7 +857,7 @@ class core_event_testcase extends advanced_testcase {
         // all that was done is to move the annotation (deprecated) to
         // explicit expectation. Still try commenting it out and you'll see
         // the notice.
-        $this->expectException(\PHPUnit\Framework\Error\Notice::class);
+        $this->expectNotice();
         $event = \core_tests\event\context_used_in_event::create(array('other' => array('sample' => 1, 'xx' => 10)));
         $this->assertEventContextNotUsed($event);
 

@@ -71,7 +71,7 @@ class core_backup_restore_gradebook_structure_step_testcase extends advanced_tes
      */
     public function test_rewrite_step_backup_file_for_legacy_freeze($source, $expected) {
         $restore = $this->getMockBuilder('\restore_gradebook_structure_step')
-            ->setMethods(null)
+            ->onlyMethods([])
             ->disableOriginalConstructor()
             ->getMock()
             ;

@@ -83,7 +83,7 @@ class core_calendar_event_exporter_testcase extends advanced_testcase {
         $class = \core_calendar\external\calendar_event_exporter::class;
         $mock = $this->getMockBuilder($class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
         $reflector = new ReflectionClass($class);
         $method = $reflector->getMethod('get_timestamp_min_limit');
@@ -140,7 +140,7 @@ class core_calendar_event_exporter_testcase extends advanced_testcase {
         $class = \core_calendar\external\calendar_event_exporter::class;
         $mock = $this->getMockBuilder($class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
         $reflector = new ReflectionClass($class);
         $method = $reflector->getMethod('get_timestamp_max_limit');
@@ -265,7 +265,7 @@ class core_calendar_event_exporter_testcase extends advanced_testcase {
 
         $exportedevent = $exporter->export($renderer);
         // Links should always be stripped from the course short name.
-        $this->assertRegExp("/$nolinkshortname/", $exportedevent->popupname);
+        $this->assertMatchesRegularExpression("/$nolinkshortname/", $exportedevent->popupname);
     }
 
     /**

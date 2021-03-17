@@ -313,7 +313,7 @@ class availability_profile_condition_testcase extends advanced_testcase {
         // Check the message (should be using lang string with capital, which
         // is evidence that it called the right function to get the name).
         $information = $cond->get_description(false, false, $info);
-        $this->assertRegExp('~Department~', $information);
+        $this->assertMatchesRegularExpression('~Department~', $information);
 
         // Set the field to true for both users and retry.
         $DB->set_field('user', 'department', 'Cheese Studies', array('id' => $user->id));
@@ -394,7 +394,7 @@ class availability_profile_condition_testcase extends advanced_testcase {
                 'Failed checking normal (positive) result');
         if (!$yes) {
             $information = $cond->get_description(false, false, $info);
-            $this->assertRegExp($failpattern, $information);
+            $this->assertMatchesRegularExpression($failpattern, $information);
         }
 
         // Negative (NOT) test.
@@ -402,7 +402,7 @@ class availability_profile_condition_testcase extends advanced_testcase {
                 'Failed checking NOT (negative) result');
         if ($yes) {
             $information = $cond->get_description(false, true, $info);
-            $this->assertRegExp($failpattern, $information);
+            $this->assertMatchesRegularExpression($failpattern, $information);
         }
     }
 

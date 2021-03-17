@@ -116,9 +116,9 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
 
         $qsummary = $mc->get_question_summary();
 
-        $this->assertRegExp('/' . preg_quote($mc->questiontext, '/') . '/', $qsummary);
+        $this->assertMatchesRegularExpression('/' . preg_quote($mc->questiontext, '/') . '/', $qsummary);
         foreach ($mc->answers as $answer) {
-            $this->assertRegExp('/' . preg_quote($answer->answer, '/') . '/', $qsummary);
+            $this->assertMatchesRegularExpression('/' . preg_quote($answer->answer, '/') . '/', $qsummary);
         }
     }
 

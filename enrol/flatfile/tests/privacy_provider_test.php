@@ -92,14 +92,14 @@ class enrol_flatfile_privacy_testcase extends provider_testcase {
         $contextlist = provider::get_contexts_for_userid($this->user1->id);
         $this->assertEquals(2, $contextlist->count());
         $contextids = $contextlist->get_contextids();
-        $this->assertContains($this->coursecontext1->id, $contextids);
-        $this->assertContains($this->coursecontext3->id, $contextids);
+        $this->assertContainsEquals($this->coursecontext1->id, $contextids);
+        $this->assertContainsEquals($this->coursecontext3->id, $contextids);
 
         // And 1 for user2 on course2.
         $contextlist = provider::get_contexts_for_userid($this->user2->id);
         $this->assertEquals(1, $contextlist->count());
         $contextids = $contextlist->get_contextids();
-        $this->assertContains($this->coursecontext2->id, $contextids);
+        $this->assertContainsEquals($this->coursecontext2->id, $contextids);
     }
 
     /**
@@ -189,8 +189,8 @@ class enrol_flatfile_privacy_testcase extends provider_testcase {
         $contextlist = provider::get_contexts_for_userid($this->user1->id);
         $this->assertEquals(2, $contextlist->count());
         $contextids = $contextlist->get_contextids();
-        $this->assertContains($this->coursecontext1->id, $contextids);
-        $this->assertContains($this->coursecontext3->id, $contextids);
+        $this->assertContainsEquals($this->coursecontext1->id, $contextids);
+        $this->assertContainsEquals($this->coursecontext3->id, $contextids);
 
         $approvedcontextlist = new approved_contextlist(
             $this->user1,

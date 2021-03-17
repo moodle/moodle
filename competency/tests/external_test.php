@@ -614,7 +614,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
             $result = $this->update_competency_framework($f2->get('id'), 4, true);
             $this->fail('The scale cannot be changed once used.');
         } catch (\core\invalid_persistent_exception $e) {
-            $this->assertRegexp('/scaleid/', $e->getMessage());
+            $this->assertMatchesRegularExpression('/scaleid/', $e->getMessage());
         }
     }
 
@@ -1223,7 +1223,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
             $plan4 = $this->create_plan(6, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
             $this->fail('Plans cannot be created as complete.');
         } catch (coding_exception $e) {
-            $this->assertRegexp('/A plan cannot be created as complete./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/A plan cannot be created as complete./', $e->getMessage());
         }
 
         try {
@@ -1241,7 +1241,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
             $this->update_plan($plan2->id, 1, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
             $this->fail('The user can not update their own plan without permissions.');
         } catch (required_capability_exception $e) {
-            $this->assertRegexp('/Manage learning plans./', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Manage learning plans./', $e->getMessage());
         }
     }
 

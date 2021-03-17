@@ -424,13 +424,13 @@ class search_solr_engine_testcase extends advanced_testcase {
         $result = reset($results);
 
         $regex = '|'.\search_solr\engine::HIGHLIGHT_START.'message'.\search_solr\engine::HIGHLIGHT_END.'|';
-        $this->assertRegExp($regex, $result->get('content'));
+        $this->assertMatchesRegularExpression($regex, $result->get('content'));
 
         $searchrenderer = $PAGE->get_renderer('core_search');
         $exported = $result->export_for_template($searchrenderer);
 
         $regex = '|<span class="highlight">message</span>|';
-        $this->assertRegExp($regex, $exported['content']);
+        $this->assertMatchesRegularExpression($regex, $exported['content']);
     }
 
     public function test_export_file_for_engine() {

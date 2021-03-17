@@ -286,9 +286,9 @@ class mod_data_search_test extends advanced_testcase {
         $recordids = data_get_all_recordids($data1->id);
         $newrecordids = data_get_advance_search_ids($recordids, $searcharray, $data1->id);
 
-        $this->assertContains($record11, $newrecordids);
-        $this->assertContains($record12, $newrecordids);
-        $this->assertNotContains($record13, $newrecordids);
+        $this->assertContainsEquals($record11, $newrecordids);
+        $this->assertContainsEquals($record12, $newrecordids);
+        $this->assertNotContainsEquals($record13, $newrecordids);
     }
 
     /**

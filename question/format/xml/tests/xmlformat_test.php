@@ -169,11 +169,11 @@ class qformat_xml_test extends question_testcase {
         $exporter = new qformat_xml();
         $xml = $exporter->writequestion($q);
 
-        $this->assertRegExp('|<hint format=\"moodle_auto_format\">\s*<text>\s*' .
+        $this->assertMatchesRegularExpression('|<hint format=\"moodle_auto_format\">\s*<text>\s*' .
                 'This is the first hint\.\s*</text>\s*</hint>|', $xml);
-        $this->assertNotRegExp('|<shownumcorrect/>|', $xml);
-        $this->assertNotRegExp('|<clearwrong/>|', $xml);
-        $this->assertNotRegExp('|<options>|', $xml);
+        $this->assertDoesNotMatchRegularExpression('|<shownumcorrect/>|', $xml);
+        $this->assertDoesNotMatchRegularExpression('|<clearwrong/>|', $xml);
+        $this->assertDoesNotMatchRegularExpression('|<options>|', $xml);
     }
 
     public function test_write_hint_with_parts() {
@@ -204,16 +204,16 @@ class qformat_xml_test extends question_testcase {
         $exporter = new qformat_xml();
         $xml = $exporter->writequestion($q);
 
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
                 '|<hint format=\"html\">\s*<text>\s*This is the first hint\.\s*</text>|', $xml);
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
                 '|<hint format=\"html\">\s*<text>\s*This is the second hint\.\s*</text>|', $xml);
         list($ignored, $hint1, $hint2) = explode('<hint', $xml);
-        $this->assertNotRegExp('|<shownumcorrect/>|', $hint1);
-        $this->assertRegExp('|<clearwrong/>|', $hint1);
-        $this->assertRegExp('|<shownumcorrect/>|', $hint2);
-        $this->assertNotRegExp('|<clearwrong/>|', $hint2);
-        $this->assertNotRegExp('|<options>|', $xml);
+        $this->assertDoesNotMatchRegularExpression('|<shownumcorrect/>|', $hint1);
+        $this->assertMatchesRegularExpression('|<clearwrong/>|', $hint1);
+        $this->assertMatchesRegularExpression('|<shownumcorrect/>|', $hint2);
+        $this->assertDoesNotMatchRegularExpression('|<clearwrong/>|', $hint2);
+        $this->assertDoesNotMatchRegularExpression('|<options>|', $xml);
     }
 
     public function test_import_hints_no_parts() {

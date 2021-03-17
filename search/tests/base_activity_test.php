@@ -163,7 +163,7 @@ class search_base_activity_testcase extends advanced_testcase {
         // with required methods stubbed.
         $builder = $this->getMockBuilder('\core_search\base_activity');
         $builder->disableOriginalConstructor();
-        $builder->setMethods(array('get_module_name', 'get_component_name'));
+        $builder->onlyMethods(array('get_module_name', 'get_component_name'));
         $stub = $builder->getMockForAbstractClass();
         $stub->method('get_module_name')->willReturn($module);
         $stub->method('get_component_name')->willReturn($component);
@@ -380,7 +380,7 @@ class search_base_activity_testcase extends advanced_testcase {
     public function test_get_doc_icon() {
         $baseactivity = $this->getMockBuilder('\core_search\base_activity')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_module_name'))
+            ->onlyMethods(array('get_module_name'))
             ->getMockForAbstractClass();
 
         $baseactivity->method('get_module_name')->willReturn('test_activity');

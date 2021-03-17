@@ -111,8 +111,8 @@ class contextlist_test extends advanced_testcase {
         $this->assertCount(2, $cl);
 
         $contexts = $cl->get_contextids();
-        $this->assertContains(\context_user::instance($user1->id)->id, $contexts);
-        $this->assertContains(\context_user::instance($user2->id)->id, $contexts);
+        $this->assertContainsEquals(\context_user::instance($user1->id)->id, $contexts);
+        $this->assertContainsEquals(\context_user::instance($user2->id)->id, $contexts);
     }
 
     /**

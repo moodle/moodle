@@ -3327,30 +3327,30 @@ class mod_forum_lib_testcase extends advanced_testcase {
         // Admin can see everything.
         $res = mod_forum_get_tagged_posts($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$post = */0);
-        $this->assertRegExp('/'.$post11->subject.'</', $res->content);
-        $this->assertRegExp('/'.$post12->subject.'</', $res->content);
-        $this->assertRegExp('/'.$post13->subject.'</', $res->content);
-        $this->assertNotRegExp('/'.$post14->subject.'</', $res->content);
-        $this->assertRegExp('/'.$post15->subject.'</', $res->content);
-        $this->assertRegExp('/'.$post16->subject.'</', $res->content);
-        $this->assertNotRegExp('/'.$post21->subject.'</', $res->content);
-        $this->assertNotRegExp('/'.$post22->subject.'</', $res->content);
-        $this->assertNotRegExp('/'.$post23->subject.'</', $res->content);
-        $this->assertNotRegExp('/'.$post31->subject.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post11->subject.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post12->subject.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post13->subject.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post14->subject.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post15->subject.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post16->subject.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post21->subject.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post22->subject.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post23->subject.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post31->subject.'</', $res->content);
         $this->assertEmpty($res->prevpageurl);
         $this->assertNotEmpty($res->nextpageurl);
         $res = mod_forum_get_tagged_posts($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$post = */1);
-        $this->assertNotRegExp('/'.$post11->subject.'</', $res->content);
-        $this->assertNotRegExp('/'.$post12->subject.'</', $res->content);
-        $this->assertNotRegExp('/'.$post13->subject.'</', $res->content);
-        $this->assertNotRegExp('/'.$post14->subject.'</', $res->content);
-        $this->assertNotRegExp('/'.$post15->subject.'</', $res->content);
-        $this->assertNotRegExp('/'.$post16->subject.'</', $res->content);
-        $this->assertRegExp('/'.$post21->subject.'</', $res->content);
-        $this->assertRegExp('/'.$post22->subject.'</', $res->content);
-        $this->assertRegExp('/'.$post23->subject.'</', $res->content);
-        $this->assertRegExp('/'.$post31->subject.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post11->subject.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post12->subject.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post13->subject.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post14->subject.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post15->subject.'</', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post16->subject.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post21->subject.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post22->subject.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post23->subject.'</', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post31->subject.'</', $res->content);
         $this->assertNotEmpty($res->prevpageurl);
         $this->assertEmpty($res->nextpageurl);
 
@@ -3365,23 +3365,23 @@ class mod_forum_lib_testcase extends advanced_testcase {
         // User can not see posts in course 3 because he is not enrolled.
         $res = mod_forum_get_tagged_posts($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */0, /*$rec = */1, /*$post = */1);
-        $this->assertRegExp('/'.$post22->subject.'/', $res->content);
-        $this->assertRegExp('/'.$post23->subject.'/', $res->content);
-        $this->assertNotRegExp('/'.$post31->subject.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post22->subject.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post23->subject.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post31->subject.'/', $res->content);
 
         // User can search forum posts inside a course.
         $coursecontext = context_course::instance($course1->id);
         $res = mod_forum_get_tagged_posts($tag, /*$exclusivemode = */false,
             /*$fromctx = */0, /*$ctx = */$coursecontext->id, /*$rec = */1, /*$post = */0);
-        $this->assertRegExp('/'.$post11->subject.'/', $res->content);
-        $this->assertRegExp('/'.$post12->subject.'/', $res->content);
-        $this->assertRegExp('/'.$post13->subject.'/', $res->content);
-        $this->assertNotRegExp('/'.$post14->subject.'/', $res->content);
-        $this->assertRegExp('/'.$post15->subject.'/', $res->content);
-        $this->assertRegExp('/'.$post16->subject.'/', $res->content);
-        $this->assertNotRegExp('/'.$post21->subject.'/', $res->content);
-        $this->assertNotRegExp('/'.$post22->subject.'/', $res->content);
-        $this->assertNotRegExp('/'.$post23->subject.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post11->subject.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post12->subject.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post13->subject.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post14->subject.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post15->subject.'/', $res->content);
+        $this->assertMatchesRegularExpression('/'.$post16->subject.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post21->subject.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post22->subject.'/', $res->content);
+        $this->assertDoesNotMatchRegularExpression('/'.$post23->subject.'/', $res->content);
         $this->assertEmpty($res->nextpageurl);
     }
 

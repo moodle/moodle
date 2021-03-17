@@ -47,7 +47,7 @@ class core_files_converter_testcase extends advanced_testcase {
      */
     protected function get_testable_mock($mockedmethods = []) {
         $converter = $this->getMockBuilder(\core_files\converter::class)
-            ->setMethods($mockedmethods)
+            ->onlyMethods($mockedmethods)
             ->getMockForAbstractClass();
 
         return $converter;
@@ -61,7 +61,7 @@ class core_files_converter_testcase extends advanced_testcase {
      */
     protected function get_testable_conversion($mockedmethods = []) {
         $conversion = $this->getMockBuilder(\core_files\conversion::class)
-            ->setMethods($mockedmethods)
+            ->onlyMethods($mockedmethods)
             ->setConstructorArgs([0, (object) []])
             ->getMock();
 
@@ -77,7 +77,7 @@ class core_files_converter_testcase extends advanced_testcase {
      */
     protected function get_mocked_converter($mockedmethods = []) {
         $converter = $this->getMockBuilder(\core_files\converter_interface::class)
-            ->setMethods($mockedmethods)
+            ->onlyMethods($mockedmethods)
             ->getMockForAbstractClass();
 
         return $converter;
@@ -92,7 +92,7 @@ class core_files_converter_testcase extends advanced_testcase {
      *                  If no methods are specified, only abstract functions are mocked.
      * @return  stored_file
      */
-    protected function get_stored_file($filecontent = 'content', $filename = null, $filerecord = [], $mockedmethods = null) {
+    protected function get_stored_file($filecontent = 'content', $filename = null, $filerecord = [], $mockedmethods = []) {
         global $CFG;
 
         $contenthash = sha1($filecontent);
@@ -106,7 +106,7 @@ class core_files_converter_testcase extends advanced_testcase {
         $filerecord['id'] = 42;
 
         $file = $this->getMockBuilder(stored_file::class)
-            ->setMethods($mockedmethods)
+            ->onlyMethods($mockedmethods)
             ->setConstructorArgs([get_file_storage(), (object) $filerecord])
             ->getMock();
 
@@ -145,7 +145,7 @@ class core_files_converter_testcase extends advanced_testcase {
      */
     protected function get_file_storage_mock($mockedmethods = []) {
         $fs = $this->getMockBuilder(\file_storage::class)
-            ->setMethods($mockedmethods)
+            ->onlyMethods($mockedmethods)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -248,7 +248,7 @@ class core_files_converter_testcase extends advanced_testcase {
      */
     public function test_get_document_converter_classes_plugin_class_requirements_not_met() {
         $plugin = $this->getMockBuilder(\core_file_converter_requirements_not_met_test::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->getMock();
 
         $converter = $this->get_testable_mock(['get_enabled_plugins']);
@@ -267,7 +267,7 @@ class core_files_converter_testcase extends advanced_testcase {
      */
     public function test_get_document_converter_classes_plugin_class_met_not_supported() {
         $plugin = $this->getMockBuilder(\core_file_converter_type_not_supported_test::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->getMock();
 
         $converter = $this->get_testable_mock(['get_enabled_plugins']);
@@ -286,7 +286,7 @@ class core_files_converter_testcase extends advanced_testcase {
      */
     public function test_get_document_converter_classes_plugin_class_met_and_supported() {
         $plugin = $this->getMockBuilder(\core_file_converter_type_supported_test::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->getMock();
         $classname = get_class($plugin);
 

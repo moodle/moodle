@@ -203,8 +203,8 @@ class healthlib_testcase extends advanced_testcase {
         $missingparent = array((object) array('id' => 2, 'parent' => 3, 'name' => 'test'),
                                (object) array('id' => 4, 'parent' => 5, 'name' => 'test2'));
         $result = tool_health_category_list_missing_parents($missingparent);
-        $this->assertRegExp('/Category 2: test/', $result);
-        $this->assertRegExp('/Category 4: test2/', $result);
+        $this->assertMatchesRegularExpression('/Category 2: test/', $result);
+        $this->assertMatchesRegularExpression('/Category 4: test2/', $result);
     }
 
     /**
@@ -213,6 +213,6 @@ class healthlib_testcase extends advanced_testcase {
     public function test_tool_health_category_list_loops() {
         $loops = array((object) array('id' => 2, 'parent' => 3, 'name' => 'test'));
         $result = tool_health_category_list_loops($loops);
-        $this->assertRegExp('/Category 2: test/', $result);
+        $this->assertMatchesRegularExpression('/Category 2: test/', $result);
     }
 }

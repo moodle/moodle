@@ -48,18 +48,17 @@ class core_curl_security_helper_testcase extends advanced_testcase {
     public function test_curl_security_helper_url_is_blocked($dns, $url, $blockedhosts, $allowedports, $expected) {
         $this->resetAfterTest(true);
         $helper = $this->getMockBuilder('\core\files\curl_security_helper')
-                        ->setMethods(['get_host_list_by_name'])
-                        ->getMock();
+            ->onlyMethods(['get_host_list_by_name'])
+            ->getMock();
 
         // Override the get host list method to return hard coded values based on a mapping provided by $dns.
-        $helper->method('get_host_list_by_name')
-               ->will(
-                   $this->returnCallback(
-                       function($host) use ($dns) {
-                           return isset($dns[$host]) ? $dns[$host] : [];
-                       }
-                   )
-               );
+        $helper->method('get_host_list_by_name')->will(
+            $this->returnCallback(
+                function($host) use ($dns) {
+                    return isset($dns[$host]) ? $dns[$host] : [];
+                }
+            )
+        );
 
         set_config('curlsecurityblockedhosts', $blockedhosts);
         set_config('curlsecurityallowedport', $allowedports);

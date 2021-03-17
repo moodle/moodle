@@ -1550,8 +1550,8 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
         $contextlist = new contextlist();
         provider::add_contexts_for_conversations($contextlist, $user1->id, $component, $itemtype);
         $this->assertCount(2, $contextlist);
-        $this->assertContains($coursecontext1->id, $contextlist->get_contextids());
-        $this->assertContains($coursecontext2->id, $contextlist->get_contextids());
+        $this->assertContainsEquals($coursecontext1->id, $contextlist->get_contextids());
+        $this->assertContainsEquals($coursecontext2->id, $contextlist->get_contextids());
 
         // Test for user2 (is member of the conversation and has sent a message).
         $contextlist = new contextlist();
@@ -2012,12 +2012,12 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         // There should be 5 messages - 3 individual - 2 group (course2).
         $this->assertEquals(5, $DB->count_records('messages'));
-        $messages = array_keys($DB->get_records('messages'));
-        $this->assertContains($im1, $messages);
-        $this->assertContains($im2, $messages);
-        $this->assertContains($im3, $messages);
-        $this->assertContains($gm4, $messages);
-        $this->assertContains($gm5, $messages);
+        $messages = $DB->get_records('messages');
+        $this->assertArrayHasKey($im1, $messages);
+        $this->assertArrayHasKey($im2, $messages);
+        $this->assertArrayHasKey($im3, $messages);
+        $this->assertArrayHasKey($gm4, $messages);
+        $this->assertArrayHasKey($gm5, $messages);
 
         // There should be 3 user actions - 2 for reading the message, 1 for deleting.
         $this->assertEquals(3, $DB->count_records('message_user_actions'));
@@ -2529,11 +2529,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         // There should be 4 messages - 3 private + 1 group sent by user2.
         $this->assertEquals(4, $DB->count_records('messages'));
-        $messages = array_keys($DB->get_records('messages'));
-        $this->assertContains($pm1, $messages);
-        $this->assertContains($pm2, $messages);
-        $this->assertContains($pm3, $messages);
-        $this->assertContains($gm3, $messages);
+        $messages = $DB->get_records('messages');
+        $this->assertArrayHasKey($pm1, $messages);
+        $this->assertArrayHasKey($pm2, $messages);
+        $this->assertArrayHasKey($pm3, $messages);
+        $this->assertArrayHasKey($gm3, $messages);
 
         // There should be 3 user actions - 2 for reading the message, one for deleting.
         $this->assertEquals(3, $DB->count_records('message_user_actions'));
@@ -2763,11 +2763,11 @@ class core_message_privacy_provider_testcase extends \core_privacy\tests\provide
 
         // There should be 4 messages - 3 private + 1 group sent by user3.
         $this->assertEquals(4, $DB->count_records('messages'));
-        $messages = array_keys($DB->get_records('messages'));
-        $this->assertContains($pm1, $messages);
-        $this->assertContains($pm2, $messages);
-        $this->assertContains($pm3, $messages);
-        $this->assertContains($gm3, $messages);
+        $messages = $DB->get_records('messages');
+        $this->assertArrayHasKey($pm1, $messages);
+        $this->assertArrayHasKey($pm2, $messages);
+        $this->assertArrayHasKey($pm3, $messages);
+        $this->assertArrayHasKey($gm3, $messages);
 
         // There should be 3 user actions - 2 for reading the message, one for deleting.
         $this->assertEquals(3, $DB->count_records('message_user_actions'));

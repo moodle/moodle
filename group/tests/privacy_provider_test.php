@@ -719,8 +719,8 @@ class core_group_privacy_provider_testcase extends provider_testcase {
 
         $this->assertCount(3, $contextlist);
         // One of the user context is the one related to self-conversation. Let's test group contexts.
-        $this->assertContains($coursecontext1->id, $contextids);
-        $this->assertContains($coursecontext2->id, $contextids);
+        $this->assertContainsEquals($coursecontext1->id, $contextids);
+        $this->assertContainsEquals($coursecontext2->id, $contextids);
     }
 
     /**

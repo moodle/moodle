@@ -82,7 +82,7 @@ class core_backup_async_helper_testcase extends \core_privacy\tests\provider_tes
         $this->assertSame('Moodle backup completed sucessfully', $email->subject);
         $this->assertNotEmpty($email->header);
         $this->assertNotEmpty($email->body);
-        $this->assertRegExp("/$backupid/", $email->body);
+        $this->assertMatchesRegularExpression("/$backupid/", $email->body);
         $this->assertThat($email->body, $this->logicalNot($this->stringContains('{')));
         $this->assertGreaterThan(0, $messageid);
         $sink->clear();
