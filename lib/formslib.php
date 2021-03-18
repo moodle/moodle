@@ -2271,7 +2271,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             }
             foreach ($elementList as $elementName) {
                 $value = $this->exportValue($elementName);
-                if (@PEAR::isError($value)) {
+                if ((new PEAR())->isError($value)) {
                     return $value;
                 }
                 //oh, stock QuickFOrm was returning array of arrays!
