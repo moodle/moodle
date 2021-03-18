@@ -10496,7 +10496,7 @@ class lang_string {
         // changes are not carried across.
         // To do this we always ensure $a or its properties/values are strings
         // and that any properties/values that arn't convertable are forgotten.
-        if (!empty($a)) {
+        if ($a !== null) {
             if (is_scalar($a)) {
                 $this->a = $a;
             } else if ($a instanceof lang_string) {
