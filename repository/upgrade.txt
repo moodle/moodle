@@ -6,6 +6,7 @@ http://docs.moodle.org/dev/Repository_API
 === 3.11 ===
 * The Google Drive repository now includes a new rest API function 'shared_drives_list', which can be used to fetch
   a list of existing shared drives.
+* The Google Drive repository now supports browsing and searching for content from shared drives.
 
 === 3.4 ===
 Repositories should no longer directly call file_system#add_file_to_pool or file_system#add_string_to_pool

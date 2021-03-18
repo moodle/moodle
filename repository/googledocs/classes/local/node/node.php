@@ -14,17 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace repository_googledocs\local\node;
+
 /**
- * Version details
+ * The googledocs repository content node interface.
  *
- * @package    repository
- * @subpackage googledocs
- * @copyright  2009 Dan Poltawski <talktodan@gmail.com>
+ * @package    repository_googledocs
+ * @copyright  2021 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+interface node {
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2020110901;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2020110300;        // Requires this Moodle version.
-$plugin->component = 'repository_googledocs'; // Full name of the plugin (used for diagnostics).
+    /**
+     * Create a repository node array.
+     *
+     * This method returns an array which structure is compatible to represent a content node (file/folder)
+     * in the repository.
+     *
+     * @return array|null The node array or null if the node could not be created
+     */
+    public function create_node_array(): ?array;
+}
