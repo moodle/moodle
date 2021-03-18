@@ -3374,4 +3374,105 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->expectExceptionMessage(get_string('cannotupdatepost', 'forum'));
         mod_forum_external::update_discussion_post($newpost->id, $subject, $message, $messageformat);
     }
+
+    /**
+     * Test that we can update the subject of a post to the string '0'
+     */
+    public function test_update_discussion_post_set_subject_to_zero(): void {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion((object) [
+            'userid' => $USER->id,
+            'course' => $course->id,
+            'forum' => $forum->id,
+            'name' => 'Test discussion subject',
+        ]);
+
+        // Update discussion post subject.
+        $result = external_api::clean_returnvalue(
+            mod_forum_external::update_discussion_post_returns(),
+            mod_forum_external::update_discussion_post($discussion->firstpost, '0')
+        );
+        $this->assertTrue($result['status']);
+
+        // Get updated discussion post subject from DB.
+        $postsubject = $DB->get_field('forum_posts', 'subject', ['id' => $discussion->firstpost]);
+        $this->assertEquals('0', $postsubject);
+    }
+
+    /**
+     * Test that we can update the message of a post to the string '0'
+     */
+    public function test_update_discussion_post_set_message_to_zero(): void {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion((object) [
+            'userid' => $USER->id,
+            'course' => $course->id,
+            'forum' => $forum->id,
+            'message' => 'Test discussion message',
+            'messageformat' => FORMAT_HTML,
+        ]);
+
+        // Update discussion post message.
+        $result = external_api::clean_returnvalue(
+            mod_forum_external::update_discussion_post_returns(),
+            mod_forum_external::update_discussion_post($discussion->firstpost, '', '0', FORMAT_HTML)
+        );
+        $this->assertTrue($result['status']);
+
+        // Get updated discussion post subject from DB.
+        $postmessage = $DB->get_field('forum_posts', 'message', ['id' => $discussion->firstpost]);
+        $this->assertEquals('0', $postmessage);
+    }
+
+    /**
+     * Test that we can update the message format of a post to {@see FORMAT_MOODLE}
+     */
+    public function test_update_discussion_post_set_message_format_moodle(): void {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion((object) [
+            'userid' => $USER->id,
+            'course' => $course->id,
+            'forum' => $forum->id,
+            'message' => 'Test discussion message',
+            'messageformat' => FORMAT_HTML,
+        ]);
+
+        // Update discussion post message & messageformat.
+        $result = external_api::clean_returnvalue(
+            mod_forum_external::update_discussion_post_returns(),
+            mod_forum_external::update_discussion_post($discussion->firstpost, '', 'Update discussion message', FORMAT_MOODLE)
+        );
+        $this->assertTrue($result['status']);
+
+        // Get updated discussion post from DB.
+        $updatedpost = $DB->get_record('forum_posts', ['id' => $discussion->firstpost], 'message,messageformat');
+        $this->assertEquals((object) [
+            'message' => 'Update discussion message',
+            'messageformat' => FORMAT_MOODLE,
+        ], $updatedpost);
+    }
 }
