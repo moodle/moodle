@@ -623,17 +623,17 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->setup_data();
         $user = $this->user;
 
-        /** @var \mod_choice_generator $choicegenerator */
         $choicegenerator = $this->getDataGenerator()->get_plugin_generator('mod_choice');
         $choice = $choicegenerator->create_instance([
             'course' => $this->course->id,
-            'completion' => true,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC,
             'completionview' => true,
+            'completionsubmit' => true,
         ]);
 
         $cm = get_coursemodule_from_instance('choice', $choice->id);
 
-        // Let's manually create a course completion record instead of going thru the hoops to complete an activity.
+        // Let's manually create a course completion record instead of going through the hoops to complete an activity.
         if ($hasrecord) {
             $cmcompletionrecord = (object)[
                 'coursemoduleid' => $cm->id,
@@ -660,6 +660,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $completioninfo = new completion_info($this->course);
 
         $result = $completioninfo->get_data($cm, $wholecourse, $user->id);
+
         // Course module ID of the returned completion data must match this activity's course module ID.
         $this->assertEquals($cm->id, $result->coursemoduleid);
         // User ID of the returned completion data must match the user's ID.
@@ -691,6 +692,84 @@ class core_completionlib_testcase extends advanced_testcase {
             // Otherwise, this should not be cached.
             $this->assertFalse($cache->get($key));
         }
+
+        // Check that we are including relevant completion data for the module.
+        if (!$wholecourse) {
+            $this->assertTrue(property_exists($result, 'viewed'));
+            $this->assertTrue(property_exists($result, 'customcompletion'));
+        }
+    }
+
+    /**
+     * Tests for completion_info::get_other_cm_completion_data().
+     */
+    public function test_get_other_cm_completion_data() {
+        global $DB;
+
+        $this->setup_data();
+        $user = $this->user;
+
+        $this->setAdminUser();
+
+        $choicegenerator = $this->getDataGenerator()->get_plugin_generator('mod_choice');
+        $choice = $choicegenerator->create_instance([
+            'course' => $this->course->id,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC,
+            'completionsubmit' => true,
+        ]);
+
+        $cmchoice = cm_info::create(get_coursemodule_from_instance('choice', $choice->id));
+
+        $choice2 = $choicegenerator->create_instance([
+            'course' => $this->course->id,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC,
+        ]);
+
+        $cmchoice2 = cm_info::create(get_coursemodule_from_instance('choice', $choice2->id));
+
+        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
+        $workshop = $workshopgenerator->create_instance([
+            'course' => $this->course->id,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC,
+            // Submission grade required.
+            'completiongradeitemnumber' => 0,
+        ]);
+
+        $cmworkshop = cm_info::create(get_coursemodule_from_instance('workshop', $workshop->id));
+
+        $completioninfo = new completion_info($this->course);
+
+        $method = new ReflectionMethod("completion_info", "get_other_cm_completion_data");
+        $method->setAccessible(true);
+
+        // Check that fetching data for a module with custom completion provides its info.
+        $choicecompletiondata = $method->invoke($completioninfo, $cmchoice, $user->id);
+
+        $this->assertArrayHasKey('customcompletion', $choicecompletiondata);
+        $this->assertArrayHasKey('completionsubmit', $choicecompletiondata['customcompletion']);
+        $this->assertEquals(COMPLETION_INCOMPLETE, $choicecompletiondata['customcompletion']['completionsubmit']);
+
+        // Mock a choice answer so user has completed the requirement.
+        $choicemockinfo = [
+            'choiceid' => $cmchoice->instance,
+            'userid' => $this->user->id
+        ];
+        $DB->insert_record('choice_answers', $choicemockinfo, false);
+
+        // Confirm fetching again reflects the completion.
+        $choicecompletiondata = $method->invoke($completioninfo, $cmchoice, $user->id);
+        $this->assertEquals(COMPLETION_COMPLETE, $choicecompletiondata['customcompletion']['completionsubmit']);
+
+        // Check that fetching data for a module with no custom completion still provides its grade completion status.
+        $workshopcompletiondata = $method->invoke($completioninfo, $cmworkshop, $user->id);
+
+        $this->assertArrayHasKey('completiongrade', $workshopcompletiondata);
+        $this->assertArrayNotHasKey('customcompletion', $workshopcompletiondata);
+        $this->assertEquals(COMPLETION_INCOMPLETE, $workshopcompletiondata['completiongrade']);
+
+        // Check that fetching data for a module with no completion conditions does not provide any data.
+        $choice2completiondata = $method->invoke($completioninfo, $cmchoice2, $user->id);
+        $this->assertEmpty($choice2completiondata);
     }
 
     public function test_internal_set_data() {
