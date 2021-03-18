@@ -290,6 +290,36 @@ class core_datalib_testcase extends advanced_testcase {
         $this->assertEquals($before + 1, $DB->perf_get_queries());
     }
 
+    /**
+     * Test that specifying fields when calling get_courses always returns required fields "id, category, visible"
+     */
+    public function test_get_courses_with_fields(): void {
+        $this->resetAfterTest();
+
+        $category = $this->getDataGenerator()->create_category();
+        $course = $this->getDataGenerator()->create_course(['category' => $category->id]);
+
+        // Specify "id" only.
+        $courses = get_courses($category->id, 'c.sortorder', 'c.id');
+        $this->assertCount(1, $courses);
+        $this->assertEquals((object) [
+            'id' => $course->id,
+            'category' => $course->category,
+            'visible' => $course->visible,
+        ], reset($courses));
+
+        // Specify some optional fields.
+        $courses = get_courses($category->id, 'c.sortorder', 'c.id, c.shortname, c.fullname');
+        $this->assertCount(1, $courses);
+        $this->assertEquals((object) [
+            'id' => $course->id,
+            'category' => $course->category,
+            'visible' => $course->visible,
+            'shortname' => $course->shortname,
+            'fullname' => $course->fullname,
+        ], reset($courses));
+    }
+
     public function test_increment_revision_number() {
         global $DB;
         $this->resetAfterTest();
