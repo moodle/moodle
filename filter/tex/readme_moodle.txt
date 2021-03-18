@@ -1,13 +1,13 @@
-Description of mimeTeX v 1.74 import into Moodle
+Description of mimeTeX v 1.77 import into Moodle
 
 Compiling mimeTeX:
 
 Windows
 =======
-1/ get "Automated MinGW Installer" from https://sourceforge.net/projects/mingw/files/
+1/ get "Automated MinGW-w64 Installer" from https://sourceforge.net/projects/mingw-w64/
 2/ install mingw
 3/ go into directory with extracted source files
-4/ execute "set path=%path%;c:\mingw\bin"
+4/ execute "set path=%path%;c:\mingw-w64\bin"
 5/ execute "c:\mingw\bin\gcc -DAA -DWINDOWS mimetex.c gifsave.c -lm -o mimetex.exe"
 
 Linux
@@ -35,3 +35,4 @@ Apple OSX
 
 
 Petr Skoda
+Sujith Haridasan
