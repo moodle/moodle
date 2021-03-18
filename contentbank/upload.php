@@ -23,7 +23,6 @@
  */
 
 require('../config.php');
-require_once("$CFG->dirroot/contentbank/files_form.php");
 
 use core\output\notification;
 
@@ -86,7 +85,8 @@ $options = array(
 );
 file_prepare_standard_filemanager($data, 'files', $options, $context, 'contentbank', 'public', 0);
 
-$mform = new contentbank_files_form(null, ['contextid' => $contextid, 'data' => $data, 'options' => $options, 'id' => $id]);
+$customdata = ['contextid' => $contextid, 'data' => $data, 'options' => $options, 'id' => $id];
+$mform = new \core_contentbank\form\upload_files(null, $customdata);
 
 $error = '';
 
