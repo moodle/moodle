@@ -255,6 +255,7 @@ module.exports = function(grunt) {
 
     addTask('javascript', grunt);
     addTask('style', grunt);
+    addTask('componentlibrary', grunt);
 
     addTask('watch', grunt);
     addTask('startup', grunt);
