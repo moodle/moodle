@@ -21,6 +21,37 @@
  */
 
 module.exports = grunt => {
+
+    const getCssConfigForFiles = files => {
+        return {
+            stylelint: {
+                css: {
+                    // Use a fully-qualified path.
+                    src: files,
+                    options: {
+                        configOverrides: {
+                            rules: {
+                                // These rules have to be disabled in .stylelintrc for scss compat.
+                                "at-rule-no-unknown": true,
+                            }
+                        }
+                    }
+                },
+            },
+        };
+    };
+
+    const getScssConfigForFiles = files => {
+        return {
+            stylelint: {
+                scss: {
+                    options: {syntax: 'scss'},
+                    src: files,
+                },
+            },
+        };
+    };
+
     /**
      * Register any stylelint tasks.
      *
@@ -29,108 +60,106 @@ module.exports = grunt => {
      * @param {String} fullRunDir
      */
     const registerStyleLintTasks = () => {
-        const files = grunt.moodleEnv.files;
-        const fullRunDir = grunt.moodleEnv.fullRunDir;
-        const inComponent = grunt.moodleEnv.inComponent;
-        const inTheme = grunt.moodleEnv.inTheme;
+        const glob = require('glob');
 
-        const getCssConfigForFiles = files => {
-            return {
-                stylelint: {
-                    css: {
-                        // Use a fully-qualified path.
-                        src: files,
-                        options: {
-                            configOverrides: {
-                                rules: {
-                                    // These rules have to be disabled in .stylelintrc for scss compat.
-                                    "at-rule-no-unknown": true,
-                                }
-                            }
-                        }
-                    },
-                },
-            };
-        };
-
-        const getScssConfigForFiles = files => {
-            return {
-                stylelint: {
-                    scss: {
-                        options: {syntax: 'scss'},
-                        src: files,
-                    },
-                },
-            };
-        };
-
+        // The stylelinters do not handle the case where a configuration was provided but no files were included.
+        // Keep track of whether any files were found.
         let hasCss = false;
         let hasScss = false;
 
-        if (files) {
-            // Specific files were passed. Just set them up.
-            grunt.config.merge(getCssConfigForFiles(files));
-            hasCss = true;
+        // The stylelint processors do not take a path argument. They always check all provided values.
+        // As a result we must check through each glob and determine if any files match the current directory.
+        const scssFiles = [];
+        const cssFiles = [];
 
-            grunt.config.merge(getScssConfigForFiles(files));
-            hasScss = true;
-        } else {
-            // The stylelint system does not handle the case where there was no file to lint.
-            // Check whether there are any files to lint in the current directory.
-            const glob = require('glob');
+        const requestedFiles = grunt.moodleEnv.files;
+        if (requestedFiles) {
+            // Grunt was called with a files argument.
+            // Check whether each of the requested files matches either the CSS or SCSS source file list.
 
-            // CSS exists in:
-            // [component]/styles.css
-            // [theme_pluginname]/css
+            requestedFiles.forEach(changedFilePath => {
+                let matchesGlob;
 
-            if (inComponent) {
-                hasScss = false;
-                if (inTheme) {
-                    const scssSrc = [];
-                    glob.sync(`${fullRunDir}/**/*.scss`).forEach(path => scssSrc.push(path));
-
-                    if (scssSrc.length) {
-                        grunt.config.merge(getScssConfigForFiles(scssSrc));
-                        hasScss = true;
-                    }
-                }
-            } else {
-                const scssSrc = [];
-                glob.sync(`${fullRunDir}/**/*.scss`).forEach(path => scssSrc.push(path));
-
-                if (scssSrc.length) {
-                    grunt.config.merge(getScssConfigForFiles(scssSrc));
+                // Check whether this watched path matches any watched SCSS file.
+                matchesGlob = grunt.moodleEnv.scssSrc.some(watchedPathGlob => {
+                    return glob.sync(watchedPathGlob).indexOf(changedFilePath) !== -1;
+                });
+                if (matchesGlob) {
+                    scssFiles.push(changedFilePath);
                     hasScss = true;
                 }
-            }
 
-            const cssSrc = [];
-            glob.sync(`${fullRunDir}/**/*.css`).forEach(path => cssSrc.push(path));
+                // Check whether this watched path matches any watched CSS file.
+                matchesGlob = grunt.moodleEnv.cssSrc.some(watchedPathGlob => {
+                    return glob.sync(watchedPathGlob).indexOf(changedFilePath) !== -1;
+                });
+                if (matchesGlob) {
+                    cssFiles.push(changedFilePath);
+                    hasCss = true;
+                }
+            });
+        } else {
+            // Grunt was called without a list of files.
+            // The start directory (runDir) may be a child dir of the project.
+            // Check each scssSrc file to see if it's in the start directory.
+            // This means that we can lint just mod/*/styles.css if started in the mod directory.
 
-            if (cssSrc.length) {
-                grunt.config.merge(getCssConfigForFiles(cssSrc));
-                hasCss = true;
-            }
+            grunt.moodleEnv.scssSrc.forEach(path => {
+                if (path.startsWith(grunt.moodleEnv.runDir)) {
+                    scssFiles.push(path);
+                    hasScss = true;
+                }
+            });
+
+            grunt.moodleEnv.cssSrc.forEach(path => {
+                if (path.startsWith(grunt.moodleEnv.runDir)) {
+                    cssFiles.push(path);
+                    hasCss = true;
+                }
+            });
         }
 
+        // Register the tasks.
         const scssTasks = ['sass'];
         if (hasScss) {
+            grunt.config.merge(getScssConfigForFiles(scssFiles));
             scssTasks.unshift('stylelint:scss');
         }
-        grunt.registerTask('scss', scssTasks);
 
         const cssTasks = [];
         if (hasCss) {
+            grunt.config.merge(getCssConfigForFiles(cssFiles));
             cssTasks.push('stylelint:css');
         }
-        grunt.registerTask('rawcss', cssTasks);
 
-        grunt.registerTask('css', ['scss', 'rawcss']);
+        // The tasks must be registered, even if empty to ensure a consistent command list.
+        // They jsut won't run anything.
+        grunt.registerTask('scss', scssTasks);
+        grunt.registerTask('rawcss', cssTasks);
     };
 
     // Register CSS tasks.
     grunt.loadNpmTasks('grunt-stylelint');
 
+    // Register the style lint tasks.
+    registerStyleLintTasks();
+    grunt.registerTask('css', ['scss', 'rawcss']);
+
+    const getCoreThemeMatches = () => {
+        const scssMatch = 'scss/**/*.scss';
+
+        if (grunt.moodleEnv.inTheme) {
+            return [scssMatch];
+        }
+
+        if (grunt.moodleEnv.runDir.startsWith('theme')) {
+            return [`*/${scssMatch}`];
+        }
+
+        return [`theme/*/${scssMatch}`];
+    };
+
+    // Add the watch configuration for rawcss, and scss.
     grunt.config.merge({
         watch: {
             rawcss: {
@@ -143,8 +172,10 @@ module.exports = grunt => {
                 ],
                 tasks: ['rawcss']
             },
+            scss: {
+                files: getCoreThemeMatches(),
+                tasks: ['scss']
+            },
         },
     });
-
-    registerStyleLintTasks();
 };

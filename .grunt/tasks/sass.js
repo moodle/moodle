@@ -37,13 +37,4 @@ module.exports = grunt => {
             }
         },
     });
-
-    grunt.config.merge({
-        watch: {
-            boost: {
-                files: [grunt.moodleEnv.inComponent ? 'scss/**/*.scss' : 'theme/boost/scss/**/*.scss'],
-                tasks: ['scss']
-            },
-        },
-    });
 };

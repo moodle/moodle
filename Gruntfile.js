@@ -68,6 +68,54 @@ const setupMoodleEnvironment = grunt => {
         };
     };
 
+    const getStyleConfiguration = () => {
+        const ComponentList = require(path.join(process.cwd(), '.grunt', 'components.js'));
+        // Build the cssSrc and scssSrc.
+        // Valid paths are:
+        // [component]/styles.css; and either
+        // [theme/[themename]]/scss/**/*.scss; or
+        // [theme/[themename]]/style/*.css.
+        //
+        // If a theme has scss, then it is assumed that the style directory contains generated content.
+        let cssSrc = [];
+        let scssSrc = [];
+
+        const checkComponentDirectory = componentDirectory => {
+            const isTheme = componentDirectory.startsWith('theme/');
+            if (isTheme) {
+                const scssDirectory = `${componentDirectory}/scss`;
+
+                if (fs.existsSync(scssDirectory)) {
+                    // This theme has an SCSS directory.
+                    // Include all scss files within it recursively, but do not check for css files.
+                    scssSrc.push(`${scssDirectory}/*.scss`);
+                    scssSrc.push(`${scssDirectory}/**/*.scss`);
+                } else {
+                    // This theme has no SCSS directory.
+                    // Only hte CSS files in the top-level directory are checked.
+                    cssSrc.push(`${componentDirectory}/style/*.css`);
+                }
+            } else {
+                // This is not a theme.
+                // All other plugin types are restricted to a single styles.css in their top level.
+                cssSrc.push(`${componentDirectory}/styles.css`);
+            }
+        };
+
+        if (inComponent) {
+            checkComponentDirectory(componentDirectory);
+        } else {
+            ComponentList.getComponentPaths(`${gruntFilePath}/`).forEach(componentPath => {
+                checkComponentDirectory(componentPath);
+            });
+        }
+
+        return {
+            cssSrc,
+            scssSrc,
+        };
+    };
+
     /**
      * Calculate the cwd, taking into consideration the `root` option (for Windows).
      *
@@ -75,9 +123,6 @@ const setupMoodleEnvironment = grunt => {
      * @returns {String} The current directory as best we can determine
      */
     const getCwd = grunt => {
-        const fs = require('fs');
-        const path = require('path');
-
         let cwd = fs.realpathSync(process.env.PWD || process.cwd());
 
         // Windows users can't run grunt in a subdirectory, so allow them to set
@@ -113,6 +158,7 @@ const setupMoodleEnvironment = grunt => {
     const fullRunDir = fs.realpathSync(gruntFilePath + path.sep + runDir);
     const {inAMD, amdSrc} = getAmdConfiguration();
     const {yuiSrc} = getYuiConfiguration();
+    const {cssSrc, scssSrc} = getStyleConfiguration();
 
     let files = null;
     if (grunt.option('files')) {
@@ -143,6 +189,7 @@ const setupMoodleEnvironment = grunt => {
         amdSrc,
         componentDirectory,
         cwd,
+        cssSrc,
         files,
         fullRunDir,
         gruntFilePath,
@@ -151,6 +198,7 @@ const setupMoodleEnvironment = grunt => {
         inTheme,
         relativeCwd,
         runDir,
+        scssSrc,
         yuiSrc,
     };
 };
