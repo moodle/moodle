@@ -176,10 +176,14 @@ class repository_googledocs extends repository {
     /**
      * Build the breadcrumb from a path.
      *
+     * @deprecated since Moodle 3.11.
      * @param string $path to create a breadcrumb from.
      * @return array containing name and path of each crumb.
      */
     protected function build_breadcrumb($path) {
+        debugging('The function build_breadcrumb() is deprecated, please use get_navigation() from the ' .
+            'googledocs repository content classes instead.', DEBUG_DEVELOPER);
+
         $bread = explode('/', $path);
         $crumbtrail = '';
         foreach ($bread as $crumb) {
@@ -200,12 +204,16 @@ class repository_googledocs extends repository {
      *
      * Typically, a node will be id|Name of the node.
      *
+     * @deprecated since Moodle 3.11.
      * @param string $id of the node.
      * @param string $name of the node, will be URL encoded.
      * @param string $root to append the node on, must be a result of this function.
      * @return string path to the node.
      */
     protected function build_node_path($id, $name = '', $root = '') {
+        debugging('The function build_node_path() is deprecated, please use ' .
+            '\repository_googledocs\helper::build_node_path() instead.', DEBUG_DEVELOPER);
+
         $path = $id;
         if (!empty($name)) {
             $path .= '|' . urlencode($name);
@@ -219,11 +227,15 @@ class repository_googledocs extends repository {
     /**
      * Returns information about a node in a path.
      *
+     * @deprecated since Moodle 3.11.
      * @see self::build_node_path()
      * @param string $node to extrat information from.
      * @return array about the node.
      */
     protected function explode_node_path($node) {
+        debugging('The function explode_node_path() is deprecated, please use ' .
+            '\repository_googledocs\helper::explode_node_path() instead.', DEBUG_DEVELOPER);
+
         if (strpos($node, '|') !== false) {
             list($id, $name) = explode('|', $node, 2);
             $name = urldecode($name);
@@ -331,12 +343,16 @@ class repository_googledocs extends repository {
      * This returns a list of files and folders with their details as they should be
      * formatted and returned by functions such as get_listing() or search().
      *
+     * @deprecated since Moodle 3.11.
      * @param string $q search query as expected by the Google API.
      * @param string $path parent path of the current files, will not be used for the query.
      * @param int $page page.
      * @return array of files and folders.
      */
     protected function query($q, $path = null, $page = 0) {
+        debugging('The function query() is deprecated, please use get_content_nodes() from the ' .
+            'googledocs repository content classes instead.', DEBUG_DEVELOPER);
+
         global $OUTPUT;
 
         $files = array();
