@@ -2681,11 +2681,11 @@ class mod_forum_external extends external_api {
         $updatepost->attachments = IGNORE_FILE_MERGE;
 
         // Prepare the post to be updated.
-        if (!empty($params['subject'])) {
+        if ($params['subject'] !== '') {
             $updatepost->subject = $params['subject'];
         }
 
-        if (!empty($params['message']) && !empty($params['messageformat'])) {
+        if ($params['message'] !== '' && isset($params['messageformat'])) {
             $updatepost->message       = $params['message'];
             $updatepost->messageformat = $params['messageformat'];
             $updatepost->messagetrust  = trusttext_trusted($modcontext);
