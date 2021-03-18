@@ -93,6 +93,16 @@ const fetchComponentData = () => {
 };
 
 /**
+ * Get the list of component paths.
+ *
+ * @param   {string} relativeTo
+ * @returns {array}
+ */
+const getComponentPaths = (relativeTo = '') => fetchComponentData().pathList.map(componentPath => {
+    return componentPath.replace(relativeTo, '');
+});
+
+/**
  * Get the list of paths to build AMD sources.
  *
  * @returns {Array}
@@ -225,6 +235,7 @@ const getOwningComponentDirectory = checkPath => {
 module.exports = {
     getAmdSrcGlobList,
     getComponentFromPath,
+    getComponentPaths,
     getOwningComponentDirectory,
     getYuiSrcGlobList,
     getThirdPartyLibsList,
