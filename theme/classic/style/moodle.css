@@ -13353,7 +13353,7 @@ table.calendartable caption {
     margin-right: auto;
     margin-bottom: 0.5rem; }
   .content-bank-container.view-grid .cb-unlisted .cb-thumbnail {
-    opacity: .3; }
+    opacity: .15; }
   .content-bank-container.view-grid .cb-unlisted::after {
     position: absolute;
     top: 20px;
@@ -13363,7 +13363,8 @@ table.calendartable caption {
     font-family: FontAwesome;
     font-size: 26px;
     text-align: center;
-    opacity: 0.8; }
+    opacity: 0.9;
+    text-shadow: 0 0 10px #fff; }
   .content-bank-container.view-grid .cb-heading,
   .content-bank-container.view-grid .cb-uses,
   .content-bank-container.view-grid .cb-date,
