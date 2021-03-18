@@ -30,6 +30,8 @@ use navigation_node;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class secondary extends view {
+    /** @var string $headertitle The header for this particular menu*/
+    public $headertitle;
     /**
      * Defines the default structure for the secondary nav in a course context.
      *
@@ -116,14 +118,17 @@ class secondary extends view {
         }
         $this->id = 'secondary_navigation';
         $context = $this->context;
+        $this->headertitle = get_string('menu');
 
         switch ($context->contextlevel) {
             case CONTEXT_COURSE:
                 if ($this->page->course->id != $SITE->id) {
+                    $this->headertitle = get_string('courseheader');
                     $this->load_course_navigation();
                 }
                 break;
             case CONTEXT_MODULE:
+                $this->headertitle = get_string('activityheader');
                 $this->load_module_navigation();
                 break;
             case CONTEXT_SYSTEM:

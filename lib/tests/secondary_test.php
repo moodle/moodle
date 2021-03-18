@@ -81,9 +81,12 @@ class core_secondary_testcase extends advanced_testcase {
      *
      * @param string $context The context to setup for - course, module, system
      * @param string $expectedfirstnode The expected first node
+     * @param string $header The expected string
+     * @param string $activenode The expected active node
      * @dataProvider test_setting_initialise_provider
      */
-    public function test_setting_initialise(string $context, string $expectedfirstnode) {
+    public function test_setting_initialise(string $context, string $expectedfirstnode,
+            string $header, string $activenode) {
         global $PAGE, $SITE;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -116,7 +119,9 @@ class core_secondary_testcase extends advanced_testcase {
         $node = new secondary($PAGE);
         $node->initialise();
         $children = $node->get_children_key_list();
-        $this->assertEquals($children[0], $expectedfirstnode);
+        $this->assertEquals($expectedfirstnode, $children[0]);
+        $this->assertEquals(get_string($header), $node->headertitle);
+        $this->assertEquals($activenode, $node->activenode->text);
     }
 
     /**
@@ -125,9 +130,9 @@ class core_secondary_testcase extends advanced_testcase {
      */
     public function test_setting_initialise_provider(): array {
         return [
-            'Testing in a course context' => ['course', 'coursehome'],
-            'Testing in a module context' => ['module', 'modulepage'],
-            'Testing in a site admin' => ['system', 'siteadminnode'],
+            'Testing in a course context' => ['course', 'coursehome', 'courseheader', 'Course Page'],
+            'Testing in a module context' => ['module', 'modulepage', 'activityheader', 'Activity'],
+            'Testing in a site admin' => ['system', 'siteadminnode', 'menu', 'Site administration'],
         ];
     }
 }
