@@ -456,6 +456,12 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 3.11.
+        '/customfield/edit.php',
+        '/lib/phpunit/classes/autoloader.php',
+        '/lib/xhprof/README',
+        '/message/defaultoutputs.php',
+        '/user/files_form.php',
         // Removed in 3.10.
         '/grade/grading/classes/privacy/gradingform_provider.php',
         '/lib/coursecatlib.php',
