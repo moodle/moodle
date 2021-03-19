@@ -126,14 +126,13 @@ class tool_uploaduser_cli_testcase extends advanced_testcase {
      * User upload with user profile fields
      */
     public function test_upload_with_profile_fields() {
-        global $DB, $CFG;
+        global $CFG;
         $this->resetAfterTest();
         set_config('passwordpolicy', 0);
         $this->setAdminUser();
 
-        $categoryid = $DB->insert_record('user_info_category', ['name' => 'Cat 1', 'sortorder' => 1]);
-        $this->field1 = $DB->insert_record('user_info_field', [
-            'shortname' => 'superfield', 'name' => 'Super field', 'categoryid' => $categoryid,
+        $this->field1 = $this->getDataGenerator()->create_custom_profile_field([
+            'shortname' => 'superfield', 'name' => 'Super field',
             'datatype' => 'text', 'signup' => 1, 'visible' => 1, 'required' => 1, 'sortorder' => 1]);
 
         $filepath = $CFG->dirroot.'/lib/tests/fixtures/upload_users_profile.csv';

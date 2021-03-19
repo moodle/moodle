@@ -592,9 +592,9 @@ class badgeslib_test extends advanced_testcase {
         require_once($CFG->dirroot.'/user/profile/lib.php');
 
         // Add a custom field of textarea type.
-        $customprofileid = $DB->insert_record('user_info_field', array(
-            'shortname' => 'newfield', 'name' => 'Description of new field', 'categoryid' => 1,
-            'datatype' => 'textarea'));
+        $customprofileid = $this->getDataGenerator()->create_custom_profile_field(array(
+            'shortname' => 'newfield', 'name' => 'Description of new field',
+            'datatype' => 'textarea'))->id;
 
         $this->preventResetByRollback(); // Messaging is not compatible with transactions.
         $badge = new badge($this->coursebadge);
