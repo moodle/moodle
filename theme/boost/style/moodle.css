@@ -14031,15 +14031,8 @@ span.editinstructions {
   white-space: pre-wrap; }
 
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
-:target::before {
-  content: " ";
-  display: block;
-  height: 60px;
-  /* fixed header height*/
-  margin-top: -60px;
-  /* negative fixed header height */
-  width: 1px;
-  pointer-events: none; }
+:target {
+  scroll-margin-top: 60px; }
 
 .pagelayout-embedded :target {
   padding-top: initial;
