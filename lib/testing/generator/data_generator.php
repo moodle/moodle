@@ -1289,7 +1289,7 @@ EOD;
                 'defaultdata' => 0
             ]
         ];
-        foreach ($typedefaults[$data['datatype']] as $field => $value) {
+        foreach ($typedefaults[$data['datatype']] ?? [] as $field => $value) {
             $defaults[$field] = $value;
         }
 

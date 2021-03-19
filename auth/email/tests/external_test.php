@@ -44,18 +44,17 @@ class auth_email_external_testcase extends externallib_advanced_testcase {
      * Set up for every test
      */
     public function setUp(): void {
-        global $CFG, $DB;
+        global $CFG;
 
         $this->resetAfterTest(true);
         $CFG->registerauth = 'email';
 
-        $categoryid = $DB->insert_record('user_info_category', array('name' => 'Cat 1', 'sortorder' => 1));
-        $this->field1 = $DB->insert_record('user_info_field', array(
-                'shortname' => 'frogname', 'name' => 'Name of frog', 'categoryid' => $categoryid,
-                'datatype' => 'text', 'signup' => 1, 'visible' => 1, 'required' => 1, 'sortorder' => 1));
-        $this->field2 = $DB->insert_record('user_info_field', array(
-                'shortname' => 'sometext', 'name' => 'Some text in textarea', 'categoryid' => $categoryid,
-                'datatype' => 'textarea', 'signup' => 1, 'visible' => 1, 'required' => 1, 'sortorder' => 2));
+        $this->field1 = $this->getDataGenerator()->create_custom_profile_field(array(
+                'shortname' => 'frogname', 'name' => 'Name of frog',
+                'datatype' => 'text', 'signup' => 1, 'visible' => 1, 'required' => 1, 'sortorder' => 1))->id;
+        $this->field2 = $this->getDataGenerator()->create_custom_profile_field(array(
+                'shortname' => 'sometext', 'name' => 'Some text in textarea',
+                'datatype' => 'textarea', 'signup' => 1, 'visible' => 1, 'required' => 1, 'sortorder' => 2))->id;
     }
 
     public function test_get_signup_settings() {
@@ -109,8 +108,8 @@ class auth_email_external_testcase extends externallib_advanced_testcase {
         // Create category with MathJax and a new field with MathJax.
         $categoryname = 'Cat $$(a+b)=2$$';
         $fieldname = 'Some text $$(a+b)=2$$';
-        $categoryid = $DB->insert_record('user_info_category', array('name' => $categoryname, 'sortorder' => 1));
-        $field3 = $DB->insert_record('user_info_field', array(
+        $categoryid = $this->getDataGenerator()->create_custom_profile_field_category(['name' => $categoryname])->id;
+        $this->getDataGenerator()->create_custom_profile_field(array(
                 'shortname' => 'mathjaxname', 'name' => $fieldname, 'categoryid' => $categoryid,
                 'datatype' => 'textarea', 'signup' => 1, 'visible' => 1, 'required' => 1, 'sortorder' => 2));
 
