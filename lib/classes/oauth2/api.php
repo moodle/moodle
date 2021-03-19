@@ -41,74 +41,6 @@ use moodle_exception;
 class api {
 
     /**
-     * Build a microsoft ready OAuth 2 service.
-     * @return \core\oauth2\issuer
-     */
-    private static function init_microsoft() {
-        // Microsoft is a custom setup.
-        $record = (object) [
-            'name' => 'Microsoft',
-            'image' => 'https://www.microsoft.com/favicon.ico',
-            'baseurl' => '',
-            'loginscopes' => 'openid profile email user.read',
-            'loginscopesoffline' => 'openid profile email user.read offline_access',
-            'showonloginpage' => true,
-            'servicetype' => 'microsoft',
-        ];
-
-        $issuer = new issuer(0, $record);
-        return $issuer;
-    }
-
-    /**
-     * Create endpoints for microsoft issuers.
-     * @param issuer $issuer issuer the endpoints should be created for.
-     * @return mixed
-     * @throws \coding_exception
-     * @throws \core\invalid_persistent_exception
-     */
-    private static function create_endpoints_for_microsoft($issuer) {
-
-        $endpoints = [
-            'authorization_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-            'token_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-            'userinfo_endpoint' => 'https://graph.microsoft.com/v1.0/me/',
-            'userpicture_endpoint' => 'https://graph.microsoft.com/v1.0/me/photo/$value',
-        ];
-
-        foreach ($endpoints as $name => $url) {
-            $record = (object) [
-                'issuerid' => $issuer->get('id'),
-                'name' => $name,
-                'url' => $url
-            ];
-            $endpoint = new endpoint(0, $record);
-            $endpoint->create();
-        }
-
-        // Create the field mappings.
-        $mapping = [
-            'givenName' => 'firstname',
-            'surname' => 'lastname',
-            'userPrincipalName' => 'email',
-            'displayName' => 'alternatename',
-            'officeLocation' => 'address',
-            'mobilePhone' => 'phone1',
-            'preferredLanguage' => 'lang'
-        ];
-        foreach ($mapping as $external => $internal) {
-            $record = (object) [
-                'issuerid' => $issuer->get('id'),
-                'externalfield' => $external,
-                'internalfield' => $internal
-            ];
-            $userfieldmapping = new user_field_mapping(0, $record);
-            $userfieldmapping->create();
-        }
-        return $issuer;
-    }
-
-    /**
      * Build a nextcloud ready OAuth 2 service.
      * @return \core\oauth2\issuer
      */
@@ -186,9 +118,7 @@ class api {
         require_capability('moodle/site:config', context_system::instance());
 
         // TODO: Move these methods to new service classes (to make this API easier to understand and maintain).
-        if ($type == 'microsoft') {
-            return self::init_microsoft();
-        } else if ($type == 'nextcloud') {
+        if ($type == 'nextcloud') {
             return self::init_nextcloud();
         } else {
             $classname = self::get_service_classname($type);
@@ -209,9 +139,7 @@ class api {
         require_capability('moodle/site:config', context_system::instance());
 
         // TODO: Move these methods to new service classes (to make this API easier to understand and maintain).
-        if ($type == 'microsoft') {
-            return self::create_endpoints_for_microsoft($issuer);
-        } else if ($type == 'nextcloud') {
+        if ($type == 'nextcloud') {
             return self::create_endpoints_for_nextcloud($issuer);
         } else {
             $classname = self::get_service_classname($type);
@@ -240,6 +168,7 @@ class api {
                 }
             case 'google':
             case 'facebook':
+            case 'microsoft':
                 $classname = self::get_service_classname($type);
                 $issuer = $classname::init();
                 if ($baseurl) {
@@ -247,11 +176,6 @@ class api {
                 }
                 $issuer->create();
                 return self::create_endpoints_for_standard_issuer($type, $issuer);
-
-            case 'microsoft':
-                $issuer = self::init_microsoft();
-                $issuer->create();
-                return self::create_endpoints_for_microsoft($issuer);
 
             case 'nextcloud':
                 if (!$baseurl) {
