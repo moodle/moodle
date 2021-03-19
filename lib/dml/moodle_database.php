@@ -52,6 +52,10 @@ define('SQL_QUERY_STRUCTURE', 4);
 /** SQL_QUERY_AUX - Auxiliary query done by driver, setting connection config, getting table info, etc. */
 define('SQL_QUERY_AUX', 5);
 
+/** SQL_QUERY_AUX_READONLY - Auxiliary query that can be done using the readonly connection:
+ * database parameters, table/index/column lists, if not within transaction/ddl. */
+define('SQL_QUERY_AUX_READONLY', 6);
+
 /**
  * Abstract class representing moodle database interface.
  * @link http://docs.moodle.org/dev/DML_functions
@@ -414,9 +418,11 @@ abstract class moodle_database {
 
     /**
      * This should be called before each db query.
+     *
      * @param string $sql The query string.
      * @param array $params An array of parameters.
-     * @param int $type The type of query. ( SQL_QUERY_SELECT | SQL_QUERY_AUX | SQL_QUERY_INSERT | SQL_QUERY_UPDATE | SQL_QUERY_STRUCTURE )
+     * @param int $type The type of query ( SQL_QUERY_SELECT | SQL_QUERY_AUX_READONLY | SQL_QUERY_AUX |
+     *                  SQL_QUERY_INSERT | SQL_QUERY_UPDATE | SQL_QUERY_STRUCTURE ).
      * @param mixed $extrainfo This is here for any driver specific extra information.
      * @return void
      */
@@ -433,6 +439,7 @@ abstract class moodle_database {
         switch ($type) {
             case SQL_QUERY_SELECT:
             case SQL_QUERY_AUX:
+            case SQL_QUERY_AUX_READONLY:
                 $this->reads++;
                 break;
             case SQL_QUERY_INSERT:
@@ -483,6 +490,7 @@ abstract class moodle_database {
         switch ($type) {
             case SQL_QUERY_SELECT:
             case SQL_QUERY_AUX:
+            case SQL_QUERY_AUX_READONLY:
                 throw new dml_read_exception($error, $sql, $params);
             case SQL_QUERY_INSERT:
             case SQL_QUERY_UPDATE:
