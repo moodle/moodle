@@ -246,6 +246,8 @@ module.exports = function(grunt) {
         require(path.resolve(`./.grunt/tasks/${name}.js`))(grunt);
     };
 
+    // Startup tasks.
+    grunt.moodleEnv.startupTasks = [];
 
     // Add Moodle task configuration.
     addTask('gherkinlint', grunt);

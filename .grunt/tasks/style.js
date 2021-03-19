@@ -29,4 +29,7 @@ module.exports = grunt => {
 
     // Load the SASS tasks.
     require('./sass')(grunt);
+
+    // Add the 'css' task as a startup task.
+    grunt.moodleEnv.startupTasks.push('css');
 };

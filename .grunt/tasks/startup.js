@@ -34,10 +34,8 @@ module.exports = grunt => {
         } else if (grunt.moodleEnv.inAMD) {
             grunt.task.run('amd');
         } else {
-            // Run them all!.
-            grunt.task.run('css');
-            grunt.task.run('js');
-            grunt.task.run('gherkinlint');
+            // Run all of the requested startup tasks.
+            grunt.moodleEnv.startupTasks.forEach(taskName => grunt.task.run(taskName));
         }
     };
 

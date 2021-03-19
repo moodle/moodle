@@ -126,6 +126,9 @@ module.exports = grunt => {
         },
     });
 
+    // Add the 'js' task as a startup task.
+    grunt.moodleEnv.startupTasks.push('js');
+
     // On watch, we dynamically modify config to build only affected files. This
     // method is slightly complicated to deal with multiple changed files at once (copied
     // from the grunt-contrib-watch readme).
