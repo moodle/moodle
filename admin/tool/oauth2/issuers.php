@@ -53,7 +53,7 @@ if ($action == 'edit') {
     if ($issuer) {
         $PAGE->navbar->add(get_string('editissuer', 'tool_oauth2', s($issuer->get('name'))));
     } else {
-        $PAGE->navbar->add(get_string('createnewservice', 'tool_oauth2') . get_string('custom_service', 'tool_oauth2'));
+        $PAGE->navbar->add(get_string('createnewservice', 'tool_oauth2') . ' ' . get_string('custom_service', 'tool_oauth2'));
     }
 
     $showrequireconfirm = false;
@@ -96,7 +96,7 @@ if ($mform && $mform->is_cancelled()) {
         if ($issuer) {
             echo $OUTPUT->heading(get_string('editissuer', 'tool_oauth2', s($issuer->get('name'))));
         } else {
-            echo $OUTPUT->heading(get_string('createnewservice', 'tool_oauth2') . get_string('custom_service', 'tool_oauth2'));
+            echo $OUTPUT->heading(get_string('createnewservice', 'tool_oauth2') . ' ' . get_string('custom_service', 'tool_oauth2'));
         }
         $mform->display();
         echo $OUTPUT->footer();
@@ -115,7 +115,7 @@ if ($mform && $mform->is_cancelled()) {
         redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
     } else {
         echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('createnewservice', 'tool_oauth2') . get_string($type . '_service', 'tool_oauth2'));
+        echo $OUTPUT->heading(get_string('createnewservice', 'tool_oauth2') . ' ' . get_string($type . '_service', 'tool_oauth2'));
         $mform->display();
         echo $OUTPUT->footer();
     }
@@ -130,9 +130,9 @@ if ($mform && $mform->is_cancelled()) {
     $mform = new \tool_oauth2\form\issuer(null, ['persistent' => $issuer, 'type' => $type,
         'showrequireconfirm' => $showrequireconfirm]);
 
-    $PAGE->navbar->add(get_string('createnewservice', 'tool_oauth2') . get_string($type . '_service', 'tool_oauth2'));
+    $PAGE->navbar->add(get_string('createnewservice', 'tool_oauth2') . ' ' . get_string($type . '_service', 'tool_oauth2'));
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('createnewservice', 'tool_oauth2') . get_string($type . '_service', 'tool_oauth2'));
+    echo $OUTPUT->heading(get_string('createnewservice', 'tool_oauth2') . ' ' . get_string($type . '_service', 'tool_oauth2'));
     $mform->display();
     echo $OUTPUT->footer();
 
@@ -199,7 +199,7 @@ if ($mform && $mform->is_cancelled()) {
     echo $renderer->issuers_table($issuers);
 
     echo $renderer->container_start();
-    echo get_string('createnewservice', 'tool_oauth2');
+    echo get_string('createnewservice', 'tool_oauth2') . ' ';
 
     // Google template.
     $docs = 'admin/tool/oauth2/issuers/google';
