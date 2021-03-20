@@ -28,12 +28,14 @@ import {get_string as getString} from 'core/str';
 const Selectors = {
     actions: {
         editCategory: '[data-action="editcategory"]',
+        editField: '[data-action="editfield"]',
+        createField: '[data-action="createfield"]',
     },
 };
 
 export const init = () => {
     document.addEventListener('click', function(e) {
-        const element = e.target.closest(Selectors.actions.editCategory);
+        let element = e.target.closest(Selectors.actions.editCategory);
         if (element) {
             e.preventDefault();
             const title = element.getAttribute('data-id') ?
@@ -43,6 +45,32 @@ export const init = () => {
                 formClass: 'core_user\\form\\profile_category_form',
                 args: {id: element.getAttribute('data-id')},
                 modalConfig: {title},
+                returnFocus: element,
+            });
+            form.addEventListener(form.events.FORM_SUBMITTED, () => window.location.reload());
+            form.show();
+        }
+
+        element = e.target.closest(Selectors.actions.editField);
+        if (element) {
+            e.preventDefault();
+            const form = new ModalForm({
+                formClass: 'core_user\\form\\profile_field_form',
+                args: {id: element.getAttribute('data-id')},
+                modalConfig: {title: getString('profileeditfield', 'admin', element.getAttribute('data-name'))},
+                returnFocus: element,
+            });
+            form.addEventListener(form.events.FORM_SUBMITTED, () => window.location.reload());
+            form.show();
+        }
+
+        element = e.target.closest(Selectors.actions.createField);
+        if (element) {
+            e.preventDefault();
+            const form = new ModalForm({
+                formClass: 'core_user\\form\\profile_field_form',
+                args: {datatype: element.getAttribute('data-datatype'), categoryid: element.getAttribute('data-categoryid')},
+                modalConfig: {title: getString('profilecreatenewfield', 'admin', element.getAttribute('data-datatypename'))},
                 returnFocus: element,
             });
             form.addEventListener(form.events.FORM_SUBMITTED, () => window.location.reload());

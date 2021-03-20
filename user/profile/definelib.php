@@ -514,13 +514,18 @@ function profile_save_category(stdClass $data) {
 /**
  * Edit a category
  *
+ * @deprecated since Moodle 3.11 MDL-71051 - please do not use this function any more.
+ * @todo MDL-71413 This will be deleted in Moodle 4.3.
+ * @see profile_save_category()
+ *
  * @param int $id
  * @param string $redirect
  */
 function profile_edit_category($id, $redirect) {
     global $DB, $OUTPUT, $CFG;
 
-    debugging('Function profile_edit_category() deprecated without replacement', DEBUG_DEVELOPER);
+    debugging('Function profile_edit_category() is deprecated without replacement, see also profile_save_category()',
+        DEBUG_DEVELOPER);
 
     $categoryform = new \core_user\form\profile_category_form();
 
@@ -553,77 +558,72 @@ function profile_edit_category($id, $redirect) {
 }
 
 /**
+ * Save updated field definition or create a new field
+ *
+ * @param stdClass $data data from the form profile_field_form
+ * @param array $editors editors for this form field type
+ */
+function profile_save_field(stdClass $data, array $editors): void {
+    global $CFG;
+
+    require_once($CFG->dirroot.'/user/profile/field/'.$data->datatype.'/define.class.php');
+    $newfield = 'profile_define_'.$data->datatype;
+    /** @var profile_define_base $formfield */
+    $formfield = new $newfield();
+
+    // Collect the description and format back into the proper data structure from the editor.
+    // Note: This field will ALWAYS be an editor.
+    $data->descriptionformat = $data->description['format'];
+    $data->description = $data->description['text'];
+
+    // Check whether the default data is an editor, this is (currently) only the textarea field type.
+    if (is_array($data->defaultdata) && array_key_exists('text', $data->defaultdata)) {
+        // Collect the default data and format back into the proper data structure from the editor.
+        $data->defaultdataformat = $data->defaultdata['format'];
+        $data->defaultdata = $data->defaultdata['text'];
+    }
+
+    // Convert the data format for.
+    if (is_array($editors)) {
+        foreach ($editors as $editor) {
+            if (isset($field->$editor)) {
+                $field->{$editor.'format'} = $field->{$editor}['format'];
+                $field->$editor = $field->{$editor}['text'];
+            }
+        }
+    }
+
+    $formfield->define_save($data);
+    profile_reorder_fields();
+    profile_reorder_categories();
+}
+
+/**
  * Edit a profile field.
+ *
+ * @deprecated since Moodle 3.11 MDL-71051 - please do not use this function any more.
+ * @todo MDL-71413 This will be deleted in Moodle 4.3.
+ * @see profile_save_field()
  *
  * @param int $id
  * @param string $datatype
  * @param string $redirect
  */
 function profile_edit_field($id, $datatype, $redirect) {
-    global $CFG, $DB, $OUTPUT, $PAGE;
+    global $OUTPUT, $PAGE;
 
-    if (!$field = $DB->get_record('user_info_field', array('id' => $id))) {
-        $field = new stdClass();
-        $field->datatype = $datatype;
-        $field->description = '';
-        $field->descriptionformat = FORMAT_HTML;
-        $field->defaultdata = '';
-        $field->defaultdataformat = FORMAT_HTML;
-    }
+    debugging('Function profile_edit_field() is deprecated without replacement, see also profile_save_field()',
+        DEBUG_DEVELOPER);
 
-    // Clean and prepare description for the editor.
-    $field->description = clean_text($field->description, $field->descriptionformat);
-    $field->description = array('text' => $field->description, 'format' => $field->descriptionformat, 'itemid' => 0);
-
-    $fieldform = new \core_user\form\profile_field_form(null, $field->datatype);
-
-    // Convert the data format for.
-    if (is_array($fieldform->editors())) {
-        foreach ($fieldform->editors() as $editor) {
-            if (isset($field->$editor)) {
-                $field->$editor = clean_text($field->$editor, $field->{$editor.'format'});
-                $field->$editor = array('text' => $field->$editor, 'format' => $field->{$editor.'format'}, 'itemid' => 0);
-            }
-        }
-    }
-
-    $fieldform->set_data($field);
+    $fieldform = new \core_user\form\profile_field_form();
+    $fieldform->set_data_for_dynamic_submission();
 
     if ($fieldform->is_cancelled()) {
         redirect($redirect);
 
     } else {
         if ($data = $fieldform->get_data()) {
-            require_once($CFG->dirroot.'/user/profile/field/'.$datatype.'/define.class.php');
-            $newfield = 'profile_define_'.$datatype;
-            /** @var profile_define_base $formfield */
-            $formfield = new $newfield();
-
-            // Collect the description and format back into the proper data structure from the editor.
-            // Note: This field will ALWAYS be an editor.
-            $data->descriptionformat = $data->description['format'];
-            $data->description = $data->description['text'];
-
-            // Check whether the default data is an editor, this is (currently) only the textarea field type.
-            if (is_array($data->defaultdata) && array_key_exists('text', $data->defaultdata)) {
-                // Collect the default data and format back into the proper data structure from the editor.
-                $data->defaultdataformat = $data->defaultdata['format'];
-                $data->defaultdata = $data->defaultdata['text'];
-            }
-
-            // Convert the data format for.
-            if (is_array($fieldform->editors())) {
-                foreach ($fieldform->editors() as $editor) {
-                    if (isset($field->$editor)) {
-                        $field->{$editor.'format'} = $field->{$editor}['format'];
-                        $field->$editor = $field->{$editor}['text'];
-                    }
-                }
-            }
-
-            $formfield->define_save($data);
-            profile_reorder_fields();
-            profile_reorder_categories();
+            profile_save_field($data, $fieldform->editors());
             redirect($redirect);
         }
 
@@ -632,7 +632,7 @@ function profile_edit_field($id, $datatype, $redirect) {
         if (empty($id)) {
             $strheading = get_string('profilecreatenewfield', 'admin', $datatypes[$datatype]);
         } else {
-            $strheading = get_string('profileeditfield', 'admin', format_string($field->name));
+            $strheading = get_string('profileeditfield', 'admin', format_string($fieldform->get_field_record()->name));
         }
 
         // Print the page.

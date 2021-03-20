@@ -65,7 +65,8 @@ Feature: availability_profile
     # Add custom field.
     Given I log in as "admin"
     And I navigate to "Users > Accounts > User profile fields" in site administration
-    And I set the field "datatype" to "Text input"
+    And I click on "Create a new profile field" "link"
+    And I click on "Text input" "link"
     And I set the following fields to these values:
       | Short name | superfield  |
       | Name       | Super field |
