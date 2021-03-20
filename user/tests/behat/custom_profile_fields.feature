@@ -17,7 +17,8 @@ Feature: Custom profile fields should be visible and editable by those with the 
 
     And I log in as "admin"
     And I navigate to "Users > Accounts > User profile fields" in site administration
-    And I set the field "datatype" to "Text input"
+    And I click on "Create a new profile field" "link"
+    And I click on "Text input" "link"
     And I set the following fields to these values:
       | Short name                    | notvisible_field |
       | Name                          | notvisible_field |
@@ -25,7 +26,8 @@ Feature: Custom profile fields should be visible and editable by those with the 
       | Who is this field visible to? | Not visible      |
     And I click on "Save changes" "button"
 
-    And I set the field "datatype" to "Text input"
+    And I click on "Create a new profile field" "link"
+    And I click on "Text input" "link"
     And I set the following fields to these values:
       | Short name                    | uservisible_field |
       | Name                          | uservisible_field |
@@ -33,7 +35,8 @@ Feature: Custom profile fields should be visible and editable by those with the 
       | Who is this field visible to? | Visible to user   |
     And I click on "Save changes" "button"
 
-    And I set the field "datatype" to "Text input"
+    And I click on "Create a new profile field" "link"
+    And I click on "Text input" "link"
     And I set the following fields to these values:
       | Short name                    | everyonevisible_field |
       | Name                          | everyonevisible_field |
@@ -41,7 +44,8 @@ Feature: Custom profile fields should be visible and editable by those with the 
       | Who is this field visible to? | Visible to everyone   |
     And I click on "Save changes" "button"
 
-    And I set the field "datatype" to "Text input"
+    And I click on "Create a new profile field" "link"
+    And I click on "Text input" "link"
     And I set the following fields to these values:
       | Short name                    | teachervisible_field                |
       | Name                          | teachervisible_field                |

@@ -272,12 +272,13 @@ class core_calendar_type_testcase extends advanced_testcase {
         $formdata['name'] = 'Name';
         $formdata['param1'] = $date['inputminyear'];
         $formdata['param2'] = $date['inputmaxyear'];
+        $formdata['datatype'] = 'datetime';
 
         // Mock submitting this.
         \core_user\form\profile_field_form::mock_submit($formdata);
 
         // Create the user datetime form.
-        $form = new \core_user\form\profile_field_form(null, 'datetime');
+        $form = new \core_user\form\profile_field_form();
 
         // Get the data from the submission.
         $submissiondata = $form->get_data();

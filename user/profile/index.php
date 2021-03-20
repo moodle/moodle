@@ -88,13 +88,6 @@ switch ($action) {
         echo $OUTPUT->footer();
         die;
         break;
-    case 'editfield':
-        $id       = optional_param('id', 0, PARAM_INT);
-        $datatype = optional_param('datatype', '', PARAM_ALPHA);
-
-        profile_edit_field($id, $datatype, $redirect);
-        die;
-        break;
     default:
         // Normal form.
 }
@@ -116,7 +109,10 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('profilefields', 'admin'));
 
 $outputcategories = [];
+$options = profile_list_datatypes();
+
 foreach ($categories as $category) {
+    // Category fields.
     $outputfields = [];
     if ($fields = $DB->get_records('user_info_field', array('categoryid' => $category->id), 'sortorder ASC')) {
         foreach ($fields as $field) {
@@ -129,6 +125,7 @@ foreach ($categories as $category) {
             $outputfields[] = [
                 'id' => $field->id,
                 'shortname' => $field->shortname,
+                'datatype' => $field->datatype,
                 'name' => $fieldname,
                 'isfirst' => !count($outputfields),
                 'islast' => count($outputfields) == count($fields) - 1,
@@ -136,6 +133,19 @@ foreach ($categories as $category) {
         }
     }
 
+    // Add new field menu.
+    $menu = new \action_menu();
+    $menu->set_alignment(\action_menu::BL, \action_menu::BL);
+    $menu->set_menu_trigger($strcreatefield);
+    foreach ($options as $type => $fieldname) {
+        $action = new \action_menu_link_secondary(new \moodle_url('#'), null, $fieldname,
+            ['data-action' => 'createfield', 'data-categoryid' => $category->id, 'data-datatype' => $type,
+                'data-datatypename' => $fieldname]);
+        $menu->add($action);
+    }
+    $menu->attributes['class'] .= ' float-left mr-1';
+
+    // Add category information to the template.
     $outputcategories[] = [
         'id' => $category->id,
         'name' => format_string($category->name),
@@ -144,18 +154,12 @@ foreach ($categories as $category) {
         'isfirst' => !count($outputcategories),
         'islast' => count($outputcategories) == count($categories) - 1,
         'candelete' => count($categories) > 1,
+        'addfieldmenu' => $menu->export_for_template($OUTPUT),
     ];
 }
 
-// Create a new field link.
-$options = profile_list_datatypes();
-$popupurl = new moodle_url('/user/profile/index.php?id=0&action=editfield');
-$singleselect = new single_select($popupurl, 'datatype', $options, '', ['' => get_string('choosedots')], 'newfieldform');
-$singleselect->set_label($strcreatefield);
-
 echo $OUTPUT->render_from_template('core_user/edit_profile_fields', [
     'categories' => $outputcategories,
-    'elementselect' => $singleselect->export_for_template($OUTPUT),
     'sesskey' => sesskey(),
     'baseurl' => (new moodle_url('/user/profile/index.php'))->out(false)
 ]);

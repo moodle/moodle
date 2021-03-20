@@ -47,30 +47,45 @@
                 "islast": true,
                 "candelete": true
             }
-        ],
-        "elementselect": {"options": [{"name": "Choose..."}]}
+        ]
     }
 }}
 
+<div class="row profileeditor">
+    <div class="col align-self-end">
+        <a tabindex="0" role="button" class="btn btn-secondary float-right" data-action="editcategory">{{#str}}profilecreatecategory, admin{{/str}}</a>
+    </div>
+</div>
+
+<div class="categorieslist">
 {{#categories}}
-    <h2>
-        {{{name}}}
-        <a href="#" data-action="editcategory" data-id="{{id}}" data-name="{{name}}">
-                {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}</a>
-        {{#candelete}}
-            <a href="{{baseurl}}?action=deletecategory&id={{id}}&sesskey={{sesskey}}">
-                {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
-        {{/candelete}}
-        {{^isfirst}}
-            <a href="{{baseurl}}?id={{id}}&action=movecategory&dir=up&amp;sesskey={{sesskey}}">
-            {{#pix}}t/up, core, {{#str}}moveup{{/str}}{{/pix}}</a>
-        {{/isfirst}}
-        {{#isfirst}}{{#pix}}spacer, moodle{{/pix}}{{/isfirst}}
-        {{^islast}}
-            <a href="{{baseurl}}?id={{id}}&action=movecategory&dir=down&amp;sesskey={{sesskey}}">
-            {{#pix}}t/down, core, {{#str}}movedown{{/str}}{{/pix}}</a>
-        {{/islast}}
-    </h2>
+<div data-category-id="{{id}}" id="category-{{id}}" class="mt-2">
+    <div class="row justify-content-between align-items-end">
+        <div class="col-6 categoryinstance">
+            <h3>
+                {{{name}}}
+                <a href="#" data-action="editcategory" data-id="{{id}}" data-name="{{name}}">
+                    {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}</a>
+                {{#candelete}}
+                    <a href="{{baseurl}}?action=deletecategory&id={{id}}&sesskey={{sesskey}}">
+                    {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+                {{/candelete}}
+                {{^isfirst}}
+                    <a href="{{baseurl}}?id={{id}}&action=movecategory&dir=up&amp;sesskey={{sesskey}}">
+                    {{#pix}}t/up, core, {{#str}}moveup{{/str}}{{/pix}}</a>
+                {{/isfirst}}
+                {{#isfirst}}{{#pix}}spacer, moodle{{/pix}}{{/isfirst}}
+                {{^islast}}
+                    <a href="{{baseurl}}?id={{id}}&action=movecategory&dir=down&amp;sesskey={{sesskey}}">
+                    {{#pix}}t/down, core, {{#str}}movedown{{/str}}{{/pix}}</a>
+                {{/islast}}
+            </h3>
+        </div>
+        <div class="col-auto text-right">
+            {{#addfieldmenu}}{{> core/action_menu}}{{/addfieldmenu}}
+        </div>
+    </div>
+
     <table class="generaltable fullwidth profilefield">
         {{#hasfields}}
             <thead>
@@ -86,7 +101,7 @@
                             {{{name}}}
                         </td>
                         <td class="col-3 text-right">
-                            <a href="{{baseurl}}?action=editfield&id={{id}}">
+                            <a href="#" data-action="editfield" data-id="{{id}}" data-name="{{name}}">
                                 {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}</a>
                             <a href="{{baseurl}}?action=deletefield&id={{id}}&sesskey={{sesskey}}">
                                 {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
@@ -115,14 +130,8 @@
             </thead>
         {{/hasfields}}
     </table>
+</div>
 {{/categories}}
-
-<hr>
-
-<div class="profileeditor">
-    {{#elementselect}}{{> core/single_select}}{{/elementselect}}
-    {{#str}}or, lesson{{/str}}
-    <a tabindex="0" role="button" class="btn btn-secondary" data-action="editcategory">{{#str}}profilecreatecategory, admin{{/str}}</a>
 </div>
 
 {{#js}}
