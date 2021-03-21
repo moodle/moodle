@@ -1,6 +1,12 @@
 name: Core
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - master
+      - MOODLE_[0-9]+_STABLE
+    tags-ignore:
+      - v[0-9]+.[0-9]+.[0-9]+*
 
 env:
   php: 7.4
