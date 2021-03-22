@@ -79,7 +79,9 @@ abstract class handler {
      * Register the H5P autoloader.
      */
     public static function register(): void {
-        spl_autoload_register([static::class, 'autoload']);
+        // Prepend H5P libraries in order to guarantee they are loaded first. Plugins using same libraries will need to use a
+        // different namespace if they want to use a different version.
+        spl_autoload_register([static::class, 'autoload'], true, true);
     }
 
     /**
