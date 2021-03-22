@@ -936,12 +936,20 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function view_information($quiz, $cm, $context, $messages) {
-        global $CFG;
+        global $USER;
 
         $output = '';
 
-        // Print quiz name and description.
+        // Print quiz name.
         $output .= $this->heading(format_string($quiz->name));
+
+        // Print any activity information (eg completion requirements / dates).
+        $cminfo = cm_info::create($cm);
+        $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+        $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
+        $output .= $this->output->activity_information($cminfo, $completiondetails, $activitydates);
+
+        // Print quiz description.
         $output .= $this->quiz_intro($quiz, $cm);
 
         // Output any access messages.
