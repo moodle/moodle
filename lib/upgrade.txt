@@ -118,6 +118,8 @@ information provided here is intended especially for developers.
 * The behat transformation 'string time to timestamp' no longer supports datetime format. If provided, the format must
   be strftime compatible. Example:
     - I should see "##tomorrow noon##%A, %d %B %Y, %I:%M %p##"
+* External functions implementation classes should use 'execute' as the method name, in which case the
+  'methodname' property should not be specified in db/services.php file.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:
