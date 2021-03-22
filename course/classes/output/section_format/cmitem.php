@@ -25,8 +25,9 @@
 namespace core_course\output\section_format;
 
 use core_course\course_format;
+use core_course\output\section_format;
+use renderer_base;
 use section_info;
-use completion_info;
 use renderable;
 use templatable;
 use cm_info;
@@ -78,12 +79,11 @@ class cmitem implements renderable, templatable {
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param renderer_base $output typically, the renderer that's calling this function
-     * @return array data context for a mustache template
+     * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
         $format = $this->format;
         $course = $format->get_course();
-        $completioninfo = new completion_info($course);
         $mod = $this->mod;
 
         $data = new stdClass();
@@ -95,7 +95,7 @@ class cmitem implements renderable, templatable {
         // This will apply styles to the course homepage when the activity information output component is displayed.
         $hasinfo = $showactivityconditions || $showactivitydates;
 
-        $item = new $this->cmclass($format, $this->section, $completioninfo, $mod, $this->displayoptions);
+        $item = new $this->cmclass($format, $this->section, $mod, $this->displayoptions);
         return (object)[
             'id' => $mod->id,
             'module' => $mod->modname,
@@ -105,4 +105,3 @@ class cmitem implements renderable, templatable {
         ];
     }
 }
-

@@ -872,7 +872,7 @@ class core_course_renderer extends plugin_renderer_base {
         $section = $modinfo->get_section_info($format->get_section_number());
 
         $cmclass = $format->get_output_classname('cm_format');
-        $cm = new $cmclass($format, $section, $completioninfo, $mod, $displayoptions);
+        $cm = new $cmclass($format, $section, $mod, $displayoptions);
         // The course outputs works with format renderers, not with course renderers.
         $renderer = $format->get_renderer($this->page);
         return $renderer->render($cm);

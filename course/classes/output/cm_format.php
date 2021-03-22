@@ -54,24 +54,17 @@ class cm_format implements renderable, templatable {
     /** @var array optional display options */
     protected $displayoptions;
 
-    /** @var completion_info the course completion */
-    protected $completioninfo;
-
     /**
      * Constructor.
      *
      * @param course_format $format the course format
      * @param section_info $section the section info
-     * @param completion_info $completioninfo the course completion info
      * @param cm_info $mod the course module ionfo
      * @param array $displayoptions optional extra display options
      */
-    public function __construct(course_format $format, section_info $section, completion_info $completioninfo,
-                cm_info $mod, array $displayoptions = []) {
-
+    public function __construct(course_format $format, section_info $section, cm_info $mod, array $displayoptions = []) {
         $this->format = $format;
         $this->section = $section;
-        $this->completioninfo = $completioninfo;
         $this->mod = $mod;
         $this->displayoptions = $displayoptions;
     }
@@ -79,7 +72,7 @@ class cm_format implements renderable, templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
+     * @param \renderer_base $output typically, the renderer that's calling this function
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
