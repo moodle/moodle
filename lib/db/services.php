@@ -289,7 +289,6 @@ $functions = array(
     ],
     'core_calendar_get_calendar_export_token' => [
         'classname'     => 'core_calendar\external\export\token',
-        'methodname'    => 'execute',
         'description'   => 'Return the auth token required for exporting a calendar.',
         'type'          => 'read',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
@@ -816,14 +815,12 @@ $functions = array(
     ),
     'core_files_delete_draft_files' => array(
         'classname' => 'core_files\external\delete\draft',
-        'methodname' => 'execute',
         'description' => 'Delete the indicated files (or directories) from a user draft file area.',
         'type'        => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_files_get_unused_draft_itemid' => array(
         'classname' => 'core_files\external\get\unused_draft',
-        'methodname' => 'execute',
         'description' => 'Generate a new draft itemid for the current user.',
         'type'        => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
@@ -839,7 +836,6 @@ $functions = array(
     ),
     'core_form_dynamic_form' => array(
         'classname' => 'core_form\external\dynamic_form',
-        'methodname' => 'execute',
         'description' => 'Process submission of a dynamic (modal) form',
         'type' => 'write',
         'ajax' => true,
@@ -907,7 +903,6 @@ $functions = array(
     ),
     'core_grades_grader_gradingpanel_point_fetch' => [
         'classname' => 'core_grades\\grades\\grader\\gradingpanel\\point\\external\\fetch',
-        'methodname' => 'execute',
         'description' => 'Fetch the data required to display the grader grading panel for simple grading, ' .
             'creating the grade item if required',
         'type' => 'write',
@@ -916,7 +911,6 @@ $functions = array(
     ],
     'core_grades_grader_gradingpanel_point_store' => [
         'classname' => 'core_grades\\grades\\grader\\gradingpanel\\point\\external\\store',
-        'methodname' => 'execute',
         'description' => 'Store the data required to display the grader grading panel for simple grading',
         'type' => 'write',
         'ajax' => true,
@@ -924,7 +918,6 @@ $functions = array(
     ],
     'core_grades_grader_gradingpanel_scale_fetch' => [
         'classname' => 'core_grades\\grades\\grader\\gradingpanel\\scale\\external\\fetch',
-        'methodname' => 'execute',
         'description' => 'Fetch the data required to display the grader grading panel for scale-based grading, ' .
             'creating the grade item if required',
         'type' => 'write',
@@ -933,7 +926,6 @@ $functions = array(
     ],
     'core_grades_grader_gradingpanel_scale_store' => [
         'classname' => 'core_grades\\grades\\grader\\gradingpanel\\scale\\external\\store',
-        'methodname' => 'execute',
         'description' => 'Store the data required to display the grader grading panel for scale-based grading',
         'type' => 'write',
         'ajax' => true,
@@ -1557,7 +1549,6 @@ $functions = array(
     ),
     'core_output_load_fontawesome_icon_system_map' => array(
         'classname' => 'core\external\output\icon_system\load_fontawesome_map',
-        'methodname' => 'execute',
         'description' => 'Load the mapping of moodle pix names to fontawesome icon names',
         'type' => 'read',
         'loginrequired' => false,
@@ -1748,7 +1739,6 @@ $functions = array(
     ),
     'core_user_search_identity' => array(
         'classname' => '\core_user\external\search_identity',
-        'methodname' => 'execute',
         'description' => 'Return list of users identities matching the given criteria in their name or other identity fields.',
         'type' => 'read',
         'capabilities' => 'moodle/user:viewalldetails',
@@ -2634,7 +2624,6 @@ $functions = array(
 
     'core_block_fetch_addable_blocks' => array(
         'classname'     => 'core_block\external\fetch_addable_blocks',
-        'methodname'    => 'execute',
         'description'   => 'Returns all addable blocks in a given page.',
         'type'          => 'read',
         'capabilities'  => 'moodle/site:manageblocks',
@@ -2710,7 +2699,6 @@ $functions = array(
     ],
     'core_table_get_dynamic_table_content' => [
         'classname' => 'core_table\external\dynamic\get',
-        'methodname' => 'execute',
         'description' => 'Get the dynamic table content raw html',
         'type' => 'read',
         'ajax' => true,
@@ -2718,7 +2706,6 @@ $functions = array(
     ],
     'core_xapi_statement_post' => [
         'classname'     => 'core_xapi\external\post_statement',
-        'methodname'    => 'execute',
         'classpath'     => '',
         'description'   => 'Post an xAPI statement.',
         'type'          => 'write',
@@ -2728,7 +2715,6 @@ $functions = array(
     ],
     'core_contentbank_delete_content' => [
         'classname'     => 'core_contentbank\external\delete_content',
-        'methodname'    => 'execute',
         'classpath'     => '',
         'description'   => 'Delete a content from the content bank.',
         'type'          => 'write',
@@ -2737,7 +2723,6 @@ $functions = array(
     ],
     'core_contentbank_rename_content' => [
         'classname'     => 'core_contentbank\external\rename_content',
-        'methodname'    => 'execute',
         'classpath'     => '',
         'description'   => 'Rename a content in the content bank.',
         'type'          => 'write',
@@ -2746,7 +2731,6 @@ $functions = array(
     ],
     'core_contentbank_set_content_visibility' => [
         'classname'     => 'core_contentbank\external\set_content_visibility',
-        'methodname'    => 'execute',
         'classpath'     => '',
         'description'   => 'Set the visibility of a content in the content bank.',
         'type'          => 'write',
@@ -2755,7 +2739,6 @@ $functions = array(
     ],
     'core_create_userfeedback_action_record' => [
         'classname'     => 'core\external\record_userfeedback_action',
-        'methodname'    => 'execute',
         'classpath'     => '',
         'description'   => 'Record the action that the user takes in the user feedback notification for future use.',
         'type'          => 'write',
@@ -2764,7 +2747,6 @@ $functions = array(
     ],
     'core_payment_get_available_gateways' => [
         'classname'   => 'core_payment\external\get_available_gateways',
-        'methodname'  => 'execute',
         'description' => 'Get the list of payment gateways that support the given component/area',
         'type'        => 'read',
         'ajax'        => true,
