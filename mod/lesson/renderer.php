@@ -37,7 +37,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @return string
      */
     public function header($lesson, $cm, $currenttab = '', $extraeditbuttons = false, $lessonpageid = null, $extrapagetitle = null) {
-        global $CFG;
+        global $CFG, $USER;
 
         $activityname = format_string($lesson->name, true, $lesson->course);
         if (empty($extrapagetitle)) {
@@ -55,8 +55,13 @@ class mod_lesson_renderer extends plugin_renderer_base {
         lesson_add_header_buttons($cm, $context, $extraeditbuttons, $lessonpageid);
         $output = $this->output->header();
 
+        $cminfo = cm_info::create($cm);
+        $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+        $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
         if (has_capability('mod/lesson:manage', $context)) {
             $output .= $this->output->heading_with_help($activityname, 'overview', 'lesson');
+            $output .= $this->output->activity_information($cminfo, $completiondetails, $activitydates);
+
             // Info box.
             if ($lesson->intro) {
                 $output .= $this->output->box(format_module_intro('lesson', $lesson, $cm->id), 'generalbox', 'intro');
@@ -69,6 +74,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
             }
         } else {
             $output .= $this->output->heading($activityname);
+            $output .= $this->output->activity_information($cminfo, $completiondetails, $activitydates);
+
             // Info box.
             if ($lesson->intro) {
                 $output .= $this->output->box(format_module_intro('lesson', $lesson, $cm->id), 'generalbox', 'intro');
