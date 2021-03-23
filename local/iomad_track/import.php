@@ -59,7 +59,7 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
 
 // Array of all valid fields for validation.
-$stdfields = array('username', 'userid', 'courseid', 'coursename', 'timeenrolled', 'timestarted', 'timecompleted',
+$stdfields = array('username', 'userid', 'courseid', 'coursename', 'coursecode', 'timeenrolled', 'timestarted', 'timecompleted',
         'finalscore', 'licensename', 'licenseallocated', 'licenseid', 'companyid', 'company', 'departmentid', 'department');
 
 // Process current completions.
@@ -153,6 +153,19 @@ if (!empty($fileimport)) {
                             $upt->track('username', $userrec->username);
                         } else if (strpos($key, 'coursename') !== false) {
                             if (!$courserec = $DB->get_record('course', array('shortname' => $value))) {
+                                $upt->track('status', get_string('missingfield', 'error', 'coursename'), 'error');
+                                $upt->track('course', $errorstr, 'error');
+                                $line[] = get_string('missingfield', 'error', 'coursename');
+                                $userserrors++;
+                                $errornum++;
+                                $erroredusers[] = $line;
+                                continue 2;
+                            }
+                            $completionrec->courseid = $courserec->id;
+                            $completionrec->coursename = $courserec->fullname;
+                            $upt->track('course', $courserec->fullname);
+                        } else if (strpos($key, 'coursecode') !== false) {
+                            if (!$courserec = $DB->get_record('course', array('idnumber' => $value))) {
                                 $upt->track('status', get_string('missingfield', 'error', 'coursename'), 'error');
                                 $upt->track('course', $errorstr, 'error');
                                 $line[] = get_string('missingfield', 'error', 'coursename');
@@ -457,7 +470,7 @@ function validate_uploadcompletion_columns(&$columns) {
     if (!(in_array('username', $processed) || in_array('userid', $processed))) {
         return get_string('missingusername', 'local_iomad_track');
     }
-    if (!(in_array('coursename', $processed) || in_array('courseid', $processed))) {
+    if (!(in_array('coursename', $processed) || in_array('courseid', $processed) || in_array('coursecode', $processed))) {
         return get_string('missingcoursename', 'local_iomad_track');
     }
     if (!in_array('timecompleted', $processed)) {
