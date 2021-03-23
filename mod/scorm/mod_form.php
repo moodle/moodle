@@ -280,7 +280,7 @@ class mod_scorm_mod_form extends moodleform_mod {
     }
 
     public function data_preprocessing(&$defaultvalues) {
-        global $COURSE;
+        global $CFG, $COURSE;
 
         if (isset($defaultvalues['popup']) && ($defaultvalues['popup'] == 1) && isset($defaultvalues['options'])) {
             if (!empty($defaultvalues['options'])) {
@@ -313,10 +313,10 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         if (($COURSE->format == 'singleactivity') && ((count($scorms) == 0) || ($defaultvalues['instance'] == $coursescorm->id))) {
             $defaultvalues['redirect'] = 'yes';
-            $defaultvalues['redirecturl'] = '../course/view.php?id='.$defaultvalues['course'];
+            $defaultvalues['redirecturl'] = $CFG->wwwroot.'/course/view.php?id='.$defaultvalues['course'];
         } else {
             $defaultvalues['redirect'] = 'no';
-            $defaultvalues['redirecturl'] = '../mod/scorm/view.php?id='.$defaultvalues['coursemodule'];
+            $defaultvalues['redirecturl'] = $CFG->wwwroot.'/mod/scorm/view.php?id='.$defaultvalues['coursemodule'];
         }
         if (isset($defaultvalues['version'])) {
             $defaultvalues['pkgtype'] = (substr($defaultvalues['version'], 0, 5) == 'SCORM') ? 'scorm' : 'aicc';
