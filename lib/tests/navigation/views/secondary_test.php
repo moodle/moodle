@@ -14,7 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use core\navigation\views\secondary;
+namespace core\navigation\views;
+
+use navigation_node;
+use ReflectionMethod;
 
 /**
  * Class core_secondary_testcase
@@ -26,7 +29,7 @@ use core\navigation\views\secondary;
  * @copyright   2021 onwards Peter Dias
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_secondary_testcase extends advanced_testcase {
+class secondary_test extends \advanced_testcase {
     /**
      * Test the get_leaf_nodes function
      * @param float $siteorder The order for the siteadmin node
@@ -81,9 +84,12 @@ class core_secondary_testcase extends advanced_testcase {
      *
      * @param string $context The context to setup for - course, module, system
      * @param string $expectedfirstnode The expected first node
+     * @param string $header The expected string
+     * @param string $activenode The expected active node
      * @dataProvider test_setting_initialise_provider
      */
-    public function test_setting_initialise(string $context, string $expectedfirstnode) {
+    public function test_setting_initialise(string $context, string $expectedfirstnode,
+            string $header, string $activenode) {
         global $PAGE, $SITE;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -92,21 +98,21 @@ class core_secondary_testcase extends advanced_testcase {
         switch ($context) {
             case 'course':
                 $pagecourse = $this->getDataGenerator()->create_course();
-                $contextrecord = context_course::instance($pagecourse->id, MUST_EXIST);
-                $pageurl = new moodle_url('/course/view.php', ['id' => $pagecourse->id]);
+                $contextrecord = \context_course::instance($pagecourse->id, MUST_EXIST);
+                $pageurl = new \moodle_url('/course/view.php', ['id' => $pagecourse->id]);
                 break;
             case 'module':
                 $pagecourse = $this->getDataGenerator()->create_course();
                 $assign = $this->getDataGenerator()->create_module('assign', ['course' => $pagecourse->id]);
                 $cm = get_coursemodule_from_id('assign', $assign->cmid);
-                $contextrecord = context_module::instance($cm->id);
-                $pageurl = new moodle_url('/mod/assign/view.php', ['id' => $cm->instance]);
+                $contextrecord = \context_module::instance($cm->id);
+                $pageurl = new \moodle_url('/mod/assign/view.php', ['id' => $cm->instance]);
                 $PAGE->set_cm($cm);
                 break;
             case 'system':
-                $contextrecord = context_system::instance();
+                $contextrecord = \context_system::instance();
                 $PAGE->set_pagelayout('admin');
-                $pageurl = new moodle_url('/admin/index.php');
+                $pageurl = new \moodle_url('/admin/index.php');
 
         }
         $PAGE->set_url($pageurl);
@@ -116,7 +122,9 @@ class core_secondary_testcase extends advanced_testcase {
         $node = new secondary($PAGE);
         $node->initialise();
         $children = $node->get_children_key_list();
-        $this->assertEquals($children[0], $expectedfirstnode);
+        $this->assertEquals($expectedfirstnode, $children[0]);
+        $this->assertEquals(get_string($header), $node->headertitle);
+        $this->assertEquals($activenode, $node->activenode->text);
     }
 
     /**
@@ -125,9 +133,9 @@ class core_secondary_testcase extends advanced_testcase {
      */
     public function test_setting_initialise_provider(): array {
         return [
-            'Testing in a course context' => ['course', 'coursehome'],
-            'Testing in a module context' => ['module', 'modulepage'],
-            'Testing in a site admin' => ['system', 'siteadminnode'],
+            'Testing in a course context' => ['course', 'coursehome', 'courseheader', 'Course Page'],
+            'Testing in a module context' => ['module', 'modulepage', 'activityheader', 'Activity'],
+            'Testing in a site admin' => ['system', 'siteadminnode', 'menu', 'Site administration'],
         ];
     }
 }

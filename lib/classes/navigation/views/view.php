@@ -36,6 +36,8 @@ abstract class view extends navigation_node {
     protected $page;
     /** @var bool $initialised A switch to see if the navigation node is initialised */
     protected $initialised = false;
+    /** @var navigation_node $activenode A string identifier for the active node*/
+    public $activenode;
 
     /**
      * Function to initialise the respective view
@@ -116,7 +118,9 @@ abstract class view extends navigation_node {
                         $child->make_inactive();
                     } else {
                         $child->make_active();
+                        $this->activenode = $child;
                     }
+
                     return $node; // We have found the active node, set the parent status, no need to continue.
                 }
             }
