@@ -654,7 +654,11 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     // Now that module is fully updated, also update completion data if required.
     // (this will wipe all user completion data and recalculate it)
     if ($completion->is_enabled() && !empty($moduleinfo->completionunlocked)) {
-        $completion->reset_all_state($cm);
+        // Rebuild course cache before resetting completion states to ensure that the cm_info attributes are up to date.
+        course_modinfo::build_course_cache($course);
+        // Fetch this course module's info.
+        $cminfo = cm_info::create($cm);
+        $completion->reset_all_state($cminfo);
     }
     $cm->name = $moduleinfo->name;
     \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
