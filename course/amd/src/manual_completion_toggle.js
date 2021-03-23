@@ -26,6 +26,7 @@
 import Templates from 'core/templates';
 import Notification from 'core/notification';
 import {toggleManualCompletion} from 'core_course/repository';
+import * as CourseEvents from 'core_course/events';
 
 /**
  * Selectors in the manual completion template.
@@ -109,7 +110,20 @@ const toggleManualCompletionState = async(toggleButton) => {
         const renderObject = await Templates.renderForPromise('core_course/completion_manual', templateContext);
 
         // Replace the toggle button with the newly loaded template.
-        await Templates.replaceNode(toggleButton, renderObject.html, renderObject.js);
+        const replacedNode = await Templates.replaceNode(toggleButton, renderObject.html, renderObject.js);
+        const newToggleButton = replacedNode.pop();
+
+        // Build manualCompletionToggled custom event.
+        const toggledEvent = new CustomEvent(CourseEvents.manualCompletionToggled, {
+            bubbles: true,
+            detail: {
+                cmid,
+                activityname,
+                completed,
+            }
+        });
+        // Dispatch the manualCompletionToggled custom event.
+        newToggleButton.dispatchEvent(toggledEvent);
 
     } catch (exception) {
         // In case of an error, revert the original state and appearance of the button.
