@@ -114,15 +114,12 @@ class events_related_objects_cache {
     public function get_context(event_interface $event) {
         global $USER;
 
-        $categoryid = $event->get_category() ? $event->get_category()->get('id') : null;
         $courseid = $event->get_course() ? $event->get_course()->get('id') : null;
         $groupid = $event->get_group() ? $event->get_group()->get('id') : null;
         $userid = $event->get_user() ? $event->get_user()->get('id') : null;
         $moduleid = $event->get_course_module() ? $event->get_course_module()->get('id') : null;
 
-        if (!empty($categoryid)) {
-            return \context_coursecat::instance($categoryid);
-        } else if (!empty($courseid)) {
+        if (!empty($courseid)) {
             return \context_course::instance($event->get_course()->get('id'));
         } else if (!empty($groupid)) {
             $group = $this->get_group($event);
