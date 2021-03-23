@@ -14,7 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use core\navigation\views\secondary;
+namespace core\navigation\views;
+
+use navigation_node;
+use ReflectionMethod;
 
 /**
  * Class core_secondary_testcase
@@ -26,7 +29,7 @@ use core\navigation\views\secondary;
  * @copyright   2021 onwards Peter Dias
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_secondary_testcase extends advanced_testcase {
+class secondary_test extends \advanced_testcase {
     /**
      * Test the get_leaf_nodes function
      * @param float $siteorder The order for the siteadmin node
@@ -95,21 +98,21 @@ class core_secondary_testcase extends advanced_testcase {
         switch ($context) {
             case 'course':
                 $pagecourse = $this->getDataGenerator()->create_course();
-                $contextrecord = context_course::instance($pagecourse->id, MUST_EXIST);
-                $pageurl = new moodle_url('/course/view.php', ['id' => $pagecourse->id]);
+                $contextrecord = \context_course::instance($pagecourse->id, MUST_EXIST);
+                $pageurl = new \moodle_url('/course/view.php', ['id' => $pagecourse->id]);
                 break;
             case 'module':
                 $pagecourse = $this->getDataGenerator()->create_course();
                 $assign = $this->getDataGenerator()->create_module('assign', ['course' => $pagecourse->id]);
                 $cm = get_coursemodule_from_id('assign', $assign->cmid);
-                $contextrecord = context_module::instance($cm->id);
-                $pageurl = new moodle_url('/mod/assign/view.php', ['id' => $cm->instance]);
+                $contextrecord = \context_module::instance($cm->id);
+                $pageurl = new \moodle_url('/mod/assign/view.php', ['id' => $cm->instance]);
                 $PAGE->set_cm($cm);
                 break;
             case 'system':
-                $contextrecord = context_system::instance();
+                $contextrecord = \context_system::instance();
                 $PAGE->set_pagelayout('admin');
-                $pageurl = new moodle_url('/admin/index.php');
+                $pageurl = new \moodle_url('/admin/index.php');
 
         }
         $PAGE->set_url($pageurl);
