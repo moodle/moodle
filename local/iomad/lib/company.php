@@ -3874,25 +3874,18 @@ class company {
         }
 
         // Do not send if this is already recorded.
-        if (!empty($enrolrec->timestart) &&
-            ( $DB->get_record_sql("SELECT id FROM {local_iomad_track}
+        if (!empty($enrolrec->timestart)) {
+            if ($trackrec = $DB->get_record_sql("SELECT * FROM {local_iomad_track}
                                     WHERE userid=:userid
                                     AND courseid = :courseid
-                                    AND timeenrolled <= :timeenrolled
-                                    AND timecompleted IS NOT NULL",
+                                    AND timeenrolled = :timeenrolled",
                                     array('userid' => $userid,
                                           'courseid' => $courseid,
-                                          'timeenrolled' => $enrolrec->timestart))
-            && $DB->get_record_sql("SELECT id FROM {local_iomad_track}
-                                    WHERE userid=:userid
-                                    AND courseid = :courseid
-                                    AND timeenrolled <= :timeenrolled
-                                    AND timecompleted != :timecompleted",
-                                    array('userid' => $userid,
-                                          'courseid' => $courseid,
-                                          'timecompleted' => $completionrec->timecompleted,
-                                          'timeenrolled' => $enrolrec->timestart)))) {
-            return true;
+                                          'timeenrolled' => $enrolrec->timestart))) {
+                if ($trackrec->timecompleted !=null && $trackrec->timecompleted != $completionrec->timecompleted) {
+                    return true;
+                }
+            }
         }
 
         $course = $DB->get_record('course', array('id' => $courseid));
