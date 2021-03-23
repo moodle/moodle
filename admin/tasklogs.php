@@ -24,20 +24,14 @@
 
 require_once(__DIR__ . '/../config.php');
 require_once("{$CFG->libdir}/adminlib.php");
-require_once("{$CFG->libdir}/tablelib.php");
-require_once("{$CFG->libdir}/filelib.php");
 
-$filter = optional_param('filter', '', PARAM_RAW);
-$result = optional_param('result', null, PARAM_INT);
+use core_admin\local\systemreports\task_logs;
+use core_reportbuilder\system_report_factory;
 
-$pageurl = new \moodle_url('/admin/tasklogs.php');
-$pageurl->param('filter', $filter);
-$pageurl->param('result', $result);
-
-$PAGE->set_url($pageurl);
+$PAGE->set_url(new \moodle_url('/admin/tasklogs.php'));
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('admin');
-$strheading = get_string('tasklogs', 'tool_task');
+$strheading = get_string('tasklogs', 'admin');
 $PAGE->set_title($strheading);
 $PAGE->set_heading($strheading);
 
@@ -45,6 +39,7 @@ admin_externalpage_setup('tasklogs');
 
 $logid = optional_param('logid', null, PARAM_INT);
 $download = optional_param('download', false, PARAM_BOOL);
+$filter = optional_param('filter', null, PARAM_TEXT);
 
 if (null !== $logid) {
     // Raise memory limit in case the log is large.
@@ -60,36 +55,15 @@ if (null !== $logid) {
     exit;
 }
 
-$renderer = $PAGE->get_renderer('tool_task');
-
 echo $OUTPUT->header();
+$report = system_report_factory::create(task_logs::class, context_system::instance());
 
-// Output the search form.
-echo $OUTPUT->render_from_template('core_admin/tasklogs', (object) [
-    'action' => $pageurl->out(),
-    'filter' => htmlentities($filter),
-    'resultfilteroptions' => [
-        (object) [
-            'value' => -1,
-            'title' => get_string('all'),
-            'selected' => (-1 === $result),
-        ],
-        (object) [
-            'value' => 0,
-            'title' => get_string('success'),
-            'selected' => (0 === $result),
-        ],
-        (object) [
-            'value' => 1,
-            'title' => get_string('task_result:failed', 'admin'),
-            'selected' => (1 === $result),
-        ],
-    ],
-]);
+if (!empty($filter)) {
+    $report->set_filter_values([
+        'task_log:name_operator' => \core_reportbuilder\local\filters\text::IS_EQUAL_TO,
+        'task_log:name_value' => $filter,
+    ]);
+}
 
-// Output any matching logs.
-$table = new \core_admin\task_log_table($filter, $result);
-$table->baseurl = $pageurl;
-$table->out(100, false);
-
+echo $report->output();
 echo $OUTPUT->footer();
