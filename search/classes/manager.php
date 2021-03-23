@@ -264,12 +264,44 @@ class manager {
     }
 
     /**
+     * Tests if global search is configured to be equivalent to the front page course search.
+     *
+     * @return bool
+     */
+    public static function can_replace_course_search(): bool {
+        global $CFG;
+
+        // Assume we can replace front page search.
+        $canreplace = true;
+
+        // Global search must be enabled.
+        if (!static::is_global_search_enabled()) {
+            $canreplace = false;
+        }
+
+        // Users must be able to search the details of all courses that they can see,
+        // even if they do not have access to them.
+        if (empty($CFG->searchincludeallcourses)) {
+            $canreplace = false;
+        }
+
+        // Course search must be enabled.
+        if ($canreplace) {
+            $areaid = static::generate_areaid('core_course', 'course');
+            $enabledareas = static::get_search_areas_list(true);
+            $canreplace = isset($enabledareas[$areaid]);
+        }
+
+        return $canreplace;
+    }
+
+    /**
      * Returns the search URL for course search
      *
      * @return moodle_url
      */
     public static function get_course_search_url() {
-        if (self::is_global_search_enabled()) {
+        if (self::can_replace_course_search()) {
             $searchurl = '/search/index.php';
         } else {
             $searchurl = '/course/search.php';

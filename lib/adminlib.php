@@ -11316,6 +11316,18 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $row[1] = $status;
         $table->data[] = $row;
 
+        // Replace front page search.
+        $row = array();
+        $url = new moodle_url("/admin/search.php?query=searchincludeallcourses");
+        $row[0] = '6. ' . html_writer::tag('a', get_string('replacefrontsearch', 'admin'),
+                                           array('href' => $url));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
+        if (\core_search\manager::can_replace_course_search()) {
+            $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge badge-success'));
+        }
+        $row[1] = $status;
+        $table->data[] = $row;
+
         $return .= html_writer::table($table);
 
         return highlight($query, $return);

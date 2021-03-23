@@ -1088,6 +1088,7 @@ $string['rememberuserlicensepref'] = 'Remember user licence preference';
 $string['rememberuserlicensepref_help'] = 'If enabled, the last licence selected by the user is preselected when uploading a file in the file picker. Otherwise, the default site licence is preselected.';
 $string['rememberusername'] = 'Remember username';
 $string['rememberusername_desc'] = 'Enable if you want to store permanent cookies with usernames during user login. Permanent cookies may be considered a privacy issue if used without consent.';
+$string['replacefrontsearch'] = 'Used for front page course search';
 $string['reportsmanage'] = 'Manage reports';
 $string['requiredentrieschanged'] = 'Note: After upgrading, the setting \'Required entries before viewing\' is now enforced in the following database activities:<br/>{$a->text}<br/>';
 $string['requiremodintro'] = 'Require activity description';

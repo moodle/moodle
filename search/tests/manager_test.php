@@ -78,18 +78,102 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertFalse(\core_search\manager::is_global_search_enabled());
     }
 
-    public function test_course_search_url() {
-
+    /**
+     * Tests the course search url is correct.
+     *
+     * @param bool|null $gsenabled Enable global search (null to leave as the default).
+     * @param bool|null $allcourses Enable searching all courses (null to leave as the default).
+     * @param bool|null $enablearea Enable the course search area (null to leave as the default).
+     * @param string $expected The expected course search url.
+     * @dataProvider data_course_search_url
+     */
+    public function test_course_search_url(?bool $gsenabled, ?bool $allcourses, ?bool $enablearea, string $expected) {
         $this->resetAfterTest();
 
-        // URL is course/search.php by default.
-        $this->assertEquals(new moodle_url("/course/search.php"), \core_search\manager::get_course_search_url());
+        if (!is_null($gsenabled)) {
+            set_config('enableglobalsearch', $gsenabled);
+        }
 
-        set_config('enableglobalsearch', true);
-        $this->assertEquals(new moodle_url("/search/index.php"), \core_search\manager::get_course_search_url());
+        if (!is_null($allcourses)) {
+            set_config('searchincludeallcourses', $allcourses);
+        }
 
-        set_config('enableglobalsearch', false);
-        $this->assertEquals(new moodle_url("/course/search.php"), \core_search\manager::get_course_search_url());
+        if (!is_null($enablearea)) {
+            // Setup the course search area.
+            $areaid = \core_search\manager::generate_areaid('core_course', 'course');
+            $area = \core_search\manager::get_search_area($areaid);
+            $area->set_enabled($enablearea);
+        }
+
+        $this->assertEquals(new moodle_url($expected), \core_search\manager::get_course_search_url());
+    }
+
+    /**
+     * Data for the test_course_search_url test.
+     *
+     * @return array[]
+     */
+    public function data_course_search_url(): array {
+        return [
+            'defaults' => [null, null, null, '/course/search.php'],
+            'enabled' => [true, true, true, '/search/index.php'],
+            'no all courses, no search area' => [true, false, false, '/course/search.php'],
+            'no search area' => [true, true, false, '/course/search.php'],
+            'no all courses' => [true, false, true, '/course/search.php'],
+            'disabled' => [false, false, false, '/course/search.php'],
+            'no global search' => [false, true, false, '/course/search.php'],
+            'no global search, no all courses' => [false, false, true, '/course/search.php'],
+            'no global search, no search area' => [false, true, false, '/course/search.php'],
+        ];
+    }
+
+    /**
+     * Tests that we detect that global search can replace frontpage course search.
+     *
+     * @param bool|null $gsenabled Enable global search (null to leave as the default).
+     * @param bool|null $allcourses Enable searching all courses (null to leave as the default).
+     * @param bool|null $enablearea Enable the course search area (null to leave as the default).
+     * @param bool $expected The expected result.
+     * @dataProvider data_can_replace_course_search
+     */
+    public function test_can_replace_course_search(?bool $gsenabled, ?bool $allcourses, ?bool $enablearea, bool $expected) {
+        $this->resetAfterTest();
+
+        if (!is_null($gsenabled)) {
+            set_config('enableglobalsearch', $gsenabled);
+        }
+
+        if (!is_null($allcourses)) {
+            set_config('searchincludeallcourses', $allcourses);
+        }
+
+        if (!is_null($enablearea)) {
+            // Setup the course search area.
+            $areaid = \core_search\manager::generate_areaid('core_course', 'course');
+            $area = \core_search\manager::get_search_area($areaid);
+            $area->set_enabled($enablearea);
+        }
+
+        $this->assertEquals($expected, \core_search\manager::can_replace_course_search());
+    }
+
+    /**
+     * Data for the test_can_replace_course_search test.
+     *
+     * @return array[]
+     */
+    public function data_can_replace_course_search(): array {
+        return [
+            'defaults' => [null, null, null, false],
+            'enabled' => [true, true, true, true],
+            'no all courses, no search area' => [true, false, false, false],
+            'no search area' => [true, true, false, false],
+            'no all courses' => [true, false, true, false],
+            'disabled' => [false, false, false, false],
+            'no global search' => [false, true, false, false],
+            'no global search, no all courses' => [false, false, true, false],
+            'no global search, no search area' => [false, true, false, false],
+        ];
     }
 
     public function test_search_areas() {
