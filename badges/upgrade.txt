@@ -4,6 +4,13 @@ information provided here is intended especially for developers.
 === 3.11 ===
 * $CFG->badges_site_backpack setting has been completely removed because it's not required anymore. From now, the primary
 site backpack will be the first one in the "Manage backpacks" list (so, the one with lower sortorder value).
+* Final deprecation for:
+ - BADGE_BACKPACKURL constant has been removed.
+ - badges/backpack.js file has been removed.
+* The following methods have been deprecated:
+ - badges_check_backpack_accessibility()
+ - badges_setup_backpack_js()
+ - badges_local_backpack_js()
 
 === 3.10 ===
 * Users can now specify a backpack that differs from the site backpack. In order to do this, connection details need to
