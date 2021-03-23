@@ -314,4 +314,9 @@
         $PAGE->requires->js_call_amd('core_course/downloadcontent', 'init');
     }
 
+    // Load the view JS module if completion tracking is enabled for this course.
+    if ($completion->is_enabled()) {
+        $PAGE->requires->js_call_amd('core_course/view', 'init');
+    }
+
     echo $OUTPUT->footer();

@@ -114,12 +114,14 @@ const toggleManualCompletionState = async(toggleButton) => {
         const newToggleButton = replacedNode.pop();
 
         // Build manualCompletionToggled custom event.
+        const withAvailability = toggleButton.getAttribute('data-withavailability');
         const toggledEvent = new CustomEvent(CourseEvents.manualCompletionToggled, {
             bubbles: true,
             detail: {
                 cmid,
                 activityname,
                 completed,
+                withAvailability,
             }
         });
         // Dispatch the manualCompletionToggled custom event.

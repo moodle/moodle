@@ -29,6 +29,7 @@ use cm_info;
 use completion_info;
 use context;
 use core\activity_dates;
+use core_availability\info;
 use core_completion\cm_completion_details;
 use core_user;
 use core_user\fields;
@@ -90,6 +91,8 @@ class activity_information implements renderable, templatable {
      * @return stdClass
      */
     protected function build_completion_data(): stdClass {
+        global $CFG;
+
         $data = new stdClass();
 
         $data->hascompletion = $this->cmcompletion->has_completion();
@@ -122,6 +125,16 @@ class activity_information implements renderable, templatable {
             ];
             $setbylangkey = $data->overallcomplete ? 'completion_setby:manual:done' : 'completion_setby:manual:markdone';
             $data->accessibledescription = get_string($setbylangkey, 'course', $setbydata);
+        }
+
+        // Whether the completion of this activity controls the availability of other activities/sections in the course.
+        $data->withavailability = false;
+        $course = $this->cminfo->get_course();
+        // An activity with manual completion tracking which is used to enable access to other activities/sections in
+        // the course needs to refresh the page after having its completion state toggled. This withavailability flag will enable
+        // this functionality on the course homepage. Otherwise, the completion toggling will just happen normally via ajax.
+        if ($this->cmcompletion->has_completion() && !$this->cmcompletion->is_automatic()) {
+            $data->withavailability = !empty($CFG->enableavailability) && info::completion_value_used($course, $this->cminfo->id);
         }
 
         // Build automatic completion details.
