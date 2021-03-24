@@ -492,10 +492,9 @@ function profile_list_categories() {
  * @param string $redirect
  */
 function profile_edit_category($id, $redirect) {
-    global $DB, $OUTPUT, $CFG;
+    global $DB, $OUTPUT;
 
-    require_once($CFG->dirroot.'/user/profile/index_category_form.php');
-    $categoryform = new category_form();
+    $categoryform = new \core_user\form\profile_category_form();
 
     if ($category = $DB->get_record('user_info_category', array('id' => $id))) {
         $categoryform->set_data($category);
