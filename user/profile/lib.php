@@ -84,7 +84,7 @@ class profile_field_base {
      * Constructor method.
      * @param int $fieldid id of the profile from the user_info_field table
      * @param int $userid id of the user for whom we are displaying data
-     * @param object $fielddata optional data for the field object plus additional fields 'hasuserdata', 'data' and 'dataformat'
+     * @param stdClass $fielddata optional data for the field object plus additional fields 'hasuserdata', 'data' and 'dataformat'
      *    with user data. (If $fielddata->hasuserdata is empty, user data is not available and we should use default data).
      *    If this parameter is passed, constructor will not call load_data() at all.
      */
@@ -130,7 +130,7 @@ class profile_field_base {
     /**
      * Abstract method: Adds the profile field to the moodle form class
      * @abstract The following methods must be overwritten by child classes
-     * @param moodleform $mform instance of the moodleform class
+     * @param MoodleQuickForm $mform instance of the moodleform class
      */
     public function edit_field_add($mform) {
         print_error('mustbeoveride', 'debug', '', 'edit_field_add');
@@ -148,7 +148,7 @@ class profile_field_base {
 
     /**
      * Print out the form field in the edit profile page
-     * @param moodleform $mform instance of the moodleform class
+     * @param MoodleQuickForm $mform instance of the moodleform class
      * @return bool
      */
     public function edit_field($mform) {
@@ -164,7 +164,7 @@ class profile_field_base {
 
     /**
      * Tweaks the edit form
-     * @param moodleform $mform instance of the moodleform class
+     * @param MoodleQuickForm $mform instance of the moodleform class
      * @return bool
      */
     public function edit_after_data($mform) {
@@ -179,7 +179,6 @@ class profile_field_base {
     /**
      * Saves the data coming from form
      * @param stdClass $usernew data coming from the form
-     * @return mixed returns data id if success of db insert/update, false on fail, 0 if not permitted
      */
     public function edit_save_data($usernew) {
         global $DB;
@@ -213,7 +212,7 @@ class profile_field_base {
      * Validate the form field from profile page
      *
      * @param stdClass $usernew
-     * @return  string  contains error message otherwise null
+     * @return  array  error messages for the form validation
      */
     public function edit_validate_field($usernew) {
         global $DB;
@@ -256,7 +255,7 @@ class profile_field_base {
 
     /**
      * Sets the default data for the field in the form object
-     * @param  moodleform $mform instance of the moodleform class
+     * @param MoodleQuickForm $mform instance of the moodleform class
      */
     public function edit_field_set_default($mform) {
         if (!empty($this->field->defaultdata)) {
@@ -267,7 +266,7 @@ class profile_field_base {
     /**
      * Sets the required flag for the field in the form object
      *
-     * @param moodleform $mform instance of the moodleform class
+     * @param MoodleQuickForm $mform instance of the moodleform class
      */
     public function edit_field_set_required($mform) {
         global $USER;
@@ -278,7 +277,7 @@ class profile_field_base {
 
     /**
      * HardFreeze the field if locked.
-     * @param moodleform $mform instance of the moodleform class
+     * @param MoodleQuickForm $mform instance of the moodleform class
      */
     public function edit_field_set_locked($mform) {
         if (!$mform->elementExists($this->inputname)) {
@@ -576,7 +575,7 @@ class profile_field_base {
  * @param int $userid
  * @return profile_field_base[]
  */
-function profile_get_user_fields_with_data($userid) {
+function profile_get_user_fields_with_data(int $userid): array {
     global $DB, $CFG;
 
     // Join any user info data present with each user info field for the user object.
@@ -610,7 +609,7 @@ function profile_get_user_fields_with_data($userid) {
  * @param int $userid
  * @return profile_field_base[][]
  */
-function profile_get_user_fields_with_data_by_category($userid) {
+function profile_get_user_fields_with_data_by_category(int $userid): array {
     $fields = profile_get_user_fields_with_data($userid);
     $data = [];
     foreach ($fields as $field) {
@@ -623,9 +622,7 @@ function profile_get_user_fields_with_data_by_category($userid) {
  * Loads user profile field data into the user object.
  * @param stdClass $user
  */
-function profile_load_data($user) {
-    global $CFG;
-
+function profile_load_data(stdClass $user): void {
     $fields = profile_get_user_fields_with_data($user->id);
     foreach ($fields as $formfield) {
         $formfield->edit_load_user_data($user);
@@ -635,10 +632,10 @@ function profile_load_data($user) {
 /**
  * Print out the customisable categories and fields for a users profile
  *
- * @param moodleform $mform instance of the moodleform class
- * @param int $userid id of user whose profile is being edited.
+ * @param MoodleQuickForm $mform instance of the moodleform class
+ * @param int $userid id of user whose profile is being edited or 0 for the new user
  */
-function profile_definition($mform, $userid = 0) {
+function profile_definition(MoodleQuickForm $mform, int $userid = 0): void {
     $categories = profile_get_user_fields_with_data_by_category($userid);
     foreach ($categories as $categoryid => $fields) {
         // Check first if *any* fields will be displayed.
@@ -664,12 +661,10 @@ function profile_definition($mform, $userid = 0) {
 
 /**
  * Adds profile fields to user edit forms.
- * @param moodleform $mform
+ * @param MoodleQuickForm $mform
  * @param int $userid
  */
-function profile_definition_after_data($mform, $userid) {
-    global $CFG;
-
+function profile_definition_after_data(MoodleQuickForm $mform, int $userid): void {
     $userid = ($userid < 0) ? 0 : (int)$userid;
 
     $fields = profile_get_user_fields_with_data($userid);
@@ -682,11 +677,9 @@ function profile_definition_after_data($mform, $userid) {
  * Validates profile data.
  * @param stdClass $usernew
  * @param array $files
- * @return array
+ * @return array array of errors, same as in {@see moodleform::validation()}
  */
-function profile_validation($usernew, $files) {
-    global $CFG;
-
+function profile_validation(stdClass $usernew, array $files): array {
     $err = array();
     $fields = profile_get_user_fields_with_data($usernew->id);
     foreach ($fields as $formfield) {
@@ -699,7 +692,7 @@ function profile_validation($usernew, $files) {
  * Saves profile data for a user.
  * @param stdClass $usernew
  */
-function profile_save_data($usernew) {
+function profile_save_data(stdClass $usernew): void {
     global $CFG;
 
     $fields = profile_get_user_fields_with_data($usernew->id);
@@ -710,10 +703,15 @@ function profile_save_data($usernew) {
 
 /**
  * Display profile fields.
+ *
+ * @deprecated since Moodle 3.11 MDL-71051 - please do not use this function any more.
+ * @todo MDL-71413 This will be deleted in Moodle 4.3.
+ *
  * @param int $userid
  */
 function profile_display_fields($userid) {
-    global $CFG, $USER, $DB;
+    debugging('Function profile_display_fields() is deprecated because it is no longer used and will be '.
+        'removed in future versions of Moodle', DEBUG_DEVELOPER);
 
     $categories = profile_get_user_fields_with_data_by_category($userid);
     foreach ($categories as $categoryid => $fields) {
@@ -732,7 +730,7 @@ function profile_display_fields($userid) {
  * @return array list of profile fields info
  * @since Moodle 3.2
  */
-function profile_get_signup_fields() {
+function profile_get_signup_fields(): array {
     $profilefields = array();
     $fieldobjects = profile_get_user_fields_with_data(0);
     foreach ($fieldobjects as $fieldobject) {
@@ -753,9 +751,9 @@ function profile_get_signup_fields() {
 /**
  * Adds code snippet to a moodle form object for custom profile fields that
  * should appear on the signup page
- * @param moodleform $mform moodle form object
+ * @param MoodleQuickForm $mform moodle form object
  */
-function profile_signup_fields($mform) {
+function profile_signup_fields(MoodleQuickForm $mform): void {
 
     if ($fields = profile_get_signup_fields()) {
         foreach ($fields as $field) {
@@ -771,13 +769,11 @@ function profile_signup_fields($mform) {
 
 /**
  * Returns an object with the custom profile fields set for the given user
- * @param integer $userid
+ * @param int $userid
  * @param bool $onlyinuserobject True if you only want the ones in $USER.
- * @return stdClass
+ * @return stdClass object where properties names are shortnames of custom profile fields
  */
-function profile_user_record($userid, $onlyinuserobject = true) {
-    global $CFG;
-
+function profile_user_record(int $userid, bool $onlyinuserobject = true): stdClass {
     $usercustomfields = new stdClass();
 
     $fields = profile_get_user_fields_with_data($userid);
