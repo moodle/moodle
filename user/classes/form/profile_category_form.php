@@ -22,6 +22,10 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core_user\form;
+
+use moodleform;
+
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    //  It must be included from a Moodle page.
 }
@@ -34,7 +38,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
  * @copyright  2007 onwards Shane Elliot {@link http://pukunui.com}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class category_form extends moodleform {
+class profile_category_form extends moodleform {
 
     /**
      * Define the form.
@@ -91,5 +95,4 @@ class category_form extends moodleform {
         return $errors;
     }
 }
-
 

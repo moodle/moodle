@@ -290,9 +290,9 @@ class profilefield_social_testcase extends provider_testcase {
     private function add_profile_field($categoryid, $datatype) {
         $data = $this->getDataGenerator()->create_custom_profile_field([
             'datatype' => $datatype,
-            'shortname' => 'tstField',
-            'name' => 'Test field',
-            'description' => 'This is a test.',
+            'shortname' => 'icq',
+            'name' => 'icq',
+            'description' => '',
             'categoryid' => $categoryid,
         ]);
         return $data->id;

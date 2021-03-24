@@ -222,7 +222,7 @@ class core_user_profilelib_testcase extends advanced_testcase {
 
         // Add a required, visible, unlocked custom field.
         $this->getDataGenerator()->create_custom_profile_field(['shortname' => 'house', 'name' => 'House', 'required' => 1,
-            'visible' => 1, 'locked' => 0, 'datatype' => 'text', 'default' => null]);
+            'visible' => 1, 'locked' => 0, 'datatype' => 'text', 'defaultdata' => null]);
 
         // Create some student accounts.
         $hermione = $this->getDataGenerator()->create_user(['profile_field_house' => 'Gryffindor']);
