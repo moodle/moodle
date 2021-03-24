@@ -167,7 +167,7 @@ function lesson_update_events($lesson, $override = null) {
         // Events module won't show user events when the courseid is nonzero.
         $event->courseid    = ($userid) ? 0 : $lesson->course;
         $event->groupid     = $groupid;
-        $event->userid      = 0;
+        $event->userid      = $userid;
         $event->modulename  = 'lesson';
         $event->instance    = $lesson->id;
         $event->timestart   = $available;
@@ -200,8 +200,6 @@ function lesson_update_events($lesson, $override = null) {
             $params = new stdClass();
             $params->lesson = $lesson->name;
             $eventname = get_string('overrideusereventname', 'lesson', $params);
-            // Only set userid for user override events.
-            $event->userid = $userid;
             // Set user override priority.
             $event->priority = CALENDAR_EVENT_USER_OVERRIDE_PRIORITY;
         } else {
