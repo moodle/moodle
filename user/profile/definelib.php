@@ -484,6 +484,32 @@ function profile_list_categories() {
     return array_map('format_string', $categories);
 }
 
+/**
+ * Create or update a profile category
+ *
+ * @param stdClass $data
+ * @throws coding_exception
+ * @throws dml_exception
+ */
+function profile_save_category(stdClass $data) {
+    global $DB;
+
+    if (empty($data->id)) {
+        unset($data->id);
+        $data->sortorder = $DB->count_records('user_info_category') + 1;
+        $data->id = $DB->insert_record('user_info_category', $data, true);
+
+        $createdcategory = $DB->get_record('user_info_category', array('id' => $data->id));
+        \core\event\user_info_category_created::create_from_category($createdcategory)->trigger();
+    } else {
+        $DB->update_record('user_info_category', $data);
+
+        $updatedcateogry = $DB->get_record('user_info_category', array('id' => $data->id));
+        \core\event\user_info_category_updated::create_from_category($updatedcateogry)->trigger();
+    }
+    profile_reorder_categories();
+    profile_purge_user_fields_cache();
+}
 
 /**
  * Edit a category
@@ -492,7 +518,9 @@ function profile_list_categories() {
  * @param string $redirect
  */
 function profile_edit_category($id, $redirect) {
-    global $DB, $OUTPUT;
+    global $DB, $OUTPUT, $CFG;
+
+    debugging('Function profile_edit_category() deprecated without replacement', DEBUG_DEVELOPER);
 
     $categoryform = new \core_user\form\profile_category_form();
 
@@ -504,23 +532,8 @@ function profile_edit_category($id, $redirect) {
         redirect($redirect);
     } else {
         if ($data = $categoryform->get_data()) {
-            if (empty($data->id)) {
-                unset($data->id);
-                $data->sortorder = $DB->count_records('user_info_category') + 1;
-                $data->id = $DB->insert_record('user_info_category', $data, true);
-
-                $createdcategory = $DB->get_record('user_info_category', array('id' => $data->id));
-                \core\event\user_info_category_created::create_from_category($createdcategory)->trigger();
-            } else {
-                $DB->update_record('user_info_category', $data);
-
-                $updatedcateogry = $DB->get_record('user_info_category', array('id' => $data->id));
-                \core\event\user_info_category_updated::create_from_category($updatedcateogry)->trigger();
-            }
-            profile_reorder_categories();
-            profile_purge_user_fields_cache();
+            profile_save_category($data);
             redirect($redirect);
-
         }
 
         if (empty($id)) {
