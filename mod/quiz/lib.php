@@ -1949,8 +1949,6 @@ function quiz_completion_check_passing_grade_or_all_attempts($course, $cm, $user
  * @throws coding_exception
  */
 function quiz_completion_check_min_attempts($userid, $quiz) {
-    global $DB;
-
     if (empty($quiz->completionminattempts)) {
         return true;
     }
@@ -2174,7 +2172,7 @@ function quiz_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionattemptsexhausted, completionpass';
+    $fields = 'id, name, intro, introformat, completionattemptsexhausted, completionpass, completionminattempts';
     if (!$quiz = $DB->get_record('quiz', $dbparams, $fields)) {
         return false;
     }
@@ -2189,8 +2187,16 @@ function quiz_get_coursemodule_info($coursemodule) {
 
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
-        $result->customdata['customcompletionrules']['completionattemptsexhausted'] = $quiz->completionattemptsexhausted;
-        $result->customdata['customcompletionrules']['completionpass'] = $quiz->completionpass;
+        if ($quiz->completionpass || $quiz->completionattemptsexhausted) {
+            $result->customdata['customcompletionrules']['completionpassorattemptsexhausted'] = [
+                'completionpass' => $quiz->completionpass,
+                'completionattemptsexhausted' => $quiz->completionattemptsexhausted,
+            ];
+        } else {
+            $result->customdata['customcompletionrules']['completionpassorattemptsexhausted'] = [];
+        }
+
+        $result->customdata['customcompletionrules']['completionminattempts'] = $quiz->completionminattempts;
     }
 
     return $result;
@@ -2210,27 +2216,28 @@ function mod_quiz_get_completion_active_rule_descriptions($cm) {
     }
 
     $descriptions = [];
-    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
-        switch ($key) {
-            case 'completionattemptsexhausted':
-                if (!empty($val)) {
-                    $descriptions[] = get_string('completionattemptsexhausteddesc', 'quiz');
-                }
-                break;
-            case 'completionpass':
-                if (!empty($val)) {
-                    $descriptions[] = get_string('completionpassdesc', 'quiz', format_time($val));
-                }
-                break;
-            case 'completionminattempts':
-                if (!empty($val)) {
-                    $descriptions[] = get_string('completionminattemptsdesc', 'quiz', $val);
-                }
-                break;
-            default:
-                break;
+    $rules = $cm->customdata['customcompletionrules'];
+
+    if (!empty($rules['completionpassorattemptsexhausted'])) {
+        if (!empty($rules['completionpassorattemptsexhausted']['completionattemptsexhausted'])) {
+            $descriptions[] = get_string('completionpassorattemptsexhausteddesc', 'quiz');
+        } else if (!empty($rules['completionpassorattemptsexhausted']['completionpass'])) {
+            $descriptions[] = get_string('completionpassdesc', 'quiz',
+                format_time($rules['completionpassorattemptsexhausted']['completionpass']));
+        }
+    } else {
+        // Fallback.
+        if (!empty($rules['completionattemptsexhausted'])) {
+            $descriptions[] = get_string('completionpassorattemptsexhausteddesc', 'quiz');
+        } else if (!empty($rules['completionpass'])) {
+            $descriptions[] = get_string('completionpassdesc', 'quiz', format_time($rules['completionpass']));
         }
     }
+
+    if (!empty($rules['completionminattempts'])) {
+        $descriptions[] = get_string('completionminattemptsdesc', 'quiz', $rules['completionminattempts']);
+    }
+
     return $descriptions;
 }
 
