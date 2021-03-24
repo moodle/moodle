@@ -180,6 +180,7 @@ $string['commentorgrade'] = 'Make comment or override grade';
 $string['comments'] = 'Comments';
 $string['completedon'] = 'Completed on';
 $string['completionminattempts'] = 'Minimum number of attempts:';
+$string['completionminattemptsdesc'] = 'Minimum number of attempts required: {$a}';
 $string['completionminattemptsgroup'] = 'Require attempts';
 $string['completionminattemptserror'] = 'Minimum number of attempts must be lower or equal to attempts allowed.';
 $string['completionpass'] = 'Require passing grade';
