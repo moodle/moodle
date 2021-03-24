@@ -215,14 +215,6 @@
         redirect($CFG->wwwroot .'/');
     }
 
-    $completion = new completion_info($course);
-    if ($completion->is_enabled()) {
-        $PAGE->requires->string_for_js('completion-alt-manual-y', 'completion');
-        $PAGE->requires->string_for_js('completion-alt-manual-n', 'completion');
-
-        $PAGE->requires->js_init_call('M.core_completion.init');
-    }
-
     // Determine whether the user has permission to download course content.
     $candownloadcourse = \core\content::can_export_context($context, $USER);
 
@@ -260,19 +252,6 @@
         if (async_helper::is_async_pending($id, 'course', 'backup')) {
             echo $OUTPUT->notification(get_string('pendingasyncedit', 'backup'), 'warning');
         }
-    }
-
-    if ($completion->is_enabled()) {
-        // This value tracks whether there has been a dynamic change to the page.
-        // It is used so that if a user does this - (a) set some tickmarks, (b)
-        // go to another page, (c) clicks Back button - the page will
-        // automatically reload. Otherwise it would start with the wrong tick
-        // values.
-        echo html_writer::start_tag('form', array('action'=>'.', 'method'=>'get'));
-        echo html_writer::start_tag('div');
-        echo html_writer::empty_tag('input', array('type'=>'hidden', 'id'=>'completion_dynamic_change', 'name'=>'completion_dynamic_change', 'value'=>'0'));
-        echo html_writer::end_tag('div');
-        echo html_writer::end_tag('form');
     }
 
     // Course wrapper start.
@@ -315,6 +294,7 @@
     }
 
     // Load the view JS module if completion tracking is enabled for this course.
+    $completion = new completion_info($course);
     if ($completion->is_enabled()) {
         $PAGE->requires->js_call_amd('core_course/view', 'init');
     }
