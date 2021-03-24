@@ -154,8 +154,8 @@ class core_calendar_local_api_testcase extends advanced_testcase {
             'courseid' => $course->id,
             'modulename' => 'assign',
             'instance' => $moduleinstance->id,
-            'userid' => 0,
-            'eventtype' => 'due',
+            'userid' => 1,
+            'eventtype' => 'user',
             'repeats' => 0,
             'timestart' => 1,
         ];
@@ -205,8 +205,8 @@ class core_calendar_local_api_testcase extends advanced_testcase {
             'courseid' => $course->id,
             'modulename' => 'assign',
             'instance' => $moduleinstance->id,
-            'userid' => 0,
-            'eventtype' => 'due',
+            'userid' => 1,
+            'eventtype' => 'user',
             'repeats' => 0,
             'timestart' => 1,
         ];
@@ -257,8 +257,8 @@ class core_calendar_local_api_testcase extends advanced_testcase {
             'courseid' => $course->id,
             'modulename' => 'assign',
             'instance' => $moduleinstance->id,
-            'userid' => 0,
-            'eventtype' => 'due',
+            'userid' => 1,
+            'eventtype' => 'user',
             'repeats' => 0,
             'timestart' => 1,
         ];
