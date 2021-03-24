@@ -608,8 +608,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 1; $i < 6; $i++) {
             create_event([
                 'name' => sprintf('Event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course1->id,
@@ -619,8 +619,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 6; $i < 12; $i++) {
             create_event([
                 'name' => sprintf('Event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course2->id,
@@ -663,8 +663,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 1; $i < 6; $i++) {
             create_event([
                 'name' => sprintf('Event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course1->id,
@@ -674,8 +674,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 6; $i < 12; $i++) {
             create_event([
                 'name' => sprintf('Event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course2->id,
@@ -719,8 +719,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 1; $i < 6; $i++) {
             create_event([
                 'name' => sprintf('Event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course1->id,
@@ -730,8 +730,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 6; $i < 12; $i++) {
             create_event([
                 'name' => sprintf('Event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course2->id,
@@ -773,8 +773,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 1; $i < 21; $i++) {
             $records[] = create_event([
                 'name' => sprintf('Event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course1->id,
@@ -784,8 +784,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 21; $i < 41; $i++) {
             $records[] = create_event([
                 'name' => sprintf('Event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course2->id,
@@ -830,8 +830,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 1; $i < 41; $i++) {
             create_event([
                 'name' => sprintf('Event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course1->id,
@@ -901,8 +901,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 1; $i < 21; $i++) {
             create_event([
                 'name' => sprintf('Event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course1->id,
@@ -912,8 +912,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 21; $i < 41; $i++) {
             create_event([
                 'name' => sprintf('Event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course2->id,
@@ -979,8 +979,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 1; $i < 11; $i++) {
             $records[] = create_event([
                 'name' => sprintf('1 event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course1->id,
@@ -990,8 +990,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 1; $i < 11; $i++) {
             $records[] = create_event([
                 'name' => sprintf('2 event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course1->id,
@@ -1002,8 +1002,8 @@ class core_calendar_event_vault_testcase extends advanced_testcase {
         for ($i = 1; $i < 11; $i++) {
             $records[] = create_event([
                 'name' => sprintf('3 event %d', $i),
-                'eventtype' => 'due',
-                'userid' => 0,
+                'eventtype' => 'user',
+                'userid' => $user->id,
                 'timesort' => $i,
                 'type' => CALENDAR_EVENT_TYPE_ACTION,
                 'courseid' => $course2->id,
