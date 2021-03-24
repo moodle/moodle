@@ -441,6 +441,7 @@ class core_task_logmanager extends advanced_testcase {
      */
     protected function get_test_adhoc_task() : \core\task\adhoc_task {
         $task = $this->getMockForAbstractClass(\core\task\adhoc_task::class);
+        $task->set_component('core');
 
         // Mock a lock on the task.
         $lock = $this->getMockBuilder(\core\lock\lock::class)
