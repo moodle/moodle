@@ -1139,23 +1139,19 @@ EOD;
                 break;
             case 'group':
                 unset($record->categoryid);
-                unset($record->userid);
                 break;
             case 'course':
                 unset($record->categoryid);
                 unset($record->groupid);
-                unset($record->userid);
                 break;
             case 'category':
                 unset($record->courseid);
                 unset($record->groupid);
-                unset($record->userid);
                 break;
             case 'site':
                 unset($record->categoryid);
                 unset($record->courseid);
                 unset($record->groupid);
-                unset($record->userid);
                 break;
         }
 
