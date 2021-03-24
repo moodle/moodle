@@ -32,7 +32,7 @@ class profile_define_base {
 
     /**
      * Prints out the form snippet for creating or editing a profile field
-     * @param moodleform $form instance of the moodleform class
+     * @param MoodleQuickForm $form instance of the moodleform class
      */
     public function define_form(&$form) {
         $form->addElement('header', '_commonsettings', get_string('profilecommonsettings', 'admin'));
@@ -45,7 +45,7 @@ class profile_define_base {
     /**
      * Prints out the form snippet for the part of creating or editing a profile field common to all data types.
      *
-     * @param moodleform $form instance of the moodleform class
+     * @param MoodleQuickForm $form instance of the moodleform class
      */
     public function define_form_common(&$form) {
 
@@ -88,7 +88,7 @@ class profile_define_base {
 
     /**
      * Prints out the form snippet for the part of creating or editing a profile field specific to the current data type.
-     * @param moodleform $form instance of the moodleform class
+     * @param MoodleQuickForm $form instance of the moodleform class
      */
     public function define_form_specific($form) {
         // Do nothing - overwrite if necessary.
@@ -166,7 +166,7 @@ class profile_define_base {
 
     /**
      * Alter form based on submitted or existing data
-     * @param moodleform $mform
+     * @param MoodleQuickForm $mform
      */
     public function define_after_data(&$mform) {
         // Do nothing - overwrite if necessary.
