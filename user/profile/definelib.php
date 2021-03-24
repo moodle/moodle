@@ -575,8 +575,7 @@ function profile_edit_field($id, $datatype, $redirect) {
     $field->description = clean_text($field->description, $field->descriptionformat);
     $field->description = array('text' => $field->description, 'format' => $field->descriptionformat, 'itemid' => 0);
 
-    require_once($CFG->dirroot.'/user/profile/index_field_form.php');
-    $fieldform = new field_form(null, $field->datatype);
+    $fieldform = new \core_user\form\profile_field_form(null, $field->datatype);
 
     // Convert the data format for.
     if (is_array($fieldform->editors())) {

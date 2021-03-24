@@ -22,9 +22,11 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    //  It must be included from a Moodle page.
-}
+namespace core_user\form;
+
+use profile_define_base;
+
+defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
@@ -34,7 +36,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
  * @copyright  2007 onwards Shane Elliot {@link http://pukunui.com}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class field_form extends moodleform {
+class profile_field_form extends \moodleform {
 
     /** @var profile_define_base $field */
     public $field;
