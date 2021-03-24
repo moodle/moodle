@@ -2222,6 +2222,11 @@ function mod_quiz_get_completion_active_rule_descriptions($cm) {
                     $descriptions[] = get_string('completionpassdesc', 'quiz', format_time($val));
                 }
                 break;
+            case 'completionminattempts':
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionminattemptsdesc', 'quiz', $val);
+                }
+                break;
             default:
                 break;
         }
