@@ -46,6 +46,8 @@ renderer and course format renderer:
 
 === 3.11 ===
 * A new callback xxx_coursemodule_definition_after_data that allows plugins to extend activity forms after the data is set.
+* \core_course_renderer::course_section_cm_completion() has been deprecated. It is not being used anymore and is being replaced by
+  \core_renderer::activity_information().
 
 === 3.10 ===
 
