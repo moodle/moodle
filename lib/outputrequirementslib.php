@@ -787,8 +787,6 @@ class page_requirements_manager {
                                     'requires' => array('node', 'cookie'));
                     break;
                 case 'core_completion':
-                    $module = array('name'     => 'core_completion',
-                                    'fullpath' => '/course/completion.js');
                     break;
                 case 'core_message':
                     $module = array('name'     => 'core_message',
