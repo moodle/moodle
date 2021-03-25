@@ -109,23 +109,19 @@ export const init = ({
         });
 
         root.addEventListener('click', e => {
-            // Handle clicking of the "Show [all|count]" and "Select all" actions.
-            const showCountLink = root.querySelector(Selectors.showCountToggle);
+            // Handle clicking of the "Select all" actions.
             const checkCountButton = root.querySelector(Selectors.checkCountButton);
-
-            const showCountLinkClicked = showCountLink && showCountLink.contains(e.target);
             const checkCountButtonClicked = checkCountButton && checkCountButton.contains(e.target);
 
-            if (showCountLinkClicked || checkCountButtonClicked) {
+            if (checkCountButtonClicked) {
                 e.preventDefault();
 
                 const tableRoot = getTableFromUniqueId(uniqueid);
 
-                DynamicTable.setPageSize(tableRoot, showCountLink.dataset.targetPageSize)
+                DynamicTable.setPageSize(tableRoot, checkCountButton.dataset.targetPageSize)
                 .then(tableRoot => {
-                    // Always update the toggle state.
-                    // This ensures that the bulk actions are disabled after changing the page size.
-                    CheckboxToggleAll.setGroupState(root, 'participants-table', checkCountButtonClicked);
+                    // Update the toggle state.
+                    CheckboxToggleAll.setGroupState(root, 'participants-table', true);
 
                     return tableRoot;
                 })
@@ -135,12 +131,11 @@ export const init = ({
 
         // When the content is refreshed, update the row counts in various places.
         root.addEventListener(DynamicTable.Events.tableContentRefreshed, e => {
-            const showCountLink = root.querySelector(Selectors.showCountToggle);
             const checkCountButton = root.querySelector(Selectors.checkCountButton);
 
             const tableRoot = e.target;
 
-            const defaultPageSize = parseInt(root.dataset.tableDefaultPerPage, 10);
+            const defaultPageSize = parseInt(tableRoot.dataset.tableDefaultPerPage, 10);
             const currentPageSize = parseInt(tableRoot.dataset.tablePageSize, 10);
             const totalRowCount = parseInt(tableRoot.dataset.tableTotalRows, 10);
 
@@ -154,31 +149,17 @@ export const init = ({
                 },
             ];
 
-
             if (totalRowCount <= defaultPageSize) {
-                // There are fewer than the default page count numbers of rows.
-                showCountLink.classList.add('hidden');
-
                 if (checkCountButton) {
                     checkCountButton.classList.add('hidden');
                 }
             } else if (totalRowCount <= currentPageSize) {
                 // The are fewer than the current page size.
                 pageCountStrings.push({
-                    key: 'showperpage',
-                    component: 'core',
-                    param: defaultPageSize,
-                });
-
-                pageCountStrings.push({
                     key: 'selectalluserswithcount',
                     component: 'core',
                     param: defaultPageSize,
                 });
-
-                // Show the 'Show [x]' link.
-                showCountLink.classList.remove('hidden');
-                showCountLink.dataset.targetPageSize = defaultPageSize;
 
                 if (checkCountButton) {
                     // The 'Check all [x]' button is only visible when there are values to set.
@@ -186,20 +167,10 @@ export const init = ({
                 }
             } else {
                 pageCountStrings.push({
-                    key: 'showall',
-                    component: 'core',
-                    param: totalRowCount,
-                });
-
-                pageCountStrings.push({
                     key: 'selectalluserswithcount',
                     component: 'core',
                     param: totalRowCount,
                 });
-
-                // Show both the 'Show [x]' link, and the 'Check all [x]' button.
-                showCountLink.classList.remove('hidden');
-                showCountLink.dataset.targetPageSize = totalRowCount;
 
                 if (checkCountButton) {
                     checkCountButton.classList.remove('hidden');
@@ -207,13 +178,9 @@ export const init = ({
             }
 
             Str.get_strings(pageCountStrings)
-            .then(([showingParticipantCountString, showCountString, selectCountString]) => {
+            .then(([showingParticipantCountString, selectCountString]) => {
                 const showingParticipantCount = root.querySelector(Selectors.showCountText);
                 showingParticipantCount.innerHTML = showingParticipantCountString;
-
-                if (showCountString) {
-                    showCountLink.innerHTML = showCountString;
-                }
 
                 if (selectCountString && checkCountButton) {
                     checkCountButton.value = selectCountString;
