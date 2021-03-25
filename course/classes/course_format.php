@@ -38,6 +38,7 @@ use lang_string;
 use completion_info;
 use external_api;
 use stdClass;
+use core_course\output\course_format\legacy_format_renderer;
 
 /**
  * Base class for course formats
@@ -1055,7 +1056,19 @@ abstract class course_format {
      * @return renderer_base
      */
     public function get_renderer(moodle_page $page) {
-        return $page->get_renderer('format_'. $this->get_format());
+        try {
+            $renderer = $page->get_renderer('format_'. $this->get_format());
+        } catch (moodle_exception $e) {
+            $formatname = $this->get_format();
+            $expectedrenderername = 'format_'. $this->get_format() . '\output\renderer';
+            debugging(
+                "The '{$formatname}' course format does not define the {$expectedrenderername} renderer class. This is required since Moodle 4.0.",
+                 DEBUG_DEVELOPER
+            );
+            $renderer = new legacy_format_renderer($page, null);
+        }
+
+        return $renderer;
     }
 
     /**
