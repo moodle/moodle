@@ -337,7 +337,7 @@
     <location>plist</location>
     <name>plist</name>
     <license>MIT</license>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
   </library>
   <library>
     <location>zipstream</location>
