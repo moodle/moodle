@@ -35,7 +35,6 @@ use core_table\local\filter\integer_filter;
 use core_table\local\filter\string_filter;
 
 define('DEFAULT_PAGE_SIZE', 20);
-define('SHOW_ALL_PAGE_SIZE', 5000);
 
 $page         = optional_param('page', 0, PARAM_INT); // Which page to show.
 $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT); // How many per page.
@@ -189,7 +188,6 @@ echo html_writer::start_tag('form', [
     'id' => 'participantsform',
     'data-course-id' => $course->id,
     'data-table-unique-id' => $participanttable->uniqueid,
-    'data-table-default-per-page' => ($perpage < DEFAULT_PAGE_SIZE) ? $perpage : DEFAULT_PAGE_SIZE,
 ]);
 echo '<div>';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -204,40 +202,6 @@ echo html_writer::tag(
 );
 
 echo $participanttablehtml;
-
-$perpageurl = new moodle_url('/user/index.php', [
-    'contextid' => $context->id,
-    'id' => $course->id,
-]);
-$perpagesize = DEFAULT_PAGE_SIZE;
-$perpagevisible = false;
-$perpagestring = '';
-
-if ($perpage == SHOW_ALL_PAGE_SIZE && $participanttable->totalrows > DEFAULT_PAGE_SIZE) {
-    $perpageurl->param('perpage', $participanttable->totalrows);
-    $perpagesize = SHOW_ALL_PAGE_SIZE;
-    $perpagevisible = true;
-    $perpagestring = get_string('showperpage', '', DEFAULT_PAGE_SIZE);
-} else if ($participanttable->get_page_size() < $participanttable->totalrows) {
-    $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-    $perpagesize = SHOW_ALL_PAGE_SIZE;
-    $perpagevisible = true;
-    $perpagestring = get_string('showall', '', $participanttable->totalrows);
-}
-
-$perpageclasses = '';
-if (!$perpagevisible) {
-    $perpageclasses = 'hidden';
-}
-echo $OUTPUT->container(html_writer::link(
-    $perpageurl,
-    $perpagestring,
-    [
-        'data-action' => 'showcount',
-        'data-target-page-size' => $perpagesize,
-        'class' => $perpageclasses,
-    ]
-), [], 'showall');
 
 $bulkoptions = (object) [
     'uniqueid' => $participanttable->uniqueid,
@@ -256,7 +220,7 @@ if ($bulkoperations) {
             'id' => 'checkall',
             'class' => 'btn btn-secondary',
             'value' => $label,
-            'data-target-page-size' => $participanttable->totalrows,
+            'data-target-page-size' => TABLE_SHOW_ALL_PAGE_SIZE,
         ]);
     }
     echo html_writer::end_tag('div');

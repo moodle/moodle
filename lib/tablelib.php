@@ -46,6 +46,11 @@ define('TABLE_P_TOP',    1);
 define('TABLE_P_BOTTOM', 2);
 /**#@-*/
 
+/**
+ * Constant that defines the 'Show all' page size.
+ */
+define('TABLE_SHOW_ALL_PAGE_SIZE', 5000);
+
 use core_table\local\filter\filterset;
 
 /**
@@ -107,6 +112,9 @@ class flexible_table {
     var $currentrow  = 0;
     var $sort_default_column = NULL;
     var $sort_default_order  = SORT_ASC;
+
+    /** @var integer The defeult per page size for the table. */
+    private $defaultperpage = 30;
 
     /**
      * Array of positions in which to display download controls.
@@ -1508,6 +1516,24 @@ class flexible_table {
     }
 
     /**
+     * Get the default per page.
+     *
+     * @return int
+     */
+    public function get_default_per_page(): int {
+        return $this->defaultperpage;
+    }
+
+    /**
+     * Set the default per page.
+     *
+     * @param int $defaultperpage
+     */
+    public function set_default_per_page(int $defaultperpage): void {
+        $this->defaultperpage = $defaultperpage;
+    }
+
+    /**
      * Set the preferred first name initial in an initials bar.
      *
      * @param string $initial The character to set
@@ -1678,6 +1704,7 @@ class flexible_table {
                 'data-table-last-initial' => $this->prefs['i_last'],
                 'data-table-page-number' => $this->currpage + 1,
                 'data-table-page-size' => $this->pagesize,
+                'data-table-default-per-page' => $this->get_default_per_page(),
                 'data-table-hidden-columns' => json_encode(array_keys($this->prefs['collapse'])),
                 'data-table-total-rows' => $this->totalrows,
             ]);
@@ -1696,8 +1723,33 @@ class flexible_table {
         global $PAGE;
 
         if (is_a($this, \core_table\dynamic::class)) {
+            $output = '';
+
+            $perpageurl = new moodle_url($PAGE->url);
+
+            // Generate "Show all/Show per page" link.
+            if ($this->pagesize == TABLE_SHOW_ALL_PAGE_SIZE && $this->totalrows > $this->get_default_per_page()) {
+                $perpagesize = $this->get_default_per_page();
+                $perpagestring = get_string('showperpage', '', $this->get_default_per_page());
+            } else if ($this->pagesize < $this->totalrows) {
+                $perpagesize = TABLE_SHOW_ALL_PAGE_SIZE;
+                $perpagestring = get_string('showall', '', $this->totalrows);
+            }
+            if (isset($perpagesize) && isset($perpagestring)) {
+                $perpageurl->param('perpage', $perpagesize);
+                $output .= html_writer::link(
+                    $perpageurl,
+                    $perpagestring,
+                    [
+                        'data-action' => 'showcount',
+                        'data-target-page-size' => $perpagesize,
+                    ]
+                );
+            }
+
             $PAGE->requires->js_call_amd('core_table/dynamic', 'init');
-            return html_writer::end_tag('div');
+            $output .= html_writer::end_tag('div');
+            return $output;
         }
 
         return '';
