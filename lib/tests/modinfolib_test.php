@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/modinfolib.php');
  * @copyright 2012 Andrew Davis
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_modinfolib_testcase extends advanced_testcase {
+class modinfolib_test extends advanced_testcase {
     public function test_section_info_properties() {
         global $DB, $CFG;
 
@@ -918,5 +918,87 @@ class core_modinfolib_testcase extends advanced_testcase {
         // Manager can see the hidden one too.
         list($course, $cm) = get_course_and_cm_from_cmid($hiddenpage->cmid, 'page', 0, $manager->id);
         $this->assertTrue($cm->uservisible);
+    }
+
+    /**
+     * Test test_get_section_info_by_id method
+     *
+     * @dataProvider get_section_info_by_id_provider
+     * @covers ::get_section_info_by_id
+     *
+     * @param int $sectionnum the section number
+     * @param int $strictness the search strict mode
+     * @param bool $expectnull if the function will return a null
+     * @param bool $expectexception if the function will throw an exception
+     */
+    public function test_get_section_info_by_id(
+        int $sectionnum,
+        int $strictness = IGNORE_MISSING,
+        bool $expectnull = false,
+        bool $expectexception = false
+    ) {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a course with 4 sections.
+        $course = $this->getDataGenerator()->create_course(['numsections' => 4]);
+
+        // Index sections.
+        $sectionindex = [];
+        $modinfo = get_fast_modinfo($course);
+        $allsections = $modinfo->get_section_info_all();
+        foreach ($allsections as $section) {
+            $sectionindex[$section->section] = $section->id;
+        }
+
+        if ($expectexception) {
+            $this->expectException(moodle_exception::class);
+        }
+
+        $sectionid = $sectionindex[$sectionnum] ?? -1;
+
+        $section = $modinfo->get_section_info_by_id($sectionid, $strictness);
+
+        if ($expectnull) {
+            $this->assertNull($section);
+        } else {
+            $this->assertEquals($sectionid, $section->id);
+            $this->assertEquals($sectionnum, $section->section);
+        }
+    }
+
+    /**
+     * Data provider for test_get_section_info_by_id().
+     *
+     * @return array
+     */
+    public function get_section_info_by_id_provider() {
+        return [
+            'Valid section id' => [
+                'sectionnum' => 1,
+                'strictness' => IGNORE_MISSING,
+                'expectnull' => false,
+                'expectexception' => false,
+            ],
+            'Section zero' => [
+                'sectionnum' => 0,
+                'strictness' => IGNORE_MISSING,
+                'expectnull' => false,
+                'expectexception' => false,
+            ],
+            'invalid section ignore missing' => [
+                'sectionnum' => -1,
+                'strictness' => IGNORE_MISSING,
+                'expectnull' => true,
+                'expectexception' => false,
+            ],
+            'invalid section must exists' => [
+                'sectionnum' => -1,
+                'strictness' => MUST_EXIST,
+                'expectnull' => false,
+                'expectexception' => true,
+            ],
+        ];
     }
 }

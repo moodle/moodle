@@ -93,6 +93,12 @@ class course_modinfo {
     private $sections;
 
     /**
+     * Array from section id => section num.
+     * @var array
+     */
+    private $sectionids;
+
+    /**
      * Array from int (cm id) => cm_info object
      * @var cm_info[]
      */
@@ -331,6 +337,24 @@ class course_modinfo {
     }
 
     /**
+     * Gets data about specific section ID.
+     * @param int $sectionid ID (not number) of section
+     * @param int $strictness Use MUST_EXIST to throw exception if it doesn't
+     * @return section_info|null Information for numbered section or null if not found
+     */
+    public function get_section_info_by_id(int $sectionid, int $strictness = IGNORE_MISSING): ?section_info {
+
+        if (!isset($this->sectionids[$sectionid])) {
+            if ($strictness === MUST_EXIST) {
+                throw new moodle_exception('sectionnotexist');
+            } else {
+                return null;
+            }
+        }
+        return $this->get_section_info($this->sectionids[$sectionid], $strictness);
+    }
+
+    /**
      * Static cache for generated course_modinfo instances
      *
      * @see course_modinfo::instance()
@@ -469,6 +493,7 @@ class course_modinfo {
         // Set initial values
         $this->userid = $userid;
         $this->sections = array();
+        $this->sectionids = [];
         $this->cms = array();
         $this->instances = array();
         $this->groups = null;
@@ -540,6 +565,7 @@ class course_modinfo {
         // Expand section objects
         $this->sectioninfo = array();
         foreach ($coursemodinfo->sectioncache as $number => $data) {
+            $this->sectionids[$data->id] = $number;
             $this->sectioninfo[$number] = new section_info($data, $number, null, null,
                     $this, null);
         }
