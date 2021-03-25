@@ -208,6 +208,12 @@ book_view($book, $chapter, $islastchapter, $course, $cm, $context);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($book->name));
 
+// Render the activity information.
+$cminfo = cm_info::create($cm);
+$cmcompletion = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
+echo $OUTPUT->activity_information($cminfo, $cmcompletion, $activitydates);
+
 // Info box.
 if ($book->intro) {
     echo $OUTPUT->box(format_module_intro('book', $book, $cm->id), 'generalbox', 'intro');
