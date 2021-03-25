@@ -3429,6 +3429,81 @@ class restore_course_logstores_structure_step extends restore_structure_step {
 }
 
 /**
+ * Structure step in charge of restoring the loglastaccess.xml file for the course logs.
+ *
+ * This restore step will rebuild the table for user_lastaccess table.
+ */
+class restore_course_loglastaccess_structure_step extends restore_structure_step {
+
+    /**
+     * Conditionally decide if this step should be executed.
+     *
+     * This function checks the following parameter:
+     *
+     *   1. the loglastaccess.xml file exists
+     *
+     * @return bool true is safe to execute, false otherwise
+     */
+    protected function execute_condition() {
+        // Check it is included in the backup.
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+        if (!file_exists($fullpath)) {
+            // Not found, can't restore loglastaccess.xml information.
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Return the elements to be processed on restore of loglastaccess.
+     *
+     * @return restore_path_element[] array of elements to be processed on restore.
+     */
+    protected function define_structure() {
+
+        $paths = array();
+        // To know if we are including userinfo.
+        $userinfo = $this->get_setting_value('users');
+
+        if ($userinfo) {
+            $paths[] = new restore_path_element('lastaccess', '/lastaccesses/lastaccess');
+        }
+        // Return the paths wrapped.
+        return $paths;
+    }
+
+    /**
+     * Process the 'lastaccess' elements.
+     *
+     * @param array $data element data
+     */
+    protected function process_lastaccess($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        $data->courseid = $this->get_courseid();
+        if (!$data->userid = $this->get_mappingid('user', $data->userid)) {
+            return; // Nothing to do, not able to find the user to set the lastaccess time.
+        }
+
+        // Check if record does exist.
+        $exists = $DB->get_record('user_lastaccess', array('courseid' => $data->courseid, 'userid' => $data->userid));
+        if ($exists) {
+            // If the time of last access of the restore is newer, then replace and update.
+            if ($exists->timeaccess < $data->timeaccess) {
+                $exists->timeaccess = $data->timeaccess;
+                $DB->update_record('user_lastaccess', $exists);
+            }
+        } else {
+            $DB->insert_record('user_lastaccess', $data);
+        }
+    }
+}
+
+/**
  * Structure step in charge of restoring the logstores.xml file for the activity logs.
  *
  * Note: Activity structure is completely equivalent to the course one, so just extend it.
