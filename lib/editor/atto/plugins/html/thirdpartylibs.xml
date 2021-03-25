@@ -11,7 +11,7 @@
     <location>yui/src/beautify</location>
     <name>jsbeautify</name>
     <license>MIT</license>
-    <version>1.7.5</version>
+    <version>1.13.0</version>
     <licenseversion></licenseversion>
   </library>
 </libraries>
