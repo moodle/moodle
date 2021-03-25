@@ -70,6 +70,13 @@ if (!$imscp->structure) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($imscp->name));
+
+// Render the activity information.
+$cminfo = cm_info::create($cm);
+$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
+echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
+
 // Info box.
 if ($imscp->intro) {
     echo $OUTPUT->box(format_module_intro('imscp', $imscp, $cm->id), 'generalbox', 'intro');
