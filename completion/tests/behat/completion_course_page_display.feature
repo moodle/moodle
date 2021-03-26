@@ -2,7 +2,7 @@
 Feature: Show activity completion status or activity completion configuration on the course page
   In order to understand the configuration or status of an activity's completion
   As a user
-  I want to see an appropriate checkbox icon besides the activity
+  I need to see the appropriate completion information for each activity in the course homepage
 
   Background:
     Given the following "courses" exist:
@@ -39,27 +39,27 @@ Feature: Show activity completion status or activity completion configuration on
     Given I log in as "student1"
     And I am on "Course 1" course homepage
     Then I should see "Your progress"
-    And the "Test forum name" "Forum" activity with "manual" completion shows a status completion checkbox
-    And the "Test assignment name" "Assign" activity with "auto" completion shows a status completion checkbox
-    And the "Test quiz name" "Quiz" activity does not show any completion checkbox
+    And the manual completion button of "Test forum name" is displayed as "Mark as done"
+    And the "View" completion condition of "Test assignment name" is displayed as "todo"
+    And there should be no completion information shown for "Test quiz name"
 
   Scenario: Show completion configuration to editing teachers
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     Then I should not see "Your progress"
-    And the "Test forum name" "Forum" activity with "manual" completion shows a configuration completion checkbox
-    And the "Test assignment name" "Assign" activity with "auto" completion shows a configuration completion checkbox
-    And the "Test quiz name" "Quiz" activity does not show any completion checkbox
+    And the manual completion button for "Test forum name" should be disabled
+    And "Test assignment name" should have the "View" completion condition
+    And there should be no completion information shown for "Test quiz name"
     And I am on "Course 1" course homepage with editing mode on
     And I should not see "Your progress"
-    And the "Test forum name" "Forum" activity with "manual" completion shows a configuration completion checkbox
-    And the "Test assignment name" "Assign" activity with "auto" completion shows a configuration completion checkbox
-    And the "Test quiz name" "Quiz" activity does not show any completion checkbox
+    And the manual completion button for "Test forum name" should be disabled
+    And "Test assignment name" should have the "View" completion condition
+    And there should be no completion information shown for "Test quiz name"
 
   Scenario: Show completion configuration to non-editing teachers
     Given I log in as "teacher2"
     And I am on "Course 1" course homepage
     Then I should not see "Your progress"
-    And the "Test forum name" "Forum" activity with "manual" completion shows a configuration completion checkbox
-    And the "Test assignment name" "Assign" activity with "auto" completion shows a configuration completion checkbox
-    And the "Test quiz name" "Quiz" activity does not show any completion checkbox
+    And the manual completion button for "Test forum name" should be disabled
+    And "Test assignment name" should have the "View" completion condition
+    And there should be no completion information shown for "Test quiz name"

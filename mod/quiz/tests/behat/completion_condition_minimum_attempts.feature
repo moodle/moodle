@@ -41,14 +41,14 @@ Feature: Set a quiz to be marked complete when the student completes a minimum a
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
-    And the "Test quiz name" "quiz" activity with "auto" completion should be marked as not complete
+    And the "Make attempts: 2" completion condition of "Test quiz name" is displayed as "todo"
     And I follow "Test quiz name"
     And I press "Re-attempt quiz"
     And I set the field "False" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I am on "Course 1" course homepage
-    Then "Completed: Test quiz name" "icon" should exist in the "Test quiz name" "list_item"
+    Then the "Make attempts: 2" completion condition of "Test quiz name" is displayed as "done"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
