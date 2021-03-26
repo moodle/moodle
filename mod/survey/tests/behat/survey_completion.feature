@@ -30,10 +30,10 @@ Feature: A teacher can use activity completion to track a student progress
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And the "Test survey name" "survey" activity with "auto" completion should be marked as not complete
+    And the "View" completion condition of "Test survey name" is displayed as "todo"
     And I follow "Test survey name"
     And I am on "Course 1" course homepage
-    Then the "Test survey name" "survey" activity with "auto" completion should be marked as complete
+    Then the "View" completion condition of "Test survey name" is displayed as "done"
 
   Scenario: Require survey submission
     Given I add a "Survey" to section "1" and I fill the form with:
@@ -45,8 +45,8 @@ Feature: A teacher can use activity completion to track a student progress
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And the "Test survey name" "survey" activity with "auto" completion should be marked as not complete
+    And the "View" completion condition of "Test survey name" is displayed as "todo"
     And I follow "Test survey name"
     And I press "Click here to continue"
     And I am on "Course 1" course homepage
-    Then the "Test survey name" "survey" activity with "auto" completion should be marked as complete
+    And the "View" completion condition of "Test survey name" is displayed as "done"

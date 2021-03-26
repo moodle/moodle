@@ -48,11 +48,11 @@ Feature: Set end of lesson reached as a completion condition for a lesson
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    Then the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
+    Then the "Go through the activity to the end" completion condition of "Test lesson" is displayed as "todo"
     And I follow "Test lesson"
     And I press "Next page"
     And I am on "Course 1" course homepage
-    Then the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
+    And the "Go through the activity to the end" completion condition of "Test lesson" is displayed as "todo"
     And I am on "Course 1" course homepage
     And I follow "Test lesson"
     And I should see "You have seen more than one page of this lesson already."
@@ -61,7 +61,7 @@ Feature: Set end of lesson reached as a completion condition for a lesson
     And I press "Next page"
     And I press "Next page"
     And I am on "Course 1" course homepage
-    Then the "Test lesson" "lesson" activity with "auto" completion should be marked as complete
+    And the "Go through the activity to the end" completion condition of "Test lesson" is displayed as "done"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage

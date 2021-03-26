@@ -34,12 +34,14 @@ Feature: Set a quiz to be marked complete when the student passes
   Scenario: student1 passes on the first try
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And the "Test quiz name" "quiz" activity with "auto" completion should be marked as not complete
+    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "todo"
+    And the "Receive a pass grade" completion condition of "Test quiz name" is displayed as "todo"
     And user "student1" has attempted "Test quiz name" with responses:
       | slot | response |
       |   1  | True     |
     And I am on "Course 1" course homepage
-    Then "Completed: Test quiz name" "icon" should exist in the "li.modtype_quiz" "css_element"
+    Then the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "Receive a pass grade" completion condition of "Test quiz name" is displayed as "done"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
