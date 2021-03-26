@@ -53,7 +53,6 @@ class renderer extends plugin_renderer_base {
         $table = new html_table();
         $table->head  = [
             get_string('name'),
-            get_string('configuredstatus', 'tool_oauth2'),
             get_string('issuerusedforlogin', 'tool_oauth2'),
             get_string('issuerdisplayas', 'tool_oauth2'),
             get_string('issuerusedforinternal', 'tool_oauth2'),
@@ -86,31 +85,29 @@ class renderer extends plugin_renderer_base {
             $namecell = new html_table_cell($name);
             $namecell->header = true;
 
-            // Configured.
-            if ($issuer->is_configured()) {
-                $configured = $this->pix_icon('yes', get_string('configured', 'tool_oauth2'), 'tool_oauth2');
-            } else {
-                $configured = $this->pix_icon('no', get_string('notconfigured', 'tool_oauth2'), 'tool_oauth2');
-            }
-            $configuredstatuscell = new html_table_cell($configured);
-
             // Login issuer.
-            if ((int)$issuer->get('showonloginpage') != issuer::SERVICEONLY) {
-                $loginissuer = $this->pix_icon('yes', get_string('loginissuer', 'tool_oauth2'), 'tool_oauth2');
-                $logindisplayas = s($issuer->get_display_name());
-            } else {
+            if ((int)$issuer->get('showonloginpage') == issuer::SERVICEONLY) {
                 $loginissuer = $this->pix_icon('no', get_string('notloginissuer', 'tool_oauth2'), 'tool_oauth2');
                 $logindisplayas = '';
+            } else {
+                $logindisplayas = s($issuer->get_display_name());
+                if ($issuer->is_available_for_login()) {
+                    $loginissuer = $this->pix_icon('yes', get_string('loginissuer', 'tool_oauth2'), 'tool_oauth2');
+                } else {
+                    $loginissuer = $this->pix_icon('notconfigured', get_string('notconfigured', 'tool_oauth2'), 'tool_oauth2');
+                }
             }
             $loginissuerstatuscell = new html_table_cell($loginissuer);
 
             // Internal services issuer.
-            if ((int)$issuer->get('showonloginpage') != issuer::LOGINONLY) {
-                $loginissuer = $this->pix_icon('yes', get_string('loginissuer', 'tool_oauth2'), 'tool_oauth2');
+            if ((int)$issuer->get('showonloginpage') == issuer::LOGINONLY) {
+                $serviceissuer = $this->pix_icon('no', get_string('notloginissuer', 'tool_oauth2'), 'tool_oauth2');
+            } else if ($issuer->is_configured() && $issuer->get('enabled')) {
+                $serviceissuer = $this->pix_icon('yes', get_string('loginissuer', 'tool_oauth2'), 'tool_oauth2');
             } else {
-                $loginissuer = $this->pix_icon('no', get_string('notloginissuer', 'tool_oauth2'), 'tool_oauth2');
+                $serviceissuer = $this->pix_icon('caution', get_string('notconfigured', 'tool_oauth2'), 'tool_oauth2');
             }
-            $internalissuerstatuscell = new html_table_cell($loginissuer);
+            $internalissuerstatuscell = new html_table_cell($serviceissuer);
 
             // Discovered.
             if (!empty($issuer->get('scopessupported'))) {
@@ -198,7 +195,6 @@ class renderer extends plugin_renderer_base {
 
             $row = new html_table_row([
                 $namecell,
-                $configuredstatuscell,
                 $loginissuerstatuscell,
                 $logindisplayas,
                 $internalissuerstatuscell,
