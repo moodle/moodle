@@ -4494,5 +4494,17 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022042900.01);
     }
 
+    if ($oldversion < 2022051000.00) {
+        // Add index to the sid field in the external_tokens table.
+        $table = new xmldb_table('external_tokens');
+        $index = new xmldb_index('sid', XMLDB_INDEX_NOTUNIQUE, ['sid']);
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2022051000.00);
+    }
+
     return true;
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20220323" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20220510" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2860,6 +2860,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="token" UNIQUE="false" FIELDS="token" COMMENT="This index will be used anytime a token is validated."/>
+        <INDEX NAME="sid" UNIQUE="false" FIELDS="sid" COMMENT="This index will be used anytime a token is looked up by its sid."/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="blog_association" COMMENT="Associations of blog entries with courses and module instances">
