@@ -146,6 +146,19 @@ class restore_root_task extends restore_task {
         $this->add_setting($roleassignments);
         $users->add_dependency($roleassignments);
 
+        // Define permissions.
+        $defaultvalue = false;                      // Safer default.
+        $changeable = false;
+        // Enable when available, or key doesn't exist (backward compatibility).
+        if (!array_key_exists('permissions', $rootsettings) || !empty($rootsettings['permissions'])) {
+            $defaultvalue = true;
+            $changeable = true;
+        }
+        $permissions = new restore_permissions_setting('permissions', base_setting::IS_BOOLEAN, $defaultvalue);
+        $permissions->set_ui(new backup_setting_ui_checkbox($permissions, get_string('rootsettingpermissions', 'backup')));
+        $permissions->get_ui()->set_changeable($changeable);
+        $this->add_setting($permissions);
+
         // Define activitites
         $defaultvalue = false;                      // Safer default
         $changeable = false;
