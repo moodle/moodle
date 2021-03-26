@@ -511,4 +511,33 @@ class info_testcase extends advanced_testcase {
         sort($result);
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * Tests the info_module class when involved in a recursive call to $cm->name.
+     */
+    public function test_info_recursive_name_call() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a course and page.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $page1 = $generator->create_module('page', ['course' => $course->id, 'name' => 'Page1']);
+
+        // Set invalid availability.
+        $DB->set_field('course_modules', 'availability', 'not valid', ['id' => $page1->cmid]);
+
+        // Get the cm_info object.
+        $this->setAdminUser();
+        $modinfo = get_fast_modinfo($course);
+        $cm1 = $modinfo->get_cm($page1->cmid);
+
+        // At this point we will generate dynamic data for $cm1, which will cause the debugging
+        // call below.
+        $this->assertEquals('Page1', $cm1->name);
+
+        $this->assertDebuggingCalled('Error processing availability data for ' .
+                '&lsquo;Page1&rsquo;: Invalid availability text');
+    }
 }
