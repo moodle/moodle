@@ -1,6 +1,6 @@
 <?php
 /*
- @version   v5.20.16  12-Jan-2020
+ @version   v5.21.0  2021-02-27
  @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
  @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -9,6 +9,7 @@
   Set tabs to 4.
 
   NOTE: Since 3.31, this file is no longer used, and the "postgres" driver is
-  remapped to "postgres7". Maintaining multiple postgres drivers is no easy
-  job, so hopefully this will ensure greater consistency and fewer bugs.
+  remapped to lastest available postgres version. Maintaining multiple
+  postgres drivers is no easy job, so hopefully this will ensure greater
+  consistency and fewer bugs.
 */

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version   v5.20.16  12-Jan-2020
+ * @version   v5.21.0  2021-02-27
  * @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
  * @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
  * Released under both BSD license and Lesser GPL library license.
@@ -70,6 +70,10 @@ function adodb_error($provider,$dbType,$errno)
 	case 'oracle':
 	case 'oci8': $map = adodb_error_oci8(); break;
 
+	// As discussed in https://github.com/ADOdb/ADOdb/issues/201#issuecomment-188154980
+	// firebird uses the ibase error handler for now. This may change if and
+	// when the PHP driver is updated to use the new SQLSTATE error codes
+	case 'firebird':
 	case 'ibase': $map = adodb_error_ibase(); break;
 
 	case 'odbc': $map = adodb_error_odbc(); break;
@@ -245,9 +249,9 @@ static $MAP = array(
            1006 => DB_ERROR_CANNOT_CREATE,
            1007 => DB_ERROR_ALREADY_EXISTS,
            1008 => DB_ERROR_CANNOT_DROP,
-		   1045 => DB_ERROR_ACCESS_VIOLATION,
+	   1045 => DB_ERROR_ACCESS_VIOLATION,
            1046 => DB_ERROR_NODBSELECTED,
-		   1049 => DB_ERROR_NOSUCHDB,
+	   1049 => DB_ERROR_NOSUCHDB,
            1050 => DB_ERROR_ALREADY_EXISTS,
            1051 => DB_ERROR_NOSUCHTABLE,
            1054 => DB_ERROR_NOSUCHFIELD,
@@ -257,8 +261,8 @@ static $MAP = array(
            1136 => DB_ERROR_VALUE_COUNT_ON_ROW,
            1146 => DB_ERROR_NOSUCHTABLE,
            1048 => DB_ERROR_CONSTRAINT,
-		    2002 => DB_ERROR_CONNECT_FAILED,
-			2005 => DB_ERROR_CONNECT_FAILED
+	   2002 => DB_ERROR_CONNECT_FAILED,
+           2005 => DB_ERROR_CONNECT_FAILED
        );
 
 	return $MAP;

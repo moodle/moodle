@@ -10,7 +10,7 @@ In plain English, you do not need to distribute your application in source code 
 nor do you need to distribute ADOdb source code, provided you follow the rest of
 terms of the BSD license.
 
-For more information about ADOdb, visit http://adodb.org/
+For more information about ADOdb, visit https://adodb.org/
 
 BSD 3-Clause License
 --------------------

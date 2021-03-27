@@ -1,7 +1,7 @@
 <?php
 
 /**
-  @version   v5.20.16  12-Jan-2020
+  @version   v5.21.0  2021-02-27
   @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
   @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -12,22 +12,31 @@
 
 */
 
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
+
 class ADODB2_firebird extends ADODB_DataDict {
 
 	var $databaseType = 'firebird';
 	var $seqField = false;
-	var $seqPrefix = 'gen_';
+	var $seqPrefix = 's_';
 	var $blobSize = 40000;
+	var $renameColumn = 'ALTER TABLE %s ALTER %s TO %s';
+	var $alterCol = ' ALTER';
+	var $dropCol = ' DROP';
 
- 	function ActualType($meta)
+	function ActualType($meta)
 	{
 		switch($meta) {
 		case 'C': return 'VARCHAR';
-		case 'XL': return 'VARCHAR(32000)';
-		case 'X': return 'VARCHAR(4000)';
+		case 'XL':
+		case 'X': return 'BLOB SUB_TYPE TEXT';
 
-		case 'C2': return 'VARCHAR'; // up to 32K
-		case 'X2': return 'VARCHAR(4000)';
+		case 'C2': return 'VARCHAR(32765)'; // up to 32K
+		case 'X2': return 'VARCHAR(4096)';
+
+		case 'V': return 'CHAR';
+		case 'C1': return 'CHAR(1)';
 
 		case 'B': return 'BLOB';
 
@@ -40,7 +49,7 @@ class ADODB2_firebird extends ADODB_DataDict {
 		case 'I1': return 'SMALLINT';
 		case 'I2': return 'SMALLINT';
 		case 'I4': return 'INTEGER';
-		case 'I8': return 'INTEGER';
+		case 'I8': return 'BIGINT';
 
 		case 'F': return 'DOUBLE PRECISION';
 		case 'N': return 'DECIMAL';
@@ -49,7 +58,7 @@ class ADODB2_firebird extends ADODB_DataDict {
 		}
 	}
 
-	function NameQuote($name = NULL)
+	function NameQuote($name = NULL,$allowBrackets=false)
 	{
 		if (!is_string($name)) {
 			return FALSE;
@@ -90,9 +99,9 @@ class ADODB2_firebird extends ADODB_DataDict {
 	{
 		if (strpos($t,'.') !== false) {
 			$tarr = explode('.',$t);
-			return 'DROP GENERATOR '.$tarr[0].'."gen_'.$tarr[1].'"';
+			return 'DROP GENERATOR '.$tarr[0].'."s_'.$tarr[1].'"';
 		}
-		return 'DROP GENERATOR "GEN_'.$t;
+		return 'DROP GENERATOR s_'.$t;
 	}
 
 
@@ -103,10 +112,40 @@ class ADODB2_firebird extends ADODB_DataDict {
 		if (strlen($fdefault)) $suffix .= " DEFAULT $fdefault";
 		if ($fnotnull) $suffix .= ' NOT NULL';
 		if ($fautoinc) $this->seqField = $fname;
+		$fconstraint = preg_replace("/``/", "\"", $fconstraint);
 		if ($fconstraint) $suffix .= ' '.$fconstraint;
 
 		return $suffix;
 	}
+
+	/**
+	 Generate the SQL to create table. Returns an array of sql strings.
+	*/
+	function CreateTableSQL($tabname, $flds, $tableoptions=array())
+	{
+		list($lines,$pkey,$idxs) = $this->_GenFields($flds, true);
+		// genfields can return FALSE at times
+		if ($lines == null) $lines = array();
+
+		$taboptions = $this->_Options($tableoptions);
+		$tabname = $this->TableName ($tabname);
+		$sql = $this->_TableSQL($tabname,$lines,$pkey,$taboptions);
+
+		if ($this->autoIncrement && !isset($taboptions['DROP']))
+		{ $tsql = $this->_Triggers($tabname,$taboptions);
+			foreach($tsql as $s) $sql[] = $s;
+		}
+
+		if (is_array($idxs)) {
+			foreach($idxs as $idx => $idxdef) {
+				$sql_idxs = $this->CreateIndexSql($idx, $tabname,  $idxdef['cols'], $idxdef['opts']);
+				$sql = array_merge($sql, $sql_idxs);
+			}
+		}
+
+		return $sql;
+	}
+
 
 /*
 CREATE or replace TRIGGER jaddress_insert
@@ -128,23 +167,59 @@ end;
 			else $tab = $tab1;
 			$seqField = $this->seqField;
 			$seqname = $this->schema.'.'.$this->seqPrefix.$tab;
-			$trigname = $this->schema.'.trig_'.$this->seqPrefix.$tab;
+			$trigname = $this->schema.'.t_'.$this->seqPrefix.$tab;
 		} else {
 			$seqField = $this->seqField;
 			$seqname = $this->seqPrefix.$tab1;
-			$trigname = 'trig_'.$seqname;
+			$trigname = 't_'.$seqname;
 		}
-		if (isset($tableoptions['REPLACE']))
+
+		if (isset($tableoptions['DROP']))
+		{ $sql[] = "DROP GENERATOR $seqname";
+		}
+		elseif (isset($tableoptions['REPLACE']))
 		{ $sql[] = "DROP GENERATOR \"$seqname\"";
 		  $sql[] = "CREATE GENERATOR \"$seqname\"";
 		  $sql[] = "ALTER TRIGGER \"$trigname\" BEFORE INSERT OR UPDATE AS BEGIN IF ( NEW.$seqField IS NULL OR NEW.$seqField = 0 ) THEN NEW.$seqField = GEN_ID(\"$seqname\", 1); END";
 		}
 		else
-		{ $sql[] = "CREATE GENERATOR \"$seqname\"";
-		  $sql[] = "CREATE TRIGGER \"$trigname\" FOR $tabname BEFORE INSERT OR UPDATE AS BEGIN IF ( NEW.$seqField IS NULL OR NEW.$seqField = 0 ) THEN NEW.$seqField = GEN_ID(\"$seqname\", 1); END";
+		{ $sql[] = "CREATE GENERATOR $seqname";
+		  $sql[] = "CREATE TRIGGER $trigname FOR $tabname BEFORE INSERT OR UPDATE AS BEGIN IF ( NEW.$seqField IS NULL OR NEW.$seqField = 0 ) THEN NEW.$seqField = GEN_ID($seqname, 1); END";
 		}
 
 		$this->seqField = false;
+		return $sql;
+	}
+
+	/**
+	 * Change the definition of one column
+	 *
+	 * As some DBM's can't do that on there own, you need to supply the complete definition of the new table,
+	 * to allow, recreating the table and copying the content over to the new table
+	 * @param string $tabname table-name
+	 * @param string $flds column-name and type for the changed column
+	 * @param string $tableflds='' complete definition of the new table, eg. for postgres, default ''
+	 * @param array/string $tableoptions='' options for the new table see CreateTableSQL, default ''
+	 * @return array with SQL strings
+	 */
+	function AlterColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')
+	{
+		$tabname = $this->TableName ($tabname);
+		$sql = array();
+		list($lines,$pkey,$idxs) = $this->_GenFields($flds);
+		// genfields can return FALSE at times
+		if ($lines == null) $lines = array();
+		$alter = 'ALTER TABLE ' . $tabname . $this->alterCol . ' ';
+		foreach($lines as $v) {
+			$sql[] = $alter . $v;
+		}
+		if (is_array($idxs)) {
+			foreach($idxs as $idx => $idxdef) {
+				$sql_idxs = $this->CreateIndexSql($idx, $tabname, $idxdef['cols'], $idxdef['opts']);
+				$sql = array_merge($sql, $sql_idxs);
+			}
+
+		}
 		return $sql;
 	}
 

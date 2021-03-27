@@ -1,13 +1,13 @@
 <?php
 /*
-@version   v5.20.16  12-Jan-2020
+@version   v5.21.0  2021-02-27
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
 
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 
   Oracle data driver. Requires Oracle client. Works on Windows and Unix and Oracle 7.
 
@@ -28,10 +28,6 @@ class ADODB_oracle extends ADOConnection {
 	var $sysDate = "TO_DATE(TO_CHAR(SYSDATE,'YYYY-MM-DD'),'YYYY-MM-DD')";
 	var $sysTimeStamp = 'SYSDATE';
 	var $connectSID = true;
-
-	function __construct()
-	{
-	}
 
 	// format and return date string in database date format
 	function DBDate($d, $isfld = false)
