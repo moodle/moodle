@@ -1944,7 +1944,7 @@ class ADORecordSet_db2 extends ADORecordSet {
 		
 	}
     
-    final private function processCoreFetch()
+    private function processCoreFetch()
     {
         switch ($this->fetchMode){
 		case ADODB_FETCH_ASSOC:
@@ -1970,7 +1970,7 @@ class ADORecordSet_db2 extends ADORecordSet {
 		}
     }
 
-	final private function processMoveRecord()
+	private function processMoveRecord()
     {
 		if (!$this->fields){
 			$this->EOF = true;
