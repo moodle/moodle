@@ -3,9 +3,9 @@
   <library>
     <location>adodb</location>
     <name>AdoDB</name>
-    <license>BSD/GPL</license>
-    <version>5.20.16</version>
-    <licenseversion>2.1+</licenseversion>
+    <license>BSD/LGPL</license>
+    <version>5.21.0</version>
+    <licenseversion>3-Clause/2.1+</licenseversion>
   </library>
   <library>
     <location>behat/axe</location>
