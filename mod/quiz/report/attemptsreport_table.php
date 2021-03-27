@@ -135,7 +135,7 @@ abstract class quiz_attempts_report_table extends table_sql {
     public function col_picture($attempt) {
         global $OUTPUT;
         $user = new stdClass();
-        $additionalfields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
+        $additionalfields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
         $user = username_load_fields_from_object($user, $attempt, null, $additionalfields);
         $user->id = $attempt->userid;
         return $OUTPUT->user_picture($user);
@@ -414,7 +414,7 @@ abstract class quiz_attempts_report_table extends table_sql {
         }
 
         // TODO Does not support custom user profile fields (MDL-70456).
-        $userfields = \core\user_fields::for_identity($this->context, false)->with_name()
+        $userfields = \core_user\fields::for_identity($this->context, false)->with_name()
                 ->excluding('id', 'idnumber', 'picture', 'imagealt', 'institution', 'department', 'email');
         $extrafields = $userfields->get_sql('u')->selects;
         $fields .= '

@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core\user_fields;
+use core_user\fields;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -240,7 +240,7 @@ class course_enrolment_manager {
             list($instancessql, $params, $filter) = $this->get_instance_sql();
             list($filtersql, $moreparams) = $this->get_filter_sql();
             $params += $moreparams;
-            $userfields = user_fields::for_identity($this->get_context())->with_userpic()->excluding('lastaccess');
+            $userfields = fields::for_identity($this->get_context())->with_userpic()->excluding('lastaccess');
             ['selects' => $fieldselect, 'joins' => $fieldjoin, 'params' => $fieldjoinparams] =
                     (array)$userfields->get_sql('u', true, '', '', false);
             $params += $fieldjoinparams;
@@ -273,7 +273,7 @@ class course_enrolment_manager {
 
         // Search condition.
         // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = user_fields::get_identity_fields($this->get_context(), false);
+        $extrafields = fields::get_identity_fields($this->get_context(), false);
         list($sql, $params) = users_search_sql($this->searchfilter, 'u', true, $extrafields);
 
         // Role condition.
@@ -346,7 +346,7 @@ class course_enrolment_manager {
             list($ctxcondition, $params) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'ctx');
             $params['courseid'] = $this->course->id;
             $params['cid'] = $this->course->id;
-            $userfields = user_fields::for_identity($this->get_context())->with_userpic();
+            $userfields = fields::for_identity($this->get_context())->with_userpic();
             ['selects' => $fieldselect, 'joins' => $fieldjoin, 'params' => $fieldjoinparams] =
                     (array)$userfields->get_sql('u', true);
             $params += $fieldjoinparams;
@@ -387,14 +387,14 @@ class course_enrolment_manager {
 
         // Get custom user field SQL used for querying all the fields we need (identity, name, and
         // user picture).
-        $userfields = user_fields::for_identity($this->context)->with_name()->with_userpic()
+        $userfields = fields::for_identity($this->context)->with_name()->with_userpic()
                 ->excluding('username', 'lastaccess', 'maildisplay');
         ['selects' => $fieldselects, 'joins' => $fieldjoins, 'params' => $params, 'mappings' => $mappings] =
                 (array)$userfields->get_sql('u', true, '', '', false);
 
         // Searchable fields are only the identity and name ones (not userpic).
         $searchable = array_fill_keys($userfields->get_required_fields(
-                [user_fields::PURPOSE_IDENTITY, user_fields::PURPOSE_NAME]), true);
+                [fields::PURPOSE_IDENTITY, fields::PURPOSE_NAME]), true);
 
         // Add some additional sensible conditions
         $tests = array("u.id <> :guestid", 'u.deleted = 0', 'u.confirmed = 1');
@@ -1068,7 +1068,7 @@ class course_enrolment_manager {
         $context    = $this->get_context();
         $now = time();
         // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = user_fields::get_identity_fields($context, false);
+        $extrafields = fields::get_identity_fields($context, false);
 
         $users = array();
         foreach ($userroles as $userrole) {
@@ -1147,7 +1147,7 @@ class course_enrolment_manager {
 
         $url = new moodle_url($pageurl, $this->get_url_params());
         // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = user_fields::get_identity_fields($context, false);
+        $extrafields = fields::get_identity_fields($context, false);
 
         $enabledplugins = $this->get_enrolment_plugins(true);
 
@@ -1324,7 +1324,7 @@ class course_enrolment_manager {
             list($instancesql, $instanceparams) = $DB->get_in_or_equal(array_keys($instances), SQL_PARAMS_NAMED, 'instanceid0000');
         }
 
-        $userfieldsapi = \core\user_fields::for_userpic();
+        $userfieldsapi = \core_user\fields::for_userpic();
         $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         list($idsql, $idparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid0000');
 

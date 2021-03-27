@@ -455,7 +455,7 @@ class rating_manager {
             'component'  => $options->component,
             'ratingarea' => $options->ratingarea,
         );
-        $userfieldsapi = \core\user_fields::for_userpic();
+        $userfieldsapi = \core_user\fields::for_userpic();
         $userfields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;
         $sql = "SELECT r.id, r.rating, r.itemid, r.userid, r.timemodified, r.component, r.ratingarea, $userfields
                   FROM {rating} r

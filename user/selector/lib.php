@@ -115,7 +115,7 @@ abstract class user_selector_base {
 
         // Populate the list of additional user identifiers to display.
         // TODO Does not support custom user profile fields (MDL-70456).
-        $this->extrafields = \core\user_fields::get_identity_fields($this->accesscontext, false);
+        $this->extrafields = \core_user\fields::get_identity_fields($this->accesscontext, false);
 
         if (isset($options['exclude']) && is_array($options['exclude'])) {
             $this->exclude = $options['exclude'];
@@ -439,7 +439,7 @@ abstract class user_selector_base {
         // Raw list of fields.
         $fields = array('id');
         // Add additional name fields.
-        $fields = array_merge($fields, \core\user_fields::get_name_fields(), $this->extrafields);
+        $fields = array_merge($fields, \core_user\fields::get_name_fields(), $this->extrafields);
 
         // Prepend the table alias.
         if ($u) {

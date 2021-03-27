@@ -105,7 +105,7 @@ information provided here is intended especially for developers.
     e.g. ['completionsubmit' => 'Must submit']
 * Admin setting admin_setting_configmulticheckbox now supports lazy-loading the options list by
   supplying a callback function instead of an array of options.
-* A new core API class \core\user_fields provides ways to get lists of user fields, and SQL related to
+* A new core API class \core_user\fields provides ways to get lists of user fields, and SQL related to
   those fields. This replaces existing functions get_extra_user_fields(), get_extra_user_fields_sql(),
   get_user_field_name(), get_all_user_name_fields(), and user_picture::fields(), which have all been
   deprecated.

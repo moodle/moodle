@@ -126,7 +126,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
     }
     // TODO Does not support custom user profile fields (MDL-70456).
-    $identityfields = array_flip(\core\user_fields::get_identity_fields($courseorusercontext, false));
+    $identityfields = array_flip(\core_user\fields::get_identity_fields($courseorusercontext, false));
 
     if (is_mnet_remote_user($user)) {
         $sql = "SELECT h.id, h.name, h.wwwroot,

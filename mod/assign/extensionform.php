@@ -59,7 +59,7 @@ class mod_assign_extension_form extends moodleform {
         $usershtml = '';
 
         // TODO Does not support custom user profile fields (MDL-70456).
-        $extrauserfields = \core\user_fields::get_identity_fields($assign->get_context(), false);
+        $extrauserfields = \core_user\fields::get_identity_fields($assign->get_context(), false);
         foreach ($userlist as $userid) {
             if ($usercount >= 5) {
                 $usershtml .= get_string('moreusers', 'assign', count($userlist) - 5);

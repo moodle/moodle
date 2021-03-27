@@ -91,7 +91,7 @@ switch ($action) {
                 }
 
                 if ($errorstr) {
-                    $userfieldsapi = \core\user_fields::for_name();
+                    $userfieldsapi = \core_user\fields::for_name();
                     $user = $DB->get_record('user', array('id' => $userid), 'id' . $userfieldsapi->get_sql()->selects);
                     $gradestr = new stdClass();
                     $gradestr->username = fullname($user);

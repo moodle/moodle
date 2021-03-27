@@ -220,18 +220,18 @@ class user_picture implements renderable {
 
         // only touch the DB if we are missing data and complain loudly...
         $needrec = false;
-        foreach (\core\user_fields::get_picture_fields() as $field) {
+        foreach (\core_user\fields::get_picture_fields() as $field) {
             if (!property_exists($user, $field)) {
                 $needrec = true;
                 debugging('Missing '.$field.' property in $user object, this is a performance problem that needs to be fixed by a developer. '
-                          .'Please use the \core\user_fields API to get the full list of required fields.', DEBUG_DEVELOPER);
+                          .'Please use the \core_user\fields API to get the full list of required fields.', DEBUG_DEVELOPER);
                 break;
             }
         }
 
         if ($needrec) {
             $this->user = $DB->get_record('user', array('id' => $user->id),
-                    implode(',', \core\user_fields::get_picture_fields()), MUST_EXIST);
+                    implode(',', \core_user\fields::get_picture_fields()), MUST_EXIST);
         } else {
             $this->user = clone($user);
         }
@@ -250,11 +250,11 @@ class user_picture implements renderable {
      * @param string $fieldprefix prefix to add to all columns in their aliases, does not apply to 'id'
      * @return string
      * @deprecated since Moodle 3.11 MDL-45242
-     * @see \core\user_fields
+     * @see \core_user\fields
      */
     public static function fields($tableprefix = '', array $extrafields = NULL, $idalias = 'id', $fieldprefix = '') {
-        debugging('user_picture::fields() is deprecated. Please use the \core\user_fields API instead.', DEBUG_DEVELOPER);
-        $userfields = \core\user_fields::for_userpic();
+        debugging('user_picture::fields() is deprecated. Please use the \core_user\fields API instead.', DEBUG_DEVELOPER);
+        $userfields = \core_user\fields::for_userpic();
         if ($extrafields) {
             $userfields->including(...$extrafields);
         }
@@ -288,7 +288,7 @@ class user_picture implements renderable {
 
         $return = new stdClass();
 
-        foreach (\core\user_fields::get_picture_fields() as $field) {
+        foreach (\core_user\fields::get_picture_fields() as $field) {
             if ($field === 'id') {
                 if (property_exists($record, $idalias)) {
                     $return->id = $record->{$idalias};

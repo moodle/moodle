@@ -1033,7 +1033,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         list($sql2, $params2) = $DB->get_in_or_equal($managerroles, SQL_PARAMS_NAMED, 'rid');
         list($sort, $sortparams) = users_order_by_sql('u');
         $notdeleted = array('notdeleted' => 0);
-        $userfieldsapi = \core\user_fields::for_name();
+        $userfieldsapi = \core_user\fields::for_name();
         $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $sql = "SELECT ra.contextid, ra.id AS raid,
                        r.id AS roleid, r.name AS rolename, r.shortname AS roleshortname,

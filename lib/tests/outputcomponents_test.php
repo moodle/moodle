@@ -74,7 +74,7 @@ class core_outputcomponents_testcase extends advanced_testcase {
      * Tests user_picture::unalias.
      */
     public function test_fields_unaliasing() {
-        $fields = implode(',', \core\user_fields::get_picture_fields());
+        $fields = implode(',', \core_user\fields::get_picture_fields());
         $fields = array_map('trim', explode(',', $fields));
 
         $fakerecord = new stdClass();
@@ -101,7 +101,7 @@ class core_outputcomponents_testcase extends advanced_testcase {
      * Tests user_picture::unalias with null values.
      */
     public function test_fields_unaliasing_null() {
-        $fields = implode(',', \core\user_fields::get_picture_fields());
+        $fields = implode(',', \core_user\fields::get_picture_fields());
         $fields = array_map('trim', explode(',', $fields));
 
         $fakerecord = new stdClass();

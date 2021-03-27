@@ -3540,7 +3540,7 @@ function fullname($user, $override=false) {
     }
 
     // Get all of the name fields.
-    $allnames = \core\user_fields::get_name_fields();
+    $allnames = \core_user\fields::get_name_fields();
     if ($CFG->debugdeveloper) {
         foreach ($allnames as $allname) {
             if (!property_exists($user, $allname)) {
@@ -3646,7 +3646,7 @@ function fullname($user, $override=false) {
  */
 function username_load_fields_from_object($addtoobject, $secondobject, $prefix = null, $additionalfields = null) {
     $fields = [];
-    foreach (\core\user_fields::get_name_fields() as $field) {
+    foreach (\core_user\fields::get_name_fields() as $field) {
         $fields[$field] = $prefix . $field;
     }
     if ($additionalfields) {

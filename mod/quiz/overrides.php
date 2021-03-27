@@ -109,11 +109,11 @@ if ($groupmode) {
     $colclasses[] = 'colname';
     $headers[] = get_string('user');
     // TODO Does not support custom user profile fields (MDL-70456).
-    $userfieldsapi = \core\user_fields::for_identity($context, false)->with_name()->with_userpic();
-    $extrauserfields = $userfieldsapi->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]);
+    $userfieldsapi = \core_user\fields::for_identity($context, false)->with_name()->with_userpic();
+    $extrauserfields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
     foreach ($extrauserfields as $field) {
         $colclasses[] = 'col' . $field;
-        $headers[] = \core\user_fields::get_display_name($field);
+        $headers[] = \core_user\fields::get_display_name($field);
     }
 
     list($sort, $params) = users_order_by_sql('u');

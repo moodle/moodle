@@ -94,7 +94,7 @@ if ($formaction == 'bulkchange.php') {
                     );
 
                     // TODO Does not support custom user profile fields (MDL-70456).
-                    $identityfields = \core\user_fields::get_identity_fields($context, false);
+                    $identityfields = \core_user\fields::get_identity_fields($context, false);
                     $identityfieldsselect = '';
 
                     foreach ($identityfields as $field) {

@@ -62,7 +62,7 @@ class tool_dataprivacy_data_request_form extends \core\form\persistent {
                 'valuehtmlcallback' => function($value) {
                     global $OUTPUT;
 
-                    $userfieldsapi = \core\user_fields::for_name();
+                    $userfieldsapi = \core_user\fields::for_name();
                     $allusernames = $userfieldsapi->get_sql('', false, '', '', false)->selects;
                     $fields = 'id, email, ' . $allusernames;
                     $user = \core_user::get_user($value, $fields);

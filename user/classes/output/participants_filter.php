@@ -24,7 +24,7 @@
 namespace core_user\output;
 
 use context_course;
-use core\user_fields;
+use core_user\fields;
 use renderable;
 use renderer_base;
 use stdClass;
@@ -333,7 +333,7 @@ class participants_filter implements renderable, templatable {
      * @return stdClass|null
      */
     protected function get_country_filter(): ?stdClass {
-        $extrauserfields = user_fields::get_identity_fields($this->context, false);
+        $extrauserfields = fields::get_identity_fields($this->context, false);
         if (array_search('country', $extrauserfields) === false) {
             return null;
         }

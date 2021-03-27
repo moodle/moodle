@@ -189,7 +189,7 @@ class api {
         $dpos = [];
         $context = context_system::instance();
         foreach ($dporoles as $roleid) {
-            $userfieldsapi = \core\user_fields::for_name();
+            $userfieldsapi = \core_user\fields::for_name();
             $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
             $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .
                       'u.maildisplay, u.mailformat, u.maildigest, u.email, u.emailstop, u.city, '.

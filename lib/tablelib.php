@@ -616,7 +616,7 @@ class flexible_table {
             if (isset($this->columns[$column])) {
                 continue; // This column is OK.
             }
-            if (in_array($column, \core\user_fields::get_name_fields()) &&
+            if (in_array($column, \core_user\fields::get_name_fields()) &&
                     isset($this->columns['fullname'])) {
                 continue; // This column is OK.
             }
@@ -1243,7 +1243,7 @@ class flexible_table {
                         $nameformat = get_string('fullnamedisplay');
                     }
 
-                    $requirednames = order_in_string(\core\user_fields::get_name_fields(), $nameformat);
+                    $requirednames = order_in_string(\core_user\fields::get_name_fields(), $nameformat);
 
                     if (!empty($requirednames)) {
                         if ($this->is_sortable($column)) {
@@ -1323,7 +1323,7 @@ class flexible_table {
             $sortdata = array_merge([$sortby => $sortorder], $sortdata);
         }
 
-        $usernamefields = \core\user_fields::get_name_fields();
+        $usernamefields = \core_user\fields::get_name_fields();
         $sortdata = array_filter($sortdata, function($sortby) use ($usernamefields) {
             $isvalidsort = $sortby && $this->is_sortable($sortby);
             $isvalidsort = $isvalidsort && empty($this->prefs['collapse'][$sortby]);

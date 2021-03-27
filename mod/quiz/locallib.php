@@ -1699,7 +1699,7 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
     // Check for notifications required.
     $notifyfields = 'u.id, u.username, u.idnumber, u.email, u.emailstop, u.lang,
             u.timezone, u.mailformat, u.maildisplay, u.auth, u.suspended, u.deleted, ';
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
     $notifyfields .= $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     $groups = groups_get_all_groups($course->id, $submitter->id, $cm->groupingid);
     if (is_array($groups) && count($groups) > 0) {

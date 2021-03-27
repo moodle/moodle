@@ -343,7 +343,7 @@ class api {
         global $DB;
 
         $ctxfields = context_helper::get_preload_record_columns_sql('c');
-        $userfieldsapi = \core\user_fields::for_name()->with_userpic()->including(...($extrafields ?? []));
+        $userfieldsapi = \core_user\fields::for_name()->with_userpic()->including(...($extrafields ?? []));
         $userfields = $userfieldsapi->get_sql('u')->selects;
 
         $sql = "SELECT $ctxfields $userfields
@@ -682,7 +682,7 @@ class api {
             $vsql = ' AND a.policyversionid ' . $vsql;
         }
 
-        $userfieldsapi = \core\user_fields::for_name();
+        $userfieldsapi = \core_user\fields::for_name();
         $userfieldsmod = $userfieldsapi->get_sql('m', false, 'mod', '', false)->selects;
         $sql = "SELECT u.id AS mainuserid, a.policyversionid, a.status, a.lang, a.timemodified, a.usermodified, a.note,
                   u.policyagreed, $userfieldsmod
