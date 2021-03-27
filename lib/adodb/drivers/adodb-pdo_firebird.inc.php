@@ -297,7 +297,7 @@ class ADODB_pdo_firebird extends ADODB_pdo
 	 * @param int            $fprecision
 	 * @param bool           $dialect3
 	 */
-	final private function _convertFieldType(&$fld, $ftype, $flen, $fscale, $fsubtype, $fprecision, $dialect3)
+	private function _convertFieldType(&$fld, $ftype, $flen, $fscale, $fsubtype, $fprecision, $dialect3)
 	{
 		$fscale = abs($fscale);
 		$fld->max_length = $flen;

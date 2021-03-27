@@ -1125,7 +1125,7 @@ class ADODB_Active_Record {
 	*
 	* @return	string	The quoted name
 	*/
-	final private function nameQuoter($db,$string)
+	private function nameQuoter($db,$string)
 	{
 		global $ADODB_QUOTE_FIELDNAMES;
 		

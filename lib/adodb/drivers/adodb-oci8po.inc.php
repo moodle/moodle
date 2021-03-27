@@ -95,7 +95,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 	*
 	* @return	string	The modified statement
 	*/	
-	final private function extractBinds($sql,$inputarr)
+	private function extractBinds($sql,$inputarr)
 	{
 		$inString  = false;
 		$escaped   = 0;
