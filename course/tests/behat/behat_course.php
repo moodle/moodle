@@ -2035,4 +2035,53 @@ class behat_course extends behat_base {
         $node = $this->get_selected_node('xpath_element', '//div[@data-region="modules"]');
         $this->ensure_node_is_visible($node);
     }
+
+    /**
+     * Checks the presence of the given text in the activity's displayed dates.
+     *
+     * @Given /^the activity date in "(?P<activityname>(?:[^"]|\\")*)" should contain "(?P<text>(?:[^"]|\\")*)"$/
+     * @param string $activityname The activity name.
+     * @param string $text The text to be searched in the activity date.
+     */
+    public function activity_date_in_activity_should_contain_text(string $activityname, string $text): void {
+        $containerselector = "//div[@data-region='activity-information'][@data-activityname='$activityname']";
+        $containerselector .= " /div[@data-region='activity-dates']";
+
+        $params = [$text, $containerselector, 'xpath_element'];
+        $this->execute("behat_general::assert_element_contains_text", $params);
+    }
+
+    /**
+     * Checks the presence of activity dates information in the activity information output component.
+     *
+     * @Given /^the activity date information in "(?P<activityname>(?:[^"]|\\")*)" should exist$/
+     * @param string $activityname The activity name.
+     */
+    public function activity_dates_information_in_activity_should_exist(string $activityname): void {
+        $containerselector = "//div[@data-region='activity-information'][@data-activityname='$activityname']";
+        $elementselector = "/div[@data-region='activity-dates']";
+        $params = [$elementselector, "xpath_element", $containerselector, "xpath_element"];
+        $this->execute("behat_general::should_exist_in_the", $params);
+    }
+
+    /**
+     * Checks the absence of activity dates information in the activity information output component.
+     *
+     * @Given /^the activity date information in "(?P<activityname>(?:[^"]|\\")*)" should not exist$/
+     * @param string $activityname The activity name.
+     */
+    public function activity_dates_information_in_activity_should_not_exist(string $activityname): void {
+        $containerselector = "//div[@data-region='activity-information'][@data-activityname='$activityname']";
+        try {
+            $this->find('xpath_element', $containerselector);
+        } catch (ElementNotFoundException $e) {
+            // If activity information container does not exist (activity dates not shown, completion info not shown), all good.
+            return;
+        }
+
+        // Otherwise, ensure that the completion information does not exist.
+        $elementselector = "//div[@data-region='activity-dates']";
+        $params = [$elementselector, "xpath_element", $containerselector, "xpath_element"];
+        $this->execute("behat_general::should_not_exist_in_the", $params);
+    }
 }
