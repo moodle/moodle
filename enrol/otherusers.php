@@ -55,9 +55,9 @@ $userdetails = array (
     'lastname' => get_string('lastname'),
 );
 // TODO Does not support custom user profile fields (MDL-70456).
-$extrafields = \core\user_fields::get_identity_fields($context, false);
+$extrafields = \core_user\fields::get_identity_fields($context, false);
 foreach ($extrafields as $field) {
-    $userdetails[$field] = \core\user_fields::get_display_name($field);
+    $userdetails[$field] = \core_user\fields::get_display_name($field);
 }
 
 $fields = array(

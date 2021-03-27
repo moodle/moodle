@@ -183,7 +183,7 @@ function message_search_users($courseids, $searchtext, $sort='', $exceptions='')
     }
 
     $fullname = $DB->sql_fullname();
-    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfieldsapi = \core_user\fields::for_userpic();
     $ufields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
     if (!empty($sort)) {
@@ -550,7 +550,7 @@ function message_get_messages($useridto, $useridfrom = 0, $notifications = -1, $
     global $DB;
 
     // If the 'useridto' value is empty then we are going to retrieve messages sent by the useridfrom to any user.
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
     if (empty($useridto)) {
         $userfields = $userfieldsapi->get_sql('u', false, 'userto', '', false)->selects;
         $messageuseridtosql = 'u.id as useridto';

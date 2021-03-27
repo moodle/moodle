@@ -150,7 +150,7 @@ abstract class engine {
         global $DB;
 
         if (empty(self::$cachedusers[$userid])) {
-            $userfieldsapi = \core\user_fields::for_name();
+            $userfieldsapi = \core_user\fields::for_name();
             $fields = $userfieldsapi->get_sql('', false, '', '', false)->selects;
             self::$cachedusers[$userid] = $DB->get_record('user', array('id' => $userid), 'id, ' . $fields);
         }

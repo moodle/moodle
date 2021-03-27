@@ -3085,8 +3085,8 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
     $wheres = array();
 
     // TODO Does not support custom user profile fields (MDL-70456).
-    $userfields = \core\user_fields::get_identity_fields($context, false);
-    $userfieldsapi = \core\user_fields::for_userpic()->including(...$userfields);
+    $userfields = \core_user\fields::get_identity_fields($context, false);
+    $userfieldsapi = \core_user\fields::for_userpic()->including(...$userfields);
     $userfieldssql = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
     if ($isfrontpage) {
@@ -3175,7 +3175,7 @@ function user_get_participants_sql($courseid, $groupid = 0, $accesssince = 0, $r
             $conditions[] = $idnumber;
 
             // TODO Does not support custom user profile fields (MDL-70456).
-            $extrasearchfields = \core\user_fields::get_identity_fields($context, false);
+            $extrasearchfields = \core_user\fields::get_identity_fields($context, false);
             if (!empty($extrasearchfields)) {
                 // Search all user identify fields.
                 foreach ($extrasearchfields as $extrasearchfield) {
@@ -3326,12 +3326,12 @@ function make_categories_options() {
  * @return array Array of field names from user table, not including anything
  *   listed in $already
  * @deprecated since Moodle 3.11 MDL-45242
- * @see \core\user_fields
+ * @see \core_user\fields
  */
 function get_extra_user_fields($context, $already = array()) {
-    debugging('get_extra_user_fields() is deprecated. Please use the \core\user_fields API instead.', DEBUG_DEVELOPER);
+    debugging('get_extra_user_fields() is deprecated. Please use the \core_user\fields API instead.', DEBUG_DEVELOPER);
 
-    $fields = \core\user_fields::for_identity($context, false)->excluding(...$already);
+    $fields = \core_user\fields::for_identity($context, false)->excluding(...$already);
     return $fields->get_required_fields();
 }
 
@@ -3348,12 +3348,12 @@ function get_extra_user_fields($context, $already = array()) {
  * @param array $already Array of fields that we're going to include anyway so don't list them (default none)
  * @return string Partial SQL select clause, beginning with comma, for example ',u.idnumber,u.department' unless it is blank
  * @deprecated since Moodle 3.11 MDL-45242
- * @see \core\user_fields
+ * @see \core_user\fields
  */
 function get_extra_user_fields_sql($context, $alias='', $prefix='', $already = array()) {
-    debugging('get_extra_user_fields_sql() is deprecated. Please use the \core\user_fields API instead.', DEBUG_DEVELOPER);
+    debugging('get_extra_user_fields_sql() is deprecated. Please use the \core_user\fields API instead.', DEBUG_DEVELOPER);
 
-    $fields = \core\user_fields::for_identity($context, false)->excluding(...$already);
+    $fields = \core_user\fields::for_identity($context, false)->excluding(...$already);
     // Note: There will never be any joins or join params because we turned off profile fields.
     $selects = $fields->get_sql($alias, false, $prefix)->selects;
 
@@ -3368,12 +3368,12 @@ function get_extra_user_fields_sql($context, $alias='', $prefix='', $already = a
  * @param string $field Field name, e.g. 'phone1'
  * @return string Text description taken from language file, e.g. 'Phone number'
  * @deprecated since Moodle 3.11 MDL-45242
- * @see \core\user_fields
+ * @see \core_user\fields
  */
 function get_user_field_name($field) {
-    debugging('get_user_field_name() is deprecated. Please use \core\user_fields::get_display_name() instead', DEBUG_DEVELOPER);
+    debugging('get_user_field_name() is deprecated. Please use \core_user\fields::get_display_name() instead', DEBUG_DEVELOPER);
 
-    return \core\user_fields::get_display_name($field);
+    return \core_user\fields::get_display_name($field);
 }
 
 /**
@@ -3386,15 +3386,15 @@ function get_user_field_name($field) {
  * @param bool $order moves firstname and lastname to the top of the array / start of the string.
  * @return array|string All name fields.
  * @deprecated since Moodle 3.11 MDL-45242
- * @see \core\user_fields
+ * @see \core_user\fields
  */
 function get_all_user_name_fields($returnsql = false, $tableprefix = null, $prefix = null, $fieldprefix = null, $order = false) {
-    debugging('get_all_user_name_fields() is deprecated. Please use the \core\user_fields API instead', DEBUG_DEVELOPER);
+    debugging('get_all_user_name_fields() is deprecated. Please use the \core_user\fields API instead', DEBUG_DEVELOPER);
 
     // This array is provided in this order because when called by fullname() (above) if firstname is before
     // firstnamephonetic str_replace() will change the wrong placeholder.
     $alternatenames = [];
-    foreach (\core\user_fields::get_name_fields() as $field) {
+    foreach (\core_user\fields::get_name_fields() as $field) {
         $alternatenames[$field] = $field;
     }
 

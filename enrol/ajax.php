@@ -95,7 +95,7 @@ switch ($action) {
         $page = optional_param('page', 0, PARAM_INT);
         $outcome->response = $manager->search_other_users($search, $searchanywhere, $page);
         // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = \core\user_fields::get_identity_fields($context, false);
+        $extrafields = \core_user\fields::get_identity_fields($context, false);
         $useroptions = array();
         // User is not enrolled, either link to site profile or do not link at all.
         if (has_capability('moodle/user:viewdetails', context_system::instance())) {

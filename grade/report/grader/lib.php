@@ -293,7 +293,7 @@ class grade_report_grader extends grade_report {
                         }
 
                         if ($errorstr) {
-                            $userfieldsapi = \core\user_fields::for_name();
+                            $userfieldsapi = \core_user\fields::for_name();
                             $userfields = 'id, ' . $userfieldsapi->get_sql('', false, '', '', false)->selects;
                             $user = $DB->get_record('user', array('id' => $userid), $userfields);
                             $gradestr = new stdClass();
@@ -439,7 +439,7 @@ class grade_report_grader extends grade_report {
 
         // Fields we need from the user table.
         // TODO Does not support custom user profile fields (MDL-70456).
-        $userfieldsapi = \core\user_fields::for_identity($this->context, false)->with_userpic();
+        $userfieldsapi = \core_user\fields::for_identity($this->context, false)->with_userpic();
         $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
         // We want to query both the current context and parent contexts.
@@ -661,7 +661,7 @@ class grade_report_grader extends grade_report {
         $strgrade     = $this->get_lang_string('grade');
 
         // TODO Does not support custom user profile fields (MDL-70456).
-        $extrafields = \core\user_fields::get_identity_fields($this->context, false);
+        $extrafields = \core_user\fields::get_identity_fields($this->context, false);
 
         $arrows = $this->get_sort_arrows($extrafields);
 
@@ -1946,7 +1946,7 @@ class grade_report_grader extends grade_report {
         }
 
         $arrows['studentname'] = '';
-        $requirednames = order_in_string(\core\user_fields::get_name_fields(), $nameformat);
+        $requirednames = order_in_string(\core_user\fields::get_name_fields(), $nameformat);
         if (!empty($requirednames)) {
             foreach ($requirednames as $name) {
                 $arrows['studentname'] .= html_writer::link(
@@ -1963,7 +1963,7 @@ class grade_report_grader extends grade_report {
 
         foreach ($extrafields as $field) {
             $fieldlink = html_writer::link(new moodle_url($this->baseurl,
-                    array('sortitemid' => $field)), \core\user_fields::get_display_name($field));
+                    array('sortitemid' => $field)), \core_user\fields::get_display_name($field));
             $arrows[$field] = $fieldlink;
 
             if ($field == $this->sortitemid) {

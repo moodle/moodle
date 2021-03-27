@@ -82,9 +82,9 @@ switch ($action) {
         $roles = array();
 
         // TODO Does not support custom user profile fields (MDL-70456).
-        $userfieldsapi = \core\user_fields::for_identity($context, false)->with_userpic();
+        $userfieldsapi = \core_user\fields::for_identity($context, false)->with_userpic();
         $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-        $extrafields = $userfieldsapi->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]);
+        $extrafields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
         if ($groupmemberroles = groups_get_members_by_role($groupids[0], $courseid,
                 'u.id, ' . $userfields)) {
 
@@ -206,9 +206,9 @@ if ($groups) {
 $members = array();
 if ($singlegroup) {
     // TODO Does not support custom user profile fields (MDL-70456).
-    $userfieldsapi = \core\user_fields::for_identity($context, false)->with_userpic();
+    $userfieldsapi = \core_user\fields::for_identity($context, false)->with_userpic();
     $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-    $extrafields = $userfieldsapi->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]);
+    $extrafields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
     if ($groupmemberroles = groups_get_members_by_role(reset($groupids), $courseid,
             'u.id, ' . $userfields)) {
 

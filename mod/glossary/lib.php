@@ -403,7 +403,7 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
     $params['timestart'] = $timestart;
     $params['glossaryid'] = $cm->instance;
 
-    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfieldsapi = \core_user\fields::for_userpic();
     $ufields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;
     $entries = $DB->get_records_sql("
               SELECT ge.id AS entryid, ge.glossaryid, ge.concept, ge.definition, ge.approved,
@@ -565,7 +565,7 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
     if (count($approvals) == 0) {
         return false;
     }
-    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfieldsapi = \core_user\fields::for_userpic();
     $userfields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;
     $selectsql = 'SELECT ge.id, ge.concept, ge.approved, ge.timemodified, ge.glossaryid,
             ' . $userfields;
@@ -3674,7 +3674,7 @@ function glossary_get_authors($glossary, $context, $limit, $from, $options = arr
     global $DB, $USER;
 
     $params = array();
-    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfieldsapi = \core_user\fields::for_userpic();
     $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
     $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
@@ -3828,7 +3828,7 @@ function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch
 
     list($searchcond, $params) = glossary_get_search_terms_sql($terms, $fullsearch, $glossary->id);
 
-    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfieldsapi = \core_user\fields::for_userpic();
     $userfields = $userfieldsapi->get_sql('u', false, 'userdata', 'userdataid', false)->selects;
 
     // Need one inner view here to avoid distinct + text.

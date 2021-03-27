@@ -156,7 +156,7 @@ class assign_override_form extends moodleform {
                 list($sort) = users_order_by_sql('u');
 
                 // Get the list of appropriate users, depending on whether and how groups are used.
-                $userfieldsapi = \core\user_fields::for_name();
+                $userfieldsapi = \core_user\fields::for_name();
                 if ($accessallgroups) {
                     $users = get_enrolled_users($this->context, '', 0,
                             'u.id, u.email, ' . $userfieldsapi->get_sql('u', false, '', '', false)->selects, $sort);
@@ -187,7 +187,7 @@ class assign_override_form extends moodleform {
 
                 $userchoices = array();
                 // TODO Does not support custom user profile fields (MDL-70456).
-                $canviewemail = in_array('email', \core\user_fields::get_identity_fields($this->context, false));
+                $canviewemail = in_array('email', \core_user\fields::get_identity_fields($this->context, false));
                 foreach ($users as $id => $user) {
                     if (empty($invalidusers[$id]) || (!empty($override) &&
                             $id == $override->userid)) {

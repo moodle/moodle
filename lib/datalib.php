@@ -369,7 +369,7 @@ function users_order_by_sql($usertablealias = '', $search = null, context $conte
     $paramkey++;
 
     // TODO Does not support custom user profile fields (MDL-70456).
-    $fieldstocheck = array_merge(array('firstname', 'lastname'), \core\user_fields::get_identity_fields($context, false));
+    $fieldstocheck = array_merge(array('firstname', 'lastname'), \core_user\fields::get_identity_fields($context, false));
     foreach ($fieldstocheck as $key => $field) {
         $exactconditions[] = 'LOWER(' . $tableprefix . $field . ') = LOWER(:' . $paramkey . ')';
         $params[$paramkey] = $search;
@@ -517,7 +517,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 
     // If a context is specified, get extra user fields that the current user
     // is supposed to see, otherwise just get the name fields.
-    $userfields = \core\user_fields::for_name();
+    $userfields = \core_user\fields::for_name();
     if ($extracontext) {
         $userfields->with_identity($extracontext, true);
     }

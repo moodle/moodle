@@ -101,7 +101,7 @@ if ($override->groupid) {
     $namefields = [];
 
     // TODO Does not support custom user profile fields (MDL-70456).
-    foreach (\core\user_fields::for_identity($context, false)->get_required_fields() as $field) {
+    foreach (\core_user\fields::for_identity($context, false)->get_required_fields() as $field) {
         if (isset($user->$field) && $user->$field !== '') {
             $namefields[] = $user->$field;
         }

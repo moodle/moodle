@@ -271,7 +271,7 @@ if ($roleid) {
     foreach ($assignableroles as $roleid => $notused) {
         $roleusers = '';
         if (0 < $assigncounts[$roleid] && $assigncounts[$roleid] <= MAX_USERS_TO_LIST_PER_ROLE) {
-            $userfieldsapi = \core\user_fields::for_name();
+            $userfieldsapi = \core_user\fields::for_name();
             $userfields = 'u.id, u.username' . $userfieldsapi->get_sql('u')->selects;
             $roleusers = get_role_users($roleid, $context, false, $userfields);
             if (!empty($roleusers)) {

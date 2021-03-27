@@ -126,7 +126,7 @@ class mod_forum_renderer extends plugin_renderer_base {
         } else {
             $cm = $modinfo->instances['forum'][$forum->id];
             // TODO Does not support custom user profile fields (MDL-70456).
-            $canviewemail = in_array('email', \core\user_fields::get_identity_fields(context_module::instance($cm->id), false));
+            $canviewemail = in_array('email', \core_user\fields::get_identity_fields(context_module::instance($cm->id), false));
             $strparams = new stdclass();
             $strparams->name = format_string($forum->name);
             $strparams->count = count($users);

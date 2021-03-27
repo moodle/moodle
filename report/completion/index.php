@@ -67,7 +67,7 @@ $silast  = optional_param('silast', 'all', PARAM_NOTAGS);
 
 // Whether to show extra user identity information
 // TODO Does not support custom user profile fields (MDL-70456).
-$extrafields = \core\user_fields::get_identity_fields($context, false);
+$extrafields = \core_user\fields::get_identity_fields($context, false);
 $leftcols = 1 + count($extrafields);
 
 // Check permissions
@@ -441,7 +441,7 @@ if (!$csv) {
     // Print user identity columns
     foreach ($extrafields as $field) {
         echo '<th scope="col" class="completion-identifyfield">' .
-                \core\user_fields::get_display_name($field) . '</th>';
+                \core_user\fields::get_display_name($field) . '</th>';
     }
 
     ///
@@ -512,7 +512,7 @@ if (!$csv) {
     $row[] = get_string('id', 'report_completion');
     $row[] = get_string('name', 'report_completion');
     foreach ($extrafields as $field) {
-        $row[] = \core\user_fields::get_display_name($field);
+        $row[] = \core_user\fields::get_display_name($field);
     }
 
     // Add activity headers

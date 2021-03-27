@@ -182,7 +182,7 @@ function forum_rss_feed_discussions_sql($forum, $cm, $newsince=0) {
 
     $forumsort = "d.timemodified DESC";
     $postdata = "p.id AS postid, p.subject, p.created as postcreated, p.modified, p.discussion, p.userid, p.message as postmessage, p.messageformat AS postformat, p.messagetrust AS posttrust";
-    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfieldsapi = \core_user\fields::for_userpic();
     $userpicturefields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;
 
     $sql = "SELECT $postdata, d.id as discussionid, d.name as discussionname, d.timemodified, d.usermodified, d.groupid,
@@ -236,7 +236,7 @@ function forum_rss_feed_posts_sql($forum, $cm, $newsince=0) {
         $privatewhere = '';
     }
 
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
     $usernamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     $sql = "SELECT p.id AS postid,
                  d.id AS discussionid,

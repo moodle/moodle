@@ -706,9 +706,9 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
         list($sort, $sortparams) = users_order_by_sql('u');
 
         // TODO Does not support custom user profile fields (MDL-70456).
-        $userfieldsapi = \core\user_fields::for_identity($context, false)->with_userpic();
+        $userfieldsapi = \core_user\fields::for_identity($context, false)->with_userpic();
         $ufields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-        $extrafields = $userfieldsapi->get_required_fields([\core\user_fields::PURPOSE_IDENTITY]);
+        $extrafields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
 
         $params['a1lessonid'] = $lesson->id;
         $params['b1lessonid'] = $lesson->id;
@@ -903,7 +903,7 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
     $headers = [get_string('name')];
 
     foreach ($extrafields as $field) {
-        $headers[] = \core\user_fields::get_display_name($field);
+        $headers[] = \core_user\fields::get_display_name($field);
     }
 
     $caneditlesson = has_capability('mod/lesson:edit', $context);

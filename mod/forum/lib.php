@@ -644,7 +644,7 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
 
     // do not use log table if possible, it may be huge and is expensive to join with other tables
 
-    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfieldsapi = \core_user\fields::for_userpic();
     $allnamefields = $userfieldsapi->get_sql('u', false, '', 'duserid', false)->selects;
     if (!$posts = $DB->get_records_sql("SELECT p.*,
                                               f.course, f.type AS forumtype, f.name AS forumname, f.intro, f.introformat, f.duedate,
@@ -972,7 +972,7 @@ function forum_scale_used_anywhere(int $scaleid): bool {
 function forum_get_post_full($postid) {
     global $CFG, $DB;
 
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
     $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     return $DB->get_record_sql("SELECT p.*, d.forum, $allnames, u.email, u.picture, u.imagealt
                              FROM {forum_posts} p
@@ -1002,7 +1002,7 @@ function forum_get_all_discussion_posts($discussionid, $sort, $tracking = false)
         $params[] = $USER->id;
     }
 
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
     $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     $params[] = $discussionid;
     if (!$posts = $DB->get_records_sql("SELECT p.*, $allnames, u.email, u.picture, u.imagealt $tr_sel
@@ -1301,7 +1301,7 @@ function forum_search_posts($searchterms, $courseid, $limitfrom, $limitnum,
                    FROM $fromsql
                   WHERE $selectsql";
 
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
     $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     $searchsql = "SELECT p.*,
                          d.forum,
@@ -1342,7 +1342,7 @@ function forum_get_user_posts($forumid, $userid) {
         }
     }
 
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
     $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     return $DB->get_records_sql("SELECT p.*, d.forum, $allnames, u.email, u.picture, u.imagealt
                               FROM {forum} f
@@ -1434,7 +1434,7 @@ function forum_count_user_posts($forumid, $userid) {
 function forum_get_post_from_log($log) {
     global $CFG, $DB;
 
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
     $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     if ($log->action == "add post") {
 
@@ -1763,7 +1763,7 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
         $postdata = "p.*";
     }
 
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
 
     if (empty($userlastmodified)) {  // We don't need to know this
         $umfields = "";
@@ -2439,7 +2439,7 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
 
     // Picture
     $postuser = new stdClass();
-    $postuserfields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
+    $postuserfields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
     $postuser = username_load_fields_from_object($postuser, $post, null, $postuserfields);
     $postuser->id = $post->userid;
     echo '<td class="author">';
@@ -4114,7 +4114,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
         $groupselect = "";
     }
 
-    $userfieldsapi = \core\user_fields::for_name();
+    $userfieldsapi = \core_user\fields::for_name();
     $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     if (!$posts = $DB->get_records_sql("SELECT p.*, f.type AS forumtype, d.forum, d.groupid,
                                               d.timestart, d.timeend, d.userid AS duserid,
@@ -4187,7 +4187,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
 
         $tmpactivity->user = new stdClass();
         $additionalfields = array('id' => 'userid', 'picture', 'imagealt', 'email');
-        $additionalfields = explode(',', implode(',', \core\user_fields::get_picture_fields()));
+        $additionalfields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
         $tmpactivity->user = username_load_fields_from_object($tmpactivity->user, $post, null, $additionalfields);
         $tmpactivity->user->id = $post->userid;
 
@@ -6024,7 +6024,7 @@ function forum_get_posts_by_user($user, array $courses, $musthaveaccess = false,
     // Prepare SQL to both count and search.
     // We alias user.id to useridx because we forum_posts already has a userid field and not aliasing this would break
     // oracle and mssql.
-    $userfieldsapi = \core\user_fields::for_userpic();
+    $userfieldsapi = \core_user\fields::for_userpic();
     $userfields = $userfieldsapi->get_sql('u', false, '', 'useridx', false)->selects;
     $countsql = 'SELECT COUNT(*) ';
     $selectsql = 'SELECT p.*, d.forum, d.name AS discussionname, '.$userfields.' ';

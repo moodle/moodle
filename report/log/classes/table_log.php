@@ -125,7 +125,7 @@ class report_log_table_log extends table_sql {
 
         // If we reach that point new users logs have been generated since the last users db query.
         list($usql, $uparams) = $DB->get_in_or_equal($userid);
-        $userfieldsapi = \core\user_fields::for_name();
+        $userfieldsapi = \core_user\fields::for_name();
         $sql = "SELECT id," . $userfieldsapi->get_sql('', false, '', '', false)->selects .
                 " FROM {user} WHERE id " . $usql;
         if (!$user = $DB->get_records_sql($sql, $uparams)) {
@@ -591,7 +591,7 @@ class report_log_table_log extends table_sql {
         // Get user fullname and put that in return list.
         if (!empty($userids)) {
             list($usql, $uparams) = $DB->get_in_or_equal($userids);
-            $userfieldsapi = \core\user_fields::for_name();
+            $userfieldsapi = \core_user\fields::for_name();
             $users = $DB->get_records_sql("SELECT id," . $userfieldsapi->get_sql('', false, '', '', false)->selects .
                     " FROM {user} WHERE id " . $usql,
                     $uparams);

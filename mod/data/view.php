@@ -294,7 +294,7 @@
                 echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');
             }
         } else {   // Print a confirmation page
-            $userfieldsapi = \core\user_fields::for_userpic()->excluding('id');
+            $userfieldsapi = \core_user\fields::for_userpic()->excluding('id');
             $allnamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
             $dbparams = array($delete);
             if ($deleterecord = $DB->get_record_sql("SELECT dr.*, $allnamefields
@@ -331,7 +331,7 @@
             $validrecords = array();
             $recordids = array();
             foreach ($multidelete as $value) {
-                $userfieldsapi = \core\user_fields::for_userpic()->excluding('id');
+                $userfieldsapi = \core_user\fields::for_userpic()->excluding('id');
                 $allnamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
                 $dbparams = array('id' => $value);
                 if ($deleterecord = $DB->get_record_sql("SELECT dr.*, $allnamefields
