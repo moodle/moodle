@@ -48,6 +48,13 @@ renderer and course format renderer:
 * A new callback xxx_coursemodule_definition_after_data that allows plugins to extend activity forms after the data is set.
 * \core_course_renderer::course_section_cm_completion() has been deprecated. It is not being used anymore and is being replaced by
   \core_renderer::activity_information().
+* New Behat steps for checking activity date information in the \behat_course class:
+  - activity_date_in_activity_should_contain_text()
+    - Given the activity date in "<ActivityName>" should contain "<Text>"
+  - activity_dates_information_in_activity_should_exist()
+    - Given the activity date information in "<ActivityName>" should exist
+  - activity_dates_information_in_activity_should_not_exist()
+    - Given the activity date information in "<ActivityName>" should not exist
 
 === 3.10 ===
 
