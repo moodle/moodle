@@ -26,6 +26,7 @@
     {
         "activityname": "Course announcements",
         "hascompletion": true,
+        "uservisible": true,
         "hasdates": true,
         "isautomatic": true,
         "istrackeduser": true,
@@ -56,17 +57,19 @@
     </div>
     {{/hasdates}}
     {{#hascompletion}}
-    <div data-region="completion-info">
-        {{#isautomatic}}
-            <div class="automatic-completion-conditions" data-region ="completionrequirements" role="list" aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}">
-                {{#completiondetails}}
-                    {{> core_course/completion_automatic }}
-                {{/completiondetails}}
+        {{#uservisible}}
+            <div data-region="completion-info">
+                {{#isautomatic}}
+                    <div class="automatic-completion-conditions" data-region ="completionrequirements" role="list" aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}">
+                        {{#completiondetails}}
+                            {{> core_course/completion_automatic }}
+                        {{/completiondetails}}
+                    </div>
+                {{/isautomatic}}
+                {{^isautomatic}}
+                    {{> core_course/completion_manual }}
+                {{/isautomatic}}
             </div>
-        {{/isautomatic}}
-        {{^isautomatic}}
-            {{> core_course/completion_manual }}
-        {{/isautomatic}}
-    </div>
+        {{/uservisible}}
     {{/hascompletion}}
 </div>
