@@ -5,16 +5,21 @@ it is now used only in enrol and auth db plugins.
 The core DML drivers are not using ADODB any more.
 
 Removed:
- * contrib/
- * cute_icons_for_site/
+ * Any invisible file (dot suffixed)
+ * composer.json
+ * contrib/ (if present)
+ * cute_icons_for_site/ (if present)
  * docs/
- * nbproject/
+ * lang/* everything but adodb-en.inc.php (originally because they were not utf-8, now because of not used)
  * pear/
+
+
+
+ * nbproject/
  * replicate/
  * scripts/
  * session/
  * tests/
- * composer.json
  * server.php
  * lang/* except en (because they were not in utf8)
 

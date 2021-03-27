@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.16  12-Jan-2020
+@version   v5.21.0  2021-02-27
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -21,7 +21,10 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 	var $sysDate = 'CURDATE()';
 	var $sysTimeStamp = 'NOW()';
 	var $hasGenID = true;
-	var $_genIDSQL = "update %s set id=LAST_INSERT_ID(id+1);";
+	var $_genIDSQL = "UPDATE %s SET id=LAST_INSERT_ID(id+1);";
+	var $_genSeqSQL = "CREATE TABLE  if NOT EXISTS %s (id int not null)";
+	var $_genSeqCountSQL = "SELECT count(*) FROM %s";
+	var $_genSeq2SQL = "INSERT INTO %s VALUES (%s)";
 	var $_dropSeqSQL = "drop table %s";
 	var $fmtTimeStamp = "'Y-m-d H:i:s'";
 	var $nameQuote = '`';
@@ -204,7 +207,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 		$nrows = (int) $nrows;
 		$offset = (int) $offset;		
 		$offsetStr =($offset>=0) ? "$offset," : '';
-		// jason judge, see http://phplens.com/lens/lensforum/msgs.php?id=9220
+		// jason judge, see PHPLens Issue No: 9220
 		if ($nrows < 0) {
 			$nrows = '18446744073709551615';
 		}
@@ -309,5 +312,42 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 			$s = "CONCAT($s)";
 		}
 		return $s;
+	}
+
+	function GenID($seqname='adodbseq',$startID=1)
+	{
+		$getnext = sprintf($this->_genIDSQL,$seqname);
+		$holdtransOK = $this->_transOK; // save the current status
+		$rs = @$this->Execute($getnext);
+		if (!$rs) {
+			if ($holdtransOK) $this->_transOK = true; //if the status was ok before reset
+			$this->Execute(sprintf($this->_genSeqSQL,$seqname));
+			$cnt = $this->GetOne(sprintf($this->_genSeqCountSQL,$seqname));
+			if (!$cnt) $this->Execute(sprintf($this->_genSeq2SQL,$seqname,$startID-1));
+			$rs = $this->Execute($getnext);
+		}
+
+		if ($rs) {
+			$this->genID = $this->_connectionID->lastInsertId($seqname);
+			$rs->Close();
+		} else {
+			$this->genID = 0;
+		}
+
+		return $this->genID;
+	}
+
+
+	function createSequence($seqname='adodbseq',$startID=1)
+	{
+		if (empty($this->_genSeqSQL)) {
+			return false;
+		}
+		$ok = $this->Execute(sprintf($this->_genSeqSQL,$seqname,$startID));
+		if (!$ok) {
+			return false;
+		}
+
+		return $this->Execute(sprintf($this->_genSeq2SQL,$seqname,$startID-1));
 	}
 }
