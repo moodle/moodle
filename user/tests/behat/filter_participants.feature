@@ -1018,7 +1018,7 @@ Feature: Course participants can be filtered
     And I should not see "Student 3" in the "participants" "table"
     And I should not see "Patricia Pea" in the "participants" "table"
 
-  @javascript @frogfrog
+  @javascript
   Scenario: Filtering works correctly with custom profile fields
     Given the following config values are set as admin:
       | showuseridentity | email,profile_field_frog |
