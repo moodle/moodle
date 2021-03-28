@@ -56,20 +56,40 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         $this->setTimezone('Europe/London');
 
+        // Let's specify the hour we are going to use initially for the test.
+        // (note that we pick 01:00 that is tricky for Europe/London, because
+        // it's exactly the Daylight Saving Time Begins hour.
+        $testhour = 1;
+
         // Test job run at 1 am.
         $testclass = new \core\task\scheduled_test_task();
 
         // All fields default to '*'.
-        $testclass->set_hour('1');
+        $testclass->set_hour($testhour);
         $testclass->set_minute('0');
         // Next valid time should be 1am of the next day.
         $nexttime = $testclass->get_next_scheduled_time();
 
         $oneamdate = new DateTime('now', new DateTimeZone('Europe/London'));
-        $oneamdate->setTime(1, 0, 0);
+        $oneamdate->setTime($testhour, 0, 0);
+
+        // Once a year (currently last Sunday of March), when changing to Daylight Saving Time,
+        // Europe/London 01:00 simply doesn't exists because, exactly at 01:00 the clock
+        // is advanced by one hour and becomes 02:00. When that happens, the DateInterval
+        // calculations cannot be to advance by 1 day, but by one less hour. That is exactly when
+        // the next scheduled run will happen (next day 01:00).
+        $isdaylightsaving = false;
+        if ($testhour < (int)$oneamdate->format('H')) {
+            $isdaylightsaving = true;
+        }
+
         // Make it 1 am tomorrow if the time is after 1am.
         if ($oneamdate->getTimestamp() < time()) {
             $oneamdate->add(new DateInterval('P1D'));
+            if ($isdaylightsaving) {
+                // If today is Europe/London Daylight Saving Time Begins, expectation is 1 less hour.
+                $oneamdate->sub(new DateInterval('PT1H'));
+            }
         }
         $oneam = $oneamdate->getTimestamp();
 
