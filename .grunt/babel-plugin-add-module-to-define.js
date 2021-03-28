@@ -39,7 +39,7 @@ module.exports = ({template, types}) => {
     const fs = require('fs');
     const path = require('path');
     const cwd = process.cwd();
-    const ComponentList = require(path.resolve('GruntfileComponents.js'));
+    const ComponentList = require(path.join(process.cwd(), '.grunt', 'components.js'));
 
     /**
      * Search the list of components that match the given file name

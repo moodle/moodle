@@ -93,6 +93,16 @@ const fetchComponentData = () => {
 };
 
 /**
+ * Get the list of component paths.
+ *
+ * @param   {string} relativeTo
+ * @returns {array}
+ */
+const getComponentPaths = (relativeTo = '') => fetchComponentData().pathList.map(componentPath => {
+    return componentPath.replace(relativeTo, '');
+});
+
+/**
  * Get the list of paths to build AMD sources.
  *
  * @returns {Array}
@@ -141,6 +151,49 @@ const getThirdPartyLibsList = relativeTo => {
 };
 
 /**
+ * Get the list of thirdparty library paths.
+ *
+ * @returns {array}
+ */
+const getThirdPartyPaths = () => {
+    const DOMParser = require('xmldom').DOMParser;
+    const fs = require('fs');
+    const path = require('path');
+    const xpath = require('xpath');
+
+    const thirdpartyfiles = getThirdPartyLibsList(fs.realpathSync('./'));
+    const libs = ['node_modules/', 'vendor/'];
+
+    const addLibToList = lib => {
+        if (!lib.match('\\*') && fs.statSync(lib).isDirectory()) {
+            // Ensure trailing slash on dirs.
+            lib = lib.replace(/\/?$/, '/');
+        }
+
+        // Look for duplicate paths before adding to array.
+        if (libs.indexOf(lib) === -1) {
+            libs.push(lib);
+        }
+    };
+
+    thirdpartyfiles.forEach(function(file) {
+        const dirname = path.dirname(file);
+
+        const xmlContent = fs.readFileSync(file, 'utf8');
+        const doc = new DOMParser().parseFromString(xmlContent);
+        const nodes = xpath.select("/libraries/library/location/text()", doc);
+
+        nodes.forEach(function(node) {
+            let lib = path.posix.join(dirname, node.toString());
+            addLibToList(lib);
+        });
+    });
+
+    return libs;
+
+};
+
+/**
  * Find the name of the component matching the specified path.
  *
  * @param {String} path
@@ -182,7 +235,9 @@ const getOwningComponentDirectory = checkPath => {
 module.exports = {
     getAmdSrcGlobList,
     getComponentFromPath,
+    getComponentPaths,
     getOwningComponentDirectory,
     getYuiSrcGlobList,
     getThirdPartyLibsList,
+    getThirdPartyPaths,
 };
