@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/badges/lib.php');
 
 use core_badges\helper;
 
-class core_badges_badgeslib_testcase extends advanced_testcase {
+class badgeslib_test extends advanced_testcase {
     protected $badgeid;
     protected $course;
     protected $user;
@@ -693,6 +693,16 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $award = reset($awards);
         $assertion2 = new core_badges_assertion($award->uniquehash, OPEN_BADGES_V2);
         $testassertion2 = $this->assertion2;
+
+        // Make sure JSON strings have the same structure.
+        $this->assertStringMatchesFormat($testassertion2->badge, json_encode($assertion2->get_badge_assertion()));
+        $this->assertStringMatchesFormat($testassertion2->class, json_encode($assertion2->get_badge_class()));
+        $this->assertStringMatchesFormat($testassertion2->issuer, json_encode($assertion2->get_issuer()));
+
+        // Test Openbadge specification version 2.1. It has the same format as OBv2.0.
+        // Get assertion version 2.1.
+        $award = reset($awards);
+        $assertion2 = new core_badges_assertion($award->uniquehash, OPEN_BADGES_V2P1);
 
         // Make sure JSON strings have the same structure.
         $this->assertStringMatchesFormat($testassertion2->badge, json_encode($assertion2->get_badge_assertion()));
