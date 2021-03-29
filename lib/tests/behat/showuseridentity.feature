@@ -22,7 +22,7 @@ Feature: Select user identity fields
       | user1 | C1     | manager |
       | user2 | C1     | manager |
 
-  Scenario: The admin settings screen should show text custom fields (and let you choose them)
+  Scenario: The admin settings screen should show text custom fields of certain length (and let you choose them)
     When I log in as "admin"
     And I navigate to "Users > Permissions > User policies" in site administration
     Then I should see "Speciality" in the "#admin-showuseridentity" "css_element"

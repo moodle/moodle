@@ -122,14 +122,14 @@ class profile_field_form extends dynamic_form {
         $field = $this->get_field_record();
 
         // Clean and prepare description for the editor.
-        $field->description = clean_text($field->description, $field->descriptionformat);
-        $field->description = array('text' => $field->description, 'format' => $field->descriptionformat, 'itemid' => 0);
+        $description = clean_text($field->description, $field->descriptionformat);
+        $field->description = ['text' => $description, 'format' => $field->descriptionformat, 'itemid' => 0];
         // Convert the data format for.
         if (is_array($this->editors())) {
             foreach ($this->editors() as $editor) {
                 if (isset($field->$editor)) {
-                    $field->$editor = clean_text($field->$editor, $field->{$editor.'format'});
-                    $field->$editor = array('text' => $field->$editor, 'format' => $field->{$editor.'format'}, 'itemid' => 0);
+                    $editordesc = clean_text($field->$editor, $field->{$editor.'format'});
+                    $field->$editor = ['text' => $editordesc, 'format' => $field->{$editor.'format'}, 'itemid' => 0];
                 }
             }
         }
