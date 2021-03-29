@@ -278,6 +278,73 @@ class core_backup_automated_backup_testcase extends advanced_testcase {
         $this->assertTrue($skipped);
         $this->expectOutputRegex("/Skipping $course->fullname \(Not modified since previous backup\)/");
     }
+
+    /**
+     * Test the task completes when coureid is missing.
+     */
+    public function test_task_complete_when_courseid_is_missing() {
+        global $DB;
+        $admin = get_admin();
+        $classobject = $this->backupcronautomatedhelper->return_this();
+
+        // Create this backup course.
+        $backupcourse = new stdClass;
+        $backupcourse->courseid = $this->course->id;
+        $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_NOTYETRUN;
+        $DB->insert_record('backup_courses', $backupcourse);
+        $backupcourse = $DB->get_record('backup_courses', ['courseid' => $this->course->id]);
+
+        // Create a backup task.
+        $method = new ReflectionMethod('\backup_cron_automated_helper', 'push_course_backup_adhoc_task');
+        $method->setAccessible(true); // Allow accessing of private method.
+        $method->invokeArgs($classobject, [$backupcourse, $admin]);
+
+        // Delete course for this test.
+        delete_course($this->course->id, false);
+
+        $task = core\task\manager::get_next_adhoc_task(time());
+
+        ob_start();
+        $task->execute();
+        $output = ob_get_clean();
+
+        $this->assertStringContainsString('Invalid course id: ' . $this->course->id . ', task aborted.', $output);
+        core\task\manager::adhoc_task_complete($task);
+    }
+
+    /**
+     * Test the task completes when backup course is missing.
+     */
+    public function test_task_complete_when_backup_course_is_missing() {
+        global $DB;
+        $admin = get_admin();
+        $classobject = $this->backupcronautomatedhelper->return_this();
+
+        // Create this backup course.
+        $backupcourse = new stdClass;
+        $backupcourse->courseid = $this->course->id;
+        $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_NOTYETRUN;
+        $DB->insert_record('backup_courses', $backupcourse);
+        $backupcourse = $DB->get_record('backup_courses', ['courseid' => $this->course->id]);
+
+        // Create a backup task.
+        $method = new ReflectionMethod('\backup_cron_automated_helper', 'push_course_backup_adhoc_task');
+        $method->setAccessible(true); // Allow accessing of private method.
+        $method->invokeArgs($classobject, [$backupcourse, $admin]);
+
+        // Delete backup course for this test.
+        $DB->delete_records('backup_courses', ['courseid' => $this->course->id]);
+
+        $task = core\task\manager::get_next_adhoc_task(time());
+
+        ob_start();
+        $task->execute();
+        $output = ob_get_clean();
+
+        $this->assertStringContainsString('Automated backup for course: ' . $this->course->fullname . ' encounters an error.',
+            $output);
+        core\task\manager::adhoc_task_complete($task);
+    }
 }
 
 /**
