@@ -48,7 +48,7 @@ class course_backup_task extends \core\task\adhoc_task {
 
         try {
             $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             mtrace('Invalid course id: ' . $courseid . ', task aborted.');
             return;
         }
