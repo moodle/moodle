@@ -110,21 +110,25 @@ if ($groupingid) {
 
 list($sort, $sortparams) = users_order_by_sql('u');
 
-// TODO Does not support custom user profile fields (MDL-70456).
-$userfieldsapi = \core_user\fields::for_identity($context, false)->with_userpic();
-$userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+$userfieldsapi = \core_user\fields::for_identity($context)->with_userpic();
+[
+    'selects' => $userfieldsselects,
+    'joins' => $userfieldsjoin,
+    'params' => $userfieldsparams
+] = (array)$userfieldsapi->get_sql('u', true);
 $extrafields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
-$allnames = 'u.id, ' . $userfields;
+$allnames = 'u.id ' . $userfieldsselects;
 
 $sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, $allnames, u.idnumber, u.username
           FROM {groups} g
                LEFT JOIN {groupings_groups} gg ON g.id = gg.groupid
                LEFT JOIN {groups_members} gm ON g.id = gm.groupid
                LEFT JOIN {user} u ON gm.userid = u.id
+               $userfieldsjoin
          WHERE g.courseid = :courseid $groupwhere $groupingwhere
       ORDER BY g.name, $sort";
 
-$rs = $DB->get_recordset_sql($sql, array_merge($params, $sortparams));
+$rs = $DB->get_recordset_sql($sql, array_merge($params, $sortparams, $userfieldsparams));
 foreach ($rs as $row) {
     $user = username_load_fields_from_object((object) [], $row, null,
         array_merge(['id' => 'userid', 'username', 'idnumber'], $extrafields));
@@ -171,10 +175,11 @@ if ($groupid <= 0 && $groupingid <= 0) {
                     JOIN {groups} g ON g.id = gm.groupid
                    WHERE g.courseid = :courseid
                    ) grouped ON grouped.userid = u.id
+                  $userfieldsjoin
              WHERE grouped.userid IS NULL";
     $params['courseid'] = $courseid;
 
-    $nogroupusers = $DB->get_records_sql($sql, $params);
+    $nogroupusers = $DB->get_records_sql($sql, array_merge($params, $userfieldsparams));
 
     if ($nogroupusers) {
         $members[OVERVIEW_GROUPING_NO_GROUP][OVERVIEW_NO_GROUP] = $nogroupusers;
