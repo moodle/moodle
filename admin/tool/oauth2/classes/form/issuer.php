@@ -229,8 +229,8 @@ class issuer extends persistent {
      * Define extra validation mechanims.
      *
      * The data here:
-     * - does not include {@link self::$fieldstoremove}.
-     * - does include {@link self::$foreignfields}.
+     * - does not include {@see self::$fieldstoremove}.
+     * - does include {@see self::$foreignfields}.
      * - was converted to map persistent-like data, e.g. array $description to string $description + int $descriptionformat.
      *
      * You can modify the $errors parameter in order to remove some validation errors should you

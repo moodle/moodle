@@ -54,7 +54,7 @@ class renderer extends plugin_renderer_base {
         $table->head  = [
             get_string('name'),
             get_string('issuerusedforlogin', 'tool_oauth2'),
-            get_string('issuerdisplayas', 'tool_oauth2'),
+            get_string('logindisplay', 'tool_oauth2'),
             get_string('issuerusedforinternal', 'tool_oauth2'),
             get_string('discoverystatus', 'tool_oauth2') . ' ' . $this->help_icon('discovered', 'tool_oauth2'),
             get_string('systemauthstatus', 'tool_oauth2') . ' ' . $this->help_icon('systemaccountconnected', 'tool_oauth2'),
@@ -91,7 +91,7 @@ class renderer extends plugin_renderer_base {
                 $logindisplayas = '';
             } else {
                 $logindisplayas = s($issuer->get_display_name());
-                if ($issuer->is_available_for_login()) {
+                if ($issuer->get('id') && $issuer->is_configured() && !empty($issuer->get_endpoint_url('userinfo'))) {
                     $loginissuer = $this->pix_icon('yes', get_string('loginissuer', 'tool_oauth2'), 'tool_oauth2');
                 } else {
                     $loginissuer = $this->pix_icon('notconfigured', get_string('notconfigured', 'tool_oauth2'), 'tool_oauth2');
@@ -101,11 +101,11 @@ class renderer extends plugin_renderer_base {
 
             // Internal services issuer.
             if ((int)$issuer->get('showonloginpage') == issuer::LOGINONLY) {
-                $serviceissuer = $this->pix_icon('no', get_string('notloginissuer', 'tool_oauth2'), 'tool_oauth2');
-            } else if ($issuer->is_configured() && $issuer->get('enabled')) {
-                $serviceissuer = $this->pix_icon('yes', get_string('loginissuer', 'tool_oauth2'), 'tool_oauth2');
+                $serviceissuer = $this->pix_icon('no', get_string('issuersservicesnotallow', 'tool_oauth2'), 'tool_oauth2');
+            } else if ($issuer->get('id') && $issuer->is_configured() && !empty($issuer->get_endpoint_url('userinfo'))) {
+                $serviceissuer = $this->pix_icon('yes', get_string('issuersservicesallow', 'tool_oauth2'), 'tool_oauth2');
             } else {
-                $serviceissuer = $this->pix_icon('caution', get_string('notconfigured', 'tool_oauth2'), 'tool_oauth2');
+                $serviceissuer = $this->pix_icon('notconfigured', get_string('notconfigured', 'tool_oauth2'), 'tool_oauth2');
             }
             $internalissuerstatuscell = new html_table_cell($serviceissuer);
 
@@ -202,6 +202,10 @@ class renderer extends plugin_renderer_base {
                 $systemauthstatuscell,
                 $editcell,
             ]);
+
+            if (!$issuer->get('enabled')) {
+                $row->attributes['class'] = 'dimmed_text';
+            }
 
             $data[] = $row;
             $index++;

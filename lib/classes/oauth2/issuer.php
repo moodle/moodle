@@ -199,7 +199,7 @@ class issuer extends persistent {
     public function is_available_for_login() {
         return $this->get('id') &&
             $this->is_configured() &&
-            $this->get('showonloginpage') != issuer::SERVICEONLY &&
+            $this->get('showonloginpage') != self::SERVICEONLY &&
             $this->get('enabled') &&
             !empty($this->get_endpoint_url('userinfo'));
     }
