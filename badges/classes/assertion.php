@@ -128,7 +128,7 @@ class core_badges_assertion {
             $email = empty($this->_data->backpackemail) ? $this->_data->email : $this->_data->backpackemail;
             $assertionurl = new moodle_url('/badges/assertion.php', array('b' => $hash, 'obversion' => $this->_obversion));
 
-            if ($this->_obversion == OPEN_BADGES_V2) {
+            if ($this->_obversion >= OPEN_BADGES_V2) {
                 $classurl = new moodle_url('/badges/badge_json.php', array('id' => $this->get_badge_id()));
             } else {
                 $classurl = new moodle_url('/badges/assertion.php', array('b' => $hash, 'action' => 1));
@@ -325,7 +325,7 @@ class core_badges_assertion {
      */
     protected function embed_data_badge_version2 (&$json, $type = OPEN_BADGES_V2_TYPE_ASSERTION) {
         // Specification Version 2.0.
-        if ($this->_obversion == OPEN_BADGES_V2) {
+        if ($this->_obversion >= OPEN_BADGES_V2) {
             $badge = new badge($this->_data->id);
             if (empty($this->_data->courseid)) {
                 $context = context_system::instance();
