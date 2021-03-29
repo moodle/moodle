@@ -52,7 +52,7 @@ if (!is_null($action)) {
     } else { // Revoked badge.
         header("HTTP/1.0 410 Gone");
         $assertion = array();
-        if ($obversion == OPEN_BADGES_V2) {
+        if ($obversion >= OPEN_BADGES_V2) {
             $assertionurl = new moodle_url('/badges/assertion.php', array('b' => $hash));
             $assertion['id'] = $assertionurl->out();
         }
