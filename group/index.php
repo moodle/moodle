@@ -81,12 +81,15 @@ switch ($action) {
     case 'ajax_getmembersingroup':
         $roles = array();
 
-        // TODO Does not support custom user profile fields (MDL-70456).
-        $userfieldsapi = \core_user\fields::for_identity($context, false)->with_userpic();
-        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+        $userfieldsapi = \core_user\fields::for_identity($context)->with_userpic();
+        [
+            'selects' => $userfieldsselects,
+            'joins' => $userfieldsjoin,
+            'params' => $userfieldsparams
+        ] = (array)$userfieldsapi->get_sql('u', true, '', '', false);
         $extrafields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
         if ($groupmemberroles = groups_get_members_by_role($groupids[0], $courseid,
-                'u.id, ' . $userfields)) {
+                'u.id, ' . $userfieldsselects, null, '', $userfieldsparams, $userfieldsjoin)) {
 
             $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
@@ -205,12 +208,15 @@ if ($groups) {
 // Get list of group members to render if there is a single selected group.
 $members = array();
 if ($singlegroup) {
-    // TODO Does not support custom user profile fields (MDL-70456).
-    $userfieldsapi = \core_user\fields::for_identity($context, false)->with_userpic();
-    $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+    $userfieldsapi = \core_user\fields::for_identity($context)->with_userpic();
+    [
+        'selects' => $userfieldsselects,
+        'joins' => $userfieldsjoin,
+        'params' => $userfieldsparams
+    ] = (array)$userfieldsapi->get_sql('u', true, '', '', false);
     $extrafields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
     if ($groupmemberroles = groups_get_members_by_role(reset($groupids), $courseid,
-            'u.id, ' . $userfields)) {
+            'u.id, ' . $userfieldsselects, null, '', $userfieldsparams, $userfieldsjoin)) {
 
         $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
