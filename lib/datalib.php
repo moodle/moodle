@@ -305,7 +305,7 @@ function users_search_sql($search, $u = 'u', $searchanywhere = true, array $extr
  *  - firstname
  *  - lastname
  *  - $DB->sql_fullname
- *  - those returned by get_extra_user_fields
+ *  - those returned by \core_user\fields::get_identity_fields
  *
  * If named parameters are used (which is the default, and highly recommended),
  * then the parameter names are like :usersortexactN, where N is an int.
@@ -334,7 +334,7 @@ function users_search_sql($search, $u = 'u', $searchanywhere = true, array $extr
  * @param string $usertablealias (optional) any table prefix for the {users} table. E.g. 'u'.
  * @param string $search (optional) a current search string. If given,
  *      any exact matches to this string will be sorted first.
- * @param context $context the context we are in. Use by get_extra_user_fields.
+ * @param context $context the context we are in. Used by \core_user\fields::get_identity_fields.
  *      Defaults to $PAGE->context.
  * @return array with two elements:
  *      string SQL fragment to use in the ORDER BY clause. For example, "firstname, lastname".

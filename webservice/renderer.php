@@ -106,7 +106,7 @@ class core_webservice_renderer extends plugin_renderer_base {
         global $CFG;
 
         $listitems = [];
-        $extrafields = get_extra_user_fields(context_system::instance());
+        $extrafields = \core_user\fields::get_identity_fields(context_system::instance());
 
         foreach ($users as $user) {
             $settingsurl = new moodle_url('/admin/webservice/service_user_settings.php',

@@ -1226,7 +1226,7 @@ class course_enrolment_manager {
      * Please note that this function does not check capability for moodle/coures:viewhiddenuserfields
      *
      * @param object $user The user record
-     * @param array $extrafields The list of fields as returned from get_extra_user_fields used to determine which
+     * @param array $extrafields The list of fields as returned from \core_user\fields::get_identity_fields used to determine which
      * additional fields may be displayed
      * @param int $now The time used for lastaccess calculation
      * @return array The fields to be displayed including userid, courseid, picture, firstname, lastcourseaccess, lastaccess and any
