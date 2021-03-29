@@ -231,9 +231,9 @@ if ($hassiteconfig
 
                     // Custom profile fields.
                     $profilefields = profile_get_custom_fields();
-                    foreach ($profilefields as $key => $field) {
-                        // Only reasonable-length fields can be used as identity fields.
-                        if ($field->param2 > 255) {
+                    foreach ($profilefields as $field) {
+                        // Only reasonable-length text fields can be used as identity fields.
+                        if ($field->param2 > 255 || $field->datatype != 'text') {
                             continue;
                         }
                         $fields['profile_field_' . $field->shortname] = $field->name . ' *';

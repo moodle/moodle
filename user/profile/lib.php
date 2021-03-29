@@ -854,7 +854,7 @@ function profile_save_custom_fields($userid, $profilefields) {
  * current request for all fields so that it can be used quickly.
  *
  * @param string $shortname Shortname of custom profile field
- * @return stdClass Object with properties id, shortname, name, visible, datatype, categoryid, etc
+ * @return stdClass|null Object with properties id, shortname, name, visible, datatype, categoryid, etc
  */
 function profile_get_custom_field_data_by_shortname(string $shortname): ?stdClass {
     $cache = \cache::make_from_params(cache_store::MODE_REQUEST, 'core_profile', 'customfields',

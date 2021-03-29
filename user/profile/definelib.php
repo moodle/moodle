@@ -488,10 +488,8 @@ function profile_list_categories() {
  * Create or update a profile category
  *
  * @param stdClass $data
- * @throws coding_exception
- * @throws dml_exception
  */
-function profile_save_category(stdClass $data) {
+function profile_save_category(stdClass $data): void {
     global $DB;
 
     if (empty($data->id)) {

@@ -44,7 +44,7 @@ class award_criteria_profile extends award_criteria {
      *
      */
     public function get_options(&$mform) {
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->dirroot . '/user/profile/lib.php');
 
         $none = true;
@@ -93,13 +93,14 @@ class award_criteria_profile extends award_criteria {
             foreach ($cfields as $field) {
                 if (!isset($currentcat) || $currentcat != $field->categoryid) {
                     $currentcat = $field->categoryid;
-                    $mform->addElement('header', 'category_' . $currentcat, format_string($field->categoryname));
+                    $categoryname = $DB->get_field('user_info_category', 'name', ['id' => $field->categoryid]);
+                    $mform->addElement('header', 'category_' . $currentcat, format_string($categoryname));
                 }
                 $checked = false;
                 if (in_array($field->id, $existing)) {
                     $checked = true;
                 }
-                $this->config_options($mform, array('id' => $field->fieldid, 'checked' => $checked, 'name' => $field->name, 'error' => false));
+                $this->config_options($mform, array('id' => $field->id, 'checked' => $checked, 'name' => $field->name, 'error' => false));
                 $none = false;
             }
         }
@@ -135,7 +136,9 @@ class award_criteria_profile extends award_criteria {
         foreach ($this->params as $p) {
             if (is_numeric($p['field'])) {
                 $fields = profile_get_custom_fields();
-                $str = $fields[$p['field']]->name ?? $p['field'];
+                // Get formatted field name if such field exists.
+                $str = isset($fields[$p['field']]->name) ?
+                    format_string($fields[$p['field']]->name) : null;
             } else {
                 $str = \core_user\fields::get_display_name($p['field']);
             }
