@@ -1690,3 +1690,71 @@ function forum_get_user_grades($forum, $userid = 0) {
     $rm = new rating_manager();
     return $rm->get_user_grades($ratingoptions);
 }
+
+/**
+ * Obtains the automatic completion state for this forum based on any conditions
+ * in forum settings.
+ *
+ * @deprecated since Moodle 3.11
+ * @todo MDL-71196 Final deprecation in Moodle 4.3
+ * @see \mod_forum\completion\custom_completion
+ * @global object
+ * @global object
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not. (If no conditions, then return
+ *   value depends on comparison type)
+ */
+function forum_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
+
+    // No need to call debugging here. Deprecation debugging notice already being called in \completion_info::internal_get_state().
+
+    // Get forum details.
+    if (!($forum = $DB->get_record('forum', array('id' => $cm->instance)))) {
+        throw new Exception("Can't find forum {$cm->instance}");
+    }
+
+    $result = $type; // Default return value.
+
+    $postcountparams = array('userid' => $userid, 'forumid' => $forum->id);
+    $postcountsql = "
+SELECT
+    COUNT(1)
+FROM
+    {forum_posts} fp
+    INNER JOIN {forum_discussions} fd ON fp.discussion=fd.id
+WHERE
+    fp.userid=:userid AND fd.forum=:forumid";
+
+    if ($forum->completiondiscussions) {
+        $value = $forum->completiondiscussions <=
+            $DB->count_records('forum_discussions', array('forum' => $forum->id, 'userid' => $userid));
+        if ($type == COMPLETION_AND) {
+            $result = $result && $value;
+        } else {
+            $result = $result || $value;
+        }
+    }
+    if ($forum->completionreplies) {
+        $value = $forum->completionreplies <=
+            $DB->get_field_sql($postcountsql . ' AND fp.parent<>0', $postcountparams);
+        if ($type == COMPLETION_AND) {
+            $result = $result && $value;
+        } else {
+            $result = $result || $value;
+        }
+    }
+    if ($forum->completionposts) {
+        $value = $forum->completionposts <= $DB->get_field_sql($postcountsql, $postcountparams);
+        if ($type == COMPLETION_AND) {
+            $result = $result && $value;
+        } else {
+            $result = $result || $value;
+        }
+    }
+
+    return $result;
+}
