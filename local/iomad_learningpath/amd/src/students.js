@@ -49,12 +49,13 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
             function user_list() {
 
                 var filter = $('#userfilter').val();
+                var profilefieldid = $('#profilefieldid').val();
 
                 // Ajax stuff to get list
                 // call the web service
                 ajax.call([{
                     methodname: 'local_iomad_learningpath_getprospectiveusers',
-                    args: {companyid: companyid, pathid: pathid, filter: filter},
+                    args: {companyid: companyid, pathid: pathid, filter: filter, profilefieldid: profilefieldid},
                     done: function(users) {
                         apply_filter(users);
                     },
@@ -67,6 +68,9 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
              */
             $(window).on('load', user_list(''));
             $('#userfilter').on('input', function() {
+                user_list();
+            });
+            $('#profilefieldid').on('change', function() {
                 user_list();
             });
 

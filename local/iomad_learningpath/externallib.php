@@ -592,6 +592,7 @@ class local_iomad_learningpath_external extends external_api {
                 'companyid' => new external_value(PARAM_INT, 'ID of Iomad Company'),
                 'pathid' => new external_value(PARAM_INT, 'ID learning path'),
                 'filter' => new external_value(PARAM_TEXT, 'Filter user list returned', VALUE_DEFAULT, ''),
+                'profilefieldid' => new external_value(PARAM_INT, 'Filter by user profilefield', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -619,12 +620,12 @@ class local_iomad_learningpath_external extends external_api {
      * @param int $filter
      * @throws invalid_parameter_exception
      */
-    public static function getprospectiveusers($companyid, $pathid, $filter) {
+    public static function getprospectiveusers($companyid, $pathid, $filter, $profilefieldid) {
         global $DB;
 
         // Validate params
         $params = self::validate_parameters(self::getprospectiveusers_parameters(),
-            ['companyid' => $companyid, 'pathid' => $pathid, 'filter' => $filter]);
+            ['companyid' => $companyid, 'pathid' => $pathid, 'filter' => $filter, 'profilefieldid' => $profilefieldid]);
 
         // Find/validate company
         if (!$company = $DB->get_record('company', ['id' => $params['companyid']])) {
@@ -638,7 +639,7 @@ class local_iomad_learningpath_external extends external_api {
 
         // Get lists of users
         $companypaths = new local_iomad_learningpath\companypaths($params['companyid'], $context);
-        $users = $companypaths->get_prospective_users($params['pathid'], $params['filter']);
+        $users = $companypaths->get_prospective_users($params['pathid'], $params['filter'], $params['profilefieldid']);
 
         return $users;
     }

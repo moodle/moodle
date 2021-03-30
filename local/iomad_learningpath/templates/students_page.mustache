@@ -16,6 +16,14 @@
             <label for="userfilter">{{# str }}filter, local_iomad_learningpath{{/ str }}</label>
             <input id="userfilter" class="form-control" type="text" name="userfilter">
         </div>
+        <div class="form-group">
+            <select id="profilefieldid" class="form-control" name="profilefieldid">
+            <option value=0>{{# str}}user{{/ str }}</option>
+            {{# profilefields }}
+                <option value={{ id }}>{{ title }}</option>
+            {{/ profilefields }}
+            </select>
+        </div>
     </div>
 </div>
 

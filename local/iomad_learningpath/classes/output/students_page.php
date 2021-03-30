@@ -48,12 +48,31 @@ class students_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
+        global $companyid, $DB;
+
         $data = new stdClass();
         $data->path = $this->path;
         $data->done = $output->single_button(
             new \moodle_url('/local/iomad_learningpath/manage.php'),
             get_string('done', 'local_iomad_learningpath')
         );
+        // Get the company profile fields.
+        $companyprofilecategories = $DB->get_records_sql("SELECT uif.id,uif.name FROM {user_info_category} uic
+                                                          JOIN {user_info_field} uif ON (uic.id = uif.categoryid)
+                                                          WHERE uic.id NOT IN (
+                                                              SELECT profileid FROM {company}
+                                                              WHERE id != :companyid
+                                                          )
+                                                          ORDER BY uif.name DESC",
+                                                          array('companyid' => $companyid));
+
+        $data->profilefields = array();
+        foreach ($companyprofilecategories as $profilecategory) {
+            $entry = (object) array();
+            $entry->id = $profilecategory->id;
+            $entry->title = format_string($profilecategory->name);
+            $data->profilefields[] = $entry;
+        }
 
         return $data;
     }

@@ -653,32 +653,33 @@ class companypaths {
      * @param array $excludeids
      * @return array of objects
      */
-    public function get_prospective_users($pathid, $filter) {
+    public function get_prospective_users($pathid, $filter, $profilefieldid = 0) {
         global $DB;
 
         // Set up some defaults for the SQL.
         $companyprofjoin = "";
-        $companyprofwhere = "";
         $sqlparams = array('companyid' => $this->companyid);
 
-        // Build company profile search.
-        if ($companyprofileids = $DB->get_records_sql("SELECT id 
-                                                       FROM {user_info_field}
-                                                       WHERE
-                                                       categoryid IN (
-                                                        SELECT profileid FROM {company}
-                                                        WHERE id = :companyid)
-                                                       OR
-                                                       categoryid IN (
-                                                        SELECT id FROM {user_info_category}
-                                                        WHERE id NOT IN (
-                                                         SELECT profileid FROM {company}
-                                                        )
-                                                       )",
-                                                       array('companyid' => $this->companyid))) {
-            $companyprofjoin = "LEFT JOIN {user_info_data} uid ON (u.id = uid.userid AND uid.fieldid IN (" . implode(',', array_keys($companyprofileids)) . "))";
-            $companyprofwhere = " OR " . $DB->sql_like("uid.data", ':profsearch', false, false);
-            $sqlparams['profsearch'] = "%".$filter."%"; 
+        // Did we get passed anything to filter?
+        if (!empty($filter)) {
+            if (!empty($profilefieldid)) {
+                $companyprofjoin = "LEFT JOIN {user_info_data} uid ON (u.id = uid.userid AND uid.fieldid = :profilefieldid)";
+                $filtersql = " AND " . $DB->sql_like("uid.data", ':profsearch', false, false);
+                $sqlparams['profilefieldid'] = $profilefieldid;
+                $sqlparams['profsearch'] = "%".$filter."%"; 
+            } else {
+                $filtersql = " AND (
+                             " . $DB->sql_like("u.firstname", ':firstname', false, false) . "
+                              OR " . $DB->sql_like("u.lastname", ':lastname', false, false) . "
+                              OR " . $DB->sql_like("u.email", ':email', false, false) . "
+                              )";
+            $sqlparams['firstname'] = "%" . $filter . "%";
+            $sqlparams['lastname'] = "%" . $filter . "%";
+            $sqlparams['email'] = "%" . $filter . "%";
+
+            }
+        } else {
+            $filtersql = "";
         }
 
         // Get any users who are already assigned to the learning path.
@@ -691,21 +692,7 @@ class companypaths {
             $excludesql = "";
         }
 
-        // Did we get passed anything to filter?
-        if (!empty($filter)) {
-            $filtersql = " AND (
-                            " . $DB->sql_like("u.firstname", ':firstname', false, false) . "
-                            OR " . $DB->sql_like("u.lastname", ':lastname', false, false) . "
-                            OR " . $DB->sql_like("u.email", ':email', false, false) . "
-                            $companyprofwhere
-                           )";
-            $sqlparams['firstname'] = "%" . $filter . "%";
-            $sqlparams['lastname'] = "%" . $filter . "%";
-            $sqlparams['email'] = "%" . $filter . "%";
 
-        } else {
-            $filtersql = "";
-        }
 
         // Build the SQL.
         $sql = "SELECT DISTINCT u.*
