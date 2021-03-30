@@ -2646,5 +2646,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021042400.00);
     }
 
+    if ($oldversion < 2021043000.01) {
+        // Remove usemodchooser user preference for every user.
+        $DB->delete_records('user_preferences', ['name' => 'usemodchooser']);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021043000.01);
+    }
+
     return true;
 }
