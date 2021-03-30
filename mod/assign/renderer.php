@@ -233,7 +233,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o = '';
 
         if ($header->subpage) {
-            $this->page->navbar->add($header->subpage);
+            $this->page->navbar->add($header->subpage, $header->subpageurl);
             $args = ['contextname' => $header->context->get_context_name(false, true), 'subpage' => $header->subpage];
             $title = get_string('subpagetitle', 'assign', $args);
         } else {

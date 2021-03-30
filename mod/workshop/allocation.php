@@ -46,7 +46,7 @@ require_capability('mod/workshop:allocate', $context);
 
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
-$PAGE->navbar->add(get_string('allocation', 'workshop'));
+$PAGE->navbar->add(get_string('allocation', 'workshop'), $workshop->allocation_url($method));
 
 $allocator  = $workshop->allocator_instance($method);
 $initresult = $allocator->init();
