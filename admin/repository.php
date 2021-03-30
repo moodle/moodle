@@ -390,6 +390,7 @@ if (($action == 'edit') || ($action == 'new')) {
             }
 
             $table->data[] = array($i->get_readablename(), $OUTPUT->render($select), $updown, $settings, $uninstall);
+            $table->rowclasses[] = '';
 
             if (!in_array($typename, $alreadyplugins)) {
                 $alreadyplugins[] = $typename;
@@ -410,6 +411,7 @@ if (($action == 'edit') || ($action == 'new')) {
                     $uninstall = html_writer::link($uninstallurl, $struninstall);
                 }
                 $table->data[] = array(get_string('pluginname', 'repository_'.$plugin), $OUTPUT->render($select), '', '', $uninstall);
+                $table->rowclasses[] = 'dimmed_text';
             }
         }
     }

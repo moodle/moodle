@@ -7865,6 +7865,7 @@ class admin_setting_managecustomfields extends admin_setting {
 
             if ($field->is_enabled()) {
                 $strfieldname = $field->displayname;
+                $class = '';
                 $hideshow = html_writer::link($url->out(false, array('action' => 'disable')),
                         $OUTPUT->pix_icon('t/hide', $txt->disable, 'moodle', array('class' => 'iconsmall')));
             } else {
@@ -7882,6 +7883,7 @@ class admin_setting_managecustomfields extends admin_setting {
                 $uninstall = html_writer::link($uninstallurl, $txt->uninstall);
             }
             $row = new html_table_row(array($strfieldname, $hideshow, $uninstall, $settings));
+            $row->attributes['class'] = $class;
             $table->data[] = $row;
         }
         $return .= html_writer::table($table);

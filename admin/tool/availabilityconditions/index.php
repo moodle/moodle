@@ -99,7 +99,6 @@ foreach ($plugins as $plugin => $name) {
         $enabledstr = get_string('show');
         $class = 'dimmed_text';
     }
-    $namespan = html_writer::span($name, $class);
 
     // Make enable control. This is a POST request (using a form control rather
     // than just a link) because it makes a database change.
@@ -107,7 +106,7 @@ foreach ($plugins as $plugin => $name) {
     $url = new moodle_url('/' . $CFG->admin . '/tool/availabilityconditions/', $params);
     $enablecontrol = html_writer::link($url, $OUTPUT->pix_icon('t/' . $enabledaction, $enabledstr));
 
-    $table->add_data(array($namespan, $version, $enablecontrol));
+    $table->add_data([$name, $version, $enablecontrol], $class);
 }
 
 $table->print_html();
