@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 define('LESSON_EVENT_TYPE_OPEN', 'open');
 define('LESSON_EVENT_TYPE_CLOSE', 'close');
 
+require_once(__DIR__ . '/deprecatedlib.php');
 /* Do not include any libraries here! */
 
 /**
@@ -997,52 +998,6 @@ function lesson_supports($feature) {
     }
 }
 
-/**
- * Obtains the automatic completion state for this lesson based on any conditions
- * in lesson settings.
- *
- * @param object $course Course
- * @param object $cm course-module
- * @param int $userid User ID
- * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
- * @return bool True if completed, false if not, $type if conditions not set.
- */
-function lesson_get_completion_state($course, $cm, $userid, $type) {
-    global $CFG, $DB;
-
-    // Get lesson details.
-    $lesson = $DB->get_record('lesson', array('id' => $cm->instance), '*',
-            MUST_EXIST);
-
-    $result = $type; // Default return value.
-    // If completion option is enabled, evaluate it and return true/false.
-    if ($lesson->completionendreached) {
-        $value = $DB->record_exists('lesson_timer', array(
-                'lessonid' => $lesson->id, 'userid' => $userid, 'completed' => 1));
-        if ($type == COMPLETION_AND) {
-            $result = $result && $value;
-        } else {
-            $result = $result || $value;
-        }
-    }
-    if ($lesson->completiontimespent != 0) {
-        $duration = $DB->get_field_sql(
-                        "SELECT SUM(lessontime - starttime)
-                               FROM {lesson_timer}
-                              WHERE lessonid = :lessonid
-                                AND userid = :userid",
-                        array('userid' => $userid, 'lessonid' => $lesson->id));
-        if (!$duration) {
-            $duration = 0;
-        }
-        if ($type == COMPLETION_AND) {
-            $result = $result && ($lesson->completiontimespent < $duration);
-        } else {
-            $result = $result || ($lesson->completiontimespent < $duration);
-        }
-    }
-    return $result;
-}
 /**
  * This function extends the settings navigation block for the site.
  *
