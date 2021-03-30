@@ -43,7 +43,9 @@ function email_reports_cron() {
                         JOIN {company} c ON (lit.companyid = c.id)
                         JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
                         JOIN {user} u ON (lit.userid = u.id)
-                        WHERE ic.warncompletion > 0
+                        JOIN {course} co ON (lit.courseid = co.id AND ic.courseid = co.id)
+                        WHERE co.visible = 1
+                        AND ic.warncompletion > 0
                         AND lit.timecompleted IS NULL
                         AND lit.timeenrolled < " . $runtime . " - (ic.warncompletion * 86400)
                         AND u.deleted = 0
@@ -190,7 +192,9 @@ function email_reports_cron() {
                                JOIN {company} c ON (lit.companyid = c.id)
                                JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
                                JOIN {user} u ON (lit.userid = u.id)
-                               WHERE ic.warncompletion > 0
+                               JOIN {course} co ON (lit.courseid = co.id AND ic.courseid = co.id)
+                               WHERE co.visible = 1
+                               AND ic.warncompletion > 0
                                AND lit.timecompleted IS NULL
                                AND lit.timeenrolled < " . $runtime . " - (ic.warncompletion * 86400)
                                AND u.deleted = 0
@@ -255,7 +259,9 @@ function email_reports_cron() {
                                               JOIN {company} c ON (lit.companyid = c.id)
                                               JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
                                               JOIN {user} u ON (lit.userid = u.id)
-                                              WHERE lit.companyid = :companyid
+                                              JOIN {course} co ON (lit.courseid = co.id AND it.courseid = co.id)
+                                              WHERE co.visible = 1
+                                              AND lit.companyid = :companyid
                                               AND lit.userid IN (" . $departmentids . ")
                                               AND lit.userid != :managerid
                                               $companysql
@@ -324,8 +330,10 @@ function email_reports_cron() {
     mtrace("sending course not started emails");
 
     // Deal with courses where users have not yet started.
-    $warnnotstartedcourses = $DB->get_records_sql("SELECT * FROM {iomad_courses}
-                                                   WHERE warnnotstarted != 0");
+    $warnnotstartedcourses = $DB->get_records_sql("SELECT * FROM {iomad_courses} ic
+                                                   JOIN {course} co ON (ic.courseid = co.id)
+                                                   WHERE warnnotstarted != 0
+                                                   AND co.visible = 1");
     foreach ($warnnotstartedcourses as $warnnotstartedcourse) {
         $checktime = time() - $warnnotstartedcourse->warnnotstarted * 60 * 60 *24;
         $warnnotstartedusers = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
@@ -439,7 +447,9 @@ function email_reports_cron() {
                         JOIN {company} c ON (lit.companyid = c.id)
                         JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
                         JOIN {user} u ON (lit.userid = u.id)
-                        WHERE ic.validlength > 0
+                        JOIN {course} co ON (lit.courseid = co.id AND ic.courseid = co.id)
+                        WHERE co.visible = 1
+                        AND ic.validlength > 0
                         AND ic.warnexpire > 0
                         AND (lit.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) < " . $runtime . "
                         AND u.deleted = 0
@@ -580,11 +590,13 @@ function email_reports_cron() {
     mtrace("sending to managers");
     // Email the managers
     // Get the companies from the list of users in the temp table.
-    $companysql = "SELECT DISTINCT lit.companyid 
+    $companysql = "SELECT DISTINCT lit.companyid
                         FROM {local_iomad_track} lit
                         JOIN {iomad_courses} ic ON (lit.courseid = ic.courseid)
                         JOIN {user} u ON (lit.userid = u.id)
-                        WHERE ic.validlength > 0
+                        JOIN {course} co ON (lit.courseid = co.id AND ic.courseid = co.id)
+                        WHERE co.visible = 1
+                        AND ic.validlength > 0
                         AND ic.warnexpire > 0
                         AND (lit.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) < " . $runtime . "
                         AND u.deleted = 0
@@ -718,7 +730,9 @@ function email_reports_cron() {
                                           {local_iomad_track} lit
                                           JOIN {user_enrolments} ue ON (lit.userid = ue.userid)
                                           JOIN {enrol} e ON (lit.courseid = e.courseid AND ue.enrolid = e.id)
-                                          WHERE lit.courseid = :courseid
+                                          JOIN {course} co ON (lit.courseid = co.id AND e.courseid = co.id)
+                                          WHERE co.visible = 1
+                                          AND lit.courseid = :courseid
                                           AND lit.timecompleted + :expiretime < :runtime",
                                           array('courseid' => $completionexpirecourse->courseid,
                                                 'expiretime' => $expiretime,
@@ -799,7 +813,8 @@ function email_reports_cron() {
                                                   JOIN {course} c ON (cc.course = c.id)
                                                   JOIN {company_users} cu ON (u.id = cu.userid)
                                                   JOIN {department} d ON (cu.departmentid = d.id)
-                                                  WHERE cc.userid IN (" . $departmentids . ")
+                                                  WHERE c.visible = 1
+                                                  AND cc.userid IN (" . $departmentids . ")
                                                   AND cc.userid != :managerid
                                                   $companysql
                                                   AND cc.timecompleted > :weekago",
@@ -833,7 +848,8 @@ function email_reports_cron() {
                                                           FROM {course_completions} cc
                                                           JOIN {user} u ON (cc.userid = u.id)
                                                           JOIN {course} c ON (cc.course = c.id)
-                                                          WHERE cc.userid IN (" . $departmentids . ")
+                                                          WHERE c.visible = 1
+                                                          AND cc.userid IN (" . $departmentids . ")
                                                           AND cc.timecompleted > :weekago",
                                                           array('weekago' => $timenow - (60 * 60 * 24 * 7)))) {
                     foreach ($managerusers as $manageruser) {
