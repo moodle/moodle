@@ -562,10 +562,10 @@ class completion_info {
      * if a forum provides options for marking itself 'completed' once a user makes
      * N posts, this function should be called every time a user makes a new post.
      * [After the post has been saved to the database]. When calling, you do not
-     * need to pass in the new completion state. Instead this function carries out
-     * completion calculation by checking grades and viewed state itself, and
-     * calling the involved module via modulename_get_completion_state() to check
-     * module-specific conditions.
+     * need to pass in the new completion state. Instead this function carries out completion
+     * calculation by checking grades and viewed state itself, and calling the involved module
+     * via mod_{modulename}\\completion\\custom_completion::get_overall_completion_state() to
+     * check module-specific conditions.
      *
      * @param stdClass|cm_info $cm Course-module
      * @param int $possibleresult Expected completion result. If the event that
@@ -701,12 +701,16 @@ class completion_info {
                 }
             } else {
                 // Fallback to the get_completion_state callback.
+                $cmcompletionclass = "mod_{$cminfo->modname}\\completion\\custom_completion";
                 $function = $cminfo->modname . '_get_completion_state';
                 if (!function_exists($function)) {
-                    $this->internal_systemerror("Module {$cminfo->modname} claims to support
-                    FEATURE_COMPLETION_HAS_RULES but does not have required
-                    {$cminfo->modname}_get_completion_state function");
+                    $this->internal_systemerror("Module {$cminfo->modname} claims to support FEATURE_COMPLETION_HAS_RULES " .
+                        "but does not implement the custom completion class $cmcompletionclass which extends " .
+                        "\core_completion\activity_custom_completion.");
                 }
+                debugging("*_get_completion_state() callback functions such as $function have been deprecated and should no " .
+                    "longer be used. Please implement the custom completion class $cmcompletionclass which extends " .
+                    "\core_completion\activity_custom_completion.", DEBUG_DEVELOPER);
                 if (!$function($this->course, $cminfo, $userid, COMPLETION_AND)) {
                     return COMPLETION_INCOMPLETE;
                 }
