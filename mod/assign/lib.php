@@ -25,6 +25,8 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/deprecatedlib.php');
+
 /**
  * Adds an assignment instance
  *
@@ -1291,36 +1293,6 @@ function assign_user_outline($course, $user, $coursemodule, $assignment) {
     $result->time = $gradebookgrade->dategraded;
 
     return $result;
-}
-
-/**
- * Obtains the automatic completion state for this module based on any conditions
- * in assign settings.
- *
- * @param object $course Course
- * @param object $cm Course-module
- * @param int $userid User ID
- * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
- * @return bool True if completed, false if not, $type if conditions not set.
- */
-function assign_get_completion_state($course, $cm, $userid, $type) {
-    global $CFG, $DB;
-    require_once($CFG->dirroot . '/mod/assign/locallib.php');
-
-    $assign = new assign(null, $cm, $course);
-
-    // If completion option is enabled, evaluate it and return true/false.
-    if ($assign->get_instance()->completionsubmit) {
-        if ($assign->get_instance()->teamsubmission) {
-            $submission = $assign->get_group_submission($userid, 0, false);
-        } else {
-            $submission = $assign->get_user_submission($userid, false);
-        }
-        return $submission && $submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED;
-    } else {
-        // Completion option is not enabled so just return $type.
-        return $type;
-    }
 }
 
 /**
