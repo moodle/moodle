@@ -2222,12 +2222,11 @@ class company {
         $userdepartments = $DB->get_records('company_users', array('userid' => $userid, 'companyid' => $this->id));
 
         // Set the initial return array.
-
         $managers = array();
         $departments = array();
         // Get the list of parent departments.
-        foreach ($userdepartments as $userdepartmentid => $junk) {
-            if ($userdepartment = $this->get_departmentbyid($userdepartmentid)) {
+        foreach ($userdepartments as $companyuserrec) {
+            if ($userdepartment = $this->get_departmentbyid($companyuserrec->departmentid)) {
                 $departmentlist = $this->get_parentdepartments($userdepartment);
                 self::get_parents_list($departmentlist, $departments);
             }
