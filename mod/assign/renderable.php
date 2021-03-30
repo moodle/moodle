@@ -671,6 +671,8 @@ class assign_header implements renderable {
     public $preface = '';
     /** @var string $postfix optional postfix (text to show after the intro) */
     public $postfix = '';
+    /** @var moodle_url $subpageurl link for the subpage */
+    public $subpageurl = null;
 
     /**
      * Constructor
@@ -688,7 +690,8 @@ class assign_header implements renderable {
                                 $coursemoduleid,
                                 $subpage='',
                                 $preface='',
-                                $postfix='') {
+                                $postfix='',
+                                moodle_url $subpageurl = null) {
         $this->assign = $assign;
         $this->context = $context;
         $this->showintro = $showintro;
@@ -696,6 +699,7 @@ class assign_header implements renderable {
         $this->subpage = $subpage;
         $this->preface = $preface;
         $this->postfix = $postfix;
+        $this->subpageurl = $subpageurl;
     }
 }
 
