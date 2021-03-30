@@ -150,3 +150,6 @@ aimid,core
 yahooid,core
 icqnumber,core
 msnid,core
+configenableactivitychooser,core_admin
+enableactivitychooser,core_admin
+coursepreferences,core

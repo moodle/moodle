@@ -272,100 +272,21 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     function course_section_add_cm_control($course, $section, $sectionreturn = null, $displayoptions = array()) {
-        global $CFG, $USER;
-
         // The returned control HTML can be one of the following:
         // - Only the non-ajax control (select menus of activities and resources) with a noscript fallback for non js clients.
+        // Please note that non-ajax control has been deprecated and it will be removed in the future.
+
         // - Only the ajax control (the link which when clicked produces the activity chooser modal). No noscript fallback.
-        // - [Behat only]: The non-ajax control and optionally the ajax control (depending on site settings). If included, the link
-        // takes priority and the non-ajax control is wrapped in a <noscript>.
-        // Behat requires the third case because some features run with JS, some do not. We must include the noscript fallback.
-        $behatsite = defined('BEHAT_SITE_RUNNING');
-        $nonajaxcontrol = '';
-        $ajaxcontrol = '';
+
         $courseajaxenabled = course_ajax_enabled($course);
-        $userchooserenabled = get_user_preferences('usemodchooser', $CFG->modchooserdefault);
 
-        // Decide what combination of controls to output:
-        // During behat runs, both controls can be used in conjunction to provide non-js fallback.
-        // During normal use only one control or the other will be output. No non-js fallback is needed.
-        $rendernonajaxcontrol = $behatsite || !$courseajaxenabled || !$userchooserenabled || $course->id != $this->page->course->id;
-        $renderajaxcontrol = $courseajaxenabled && $userchooserenabled && $course->id == $this->page->course->id;
-
-        // The non-ajax control, which includes an entirely non-js (<noscript>) fallback too.
+        // Non ajax control is under deprecated, $rendernonajaxcontrol will be removed in later versions.
+        $rendernonajaxcontrol = !$courseajaxenabled || $course->id != $this->page->course->id;
         if ($rendernonajaxcontrol) {
-            $vertical = !empty($displayoptions['inblock']);
-
-            // Check to see if user can add menus.
-            if (!has_capability('moodle/course:manageactivities', context_course::instance($course->id))
-                || !$this->page->user_is_editing()) {
-                return '';
-            }
-
-            // Retrieve all modules with associated metadata.
-            $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
-            $urlparams = ['section' => $section];
-            if (!is_null($sectionreturn)) {
-                $urlparams['sr'] = $sectionreturn;
-            }
-            $modules = $contentitemservice->get_content_items_for_user_in_course($USER, $course, $urlparams);
-
-            // Return if there are no content items to add.
-            if (empty($modules)) {
-                return '';
-            }
-
-            // We'll sort resources and activities into two lists.
-            $activities = array(MOD_CLASS_ACTIVITY => array(), MOD_CLASS_RESOURCE => array());
-
-            foreach ($modules as $module) {
-                $activityclass = MOD_CLASS_ACTIVITY;
-                if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
-                    $activityclass = MOD_CLASS_RESOURCE;
-                } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
-                    // System modules cannot be added by user, do not add to dropdown.
-                    continue;
-                }
-                $link = $module->link;
-                $activities[$activityclass][$link] = $module->title;
-            }
-
-            $straddactivity = get_string('addactivity');
-            $straddresource = get_string('addresource');
-            $sectionname = get_section_name($course, $section);
-            $strresourcelabel = get_string('addresourcetosection', null, $sectionname);
-            $stractivitylabel = get_string('addactivitytosection', null, $sectionname);
-
-            $nonajaxcontrol = html_writer::start_tag('div', array('class' => 'section_add_menus', 'id' => 'add_menus-section-'
-                . $section));
-
-            if (!$vertical) {
-                $nonajaxcontrol .= html_writer::start_tag('div', array('class' => 'horizontal'));
-            }
-
-            if (!empty($activities[MOD_CLASS_RESOURCE])) {
-                $select = new url_select($activities[MOD_CLASS_RESOURCE], '', array('' => $straddresource), "ressection$section");
-                $select->set_help_icon('resources');
-                $select->set_label($strresourcelabel, array('class' => 'accesshide'));
-                $nonajaxcontrol .= $this->output->render($select);
-            }
-
-            if (!empty($activities[MOD_CLASS_ACTIVITY])) {
-                $select = new url_select($activities[MOD_CLASS_ACTIVITY], '', array('' => $straddactivity), "section$section");
-                $select->set_help_icon('activities');
-                $select->set_label($stractivitylabel, array('class' => 'accesshide'));
-                $nonajaxcontrol .= $this->output->render($select);
-            }
-
-            if (!$vertical) {
-                $nonajaxcontrol .= html_writer::end_tag('div');
-            }
-
-            $nonajaxcontrol .= html_writer::end_tag('div');
-        }
-
-        // The ajax control - the 'Add an activity or resource' link.
-        if ($renderajaxcontrol) {
+            // The non-ajax control, which includes an entirely non-js (<noscript>) fallback too.
+            return $this->course_section_add_cm_control_nonajax($course, $section, $sectionreturn, $displayoptions);
+        } else {
+            // The ajax control - the 'Add an activity or resource' link.
             // The module chooser link.
             $straddeither = get_string('addresourceoractivity');
             $ajaxcontrol = html_writer::start_tag('div', array('class' => 'mdl-right'));
@@ -384,18 +305,100 @@ class core_course_renderer extends plugin_renderer_base {
 
             // Load the JS for the modal.
             $this->course_activitychooser($course->id);
+            return $ajaxcontrol;
+        }
+    }
+
+    /**
+     * Render the deprecated nonajax activity chooser.
+     *
+     * @deprecated since Moodle 3.11
+     *
+     * @todo MDL-71331 deprecate this function
+     * @param stdClass $course the course object
+     * @param int $section relative section number (field course_sections.section)
+     * @param int $sectionreturn The section to link back to
+     * @param array $displayoptions additional display options, for example blocks add
+     *     option 'inblock' => true, suggesting to display controls vertically
+     * @return string
+     */
+    private function course_section_add_cm_control_nonajax($course, $section, $sectionreturn = null,
+            $displayoptions = array()): string {
+        global $USER;
+
+        $vertical = !empty($displayoptions['inblock']);
+
+        // Check to see if user can add menus.
+        if (
+            !has_capability('moodle/course:manageactivities', context_course::instance($course->id))
+            || !$this->page->user_is_editing()
+        ) {
+            return '';
         }
 
-        // Behat only: If both controls are being included in the HTML,
-        // show the link by default and only fall back to the selects if js is disabled.
-        if ($behatsite && $renderajaxcontrol) {
-            $nonajaxcontrol = html_writer::tag('div', $nonajaxcontrol, array('class' => 'hiddenifjs addresourcedropdown'));
-            $ajaxcontrol = html_writer::tag('div', $ajaxcontrol, array('class' => 'visibleifjs addresourcemodchooser'));
+        debugging('non-js dropdowns are deprecated.', DEBUG_DEVELOPER);
+        // Retrieve all modules with associated metadata.
+        $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
+        $urlparams = ['section' => $section];
+        if (!is_null($sectionreturn)) {
+            $urlparams['sr'] = $sectionreturn;
+        }
+        $modules = $contentitemservice->get_content_items_for_user_in_course($USER, $course, $urlparams);
+
+        // Return if there are no content items to add.
+        if (empty($modules)) {
+            return '';
         }
 
-        // If behat is running, we should have the non-ajax control + the ajax control.
-        // Otherwise, we'll have one or the other.
-        return $ajaxcontrol . $nonajaxcontrol;
+        // We'll sort resources and activities into two lists.
+        $activities = array(MOD_CLASS_ACTIVITY => array(), MOD_CLASS_RESOURCE => array());
+
+        foreach ($modules as $module) {
+            $activityclass = MOD_CLASS_ACTIVITY;
+            if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
+                $activityclass = MOD_CLASS_RESOURCE;
+            } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
+                // System modules cannot be added by user, do not add to dropdown.
+                continue;
+            }
+            $link = $module->link;
+            $activities[$activityclass][$link] = $module->title;
+        }
+
+        $straddactivity = get_string('addactivity');
+        $straddresource = get_string('addresource');
+        $sectionname = get_section_name($course, $section);
+        $strresourcelabel = get_string('addresourcetosection', null, $sectionname);
+        $stractivitylabel = get_string('addactivitytosection', null, $sectionname);
+
+        $nonajaxcontrol = html_writer::start_tag('div', array('class' => 'section_add_menus', 'id' => 'add_menus-section-'
+            . $section));
+
+        if (!$vertical) {
+            $nonajaxcontrol .= html_writer::start_tag('div', array('class' => 'horizontal'));
+        }
+
+        if (!empty($activities[MOD_CLASS_RESOURCE])) {
+            $select = new url_select($activities[MOD_CLASS_RESOURCE], '', array('' => $straddresource), "ressection$section");
+            $select->set_help_icon('resources');
+            $select->set_label($strresourcelabel, array('class' => 'accesshide'));
+            $nonajaxcontrol .= $this->output->render($select);
+        }
+
+        if (!empty($activities[MOD_CLASS_ACTIVITY])) {
+            $select = new url_select($activities[MOD_CLASS_ACTIVITY], '', array('' => $straddactivity), "section$section");
+            $select->set_help_icon('activities');
+            $select->set_label($stractivitylabel, array('class' => 'accesshide'));
+            $nonajaxcontrol .= $this->output->render($select);
+        }
+
+        if (!$vertical) {
+            $nonajaxcontrol .= html_writer::end_tag('div');
+        }
+
+        $nonajaxcontrol .= html_writer::end_tag('div');
+
+        return $nonajaxcontrol;
     }
 
     /**
