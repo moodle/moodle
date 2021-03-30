@@ -1065,4 +1065,20 @@ class behat_navigation extends behat_base {
         }
         $this->execute('behat_general::i_visit', [$url]);
     }
+
+
+    /**
+     * First checks to see if we are on this page via the breadcrumb. If not we then attempt to follow the link name given.
+     *
+     * @param  string $pagename Name of the breadcrumb item to check and follow.
+     */
+    public function go_to_breadcrumb_location(string $pagename): void {
+        $link = $this->getSession()->getPage()->find(
+                'xpath',
+                "//nav[@aria-label='Navigation bar']/ol/li[last()][contains(normalize-space(.), '" . $pagename . "')]"
+        );
+        if (!$link) {
+            $this->execute("behat_general::click_link", $pagename);
+        }
+    }
 }

@@ -61,7 +61,7 @@ class behat_mod_glossary extends behat_base {
      */
     public function i_add_a_glossary_entries_category_named($categoryname) {
 
-        $this->execute("behat_general::click_link", get_string('categoryview', 'mod_glossary'));
+        $this->execute("behat_navigation::go_to_breadcrumb_location", get_string('categoryview', 'mod_glossary'));
 
         $this->execute("behat_forms::press_button", get_string('editcategories', 'mod_glossary'));
 

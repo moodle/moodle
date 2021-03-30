@@ -85,7 +85,7 @@ class behat_grading extends behat_base {
         // Step to access the user grade page from the grading page.
         $gradetext = get_string('gradeverb');
 
-        $this->execute('behat_general::click_link', $this->escape($activityname));
+        $this->execute('behat_navigation::go_to_breadcrumb_location', $this->escape($activityname));
 
         $this->execute('behat_navigation::i_navigate_to_in_current_page_administration',
             get_string('viewgrading', 'mod_assign'));
