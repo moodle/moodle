@@ -89,6 +89,7 @@ Feature: In a lesson activity a student should
     And I should see "Second page contents"
     And I press "Next page"
     And I should see "Third page contents"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "You have seen more than one page of this lesson already."
     And I should see "Do you want to start at the last page you saw?"
@@ -98,6 +99,7 @@ Feature: In a lesson activity a student should
     And I wait "1" seconds
     And I press "Next page"
     And I should see "Paper is made from trees."
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "You have seen more than one page of this lesson already."
     And I should see "Do you want to start at the last page you saw?"
@@ -108,6 +110,7 @@ Feature: In a lesson activity a student should
     And I press "Submit"
     And I press "Continue"
     And I should see "Kermit is a frog"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "You have seen more than one page of this lesson already."
     And I should see "Do you want to start at the last page you saw?"
@@ -165,6 +168,7 @@ Feature: In a lesson activity a student should
     And I wait "1" seconds
     And I press "Next page"
     And I should see "Third page contents"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     Then I should see "You have seen more than one page of this lesson already."
     And I should see "Do you want to start at the last page you saw?"
@@ -286,6 +290,7 @@ Feature: In a lesson activity a student should
     And I press "Submit"
     And I press "Continue"
     And I should see "2+2=4"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "You have seen more than one page of this lesson already."
     Then I should see "Do you want to start at the last page you saw?"
@@ -298,6 +303,7 @@ Feature: In a lesson activity a student should
     And I press "Submit"
     And I press "Continue"
     And I should see "Second content page"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I should see "You have seen more than one page of this lesson already."
     And I should see "Do you want to start at the last page you saw?"
@@ -399,6 +405,7 @@ Feature: In a lesson activity a student should
     And I press "Submit"
     And I press "Continue"
     And I should see "2+2=4"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     Then I should see "You have seen more than one page of this lesson already."
     And I should see "Do you want to start at the last page you saw?"

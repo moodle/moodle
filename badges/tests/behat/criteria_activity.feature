@@ -36,7 +36,6 @@ Feature: Award badges based on activity completion
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Add a new badge" in current page administration
-    And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |

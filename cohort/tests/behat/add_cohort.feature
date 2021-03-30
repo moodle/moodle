@@ -33,6 +33,10 @@ Feature: Add cohorts of users
     Then the following should exist in the "generaltable" table:
       | Name          | Cohort ID   | Description           |
       | My new cohort | mynewcohort | My new cohort is cool |
+    And I should see "Test cohort name"
+    And I should see "333"
+    And I should see "Test cohort description"
+    And I should see "Created manually"
 
   @javascript
   Scenario: Add users to a cohort selecting them from the system users list
@@ -76,8 +80,7 @@ Feature: Add cohorts of users
 
   @javascript
   Scenario: Add users to a cohort using a bulk user action
-    When I follow "Accounts"
-    And I follow "Bulk user actions"
+    When I navigate to "Users > Accounts > Bulk user actions" in site administration
     And I set the field "Available" to "Third User"
     And I press "Add to selection"
     And I set the field "Available" to "Forth User"
@@ -86,8 +89,7 @@ Feature: Add cohorts of users
     And I press "Go"
     And I set the field "Cohort" to "Test cohort name [333]"
     And I press "Add to cohort"
-    And I follow "Accounts"
-    And I follow "Cohorts"
+    And I navigate to "Users > Accounts > Cohorts" in site administration
     Then I should see "2" in the "#cohorts" "css_element"
     And I click on "Assign" "link" in the "Test cohort name" "table_row"
     And the "Current users" select box should contain "Third User (third@example.com)"
@@ -96,9 +98,9 @@ Feature: Add cohorts of users
 
   @javascript
   Scenario: Edit cohort name in-place
-    When I follow "Cohorts"
+    When I navigate to "Users > Accounts > Cohorts" in site administration
     And I set the field "Edit cohort name" to "Students cohort"
     Then I should not see "Test cohort name"
     And I should see "Students cohort"
-    And I follow "Cohorts"
+    And I navigate to "Users > Accounts > Cohorts" in site administration
     And I should see "Students cohort"

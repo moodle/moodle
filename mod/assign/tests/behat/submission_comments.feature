@@ -40,7 +40,7 @@ Feature: In an assignment, students can comment in their submissions
     And I follow "Save comment"
     And I should see "Second student comment"
     And I should not see "First student comment"
-    And I follow "Test assignment name"
+    And I reload the page
     And I click on ".comment-link" "css_element"
     And I should see "Second student comment"
     And I should not see "First student comment"

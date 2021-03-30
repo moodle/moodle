@@ -21,7 +21,7 @@ Feature: Within a moodle instance, an administrator should be able to import lan
     And I press "Save changes to the language pack"
     And I should see "There are 1 modified strings."
     And I click on "Continue" "button"
-    And I should see "Custom string example" in the "page-header" "region"
+    And I should see "Custom string example"
 
   @javascript
   Scenario: Update only customized strings
@@ -36,12 +36,12 @@ Feature: Within a moodle instance, an administrator should be able to import lan
     And I should see "String core/nonexistentinvetedstring not found."
     And I click on "Continue" "button"
     And I should see "There are 1 modified strings."
-    And I should not see "Uploaded custom string" in the "page-header" "region"
+    And I should not see "Uploaded custom string"
     And I click on "Save strings to language pack" "button"
     And I click on "Continue" "button"
-    And I should not see "Custom string example" in the "page-header" "region"
-    And I should see "Uploaded custom string" in the "page-header" "region"
-    And I should not see "Another Uploaded string" in the "page-header" "region"
+    And I should not see "Custom string example"
+    And I should see "Uploaded custom string"
+    And I should not see "Another Uploaded string"
 
   @javascript
   Scenario: Create only new strings
@@ -56,12 +56,12 @@ Feature: Within a moodle instance, an administrator should be able to import lan
     And I should see "String core/nonexistentinvetedstring not found."
     And I click on "Continue" "button"
     And I should see "There are 1 modified strings."
-    And I should not see "Uploaded custom string" in the "page-header" "region"
+    And I should not see "Uploaded custom string"
     And I click on "Save strings to language pack" "button"
     And I click on "Continue" "button"
-    And I should see "Custom string example" in the "page-header" "region"
-    And I should not see "Uploaded custom string" in the "page-header" "region"
-    And I should see "Another Uploaded string" in the "page-header" "region"
+    And I should see "Custom string example"
+    And I should not see "Uploaded custom string"
+    And I should see "Another Uploaded string"
 
   @javascript
   Scenario: Import all strings
@@ -76,9 +76,9 @@ Feature: Within a moodle instance, an administrator should be able to import lan
     And I should see "String core/nonexistentinvetedstring not found."
     And I click on "Continue" "button"
     And I should see "There are 2 modified strings."
-    And I should not see "Uploaded custom string" in the "page-header" "region"
+    And I should not see "Uploaded custom string"
     And I click on "Save strings to language pack" "button"
     And I click on "Continue" "button"
-    And I should not see "Custom string example" in the "page-header" "region"
-    And I should see "Uploaded custom string" in the "page-header" "region"
-    And I should see "Another Uploaded string" in the "page-header" "region"
+    And I should not see "Custom string example"
+    And I should see "Uploaded custom string"
+    And I should see "Another Uploaded string"
