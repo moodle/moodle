@@ -131,7 +131,7 @@ class category_condition extends condition {
      */
     protected function display_category_form($contexts, $pageurl, $current) {
         echo \html_writer::start_div('choosecategory');
-        $catmenu = question_category_options($contexts, true, 0, true);
+        $catmenu = question_category_options($contexts, true, 0, true, -1, false);
         echo \html_writer::label(get_string('selectacategory', 'question'), 'id_selectacategory', true, array("class" => "mr-1"));
         echo \html_writer::select($catmenu, 'category', $current, array(),
                 array('class' => 'searchoptions custom-select', 'id' => 'id_selectacategory'));
