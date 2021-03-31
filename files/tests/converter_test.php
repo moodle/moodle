@@ -36,7 +36,7 @@ use core_files\converter;
  * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_files_converter_testcase extends advanced_testcase {
+class converter_test extends advanced_testcase {
 
     /**
      * Get a testable mock of the abstract files_converter class.
@@ -247,7 +247,7 @@ class core_files_converter_testcase extends advanced_testcase {
      * Test the get_document_converter_classes function when the returned classes do not meet requirements.
      */
     public function test_get_document_converter_classes_plugin_class_requirements_not_met() {
-        $plugin = $this->getMockBuilder(\core_file_converter_requirements_not_met_test::class)
+        $plugin = $this->getMockBuilder(\core_file_converter_requirements_not_met::class)
             ->onlyMethods([])
             ->getMock();
 
@@ -266,7 +266,7 @@ class core_files_converter_testcase extends advanced_testcase {
      * Test the get_document_converter_classes function when the returned classes do not meet requirements.
      */
     public function test_get_document_converter_classes_plugin_class_met_not_supported() {
-        $plugin = $this->getMockBuilder(\core_file_converter_type_not_supported_test::class)
+        $plugin = $this->getMockBuilder(\core_file_converter_type_not_supported::class)
             ->onlyMethods([])
             ->getMock();
 
@@ -285,7 +285,7 @@ class core_files_converter_testcase extends advanced_testcase {
      * Test the get_document_converter_classes function when the returned classes do not meet requirements.
      */
     public function test_get_document_converter_classes_plugin_class_met_and_supported() {
-        $plugin = $this->getMockBuilder(\core_file_converter_type_supported_test::class)
+        $plugin = $this->getMockBuilder(\core_file_converter_type_supported::class)
             ->onlyMethods([])
             ->getMock();
         $classname = get_class($plugin);
@@ -741,7 +741,7 @@ class core_files_converter_testcase extends advanced_testcase {
     }
 }
 
-class core_file_converter_requirements_test_base implements \core_files\converter_interface {
+class core_file_converter_requirements_base implements \core_files\converter_interface {
 
     /**
      * Whether the plugin is configured and requirements are met.
@@ -799,7 +799,7 @@ class core_file_converter_requirements_test_base implements \core_files\converte
  * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_file_converter_requirements_not_met_test extends core_file_converter_requirements_test_base {
+class core_file_converter_requirements_not_met extends core_file_converter_requirements_base {
 }
 
 /**
@@ -809,7 +809,7 @@ class core_file_converter_requirements_not_met_test extends core_file_converter_
  * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_file_converter_type_not_supported_test extends core_file_converter_requirements_test_base {
+class core_file_converter_type_not_supported extends core_file_converter_requirements_base {
 
     /**
      * Whether the plugin is configured and requirements are met.
@@ -828,7 +828,7 @@ class core_file_converter_type_not_supported_test extends core_file_converter_re
  * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_file_converter_type_supported_test extends core_file_converter_requirements_test_base {
+class core_file_converter_type_supported extends core_file_converter_requirements_base {
 
     /**
      * Whether the plugin is configured and requirements are met.
@@ -858,7 +858,7 @@ class core_file_converter_type_supported_test extends core_file_converter_requir
  * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_file_converter_type_successful extends core_file_converter_requirements_test_base {
+class core_file_converter_type_successful extends core_file_converter_requirements_base {
 
     /**
      * Convert a document to a new format and return a conversion object relating to the conversion in progress.
@@ -891,7 +891,7 @@ class core_file_converter_type_successful extends core_file_converter_requiremen
  * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_file_converter_type_failed extends core_file_converter_requirements_test_base {
+class core_file_converter_type_failed extends core_file_converter_requirements_base {
 
     /**
      * Whether the plugin is configured and requirements are met.
