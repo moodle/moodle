@@ -1853,6 +1853,8 @@ class html_writer {
     /**
      * Generates a simple select form field
      *
+     * Note this function does HTML escaping on the optgroup labels, but not on the choice labels.
+     *
      * @param array $options associative array value=>label ex.:
      *                array(1=>'One, 2=>Two)
      *              it is also possible to specify optgroup as complex label array ex.:
