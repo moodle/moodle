@@ -6,8 +6,8 @@ Feature: In an assignment, teachers can change filters in the grading app
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | category | groupmode |
-      | Course 1 | C1        | 0        | 1         |
+      | fullname   | shortname | category | groupmode |
+      | Course 1 & | C1        | 0        | 1         |
     And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
@@ -25,7 +25,7 @@ Feature: In an assignment, teachers can change filters in the grading app
     And the following "activity" exists:
       | activity                            | assign                  |
       | course                              | C1                      |
-      | name                                | Test assignment name    |
+      | name                                | Test assignment name &  |
       | idnumber                            | assign                  |
       | description                         | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1                       |
@@ -36,10 +36,13 @@ Feature: In an assignment, teachers can change filters in the grading app
   @javascript
   Scenario: Set filters in the grading table and see them in the grading app
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on "Course 1 &" course homepage
+    And I follow "Test assignment name &"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
+    And I should not see "Course 1 &amp;"
+    And the "title" attribute of "a[title='Course: Course 1 &']" "css_element" should not contain "&amp;"
+    And I should not see "Test assignment name &amp;"
     And I set the field "allocatedmarker" to "Marker 1"
     And I set the field "workflowstate" to "In marking"
     And I set the field "Notify students" to "0"
@@ -47,8 +50,8 @@ Feature: In an assignment, teachers can change filters in the grading app
     And I click on "Edit settings" "link"
     And I log out
     When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on "Course 1 &" course homepage
+    And I follow "Test assignment name &"
     And I navigate to "View all submissions" in current page administration
     And I set the field "filter" to "Not submitted"
     And I set the field "markerfilter" to "Marker 1"
@@ -61,8 +64,8 @@ Feature: In an assignment, teachers can change filters in the grading app
   @javascript
   Scenario: Set filters in the grading app and see them in the grading table
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on "Course 1 &" course homepage
+    And I follow "Test assignment name &"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "allocatedmarker" to "Marker 1"
@@ -72,8 +75,8 @@ Feature: In an assignment, teachers can change filters in the grading app
     And I click on "Edit settings" "link"
     And I log out
     When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on "Course 1 &" course homepage
+    And I follow "Test assignment name &"
     And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I click on "[data-region=user-filters]" "css_element"
