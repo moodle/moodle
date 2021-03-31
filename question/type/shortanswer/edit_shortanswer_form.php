@@ -36,12 +36,13 @@ defined('MOODLE_INTERNAL') || die();
 class qtype_shortanswer_edit_form extends question_edit_form {
 
     protected function definition_inner($mform) {
-        $menu = array(
+        $menu = [
             get_string('caseno', 'qtype_shortanswer'),
             get_string('caseyes', 'qtype_shortanswer')
-        );
+        ];
         $mform->addElement('select', 'usecase',
                 get_string('casesensitive', 'qtype_shortanswer'), $menu);
+        $mform->setDefault('usecase', $this->get_default_value('usecase', $menu[0]));
 
         $mform->addElement('static', 'answersinstruct',
                 get_string('correctanswers', 'qtype_shortanswer'),

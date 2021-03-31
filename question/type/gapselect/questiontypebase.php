@@ -319,6 +319,11 @@ abstract class qtype_gapselect_base extends question_type {
         return $goupofanswers;
     }
 
+    public function save_defaults_for_new_questions(stdClass $fromform): void {
+        parent::save_defaults_for_new_questions($fromform);
+        $this->set_default_value('shuffleanswers', $fromform->shuffleanswers ?? 0);
+    }
+
     public function get_possible_responses($questiondata) {
         $question = $this->make_question($questiondata);
 

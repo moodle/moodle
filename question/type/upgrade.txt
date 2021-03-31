@@ -1,5 +1,24 @@
 This files describes API changes for question type plugins.
 
+
+=== 3.11 ===
+* Introducing the following \question_type base class methods to save/fetch the last form values
+  that were used when creating questions as the new defaults when creating new questions:
+  - \question_type::get_default_value()
+    - Fetches the default value for a given question field from the user preference.
+      Question type plugins can use this in edit_{qtypename}_form.php when using $mform->setDefault().
+  - \question_type::set_default_value()
+    - Saves the default value for a given question form field in the user preferences.
+  - \question_type::save_defaults_for_new_questions()
+    - Saves the question type plugin's defined form defaults into the user preferences.
+      It calls \question_type::set_default_value() to save each form field default value
+      into the user preferences.
+    - Question type plugins using \question_type::get_default_value() for their form fields must implement
+      this in order to save the values from these form fields as defaults for new questions.
+
+  This will help teachers who repeatedly create questions and use the same values for the fields
+  (e.g. Default mark, Penalty for each incorrect try, etc.) in the question edit form.
+
 === 3.8 ===
 
 * There is a new method for question types get_extra_question_bank_actions.
