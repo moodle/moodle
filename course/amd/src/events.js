@@ -25,4 +25,5 @@ export default {
     favourited: 'core_course:favourited',
     unfavorited: 'core_course:unfavorited',
     manualCompletionToggled: 'core_course:manualcompletiontoggled',
+    stateChanged: 'core_course:stateChanged',
 };
