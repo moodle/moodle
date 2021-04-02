@@ -106,14 +106,6 @@ $string['unitposition'] = 'Units go';
 $string['units'] = 'Units';
 $string['unitselect'] = 'a drop-down menu';
 $string['unitx'] = 'Unit {no} ';
-$string['validnumberformats'] = 'Valid number formats';
-$string['validnumberformats_help'] = '* regular numbers 13500.67, 13 500.67, 13500,67 or 13 500,67
-
-* if your language pack settings (langconfig.php file) uses a comma (,) as thousand separator *always* put the decimal point (.) as in 13,500.67 : 13,500.
-
-* for exponent form, say 1.350067 * 10<sup>4</sup>, use 1.350067 E4 : 1.350067 E04';
-
-$string['validnumbers'] = '13500.67, 13 500.67, 13,500.67, 13500,67, 13 500,67, 1.350067 E4 or 1.350067 E04';
 $string['xmustbenumeric'] = '{$a} must be a number.';
 $string['xmustnotbenumeric'] = '{$a} cannot be a number.';
 $string['youmustenteramultiplierhere'] = 'You must enter a multiplier here.';
