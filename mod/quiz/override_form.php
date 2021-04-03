@@ -135,43 +135,28 @@ class quiz_override_form extends moodleform {
                 $mform->freeze('userid');
             } else {
                 // Prepare the list of users.
-
-                // Get the list of appropriate users, depending on whether and how groups are used.
-                $userfieldsql = $userfieldsapi->get_sql('u', true, '', '', false);
-                $capabilityjoin = get_with_capability_join($this->context, 'mod/quiz:attempt', 'u.id');
-                list($sort, $sortparams) = users_order_by_sql('u', null,
-                        $this->context, $userfieldsql->mappings);
-
-                $groupjoin = '';
-                $groupparams = [];
+                $groupids = 0;
                 if (!$accessallgroups) {
                     $groups = groups_get_activity_allowed_groups($cm);
-                    list($grouptest, $groupparams) = $DB->get_in_or_equal(
-                            array_keys($groups), SQL_PARAMS_NAMED, 'grp');
-                    $groupjoin = "JOIN (SELECT DISTINCT userid
-                                  FROM {groups_members}
-                                 WHERE groupid $grouptest
-                                       ) gm ON gm.userid = u.id";
+                    $groupids = array_keys($groups);
                 }
-
-                $capabilitywhere = '';
-                if ($capabilityjoin->wheres) {
-                    $capabilitywhere = 'AND ' . $capabilityjoin->wheres;
-                }
+                $enrolledjoin = get_enrolled_with_capabilities_join(
+                        $this->context, '', 'mod/quiz:attempt', $groupids, true);
+                $userfieldsql = $userfieldsapi->get_sql('u', true, '', '', false);
+                list($sort, $sortparams) = users_order_by_sql('u', null,
+                        $this->context, $userfieldsql->mappings);
 
                 $users = $DB->get_records_sql("
                         SELECT $userfieldsql->selects
                           FROM {user} u
+                          $enrolledjoin->joins
+                          $userfieldsql->joins
                           LEFT JOIN {quiz_overrides} existingoverride ON
                                       existingoverride.userid = u.id AND existingoverride.quiz = :quizid
-                          $capabilityjoin->joins
-                          $groupjoin
-                          $userfieldsql->joins
                          WHERE existingoverride.id IS NULL
-                           $capabilitywhere
+                           AND $enrolledjoin->wheres
                       ORDER BY $sort
-                        ", array_merge(['quizid' => $this->quiz->id], $capabilityjoin->params,
-                        $groupparams, $userfieldsql->params, $sortparams));
+                        ", array_merge(['quizid' => $this->quiz->id], $userfieldsql->params, $enrolledjoin->params, $sortparams));
 
                 // Filter users based on any fixed restrictions (groups, profile).
                 $info = new \core_availability\info_module($cm);

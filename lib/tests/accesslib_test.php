@@ -2745,7 +2745,13 @@ class accesslib_test extends advanced_testcase {
      * Test that enrolled users SQL does not return any values for users in
      * other courses.
      *
+     *
      * @covers ::get_enrolled_users
+     * @covers ::get_enrolled_sql
+     * @covers ::get_enrolled_with_capabilities_join
+     * @covers ::get_enrolled_join
+     * @covers ::get_with_capability_join
+     * @covers ::groups_get_members_join
      * @covers ::get_suspended_userids
      */
     public function test_get_enrolled_sql_different_course() {
@@ -2778,7 +2784,13 @@ class accesslib_test extends advanced_testcase {
      * Test that enrolled users SQL does not return any values for role
      * assignments without an enrolment.
      *
+     *
      * @covers ::get_enrolled_users
+     * @covers ::get_enrolled_sql
+     * @covers ::get_enrolled_with_capabilities_join
+     * @covers ::get_enrolled_join
+     * @covers ::get_with_capability_join
+     * @covers ::groups_get_members_join
      * @covers ::get_suspended_userids
      */
     public function test_get_enrolled_sql_role_only() {
@@ -2810,6 +2822,11 @@ class accesslib_test extends advanced_testcase {
      * Test that multiple enrolments for the same user are counted correctly.
      *
      * @covers ::get_enrolled_users
+     * @covers ::get_enrolled_sql
+     * @covers ::get_enrolled_with_capabilities_join
+     * @covers ::get_enrolled_join
+     * @covers ::get_with_capability_join
+     * @covers ::groups_get_members_join
      * @covers ::get_suspended_userids
      */
     public function test_get_enrolled_sql_multiple_enrolments() {
@@ -2858,10 +2875,65 @@ class accesslib_test extends advanced_testcase {
     }
 
     /**
+     * Test that enrolled users returns only users in those groups that are
+     * specified.
+     *
+     * @covers ::get_enrolled_users
+     * @covers ::get_enrolled_sql
+     * @covers ::get_enrolled_with_capabilities_join
+     * @covers ::get_enrolled_join
+     * @covers ::get_with_capability_join
+     * @covers ::groups_get_members_join
+     * @covers ::get_suspended_userids
+     */
+    public function test_get_enrolled_sql_userswithgroups() {
+        $this->resetAfterTest();
+
+        $systemcontext = context_system::instance();
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        groups_add_member($group1, $user1);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        groups_add_member($group2, $user2);
+
+        // Get user from group 1.
+        $group1users   = get_enrolled_users($coursecontext, '', $group1->id);
+        $this->assertCount(1, $group1users);
+        $this->assertArrayHasKey($user1->id, $group1users);
+        $this->assertEquals(1, count_enrolled_users($coursecontext, '', $group1->id));
+
+        // Get user from group 2.
+        $group2users   = get_enrolled_users($coursecontext, '', $group2->id);
+        $this->assertCount(1, $group2users);
+        $this->assertArrayHasKey($user2->id, $group2users);
+        $this->assertEquals(1, count_enrolled_users($coursecontext, '', $group2->id));
+
+        // Get users from multiple groups.
+        $groupusers   = get_enrolled_users($coursecontext, '', [$group1->id, $group2->id]);
+        $this->assertCount(2, $groupusers);
+        $this->assertArrayHasKey($user1->id, $groupusers);
+        $this->assertArrayHasKey($user2->id, $groupusers);
+        $this->assertEquals(2, count_enrolled_users($coursecontext, '', [$group1->id, $group2->id]));
+    }
+
+    /**
      * Test that enrolled users SQL does not return any values for users
      * without a group when $context is not a valid course context.
      *
      * @covers ::get_enrolled_users
+     * @covers ::get_enrolled_sql
+     * @covers ::get_enrolled_with_capabilities_join
+     * @covers ::get_enrolled_join
+     * @covers ::get_with_capability_join
+     * @covers ::groups_get_members_join
+     * @covers ::get_suspended_userids
      */
     public function test_get_enrolled_sql_userswithoutgroup() {
         global $DB;
@@ -2880,7 +2952,7 @@ class accesslib_test extends advanced_testcase {
         $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
         groups_add_member($group, $user1);
 
-        $enrolled   = get_enrolled_users($coursecontext);
+        $enrolled = get_enrolled_users($coursecontext);
         $this->assertCount(2, $enrolled);
 
         // Get users without any group on the course context.
