@@ -288,21 +288,19 @@ class webservice {
 
         $params = array($CFG->siteguest, $serviceid);
 
-        $namefields = get_all_user_name_fields(true, 'u');
+        $userfields = \core_user\fields::for_identity(context_system::instance())->with_name()->excluding('id');
+        $fieldsql = $userfields->get_sql('u');
 
-        foreach (get_extra_user_fields(context_system::instance()) as $extrafield) {
-            $namefields .= ',u.' . $extrafield;
-        }
-
-        $sql = " SELECT u.id as id, esu.id as serviceuserid, {$namefields},
+        $sql = " SELECT u.id as id, esu.id as serviceuserid {$fieldsql->selects},
                         esu.iprestriction as iprestriction, esu.validuntil as validuntil,
                         esu.timecreated as timecreated
-                   FROM {user} u, {external_services_users} esu
+                   FROM {user} u
+                   JOIN {external_services_users} esu ON esu.userid = u.id
+                        {$fieldsql->joins}
                   WHERE u.id <> ? AND u.deleted = 0 AND u.confirmed = 1
-                        AND esu.userid = u.id
                         AND esu.externalserviceid = ?";
 
-        $users = $DB->get_records_sql($sql, $params);
+        $users = $DB->get_records_sql($sql, array_merge($fieldsql->params, $params));
 
         return $users;
     }

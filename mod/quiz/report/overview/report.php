@@ -482,7 +482,7 @@ class quiz_overview_report extends quiz_attempts_report {
      *
      * Given an array of attempts, it regrades them all, or does a dry run.
      * Each object in the attempts array must be a row from the quiz_attempts
-     * table, with the get_all_user_name_fields from the user table joined in.
+     * table, with the \core_user\fields::for_name() fields from the user table joined in.
      * In addition, if $attempt->regradeonlyslots is set, then only those slots
      * are regraded, otherwise all slots are regraded.
      *
