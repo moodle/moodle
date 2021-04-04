@@ -29,6 +29,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = 'he';
+$string['parentlanguage'] = '';
 $string['thisdirection'] = 'rtl';
 $string['thislanguage'] = 'עברית';
