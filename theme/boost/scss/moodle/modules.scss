@@ -9,6 +9,15 @@ select {
     width: auto;
 }
 
+.path-mod {
+    div.activity-information {
+        border-bottom: $border-width solid $table-border-color;
+        padding-top: map-get($spacers, 2);
+        padding-bottom: map-get($spacers, 3);
+        margin-bottom: map-get($spacers, 2);
+    }
+}
+
 // Choice module
 
 .path-mod-choice {
