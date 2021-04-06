@@ -2521,5 +2521,33 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021031200.01);
     }
 
+    if ($oldversion < 2021033100.00) {
+        // Define field 'showactivitydates' to be added to course table.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('showactivitydates', XMLDB_TYPE_INTEGER, '1', null,
+            XMLDB_NOTNULL, null, '0', 'originalcourseid');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021033100.00);
+    }
+
+    if ($oldversion < 2021033100.01) {
+        // Define field 'showcompletionconditions' to be added to course.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('showcompletionconditions', XMLDB_TYPE_INTEGER, '1', null,
+            XMLDB_NOTNULL, null, '1', 'completionnotify');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021033100.01);
+    }
+
     return true;
 }

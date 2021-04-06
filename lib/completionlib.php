@@ -141,6 +141,15 @@ define('COMPLETION_AGGREGATION_ALL', 1);
  */
 define('COMPLETION_AGGREGATION_ANY', 2);
 
+/**
+ * Completion conditions will be displayed to user.
+ */
+define('COMPLETION_SHOW_CONDITIONS', 1);
+
+/**
+ * Completion conditions will be hidden from user.
+ */
+define('COMPLETION_HIDE_CONDITIONS', 0);
 
 /**
  * Utility function for checking if the logged in user can view
