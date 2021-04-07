@@ -62,6 +62,7 @@ class block_settings_renderer extends plugin_renderer_base {
         // array of nested li elements
         $lis = array();
         $number = 0;
+        $htmlidprefix = html_writer::random_id();
         foreach ($items as $item) {
             $number++;
             if (!$item->display) {
@@ -77,8 +78,8 @@ class block_settings_renderer extends plugin_renderer_base {
             $content = $this->output->render($item);
             $id = $item->id ? $item->id : html_writer::random_id();
             $ulattr = ['id' => $id . '_group', 'role' => 'group'];
-            $liattr = ['class' => [$item->get_css_type(), 'depth_'.$depth], 'tabindex' => '-1'];
-            $pattr = ['class' => ['tree_item'], 'role' => 'treeitem'];
+            $liattr = ['class' => [$item->get_css_type(), 'depth_'.$depth], 'tabindex' => '-1', 'role' => 'treeitem'];
+            $pattr = ['class' => ['tree_item']];
             $pattr += !empty($item->id) ? ['id' => $item->id] : [];
             $hasicon = (!$isbranch && $item->icon instanceof renderable);
 
@@ -106,7 +107,7 @@ class block_settings_renderer extends plugin_renderer_base {
             if (!empty($item->classes) && count($item->classes) > 0) {
                 $pattr['class'] = array_merge($pattr['class'], $item->classes);
             }
-            $nodetextid = 'label_' . $depth . '_' . $number;
+            $nodetextid = $htmlidprefix . '_label_' . $depth . '_' . $number;
 
             // class attribute on the div item which only contains the item content
             $pattr['class'][] = 'tree_item';
@@ -115,6 +116,7 @@ class block_settings_renderer extends plugin_renderer_base {
             } else {
                 $pattr['class'][] = 'leaf';
             }
+            $pattr['id'] = $nodetextid;
 
             $liattr['class'] = join(' ', $liattr['class']);
             $pattr['class'] = join(' ', $pattr['class']);

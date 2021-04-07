@@ -73,6 +73,7 @@ class block_navigation_renderer extends plugin_renderer_base {
         $lis = array();
         // Set the number to be static for unique id's.
         static $number = 0;
+        $htmlidprefix = html_writer::random_id();
         foreach ($items as $item) {
             $number++;
             if (!$item->display && !$item->contains_active_node()) {
@@ -90,8 +91,8 @@ class block_navigation_renderer extends plugin_renderer_base {
             $content = $item->get_content();
             $title = $item->get_title();
             $ulattr = ['id' => $id . '_group', 'role' => 'group'];
-            $liattr = ['class' => [$item->get_css_type(), 'depth_'.$depth]];
-            $pattr = ['class' => ['tree_item'], 'role' => 'treeitem'];
+            $liattr = ['class' => [$item->get_css_type(), 'depth_'.$depth],  'role' => 'treeitem'];
+            $pattr = ['class' => ['tree_item']];
             $pattr += !empty($item->id) ? ['id' => $item->id] : [];
             $isbranch = $isexpandable && ($item->children->count() > 0 || ($item->has_children() && (isloggedin() || $item->type <= navigation_node::TYPE_CATEGORY)));
             $hasicon = ((!$isbranch || $item->type == navigation_node::TYPE_ACTIVITY || $item->type == navigation_node::TYPE_RESOURCE) && $item->icon instanceof renderable);
@@ -112,7 +113,7 @@ class block_navigation_renderer extends plugin_renderer_base {
                 continue;
             }
 
-            $nodetextid = 'label_' . $depth . '_' . $number;
+            $nodetextid = $htmlidprefix . '_label_' . $depth . '_' . $number;
             $attributes = array('tabindex' => '-1', 'id' => $nodetextid);
             if ($title !== '') {
                 $attributes['title'] = $title;
