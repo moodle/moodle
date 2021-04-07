@@ -1134,8 +1134,7 @@ class mod_quiz_lib_testcase extends advanced_testcase {
         $moddefaults->completion = 2;
 
         $activeruledescriptions = [
-            get_string('completionattemptsexhausteddesc', 'quiz'),
-            get_string('completionpassdesc', 'quiz'),
+            get_string('completionpassorattemptsexhausteddesc', 'quiz'),
         ];
         $this->assertEquals(mod_quiz_get_completion_active_rule_descriptions($cm1), $activeruledescriptions);
         $this->assertEquals(mod_quiz_get_completion_active_rule_descriptions($cm2), []);
