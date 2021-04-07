@@ -123,6 +123,7 @@ $string['clickexpandreviewpanel'] = 'Click to expand review panel';
 $string['collapsegradepanel'] = 'Collapse grade panel';
 $string['collapsereviewpanel'] = 'Collapse review panel';
 $string['comment'] = 'Comment';
+$string['completiondetail:submit'] = 'Make a submission';
 $string['completionsubmit'] = 'Student must submit to this activity to complete it';
 $string['conversionexception'] = 'Could not convert assignment. Exception was: {$a}.';
 $string['configshowrecentsubmissions'] = 'Everyone can see notifications of submissions in recent activity reports.';

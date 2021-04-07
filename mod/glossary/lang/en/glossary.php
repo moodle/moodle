@@ -87,6 +87,7 @@ $string['commentdeleted'] = 'The comment has been deleted.';
 $string['comments'] = 'Comments';
 $string['commentson'] = 'Comments on';
 $string['commentupdated'] = 'The comment has been updated.';
+$string['completiondetail:entries'] = 'Make entries: {$a}';
 $string['completionentries'] = 'Student must create entries:';
 $string['completionentriesdesc'] = 'Student must create at least {$a} entry/entries';
 $string['completionentriesgroup'] = 'Require entries';
