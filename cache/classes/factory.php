@@ -658,4 +658,36 @@ class cache_factory {
         }
         return self::$displayhelper;
     }
+
+    /**
+     * Gets the cache_config_writer to use when caching is disabled.
+     * This should only be called from cache_factory_disabled.
+     *
+     * @return cache_config_writer
+     */
+    public static function get_disabled_writer(): cache_config_writer {
+        global $CFG;
+
+        // Figure out if we are in a recursive loop using late static binding.
+        // This happens when get_disabled_writer is not overridden. We just want the default.
+        $loop = false;
+        if (!empty($CFG->alternative_cache_factory_class)) {
+            $loop = get_called_class() === $CFG->alternative_cache_factory_class;
+        }
+
+        if (!$loop && !empty($CFG->alternative_cache_factory_class)) {
+            // Get the class to use from the alternative factory.
+            $factoryinstance = new $CFG->alternative_cache_factory_class();
+            return $factoryinstance::get_disabled_writer();
+        } else {
+            // We got here from cache_factory_disabled.
+            // We should use the default writer here.
+            // Make sure we have a default config if needed.
+            if (!cache_config::config_file_exists()) {
+                cache_config_writer::create_default_configuration(true);
+            }
+
+            return new cache_config_writer();
+        }
+    }
 }
