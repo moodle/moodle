@@ -142,12 +142,83 @@ class primary implements renderable, templatable {
     }
 
     /**
-     * Get/Generate the user menu
+     * Get/Generate the user menu.
+     * This is leveraging the data from user_get_user_navigation_info and the logic in $OUTPUT->user_menu()
      *
      * @return array
      */
     public function get_user_menu(): array {
-        // Empty stub to add to.
-        return [];
+        global $CFG, $USER, $PAGE;
+        require_once($CFG->dirroot . '/user/lib.php');
+
+        $usermenudata = [];
+        $info = user_get_user_navigation_info($USER, $PAGE);
+        if (isset($info->unauthenticateduser)) {
+            $info->unauthenticateduser['content'] = get_string($info->unauthenticateduser['content']);
+            $info->unauthenticateduser['url'] = get_login_url();
+            return (array) $info;
+        }
+        // Gather all the avatar data to be displayed in the user menu.
+        $usermenudata['avatardata'][] = [
+            'content' => $info->metadata['useravatar'],
+            'classes' => 'current'
+        ];
+        $usermenudata['userfullname'] = $info->metadata['realuserfullname'] ?? $info->metadata['userfullname'];
+
+        // Logged in as someone else.
+        if ($info->metadata['asotheruser']) {
+            $usermenudata['avatardata'][] = [
+                'content' => $info->metadata['realuseravatar'],
+                'classes' => 'realuser'
+            ];
+            $usermenudata['metadata'][] = [
+                'content' => get_string('loggedinas', 'moodle', $info->metadata['userfullname']),
+                'classes' => 'viewingas'
+            ];
+        }
+
+        // Gather all the meta data to be displayed in the user menu.
+        $metadata = [
+            'asotherrole' => [
+                'value' => 'rolename',
+                'class' => 'role role-##GENERATEDCLASS##',
+            ],
+            'userloginfail' => [
+                'value' => 'userloginfail',
+                'class' => 'loginfailures',
+            ],
+            'asmnetuser' => [
+                'value' => 'mnetidprovidername',
+                'class' => 'mnet mnet-##GENERATEDCLASS##',
+            ],
+        ];
+        foreach ($metadata as $key => $value) {
+            if (!empty($info->metadata[$key])) {
+                $content = $info->metadata[$value['value']] ?? '';
+                $generatedclass = strtolower(preg_replace('#[ ]+#', '-', trim($content)));
+                $customclass = str_replace('##GENERATEDCLASS##', $generatedclass, ($value['class'] ?? ''));
+                $usermenudata['metadata'][] = [
+                    'content' => $content,
+                    'classes' => $customclass
+                ];
+            }
+        }
+
+        $modifiedarray = array_map(function($value) {
+            $value->divider = $value->itemtype == 'divider';
+            $value->link = $value->itemtype == 'link';
+            if (isset($value->pix) && !empty($value->pix)) {
+                $value->pixicon = $value->pix;
+                unset($value->pix);
+            }
+            return $value;
+        }, $info->navitems);
+
+        // Add dividers after the first item and before the last item.
+        $modifiedarray[0]->divider = true;
+        $modifiedarray[count($info->navitems) - 2]->divider = true;
+        $usermenudata['items'] = $modifiedarray;
+
+        return $usermenudata;
     }
 }
