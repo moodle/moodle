@@ -169,19 +169,19 @@ abstract class activity_custom_completion {
      * @param string $rule The completion rule.
      * @return int The completion state.
      */
-    public abstract function get_state(string $rule): int;
+    abstract public function get_state(string $rule): int;
 
     /**
      * Fetch the list of custom completion rules that this module defines.
      *
      * @return array
      */
-    public abstract static function get_defined_custom_rules(): array;
+    abstract public static function get_defined_custom_rules(): array;
 
     /**
      * Returns an associative array of the descriptions of custom completion rules.
      *
      * @return array
      */
-    public abstract function get_custom_rule_descriptions(): array;
+    abstract public function get_custom_rule_descriptions(): array;
 }

@@ -18,7 +18,7 @@
  * Contains the class for building the user's activity completion details.
  *
  * @package   core_completion
- * @copyright Jun Pataleta <jun@moodle.com>
+ * @copyright 2021 Jun Pataleta <jun@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,7 @@ use completion_info;
  * Class for building the user's activity completion details.
  *
  * @package   core_completion
- * @copyright Jun Pataleta <jun@moodle.com>
+ * @copyright 2021 Jun Pataleta <jun@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cm_completion_details {
