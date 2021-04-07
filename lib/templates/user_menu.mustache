@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/user_menu
+
+    Action link template.
+
+    Context variables required for this template:
+    * unauthenticateduseruser - (Optional) Items to be displayed if an an unautheticated user is accessing the site
+        * content - The content to be displayed in the header.
+        * url - The login url
+    * items - Array of user menu items used in user_action_menu_items. Required if the above not provided.
+    * metadata - Array of additional metadata to be displayed in the dropdown button.
+    * avatardata - Array of avatars to be displayed. Usually only the current user's avatar. If viewing as another user,
+        includes that user's avatar.
+    * userfullname - The name of the logged in user
+
+    Example context (json):
+    {
+        "unauthenticateduser": {
+            "content": "You are not logged in",
+            "url": "https://yourmoodlesite/login/index.php"
+        },
+        "items": [],
+        "metadata": [],
+        "avatardata": [],
+        "userfullname": "Admin User"
+    }
+}}
+<div class="usermenu">
+    {{#unauthenticateduser}}
+        <span class="login">
+            {{content}}
+            {{#url}}
+                (<a href="{{url}}">{{#str}} login, core {{/str}}</a>)
+            {{/url}}
+        </span>
+    {{/unauthenticateduser}}
+    {{^unauthenticateduser}}
+        <div class="dropdown show">
+            <a href="#" role="button" id="user-menu-toggle" data-toggle="dropdown" aria-label="{{#str}}usermenu{{/str}}"
+               aria-haspopup="true" aria-controls="user-action-menu" class="btn dropdown-toggle">
+                <span class="userbutton">
+                    {{> core/user_menu_metadata }}
+                </span>
+                <b class="caret"></b>
+            </a>
+            <div role="menu" aria-labelledby="user-menu-toggle" id="user-action-menu" class="dropdown-menu dropdown-menu-right">
+                {{> core/user_action_menu_items }}
+            </div>
+        </div>
+    {{/unauthenticateduser}}
+</div>
