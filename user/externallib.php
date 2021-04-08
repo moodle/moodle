@@ -572,26 +572,32 @@ class core_user_external extends external_api {
 
                 // First check the user exists.
                 if (!$existinguser = core_user::get_user($user['id'])) {
-                    throw new moodle_exception('invaliduserid');
+                    throw new moodle_exception('invaliduserid', '', '', null,
+                            'Invalid user ID');
                 }
                 // Check if we are trying to update an admin.
                 if ($existinguser->id != $USER->id and is_siteadmin($existinguser) and !is_siteadmin($USER)) {
-                    throw new moodle_exception('usernotupdatedadmin');
+                    throw new moodle_exception('usernotupdatedadmin', '', '', null,
+                            'Cannot update admin accounts');
                 }
                 // Other checks (deleted, remote or guest users).
                 if ($existinguser->deleted) {
-                    throw new moodle_exception('usernotupdateddeleted');
+                    throw new moodle_exception('usernotupdateddeleted', '', '', null,
+                            'User is a deleted user');
                 }
                 if (is_mnet_remote_user($existinguser)) {
-                    throw new moodle_exception('usernotupdatedremote');
+                    throw new moodle_exception('usernotupdatedremote', '', '', null,
+                            'User is a remote user');
                 }
                 if (isguestuser($existinguser->id)) {
-                    throw new moodle_exception('usernotupdatedguest');
+                    throw new moodle_exception('usernotupdatedguest', '', '', null,
+                            'Cannot update guest account');
                 }
                 // Check duplicated emails.
                 if (isset($user['email']) && $user['email'] !== $existinguser->email) {
                     if (!validate_email($user['email'])) {
-                        throw new moodle_exception('useremailinvalid');
+                        throw new moodle_exception('useremailinvalid', '', '', null,
+                                'Invalid email address');
                     } else if (empty($CFG->allowaccountssameemail)) {
                         // Make a case-insensitive query for the given email address
                         // and make sure to exclude the user being updated.
@@ -603,7 +609,8 @@ class core_user_external extends external_api {
                         );
                         // Skip if there are other user(s) that already have the same email.
                         if ($DB->record_exists_select('user', $select, $params)) {
-                            throw new moodle_exception('useremailduplicate');
+                            throw new moodle_exception('useremailduplicate', '', '', null,
+                                    'Duplicate email address');
                         }
                     }
                 }

@@ -1,5 +1,12 @@
 This files describes API changes for code that uses the user API.
 
+=== 4.0 ===
+
+* External function core_user_external::update_users() will now fail on a per user basis. Previously if one user
+  update failed all users in the operation would fail.
+* External function core_user_external::update_users() now returns an error code and message to why a user update
+  action failed.
+
 === 3.11 ===
 
 * Added new core_user/form_user_selector JS module that can be used as the 'ajax' handler for the autocomplete form
