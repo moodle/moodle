@@ -620,35 +620,127 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test badges observer when cohort_member_added event is fired.
+     * Test badges observer when cohort_member_added event is fired and user required to belong to any cohort.
+     *
+     * @covers award_criteria_cohort
      */
-    public function test_badges_observer_cohort_criteria_review() {
+    public function test_badges_observer_any_cohort_criteria_review() {
         global $CFG;
 
         require_once("$CFG->dirroot/cohort/lib.php");
 
-        $cohort = $this->getDataGenerator()->create_cohort();
+        $cohort1 = $this->getDataGenerator()->create_cohort();
+        $cohort2 = $this->getDataGenerator()->create_cohort();
 
         $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+
         $badge = new badge($this->badgeid);
         $this->assertFalse($badge->is_issued($this->user->id));
+        $this->assertSame(0, $badge->review_all_criteria()); // Verify award_criteria_cohort->get_completed_criteria_sql().
 
         // Set up the badge criteria.
         $criteriaoverall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id));
         $criteriaoverall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY));
         $criteriaoverall1 = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_COHORT, 'badgeid' => $badge->id));
-        $criteriaoverall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY, 'cohort_cohorts' => array('0' => $cohort->id)));
-
-        // Make the badge active.
+        $criteriaoverall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY,
+            'cohort_cohorts' => array('0' => $cohort1->id, '1' => $cohort2->id)));
         $badge->set_status(BADGE_STATUS_ACTIVE);
 
+        // Reload it to contain criteria.
+        $badge = new badge($this->badgeid);
+        $this->assertFalse($badge->is_issued($this->user->id));
+        $this->assertSame(0, $badge->review_all_criteria()); // Verify award_criteria_cohort->get_completed_criteria_sql().
+
         // Add the user to the cohort.
-        cohort_add_member($cohort->id, $this->user->id);
+        cohort_add_member($cohort2->id, $this->user->id);
+        $this->assertDebuggingCalled();
 
         // Verify that the badge was awarded.
-        $this->assertDebuggingCalled();
         $this->assertTrue($badge->is_issued($this->user->id));
+        // As the badge has been awarded to user because core_badges_observer been called when the member has been added to the
+        // cohort, there are no other users that can award this badge.
+        $this->assertSame(0, $badge->review_all_criteria()); // Verify award_criteria_cohort->get_completed_criteria_sql().
+    }
 
+    /**
+     * Test badges observer when cohort_member_added event is fired and user required to belong to multiple (all) cohorts.
+     *
+     * @covers award_criteria_cohort
+     */
+    public function test_badges_observer_all_cohort_criteria_review() {
+        global $CFG;
+
+        require_once("$CFG->dirroot/cohort/lib.php");
+
+        $cohort1 = $this->getDataGenerator()->create_cohort();
+        $cohort2 = $this->getDataGenerator()->create_cohort();
+        $cohort3 = $this->getDataGenerator()->create_cohort();
+
+        // Add user2 to cohort1 and cohort3.
+        $user2 = $this->getDataGenerator()->create_user();
+        cohort_add_member($cohort3->id, $user2->id);
+        cohort_add_member($cohort1->id, $user2->id);
+
+        // Add user3 to cohort1, cohort2 and cohort3.
+        $user3 = $this->getDataGenerator()->create_user();
+        cohort_add_member($cohort1->id, $user3->id);
+        cohort_add_member($cohort2->id, $user3->id);
+        cohort_add_member($cohort3->id, $user3->id);
+
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+
+        // Cohort criteria are used in site badges.
+        $badge = new badge($this->badgeid);
+
+        $this->assertFalse($badge->is_issued($this->user->id));
+        $this->assertSame(0, $badge->review_all_criteria()); // Verify award_criteria_cohort->get_completed_criteria_sql().
+
+        // Set up the badge criteria.
+        $criteriaoverall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id));
+        $criteriaoverall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY));
+        $criteriaoverall1 = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_COHORT, 'badgeid' => $badge->id));
+        $criteriaoverall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL,
+            'cohort_cohorts' => array('0' => $cohort1->id, '1' => $cohort2->id, '2' => $cohort3->id)));
+        $badge->set_status(BADGE_STATUS_ACTIVE);
+
+        // Reload it to contain criteria.
+        $badge = new badge($this->badgeid);
+
+        // Verify that the badge was not awarded yet (ALL cohorts are needed and review_all_criteria has to be called).
+        $this->assertFalse($badge->is_issued($this->user->id));
+        $this->assertFalse($badge->is_issued($user2->id));
+        $this->assertFalse($badge->is_issued($user3->id));
+
+        // Verify that after calling review_all_criteria, users with the criteria (user3) award the badge instantly.
+        $this->assertSame(1, $badge->review_all_criteria()); // Verify award_criteria_cohort->get_completed_criteria_sql().
+        $this->assertFalse($badge->is_issued($this->user->id));
+        $this->assertFalse($badge->is_issued($user2->id));
+        $this->assertTrue($badge->is_issued($user3->id));
+        $this->assertDebuggingCalled();
+
+        // Add the user to the cohort1.
+        cohort_add_member($cohort1->id, $this->user->id);
+
+        // Verify that the badge was not awarded yet (ALL cohorts are needed).
+        $this->assertFalse($badge->is_issued($this->user->id));
+        $this->assertSame(0, $badge->review_all_criteria()); // Verify award_criteria_cohort->get_completed_criteria_sql().
+
+        // Add the user to the cohort3.
+        cohort_add_member($cohort3->id, $this->user->id);
+
+        // Verify that the badge was not awarded yet (ALL cohorts are needed).
+        $this->assertFalse($badge->is_issued($this->user->id));
+        $this->assertSame(0, $badge->review_all_criteria()); // Verify award_criteria_cohort->get_completed_criteria_sql().
+
+        // Add user to cohort2.
+        cohort_add_member($cohort2->id, $this->user->id);
+        $this->assertDebuggingCalled();
+
+        // Verify that the badge was awarded (ALL cohorts).
+        $this->assertTrue($badge->is_issued($this->user->id));
+        // As the badge has been awarded to user because core_badges_observer been called when the member has been added to the
+        // cohort, there are no other users that can award this badge.
+        $this->assertSame(0, $badge->review_all_criteria()); // Verify award_criteria_cohort->get_completed_criteria_sql().
     }
 
     /**
