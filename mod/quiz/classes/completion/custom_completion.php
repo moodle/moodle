@@ -159,4 +159,18 @@ class custom_completion extends activity_custom_completion {
             'completionminattempts' => get_string('completiondetail:minattempts', 'mod_quiz', $minattempts),
         ];
     }
+
+    /**
+     * Returns an array of all completion rules, in the order they should be displayed to users.
+     *
+     * @return array
+     */
+    public function get_sort_order(): array {
+        return [
+            'completionview',
+            'completionminattempts',
+            'completionusegrade',
+            'completionpassorattemptsexhausted',
+        ];
+    }
 }
