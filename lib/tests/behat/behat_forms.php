@@ -315,6 +315,19 @@ class behat_forms extends behat_base {
     }
 
     /**
+     * Checks, the field matches the value.
+     *
+     * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" matches multiline:$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field
+     * @param PyStringNode $value
+     * @return void
+     */
+    public function the_field_matches_multiline($field, PyStringNode $value) {
+        $this->the_field_matches_value($field, (string)$value);
+    }
+
+    /**
      * Checks, the field does not match the value.
      *
      * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" does not match value "(?P<field_value_string>(?:[^"]|\\")*)"$/
