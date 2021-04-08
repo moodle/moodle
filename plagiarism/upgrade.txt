@@ -1,5 +1,12 @@
 This files describes API changes for code that uses the plagiarism API.
 
+=== 3.11 ===
+* Support for Essay question type in Quiz has now been implemented, allowing plagiarism plugins to display information
+  on the quiz overview report and when viewing an essay question response.
+  To implement support, plugins should add a listener to the \mod_quiz\event\attempt_submitted event to send the data
+  to the plagiarism api using the essay question response summary (plain text response from the user).
+  The function plagiarism_get_links should only be called to render the results.
+
 === 3.9 ===
 
 * The method get_form_elements_module has been deprecated. Please use {plugin name}_coursemodule_edit_post_actions() instead.

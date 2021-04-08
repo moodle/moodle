@@ -246,7 +246,7 @@ abstract class quiz_attempts_report_table extends table_sql {
      * @param int $slot the number used to identify this question within this usage.
      */
     public function make_review_link($data, $attempt, $slot) {
-        global $OUTPUT;
+        global $OUTPUT, $CFG;
 
         $flag = '';
         if ($this->is_flagged($attempt->usageid, $slot)) {
@@ -273,6 +273,16 @@ abstract class quiz_attempts_report_table extends table_sql {
                         array('height' => 450, 'width' => 650)),
                 array('title' => get_string('reviewresponse', 'quiz')));
 
+        if (!empty($CFG->enableplagiarism)) {
+            require_once($CFG->libdir . '/plagiarismlib.php');
+            $output .= plagiarism_get_links([
+                'context' => $this->context->id,
+                'component' => 'qtype_'.$this->questions[$slot]->qtype,
+                'cmid' => $this->context->instanceid,
+                'area' => $attempt->usageid,
+                'itemid' => $slot,
+                'userid' => $attempt->userid]);
+        }
         return $output;
     }
 
