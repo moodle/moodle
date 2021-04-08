@@ -91,4 +91,18 @@ class custom_completion extends activity_custom_completion {
             'completionendreached' => get_string('completiondetail:reachend', 'lesson'),
         ];
     }
+
+    /**
+     * Returns an array of all completion rules, in the order they should be displayed to users.
+     *
+     * @return array
+     */
+    public function get_sort_order(): array {
+        return [
+            'completionview',
+            'completiontimespent',
+            'completionendreached',
+            'completionusegrade',
+        ];
+    }
 }
