@@ -132,6 +132,7 @@ class secondary extends view {
                 $this->load_module_navigation();
                 break;
             case CONTEXT_SYSTEM:
+                $this->headertitle = get_string('homeheader');
                 $this->load_admin_navigation();
                 break;
         }
