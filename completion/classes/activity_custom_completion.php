@@ -184,4 +184,11 @@ abstract class activity_custom_completion {
      * @return array
      */
     abstract public function get_custom_rule_descriptions(): array;
+
+    /**
+     * Returns an array of all completion rules, in the order they should be displayed to users.
+     *
+     * @return array
+     */
+    abstract public function get_sort_order(): array;
 }
