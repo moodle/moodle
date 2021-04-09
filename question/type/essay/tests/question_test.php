@@ -307,6 +307,7 @@ class qtype_essay_question_test extends advanced_testcase {
         $this->resetAfterTest();
 
         $essay = test_question_maker::make_an_essay_question();
+        $essay->minwordlimit = 15;
         $essay->start_attempt(new question_attempt_step(), 1);
         $qa = test_question_maker::get_a_qa($essay);
         $displayoptions = new question_display_options();
@@ -322,6 +323,8 @@ class qtype_essay_question_test extends advanced_testcase {
         $this->assertNull($options['filetypeslist']);
         $this->assertEquals('', $options['responsetemplate']);
         $this->assertEquals(FORMAT_MOODLE, $options['responsetemplateformat']);
+        $this->assertEquals($essay->minwordlimit, $options['minwordlimit']);
+        $this->assertNull($options['maxwordlimit']);
     }
 
     /**
