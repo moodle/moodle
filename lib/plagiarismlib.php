@@ -47,7 +47,10 @@ function plagiarism_get_links($linkarray) {
         $plagiarismplugin = new $plagiarismclass;
         $output .= $plagiarismplugin->get_links($linkarray);
     }
-    return $output;
+    if (!empty($output)) {
+        return html_writer::span($output, 'core_plagiarism_links');
+    }
+    return '';
 }
 
 /**
