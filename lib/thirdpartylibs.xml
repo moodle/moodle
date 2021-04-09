@@ -303,10 +303,16 @@
     <licenseversion>3-Clause</licenseversion>
   </library>
   <library>
-    <location>babel-polyfill</location>
-    <name>babel-polyfill</name>
+    <location>polyfills</location>
+    <name>regenerator-runtime</name>
     <license>MIT</license>
-    <version>7.7.0</version>
+    <version>0.13.7</version>
+  </library>
+  <library>
+    <location>polyfills</location>
+    <name>core-js-bundle</name>
+    <license>MIT</license>
+    <version>3.15.0</version>
   </library>
   <library>
     <location>polyfills</location>
