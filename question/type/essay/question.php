@@ -247,6 +247,8 @@ class qtype_essay_question extends question_with_responses {
             'filetypeslist' => $this->filetypeslist,
             'responsetemplate' => $this->responsetemplate,
             'responsetemplateformat' => $this->responsetemplateformat,
+            'minwordlimit' => $this->minwordlimit,
+            'maxwordlimit' => $this->maxwordlimit,
         ];
 
         return $settings;
