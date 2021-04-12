@@ -16,7 +16,7 @@ Feature: Allow teachers to edit the visibility of activity dates in a course
       | teacher1 | C1     | editingteacher |
     And the following "activities" exist:
       | activity | course | idnumber | name          | intro                   | timeopen      | timeclose     |
-      | choice   | C1     | choice1  | Test choice 1 | Test choice description | ##yesterday## | ##tomorrow##  |
+      | choice   | C1     | choice1  | Test choice   | Test choice description | ##yesterday## | ##tomorrow##  |
 
   Scenario: Activity dates setting can be enabled to display activity dates in a course
     Given I log in as "teacher1"
@@ -26,11 +26,16 @@ Feature: Allow teachers to edit the visibility of activity dates in a course
       | Show activity dates | Yes |
     And I click on "Save and display" "button"
     And I follow "Test choice"
-    Then I should see "Opened:" in the "[data-region=activity-information]" "css_element"
-    And I should see "Closes:" in the "[data-region=activity-information]" "css_element"
-    # TODO MDL-70821: Check activity dates display on course homepage.
+    Then the activity date information in "Test choice" should exist
+    And the activity date in "Test choice" should contain "Opened:"
+    And the activity date in "Test choice" should contain "Closes:"
+    And I am on "Course 1" course homepage
+    # When showactivitydates is enabled, activity dates should be shown on the course homepage.
+    And the activity date information in "Test choice" should exist
+    And the activity date in "Test choice" should contain "Opened:"
+    And the activity date in "Test choice" should contain "Closes:"
 
-  Scenario: Activity dates setting can be disabled to hidden activity dates in a course
+  Scenario: Activity dates setting can be disabled to hide activity dates in a course
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
@@ -39,11 +44,12 @@ Feature: Allow teachers to edit the visibility of activity dates in a course
     And I click on "Save and display" "button"
     And I follow "Test choice"
     # Activity dates are always shown in the module's view page.
-    Then I should see "Opened:"
-    And I should see "Closes:"
+    Then the activity date information in "Test choice" should exist
+    And the activity date in "Test choice" should contain "Opened:"
+    And the activity date in "Test choice" should contain "Closes:"
     And I am on "Course 1" course homepage
-    And I should not see "Opened:"
-    And I should not see "Closes:"
+    # When showactivitydates is disabled, activity dates should not be shown on the course homepage.
+    And the activity date information in "Test choice" should not exist
 
   Scenario: Default activity dates setting default value can changed to No
     Given I log in as "admin"

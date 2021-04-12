@@ -119,9 +119,7 @@ if ($courseid) {
     }
 }
 
-
 $targetstate = required_param('completionstate', PARAM_INT);
-$fromajax    = optional_param('fromajax', 0, PARAM_INT);
 
 $PAGE->set_url('/course/togglecompletion.php', array('id'=>$cmid, 'completionstate'=>$targetstate));
 
@@ -158,33 +156,15 @@ if (!$completion->is_enabled()) {
 
 // Check completion state is manual
 if($cm->completion != COMPLETION_TRACKING_MANUAL) {
-    error_or_ajax('cannotmanualctrack', $fromajax);
+    throw new moodle_exception('cannotmanualctrack');
 }
 
 $completion->update_state($cm, $targetstate);
 
-// And redirect back to course
-if ($fromajax) {
-    print 'OK';
+// In case of use in other areas of code we allow a 'backto' parameter, otherwise go back to course page.
+if ($backto = optional_param('backto', null, PARAM_URL)) {
+    redirect($backto);
 } else {
-    // In case of use in other areas of code we allow a 'backto' parameter,
-    // otherwise go back to course page
-
-    if ($backto = optional_param('backto', null, PARAM_URL)) {
-        redirect($backto);
-    } else {
-        redirect(course_get_url($course, $cm->sectionnum));
-    }
-}
-
-// utility functions
-
-function error_or_ajax($message, $fromajax) {
-    if ($fromajax) {
-        print get_string($message, 'error');
-        exit;
-    } else {
-        print_error($message);
-    }
+    redirect(course_get_url($course, $cm->sectionnum));
 }
 

@@ -154,6 +154,162 @@ class behat_completion extends behat_base {
     }
 
     /**
+     * Checks if the activity with specified name is maked as complete.
+     *
+     * @Given /^the "(?P<conditionname>(?:[^"]|\\")*)" completion condition of "(?P<activityname>(?:[^"]|\\")*)" is displayed as "(?P<completionstatus>(?:[^"]|\\")*)"$/
+     * @param string $conditionname The completion condition text.
+     * @param string $activityname The activity name.
+     * @param string $completionstatus The completion status. Must be either of the following: 'todo', 'done', 'failed'.
+     */
+    public function activity_completion_condition_displayed_as(string $conditionname, string $activityname,
+            string $completionstatus): void {
+
+        if (!in_array($completionstatus, ['todo', 'done', 'failed'])) {
+            throw new coding_exception('Invalid completion status. It must be of type "todo", "done", or "failed".');
+        }
+
+        $text = get_string("completion_automatic:$completionstatus", 'core_course') . ' ' . $conditionname;
+
+        $conditionslistlabel = get_string('completionrequirements', 'core_course', $activityname);
+        $selector = "div[aria-label='$conditionslistlabel']";
+
+        $this->execute("behat_general::assert_element_contains_text", [$text, $selector, "css_element"]);
+    }
+
+    /**
+     * Checks if the activity with specified name is maked as complete.
+     *
+     * @Given /^the "(?P<conditionname>(?:[^"]|\\")*)" completion condition of "(?P<activityname>(?:[^"]|\\")*)" overridden by "(?P<username>(?:[^"]|\\")*)" is displayed as "(?P<completionstatus>(?:[^"]|\\")*)"$/
+     * @param string $conditionname The completion condition text.
+     * @param string $activityname The activity name.
+     * @param string $username The full name of the user overriding the student's activity completion.
+     * @param string $completionstatus The override completion status. Must be either of the following: 'todo', 'done'.
+     */
+    public function overridden_activity_completion_condition_displayed_as(string $conditionname, string $activityname,
+            string $username, string $completionstatus): void {
+        if (!in_array($completionstatus, ['todo', 'done'])) {
+            throw new coding_exception('Invalid override completion status. It must be of type "todo" or "done".');
+        }
+
+        $conditionlabel = get_string('completion_setby:auto:' . $completionstatus, 'core_course', (object)[
+            'condition' => $conditionname,
+            'setby' => $username,
+        ]);
+        $conditionbadge = "span[aria-label='$conditionlabel']";
+
+        $conditionslistlabel = get_string('completionrequirements', 'core_course', $activityname);
+        $completionconditions = "div[aria-label='$conditionslistlabel']";
+
+        $params = [$conditionbadge, 'css_element', $completionconditions, 'css_element'];
+        $this->execute("behat_general::should_exist_in_the", $params);
+    }
+
+    /**
+     * Checks the manual completion state of an activity.
+     *
+     * @Given /^the manual completion button of "(?P<activityname>(?:[^"]|\\")*)" is displayed as "(?P<completionstatus>(?:[^"]|\\")*)"$/
+     * @param string $activityname The activity name.
+     * @param string $completionstatus The completion status shown on the manual completion button.
+     *                                 Must be either 'Mark as done' or 'Done'.
+     */
+    public function manual_completion_button_displayed_as(string $activityname, string $completionstatus): void {
+        if (!in_array($completionstatus, ['Mark as done', 'Done'])) {
+            throw new coding_exception('Invalid completion status. It must be "Mark as done" or "Done".');
+        }
+
+        $langstringkey = $completionstatus === 'Done' ? 'done' : 'markdone';
+        $conditionslistlabel = get_string('completion_manual:aria:' . $langstringkey, 'core_course', $activityname);
+        $selector = "button[aria-label='$conditionslistlabel']";
+
+        $this->execute("behat_general::assert_element_contains_text", [$completionstatus, $selector, "css_element"]);
+    }
+
+    /**
+     * Checks the manual completion state of an activity.
+     *
+     * @Given /^the manual completion button of "(?P<activityname>(?:[^"]|\\")*)" overridden by "(?P<username>(?:[^"]|\\")*)" is displayed as "(?P<completionstatus>(?:[^"]|\\")*)"$/
+     * @param string $activityname The activity name.
+     * @param string $username The full name of the user overriding the student's activity completion.
+     * @param string $completionstatus The completion status shown on the manual completion button.
+     *                                 Must be either 'Mark as done' or 'Done'.
+     */
+    public function overridden_manual_completion_button_displayed_as(string $activityname, string $username,
+            string $completionstatus): void {
+        if (!in_array($completionstatus, ['Mark as done', 'Done'])) {
+            throw new coding_exception('Invalid completion status. It must be "Mark as done" or "Done".');
+        }
+
+        $langstringkey = $completionstatus === 'Done' ? 'done' : 'markdone';
+        $conditionslistlabel = get_string('completion_setby:manual:' . $langstringkey, 'core_course', (object)[
+            'activityname' => $activityname,
+            'setby' => $username,
+        ]);
+        $selector = "button[aria-label='$conditionslistlabel']";
+
+        $this->execute("behat_general::assert_element_contains_text", [$completionstatus, $selector, "css_element"]);
+    }
+
+    /**
+     * Toggles the manual completion button for a given activity.
+     *
+     * @Given /^I toggle the manual completion state of "(?P<activityname>(?:[^"]|\\")*)"$/
+     * @param string $activityname The activity name.
+     */
+    public function toggle_the_manual_completion_state(string $activityname): void {
+        $selector = "button[data-action=toggle-manual-completion][data-activityname='{$activityname}']";
+
+        $this->execute("behat_general::i_click_on", [$selector, "css_element"]);
+    }
+
+    /**
+     * Check that the activity does show completion information.
+     *
+     * @Given /^there should be no completion information shown for "(?P<activityname>(?:[^"]|\\")*)"$/
+     * @param string $activityname The activity name.
+     */
+    public function there_should_be_no_completion_for_activity(string $activityname): void {
+        $containerselector = "div[data-region=activity-information][data-activityname='$activityname']";
+        try {
+            $this->find('css_element', $containerselector);
+        } catch (ElementNotFoundException $e) {
+            // If activity information container does not exist (activity dates not shown, completion info not shown), all good.
+            return;
+        }
+
+        // Otherwise, ensure that the completion information does not exist.
+        $elementselector = "div[data-region=completion-info]";
+        $params = [$elementselector, "css_element", $containerselector, "css_element"];
+        $this->execute("behat_general::should_not_exist_in_the", $params);
+    }
+
+    /**
+     * Check that the manual completion button for the activity is disabled.
+     *
+     * @Given /^the manual completion button for "(?P<activityname>(?:[^"]|\\")*)" should be disabled$/
+     * @param string $activityname The activity name.
+     */
+    public function the_manual_completion_button_for_activity_should_be_disabled(string $activityname): void {
+        $selector = "div[data-activityname='$activityname'] button";
+
+        $params = [$selector, "css_element"];
+        $this->execute("behat_general::the_element_should_be_disabled", $params);
+    }
+
+    /**
+     * Check that the activity has the given automatic completion condition.
+     *
+     * @Given /^"(?P<activityname>(?:[^"]|\\")*)" should have the "(?P<conditionname>(?:[^"]|\\")*)" completion condition$/
+     * @param string $activityname The activity name.
+     * @param string $conditionname The automatic condition name.
+     */
+    public function activity_should_have_the_completion_condition(string $activityname, string $conditionname): void {
+        $containerselector = "div[data-region=activity-information][data-activityname='$activityname']";
+
+        $params = [$conditionname, $containerselector, 'css_element'];
+        $this->execute("behat_general::assert_element_contains_text", $params);
+    }
+
+    /**
      * Checks if the activity with specified name shows a information completion checkbox (i.e. showing the completion tracking
      * configuration).
      *

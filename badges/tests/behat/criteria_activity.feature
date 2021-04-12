@@ -53,7 +53,8 @@ Feature: Award badges based on activity completion
   Scenario: Student earns a badge using activity completion, but does not get passing grade
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And the "Test quiz name" "quiz" activity with "auto" completion should be marked as not complete
+    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "failed"
+    And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
     And I follow "Test quiz name"
     And I press "Re-attempt quiz"
     And I set the field "False" to "1"

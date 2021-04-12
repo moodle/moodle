@@ -50,7 +50,7 @@ Feature: Set time spent as a completion condition for a lesson
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    Then the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
+    Then the "Spend at least 10 secs on this activity" completion condition of "Test lesson" is displayed as "todo"
     And I follow "Test lesson"
     And I press "Next page"
     # Add 1 sec delay so lesson knows a valid attempt has been made in past.
@@ -59,7 +59,7 @@ Feature: Set time spent as a completion condition for a lesson
     And I should see "You completed this lesson in"
     And I should see ", which is less than the required time of 10 secs. You might need to attempt the lesson again."
     And I am on "Course 1" course homepage
-    And the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
+    And the "Spend at least 10 secs on this activity" completion condition of "Test lesson" is displayed as "todo"
     And I am on "Course 1" course homepage
     And I follow "Test lesson"
     And I press "Next page"
@@ -67,7 +67,7 @@ Feature: Set time spent as a completion condition for a lesson
     And I press "Next page"
     And I should not see "You might need to attempt the lesson again."
     And I am on "Course 1" course homepage
-    And the "Test lesson" "lesson" activity with "auto" completion should be marked as complete
+    And the "Spend at least 10 secs on this activity" completion condition of "Test lesson" is displayed as "done"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
