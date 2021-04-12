@@ -943,9 +943,24 @@ class core_course_renderer extends plugin_renderer_base {
             $output .= html_writer::div($modicons, 'actions');
         }
 
-        $completiondetails = \core_completion\cm_completion_details::get_instance($mod, $USER->id);
-        $activitydates = \core\activity_dates::get_dates_for_module($mod, $USER->id);
-        $output .= $this->output->activity_information($mod, $completiondetails, $activitydates);
+        // Fetch completion details.
+        $showcompletionconditions = $course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS;
+        $completiondetails = \core_completion\cm_completion_details::get_instance($mod, $USER->id, $showcompletionconditions);
+        $ismanualcompletion = $completiondetails->has_completion() && !$completiondetails->is_automatic();
+
+        // Fetch activity dates.
+        $activitydates = [];
+        if ($course->showactivitydates) {
+            $activitydates = \core\activity_dates::get_dates_for_module($mod, $USER->id);
+        }
+
+        // Show the activity information if:
+        // - The course's showcompletionconditions setting is enabled; or
+        // - The activity tracks completion manually; or
+        // - There are activity dates to be shown.
+        if ($showcompletionconditions || $ismanualcompletion || $activitydates) {
+            $output .= $this->output->activity_information($mod, $completiondetails, $activitydates);
+        }
 
         // Show availability info (if module is not available).
         $output .= $this->course_section_cm_availability($mod, $displayoptions);
