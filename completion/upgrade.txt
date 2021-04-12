@@ -1,6 +1,25 @@
 This files describes API changes in /completion/* - completion,
 information provided here is intended especially for developers.
 
+=== 3.11 ===
+* New Behat steps for activity completion in the behat_completion class:
+  - activity_completion_condition_displayed_as()
+    - Given the "<Completion condition>" completion condition of "<Activity name>" is displayed as "<Status>"
+  - activity_should_have_the_completion_condition()
+    - Given "<Activity name>" should have the "<Condition name>" completion condition
+  - manual_completion_button_displayed_as()
+    - Given the manual completion button of "<Activity name>" is displayed as "<Status>"
+  - the_manual_completion_button_for_activity_should_be_disabled()
+    - Given the manual completion button for "<Activity name>" should be disabled
+  - there_should_be_no_completion_for_activity()
+    - Given there should be no completion information shown for "<Activity name>"
+  - toggle_the_manual_completion_state()
+    - Given I toggle the manual completion state of "<Activity name>"
+  - overridden_manual_completion_button_displayed_as
+    - Given the manual completion button of "<Activity name>" overridden by "<User>" is displayed as "<Status>"
+  - overridden_activity_completion_condition_displayed_as
+    - Given the "<Completion condition>" completion condition of "<Activity name>" overridden by "<User>" is displayed as "<Status>"
+
 === 3.7 ===
  * External function core_completion_external::get_activities_completion_status new returns the following additional field:
    - valueused (indicates whether the completion state affects the availability of other content)

@@ -24,13 +24,14 @@
 
 namespace core_course\output;
 
-use core_course\course_format;
-use section_info;
-use completion_info;
-use renderable;
-use templatable;
 use cm_info;
+use core\activity_dates;
+use core_completion\cm_completion_details;
+use core_course\course_format;
+use renderable;
+use section_info;
 use stdClass;
+use templatable;
 
 /**
  * Base class to render a course module inside a course format.
@@ -53,24 +54,17 @@ class cm_format implements renderable, templatable {
     /** @var array optional display options */
     protected $displayoptions;
 
-    /** @var completion_info the course completion */
-    protected $completioninfo;
-
     /**
      * Constructor.
      *
      * @param course_format $format the course format
      * @param section_info $section the section info
-     * @param completion_info $completioninfo the course completion info
      * @param cm_info $mod the course module ionfo
      * @param array $displayoptions optional extra display options
      */
-    public function __construct(course_format $format, section_info $section, completion_info $completioninfo,
-                cm_info $mod, array $displayoptions = []) {
-
+    public function __construct(course_format $format, section_info $section, cm_info $mod, array $displayoptions = []) {
         $this->format = $format;
         $this->section = $section;
-        $this->completioninfo = $completioninfo;
         $this->mod = $mod;
         $this->displayoptions = $displayoptions;
     }
@@ -78,24 +72,30 @@ class cm_format implements renderable, templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
+     * @param \renderer_base $output typically, the renderer that's calling this function
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
+        global $USER;
+
         $format = $this->format;
-        $course = $format->get_course();
         $mod = $this->mod;
         $displayoptions = $this->displayoptions;
+        $course = $mod->get_course();
 
+        $completiondetails = cm_completion_details::get_instance($mod, $USER->id, $course->showcompletionconditions);
+        $activitydates = [];
+        if ($course->showactivitydates) {
+            $activitydates = activity_dates::get_dates_for_module($mod, $USER->id);
+        }
+        $activityinfo = new activity_information($mod, $completiondetails, $activitydates);
         $data = (object)[
             'cmname' => $output->course_section_cm_name($mod, $displayoptions),
             'afterlink' => $mod->afterlink,
             'altcontent' => $output->course_section_cm_text($mod, $displayoptions),
             'availability' => $output->course_section_cm_availability($mod, $displayoptions),
             'url' => $mod->url,
-            'completion' => $output->course_section_cm_completion(
-                $course, $this->completioninfo, $mod, $displayoptions
-            ),
+            'activityinfo' => $activityinfo->export_for_template($output),
         ];
 
         if (!empty($mod->indent)) {
@@ -125,7 +125,7 @@ class cm_format implements renderable, templatable {
             $data->moveicon = course_get_cm_move($mod, $returnsection);
         }
 
-        if (!empty($data->completion) || !empty($data->extras)) {
+        if (!empty($data->extras)) {
             $data->hasextras = true;
         }
 

@@ -425,6 +425,10 @@ class core_course_renderer extends plugin_renderer_base {
      * If completion is manual, returns a form (with an icon inside) that allows user to
      * toggle completion
      *
+     * @deprecated since Moodle 3.11
+     * @todo MDL-71183 Final deprecation in Moodle 4.3.
+     * @see \core_renderer::activity_information
+     *
      * @param stdClass $course course object
      * @param completion_info $completioninfo completion info for the course, it is recommended
      *     to fetch once for all modules in course/section for performance
@@ -434,6 +438,10 @@ class core_course_renderer extends plugin_renderer_base {
      */
     public function course_section_cm_completion($course, &$completioninfo, cm_info $mod, $displayoptions = array()) {
         global $CFG, $DB, $USER;
+
+        debugging(__FUNCTION__ . ' is deprecated and is being replaced by the activity_information output component.',
+            DEBUG_DEVELOPER);
+
         $output = '';
 
         $istrackeduser = $completioninfo->is_tracked_user($USER->id);
@@ -848,14 +856,6 @@ class core_course_renderer extends plugin_renderer_base {
      *
      * @deprecated since 4.0 - use core_course output components instead.
      *
-     * This function calls:
-     * {@link core_course_renderer::course_section_cm_name()}
-     * {@link core_course_renderer::course_section_cm_text()}
-     * {@link core_course_renderer::course_section_cm_availability()}
-     * {@link core_course_renderer::course_section_cm_completion()}
-     * {@link course_get_cm_edit_actions()}
-     * {@link core_course_renderer::course_section_cm_edit_actions()}
-     *
      * @param stdClass $course
      * @param completion_info $completioninfo
      * @param cm_info $mod
@@ -880,7 +880,7 @@ class core_course_renderer extends plugin_renderer_base {
         $section = $modinfo->get_section_info($format->get_section_number());
 
         $cmclass = $format->get_output_classname('cm_format');
-        $cm = new $cmclass($format, $section, $completioninfo, $mod, $displayoptions);
+        $cm = new $cmclass($format, $section, $mod, $displayoptions);
         // The course outputs works with format renderers, not with course renderers.
         $renderer = $format->get_renderer($this->page);
         return $renderer->render($cm);

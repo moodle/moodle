@@ -24,7 +24,10 @@
 
     Example context (json):
     {
+        "activityname": "Course announcements",
         "hascompletion": true,
+        "uservisible": true,
+        "hasdates": true,
         "isautomatic": true,
         "istrackeduser": true,
         "activitydates": [
@@ -45,24 +48,28 @@
         ]
     }
 }}
-<div data-region="activity-information" class="activity-information">
-    <div class="mb-1">
+<div data-region="activity-information" data-activityname="{{activityname}}" class="activity-information">
+    {{#hasdates}}
+    <div data-region="activity-dates" class="mb-1">
         {{#activitydates}}
             {{>core_course/activity_date}}
         {{/activitydates}}
     </div>
-    <div>
-        {{#hascompletion}}
-            {{#isautomatic}}
-                <div class="automatic-completion-conditions" data-region ="completionrequirements" role="list" aria-label="{{#str}}completionrequirements, core_course{{/str}}">
-                    {{#completiondetails}}
-                        {{> core_course/completion_automatic }}
-                    {{/completiondetails}}
-                </div>
-            {{/isautomatic}}
-            {{^isautomatic}}
-                {{> core_course/completion_manual }}
-            {{/isautomatic}}
-        {{/hascompletion}}
-    </div>
+    {{/hasdates}}
+    {{#hascompletion}}
+        {{#uservisible}}
+            <div data-region="completion-info">
+                {{#isautomatic}}
+                    <div class="automatic-completion-conditions" data-region ="completionrequirements" role="list" aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}">
+                        {{#completiondetails}}
+                            {{> core_course/completion_automatic }}
+                        {{/completiondetails}}
+                    </div>
+                {{/isautomatic}}
+                {{^isautomatic}}
+                    {{> core_course/completion_manual }}
+                {{/isautomatic}}
+            </div>
+        {{/uservisible}}
+    {{/hascompletion}}
 </div>

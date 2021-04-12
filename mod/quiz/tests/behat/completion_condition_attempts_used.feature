@@ -37,14 +37,16 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
   Scenario: student1 uses up both attempts without passing
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And the "Test quiz name" "quiz" activity with "auto" completion should be marked as not complete
+    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "failed"
+    And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
     And I follow "Test quiz name"
     And I press "Re-attempt quiz"
     And I set the field "False" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I am on "Course 1" course homepage
-    Then "Completed: Test quiz name" "icon" should exist in the "li.modtype_quiz" "css_element"
+    Then the "Receive a grade" completion condition of "Test quiz name" is displayed as "failed"
+    And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "done"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage

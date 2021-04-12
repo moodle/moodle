@@ -13375,8 +13375,15 @@ body:not(.editing) .sitetopic ul.section {
   padding: .2em; }
 
 .section li.activity {
-  padding: .2em;
+  padding: 0.2em;
   clear: both; }
+  .section li.activity.hasinfo {
+    border-bottom: 1px solid #dee2e6;
+    padding-top: 1rem;
+    padding-bottom: 1rem; }
+    .section li.activity.hasinfo:last-child {
+      border-bottom: 0;
+      padding-bottom: 0; }
 
 .section .activity .activityinstance .groupinglabel {
   padding-left: 30px; }

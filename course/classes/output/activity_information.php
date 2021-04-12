@@ -29,6 +29,7 @@ use cm_info;
 use completion_info;
 use context;
 use core\activity_dates;
+use core_availability\info;
 use core_completion\cm_completion_details;
 use core_user;
 use core_user\fields;
@@ -80,6 +81,7 @@ class activity_information implements renderable, templatable {
         $data->cmid = $this->cminfo->id;
         $data->activityname = $this->cminfo->name;
         $data->activitydates = $this->activitydates;
+        $data->hasdates = !empty($this->activitydates);
 
         return $data;
     }
@@ -90,6 +92,8 @@ class activity_information implements renderable, templatable {
      * @return stdClass
      */
     protected function build_completion_data(): stdClass {
+        global $CFG;
+
         $data = new stdClass();
 
         $data->hascompletion = $this->cmcompletion->has_completion();
@@ -124,6 +128,19 @@ class activity_information implements renderable, templatable {
             $data->accessibledescription = get_string($setbylangkey, 'course', $setbydata);
         }
 
+        // Whether the completion of this activity controls the availability of other activities/sections in the course.
+        $data->withavailability = false;
+        $course = $this->cminfo->get_course();
+        // An activity with manual completion tracking which is used to enable access to other activities/sections in
+        // the course needs to refresh the page after having its completion state toggled. This withavailability flag will enable
+        // this functionality on the course homepage. Otherwise, the completion toggling will just happen normally via ajax.
+        if ($this->cmcompletion->has_completion() && !$this->cmcompletion->is_automatic()) {
+            $data->withavailability = !empty($CFG->enableavailability) && info::completion_value_used($course, $this->cminfo->id);
+        }
+
+        // Whether this activity is visible to the user. If not, completion information will not be shown.
+        $data->uservisible = $this->cminfo->uservisible;
+
         // Build automatic completion details.
         $details = [];
         foreach ($this->cmcompletion->get_details() as $key => $detail) {
@@ -139,7 +156,8 @@ class activity_information implements renderable, templatable {
                     'condition' => $detail->description,
                     'setby' => $data->overrideby,
                 ];
-                $detail->accessibledescription = get_string('completion_setby:auto', 'course', $setbydata);
+                $overridestatus = $detail->statuscomplete ? 'done' : 'todo';
+                $detail->accessibledescription = get_string('completion_setby:auto:' . $overridestatus, 'course', $setbydata);
             }
 
             // We don't need the status in the template.

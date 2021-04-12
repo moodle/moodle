@@ -28,9 +28,17 @@
         "afterlink": "<span class=\"badge badge-primary\">30 unread messages</span>",
         "hasextras": true,
         "extras": ["<span class=\"badge badge-secondary\">[extras]</span>"],
-        "completion": "<span class=\"badge badge-success\">Completed!</span>",
+        "activityinfo": {
+            "activityname": "Activity example",
+            "hascompletion": true,
+            "uservisible": true,
+            "hasdates": true,
+            "isautomatic": true,
+            "istrackeduser": true,
+            "activitydates": [{ "label": "Opens:", "timestamp": 1293876000 }],
+            "completiondetails": [{ "statusincomplete": 1, "description": "Receive a grade" }]
+        },
         "availability": "<div><span class=\"badge badge-info\">Restricted</span> Available from <strong>3 Dec 2029</strong></div>"
-
     }
 }}
 <div>
@@ -57,10 +65,12 @@
             {{#hasextras}}
             <div class="actions">
                 {{#extras}} {{{.}}} {{/extras}}
-                {{{completion}}}
             </div>
             {{/hasextras}}
 
+            {{#activityinfo}}
+                {{> core_course/activity_info}}
+            {{/activityinfo}}
             {{{availability}}}
 
             {{#hasurl}} {{{altcontent}}} {{/hasurl}}
