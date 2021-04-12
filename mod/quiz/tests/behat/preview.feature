@@ -34,9 +34,16 @@ Feature: Preview a quiz as a teacher
       |   2  | False    |
 
   @javascript
-  Scenario: Preview a quiz
+  Scenario: Review the quiz attempt
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
     And I follow "Review"
     Then I should see "25.00 out of 100.00"
     And I follow "Finish review"
     And "Review" "link" in the "Preview" "table_row" should be visible
+
+  @javascript
+  Scenario: Preview the quiz
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
+    When I press "Preview quiz now"
+    Then I should see "Question 1"
+    And "Start a new preview" "button" should exist
