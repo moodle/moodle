@@ -1012,10 +1012,17 @@ abstract class repository implements cacheable_object {
         global $DB, $CFG, $USER;
 
         // Fill $args attributes with default values unless specified
-        if (!isset($args['currentcontext']) || !($args['currentcontext'] instanceof context)) {
-            $current_context = context_system::instance();
+        if (isset($args['currentcontext'])) {
+            if ($args['currentcontext'] instanceof context) {
+                $current_context = $args['currentcontext'];
+            } else {
+                debugging('currentcontext passed to repository::get_instances was ' .
+                        'not a context object. Using system context instead, but ' .
+                        'you should probably fix your code.', DEBUG_DEVELOPER);
+                $current_context = context_system::instance();
+            }
         } else {
-            $current_context = $args['currentcontext'];
+            $current_context = context_system::instance();
         }
         $args['currentcontext'] = $current_context->id;
         $contextids = array();
