@@ -4055,9 +4055,30 @@ class restore_contentbankcontent_structure_step extends restore_structure_step {
         $exists = $DB->record_exists('contentbank_content', $params);
         if (!$exists) {
             $params['configdata'] = $data->configdata;
-            $params['usercreated'] = $this->get_mappingid('user', $data->usercreated);
-            $params['usermodified'] = $this->get_mappingid('user', $data->usermodified);
             $params['timemodified'] = time();
+
+            // Trying to map users. Users cannot always be mapped, e.g. when copying.
+            $params['usercreated'] = $this->get_mappingid('user', $data->usercreated);
+            if (!$params['usercreated']) {
+                // Leave the content creator unchanged when we are restoring the same site.
+                // Otherwise use current user id.
+                if ($this->task->is_samesite()) {
+                    $params['usercreated'] = $data->usercreated;
+                } else {
+                    $params['usercreated'] = $this->task->get_userid();
+                }
+            }
+            $params['usermodified'] = $this->get_mappingid('user', $data->usermodified);
+            if (!$params['usermodified']) {
+                // Leave the content modifier unchanged when we are restoring the same site.
+                // Otherwise use current user id.
+                if ($this->task->is_samesite()) {
+                    $params['usermodified'] = $data->usermodified;
+                } else {
+                    $params['usermodified'] = $this->task->get_userid();
+                }
+            }
+
             $newitemid = $DB->insert_record('contentbank_content', $params);
             $this->set_mapping('contentbank_content', $oldid, $newitemid, true);
         }
