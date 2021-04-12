@@ -159,3 +159,37 @@ Feature: Content bank use editor feature
     And I click on "Content bank" "link"
     And I follow "filltheblanks.h5p"
     Then "Edit" "link" should not exist in the "region-main" "region"
+
+  Scenario: Teachers keep their content authoring in copied courses
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 1 | C1        | 0        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+    And the following "contentbank content" exist:
+      | contextlevel | reference | contenttype     | user     | contentname       | filepath                              |
+      | Course       | C1        | contenttype_h5p | admin    | filltheblanks.h5p | /h5p/tests/fixtures/filltheblanks.h5p |
+      | Course       | C1        | contenttype_h5p | teacher1 | ipsums.h5p        | /h5p/tests/fixtures/ipsums.h5p        |
+    And I am on "Course 1" course homepage
+    And I navigate to "Copy course" in current page administration
+    And I set the following fields to these values:
+      | Course full name  | Copy |
+      | Course short name | Copy |
+      | Teacher           | 1    |
+    When I press "Copy and view"
+    And I trigger cron
+    And I am on homepage
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Copy" course homepage
+    And I expand "Site pages" node
+    And I click on "Content bank" "link"
+    And I follow "ipsums.h5p"
+    Then "Edit" "link" should exist in the "region-main" "region"
+    And I click on "Content bank" "link"
+    And I follow "filltheblanks.h5p"
+    Then "Edit" "link" should not exist in the "region-main" "region"
