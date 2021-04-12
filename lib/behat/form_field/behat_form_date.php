@@ -56,6 +56,14 @@ class behat_form_date extends behat_form_group {
             // Disable the given date selector field.
             $this->set_child_field_value('enabled', false);
         } else if (is_numeric($value)) { // The value is numeric (unix timestamp).
+            // First, reset the day always to an existing one (1st). Without that
+            // undesired modifications (JS) happens when changing of month and day if
+            // the interim combination doesn't exists (for example, 31 March => 01 April).
+            // Note that instead of always setting the day to 1, this could be a little more
+            // clever, for example only changing when the day > 28, or only when the
+            // months (current or changed) have less days that the other. But that would
+            // require more complex calculations than the simpler line below.
+            $this->set_child_field_value('day', 1);
             // Assign the mapped values to each form element in the date selector field.
             foreach ($this->get_mapped_fields($value) as $childname => $childvalue) {
                 $this->set_child_field_value($childname, $childvalue);
@@ -74,11 +82,18 @@ class behat_form_date extends behat_form_group {
      * @return array
      */
     protected function get_mapped_fields(int $timestamp): array {
+        // Order is important, first enable, and then year -> month -> day
+        // (other order can lead to some transitions not working as expected,
+        // for example, changing from 15 June to 31 August, Behat ends with
+        // date being 1 August if the modification order is day, then month).
+        // Note that the behaviour described above is 100% reproducible
+        // manually, with the form (JS) auto-fixing things in the middle and
+        // leading to undesired final dates.
         return [
             'enabled' => true,
-            'day' => date('j', $timestamp),
-            'month' => date('n', $timestamp),
             'year' => date('Y', $timestamp),
+            'month' => date('n', $timestamp),
+            'day' => date('j', $timestamp),
         ];
     }
 
