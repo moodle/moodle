@@ -63,6 +63,12 @@ $alert-border-width:                0 !default;
 
 $card-group-margin: .25rem;
 
+// Toasts
+$toast-color:                       $white !default;
+$toast-background-color:            rgba($gray-900, .95) !default;
+$toast-header-color:                $gray-100 !default;
+$toast-header-background-color:     rgba($white, .1) !default;
+
 $input-btn-focus-color: rgba($primary, .75) !default;
 
 $input-border-color: $gray-500 !default;
