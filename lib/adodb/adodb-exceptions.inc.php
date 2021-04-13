@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version   v5.20.16  12-Jan-2020
+ * @version   v5.21.0  2021-02-27
  * @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
  * @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
  * Released under both BSD license and Lesser GPL library license.
@@ -10,7 +10,7 @@
  *
  * Set tabs to 4 for best viewing.
  *
- * Latest version is available at http://adodb.org/
+ * Latest version is available at https://adodb.org/
  *
  * Exception-handling code using PHP5 exceptions (try-catch-throw).
  */
@@ -60,14 +60,14 @@ var $database = '';
 }
 
 /**
-* Default Error Handler. This will be called with the following params
+* Default Error Handler.
 *
-* @param $dbms		the RDBMS you are connecting to
-* @param $fn		the name of the calling function (in uppercase)
-* @param $errno		the native error number from the database
-* @param $errmsg	the native error msg from the database
-* @param $p1		$fn specific parameter - see below
-* @param $P2		$fn specific parameter - see below
+* @param string $dbms    the RDBMS you are connecting to
+* @param string $fn      the name of the calling function (in uppercase)
+* @param int    $errno   the native error number from the database
+* @param string $errmsg  the native error msg from the database
+* @param mixed  $p1      $fn specific parameter - see below
+* @param mixed  $p2      $fn specific parameter - see below
 */
 
 function adodb_throw($dbms, $fn, $errno, $errmsg, $p1, $p2, $thisConnection)

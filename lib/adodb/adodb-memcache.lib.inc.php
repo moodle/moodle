@@ -11,7 +11,7 @@ if (empty($ADODB_INCLUDED_CSV)) include_once(ADODB_DIR.'/adodb-csvlib.inc.php');
 
 /*
 
-  @version   v5.20.16  12-Jan-2020
+  @version   v5.21.0  2021-02-27
   @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
   @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -19,7 +19,7 @@ if (empty($ADODB_INCLUDED_CSV)) include_once(ADODB_DIR.'/adodb-csvlib.inc.php');
   the BSD license will take precedence. See License.txt.
   Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 
 Usage:
 
@@ -28,17 +28,25 @@ $db->memCache = true; /// should we use memCache instead of caching in files
 $db->memCacheHost = array($ip1, $ip2, $ip3);
 $db->memCachePort = 11211; /// this is default memCache port
 $db->memCacheCompress = false; /// Use 'true' to store the item compressed (uses zlib)
+                               /// Note; compression is not supported w/the memcached library
 
 $db->Connect(...);
 $db->CacheExecute($sql);
 
-  Note the memcache class is shared by all connections, is created during the first call to Connect/PConnect.
+  Notes; The memcache class is shared by all connections, is created during the first call to Connect/PConnect.
+         We'll look for both the memcache library (https://pecl.php.net/package/memcache) and the  memcached
+         library (https://pecl.php.net/package/memcached). If both exist, the memcache library will be used.
 
   Class instance is stored in $ADODB_CACHE
 */
 
 	class ADODB_Cache_MemCache {
 		var $createdir = false; // create caching directory structure?
+
+		// $library will be populated with the proper library on connect
+		// and is used later when there are differences in specific calls
+		// between memcache and memcached
+		var $library = false;
 
 		//-----------------------------
 		// memcache specific variables
@@ -60,18 +68,23 @@ $db->CacheExecute($sql);
 		// implement as lazy connection. The connection only occurs on CacheExecute call
 		function connect(&$err)
 		{
-			if (!function_exists('memcache_pconnect')) {
-				$err = 'Memcache module PECL extension not found!';
+			// do we have memcache or memcached?
+			if (class_exists('Memcache')) {
+				$this->library='Memcache';
+				$memcache = new MemCache;
+			} elseif (class_exists('Memcached')) {
+				$this->library='Memcached';
+				$memcache = new MemCached;
+			} else {
+				$err = 'Neither the Memcache nor Memcached PECL extensions were found!';
 				return false;
 			}
-
-			$memcache = new MemCache;
 
 			if (!is_array($this->hosts)) $this->hosts = array($this->hosts);
 
 			$failcnt = 0;
 			foreach($this->hosts as $host) {
-				if (!@$memcache->addServer($host,$this->port,true)) {
+				if (!@$memcache->addServer($host,$this->port)) {
 					$failcnt += 1;
 				}
 			}
@@ -93,8 +106,25 @@ $db->CacheExecute($sql);
 			}
 			if (!$this->_memcache) return false;
 
-			if (!$this->_memcache->set($filename, $contents, $this->compress ? MEMCACHE_COMPRESSED : 0, $secs2cache)) {
-				if ($debug) ADOConnection::outp(" Failed to save data at the memcached server!<br>\n");
+			$failed=false;
+			switch ($this->library) {
+				case 'Memcache':
+					if (!$this->_memcache->set($filename, $contents, $this->compress ? MEMCACHE_COMPRESSED : 0, $secs2cache)) {
+						$failed=true;
+					}
+					break;
+				case 'Memcached':
+					if (!$this->_memcache->set($filename, $contents, $secs2cache)) {
+						$failed=true;
+					}
+					break;
+				default:
+					$failed=true;
+					break;
+			}
+
+			if($failed) {
+				if ($debug) ADOConnection::outp(" Failed to save data at the memcache server!<br>\n");
 				return false;
 			}
 
@@ -110,7 +140,7 @@ $db->CacheExecute($sql);
 
 			$rs = $this->_memcache->get($filename);
 			if (!$rs) {
-				$err = 'Item with such key doesn\'t exists on the memcached server.';
+				$err = 'Item with such key doesn\'t exist on the memcache server.';
 				return $false;
 			}
 
@@ -176,8 +206,8 @@ $db->CacheExecute($sql);
 			$del = $this->_memcache->delete($filename);
 
 			if ($debug)
-				if (!$del) ADOConnection::outp("flushcache: $key entry doesn't exist on memcached server!<br>\n");
-				else ADOConnection::outp("flushcache: $key entry flushed from memcached server!<br>\n");
+				if (!$del) ADOConnection::outp("flushcache: $key entry doesn't exist on memcache server!<br>\n");
+				else ADOConnection::outp("flushcache: $key entry flushed from memcache server!<br>\n");
 
 			return $del;
 		}

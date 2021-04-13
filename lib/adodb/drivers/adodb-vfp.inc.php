@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.16  12-Jan-2020
+@version   v5.21.0  2021-02-27
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -8,7 +8,7 @@
   the BSD license will take precedence.
 Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 
   Microsoft Visual FoxPro data driver. Requires ODBC. Works only on MS Windows.
 */
@@ -17,7 +17,7 @@ Set tabs to 4 for best viewing.
 if (!defined('ADODB_DIR')) die();
 
 if (!defined('_ADODB_ODBC_LAYER')) {
-	include(ADODB_DIR."/drivers/adodb-odbc.inc.php");
+	include_once(ADODB_DIR."/drivers/adodb-odbc.inc.php");
 }
 if (!defined('ADODB_VFP')){
 define('ADODB_VFP',1);
@@ -69,11 +69,6 @@ class  ADORecordSet_vfp extends ADORecordSet_odbc {
 	var $databaseType = "vfp";
 
 
-	function __construct($id,$mode=false)
-	{
-		return parent::__construct($id,$mode);
-	}
-
 	function MetaType($t, $len = -1, $fieldobj = false)
 	{
 		if (is_object($t)) {
@@ -95,7 +90,7 @@ class  ADORecordSet_vfp extends ADORecordSet_odbc {
 
 		case 'I': return 'I';
 
-		default: return 'N';
+		default: return ADODB_DEFAULT_METATYPE;
 		}
 	}
 }

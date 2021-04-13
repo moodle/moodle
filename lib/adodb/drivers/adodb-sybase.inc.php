@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.16  12-Jan-2020
+@version   v5.21.0  2021-02-27
 @copyright (c) 2000-2013 John Lim. All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -8,7 +8,7 @@
   the BSD license will take precedence.
   Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 
   Sybase driver contributed by Toni (toni.tunkkari@finebyte.com)
 
@@ -43,10 +43,6 @@ class ADODB_sybase extends ADOConnection {
 	var $rightOuter = '=*';
 
 	var $port;
-
-	function __construct()
-	{
-	}
 
 	// might require begintrans -- committrans
 	function _insertid()
@@ -171,7 +167,7 @@ class ADODB_sybase extends ADOConnection {
 	{
 	global $ADODB_COUNTRECS;
 
-		if ($ADODB_COUNTRECS == false && ADODB_PHPVER >= 0x4300)
+		if ($ADODB_COUNTRECS == false)
 			return sybase_unbuffered_query($sql,$this->_connectionID);
 		else
 			return sybase_query($sql,$this->_connectionID);
@@ -320,7 +316,7 @@ class ADORecordset_sybase extends ADORecordSet {
 		}
 		if (!$mode) $this->fetchMode = ADODB_FETCH_ASSOC;
 		else $this->fetchMode = $mode;
-		parent::__construct($id,$mode);
+		parent::__construct($id);
 	}
 
 	/*	Returns: an object containing field information.
@@ -393,12 +389,8 @@ class ADORecordset_sybase extends ADORecordSet {
 }
 
 class ADORecordSet_array_sybase extends ADORecordSet_array {
-	function __construct($id=-1)
-	{
-		parent::__construct($id);
-	}
 
-		// sybase/mssql uses a default date like Dec 30 2000 12:00AM
+	// sybase/mssql uses a default date like Dec 30 2000 12:00AM
 	static function UnixDate($v)
 	{
 	global $ADODB_sybase_mths;

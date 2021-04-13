@@ -1,6 +1,6 @@
 <?php
 /*
-  @version   v5.20.16  12-Jan-2020
+  @version   v5.21.0  2021-02-27
   @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
   @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
 
@@ -14,7 +14,7 @@
     Fixed the way data types and lengths are returned in MetaColumns()
     as well as added the default lengths for certain types
     Updated public variables for Netezza
-    Still need to remove blob functions, as Netezza doesn't suppport blob
+    Still need to remove blob functions, as Netezza doesn't support blob
 */
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -49,11 +49,6 @@ class ADODB_netezza extends ADODB_postgres64 {
 	var $autoRollback = true; // apparently pgsql does not autorollback properly before 4.3.4
 							// http://bugs.php.net/bug.php?id=25404
 
-
-	function __construct()
-	{
-
-	}
 
 	function MetaColumns($table,$upper=true)
 	{
@@ -140,11 +135,6 @@ class ADORecordSet_netezza extends ADORecordSet_postgres64
 {
 	var $databaseType = "netezza";
 	var $canSeek = true;
-
-	function __construct($queryID,$mode=false)
-	{
-		parent::__construct($queryID,$mode);
-	}
 
 	// _initrs modified to disable blob handling
 	function _initrs()

@@ -8,7 +8,7 @@ $ADODB_INCLUDED_CSV = 1;
 
 /*
 
-  @version   v5.20.16  12-Jan-2020
+  @version   v5.21.0  2021-02-27
   @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
   @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -16,7 +16,7 @@ $ADODB_INCLUDED_CSV = 1;
   the BSD license will take precedence. See License.txt.
   Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 
   Library for CSV serialization. This is used by the csv/proxy driver and is the
   CacheExecute() serialization format.
@@ -27,7 +27,7 @@ $ADODB_INCLUDED_CSV = 1;
 	 *
 	 * @param rs	the recordset
 	 *
-	 * @return	the CSV formated data
+	 * @return	the CSV formatted data
 	 */
 	function _rs2serialize(&$rs,$conn=false,$sql='')
 	{
@@ -85,7 +85,7 @@ $ADODB_INCLUDED_CSV = 1;
 * @param err		returns the error message
 * @param timeout	dispose if recordset has been alive for $timeout secs
 *
-* @return		recordset, or false if error occured. If no
+* @return		recordset, or false if error occurred. If no
 *			error occurred in sql INSERT/UPDATE/DELETE,
 *			empty recordset is returned
 */
@@ -245,10 +245,8 @@ $ADODB_INCLUDED_CSV = 1;
 
 		fclose($fp);
 		@$arr = unserialize($text);
-		//var_dump($arr);
 		if (!is_array($arr)) {
 			$err = "Recordset had unexpected EOF (in serialized recordset)";
-			if (get_magic_quotes_runtime()) $err .= ". Magic Quotes Runtime should be disabled!";
 			return $false;
 		}
 		$rs = new $rsclass();

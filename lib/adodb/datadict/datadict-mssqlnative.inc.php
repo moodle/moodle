@@ -1,7 +1,7 @@
 <?php
 
 /**
-  @version   v5.20.16  12-Jan-2020
+  @version   v5.21.0  2021-02-27
   @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
   @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -53,6 +53,9 @@ class ADODB2_mssqlnative extends ADODB_DataDict {
 
 	//var $alterCol = ' ALTER COLUMN ';
 
+	public $blobAllowsDefaultValue = true;
+	public $blobAllowsNotNull      = true;
+
 	function MetaType($t,$len=-1,$fieldobj=false)
 	{
 		if (is_object($t)) {
@@ -94,7 +97,10 @@ class ADODB2_mssqlnative extends ADODB_DataDict {
 			  -3 => 'X'
 			);
 
-		return $_typeConversion($t);
+		if (isset($_typeConversion[$t]))
+		return $_typeConversion[$t];
+		
+		return ADODB_DEFAULT_METATYPE;
 
 	}
 
@@ -126,7 +132,6 @@ class ADODB2_mssqlnative extends ADODB_DataDict {
 		case 'F': return 'REAL';
 		case 'N': return 'NUMERIC';
 		default:
-			print "RETURN $meta";
 			return $meta;
 		}
 	}
@@ -353,7 +358,7 @@ CREATE TABLE
 	}
 
 
-	function _GetSize($ftype, $ty, $fsize, $fprec)
+	function _GetSize($ftype, $ty, $fsize, $fprec,$options=false)
 	{
 		switch ($ftype) {
 		case 'INT':
@@ -363,7 +368,7 @@ CREATE TABLE
 			return $ftype;
 		}
     	if ($ty == 'T') return $ftype;
-    	return parent::_GetSize($ftype, $ty, $fsize, $fprec);
+    	return parent::_GetSize($ftype, $ty, $fsize, $fprec, $options);
 
 	}
 }
