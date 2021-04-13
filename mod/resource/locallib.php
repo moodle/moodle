@@ -61,7 +61,7 @@ function resource_redirect_if_migrated($oldid, $cmid) {
  * @return does not return
  */
 function resource_display_embed($resource, $cm, $course, $file) {
-    global $CFG, $PAGE, $OUTPUT;
+    global $PAGE, $OUTPUT, $USER;
 
     $clicktoopen = resource_get_clicktoopen($file, $resource->revision);
 
@@ -101,6 +101,12 @@ function resource_display_embed($resource, $cm, $course, $file) {
 
     resource_print_header($resource, $cm, $course);
     resource_print_heading($resource, $cm, $course);
+
+    // Display any activity information (eg completion requirements / dates).
+    $cminfo = cm_info::create($cm);
+    $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+    $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
+    echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
 
     echo $code;
 
@@ -202,10 +208,16 @@ function resource_get_clicktodownload($file, $revision) {
  * @return does not return
  */
 function resource_print_workaround($resource, $cm, $course, $file) {
-    global $CFG, $OUTPUT;
-
+    global $CFG, $OUTPUT, $USER;
     resource_print_header($resource, $cm, $course);
     resource_print_heading($resource, $cm, $course, true);
+
+    // Display any activity information (eg completion requirements / dates).
+    $cminfo = cm_info::create($cm);
+    $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+    $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
+    echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
+
     resource_print_intro($resource, $cm, $course, true);
 
     $resource->mainfile = $file->get_filename();
