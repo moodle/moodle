@@ -31,6 +31,8 @@ if (! $cm = get_coursemodule_from_id('survey', $id)) {
     print_error('invalidcoursemodule');
 }
 
+$cm = cm_info::create($cm);
+
 if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
     print_error('coursemisconf');
 }
@@ -70,6 +72,11 @@ $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($survey->name));
+
+// Render the activity information.
+$completiondetails = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
+$activitydates = \core\activity_dates::get_dates_for_module($cm, $USER->id);
+echo $OUTPUT->activity_information($cm, $completiondetails, $activitydates);
 
 // Check to see if groups are being used in this survey.
 if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used.
