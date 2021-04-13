@@ -62,7 +62,7 @@ $company = new company($companyid);
 $return = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
 
 // Deal with the departments.
-$parentlevels = company::get_company_parentnode($companyid);
+$parentlevel = company::get_company_parentnode($companyid);
 $companydepartment = $parentlevel->id;
 
 if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
@@ -121,6 +121,7 @@ if ($format) {
 
     // Get department users.
     $departmentusers = array();
+    $userlevels = $company->get_userlevel($USER);
     foreach ($userlevels as $userlevelid => $userlevel) {
         $departmentusers = company::get_recursive_department_users($userlevelid);
     }
@@ -140,7 +141,7 @@ if ($format) {
 
 
 
-    $userids = $DB->get_records_sql_menu("SELECT userid, userid as id
+    $userids = $DB->get_records_sql_menu("SELECT DISTINCT userid, userid as id
         FROM
             {company_users}
         WHERE
