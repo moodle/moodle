@@ -1,6 +1,6 @@
 <?php
 /**
-* @version   v5.20.16  12-Jan-2020
+* @version   v5.21.0  2021-02-27
 * @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 * @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
 * Released under both BSD license and Lesser GPL library license.
@@ -9,7 +9,7 @@
 *
 * Set tabs to 4 for best viewing.
 *
-* Latest version is available at http://adodb.org/
+* Latest version is available at https://adodb.org/
 *
 *  Portable MSSQL Driver that supports || instead of +
 *
@@ -32,10 +32,6 @@ class ADODB_mssqlpo extends ADODB_mssql {
 
 	function PrepareSP($sql, $param = true)
 	{
-		if (!$this->_has_mssql_init) {
-			ADOConnection::outp( "PrepareSP: mssql_init only available since PHP 4.1.0");
-			return $sql;
-		}
 		if (is_string($sql)) $sql = str_replace('||','+',$sql);
 		$stmt = mssql_init($sql,$this->_connectionID);
 		if (!$stmt)  return $sql;
@@ -51,8 +47,4 @@ class ADODB_mssqlpo extends ADODB_mssql {
 
 class ADORecordset_mssqlpo extends ADORecordset_mssql {
 	var $databaseType = "mssqlpo";
-	function __construct($id,$mode=false)
-	{
-		parent::__construct($id,$mode);
-	}
 }

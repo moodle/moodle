@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.16  12-Jan-2020
+@version   v5.21.0  2021-02-27
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -8,7 +8,7 @@
   the BSD license will take precedence.
 Set tabs to 4 for best viewing.
 
-  Latest version is available at http://adodb.org/
+  Latest version is available at https://adodb.org/
 
   SAPDB data driver. Requires ODBC.
 
@@ -18,7 +18,7 @@ Set tabs to 4 for best viewing.
 if (!defined('ADODB_DIR')) die();
 
 if (!defined('_ADODB_ODBC_LAYER')) {
-	include(ADODB_DIR."/drivers/adodb-odbc.inc.php");
+	include_once(ADODB_DIR."/drivers/adodb-odbc.inc.php");
 }
 if (!defined('ADODB_SAPDB')){
 define('ADODB_SAPDB',1);
@@ -32,12 +32,6 @@ class ADODB_SAPDB extends ADODB_odbc {
 	var $fmtTimeStamp = "'Y-m-d H:i:s'"; /// used by DBTimeStamp as the default timestamp fmt.
 	var $hasInsertId = true;
 	var $_bindInputArray = true;
-
-	function __construct()
-	{
-		//if (strncmp(PHP_OS,'WIN',3) === 0) $this->curmode = SQL_CUR_USE_ODBC;
-		parent::__construct();
-	}
 
 	function ServerInfo()
 	{
@@ -55,7 +49,7 @@ class ADODB_SAPDB extends ADODB_odbc {
 		return $this->GetCol("SELECT columnname FROM COLUMNS WHERE tablename=$table AND mode='KEY' ORDER BY pos");
 	}
 
- 	function MetaIndexes ($table, $primary = FALSE, $owner = false)
+	function MetaIndexes ($table, $primary = FALSE, $owner = false)
 	{
 		$table = $this->Quote(strtoupper($table));
 
@@ -65,43 +59,43 @@ class ADODB_SAPDB extends ADODB_odbc {
 
 		global $ADODB_FETCH_MODE;
 		$save = $ADODB_FETCH_MODE;
-        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-        if ($this->fetchMode !== FALSE) {
-        	$savem = $this->SetFetchMode(FALSE);
-        }
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+		if ($this->fetchMode !== FALSE) {
+			$savem = $this->SetFetchMode(FALSE);
+		}
 
-        $rs = $this->Execute($sql);
-        if (isset($savem)) {
-        	$this->SetFetchMode($savem);
-        }
-        $ADODB_FETCH_MODE = $save;
+		$rs = $this->Execute($sql);
+		if (isset($savem)) {
+			$this->SetFetchMode($savem);
+		}
+		$ADODB_FETCH_MODE = $save;
 
-        if (!is_object($rs)) {
-        	return FALSE;
-        }
+		if (!is_object($rs)) {
+			return FALSE;
+		}
 
 		$indexes = array();
 		while ($row = $rs->FetchRow()) {
-            $indexes[$row[0]]['unique'] = $row[1] == 'UNIQUE';
-            $indexes[$row[0]]['columns'][] = $row[2];
-    	}
+			$indexes[$row[0]]['unique'] = $row[1] == 'UNIQUE';
+			$indexes[$row[0]]['columns'][] = $row[2];
+		}
 		if ($primary) {
 			$indexes['SYSPRIMARYKEYINDEX'] = array(
 					'unique' => True,	// by definition
 					'columns' => $this->GetCol("SELECT columnname FROM COLUMNS WHERE tablename=$table AND mode='KEY' ORDER BY pos"),
 				);
 		}
-        return $indexes;
+		return $indexes;
 	}
 
 	function MetaColumns ($table, $normalize = true)
 	{
 		global $ADODB_FETCH_MODE;
 		$save = $ADODB_FETCH_MODE;
-        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-        if ($this->fetchMode !== FALSE) {
-        	$savem = $this->SetFetchMode(FALSE);
-        }
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+		if ($this->fetchMode !== FALSE) {
+			$savem = $this->SetFetchMode(FALSE);
+		}
 		$table = $this->Quote(strtoupper($table));
 
 		$retarr = array();
@@ -134,10 +128,10 @@ class ADODB_SAPDB extends ADODB_odbc {
 			}
 			$retarr[$fld->name] = $fld;
 		}
-        if (isset($savem)) {
-        	$this->SetFetchMode($savem);
-        }
-        $ADODB_FETCH_MODE = $save;
+		if (isset($savem)) {
+			$this->SetFetchMode($savem);
+		}
+		$ADODB_FETCH_MODE = $save;
 
 		return $retarr;
 	}
@@ -158,13 +152,13 @@ class ADODB_SAPDB extends ADODB_odbc {
 	/*
 		SelectLimit implementation problems:
 
-	 	The following will return random 10 rows as order by performed after "WHERE rowno<10"
-	 	which is not ideal...
+		The following will return random 10 rows as order by performed after "WHERE rowno<10"
+		which is not ideal...
 
-	  		select * from table where rowno < 10 order by 1
+			select * from table where rowno < 10 order by 1
 
-	  	This means that we have to use the adoconnection base class SelectLimit when
-	  	there is an "order by".
+		This means that we have to use the adoconnection base class SelectLimit when
+		there is an "order by".
 
 		See http://listserv.sap.com/pipermail/sapdb.general/2002-January/010405.html
 	 */
@@ -172,14 +166,10 @@ class ADODB_SAPDB extends ADODB_odbc {
 };
 
 
-class  ADORecordSet_sapdb extends ADORecordSet_odbc {
+class ADORecordSet_sapdb extends ADORecordSet_odbc {
 
 	var $databaseType = "sapdb";
 
-	function __construct($id,$mode=false)
-	{
-		parent::__construct($id,$mode);
-	}
 }
 
 } //define

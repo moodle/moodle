@@ -1,4 +1,4 @@
-ADOdb Library for PHP5
+ADOdb Library for PHP
 ======================
 
 [![Join chat on Gitter](https://img.shields.io/gitter/room/form-data/form-data.svg)](https://gitter.im/adodb/adodb?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -16,7 +16,7 @@ or, at your option, any later version.
 This means you can use it in proprietary products;
 see [License](https://github.com/ADOdb/ADOdb/blob/master/LICENSE.md) for details.
 
-Home page: http://adodb.org/
+Home page: https://adodb.org/
 
 
 Introduction
@@ -27,8 +27,8 @@ need for a database class library to hide the differences between the
 different databases (encapsulate the differences) so we can easily
 switch databases.
 
-The library currently supports MySQL, Interbase, Sybase, PostgreSQL, Oracle,
-Microsoft SQL server,  Foxpro ODBC, Access ODBC, Informix, DB2,
+The library currently supports MySQL, Firebird & Interbase, PostgreSQL, SQLite3, Oracle,
+Microsoft SQL Server, Foxpro ODBC, Access ODBC, Informix, DB2, Sybase,
 Sybase SQL Anywhere, generic ODBC and Microsoft's ADO.
 
 We hope more people will contribute drivers to support other databases.
@@ -48,12 +48,12 @@ You can debug using:
 <?php
 include('adodb/adodb.inc.php');
 
-$db = ADONewConnection($driver); # eg. 'mysql' or 'oci8'
+$db = adoNewConnection($driver); # eg. 'mysqli' or 'oci8'
 $db->debug = true;
-$db->Connect($server, $user, $password, $database);
-$rs = $db->Execute('select * from some_small_table');
+$db->connect($server, $user, $password, $database);
+$rs = $db->execute('select * from some_small_table');
 print "<pre>";
-print_r($rs->GetRows());
+print_r($rs->getRows());
 print "</pre>";
 ```
 
@@ -61,14 +61,14 @@ print "</pre>";
 Documentation and Examples
 ==========================
 
-Refer to the [ADOdb website](http://adodb.org/) for library documentation and examples. The documentation can also be [downloaded for offline viewing](https://sourceforge.net/projects/adodb/files/Documentation/).
+Refer to the [ADOdb website](https://adodb.org/) for library documentation and examples. The documentation can also be [downloaded for offline viewing](https://sourceforge.net/projects/adodb/files/Documentation/).
 
-- [Main documentation](http://adodb.org/dokuwiki/doku.php?id=v5:userguide:userguide_index): Query, update and insert records using a portable API.
-- [Data dictionary](http://adodb.org/dokuwiki/doku.php?id=v5:dictionary:dictionary_index) describes how to create database tables and indexes in a portable manner.
-- [Database performance monitoring](http://adodb.org/dokuwiki/doku.php?id=v5:performance:performance_index) allows you to perform health checks, tune and monitor your database.
-- [Database-backed sessions](http://adodb.org/dokuwiki/doku.php?id=v5:session:session_index).
+- [Main documentation](https://adodb.org/dokuwiki/doku.php?id=v5:userguide:userguide_index): Query, update and insert records using a portable API.
+- [Data dictionary](https://adodb.org/dokuwiki/doku.php?id=v5:dictionary:dictionary_index) describes how to create database tables and indexes in a portable manner.
+- [Database performance monitoring](https://adodb.org/dokuwiki/doku.php?id=v5:performance:performance_index) allows you to perform health checks, tune and monitor your database.
+- [Database-backed sessions](https://adodb.org/dokuwiki/doku.php?id=v5:session:session_index).
 
-There is also a [tutorial](http://adodb.org/dokuwiki/doku.php?id=v5:userguide:mysql_tutorial) that contrasts ADOdb code with PHP native MySQL code.
+There is also a [tutorial](https://adodb.org/dokuwiki/doku.php?id=v5:userguide:mysql_tutorial) that contrasts ADOdb code with PHP native MySQL code.
 
 
 Files
@@ -96,7 +96,6 @@ https://github.com/ADOdb/ADOdb/issues
 
 You may also find legacy issues in
 
-- the old [ADOdb forums](http://phplens.com/lens/lensforum/topics.php?id=4) on phplens.com
 - the [SourceForge tickets section](http://sourceforge.net/p/adodb/_list/tickets)
 
 However, please note that they are not actively monitored and should
