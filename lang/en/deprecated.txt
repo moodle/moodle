@@ -161,3 +161,5 @@ coursepage,core_admin
 invalidpersistenterror,core_competency
 mediapluginswf,core_admin
 mediapluginswfnote,core_admin
+createuserandpass,core
+supplyinfo,core

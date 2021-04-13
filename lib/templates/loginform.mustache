@@ -91,175 +91,134 @@
         "logourl": false,
         "sitename": "Beer & Chips",
         "logintoken": "randomstring",
-        "maintenance": "For full access to this site, you need to login in as an admin."
+        "maintenance": "For full access to this site, you need to login in as an admin.",
+        "languagemenu": "Choose language"
     }
 }}
 
-<div class="my-1 my-sm-5"></div>
-<div class="row justify-content-center">
-<div class="col-xl-6 col-sm-8 ">
-<div class="card">
-    <div class="card-block">
-        {{#logourl}}
-            <h1 class="h2 card-header text-center" >
-                <span class="sr-only">{{sitename}}: {{#str}} login {{/str}}</span>
-                <img src="{{logourl}}" class="img-fluid" alt=""/>
-            </h1>
-        {{/logourl}}
-        {{^logourl}}
-            <h1 class="h2 card-header text-center" aria-label="{{sitename}}: {{#str}} login {{/str}}">{{sitename}}</h1>
-        {{/logourl}}
-        <div class="card-body">
-            {{#cansignup}}
-                <div class="sr-only">
-                    <a href="{{signupurl}}">{{#str}} tocreatenewaccount {{/str}}</a>
-                </div>
-            {{/cansignup}}
-
-            {{#error}}
-                <div class="loginerrors mt-3">
-                    <a href="#" id="loginerrormessage" class="accesshide">{{error}}</a>
-                    <div class="alert alert-danger" role="alert" data-aria-autofocus="true">{{error}}</div>
-                </div>
-            {{/error}}
-
-            <div class="row justify-content-md-center">
-                <div class="col-md-5">
-                    <form class="mt-3" action="{{loginurl}}" method="post" id="login">
-                        <input id="anchor" type="hidden" name="anchor" value="">
-                        <script>document.getElementById('anchor').value = location.hash;</script>
-                        <input type="hidden" name="logintoken" value="{{logintoken}}">
-                        <div class="form-group">
-                            <label for="username" class="sr-only">
-                                {{^canloginbyemail}}
-                                    {{#str}} username {{/str}}
-                                {{/canloginbyemail}}
-                                {{#canloginbyemail}}
-                                    {{#str}} usernameemail {{/str}}
-                                {{/canloginbyemail}}
-                            </label>
-                            <input type="text" name="username" id="username"
-                                class="form-control"
-                                value="{{username}}"
-                                placeholder={{#quote}}{{^canloginbyemail}}{{#str}}username{{/str}}{{/canloginbyemail}}{{#canloginbyemail}}{{#str}}usernameemail{{/str}}{{/canloginbyemail}}{{/quote}}
-                                autocomplete="username">
-                        </div>
-                        <div class="form-group">
-                            <label for="password" class="sr-only">{{#str}} password {{/str}}</label>
-                            <input type="password" name="password" id="password" value=""
-                                class="form-control"
-                                placeholder={{#quote}}{{#str}}password{{/str}}{{/quote}}
-                                autocomplete="current-password">
-                        </div>
-                        {{#rememberusername}}
-                            <div class="rememberpass mt-3">
-                                <input type="checkbox" name="rememberusername" id="rememberusername" value="1" {{#username}}checked="checked"{{/username}} />
-                                <label for="rememberusername">{{#str}} rememberusername, admin {{/str}}</label>
-                            </div>
-                        {{/rememberusername}}
-
-                        <button type="submit" class="btn btn-primary btn-block mt-3" id="loginbtn">{{#str}}login{{/str}}</button>
-                    </form>
-                </div>
-
-                <div class="col-md-5">
-                    <div class="forgetpass mt-3">
-                        <p><a href="{{forgotpasswordurl}}">{{#str}}forgotten{{/str}}</a></p>
-                    </div>
-
-                    <div class="mt-3">
-                        {{#str}} cookiesenabled {{/str}}
-                        {{{cookieshelpiconformatted}}}
-                    </div>
-                    {{#canloginasguest}}
-                        <div class="mt-2">
-                            <p>{{#str}}someallowguest{{/str}}</p>
-                            <form action="{{loginurl}}" method="post" id="guestlogin">
-                                <input type="hidden" name="logintoken" value="{{logintoken}}">
-                                <input type="hidden" name="username" value="guest" />
-                                <input type="hidden" name="password" value="guest" />
-                                <button class="btn btn-secondary btn-block" type="submit">{{#str}}loginguest{{/str}}</button>
-                            </form>
-                        </div>
-                    {{/canloginasguest}}
-
-                {{#hasidentityproviders}}
-                    <h2 class="h6 mt-2">{{#str}} potentialidps, auth {{/str}}</h2>
-                    <div class="potentialidplist mt-3">
-                        {{#identityproviders}}
-                            <div class="potentialidp">
-                                <a href="{{url}}" title={{#quote}}{{name}}{{/quote}} class="btn btn-secondary btn-block">
-                                    {{#iconurl}}
-                                        <img src="{{iconurl}}" alt="" width="24" height="24"/>
-                                    {{/iconurl}}
-                                    {{name}}
-                                </a>
-                            </div>
-                        {{/identityproviders}}
-                    </div>
-                {{/hasidentityproviders}}
-                </div>
-            </div>
+<div class="loginform">
+    {{#languagemenu}}
+        <div class="login-languagemenu">
+            {{{languagemenu}}}
         </div>
-    </div>
-</div>
-</div>
-</div>
-
-
-{{#hasinstructions}}
-<div class="row justify-content-center mt-3">
-<div class="col-xl-6 col-sm-8">
-<div class="card">
-    <div class="card-body">
-        <div class="card-title">
-            <h2>{{#str}}firsttime{{/str}}</h2>
+    {{/languagemenu}}
+    {{#logourl}}
+        <div id="loginlogo" class="login-logo">
+            <img id="logoimage" src="{{logourl}}" class="img-fluid" alt="{{sitename}}"/>
+            <h1 class="login-heading sr-only">{{sitename}} {{#str}} login {{/str}}</h1>
         </div>
-        <div>
-        {{{instructions}}}
-        {{#cansignup}}
-            <form class="mt-3" action="{{signupurl}}" method="get" id="signup">
-                <button type="submit" class="btn btn-secondary">{{#str}}startsignup{{/str}}</button>
-            </form>
-        {{/cansignup}}
+    {{/logourl}}
+    {{^logourl}}
+        <h1 class="login-heading mb-4">{{sitename}} {{#str}} login {{/str}}</h1>
+    {{/logourl}}
+    {{#maintenance}}
+        <div class="alert alert-danger login-maintenance">
+            {{{maintenance}}}
         </div>
-    </div>
-</div>
-</div>
-</div>
-{{/hasinstructions}}
-
-{{#maintenance}}
-    <div class="row justify-content-center mt-3">
-        <div class="col-xl-6 col-sm-8">
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-title">
-                        <h2>{{#str}}sitemaintenance, core_admin{{/str}}</h2>
-                    </div>
-                    <div>
-                        {{{maintenance}}}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-{{/maintenance}}
-{{#js}}
+    {{/maintenance}}
     {{#error}}
-        require(['jquery'], function($) {
-            $('#loginerrormessage').focus();
-        });
+        <a href="#" id="loginerrormessage" class="sr-only">{{error}}</a>
+        <div class="alert alert-danger" role="alert">{{error}}</div>
     {{/error}}
+    {{#cansignup}}
+        <a href="{{signupurl}}" class="sr-only">{{#str}} tocreatenewaccount {{/str}}</a>
+    {{/cansignup}}
+    <form class="login-form" action="{{loginurl}}" method="post" id="login">
+        <input type="hidden" name="logintoken" value="{{logintoken}}">
+        <div class="login-form-username form-group">
+            <label for="username" class="sr-only">
+                {{^canloginbyemail}}
+                    {{#str}} username {{/str}}
+                {{/canloginbyemail}}
+                {{#canloginbyemail}}
+                    {{#str}} usernameemail {{/str}}
+                {{/canloginbyemail}}
+            </label>
+            <input type="text" name="username" id="username" {{!
+                !}}class="form-control" {{!
+                !}}value="{{username}}" {{!
+                !}}placeholder={{#quote}}{{^canloginbyemail}}{{#str}}username{{/str}}{{/canloginbyemail}}{{!
+                !}}{{#canloginbyemail}}{{#str}}usernameemail{{/str}}{{/canloginbyemail}}{{/quote}} {{!
+                !}}autocomplete="username">
+        </div>
+        <div class="login-form-password form-group">
+            <label for="password" class="sr-only">{{#str}} password {{/str}}</label>
+            <input type="password" name="password" id="password" value="" {{!
+                !}}class="form-control" {{!
+                !}}placeholder={{#quote}}{{#str}}password{{/str}}{{/quote}} {{!
+                !}}autocomplete="current-password">
+        </div>
+        {{#rememberusername}}
+            <div class="login-form-rememberusername form-group">
+                <div class="custom-control custom-radio">
+                    <input type="checkbox" name="rememberusername" id="rememberusername" class="custom-control-input" value="1"
+                        {{#username}}checked{{/username}} />
+                    <label class="custom-control-label" for="rememberusername">{{#str}} rememberusername, admin {{/str}}</label>
+                </div>
+            </div>
+        {{/rememberusername}}
+        <div class="login-form-submit form-group">
+            <button class="btn btn-primary btn-lg" type="submit" id="loginbtn">{{#str}}login{{/str}}</button>
+        </div>
+        <div class="login-form-forgotpassword form-group">
+            <a href="{{forgotpasswordurl}}">{{#str}}forgotten{{/str}}</a>
+        </div>
+    </form>
+    {{#hasidentityproviders}}
+        <div class="login-divider"></div>
+        <div class="login-identityproviders">
+            <h2 class="login-heading">{{#str}} potentialidps, auth {{/str}}</h2>
+            {{#identityproviders}}
+                <a class="btn login-identityprovider-btn" href="{{url}}">
+                    {{#iconurl}}
+                        <img src="{{iconurl}}" alt="" width="24" height="24"/>
+                    {{/iconurl}}
+                    {{name}}
+                </a>
+            {{/identityproviders}}
+        </div>
+    {{/hasidentityproviders}}
+    {{#hasinstructions}}
+        <div class="login-divider"></div>
+        <div class="login-instructions {{#cansignup}}mb-3{{/cansignup}}">
+            <h2 class="login-heading">{{#str}}firsttime{{/str}}</h2>
+            {{{instructions}}}
+        </div>
+    {{/hasinstructions}}
+    {{#cansignup}}
+        <div class="login-signup">
+            <a class="btn btn-secondary" href="{{signupurl}}">{{#str}}startsignup{{/str}}</a>
+        </div>
+    {{/cansignup}}
+    {{#canloginasguest}}
+        <div class="login-divider"></div>
+        <h2 class="login-heading">{{#str}}someallowguest{{/str}}</h2>
+        <form action="{{loginurl}}" method="post" id="guestlogin">
+            <input type="hidden" name="logintoken" value="{{logintoken}}">
+            <input type="hidden" name="username" value="guest" />
+            <input type="hidden" name="password" value="guest" />
+            <button class="btn btn-secondary" type="submit">{{#str}}loginguest{{/str}}</button>
+        </form>
+    {{/canloginasguest}}
+    <div class="login-divider"></div>
+    <div class="login-cookiemessage">
+        {{#str}} cookiesenabled {{/str}}
+        {{{cookieshelpiconformatted}}}
+    </div>
+</div>
+
+{{#js}}
     {{^error}}
         {{#autofocusform}}
-            require(['jquery'], function($) {
-                if ($('#username').val()) {
-                    $('#password').focus();
-                } else {
-                    $('#username').focus();
-                }
-            });
+            var userNameField = document.getElementById('username');
+            if (userNameField.value.length == 0) {
+                userNameField.focus();
+            } else {
+                document.getElementById('password').focus();
+            }
         {{/autofocusform}}
+    {{/error}}
+    {{#error}}
+        document.getElementById('loginerrormessage').focus();
     {{/error}}
 {{/js}}

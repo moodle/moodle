@@ -47,10 +47,8 @@ $PAGE->set_context($systemcontext);
 
 // setup text strings
 $strforgotten = get_string('passwordforgotten');
-$strlogin     = get_string('login');
 
-$PAGE->navbar->add($strlogin, get_login_url());
-$PAGE->navbar->add($strforgotten);
+$PAGE->set_pagelayout('login');
 $PAGE->set_title($strforgotten);
 $PAGE->set_heading($COURSE->fullname);
 

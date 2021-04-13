@@ -3721,6 +3721,44 @@ EOD;
     }
 
     /**
+     * Returns the language menu if multiple languages are installed.
+     *
+     * @return object lang menu object for rendering.
+     */
+    public function language_menu() {
+        global $CFG;
+
+        if ($CFG->langmenu) {
+            $langs = get_string_manager()->get_list_of_translations();
+
+            if (count($langs) < 2) {
+                return '';
+            }
+
+            $langmenu = new action_menu();
+            $menuname = get_string('language');
+
+            $currentlang = current_language();
+            if (isset($langs[$currentlang])) {
+                $menuname = $langs[$currentlang];
+            }
+            $langmenu->set_menu_trigger($menuname);
+
+            foreach ($langs as $langtype => $langname) {
+                $lang = new action_menu_link_secondary(
+                    new moodle_url($this->page->url, ['lang' => $langtype]),
+                    null,
+                    $langname,
+                    ['data-lang' => $langtype]
+                );
+                $langmenu->add($lang);
+            }
+
+            return $this->render($langmenu);
+        }
+    }
+
+    /**
      * We want to show the custom menus as a list of links in the footer on small screens.
      * Just return the menu object exported so we can render it differently.
      */

@@ -419,7 +419,6 @@ $string['createnewcategory'] = 'Create new category';
 $string['createnewcourse'] = 'Create new course';
 $string['createnewsubcategory'] = 'Create new subcategory';
 $string['createsubcategoryof'] = 'Create subcategory of {$a}';
-$string['createuserandpass'] = 'Choose your username and password';
 $string['createuser'] = 'Create user';
 $string['createziparchive'] = 'Create zip archive';
 $string['creatingblocks'] = 'Creating blocks';
@@ -2064,7 +2063,6 @@ $string['successduration'] = 'Success ({$a} seconds)';
 $string['summary'] = 'Summary';
 $string['summary_help'] = 'The idea of a summary is a short text to prepare students for the activities within the topic or week. The text is shown on the course page under the section name.';
 $string['summaryof'] = 'Summary of {$a}';
-$string['supplyinfo'] = 'More details';
 $string['suspended'] = 'Suspended';
 $string['suspendedusers'] = 'Suspended users';
 $string['switchdevicedefault'] = 'Switch to the standard theme';
@@ -2350,4 +2348,6 @@ $string['coursepreferences'] = 'Course preferences';
 $string['registrationno'] = 'No, I do not wish to receive any emails';
 
 // Deprecated since Moodle 4.0.
+$string['createuserandpass'] = 'Choose your username and password';
 $string['descriptiona'] = 'Description: {$a}';
+$string['supplyinfo'] = 'More details';
