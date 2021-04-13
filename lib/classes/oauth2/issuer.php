@@ -111,7 +111,7 @@ class issuer extends persistent {
                 'default' => true
             ),
             'servicetype' => array(
-                'type' => PARAM_TEXT,
+                'type' => PARAM_ALPHANUM,
                 'null' => NULL_ALLOWED,
                 'default' => null,
             ),
