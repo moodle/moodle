@@ -701,7 +701,7 @@ class course_modinfo {
  * {@link cached_cm_info}
  *
  * <b>Stage 2 - dynamic data.</b>
- * Dynamic data is user-dependend, it is stored in request-level cache. To reset this cache
+ * Dynamic data is user-dependent, it is stored in request-level cache. To reset this cache
  * {@link get_fast_modinfo()} with $reset argument may be called.
  *
  * Dynamic data is obtained when any of the following properties/methods is requested:
@@ -722,6 +722,7 @@ class course_modinfo {
  * - {@link cm_info::set_user_visible()}
  * - {@link cm_info::set_on_click()}
  * - {@link cm_info::set_icon_url()}
+ * - {@link cm_info::override_customdata()}
  * Any methods affecting view elements can also be set in this callback.
  *
  * <b>Stage 3 (view data).</b>
@@ -1422,6 +1423,7 @@ class cm_info implements IteratorAggregate {
      * @return mixed Optional custom data stored in modinfo cache for this activity, or null if none
      */
     private function get_custom_data() {
+        $this->obtain_dynamic_data();
         return $this->customdata;
     }
 
@@ -1677,6 +1679,16 @@ class cm_info implements IteratorAggregate {
     public function set_on_click($onclick) {
         $this->check_not_view_only();
         $this->onclick = $onclick;
+    }
+
+    /**
+     * Overrides the value of an element in the customdata array.
+     *
+     * @param string $name The key in the customdata array
+     * @param mixed $value The value
+     */
+    public function override_customdata($name, $value) {
+        $this->customdata[$name] = $value;
     }
 
     /**
