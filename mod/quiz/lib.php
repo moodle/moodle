@@ -2186,7 +2186,8 @@ function quiz_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionattemptsexhausted, completionpass, completionminattempts';
+    $fields = 'id, name, intro, introformat, completionattemptsexhausted, completionpass, completionminattempts,
+        timeopen, timeclose';
     if (!$quiz = $DB->get_record('quiz', $dbparams, $fields)) {
         return false;
     }
@@ -2213,7 +2214,71 @@ function quiz_get_coursemodule_info($coursemodule) {
         $result->customdata['customcompletionrules']['completionminattempts'] = $quiz->completionminattempts;
     }
 
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($quiz->timeopen) {
+        $result->customdata['timeopen'] = $quiz->timeopen;
+    }
+    if ($quiz->timeclose) {
+        $result->customdata['timeclose'] = $quiz->timeclose;
+    }
+
     return $result;
+}
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ *
+ * @param cm_info $cm
+ */
+function mod_quiz_cm_info_dynamic(cm_info $cm) {
+    global $USER;
+
+    $cache = cache::make('mod_quiz', 'overrides');
+    $override = $cache->get("{$cm->instance}_u_{$USER->id}");
+
+    if (!$override) {
+        $override = (object) [
+            'timeopen' => null,
+            'timeclose' => null,
+        ];
+    }
+
+    // No need to look for group overrides if there are user overrides for both timeopen and timeclose.
+    if (is_null($override->timeopen) || is_null($override->timeclose)) {
+        $opens = [];
+        $closes = [];
+        $groupings = groups_get_user_groups($cm->course, $USER->id);
+        foreach ($groupings[0] as $groupid) {
+            $groupoverride = $cache->get("{$cm->instance}_g_{$groupid}");
+            if (isset($groupoverride->timeopen)) {
+                $opens[] = $groupoverride->timeopen;
+            }
+            if (isset($groupoverride->timeclose)) {
+                $closes[] = $groupoverride->timeclose;
+            }
+        }
+        // If there is a user override for a setting, ignore the group override.
+        if (is_null($override->timeopen) && count($opens)) {
+            $override->timeopen = min($opens);
+        }
+        if (is_null($override->timeclose) && count($closes)) {
+            if (in_array(0, $closes)) {
+                $override->timeclose = 0;
+            } else {
+                $override->timeclose = max($closes);
+            }
+        }
+    }
+
+    // Populate some other values that can be used in calendar or on dashboard.
+    if (!is_null($override->timeopen)) {
+        $cm->override_customdata('timeopen', $override->timeopen);
+    }
+    if (!is_null($override->timeclose)) {
+        $cm->override_customdata('timeclose', $override->timeclose);
+    }
 }
 
 /**
