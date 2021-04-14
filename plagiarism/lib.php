@@ -41,7 +41,8 @@ abstract class plagiarism_plugin {
 
     /**
      * Return the list of form element names.
-     *
+     * @deprecated Since Moodle 4.0 - this function was a placeholder and not used in core.
+     * @todo MDL-71326 Remove this method.
      * @return array contains the form element names.
      */
     public function get_configs() {
@@ -58,6 +59,8 @@ abstract class plagiarism_plugin {
     }
     /**
      * hook to allow plagiarism specific information to be returned unformatted
+     * @deprecated Since Moodle 4.0 - this function was a placeholder and not used in core Moodle code.
+     * @todo MDL-71326 Remove this method.
      * @param int $cmid
      * @param int $userid
      * @param $file file object
@@ -96,7 +99,8 @@ abstract class plagiarism_plugin {
     }
     /**
      * hook to allow status of submitted files to be updated - called on grading/report pages.
-     *
+     * @deprecated Since Moodle 4.0 - Please use {plugin name}_before_standard_top_of_body_html instead.
+     * @todo MDL-71326 Remove this method.
      * @param object $course - full Course object
      * @param object $cm - full cm object
      */

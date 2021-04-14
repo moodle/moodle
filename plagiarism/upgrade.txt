@@ -1,5 +1,11 @@
 This files describes API changes for code that uses the plagiarism API.
 
+=== 4.0 ===
+* The method update_status() has been deprecated. Please use {plugin name}_before_standard_top_of_body_html() instead.
+* The method get_configs() has been deprecated and will be removed from the abstract class as it was not used in core.
+* The method plagiarism_get_file_results has been deprecated - it was not used in core - please call a plagiarism
+  plugins internal functions directly instead of using this function.
+
 === 3.11 ===
 * Support for Essay question type in Quiz has now been implemented, allowing plagiarism plugins to display information
   on the quiz overview report and when viewing an essay question response.
