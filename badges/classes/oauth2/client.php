@@ -245,10 +245,12 @@ class client extends \core\oauth2\client {
         }
         // Requests can either use http GET or POST.
         $response = $this->post($this->token_url(), $this->build_post_data($params));
-        $r = json_decode($response);
         if ($this->info['http_code'] !== 200) {
-            throw new moodle_exception('Could not upgrade oauth token');
+            $debuginfo = !empty($this->error) ? $this->error : $response;
+            throw new moodle_exception('oauth2refreshtokenerror', 'core_error', '', $this->info['http_code'], $debuginfo);
         }
+
+        $r = json_decode($response);
 
         if (is_null($r)) {
             throw new moodle_exception("Could not decode JSON token response");
