@@ -350,18 +350,15 @@ class core_badges_renderer extends plugin_renderer_base {
             if (!empty($CFG->badges_allowexternalbackpack) && ($expiration > $now)
                 && $userbackpack = badges_get_user_backpack($USER->id)) {
 
-                $assertion = null;
                 if (badges_open_badges_backpack_api($userbackpack->id) == OPEN_BADGES_V2P1) {
                     $assertion = new moodle_url('/badges/backpack-export.php', array('hash' => $ibadge->hash));
                 } else {
                     $assertion = new moodle_url('/badges/backpack-add.php', array('hash' => $ibadge->hash));
                 }
 
-                if (!is_null(assertion)) {
-                    $attributes = ['class' => 'btn btn-secondary m-1', 'role' => 'button'];
-                    $tobackpack = html_writer::link($assertion, get_string('addtobackpack', 'badges'), $attributes);
-                    $output .= $tobackpack;
-                }
+                $attributes = ['class' => 'btn btn-secondary m-1', 'role' => 'button'];
+                $tobackpack = html_writer::link($assertion, get_string('addtobackpack', 'badges'), $attributes);
+                $output .= $tobackpack;
             }
         }
         $output .= html_writer::end_tag('div');
