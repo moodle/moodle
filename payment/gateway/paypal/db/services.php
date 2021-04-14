@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 $functions = [
     'paygw_paypal_get_config_for_js' => [
         'classname'   => 'paygw_paypal\external\get_config_for_js',
-        'methodname'  => 'execute',
         'classpath'   => '',
         'description' => 'Returns the configuration settings to be used in js',
         'type'        => 'read',
@@ -35,7 +34,6 @@ $functions = [
     ],
     'paygw_paypal_create_transaction_complete' => [
         'classname'   => 'paygw_paypal\external\transaction_complete',
-        'methodname'  => 'execute',
         'classpath'   => '',
         'description' => 'Takes care of what needs to be done when a PayPal transaction comes back as complete.',
         'type'        => 'write',
