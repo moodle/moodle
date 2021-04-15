@@ -764,4 +764,66 @@ class core_group_lib_testcase extends advanced_testcase {
 
         $this->assertEquals(3, $DB->count_records('message_conversation_members', ['conversationid' => $conversation->id]));
     }
+
+    public function test_groups_get_members_by_role(): void {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        $course1 = $this->getDataGenerator()->create_course();
+
+        $user1 = $this->getDataGenerator()->create_user(['username' => 'user1', 'idnumber' => 1]);
+        $user2 = $this->getDataGenerator()->create_user(['username' => 'user2', 'idnumber' => 2]);
+        $user3 = $this->getDataGenerator()->create_user(['username' => 'user3', 'idnumber' => 3]);
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 0);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id, 1);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id, 1);
+
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course1->id]);
+
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $user1->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $user2->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $user3->id]);
+
+        // Test basic usage.
+        $result = groups_get_members_by_role($group1->id, $course1->id);
+        $this->assertEquals(1, count($result[0]->users));
+        $this->assertEquals(2, count($result[1]->users));
+        $this->assertEquals($user1->firstname, reset($result[0]->users)->firstname);
+        $this->assertEquals($user1->username, reset($result[0]->users)->username);
+
+        // Test with specified fields.
+        $result = groups_get_members_by_role($group1->id, $course1->id, 'u.firstname, u.lastname');
+        $this->assertEquals(1, count($result[0]->users));
+        $this->assertEquals($user1->firstname, reset($result[0]->users)->firstname);
+        $this->assertEquals($user1->lastname, reset($result[0]->users)->lastname);
+        $this->assertEquals(false, isset(reset($result[0]->users)->username));
+
+        // Test with sorting.
+        $result = groups_get_members_by_role($group1->id, $course1->id, 'u.username', 'u.username DESC');
+        $this->assertEquals(1, count($result[0]->users));
+        $this->assertEquals($user3->username, reset($result[1]->users)->username);
+        $result = groups_get_members_by_role($group1->id, $course1->id, 'u.username', 'u.username ASC');
+        $this->assertEquals(1, count($result[0]->users));
+        $this->assertEquals($user2->username, reset($result[1]->users)->username);
+
+        // Test with extra WHERE.
+        $result = groups_get_members_by_role(
+            $group1->id,
+            $course1->id,
+            'u.username',
+            null,
+            'u.idnumber > :number',
+            ['number' => 2]);
+        $this->assertEquals(1, count($result));
+        $this->assertEquals(1, count($result[1]->users));
+        $this->assertEquals($user3->username, reset($result[1]->users)->username);
+
+        // Test with join.
+        set_user_preference('reptile', 'snake', $user1);
+        $result = groups_get_members_by_role($group1->id, $course1->id, 'u.username, up.value', null, 'up.name = :prefname',
+                ['prefname' => 'reptile'], 'JOIN {user_preferences} up ON up.userid = u.id');
+        $this->assertEquals('snake', reset($result[0]->users)->value);
+    }
 }

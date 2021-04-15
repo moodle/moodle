@@ -153,6 +153,21 @@ class core_datalib_testcase extends advanced_testcase {
         foreach ($results as $record) {
             $this->assertSame('frog', $record->value);
         }
+
+        // Join with another table and include other table fields in search.
+        set_user_preference('reptile', 'snake', $user1);
+        set_user_preference('reptile', 'lizard', $user2);
+        list($sql, $params) = users_search_sql('snake', 'qq', true, ['up.value']);
+        $results = $DB->get_records_sql("
+                SELECT up.id, up.value
+                  FROM {user} qq
+                  JOIN {user_preferences} up ON up.userid = qq.id
+                 WHERE up.name = :prefname
+                       AND $sql", array_merge(array('prefname' => 'reptile'), $params));
+        $this->assertEquals(1, count($results));
+        foreach ($results as $record) {
+            $this->assertSame('snake', $record->value);
+        }
     }
 
     public function test_users_order_by_sql_simple() {
@@ -200,6 +215,25 @@ class core_datalib_testcase extends advanced_testcase {
                 THEN 0 ELSE 1 END, u.lastname, u.firstname, u.id', $sort);
         $this->assertEquals(array('usersortexact1' => 'search', 'usersortexact2' => 'search',
                 'usersortexact3' => 'search', 'usersortexact4' => 'search', 'usersortexact5' => 'search'), $params);
+    }
+
+    public function test_users_order_by_sql_search_with_custom_fields(): void {
+        global $CFG, $DB;
+        $this->resetAfterTest();
+
+        $CFG->showuseridentity = 'email,idnumber';
+        $this->setAdminUser();
+
+        list($sort, $params) =
+                users_order_by_sql('u', 'search', context_system::instance(), ['profile_field_customfield' => 'x.customfield']);
+        $this->assert_same_sql('CASE WHEN
+                    ' . $DB->sql_fullname('u.firstname', 'u.lastname') . ' = :usersortexact1 OR
+                    LOWER(u.firstname) = LOWER(:usersortexact2) OR
+                    LOWER(u.lastname) = LOWER(:usersortexact3) OR
+                    LOWER(x.customfield) = LOWER(:usersortexact4)
+                THEN 0 ELSE 1 END, u.lastname, u.firstname, u.id', $sort);
+        $this->assertEquals(array('usersortexact1' => 'search', 'usersortexact2' => 'search',
+                'usersortexact3' => 'search', 'usersortexact4' => 'search'), $params);
     }
 
     public function test_get_admin() {
