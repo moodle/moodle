@@ -222,6 +222,7 @@ class client extends \core\oauth2\client {
         $callbackurl = self::callback_url();
 
         if ($granttype == 'authorization_code') {
+            $this->basicauth = true;
             $params = array('code' => $code,
                 'grant_type' => $granttype,
                 'redirect_uri' => $callbackurl->out(false),
@@ -236,7 +237,7 @@ class client extends \core\oauth2\client {
             );
         }
         if ($this->basicauth) {
-            $idsecret = urlencode($this->clientid) . ':' . urlencode($this->clientsecret);
+            $idsecret = $this->clientid . ':' . $this->clientsecret;
             $this->setHeader('Authorization: Basic ' . base64_encode($idsecret));
         } else {
             $params['client_id'] = $this->clientid;
@@ -244,10 +245,12 @@ class client extends \core\oauth2\client {
         }
         // Requests can either use http GET or POST.
         $response = $this->post($this->token_url(), $this->build_post_data($params));
-        $r = json_decode($response);
         if ($this->info['http_code'] !== 200) {
-            throw new moodle_exception('Could not upgrade oauth token');
+            $debuginfo = !empty($this->error) ? $this->error : $response;
+            throw new moodle_exception('oauth2refreshtokenerror', 'core_error', '', $this->info['http_code'], $debuginfo);
         }
+
+        $r = json_decode($response);
 
         if (is_null($r)) {
             throw new moodle_exception("Could not decode JSON token response");
