@@ -28,6 +28,9 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/filebrowser/file_browser.php');
 
+use repository_googledocs\helper;
+use repository_googledocs\googledocs_content_search;
+
 /**
  * Google Docs Plugin
  *
@@ -54,6 +57,18 @@ class repository_googledocs extends repository {
      * Additional scopes required for drive.
      */
     const SCOPES = 'https://www.googleapis.com/auth/drive';
+
+    /** @var string Defines the path node identifier for the repository root. */
+    const REPOSITORY_ROOT_ID = 'repository_root';
+
+    /** @var string Defines the path node identifier for the my drive root. */
+    const MY_DRIVE_ROOT_ID = 'root';
+
+    /** @var string Defines the path node identifier for the shared drives root. */
+    const SHARED_DRIVES_ROOT_ID = 'shared_drives_root';
+
+    /** @var string Defines the path node identifier for the content search root. */
+    const SEARCH_ROOT_ID = 'search';
 
     /**
      * Constructor.
@@ -161,10 +176,14 @@ class repository_googledocs extends repository {
     /**
      * Build the breadcrumb from a path.
      *
+     * @deprecated since Moodle 3.11.
      * @param string $path to create a breadcrumb from.
      * @return array containing name and path of each crumb.
      */
     protected function build_breadcrumb($path) {
+        debugging('The function build_breadcrumb() is deprecated, please use get_navigation() from the ' .
+            'googledocs repository content classes instead.', DEBUG_DEVELOPER);
+
         $bread = explode('/', $path);
         $crumbtrail = '';
         foreach ($bread as $crumb) {
@@ -185,12 +204,16 @@ class repository_googledocs extends repository {
      *
      * Typically, a node will be id|Name of the node.
      *
+     * @deprecated since Moodle 3.11.
      * @param string $id of the node.
      * @param string $name of the node, will be URL encoded.
      * @param string $root to append the node on, must be a result of this function.
      * @return string path to the node.
      */
     protected function build_node_path($id, $name = '', $root = '') {
+        debugging('The function build_node_path() is deprecated, please use ' .
+            '\repository_googledocs\helper::build_node_path() instead.', DEBUG_DEVELOPER);
+
         $path = $id;
         if (!empty($name)) {
             $path .= '|' . urlencode($name);
@@ -204,11 +227,15 @@ class repository_googledocs extends repository {
     /**
      * Returns information about a node in a path.
      *
+     * @deprecated since Moodle 3.11.
      * @see self::build_node_path()
      * @param string $node to extrat information from.
      * @return array about the node.
      */
     protected function explode_node_path($node) {
+        debugging('The function explode_node_path() is deprecated, please use ' .
+            '\repository_googledocs\helper::explode_node_path() instead.', DEBUG_DEVELOPER);
+
         if (strpos($node, '|') !== false) {
             list($id, $name) = explode('|', $node, 2);
             $name = urldecode($name);
@@ -234,38 +261,48 @@ class repository_googledocs extends repository {
      */
     public function get_listing($path='', $page = '') {
         if (empty($path)) {
-            $path = $this->build_node_path('root', get_string('pluginname', 'repository_googledocs'));
+            $pluginname = get_string('pluginname', 'repository_googledocs');
+            $path = helper::build_node_path('repository_root', $pluginname);
         }
+
         if (!$this->issuer->get('enabled')) {
             // Empty list of files for disabled repository.
-            return ['dynload' => false, 'list' => [], 'nologin' => true];
+            return [
+                'dynload' => false,
+                'list' => [],
+                'nologin' => true,
+            ];
         }
 
         // We analyse the path to extract what to browse.
         $trail = explode('/', $path);
         $uri = array_pop($trail);
-        list($id, $name) = $this->explode_node_path($uri);
+        list($id, $name) = helper::explode_node_path($uri);
+        $service = new repository_googledocs\rest($this->get_user_oauth_client());
 
-        // Handle the special keyword 'search', which we defined in self::search() so that
-        // we could set up a breadcrumb in the search results. In any other case ID would be
-        // 'root' which is a special keyword set up by Google, or a parent (folder) ID.
-        if ($id === 'search') {
-            return $this->search($name);
+        // Define the content class object and query which will be used to get the contents for this path.
+        if ($id === self::SEARCH_ROOT_ID) {
+            // The special keyword 'search' is the ID of the node. This is possible as we can set up a breadcrumb in
+            // the search results. Therefore, we should use the content search object to get the results from the
+            // previously performed search.
+            $contentobj = new googledocs_content_search($service, $path);
+            // We need to deconstruct the node name in order to obtain the search term and use it as a query.
+            $query = str_replace(get_string('searchfor', 'repository_googledocs'), '', $name);
+            $query = trim(str_replace("'", "", $query));
+        } else {
+            // Otherwise, return and use the appropriate (based on the path) content browser object.
+            $contentobj = helper::get_browser($service, $path);
+            // Use the node ID as a query.
+            $query = $id;
         }
 
-        // Query the Drive.
-        $q = "'" . str_replace("'", "\'", $id) . "' in parents";
-        $q .= ' AND trashed = false';
-        $results = $this->query($q, $path);
-
-        $ret = array();
-        $ret['dynload'] = true;
-        $ret['defaultreturntype'] = $this->default_returntype();
-        $ret['path'] = $this->build_breadcrumb($path);
-        $ret['list'] = $results;
-        $ret['manage'] = 'https://drive.google.com/';
-
-        return $ret;
+        return [
+            'dynload' => true,
+            'defaultreturntype' => $this->default_returntype(),
+            'path' => $contentobj->get_navigation(),
+            'list' => $contentobj->get_content_nodes($query, [$this, 'filter']),
+            'manage' => 'https://drive.google.com/',
+        ];
     }
 
     /**
@@ -276,21 +313,25 @@ class repository_googledocs extends repository {
      * @return array of results.
      */
     public function search($searchtext, $page = 0) {
-        $path = $this->build_node_path('root', get_string('pluginname', 'repository_googledocs'));
-        $str = get_string('searchfor', 'repository_googledocs', $searchtext);
-        $path = $this->build_node_path('search', $str, $path);
+        // Construct the path to the repository root.
+        $pluginname = get_string('pluginname', 'repository_googledocs');
+        $rootpath = helper::build_node_path(self::REPOSITORY_ROOT_ID, $pluginname);
+        // Construct the path to the search results node.
+        // Currently, when constructing the search node name, the search term is concatenated to the lang string.
+        // This was done deliberately so that we can easily and accurately obtain the search term from the search node
+        // name later when navigating to the search results through the breadcrumb navigation.
+        $name = get_string('searchfor', 'repository_googledocs') . " '{$searchtext}'";
+        $path = helper::build_node_path(self::SEARCH_ROOT_ID, $name, $rootpath);
 
-        // Query the Drive.
-        $q = "fullText contains '" . str_replace("'", "\'", $searchtext) . "'";
-        $q .= ' AND trashed = false';
-        $results = $this->query($q, $path);
+        $service = new repository_googledocs\rest($this->get_user_oauth_client());
+        $searchobj = new googledocs_content_search($service, $path);
 
-        $ret = array();
-        $ret['dynload'] = true;
-        $ret['path'] = $this->build_breadcrumb($path);
-        $ret['list'] = $results;
-        $ret['manage'] = 'https://drive.google.com/';
-        return $ret;
+        return [
+            'dynload' => true,
+            'path' => $searchobj->get_navigation(),
+            'list' => $searchobj->get_content_nodes($searchtext, [$this, 'filter']),
+            'manage' => 'https://drive.google.com/',
+        ];
     }
 
     /**
@@ -302,12 +343,16 @@ class repository_googledocs extends repository {
      * This returns a list of files and folders with their details as they should be
      * formatted and returned by functions such as get_listing() or search().
      *
+     * @deprecated since Moodle 3.11.
      * @param string $q search query as expected by the Google API.
      * @param string $path parent path of the current files, will not be used for the query.
      * @param int $page page.
      * @return array of files and folders.
      */
     protected function query($q, $path = null, $page = 0) {
+        debugging('The function query() is deprecated, please use get_content_nodes() from the ' .
+            'googledocs repository content classes instead.', DEBUG_DEVELOPER);
+
         global $OUTPUT;
 
         $files = array();
