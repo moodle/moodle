@@ -251,6 +251,7 @@ class generator_testcase extends \advanced_testcase {
             'coremajor' => null,
             'coreminor' => null,
             'metadatasettings' => null,
+            'enabled' => 1,
         ];
 
         $this->assertEquals($expected, $data);

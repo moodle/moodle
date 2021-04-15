@@ -1,11 +1,17 @@
-@core @core_contentbank @contenttype_h5p @_file_upload @_switch_iframe @javascript
+@core @core_contentbank @core_h5p @contenttype_h5p @_file_upload @_switch_iframe @javascript
 Feature: Replace H5P file from an existing content requires special capabilities
   In order replace an H5P content from the content bank
   As a teacher
   I need to be able to replace the content only if certain capabilities are allowed
 
   Background:
-    Given the following "users" exist:
+    Given I log in as "admin"
+    And I navigate to "H5P > Manage H5P content types" in site administration
+    And I upload "h5p/tests/fixtures/ipsums.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
+    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
+    And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "categories" exist:
@@ -21,6 +27,7 @@ Feature: Replace H5P file from an existing content requires special capabilities
       | contextlevel | reference | contenttype     | user     | contentname       | filepath                              |
       | Course       | C1        | contenttype_h5p | admin    | admincontent      | /h5p/tests/fixtures/ipsums.h5p        |
       | Course       | C1        | contenttype_h5p | teacher1 | teachercontent    | /h5p/tests/fixtures/filltheblanks.h5p |
+    And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Navigation" block if not present

@@ -2466,6 +2466,10 @@ body.h5p-embed {
     }
 }
 
+#h5pcontenttypes td {
+    vertical-align: middle;
+}
+
 .text-decoration-none {
     text-decoration: none !important; /* stylelint-disable-line declaration-no-important */
 }

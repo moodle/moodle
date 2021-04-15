@@ -520,7 +520,7 @@ class framework implements \H5PFrameworkInterface {
 
         $results = $DB->get_records('h5p_libraries', [], 'title ASC, majorversion ASC, minorversion ASC',
             'id, machinename AS machine_name, majorversion AS major_version, minorversion AS minor_version,
-            patchversion AS patch_version, runnable, title');
+            patchversion AS patch_version, runnable, title, enabled');
 
         $libraries = array();
         foreach ($results as $library) {

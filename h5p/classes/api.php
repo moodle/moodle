@@ -185,16 +185,20 @@ class api {
      *
      * @param string $url H5P pluginfile URL.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
+     * @param bool $skipcapcheck Whether capabilities should be checked or not to get the pluginfile URL because sometimes they
+     *     might be controlled before calling this method.
      *
      * @return array of [file, stdClass|false]:
      *             - file local file for this $url.
      *             - stdClass is an H5P object or false if there isn't any H5P with this URL.
      */
-    public static function get_content_from_pluginfile_url(string $url, bool $preventredirect = true): array {
+    public static function get_content_from_pluginfile_url(string $url, bool $preventredirect = true,
+        bool $skipcapcheck = false): array {
+
         global $DB;
 
         // Deconstruct the URL and get the pathname associated.
-        if (self::can_access_pluginfile_hash($url, $preventredirect)) {
+        if ($skipcapcheck || self::can_access_pluginfile_hash($url, $preventredirect)) {
             $pathnamehash = self::get_pluginfile_hash($url);
         }
 
@@ -223,17 +227,19 @@ class api {
      * @param factory $factory The \core_h5p\factory object
      * @param stdClass $messages The error, exception and info messages, raised while preparing and running an H5P content.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
+     * @param bool $skipcapcheck Whether capabilities should be checked or not to get the pluginfile URL because sometimes they
+     *     might be controlled before calling this method.
      *
      * @return array of [file, h5pid]:
      *             - file local file for this $url.
      *             - h5pid is the H5P identifier or false if there isn't any H5P with this URL.
      */
     public static function create_content_from_pluginfile_url(string $url, \stdClass $config, factory $factory,
-        \stdClass &$messages, bool $preventredirect = true): array {
+        \stdClass &$messages, bool $preventredirect = true, bool $skipcapcheck = false): array {
         global $USER;
 
         $core = $factory->get_core();
-        list($file, $h5p) = self::get_content_from_pluginfile_url($url, $preventredirect);
+        list($file, $h5p) = self::get_content_from_pluginfile_url($url, $preventredirect, $skipcapcheck);
 
         if (!$file) {
             $core->h5pF->setErrorMessage(get_string('h5pfilenotfound', 'core_h5p'));
@@ -251,13 +257,21 @@ class api {
         $context = \context::instance_by_id($file->get_contextid());
         if ($h5p) {
             // The H5P content has been deployed previously.
-            $displayoptions = helper::get_display_options($core, $config);
-            // Check if the user can set the displayoptions.
-            if ($displayoptions != $h5p->displayoptions && has_capability('moodle/h5p:setdisplayoptions', $context)) {
-                // If the displayoptions has changed and the user has permission to modify it, update this information in the DB.
-                $core->h5pF->updateContentFields($h5p->id, ['displayoptions' => $displayoptions]);
+
+            // If the main library for this H5P content is disabled, the content won't be displayed.
+            $mainlibrary = (object) ['id' => $h5p->mainlibraryid];
+            if (!self::is_library_enabled($mainlibrary)) {
+                $core->h5pF->setErrorMessage(get_string('mainlibrarydisabled', 'core_h5p'));
+                return [$file, false];
+            } else {
+                $displayoptions = helper::get_display_options($core, $config);
+                // Check if the user can set the displayoptions.
+                if ($displayoptions != $h5p->displayoptions && has_capability('moodle/h5p:setdisplayoptions', $context)) {
+                    // If displayoptions has changed and user has permission to modify it, update this information in DB.
+                    $core->h5pF->updateContentFields($h5p->id, ['displayoptions' => $displayoptions]);
+                }
+                return [$file, $h5p->id];
             }
-            return [$file, $h5p->id];
         } else {
             // The H5P content hasn't been deployed previously.
 
@@ -592,5 +606,117 @@ class api {
         }
 
         return null;
+    }
+
+    /**
+     * Enable or disable a library.
+     *
+     * @param int $libraryid The id of the library to enable/disable.
+     * @param bool $isenabled True if the library should be enabled; false otherwise.
+     */
+    public static function set_library_enabled(int $libraryid, bool $isenabled): void {
+        global $DB;
+
+        $library = $DB->get_record('h5p_libraries', ['id' => $libraryid], '*', MUST_EXIST);
+        if ($library->runnable) {
+            // For now, only runnable libraries can be enabled/disabled.
+            $record = [
+                'id' => $libraryid,
+                'enabled' => $isenabled,
+            ];
+            $DB->update_record('h5p_libraries', $record);
+        }
+    }
+
+    /**
+     * Check whether a library is enabled or not. When machinename is passed, it will return false if any of the versions
+     * for this machinename is disabled.
+     * If the library doesn't exist, it will return true.
+     *
+     * @param \stdClass $librarydata Supported fields for library: 'id' and 'machichename'.
+     * @return bool
+     * @throws \moodle_exception
+     */
+    public static function is_library_enabled(\stdClass $librarydata): bool {
+        global $DB;
+
+        $params = [];
+        if (property_exists($librarydata, 'machinename')) {
+            $params['machinename'] = $librarydata->machinename;
+        }
+        if (property_exists($librarydata, 'id')) {
+            $params['id'] = $librarydata->id;
+        }
+
+        if (empty($params)) {
+            throw new \moodle_exception("Missing 'machinename' or 'id' in librarydata parameter");
+        }
+
+        $libraries = $DB->get_records('h5p_libraries', $params);
+
+        // If any of the libraries with these values have been disabled, return false.
+        foreach ($libraries as $id => $library) {
+            if (!$library->enabled) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check whether an H5P package is valid or not.
+     *
+     * @param \stored_file $file The file with the H5P content.
+     * @param bool $onlyupdatelibs Whether new libraries can be installed or only the existing ones can be updated
+     * @param bool $skipcontent Should the content be skipped (so only the libraries will be saved)?
+     * @param factory|null $factory The \core_h5p\factory object
+     * @param bool $deletefiletree Should the temporary files be deleted before returning?
+     * @return bool True if the H5P file is valid (expected format, valid libraries...); false otherwise.
+     */
+    public static function is_valid_package(\stored_file $file, bool $onlyupdatelibs, bool $skipcontent = false,
+            ?factory $factory = null, bool $deletefiletree = true): bool {
+
+        // This may take a long time.
+        \core_php_time_limit::raise();
+
+        $isvalid = false;
+
+        if (empty($factory)) {
+            $factory = new factory();
+        }
+        $core = $factory->get_core();
+        $h5pvalidator = $factory->get_validator();
+
+        // Set the H5P file path.
+        $core->h5pF->set_file($file);
+        $path = $core->fs->getTmpPath();
+        $core->h5pF->getUploadedH5pFolderPath($path);
+        // Add manually the extension to the file to avoid the validation fails.
+        $path .= '.h5p';
+        $core->h5pF->getUploadedH5pPath($path);
+        // Copy the .h5p file to the temporary folder.
+        $file->copy_content_to($path);
+
+        if ($h5pvalidator->isValidPackage($skipcontent, $onlyupdatelibs)) {
+            if ($skipcontent) {
+                $isvalid = true;
+            } else if (!empty($h5pvalidator->h5pC->mainJsonData['mainLibrary'])) {
+                $mainlibrary = (object) ['machinename' => $h5pvalidator->h5pC->mainJsonData['mainLibrary']];
+                if (self::is_library_enabled($mainlibrary)) {
+                    $isvalid = true;
+                } else {
+                    // If the main library of the package is disabled, the H5P content will be considered invalid.
+                    $core->h5pF->setErrorMessage(get_string('mainlibrarydisabled', 'core_h5p'));
+                }
+            }
+        }
+
+        if ($deletefiletree) {
+            // Remove temp content folder.
+            \H5PCore::deleteFileTree($path);
+        }
+
+        return $isvalid;
     }
 }

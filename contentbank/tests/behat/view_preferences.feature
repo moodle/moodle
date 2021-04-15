@@ -1,4 +1,4 @@
-@core @core_contentbank @contentbank_h5p @_file_upload @javascript
+@core @core_contentbank @core_h5p @contentbank_h5p @_file_upload @javascript
 Feature: Store the content bank view preference
   In order to consistantly view the content bank in icons or details view
   As an admin
