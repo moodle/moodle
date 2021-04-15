@@ -148,10 +148,11 @@ class gradereport_user_external extends external_api {
 
         $gpr = new grade_plugin_return(
             array(
-                'type' => 'report',
-                'plugin' => 'user',
-                'courseid' => $course->id,
-                'userid' => $userid)
+                'type'           => 'report',
+                'plugin'         => 'user',
+                'courseid'       => $course->id,
+                'courseidnumber' => $course->idnumber,
+                'userid'         => $userid)
             );
 
         $reportdata = array();
@@ -162,11 +163,12 @@ class gradereport_user_external extends external_api {
             $report->fill_table();
 
             $gradeuserdata = array(
-                'courseid'      => $course->id,
-                'userid'        => $user->id,
-                'userfullname'  => fullname($user),
-                'useridnumber'  => $user->idnumber,
-                'maxdepth'      => $report->maxdepth,
+                'courseid'       => $course->id,
+                'courseidnumber' => $course->idnumber,
+                'userid'         => $user->id,
+                'userfullname'   => fullname($user),
+                'useridnumber'   => $user->idnumber,
+                'maxdepth'       => $report->maxdepth,
             );
             if ($tabledata) {
                 $gradeuserdata['tabledata'] = $report->tabledata;
@@ -189,11 +191,12 @@ class gradereport_user_external extends external_api {
                 $report->fill_table();
 
                 $gradeuserdata = array(
-                    'courseid'      => $course->id,
-                    'userid'        => $currentuser->id,
-                    'userfullname'  => fullname($currentuser),
-                    'useridnumber'  => $currentuser->idnumber,
-                    'maxdepth'      => $report->maxdepth,
+                    'courseid'       => $course->id,
+                    'courseidnumber' => $course->idnumber,
+                    'userid'         => $currentuser->id,
+                    'userfullname'   => fullname($currentuser),
+                    'useridnumber'   => $currentuser->idnumber,
+                    'maxdepth'       => $report->maxdepth,
                 );
                 if ($tabledata) {
                     $gradeuserdata['tabledata'] = $report->tabledata;
@@ -478,6 +481,7 @@ class gradereport_user_external extends external_api {
                     new external_single_structure(
                         array(
                             'courseid' => new external_value(PARAM_INT, 'course id'),
+                            'courseidnumber' => new external_value(PARAM_TEXT, 'course idnumber'),
                             'userid'   => new external_value(PARAM_INT, 'user id'),
                             'userfullname' => new external_value(PARAM_TEXT, 'user fullname'),
                             'useridnumber' => new external_value(
