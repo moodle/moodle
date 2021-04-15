@@ -438,17 +438,7 @@ class manager {
         $filename = 'tour_export_' . $tour->get_id() . '_' . time() . '.json';
 
         // Force download.
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', time()) . ' GMT');
-        header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
-        header('Expires: ' . gmdate('D, d M Y H:i:s', 0) . 'GMT');
-        header('Pragma: no-cache');
-        header('Accept-Ranges: none');
-        header('Content-disposition: attachment; filename=' . $filename);
-        header('Content-length: ' . strlen($exportstring));
-        header('Content-type: text/calendar; charset=utf-8');
-
-        echo $exportstring;
-        die;
+        send_file($exportstring, $filename, 0, 0, true, true);
     }
 
     /**
