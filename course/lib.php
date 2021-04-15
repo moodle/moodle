@@ -61,6 +61,7 @@ define('COURSE_TIMELINE_ALL', 'all');
 define('COURSE_TIMELINE_PAST', 'past');
 define('COURSE_TIMELINE_INPROGRESS', 'inprogress');
 define('COURSE_TIMELINE_FUTURE', 'future');
+define('COURSE_TIMELINE_SEARCH', 'search');
 define('COURSE_FAVOURITES', 'favourites');
 define('COURSE_TIMELINE_HIDDEN', 'hidden');
 define('COURSE_CUSTOMFIELD', 'customfield');
@@ -4312,6 +4313,58 @@ function course_get_enrolled_courses_for_logged_in_user(
 }
 
 /**
+ * Get the list of enrolled courses the current user searched for.
+ *
+ * This function returns a Generator. The courses will be loaded from the database
+ * in chunks rather than a single query.
+ *
+ * @param int $limit Restrict result set to this amount
+ * @param int $offset Skip this number of records from the start of the result set
+ * @param string|null $sort SQL string for sorting
+ * @param string|null $fields SQL string for fields to be returned
+ * @param int $dbquerylimit The number of records to load per DB request
+ * @param array $searchcriteria contains search criteria
+ * @param array $options display options, same as in get_courses() except 'recursive' is ignored -
+ *                       search is always category-independent
+ * @return Generator
+ */
+function course_get_enrolled_courses_for_logged_in_user_from_search(
+    int $limit = 0,
+    int $offset = 0,
+    string $sort = null,
+    string $fields = null,
+    int $dbquerylimit = COURSE_DB_QUERY_LIMIT,
+    array $searchcriteria = [],
+    array $options = []
+) : Generator {
+
+    $haslimit = !empty($limit);
+    $recordsloaded = 0;
+    $querylimit = (!$haslimit || $limit > $dbquerylimit) ? $dbquerylimit : $limit;
+    $ids = core_course_category::search_courses($searchcriteria, $options);
+
+    // If no courses were found matching the criteria return back.
+    if (empty($ids)) {
+        return;
+    }
+
+    while ($courses = enrol_get_my_courses($fields, $sort, $querylimit, $ids, false, $offset)) {
+        yield from $courses;
+
+        $recordsloaded += $querylimit;
+
+        if (count($courses) < $querylimit) {
+            break;
+        }
+        if ($haslimit && $recordsloaded >= $limit) {
+            break;
+        }
+
+        $offset += $querylimit;
+    }
+}
+
+/**
  * Search the given $courses for any that match the given $classification up to the specified
  * $limit.
  *
@@ -4334,9 +4387,9 @@ function course_filter_courses_by_timeline_classification(
 
     if (!in_array($classification,
             [COURSE_TIMELINE_ALLINCLUDINGHIDDEN, COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, COURSE_TIMELINE_INPROGRESS,
-                COURSE_TIMELINE_FUTURE, COURSE_TIMELINE_HIDDEN])) {
+                COURSE_TIMELINE_FUTURE, COURSE_TIMELINE_HIDDEN, COURSE_TIMELINE_SEARCH])) {
         $message = 'Classification must be one of COURSE_TIMELINE_ALLINCLUDINGHIDDEN, COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, '
-            . 'COURSE_TIMELINE_INPROGRESS or COURSE_TIMELINE_FUTURE';
+            . 'COURSE_TIMELINE_INPROGRESS, COURSE_TIMELINE_SEARCH or COURSE_TIMELINE_FUTURE';
         throw new moodle_exception($message);
     }
 
@@ -4350,6 +4403,7 @@ function course_filter_courses_by_timeline_classification(
 
         // Added as of MDL-63457 toggle viewability for each user.
         if ($classification == COURSE_TIMELINE_ALLINCLUDINGHIDDEN || ($classification == COURSE_TIMELINE_HIDDEN && $pref) ||
+            $classification == COURSE_TIMELINE_SEARCH||
             (($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) && !$pref)) {
             $filteredcourses[] = $course;
             $filtermatches++;

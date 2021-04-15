@@ -4832,6 +4832,104 @@ class core_course_courselib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the course_get_enrolled_courses_for_logged_in_user_from_search function.
+     */
+    public function test_course_get_enrolled_courses_for_logged_in_user_from_search() {
+        global $DB;
+
+        // Set up.
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $student = $generator->create_user();
+
+        $cat1 = core_course_category::create(['name' => 'Cat1']);
+        $cat2 = core_course_category::create(['name' => 'Cat2', 'parent' => $cat1->id]);
+        $c1 = $this->getDataGenerator()->create_course(['category' => $cat1->id, 'fullname' => 'Test 3', 'summary' => 'Magic', 'idnumber' => 'ID3']);
+        $c2 = $this->getDataGenerator()->create_course(['category' => $cat1->id, 'fullname' => 'Test 1', 'summary' => 'Magic']);
+        $c3 = $this->getDataGenerator()->create_course(['category' => $cat1->id, 'fullname' => 'Математика', 'summary' => ' Test Magic']);
+        $c4 = $this->getDataGenerator()->create_course(['category' => $cat1->id, 'fullname' => 'Test 4', 'summary' => 'Magic', 'idnumber' => 'ID4']);
+
+        $c5 = $this->getDataGenerator()->create_course(['category' => $cat2->id, 'fullname' => 'Test 5', 'summary' => 'Magic']);
+        $c6 = $this->getDataGenerator()->create_course(['category' => $cat2->id, 'fullname' => 'Дискретная Математика', 'summary' => 'Magic']);
+        $c7 = $this->getDataGenerator()->create_course(['category' => $cat2->id, 'fullname' => 'Test 7', 'summary' => 'Magic']);
+        $c8 = $this->getDataGenerator()->create_course(['category' => $cat2->id, 'fullname' => 'Test 8', 'summary' => 'Magic']);
+
+        for ($i = 1; $i < 9; $i++) {
+            $generator->enrol_user($student->id, ${"c$i"}->id, 'student');
+        }
+
+        $this->setUser($student);
+
+        $returnedcourses = course_get_enrolled_courses_for_logged_in_user_from_search(
+            0,
+            0,
+            'id ASC',
+            null,
+            COURSE_DB_QUERY_LIMIT,
+            ['search' => 'test'],
+            ['idonly' => true]
+        );
+
+        $actualresult = array_map(function($course) {
+            return $course->id;
+        }, iterator_to_array($returnedcourses, false));
+
+        $this->assertEquals([$c1->id, $c2->id, $c3->id, $c4->id, $c5->id, $c7->id, $c8->id], $actualresult);
+
+        // Test no courses matching the search.
+        $returnedcourses = course_get_enrolled_courses_for_logged_in_user_from_search(
+            0,
+            0,
+            'id ASC',
+            null,
+            COURSE_DB_QUERY_LIMIT,
+            ['search' => 'foobar'],
+            ['idonly' => true]
+        );
+
+        $actualresult = array_map(function($course) {
+            return $course->id;
+        }, iterator_to_array($returnedcourses, false));
+
+        $this->assertEquals([], $actualresult);
+
+        // Test returning all courses that have a mutual summary.
+        $returnedcourses = course_get_enrolled_courses_for_logged_in_user_from_search(
+            0,
+            0,
+            'id ASC',
+            null,
+            COURSE_DB_QUERY_LIMIT,
+            ['search' => 'Magic'],
+            ['idonly' => true]
+        );
+
+        $actualresult = array_map(function($course) {
+            return $course->id;
+        }, iterator_to_array($returnedcourses, false));
+
+        $this->assertEquals([$c1->id, $c2->id, $c3->id, $c4->id, $c5->id, $c6->id, $c7->id, $c8->id], $actualresult);
+
+        // Test returning a unique course.
+        $returnedcourses = course_get_enrolled_courses_for_logged_in_user_from_search(
+            0,
+            0,
+            'id ASC',
+            null,
+            COURSE_DB_QUERY_LIMIT,
+            ['search' => 'Дискретная'],
+            ['idonly' => true]
+        );
+
+        $actualresult = array_map(function($course) {
+            return $course->id;
+        }, iterator_to_array($returnedcourses, false));
+
+        $this->assertEquals([$c6->id], $actualresult);
+    }
+
+    /**
      * Test the course_filter_courses_by_timeline_classification function.
      *
      * @dataProvider get_course_filter_courses_by_timeline_classification_test_cases()

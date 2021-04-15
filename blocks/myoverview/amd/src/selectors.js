@@ -28,7 +28,6 @@ export default {
     FILTERS: '[data-region="filter"]',
     FILTER_OPTION: '[data-filter]',
     DISPLAY_OPTION: '[data-display-option]',
-    COURSE_REGION: '[data-region="course-view-content"]',
     ACTION_HIDE_COURSE: '[data-action="hide-course"]',
     ACTION_SHOW_COURSE: '[data-action="show-course"]',
     ACTION_ADD_FAVOURITE: '[data-action="add-favourite"]',
@@ -36,5 +35,10 @@ export default {
     FAVOURITE_ICON: '[data-region="favourite-icon"]',
     ICON_IS_FAVOURITE: '[data-region="is-favourite"]',
     ICON_NOT_FAVOURITE: '[data-region="not-favourite"]',
-    PAGED_CONTENT_CONTAINER: '[data-region="page-container"]'
+    region: {
+        selectBlock: '[data-region="myoverview"]',
+        clearIcon: '[data-region="clear-icon"]',
+        searchIcon: '[data-region="search-icon"]',
+        searchInput: '[data-region="search-input"]',
+    },
 };
