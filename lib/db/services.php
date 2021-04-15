@@ -942,7 +942,6 @@ $functions = array(
     ),
     'core_grades_create_gradecategories' => array (
         'classname' => 'core_grades\external\create_gradecategories',
-        'methodname' => 'create_gradecategories',
         'description' => 'Create grade categories inside a course gradebook.',
         'type' => 'write',
         'capabilities' => 'moodle/grade:manage',
