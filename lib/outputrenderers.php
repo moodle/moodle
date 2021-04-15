@@ -912,6 +912,10 @@ class core_renderer extends renderer_base {
      * @throws coding_exception
      */
     public function activity_information(cm_info $cminfo, cm_completion_details $completiondetails, array $activitydates): string {
+        if (!$completiondetails->has_completion() && empty($activitydates)) {
+            // No need to render the activity information when there's no completion info and activity dates to show.
+            return '';
+        }
         $activityinfo = new activity_information($cminfo, $completiondetails, $activitydates);
         $renderer = $this->page->get_renderer('core', 'course');
         return $renderer->render($activityinfo);
