@@ -3,6 +3,19 @@ information provided here is intended especially for developers. Full
 details of the repository API are available on Moodle docs:
 http://docs.moodle.org/dev/Repository_API
 
+=== 3.11 ===
+* The Google Drive repository now includes a new rest API function 'shared_drives_list', which can be used to fetch
+  a list of existing shared drives.
+* The Google Drive repository now supports browsing and searching for content from shared drives.
+* The method build_breadcrumb() in repository/googledocs/lib.php has been deprecated, please use get_navigation()
+  from the googledocs repository content classes instead.
+* The method build_node_path() in repository/googledocs/lib.php has been deprecated, please use
+  \repository_googledocs\helper::build_node_path() instead.
+* The method explode_node_path() in repository/googledocs/lib.php has been deprecated, please use
+  \repository_googledocs\helper::explode_node_path() instead.
+* The function query() in repository/googledocs/lib.php is deprecated, please use get_content_nodes() from the
+  googledocs repository content classes instead.
+
 === 3.4 ===
 Repositories should no longer directly call file_system#add_file_to_pool or file_system#add_string_to_pool
 instead they should call the stored_file method, set_synchronised_content_from_file or set_synchronised_content_from_string
