@@ -14,6 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_grades\external;
+
+use external_api;
+use external_function_parameters;
+use external_value;
+use external_single_structure;
+use external_multiple_structure;
+use external_warnings;
+
+defined('MOODLE_INTERNAL') || die;
+
+require_once("$CFG->libdir/externallib.php");
+require_once("$CFG->libdir/gradelib.php");
+require_once("$CFG->dirroot/grade/edit/tree/lib.php");
+
 /**
  * Create gradecategories webservice.
  *
@@ -22,30 +37,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.11
  */
-
-namespace core_grades\external;
-defined('MOODLE_INTERNAL') || die;
-use \external_function_parameters,
-    \external_value,
-    \external_single_structure,
-    \external_multiple_structure,
-    \external_warnings;
-
-require_once("$CFG->libdir/externallib.php");
-require_once("$CFG->libdir/gradelib.php");
-require_once("$CFG->dirroot/grade/edit/tree/lib.php");
-
-/**
- * Parameter, returns and webservice definitions for create_gradecategories.
- */
-class create_gradecategories extends \external_api {
+class create_gradecategories extends external_api {
     /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
      * @since Moodle 3.11
      */
-    public static function create_gradecategories_parameters() {
+    public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters(
             [
                 'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_REQUIRED),
@@ -86,9 +85,10 @@ class create_gradecategories extends \external_api {
      * @param int $courseid the courseid to create the gradecategory in.
      * @param array $categories the categories to create.
      * @return array array of created categoryids and warnings.
+     * @since Moodle 3.11
      */
-    public static function create_gradecategories(int $courseid, array $categories) {
-        $params = self::validate_parameters(self::create_gradecategories_parameters(),
+    public static function execute(int $courseid, array $categories): array {
+        $params = self::validate_parameters(self::execute_parameters(),
             ['courseid' => $courseid, 'categories' => $categories]);
 
         // Now params are validated, update the references.
@@ -106,10 +106,10 @@ class create_gradecategories extends \external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return external_single_structure
      * @since Moodle 3.11
      */
-    public static function create_gradecategories_returns() {
+    public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'categoryids' => new external_multiple_structure(
                 new external_value(PARAM_INT, 'created cateogry ID')
