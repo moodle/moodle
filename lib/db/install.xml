@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20210222" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20210415" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -4203,6 +4203,7 @@
         <FIELD NAME="metadatasettings" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Library metadata settings"/>
         <FIELD NAME="tutorial" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Tutorial URL"/>
         <FIELD NAME="example" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Example URL"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Defines if this library is enabled (1) or not (0)"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

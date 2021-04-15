@@ -46,7 +46,7 @@ require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php')
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_contentbank\contentbank
  */
-class core_contentbank_testcase extends advanced_testcase {
+class contentbank_test extends advanced_testcase {
 
     /**
      * Setup to ensure that fixtures are loaded.
@@ -206,9 +206,10 @@ class core_contentbank_testcase extends advanced_testcase {
      */
     public function test_search_contents(?string $search, string $where, int $expectedresult, array $contexts = [],
             array $contenttypes = null): void {
-        global $DB;
+        global $DB, $CFG;
 
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         // Create users.
         $managerroleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
@@ -230,11 +231,12 @@ class core_contentbank_testcase extends advanced_testcase {
         }
 
         // Add some content to the content bank.
+        $filepath = $CFG->dirroot . '/h5p/tests/fixtures/filltheblanks.h5p';
         $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
         foreach ($contexts as $context) {
             $contextinstance = $existingcontexts[$context];
             $records = $generator->generate_contentbank_data('contenttype_h5p', 3,
-                $manager->id, $contextinstance, false);
+                $manager->id, $contextinstance, false, $filepath);
         }
 
         // Search for some content.
@@ -357,12 +359,12 @@ class core_contentbank_testcase extends advanced_testcase {
      * @covers ::create_content_from_file
      */
     public function test_create_content_from_file() {
-        global $USER;
+        global $USER, $CFG;
 
         $this->resetAfterTest();
         $this->setAdminUser();
         $systemcontext = \context_system::instance();
-        $name = 'dummy_h5p.h5p';
+        $name = 'greeting-card-887.h5p';
 
         // Create a dummy H5P file.
         $dummyh5p = array(
@@ -374,8 +376,8 @@ class core_contentbank_testcase extends advanced_testcase {
             'filename' => $name,
             'userid' => $USER->id
         );
-        $fs = get_file_storage();
-        $dummyh5pfile = $fs->create_file_from_string($dummyh5p, 'Dummy H5Pcontent');
+        $path = $CFG->dirroot . '/h5p/tests/fixtures/' . $name;
+        $dummyh5pfile = \core_h5p\helper::create_fake_stored_file_from_path($path);
 
         $cb = new contentbank();
         $content = $cb->create_content_from_file($systemcontext, $USER->id, $dummyh5pfile);

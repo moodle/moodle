@@ -1,4 +1,4 @@
-@core @core_contentbank @contentbank_h5p @_file_upload @javascript
+@core @core_contentbank @core_h5p @contentbank_h5p @_file_upload @javascript
 Feature: Content bank use editor feature
   In order to add/edit content
   As a user
@@ -117,7 +117,12 @@ Feature: Content bank use editor feature
     Then the field "Title" matches value "New title"
 
   Scenario: Teachers can edit their own content in the content bank
-    Given the following "users" exist:
+    Given I navigate to "H5P > Manage H5P content types" in site administration
+    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
+    And I upload "h5p/tests/fixtures/ipsums.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
+    And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "courses" exist:

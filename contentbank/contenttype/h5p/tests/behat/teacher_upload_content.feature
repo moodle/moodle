@@ -1,4 +1,4 @@
-@core @core_contentbank @contenttype_h5p @_file_upload @_switch_iframe @javascript
+@core @core_contentbank @core_h5p @contenttype_h5p @_file_upload @_switch_iframe @javascript
 Feature: H5P file upload to content bank for non admins
   In order import new H5P content to content bank
   As an admin
@@ -37,7 +37,14 @@ Feature: H5P file upload to content bank for non admins
     Then I should see "Content bank"
 
   Scenario: Teachers can upload .h5p extension files to course content bank
-    Given I am on "Course 1" course homepage with editing mode on
+    Given I log out
+    And I log in as "admin"
+    And I navigate to "H5P > Manage H5P content types" in site administration
+    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Navigation" block if not present
     When I expand "Site pages" node
     And I click on "Content bank" "link"
@@ -52,7 +59,14 @@ Feature: H5P file upload to content bank for non admins
     And I should see "filltheblanks.h5p"
 
   Scenario: Other teachers can see uploaded H5P contents
-    Given I am on "Course 1" course homepage with editing mode on
+    Given I log out
+    And I log in as "admin"
+    And I navigate to "H5P > Manage H5P content types" in site administration
+    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
     And I add the "Navigation" block if not present
     When I expand "Site pages" node
     And I click on "Content bank" "link"
@@ -72,7 +86,7 @@ Feature: H5P file upload to content bank for non admins
     And I click on "Content bank" "link"
     Then I should see "filltheblanks.h5p"
 
-  Scenario: Teachers can not upload and deployed content types when libraries are not installed
+  Scenario: Teachers can not upload and deploy content types when libraries are not installed
     Given I log out
     And I log in as "admin"
     And I navigate to "H5P > Manage H5P content types" in site administration
@@ -89,14 +103,14 @@ Feature: H5P file upload to content bank for non admins
     And I click on "filltheblanks.h5p" "link"
     And I click on "Select this file" "button"
     And I click on "Save changes" "button"
-    And I switch to "h5p-player" class iframe
-    Then I should not see "Of which countries"
-    And I should see "missing-required-library"
-    And I switch to the main frame
+    Then I should see "Sorry, this file is not valid."
+    And I should not see "filltheblanks.h5p"
     And I log out
     And I log in as "admin"
-    And I navigate to "H5P > Manage H5P content types" in site administration
-    And I should not see "Fill in the Blanks"
+    And I am on "Course 1" course homepage
+    And I expand "Site pages" node
+    And I click on "Content bank" "link"
+    And I should not see "filltheblanks.h5p"
 
   Scenario: Teachers can not see existing contents when libraries are not installed
     Given I log out
@@ -138,8 +152,13 @@ Feature: H5P file upload to content bank for non admins
     Given I am on "Course 1" course homepage
     When I expand "Site pages" node
     And I click on "Content bank" "link"
+    Then I should not see "filltheblanks.h5p"
+    And I log out
+    And I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I expand "Site pages" node
+    And I click on "Content bank" "link"
     And I should see "filltheblanks.h5p"
     And I click on "filltheblanks.h5p" "link"
     And I switch to "h5p-player" class iframe
-    Then I should not see "Of which countries"
-    Then I should see "missing-required-library"
+    And I should see "missing-required-library"

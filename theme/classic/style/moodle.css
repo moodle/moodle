@@ -11878,6 +11878,9 @@ body.h5p-embed #maincontent {
 body.h5p-embed .h5pmessages {
   min-height: 230px; }
 
+#h5pcontenttypes td {
+  vertical-align: middle; }
+
 .text-decoration-none {
   text-decoration: none !important;
   /* stylelint-disable-line declaration-no-important */ }

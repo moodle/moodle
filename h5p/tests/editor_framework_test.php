@@ -37,18 +37,23 @@ use core_h5p\local\library\autoloader;
  *
  * @runTestsInSeparateProcesses
  */
-class editor_framework_testcase extends \advanced_testcase {
+class editor_framework_test extends \advanced_testcase {
 
     /** @var editor_framework H5P editor_framework instance */
     protected $editorframework;
+
+    /**
+     * Setup to ensure that fixtures are loaded.
+     */
+    public static function setupBeforeClass(): void {
+        autoloader::register();
+    }
 
     /**
      * Set up function for tests.
      */
     protected function setUp(): void {
         parent::setUp();
-
-        autoloader::register();
 
         $this->editorframework = new editor_framework();
     }
@@ -362,7 +367,7 @@ class editor_framework_testcase extends \advanced_testcase {
 
         $expectedlibraries = [];
         foreach ($data as $key => $value) {
-            if (isset($value->data)) {
+            if (isset($value->data) && $value->data->runnable) {
                 $value->data->name = $value->data->machinename;
                 $value->data->majorVersion = $value->data->majorversion;
                 $value->data->minorVersion = $value->data->minorversion;

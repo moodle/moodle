@@ -1,4 +1,4 @@
-@core @core_contentbank @contentbank_h5p @javascript
+@core @core_contentbank @core_h5p @contentbank_h5p @_file_upload @javascript
 Feature: Make content public or unlisted
   In order to make content public or unlisted
   As a user
@@ -13,6 +13,9 @@ Feature: Make content public or unlisted
     And I set the following fields to these values:
       | Page contexts | Display throughout the entire site |
     And I press "Save changes"
+    And I navigate to "H5P > Manage H5P content types" in site administration
+    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "H5P content type" filemanager
+    And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
 
   Scenario: Users can make their content public or unlisted
     Given the following "contentbank content" exist:
