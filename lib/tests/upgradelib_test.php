@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir.'/upgradelib.php');
 require_once($CFG->libdir.'/db/upgradelib.php');
+require_once($CFG->dirroot . '/calendar/tests/helpers.php');
 
 /**
  * Tests various classes and functions in upgradelib.php library.
@@ -1128,5 +1129,365 @@ class core_upgradelib_testcase extends advanced_testcase {
         // A core license which was deleted prior to upgrade should not be reinstalled.
         $actualshortnames = $DB->get_records_menu('license', null, '', 'id, shortname');
         $this->assertNotContains($deletedcorelicenseshortname, $actualshortnames);
+    }
+
+    /**
+     * Execute same problematic query from upgrade step.
+     *
+     * @return bool
+     */
+    public function run_upgrade_step_query() {
+        global $DB;
+
+        return $DB->execute("UPDATE {event} SET userid = 0 WHERE eventtype <> 'user' OR priority <> 0");
+    }
+
+    /**
+     * Test the functionality of upgrade_calendar_events_status() function.
+     */
+    public function test_upgrade_calendar_events_status() {
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $events = create_standard_events(5);
+        $eventscount = count($events);
+
+        // Run same DB query as the problematic upgrade step.
+        $this->run_upgrade_step_query();
+
+        // Get the events info.
+        $status = upgrade_calendar_events_status(false);
+
+        // Total events.
+        $expected = [
+            'total' => (object)[
+                'count' => $eventscount,
+                'bad' => $eventscount - 5, // Event count excluding user events.
+            ],
+            'standard' => (object)[
+                'count' => $eventscount,
+                'bad' => $eventscount - 5, // Event count excluding user events.
+            ],
+        ];
+
+        $this->assertEquals($expected['standard']->count, $status['standard']->count);
+        $this->assertEquals($expected['standard']->bad, $status['standard']->bad);
+        $this->assertEquals($expected['total']->count, $status['total']->count);
+        $this->assertEquals($expected['total']->bad, $status['total']->bad);
+    }
+
+    /**
+     * Test the functionality of upgrade_calendar_events_get_teacherid() function.
+     */
+    public function test_upgrade_calendar_events_get_teacherid() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a new course and enrol a user as editing teacher.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $teacher = $generator->create_and_enrol($course, 'editingteacher');
+
+        // There's a teacher enrolled in the course, return its user id.
+        $userid = upgrade_calendar_events_get_teacherid($course->id);
+
+        // It should return the enrolled teacher by default.
+        $this->assertEquals($teacher->id, $userid);
+
+        // Un-enrol teacher from course.
+        $instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual']);
+        enrol_get_plugin('manual')->unenrol_user($instance, $teacher->id);
+
+        // Since there are no teachers enrolled in the course, fallback to admin user id.
+        $admin = get_admin();
+        $userid = upgrade_calendar_events_get_teacherid($course->id);
+        $this->assertEquals($admin->id, $userid);
+    }
+
+    /**
+     * Test the functionality of upgrade_calendar_standard_events_fix() function.
+     */
+    public function test_upgrade_calendar_standard_events_fix() {
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $events = create_standard_events(5);
+        $eventscount = count($events);
+
+        // Get the events info.
+        $info = upgrade_calendar_events_status(false);
+
+        // There should be no standard events to be fixed.
+        $this->assertEquals(0, $info['standard']->bad);
+
+        // No events to be fixed, should return false.
+        $this->assertFalse(upgrade_calendar_standard_events_fix($info['standard'], false));
+
+        // Run same problematic DB query.
+        $this->run_upgrade_step_query();
+
+        // Get the events info.
+        $info = upgrade_calendar_events_status(false);
+
+        // There should be 20 events to be fixed (five from each type except user).
+        $this->assertEquals($eventscount - 5, $info['standard']->bad);
+
+        // Test the function runtime, passing -1 as end time.
+        // It should not be able to fix all events so fast, so some events should remain to be fixed in the next run.
+        $result = upgrade_calendar_standard_events_fix($info['standard'], false, -1);
+        $this->assertNotFalse($result);
+
+        // Call the function again, this time it will run until all events have been fixed.
+        $this->assertFalse(upgrade_calendar_standard_events_fix($info['standard'], false));
+
+        // Get the events info again.
+        $info = upgrade_calendar_events_status(false);
+
+        // All standard events should have been recovered.
+        // There should be no standard events flagged to be fixed.
+        $this->assertEquals(0, $info['standard']->bad);
+    }
+
+    /**
+     * Test the functionality of upgrade_calendar_subscription_events_fix() function.
+     */
+    public function test_upgrade_calendar_subscription_events_fix() {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        require_once($CFG->dirroot . '/lib/bennu/bennu.inc.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create event subscription.
+        $subscription = new stdClass;
+        $subscription->name = 'Repeated events';
+        $subscription->importfrom = CALENDAR_IMPORT_FROM_FILE;
+        $subscription->eventtype = 'site';
+        $id = calendar_add_subscription($subscription);
+
+        // Get repeated events ICS file.
+        $calendar = file_get_contents($CFG->dirroot . '/lib/tests/fixtures/repeated_events.ics');
+        $ical = new iCalendar();
+        $ical->unserialize($calendar);
+
+        // Import subscription events.
+        calendar_import_icalendar_events($ical, null, $id);
+
+        // Subscription should have added 18 events.
+        $eventscount = $DB->count_records('event');
+
+        // Get the events info.
+        $info = upgrade_calendar_events_status(false);
+
+        // There should be no subscription events to be fixed at this point.
+        $this->assertEquals(0, $info['subscription']->bad);
+
+        // No events to be fixed, should return false.
+        $this->assertFalse(upgrade_calendar_subscription_events_fix($info['subscription'], false));
+
+        // Run same problematic DB query.
+        $this->run_upgrade_step_query();
+
+        // Get the events info and assert total number of events is correct.
+        $info = upgrade_calendar_events_status(false);
+        $subscriptioninfo = $info['subscription'];
+
+        $this->assertEquals($eventscount, $subscriptioninfo->count);
+
+        // Since we have added our subscription as site, all sub events have been affected.
+        $this->assertEquals($eventscount, $subscriptioninfo->bad);
+
+        // Test the function runtime, passing -1 as end time.
+        // It should not be able to fix all events so fast, so some events should remain to be fixed in the next run.
+        $result = upgrade_calendar_subscription_events_fix($subscriptioninfo, false, -1);
+        $this->assertNotFalse($result);
+
+        // Call the function again, this time it will run until all events have been fixed.
+        $this->assertFalse(upgrade_calendar_subscription_events_fix($subscriptioninfo, false));
+
+        // Get the events info again.
+        $info = upgrade_calendar_events_status(false);
+
+        // All standard events should have been recovered.
+        // There should be no standard events flagged to be fixed.
+        $this->assertEquals(0, $info['subscription']->bad);
+    }
+
+    /**
+     * Test the functionality of upgrade_calendar_action_events_fix() function.
+     */
+    public function test_upgrade_calendar_action_events_fix() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a new course and a choice activity.
+        $course = $this->getDataGenerator()->create_course();
+        $choice = $this->getDataGenerator()->create_module('choice', ['course' => $course->id]);
+
+        // Create some action events.
+        create_action_event(['courseid' => $course->id, 'modulename' => 'choice', 'instance' => $choice->id,
+            'eventtype' => CHOICE_EVENT_TYPE_OPEN]);
+        create_action_event(['courseid' => $course->id, 'modulename' => 'choice', 'instance' => $choice->id,
+            'eventtype' => CHOICE_EVENT_TYPE_CLOSE]);
+
+        $eventscount = $DB->count_records('event');
+
+        // Get the events info.
+        $info = upgrade_calendar_events_status(false);
+        $actioninfo = $info['action'];
+
+        // There should be no standard events to be fixed.
+        $this->assertEquals(0, $actioninfo->bad);
+
+        // No events to be fixed, should return false.
+        $this->assertFalse(upgrade_calendar_action_events_fix($actioninfo, false));
+
+        // Run same problematic DB query.
+        $this->run_upgrade_step_query();
+
+        // Get the events info.
+        $info = upgrade_calendar_events_status(false);
+        $actioninfo = $info['action'];
+
+        // There should be 2 events to be fixed.
+        $this->assertEquals($eventscount, $actioninfo->bad);
+
+        // Test the function runtime, passing -1 as end time.
+        // It should not be able to fix all events so fast, so some events should remain to be fixed in the next run.
+        $this->assertNotFalse(upgrade_calendar_action_events_fix($actioninfo, false, -1));
+
+        // Call the function again, this time it will run until all events have been fixed.
+        $this->assertFalse(upgrade_calendar_action_events_fix($actioninfo, false));
+
+        // Get the events info again.
+        $info = upgrade_calendar_events_status(false);
+
+        // All standard events should have been recovered.
+        // There should be no standard events flagged to be fixed.
+        $this->assertEquals(0, $info['action']->bad);
+    }
+
+    /**
+     * Test the user override part of upgrade_calendar_override_events_fix() function.
+     */
+    public function test_upgrade_calendar_user_override_events_fix() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+
+        // Create a new course.
+        $course = $generator->create_course();
+
+        // Create few users and enrol as students.
+        $student1 = $generator->create_and_enrol($course, 'student');
+        $student2 = $generator->create_and_enrol($course, 'student');
+        $student3 = $generator->create_and_enrol($course, 'student');
+
+        // Create some activities and some override events.
+        foreach (['assign', 'lesson', 'quiz'] as $modulename) {
+            $instance = $generator->create_module($modulename, ['course' => $course->id]);
+            create_user_override_event($modulename, $instance->id, $student1->id);
+            create_user_override_event($modulename, $instance->id, $student2->id);
+            create_user_override_event($modulename, $instance->id, $student3->id);
+        }
+
+        // There should be 9 override events to be fixed (three from each module).
+        $eventscount = $DB->count_records('event');
+        $this->assertEquals(9, $eventscount);
+
+        // Get the events info.
+        $info = upgrade_calendar_events_status(false);
+        $overrideinfo = $info['override'];
+
+        // There should be no standard events to be fixed.
+        $this->assertEquals(0, $overrideinfo->bad);
+
+        // No events to be fixed, should return false.
+        $this->assertFalse(upgrade_calendar_override_events_fix($overrideinfo, false));
+
+        // Run same problematic DB query.
+        $this->run_upgrade_step_query();
+
+        // Get the events info.
+        $info = upgrade_calendar_events_status(false);
+        $overrideinfo = $info['override'];
+
+        // There should be 9 events to be fixed (three from each module).
+        $this->assertEquals($eventscount, $overrideinfo->bad);
+
+        // Call the function again, this time it will run until all events have been fixed.
+        $this->assertFalse(upgrade_calendar_override_events_fix($overrideinfo, false));
+
+        // Get the events info again.
+        $info = upgrade_calendar_events_status(false);
+
+        // All standard events should have been recovered.
+        // There should be no standard events flagged to be fixed.
+        $this->assertEquals(0, $info['override']->bad);
+    }
+
+    /**
+     * Test the group override part of upgrade_calendar_override_events_fix() function.
+     */
+    public function test_upgrade_calendar_group_override_events_fix() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+
+        // Create a new course and few groups.
+        $course = $generator->create_course();
+        $group1 = $generator->create_group(['courseid' => $course->id]);
+        $group2 = $generator->create_group(['courseid' => $course->id]);
+        $group3 = $generator->create_group(['courseid' => $course->id]);
+
+        // Create some activities and some override events.
+        foreach (['assign', 'lesson', 'quiz'] as $modulename) {
+            $instance = $generator->create_module($modulename, ['course' => $course->id]);
+            create_group_override_event($modulename, $instance->id, $course->id, $group1->id);
+            create_group_override_event($modulename, $instance->id, $course->id, $group2->id);
+            create_group_override_event($modulename, $instance->id, $course->id, $group3->id);
+        }
+
+        // There should be 9 override events to be fixed (three from each module).
+        $eventscount = $DB->count_records('event');
+        $this->assertEquals(9, $eventscount);
+
+        // Get the events info.
+        $info = upgrade_calendar_events_status(false);
+
+        // We classify group overrides as action events since they do not record the userid.
+        $groupoverrideinfo = $info['action'];
+
+        // There should be no events to be fixed.
+        $this->assertEquals(0, $groupoverrideinfo->bad);
+
+        // No events to be fixed, should return false.
+        $this->assertFalse(upgrade_calendar_action_events_fix($groupoverrideinfo, false));
+
+        // Run same problematic DB query.
+        $this->run_upgrade_step_query();
+
+        // Get the events info.
+        $info = upgrade_calendar_events_status(false);
+        $this->assertEquals(9, $info['action']->bad);
+
+        // Call the function again, this time it will run until all events have been fixed.
+        $this->assertFalse(upgrade_calendar_action_events_fix($info['action'], false));
+
+        // Since group override events do not set userid, these events should not be flagged to be fixed.
+        $this->assertEquals(0, $groupoverrideinfo->bad);
     }
 }
