@@ -186,7 +186,7 @@ Feature: Render H5P content using filters
   Scenario: Render local H5P file with a disabled main library
     Given I log in as "admin"
 # Upload H5P file to private files.
-    And I follow "Private files"
+    And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/ipsums.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"
 # Upload manually the H5P content-type library and disable it.
