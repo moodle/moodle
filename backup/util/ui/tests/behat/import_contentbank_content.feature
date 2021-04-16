@@ -6,6 +6,13 @@ Feature: Import course content bank content
 
   Background:
     Given I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    And I add the "Navigation" block if not present
+    And I configure the "Navigation" block
+    And I set the following fields to these values:
+      | Page contexts | Display throughout the entire site |
+    And I press "Save changes"
     And I navigate to "H5P > Manage H5P content types" in site administration
     And I upload "h5p/tests/fixtures/ipsums.h5p" file to "H5P content type" filemanager
     And I click on "Upload H5P content types" "button" in the "#fitem_id_uploadlibraries" "css_element"
@@ -28,23 +35,29 @@ Feature: Import course content bank content
 
   Scenario: Import content bank content to another course
     Given I am on "Course 2" course homepage
+    And I expand "Site pages" node
     And I click on "Content bank" "link"
     And I should not see "ipsums.h5p"
     When I import "Course 1" course into "Course 2" course using this options:
+    And I expand "Site pages" node
     And I click on "Content bank" "link"
     Then I should see "ipsums.h5p"
     And I am on "Course 1" course homepage
+    And I expand "Site pages" node
     And I click on "Content bank" "link"
     And I should see "ipsums.h5p"
 
   Scenario: User could configure not to import content bank
     Given I am on "Course 2" course homepage
+    And I expand "Site pages" node
     And I click on "Content bank" "link"
     And I should not see "ipsums.h5p"
     When I import "Course 1" course into "Course 2" course using this options:
       | Initial | Include content bank content | 0 |
+    And I expand "Site pages" node
     And I click on "Content bank" "link"
     Then I should not see "ipsums.h5p"
     And I am on "Course 1" course homepage
+    And I expand "Site pages" node
     And I click on "Content bank" "link"
     And I should see "ipsums.h5p"
