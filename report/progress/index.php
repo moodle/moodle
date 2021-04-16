@@ -26,7 +26,7 @@
 require('../../config.php');
 require_once($CFG->libdir . '/completionlib.php');
 
-define('COMPLETION_REPORT_PAGE', 25);
+use \report_progress\local\helper;
 
 // Get course
 $id = required_param('course',PARAM_INT);
@@ -45,11 +45,13 @@ $format = optional_param('format','',PARAM_ALPHA);
 $excel = $format == 'excelcsv';
 $csv = $format == 'csv' || $excel;
 
-// Paging
-$start   = optional_param('start', 0, PARAM_INT);
+// Paging, sorting and filtering.
+$page   = optional_param('page', 0, PARAM_INT);
 $sifirst = optional_param('sifirst', 'all', PARAM_NOTAGS);
 $silast  = optional_param('silast', 'all', PARAM_NOTAGS);
-$start   = optional_param('start', 0, PARAM_INT);
+$groupid = optional_param('group', 0, PARAM_INT);
+$activityinclude = optional_param('activityinclude', 'all', PARAM_TEXT);
+$activityorder = optional_param('activityorder', 'orderincourse', PARAM_TEXT);
 
 // Whether to show extra user identity information
 // TODO Does not support custom user profile fields (MDL-70456).
@@ -72,8 +74,8 @@ if ($sort !== '') {
 if ($format !== '') {
     $url->param('format', $format);
 }
-if ($start !== 0) {
-    $url->param('start', $start);
+if ($page !== 0) {
+    $url->param('page', $page);
 }
 if ($sifirst !== 'all') {
     $url->param('sifirst', $sifirst);
@@ -81,6 +83,16 @@ if ($sifirst !== 'all') {
 if ($silast !== 'all') {
     $url->param('silast', $silast);
 }
+if ($groupid !== 0) {
+    $url->param('group', $groupid);
+}
+if ($activityinclude !== '') {
+    $url->param('activityinclude', $activityinclude);
+}
+if ($activityorder !== '') {
+    $url->param('activityorder', $activityorder);
+}
+
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 
@@ -96,10 +108,10 @@ if ($group===0 && $course->groupmode==SEPARATEGROUPS) {
 }
 
 // Get data on activities and progress of all users, and give error if we've
-// nothing to display (no users or no activities)
-$reportsurl = $CFG->wwwroot.'/course/report.php?id='.$course->id;
+// nothing to display (no users or no activities).
 $completion = new completion_info($course);
-$activities = $completion->get_activities();
+list($activitytypes, $activities) = helper::get_activities_to_show($completion, $activityinclude, $activityorder);
+$output = $PAGE->get_renderer('report_progress');
 
 if ($sifirst !== 'all') {
     set_user_preference('ifirst', $sifirst);
@@ -149,8 +161,8 @@ if ($total) {
         $where_params,
         $group,
         $firstnamesort ? 'u.firstname ASC, u.lastname ASC' : 'u.lastname ASC, u.firstname ASC',
-        $csv ? 0 : COMPLETION_REPORT_PAGE,
-        $csv ? 0 : $start,
+        $csv ? 0 : helper::COMPLETION_REPORT_PAGE,
+        $csv ? 0 : $page * helper::COMPLETION_REPORT_PAGE,
         $context
     );
 }
@@ -182,8 +194,17 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
     echo $OUTPUT->header();
     $PAGE->requires->js_call_amd('report_progress/completion_override', 'init', [fullname($USER)]);
 
-    // Handle groups (if enabled)
-    groups_print_course_menu($course,$CFG->wwwroot.'/report/progress/?course='.$course->id);
+    // Handle groups (if enabled).
+    $groupurl = fullclone($url);
+    $groupurl->remove_params(['page', 'group']);
+    groups_print_course_menu($course, $groupurl);
+
+    // Display include activity filter.
+    echo $output->render_include_activity_select($url, $activitytypes, $activityinclude);
+
+    // Display activity order options.
+    echo $output->render_activity_order_select($url, $activityorder);
+
 }
 
 if (count($activities)==0) {
@@ -213,57 +234,12 @@ $prefixfirst = 'sifirst';
 $prefixlast = 'silast';
 
 // The URL used in the initials bar should reset the 'start' parameter.
-$initialsbarurl = new moodle_url($url);
-$initialsbarurl->remove_params('start');
+$initialsbarurl = fullclone($url);
+$initialsbarurl->remove_params('page');
 
-$pagingbar .= $OUTPUT->initials_bar($sifirst, 'firstinitial', get_string('firstname'), $prefixfirst, $initialsbarurl);
+$pagingbar .= $OUTPUT->initials_bar($sifirst, 'firstinitial mt-2', get_string('firstname'), $prefixfirst, $initialsbarurl);
 $pagingbar .= $OUTPUT->initials_bar($silast, 'lastinitial', get_string('lastname'), $prefixlast, $initialsbarurl);
-
-// Do we need a paging bar?
-if ($total > COMPLETION_REPORT_PAGE) {
-
-    // Paging bar
-    $pagingbar .= '<div class="paging">';
-    $pagingbar .= get_string('page').': ';
-
-    $sistrings = array();
-    if ($sifirst != 'all') {
-        $sistrings[] =  "sifirst={$sifirst}";
-    }
-    if ($silast != 'all') {
-        $sistrings[] =  "silast={$silast}";
-    }
-    $sistring = !empty($sistrings) ? '&amp;'.implode('&amp;', $sistrings) : '';
-
-    // Display previous link
-    if ($start > 0) {
-        $pstart = max($start - COMPLETION_REPORT_PAGE, 0);
-        $pagingbar .= "(<a class=\"previous\" href=\"{$link}{$pstart}{$sistring}\">".get_string('previous').'</a>)&nbsp;';
-    }
-
-    // Create page links
-    $curstart = 0;
-    $curpage = 0;
-    while ($curstart < $total) {
-        $curpage++;
-
-        if ($curstart == $start) {
-            $pagingbar .= '&nbsp;'.$curpage.'&nbsp;';
-        } else {
-            $pagingbar .= "&nbsp;<a href=\"{$link}{$curstart}{$sistring}\">$curpage</a>&nbsp;";
-        }
-
-        $curstart += COMPLETION_REPORT_PAGE;
-    }
-
-    // Display next link
-    $nstart = $start + COMPLETION_REPORT_PAGE;
-    if ($nstart < $total) {
-        $pagingbar .= "&nbsp;(<a class=\"next\" href=\"{$link}{$nstart}{$sistring}\">".get_string('next').'</a>)';
-    }
-
-    $pagingbar .= '</div>';
-}
+$pagingbar .= $OUTPUT->paging_bar($total, $page, helper::COMPLETION_REPORT_PAGE, $url);
 
 // Okay, let's draw the table of progress info,
 
@@ -285,16 +261,16 @@ if (!$csv) {
     // User heading / sort option
     print '<th scope="col" class="completion-sortchoice">';
 
-    $sistring = "&amp;silast={$silast}&amp;sifirst={$sifirst}";
-
+    $sorturl = fullclone($url);
     if ($firstnamesort) {
+        $sorturl->param('sort', 'lastname');
+        $sortlink = html_writer::link($sorturl, get_string('lastname'));
         print
-            get_string('firstname')." / <a href=\"./?course={$course->id}{$sistring}\">".
-            get_string('lastname').'</a>';
+            get_string('firstname') . " / $sortlink";
     } else {
-        print "<a href=\"./?course={$course->id}&amp;sort=firstname{$sistring}\">".
-            get_string('firstname').'</a> / '.
-            get_string('lastname');
+        $sorturl->param('sort', 'firstname');
+        $sortlink = html_writer::link($sorturl, get_string('firstname'));
+        print "$sortlink / " . get_string('lastname');
     }
     print '</th>';
 
@@ -455,10 +431,7 @@ if ($csv) {
 print '</tbody></table>';
 print '</div>';
 
-print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
-    '&amp;format=csv">'.get_string('csvdownload','completion').'</a></li>
-    <li><a href="index.php?course='.$course->id.'&amp;format=excelcsv">'.
-    get_string('excelcsvdownload','completion').'</a></li></ul>';
+echo $output->render_download_buttons($url);
 
 echo $OUTPUT->footer();
 
