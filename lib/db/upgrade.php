@@ -2564,5 +2564,28 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021041300.01);
     }
 
+    if ($oldversion < 2021042100.02) {
+        require_once($CFG->libdir . '/db/upgradelib.php');
+
+        // Check if this site has executed the problematic upgrade steps.
+        $needsfixing = upgrade_calendar_site_status(false);
+
+        // Only queue the task if this site has been affected by the problematic upgrade step.
+        if ($needsfixing) {
+
+            // Create adhoc task to search and recover orphaned calendar events.
+            $record = new \stdClass();
+            $record->classname = '\core\task\calendar_fix_orphaned_events';
+
+            // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
+            $nextruntime = time() - 1;
+            $record->nextruntime = $nextruntime;
+            $DB->insert_record('task_adhoc', $record);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021042100.02);
+    }
+
     return true;
 }
