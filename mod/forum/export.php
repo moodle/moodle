@@ -90,7 +90,6 @@ if ($form->is_cancelled()) {
     raise_memory_limit(MEMORY_HUGE);
 
     $discussionvault = $vaultfactory->get_discussion_vault();
-    $postvault = $vaultfactory->get_post_vault();
     if ($data->discussionids) {
         $discussionids = $data->discussionids;
     } else if (empty($discussionids)) {
@@ -111,8 +110,13 @@ if ($form->is_cancelled()) {
         $filters['to'] = $data->to;
     }
 
-    // Retrieve posts based on the selected filters.
-    $posts = $postvault->get_from_filters($USER, $filters, $capabilitymanager->can_view_any_private_reply($USER));
+    // Retrieve posts based on the selected filters, note if forum has no discussions then there is nothing to export.
+    if (!empty($filters['discussionids'])) {
+        $postvault = $vaultfactory->get_post_vault();
+        $posts = $postvault->get_from_filters($USER, $filters, $capabilitymanager->can_view_any_private_reply($USER));
+    } else {
+        $posts = [];
+    }
 
     $striphtml = !empty($data->striphtml);
     $humandates = !empty($data->humandates);
