@@ -62,9 +62,9 @@ Feature: View activity completion information in the LTI activity
   @javascript
   Scenario: Use manual completion
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Music history"
-    And I navigate to "Edit settings" in current page administration
+    And I am on "Course 1" course homepage with editing mode on
+    And I open "Music history" actions menu
+    And I click on "Edit settings" "link" in the "Music history" activity
     And I expand all fieldsets
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and display"
