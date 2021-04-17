@@ -98,6 +98,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I press "Enrol me"
+    And I should see "You are enrolled in the course"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -118,6 +119,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I press "Enrol me"
+    And I should see "You are enrolled in the course"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage

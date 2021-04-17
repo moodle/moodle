@@ -3670,7 +3670,8 @@ class navbar extends navigation_node {
         }
 
         // Don't show the 'course' node if enrolled in this course.
-        if (!is_enrolled(context_course::instance($this->page->course->id, null, '', true))) {
+        $coursecontext = context_course::instance($this->page->course->id);
+        if (!is_enrolled($coursecontext, null, '', true)) {
             $courses = $this->page->navigation->get('courses');
             if (!$courses) {
                 // Courses node may not be present.
