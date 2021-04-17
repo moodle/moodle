@@ -1037,6 +1037,59 @@ class core_enrollib_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see test_enrol_get_my_courses_by_time}
+     *
+     * @return array
+     */
+    public function enrol_get_my_courses_by_time_provider(): array {
+        return [
+            'No start or end time' =>
+                [null, null, true],
+            'Start time now, no end time' =>
+                [0, null, true],
+            'Start time now, end time in the future' =>
+                [0, MINSECS, true],
+            'Start time in the past, no end time' =>
+                [-MINSECS, null, true],
+            'Start time in the past, end time in the future' =>
+                [-MINSECS, MINSECS, true],
+            'Start time in the past, end time in the past' =>
+                [-DAYSECS, -HOURSECS, false],
+            'Start time in the future' =>
+                [MINSECS, null, false],
+        ];
+    }
+
+    /**
+     * Test that expected course enrolments are returned when they have timestart / timeend specified
+     *
+     * @param int|null $timestartoffset Null for 0, otherwise offset from current time
+     * @param int|null $timeendoffset Null for 0, otherwise offset from current time
+     * @param bool $expectreturn
+     *
+     * @dataProvider enrol_get_my_courses_by_time_provider
+     */
+    public function test_enrol_get_my_courses_by_time(?int $timestartoffset, ?int $timeendoffset, bool $expectreturn): void {
+        $this->resetAfterTest();
+
+        $time = time();
+        $timestart = $timestartoffset === null ? 0 : $time + $timestartoffset;
+        $timeend = $timeendoffset === null ? 0 : $time + $timeendoffset;
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student', null, 'manual', $timestart, $timeend);
+        $this->setUser($user);
+
+        $courses = enrol_get_my_courses();
+        if ($expectreturn) {
+            $this->assertCount(1, $courses);
+            $this->assertEquals($course->id, reset($courses)->id);
+        } else {
+            $this->assertEmpty($courses);
+        }
+    }
+
+    /**
      * test_course_users
      *
      * @return void
