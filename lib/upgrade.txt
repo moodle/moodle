@@ -117,6 +117,8 @@ information provided here is intended especially for developers.
     - I should see "##tomorrow noon##%A, %d %B %Y, %I:%M %p##"
 * External functions implementation classes should use 'execute' as the method name, in which case the
   'methodname' property should not be specified in db/services.php file.
+* The core_grades_create_gradecategory webservice has been deprecated in favour of core_grades_create_gradecategories, which is
+  functionally identical but allows for parallel gradecategory creations by supplying a data array to the webservice.
 
 === 3.10 ===
 * PHPUnit has been upgraded to 8.5. That comes with a few changes:

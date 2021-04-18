@@ -575,6 +575,10 @@ class core_grades_external extends external_api {
     /**
      * Returns description of method parameters
      *
+     * @deprecated since Moodle 3.11 MDL-71031 - please do not use this function any more.
+     * @todo MDL-71325 This will be deleted in Moodle 4.3.
+     * @see core_grades\external\create_gradecategories::create_gradecategories()
+     *
      * @return external_function_parameters
      * @since Moodle 3.10
      */
@@ -611,6 +615,10 @@ class core_grades_external extends external_api {
     /**
      * Creates a gradecategory inside of the specified course.
      *
+     * @deprecated since Moodle 3.11 MDL-71031 - please do not use this function any more.
+     * @todo MDL-71325 This will be deleted in Moodle 4.3.
+     * @see core_grades\external\create_gradecategories::create_gradecategories()
+     *
      * @param int $courseid the courseid to create the gradecategory in.
      * @param string $fullname the fullname of the grade category to create.
      * @param array $options array of options to set.
@@ -633,97 +641,21 @@ class core_grades_external extends external_api {
         self::validate_context($context);
         require_capability('moodle/grade:manage', $context);
 
-        $defaultparentcat = new grade_category(['courseid' => $courseid, 'depth' => 1], true);
+        $categories = [];
+        $categories[] = ['fullname' => $fullname, 'options' => $options];
+        // Call through to webservice class for multiple creations,
+        // Where the majority of the this functionality moved with the deprecation of this function.
+        $result = \core_grades\external\create_gradecategories::create_gradecategories_from_data($courseid, $categories);
 
-        // Setup default data so WS call needs to contain only data to set.
-        // This is not done in the Parameters, so that the array of options can be optional.
-        $data = [
-            'fullname' => $fullname,
-            'aggregation' => grade_get_setting($courseid, 'displaytype', $CFG->grade_displaytype),
-            'aggregateonlygraded' => 1,
-            'aggregateoutcomes' => 0,
-            'droplow' => 0,
-            'grade_item_itemname' => '',
-            'grade_item_iteminfo' => '',
-            'grade_item_idnumber' => '',
-            'grade_item_gradetype' => GRADE_TYPE_VALUE,
-            'grade_item_grademax' => 100,
-            'grade_item_grademin' => 1,
-            'grade_item_gradepass' => 1,
-            'grade_item_display' => GRADE_DISPLAY_TYPE_DEFAULT,
-            // Hack. This must be -2 to use the default setting.
-            'grade_item_decimals' => -2,
-            'grade_item_hiddenuntil' => 0,
-            'grade_item_locktime' => 0,
-            'grade_item_weightoverride' => 0,
-            'grade_item_aggregationcoef2' => 0,
-            'parentcategory' => $defaultparentcat->id
-        ];
-
-        // Most of the data items need boilerplate prepended. These are the exceptions.
-        $ignorekeys = ['aggregation', 'aggregateonlygraded', 'aggregateoutcomes', 'droplow', 'parentcategoryid', 'parentcategoryidnumber'];
-        foreach ($options as $key => $value) {
-            if (!in_array($key, $ignorekeys)) {
-                $fullkey = 'grade_item_' . $key;
-                $data[$fullkey] = $value;
-            } else {
-                $data[$key] = $value;
-            }
-        }
-
-        // Handle parent category special case.
-        if (array_key_exists('parentcategoryid', $options) && $parentcat = $DB->get_record('grade_categories',
-            ['id' => $options['parentcategoryid'], 'courseid' => $courseid])) {
-            $data['parentcategory'] = $parentcat->id;
-        } else if (array_key_exists('parentcategoryidnumber', $options) && $parentcatgradeitem = $DB->get_record('grade_items',
-            ['itemtype' => 'category', 'idnumber' => $options['parentcategoryidnumber']], '*', IGNORE_MULTIPLE)) {
-            if ($parentcat = $DB->get_record('grade_categories', ['courseid' => $courseid, 'id' => $parentcatgradeitem->iteminstance])) {
-                $data['parentcategory'] = $parentcat->id;
-            }
-        }
-
-        // Create new gradecategory item.
-        $gradecategory = new grade_category(['courseid' => $courseid], false);
-        $gradecategory->apply_default_settings();
-        $gradecategory->apply_forced_settings();
-
-        // Data Validation.
-        if (array_key_exists('grade_item_gradetype', $data) and $data['grade_item_gradetype'] == GRADE_TYPE_SCALE) {
-            if (empty($data['grade_item_scaleid'])) {
-                $warnings[] = ['item' => 'scaleid', 'warningcode' => 'invalidscale',
-                    'message' => get_string('missingscale', 'grades')];
-            }
-        }
-        if (array_key_exists('grade_item_grademin', $data) and array_key_exists('grade_item_grademax', $data)) {
-            if (($data['grade_item_grademax'] != 0 OR $data['grade_item_grademin'] != 0) AND
-                ($data['grade_item_grademax'] == $data['grade_item_grademin'] OR
-                $data['grade_item_grademax'] < $data['grade_item_grademin'])) {
-                $warnings[] = ['item' => 'grademax', 'warningcode' => 'invalidgrade',
-                    'message' => get_string('incorrectminmax', 'grades')];
-            }
-        }
-
-        if (!empty($warnings)) {
-            return ['categoryid' => null, 'warnings' => $warnings];
-        }
-
-        // Now call the update function with data. Transactioned so the gradebook isn't broken on bad data.
-        try {
-            $transaction = $DB->start_delegated_transaction();
-            grade_edit_tree::update_gradecategory($gradecategory, (object) $data);
-            $transaction->allow_commit();
-        } catch (Exception $e) {
-            // If the submitted data was broken for any reason.
-            $warnings['database'] = $e->getMessage();
-            $transaction->rollback();
-            return ['warnings' => $warnings];
-        }
-
-        return['categoryid' => $gradecategory->id, 'warnings' => []];
+        return['categoryid' => $result['categoryids'][0], 'warnings' => []];
     }
 
     /**
      * Returns description of method result value
+     *
+     * @deprecated since Moodle 3.11 MDL-71031 - please do not use this function any more.
+     * @todo MDL-71325 This will be deleted in Moodle 4.3.
+     * @see core_grades\external\create_gradecategories::create_gradecategories()
      *
      * @return external_description
      * @since Moodle 3.10
@@ -733,5 +665,14 @@ class core_grades_external extends external_api {
             'categoryid' => new external_value(PARAM_INT, 'The ID of the created category', VALUE_OPTIONAL),
             'warnings' => new external_warnings(),
         ]);
+    }
+
+    /**
+     * Marking the method as deprecated. See MDL-71031 for details.
+     * @since Moodle 3.11
+     * @return bool
+     */
+    public static function create_gradecategory_is_deprecated() {
+        return true;
     }
 }
