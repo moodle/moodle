@@ -60,6 +60,7 @@ class core_backup_cleanup_task_testcase extends advanced_testcase {
             $user->id
         );
         $controller->execute_plan();
+        $controller->destroy(); // Unset all structures, close files...
         return $controller->get_backupid();
     }
 
