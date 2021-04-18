@@ -1420,9 +1420,14 @@ class cm_info implements IteratorAggregate {
         return $this->onclick;
     }
     /**
+     * Getter method for property $customdata, ensures that dynamic data is retrieved.
+     *
+     * This method is normally called by the property ->customdata, but can be called directly if there
+     * is a case when it might be called recursively (you can't call property values recursively).
+     *
      * @return mixed Optional custom data stored in modinfo cache for this activity, or null if none
      */
-    private function get_custom_data() {
+    public function get_custom_data() {
         $this->obtain_dynamic_data();
         return $this->customdata;
     }
@@ -1688,6 +1693,9 @@ class cm_info implements IteratorAggregate {
      * @param mixed $value The value
      */
     public function override_customdata($name, $value) {
+        if (!is_array($this->customdata)) {
+            $this->customdata = [];
+        }
         $this->customdata[$name] = $value;
     }
 
@@ -1893,7 +1901,8 @@ class cm_info implements IteratorAggregate {
      * the module or not.
      *
      * As part of this function, the module's _cm_info_dynamic function from its lib.php will
-     * be called (if it exists).
+     * be called (if it exists). Make sure that the functions that are called here do not use
+     * any getter magic method from cm_info.
      * @return void
      */
     private function obtain_dynamic_data() {
