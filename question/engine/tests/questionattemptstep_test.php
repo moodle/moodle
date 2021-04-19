@@ -128,4 +128,51 @@ class question_attempt_step_test extends advanced_testcase {
         $this->assertEquals(array(), $step->get_behaviour_data());
 
     }
+
+
+    /**
+     * Test get_user function.
+     */
+    public function test_get_user() {
+        $this->resetAfterTest(true);
+        $student = $this->getDataGenerator()->create_user();
+
+        $step = new question_attempt_step(array(), 123, $student->id);
+        $step->add_full_user_object($student);
+
+        $this->assertEquals($student, $step->get_user());
+    }
+
+    /**
+     * Test get_user_fullname function.
+     */
+    public function test_get_user_fullname() {
+        $this->resetAfterTest(true);
+        $student = $this->getDataGenerator()->create_user();
+
+        $step = new question_attempt_step(array(), 123, $student->id);
+        $step->add_full_user_object($student);
+
+        $this->assertEquals(fullname($student), $step->get_user_fullname());
+    }
+
+    /**
+     * Test add_full_user_object function.
+     */
+    public function test_add_full_user_object() {
+        $this->resetAfterTest(true);
+        $student1 = $this->getDataGenerator()->create_user();
+        $student2 = $this->getDataGenerator()->create_user();
+
+        $step = new question_attempt_step(array(), 123, $student1->id);
+
+        // Add full user with the valid user.
+        $step->add_full_user_object($student1);
+        $this->assertEquals($student1, $step->get_user());
+
+        // Throw exception with the invalid user.
+        $this->expectException('coding_exception');
+        $this->expectExceptionMessage('Wrong user passed to add_full_user_object');
+        $step->add_full_user_object($student2);
+    }
 }

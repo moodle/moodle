@@ -720,6 +720,15 @@ class quiz_attempt {
     }
 
     /**
+     * Preload all attempt step users to show in Response history.
+     *
+     * @throws dml_exception
+     */
+    public function preload_all_attempt_step_users(): void {
+        $this->quba->preload_all_step_users();
+    }
+
+    /**
      * Let each slot know which section it is part of.
      */
     protected function link_sections_and_slots() {
