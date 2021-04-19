@@ -498,9 +498,9 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
     // If the user can't see hidden grades, don't return that information.
     $gitem = grade_item::fetch(array('id' => $grades->items[0]->id));
     if (!$gitem->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
-        $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
+        $result->info = get_string('gradenoun') . ': ' . $grade->str_long_grade;
     } else {
-        $result->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
+        $result->info = get_string('gradenoun') . ': ' . get_string('hidden', 'grades');
     }
 
     $result->time = grade_get_date_for_user_grade($grade, $user);
@@ -529,12 +529,12 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
         // If the user can't see hidden grades, don't return that information.
         $gitem = grade_item::fetch(array('id' => $grades->items[0]->id));
         if (!$gitem->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
-            echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
+            echo $OUTPUT->container(get_string('gradenoun').': '.$grade->str_long_grade);
             if ($grade->str_feedback) {
                 echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
             }
         } else {
-            echo $OUTPUT->container(get_string('grade') . ': ' . get_string('hidden', 'grades'));
+            echo $OUTPUT->container(get_string('gradenoun') . ': ' . get_string('hidden', 'grades'));
             if ($grade->str_feedback) {
                 echo $OUTPUT->container(get_string('feedback').': '.get_string('hidden', 'grades'));
             }

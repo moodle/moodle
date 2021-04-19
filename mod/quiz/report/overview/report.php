@@ -664,7 +664,7 @@ class quiz_overview_report extends quiz_attempts_report {
     protected static function get_chart($labels, $data) {
         $chart = new \core\chart_bar();
         $chart->set_labels($labels);
-        $chart->get_xaxis(0, true)->set_label(get_string('grade'));
+        $chart->get_xaxis(0, true)->set_label(get_string('gradenoun'));
 
         $yaxis = $chart->get_yaxis(0, true);
         $yaxis->set_label(get_string('participants'));

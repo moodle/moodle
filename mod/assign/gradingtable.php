@@ -449,7 +449,7 @@ class assign_grading_table extends table_sql implements renderable {
         }
         // Grade.
         $columns[] = 'grade';
-        $headers[] = get_string('grade');
+        $headers[] = get_string('gradenoun');
         if ($this->is_downloading()) {
             $gradetype = $this->assignment->get_instance()->grade;
             if ($gradetype > 0) {
@@ -998,7 +998,7 @@ class assign_grading_table extends table_sql implements renderable {
             }
 
             $url = new moodle_url('/mod/assign/view.php', $urlparams);
-            $link = '<a href="' . $url . '" class="btn btn-primary">' . get_string('grade') . '</a>';
+            $link = '<a href="' . $url . '" class="btn btn-primary">' . get_string('gradeverb') . '</a>';
             $grade .= $link . $separator;
         }
 
@@ -1241,7 +1241,7 @@ class assign_grading_table extends table_sql implements renderable {
         $noimage = null;
 
         if (!$row->grade) {
-            $description = get_string('grade');
+            $description = get_string('gradeverb');
         } else {
             $description = get_string('updategrade', 'assign');
         }

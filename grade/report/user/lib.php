@@ -1290,7 +1290,7 @@ function gradereport_user_myprofile_navigation(core_user\output\myprofile\tree $
         }
         if ($gradeaccess) {
             $url = new moodle_url('/course/user.php', array('mode' => 'grade', 'id' => $course->id, 'user' => $user->id));
-            $node = new core_user\output\myprofile\node('reports', 'grade', get_string('grade'), null, $url);
+            $node = new core_user\output\myprofile\node('reports', 'grade', get_string('grades'), null, $url);
             $tree->add_node($node);
         }
     }

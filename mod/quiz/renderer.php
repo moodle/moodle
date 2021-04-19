@@ -1029,7 +1029,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $table->size[] = '';
         }
         if ($viewobj->gradecolumn) {
-            $table->head[] = get_string('grade') . ' / ' .
+            $table->head[] = get_string('gradenoun') . ' / ' .
                     quiz_format_grade($quiz, $quiz->grade);
             $table->align[] = 'center';
             $table->size[] = '';
