@@ -116,21 +116,32 @@ class cm_completion_details {
             ];
         }
 
-        // Custom completion rules.
+        // Check if this activity has custom_completion class implemented.
         $cmcompletionclass = activity_custom_completion::get_cm_completion_class($this->cminfo->modname);
-        if (!isset($completiondata->customcompletion) || !$cmcompletionclass) {
-            // Return early if there are no custom rules to process or the cm completion class implementation is not available.
-            return $details;
+        if ($cmcompletionclass) {
+            if (isset($completiondata->customcompletion)) {
+                /** @var activity_custom_completion $cmcompletion */
+                $cmcompletion = new $cmcompletionclass($this->cminfo, $this->userid);
+                foreach ($completiondata->customcompletion as $rule => $status) {
+                    $details[$rule] = (object)[
+                        'status' => !$hasoverride ? $status : $completiondata->completionstate,
+                        'description' => $cmcompletion->get_custom_rule_description($rule),
+                    ];
+                }
+            }
+        } else {
+            if (function_exists($this->cminfo->modname . '_get_completion_state')) {
+                // If the plugin does not have the custom completion implementation but implements the get_completion_state() callback,
+                // fallback to displaying the overall completion state of the activity.
+                $details = [
+                    'plugincompletionstate' => (object)[
+                        'status' => $this->get_overall_completion(),
+                        'description' => get_string('completeactivity', 'completion')
+                    ]
+                ];
+            }
         }
 
-        /** @var activity_custom_completion $cmcompletion */
-        $cmcompletion = new $cmcompletionclass($this->cminfo, $this->userid);
-        foreach ($completiondata->customcompletion as $rule => $status) {
-            $details[$rule] = (object)[
-                'status' => !$hasoverride ? $status : $completiondata->completionstate,
-                'description' => $cmcompletion->get_custom_rule_description($rule),
-            ];
-        }
 
         return $details;
     }
