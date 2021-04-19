@@ -101,4 +101,3 @@ Feature: Test creating a drag and drop onto image question
     And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
     Then the following fields match these values:
       | id_shuffleanswers | 1   |
-
