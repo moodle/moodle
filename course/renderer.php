@@ -837,7 +837,8 @@ class core_course_renderer extends plugin_renderer_base {
         $output = '';
         if ($modulehtml = $this->course_section_cm($course, $completioninfo, $mod, $sectionreturn, $displayoptions)) {
             $infoclass = '';
-            if (($course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS) || !empty($course->showactivitydates)) {
+            if ((($course->enablecompletion == COMPLETION_ENABLED) &&
+                ($course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS)) || !empty($course->showactivitydates)) {
                 // This will apply styles to the course homepage when the activity information output component is displayed.
                 $infoclass = 'hasinfo';
             }
