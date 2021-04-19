@@ -408,9 +408,9 @@ function lesson_user_outline($course, $user, $mod, $lesson) {
             }
         } else {
             if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
-                $return->info = get_string('grade') . ': ' . $grade->str_long_grade;
+                $return->info = get_string('gradenoun') . ': ' . $grade->str_long_grade;
             } else {
-                $return->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
+                $return->info = get_string('gradenoun') . ': ' . get_string('hidden', 'grades');
             }
 
             $return->time = grade_get_date_for_user_grade($grade, $user);
@@ -462,9 +462,9 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
             }
         } else {
             if (!$grade->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
-                $status = get_string("grade") . ': ' . $grade->str_long_grade;
+                $status = get_string('gradenoun') . ': ' . $grade->str_long_grade;
             } else {
-                $status = get_string('grade') . ': ' . get_string('hidden', 'grades');
+                $status = get_string('gradenoun') . ': ' . get_string('hidden', 'grades');
             }
         }
 

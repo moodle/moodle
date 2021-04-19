@@ -81,7 +81,7 @@ class qtype_multichoice_edit_form extends question_edit_form {
         $repeated[] = $mform->createElement('editor', 'answer',
                 $label, array('rows' => 1), $this->editoroptions);
         $repeated[] = $mform->createElement('select', 'fraction',
-                get_string('grade'), $gradeoptions);
+                get_string('gradenoun'), $gradeoptions);
         $repeated[] = $mform->createElement('editor', 'feedback',
                 get_string('feedback', 'question'), array('rows' => 1), $this->editoroptions);
         $repeatedoptions['answer']['type'] = PARAM_RAW;
