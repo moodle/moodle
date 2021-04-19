@@ -55,6 +55,7 @@ $string['checkall'] = 'Check or uncheck all activities and resources';
 $string['checkallsection'] = 'Check or uncheck all activities and resources in the following section: {$a}';
 $string['checkactivity'] = 'Checkbox for activity / resource: {$a}';
 $string['completed'] = 'Completed';
+$string['completeactivity'] = 'Complete the activity';
 $string['completedunlocked'] = 'Completion options unlocked';
 $string['completedunlockedtext'] = 'When you save changes, completion state for all students will be erased. If you change your mind about this, do not save the form.';
 $string['completedwarning'] = 'Completion options locked';
