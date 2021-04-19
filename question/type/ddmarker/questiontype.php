@@ -82,6 +82,12 @@ class question_hint_ddmarker extends question_hint_with_parts {
  */
 class qtype_ddmarker extends qtype_ddtoimage_base {
 
+    public function save_defaults_for_new_questions(stdClass $fromform): void {
+        parent::save_defaults_for_new_questions($fromform);
+        $this->set_default_value('showmisplaced', $fromform->showmisplaced);
+        $this->set_default_value('shuffleanswers', $fromform->shuffleanswers);
+    }
+
     public function save_question_options($formdata) {
         global $DB, $USER;
         $context = $formdata->context;
