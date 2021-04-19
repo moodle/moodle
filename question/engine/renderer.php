@@ -471,14 +471,10 @@ class core_question_renderer extends plugin_renderer_base {
 
             $restrictedqa = new question_attempt_with_restricted_history($qa, $i, null);
 
-            $user = new stdClass();
-            $user->id = $step->get_user_id();
-            $row = array(
-                $stepno,
-                userdate($step->get_timecreated(), get_string('strftimedatetimeshort')),
-                s($qa->summarise_action($step)),
-                $restrictedqa->get_state_string($options->correctness),
-            );
+            $row = [$stepno,
+                    userdate($step->get_timecreated(), get_string('strftimedatetimeshort')),
+                    s($qa->summarise_action($step)) . $this->action_author($step, $options),
+                    $restrictedqa->get_state_string($options->correctness)];
 
             if ($options->marks >= question_display_options::MARK_AND_MAX) {
                 $row[] = $qa->format_fraction_as_mark($step->get_fraction(), $options->markdp);
@@ -495,4 +491,20 @@ class core_question_renderer extends plugin_renderer_base {
                         array('class' => 'responsehistoryheader'));
     }
 
+    /**
+     * Action author's profile link.
+     *
+     * @param question_attempt_step $step The step.
+     * @param question_display_options $options The display options.
+     * @return string The link to user's profile.
+     */
+    protected function action_author(question_attempt_step $step, question_display_options $options): string {
+        if ($options->userinfoinhistory && $step->get_user_id() != $options->userinfoinhistory) {
+            return html_writer::link(
+                    new moodle_url('/user/view.php', ['id' => $step->get_user_id(), 'course' => $this->page->course->id]),
+                    $step->get_user_fullname(), ['class' => 'd-table-cell']);
+        } else {
+            return '';
+        }
+    }
 }

@@ -44,6 +44,7 @@ if ($page !== 0) {
 $PAGE->set_url($url);
 
 $attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
+$attemptobj->preload_all_attempt_step_users();
 $page = $attemptobj->force_page_number_into_range($page);
 
 // Now we can validate the params better, re-genrate the page URL.

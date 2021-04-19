@@ -476,7 +476,10 @@ abstract class question_engine {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_display_options {
-    /**#@+ @var integer named constants for the values that most of the options take. */
+    /**#@+
+     * @var integer named constants for the values that most of the options take.
+     */
+    const SHOW_ALL = -1;
     const HIDDEN = 0;
     const VISIBLE = 1;
     const EDITABLE = 2;
@@ -630,6 +633,11 @@ class question_display_options {
      * @var int the context the attempt being output belongs to.
      */
     public $context;
+
+    /**
+     * @var int The option to show the action author in the response history.
+     */
+    public $userinfoinhistory = self::HIDDEN;
 
     /**
      * Set all the feedback-related fields {@link $feedback}, {@link generalfeedback},
