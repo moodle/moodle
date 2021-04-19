@@ -42,13 +42,6 @@
     <version>v4.6.0</version>
     <licenseversion></licenseversion>
   </library>
-    <library>
-    <location>amd/src/index.js</location>
-    <name>bootstrap-util</name>
-    <license>(MIT)</license>
-    <version>v4.6.0</version>
-    <licenseversion></licenseversion>
-  </library>
   <library>
     <location>amd/src/bootstrap/modal.js</location>
     <name>bootstrap-modal</name>
@@ -100,6 +93,13 @@
   </library>
   <library>
     <location>amd/src/bootstrap/util.js</location>
+    <name>bootstrap-util</name>
+    <license>(MIT)</license>
+    <version>v4.6.0</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>amd/src/index.js</location>
     <name>bootstrap-util</name>
     <license>(MIT)</license>
     <version>v4.6.0</version>
