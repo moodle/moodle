@@ -47,6 +47,11 @@ class qtype_match extends question_type {
         return true;
     }
 
+    public function save_defaults_for_new_questions(stdClass $fromform): void {
+        parent::save_defaults_for_new_questions($fromform);
+        $this->set_default_value('shuffleanswers', $fromform->shuffleanswers);
+    }
+
     public function save_question_options($question) {
         global $DB;
         $context = $question->context;

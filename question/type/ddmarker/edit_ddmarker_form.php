@@ -45,6 +45,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
 
     protected function definition_inner($mform) {
         $mform->addElement('advcheckbox', 'showmisplaced', get_string('showmisplaced', 'qtype_ddmarker'));
+        $mform->setDefault('showmisplaced', $this->get_default_value('showmisplaced', 0));
         parent::definition_inner($mform);
 
         $mform->addHelpButton('drops[0]', 'dropzones', 'qtype_ddmarker');
@@ -60,7 +61,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         $mform->addElement('header', 'draggableitemheader',
                                 get_string('markers', 'qtype_ddmarker'));
         $mform->addElement('advcheckbox', 'shuffleanswers', get_string('shuffleimages', 'qtype_'.$this->qtype()));
-        $mform->setDefault('shuffleanswers', 0);
+        $mform->setDefault('shuffleanswers', $this->get_default_value('shuffleanswers', 0));
         $this->repeat_elements($this->draggable_item($mform), $itemrepeatsatstart,
                 $this->draggable_items_repeated_options(),
                 'noitems', 'additems', self::ADD_NUM_ITEMS,
