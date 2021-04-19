@@ -1,6 +1,11 @@
 This files describes API changes in analytics sub system,
 information provided here is intended especially for developers.
 
+=== 3.10.4 ===
+
+* A new function get_executed_actions() has been added to \core_analytics\prediction class
+  to get all (or filtered by action name) executed actions of a prediction
+
 === 3.8 ===
 
 * "Time-splitting method" have been replaced by "Analysis interval" for the language strings that are
