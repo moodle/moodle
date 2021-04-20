@@ -3401,10 +3401,10 @@
         <FIELD NAME="lastruntime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="nextruntime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="blocking" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Block the entire cron when this task is running."/>
-        <FIELD NAME="minute" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="hour" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="day" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="month" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="minute" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="hour" TYPE="char" LENGTH="70" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="day" TYPE="char" LENGTH="90" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="month" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="dayofweek" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="faildelay" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="customised" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Used on upgrades to prevent overwriting custom schedules."/>
