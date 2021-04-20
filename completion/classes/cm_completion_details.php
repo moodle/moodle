@@ -40,6 +40,9 @@ class cm_completion_details {
     /** @var completion_info The completion info instance for this cm's course. */
     protected $completioninfo = null;
 
+    /** @var object The completion data. */
+    protected $completiondata = null;
+
     /** @var cm_info The course module information. */
     protected $cminfo = null;
 
@@ -62,6 +65,7 @@ class cm_completion_details {
      */
     public function __construct(completion_info $completioninfo, cm_info $cminfo, int $userid, bool $returndetails = true) {
         $this->completioninfo = $completioninfo;
+        $this->completiondata = $completioninfo->get_data($cminfo, false, $userid);
         $this->cminfo = $cminfo;
         $this->userid = $userid;
         $this->returndetails = $returndetails;
@@ -87,7 +91,7 @@ class cm_completion_details {
             return [];
         }
 
-        $completiondata = $this->completioninfo->get_data($this->cminfo, false, $this->userid);
+        $completiondata = $this->completiondata;
         $hasoverride = !empty($this->overridden_by());
 
         $details = [];
@@ -155,8 +159,7 @@ class cm_completion_details {
      * @return int The overall completion state for this course module.
      */
     public function get_overall_completion(): int {
-        $completiondata = $this->completioninfo->get_data($this->cminfo, false, $this->userid);
-        return (int)$completiondata->completionstate;
+        return (int)$this->completiondata->completionstate;
     }
 
     /**
@@ -183,8 +186,7 @@ class cm_completion_details {
      * @return int|null
      */
     public function overridden_by(): ?int {
-        $completiondata = $this->completioninfo->get_data($this->cminfo);
-        return isset($completiondata->overrideby) ? (int)$completiondata->overrideby : null;
+        return isset($this->completiondata->overrideby) ? (int)$this->completiondata->overrideby : null;
     }
 
     /**
@@ -220,6 +222,15 @@ class cm_completion_details {
     }
 
     /**
+     * Completion state timemodified
+     *
+     * @return int timestamp
+     */
+    public function get_timemodified(): int {
+        return (int)$this->completiondata->timemodified;
+    }
+
+    /**
      * Generates an instance of this class.
      *
      * @param cm_info $cminfo The course module info instance.
@@ -229,7 +240,7 @@ class cm_completion_details {
      */
     public static function get_instance(cm_info $cminfo, int $userid, bool $returndetails = true): cm_completion_details {
         $course = $cminfo->get_course();
-        $completioninfo = new completion_info($course);
+        $completioninfo = new \completion_info($course);
         return new self($completioninfo, $cminfo, $userid, $returndetails);
     }
 }

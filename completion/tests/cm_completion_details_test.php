@@ -54,7 +54,8 @@ class cm_completion_details_test extends advanced_testcase {
      * @param array $completionoptions Completion options (e.g. completionview, completionusegrade, etc.)
      * @return cm_completion_details
      */
-    protected function setup_data(?int $completion, array $completionoptions = []): cm_completion_details {
+    protected function setup_data(?int $completion, array $completionoptions = [],
+        object $mockcompletiondata = null): cm_completion_details {
         if (is_null($completion)) {
             $completion = COMPLETION_TRACKING_AUTOMATIC;
         }
@@ -68,6 +69,12 @@ class cm_completion_details_test extends advanced_testcase {
         $this->completioninfo->expects($this->any())
             ->method('is_enabled')
             ->willReturn($completion);
+
+        if (!empty($mockcompletiondata)) {
+            $this->completioninfo->expects($this->any())
+                ->method('get_data')
+                ->willReturn($mockcompletiondata);
+        }
 
         // Build a mock cm_info instance.
         $mockcminfo = $this->getMockBuilder(cm_info::class)
@@ -171,12 +178,8 @@ class cm_completion_details_test extends advanced_testcase {
      * @param int $state
      */
     public function test_get_overall_completion(int $state) {
-        $cmcompletion = $this->setup_data(COMPLETION_TRACKING_AUTOMATIC);
-
-        $this->completioninfo->expects($this->once())
-            ->method('get_data')
-            ->willReturn((object)['completionstate' => $state]);
-
+        $completiondata = (object)['completionstate' => $state];
+        $cmcompletion = $this->setup_data(COMPLETION_TRACKING_AUTOMATIC, [], $completiondata);
         $this->assertEquals($state, $cmcompletion->get_overall_completion());
     }
 
@@ -274,12 +277,7 @@ class cm_completion_details_test extends advanced_testcase {
             $options['completionusegrade'] = true;
         }
 
-        $cmcompletion = $this->setup_data($completion, $options);
-
-        $this->completioninfo->expects($this->any())
-            ->method('get_data')
-            ->willReturn($getdatareturn);
-
+        $cmcompletion = $this->setup_data($completion, $options, $getdatareturn);
         $this->assertEquals($expecteddetails, $cmcompletion->get_details());
     }
 }
