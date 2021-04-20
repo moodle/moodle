@@ -731,17 +731,28 @@ class behat_config_util {
             }
             $installedversion = $package->version;
         } else if (!empty($CFG->behat_ionic_wwwroot)) {
-            // Get app version from config.json inside wwwroot.
-            $jsonurl = $CFG->behat_ionic_wwwroot . '/config.json';
-            $json = @download_file_content($jsonurl);
+            // Get app version from env.json inside wwwroot.
+            $jsonurl = $CFG->behat_ionic_wwwroot . '/assets/env.json';
+            $json = @file_get_contents($jsonurl);
             if (!$json) {
-                throw new coding_exception('Unable to load app version from ' . $jsonurl);
+                // Fall back to ionic 3 config file.
+                $jsonurl = $CFG->behat_ionic_wwwroot . '/config.json';
+                $json = @file_get_contents($jsonurl);
+                if (!$json) {
+                    throw new coding_exception('Unable to load app version from ' . $jsonurl);
+                }
+                $config = json_decode($json);
+                if ($config === null || empty($config->versionname)) {
+                    throw new coding_exception('Invalid app config data in ' . $jsonurl);
+                }
+                $installedversion = str_replace('-dev', '', $config->versionname);
+            } else {
+                $env = json_decode($json);
+                if (empty($env->build->version ?? null)) {
+                    throw new coding_exception('Invalid app config data in ' . $jsonurl);
+                }
+                $installedversion = $env->build->version;
             }
-            $config = json_decode($json);
-            if ($config === null || empty($config->versionname)) {
-                throw new coding_exception('Invalid app config data in ' . $jsonurl);
-            }
-            $installedversion = str_replace('-dev', '', $config->versionname);
         } else {
             return '';
         }
