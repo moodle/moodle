@@ -12,6 +12,11 @@ Important
 A new version of the libray is being developed @ https://github.com/tecnickcom/tc-lib-pdf . Check periodically when it's ready
 and if it's a drop-in replacement for the legacy tcpdf one.
 
+2021/04/20
+----------
+Upgrade to tcpdf TCPDF 6.4.1 (MDL-70902)
+by David Matamoros <davidmc@moodle.com>
+
 2021/02/11
 ----------
 Reduce PDF metadata disclosure (MDL-70735)
