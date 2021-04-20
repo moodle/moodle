@@ -111,11 +111,12 @@ class api {
     /**
      * List all the issuers, ordered by the sortorder field
      *
-     * @param bool $showall also include issues that are configured to be shown only on login page
+     * @param bool $includeloginonly also include issuers that are configured to be shown only on login page,
+     *     By default false, in this case the method returns all issuers that can be used in services
      * @return \core\oauth2\issuer[]
      */
-    public static function get_all_issuers(bool $showall = false) {
-        if ($showall) {
+    public static function get_all_issuers(bool $includeloginonly = false) {
+        if ($includeloginonly) {
             return issuer::get_records([], 'sortorder');
         } else {
             return array_values(issuer::get_records_select('showonloginpage<>?', [issuer::LOGINONLY], 'sortorder'));

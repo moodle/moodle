@@ -102,7 +102,7 @@ class renderer extends plugin_renderer_base {
             // Internal services issuer.
             if ((int)$issuer->get('showonloginpage') == issuer::LOGINONLY) {
                 $serviceissuer = $this->pix_icon('no', get_string('issuersservicesnotallow', 'tool_oauth2'), 'tool_oauth2');
-            } else if ($issuer->get('id') && $issuer->is_configured() && !empty($issuer->get_endpoint_url('userinfo'))) {
+            } else if ($issuer->get('id') && $issuer->is_configured()) {
                 $serviceissuer = $this->pix_icon('yes', get_string('issuersservicesallow', 'tool_oauth2'), 'tool_oauth2');
             } else {
                 $serviceissuer = $this->pix_icon('notconfigured', get_string('notconfigured', 'tool_oauth2'), 'tool_oauth2');

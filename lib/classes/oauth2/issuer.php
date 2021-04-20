@@ -196,7 +196,7 @@ class issuer extends persistent {
      * @return bool
      * @throws \coding_exception
      */
-    public function is_available_for_login() {
+    public function is_available_for_login(): bool {
         return $this->get('id') &&
             $this->is_configured() &&
             $this->get('showonloginpage') != self::SERVICEONLY &&
@@ -265,7 +265,7 @@ class issuer extends persistent {
      *
      * @return string
      */
-    public function get_display_name() {
+    public function get_display_name(): string {
         return $this->get('loginpagename') ? $this->get('loginpagename') : $this->get('name');
     }
 }
