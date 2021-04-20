@@ -366,7 +366,8 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             var i, m = this.get(MANIPULATOR);
             var element = Y.Node.create('<div class="popover popover-bottom"><div class="arrow"></div>' +
                                         '<div class="header popover-title">' +
-                                        '<div role="button" class="close" aria-label="Close">' +
+                                        '<div role="button" class="close" aria-label="' +
+                                        M.util.get_string('closebuttontitle', 'moodle') + '">' +
                                         '<span aria-hidden="true">&times;</span></div>' +
                                         '<h3>'+M.util.get_string('assignroles', 'role')+'</h3>' +
                                         '</div><div class="content popover-content form-inline form-group"></div></div>');
