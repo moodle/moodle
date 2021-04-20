@@ -34,6 +34,9 @@
         data-source="{{source}}"
         data-parameter="{{parameters}}">
             <div class="reportbuilder-table-wrapper">
+                {{#filterspresent}}
+                    {{>core_reportbuilder/local/filters/area}}
+                {{/filterspresent}}
                 <!-- Table -->
                 {{{table}}}
             </div>

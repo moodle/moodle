@@ -118,7 +118,12 @@ class filter extends dynamic_form {
 
         // Allow each filter instance to add itself to this form, wrapping each inside custom header/footer template.
         foreach ($this->get_system_report()->get_filter_instances() as $filterinstance) {
+            $mform->addElement('html', $OUTPUT->render_from_template('core_reportbuilder/local/filters/header', [
+                'name' => $filterinstance->get_header(),
+            ]));
+
             $filterinstance->setup_form($mform);
+            $mform->addElement('html', $OUTPUT->render_from_template('core_reportbuilder/local/filters/footer', []));
         }
 
         $this->set_display_vertical();
