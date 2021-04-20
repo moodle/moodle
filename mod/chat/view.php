@@ -122,14 +122,10 @@ if (has_capability('mod/chat:chat', $context)) {
     echo $OUTPUT->box_start('generalbox', 'enterlink');
 
     $now = time();
-    $span = $chat->chattime - $now;
-    if ($chat->chattime and $chat->schedule and ($span > 0)) {  // A chat is scheduled.
-        echo '<p>';
-        $chatinfo = new stdClass();
-        $chatinfo->date = userdate($chat->chattime);
-        $chatinfo->fromnow = format_time($span);
-        echo get_string('sessionstart', 'chat', $chatinfo);
-        echo '</p>';
+    $chattime = $chat->chattime ?? 0;
+    $span = $chattime - $now;
+    if (!empty($chat->schedule) && $span > 0) {
+        echo html_writer::tag('p', get_string('sessionstartsin', 'chat', format_time($span)));
     }
 
     $params['id'] = $chat->id;
