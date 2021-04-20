@@ -23,4 +23,7 @@ Removed:
 Added:
  * readme_moodle.txt
 
+Changed:
+ * Updated H5peditor::getLibraryData parameters to fix PHP8.0 warnings. See MDL-70903 for details.
+
 Downloaded version: moodle-1.20.2 release
