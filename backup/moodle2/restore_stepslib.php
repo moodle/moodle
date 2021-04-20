@@ -2058,7 +2058,9 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
         if ($this->get_setting_value('role_assignments')) {
             $paths[] = new restore_path_element('assignment', '/roles/role_assignments/assignment');
         }
-        $paths[] = new restore_path_element('override', '/roles/role_overrides/override');
+        if ($this->get_setting_value('permissions')) {
+            $paths[] = new restore_path_element('override', '/roles/role_overrides/override');
+        }
 
         return $paths;
     }
