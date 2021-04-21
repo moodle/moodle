@@ -42,19 +42,21 @@ class block_tag_youtube_edit_form extends block_edit_form {
 
         // Category setting.
         $categorychoices = ['0' => get_string('anycategory', 'block_tag_youtube')];
+        $hascategoryerror = false;
         $categoryerror = '';
 
         try {
             // Get all video categories through an API call and add them to the category list.
             $categorychoices += $this->block->get_categories();
         } catch (Exception $e) {
+            $hascategoryerror = true;
             $categoryerror = $e->getMessage();
         }
         $mform->addElement('select', 'config_category', get_string('category', 'block_tag_youtube'),
             $categorychoices);
         $mform->setDefault('config_category', 0);
 
-        if ($categoryerror) {
+        if ($hascategoryerror) {
             $notification = $OUTPUT->notification(get_string('categoryerror', 'block_tag_youtube', $categoryerror),
                 'error');
             $mform->addElement('static', 'config_category_error', '', $notification);
