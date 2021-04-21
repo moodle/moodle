@@ -2302,7 +2302,11 @@ EOF;
     public function test_get_string_limitation() {
         // This is one of the limitations to the lang_string class. It can't be
         // used as a key.
-        $this->expectWarning();
+        if (PHP_VERSION_ID >= 80000) {
+            $this->expectException(TypeError::class);
+        } else {
+            $this->expectWarning();
+        }
         $array = array(get_string('yes', null, null, true) => 'yes');
     }
 
