@@ -112,9 +112,6 @@ if ($type) {
         } else {
             $fieldcount = (int)ini_get('max_input_vars') - 11;
         }
-    } else if ($type[1] === 'l') {
-        // Just over the limit.
-        $fieldcount = (int)ini_get('max_input_vars') + 100;
     }
 
     $mform = new core_max_input_vars_form('max_input_vars.php',
@@ -220,8 +217,7 @@ if ($type && ($result = $mform->get_data())) {
 echo html_writer::start_tag('ul');
 foreach (array('c' => 'Advanced checkboxes',
         'a' => 'Select options') as $control => $controlname) {
-    foreach (array('s' => 'Small', 'm' => 'Below limit', 'e' => 'Exact PHP limit',
-            'l' => 'Above limit') as $size => $sizename) {
+    foreach (array('s' => 'Small', 'm' => 'Below limit', 'e' => 'Exact PHP limit') as $size => $sizename) {
         echo html_writer::tag('li', html_writer::link('max_input_vars.php?type=' .
                 $control . $size, $controlname . ' / ' . $sizename));
     }
