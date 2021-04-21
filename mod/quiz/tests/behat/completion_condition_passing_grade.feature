@@ -1,4 +1,4 @@
-@mod @mod_quiz
+@mod @mod_quiz @core_completion
 Feature: Set a quiz to be marked complete when the student passes
   In order to ensure a student has learned the material before being marked complete
   As a teacher
@@ -25,8 +25,8 @@ Feature: Set a quiz to be marked complete when the student passes
       | questioncategory | qtype     | name           | questiontext              |
       | Test questions   | truefalse | First question | Answer the first question |
     And the following "activities" exist:
-      | activity | name           | course | idnumber | attempts | gradepass | completion | completionusegrade | completionpass |
-      | quiz     | Test quiz name | C1     | quiz1    | 4        | 5.00      | 2          | 1                  | 1              |
+      | activity | name           | course | idnumber | attempts | gradepass | completion | completionusegrade | completionpass | completionview |
+      | quiz     | Test quiz name | C1     | quiz1    | 4        | 5.00      | 2          | 1                  | 1              | 1              |
     And quiz "Test quiz name" contains the following questions:
       | question       | page |
       | First question | 1    |
@@ -36,12 +36,18 @@ Feature: Set a quiz to be marked complete when the student passes
     And I am on "Course 1" course homepage
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "todo"
     And the "Receive a pass grade" completion condition of "Test quiz name" is displayed as "todo"
+    And the "View" completion condition of "Test quiz name" is displayed as "todo"
     And user "student1" has attempted "Test quiz name" with responses:
       | slot | response |
       |   1  | True     |
-    And I am on "Course 1" course homepage
+    And I follow "Test quiz name"
     Then the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
     And the "Receive a pass grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "View" completion condition of "Test quiz name" is displayed as "done"
+    And I am on "Course 1" course homepage
+    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "Receive a pass grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "View" completion condition of "Test quiz name" is displayed as "done"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
