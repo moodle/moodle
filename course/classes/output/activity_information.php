@@ -98,6 +98,7 @@ class activity_information implements renderable, templatable {
 
         $data->hascompletion = $this->cmcompletion->has_completion();
         $data->isautomatic = $this->cmcompletion->is_automatic();
+        $data->showmanualcompletion = $this->cmcompletion->show_manual_completion();
 
         // Get the name of the user overriding the completion condition, if available.
         $data->overrideby = null;

@@ -49,6 +49,9 @@ class cm_completion_details {
     /** @var bool Whether to return automatic completion details. */
     protected $returndetails = true;
 
+    /** @var activity_custom_completion Activity custom completion object. */
+    protected $cmcompletion = null;
+
     /**
      * Constructor.
      *
@@ -62,6 +65,10 @@ class cm_completion_details {
         $this->cminfo = $cminfo;
         $this->userid = $userid;
         $this->returndetails = $returndetails;
+        $cmcompletionclass = activity_custom_completion::get_cm_completion_class($this->cminfo->modname);
+        if ($cmcompletionclass) {
+            $this->cmcompletion = new $cmcompletionclass($this->cminfo, $this->userid);
+        }
     }
 
     /**
@@ -116,16 +123,12 @@ class cm_completion_details {
             ];
         }
 
-        // Check if this activity has custom_completion class implemented.
-        $cmcompletionclass = activity_custom_completion::get_cm_completion_class($this->cminfo->modname);
-        if ($cmcompletionclass) {
+        if ($this->cmcompletion) {
             if (isset($completiondata->customcompletion)) {
-                /** @var activity_custom_completion $cmcompletion */
-                $cmcompletion = new $cmcompletionclass($this->cminfo, $this->userid);
                 foreach ($completiondata->customcompletion as $rule => $status) {
                     $details[$rule] = (object)[
                         'status' => !$hasoverride ? $status : $completiondata->completionstate,
-                        'description' => $cmcompletion->get_custom_rule_description($rule),
+                        'description' => $this->cmcompletion->get_custom_rule_description($rule),
                     ];
                 }
             }
@@ -191,6 +194,29 @@ class cm_completion_details {
      */
     public function is_tracked_user(): bool {
         return $this->completioninfo->is_tracked_user($this->userid);
+    }
+
+    /**
+     * Determine whether to show the manual completion or not.
+     *
+     * @return bool
+     */
+    public function show_manual_completion(): bool {
+        global $PAGE;
+
+        if ($PAGE->context->contextlevel == CONTEXT_MODULE) {
+            // Manual completion should always be shown on the activity page.
+            return true;
+        } else {
+            $course = $this->cminfo->get_course();
+            if ($course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS) {
+                return true;
+            } else if ($this->cmcompletion) {
+                return $this->cmcompletion->manual_completion_always_shown();
+            }
+        }
+
+        return false;
     }
 
     /**
