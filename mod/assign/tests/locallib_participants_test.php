@@ -28,8 +28,11 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once(__DIR__ . '/../locallib.php');
+require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
 
 class mod_assign_locallib_participants extends advanced_testcase {
+    use mod_assign_test_generator;
+
     public function test_list_participants_blind_marking() {
         global $DB;
         $this->resetAfterTest(true);
@@ -116,6 +119,40 @@ class mod_assign_locallib_participants extends advanced_testcase {
         // The updated grading table should have the same order as the updated participant list.
         $table->query_db(10);
         $this->assertEquals($newkeys, array_keys($table->rawdata));
+    }
+
+    /**
+     * Tests that users who have a submission, but can no longer submit are listed.
+     */
+    public function test_list_participants_can_no_longer_submit() {
+        global $DB;
+        $this->resetAfterTest(true);
+        // Create a role that will prevent users submitting.
+        $role = self::getDataGenerator()->create_role();
+        assign_capability('mod/assign:submit', CAP_PROHIBIT, $role, context_system::instance());
+        // Create the test data.
+        $course = self::getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $assign = $this->create_instance($course);
+        self::getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student1 = self::getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = self::getDataGenerator()->create_and_enrol($course, 'student');
+        $cannotsubmit1 = self::getDataGenerator()->create_and_enrol($course, 'student');
+        $cannotsubmit2 = self::getDataGenerator()->create_and_enrol($course, 'student');
+        // Create submissions for some users.
+        $this->add_submission($student1, $assign);
+        $this->submit_for_grading($student1, $assign);
+        $this->add_submission($cannotsubmit1, $assign);
+        $this->submit_for_grading($cannotsubmit1, $assign);
+        // Remove the capability to submit from some users.
+        role_assign($role, $cannotsubmit1->id, $coursecontext);
+        role_assign($role, $cannotsubmit2->id, $coursecontext);
+        // Everything is setup for the test now.
+        $participants = $assign->list_participants(null, true);
+        self::assertCount(3, $participants);
+        self::assertArrayHasKey($student1->id, $participants);
+        self::assertArrayHasKey($student2->id, $participants);
+        self::assertArrayHasKey($cannotsubmit1->id, $participants);
     }
 
     public function helper_add_submission($assign, $user, $data, $type) {
