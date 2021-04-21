@@ -195,7 +195,7 @@ if ($mform && $mform->is_cancelled()) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('pluginname', 'tool_oauth2'));
     echo $OUTPUT->doc_link('OAuth2_Services', get_string('serviceshelp', 'tool_oauth2'));
-    $issuers = core\oauth2\api::get_all_issuers();
+    $issuers = core\oauth2\api::get_all_issuers(true);
     echo $renderer->issuers_table($issuers);
 
     echo $renderer->container_start();

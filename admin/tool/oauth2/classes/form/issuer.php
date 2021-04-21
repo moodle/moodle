@@ -115,28 +115,6 @@ class issuer extends persistent {
         $mform->addElement('checkbox', 'basicauth', get_string('usebasicauth', 'tool_oauth2'));
         $mform->addHelpButton('basicauth', 'usebasicauth', 'tool_oauth2');
 
-        // Login scopes.
-        $mform->addElement('text', 'loginscopes', get_string('issuerloginscopes', 'tool_oauth2'));
-        $mform->addRule('loginscopes', null, 'required', null, 'client');
-        $mform->addRule('loginscopes', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('loginscopes', 'issuerloginscopes', 'tool_oauth2');
-
-        // Login scopes offline.
-        $mform->addElement('text', 'loginscopesoffline', get_string('issuerloginscopesoffline', 'tool_oauth2'));
-        $mform->addRule('loginscopesoffline', null, 'required', null, 'client');
-        $mform->addRule('loginscopesoffline', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('loginscopesoffline', 'issuerloginscopesoffline', 'tool_oauth2');
-
-        // Login params.
-        $mform->addElement('text', 'loginparams', get_string('issuerloginparams', 'tool_oauth2'));
-        $mform->addRule('loginparams', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('loginparams', 'issuerloginparams', 'tool_oauth2');
-
-        // Login params offline.
-        $mform->addElement('text', 'loginparamsoffline', get_string('issuerloginparamsoffline', 'tool_oauth2'));
-        $mform->addRule('loginparamsoffline', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('loginparamsoffline', 'issuerloginparamsoffline', 'tool_oauth2');
-
         // Base Url.
         $mform->addElement('text', 'baseurl', get_string('issuerbaseurl', 'tool_oauth2'));
         $mform->addRule('baseurl', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
@@ -145,24 +123,61 @@ class issuer extends persistent {
             $mform->addRule('baseurl', null, 'required', null, 'client');
         }
 
-        // Allowed Domains.
-        $mform->addElement('text', 'alloweddomains', get_string('issueralloweddomains', 'tool_oauth2'));
-        $mform->addRule('alloweddomains', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
-        $mform->addHelpButton('alloweddomains', 'issueralloweddomains', 'tool_oauth2');
-
         // Image.
         $mform->addElement('text', 'image', get_string('issuerimage', 'tool_oauth2'), 'maxlength="1024"');
         $mform->addRule('image', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
         $mform->addHelpButton('image', 'issuername', 'tool_oauth2');
 
         // Show on login page.
-        $mform->addElement('checkbox', 'showonloginpage', get_string('issuershowonloginpage', 'tool_oauth2'));
-        $mform->addHelpButton('showonloginpage', 'issuershowonloginpage', 'tool_oauth2');
+        $options = [
+            \core\oauth2\issuer::EVERYWHERE => get_string('issueruseineverywhere', 'tool_oauth2'),
+            \core\oauth2\issuer::LOGINONLY => get_string('issueruseinloginonly', 'tool_oauth2'),
+            \core\oauth2\issuer::SERVICEONLY => get_string('issueruseininternalonly', 'tool_oauth2'),
+        ];
+        $mform->addElement('select', 'showonloginpage', get_string('issuerusein', 'tool_oauth2'), $options);
+        $mform->addHelpButton('showonloginpage', 'issuerusein', 'tool_oauth2');
+
+        // Name on login page.
+        $mform->addElement('text', 'loginpagename', get_string('issuerloginpagename', 'tool_oauth2'));
+        $mform->addRule('loginpagename', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('loginpagename', 'issuerloginpagename', 'tool_oauth2');
+        $mform->hideIf('loginpagename', 'showonloginpage', 'eq', \core\oauth2\issuer::SERVICEONLY);
+
+        // Login scopes.
+        $mform->addElement('text', 'loginscopes', get_string('issuerloginscopes', 'tool_oauth2'));
+        $mform->addRule('loginscopes', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('loginscopes', 'issuerloginscopes', 'tool_oauth2');
+        $mform->hideIf('loginscopes', 'showonloginpage', 'eq', \core\oauth2\issuer::SERVICEONLY);
+
+        // Login scopes offline.
+        $mform->addElement('text', 'loginscopesoffline', get_string('issuerloginscopesoffline', 'tool_oauth2'));
+        $mform->addRule('loginscopesoffline', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('loginscopesoffline', 'issuerloginscopesoffline', 'tool_oauth2');
+        $mform->hideIf('loginscopesoffline', 'showonloginpage', 'eq', \core\oauth2\issuer::SERVICEONLY);
+
+        // Login params.
+        $mform->addElement('text', 'loginparams', get_string('issuerloginparams', 'tool_oauth2'));
+        $mform->addRule('loginparams', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('loginparams', 'issuerloginparams', 'tool_oauth2');
+        $mform->hideIf('loginparams', 'showonloginpage', 'eq', \core\oauth2\issuer::SERVICEONLY);
+
+        // Login params offline.
+        $mform->addElement('text', 'loginparamsoffline', get_string('issuerloginparamsoffline', 'tool_oauth2'));
+        $mform->addRule('loginparamsoffline', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('loginparamsoffline', 'issuerloginparamsoffline', 'tool_oauth2');
+        $mform->hideIf('loginparamsoffline', 'showonloginpage', 'eq', \core\oauth2\issuer::SERVICEONLY);
+
+        // Allowed Domains.
+        $mform->addElement('text', 'alloweddomains', get_string('issueralloweddomains', 'tool_oauth2'));
+        $mform->addRule('alloweddomains', get_string('maximumchars', '', 1024), 'maxlength', 1024, 'client');
+        $mform->addHelpButton('alloweddomains', 'issueralloweddomains', 'tool_oauth2');
+        $mform->hideIf('alloweddomains', 'showonloginpage', 'eq', \core\oauth2\issuer::SERVICEONLY);
 
         if ($this->showrequireconfirm) {
             // Require confirmation email for new accounts.
             $mform->addElement('advcheckbox', 'requireconfirmation', get_string('issuerrequireconfirmation', 'tool_oauth2'));
             $mform->addHelpButton('requireconfirmation', 'issuerrequireconfirmation', 'tool_oauth2');
+            $mform->hideIf('requireconfirmation', 'showonloginpage', 'eq', \core\oauth2\issuer::SERVICEONLY);
         }
 
         if ($this->type == 'imsobv2p1' || $issuer->get('servicetype') == 'imsobv2p1') {
@@ -208,5 +223,37 @@ class issuer extends persistent {
             // Set servicetype if it's defined.
             $mform->getElement('servicetype')->setValue($this->type);
         }
+    }
+
+    /**
+     * Define extra validation mechanims.
+     *
+     * The data here:
+     * - does not include {@see self::$fieldstoremove}.
+     * - does include {@see self::$foreignfields}.
+     * - was converted to map persistent-like data, e.g. array $description to string $description + int $descriptionformat.
+     *
+     * You can modify the $errors parameter in order to remove some validation errors should you
+     * need to. However, the best practice is to return new or overriden errors. Only modify the
+     * errors passed by reference when you have no other option.
+     *
+     * Do not add any logic here, it is only intended to be used by child classes.
+     *
+     * @param  stdClass $data Data to validate.
+     * @param  array $files Array of files.
+     * @param  array $errors Currently reported errors.
+     * @return array of additional errors, or overridden errors.
+     */
+    protected function extra_validation($data, $files, array &$errors) {
+        $errors = [];
+        if ($data->showonloginpage != \core\oauth2\issuer::SERVICEONLY) {
+            if (!strlen(trim($data->loginscopes))) {
+                $errors['loginscopes'] = get_string('required');
+            }
+            if (!strlen(trim($data->loginscopesoffline))) {
+                $errors['loginscopesoffline'] = get_string('required');
+            }
+        }
+        return $errors;
     }
 }

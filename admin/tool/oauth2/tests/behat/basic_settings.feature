@@ -18,8 +18,8 @@ Feature: Basic OAuth2 functionality
     When I press "Save changes"
     Then I should see "Changes saved"
     And I should see "Testing service"
-    And "Configured" "icon" should exist in the "Testing service" "table_row"
     And "Allow login" "icon" should exist in the "Testing service" "table_row"
+    And "Allow services" "icon" should exist in the "Testing service" "table_row"
     And "Service discovery successful" "icon" should exist in the "Testing service" "table_row"
     And I click on "Configure endpoints" "link" in the "Testing service" "table_row"
     And I should see "https://accounts.google.com/.well-known/openid-configuration" in the "discovery_endpoint" "table_row"
@@ -51,8 +51,8 @@ Feature: Basic OAuth2 functionality
     When I press "Save changes"
     Then I should see "Changes saved"
     And I should see "Testing service"
-    And "Configured" "icon" should exist in the "Testing service" "table_row"
     And "Allow login" "icon" should exist in the "Testing service" "table_row"
+    And "Allow services" "icon" should exist in the "Testing service" "table_row"
     And I should see "-" in the "Testing service" "table_row"
     And I click on "Configure endpoints" "link" in the "Testing service" "table_row"
     And I should see "authorization_endpoint"
@@ -83,8 +83,8 @@ Feature: Basic OAuth2 functionality
     When I press "Save changes"
     Then I should see "Changes saved"
     And I should see "Testing service"
-    And "Configured" "icon" should exist in the "Testing service" "table_row"
     And "Allow login" "icon" should exist in the "Testing service" "table_row"
+    And "Allow services" "icon" should exist in the "Testing service" "table_row"
     And I should see "-" in the "Testing service" "table_row"
     And I click on "Configure endpoints" "link" in the "Testing service" "table_row"
     And I should see "authorization_endpoint"
@@ -120,8 +120,8 @@ Feature: Basic OAuth2 functionality
     When I press "Save changes"
     Then I should see "Changes saved"
     And I should see "Testing service"
-    And "Configured" "icon" should exist in the "Testing service" "table_row"
     And "Do not allow login" "icon" should exist in the "Testing service" "table_row"
+    And "Allow services" "icon" should exist in the "Testing service" "table_row"
     And I should see "-" in the "Testing service" "table_row"
     And I click on "Configure endpoints" "link" in the "Testing service" "table_row"
     And I should see "authorization_endpoint"
@@ -152,7 +152,7 @@ Feature: Basic OAuth2 functionality
     When I press "Save changes"
     Then I should see "Changes saved"
     And I should see "OpenBadges"
-    And "Configured" "icon" should exist in the "OpenBadges" "table_row"
+    And "Allow services" "icon" should exist in the "OpenBadges" "table_row"
     And "Do not allow login" "icon" should exist in the "OpenBadges" "table_row"
     And "Service discovery successful" "icon" should exist in the "OpenBadges" "table_row"
     And the "src" attribute of "table.admintable th img" "css_element" should contain "IMS-Global-Logo.png"
@@ -187,8 +187,8 @@ Feature: Basic OAuth2 functionality
     When I press "Save changes"
     Then I should see "Changes saved"
     And I should see "Google custom"
-    And "Configured" "icon" should exist in the "Google custom" "table_row"
     And "Do not allow login" "icon" should exist in the "Google custom" "table_row"
+    And "Allow services" "icon" should exist in the "Google custom" "table_row"
     And "Service discovery successful" "icon" should exist in the "Google custom" "table_row"
     And the "src" attribute of "table.admintable th img" "css_element" should contain "favicon.ico"
     And I click on "Configure endpoints" "link" in the "Google custom" "table_row"
@@ -222,7 +222,7 @@ Feature: Basic OAuth2 functionality
     When I press "Save changes"
     Then I should see "Could not discover end points for identity issuer: Invalid custom service"
     And I should see "URL: https://dc.imsglobal.org/.well-known/openid-configuration"
-    And "Configured" "icon" should exist in the "Invalid custom service" "table_row"
+    And "Allow services" "icon" should exist in the "Invalid custom service" "table_row"
     And "Do not allow login" "icon" should exist in the "Invalid custom service" "table_row"
     And I should see "-" in the "Invalid custom service" "table_row"
     And I click on "Configure endpoints" "link" in the "Invalid custom service" "table_row"
@@ -237,8 +237,8 @@ Feature: Basic OAuth2 functionality
       | Name                       | Valid custom service                        |
       | Service base URL           | https://accounts.google.com/                |
     And I press "Save changes"
-    And "Configured" "icon" should exist in the "Valid custom" "table_row"
     And "Do not allow login" "icon" should exist in the "Valid custom" "table_row"
+    And "Allow services" "icon" should exist in the "Valid custom" "table_row"
     And "Service discovery successful" "icon" should exist in the "Valid custom" "table_row"
     And I click on "Edit" "link" in the "Valid custom service" "table_row"
     And I set the following fields to these values:
@@ -263,7 +263,7 @@ Feature: Basic OAuth2 functionality
     When I press "Save changes"
     And I should see "Changes saved"
     And I should see "Empty custom service"
-    And "Configured" "icon" should exist in the "Empty custom service" "table_row"
+    And "Allow services" "icon" should exist in the "Empty custom service" "table_row"
     And "Do not allow login" "icon" should exist in the "Empty custom service" "table_row"
     And I should see "-" in the "Empty custom service" "table_row"
     And I click on "Configure endpoints" "link" in the "Empty custom service" "table_row"
@@ -279,8 +279,8 @@ Feature: Basic OAuth2 functionality
       | Name                       | Valid custom service                      |
       | Service base URL           | https://accounts.google.com               |
     And I press "Save changes"
-    And "Configured" "icon" should exist in the "Valid custom" "table_row"
     And "Do not allow login" "icon" should exist in the "Valid custom" "table_row"
+    And "Allow services" "icon" should exist in the "Valid custom" "table_row"
     And "Service discovery successful" "icon" should exist in the "Valid custom" "table_row"
     And I click on "Edit" "link" in the "Valid custom service" "table_row"
     And I set the following fields to these values:
@@ -301,3 +301,59 @@ Feature: Basic OAuth2 functionality
     And I press "Continue"
     And I should see "Identity issuer deleted"
     And I should not see "Empty custom service"
+
+  Scenario: Create a standard service for Google and test form and UI for login only, services only and both
+    Given I press "Google"
+    And I should see "Create new service: Google"
+    # Create using 'Login page only' option.
+    And I set the following fields to these values:
+      | Name                       | Testing service                           |
+      | Client ID                  | thisistheclientid                         |
+      | Client secret              | supersecret                               |
+      | This service will be used  | Login page only                           |
+    When I press "Save changes"
+    Then I should see "Changes saved"
+    And I should see "Testing service"
+    And "Allow login" "icon" should exist in the "Testing service" "table_row"
+    And "Do not allow services" "icon" should exist in the "Testing service" "table_row"
+    And "Service discovery successful" "icon" should exist in the "Testing service" "table_row"
+    # Change to 'Internal services only'.
+    And I click on "Edit" "link" in the "Testing service" "table_row"
+    And I set the following fields to these values:
+      | This service will be used  | Internal services only                     |
+    And I press "Save changes"
+    And I should see "Changes saved"
+    And "Do not allow login" "icon" should exist in the "Testing service" "table_row"
+    And "Allow services" "icon" should exist in the "Testing service" "table_row"
+    # Change to 'Login page and internal services' and add a display name.
+    And I click on "Edit" "link" in the "Testing service" "table_row"
+    And I set the following fields to these values:
+      | This service will be used         | Login page and internal services     |
+      | Name displayed on the login page  | Google new display name              |
+    And I press "Save changes"
+    And I should see "Changes saved"
+    And "Allow login" "icon" should exist in the "Testing service" "table_row"
+    And "Allow services" "icon" should exist in the "Testing service" "table_row"
+    And I should see "Google new display name" in the "Testing service" "table_row"
+
+  Scenario: Create a login page only custom OIDC service
+    Given I press "Custom"
+    And I should see "Create new service: Custom"
+    And I set the following fields to these values:
+      | Name                              | Empty custom service                      |
+      | Client ID                         | thisistheclientid                         |
+      | Client secret                     | supersecret                               |
+      | This service will be used         | Login page only                           |
+      | Name displayed on the login page  | Custom display name                       |
+    When I press "Save changes"
+    And I should see "Changes saved"
+    And I should see "Empty custom service"
+    And I should see "Custom display name" in the "Empty custom service" "table_row"
+    And "Not configured" "icon" should exist in the "Empty custom service" "table_row"
+    And "Do not allow services" "icon" should exist in the "Empty custom service" "table_row"
+    And I click on "Edit" "link" in the "Empty custom service" "table_row"
+    And I set the following fields to these values:
+      | Service base URL           | https://accounts.google.com               |
+    And I press "Save changes"
+    And "Allow login" "icon" should exist in the "Empty custom service" "table_row"
+    And "Do not allow services" "icon" should exist in the "Empty custom service" "table_row"

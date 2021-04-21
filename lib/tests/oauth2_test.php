@@ -366,4 +366,81 @@ class core_oauth2_testcase extends advanced_testcase {
         ];
     }
 
+    /**
+     * Test for get all issuers.
+     */
+    public function test_get_all_issuers() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $googleissuer = core\oauth2\api::create_standard_issuer('google');
+        core\oauth2\api::create_standard_issuer('facebook');
+        core\oauth2\api::create_standard_issuer('microsoft');
+
+        // Set Google issuer to be shown only on login page.
+        $record = $googleissuer->to_record();
+        $record->showonloginpage = $googleissuer::LOGINONLY;
+        core\oauth2\api::update_issuer($record);
+
+        $issuers = \core\oauth2\api::get_all_issuers();
+        $this->assertCount(2, $issuers);
+        $expected = ['Microsoft', 'Facebook'];
+        $this->assertEqualsCanonicalizing($expected, [$issuers[0]->get_display_name(), $issuers[1]->get_display_name()]);
+
+        $issuers = \core\oauth2\api::get_all_issuers(true);
+        $this->assertCount(3, $issuers);
+        $expected = ['Google', 'Microsoft', 'Facebook'];
+        $this->assertEqualsCanonicalizing($expected,
+            [$issuers[0]->get_display_name(), $issuers[1]->get_display_name(), $issuers[2]->get_display_name()]);
+    }
+
+    /**
+     * Test for is available for login.
+     */
+    public function test_is_available_for_login() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $googleissuer = core\oauth2\api::create_standard_issuer('google');
+
+        // Set Google issuer to be shown only on login page.
+        $record = $googleissuer->to_record();
+        $record->showonloginpage = $googleissuer::LOGINONLY;
+        core\oauth2\api::update_issuer($record);
+
+        $this->assertFalse($googleissuer->is_available_for_login());
+
+        // Set a clientid and clientsecret.
+        $googleissuer->set('clientid', 'clientid');
+        $googleissuer->set('clientsecret', 'secret');
+        $googleissuer->update();
+
+        $this->assertTrue($googleissuer->is_available_for_login());
+
+        // Set showonloginpage to service only.
+        $googleissuer->set('showonloginpage', \core\oauth2\issuer::SERVICEONLY);
+        $googleissuer->update();
+
+        $this->assertFalse($googleissuer->is_available_for_login());
+
+        // Set showonloginpage to everywhere (service and login) and disable issuer.
+        $googleissuer->set('showonloginpage', \core\oauth2\issuer::EVERYWHERE);
+        $googleissuer->set('enabled', 0);
+        $googleissuer->update();
+
+        $this->assertFalse($googleissuer->is_available_for_login());
+
+        // Enable issuer.
+        $googleissuer->set('enabled', 1);
+        $googleissuer->update();
+
+        $this->assertTrue($googleissuer->is_available_for_login());
+
+        // Remove userinfo endpoint from issuer.
+        $endpoint = core\oauth2\endpoint::get_record([
+            'issuerid' => $googleissuer->get('id'),
+            'name' => 'userinfo_endpoint'
+        ]);
+        \core\oauth2\api::delete_endpoint($endpoint->get('id'));
+
+        $this->assertFalse($googleissuer->is_available_for_login());
+    }
 }

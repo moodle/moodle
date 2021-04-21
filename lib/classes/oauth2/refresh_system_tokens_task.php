@@ -84,7 +84,7 @@ class refresh_system_tokens_task extends scheduled_task {
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
-        $issuers = \core\oauth2\api::get_all_issuers();
+        $issuers = \core\oauth2\api::get_all_issuers(true);
         $tasksuccess = true;
         foreach ($issuers as $issuer) {
             if ($issuer->is_system_account_connected()) {
