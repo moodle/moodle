@@ -216,7 +216,7 @@ class encryption_testcase extends \basic_testcase {
 
         switch ($method) {
             case encryption::METHOD_SODIUM:
-                $this->expectExceptionMessage('key size should be');
+                $this->expectExceptionMessageMatches('/(should|must) be SODIUM_CRYPTO_SECRETBOX_KEYBYTES bytes/');
                 break;
 
             case encryption::METHOD_OPENSSL:
