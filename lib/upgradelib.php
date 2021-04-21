@@ -2717,3 +2717,27 @@ function upgrade_find_theme_location($themename) {
 
     return $dir;
 }
+
+/**
+ * Environment check for the php setting max_input_vars
+ *
+ * @param environment_results $result
+ * @return environment_results|null
+ */
+function check_max_input_vars(environment_results $result) {
+    $max = (int)ini_get('max_input_vars');
+    if ($max < 5000) {
+        $result->setInfo('max_input_vars');
+        $result->setStatus(false);
+        if (PHP_VERSION_ID >= 80000) {
+            // For PHP8 this check is required.
+            $result->setLevel('required');
+            $result->setFeedbackStr('settingmaxinputvarsrequired');
+        } else {
+            // For PHP7 this check is optional (recommended).
+            $result->setFeedbackStr('settingmaxinputvars');
+        }
+        return $result;
+    }
+    return null;
+}
