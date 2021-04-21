@@ -16,6 +16,8 @@ Feature: View activity completion information in the URL resource
       | user | course | role           |
       | student1 | C1 | student        |
       | teacher1 | C1 | editingteacher |
+    And the following config values are set as admin:
+      | displayoptions | 0,1,2,3,4,5,6 | url |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Edit settings" in current page administration
@@ -116,3 +118,35 @@ Feature: View activity completion information in the URL resource
     Then the manual completion button of "Music history" is displayed as "Mark as done"
     And I toggle the manual completion state of "Music history"
     And the manual completion button of "Music history" is displayed as "Done"
+
+  @javascript
+  Scenario Outline: The manual completion button will be shown on the course page for Open, In pop-up and New window display mode if the Show completion conditions is set to No
+    Given I am on "Course 1" course homepage with editing mode on
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Enable completion tracking | Yes |
+      | Show completion conditions | No  |
+    And I press "Save and display"
+    And I add a "URL" to section "1" and I fill the form with:
+      | Name                | Music history                                        |
+      | External URL        | https://moodle.org/                                  |
+      | id_display          | <display>                                            |
+      | Completion tracking | Students can manually mark the activity as completed |
+    # Teacher view.
+    And the manual completion button for "Music history" should exist
+    And the manual completion button for "Music history" should be disabled
+    And I log out
+    # Student view.
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
+    Then the manual completion button for "Music history" should exist
+    And the manual completion button of "Music history" is displayed as "Mark as done"
+    And I toggle the manual completion state of "Music history"
+    And the manual completion button of "Music history" is displayed as "Done"
+
+    Examples:
+      | display        |
+      | Open           |
+      | In pop-up      |
+      | New window     |

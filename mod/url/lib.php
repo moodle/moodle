@@ -243,6 +243,8 @@ function url_get_coursemodule_info($coursemodule) {
         $info->content = format_module_intro('url', $url, $coursemodule->id, false);
     }
 
+    $info->customdata['display'] = $display;
+
     return $info;
 }
 
