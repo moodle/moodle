@@ -1,0 +1,94 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_lti/registration_upgrade_choice_page.mustache
+
+    This template provides the layout to display the upgrade choices
+    available when registering a tool for which there exists at least
+    one other tool with the same domain.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * startregurlenc: the URL provided by the tool to start the registration, url encoded
+    * tools: the list of tools matching the domain
+
+    Example context (json):
+    {
+        "startregurlenc":"https%3A%2F%2Fmytool.example%2Fregister",
+        "tools": [
+          {
+            "id": 222,
+            "name": "This is My LTI 1.1 tool",
+            "baseurl": "https://mytool.example",
+            "version": "LTI-1p0",
+            "sesskey": "785t9302"
+          }
+        ]
+    }
+
+}}
+<p>{{#str}}dynreg_update_text, mod_lti {{/str}}</p>
+<div class="alert alert-warning" role="alert">
+{{#str}}dynreg_update_warn_dupdomain, mod_lti {{/str}}
+</div>
+<table class="table table-striped">
+<tr>
+<th>{{#str}}dynreg_update_name, mod_lti {{/str}}</th>
+<th>{{#str}}dynreg_update_url, mod_lti {{/str}}</th>
+<th>{{#str}}dynreg_update_version, mod_lti {{/str}}</th>
+<th></th>
+</tr>
+{{#tools}}
+  <tr>
+  <td>{{name}}</td>
+  <td>{{baseurl}}</td>
+  <td>{{ltiversion}}</td>
+  <td><button data-href="startltiadvregistration.php?url={{startregurlenc}}&type={{id}}" class="btn btn-outline-primary">
+      <span class="btn-loader">{{> mod_lti/loader }}</span>
+      {{#str}}dynreg_update_btn_update, mod_lti {{/str}}
+      </button>
+  </td>
+  </tr>
+{{/tools}}
+</table>
+{{^tools}}
+{{#str}}dynreg_update_notools, mod_lti {{/str}}
+{{/tools}}
+<div>
+  <button data-href="startltiadvregistration.php?url={{startregurlenc}}&type=0" class="btn btn-primary">
+    <span class="btn-loader">{{> mod_lti/loader }}</span>
+    {{#str}}dynreg_update_btn_new, mod_lti {{/str}}
+  </button>
+</div>
+<form method="POST" id="startregform">
+  <input type="hidden" name="sesskey" value="{{sesskey}}"/>
+</form>
+{{#js}}
+    disableAndGo = e => {
+      document.querySelectorAll("button").forEach(e=>e.setAttribute("disabled", true));
+      e.target.querySelector("span.btn-loader").style.display="inline";
+      let form = document.getElementById("startregform");
+      form.action = e.target.getAttribute("data-href");
+      form.submit();
+    };
+    document.querySelectorAll("button").forEach(b=>b.onclick=disableAndGo);
+{{/js}}

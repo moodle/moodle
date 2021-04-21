@@ -26,8 +26,8 @@
  * @since      3.1
  */
 define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/events', 'mod_lti/keys', 'mod_lti/tool_type',
-        'mod_lti/tool_proxy', 'core/str'],
-        function($, ajax, notification, templates, ltiEvents, KEYS, toolType, toolProxy, str) {
+        'mod_lti/tool_proxy', 'core/str', 'core/config'],
+        function($, ajax, notification, templates, ltiEvents, KEYS, toolType, toolProxy, str, config) {
 
     var SELECTORS = {
         EXTERNAL_REGISTRATION_CONTAINER: '#external-registration-container',
@@ -116,7 +116,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
         $(SELECTORS.EXTERNAL_REGISTRATION_PAGE_CONTAINER).removeClass('hidden');
         var container = $(SELECTORS.EXTERNAL_REGISTRATION_TEMPLATE_CONTAINER);
         container.append($("<iframe src='startltiadvregistration.php?url="
-                         + encodeURIComponent(url) + "'></iframe>"));
+                         + encodeURIComponent(url) + "&sesskey=" + config.sesskey + "'></iframe>"));
         showExternalRegistration();
         window.addEventListener("message", closeLTIAdvRegistration, false);
     };
