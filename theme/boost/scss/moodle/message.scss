@@ -48,17 +48,17 @@
             }
         }
         tr {
+            th {
+                border-left: 1px solid $border-color;
+            }
             td {
                 &:not(:first-child) {
                     width: 150px;
                     text-align: center;
                 }
                 &:nth-child(even) {
-                    background-color: #f7f7f7;
+                    border: 1px solid $border-color;
                 }
-            }
-            th:nth-child(even) {
-                background-color: #f7f7f7;
             }
         }
         .preference-row {

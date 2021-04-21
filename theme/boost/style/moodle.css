@@ -15095,13 +15095,13 @@ a.ygtvspacer:hover {
       display: none; }
     .preferences-container .preference-table thead th.unconfigured .config-warning {
       display: inline-block; }
+  .preferences-container .preference-table tr th {
+    border-left: 1px solid #dee2e6; }
   .preferences-container .preference-table tr td:not(:first-child) {
     width: 150px;
     text-align: center; }
   .preferences-container .preference-table tr td:nth-child(even) {
-    background-color: #f7f7f7; }
-  .preferences-container .preference-table tr th:nth-child(even) {
-    background-color: #f7f7f7; }
+    border: 1px solid #dee2e6; }
   .preferences-container .preference-table .preference-row .hover-tooltip-container {
     display: inline-block; }
   .preferences-container .preference-table .preference-row .preference-name {
