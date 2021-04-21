@@ -30,3 +30,13 @@ Feature: Display of information before starting a quiz
       | TF1      | 1    |
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
     Then I should see "Grade to pass: 60.00 out of 100.00"
+
+  Scenario: Check the pass grade is not displayed if not set
+    Given the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber | gradepass |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    |           |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page |
+      | TF1      | 1    |
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    Then I should not see "Grade to pass: 0.00"
