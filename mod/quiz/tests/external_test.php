@@ -451,37 +451,101 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
      * Test get_user_best_grade
      */
     public function test_get_user_best_grade() {
-        global $DB;
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $questioncat = $questiongenerator->create_question_category();
+
+        // Create a new quiz.
+        $quizapi1 = $quizgenerator->create_instance([
+                'name' => 'Test Quiz API 1',
+                'course' => $this->course->id,
+                'sumgrades' => 1
+        ]);
+        $quizapi2 = $quizgenerator->create_instance([
+                'name' => 'Test Quiz API 2',
+                'course' => $this->course->id,
+                'sumgrades' => 1,
+                'marksduring' => 0,
+                'marksimmediately' => 0,
+                'marksopen' => 0,
+                'marksclosed' => 0
+        ]);
+
+        // Create a question.
+        $question = $questiongenerator->create_question('numerical', null, ['category' => $questioncat->id]);
+
+        // Add question to the quizzes.
+        quiz_add_quiz_question($question->id, $quizapi1);
+        quiz_add_quiz_question($question->id, $quizapi2);
+
+        // Create quiz object.
+        $quizapiobj1 = quiz::create($quizapi1->id, $this->student->id);
+        $quizapiobj2 = quiz::create($quizapi2->id, $this->student->id);
+
+        // Set grade to pass.
+        $item = grade_item::fetch([
+                'courseid' => $this->course->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'quiz',
+                'iteminstance' => $quizapi1->id,
+                'outcomeid' => null
+        ]);
+        $item->gradepass = 80;
+        $item->update();
+
+        $item = grade_item::fetch([
+                'courseid' => $this->course->id,
+                'itemtype' => 'mod',
+                'itemmodule' => 'quiz',
+                'iteminstance' => $quizapi2->id,
+                'outcomeid' => null
+        ]);
+        $item->gradepass = 80;
+        $item->update();
+
+        // Start the passing attempt.
+        $quba1 = question_engine::make_questions_usage_by_activity('mod_quiz', $quizapiobj1->get_context());
+        $quba1->set_preferred_behaviour($quizapiobj1->get_quiz()->preferredbehaviour);
+
+        $quba2 = question_engine::make_questions_usage_by_activity('mod_quiz', $quizapiobj2->get_context());
+        $quba2->set_preferred_behaviour($quizapiobj2->get_quiz()->preferredbehaviour);
+
+        // Start the testing for quizapi1 that allow the student to view the grade.
 
         $this->setUser($this->student);
-
-        $result = mod_quiz_external::get_user_best_grade($this->quiz->id);
+        $result = mod_quiz_external::get_user_best_grade($quizapi1->id);
         $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
 
         // No grades yet.
         $this->assertFalse($result['hasgrade']);
         $this->assertTrue(!isset($result['grade']));
 
-        $grade = new stdClass();
-        $grade->quiz = $this->quiz->id;
-        $grade->userid = $this->student->id;
-        $grade->grade = 8.9;
-        $grade->timemodified = time();
-        $grade->id = $DB->insert_record('quiz_grades', $grade);
+        // Start the attempt.
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizapiobj1, 1, false, $timenow, false, $this->student->id);
+        quiz_start_new_attempt($quizapiobj1, $quba1, $attempt, 1, $timenow);
+        quiz_attempt_save_started($quizapiobj1, $quba1, $attempt);
 
-        $result = mod_quiz_external::get_user_best_grade($this->quiz->id);
+        // Process some responses from the student.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_submitted_actions($timenow, false, [1 => ['answer' => '3.14']]);
+
+        // Finish the attempt.
+        $attemptobj->process_finish($timenow, false);
+
+        $result = mod_quiz_external::get_user_best_grade($quizapi1->id);
         $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
 
         // Now I have grades.
         $this->assertTrue($result['hasgrade']);
-        $this->assertEquals(8.9, $result['grade']);
+        $this->assertEquals(100.0, $result['grade']);
 
         // We should not see other users grades.
         $anotherstudent = self::getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($anotherstudent->id, $this->course->id, $this->studentrole->id, 'manual');
 
         try {
-            mod_quiz_external::get_user_best_grade($this->quiz->id, $anotherstudent->id);
+            mod_quiz_external::get_user_best_grade($quizapi1->id, $anotherstudent->id);
             $this->fail('Exception expected due to missing capability.');
         } catch (required_capability_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -490,11 +554,11 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         // Teacher must be able to see student grades.
         $this->setUser($this->teacher);
 
-        $result = mod_quiz_external::get_user_best_grade($this->quiz->id, $this->student->id);
+        $result = mod_quiz_external::get_user_best_grade($quizapi1->id, $this->student->id);
         $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
 
         $this->assertTrue($result['hasgrade']);
-        $this->assertEquals(8.9, $result['grade']);
+        $this->assertEquals(100.0, $result['grade']);
 
         // Invalid user.
         try {
@@ -504,8 +568,48 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('invaliduser', $e->errorcode);
         }
 
-        // Remove the created data.
-        $DB->delete_records('quiz_grades', array('id' => $grade->id));
+        // End the testing for quizapi1 that allow the student to view the grade.
+
+        // Start the testing for quizapi2 that do not allow the student to view the grade.
+
+        $this->setUser($this->student);
+        $result = mod_quiz_external::get_user_best_grade($quizapi2->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+
+        // No grades yet.
+        $this->assertFalse($result['hasgrade']);
+        $this->assertTrue(!isset($result['grade']));
+
+        // Start the attempt.
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizapiobj2, 1, false, $timenow, false, $this->student->id);
+        quiz_start_new_attempt($quizapiobj2, $quba2, $attempt, 1, $timenow);
+        quiz_attempt_save_started($quizapiobj2, $quba2, $attempt);
+
+        // Process some responses from the student.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_submitted_actions($timenow, false, [1 => ['answer' => '3.14']]);
+
+        // Finish the attempt.
+        $attemptobj->process_finish($timenow, false);
+
+        $result = mod_quiz_external::get_user_best_grade($quizapi2->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+
+        // Now I have grades but I will not be allowed to see it.
+        $this->assertFalse($result['hasgrade']);
+        $this->assertTrue(!isset($result['grade']));
+
+        // Teacher must be able to see student grades.
+        $this->setUser($this->teacher);
+
+        $result = mod_quiz_external::get_user_best_grade($quizapi2->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
+
+        $this->assertTrue($result['hasgrade']);
+        $this->assertEquals(100.0, $result['grade']);
+
+        // End the testing for quizapi2 that do not allow the student to view the grade.
 
     }
     /**
