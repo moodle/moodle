@@ -102,6 +102,12 @@ if (!$form_export->is_submitted()) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($data->name), 2);
 
+    // Render the activity information.
+    $cminfo = cm_info::create($cm);
+    $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+    $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
+    echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
+
     // Needed for tabs.php
     $currenttab = 'presets';
     $currentgroup = groups_get_activity_group($cm);
