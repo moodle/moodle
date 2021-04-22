@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2021052500;
+$plugin->version   = 2021042200;
 $plugin->requires  = 2021020400;
 $plugin->component = 'profilefield_social';
