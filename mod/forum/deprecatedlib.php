@@ -392,7 +392,6 @@ function forum_cron_minimise_user_record(stdClass $user) {
     unset($user->department);
     unset($user->address);
     unset($user->city);
-    unset($user->url);
     unset($user->currentlogin);
     unset($user->description);
     unset($user->descriptionformat);
