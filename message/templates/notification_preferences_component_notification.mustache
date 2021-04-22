@@ -71,21 +71,15 @@
                                 {{#loggedin}}
                                     {{< core/hover_tooltip }}
                                         {{$anchor}}
-                                            <label class="preference-state"
+                                            <label class="custom-control custom-switch"
                                                 title="{{displayname}}"
                                                 data-state="{{name}}">
-
                                                 <span class="accesshide">{{displayname}}</span>
                                                 <input type="checkbox"
-                                                    tabindex="-1"
-                                                    class="accesshide"
+                                                    class="custom-control-input"
                                                     {{#checked}}checked{{/checked}}
                                                     {{#disableall}}disabled{{/disableall}} />
-                                                <div class="preference-state-status-container" tabindex="0">
-                                                    <span class="on-text">{{#str}} on, message {{/str}}</span>
-                                                    <span class="off-text">{{#str}} off, message {{/str}}</span>
-                                                    {{> core/loading }}
-                                                </div>
+                                                <span class="custom-control-label d-block"></span>
                                             </label>
                                         {{/anchor}}
                                         {{$tooltip}}{{displayname}}{{/tooltip}}
@@ -96,21 +90,15 @@
                                 {{#loggedoff}}
                                     {{< core/hover_tooltip }}
                                         {{$anchor}}
-                                            <label class="preference-state"
+                                            <label class="custom-control custom-switch"
                                                 title="{{displayname}}"
                                                 data-state="{{name}}">
-
                                                 <span class="accesshide">{{displayname}}</span>
                                                 <input type="checkbox"
-                                                    tabindex="-1"
-                                                    class="accesshide"
+                                                    class="custom-control-input"
                                                     {{#checked}}checked{{/checked}}
                                                     {{#disableall}}disabled{{/disableall}} />
-                                                <div class="preference-state-status-container" tabindex="0">
-                                                    <span class="on-text">{{#str}} on, message {{/str}}</span>
-                                                    <span class="off-text">{{#str}} off, message {{/str}}</span>
-                                                    {{> core/loading }}
-                                                </div>
+                                                <span class="custom-control-label d-block"></span>
                                             </label>
                                         {{/anchor}}
                                         {{$tooltip}}{{displayname}}{{/tooltip}}
