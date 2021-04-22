@@ -50,20 +50,32 @@ Feature: Allow teachers to edit the visibility of completion conditions in a cou
     And I follow "Test choice manual"
     And the manual completion button for "Test choice manual" should be disabled
 
-  Scenario: Default show completion conditions value in course form when default show completion conditions admin setting is set to No
+  Scenario Outline: Default showcompletionconditions value in course form on course creation
     Given I log in as "admin"
     And I navigate to "Courses > Course default settings" in site administration
-    When I set the following fields to these values:
-      | Show completion conditions | No |
-    And I click on "Save changes" "button"
-    And I navigate to "Courses > Add a new course" in site administration
-    Then the field "showcompletionconditions" matches value "No"
+    And I set the field "Show completion conditions" to "<siteshowcompletion>"
+    And I press "Save changes"
+    When I navigate to "Courses > Add a new course" in site administration
+    Then the field "showcompletionconditions" matches value "<expected>"
 
-  Scenario: Default show completion conditions value in course form when default show completion conditions admin setting is set to Yes
+    Examples:
+      | siteshowcompletion | expected |
+      | Yes                | Yes      |
+      | No                 | No       |
+
+  Scenario Outline: Default showcompletionconditions displayed when editing a course with disabled completion tracking
     Given I log in as "admin"
     And I navigate to "Courses > Course default settings" in site administration
-    When I set the following fields to these values:
-      | Show completion conditions | Yes |
-    And I click on "Save changes" "button"
-    And I navigate to "Courses > Add a new course" in site administration
-    Then the field "showcompletionconditions" matches value "Yes"
+    And I set the field "Show completion conditions" to "<siteshowcompletion>"
+    And I press "Save changes"
+    And I am on "Course 1" course homepage with editing mode on
+    And I navigate to "Edit settings" in current page administration
+    And I set the field "Enable completion tracking" to "No"
+    And I press "Save and display"
+    And I navigate to "Edit settings" in current page administration
+    Then the field "Show completion conditions" matches value "<expected>"
+
+    Examples:
+      | siteshowcompletion  | expected  |
+      | Yes                 | Yes       |
+      | No                  | No        |
