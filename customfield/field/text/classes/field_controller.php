@@ -113,7 +113,7 @@ class field_controller extends \core_customfield\field_controller {
                     $errors['configdata[link]'] = get_string('errorconfiglinkplaceholder', 'customfield_text');
                 } else if (!validateUrlSyntax(str_replace('$$', 'XYZ', $link), 's+H?S?F-E-u-P-a?I?p?f?q?r?')) {
                     // This validation is more strict than PARAM_URL - it requires the protocol and it must be either http or https.
-                    $errors['configdata[link]'] = get_string('errorconfigdisplaysize', 'customfield_text');
+                    $errors['configdata[link]'] = get_string('errorconfiglinksyntax', 'customfield_text');
                 }
             }
         }
