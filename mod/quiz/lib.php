@@ -1146,7 +1146,7 @@ function quiz_review_option_form_to_db($fromform, $field) {
     $review = 0;
     foreach ($times as $whenname => $when) {
         $fieldname = $field . $whenname;
-        if (isset($fromform->$fieldname)) {
+        if (!empty($fromform->$fieldname)) {
             $review |= $when;
             unset($fromform->$fieldname);
         }
