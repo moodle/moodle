@@ -135,6 +135,15 @@ if (!$envstatus) {
     exit(1);
 }
 
+// Make sure there are no files left over from previous versions.
+if (upgrade_stale_php_files_present()) {
+    cli_problem(get_string('upgradestalefiles', 'admin'));
+
+    // Stale file info contains HTML elements which aren't suitable for CLI.
+    $upgradestalefilesinfo = get_string('upgradestalefilesinfo', 'admin', get_docs_url('Upgrading'));
+    cli_error(strip_tags($upgradestalefilesinfo));
+}
+
 // Test plugin dependencies.
 $failed = array();
 if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed, $CFG->branch)) {
