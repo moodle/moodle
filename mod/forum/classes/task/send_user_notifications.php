@@ -548,7 +548,6 @@ class send_user_notifications extends \core\task\adhoc_task {
         unset($user->department);
         unset($user->address);
         unset($user->city);
-        unset($user->url);
         unset($user->currentlogin);
         unset($user->description);
         unset($user->descriptionformat);

@@ -2575,5 +2575,28 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021052500.83);
     }
 
+    if ($oldversion < 2021052500.84) {
+        require_once($CFG->dirroot . '/user/profile/field/social/upgradelib.php');
+        $table = new xmldb_table('user');
+        $tablecolumns = ['icq', 'skype', 'aim', 'yahoo', 'msn', 'url'];
+
+        foreach ($tablecolumns as $column) {
+            $field = new xmldb_field($column);
+            if ($dbman->field_exists($table, $field)) {
+                user_profile_social_moveto_profilefield($column);
+                $dbman->drop_field($table, $field);
+            }
+        }
+
+        // Update all module availability if it relies on the old user fields.
+        user_profile_social_update_module_availability();
+
+        // Remove field mapping for oauth2.
+        $DB->delete_records('oauth2_user_field_mapping', array('internalfield' => 'url'));
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.84);
+    }
+
     return true;
 }

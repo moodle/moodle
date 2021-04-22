@@ -33,11 +33,6 @@
         * usercountry
         * usercity
         * useremail
-        * usericq
-        * userskype
-        * useryahoo
-        * useraim
-        * usermsn
         * userphone1
         * userphone2
         * userinstitution
@@ -54,11 +49,6 @@
         "usercountry": "Australia",
         "usercity": "Perth",
         "useremail": "<a href=''>john.doe@example.com</a>",
-        "usericq": "12345",
-        "userskype": "john.doe",
-        "useryahoo": "12345",
-        "useraim": "12345",
-        "usermsn": "12345",
         "userphone1": "123456789",
         "userphone2": "123456789",
         "userinstitution": "Institution",
@@ -98,36 +88,6 @@
              {{{ useremail }}}
         </div>
     {{/useremail}}
-    {{#usericq}}
-    <div class="myprofileitem icq">
-         <span>ICQ:</span>
-         {{ usericq }}
-    </div>
-    {{/usericq}}
-    {{#userskype}}
-    <div class="myprofileitem skype">
-         <span>Skype:</span>
-         {{ userskype }}
-    </div>
-    {{/userskype}}
-    {{#useryahoo}}
-    <div class="myprofileitem yahoo">
-         <span>Yahoo:</span>
-         {{ useryahoo }}
-    </div>
-    {{/useryahoo}}
-    {{#useraim}}
-    <div class="myprofileitem aim">
-         <span>AIM:</span>
-         {{ useraim }}
-    </div>
-    {{/useraim}}
-    {{#usermsn}}
-    <div class="myprofileitem msn">
-         <span>MSN:</span>
-         {{ usermsn }}
-    </div>
-    {{/usermsn}}
     {{#userphone1}}
     <div class="myprofileitem phone1">
          <span>{{#str}} phone1 {{/str}}:</span>

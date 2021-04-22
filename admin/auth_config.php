@@ -171,8 +171,6 @@ function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, 
                 // limit for the setting name is 100.
                 continue;
             }
-        } elseif ($fieldname == 'url') {
-            $fieldname = get_string('webpage');
         } else {
             $fieldname = get_string($fieldname);
         }

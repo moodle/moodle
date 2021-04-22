@@ -23,6 +23,13 @@
  */
 
 /**
+ * Visible to anyone who has the moodle/site:viewuseridentity permission.
+ * Editable by the profile owner if they have the moodle/user:editownprofile capability
+ * or any user with the moodle/user:update capability.
+ */
+define('PROFILE_VISIBLE_TEACHERS', '3');
+
+/**
  * Visible to anyone who can view the user.
  * Editable by the profile owner if they have the moodle/user:editownprofile capability
  * or any user with the moodle/user:update capability.
@@ -428,11 +435,20 @@ class profile_field_base {
      * @return bool
      */
     public function is_visible() {
-        global $USER;
+        global $USER, $COURSE;
 
         $context = ($this->userid > 0) ? context_user::instance($this->userid) : context_system::instance();
 
         switch ($this->field->visible) {
+            case PROFILE_VISIBLE_TEACHERS:
+                if ($this->is_signup_field() && (empty($this->userid) || isguestuser($this->userid))) {
+                    return true;
+                } else if ($this->userid == $USER->id) {
+                    return true;
+                } else {
+                    $coursecontext = context_course::instance($COURSE->id);
+                    return has_capability('moodle/site:viewuseridentity', $coursecontext);
+                }
             case PROFILE_VISIBLE_ALL:
                 return true;
             case PROFILE_VISIBLE_PRIVATE:
@@ -807,6 +823,14 @@ function profile_get_custom_fields($onlyinuserobject = false) {
             if (!$formfield->is_user_object_data()) {
                 unset($fields[$id]);
             }
+        }
+    }
+
+    foreach ($fields as $index => $field) {
+        $component = 'profilefield_' . $field->datatype;
+        $classname = "\\$component\\helper";
+        if (class_exists($classname) && method_exists($classname, 'get_fieldname')) {
+            $fields[$index]->name = $classname::get_fieldname($field->name);
         }
     }
 

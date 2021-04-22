@@ -258,7 +258,6 @@ class api {
         $user->mnethostid = $CFG->mnet_localhost_id;
         $user->lastname = isset($userinfo['lastname']) ? $userinfo['lastname'] : '';
         $user->firstname = isset($userinfo['firstname']) ? $userinfo['firstname'] : '';
-        $user->url = isset($userinfo['url']) ? $userinfo['url'] : '';
         $user->alternatename = isset($userinfo['alternatename']) ? $userinfo['alternatename'] : '';
         $user->secret = random_string(15);
 
@@ -307,7 +306,6 @@ class api {
         $user->mnethostid = $CFG->mnet_localhost_id;
         $user->lastname = isset($userinfo['lastname']) ? $userinfo['lastname'] : '';
         $user->firstname = isset($userinfo['firstname']) ? $userinfo['firstname'] : '';
-        $user->url = isset($userinfo['url']) ? $userinfo['url'] : '';
         $user->alternatename = isset($userinfo['alternatename']) ? $userinfo['alternatename'] : '';
         $user->secret = random_string(15);
 
