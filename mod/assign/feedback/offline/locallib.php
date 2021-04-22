@@ -131,7 +131,8 @@ class assign_feedback_offline extends assign_feedback_plugin {
         $adminconfig = $this->assignment->get_admin_config();
         $gradebookplugin = $adminconfig->feedback_plugin_for_gradebook;
 
-        $updatecount = 0;
+        $updategradecount = 0;
+        $updatefeedbackcount = 0;
         while ($record = $gradeimporter->next()) {
             $user = $record->user;
             $modified = $record->modified;
@@ -179,7 +180,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
                 $grade->grader = $USER->id;
                 if ($this->assignment->update_grade($grade)) {
                     $this->assignment->notify_grade_modified($grade);
-                    $updatecount += 1;
+                    $updategradecount += 1;
                 }
             }
 
@@ -197,7 +198,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
                         }
                     }
                     if ($newvalue != $oldvalue) {
-                        $updatecount += 1;
+                        $updatefeedbackcount += 1;
                         $grade = $this->assignment->get_user_grade($record->user->id, true);
                         $this->assignment->notify_grade_modified($grade);
                         $plugin->set_editor_text($field, $newvalue, $grade->id);
@@ -222,7 +223,11 @@ class assign_feedback_offline extends assign_feedback_plugin {
                                                   false,
                                                   $this->assignment->get_course_module()->id,
                                                   get_string('importgrades', 'assignfeedback_offline')));
-        $o .= $renderer->box(get_string('updatedgrades', 'assignfeedback_offline', $updatecount));
+        $strparams = [
+            'gradeupdatescount' => $updategradecount,
+            'feedbackupdatescount' => $updatefeedbackcount,
+        ];
+        $o .= $renderer->box(get_string('updatedgrades', 'assignfeedback_offline', $strparams));
         $url = new moodle_url('view.php',
                               array('id'=>$this->assignment->get_course_module()->id,
                                     'action'=>'grading'));
