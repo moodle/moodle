@@ -521,7 +521,23 @@ class mod_quiz_external extends external_api {
         }
 
         $result = array();
-        $grade = quiz_get_best_grade($quiz, $user->id);
+
+        // This code was mostly copied from mod/quiz/view.php. We need to make the web service logic consistent.
+        // Get this user's attempts.
+        $attempts = quiz_get_user_attempts($quiz->id, $user->id, 'all');
+        $canviewgrade = false;
+        if ($attempts) {
+            if ($USER->id != $user->id) {
+                // No need to check the permission here. We did it at by require_capability('mod/quiz:viewreports', $context).
+                $canviewgrade = true;
+            } else {
+                // Work out which columns we need, taking account what data is available in each attempt.
+                [$notused, $alloptions] = quiz_get_combined_reviewoptions($quiz, $attempts);
+                $canviewgrade = $alloptions->marks >= question_display_options::MARK_AND_MAX;
+            }
+        }
+
+        $grade = $canviewgrade ? quiz_get_best_grade($quiz, $user->id) : null;
 
         if ($grade === null) {
             $result['hasgrade'] = false;
