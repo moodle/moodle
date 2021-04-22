@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/mod/lti/locallib.php');
 $scope = optional_param('scope', '', PARAM_TEXT);
 $responsetype = optional_param('response_type', '', PARAM_TEXT);
 $clientid = optional_param('client_id', '', PARAM_TEXT);
-$redirecturi = optional_param('redirect_uri', '', PARAM_TEXT);
+$redirecturi = optional_param('redirect_uri', '', PARAM_URL);
 $loginhint = optional_param('login_hint', '', PARAM_TEXT);
 $ltimessagehint = optional_param('lti_message_hint', 0, PARAM_INT);
 $state = optional_param('state', '', PARAM_TEXT);
