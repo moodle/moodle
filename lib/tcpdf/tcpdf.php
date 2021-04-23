@@ -774,13 +774,6 @@ class TCPDF {
 	protected $encoding = 'UTF-8';
 
 	/**
-	 * PHP internal encoding.
-	 * @protected
-	 * @since 1.53.0.TC016
-	 */
-	protected $internal_encoding;
-
-	/**
 	 * Boolean flag to indicate if the document language is Right-To-Left.
 	 * @protected
 	 * @since 2.0.000
@@ -1832,6 +1825,23 @@ class TCPDF {
 	 */
 	protected $gdgammacache = array();
 
+    /**
+     * Cache array for file content
+     * @protected
+     * @var array
+     * @sinde 6.3.5 (2020-09-28)
+     */
+	protected $fileContentCache = array();
+
+	/**
+	 * Whether to allow local file path in image html tags, when prefixed with file://
+	 *
+	 * @var bool
+	 * @protected
+	 * @since 6.4 (2020-07-23)
+	 */
+	protected $allowLocalFiles = false;
+
 	//------------------------------------------------------------
 	// METHODS
 	//------------------------------------------------------------
@@ -1839,8 +1849,6 @@ class TCPDF {
 	/**
 	 * This is the class constructor.
 	 * It allows to set up the page format, the orientation and the measure unit used in all the methods (except for the font sizes).
-	 *
-	 * IMPORTANT: Please note that this method sets the mb_internal_encoding to ASCII, so if you are using the mbstring module functions with TCPDF you need to correctly set/unset the mb_internal_encoding when needed.
 	 *
 	 * @param $orientation (string) page orientation. Possible values are (case insensitive):<ul><li>P or Portrait (default)</li><li>L or Landscape</li><li>'' (empty string) for automatic orientation</li></ul>
 	 * @param $unit (string) User measure unit. Possible values are:<ul><li>pt: point</li><li>mm: millimeter (default)</li><li>cm: centimeter</li><li>in: inch</li></ul><br />A point equals 1/72 of inch, that is to say about 0.35 mm (an inch being 2.54 cm). This is a very common unit in typography; font sizes are expressed in that unit.
@@ -1853,11 +1861,6 @@ class TCPDF {
 	 * @see getPageSizeFromFormat(), setPageFormat()
 	 */
 	public function __construct($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8', $diskcache=false, $pdfa=false) {
-		/* Set internal character encoding to ASCII */
-		if (function_exists('mb_internal_encoding') AND mb_internal_encoding()) {
-			$this->internal_encoding = mb_internal_encoding();
-			mb_internal_encoding('ASCII');
-		}
 		// set file ID for trailer
 		$serformat = (is_array($format) ? json_encode($format) : $format);
 		$this->file_id = md5(TCPDF_STATIC::getRandomSeed('TCPDF'.$orientation.$unit.$serformat.$encoding));
@@ -2728,7 +2731,7 @@ class TCPDF {
 	/**
 	 * Adjust the internal Cell padding array to take account of the line width.
 	 * @param $brd (mixed) Indicates if borders must be drawn around the cell. The value can be a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul> or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul> or an array of line styles for each border group - for example: array('LTRB' => array('width' => 2, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 0)))
-	 * @return array of adjustments
+	 * @return void|array of adjustments
 	 * @public
 	 * @since 5.9.000 (2010-10-03)
 	 */
@@ -2744,7 +2747,11 @@ class TCPDF {
 				$newbrd[$brd[$i]] = true;
 			}
 			$brd = $newbrd;
-		} elseif (($brd === 1) OR ($brd === true) OR (is_numeric($brd) AND (intval($brd) > 0))) {
+		} elseif (
+			($brd === 1)
+			|| ($brd === true)
+			|| (is_numeric($brd) && ((int)$brd > 0))
+		) {
 			$brd = array('LRTB' => true);
 		}
 		if (!is_array($brd)) {
@@ -2762,7 +2769,7 @@ class TCPDF {
 		// process borders
 		foreach ($brd as $border => $style) {
 			$line_width = $this->LineWidth;
-			if (is_array($style) AND isset($style['width'])) {
+			if (is_array($style) && isset($style['width'])) {
 				// get border width
 				$line_width = $style['width'];
 			}
@@ -2783,20 +2790,43 @@ class TCPDF {
 				}
 			}
 			// correct internal cell padding if required to avoid overlap between text and lines
-			if ((strpos($border,'T') !== false) AND ($this->cell_padding['T'] < $adj)) {
+			if (
+				is_numeric($this->cell_padding['T'])
+				&& ($this->cell_padding['T'] < $adj)
+				&& (strpos($border, 'T') !== false)
+			) {
 				$this->cell_padding['T'] = $adj;
 			}
-			if ((strpos($border,'R') !== false) AND ($this->cell_padding['R'] < $adj)) {
+			if (
+				is_numeric($this->cell_padding['R'])
+				&& ($this->cell_padding['R'] < $adj)
+				&& (strpos($border, 'R') !== false)
+			) {
 				$this->cell_padding['R'] = $adj;
 			}
-			if ((strpos($border,'B') !== false) AND ($this->cell_padding['B'] < $adj)) {
+			if (
+				is_numeric($this->cell_padding['B'])
+				&& ($this->cell_padding['B'] < $adj)
+				&& (strpos($border, 'B') !== false)
+			) {
 				$this->cell_padding['B'] = $adj;
 			}
-			if ((strpos($border,'L') !== false) AND ($this->cell_padding['L'] < $adj)) {
+			if (
+				is_numeric($this->cell_padding['L'])
+				&& ($this->cell_padding['L'] < $adj)
+				&& (strpos($border, 'L') !== false)
+			) {
 				$this->cell_padding['L'] = $adj;
 			}
+
 		}
-		return array('T' => ($this->cell_padding['T'] - $cp['T']), 'R' => ($this->cell_padding['R'] - $cp['R']), 'B' => ($this->cell_padding['B'] - $cp['B']), 'L' => ($this->cell_padding['L'] - $cp['L']));
+
+		return array(
+			'T' => ($this->cell_padding['T'] - $cp['T']),
+			'R' => ($this->cell_padding['R'] - $cp['R']),
+			'B' => ($this->cell_padding['B'] - $cp['B']),
+			'L' => ($this->cell_padding['L'] - $cp['L']),
+		);
 	}
 
 	/**
@@ -2934,6 +2964,18 @@ class TCPDF {
 	public function SetCreator($creator) {
 		$this->creator = $creator;
 	}
+
+	/**
+	 * Whether to allow local file path in image html tags, when prefixed with file://
+	 * 
+	 * @param $allowLocalFiles bool true, when local files should be allowed. Otherwise false.
+	 * @public
+	 * @since 6.4
+	 */
+	public function SetAllowLocalFiles($allowLocalFiles) {
+		$this->allowLocalFiles = (bool) $allowLocalFiles;
+	}
+
 
 	/**
 	 * Throw an exception or print an error message and die if the K_TCPDF_PARSER_THROW_EXCEPTION_ERROR constant is set to true.
@@ -4863,7 +4905,7 @@ class TCPDF {
 		}
 		reset($this->embeddedfiles);
 		foreach ($this->embeddedfiles as $filename => $filedata) {
-			$data = TCPDF_STATIC::fileGetContents($filedata['file']);
+		    $data = $this->getCachedFileContents($filedata['file']);
 			if ($data !== FALSE) {
 				$rawsize = strlen($data);
 				if ($rawsize > 0) {
@@ -6489,7 +6531,7 @@ class TCPDF {
 					// *** very slow ***
 					$l = $this->GetArrStringWidth(TCPDF_FONTS::utf8Bidi(array_slice($chars, $j, ($i - $j)), '', $this->tmprtl, $this->isunicode, $this->CurrentFont));
 				} else {
-					$l += $this->GetCharWidth($c);
+					$l += $this->GetCharWidth($c, ($i+1 < $nb));
 				}
 				if (($l > $wmax) OR (($c == 173) AND (($l + $tmp_shy_replacement_width) >= $wmax))) {
 					if (($c == 173) AND (($l + $tmp_shy_replacement_width) > $wmax)) {
@@ -6866,6 +6908,12 @@ class TCPDF {
 		list($x, $y) = $this->checkPageRegions($h, $x, $y);
 		$exurl = ''; // external streams
 		$imsize = FALSE;
+
+        // Make sure the file variable is not empty or null because accessing $file[0] later
+        // results in error when running PHP 7.4
+        if (empty($file)) {
+            return false;
+        }
 		// check if we are passing an image as file or string
 		if ($file[0] === '@') {
 			// image from string
@@ -6877,18 +6925,14 @@ class TCPDF {
 				$exurl = $file;
 			}
 			// check if file exist and it is valid
-			if (!@TCPDF_STATIC::file_exists($file)) {
+			if (!@$this->fileExists($file)) {
 				return false;
 			}
-			if (($imsize = @getimagesize($file)) === FALSE) {
-				if (in_array($file, $this->imagekeys)) {
-					// get existing image data
-					$info = $this->getImageBuffer($file);
-					$imsize = array($info['w'], $info['h']);
-				} elseif (strpos($file, '__tcpdf_'.$this->file_id.'_img') === FALSE) {
-					$imgdata = TCPDF_STATIC::fileGetContents($file);
-				}
-			}
+            if (false !== $info = $this->getImageBuffer($file)) {
+                $imsize = array($info['w'], $info['h']);
+            } elseif (($imsize = @getimagesize($file)) === FALSE && strpos($file, '__tcpdf_'.$this->file_id.'_img') === FALSE){
+                $imgdata = $this->getCachedFileContents($file);
+            }
 		}
 		if (!empty($imgdata)) {
 			// copy image to cache
@@ -7093,7 +7137,7 @@ class TCPDF {
 							$svgimg = substr($file, 1);
 						} else {
 							// get SVG file content
-							$svgimg = TCPDF_STATIC::fileGetContents($file);
+                            $svgimg = $this->getCachedFileContents($file);
 						}
 						if ($svgimg !== FALSE) {
 							// get width and height
@@ -7178,7 +7222,7 @@ class TCPDF {
 		} else {
 			$ximg = $x;
 		}
-		
+
 		if ($ismask OR $hidden) {
 			// image is not displayed
 			return $info['i'];
@@ -7767,14 +7811,10 @@ class TCPDF {
 	 * @since 4.5.016 (2009-02-24)
 	 */
 	public function _destroy($destroyall=false, $preserve_objcopy=false) {
-		// restore internal encoding
-		if (isset($this->internal_encoding) AND !empty($this->internal_encoding)) {
-			mb_internal_encoding($this->internal_encoding);
-		}
 		if (isset(self::$cleaned_ids[$this->file_id])) {
 			$destroyall = false;
 		}
-		if ($destroyall AND !$preserve_objcopy) {
+		if ($destroyall AND !$preserve_objcopy && isset($this->file_id)) {
 			self::$cleaned_ids[$this->file_id] = true;
 			// remove all temporary files
 			if ($handle = @opendir(K_PATH_CACHE)) {
@@ -7787,7 +7827,7 @@ class TCPDF {
 			}
 			if (isset($this->imagekeys)) {
 				foreach($this->imagekeys as $file) {
-					if (strpos($file, K_PATH_CACHE) === 0) {
+					if (strpos($file, K_PATH_CACHE) === 0 && TCPDF_STATIC::file_exists($file)) {
 						@unlink($file);
 					}
 				}
@@ -7795,7 +7835,6 @@ class TCPDF {
 		}
 		$preserve = array(
 			'file_id',
-			'internal_encoding',
 			'state',
 			'bufferlen',
 			'buffer',
@@ -14909,7 +14948,7 @@ class TCPDF {
 		if ($file[0] === '@') { // image from string
 			$data = substr($file, 1);
 		} else { // EPS/AI file
-			$data = TCPDF_STATIC::fileGetContents($file);
+            $data = $this->getCachedFileContents($file);
 		}
 		if ($data === FALSE) {
 			$this->Error('EPS file not found: '.$file);
@@ -15511,7 +15550,7 @@ class TCPDF {
 			$this->y = $y + $vpadding + $barh;
 			$cellpadding = $this->cell_padding;
 			$this->SetCellPadding(0);
-			$this->Cell($txtwidth, '', $label, 0, 0, 'C', false, '', $style['stretchtext'], false, 'T', 'T');
+			$this->Cell($txtwidth, 0, $label, 0, 0, 'C', false, '', $style['stretchtext'], false, 'T', 'T');
 			$this->cell_padding = $cellpadding;
 		}
 		// restore original direction
@@ -16328,7 +16367,7 @@ class TCPDF {
 						$type = array();
 						if (preg_match('/href[\s]*=[\s]*"([^"]*)"/', $link, $type) > 0) {
 							// read CSS data file
-							$cssdata = TCPDF_STATIC::fileGetContents(trim($type[1]));
+                            $cssdata = $this->getCachedFileContents(trim($type[1]));
 							if (($cssdata !== FALSE) AND (strlen($cssdata) > 0)) {
 								$css = array_merge($css, TCPDF_STATIC::extractCSSproperties($cssdata));
 							}
@@ -16354,7 +16393,7 @@ class TCPDF {
 		// create a special tag to contain the CSS array (used for table content)
 		$csstagarray = '<cssarray>'.htmlentities(json_encode($css)).'</cssarray>';
 		// remove head and style blocks
-		$html = preg_replace('/<head([^\>]*)>(.*?)<\/head>/siU', '', $html);
+		$html = preg_replace('/<head([^\>]*)>(.*)?<\/head>/siU', '', $html);
 		$html = preg_replace('/<style([^\>]*)>([^\<]*)<\/style>/isU', '', $html);
 		// define block tags
 		$blocktags = array('blockquote','br','dd','dl','div','dt','h1','h2','h3','h4','h5','h6','hr','li','ol','p','pre','ul','tcpdf','table','tr','td');
@@ -16549,7 +16588,11 @@ class TCPDF {
 						$dom[($dom[$key]['parent'])]['content'] = str_replace('</thead>', '', $dom[($dom[$key]['parent'])]['content']);
 					}
 					// store header rows on a new table
-					if (($dom[$key]['value'] == 'tr') AND ($dom[($dom[$key]['parent'])]['thead'] === true)) {
+					if (
+						($dom[$key]['value'] === 'tr')
+						&& !empty($dom[($dom[$key]['parent'])]['thead'])
+						&& ($dom[($dom[$key]['parent'])]['thead'] === true)
+					) {
 						if (TCPDF_STATIC::empty_string($dom[($dom[($dom[$key]['parent'])]['parent'])]['thead'])) {
 							$dom[($dom[($dom[$key]['parent'])]['parent'])]['thead'] = $csstagarray.$a[$dom[($dom[($dom[$key]['parent'])]['parent'])]['elkey']];
 						}
@@ -16979,10 +17022,20 @@ class TCPDF {
 							// rows on thead block are printed as a separate table
 						} else {
 							$dom[$key]['thead'] = false;
+							$parent = $dom[$key]['parent'];
+
+							if (!isset($dom[$parent]['rows'])) {
+								$dom[$parent]['rows'] = 0;
+							}
 							// store the number of rows on table element
-							++$dom[($dom[$key]['parent'])]['rows'];
+							++$dom[$parent]['rows'];
+
+							if (!isset($dom[$parent]['trids'])) {
+								$dom[$parent]['trids'] = array();
+							}
+
 							// store the TR elements IDs on table element
-							array_push($dom[($dom[$key]['parent'])]['trids'], $key);
+							array_push($dom[$parent]['trids'], $key);
 						}
 					}
 					if (($dom[$key]['value'] == 'th') OR ($dom[$key]['value'] == 'td')) {
@@ -18865,7 +18918,18 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 				}
 				$prevlinewidth = $this->GetLineWidth();
 				$this->SetLineWidth($hrHeight);
-				$this->Line($x, $y, $x + $hrWidth, $y);
+
+				$lineStyle = array(
+					'color' => $tag['fgcolor'],
+					'cap'   => $tag['style']['cap'],
+					'join'  => $tag['style']['join'],
+					'dash'  => $tag['style']['dash'],
+					'phase' => $tag['style']['phase'],
+				);
+
+				$lineStyle = array_filter($lineStyle);
+
+				$this->Line($x, $y, $x + $hrWidth, $y, $lineStyle);
 				$this->SetLineWidth($prevlinewidth);
 				$this->addHTMLVertSpace(max($hbc, ($hrHeight / 2)), 0, $cell, !isset($dom[($key + 1)]));
 				break;
@@ -18885,7 +18949,11 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					// data stream
 					$imgsrc = '@'.base64_decode(substr($imgsrc, 1));
 					$type = '';
-				} else {
+				} elseif ( $this->allowLocalFiles && substr($imgsrc, 0, 7) === 'file://') {
+                    // get image type from a local file path
+                    $imgsrc = substr($imgsrc, 7);
+                    $type = TCPDF_IMAGES::getImageFileType($imgsrc);
+                } else {
 					if (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
 						// fix image path
 						$findroot = strpos($imgsrc, $_SERVER['DOCUMENT_ROOT']);
@@ -19807,7 +19875,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					}
 				}
 				if (!$in_table_head) { // we are not inside a thead section
-					$this->cell_padding = $table_el['old_cell_padding'];
+					$this->cell_padding = isset($table_el['old_cell_padding']) ? $table_el['old_cell_padding'] : null;
 					// reset row height
 					$this->resetLastH();
 					if (($this->page == ($this->numpages - 1)) AND ($this->pageopen[$this->numpages])) {
@@ -21717,6 +21785,8 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 	public function commitTransaction() {
 		if (isset($this->objcopy)) {
 			$this->objcopy->_destroy(true, true);
+			/* The unique file_id should not be used during cleanup again */
+			$this->objcopy->file_id = NULL;
 			unset($this->objcopy);
 		}
 	}
@@ -21730,14 +21800,22 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 	 */
 	public function rollbackTransaction($self=false) {
 		if (isset($this->objcopy)) {
+			$objcopy = $this->objcopy;
 			$this->_destroy(true, true);
 			if ($self) {
-				$objvars = get_object_vars($this->objcopy);
+				$objvars = get_object_vars($objcopy);
 				foreach ($objvars as $key => $value) {
 					$this->$key = $value;
 				}
+				$objcopy->_destroy(true, true);
+				/* The unique file_id should not be used during cleanup again */
+				$objcopy->file_id = NULL;
+				unset($objcopy);
+				return $this;
 			}
-			return $this->objcopy;
+			/* The unique file_id should not be used during cleanup again */
+			$this->file_id = NULL;
+			return $objcopy;
 		}
 		return $this;
 	}
@@ -22776,7 +22854,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 			$svgdata = substr($file, 1);
 		} else { // SVG file
 			$this->svgdir = dirname($file);
-			$svgdata = TCPDF_STATIC::fileGetContents($file);
+            $svgdata = $this->getCachedFileContents($file);
 		}
 		if ($svgdata === FALSE) {
 			$this->Error('SVG file not found: '.$file);
@@ -22986,22 +23064,26 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 		$f = ($this->h - $oy) * $this->k * (1 - $svgscale_y);
 		$this->_out(sprintf('%F %F %F %F %F %F cm', $svgscale_x, 0, 0, $svgscale_y, ($e + $svgoffset_x), ($f + $svgoffset_y)));
 		// creates a new XML parser to be used by the other XML functions
-		$this->parser = xml_parser_create('UTF-8');
+		$parser = xml_parser_create('UTF-8');
 		// the following function allows to use parser inside object
-		xml_set_object($this->parser, $this);
+		xml_set_object($parser, $this);
 		// disable case-folding for this XML parser
-		xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
+		xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
 		// sets the element handler functions for the XML parser
-		xml_set_element_handler($this->parser, 'startSVGElementHandler', 'endSVGElementHandler');
+		xml_set_element_handler($parser, 'startSVGElementHandler', 'endSVGElementHandler');
 		// sets the character data handler function for the XML parser
-		xml_set_character_data_handler($this->parser, 'segSVGContentHandler');
+		xml_set_character_data_handler($parser, 'segSVGContentHandler');
 		// start parsing an XML document
-		if (!xml_parse($this->parser, $svgdata)) {
-			$error_message = sprintf('SVG Error: %s at line %d', xml_error_string(xml_get_error_code($this->parser)), xml_get_current_line_number($this->parser));
+		if (!xml_parse($parser, $svgdata)) {
+			$error_message = sprintf('SVG Error: %s at line %d', xml_error_string(xml_get_error_code($parser)), xml_get_current_line_number($parser));
 			$this->Error($error_message);
 		}
 		// free this XML parser
-		xml_parser_free($this->parser);
+		xml_parser_free($parser);
+
+		// >= PHP 7.0.0 "explicitly unset the reference to parser to avoid memory leaks"
+		unset($parser);
+
 		// restore previous graphic state
 		$this->_out($this->epsmarker.'Q');
 		// restore graphic vars
@@ -23418,6 +23500,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 		}
 		$paths = array();
 		$d = preg_replace('/([0-9ACHLMQSTVZ])([\-\+])/si', '\\1 \\2', $d);
+		$d = preg_replace('/(\.[0-9]+)(\.)/s', '\\1 \\2', $d);
 		preg_match_all('/([ACHLMQSTVZ])[\s]*([^ACHLMQSTVZ\"]*)/si', $d, $paths, PREG_SET_ORDER);
 		$x = 0;
 		$y = 0;
@@ -24570,6 +24653,33 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 	}
 
 	// --- END SVG METHODS -----------------------------------------------------
+
+    /**
+     * Keeps files in memory, so it doesn't need to downloaded everytime in a loop
+     * @param string $file
+     * @return string
+     */
+    protected function getCachedFileContents($file)
+    {
+        if (!isset($this->fileContentCache[$file])) {
+            $this->fileContentCache[$file] = TCPDF_STATIC::fileGetContents($file);
+        }
+        return $this->fileContentCache[$file];
+    }
+
+    /**
+     * Avoid multiple calls to an external server to see if a file exists
+     * @param string $file
+     * @return bool
+     */
+    protected function fileExists($file)
+    {
+        if (isset($this->fileContentCache[$file]) || false !== $this->getImageBuffer($file)) {
+            return true;
+        }
+
+        return TCPDF_STATIC::file_exists($file);
+    }
 
 } // END OF TCPDF CLASS
 
