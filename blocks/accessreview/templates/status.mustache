@@ -1,0 +1,63 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_accessreview/status
+
+    Accessibility review result information.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * classList - array of block_accessreview classes
+    * resultPassed - boolean indicating that the item is correct
+    * passRate - object containing metrics
+      * errorCount - the number of failures
+      * checkCount - the number of items checked
+      * failureRate - the percentage of items failing
+
+    Example context (json):
+    {
+        "classList": "block_accessreview_danger",
+        "passRate": {
+            "checkCount": "60",
+            "errorCount": "12",
+            "failureRate": "20"
+        }
+    }
+}}
+<div class="block_accessreview block_accessreview_view {{classList}}">
+    {{#resultPassed}}
+        {{#pix}}t/pass, block_accessreview, {{#str}}status:successalt, block_accessreview{{/str}}{{/pix}}
+        {{#str}}status:success, block_accessreview, {
+            "errorCount": {{passRate.errorCount}},
+            "checkCount": {{passRate.checkCount}},
+            "failureRate": {{passRate.failureRate}}
+        }{{/str}}
+    {{/resultPassed}}
+    {{^resultPassed}}
+        {{#pix}}t/fail, block_accessreview, {{#str}}status:errorsalt, block_accessreview{{/str}}{{/pix}}
+        {{#str}}status:errors, block_accessreview, {
+            "errorCount": {{passRate.errorCount}},
+            "checkCount": {{passRate.checkCount}},
+            "failureRate": {{passRate.failureRate}}
+        }{{/str}}
+    {{/resultPassed}}
+</div>
