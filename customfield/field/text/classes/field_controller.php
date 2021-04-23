@@ -55,12 +55,16 @@ class field_controller extends \core_customfield\field_controller {
 
         $mform->addElement('text', 'configdata[displaysize]', get_string('displaysize', 'customfield_text'), ['size' => 6]);
         $mform->setType('configdata[displaysize]', PARAM_INT);
-        $mform->setDefault('configdata[displaysize]', 50);
+        if (!$this->get_configdata_property('displaysize')) {
+            $mform->setDefault('configdata[displaysize]', 50);
+        }
         $mform->addRule('configdata[displaysize]', null, 'numeric', null, 'client');
 
         $mform->addElement('text', 'configdata[maxlength]', get_string('maxlength', 'customfield_text'), ['size' => 6]);
         $mform->setType('configdata[maxlength]', PARAM_INT);
-        $mform->setDefault('configdata[maxlength]', 1333);
+        if (!$this->get_configdata_property('maxlength')) {
+            $mform->setDefault('configdata[maxlength]', 1333);
+        }
         $mform->addRule('configdata[maxlength]', null, 'numeric', null, 'client');
 
         $mform->addElement('selectyesno', 'configdata[ispassword]', get_string('ispassword', 'customfield_text'));
