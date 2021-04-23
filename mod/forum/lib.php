@@ -374,69 +374,6 @@ function forum_supports($feature) {
 }
 
 /**
- * Obtains the automatic completion state for this forum based on any conditions
- * in forum settings.
- *
- * @global object
- * @global object
- * @param object $course Course
- * @param object $cm Course-module
- * @param int $userid User ID
- * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
- * @return bool True if completed, false if not. (If no conditions, then return
- *   value depends on comparison type)
- */
-function forum_get_completion_state($course,$cm,$userid,$type) {
-    global $CFG,$DB;
-
-    // Get forum details
-    if (!($forum=$DB->get_record('forum',array('id'=>$cm->instance)))) {
-        throw new Exception("Can't find forum {$cm->instance}");
-    }
-
-    $result=$type; // Default return value
-
-    $postcountparams=array('userid'=>$userid,'forumid'=>$forum->id);
-    $postcountsql="
-SELECT
-    COUNT(1)
-FROM
-    {forum_posts} fp
-    INNER JOIN {forum_discussions} fd ON fp.discussion=fd.id
-WHERE
-    fp.userid=:userid AND fd.forum=:forumid";
-
-    if ($forum->completiondiscussions) {
-        $value = $forum->completiondiscussions <=
-                 $DB->count_records('forum_discussions',array('forum'=>$forum->id,'userid'=>$userid));
-        if ($type == COMPLETION_AND) {
-            $result = $result && $value;
-        } else {
-            $result = $result || $value;
-        }
-    }
-    if ($forum->completionreplies) {
-        $value = $forum->completionreplies <=
-                 $DB->get_field_sql( $postcountsql.' AND fp.parent<>0',$postcountparams);
-        if ($type==COMPLETION_AND) {
-            $result = $result && $value;
-        } else {
-            $result = $result || $value;
-        }
-    }
-    if ($forum->completionposts) {
-        $value = $forum->completionposts <= $DB->get_field_sql($postcountsql,$postcountparams);
-        if ($type == COMPLETION_AND) {
-            $result = $result && $value;
-        } else {
-            $result = $result || $value;
-        }
-    }
-
-    return $result;
-}
-
-/**
  * Create a message-id string to use in the custom headers of forum notification emails
  *
  * message-id is used by email clients to identify emails and to nest conversations

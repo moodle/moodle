@@ -35,6 +35,9 @@ define ('DATA_TIMEMODIFIED', -4);
 define ('DATA_TAGS', -5);
 
 define ('DATA_CAP_EXPORT', 'mod/data:viewalluserpresets');
+// Users having assigned the default role "Non-editing teacher" can export database records
+// Using the mod/data capability "viewalluserpresets" existing in Moodle 1.9.x.
+// In Moodle >= 2, new roles may be introduced and used instead.
 
 define('DATA_PRESET_COMPONENT', 'mod_data');
 define('DATA_PRESET_FILEAREA', 'site_presets');
@@ -43,9 +46,7 @@ define('DATA_PRESET_CONTEXT', SYSCONTEXTID);
 define('DATA_EVENT_TYPE_OPEN', 'open');
 define('DATA_EVENT_TYPE_CLOSE', 'close');
 
-// Users having assigned the default role "Non-editing teacher" can export database records
-// Using the mod/data capability "viewalluserpresets" existing in Moodle 1.9.x.
-// In Moodle >= 2, new roles may be introduced and used instead.
+require_once(__DIR__ . '/deprecatedlib.php');
 
 /**
  * @package   mod_data
@@ -4467,40 +4468,6 @@ function data_update_completion_state($data, $course, $cm) {
             $completion->update_state($cm, COMPLETION_INCOMPLETE);
         }
     }
-}
-
-/**
- * Obtains the automatic completion state for this database item based on any conditions
- * on its settings. The call for this is in completion lib where the modulename is appended
- * to the function name. This is why there are unused parameters.
- *
- * @since Moodle 3.3
- * @param stdClass $course Course
- * @param cm_info|stdClass $cm course-module
- * @param int $userid User ID
- * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
- * @return bool True if completed, false if not, $type if conditions not set.
- */
-function data_get_completion_state($course, $cm, $userid, $type) {
-    global $DB, $PAGE;
-    $result = $type; // Default return value
-    // Get data details.
-    if (isset($PAGE->cm->id) && $PAGE->cm->id == $cm->id) {
-        $data = $PAGE->activityrecord;
-    } else {
-        $data = $DB->get_record('data', array('id' => $cm->instance), '*', MUST_EXIST);
-    }
-    // If completion option is enabled, evaluate it and return true/false.
-    if ($data->completionentries) {
-        $numentries = data_numentries($data, $userid);
-        // Check the number of entries required against the number of entries already made.
-        if ($numentries >= $data->completionentries) {
-            $result = true;
-        } else {
-            $result = false;
-        }
-    }
-    return $result;
 }
 
 /**
