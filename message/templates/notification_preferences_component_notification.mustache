@@ -22,7 +22,7 @@
     Classes required for JS:
     * disabled
 
-    Data attibutes required for JS:
+    Data attributes required for JS:
     * All data attributes are required
 
     Context variables required for this template:
@@ -39,17 +39,16 @@
                 "displayname": "Popup notification",
                 "name": "popup",
                 "locked": 0,
+                "userconfigured": 1,
                 "loggedin": {
                     "name": "loggedin",
                     "displayname": "When I'm logged in",
-                    "checked": 0,
-                    "iconurl": "some url"
+                    "checked": 0
                 },
                 "loggedoff": {
                     "name": "loggedoff",
                     "displayname": "When I'm offline",
-                    "checked": 0,
-                    "iconurl": "some url"
+                    "checked": 0
                 }
             }
         ]
@@ -63,7 +62,7 @@
                 <div class="dimmed_text">{{lockedmessage}}</div>
             {{/locked}}
             {{^locked}}
-                <div class="disabled-message">{{#str}} disabled, question {{/str}}</div>
+                <div class="disabled-message">{{#str}} disabled, admin {{/str}}</div>
                 <form>
                     <div class="container-fluid">
                         <div class="row">
