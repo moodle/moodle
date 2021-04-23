@@ -125,8 +125,8 @@ foreach ($quizzes as $quiz) {
             $strsection = $quiz->section;
             $strsection = get_section_name($course, $quiz->section);
         }
-        if ($currentsection) {
-            $learningtable->data[] = 'hr';
+        if ($currentsection !== "") {
+            $table->data[] = 'hr';
         }
         $currentsection = $quiz->section;
     }
