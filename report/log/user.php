@@ -92,7 +92,7 @@ if ($mode === 'today') {
 $PAGE->add_report_nodes($user->id, $navigationnode);
 
 if ($courseid == SITEID) {
-    $PAGE->set_heading(fullname($user));
+    $PAGE->set_heading(fullname($user, has_capability('moodle/site:viewfullnames', $PAGE->context)));
 } else {
     $PAGE->set_heading($course->fullname);
 }
@@ -105,6 +105,7 @@ $event->trigger();
 echo $OUTPUT->header();
 if ($courseid != SITEID) {
     $userheading = array(
+            'heading' => fullname($user, has_capability('moodle/site:viewfullnames', $PAGE->context)),
             'user' => $user,
             'usercontext' => $personalcontext,
         );
