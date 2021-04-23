@@ -6617,7 +6617,7 @@ function forum_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionposts, completiondiscussions, completionreplies';
+    $fields = 'id, name, intro, introformat, completionposts, completiondiscussions, completionreplies, duedate, cutoffdate';
     if (!$forum = $DB->get_record('forum', $dbparams, $fields)) {
         return false;
     }
@@ -6635,6 +6635,14 @@ function forum_get_coursemodule_info($coursemodule) {
         $result->customdata['customcompletionrules']['completiondiscussions'] = $forum->completiondiscussions;
         $result->customdata['customcompletionrules']['completionreplies'] = $forum->completionreplies;
         $result->customdata['customcompletionrules']['completionposts'] = $forum->completionposts;
+    }
+
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($forum->duedate) {
+        $result->customdata['duedate'] = $forum->duedate;
+    }
+    if ($forum->cutoffdate) {
+        $result->customdata['cutoffdate'] = $forum->cutoffdate;
     }
 
     return $result;
