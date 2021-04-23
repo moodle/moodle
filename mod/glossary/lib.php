@@ -49,6 +49,8 @@ define('GLOSSARY_CONTINUOUS', 'continuous');
 define('GLOSSARY_DICTIONARY', 'dictionary');
 define('GLOSSARY_FULLWITHOUTAUTHOR', 'fullwithoutauthor');
 
+require_once(__DIR__ . '/deprecatedlib.php');
+
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 /**
  * @global object
@@ -3093,42 +3095,6 @@ function glossary_supports($feature) {
 
         default: return null;
     }
-}
-
-/**
- * Obtains the automatic completion state for this glossary based on any conditions
- * in glossary settings.
- *
- * @global object
- * @global object
- * @param object $course Course
- * @param object $cm Course-module
- * @param int $userid User ID
- * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
- * @return bool True if completed, false if not. (If no conditions, then return
- *   value depends on comparison type)
- */
-function glossary_get_completion_state($course,$cm,$userid,$type) {
-    global $CFG, $DB;
-
-    // Get glossary details
-    if (!($glossary=$DB->get_record('glossary',array('id'=>$cm->instance)))) {
-        throw new Exception("Can't find glossary {$cm->instance}");
-    }
-
-    $result=$type; // Default return value
-
-    if ($glossary->completionentries) {
-        $value = $glossary->completionentries <=
-                 $DB->count_records('glossary_entries',array('glossaryid'=>$glossary->id, 'userid'=>$userid, 'approved'=>1));
-        if ($type == COMPLETION_AND) {
-            $result = $result && $value;
-        } else {
-            $result = $result || $value;
-        }
-    }
-
-    return $result;
 }
 
 function glossary_extend_navigation($navigation, $course, $module, $cm) {

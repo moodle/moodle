@@ -18,7 +18,12 @@ declare(strict_types=1);
 
 namespace mod_quiz\completion;
 
+use context_module;
 use core_completion\activity_custom_completion;
+use grade_grade;
+use grade_item;
+use quiz;
+use quiz_access_manager;
 
 /**
  * Activity custom completion subclass for the quiz activity.
@@ -33,29 +38,89 @@ use core_completion\activity_custom_completion;
 class custom_completion extends activity_custom_completion {
 
     /**
+     * Check passing grade (or no attempts left) requirement for completion.
+     *
+     * @return bool True if the passing grade (or no attempts left) requirement is disabled or met.
+     */
+    protected function check_passing_grade_or_all_attempts(): bool {
+        global $CFG;
+        require_once($CFG->libdir . '/gradelib.php');
+
+        $completionpassorattempts = $this->cm->customdata['customcompletionrules']['completionpassorattemptsexhausted'];
+
+        if (empty($completionpassorattempts['completionpass'])) {
+            return true;
+        }
+
+        // Check for passing grade.
+        $item = grade_item::fetch([
+            'courseid' => $this->cm->get_course()->id,
+            'itemtype' => 'mod',
+            'itemmodule' => 'quiz',
+            'iteminstance' => $this->cm->instance,
+            'outcomeid' => null
+        ]);
+        if ($item) {
+            $grades = grade_grade::fetch_users_grades($item, [$this->userid], false);
+            if (!empty($grades[$this->userid]) && $grades[$this->userid]->is_passed($item)) {
+                return true;
+            }
+        }
+
+        // If a passing grade is required and exhausting all available attempts is not accepted for completion,
+        // then this quiz is not complete.
+        if (empty($completionpassorattempts['completionattemptsexhausted'])) {
+            return false;
+        }
+
+        // Check if all attempts are used up.
+        $attempts = quiz_get_user_attempts($this->cm->instance, $this->userid, 'finished', true);
+        if (!$attempts) {
+            return false;
+        }
+        $lastfinishedattempt = end($attempts);
+        $context = context_module::instance($this->cm->id);
+        $quizobj = quiz::create($this->cm->instance, $this->userid);
+        $accessmanager = new quiz_access_manager(
+            $quizobj,
+            time(),
+            has_capability('mod/quiz:ignoretimelimits', $context, $this->userid, false)
+        );
+
+        return $accessmanager->is_finished(count($attempts), $lastfinishedattempt);
+    }
+
+    /**
+     * Check minimum attempts requirement for completion.
+     *
+     * @return bool True if minimum attempts requirement is disabled or met.
+     */
+    protected function check_min_attempts() {
+        $minattempts = $this->cm->customdata['customcompletionrules']['completionminattempts'];
+        if (!$minattempts) {
+            return true;
+        }
+
+        // Check if the user has done enough attempts.
+        $attempts = quiz_get_user_attempts($this->cm->instance, $this->userid, 'finished', true);
+        return $minattempts <= count($attempts);
+    }
+
+    /**
      * Fetches the completion state for a given completion rule.
      *
      * @param string $rule The completion rule.
      * @return int The completion state.
      */
     public function get_state(string $rule): int {
-        global $DB;
-
         $this->validate_rule($rule);
-
-        $quiz = $DB->get_record('quiz', ['id' => $this->cm->instance], '*', MUST_EXIST);
 
         switch ($rule) {
             case 'completionpassorattemptsexhausted':
-                $status = quiz_completion_check_passing_grade_or_all_attempts(
-                    $this->cm->get_course(),
-                    $this->cm,
-                    $this->userid,
-                    $quiz
-                );
+                $status = static::check_passing_grade_or_all_attempts();
                 break;
             case 'completionminattempts':
-                $status = quiz_completion_check_min_attempts($this->userid, $quiz);
+                $status = static::check_min_attempts();
                 break;
         }
 

@@ -253,6 +253,12 @@ class mod_quiz_lib_testcase extends advanced_testcase {
 
         // Check the results.
         $this->assertFalse(quiz_get_completion_state($course, $cm, $failstudent->id, 'return'));
+
+        $this->assertDebuggingCalledCount(3, [
+            'quiz_completion_check_passing_grade_or_all_attempts has been deprecated.',
+            'quiz_completion_check_min_attempts has been deprecated.',
+            'quiz_completion_check_passing_grade_or_all_attempts has been deprecated.',
+        ]);
     }
 
     /**
@@ -306,6 +312,14 @@ class mod_quiz_lib_testcase extends advanced_testcase {
 
         // Check the results. Quiz is completed by $exhauststudent because there are no remaining attempts.
         $this->assertTrue(quiz_get_completion_state($course, $cm, $exhauststudent->id, 'return'));
+
+        $this->assertDebuggingCalledCount(5, [
+            'quiz_completion_check_passing_grade_or_all_attempts has been deprecated.',
+            'quiz_completion_check_min_attempts has been deprecated.',
+            'quiz_completion_check_passing_grade_or_all_attempts has been deprecated.',
+            'quiz_completion_check_passing_grade_or_all_attempts has been deprecated.',
+            'quiz_completion_check_min_attempts has been deprecated.',
+        ]);
     }
 
     /**
@@ -346,6 +360,13 @@ class mod_quiz_lib_testcase extends advanced_testcase {
 
         // Check the results. Quiz is completed by $student because two attempts were done.
         $this->assertTrue(quiz_get_completion_state($course, $cm, $student->id, 'return'));
+
+        $this->assertDebuggingCalledCount(4, [
+            'quiz_completion_check_passing_grade_or_all_attempts has been deprecated.',
+            'quiz_completion_check_min_attempts has been deprecated.',
+            'quiz_completion_check_passing_grade_or_all_attempts has been deprecated.',
+            'quiz_completion_check_min_attempts has been deprecated.',
+        ]);
     }
 
     /**
@@ -392,6 +413,13 @@ class mod_quiz_lib_testcase extends advanced_testcase {
 
         // Check the results. Quiz is completed by $student because two attempts were done AND a passing grade was obtained.
         $this->assertTrue(quiz_get_completion_state($course, $cm, $student->id, 'return'));
+
+        $this->assertDebuggingCalledCount(4, [
+            'quiz_completion_check_passing_grade_or_all_attempts has been deprecated.',
+            'quiz_completion_check_min_attempts has been deprecated.',
+            'quiz_completion_check_passing_grade_or_all_attempts has been deprecated.',
+            'quiz_completion_check_min_attempts has been deprecated.',
+        ]);
     }
 
     public function test_quiz_get_user_attempts() {

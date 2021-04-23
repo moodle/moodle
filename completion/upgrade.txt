@@ -19,6 +19,9 @@ information provided here is intended especially for developers.
     - Given the manual completion button of "<Activity name>" overridden by "<User>" is displayed as "<Status>"
   - overridden_activity_completion_condition_displayed_as
     - Given the "<Completion condition>" completion condition of "<Activity name>" overridden by "<User>" is displayed as "<Status>"
+* *_get_completion_state() callback functions have been deprecated and should no longer be used. Plugins that define custom
+  completion rules must implement the mod_[modname]\completion\custom_completion class that extends the
+  \core_completion\activity_custom_completion base class.
 
 === 3.7 ===
  * External function core_completion_external::get_activities_completion_status new returns the following additional field:
