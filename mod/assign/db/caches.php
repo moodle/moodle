@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Defined caches used internally by the plugin.
  *
- * @package    mod_assign
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_assign
+ * @copyright 2021 Shamim Rezaie <shamim@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+declare(strict_types=1);
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_assign'; // Full name of the plugin (used for diagnostics).
-$plugin->version  = 2021052501;    // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2021052500;    // Requires this Moodle version.
+$definitions = [
+    'overrides' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'datasource' => '\mod_assign\cache\overrides',
+    ],
+];
