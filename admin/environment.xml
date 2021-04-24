@@ -3447,7 +3447,7 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="hash" level="required"/>
       <PHP_EXTENSION name="fileinfo" level="required"/>
-      <PHP_EXTENSION name="sodium" level="required"/>
+      <PHP_EXTENSION name="sodium" level="optional"/>
     </PHP_EXTENSIONS>
     <PHP_SETTINGS>
       <PHP_SETTING name="memory_limit" value="96M" level="required">
