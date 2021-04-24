@@ -83,6 +83,7 @@ $string['averagescore'] = 'Average score';
 $string['averagetime'] = 'Average time';
 $string['branch'] = 'Content';
 $string['branchtable'] = 'Content';
+$string['cachedef_overrides'] = 'User and group override information';
 $string['cancel'] = 'Cancel';
 $string['cannotfindanswer'] = 'Error: could not find answer';
 $string['cannotfindattempt'] = 'Error: could not find attempt';
