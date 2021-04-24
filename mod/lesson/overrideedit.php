@@ -175,6 +175,8 @@ if ($mform->is_cancelled()) {
     if (!empty($override->id)) {
         $fromform->id = $override->id;
         $DB->update_record('lesson_overrides', $fromform);
+        $cachekey = $groupmode ? "{$fromform->lessonid}_g_{$fromform->groupid}" : "{$fromform->lessonid}_u_{$fromform->userid}";
+        cache::make('mod_lesson', 'overrides')->delete($cachekey);
 
         // Determine which override updated event to fire.
         $params['objectid'] = $override->id;
@@ -191,6 +193,8 @@ if ($mform->is_cancelled()) {
     } else {
         unset($fromform->id);
         $fromform->id = $DB->insert_record('lesson_overrides', $fromform);
+        $cachekey = $groupmode ? "{$fromform->lessonid}_g_{$fromform->groupid}" : "{$fromform->lessonid}_u_{$fromform->userid}";
+        cache::make('mod_lesson', 'overrides')->delete($cachekey);
 
         // Determine which override created event to fire.
         $params['objectid'] = $fromform->id;

@@ -924,23 +924,27 @@ function lesson_reset_userdata($data) {
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallattempts', 'lesson'), 'error'=>false);
     }
 
+    $purgeoverrides = false;
+
     // Remove user overrides.
     if (!empty($data->reset_lesson_user_overrides)) {
         $DB->delete_records_select('lesson_overrides',
                 'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND userid IS NOT NULL', array($data->courseid));
         $status[] = array(
-        'component' => $componentstr,
-        'item' => get_string('useroverridesdeleted', 'lesson'),
-        'error' => false);
+            'component' => $componentstr,
+            'item' => get_string('useroverridesdeleted', 'lesson'),
+            'error' => false);
+        $purgeoverrides = true;
     }
     // Remove group overrides.
     if (!empty($data->reset_lesson_group_overrides)) {
         $DB->delete_records_select('lesson_overrides',
         'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND groupid IS NOT NULL', array($data->courseid));
         $status[] = array(
-        'component' => $componentstr,
-        'item' => get_string('groupoverridesdeleted', 'lesson'),
-        'error' => false);
+            'component' => $componentstr,
+            'item' => get_string('groupoverridesdeleted', 'lesson'),
+            'error' => false);
+        $purgeoverrides = true;
     }
     /// updating dates - shift may be negative too
     if ($data->timeshift) {
@@ -953,10 +957,16 @@ function lesson_reset_userdata($data) {
                        WHERE lessonid IN (SELECT id FROM {lesson} WHERE course = ?)
                          AND deadline <> 0", array($data->timeshift, $data->courseid));
 
+        $purgeoverrides = true;
+
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
         shift_course_mod_dates('lesson', array('available', 'deadline'), $data->timeshift, $data->courseid);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+    }
+
+    if ($purgeoverrides) {
+        cache::make('mod_lesson', 'overrides')->purge();
     }
 
     return $status;
