@@ -30,7 +30,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Φάκελος διαχειριστή';
-$string['availablelangs'] = 'Λίστα διαθέσιμων πακέτων γλωσσών';
+$string['availablelangs'] = 'Λίστα διαθέσιμων πακέτων γλώσσας';
 $string['chooselanguagehead'] = 'Επιλογή γλώσσας';
 $string['chooselanguagesub'] = 'Παρακαλούμε, επιλέξτε γλώσσα για την εγκατάσταση. Αυτή η γλώσσα θα χρησιμοποιηθεί επίσης ως προεπιλεγμένη γλώσσα για τον ιστότοπο, αν και μπορεί να αλλάξει αργότερα.';
 $string['clialreadyconfigured'] = 'Το αρχείο ρυθμίσεων config.php υπάρχει ήδη. Χρησιμοποιήστε το admin/cli/install_database.php για να εγκαταστήσετε το Moodle για αυτόν τον ιστότοπο.';
