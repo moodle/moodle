@@ -226,7 +226,8 @@ if ($mode == 'listtemplate'){
     $field = 'listtemplateheader';
     $editor->set_text($data->listtemplateheader);
     $editor->use_editor($field, $options);
-    echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->listtemplateheader).'</textarea></div>';
+    echo '<div><textarea id="'.$field.'" name="'.$field.'" class="form-control" rows="15" cols="80">' .
+        s($data->listtemplateheader) . '</textarea></div>';
 
     echo '</td>';
     echo '</tr>';
