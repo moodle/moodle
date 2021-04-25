@@ -1923,7 +1923,7 @@ function quiz_process_group_deleted_in_course($courseid) {
 
     // It would be nice if we got the groupid that was deleted.
     // Instead, we just update all quizzes with orphaned group overrides.
-    $sql = "SELECT o.id, o.quiz
+    $sql = "SELECT o.id, o.quiz, o.groupid
               FROM {quiz_overrides} o
               JOIN {quiz} quiz ON quiz.id = o.quiz
          LEFT JOIN {groups} grp ON grp.id = o.groupid
@@ -1931,12 +1931,16 @@ function quiz_process_group_deleted_in_course($courseid) {
                AND o.groupid IS NOT NULL
                AND grp.id IS NULL";
     $params = array('courseid' => $courseid);
-    $records = $DB->get_records_sql_menu($sql, $params);
+    $records = $DB->get_records_sql($sql, $params);
     if (!$records) {
         return; // Nothing to do.
     }
     $DB->delete_records_list('quiz_overrides', 'id', array_keys($records));
-    quiz_update_open_attempts(array('quizid' => array_unique(array_values($records))));
+    $cache = cache::make('mod_quiz', 'overrides');
+    foreach ($records as $record) {
+        $cache->delete("{$record->quiz}_g_{$record->groupid}");
+    }
+    quiz_update_open_attempts(['quizid' => array_unique(array_column($records, 'quiz'))]);
 }
 
 /**

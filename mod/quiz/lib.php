@@ -232,10 +232,12 @@ function quiz_delete_override($quiz, $overrideid, $log = true) {
         // Create the search array for a group override.
         $eventsearcharray = array('modulename' => 'quiz',
             'instance' => $quiz->id, 'groupid' => (int)$override->groupid);
+        $cachekey = "{$quiz->id}_g_{$override->groupid}";
     } else {
         // Create the search array for a user override.
         $eventsearcharray = array('modulename' => 'quiz',
             'instance' => $quiz->id, 'userid' => (int)$override->userid);
+        $cachekey = "{$quiz->id}_u_{$override->userid}";
     }
     $events = $DB->get_records('event', $eventsearcharray);
     foreach ($events as $event) {
@@ -244,6 +246,7 @@ function quiz_delete_override($quiz, $overrideid, $log = true) {
     }
 
     $DB->delete_records('quiz_overrides', array('id' => $overrideid));
+    cache::make('mod_quiz', 'overrides')->delete($cachekey);
 
     if ($log) {
         // Set the common parameters for one of the events we will be triggering.
@@ -1536,6 +1539,8 @@ function quiz_reset_userdata($data) {
             'error' => false);
     }
 
+    $purgeoverrides = false;
+
     // Remove user overrides.
     if (!empty($data->reset_quiz_user_overrides)) {
         $DB->delete_records_select('quiz_overrides',
@@ -1544,6 +1549,7 @@ function quiz_reset_userdata($data) {
             'component' => $componentstr,
             'item' => get_string('useroverridesdeleted', 'quiz'),
             'error' => false);
+        $purgeoverrides = true;
     }
     // Remove group overrides.
     if (!empty($data->reset_quiz_group_overrides)) {
@@ -1553,6 +1559,7 @@ function quiz_reset_userdata($data) {
             'component' => $componentstr,
             'item' => get_string('groupoverridesdeleted', 'quiz'),
             'error' => false);
+        $purgeoverrides = true;
     }
 
     // Updating dates - shift may be negative too.
@@ -1566,6 +1573,8 @@ function quiz_reset_userdata($data) {
                        WHERE quiz IN (SELECT id FROM {quiz} WHERE course = ?)
                          AND timeclose <> 0", array($data->timeshift, $data->courseid));
 
+        $purgeoverrides = true;
+
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
         shift_course_mod_dates('quiz', array('timeopen', 'timeclose'),
@@ -1575,6 +1584,10 @@ function quiz_reset_userdata($data) {
             'component' => $componentstr,
             'item' => get_string('openclosedatesupdated', 'quiz'),
             'error' => false);
+    }
+
+    if ($purgeoverrides) {
+        cache::make('mod_quiz', 'overrides')->purge();
     }
 
     return $status;
