@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quiz activity version information.
+ * Defined caches used internally by the plugin.
  *
  * @package   mod_quiz
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright 2021 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+declare(strict_types=1);
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2021042700;
-$plugin->requires  = 2020110300;
-$plugin->component = 'mod_quiz';
+$definitions = [
+    'overrides' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'datasource' => '\mod_quiz\cache\overrides',
+    ],
+];
