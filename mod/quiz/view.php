@@ -187,7 +187,8 @@ if ($quiz->attempts != 1) {
             quiz_get_grading_option_name($quiz->grademethod));
 }
 
-if ($item && $item->gradepass) {
+// Inform user of the grade to pass if non-zero.
+if ($item && grade_floats_different($item->gradepass, 0)) {
     $a = new stdClass();
     $a->grade = quiz_format_grade($quiz, $item->gradepass);
     $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
