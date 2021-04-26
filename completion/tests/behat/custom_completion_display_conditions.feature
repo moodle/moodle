@@ -44,9 +44,10 @@ Feature: Allow teachers to edit the visibility of completion conditions in a cou
     # Completion conditions are always shown in the module's view page.
     And I follow "Test choice auto"
     Then "Test choice auto" should have the "Make a choice" completion condition
-    # The manual completion toggle button should be always displayed in both course homepage and activity view.
+    # The manual completion toggle button should not be displayed in the course homepage when completion is disabled.
     And I am on "Course 1" course homepage
-    And the manual completion button for "Test choice manual" should be disabled
+    And the manual completion button for "Test choice manual" should not exist
+    # The manual completion toggle button should always be displayed in the activity view.
     And I follow "Test choice manual"
     And the manual completion button for "Test choice manual" should be disabled
 
