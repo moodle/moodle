@@ -12,6 +12,9 @@ Feature: Block accessreview results
       | activity | name      | intro                              | course | idnumber |
       | label    | Label one | <b>Bold text is bold.</b>          | C1     | id001    |
       | label    | Label two | <a href="modle.org">Click here</a> | C1     | id002    |
+    And I run the scheduled task "\tool_brickfield\task\process_analysis_requests"
+    And I run the scheduled task "\tool_brickfield\task\bulk_process_courses"
+    And I run the scheduled task "\tool_brickfield\task\bulk_process_caches"
 
   Scenario: View accessreview block results on a course
     Given I log in as "admin"
