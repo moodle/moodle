@@ -2621,5 +2621,26 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021052500.85);
     }
 
+    if ($oldversion < 2021052500.87) {
+        // Changing the default of field showcompletionconditions on table course to 0.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('showcompletionconditions', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'showactivitydates');
+
+        // Launch change of nullability for field showcompletionconditions.
+        $dbman->change_field_notnull($table, $field);
+
+        // Launch change of default for field showcompletionconditions.
+        $dbman->change_field_default($table, $field);
+
+        // Set showcompletionconditions to null for courses which don't track completion.
+        $sql = "UPDATE {course}
+                   SET showcompletionconditions = null
+                 WHERE enablecompletion <> 1";
+        $DB->execute($sql);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021052500.87);
+    }
+
     return true;
 }
