@@ -572,6 +572,16 @@ function mod_assign_cm_info_dynamic(cm_info $cm) {
         }
     }
 
+    // Calculate relative dates. The assignment module calculates relative date only for duedate.
+    // A user or group override always has higher priority over any relative date calculation.
+    if (empty($override->duedate) && !empty($cm->customdata['duedate'])) {
+        $course = get_course($cm->course);
+        $usercoursedates = course_get_course_dates_for_user_id($course, $USER->id);
+        if ($usercoursedates['start']) {
+            $override->duedate = $cm->customdata['duedate'] + $usercoursedates['startoffset'];
+        }
+    }
+
     // Populate some other values that can be used in calendar or on dashboard.
     if (!is_null($override->allowsubmissionsfromdate)) {
         $cm->override_customdata('allowsubmissionsfromdate', $override->allowsubmissionsfromdate);

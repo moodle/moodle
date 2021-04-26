@@ -80,10 +80,33 @@ class activity_information implements renderable, templatable {
 
         $data->cmid = $this->cminfo->id;
         $data->activityname = $this->cminfo->name;
-        $data->activitydates = $this->activitydates;
+        $this->build_dates_data($data);
         $data->hasdates = !empty($this->activitydates);
 
         return $data;
+    }
+
+    /**
+     * Builds the dates data for export.
+     *
+     * @param stdClass $data
+     */
+    protected function build_dates_data(stdClass $data): void {
+        foreach ($this->activitydates as $date) {
+            if (empty($date['relativeto'])) {
+                $date['datestring'] = userdate($date['timestamp'], get_string('strftimedatetime', 'core_langconfig'));
+            } else {
+                $diffstr = get_time_interval_string($date['timestamp'], $date['relativeto']);
+                if ($date['timestamp'] >= $date['relativeto']) {
+                    $date['datestring'] = get_string('relativedatessubmissionduedateafter', 'core_course',
+                        ['datediffstr' => $diffstr]);
+                } else {
+                    $date['datestring'] = get_string('relativedatessubmissionduedatebefore', 'core_course',
+                        ['datediffstr' => $diffstr]);
+                }
+            }
+            $data->activitydates[] = $date;
+        }
     }
 
     /**

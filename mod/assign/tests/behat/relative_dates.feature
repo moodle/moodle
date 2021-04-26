@@ -35,6 +35,29 @@ I should be able to create an assignment with a due date relative to the course 
     And I follow "Test assignment name"
     And I should not see "Assignment is overdue by:" in the "Time remaining" "table_row"
 
+  Scenario: As a student the due date I see for submitting my assignment is relative to my course start date
+    Given the following config values are set as admin:
+      | enablecourserelativedates | 1 |
+    And the following "courses" exist:
+    # A course with start date set to 1 Jan 2021.
+      | fullname | shortname  | category  | groupmode | relativedatesmode | startdate   |
+      | Course 1 | C1         | 0         | 1         | 1                 | 1609459200  |
+    And the following "users" exist:
+      | username | firstname  | lastname  | email                 |
+      | student1 | Student    | 1         | student1@example.com  |
+    And the following "course enrolments" exist:
+    # User's enrolment starts from 5 Jan 2021.
+      | user      | course  | role    | timestart   |
+      | student1  | C1      | student | 1609804800  |
+    And the following "activities" exist:
+    # The assignment's due date is 3 Jan 2021.
+      | activity  | name                  | intro                       | course  | idnumber  | assignsubmission_onlinetext_enabled | duedate     |
+      | assign    | Test assignment name  | Test assignment description | C1      | assign0   | 1                                   | 1609632000  |
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    Then the activity date in "Test assignment name" should contain "Due: 7 January 2021, 8:00 AM"
+
   Scenario: As a teacher, I should see the relative dates when reviewing assignment submissions
     Given the following config values are set as admin:
       | enablecourserelativedates | 1 |

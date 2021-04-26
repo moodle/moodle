@@ -450,8 +450,6 @@ $string['quickgradingresult'] = 'Quick grading';
 $string['quickgradingchangessaved'] = 'The grade changes were saved';
 $string['quickgrading_help'] = 'Quick grading allows you to assign grades (and outcomes) directly in the submissions table. Quick grading is not compatible with advanced grading and is not recommended when there are multiple markers.';
 $string['relativedatessubmissiontimeleft'] = 'Calculated for each student';
-$string['relativedatessubmissionduedateafter'] = '{$a->datediffstr} after course start';
-$string['relativedatessubmissionduedatebefore'] = '{$a->datediffstr} before course start';
 $string['removeallgroupoverrides'] = 'Delete all group overrides';
 $string['removealluseroverrides'] = 'Delete all user overrides';
 $string['reopenuntilpassincompatiblewithblindmarking'] = 'Reopen until pass option is incompatible with anonymous submissions, because the grades are not released to the gradebook until the student identities are revealed.';
@@ -640,3 +638,7 @@ $string['nolatesubmissions'] = 'No late submissions accepted. ';
 $string['nosubmissionsacceptedafter'] = 'No submissions accepted after ';
 $string['notsubmittedyet'] = 'Not submitted yet';
 $string['submissionsnotgraded'] = 'Submissions not graded: {$a}';
+
+// Deprecated since Moodle 3.11.
+$string['relativedatessubmissionduedateafter'] = '{$a->datediffstr} after course start';
+$string['relativedatessubmissionduedatebefore'] = '{$a->datediffstr} before course start';
