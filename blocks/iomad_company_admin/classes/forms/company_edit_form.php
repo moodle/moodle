@@ -118,11 +118,20 @@ class company_edit_form extends \company_moodleform {
         $mform->setType('previousroletemplateid', PARAM_INT);
         $mform->setType('previousemailtemplateid', PARAM_INT);
 
+        $mform->addElement('textarea', 'address',
+                            get_string('address'));
+        $mform->setType('address', PARAM_NOTAGS);
+
         $mform->addElement('text', 'city',
                             get_string('companycity', 'block_iomad_company_admin'),
                             'maxlength="50" size="50"');
         $mform->setType('city', PARAM_NOTAGS);
         $mform->addRule('city', $strrequired, 'required', null, 'client');
+
+        $mform->addElement('text', 'postcode',
+                            get_string('postcode', 'block_iomad_company_admin'),
+                            'maxlength="50" size="50"');
+        $mform->setType('postcode', PARAM_NOTAGS);
 
         /* copied from user/editlib.php */
         $choices = get_string_manager()->get_list_of_countries();

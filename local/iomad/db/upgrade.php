@@ -2202,5 +2202,29 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021012500, 'local', 'iomad');
     }
 
+    if ($oldversion < 2021042500) {
+
+        // Define field address to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('address', XMLDB_TYPE_TEXT, null, null, null, null, null, 'code');
+
+        // Conditionally launch add field address.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field postcode to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('postcode', XMLDB_TYPE_CHAR, '20', null, null, null, null, 'city');
+
+        // Conditionally launch add field postcode.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2021042500, 'local', 'iomad');
+    }
+
     return $result;
 }
