@@ -6889,7 +6889,7 @@ a.close.disabled {
 .align-baseline {
   vertical-align: baseline !important; }
 
-.align-top {
+.align-top, [data-filterregion="value"] div:first-of-type {
   vertical-align: top !important; }
 
 .align-middle {
