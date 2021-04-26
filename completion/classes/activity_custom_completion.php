@@ -139,6 +139,17 @@ abstract class activity_custom_completion {
     }
 
     /**
+     * Show the manual completion or not regardless of the course's showcompletionconditions setting.
+     * Returns false by default for plugins that don't need to override the course's showcompletionconditions setting.
+     * Activity plugins that need to always show manual completion need to override this function.
+     *
+     * @return bool
+     */
+    public function manual_completion_always_shown(): bool {
+        return false;
+    }
+
+    /**
      * Fetches the module's custom completion class implementation if it's available.
      *
      * @param string $modname The activity module name. Usually from cm_info::modname.
