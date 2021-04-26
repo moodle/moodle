@@ -342,10 +342,10 @@ class mod_assign_renderer extends plugin_renderer_base {
                 // Returns a formatted string, in the format '10d 10h 45m'.
                 $diffstr = get_time_interval_string($duedate, $summary->coursestartdate);
                 if ($duedate >= $summary->coursestartdate) {
-                    $cell2content = get_string('relativedatessubmissionduedateafter', 'mod_assign',
+                    $cell2content = get_string('relativedatessubmissionduedateafter', 'core_course',
                         ['datediffstr' => $diffstr]);
                 } else {
-                    $cell2content = get_string('relativedatessubmissionduedatebefore', 'mod_assign',
+                    $cell2content = get_string('relativedatessubmissionduedatebefore', 'core_course',
                         ['datediffstr' => $diffstr]);
                 }
             } else {
