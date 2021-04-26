@@ -52,6 +52,20 @@ class dates extends activity_dates {
 
         $timeopen = $this->cm->customdata['allowsubmissionsfromdate'] ?? null;
         $timedue = $this->cm->customdata['duedate'] ?? null;
+
+        $activitygroup = groups_get_activity_group($this->cm, true);
+        if ($activitygroup) {
+            if ($assign->can_view_grades()) {
+                $groupoverride = \cache::make('mod_assign', 'overrides')->get("{$this->cm->instance}_g_{$activitygroup}");
+                if (!empty($groupoverride->allowsubmissionsfromdate)) {
+                    $timeopen = $groupoverride->allowsubmissionsfromdate;
+                }
+                if (!empty($groupoverride->duedate)) {
+                    $timedue = $groupoverride->duedate;
+                }
+            }
+        }
+
         $now = time();
         $dates = [];
 
