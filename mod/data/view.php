@@ -362,12 +362,8 @@
     }
 
     // If data activity closed dont let students in.
+    // No need to display warnings because activity dates are displayed at the top of the page.
     list($showactivity, $warnings) = data_get_time_availability_status($data, $canmanageentries);
-
-    if (!$showactivity) {
-        $reason = current(array_keys($warnings));
-        echo $OUTPUT->notification(get_string($reason, 'data', $warnings[$reason]));
-    }
 
 if ($showactivity) {
     // Print the tabs
