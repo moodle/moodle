@@ -88,13 +88,13 @@ class printable_test extends \advanced_testcase {
         $object = new printable();
         $object->set_filter($filter);
         $output = $object->get_output();
-        $this->assertStringContainsString('<h3>Course: PHPUnit test site</h3><div id=', $output);
+        $this->assertStringContainsString('<h3>Course PHPUnit test site</h3><div id=', $output);
 
         $filter->target = '';
         $object = new printable();
         $object->set_filter($filter);
         $output = $object->get_output();
-        $this->assertStringContainsString('<h3>Course: PHPUnit test site</h3><a href=', $output);
+        $this->assertStringContainsString('<h3>Course PHPUnit test site</h3><a href=', $output);
 
         $filter->target = 'html';
         $object = new printable();

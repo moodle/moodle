@@ -45,8 +45,7 @@ class renderer extends \tool_brickfield\output\renderer {
         $templatedata = new \stdClass();
 
         // Set up the page information for the template.
-        $templatedata->title = get_string('titlepertarget', manager::PLUGINNAME) . ' : ' .
-            accessibility::get_title($filter, $data->countdata);
+        $templatedata->title = accessibility::get_title($filter, $data->countdata);
         $templatedata->chartdesc = get_string('pagedesc:pertarget', manager::PLUGINNAME);
         $templatedata->chartdesctitle = get_string('pagedesctitle:pertarget', manager::PLUGINNAME);
 

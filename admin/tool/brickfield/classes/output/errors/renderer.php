@@ -56,8 +56,7 @@ class renderer extends \tool_brickfield\output\renderer {
         );
 
         // Set up a table of data for the template.
-        $templatedata->pagetitle = get_string('titleerrors', manager::PLUGINNAME) . ' : ' .
-            accessibility::get_title($filter, $data->countdata);
+        $templatedata->pagetitle = accessibility::get_title($filter, $data->countdata);
 
         if (count($data->errordata) == 0) {
             $templatedata->noerrorsfound = get_string('noerrorsfound', manager::PLUGINNAME);

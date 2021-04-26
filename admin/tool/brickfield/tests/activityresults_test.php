@@ -54,13 +54,13 @@ class activityresults_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         $category = $this->getDataGenerator()->create_category();
-        $filter = new filter(1, $category->id, 'tab', 3, 4);
+        $filter = new filter(1, $category->id, 'activityresults', 3, 4);
         $filter->courseids = [];
 
         $object = new activityresults();
         $object->set_filter($filter);
         $output = $object->get_output();
         $this->assertIsString($output);
-        $this->assertStringContainsString('Results per activity :', $output);
+        $this->assertStringContainsString('Results per activity:', $output);
     }
 }
