@@ -335,26 +335,8 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         $time = time();
         if ($summary->duedate) {
-            // Due date.
-            $cell1content = get_string('duedate', 'assign');
-            $duedate = $summary->duedate;
-            if ($summary->courserelativedatesmode) {
-                // Returns a formatted string, in the format '10d 10h 45m'.
-                $diffstr = get_time_interval_string($duedate, $summary->coursestartdate);
-                if ($duedate >= $summary->coursestartdate) {
-                    $cell2content = get_string('relativedatessubmissionduedateafter', 'core_course',
-                        ['datediffstr' => $diffstr]);
-                } else {
-                    $cell2content = get_string('relativedatessubmissionduedatebefore', 'core_course',
-                        ['datediffstr' => $diffstr]);
-                }
-            } else {
-                $cell2content = userdate($duedate);
-            }
-
-            $this->add_table_row_tuple($t, $cell1content, $cell2content);
-
             // Time remaining.
+            $duedate = $summary->duedate;
             $cell1content = get_string('timeremaining', 'assign');
             if ($summary->courserelativedatesmode) {
                 $cell2content = get_string('relativedatessubmissiontimeleft', 'mod_assign');
@@ -667,18 +649,6 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o .= $this->output->heading(get_string('submissionstatusheading', 'assign'), 3);
         $time = time();
 
-        if ($status->allowsubmissionsfromdate &&
-                $time <= $status->allowsubmissionsfromdate) {
-            $o .= $this->output->box_start('generalbox boxaligncenter submissionsalloweddates');
-            if ($status->alwaysshowdescription) {
-                $date = userdate($status->allowsubmissionsfromdate);
-                $o .= get_string('allowsubmissionsfromdatesummary', 'assign', $date);
-            } else {
-                $date = userdate($status->allowsubmissionsfromdate);
-                $o .= get_string('allowsubmissionsanddescriptionfromdatesummary', 'assign', $date);
-            }
-            $o .= $this->output->box_end();
-        }
         $o .= $this->output->box_start('boxaligncenter submissionsummarytable');
 
         $t = new html_table();
@@ -810,11 +780,6 @@ class mod_assign_renderer extends plugin_renderer_base {
         $submission = $status->teamsubmission ? $status->teamsubmission : $status->submission;
         $duedate = $status->duedate;
         if ($duedate > 0) {
-            // Due date.
-            $cell1content = get_string('duedate', 'assign');
-            $cell2content = userdate($duedate);
-            $this->add_table_row_tuple($t, $cell1content, $cell2content);
-
             if ($status->view == assign_submission_status::GRADER_VIEW) {
                 if ($status->cutoffdate) {
                     // Cut off date.

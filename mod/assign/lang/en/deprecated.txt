@@ -1,3 +1,5 @@
+allowsubmissionsfromdatesummary,mod_assign
+allowsubmissionsanddescriptionfromdatesummary,mod_assign
 duedateno,mod_assign
 mysubmission,mod_assign
 nolatesubmissions,mod_assign

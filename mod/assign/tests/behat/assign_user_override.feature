@@ -85,12 +85,12 @@ Feature: Assign user override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    Then I should see "Saturday, 1 January 2000, 8:00"
+    Then the activity date in "Test assignment name" should contain "Due: 1 January 2000, 8:00 AM"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And I should see "Wednesday, 1 January 2020, 8:00"
+    And the activity date in "Test assignment name" should contain "Due: 1 January 2020, 8:00 AM"
 
   @javascript
   Scenario: Allow a user to have a different cut off date
@@ -143,12 +143,12 @@ Feature: Assign user override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    Then I should see "This assignment will accept submissions from Tuesday, 1 January 2030, 8:00"
+    Then the activity date in "Test assignment name" should contain "Opens: 1 January 2030, 8:00 AM"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And I should not see "This assignment will accept submissions from Tuesday, 1 January 2030, 8:00"
+    And I should not see "1 January 2030, 8:00 AM"
 
   Scenario: Override a user when teacher is in no group, and does not have accessallgroups permission, and the activity's group mode is "separate groups"
     Given the following "permission overrides" exist:
