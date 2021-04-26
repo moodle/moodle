@@ -102,7 +102,7 @@ if (has_capability('mod/feedback:edititems', $context)) {
     $mygroupid = groups_get_activity_group($cm);
 
     echo $groupselect.'<div class="clearer">&nbsp;</div>';
-    $summary = new mod_feedback\output\summary($feedbackcompletion, $mygroupid, true);
+    $summary = new mod_feedback\output\summary($feedbackcompletion, $mygroupid);
     echo $OUTPUT->render_from_template('mod_feedback/summary', $summary->export_for_template($OUTPUT));
 
     if ($pageaftersubmit = $feedbackcompletion->page_after_submit()) {
