@@ -1011,8 +1011,12 @@ class engine extends \core_search\engine {
 
         // A giant block of code that is really just error checking around the curl request.
         try {
-            // Now actually do the request.
-            $result = $curl->post($url->out(false), array('myfile' => $storedfile));
+            // We have to post the file directly in binary data (not using multipart) to avoid
+            // Solr bug SOLR-15039 which can cause incorrect data when you use multipart upload.
+            // Note this loads the whole file into memory; see limit in file_is_indexable().
+            $curl->setHeader('Content-Type: text/plain; charset=UTF-8');
+            $result = $curl->post($url->out(false), $storedfile->get_content());
+            $curl->resetHeader();
 
             $code = $curl->get_errno();
             $info = $curl->get_info();
@@ -1074,6 +1078,18 @@ class engine extends \core_search\engine {
         if (!empty($this->config->maxindexfilekb) && ($file->get_filesize() > ($this->config->maxindexfilekb * 1024))) {
             // The file is too big to index.
             return false;
+        }
+
+        // Because we now load files into memory to index them in Solr, we also have to ensure that
+        // we don't try to index anything bigger than the memory limit (less 100MB for safety).
+        // Memory limit in cron is MEMORY_EXTRA which is usually 256 or 384MB but can be increased
+        // in config, so this will allow files over 100MB to be indexed.
+        $limit = ini_get('memory_limit');
+        if ($limit && $limit != -1) {
+            $limitbytes = get_real_size($limit);
+            if ($file->get_filesize() > $limitbytes) {
+                return false;
+            }
         }
 
         $mime = $file->get_mimetype();
