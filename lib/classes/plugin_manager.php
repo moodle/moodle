@@ -1935,7 +1935,7 @@ class core_plugin_manager {
             ),
 
             'profilefield' => array(
-                'checkbox', 'datetime', 'menu', 'text', 'textarea'
+                'checkbox', 'datetime', 'menu', 'social', 'text', 'textarea'
             ),
 
             'qbehaviour' => array(
