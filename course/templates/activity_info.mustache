@@ -30,6 +30,7 @@
         "hasdates": true,
         "isautomatic": true,
         "istrackeduser": true,
+        "showmanualcompletion": true,
         "activitydates": [
             {
                 "label": "Opens:",
@@ -67,7 +68,9 @@
                     </div>
                 {{/isautomatic}}
                 {{^isautomatic}}
-                    {{> core_course/completion_manual }}
+                    {{#showmanualcompletion}}
+                        {{> core_course/completion_manual }}
+                    {{/showmanualcompletion}}
                 {{/isautomatic}}
             </div>
         {{/uservisible}}

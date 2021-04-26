@@ -296,6 +296,32 @@ class behat_completion extends behat_base {
     }
 
     /**
+     * Check that the manual completion button for the activity does not exist.
+     *
+     * @Given /^the manual completion button for "(?P<activityname>(?:[^"]|\\")*)" should not exist/
+     * @param string $activityname The activity name.
+     */
+    public function the_manual_completion_button_for_activity_should_not_exist(string $activityname): void {
+        $selector = "div[data-activityname='$activityname'] button";
+
+        $params = [$selector, "css_element"];
+        $this->execute('behat_general::should_not_exist', $params);
+    }
+
+    /**
+     * Check that the manual completion button for the activity exists.
+     *
+     * @Given /^the manual completion button for "(?P<activityname>(?:[^"]|\\")*)" should exist/
+     * @param string $activityname The activity name.
+     */
+    public function the_manual_completion_button_for_activity_should_exist(string $activityname): void {
+        $selector = "div[data-activityname='$activityname'] button";
+
+        $params = [$selector, "css_element"];
+        $this->execute('behat_general::should_exist', $params);
+    }
+
+    /**
      * Check that the activity has the given automatic completion condition.
      *
      * @Given /^"(?P<activityname>(?:[^"]|\\")*)" should have the "(?P<conditionname>(?:[^"]|\\")*)" completion condition$/
