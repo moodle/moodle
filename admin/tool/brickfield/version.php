@@ -25,7 +25,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tool_brickfield';
-$plugin->release = '1.2 (Build - 2021031500)';
-$plugin->version = 2020101917;
-$plugin->requires = 2018051700; // Moodle 3.5 and up.
-$plugin->maturity = MATURITY_STABLE;
+$plugin->version = 2020101918;
+$plugin->requires = 2021042000;
