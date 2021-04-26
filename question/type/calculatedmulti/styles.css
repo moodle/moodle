@@ -25,4 +25,5 @@
 .que.calculatedmulti .answer div.r1 input {
     margin: 0.3rem 0.5rem;
     width: 14px;
+    flex-shrink: 0;
 }
