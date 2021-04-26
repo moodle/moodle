@@ -33,7 +33,9 @@ Feature: Restrict availability of the choice module to a deadline
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Choice name"
-    Then I should see "This activity is not available until"
+    Then "choice_1" "radio" should not exist
+    And "choice_2" "radio" should not exist
+    And "Save my choice" "button" should not exist
 
   Scenario: Enable the choice activity with a start deadline in the past
     Given I add a "Choice" to section "1" and I fill the form with:
@@ -85,4 +87,6 @@ Feature: Restrict availability of the choice module to a deadline
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Choice name"
-    Then I should see "This activity closed on"
+    Then "choice_1" "radio" should not exist
+    And "choice_2" "radio" should not exist
+    And "Save my choice" "button" should not exist

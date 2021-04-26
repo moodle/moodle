@@ -116,6 +116,7 @@ $string['options'] = 'Options';
 $string['page-mod-choice-x'] = 'Any choice module page';
 $string['pluginadministration'] = 'Choice administration';
 $string['pluginname'] = 'Choice';
+$string['previewing'] = 'This is just a preview of the available options for this activity. You will be able to make a choice when it opens.';
 $string['previewonly'] = 'This is just a preview of the available options for this activity. You will not be able to submit your choice until {$a}.';
 $string['privacy'] = 'Privacy of results';
 $string['privacy:metadata:choice_answers'] = 'Information about the user\'s chosen answer(s) for a given choice activity';
