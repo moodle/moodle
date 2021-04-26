@@ -108,30 +108,33 @@ class accessibility {
     }
 
     /**
-     * Get the relevant title with extra value concatenated on.
+     * Get the relevant title.
      * @param local\tool\filter $filter
      * @param int $countdata
-     * @param string $extra
      * @return string
      * @throws \coding_exception
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    public static function get_title(local\tool\filter $filter, int $countdata, string $extra = ''): string {
+    public static function get_title(local\tool\filter $filter, int $countdata): string {
         global $DB;
+
+        $tmp = new \stdClass();
+        $tmp->count = $countdata;
+        $langstr = 'title' . $filter->tab . 'partial';
 
         if ($filter->courseid != 0) {
             $thiscourse = get_fast_modinfo($filter->courseid)->get_course();
-            return get_string('course') . ': ' . $thiscourse->fullname . $extra;
+            $tmp->type = get_string('course');
+            $tmp->name = $thiscourse->fullname;
         } else if ($filter->categoryid != 0) {
             $category = $DB->get_record('course_categories', ['id' => $filter->categoryid]);
-            $tmp = new \stdClass();
-            $tmp->catname = $category->name;
-            $tmp->count = $countdata;
-            return get_string('allcoursescat', manager::PLUGINNAME, $tmp) . $extra;
+            $tmp->type = get_string('category');
+            $tmp->name = $category->name;
         } else {
-            return get_string('allcourses', manager::PLUGINNAME, $countdata) . $extra;
+            $langstr = 'title' . $filter->tab . 'all';
         }
+        return get_string($langstr, manager::PLUGINNAME, $tmp);
     }
 
     /**

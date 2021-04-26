@@ -44,8 +44,7 @@ class renderer extends \tool_brickfield\output\renderer {
         $templatedata = new \stdClass();
 
         // Set up the page information for the external renderer.
-        $templatedata->title = get_string('titlepertype', manager::PLUGINNAME) . ' : ' .
-            accessibility::get_title($filter, $data->countdata);
+        $templatedata->title = accessibility::get_title($filter, $data->countdata);
         $templatedata->chartdesc = get_string('pagedesc:checktype', manager::PLUGINNAME);
         $templatedata->chartdesctitle = get_string('pagedesctitle:checktype', manager::PLUGINNAME);
 

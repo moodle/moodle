@@ -62,6 +62,6 @@ class checktyperesults_test extends \advanced_testcase {
         $object->get_data();
         $output = $object->get_output();
         $this->assertIsString($output);
-        $this->assertStringContainsString('Results per content type :', $output);
+        $this->assertStringContainsString('Results per content type:', $output);
     }
 }

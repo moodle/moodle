@@ -70,15 +70,15 @@ class renderer extends \tool_brickfield\output\renderer {
 
         $div1 = \html_writer::div($this->pix_icon('f/award',
                 get_string('totalactivities', manager::PLUGINNAME), manager::PLUGINNAME).
-            get_string('totalactivities', manager::PLUGINNAME) . ': ' . $data->combodata['total'], '',
+            get_string('totalactivitiescount', manager::PLUGINNAME, $data->combodata['total']), '',
             ['class' => 'col-sm-3'.$css]);
         $div2 = \html_writer::div($this->pix_icon('f/done2',
                 get_string('passed', manager::PLUGINNAME), manager::PLUGINNAME).
-            get_string('passed', manager::PLUGINNAME) . ': ' . $data->combodata['passed'], '',
+            get_string('passedcount', manager::PLUGINNAME, $data->combodata['passed']), '',
             ['class' => 'col-sm-3'.$css]);
         $div3 = \html_writer::div($this->pix_icon('f/error',
                 get_string('failed', manager::PLUGINNAME), manager::PLUGINNAME).
-            get_string('failed', manager::PLUGINNAME) . ': ' . $data->combodata['failed'], '',
+            get_string('failedcount', manager::PLUGINNAME, $data->combodata['failed']), '',
             ['class' => 'col-sm-3'.$css]);
         $out .= \html_writer::div($div1.$div2.$div3, '', ['id' => 'rowa', 'class' => 'row h4']);
 
@@ -170,8 +170,7 @@ class renderer extends \tool_brickfield\output\renderer {
         $str4 .= \html_writer::table($table, true);
         $out .= \html_writer::div($str4, '', ['class' => 'col-sm-4']);
 
-        $str5 = \html_writer::tag('h4', get_string('titleerrors', manager::PLUGINNAME) .
-            get_string('titleerrorscount', manager::PLUGINNAME, $data->errordetailscount));
+        $str5 = \html_writer::tag('h4', get_string('titleerrorscount', manager::PLUGINNAME, $data->errordetailscount));
         $table = new \html_table();
         $table->head  = [
             get_string('tbltarget', manager::PLUGINNAME),
@@ -255,16 +254,19 @@ class renderer extends \tool_brickfield\output\renderer {
                 <tr>
                     <td>
                         <img src="' . $this->image_path() . 'tachometer-alt-solid.svg" width="15" height="15">' .
-                        ' <td style="line-height: 10px;"> '.get_string('totalactivities', manager::PLUGINNAME) . ': ' .
-                        $data->combodata['total'] .'</td></td>
+                        ' <td style="line-height: 10px;"> ' .
+                        get_string('totalactivitiescount', manager::PLUGINNAME, $data->combodata['total']) .
+                        '</td></td>
                     <td>
                         <img src="' . $this->image_path() . 'check-square-regular.svg" width="15" height="15">' .
-                        ' <td style="line-height: 10px;"> '.get_string('passed', manager::PLUGINNAME) . ': ' .
-                        $data->combodata['passed'] .'</td></td>
+                        ' <td style="line-height: 10px;"> ' .
+                        get_string('passedcount', manager::PLUGINNAME, $data->combodata['passed']) .
+                        '</td></td>
                     <td>
                         <img src="' . $this->image_path() . 'times-circle-regular.svg" width="15" height="15">' .
-                        ' <td style="line-height: 10px;"> '.get_string('failed', manager::PLUGINNAME) . ': ' .
-                        $data->combodata['failed'] .'</td></td>
+                        ' <td style="line-height: 10px;"> ' .
+                        get_string('failedcount', manager::PLUGINNAME, $data->combodata['failed']) .
+                        '</td></td>
                 </tr>
             </table>';
 

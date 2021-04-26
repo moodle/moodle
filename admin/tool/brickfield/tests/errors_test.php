@@ -54,13 +54,13 @@ class errors_test extends \advanced_testcase {
         $this->resetAfterTest();
         $category = $this->getDataGenerator()->create_category();
 
-        $filter = new filter(1, $category->id, 'tab', 3, 4);
+        $filter = new filter(1, $category->id, 'errors', 3, 4);
         $filter->courseids = [];
 
         $object = new errors();
         $object->set_filter($filter);
         $output = $object->get_output();
         $this->assertIsString($output);
-        $this->assertStringContainsString('Error details :', $output);
+        $this->assertStringContainsString('Error details:', $output);
     }
 }

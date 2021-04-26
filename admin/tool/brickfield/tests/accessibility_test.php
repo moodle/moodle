@@ -42,28 +42,22 @@ class accessibility_test extends \advanced_testcase {
 
         // Testing the else statement.
         $output = $object->get_title($filter, 0);
-        $this->assertEquals($output, 'All reviewed courses (0)');
+        $this->assertEquals($output, 'Error details: All reviewed courses (0 courses)');
         $output = $object->get_title($filter, 5);
-        $this->assertEquals($output, 'All reviewed courses (5)');
-        $output = $object->get_title($filter, 0, ' extra text');
-        $this->assertEquals($output, 'All reviewed courses (0) extra text');
+        $this->assertEquals($output, 'Error details: All reviewed courses (5 courses)');
 
         // Testing the if statement.
         $filter->courseid = 1;
         $output = $object->get_title($filter, 0);
-        $this->assertEquals($output, 'Course: PHPUnit test site');
-        $output = $object->get_title($filter, 1, ' extra text');
-        $this->assertEquals($output, 'Course: PHPUnit test site extra text');
+        $this->assertEquals($output, 'Error details: Course PHPUnit test site');
 
         // Testing the else if statement.
         $filter->categoryid = 1;
         $filter->courseid = 0;
         $output = $object->get_title($filter, 0);
-        $this->assertEquals($output, 'All reviewed courses for category Miscellaneous (0)');
+        $this->assertEquals($output, 'Error details: Category Miscellaneous');
         $output = $object->get_title($filter, 2);
-        $this->assertEquals($output, 'All reviewed courses for category Miscellaneous (2)');
-        $output = $object->get_title($filter, 3, ' extra text');
-        $this->assertEquals($output, 'All reviewed courses for category Miscellaneous (3) extra text');
+        $this->assertEquals($output, 'Error details: Category Miscellaneous');
     }
 
     /**
