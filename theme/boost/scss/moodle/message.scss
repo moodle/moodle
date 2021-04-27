@@ -74,61 +74,6 @@
                 height: 30px;
                 line-height: 30px;
             }
-            .preference-state {
-                margin: 0;
-                padding: 0;
-                display: inline-block;
-                vertical-align: middle;
-
-                input[type="checkbox"]:checked + .preference-state-status-container {
-                    background-color: #5cb85c;
-
-                    .on-text {
-                        display: inline-block;
-                    }
-                    .off-text {
-                        display: none;
-                    }
-                }
-                .preference-state-status-container {
-                    width: 30px;
-                    height: 30px;
-                    line-height: 30px;
-                    text-align: center;
-                    border-radius: 4px;
-                    background-color: #d9534f;
-                    color: #fff;
-                    cursor: pointer;
-
-                    .loading-icon {
-                        display: none;
-                    }
-                    .on-text {
-                        display: none;
-                    }
-                    .off-text {
-                        display: inline-block;
-                    }
-                }
-                &.loading {
-                    input[type="checkbox"]:checked + .preference-state-status-container {
-                        .on-text,
-                        .off-text {
-                            display: none;
-                        }
-                    }
-
-                    .preference-state-status-container {
-                        .on-text,
-                        .off-text {
-                            display: none;
-                        }
-                        .loading-icon {
-                            display: block;
-                        }
-                    }
-                }
-            }
             &.loading {
                 .preference-name {
                     .loading-icon {
