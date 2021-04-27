@@ -11,14 +11,14 @@ Feature: Brickfield activityresults
       | label    | Label two | <a href="modle.org">Click here</a> | C1     | id002    |
 
   @javascript
-  Scenario: Test the Brickfield accessibility reports plugin
+  Scenario: Test the Brickfield accessibility tool plugin
     Given I log in as "admin"
     And I navigate to "Plugins > Admin tools > Accessibility > Brickfield registration" in site administration
     And I set the field "id_key" to "123456789012345678901234567890ab"
     And I set the field "id_hash" to "ab123456789012345678901234567890"
     And I press "Activate"
     Then I should see "Your accessibility toolkit is still being validated."
-    And I navigate to "Plugins > Admin tools > Accessibility > Go to reports" in site administration
+    And I navigate to "Plugins > Admin tools > Accessibility > Reports" in site administration
     And I press "Submit for analysis"
     Then I should see "The global (course independent) content has been scheduled for analysis."
     And I am on "Course 1" course homepage
@@ -39,7 +39,7 @@ Feature: Brickfield activityresults
     And I set the field "id_key" to "123456789012345678901234567890ab"
     And I set the field "id_hash" to "ab123456789012345678901234567890"
     And I press "Activate"
-    And I navigate to "Plugins > Admin tools > Accessibility > Go to reports" in site administration
+    And I navigate to "Plugins > Admin tools > Accessibility > Reports" in site administration
     And I should see "Error details: All reviewed courses (2 courses)"
     And I follow "Activity breakdown"
     Then I should see "Results per activity: All reviewed courses (2 courses)"
