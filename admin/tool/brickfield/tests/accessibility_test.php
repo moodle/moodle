@@ -42,22 +42,14 @@ class accessibility_test extends \advanced_testcase {
 
         // Testing the else statement.
         $output = $object->get_title($filter, 0);
-        $this->assertEquals($output, 'Error details: All reviewed courses (0 courses)');
+        $this->assertEquals($output, 'Error details: all reviewed courses (0 courses)');
         $output = $object->get_title($filter, 5);
-        $this->assertEquals($output, 'Error details: All reviewed courses (5 courses)');
+        $this->assertEquals($output, 'Error details: all reviewed courses (5 courses)');
 
         // Testing the if statement.
         $filter->courseid = 1;
         $output = $object->get_title($filter, 0);
-        $this->assertEquals($output, 'Error details: Course PHPUnit test site');
-
-        // Testing the else if statement.
-        $filter->categoryid = 1;
-        $filter->courseid = 0;
-        $output = $object->get_title($filter, 0);
-        $this->assertEquals($output, 'Error details: Category Miscellaneous');
-        $output = $object->get_title($filter, 2);
-        $this->assertEquals($output, 'Error details: Category Miscellaneous');
+        $this->assertEquals($output, 'Error details: course PHPUnit test site');
     }
 
     /**
