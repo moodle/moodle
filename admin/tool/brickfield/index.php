@@ -35,6 +35,7 @@ use tool_brickfield\scheduler;
 use tool_brickfield\task\process_analysis_requests;
 
 require('../../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 
 // If this feature has been disabled, do nothing.
 accessibility::require_accessibility_enabled();
@@ -110,7 +111,12 @@ $url = new moodle_url($navurl, ['tab' => $tab, 'perpage' => $perpage]);
 
 $tool->set_filter(new filter($courseid, $categoryid, $tab, $page, $perpage, $url, $target));
 
-$PAGE->navigation->override_active_url($navurl);
+// Course and site require different navigation setups.
+if ($courseid > SITEID) {
+    $PAGE->navigation->override_active_url($navurl);
+} else {
+    admin_externalpage_setup('tool_brickfield_reports', '', null, '', ['pagelayout' => 'report']);
+}
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout($layout);
