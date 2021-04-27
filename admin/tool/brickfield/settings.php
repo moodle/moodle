@@ -77,8 +77,9 @@ if ($hassiteconfig) {
         manager::PLUGINNAME . '/analysistype',
         get_string('analysistype', manager::PLUGINNAME),
         get_string('analysistype_desc', manager::PLUGINNAME),
+        analysis::ANALYSISDISABLED,
         analysis::ANALYSISBYREQUEST,
-        analysis::ANALYSISBYREQUEST
+        analysis::ANALYSISDISABLED
     ));
 
     $settings->add(new admin_setting_configcheckbox(
