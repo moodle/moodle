@@ -63,7 +63,7 @@ if ($hassiteconfig) {
         )
     );
 
-    $settings = new admin_settingpage(manager::PLUGINNAME, get_string('settings'));
+    $settings = new admin_settingpage(manager::PLUGINNAME, get_string('settings', manager::PLUGINNAME));
 
     $settings->add(new admin_setting_description(
         manager::PLUGINNAME . '/logo', '',

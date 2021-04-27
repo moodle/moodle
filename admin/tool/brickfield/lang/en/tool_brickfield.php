@@ -122,6 +122,7 @@ $string['schedule:requestanalysis'] = 'Submit for analysis';
 $string['schedule:scheduled'] = 'This course has been scheduled for analysis.';
 $string['schedule:sitenotscheduled'] = 'The global (course independent) content has not yet been scheduled for analysis, to find common accessibility issues.</p><p>By clicking on the "Submit for analysis" button, you confirm that you want all your relevant global (course independant) content to be scheduled for analysis.</p><p>This analysis will conduct multiple common accessibility checks on this content, and those results will then display on these Accessibility toolkit report pages.</p><p>Please view the <a href="{$a}">Accessibility toolkit help page</a> for further details.</p><p>This analysis will be processed in the background, by the Moodle scheduled tasks, so its speed of completion will depend on task timings and task run schedules.';
 $string['schedule:sitescheduled'] = 'The global (course independent) content has been scheduled for analysis.';
+$string['settings'] = 'Accessibility tool settings';
 $string['taberrors'] = 'Check Errors';
 $string['targetavetitle'] = 'Average errors per activity';
 $string['targetpercentage'] = 'Percentage of instances passed/not per activity';
