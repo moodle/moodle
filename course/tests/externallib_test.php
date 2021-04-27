@@ -1437,8 +1437,9 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $result = core_course_external::get_course_contents($course->id);
         $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
         $this->assertCount(1, $result[0]['modules']);   // One module, first section.
-        $customdata = unserialize(json_decode($result[0]['modules'][0]['customdata']));
-        $this->assertEquals('text/plain', $customdata['filedetails']['mimetype']);
+        $customdata = json_decode($result[0]['modules'][0]['customdata']);
+        $displayoptions = unserialize($customdata->displayoptions);
+        $this->assertEquals('text/plain', $displayoptions['filedetails']['mimetype']);
     }
 
     /**
