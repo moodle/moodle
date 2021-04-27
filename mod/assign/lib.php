@@ -485,10 +485,11 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
  *                        will know about (most noticeably, an icon).
  */
 function assign_get_coursemodule_info($coursemodule) {
-    global $CFG, $DB;
+    global $DB;
 
     $dbparams = array('id'=>$coursemodule->instance);
-    $fields = 'id, name, alwaysshowdescription, allowsubmissionsfromdate, intro, introformat, completionsubmit';
+    $fields = 'id, name, alwaysshowdescription, allowsubmissionsfromdate, intro, introformat, completionsubmit,
+        duedate, cutoffdate, allowsubmissionsfromdate';
     if (! $assignment = $DB->get_record('assign', $dbparams, $fields)) {
         return false;
     }
@@ -507,7 +508,80 @@ function assign_get_coursemodule_info($coursemodule) {
         $result->customdata['customcompletionrules']['completionsubmit'] = $assignment->completionsubmit;
     }
 
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($assignment->duedate) {
+        $result->customdata['duedate'] = $assignment->duedate;
+    }
+    if ($assignment->cutoffdate) {
+        $result->customdata['cutoffdate'] = $assignment->cutoffdate;
+    }
+    if ($assignment->allowsubmissionsfromdate) {
+        $result->customdata['allowsubmissionsfromdate'] = $assignment->allowsubmissionsfromdate;
+    }
+
     return $result;
+}
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ *
+ * @param cm_info $cm
+ */
+function mod_assign_cm_info_dynamic(cm_info $cm) {
+    global $USER;
+
+    $cache = cache::make('mod_assign', 'overrides');
+    $override = $cache->get("{$cm->instance}_u_{$USER->id}");
+
+    if (!$override) {
+        $override = (object) [
+            'allowsubmissionsfromdate' => null,
+            'duedate' => null,
+            'cutoffdate' => null,
+        ];
+    }
+
+    // No need to look for group overrides if there are user overrides for all allowsubmissionsfromdate, duedate and cutoffdate.
+    if (is_null($override->allowsubmissionsfromdate) || is_null($override->duedate) || is_null($override->cutoffdate)) {
+        $selectedgroupoverride = (object) [
+            'allowsubmissionsfromdate' => null,
+            'duedate' => null,
+            'cutoffdate' => null,
+            'sortorder' => PHP_INT_MAX, // So that every sortorder read from DB is less than this.
+        ];
+        $groupings = groups_get_user_groups($cm->course, $USER->id);
+        foreach ($groupings[0] as $groupid) {
+            $groupoverride = $cache->get("{$cm->instance}_g_{$groupid}");
+            if ($groupoverride) {
+                if ($groupoverride->sortorder < $selectedgroupoverride->sortorder) {
+                    $selectedgroupoverride = $groupoverride;
+                }
+            }
+        }
+        // If there is a user override for a setting, ignore the group override.
+        if (is_null($override->allowsubmissionsfromdate)) {
+            $override->allowsubmissionsfromdate = $selectedgroupoverride->allowsubmissionsfromdate;
+        }
+        if (is_null($override->duedate)) {
+            $override->duedate = $selectedgroupoverride->duedate;
+        }
+        if (is_null($override->cutoffdate)) {
+            $override->cutoffdate = $selectedgroupoverride->cutoffdate;
+        }
+    }
+
+    // Populate some other values that can be used in calendar or on dashboard.
+    if (!is_null($override->allowsubmissionsfromdate)) {
+        $cm->override_customdata('allowsubmissionsfromdate', $override->allowsubmissionsfromdate);
+    }
+    if (!is_null($override->duedate)) {
+        $cm->override_customdata('duedate', $override->duedate);
+    }
+    if (!is_null($override->cutoffdate)) {
+        $cm->override_customdata('cutoffdate', $override->cutoffdate);
+    }
 }
 
 /**

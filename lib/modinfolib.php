@@ -701,7 +701,7 @@ class course_modinfo {
  * {@link cached_cm_info}
  *
  * <b>Stage 2 - dynamic data.</b>
- * Dynamic data is user-dependend, it is stored in request-level cache. To reset this cache
+ * Dynamic data is user-dependent, it is stored in request-level cache. To reset this cache
  * {@link get_fast_modinfo()} with $reset argument may be called.
  *
  * Dynamic data is obtained when any of the following properties/methods is requested:
@@ -722,6 +722,7 @@ class course_modinfo {
  * - {@link cm_info::set_user_visible()}
  * - {@link cm_info::set_on_click()}
  * - {@link cm_info::set_icon_url()}
+ * - {@link cm_info::override_customdata()}
  * Any methods affecting view elements can also be set in this callback.
  *
  * <b>Stage 3 (view data).</b>
@@ -1419,9 +1420,15 @@ class cm_info implements IteratorAggregate {
         return $this->onclick;
     }
     /**
+     * Getter method for property $customdata, ensures that dynamic data is retrieved.
+     *
+     * This method is normally called by the property ->customdata, but can be called directly if there
+     * is a case when it might be called recursively (you can't call property values recursively).
+     *
      * @return mixed Optional custom data stored in modinfo cache for this activity, or null if none
      */
-    private function get_custom_data() {
+    public function get_custom_data() {
+        $this->obtain_dynamic_data();
         return $this->customdata;
     }
 
@@ -1680,6 +1687,19 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
+     * Overrides the value of an element in the customdata array.
+     *
+     * @param string $name The key in the customdata array
+     * @param mixed $value The value
+     */
+    public function override_customdata($name, $value) {
+        if (!is_array($this->customdata)) {
+            $this->customdata = [];
+        }
+        $this->customdata[$name] = $value;
+    }
+
+    /**
      * Sets HTML that displays after link on course view page.
      * @param string $afterlink HTML string (empty string if none)
      * @return void
@@ -1881,7 +1901,8 @@ class cm_info implements IteratorAggregate {
      * the module or not.
      *
      * As part of this function, the module's _cm_info_dynamic function from its lib.php will
-     * be called (if it exists).
+     * be called (if it exists). Make sure that the functions that are called here do not use
+     * any getter magic method from cm_info.
      * @return void
      */
     private function obtain_dynamic_data() {

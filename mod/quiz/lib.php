@@ -234,10 +234,12 @@ function quiz_delete_override($quiz, $overrideid, $log = true) {
         // Create the search array for a group override.
         $eventsearcharray = array('modulename' => 'quiz',
             'instance' => $quiz->id, 'groupid' => (int)$override->groupid);
+        $cachekey = "{$quiz->id}_g_{$override->groupid}";
     } else {
         // Create the search array for a user override.
         $eventsearcharray = array('modulename' => 'quiz',
             'instance' => $quiz->id, 'userid' => (int)$override->userid);
+        $cachekey = "{$quiz->id}_u_{$override->userid}";
     }
     $events = $DB->get_records('event', $eventsearcharray);
     foreach ($events as $event) {
@@ -246,6 +248,7 @@ function quiz_delete_override($quiz, $overrideid, $log = true) {
     }
 
     $DB->delete_records('quiz_overrides', array('id' => $overrideid));
+    cache::make('mod_quiz', 'overrides')->delete($cachekey);
 
     if ($log) {
         // Set the common parameters for one of the events we will be triggering.
@@ -1538,6 +1541,8 @@ function quiz_reset_userdata($data) {
             'error' => false);
     }
 
+    $purgeoverrides = false;
+
     // Remove user overrides.
     if (!empty($data->reset_quiz_user_overrides)) {
         $DB->delete_records_select('quiz_overrides',
@@ -1546,6 +1551,7 @@ function quiz_reset_userdata($data) {
             'component' => $componentstr,
             'item' => get_string('useroverridesdeleted', 'quiz'),
             'error' => false);
+        $purgeoverrides = true;
     }
     // Remove group overrides.
     if (!empty($data->reset_quiz_group_overrides)) {
@@ -1555,6 +1561,7 @@ function quiz_reset_userdata($data) {
             'component' => $componentstr,
             'item' => get_string('groupoverridesdeleted', 'quiz'),
             'error' => false);
+        $purgeoverrides = true;
     }
 
     // Updating dates - shift may be negative too.
@@ -1568,6 +1575,8 @@ function quiz_reset_userdata($data) {
                        WHERE quiz IN (SELECT id FROM {quiz} WHERE course = ?)
                          AND timeclose <> 0", array($data->timeshift, $data->courseid));
 
+        $purgeoverrides = true;
+
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
         shift_course_mod_dates('quiz', array('timeopen', 'timeclose'),
@@ -1577,6 +1586,10 @@ function quiz_reset_userdata($data) {
             'component' => $componentstr,
             'item' => get_string('openclosedatesupdated', 'quiz'),
             'error' => false);
+    }
+
+    if ($purgeoverrides) {
+        cache::make('mod_quiz', 'overrides')->purge();
     }
 
     return $status;
@@ -2079,7 +2092,8 @@ function quiz_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionattemptsexhausted, completionpass, completionminattempts';
+    $fields = 'id, name, intro, introformat, completionattemptsexhausted, completionpass, completionminattempts,
+        timeopen, timeclose';
     if (!$quiz = $DB->get_record('quiz', $dbparams, $fields)) {
         return false;
     }
@@ -2106,7 +2120,71 @@ function quiz_get_coursemodule_info($coursemodule) {
         $result->customdata['customcompletionrules']['completionminattempts'] = $quiz->completionminattempts;
     }
 
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($quiz->timeopen) {
+        $result->customdata['timeopen'] = $quiz->timeopen;
+    }
+    if ($quiz->timeclose) {
+        $result->customdata['timeclose'] = $quiz->timeclose;
+    }
+
     return $result;
+}
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ *
+ * @param cm_info $cm
+ */
+function mod_quiz_cm_info_dynamic(cm_info $cm) {
+    global $USER;
+
+    $cache = cache::make('mod_quiz', 'overrides');
+    $override = $cache->get("{$cm->instance}_u_{$USER->id}");
+
+    if (!$override) {
+        $override = (object) [
+            'timeopen' => null,
+            'timeclose' => null,
+        ];
+    }
+
+    // No need to look for group overrides if there are user overrides for both timeopen and timeclose.
+    if (is_null($override->timeopen) || is_null($override->timeclose)) {
+        $opens = [];
+        $closes = [];
+        $groupings = groups_get_user_groups($cm->course, $USER->id);
+        foreach ($groupings[0] as $groupid) {
+            $groupoverride = $cache->get("{$cm->instance}_g_{$groupid}");
+            if (isset($groupoverride->timeopen)) {
+                $opens[] = $groupoverride->timeopen;
+            }
+            if (isset($groupoverride->timeclose)) {
+                $closes[] = $groupoverride->timeclose;
+            }
+        }
+        // If there is a user override for a setting, ignore the group override.
+        if (is_null($override->timeopen) && count($opens)) {
+            $override->timeopen = min($opens);
+        }
+        if (is_null($override->timeclose) && count($closes)) {
+            if (in_array(0, $closes)) {
+                $override->timeclose = 0;
+            } else {
+                $override->timeclose = max($closes);
+            }
+        }
+    }
+
+    // Populate some other values that can be used in calendar or on dashboard.
+    if (!is_null($override->timeopen)) {
+        $cm->override_customdata('timeopen', $override->timeopen);
+    }
+    if (!is_null($override->timeclose)) {
+        $cm->override_customdata('timeclose', $override->timeclose);
+    }
 }
 
 /**

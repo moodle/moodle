@@ -1121,7 +1121,9 @@ class completion_info {
         // Custom activity module completion data.
 
         // Cast custom data to array before checking for custom completion rules.
-        $customdata = (array)$cm->customdata;
+        // We call ->get_custom_data() instead of ->customdata here because there is the chance of recursive calling,
+        // and we cannot call a getter from a getter in PHP.
+        $customdata = (array) $cm->get_custom_data();
         // Return early if the plugin does not define custom completion rules.
         if (empty($customdata['customcompletionrules'])) {
             return $data;

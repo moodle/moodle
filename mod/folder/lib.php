@@ -439,7 +439,7 @@ function folder_get_coursemodule_info($cm) {
  * @param cm_info $cm
  */
 function folder_cm_info_dynamic(cm_info $cm) {
-    if ($cm->customdata) {
+    if ($cm->get_custom_data()) {
         // the field 'customdata' is not empty IF AND ONLY IF we display contens inline
         $cm->set_no_view_link();
     }

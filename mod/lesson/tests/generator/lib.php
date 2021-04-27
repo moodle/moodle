@@ -426,4 +426,27 @@ class mod_lesson_generator extends testing_module_generator {
         $page = lesson_page::create((object)$record, new lesson($lesson), $context, $CFG->maxbytes);
         return $DB->get_record('lesson_pages', array('id' => $page->id), '*', MUST_EXIST);
     }
+
+    /**
+     * Create a lesson override (either user or group).
+     *
+     * @param array $data must specify lessonid, and one of userid or groupid.
+     */
+    public function create_override(array $data): void {
+        global $DB;
+
+        if (!isset($data['lessonid'])) {
+            throw new coding_exception('Must specify lessonid when creating a lesson override.');
+        }
+
+        if (!isset($data['userid']) && !isset($data['groupid'])) {
+            throw new coding_exception('Must specify one of userid or groupid when creating a lesson override.');
+        }
+
+        if (isset($data['userid']) && isset($data['groupid'])) {
+            throw new coding_exception('Cannot specify both userid and groupid when creating a lesson override.');
+        }
+
+        $DB->insert_record('lesson_overrides', (object) $data);
+    }
 }
