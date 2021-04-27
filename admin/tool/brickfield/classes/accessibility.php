@@ -125,12 +125,7 @@ class accessibility {
 
         if ($filter->courseid != 0) {
             $thiscourse = get_fast_modinfo($filter->courseid)->get_course();
-            $tmp->type = get_string('course');
             $tmp->name = $thiscourse->fullname;
-        } else if ($filter->categoryid != 0) {
-            $category = $DB->get_record('course_categories', ['id' => $filter->categoryid]);
-            $tmp->type = get_string('category');
-            $tmp->name = $category->name;
         } else {
             $langstr = 'title' . $filter->tab . 'all';
         }
