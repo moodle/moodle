@@ -15110,40 +15110,6 @@ a.ygtvspacer:hover {
     text-align: center;
     height: 30px;
     line-height: 30px; }
-  .preferences-container .preference-table .preference-row .preference-state {
-    margin: 0;
-    padding: 0;
-    display: inline-block;
-    vertical-align: middle; }
-    .preferences-container .preference-table .preference-row .preference-state input[type="checkbox"]:checked + .preference-state-status-container {
-      background-color: #5cb85c; }
-      .preferences-container .preference-table .preference-row .preference-state input[type="checkbox"]:checked + .preference-state-status-container .on-text {
-        display: inline-block; }
-      .preferences-container .preference-table .preference-row .preference-state input[type="checkbox"]:checked + .preference-state-status-container .off-text {
-        display: none; }
-    .preferences-container .preference-table .preference-row .preference-state .preference-state-status-container {
-      width: 30px;
-      height: 30px;
-      line-height: 30px;
-      text-align: center;
-      border-radius: 4px;
-      background-color: #d9534f;
-      color: #fff;
-      cursor: pointer; }
-      .preferences-container .preference-table .preference-row .preference-state .preference-state-status-container .loading-icon {
-        display: none; }
-      .preferences-container .preference-table .preference-row .preference-state .preference-state-status-container .on-text {
-        display: none; }
-      .preferences-container .preference-table .preference-row .preference-state .preference-state-status-container .off-text {
-        display: inline-block; }
-    .preferences-container .preference-table .preference-row .preference-state.loading input[type="checkbox"]:checked + .preference-state-status-container .on-text,
-    .preferences-container .preference-table .preference-row .preference-state.loading input[type="checkbox"]:checked + .preference-state-status-container .off-text {
-      display: none; }
-    .preferences-container .preference-table .preference-row .preference-state.loading .preference-state-status-container .on-text,
-    .preferences-container .preference-table .preference-row .preference-state.loading .preference-state-status-container .off-text {
-      display: none; }
-    .preferences-container .preference-table .preference-row .preference-state.loading .preference-state-status-container .loading-icon {
-      display: block; }
   .preferences-container .preference-table .preference-row.loading .preference-name .loading-icon {
     display: block; }
 
