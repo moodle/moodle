@@ -12,6 +12,8 @@ Feature: Block accessreview results
       | activity | name      | intro                              | course | idnumber |
       | label    | Label one | <b>Bold text is bold.</b>          | C1     | id001    |
       | label    | Label two | <a href="modle.org">Click here</a> | C1     | id002    |
+    And the following config values are set as admin:
+      | analysistype | 1 | tool_brickfield |
 
   Scenario: View accessreview block results on a course
     Given I log in as "admin"

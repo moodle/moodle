@@ -8,6 +8,8 @@ Feature: Block accessreview
     Given the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1        | topics |
+    And the following config values are set as admin:
+      | analysistype | 1 | tool_brickfield |
 
   Scenario: View accessreview block on a course
     Given I log in as "admin"
