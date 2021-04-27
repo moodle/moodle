@@ -38,10 +38,10 @@
     ], "noSelectionString": "No selection" }
 }}
 {{#items}}
-    <span role="option" data-value="{{value}}" aria-selected="true" class="badge badge-info mb-3 mr-1" style="font-size: 100%">
+    <span role="option" data-value="{{value}}" aria-selected="true" class="badge badge-secondary m-1" style="font-size: 100%">
         <span aria-hidden="true">× </span>{{{label}}}
     </span>
 {{/items}}
 {{^items}}
-    <span class="mb-3 mr-1">{{noSelectionString}}</span>
+    <span class="m-1 h-5">{{noSelectionString}}</span>
 {{/items}}

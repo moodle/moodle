@@ -11586,7 +11586,9 @@ dd:after {
     .inplaceeditable.inplaceeditingon input {
       width: 330px;
       vertical-align: text-bottom;
-      margin-bottom: 0; } }
+      margin-bottom: 0; }
+      .inplaceeditable.inplaceeditingon input[role="combobox"] {
+        width: auto; } }
   .inplaceeditable.inplaceeditingon select {
     margin-bottom: 0; }
 
@@ -17595,7 +17597,7 @@ fieldset.coursesearchbox label {
   vertical-align: bottom; }
 
 .form-autocomplete-selection {
-  margin: 0.25rem;
+  margin: 0.25rem 0;
   min-height: 2.375rem; }
 
 .form-autocomplete-selection [role=option] {
@@ -17646,8 +17648,7 @@ fieldset.coursesearchbox label {
   vertical-align: middle; }
 
 .form-autocomplete-selection [data-active-selection=true] {
-  padding: 0.5em;
-  font-size: large; }
+  box-shadow: 0 0 0 0.2rem rgba(15, 108, 191, 0.75); }
 
 select.form-control[size], select.form-control[multiple] {
   padding-right: 0; }
