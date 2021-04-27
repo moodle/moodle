@@ -925,23 +925,27 @@ function lesson_reset_userdata($data) {
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallattempts', 'lesson'), 'error'=>false);
     }
 
+    $purgeoverrides = false;
+
     // Remove user overrides.
     if (!empty($data->reset_lesson_user_overrides)) {
         $DB->delete_records_select('lesson_overrides',
                 'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND userid IS NOT NULL', array($data->courseid));
         $status[] = array(
-        'component' => $componentstr,
-        'item' => get_string('useroverridesdeleted', 'lesson'),
-        'error' => false);
+            'component' => $componentstr,
+            'item' => get_string('useroverridesdeleted', 'lesson'),
+            'error' => false);
+        $purgeoverrides = true;
     }
     // Remove group overrides.
     if (!empty($data->reset_lesson_group_overrides)) {
         $DB->delete_records_select('lesson_overrides',
         'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND groupid IS NOT NULL', array($data->courseid));
         $status[] = array(
-        'component' => $componentstr,
-        'item' => get_string('groupoverridesdeleted', 'lesson'),
-        'error' => false);
+            'component' => $componentstr,
+            'item' => get_string('groupoverridesdeleted', 'lesson'),
+            'error' => false);
+        $purgeoverrides = true;
     }
     /// updating dates - shift may be negative too
     if ($data->timeshift) {
@@ -954,10 +958,16 @@ function lesson_reset_userdata($data) {
                        WHERE lessonid IN (SELECT id FROM {lesson} WHERE course = ?)
                          AND deadline <> 0", array($data->timeshift, $data->courseid));
 
+        $purgeoverrides = true;
+
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
         shift_course_mod_dates('lesson', array('available', 'deadline'), $data->timeshift, $data->courseid);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+    }
+
+    if ($purgeoverrides) {
+        cache::make('mod_lesson', 'overrides')->purge();
     }
 
     return $status;
@@ -1497,7 +1507,7 @@ function lesson_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionendreached, completiontimespent';
+    $fields = 'id, name, intro, introformat, completionendreached, completiontimespent, available, deadline';
     if (!$lesson = $DB->get_record('lesson', $dbparams, $fields)) {
         return false;
     }
@@ -1516,7 +1526,71 @@ function lesson_get_coursemodule_info($coursemodule) {
         $result->customdata['customcompletionrules']['completiontimespent'] = $lesson->completiontimespent;
     }
 
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($lesson->available) {
+        $result->customdata['available'] = $lesson->available;
+    }
+    if ($lesson->deadline) {
+        $result->customdata['deadline'] = $lesson->deadline;
+    }
+
     return $result;
+}
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ *
+ * @param cm_info $cm
+ */
+function mod_lesson_cm_info_dynamic(cm_info $cm) {
+    global $USER;
+
+    $cache = cache::make('mod_lesson', 'overrides');
+    $override = $cache->get("{$cm->instance}_u_{$USER->id}");
+
+    if (!$override) {
+        $override = (object) [
+            'available' => null,
+            'deadline' => null,
+        ];
+    }
+
+    // No need to look for group overrides if there are user overrides for both available and deadline.
+    if (is_null($override->available) || is_null($override->deadline)) {
+        $availables = [];
+        $deadlines = [];
+        $groupings = groups_get_user_groups($cm->course, $USER->id);
+        foreach ($groupings[0] as $groupid) {
+            $groupoverride = $cache->get("{$cm->instance}_g_{$groupid}");
+            if (isset($groupoverride->available)) {
+                $availables[] = $groupoverride->available;
+            }
+            if (isset($groupoverride->deadline)) {
+                $deadlines[] = $groupoverride->deadline;
+            }
+        }
+        // If there is a user override for a setting, ignore the group override.
+        if (is_null($override->available) && count($availables)) {
+            $override->available = min($availables);
+        }
+        if (is_null($override->deadline) && count($deadlines)) {
+            if (in_array(0, $deadlines)) {
+                $override->deadline = 0;
+            } else {
+                $override->deadline = max($deadlines);
+            }
+        }
+    }
+
+    // Populate some other values that can be used in calendar or on dashboard.
+    if (!is_null($override->available)) {
+        $cm->override_customdata('available', $override->available);
+    }
+    if (!is_null($override->deadline)) {
+        $cm->override_customdata('deadline', $override->deadline);
+    }
 }
 
 /**

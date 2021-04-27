@@ -59,4 +59,28 @@ class mod_assign_generator extends testing_module_generator {
 
         return parent::create_instance($record, (array)$options);
     }
+
+    /**
+     * Create an assign override (either user or group).
+     *
+     * @param array $data must specify assignid, and one of userid or groupid.
+     * @throws coding_exception
+     */
+    public function create_override(array $data): void {
+        global $DB;
+
+        if (!isset($data['assignid'])) {
+            throw new coding_exception('Must specify assignid when creating an assign override.');
+        }
+
+        if (!isset($data['userid']) && !isset($data['groupid'])) {
+            throw new coding_exception('Must specify one of userid or groupid when creating an assign override.');
+        }
+
+        if (isset($data['userid']) && isset($data['groupid'])) {
+            throw new coding_exception('Cannot specify both userid and groupid when creating an assign override.');
+        }
+
+        $DB->insert_record('assign_overrides', (object) $data);
+    }
 }
