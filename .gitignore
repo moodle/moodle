@@ -26,11 +26,13 @@
 /cscope.*
 /.patches/
 /.idea/
+.phpstorm.*
 /nbproject/
 CVS
 .DS_Store
 /.settings/
 /.project
+.phpstorm.*
 /.buildpath
 /.cache
 .phpunit.result.cache
