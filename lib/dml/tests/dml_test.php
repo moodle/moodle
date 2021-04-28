@@ -4141,6 +4141,47 @@ EOD;
         // $this->assertEquals(3, count($records), 'Accent insensitive LIKE searches may not be supported in all databases, this is not a problem.');
     }
 
+    /**
+     * Test DML libraries sql_like_escape method
+     */
+    public function test_sql_like_escape(): void {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $dbman->create_table($table);
+
+        $tablename = $table->getName();
+
+        // Two of the records contain LIKE characters (%_), plus square brackets supported only by SQL Server (and '^-' which
+        // should be ignored by SQL Server given they only have meaning inside square brackets).
+        $DB->insert_record($tablename, (object) ['name' => 'lionel']);
+        $DB->insert_record($tablename, (object) ['name' => 'lionel%_^-[0]']);
+        $DB->insert_record($tablename, (object) ['name' => 'rick']);
+        $DB->insert_record($tablename, (object) ['name' => 'rick%_^-[0]']);
+
+        $select = $DB->sql_like('name', ':namelike');
+        $params = ['namelike' => '%' . $DB->sql_like_escape('%_^-[0]')];
+
+        // All drivers should return our two records containing wildcard characters.
+        $this->assertEqualsCanonicalizing([
+            'lionel%_^-[0]',
+            'rick%_^-[0]',
+        ], $DB->get_fieldset_select($tablename, 'name', $select, $params));
+
+        // Test for unbalanced brackets.
+        $select = $DB->sql_like('name', ':namelike');
+        $params = ['namelike' => '%' . $DB->sql_like_escape('[') . '%'];
+
+        $this->assertEqualsCanonicalizing([
+            'lionel%_^-[0]',
+            'rick%_^-[0]',
+        ], $DB->get_fieldset_select($tablename, 'name', $select, $params));
+    }
+
     public function test_coalesce() {
         $DB = $this->tdb;
 
