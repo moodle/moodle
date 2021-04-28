@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.10.4 ===
+* The third-party library h5p/h5plib/v124/core has been updated to version 1.24.2.
+
 === 3.10 ===
 * Added a new cache for h5p_library_files (MDL-69207)
 
