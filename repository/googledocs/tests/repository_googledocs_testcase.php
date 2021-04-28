@@ -54,6 +54,7 @@ abstract class repository_googledocs_testcase extends \advanced_testcase {
      *
      * @param string $id The ID of the file
      * @param string $name The name of the file
+     * @param string $title The title of the file node
      * @param string|null $size The size of the file
      * @param string $modified The date of the last modification
      * @param string $thumbnail The thumbnail of the file
@@ -61,12 +62,12 @@ abstract class repository_googledocs_testcase extends \advanced_testcase {
      * @param string|null $exportformat The export format of the file
      * @return array The repository file node array
      */
-    protected function create_file_content_node_array(string $id, string $name, ?string $size = null,
+    protected function create_file_content_node_array(string $id, string $name, string $title, ?string $size = null,
             string $modified = '', string $thumbnail = '' , string $link = '', string $exportformat = ''): array {
 
         return [
             'id' => $id,
-            'title' => $name,
+            'title' => $title,
             'source' => json_encode([
                 'id' => $id,
                 'name' => $name,
