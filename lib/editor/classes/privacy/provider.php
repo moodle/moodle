@@ -61,7 +61,7 @@ class provider implements
      * @param   int         $userid The userid of the user whose data is to be exported.
      */
     public static function export_user_preferences(int $userid) {
-        $preference = get_user_preferences('htmleditor');
+        $preference = get_user_preferences('htmleditor', null, $userid);
         if (!empty($preference)) {
             $desc = get_string('privacy:preference:htmleditor', 'core_editor',
                     get_string('pluginname', "editor_{$preference}"));
