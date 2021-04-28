@@ -120,13 +120,12 @@ $string['roleassignmentsnumber'] = 'Number of role assignments ({$a})';
 $string['search'] = 'Search';
 $string['sendingsize'] = 'Please wait the course file is uploading ({$a->total}Mb)...';
 $string['sendfollowinginfo'] = 'More information';
-$string['sendfollowinginfo_help'] = 'The following information will be sent to contribute to overall statistics only.  It will not be made public on any site listing.';
+$string['sendfollowinginfo_help'] = 'The following information will be sent to Moodle each time your site registration is updated (by default weekly, when the \'Site registration\' scheduled task is run). The information contributes to overall statistics only and will not be made public on any site listing.';
 $string['sent'] = '...finished';
 $string['siteadmin'] = 'Administrator';
 $string['siteadmin_help'] = 'The full name of the site administrator.';
 $string['sitecommnews'] = 'Moodle newsletter';
 $string['sitecommnews_help'] = 'You have the option of subscribing to our Moodle newsletter. You may unsubscribe at any time.';
-$string['sitecommnewsno'] = 'No, I do not wish to receive any emails';
 $string['sitecommnewsyes'] = 'Yes, I would like to receive the Moodle newsletter';
 $string['sitecountry'] = 'Country';
 $string['sitecountry_help'] = 'The country your organisation or institution is located in.';
@@ -236,3 +235,6 @@ $string['updatesite'] = 'Update registration on {$a}';
 $string['updatestatus'] = 'Check it now.';
 $string['unregisterfrom'] = 'Unregister from {$a}';
 $string['unregisterexplained'] = 'If the site with URL {$a} is registered, then its registration will be removed.';
+
+// Deprecate since 3.11.
+$string['sitecommnewsno'] = 'No, I do not wish to receive any emails';
