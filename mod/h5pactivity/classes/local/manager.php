@@ -33,6 +33,7 @@ use cm_info;
 use moodle_recordset;
 use core_user;
 use stdClass;
+use core\dml\sql_join;
 use mod_h5pactivity\event\course_module_viewed;
 
 /**
@@ -288,21 +289,88 @@ class manager {
     /**
      * Count the activity completed attempts.
      *
-     * If no user is provided will count all activity attempts.
+     * If no user is provided the method will count all active users attempts.
+     * Check get_active_users_join PHPdoc to a more detailed description of "active users".
      *
      * @param int|null $userid optional user id (default null)
      * @return int the total amount of attempts
      */
     public function count_attempts(int $userid = null): int {
         global $DB;
-        $params = [
-            'h5pactivityid' => $this->instance->id,
-            'completion' => 1
-        ];
+
+        // Counting records is enough for one user.
         if ($userid) {
             $params['userid'] = $userid;
+            $params = [
+                'h5pactivityid' => $this->instance->id,
+                'userid' => $userid,
+                'completion' => 1,
+            ];
+            return $DB->count_records('h5pactivity_attempts', $params);
         }
-        return $DB->count_records('h5pactivity_attempts', $params);
+
+        $usersjoin = $this->get_active_users_join();
+
+        // Final SQL.
+        return $DB->count_records_sql(
+            "SELECT COUNT(*)
+               FROM {user} u $usersjoin->joins
+              WHERE $usersjoin->wheres",
+            array_merge($usersjoin->params)
+        );
+    }
+
+    /**
+     * Return the join to collect all activity active users.
+     *
+     * The concept of active user is relative to the activity permissions. All users with
+     * "mod/h5pactivity:view" are potential users but those with "mod/h5pactivity:reviewattempts"
+     * are evaluators and they don't count as valid submitters.
+     *
+     * Note that, in general, the active list has the same effect as checking for "mod/h5pactivity:submit"
+     * but submit capability cannot be used because is a write capability and does not apply to frozen contexts.
+     *
+     * @since Moodle 3.11
+     * @param bool $allpotentialusers if true, the join will return all active users, not only the ones with attempts.
+     * @return sql_join the active users attempts join
+     */
+    public function get_active_users_join (bool $allpotentialusers = false): sql_join {
+
+        // Only valid users counts. By default, all users with submit capability are considered potential ones.
+        $context = $this->get_context();
+
+        // We want to present all potential users.
+        $capjoin = get_enrolled_with_capabilities_join($context, '', 'mod/h5pactivity:view');
+
+        if ($capjoin->cannotmatchanyrows) {
+            return $capjoin;
+        }
+
+        // But excluding all reviewattempts users converting a capabilities join into left join.
+        $reviewersjoin = get_with_capability_join($context, 'mod/h5pactivity:reviewattempts', 'u.id');
+
+        $capjoin = new sql_join(
+            $capjoin->joins . "\n LEFT " . str_replace('ra', 'reviewer', $reviewersjoin->joins),
+            $capjoin->wheres . " AND reviewer.userid IS NULL",
+            $capjoin->params
+        );
+
+        if ($allpotentialusers) {
+            return $capjoin;
+        }
+
+        // Add attempts join.
+        $where = "ha.h5pactivityid = :h5pactivityid AND ha.completion = :completion";
+        $params = [
+            'h5pactivityid' => $this->instance->id,
+            'completion' => 1,
+        ];
+
+        return new sql_join(
+            $capjoin->joins . "\n JOIN {h5pactivity_attempts} ha ON ha.userid = u.id",
+            $capjoin->wheres . " AND $where",
+            array_merge($capjoin->params, $params)
+        );
     }
 
     /**
@@ -374,6 +442,12 @@ class manager {
      */
     public function get_report(int $userid = null, int $attemptid = null): ?report {
         global $USER;
+
+        // If tracking is disabled, no reports are available.
+        if (!$this->instance->enabletracking) {
+            return null;
+        }
+
         $attempt = null;
         if ($attemptid) {
             $attempt = $this->get_attempt($attemptid);
@@ -395,8 +469,8 @@ class manager {
             return null;
         }
 
-        // Check if that user can be tracked.
-        if ($user && !$this->is_tracking_enabled($user)) {
+        // Only enrolled users has reports.
+        if ($user && !is_enrolled($this->context, $user, 'mod/h5pactivity:view')) {
             return null;
         }
 
