@@ -107,7 +107,7 @@ abstract class H5PMetadata {
       switch ($config['type']) {
         case 'text':
           if ($value !== null && strlen($value) > $config['maxLength']) {
-            $value = mb_substr($value, 0, $config['maxLength']);
+            $value = \core_text::substr($value, 0, $config['maxLength']);
           }
           $types[] = '%s';
           break;

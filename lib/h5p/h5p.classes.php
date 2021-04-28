@@ -758,11 +758,14 @@ class H5PValidator {
       unlink($tmpPath);
       return FALSE;
     }
+    // Moodle: the extension mbstring is optional.
+    /*
     if (!extension_loaded('mbstring')) {
       $this->h5pF->setErrorMessage($this->h5pF->t('The mbstring PHP extension is not loaded. H5P need this to function properly'), 'mbstring-unsupported');
       unlink($tmpPath);
       return FALSE;
     }
+    */
 
     // Create a temporary dir to extract package in.
     $tmpDir = $this->h5pF->getUploadedH5pFolderPath();
@@ -809,7 +812,7 @@ class H5PValidator {
       }
       $totalSize += $fileStat['size'];
 
-      $fileName = mb_strtolower($fileStat['name']);
+      $fileName = \core_text::strtolower($fileStat['name']);
       if (preg_match('/(^[\._]|\/[\._])/', $fileName) !== 0) {
         continue; // Skip any file or folder starting with a . or _
       }
@@ -2432,7 +2435,7 @@ class H5PCore {
     // Using content dependencies
     foreach ($dependencies as $dependency) {
       if (isset($dependency['path']) === FALSE) {
-        $dependency['path'] = 'libraries/' . H5PCore::libraryToString($dependency, TRUE);
+        $dependency['path'] = $this->getDependencyPath($dependency);
         $dependency['preloadedJs'] = explode(',', $dependency['preloadedJs']);
         $dependency['preloadedCss'] = explode(',', $dependency['preloadedCss']);
       }
@@ -2450,6 +2453,16 @@ class H5PCore {
     }
 
     return $files;
+  }
+
+  /**
+   * Get the path to the dependency.
+   *
+   * @param stdClass $dependency
+   * @return string
+   */
+  protected function getDependencyPath(array $dependency): string {
+    return H5PCore::libraryToString($dependency, TRUE);
   }
 
   private static function getDependenciesHash(&$dependencies) {
@@ -3202,21 +3215,23 @@ class H5PCore {
    * @return string
    */
   private static function hashToken($action, $time_factor) {
-    if (!isset($_SESSION['h5p_token'])) {
+    global $SESSION;
+
+    if (!isset($SESSION->h5p_token)) {
       // Create an unique key which is used to create action tokens for this session.
       if (function_exists('random_bytes')) {
-        $_SESSION['h5p_token'] = base64_encode(random_bytes(15));
+        $SESSION->h5p_token = base64_encode(random_bytes(15));
       }
       else if (function_exists('openssl_random_pseudo_bytes')) {
-        $_SESSION['h5p_token'] = base64_encode(openssl_random_pseudo_bytes(15));
+        $SESSION->h5p_token = base64_encode(openssl_random_pseudo_bytes(15));
       }
       else {
-        $_SESSION['h5p_token'] = uniqid('', TRUE);
+        $SESSION->h5p_token = uniqid('', TRUE);
       }
     }
 
     // Create hash and return
-    return substr(hash('md5', $action . $time_factor . $_SESSION['h5p_token']), -16, 13);
+    return substr(hash('md5', $action . $time_factor . $SESSION->h5p_token), -16, 13);
   }
 
   /**
@@ -3303,12 +3318,15 @@ class H5PCore {
       $setup->disable_hub = TRUE;
     }
 
+    // Moodle: the extension mbstring is optional.
+    /*
     if (!extension_loaded('mbstring')) {
       $setup->errors[] = $this->h5pF->t(
         'The mbstring PHP extension is not loaded. H5P needs this to function properly'
       );
       $setup->disable_hub = TRUE;
     }
+    */
 
     // Check php version >= 5.2
     $php_version = explode('.', phpversion());
@@ -3656,12 +3674,13 @@ class H5PContentValidator {
 
     // Check if string is within allowed length
     if (isset($semantics->maxLength)) {
+      // Moodle: the extension mbstring is optional.
+      /*
       if (!extension_loaded('mbstring')) {
         $this->h5pF->setErrorMessage($this->h5pF->t('The mbstring PHP extension is not loaded. H5P need this to function properly'), 'mbstring-unsupported');
       }
-      else {
-        $text = mb_substr($text, 0, $semantics->maxLength);
-      }
+      */
+      $text = \core_text::substr($text, 0, $semantics->maxLength);
     }
 
     // Check if string is according to optional regexp in semantics
@@ -3711,11 +3730,14 @@ class H5PContentValidator {
         // file name, 2. testing against a returned error array that could
         // never be more than 1 element long anyway, 3. recreating the regex
         // for every file.
+        // Moodle: the extension mbstring is optional.
+        /*
         if (!extension_loaded('mbstring')) {
           $this->h5pF->setErrorMessage($this->h5pF->t('The mbstring PHP extension is not loaded. H5P need this to function properly'), 'mbstring-unsupported');
           $valid = FALSE;
         }
-        else if (!preg_match($wl_regex, mb_strtolower($file))) {
+        */
+        if (!preg_match($wl_regex, \core_text::strtolower($file))) {
           $this->h5pF->setErrorMessage($this->h5pF->t('File "%filename" not allowed. Only files with the following extensions are allowed: %files-allowed.', array('%filename' => $file, '%files-allowed' => $whitelist)), 'not-in-whitelist');
           $valid = FALSE;
         }
