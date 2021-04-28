@@ -64,8 +64,9 @@ class file_node_testcase extends \repository_googledocs_testcase {
                     $this->create_google_drive_file_object('d85b21c0f86cb0', 'File.pdf',
                         'application/pdf', 'pdf', '1000', '01/01/21 0:30'),
                     [],
-                    $this->create_file_content_node_array('d85b21c0f86cb0', 'File.pdf', '1000', '1609432200',
-                        'https://googleusercontent.com/type/application/pdf', '', 'download'),
+                    $this->create_file_content_node_array('d85b21c0f86cb0', 'File.pdf', 'File.pdf', '1000',
+                        '1609432200', 'https://googleusercontent.com/type/application/pdf', '',
+                        'download'),
                 ],
             'Google Drive file that has webContentLink and webViewLink.' =>
                 [
@@ -76,8 +77,8 @@ class file_node_testcase extends \repository_googledocs_testcase {
                     [
                         'documentformat' => 'rtf',
                     ],
-                    $this->create_file_content_node_array('d85b21c0f86cb0', 'File.pdf', null, '',
-                        'https://googleusercontent.com/type/application/pdf',
+                    $this->create_file_content_node_array('d85b21c0f86cb0', 'File.pdf', 'File.pdf', null,
+                        '', 'https://googleusercontent.com/type/application/pdf',
                         'https://drive.google.com/file/d/d85b21c0f86cb0/view?usp=drivesdk', 'download'),
                 ],
             'Google Drive file that has webContentLink and no webViewLink.' =>
@@ -86,8 +87,8 @@ class file_node_testcase extends \repository_googledocs_testcase {
                         'application/pdf', 'pdf', null, '',
                         'https://drive.google.com/uc?id=d85b21c0f86cb0&export=download', ''),
                     [],
-                    $this->create_file_content_node_array('d85b21c0f86cb0', 'File.pdf', null, '',
-                        'https://googleusercontent.com/type/application/pdf',
+                    $this->create_file_content_node_array('d85b21c0f86cb0', 'File.pdf', 'File.pdf', null,
+                        '', 'https://googleusercontent.com/type/application/pdf',
                         'https://drive.google.com/uc?id=d85b21c0f86cb0&export=download', 'download'),
                 ],
             'Google Drive file without an extension (Google document file; documentformat config set to rtf).' =>
@@ -97,7 +98,7 @@ class file_node_testcase extends \repository_googledocs_testcase {
                     [
                         'documentformat' => 'rtf',
                     ],
-                    $this->create_file_content_node_array('d85b21c0f86cb0', 'File.gdoc', '', '',
+                    $this->create_file_content_node_array('d85b21c0f86cb0', 'File', 'File.gdoc', '', '',
                         'https://googleusercontent.com/type/application/vnd.google-apps.document', '',
                         'application/rtf'),
                 ],
