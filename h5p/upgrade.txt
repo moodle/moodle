@@ -11,6 +11,7 @@ Some extra methods have been added to the api too in order to support this field
 - set_library_enabled
 - is_library_enabled
 - is_valid_package
+* The third-party library h5p/h5plib/v124/core has been updated to version 1.24.2.
 
 === 3.10 ===
 * Added a new cache for h5p_library_files (MDL-69207)
