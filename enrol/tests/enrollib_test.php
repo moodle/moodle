@@ -1415,4 +1415,77 @@ class core_enrollib_testcase extends advanced_testcase {
         $durationinday = $duration / DAYSECS;
         $this->assertEquals(9, $durationinday);
     }
+
+    /**
+     * Test get_enrolled_with_capabilities_join cannotmatchanyrows attribute.
+     *
+     * @dataProvider get_enrolled_with_capabilities_join_cannotmatchanyrows_data()
+     * @param string $capability the tested capability
+     * @param bool $useprohibit if the capability must be assigned to prohibit
+     * @param int $expectedmatch expected cannotmatchanyrows value
+     * @param int $expectedcount expceted count value
+     */
+    public function test_get_enrolled_with_capabilities_join_cannotmatchanyrows(
+        string $capability,
+        bool $useprohibit,
+        int $expectedmatch,
+        int $expectedcount
+    ) {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $roleid = $CFG->defaultuserroleid;
+
+        // Override capability if necessary.
+        if ($useprohibit && $capability) {
+            assign_capability($capability, CAP_PROHIBIT, $roleid, $context);
+        }
+
+        // Check if we must enrol or not.
+        $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+
+        $join = get_enrolled_with_capabilities_join($context, '', $capability);
+
+        // Execute query.
+        $sql = "SELECT COUNT(DISTINCT u.id)
+                  FROM {user} u {$join->joins}
+                 WHERE {$join->wheres}";
+        $countrecords = $DB->count_records_sql($sql, $join->params);
+
+        // Validate cannotmatchanyrows.
+        $this->assertEquals($expectedmatch, $join->cannotmatchanyrows);
+        $this->assertEquals($expectedcount, $countrecords);
+    }
+
+    /**
+     * Data provider for test_get_enrolled_with_capabilities_join_cannotmatchanyrows
+     *
+     * @return @array of testing scenarios
+     */
+    public function get_enrolled_with_capabilities_join_cannotmatchanyrows_data() {
+        return [
+            'no prohibits, no capability' => [
+                'capability' => '',
+                'useprohibit' => false,
+                'expectedmatch' => 0,
+                'expectedcount' => 1,
+            ],
+            'no prohibits with capability' => [
+                'capability' => 'moodle/course:manageactivities',
+                'useprohibit' => false,
+                'expectedmatch' => 0,
+                'expectedcount' => 1,
+            ],
+            'prohibits with capability' => [
+                'capability' => 'moodle/course:manageactivities',
+                'useprohibit' => true,
+                'expectedmatch' => 1,
+                'expectedcount' => 0,
+            ],
+        ];
+    }
 }

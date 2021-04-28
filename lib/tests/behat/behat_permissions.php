@@ -249,4 +249,44 @@ class behat_permissions extends behat_base {
             }
         }
     }
+
+    /**
+     * Mark context as frozen.
+     *
+     * @Then /^the "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" is context frozen$/
+     * @throws ExpectationException if the context cannot be frozen or found
+     * @param string $element Element we look on
+     * @param string $selector The type of where we look (activity, course)
+     */
+    public function the_context_is_context_frozen(string $element, string $selector) {
+
+        // Enable context freeze if it is not done yet.
+        set_config('contextlocking', 1);
+
+        // Find context.
+        $context = self::get_context($selector, $element);
+
+        // Freeze context.
+        $context->set_locked(true);
+    }
+
+    /**
+     * Unmark context as frozen.
+     *
+     * @Then /^the "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" is not context frozen$/
+     * @throws ExpectationException if the context cannot be frozen or found
+     * @param string $element Element we look on
+     * @param string $selector The type of where we look (activity, course)
+     */
+    public function the_context_is_not_context_frozen(string $element, string $selector) {
+
+        // Enable context freeze if it is not done yet.
+        set_config('contextlocking', 1);
+
+        // Find context.
+        $context = self::get_context($selector, $element);
+
+        // Freeze context.
+        $context->set_locked(false);
+    }
 }
