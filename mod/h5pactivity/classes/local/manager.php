@@ -185,7 +185,7 @@ class manager {
      * @param stdClass|null $user user record (default $USER)
      * @return bool if the user can see the attempts link
      */
-    public function can_view_all_attempts (stdClass $user = null): bool {
+    public function can_view_all_attempts(stdClass $user = null): bool {
         global $USER;
         if (!$this->instance->enabletracking) {
             return false;
@@ -202,7 +202,7 @@ class manager {
      * @param stdClass|null $user user record (default $USER)
      * @return bool if the user can see the own attempts link
      */
-    public function can_view_own_attempts (stdClass $user = null): bool {
+    public function can_view_own_attempts(stdClass $user = null): bool {
         global $USER;
         if (!$this->instance->enabletracking) {
             return false;
@@ -334,7 +334,7 @@ class manager {
      * @param bool $allpotentialusers if true, the join will return all active users, not only the ones with attempts.
      * @return sql_join the active users attempts join
      */
-    public function get_active_users_join (bool $allpotentialusers = false): sql_join {
+    public function get_active_users_join(bool $allpotentialusers = false): sql_join {
 
         // Only valid users counts. By default, all users with submit capability are considered potential ones.
         $context = $this->get_context();
