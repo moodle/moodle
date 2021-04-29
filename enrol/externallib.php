@@ -433,6 +433,8 @@ class core_enrol_external extends external_api {
                 'isfavourite' => isset($favouritecourseids[$course->id]),
                 'hidden' => $hidden,
                 'overviewfiles' => $overviewfiles,
+                'showactivitydates' => $course->showactivitydates,
+                'showcompletionconditions' => $course->showcompletionconditions,
             ];
             if ($returnusercount) {
                 $courseresult['enrolledusercount'] = $enrolledusercount;
@@ -479,6 +481,8 @@ class core_enrol_external extends external_api {
                     'isfavourite' => new external_value(PARAM_BOOL, 'If the user marked this course a favourite.', VALUE_OPTIONAL),
                     'hidden' => new external_value(PARAM_BOOL, 'If the user hide the course from the dashboard.', VALUE_OPTIONAL),
                     'overviewfiles' => new external_files('Overview files attached to this course.', VALUE_OPTIONAL),
+                    'showactivitydates' => new external_value(PARAM_BOOL, 'Whether the activity dates are shown or not'),
+                    'showcompletionconditions' => new external_value(PARAM_BOOL, 'Whether the activity completion conditions are shown or not'),
                 )
             )
         );

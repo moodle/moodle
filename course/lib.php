@@ -4735,8 +4735,11 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
         $userid = $USER->id;
     }
 
-    $basefields = array('id', 'idnumber', 'summary', 'summaryformat', 'startdate', 'enddate', 'category',
-            'shortname', 'fullname', 'timeaccess', 'component', 'visible');
+    $basefields = [
+        'id', 'idnumber', 'summary', 'summaryformat', 'startdate', 'enddate', 'category',
+        'shortname', 'fullname', 'timeaccess', 'component', 'visible',
+        'showactivitydates', 'showcompletionconditions',
+    ];
 
     $sort = trim($sort);
     if (empty($sort)) {
@@ -4755,7 +4758,7 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
 
     $ctxfields = context_helper::get_preload_record_columns_sql('ctx');
 
-    $coursefields = 'c.' .join(',', $basefields);
+    $coursefields = 'c.' . join(',', $basefields);
 
     // Ask the favourites service to give us the join SQL for favourited courses,
     // so we can include favourite information in the query.
