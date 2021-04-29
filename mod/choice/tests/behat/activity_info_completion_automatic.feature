@@ -32,19 +32,19 @@ Feature: Automatic completion in the choice activity
     Given I log in as "student1"
     And I am on "Course 1" course homepage
     When I follow "What to drink?"
-    Then I should see "Done: View" in the "[data-region=completionrequirements]" "css_element"
-    And I should see "To do: Make a choice" in the "[data-region=completionrequirements]" "css_element"
+    Then the "View" completion condition of "What to drink?" is displayed as "done"
+    And the "Make a choice" completion condition of "What to drink?" is displayed as "todo"
     And I set the field "Beer" to "1"
     And I press "Save my choice"
-    And I should see "Done: View" in the "[data-region=completionrequirements]" "css_element"
-    And I should see "Done: Make a choice" in the "[data-region=completionrequirements]" "css_element"
+    And the "View" completion condition of "What to drink?" is displayed as "done"
+    And the "Make a choice" completion condition of "What to drink?" is displayed as "done"
 
   Scenario: Viewing a choice activity with automatic completion as a teacher
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     When I follow "What to drink?"
-    And I should see "View" in the "[data-region=completionrequirements]" "css_element"
-    And I should see "Make a choice" in the "[data-region=completionrequirements]" "css_element"
+    Then "What to drink?" should have the "View" completion condition
+    And "What to drink?" should have the "Make a choice" completion condition
 
   @javascript
   Scenario: Overriding automatic choice completion for a user
@@ -57,5 +57,5 @@ Feature: Automatic completion in the choice activity
     And I log in as "student1"
     And I am on "Course 1" course homepage
     When I follow "What to drink?"
-    Then "span[aria-label=\"Done: View (set by Teacher 1)\"]" "css_element" should exist
-    And "span[aria-label=\"Done: Make a choice (set by Teacher 1)\"]" "css_element" should exist
+    Then the "View" completion condition of "What to drink?" overridden by "Teacher 1" is displayed as "done"
+    And the "Make a choice" completion condition of "What to drink?" overridden by "Teacher 1" is displayed as "done"

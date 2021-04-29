@@ -1,8 +1,8 @@
 @mod @mod_resource @core_completion @_file_upload
-Feature: View activity completion information for the resource
-  In order to have visibility of Resource completion requirements
+Feature: View activity completion information for file resources
+  In order to have visibility of file resource completion requirements
   As a student
-  I need to be able to view my Resource completion progress
+  I need to be able to view my file resource completion progress
 
   Background:
     Given the following "users" exist:
@@ -28,15 +28,15 @@ Feature: View activity completion information for the resource
     And I press "Save and display"
 
   @javascript
-  Scenario Outline: The manual completion button will be shown on the course page for Open, In pop-up, New window and Force download display mode if the Show completion conditions is set to No
+  Scenario Outline: The manual completion button will be shown on the course page for Open, In pop-up, New window and Force download display mode if Show completion conditions is set to No
     Given I am on "Course 1" course homepage with editing mode on
     And I add a "File" to section "1"
     And I set the following fields to these values:
-      | Name                      | Myfile                                                |
+      | Name                      | Myfile                                               |
       | id_display                | <display>                                            |
       | Show size                 | 0                                                    |
       | Show type                 | 0                                                    |
-      | Show upload/modified date  | 0                                                    |
+      | Show upload/modified date | 0                                                    |
       | Completion tracking       | Students can manually mark the activity as completed |
     And I upload "mod/resource/tests/fixtures/samplefile.txt" file to "Select files" filemanager
     And I press "Save and return to course"
@@ -58,3 +58,60 @@ Feature: View activity completion information for the resource
       | In pop-up      |
       | Force download |
       | New window     |
+
+  @javascript
+  Scenario: The manual completion button will be shown on the activity page and course page if Show completion conditions is set to Yes
+    Given I am on "Course 1" course homepage
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Show completion conditions" to "Yes"
+    And I press "Save and display"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add a "File" to section "1"
+    And I set the following fields to these values:
+      | Name                | Myfile                                               |
+      | id_display          | Embed                                                |
+      | Completion tracking | Students can manually mark the activity as completed |
+    And I upload "mod/resource/tests/fixtures/samplefile.txt" file to "Select files" filemanager
+    And I click on "Save and display" "button"
+    # Teacher view.
+    And the manual completion button for "Myfile" should exist
+    And the manual completion button for "Myfile" should be disabled
+    And I follow "Myfile"
+    And the manual completion button for "Myfile" should exist
+    And the manual completion button for "Myfile" should be disabled
+    And I log out
+    # Student view.
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
+    Then the manual completion button for "Myfile" should exist
+    And I follow "Myfile"
+    And the manual completion button of "Myfile" is displayed as "Mark as done"
+    And I toggle the manual completion state of "Myfile"
+    And the manual completion button of "Myfile" is displayed as "Done"
+
+  @javascript
+  Scenario: View automatic completion items
+    Given I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Show completion conditions" to "Yes"
+    And I press "Save and display"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add a "File" to section "1"
+    And I set the following fields to these values:
+      | Name                | Myfile                                     |
+      | id_display          | Embed                                             |
+      | Completion tracking | Show activity as complete when conditions are met |
+      | Require view        | 1                                                 |
+    And I upload "mod/resource/tests/fixtures/samplefile.txt" file to "Select files" filemanager
+    And I press "Save and display"
+    And I am on "Course 1" course homepage
+    # Teacher view.
+    And I follow "Myfile"
+    And "Myfile" should have the "View" completion condition
+    And I log out
+    # Student view.
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Myfile"
+    Then the "View" completion condition of "Myfile" is displayed as "done"

@@ -1,4 +1,4 @@
-@mod @mod_quiz
+@mod @mod_quiz @core_completion
 Feature: Set a quiz to be marked complete when the student uses all attempts allowed
   In order to ensure a student has learned the material before being marked complete
   As a teacher
@@ -47,8 +47,14 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
     And I am on "Course 1" course homepage
     Then the "Receive a grade" completion condition of "Test quiz name" is displayed as "failed"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "done"
+    And I follow "Test quiz name"
+    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "failed"
+    And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "done"
     And I log out
     And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz name"
+    And "Test quiz name" should have the "Receive a pass grade or complete all available attempts" completion condition
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Activity completion" in current page administration
     And "Completed" "icon" should exist in the "Student 1" "table_row"

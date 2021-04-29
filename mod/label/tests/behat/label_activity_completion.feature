@@ -24,22 +24,43 @@ Feature: View activity completion information for the label
       | Enable completion tracking | Yes |
       | Show completion conditions | No  |
     And I press "Save and display"
+    And the following "activity" exists:
+      | activity       | label         |
+      | course         | C1            |
+      | idnumber       | mh1           |
+      | section        | 1             |
+      | completion     | 1             |
 
   @javascript
   Scenario: The manual completion button will be shown on the course page if the Show completion conditions is set to No
-    Given I am on "Course 1" course homepage with editing mode on
-    When I add a "label" to section "1" and I fill the form with:
-      | Label text          | Swanky label                                         |
-      | Availability        | Show on course page                                  |
-      | Completion tracking | Students can manually mark the activity as completed |
+    Given I am on "Course 1" course homepage
     # Teacher view.
-    And the manual completion button for "Swanky label" should exist
-    And the manual completion button for "Swanky label" should be disabled
+    And the manual completion button for "Test label 1" should exist
+    And the manual completion button for "Test label 1" should be disabled
     And I log out
     # Student view.
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    Then the manual completion button for "Swanky label" should exist
-    And the manual completion button of "Swanky label" is displayed as "Mark as done"
-    And I toggle the manual completion state of "Swanky label"
-    And the manual completion button of "Swanky label" is displayed as "Done"
+    Then the manual completion button for "Test label 1" should exist
+    And the manual completion button of "Test label 1" is displayed as "Mark as done"
+    And I toggle the manual completion state of "Test label 1"
+    And the manual completion button of "Test label 1" is displayed as "Done"
+
+  @javascript
+  Scenario: The manual completion button will be shown on the course page if the Show completion conditions is set to Yes
+    Given I am on "Course 1" course homepage
+    And I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Show completion conditions" to "Yes"
+    And I press "Save and display"
+    # Teacher view.
+    And the manual completion button for "Test label 1" should exist
+    And the manual completion button for "Test label 1" should be disabled
+    And I log out
+    # Student view.
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
+    Then the manual completion button for "Test label 1" should exist
+    And the manual completion button of "Test label 1" is displayed as "Mark as done"
+    And I toggle the manual completion state of "Test label 1"
+    And the manual completion button of "Test label 1" is displayed as "Done"

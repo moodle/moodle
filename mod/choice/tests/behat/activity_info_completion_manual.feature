@@ -31,31 +31,28 @@ Feature: Manual completion in the choice activity
     Given I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "What to drink?"
-    And "Mark as done" "button" should exist
-    When I press "Mark as done"
-    And I wait until the page is ready
-    Then "Done" "button" should exist
+    And the manual completion button of "What to drink?" is displayed as "Mark as done"
+    When I toggle the manual completion state of "What to drink?"
+    Then the manual completion button of "What to drink?" is displayed as "Done"
     But "Mark as done" "button" should not exist
     # Just make sure that the change persisted.
     And I reload the page
     And I wait until the page is ready
     And I should not see "Mark as done"
-    And I should see "Done"
-    And I press "Done"
-    And I wait until the page is ready
-    And "Mark as done" "button" should exist
+    And the manual completion button of "What to drink?" is displayed as "Done"
+    And I toggle the manual completion state of "What to drink?"
+    And the manual completion button of "What to drink?" is displayed as "Mark as done"
     But "Done" "button" should not exist
     # Just make sure that the change persisted.
     And I reload the page
-    And I wait until the page is ready
-    And "Mark as done" "button" should exist
+    And the manual completion button of "What to drink?" is displayed as "Mark as done"
     But "Done" "button" should not exist
 
   Scenario: Viewing a choice activity with manual completion as a teacher
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     When I follow "What to drink?"
-    Then the "Mark as done" "button" should be disabled
+    Then the manual completion button for "What to drink?" should be disabled
 
   @javascript
   Scenario: Overriding a manual choice completion for a user to done
@@ -68,10 +65,9 @@ Feature: Manual completion in the choice activity
     And I log in as "student1"
     And I am on "Course 1" course homepage
     When I follow "What to drink?"
-    Then "button[aria-label=\"What to drink? is marked by Teacher 1 as done. Press to undo.\"]" "css_element" should exist
-    And I press "Done"
-    And I wait until the page is ready
-    And "button[aria-label=\"Mark What to drink? as done\"]" "css_element" should exist
+    Then the manual completion button of "What to drink?" overridden by "Teacher 1" is displayed as "Done"
+    And I toggle the manual completion state of "What to drink?"
+    And the manual completion button of "What to drink?" is displayed as "Mark as done"
 
   @javascript
   Scenario: Overriding a manual choice completion for a user to not done
@@ -90,7 +86,6 @@ Feature: Manual completion in the choice activity
     And I log in as "student1"
     And I am on "Course 1" course homepage
     When I follow "What to drink?"
-    Then "button[aria-label=\"What to drink? is marked by Teacher 1 as not done. Press to mark as done.\"]" "css_element" should exist
-    And I press "Mark as done"
-    And I wait until the page is ready
-    And "button[aria-label=\"What to drink? is marked as done. Press to undo.\"]" "css_element" should exist
+    Then the manual completion button of "What to drink?" overridden by "Teacher 1" is displayed as "Mark as done"
+    And I toggle the manual completion state of "What to drink?"
+    And the manual completion button of "What to drink?" is displayed as "Done"
