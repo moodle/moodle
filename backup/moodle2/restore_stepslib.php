@@ -1915,11 +1915,23 @@ class restore_course_structure_step extends restore_structure_step {
         if ($data->defaultgroupingid) {
             $data->defaultgroupingid = $this->get_mappingid('grouping', $data->defaultgroupingid);
         }
+
+        $courseconfig = get_config('moodlecourse');
+
         if (empty($CFG->enablecompletion)) {
+            // Completion is disabled globally.
             $data->enablecompletion = 0;
             $data->completionstartonenrol = 0;
             $data->completionnotify = 0;
+            $data->showcompletionconditions = null;
+        } else {
+            $showcompletionconditionsdefault = ($courseconfig->showcompletionconditions ?? null);
+            $data->showcompletionconditions = $data->showcompletionconditions ?? $showcompletionconditionsdefault;
         }
+
+        $showactivitydatesdefault = ($courseconfig->showactivitydates ?? null);
+        $data->showactivitydates = $data->showactivitydates ?? $showactivitydatesdefault;
+
         $languages = get_string_manager()->get_list_of_translations(); // Get languages for quick search
         if (isset($data->lang) && !array_key_exists($data->lang, $languages)) {
             $data->lang = '';
