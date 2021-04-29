@@ -1,8 +1,8 @@
-@mod @mod_wiki @core_completion
-Feature: View activity completion information in the Wiki activity
-  In order to have visibility of wiki completion requirements
+@mod @mod_book @core_completion
+Feature: View activity completion information in the book activity
+  In order to have visibility of book completion requirements
   As a student
-  I need to be able to view my wiki completion progress
+  I need to be able to view my book completion progress
 
   Background:
     Given the following "users" exist:
@@ -25,37 +25,30 @@ Feature: View activity completion information in the Wiki activity
       | Show completion conditions | Yes |
     And I press "Save and display"
     And the following "activity" exists:
-      | activity       | wiki          |
+      | activity       | book          |
       | course         | C1            |
       | idnumber       | mh1           |
       | name           | Music history |
       | section        | 1             |
       | completion     | 2             |
       | completionview | 1             |
-    And I am on "Course 1" course homepage
-    And I follow "Music history"
-    And I click on "Create page" "button"
     And I log out
 
-  Scenario: View automatic completion items as a teacher and confirm all tabs display conditions
+  Scenario: View automatic completion items
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    When I follow "Music history"
-    Then "Music history" should have the "View" completion condition
-    And I click on "Edit" "link" in the "region-main" "region"
+    And I follow "Music history"
+    And I set the following fields to these values:
+      | Chapter title | Drum theory             |
+      | Content       | Rudiments are important |
+    And I press "Save changes"
+    # Teacher view.
+    And I follow "Music history"
     And "Music history" should have the "View" completion condition
-    And I follow "Comments"
-    And "Music history" should have the "View" completion condition
-    And I follow "Map"
-    And "Music history" should have the "View" completion condition
-    And I follow "Files"
-    And "Music history" should have the "View" completion condition
-    And I follow "Administration"
-    And "Music history" should have the "View" completion condition
-
-  Scenario: View automatic completion items as a student
-    Given I log in as "student1"
-    When I am on "Course 1" course homepage
+    And I log out
+    # Student view.
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
     And I follow "Music history"
     Then the "View" completion condition of "Music history" is displayed as "done"
 
@@ -66,9 +59,13 @@ Feature: View activity completion information in the Wiki activity
     And I follow "Music history"
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
-    And I press "Unlock completion options"
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and display"
+    And I set the following fields to these values:
+      | Chapter title | Drum theory             |
+      | Content       | Rudiments are important |
+    And I press "Save changes"
+    And I follow "Music history"
     # Teacher view.
     And the manual completion button for "Music history" should be disabled
     And I log out

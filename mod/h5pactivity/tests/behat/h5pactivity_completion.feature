@@ -1,8 +1,8 @@
-@mod @mod_wiki @core_completion
-Feature: View activity completion information in the Wiki activity
-  In order to have visibility of wiki completion requirements
+@mod @mod_h5pactivity @core_h5p @_file_upload @_switch_iframe @javascript @core_completion
+Feature: View activity completion information in the h5p activity
+  In order to have visibility of h5p completion requirements
   As a student
-  I need to be able to view my wiki completion progress
+  I need to be able to view my h5p completion progress
 
   Background:
     Given the following "users" exist:
@@ -16,7 +16,7 @@ Feature: View activity completion information in the Wiki activity
       | user | course | role           |
       | student1 | C1 | student        |
       | teacher1 | C1 | editingteacher |
-    And I log in as "teacher1"
+    And I log in as "admin"
     And I am on "Course 1" course homepage
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
@@ -24,51 +24,45 @@ Feature: View activity completion information in the Wiki activity
       | Enable completion tracking | Yes |
       | Show completion conditions | Yes |
     And I press "Save and display"
-    And the following "activity" exists:
-      | activity       | wiki          |
-      | course         | C1            |
-      | idnumber       | mh1           |
-      | name           | Music history |
-      | section        | 1             |
-      | completion     | 2             |
-      | completionview | 1             |
-    And I am on "Course 1" course homepage
-    And I follow "Music history"
-    And I click on "Create page" "button"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add a "H5P" to section "1"
+    And I set the following fields to these values:
+      | Name                | Music history                                     |
+      | Completion tracking | Show activity as complete when conditions are met |
+      | Require view        | 1                                                 |
+      | Require grade       | 1                                                 |
+    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Package file" filemanager
+    And I click on "Save and display" "button"
     And I log out
 
-  Scenario: View automatic completion items as a teacher and confirm all tabs display conditions
+  Scenario: View automatic completion items
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    When I follow "Music history"
-    Then "Music history" should have the "View" completion condition
-    And I click on "Edit" "link" in the "region-main" "region"
-    And "Music history" should have the "View" completion condition
-    And I follow "Comments"
-    And "Music history" should have the "View" completion condition
-    And I follow "Map"
-    And "Music history" should have the "View" completion condition
-    And I follow "Files"
-    And "Music history" should have the "View" completion condition
-    And I follow "Administration"
-    And "Music history" should have the "View" completion condition
-
-  Scenario: View automatic completion items as a student
-    Given I log in as "student1"
-    When I am on "Course 1" course homepage
+    # Teacher view.
     And I follow "Music history"
+    And "Music history" should have the "View" completion condition
+    And "Music history" should have the "Receive a grade" completion condition
+    And I log out
+    # Student view.
+    When I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Music history"
+    And I switch to "h5p-player" class iframe
+    And I switch to "h5p-iframe" class iframe
+    And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
+    And I reload the page
     Then the "View" completion condition of "Music history" is displayed as "done"
+    And the "Receive a grade" completion condition of "Music history" is displayed as "done"
 
-  @javascript
   Scenario: Use manual completion
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Music history"
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
-    And I press "Unlock completion options"
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and display"
+    And I follow "Music history"
     # Teacher view.
     And the manual completion button for "Music history" should be disabled
     And I log out
