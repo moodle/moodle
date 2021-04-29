@@ -60,6 +60,7 @@ $string['assign:viewgrades'] = 'View grades';
 $string['assign:showhiddengrader'] = 'See the identity of a hidden grader';
 $string['assign:submit'] = 'Submit assignment';
 $string['assign:view'] = 'View assignment';
+$string['assign:viewownsubmissionsummary'] = 'View own submission summary';
 $string['assignfeedback'] = 'Feedback plugin';
 $string['assignfeedbackpluginname'] = 'Feedback plugin';
 $string['assignmentisdue'] = 'Assignment is due';
