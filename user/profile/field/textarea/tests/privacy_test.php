@@ -276,13 +276,8 @@ class profilefield_textarea_testcase extends provider_testcase {
      * @return int The ID of the profile category
      */
     private function add_profile_category() {
-        global $DB;
-        // Create a new profile category.
-        $cat = new stdClass();
-        $cat->name = 'Test category';
-        $cat->sortorder = 1;
-
-        return $DB->insert_record('user_info_category', $cat);
+        $cat = $this->getDataGenerator()->create_custom_profile_field_category(['name' => 'Test category']);
+        return $cat->id;
     }
 
     /**
@@ -293,20 +288,13 @@ class profilefield_textarea_testcase extends provider_testcase {
      * @return int The ID of the profile field
      */
     private function add_profile_field($categoryid, $datatype) {
-        global $DB;
-        // Create a new profile field.
-        $data = new stdClass();
-        $data->datatype = $datatype;
-        $data->shortname = 'tstField';
-        $data->name = 'Test field';
-        $data->description = 'This is a test.';
-        $data->required = false;
-        $data->locked = false;
-        $data->forceunique = false;
-        $data->signup = false;
-        $data->visible = '0';
-        $data->categoryid = $categoryid;
-
-        return $DB->insert_record('user_info_field', $data);
+        $data = $this->getDataGenerator()->create_custom_profile_field([
+            'datatype' => $datatype,
+            'shortname' => 'tstField',
+            'name' => 'Test field',
+            'description' => 'This is a test.',
+            'categoryid' => $categoryid,
+        ]);
+        return $data->id;
     }
 }

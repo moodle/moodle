@@ -50,14 +50,10 @@ class availability_profile_condition_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        // Add a custom profile field type. The API for doing this is indescribably
-        // horrid and tightly intertwined with the form UI, so it's best to add
-        // it directly in database.
-        $DB->insert_record('user_info_field', array(
-                'shortname' => 'frogtype', 'name' => 'Type of frog', 'categoryid' => 1,
+        // Add a custom profile field type.
+        $this->profilefield = $this->getDataGenerator()->create_custom_profile_field(array(
+                'shortname' => 'frogtype', 'name' => 'Type of frog',
                 'datatype' => 'text'));
-        $this->profilefield = $DB->get_record('user_info_field',
-                array('shortname' => 'frogtype'));
 
         // Clear static cache.
         \availability_profile\condition::wipe_static_cache();
@@ -333,11 +329,9 @@ class availability_profile_condition_testcase extends advanced_testcase {
         $info = new \core_availability\mock_info();
 
         // Add custom textarea type.
-        $DB->insert_record('user_info_field', array(
-                'shortname' => 'longtext', 'name' => 'Long text', 'categoryid' => 1,
+        $customfield = $this->getDataGenerator()->create_custom_profile_field(array(
+                'shortname' => 'longtext', 'name' => 'Long text',
                 'datatype' => 'textarea'));
-        $customfield = $DB->get_record('user_info_field',
-                array('shortname' => 'longtext'));
 
         // The list of fields should include the text field added in setUp(),
         // but should not include the textarea field added just now.
@@ -465,11 +459,9 @@ class availability_profile_condition_testcase extends advanced_testcase {
         condition::wipe_static_cache();
 
         // For testing, make another info field with default value.
-        $DB->insert_record('user_info_field', array(
-                'shortname' => 'tonguestyle', 'name' => 'Tongue style', 'categoryid' => 1,
+        $otherprofilefield = $this->getDataGenerator()->create_custom_profile_field(array(
+                'shortname' => 'tonguestyle', 'name' => 'Tongue style',
                 'datatype' => 'text', 'defaultdata' => 'Slimy'));
-        $otherprofilefield = $DB->get_record('user_info_field',
-                array('shortname' => 'tonguestyle'));
 
         // Make a test course and some users.
         $generator = $this->getDataGenerator();

@@ -8,14 +8,16 @@ Feature: Social profile fields can not have a duplicate shortname.
   Scenario: Verify you can edit social profile fields.
     Given I log in as "admin"
     When I navigate to "Users > Accounts > User profile fields" in site administration
-    And I set the field "datatype" to "Social"
+    And I click on "Create a new profile field" "link"
+    And I click on "Social" "link"
     And I set the following fields to these values:
-      | Short name                    | yahoo            |
       | Networktype                   | Yahoo ID         |
+      | Short name                    | yahoo            |
     And I click on "Save changes" "button"
-    And I set the field "datatype" to "Social"
+    And I click on "Create a new profile field" "link"
+    And I click on "Social" "link"
     And I set the following fields to these values:
-      | Short name                    | yahoo            |
       | Networktype                   | Yahoo ID         |
+      | Short name                    | yahoo            |
     And I click on "Save changes" "button"
     Then I should see "This short name is already in use"

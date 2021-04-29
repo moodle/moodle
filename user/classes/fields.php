@@ -371,10 +371,11 @@ class fields {
         // or if the user doesn't have access to see them).
         foreach ($extra as $key => $field) {
             if (preg_match(self::PROFILE_FIELD_REGEX, $field, $matches)) {
+                $allowed = false;
                 if ($allowcustom) {
                     require_once($CFG->dirroot . '/user/profile/lib.php');
                     $fieldinfo = profile_get_custom_field_data_by_shortname($matches[1]);
-                    switch ($fieldinfo['visible']) {
+                    switch ($fieldinfo->visible ?? -1) {
                         case PROFILE_VISIBLE_NONE:
                         case PROFILE_VISIBLE_PRIVATE:
                             $allowed = !$context || has_capability('moodle/user:viewalldetails', $context);
@@ -383,8 +384,6 @@ class fields {
                             $allowed = true;
                             break;
                     }
-                } else {
-                    $allowed = false;
                 }
                 if (!$allowed) {
                     unset($extra[$key]);
@@ -586,7 +585,7 @@ class fields {
             require_once($CFG->dirroot . '/user/profile/lib.php');
             $fieldinfo = profile_get_custom_field_data_by_shortname($matches[1]);
             // Use format_string so it can be translated with multilang filter if necessary.
-            return format_string($fieldinfo['name']);
+            return $fieldinfo ? format_string($fieldinfo->name) : $field;
         }
 
         // Some fields have language strings which are not the same as field name.

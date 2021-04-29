@@ -50,11 +50,9 @@ if ($dataformat) {
                     'city'      => 'city',
                     'country'   => 'country');
 
-    if ($extrafields = $DB->get_records('user_info_field')) {
-        foreach ($extrafields as $n => $field) {
-            $fields['profile_field_'.$field->shortname] = 'profile_field_'.$field->shortname;
-            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-        }
+    $extrafields = profile_get_user_fields_with_data(0);
+    foreach ($extrafields as $formfield) {
+        $fields['profile_field_'.$formfield->get_shortname()] = 'profile_field_'.$formfield->get_shortname();
     }
 
     $filename = clean_filename(get_string('users'));
@@ -68,11 +66,7 @@ if ($dataformat) {
         if (!$user = $DB->get_record('user', array('id' => $userid))) {
             return null;
         }
-        foreach ($extrafields as $field) {
-            $newfield = 'profile_field_'.$field->datatype;
-            $formfield = new $newfield($field->id, $user->id);
-            $formfield->edit_load_user_data($user);
-        }
+        profile_load_data($user);
         $userprofiledata = array();
         foreach ($fields as $field => $unused) {
             // Custom user profile textarea fields come in an array

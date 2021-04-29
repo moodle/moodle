@@ -1151,6 +1151,7 @@ abstract class restore_dbops {
     public static function create_included_users($basepath, $restoreid, $userid,
             \core\progress\base $progress) {
         global $CFG, $DB;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
         $progress->start_progress('Creating included users');
 
         $authcache = array(); // Cache to get some bits from authentication plugins
@@ -1257,8 +1258,9 @@ abstract class restore_dbops {
                         $udata = (object)$udata;
                         // If the profile field has data and the profile shortname-datatype is defined in server
                         if ($udata->field_data) {
-                            if ($field = $DB->get_record('user_info_field', array('shortname'=>$udata->field_name, 'datatype'=>$udata->field_type))) {
-                            /// Insert the user_custom_profile_field
+                            $field = profile_get_custom_field_data_by_shortname($udata->field_name);
+                            if ($field && $field->datatype === $udata->field_type) {
+                                // Insert the user_custom_profile_field.
                                 $rec = new stdClass();
                                 $rec->userid  = $newuserid;
                                 $rec->fieldid = $field->id;
