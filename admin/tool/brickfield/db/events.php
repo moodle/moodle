@@ -27,11 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $observers = [
     [
-        'eventname' => '\tool_brickfield\event\plugin_installed',
-        'callback'  => '\tool_brickfield\eventobservers::plugin_installed',
-        'priority'  => 1
-    ],
-    [
         'eventname' => '\core\event\course_category_created',
         'callback'  => '\tool_brickfield\eventobservers::course_category_created',
         'internal'  => false,

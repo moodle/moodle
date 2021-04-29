@@ -20,7 +20,6 @@ use context_system;
 use core\log\sql_reader;
 use moodle_url;
 use stdClass;
-use tool_brickfield\event\plugin_installed;
 use tool_brickfield\local\tool\filter;
 
 /**
@@ -109,14 +108,14 @@ class accessibility {
 
     /**
      * Get the relevant title.
-     * @param local\tool\filter $filter
+     * @param filter $filter
      * @param int $countdata
      * @return string
      * @throws \coding_exception
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    public static function get_title(local\tool\filter $filter, int $countdata): string {
+    public static function get_title(filter $filter, int $countdata): string {
         global $DB;
 
         $tmp = new \stdClass();
@@ -469,43 +468,6 @@ class accessibility {
         $courseids = $DB->get_fieldset_sql($sql, $params);
 
         return $courseids;
-    }
-
-    /**
-     * Plugin installed.
-     * @throws coding_exception
-     * @throws dml_exception
-     */
-    public static function plugin_installed() {
-        global $USER;
-
-        $readers = get_log_manager()->get_readers(sql_reader::class);
-        $reader = reset($readers);
-        $select = 'eventname = :eventname AND action = :action AND target = :target';
-        $params = [
-            'eventname' => '\\' . manager::PLUGINNAME . '\event\plugin_installed',
-            'action' => 'installed',
-            'target' => 'plugin'
-        ];
-        $logplugininstalled = $reader->get_events_select($select, $params, 'timecreated ASC', 0, 1);
-        if (empty($logplugininstalled)) {
-            $context = context_system::instance();
-            $pi = new stdClass();
-            $pi->userid = empty($USER->id) ? 0 : $USER->id;
-            $pi->contextid = $context->id;
-            $pi->component = manager::PLUGINNAME;
-            $pi->modifierid = $pi->userid;
-            $pi->sortorder = 0;
-            $event = plugin_installed::create([
-                'context' => $context,
-                'relateduserid' => $pi->userid,
-                'other' => [
-                    'plugin' => $pi->component,
-                    'installed' => 1
-                ]
-            ]);
-            $event->trigger();
-        }
     }
 
     /**

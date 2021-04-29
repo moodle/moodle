@@ -25,5 +25,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tool_brickfield';
-$plugin->version = 2020101918;
+$plugin->version = 2020101919;
 $plugin->requires = 2021042000;
