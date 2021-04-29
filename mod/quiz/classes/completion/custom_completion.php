@@ -145,9 +145,9 @@ class custom_completion extends activity_custom_completion {
      * @return array
      */
     public function get_custom_rule_descriptions(): array {
-        $minattempts = $this->cm->customdata['customcompletionrules']['completionminattempts'];
+        $minattempts = $this->cm->customdata['customcompletionrules']['completionminattempts'] ?? 0;
 
-        $completionpassorattempts = $this->cm->customdata['customcompletionrules']['completionpassorattemptsexhausted'];
+        $completionpassorattempts = $this->cm->customdata['customcompletionrules']['completionpassorattemptsexhausted'] ?? [];
         if (!empty($completionpassorattempts['completionattemptsexhausted'])) {
             $passorallattemptslabel = get_string('completiondetail:passorexhaust', 'mod_quiz');
         } else {
