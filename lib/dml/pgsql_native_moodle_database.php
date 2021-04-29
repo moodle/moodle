@@ -192,7 +192,7 @@ class pgsql_native_moodle_database extends moodle_database {
         $dberr = ob_get_contents();
         ob_end_clean();
 
-        $status = pg_connection_status($this->pgsql);
+        $status = $this->pgsql ? pg_connection_status($this->pgsql) : false;
 
         if ($status === false or $status === PGSQL_CONNECTION_BAD) {
             $this->pgsql = null;
