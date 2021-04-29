@@ -139,8 +139,7 @@ class auth_db_testcase extends advanced_testcase {
         set_config('field_lock_email', 'unlocked', 'auth_db');
 
         // Create a user profile field and add mapping to it.
-        $DB->insert_record('user_info_field', ['shortname' => 'pet', 'name' => 'Pet', 'required' => 0,
-            'visible' => 1, 'locked' => 0, 'categoryid' => 1, 'datatype' => 'text']);
+        $this->getDataGenerator()->create_custom_profile_field(['shortname' => 'pet', 'name' => 'Pet', 'datatype' => 'text']);
 
         set_config('field_map_profile_field_pet', 'animal', 'auth_db');
         set_config('field_updatelocal_profile_field_pet', 'oncreate', 'auth_db');

@@ -415,17 +415,17 @@ function uu_allowed_sysroles_cache() {
  * @return stdClass pre-processed custom profile data
  */
 function uu_pre_process_custom_profile_data($data) {
-    global $CFG, $DB;
+    global $CFG;
+    require_once($CFG->dirroot . '/user/profile/lib.php');
+    $fields = profile_get_user_fields_with_data(0);
+
     // find custom profile fields and check if data needs to converted.
     foreach ($data as $key => $value) {
         if (preg_match('/^profile_field_/', $key)) {
             $shortname = str_replace('profile_field_', '', $key);
-            if ($fields = $DB->get_records('user_info_field', array('shortname' => $shortname))) {
-                foreach ($fields as $field) {
-                    require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-                    $newfield = 'profile_field_'.$field->datatype;
-                    $formfield = new $newfield($field->id, $data->id);
-                    if (method_exists($formfield, 'convert_external_data')) {
+            if ($fields) {
+                foreach ($fields as $formfield) {
+                    if ($formfield->get_shortname() === $shortname && method_exists($formfield, 'convert_external_data')) {
                         $data->$key = $formfield->convert_external_data($value);
                     }
                 }
@@ -443,7 +443,9 @@ function uu_pre_process_custom_profile_data($data) {
  * @return bool true if no error else false
  */
 function uu_check_custom_profile_data(&$data) {
-    global $CFG, $DB;
+    global $CFG;
+    require_once($CFG->dirroot.'/user/profile/lib.php');
+
     $noerror = true;
     $testuserid = null;
 
@@ -452,15 +454,13 @@ function uu_check_custom_profile_data(&$data) {
             $testuserid = $result[1];
         }
     }
+    $profilefields = profile_get_user_fields_with_data(0);
     // Find custom profile fields and check if data needs to converted.
     foreach ($data as $key => $value) {
         if (preg_match('/^profile_field_/', $key)) {
             $shortname = str_replace('profile_field_', '', $key);
-            if ($fields = $DB->get_records('user_info_field', array('shortname' => $shortname))) {
-                foreach ($fields as $field) {
-                    require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-                    $newfield = 'profile_field_'.$field->datatype;
-                    $formfield = new $newfield($field->id, 0);
+            foreach ($profilefields as $formfield) {
+                if ($formfield->get_shortname() === $shortname) {
                     if (method_exists($formfield, 'convert_external_data') &&
                             is_null($formfield->convert_external_data($value))) {
                         $data['status'][] = get_string('invaliduserfield', 'error', $shortname);
