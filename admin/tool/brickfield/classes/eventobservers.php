@@ -36,7 +36,7 @@ class eventobservers {
      * @return bool
      * @throws \dml_exception
      */
-    protected static function course_event_should_be_handled(int $courseid): bool {
+    private static function course_event_should_be_handled(int $courseid): bool {
         return accessibility::is_accessibility_enabled() && analysis::is_enabled() &&
             (empty($courseid) || (isset($courseid) && scheduler::is_course_in_schedule($courseid)));
     }
@@ -47,7 +47,7 @@ class eventobservers {
      * @throws \ReflectionException
      * @throws \dml_exception
      */
-    public static function area_altered(base $event) {
+    private static function area_altered(base $event) {
         // Handle if this feature is enabled and this course is in the schedule.
         if (static::course_event_should_be_handled($event->courseid)) {
             manager::find_new_or_updated_areas($event);
@@ -424,7 +424,7 @@ class eventobservers {
      * @param stdClass $data
      * @throws \dml_exception
      */
-    public static function observer_insert(stdClass $data) {
+    private static function observer_insert(stdClass $data) {
         global $DB;
 
         // Handle if this feature is enabled and this course is in the schedule.
