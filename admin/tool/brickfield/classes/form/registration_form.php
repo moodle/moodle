@@ -60,9 +60,6 @@ class registration_form  extends moodleform {
         $hash = $registration->get_secret_key();
 
         $mform->addElement('header', 'activationheader', get_string('activationheader', manager::PLUGINNAME));
-        $mform->addElement('static', 'siteinfosummary', '', get_string('activationinfo', manager::PLUGINNAME,
-            '<a href="' . $registration->get_regurl() . '" data-action="send_info" target="_blank">'));
-
         $mform->addElement('text', 'key', get_string('secretkey', manager::PLUGINNAME));
         $mform->setType('key', PARAM_TEXT);
         $mform->setDefault('key', !empty($key) ? $key : '');
@@ -77,10 +74,12 @@ class registration_form  extends moodleform {
         $mform->addElement('static', 'siteinfosummary', '',
             get_string('sendfollowinginfo', manager::PLUGINNAME, $info->moreinfostring));
 
-        $mform->addElement('hidden', 'lang', $info->language);
+        $mform->addElement('hidden', 'lang', $info->languagecode);
         $mform->setType('lang', PARAM_TEXT);
         $mform->addElement('hidden', 'countrycode', $info->country);
         $mform->setType('countrycode', PARAM_TEXT);
+        $mform->addElement('hidden', 'url', $info->url);
+        $mform->setType('url', PARAM_URL);
 
         $this->add_action_buttons(false, get_string('activate', manager::PLUGINNAME, '#'));
     }
@@ -99,6 +98,7 @@ class registration_form  extends moodleform {
         $data->name = $site->fullname;
         $data->url = $CFG->wwwroot;
         $data->language = get_string('thislanguage', 'langconfig');
+        $data->languagecode = $admin->lang ?: $CFG->lang;
         $data->country = $admin->country ?: $CFG->country;
         $data->email = $admin->email;
         $data->moreinfo = self::get_moreinfo();
@@ -125,6 +125,9 @@ class registration_form  extends moodleform {
         $moreinfo['numfactivities'] = $DB->count_records('course_modules');
         $moreinfo['mobileservice'] = empty($CFG->enablemobilewebservice) ? 0 : $CFG->enablemobilewebservice;
         $moreinfo['usersmobileregistered'] = $DB->count_records('user_devices');
+        $moreinfo['contentyperesults'] = '';
+        $moreinfo['contenttypeerrors'] = '';
+        $moreinfo['percheckerrors'] = '';
         return $moreinfo;
     }
 

@@ -86,7 +86,10 @@ class registration {
     protected $siteid;
 
     /** @var string The URL to register at. */
-    private static $regurl = 'https://account.mybrickfield.ie/';
+    private static $regurl = 'https://account.mybrickfield.ie/register';
+
+    /** @var string The URL to view terms at. */
+    private static $termsurl = 'https://account.mybrickfield.ie/terms';
 
     /**
      * Object registration constructor.
@@ -252,6 +255,14 @@ class registration {
      */
     public function get_regurl(): string {
         return self::$regurl;
+    }
+
+    /**
+     * Get the terms and conditions URL.
+     * @return string
+     */
+    public function get_termsurl(): string {
+        return self::$termsurl;
     }
 
     /**

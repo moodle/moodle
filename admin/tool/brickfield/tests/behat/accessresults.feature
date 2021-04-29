@@ -19,7 +19,7 @@ Feature: Brickfield activityresults
     And I set the field "id_key" to "123456789012345678901234567890ab"
     And I set the field "id_hash" to "ab123456789012345678901234567890"
     And I press "Activate"
-    Then I should see "Your accessibility toolkit is still being validated."
+    Then I should see "Your accessibility toolkit is functional while being validated."
     And I navigate to "Plugins > Admin tools > Accessibility > Reports" in site administration
     And I press "Submit for analysis"
     Then I should see "The global (course independent) content has been scheduled for analysis."
