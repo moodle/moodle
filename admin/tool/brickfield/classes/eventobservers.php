@@ -17,7 +17,6 @@
 namespace tool_brickfield;
 
 use core\event\base;
-use tool_brickfield\event\plugin_installed;
 use stdClass;
 
 /**
@@ -417,19 +416,6 @@ class eventobservers {
         // If this feature has been disabled, do nothing.
         if (accessibility::is_accessibility_enabled()) {
             static::area_altered($event);
-        }
-    }
-
-    /**
-     * Look for a plugin installed event.
-     * @param plugin_installed $event
-     * @throws \moodle_exception
-     */
-    public static function plugin_installed(plugin_installed $event) {
-        // If this feature has been disabled, do nothing.
-        if (accessibility::is_accessibility_enabled()) {
-            $urlregistration = manager::registration_url();
-            redirect($urlregistration->out());
         }
     }
 

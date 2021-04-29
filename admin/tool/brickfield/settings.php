@@ -97,17 +97,12 @@ if ($hassiteconfig) {
         PARAM_INT
     ));
 
-    // Need to leave this as last addition to setting variable, as it triggers a callback.
-    $lastitem = new admin_setting_configtext(
+    $settings->add(new admin_setting_configtext(
         manager::PLUGINNAME . '/perpage',
         get_string('perpage', manager::PLUGINNAME),
         '',
         50,
-        PARAM_INT);
-    $lastitem->set_updatedcallback(static function(){
-        accessibility::plugin_installed();
-    });
-    $settings->add($lastitem);
+        PARAM_INT));
 
     $ADMIN->add('brickfieldfolder', $settings);
 
