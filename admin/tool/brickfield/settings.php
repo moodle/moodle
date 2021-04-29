@@ -65,14 +65,6 @@ if ($hassiteconfig) {
 
     $settings = new admin_settingpage(manager::PLUGINNAME, get_string('settings', manager::PLUGINNAME));
 
-    $settings->add(new admin_setting_description(
-        manager::PLUGINNAME . '/logo', '',
-        html_writer::img($OUTPUT->image_url('brickfield-logo-small', manager::PLUGINNAME),
-            'logo',
-            ['style' => 'display: block; margin: 0 auto -30px auto; float: right;']
-        )
-    ));
-
     $settings->add(new admin_setting_configcheckbox(
         manager::PLUGINNAME . '/analysistype',
         get_string('analysistype', manager::PLUGINNAME),
