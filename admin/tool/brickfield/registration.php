@@ -38,7 +38,8 @@ require_once($CFG->libdir . '/moodlelib.php');
 \tool_brickfield\accessibility::require_accessibility_enabled();
 
 admin_externalpage_setup('tool_brickfield_activation');
-$PAGE->set_url(__DIR__ . '/registration.php');
+$thisurl = new moodle_url(\tool_brickfield\accessibility::get_plugin_url().'/registration.php');
+$PAGE->set_url($thisurl);
 
 $termsandconditions = optional_param('terms', 0, PARAM_BOOL);
 if ($termsandconditions) {
@@ -62,14 +63,10 @@ echo html_writer::img($OUTPUT->image_url('brickfield-logo-small', manager::PLUGI
     ['style' => 'display: block; margin: 0 auto; float: right;']);
 echo $OUTPUT->heading(get_string('pluginname', manager::PLUGINNAME), 3);
 
-$url = new moodle_url('/admin/tool/brickfield/registration.php', ['terms' => 1]);
-$action = new popup_action('click', $url, 'popup', ['height' => 400, 'width' => 600]);
-$tandclinktext = get_string('termsandconditionslink', 'tool_brickfield');
-$a = $OUTPUT->action_link($url, $tandclinktext, $action, ['target' => '_blank']);
-$reginfo = get_string('registrationinfo', 'tool_brickfield', $a);
+$registration = new registration();
+$reginfo = get_string('registrationinfo', manager::PLUGINNAME, $registration->get_termsurl());
 echo format_text($reginfo, FORMAT_HTML, ['noclean' => true]);
 
-$registration = new registration();
 if ($fromform = $registrationform->get_data()) {
     if (!$registration->set_keys_for_registration($fromform->key, $fromform->hash)) {
         echo $OUTPUT->notification(get_string('hashincorrect', manager::PLUGINNAME), 'notifyproblem');
@@ -87,5 +84,10 @@ if (!$registration->toolkit_is_active()) {
 } else {
     echo $OUTPUT->notification(get_string('activated', manager::PLUGINNAME), 'success');
 }
+
+$keyinfo = get_string('activationinfo', manager::PLUGINNAME, '<a href="' . $registration->get_regurl() .
+    '" data-action="send_info" target="_blank">');
+echo format_text($keyinfo, FORMAT_HTML, ['noclean' => true]);
+
 $registrationform->display();
 echo $OUTPUT->footer();
