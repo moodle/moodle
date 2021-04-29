@@ -100,3 +100,23 @@ $iconsizes: map-merge((
 .helplink .icon {
     margin-left: 0.5rem;
 }
+
+.icons-collapse-expand {
+    .expanded-icon {
+        display: block;
+    }
+
+    .collapsed-icon {
+        display: none;
+    }
+
+    &.collapsed {
+        .expanded-icon {
+            display: none;
+        }
+
+        .collapsed-icon {
+            display: block;
+        }
+    }
+}
