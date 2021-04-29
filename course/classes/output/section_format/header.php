@@ -89,7 +89,9 @@ class header implements renderable, templatable {
             $data->ishidden = true;
         }
 
-        if (!$format->show_editor() && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE && empty($data->issinglesection)) {
+        $coursedisplay = $course->coursedisplay ?? COURSE_DISPLAY_SINGLEPAGE;
+
+        if (!$format->show_editor() && $coursedisplay == COURSE_DISPLAY_MULTIPAGE && empty($data->issinglesection)) {
             $data->url = course_get_url($course, $section->section);
             $data->name = get_section_name($course, $section);
         }
