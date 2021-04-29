@@ -31,6 +31,9 @@ class file_node implements node {
     /** @var string|null The title of the file node. */
     private $title;
 
+    /** @var string The name of the file. */
+    private $name;
+
     /** @var string|null The file's export format. */
     private $exportformat;
 
@@ -54,6 +57,7 @@ class file_node implements node {
     public function __construct(\stdClass $gdfile) {
         $this->id = $gdfile->id;
         $this->title = $this->generate_file_title($gdfile);
+        $this->name = $gdfile->name;
         $this->exportformat = $this->generate_file_export_format($gdfile);
         $this->link = $this->generate_file_link($gdfile);
         $this->modified = ($gdfile->modifiedTime) ? strtotime($gdfile->modifiedTime) : '';
@@ -90,7 +94,7 @@ class file_node implements node {
             'source' => json_encode(
                 [
                     'id' => $this->id,
-                    'name' => $this->title,
+                    'name' => $this->name,
                     'link' => $this->link,
                     'exportformat' => $this->exportformat,
                 ]
