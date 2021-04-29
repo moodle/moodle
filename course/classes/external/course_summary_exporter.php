@@ -108,7 +108,15 @@ class course_summary_exporter extends \core\external\exporter {
             ),
             'visible' => array(
                 'type' => PARAM_BOOL,
-            )
+            ),
+            'showactivitydates' => [
+                'type' => PARAM_BOOL,
+                'null' => NULL_ALLOWED
+            ],
+            'showcompletionconditions' => [
+                'type' => PARAM_BOOL,
+                'null' => NULL_ALLOWED
+            ],
         );
     }
 
