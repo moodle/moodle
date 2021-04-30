@@ -13392,8 +13392,12 @@ body:not(.editing) .sitetopic ul.section {
   display: inline-block; }
 
 .section .activity.modtype_label.label {
-  font-weight: normal;
-  padding: .2em; }
+  font-weight: normal; }
+  .section .activity.modtype_label.label .contentwithoutlink {
+    min-height: 0; }
+  .section .activity.modtype_label.label.hasinfo p:last-child,
+  .section .activity.modtype_label.label.hasinfo i:last-child {
+    margin-bottom: 0; }
 
 .section li.activity {
   padding: .2em;
@@ -18590,7 +18594,6 @@ li.activity.label,
   color: inherit;
   border: inherit;
   text-shadow: none;
-  padding: 8px;
   white-space: normal;
   display: block;
   font-size: inherit;
@@ -18599,7 +18602,8 @@ li.activity.label,
 
 .file-picker td.label {
   display: table-cell;
-  text-align: right; }
+  text-align: right;
+  padding: 8px; }
 
 .choosercontainer #chooseform .option label {
   font-size: 12px; }
