@@ -214,16 +214,20 @@ class observer {
         }
 
         // Is this a duplicate event?
-        if (!empty($enrolrec->timecreated) &&
-             $DB->get_record_sql("SELECT id FROM {local_iomad_track}
-                                 WHERE userid = :userid
-                                 AND courseid = :courseid
-                                 AND timeenrolled = :timeenrolled
-                                 AND timecompleted IS NOT NULL",
-                                 array('userid' => $userid, 'courseid' => $courseid, 'timeenrolled' => $enrolrec->timecreated))) {
-
-            // It is so we don't record it.
-            return true;
+        if (!empty($enrolrec->timestart)) {
+            if ($trackrec = $DB->get_record_sql("SELECT * FROM {local_iomad_track}
+                                                 WHERE userid=:userid
+                                                 AND courseid = :courseid
+                                                 AND timeenrolled > :timelow
+                                                 AND timeenrolled < :timehigh",
+                                                 array('userid' => $userid,
+                                                       'courseid' => $courseid,
+                                                       'timelow' => $enrolrec->timestart - 10,
+                                                       'timehigh' => $enrolrec->timestart + 10))) {
+                if ($trackrec->timecompleted !=null && (round($trackrec->timecompleted  / 10 ) * 10) != (round($completionrec->timecompleted /10) *10)) {
+                    return true;
+                }
+            }
         }
 
         // Get the final grade for the course.

@@ -3877,11 +3877,13 @@ class company {
             if ($trackrec = $DB->get_record_sql("SELECT * FROM {local_iomad_track}
                                     WHERE userid=:userid
                                     AND courseid = :courseid
-                                    AND timeenrolled = :timeenrolled",
+                                    AND timeenrolled > :timelow
+                                    AND timeenrolled < :timehigh",
                                     array('userid' => $userid,
                                           'courseid' => $courseid,
-                                          'timeenrolled' => $enrolrec->timestart))) {
-                if ($trackrec->timecompleted !=null && $trackrec->timecompleted != $completionrec->timecompleted) {
+                                          'timelow' => $enrolrec->timestart - 10,
+                                          'timehigh' => $enrolrec->timestart + 10))) {
+                if ($trackrec->timecompleted !=null && (round($trackrec->timecompleted  / 10 ) * 10) != (round($completionrec->timecompleted /10) *10)) {
                     return true;
                 }
             }
@@ -3911,15 +3913,8 @@ class company {
         }
 
         $complete = false;
-        if ($licenses = $DB->get_records_sql("SELECT * FROM {companylicense_users} clu
-                                              JOIN {companylicense} cl
-                                              ON (clu.licenseid = cl.id and cl.program = 1)
-                                              WHERE clu.userid = :userid
-                                              AND clu.licenseid = (
-                                                  SELECT licenseid FROM {companylicense_users}
-                                                  WHERE userid = :userid2
-                                                  AND licensecourseid = :courseid)",
-                                              array('userid' => $user->id, 'userid2' => $user->id, 'courseid' => $courseid))) {
+        if(!empty($trackinfo->licenseid) && $DB->get_record('companylicense', array('id' => $trackinfo->licenseid, 'program' => 1))) {
+            $licenses = $DB->get_records('companylicense_users', array('licenseid' => $track->licenseid));
             foreach ($licenses as $license) {
                 if ($license->isusing && $DB->get_record_sql("SELECT id FROM {course_completions}
                                                               WHERE userid = :userid
