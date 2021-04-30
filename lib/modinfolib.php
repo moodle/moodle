@@ -1928,7 +1928,7 @@ class cm_info implements IteratorAggregate {
         // Check parent section.
         if ($this->available) {
             $parentsection = $this->modinfo->get_section_info($this->sectionnum);
-            if (!$parentsection->available) {
+            if (!$parentsection->get_available()) {
                 // Do not store info from section here, as that is already
                 // presented from the section (if appropriate) - just change
                 // the flag
@@ -2790,11 +2790,12 @@ class section_info implements IteratorAggregate {
     /**
      * Finds whether this section is available at the moment for the current user.
      *
-     * The value can be accessed publicly as $sectioninfo->available
+     * The value can be accessed publicly as $sectioninfo->available, but can be called directly if there
+     * is a case when it might be called recursively (you can't call property values recursively).
      *
      * @return bool
      */
-    private function get_available() {
+    public function get_available() {
         global $CFG;
         $userid = $this->modinfo->get_user_id();
         if ($this->_available !== null || $userid == -1) {
