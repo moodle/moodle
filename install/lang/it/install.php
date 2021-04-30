@@ -70,12 +70,12 @@ $string['pathsroparentdataroot'] = 'La cartella genitore ({$a->parent}) non è s
 $string['pathssubadmindir'] = 'Alcuni web host utilizzano la cartella /admin come URL di accesso a pannelli di controllo od altre funzioni particolari. Tuttavia questo nome coincide con il nome della cartella che Moodle utilizza per i propri file di amministrazione. Per evitare conflitti, è possibile specificare un nome alternativo per la cartella Admin di Moodle. Ad esempio:<p><b>moodleadmin</b></p>
 Tutti i link che puntano ai file di amministrazione di Moodle terranno conto di questa variazione.';
 $string['pathssubdataroot'] = '<p>La cartella dove Moodle memorizzerà i file caricati dagli utenti.</p>
-<p>L\'utente con il qule gira il processo del web server (in genere \'www-data\' o \'apache\') deve avere i permessi di lettura e di scrittura su questa cartella.</p>
+<p>L\'utente con il quale gira il processo del web server (in genere \'www-data\' o \'apache\') deve avere i permessi di lettura e di scrittura su questa cartella.</p>
 <p>La cartella inoltre non deve essere direttamente accessibile via web.</p>
 <p>Qualora la cartella non esista, lo script di installazione tenterà di crearla.</p>';
 $string['pathssubdirroot'] = '<p>Percorso assoluto della cartella dove si trova il codice di Moodle.</p>';
-$string['pathssubwwwroot'] = '<p>L\'iIndirizzo web per raggiungere a Moodle, in altre parole l\'indirizzo che gli utenti inseriranno nella barra degli indirizzi del proprio browser per accedere a questa installazione.</p>
-<p>Non è possibile accedere alla stessa installazione Moodle usando più di un indirizzi web. Se il tuo sito usa più indirizzi web, devi configurare dei re-indirizzamenti permanenti per tutti gli altri indirizzi web.</p>
+$string['pathssubwwwroot'] = '<p>L\'indirizzo web per raggiungere a Moodle, in altre parole l\'indirizzo che gli utenti inseriranno nella barra degli indirizzi del proprio browser per accedere a questa installazione.</p>
+<p>Non è possibile accedere alla stessa installazione Moodle usando più di un indirizzo web. Se il tuo sito usa più indirizzi web, devi configurare dei re-indirizzamenti permanenti per tutti gli altri indirizzi web.</p>
 <p>Se il tuo sito è raggiungibile sia dalla Internet sia dalla rete interna (a volte chiamata Intranet), allora usa l\'indirizzo Internet pubblico.</p>
 <p>Se l\'indirizzo utilizzato è errato, per favore correggilo nella barra degli indirizzi del browser e avvia nuovamente l\'installazione.</p>';
 $string['pathsunsecuredataroot'] = 'La posizione della Cartella dati non è sicura';
