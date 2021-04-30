@@ -265,6 +265,46 @@ abstract class tool {
     }
 
     /**
+     * Get instance name for display
+     * @param string $component
+     * @param string $table
+     * @param int $cmid
+     * @param int $courseid
+     * @param int $categoryid
+     * @return string
+     */
+    public static function get_instance_name(string $component, string $table, ?int $cmid, ?int $courseid,
+        ?int $categoryid): string {
+        global $DB;
+
+        $instancename = '';
+        if (empty($component)) {
+            return $instancename;
+        }
+        if ($component == 'core_course') {
+            if (($table == 'course_categories') && ($categoryid != 0) && ($categoryid != null)) {
+                $instancename = $DB->get_field($table, 'name', ['id' => $categoryid]);
+                return get_string('category') . ' - ' . $instancename;
+            }
+            if (($courseid == 0) || ($courseid == null)) {
+                return $instancename;
+            }
+            $thiscourse = get_fast_modinfo($courseid)->get_course();
+            $instancename = $thiscourse->shortname;
+        } else if ($component == 'core_question') {
+            $instancename = get_string('questions', 'question');
+        } else {
+            if (($cmid == 0) || ($cmid == null)) {
+                return $instancename;
+            }
+            $cm = get_fast_modinfo($courseid)->cms[$cmid];
+            $instancename = $cm->name;
+        }
+        $instancename = static::get_module_label($component).' - '.$instancename;
+        return($instancename);
+    }
+
+    /**
      * Provide arguments required for the toplevel page, using any provided filter.
      * @param filter|null $filter
      * @return array

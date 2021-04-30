@@ -25,23 +25,23 @@
         "pagenavigation": " ",
         "tableheading1": "Activity",
         "tableheading2": "Check",
-        "tableheading3": "Edit",
+        "tableheading3": "Existing HTML code",
         "tableheading4": "Line",
-        "tableheading5": "Existing HTML code",
+        "tableheading5": "Edit",
         "tabledata": [
             {
                 "activity": "Book",
                 "check": "Headings",
-                "edit": "<a href=\"link.com\">Edit</a>",
+                "html": "&lt;h3&gt;&lt;/h3&gt;",
                 "line": 2,
-                "html": "&lt;h3&gt;&lt;/h3&gt;"
+                "edit": "<a href=\"link.com\">Edit</a>"
             },
             {
                 "activity": "Label",
                 "check": "Headings",
-                "edit": "<a href=\"link.com\">Edit</a>",
+                "html": "&lt;h3&gt;&lt;/h3&gt;",
                 "line": 4,
-                "html": "&lt;h3&gt;&lt;/h3&gt;"
+                "edit": "<a href=\"link.com\">Edit</a>"
             }
         ]
     }
@@ -52,21 +52,21 @@
 <table class="generaltable">
     <thead>
     <tr>
-        <th class="header c0" style="width: 10%;" scope="col">{{tableheading1}}</th>
-        <th class="header c1" style="width: 20%;" scope="col">{{tableheading2}}</th>
-        <th class="header c2" style="width: 5%;" scope="col">{{tableheading3}}</th>
+        <th class="header c0" style="width: 30%;" scope="col">{{tableheading1}}</th>
+        <th class="header c1" style="width: 30%;" scope="col">{{tableheading2}}</th>
+        <th class="header c2" style="width: 30%;" scope="col">{{tableheading3}}</th>
         <th class="header c3" style="width: 5%;" scope="col">{{tableheading4}}</th>
-        <th class="header c4 lastcol" style="width: 60%;" scope="col">{{{tableheading5}}}</th>
+        <th class="header c4 lastcol" style="width: 5%;" scope="col">{{{tableheading5}}}</th>
     </tr>
     </thead>
     <tbody>
     {{#tabledata}}
     <tr>
-        <td class="cell c0" style="width:10%;">{{activity}}</td>
-        <td class="cell c1" style="width:20%;">{{check}}</td>
-        <td class="cell c2" style="width:5%;">{{{edit}}}</td>
+        <td class="cell c0" style="width:30%;">{{activity}}</td>
+        <td class="cell c1" style="width:30%;">{{check}}</td>
+        <td class="cell c2" style="width:30%;">{{html}}</td>
         <td class="cell c3" style="width:5%;">{{line}}</td>
-        <td class="cell c4" style="width:60%;">{{html}}</td>
+        <td class="cell c4" style="width:5%;">{{{edit}}}</td>
     </tr>
     {{/tabledata}}
     </tbody>
