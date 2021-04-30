@@ -65,18 +65,19 @@ class renderer extends \tool_brickfield\output\renderer {
 
         $templatedata->tableheading1 = get_string('tbltarget', manager::PLUGINNAME);
         $templatedata->tableheading2 = get_string('tblcheck', manager::PLUGINNAME);
-        $templatedata->tableheading3 = get_string('tbledit', manager::PLUGINNAME);
+        $templatedata->tableheading3 = get_string('tblhtmlcode', manager::PLUGINNAME);
         $templatedata->tableheading4 = get_string('tblline', manager::PLUGINNAME);
-        $templatedata->tableheading5 = get_string('tblhtmlcode', manager::PLUGINNAME);
+        $templatedata->tableheading5 = get_string('tbledit', manager::PLUGINNAME);
 
         $templatedata->tabledata = [];
         foreach ($data->errordata as $err) {
             $row = new \stdClass();
-            $row->activity = ucfirst(tool::get_module_label($err->component));
+            $row->activity = ucfirst(tool::get_instance_name($err->component, $err->tablename, $err->cmid,
+                $err->courseid, $err->categoryid));
             $row->check = $err->checkdesc;
-            $row->edit = $this->get_link($err);
-            $row->line = $err->errline;
             $row->html = $err->htmlcode;
+            $row->line = $err->errline;
+            $row->edit = $this->get_link($err, $row->activity);
             $templatedata->tabledata[] = $row;
         }
 
@@ -90,10 +91,11 @@ class renderer extends \tool_brickfield\output\renderer {
      * Return a link to edit the appropriate content for the error.
      *
      * @param \stdClass $err
+     * @param string $titlestr
      * @return string
      * @throws \coding_exception
      */
-    public function get_link(\stdClass $err): string {
+    public function get_link(\stdClass $err, string $titlestr): string {
         $out = '';
 
         $areaclass = '\tool_brickfield\local\areas\\' . $err->component . '\base';
@@ -103,7 +105,6 @@ class renderer extends \tool_brickfield\output\renderer {
             $link = module_area_base::get_edit_url($err);
         }
 
-        $titlestr = ucfirst($err->component) . ' ' . ucfirst($err->shortname) . ' (ID ' . $err->resid . ')';
         $title = get_string('errorlink', manager::PLUGINNAME, $titlestr);
 
         if (!isset($link)) {
