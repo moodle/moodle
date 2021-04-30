@@ -21,29 +21,29 @@ Feature: Block accessreview results
     And I set the field "id_key" to "123456789012345678901234567890ab"
     And I set the field "id_hash" to "ab123456789012345678901234567890"
     And I press "Activate"
-    Then I should see "Your accessibility toolkit is still being validated."
+    Then I should see "Your accessibility toolkit is functional while being validated."
     And I am on "Course 1" course homepage with editing mode on
-    When I add the "Accessibility Review" block
-    Then I should see "Accessibility Review"
+    When I add the "Accessibility review" block
+    Then I should see "Accessibility review"
     And I press "Submit for analysis"
     Then I should see "This course has been scheduled for analysis."
     And I run the scheduled task "\tool_brickfield\task\process_analysis_requests"
     And I run the scheduled task "\tool_brickfield\task\bulk_process_courses"
     And I run the scheduled task "\tool_brickfield\task\bulk_process_caches"
     And I reload the page
-    And I should see "Image" in the "Accessibility Review" "block"
-    And I should see "Layout" in the "Accessibility Review" "block"
-    And I should see "Link" in the "Accessibility Review" "block"
-    And I should see "Media" in the "Accessibility Review" "block"
-    And I should see "Table" in the "Accessibility Review" "block"
-    And I should see "Text" in the "Accessibility Review" "block"
+    And I should see "Image" in the "Accessibility review" "block"
+    And I should see "Layout" in the "Accessibility review" "block"
+    And I should see "Link" in the "Accessibility review" "block"
+    And I should see "Media" in the "Accessibility review" "block"
+    And I should see "Table" in the "Accessibility review" "block"
+    And I should see "Text" in the "Accessibility review" "block"
     # We created one link error above.
     And I should see "1" in the "Link" "table_row"
     # We created one text issue, and the standard Behat course generator creates another (too much content).
     And I should see "2" in the "Text" "table_row"
-    And "View Brickfield Accessibility Report" "icon" should exist in the "Accessibility Review" "block"
-    And "Toggle Brickfield Accessibility Heatmap" "icon" should exist in the "Accessibility Review" "block"
-    And "Download Brickfield Accessibility Report" "icon" should exist in the "Accessibility Review" "block"
+    And "View Brickfield accessibility toolkit" "icon" should exist in the "Accessibility review" "block"
+    And "Toggle Brickfield accessibility heatmap" "icon" should exist in the "Accessibility review" "block"
+    And "Download Brickfield accessibility summary report" "icon" should exist in the "Accessibility review" "block"
 
   Scenario: Toggle highlighting on/off
     Given I log in as "admin"
@@ -55,13 +55,13 @@ Feature: Block accessreview results
     And I set the field "id_hash" to "ab123456789012345678901234567890"
     And I press "Activate"
     And I am on "Course 1" course homepage with editing mode on
-    When I add the "Accessibility Review" block
+    When I add the "Accessibility review" block
     And I press "Submit for analysis"
     And I run the scheduled task "\tool_brickfield\task\process_analysis_requests"
     And I run the scheduled task "\tool_brickfield\task\bulk_process_courses"
     And I run the scheduled task "\tool_brickfield\task\bulk_process_caches"
     And I reload the page
-    And I click on "Toggle Brickfield Accessibility Heatmap" "icon"
+    And I click on "Toggle Brickfield accessibility heatmap" "icon"
     And ".block_accessreview_view" "css_element" should be visible
-    And I click on "Toggle Brickfield Accessibility Heatmap" "icon"
+    And I click on "Toggle Brickfield accessibility heatmap" "icon"
     And ".block_accessreview_view" "css_element" should not be visible

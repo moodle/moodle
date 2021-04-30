@@ -14,19 +14,19 @@ Feature: Block accessreview
   Scenario: View accessreview block on a course
     Given I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    When I add the "Accessibility Review" block
-    Then I should see "Accessibility Review"
+    When I add the "Accessibility review" block
+    Then I should see "Accessibility review"
     And I should see "Your accessibility toolkit needs to be registered."
 
   Scenario: Hide/show accessreview view
     Given I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    When I add the "Accessibility Review" block
-    Then I should see "Accessibility Review"
+    When I add the "Accessibility review" block
+    Then I should see "Accessibility review"
     And I should see "Your accessibility toolkit needs to be registered."
-    And I click on "Actions menu" "icon" in the "Accessibility Review" "block"
-    And I follow "Hide Accessibility Review block"
+    And I click on "Actions menu" "icon" in the "Accessibility review" "block"
+    And I follow "Hide Accessibility review block"
     And I should not see "Your accessibility toolkit needs to be registered."
-    And I click on "Actions menu" "icon" in the "Accessibility Review" "block"
-    And I follow "Show Accessibility Review block"
+    And I click on "Actions menu" "icon" in the "Accessibility review" "block"
+    And I follow "Show Accessibility review block"
     And I should see "Your accessibility toolkit needs to be registered."
