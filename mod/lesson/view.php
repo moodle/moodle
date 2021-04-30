@@ -69,7 +69,8 @@ if ($lesson->usepassword && !empty($userpassword)) {
 // Check these for students only TODO: Find a better method for doing this!
 if ($timerestriction = $lesson->get_time_restriction_status()) {  // Deadline restrictions.
     echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('notavailable'));
-    echo $lessonoutput->lesson_inaccessible(get_string($timerestriction->reason, 'lesson', userdate($timerestriction->time)));
+    // No need to display warnings because activity dates are displayed at the top of the page.
+    echo $lessonoutput->lesson_inaccessible('');
     echo $lessonoutput->footer();
     exit();
 } else if ($passwordrestriction = $lesson->get_password_restriction_status($userpassword)) { // Password protected lesson code.
