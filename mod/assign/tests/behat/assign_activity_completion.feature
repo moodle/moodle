@@ -126,6 +126,9 @@ Feature: View activity completion in the assignment activity
     And I press "Save changes"
     And I press "Submit assignment"
     And I press "Continue"
+    And the "View" completion condition of "Music history" is displayed as "done"
+    And the "Make a submission" completion condition of "Music history" is displayed as "done"
+    And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
