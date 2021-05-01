@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\report_helper;
+
 require('../../config.php');
 require_once($CFG->dirroot.'/report/outline/locallib.php');
 
@@ -46,6 +48,9 @@ $PAGE->set_pagelayout('report');
 require_login($course);
 $context = context_course::instance($course->id);
 require_capability('report/outline:view', $context);
+
+$url = new moodle_url('/report/outline/index.php', ['id' => $id]);
+report_helper::save_selected_report($id, $url);
 
 // Handle form to filter access logs by date.
 $filterform = new \report_outline\filter_form();
@@ -87,6 +92,10 @@ $strrelatedblogentries = get_string('relatedblogentries', 'blog');
 $PAGE->set_title($course->shortname .': '. $stractivityreport);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
+
+// Print selector drop down.
+$pluginname = get_string('pluginname', 'report_outline');
+report_helper::print_report_selector($pluginname);
 echo $OUTPUT->heading(format_string($course->fullname));
 
 list($uselegacyreader, $useinternalreader, $minloginternalreader, $logtable) = report_outline_get_common_log_variables();

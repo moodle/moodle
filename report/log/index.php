@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\report_helper;
+
 require('../../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/report/log/locallib.php');
@@ -103,6 +105,8 @@ $url = new moodle_url("/report/log/index.php", $params);
 $PAGE->set_url('/report/log/index.php', array('id' => $id));
 $PAGE->set_pagelayout('report');
 
+report_helper::save_selected_report($id, $url);
+
 // Get course details.
 $course = null;
 if ($id) {
@@ -163,6 +167,9 @@ if (empty($readers)) {
 
         if (empty($logformat)) {
             echo $output->header();
+            // Print selector dropdown.
+            $pluginname = get_string('pluginname', 'report_log');
+            report_helper::print_report_selector($pluginname);
             $userinfo = get_string('allparticipants');
             $dateinfo = get_string('alldays');
 
@@ -184,6 +191,9 @@ if (empty($readers)) {
         }
     } else {
         echo $output->header();
+        // Print selector dropdown.
+        $pluginname = get_string('pluginname', 'report_log');
+        report_helper::print_report_selector($pluginname);
         echo $output->heading(get_string('chooselogs') .':');
         echo $output->render($reportlog);
     }

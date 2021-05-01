@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\report_helper;
+
 require('../../config.php');
 require_once($CFG->dirroot.'/lib/tablelib.php');
 require_once($CFG->dirroot.'/notes/lib.php');
@@ -30,9 +32,6 @@ require_once($CFG->dirroot.'/report/participation/locallib.php');
 
 define('DEFAULT_PAGE_SIZE', 20);
 define('SHOW_ALL_PAGE_SIZE', 5000);
-
-// Release session lock.
-\core\session\manager::write_close();
 
 $id         = required_param('id', PARAM_INT); // course id.
 $roleid     = optional_param('roleid', 0, PARAM_INT); // which role to show
@@ -69,6 +68,8 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('report/participation:view', $context);
 
+report_helper::save_selected_report($id, $url);
+
 $strparticipation = get_string('participationreport');
 $strviews         = get_string('views');
 $strposts         = get_string('posts');
@@ -82,6 +83,12 @@ if (!array_key_exists($action, $actionoptions)) {
 $PAGE->set_title(format_string($course->shortname, true, array('context' => $context)) .': '. $strparticipation);
 $PAGE->set_heading(format_string($course->fullname, true, array('context' => $context)));
 echo $OUTPUT->header();
+
+// Print the selector dropdown.
+$pluginname = get_string('pluginname', 'report_participation');
+report_helper::print_report_selector($pluginname);
+// Release session lock.
+\core\session\manager::write_close();
 
 // Logs will not have been recorded before the course timecreated time.
 $minlog = $course->timecreated;
