@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\report_helper;
+
 require('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/course/lib.php');
@@ -59,6 +61,8 @@ $url = new moodle_url("/report/loglive/index.php", $params);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 
+report_helper::save_selected_report($id, $url);
+
 $renderable = new report_loglive_renderable($logreader, $id, $url, 0, $page);
 $refresh = $renderable->get_refresh_rate();
 $logreader = $renderable->selectedlogreader;
@@ -83,6 +87,10 @@ $PAGE->set_heading("$coursename: $strlivelogs ($strupdatesevery)");
 
 $output = $PAGE->get_renderer('report_loglive');
 echo $output->header();
+
+// Print selector dropdown.
+$pluginname = get_string('pluginname', 'report_loglive');
+report_helper::print_report_selector($pluginname);
 echo $output->reader_selector($renderable);
 echo $output->toggle_liveupdate_button($renderable);
 echo $output->render($renderable);
