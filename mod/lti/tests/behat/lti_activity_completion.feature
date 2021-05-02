@@ -1,4 +1,4 @@
-@mod @mod_lti @core_completion
+@mod @mod_lti @core_completion @javascript
 Feature: View activity completion information in the LTI activity
   In order to have visibility of LTI completion requirements
   As a student
@@ -28,8 +28,8 @@ Feature: View activity completion information in the LTI activity
       | Show completion conditions | Yes |
     And I press "Save and display"
     And I turn editing mode on
-    And I follow "Music history"
-    And I navigate to "Edit settings" in current page administration
+    When I open "Music history" actions menu
+    And I click on "Edit settings" "link" in the "Music history" activity
     And I set the following fields to these values:
       | Completion tracking | Show activity as complete when conditions are met |
       | Require view        | 1                                                 |
@@ -64,7 +64,6 @@ Feature: View activity completion information in the LTI activity
     Then the "Receive a grade" completion condition of "Music history" is displayed as "done"
     And the "View" completion condition of "Music history" is displayed as "done"
 
-  @javascript
   Scenario: Use manual completion
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
