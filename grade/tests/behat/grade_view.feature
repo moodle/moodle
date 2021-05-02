@@ -17,20 +17,28 @@ Feature: We can enter in grades and view reports from the gradebook
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity   | name                   | intro                   | course | section | idnumber |
+      | assign     | Test assignment name 1 | Submit your online text | C1     | 1       | assign1  |
+      | assign     | Test assignment name 2 | Submit your online text | C1     | 1       | assign2  |
     And I log in as "admin"
     And I set the following administration settings values:
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I log out
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name 1 |
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Description | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name 2 |
+    And I press "Save and return to course"
+    And I follow "Test assignment name 2"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Description | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
+    And I press "Save and return to course"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
@@ -39,6 +47,8 @@ Feature: We can enter in grades and view reports from the gradebook
     And I set the following fields to these values:
       | Online text | This is a submission for assignment 1 |
     And I press "Save changes"
+    And I press "Submit assignment"
+    And I press "Continue"
     Then I should see "Submitted for grading"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name 2"
@@ -46,6 +56,8 @@ Feature: We can enter in grades and view reports from the gradebook
     And I set the following fields to these values:
       | Online text | This is a submission for assignment 2 |
     And I press "Save changes"
+    And I press "Submit assignment"
+    And I press "Continue"
     Then I should see "Submitted for grading"
     And I log out
     And I log in as "teacher1"

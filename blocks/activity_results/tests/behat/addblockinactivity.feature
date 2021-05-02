@@ -24,30 +24,16 @@ Feature: The activity results block displays student scores
       | student3 | C1 | student |
       | student4 | C1 | student |
       | student5 | C1 | student |
+    And the following "activities" exist:
+      | activity   | name                | intro          | course | section | idnumber | assignsubmission_file_enabled |
+      | assign     | Test assignment 1   | Offline text   | C1     | 1       | assign1  | 0                             |
+      | assign     | Test assignment 2   | Offline text   | C1     | 1       | assign2  | 0                             |
+      | assign     | Test assignment 3   | Offline text   | C1     | 1       | assign3  | 0                             |
+    And the following "activities" exist:
+      | activity   | name                | content          | course | section | idnumber |
+      | page       |  Test page name     | This is a page   | C1     | 1       | page1    |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment 1 |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-    And I am on "Course 1" course homepage
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment 2 |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-    And I am on "Course 1" course homepage
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment 3 |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-    And I am on "Course 1" course homepage
-    And I add a "Page" to section "1"
-    And I set the following fields to these values:
-      | Name | Test page name |
-      | Description | Test page description |
-      | Page content | This is a page |
-    And I press "Save and return to course"
-    And I am on "Course 1" course homepage
     And I should see "Test page name"
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on

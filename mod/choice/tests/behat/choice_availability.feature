@@ -20,15 +20,18 @@ Feature: Restrict availability of the choice module to a deadline
     And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Enable the choice activity with a start deadline in the future
-    Given I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice name |
-      | Description | Choice Description |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
+    Given the following "activities" exist:
+      | activity | name        | intro              | course | idnumber | option             | section |
+      | choice   | Choice name | Choice Description | C1     | choice1  | Option 1, Option 2 | 1       |
+    And I am on "Course 1" course homepage
+    And I follow "Choice name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | timeopen[enabled] | 1 |
       | timeopen[day] | 30 |
       | timeopen[month] | December |
       | timeopen[year] | 2037 |
+    And I press "Save and return to course"
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage
@@ -36,15 +39,18 @@ Feature: Restrict availability of the choice module to a deadline
     Then I should see "This activity is not available until"
 
   Scenario: Enable the choice activity with a start deadline in the past
-    Given I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice name |
-      | Description | Choice Description |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
+    Given the following "activities" exist:
+      | activity | name        | intro              | course | idnumber | option             | section |
+      | choice   | Choice name | Choice Description | C1     | choice1  | Option 1, Option 2 | 1       |
+    And I am on "Course 1" course homepage
+    And I follow "Choice name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | timeopen[enabled] | 1 |
       | timeopen[day] | 30 |
       | timeopen[month] | December |
       | timeopen[year] | 2007 |
+    And I press "Save and return to course"
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage
@@ -54,15 +60,18 @@ Feature: Restrict availability of the choice module to a deadline
     And "Save my choice" "button" should exist
 
   Scenario: Enable the choice activity with a end deadline in the future
-    Given I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice name |
-      | Description | Choice Description |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
+    Given the following "activities" exist:
+      | activity | name        | intro              | course | idnumber | option             | section |
+      | choice   | Choice name | Choice Description | C1     | choice1  | Option 1, Option 2 | 1       |
+    And I am on "Course 1" course homepage
+    And I follow "Choice name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | timeclose[enabled] | 1 |
       | timeclose[day] | 30 |
       | timeclose[month] | December |
       | timeclose[year] | 2037 |
+    And I press "Save and return to course"
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage
@@ -72,15 +81,18 @@ Feature: Restrict availability of the choice module to a deadline
     And "Save my choice" "button" should exist
 
   Scenario: Enable the choice activity with a end deadline in the past
-    Given I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice name |
-      | Description | Choice Description |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
+    Given the following "activities" exist:
+      | activity | name        | intro              | course | idnumber | option             | section |
+      | choice   | Choice name | Choice Description | C1     | choice1  | Option 1, Option 2 | 1       |
+    And I am on "Course 1" course homepage
+    And I follow "Choice name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | timeclose[enabled] | 1 |
       | timeclose[day] | 30 |
       | timeclose[month] | December |
       | timeclose[year] | 2007 |
+    And I press "Save and return to course"
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage

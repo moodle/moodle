@@ -14,25 +14,31 @@ Feature: Chat with no calendar capabilites
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activity" exists:
+      | activity                      | chat                  |
+      | course                        | C1                    |
+      | idnumber                      | 0001                  |
+      | name                          | Test chat name        |
+      | intro                         | Test chat description |
+      | section                       | 1                     |
     And I log in as "admin"
     And I am on "Course 1" course homepage
     And I navigate to "Users > Permissions" in current page administration
     And I override the system permissions of "Teacher" role with:
       | capability | permission |
       | moodle/calendar:manageentries | Prohibit |
-    And I log out
-
-  Scenario: Editing a chat
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    When I add a "Chat" to section "1" and I fill the form with:
-      | Name of this chat room | Test chat name |
-      | Description | Test chat description |
+    And I am on "Course 1" course homepage
+    And I follow "Test chat name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Repeat/publish session times | No repeats - publish the specified time only |
       | id_chattime_day | 1 |
       | id_chattime_month | 1 |
       | id_chattime_year | 2017 |
+    And I press "Save and return to course"
     And I log out
+
+  Scenario: Editing a chat
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test chat name"

@@ -16,18 +16,26 @@ Feature: Set end of lesson reached as a completion condition for a lesson
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    Given the following "activity" exists:
+      | activity      | lesson                  |
+      | course        | C1                      |
+      | idnumber      | 0001                    |
+      | name          | Test lesson             |
+      | intro         | Test lesson description |
+      | section       | 1                       |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson |
-      | Description | Test lesson description |
-      | Completion tracking | Show activity as complete when conditions are met |
-      | completionview       | 0 |
-      | completionendreached | 1 |
+    And I follow "Test lesson"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
+      | Completion tracking  | Show activity as complete when conditions are met |
+      | completionview       | 0                                                 |
+      | completionendreached | 1                                                 |
+    And I press "Save and return to course"
     And I follow "Test lesson"
     And I follow "Add a content page"
     And I set the following fields to these values:

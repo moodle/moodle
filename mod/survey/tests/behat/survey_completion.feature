@@ -17,7 +17,6 @@ Feature: A teacher can use activity completion to track a student progress
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Require survey view
     Given the following "activities" exist:
@@ -27,6 +26,7 @@ Feature: A teacher can use activity completion to track a student progress
     And I follow "Test survey name"
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
+      | Survey type | Critical incidents |
       | Completion tracking | Show activity as complete when conditions are met |
       | completionview   | 1 |
       | completionsubmit | 0 |

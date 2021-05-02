@@ -18,13 +18,14 @@ Feature: A teacher can choose whether glossary entries require approval
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    Given I add a "Glossary" to section "1" and I fill the form with:
-      | Name | Test glossary name |
-      | Description | Test glossary entries require approval |
-      | Approved by default | No |
-    And I log out
+    And the following "activity" exists:
+      | activity                      | glossary                               |
+      | course                        | C1                                     |
+      | idnumber                      | 0001                                   |
+      | name                          | Test glossary name                     |
+      | intro                         | Test glossary entries require approval |
+      | section                       | 1                                      |
+      | defaultapproval               | 0                                      |
 
   Scenario: Approve and undo approve glossary entries
     Given I log in as "student1"

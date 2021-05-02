@@ -15,15 +15,17 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity                 | lesson                  |
+      | course                   | C1                      |
+      | idnumber                 | 0001                    |
+      | name                     | Test lesson name        |
+      | intro                    | Test lesson description |
+      | retake                   | 1                       |
+      | minquestions             | 3                       |
+      | section                  | 1                       |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1"
-    And I set the following fields to these values:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
-      | Re-takes allowed | Yes |
-      | Minimum number of questions | 3 |
-    And I press "Save and return to course"
     And I follow "Test lesson name"
     And I follow "Add a content page"
     And I set the following fields to these values:

@@ -32,8 +32,16 @@ Feature: edit_availability
     Given the following config values are set as admin:
       | enableavailability | 0 |
     When I log in as "teacher1"
+    And the following "activity" exists:
+      | activity    | page                        |
+      | course      | C1                          |
+      | idnumber    | 0001                        |
+      | section     | 1                           |
+      | name        | Page1                       |
+      | intro       | pageintro                   |
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Page" to section "1"
+    And I follow "Page1"
+    And I navigate to "Edit settings" in current page administration
     Then "Restrict access" "fieldset" should not exist
 
     Given I am on "Course 1" course homepage
@@ -43,8 +51,16 @@ Feature: edit_availability
     And the following config values are set as admin:
       | enableavailability | 1 |
 
+    And the following "activity" exists:
+      | activity    | page                        |
+      | course      | C1                          |
+      | idnumber    | 0002                        |
+      | section     | 1                           |
+      | name        | Page2                       |
+      | intro       | pageintro                   |
     And I am on "Course 1" course homepage
-    And I add a "Page" to section "1"
+    And I follow "Page2"
+    And I navigate to "Edit settings" in current page administration
     Then "Restrict access" "fieldset" should exist
 
     Given I am on "Course 1" course homepage

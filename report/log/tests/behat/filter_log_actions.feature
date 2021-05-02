@@ -8,14 +8,16 @@ Feature: In a report, admin can filter log data by action
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
+    And the following "activity" exists:
+      | activity                      | assign            |
+      | course                        | C1                |
+      | idnumber                      | 0001              |
+      | name                          | Test assignment 1 |
+      | intro                         | Offline text      |
+      | assignsubmission_file_enabled | 0                 |
+      | section                       | 1                 |
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    # Create Action.
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment 1 |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
-    And I am on "Course 1" course homepage
     # View Action.
     And I follow "Test assignment 1"
     # Update Action.
@@ -30,7 +32,6 @@ Feature: In a report, admin can filter log data by action
     When I navigate to "Reports > Logs" in site administration
     And I set the field "menumodaction" to "Create"
     And I press "Get these logs"
-    Then I should see "Course module created"
     And I should not see "Course module updated"
     And I should not see "The status of the submission has been viewed."
     And I should not see "Course module deleted"
@@ -71,7 +72,6 @@ Feature: In a report, admin can filter log data by action
     And I set the field "menumodaction" to "All changes"
     And I press "Get these logs"
     Then I should see "Course module deleted"
-    And I should see "Course module created"
     And I should see "Course module updated"
     And I should not see "The status of the submission has been viewed."
 
@@ -81,6 +81,5 @@ Feature: In a report, admin can filter log data by action
     And I set the field "menumodaction" to "All actions"
     And I press "Get these logs"
     Then I should see "Course module deleted"
-    And I should see "Course module created"
     And I should see "Course module updated"
     And I should see "The status of the submission has been viewed."

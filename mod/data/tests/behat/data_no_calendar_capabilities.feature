@@ -24,10 +24,13 @@ Feature: Database with no calendar capabilites
 
   Scenario: Editing a database
     Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    When I add a "Database" to section "1" and I fill the form with:
-      | Name | Test database name |
-      | Description | Test database description |
+    And the following "activities" exist:
+      | activity   | name                 | intro                       | course | section | idnumber |
+      | data       | Test database name   | Test database description   | C1     | 1       | data1    |
+    And I am on "Course 1" course homepage
+    And I follow "Test database name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | id_timeavailablefrom_enabled | 1 |
       | id_timeavailablefrom_day | 1 |
       | id_timeavailablefrom_month | 1 |
@@ -44,6 +47,7 @@ Feature: Database with no calendar capabilites
       | id_timeviewto_day | 1 |
       | id_timeviewto_month | 4 |
       | id_timeviewto_year | 2017 |
+    And I press "Save and return to course"
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on

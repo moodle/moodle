@@ -947,8 +947,6 @@ class core_user {
                 return ($USER->id != $user->id && (has_capability('moodle/user:update', $systemcontext) ||
                         ($user->timecreated > time() - 10 && has_capability('moodle/user:create', $systemcontext))));
             });
-        $preferences['usemodchooser'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 1,
-            'choices' => array(0, 1));
         $preferences['forum_markasreadonnotification'] = array('type' => PARAM_INT, 'null' => NULL_NOT_ALLOWED, 'default' => 1,
             'choices' => array(0, 1));
         $preferences['htmleditor'] = array('type' => PARAM_NOTAGS, 'null' => NULL_ALLOWED,

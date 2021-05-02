@@ -38,21 +38,10 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
       | G1       | G1G1    |
       | G1       | G1G2    |
       | G2       | G2G1    |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name  | Multiple groups forum             |
-      | Forum type  | Standard forum for general use    |
-      | Description | Standard forum description        |
-      | Group mode  | Separate groups                   |
-      | Grouping    | G1                                |
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name  | Single groups forum               |
-      | Forum type  | Standard forum for general use    |
-      | Description | Standard forum description        |
-      | Group mode  | Separate groups                   |
-      | Grouping    | G2                                |
-    And I log out
+    And the following "activities" exist:
+      | activity | course | idnumber | name                  | intro                      | type    | section | groupmode | grouping |
+      | forum    | C1     | 00001    | Multiple groups forum | Standard forum description | general | 1       | 1         | G1       |
+      | forum    | C1     | 00001    | Single groups forum   | Standard forum description | general | 1       | 1         | G2       |
 
   Scenario: Teacher with accessallgroups can post in all groups
     Given I log in as "teacher1"

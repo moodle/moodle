@@ -16,13 +16,14 @@ Feature: Test the display of the choice module on my home
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity | name             | intro                   | course | idnumber | option             | section |
+      | choice   | Test choice name | Test choice description | C1     | choice1  | Option 1, Option 2 | 1       |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Choice" to section "1"
-    And I expand all fieldsets
+    And I am on "Course 1" course homepage
+    And I follow "Test choice name"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-      | Choice name | Test choice name |
-      | Description | Test choice description |
       | timeopen[enabled] | 1 |
       | timeclose[enabled] | 1 |
       | timeclose[day] | 1 |
@@ -31,8 +32,6 @@ Feature: Test the display of the choice module on my home
       | timeclose[hour] | 08 |
       | timeclose[minute] | 00 |
       | Allow choice to be updated | No |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
     And I press "Save and return to course"
     And I log out
 

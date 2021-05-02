@@ -19,21 +19,27 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: number of student attempts
-    Given I add a "Lesson" to section "1"
+    Given the following "activity" exists:
+      | activity | lesson                  |
+      | course   | C1                      |
+      | idnumber | 0001                    |
+      | name     | Test lesson name        |
+      | intro    | Test lesson description |
+      | retake   | 1                       |
+      | section  | 1                       |
+    And I am on "Course 1" course homepage
+    And I follow "Test lesson name"
+    When I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
       | id_deadline_enabled | 1 |
       | deadline[day] | 1 |
       | deadline[month] | January |
       | deadline[year] | 2030 |
       | deadline[hour] | 08 |
       | deadline[minute] | 00 |
-      | Re-takes allowed | Yes |
     And I press "Save and return to course"
     And I follow "Test lesson name"
     And I follow "Add a question page"

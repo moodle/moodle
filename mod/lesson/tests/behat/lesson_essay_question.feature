@@ -15,12 +15,11 @@ Feature: In a lesson activity, teacher can add an essay question
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity | name             | intro                    | course | idnumber  | section | feedback |
+      | lesson   | Test lesson name | Test lesson description  | C1     | lesson1   | 1       | 1        |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
-      | Use default feedback | Yes |
     And I follow "Test lesson name"
     And I follow "Add a question page"
     And I set the field "Select a question type" to "Essay"

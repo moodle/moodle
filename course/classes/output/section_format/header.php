@@ -76,7 +76,7 @@ class header implements renderable, templatable {
         if ($section->section > $format->get_last_section_number()) {
             // Stealth sections (orphaned) has special title.
             $data->title = get_string('orphanedactivitiesinsectionno', '', $section->section);
-        } else if ($section->section == $format->get_section_number()) {
+        } else if ($section->section && ($section->section == $format->get_section_number())) {
             // Regular section title.
             $data->title = $output->section_title_without_link($section, $course);
             $data->issinglesection = true;

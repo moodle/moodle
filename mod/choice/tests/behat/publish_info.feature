@@ -17,15 +17,17 @@ Feature: A student can see how the results of the choice activity will be publis
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Results will not be published to the students
-    Given I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice 1 |
-      | Description | Choice Description |
+    Given the following "activities" exist:
+      | activity | name        | intro              | course | idnumber | option |
+      | choice   | Choice 1 | Choice description | C1     | choice1  | Option 1, Option 2 |
+    And I am on "Course 1" course homepage
+    And I follow "Choice 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Publish results | Do not publish results to students |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
+    And I press "Save and return to course"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
@@ -33,13 +35,16 @@ Feature: A student can see how the results of the choice activity will be publis
     Then I should see "The results of this activity will not be published after you answer."
 
   Scenario: Full results will be shown to the students after they answer
-    Given I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice 1 |
-      | Description | Choice Description |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
-      | Publish results | Show results to students after they answer |
+    Given the following "activities" exist:
+      | activity | name     | intro              | course | idnumber | option             |
+      | choice   | Choice 1 | Choice description | C1     | choice1  | Option 1, Option 2 |
+    And I am on "Course 1" course homepage
+    When I follow "Choice 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
+      | Publish results    | Show results to students after they answer            |
       | Privacy of results | Publish full results, showing names and their choices |
+    And I press "Save and return to course"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
@@ -47,12 +52,14 @@ Feature: A student can see how the results of the choice activity will be publis
     Then I should see "Full results, showing everyone's choices, will be published after you answer."
 
   Scenario: Anonymous results will be shown to students after they answer
-    Given I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice 1 |
-      | Description | Choice Description |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
-      | Publish results | Show results to students after they answer |
+    Given the following "activities" exist:
+      | activity | name     | intro              | course | idnumber | option             |
+      | choice   | Choice 1 | Choice description | C1     | choice1  | Option 1, Option 2 |
+    And I am on "Course 1" course homepage
+    When I follow "Choice 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the field "Publish results" to "Show results to students after they answer"
+    And I press "Save and return to course"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
@@ -60,13 +67,15 @@ Feature: A student can see how the results of the choice activity will be publis
     Then I should see "Anonymous results will be published after you answer."
 
   Scenario: Full results will be shown to students only after the choice is closed
-    Given I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice 1 |
-      | Description | Choice Description |
-      | Publish results | Show results to students only after the choice is closed |
-      | Privacy of results | Publish full results, showing names and their choices |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
+    Given the following "activities" exist:
+      | activity | name     | intro              | course | idnumber | option             |
+      | choice   | Choice 1 | Choice description | C1     | choice1  | Option 1, Option 2 |
+    And I am on "Course 1" course homepage
+    When I follow "Choice 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the field "Publish results" to "Show results to students only after the choice is closed"
+    And I set the field "Privacy of results" to "Publish full results, showing names and their choices"
+    And I press "Save and return to course"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
@@ -74,12 +83,14 @@ Feature: A student can see how the results of the choice activity will be publis
     Then I should see "Full results, showing everyone's choices, will be published after the activity is closed."
 
   Scenario: Anonymous results will be shown to students only after the choice is closed
-    Given I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice 1 |
-      | Description | Choice Description |
-      | Publish results | Show results to students only after the choice is closed |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
+    Given the following "activities" exist:
+      | activity | name     | intro              | course | idnumber | option             |
+      | choice   | Choice 1 | Choice description | C1     | choice1  | Option 1, Option 2 |
+    And I am on "Course 1" course homepage
+    When I follow "Choice 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the field "Publish results" to "Show results to students only after the choice is closed"
+    And I press "Save and return to course"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
@@ -87,12 +98,14 @@ Feature: A student can see how the results of the choice activity will be publis
     Then I should see "Anonymous results will be published after the activity is closed."
 
   Scenario: Results will always be shown to students
-    Given I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice 1 |
-      | Description | Choice Description |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
-      | Publish results | Always show results to students |
+    And the following "activities" exist:
+      | activity | name     | intro              | course | idnumber | option             |
+      | choice   | Choice 1 | Choice description | C1     | choice1  | Option 1, Option 2 |
+    And I am on "Course 1" course homepage
+    When I follow "Choice 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the field "Publish results" to "Always show results to students"
+    And I press "Save and return to course"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage

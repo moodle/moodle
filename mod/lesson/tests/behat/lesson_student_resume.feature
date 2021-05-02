@@ -14,14 +14,16 @@ Feature: In a lesson activity a student should
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity    | lesson                      |
+      | name        | Test lesson name            |
+      | intro       | Test lesson description     |
+      | course      | C1                          |
+      | idnumber    | 0001                        |
+      | section     | 1                           |
+      | retake      | 1                           |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1"
-    And I set the following fields to these values:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
-      | Re-takes allowed | Yes |
-    And I press "Save and return to course"
+    And I am on "Course 1" course homepage
     And I follow "Test lesson name"
 
   Scenario: resume a lesson with both content then question pages
