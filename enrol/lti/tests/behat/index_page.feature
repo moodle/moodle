@@ -14,6 +14,9 @@ Feature: Check that the page listing the shared external tools is functioning as
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity | name                 | intro                    | course | idnumber  | section |
+      | assign   | Test assignment name | Submit your online text  | C1     | assign1   | 1       |
     And I log in as "admin"
     And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Enable" "link" in the "Publish as LTI tool" "table_row"
@@ -22,9 +25,6 @@ Feature: Check that the page listing the shared external tools is functioning as
   Scenario: I want to edit an external tool
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment name |
-      | Description | Submit your online text |
     And I navigate to "Users > Enrolment methods" in current page administration
     And I select "Publish as LTI tool" from the "Add method" singleselect
     And I set the following fields to these values:

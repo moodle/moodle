@@ -12,6 +12,7 @@ information provided here is intended especially for developers.
     - Given the activity date information in "<ActivityName>" should exist
   - activity_dates_information_in_activity_should_not_exist()
     - Given the activity date information in "<ActivityName>" should not exist
+* A user preference usemodchooser has been removed and the activities/resources (non-ajax) activity chooser has been deprecated and will be removed in the future.
 
 === 3.10 ===
 

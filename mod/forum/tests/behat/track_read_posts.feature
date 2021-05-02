@@ -17,14 +17,17 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Tracking forum posts off
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Off |
+    Given the following "activity" exists:
+      | activity     | forum                  |
+      | course       | C1                     |
+      | idnumber     | 00001                  |
+      | name         | Test forum name        |
+      | intro        | Test forum description |
+      | section      | 1                      |
+      | trackingtype | 0                      |
+    And I am on "Course 1" course homepage
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Test post subject |
       | Message | Test post message |
@@ -36,11 +39,16 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     And I should not see "Track unread posts"
 
   Scenario: Tracking forum posts optional with user tracking on
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Optional |
+    Given the following "activity" exists:
+      | activity     | forum                         |
+      | course       | C1                            |
+      | idnumber     | 00001                         |
+      | name         | Test forum name               |
+      | intro        | Test forum description        |
+      | section      | 1                             |
+      | type         | generalforum                  |
+      | trackingtype | 1                             |
+    And I am on "Course 1" course homepage
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Test post subject |
       | Message | Test post message |
@@ -61,11 +69,16 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     And I should not see "1 unread post"
 
   Scenario: Tracking forum posts optional with user tracking off
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Optional |
+    Given the following "activity" exists:
+      | activity     | forum                       |
+      | course       | C1                          |
+      | idnumber     | 00001                       |
+      | name         | Test forum name             |
+      | intro        | Test forum description      |
+      | section      | 1                           |
+      | type         | generalforum                |
+      | trackingtype | 1                           |
+    And I am on "Course 1" course homepage
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Test post subject |
       | Message | Test post message |
@@ -79,12 +92,16 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
   Scenario: Tracking forum posts forced with user tracking on
     Given the following config values are set as admin:
       | forum_allowforcedreadtracking | 1 |
+    And the following "activity" exists:
+      | activity     | forum                       |
+      | course       | C1                          |
+      | idnumber     | 00001                       |
+      | name         | Test forum name             |
+      | intro        | Test forum description      |
+      | section      | 1                           |
+      | type         | generalforum                |
+      | trackingtype | 2                           |
     And I am on "Course 1" course homepage
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Force |
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Test post subject |
       | Message | Test post message |
@@ -101,12 +118,16 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
   Scenario: Tracking forum posts forced with user tracking off
     Given the following config values are set as admin:
       | forum_allowforcedreadtracking | 1 |
+    And the following "activity" exists:
+      | activity     | forum                       |
+      | course       | C1                          |
+      | idnumber     | 00001                       |
+      | name         | Test forum name             |
+      | intro        | Test forum description      |
+      | section      | 1                           |
+      | type         | generalforum                |
+      | trackingtype | 2                           |
     And I am on "Course 1" course homepage
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Force |
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Test post subject |
       | Message | Test post message |
@@ -123,12 +144,16 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
   Scenario: Tracking forum posts forced (with force disabled) with user tracking on
     Given the following config values are set as admin:
       | forum_allowforcedreadtracking | 1 |
+    And the following "activity" exists:
+      | activity     | forum                     |
+      | course       | C1                        |
+      | idnumber     | 00001                     |
+      | name         | Test forum name           |
+      | description  | Test forum description    |
+      | section      | 1                         |
+      | type         | generalforum              |
+      | trackingtype | 2                         |
     And I am on "Course 1" course homepage
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Force |
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Test post subject |
       | Message | Test post message |
@@ -153,12 +178,16 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
   Scenario: Tracking forum posts forced (with force disabled) with user tracking off
     Given the following config values are set as admin:
       | forum_allowforcedreadtracking | 1 |
+    And the following "activity" exists:
+      | activity     | forum                  |
+      | course       | C1                     |
+      | idnumber     | 00001                  |
+      | name         | Test forum name        |
+      | description  | Test forum description |
+      | section      | 1                      |
+      | type         | generalforum           |
+      | trackingtype | 2                      |
     And I am on "Course 1" course homepage
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-      | Read tracking | Force |
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Test post subject |
       | Message | Test post message |

@@ -17,10 +17,10 @@ Feature: link to gradebook on the end of lesson page
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson |
-      | Description | Test lesson description |
+    And the following "activities" exist:
+      | activity   | name        | intro                   | course | idnumber    |
+      | lesson     | Test lesson | Test lesson description | C1     | lesson1     |
+    And I am on "Course 1" course homepage
     And I follow "Test lesson"
     And I follow "Add a content page"
     And I set the following fields to these values:

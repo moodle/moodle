@@ -131,13 +131,17 @@ Feature: I can grade a students interaction across a forum
     And I should see "Tutor" in the "Parent category" "fieldset"
 
   Scenario: Setting both a rating and a whole forum grade does not bleed
-    Given I add a "Forum" to section "1"
-    And I expand all fieldsets
-    And I set the following fields to these values:
-      | Forum name     | Test Forum 1    |
-      | Description    | Test               |
-
-    When I set the field "Ratings > Aggregate type" to "Count of ratings"
+    Given the following "activity" exists:
+      | activity                      | forum        |
+      | course                        | C1           |
+      | idnumber                      | 0001         |
+      | name                          | Test Forum 1 |
+      | intro                         | Test         |
+      | section                       | 1            |
+    And I am on "Course 1" course homepage
+    And I follow "Test Forum 1"
+    And I navigate to "Edit settings" in current page administration
+    And I set the field "Ratings > Aggregate type" to "Count of ratings"
     And I set the field "Ratings > Type" to "Point"
     And I set the field "Ratings > Maximum grade" to "100"
     And I set the field "Ratings > Grade category" to "Peers"

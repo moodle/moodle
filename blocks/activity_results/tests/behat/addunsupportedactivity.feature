@@ -18,10 +18,9 @@ Feature: The activity results block doesn't display student scores for unsupport
     And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Try to configure the block to use an activity without grades
-    Given I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
+    Given the following "activities" exist:
+      | activity   | name            | intro          | course | section | idnumber | assignsubmission_file_enabled |
+      | assign     | Test assignment | Offline text   | C1     | 1       | assign1  | 0                             |
     And I am on "Course 1" course homepage
     And I add the "Activity results" block
     And I configure the "Activity results" block

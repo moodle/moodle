@@ -20,18 +20,17 @@ Feature: Include responses from inactive users
       | student1 | C1 | student |
       | student2 | C1 | student |
       | student3 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Enable the choice include inactive option and check that responses from inactive students are visible
-    Given I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice name |
-      | Description | Choice Description |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
-      | option[2] | Option 3 |
-      | Include responses from inactive/suspended users | Yes |
-    And I log out
+    Given the following "activity" exists:
+      | activity        | choice                       |
+      | course          | C1                           |
+      | idnumber        | choice1                      |
+      | name            | Choice name                  |
+      | intro           | Choice Description           |
+      | section         | 1                            |
+      | option          | Option 1, Option 2, Option 3 |
+      | includeinactive | 1                            |
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I choose "Option 1" from "Choice name" choice activity
@@ -82,14 +81,15 @@ Feature: Include responses from inactive users
     And I log out
 
   Scenario: Disable the choice include inactive option and check that responses from inactive students are not visible
-    Given I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Choice name |
-      | Description | Choice Description |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
-      | option[2] | Option 3 |
-      | Include responses from inactive/suspended users | No |
-    And I log out
+    Given the following "activity" exists:
+      | activity        | choice                       |
+      | course          | C1                           |
+      | idnumber        | choice1                      |
+      | name            | Choice name                  |
+      | intro           | Choice Description           |
+      | section         | 1                            |
+      | option          | Option 1, Option 2, Option 3 |
+      | includeinactive | 0                            |
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I choose "Option 1" from "Choice name" choice activity

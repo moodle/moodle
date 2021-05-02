@@ -19,13 +19,11 @@ Feature: Import course's contents into another course
 
   Scenario: Import course's contents to another course
     Given I log in as "teacher1"
+    And the following "activities" exist:
+      | activity | name               | intro                        | course | idnumber   | section |
+      | data     | Test database name | Test database description    | C1     | database1  | 2       |
+      | forum    | Test forum name    | Test forum name description  | C1     | forum1     | 1       |
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Database" to section "1" and I fill the form with:
-      | Name | Test database name |
-      | Description | Test database description |
-    And I add a "Forum" to section "2" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
     And I add the "Comments" block
     And I add the "Recent blog entries" block
     And I turn editing mode off

@@ -23,13 +23,14 @@ Feature: Choice with no calendar capabilites
     And I log out
 
   Scenario: Editing a choice
+    And the following "activities" exist:
+      | activity | name             | intro                   | course | idnumber | option             | section |
+      | choice   | Test choice name | Test choice description | C1     | choice1  | Option 1, Option 2 | 1       |
     Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    When I add a "Choice" to section "1" and I fill the form with:
-      | Choice name | Test choice name |
-      | Description | Test choice description |
-      | option[0] | Option 1 |
-      | option[1] | Option 2 |
+    And I am on "Course 1" course homepage
+    And I follow "Test choice name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | id_timeopen_enabled | 1 |
       | id_timeopen_day | 1 |
       | id_timeopen_month | 1 |
@@ -38,6 +39,7 @@ Feature: Choice with no calendar capabilites
       | id_timeclose_day | 1 |
       | id_timeclose_month | 2 |
       | id_timeclose_year | 2017 |
+    And I press "Save and return to course"
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on

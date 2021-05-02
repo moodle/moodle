@@ -1,4 +1,4 @@
-@mod @mod_lti @core_completion
+@mod @mod_lti @core_completion @javascript
 Feature: View activity completion information in the LTI activity
   In order to have visibility of LTI completion requirements
   As a student
@@ -16,6 +16,9 @@ Feature: View activity completion information in the LTI activity
       | user | course | role           |
       | student1 | C1 | student        |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity | name          | course | idnumber |
+      | lti      | Music history | C1     | lti1     |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Edit settings" in current page administration
@@ -25,11 +28,13 @@ Feature: View activity completion information in the LTI activity
       | Show completion conditions | Yes |
     And I press "Save and display"
     And I turn editing mode on
-    And I add a "External tool" to section "1" and I fill the form with:
-      | Activity name       | Music history                                     |
+    When I open "Music history" actions menu
+    And I click on "Edit settings" "link" in the "Music history" activity
+    And I set the following fields to these values:
       | Completion tracking | Show activity as complete when conditions are met |
       | Require view        | 1                                                 |
       | Require grade       | 1                                                 |
+    And I press "Save and return to course"
     And I log out
 
   Scenario: View automatic completion items as a teacher
@@ -59,7 +64,6 @@ Feature: View activity completion information in the LTI activity
     Then the "Receive a grade" completion condition of "Music history" is displayed as "done"
     And the "View" completion condition of "Music history" is displayed as "done"
 
-  @javascript
   Scenario: Use manual completion
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on

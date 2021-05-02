@@ -16,12 +16,15 @@ Feature: Practice mode in a lesson activity
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity                      | lesson             |
+      | course                        | C1                 |
+      | idnumber                      | 0001               |
+      | name                          | Test lesson name   |
+      | intro                         | Lesson description |
+      | section                       | 1                  |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-      # Setup a basic lesson, we'll adjust it in the scenarios later.
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Lesson description |
     And I follow "Test lesson name"
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"

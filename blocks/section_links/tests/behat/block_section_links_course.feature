@@ -14,12 +14,11 @@ Feature: The section links block allows users to quickly navigate around a moodl
     And the following "course enrolments" exist:
       | user     | course | role |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name              | intro          | course | section | idnumber | assignsubmission_file_enabled |
+      | assign     | Test assignment 1 | Offline text   | C1     | 5       | assign1  | 0                             |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "5" and I fill the form with:
-      | Assignment name | Test assignment 1 |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
 
   Scenario: Add the section links block to a course.
     Given I add the "Section links" block

@@ -16,15 +16,13 @@ Feature: View the user page for the outline report
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity | name        | description              | course | idnumber |
+      | folder   | Folder name | Folder description       | C1     | folder1  |
+    And the following "activities" exist:
+      | activity | name        | description     | course | idnumber | externalurl            |
+      | url      | URL name    | URL description | C1     | folder1  |  http://www.google.com |
     When I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Folder" to section "1" and I fill the form with:
-      | Name | Folder name |
-      | Description | Folder description |
-    And I add a "URL" to section "1" and I fill the form with:
-      | Name | URL name |
-      | Description | URL description |
-      | External URL | http://www.google.com |
 
   Scenario: View the user page when only the legacy log reader is enabled
     Given I navigate to "Plugins > Logging > Manage log stores" in site administration

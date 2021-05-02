@@ -18,16 +18,12 @@ Feature: Filter an outline report
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
+    And the following "activities" exist:
+      | activity | name       | description       | course | idnumber | section |
+      | forum    | Forum name | Forum description | C1     | FORUM01  | 1       |
+      | book     | Book name  | Book description  | C1     | BOOK01   | 1       |
     When I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Forum name |
-      | Description | Forum description |
-      | ID number| FORUM01 |
-    And I add a "Book" to section "1" and I fill the form with:
-      | Name | Book name |
-      | Description | Book description |
-      | ID number| BOOK01 |
+    And I am on "Course 1" course homepage
 
   Scenario: Filter the outline report by start date
     Given I navigate to "Plugins > Logging > Manage log stores" in site administration

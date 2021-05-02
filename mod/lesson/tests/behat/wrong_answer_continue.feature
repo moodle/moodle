@@ -16,15 +16,18 @@ Feature: An incorrect response to an answer with multiple attempts show appropri
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity   | name               | intro                     | course | section | idnumber |
+      | lesson     | Test lesson name   | Test lesson description   | C1     | 1       | lesson1  |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1"
+    And I am on "Course 1" course homepage
+    And I follow "Test lesson name"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
       | Provide option to try a question again | Yes |
       | Maximum number of attempts | 2 |
-    And I press "Save and display"
+    And I press "Save and return to course"
+    And I follow "Test lesson name"
 
   Scenario: A student answering incorrectly to a question will see an option to move to the next question if set up.
     Given I follow "Add a question page"

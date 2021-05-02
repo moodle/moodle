@@ -32,15 +32,20 @@ Feature: Using the activity grade form element
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
+    And the following "activities" exist:
+      | activity   | name            | intro                  | course | idnumber    |
+      | forum      | Test forum name | Test forum description | C1     | forum1      |
+    And I am on "Course 1" course homepage
+    And I follow "Test forum name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Forum type | Standard forum for general use |
-      | Description | Test forum description |
       | Aggregate type | Average of ratings  |
       | scale[modgrade_type] | Point |
       | scale[modgrade_point] | 100 |
       | Group mode | No groups |
+    And I press "Save and return to course"
+    And I am on "Course 1" course homepage
     And I follow "Test forum name"
     And I navigate to "Edit settings" in current page administration
     When I expand all fieldsets
@@ -156,15 +161,19 @@ Feature: Using the activity grade form element
 
   Scenario: Attempting to change the maximum grade when ratings exist
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
+    And the following "activities" exist:
+      | activity   | name            | intro                  | course | idnumber    | section |
+      | forum      | Test forum name | Test forum description | C1     | forum1      | 1       |
+    And I am on "Course 1" course homepage
+    And I follow "Test forum name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Forum type | Standard forum for general use |
-      | Description | Test forum description |
       | Aggregate type | Average of ratings  |
       | scale[modgrade_type] | Point |
       | scale[modgrade_point] | 100 |
       | Group mode | No groups |
+    And I press "Save and return to course"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage

@@ -16,15 +16,23 @@ Feature: Numeric and short answer questions have a section to catch all other st
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    Given the following "activity" exists:
+      | activity      | lesson                  |
+      | course        | C1                      |
+      | idnumber      | 0001                    |
+      | name          | Test lesson name        |
+      | intro         | Test lesson description |
+      | section       | 1                       |
+      | maxattempts   | 3                       |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1"
+    And I am on "Course 1" course homepage
+    And I follow "Test lesson name"
+    When I navigate to "Edit settings" in current page administration
+    And I expand all fieldsets
     And I set the following fields to these values:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
       | Provide option to try a question again | Yes |
-      | Maximum number of attempts | 3 |
-    And I press "Save and display"
+    And I press "Save and return to course"
+    And I follow "Test lesson name"
 
   Scenario: I can create a numerical question with an option to catch all student responses.
     Given I follow "Add a question page"

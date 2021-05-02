@@ -14,11 +14,11 @@ Feature: In a book, create chapters and sub chapters
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity | name      | intro                 | course | idnumber | section |
+      | book     | Test book | A book about dreams!  | C1     | book1    | 1       |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Book" to section "1" and I fill the form with:
-      | Name | Test book |
-      | Description | A book about dreams! |
 
   Scenario: Create chapters and sub chapters and navigate between them
     Given I follow "Test book"

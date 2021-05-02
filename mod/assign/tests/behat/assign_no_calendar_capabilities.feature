@@ -24,14 +24,18 @@ Feature: Assignment with no calendar capabilites
 
   Scenario: Editing an assignment
     Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    When I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name        | Test assignment name        |
-      | Description            | Test assignment description |
+    And the following "activities" exist:
+      | activity   | name                   | intro                        | course | section | idnumber |
+      | assign     | Test assignment name   | Test assignment description  | C1     | 1       | assign1  |
+    And I am on "Course 1" course homepage
+    And I follow "Test assignment name"
+    And I navigate to "Edit settings" in current page administration
+    And I set the following fields to these values:
       | Allow submissions from | ##1 January 2017##          |
       | Due date               | ##1 February 2017##         |
       | Cut-off date           | ##2 February 2017##         |
       | Remind me to grade by  | ##1 March 2017##            |
+    And I press "Save and return to course"
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on

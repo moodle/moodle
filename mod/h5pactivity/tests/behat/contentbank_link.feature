@@ -28,6 +28,7 @@ Feature: Content bank link in the activity settings form
     And I should see "C1" in the "page-navbar" "region"
     And I close all opened windows
 
+  @javascript
   Scenario: Content bank is not displayed if the user don't have access to the content bank
     Given the following "permission overrides" exist:
       | capability                 | permission | role           | contextlevel | reference |
