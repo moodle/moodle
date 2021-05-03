@@ -80,6 +80,7 @@ $string['invalidprivatetoken'] = 'Invalid private token. Token should not be emp
 $string['invaliduserquotawarning'] = 'The user quota (userquota) is set to an invalid number. It should be set to a valid number (an integer value) in Site security settings.';
 $string['iosappid'] = 'iOS app\'s unique identifier';
 $string['iosappid_desc'] = 'This setting may be left as default unless you have a custom iOS app.';
+$string['launchviasiteinbrowser'] = 'Launch via site in system browser';
 $string['loginintheapp'] = 'Via the app';
 $string['logininthebrowser'] = 'Via a browser window (for SSO plugins)';
 $string['loginintheembeddedbrowser'] = 'Via an embedded browser (for SSO plugins)';
@@ -109,7 +110,6 @@ $string['notificationssentnotifications'] = 'Notifications sent';
 $string['notificationscurrentactivedevices'] = 'Devices receiving notifications this month';
 $string['oauth2identityproviders'] = 'OAuth 2 identity providers';
 $string['offlineuse'] = 'Offline use';
-$string['openusingembeddedbrowser'] = 'Open using embedded browser';
 $string['pluginname'] = 'Moodle app tools';
 $string['pluginnotenabledorconfigured'] = 'Plugin not enabled or configured.';
 $string['qrcodedisabled'] = 'Access via QR code disabled';
@@ -147,3 +147,6 @@ $string['viewqrcode'] = 'View QR code';
 
 // Deprecated since Moodle 3.10.
 $string['mobileappconnected'] = 'Mobile app connected';
+
+// Deprecated since Moodle 3.11.
+$string['openusingembeddedbrowser'] = 'Open using embedded browser';
