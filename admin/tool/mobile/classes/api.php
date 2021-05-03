@@ -538,8 +538,8 @@ class api {
 
         if (!empty($availablemods['lti'])) {
             $ltidisplayname = $availablemods['lti']->displayname;
-            $features["$ltidisplayname"]['CoreCourseModuleDelegate_AddonModLti:openInAppBrowser'] =
-                new lang_string('openusingembeddedbrowser', 'tool_mobile');
+            $features["$ltidisplayname"]['CoreCourseModuleDelegate_AddonModLti:launchViaSite'] =
+                new lang_string('launchviasiteinbrowser', 'tool_mobile');
         }
 
         // Display OAuth 2 identity providers.
