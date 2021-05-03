@@ -43,8 +43,8 @@ Feature: Set availability dates for an assignment
     And I am on "Course 1" course homepage
     When I follow "Assignment name"
     Then "Add submission" "button" should not exist
-    And I should see "This assignment will accept submissions from"
-    And I should see "##tomorrow noon##%A, %d %B %Y, %I:%M %p##"
+    And the activity date in "Assignment name" should contain "Opens:"
+    And the activity date in "Assignment name" should contain "##tomorrow noon##%d %B %Y, %I:%M %p##"
 
   Scenario: Student can see the assignment's due date in the course calendar
     Given I log in as "teacher1"
@@ -82,7 +82,8 @@ Feature: Set availability dates for an assignment
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Assignment name"
-    And I should see "##+2 days 5 hours 30 minutes##%A, %d %B %Y##" in the "Due date" "table_row"
+    And the activity date in "Assignment name" should contain "Due:"
+    And the activity date in "Assignment name" should contain "##+2 days 5 hours 30 minutes##%d %B %Y##"
     And I should see "2 days 5 hours" in the "Time remaining" "table_row"
     And "Add submission" "button" should exist
     And I press "Add submission"
@@ -115,7 +116,8 @@ Feature: Set availability dates for an assignment
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Assignment name"
-    And I should see "##2 days 5 hours 30 minutes ago##%A, %d %B %Y##" in the "Due date" "table_row"
+    And the activity date in "Assignment name" should contain "Due:"
+    And the activity date in "Assignment name" should contain "##2 days 5 hours 30 minutes ago##%d %B %Y##"
     And I should see "Assignment is overdue by: 2 days 5 hours" in the "Time remaining" "table_row"
     And "Add submission" "button" should exist
     And I press "Add submission"

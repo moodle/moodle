@@ -383,23 +383,25 @@ class discussion {
         $notifications = $this->notifications;
         $discussion = $this->discussion;
         $forum = $this->forum;
-        $renderer = $this->renderer;
 
         if ($forum->is_cutoff_date_reached()) {
             $notifications[] = (new notification(
                     get_string('cutoffdatereached', 'forum'),
                     notification::NOTIFY_INFO
             ))->set_show_closebutton();
-        } else if ($forum->is_due_date_reached()) {
-            $notifications[] = (new notification(
+        } else if ($forum->get_type() != 'single') {
+            // Due date is already shown at the top of the page for single simple discussion forums.
+            if ($forum->is_due_date_reached()) {
+                $notifications[] = (new notification(
                     get_string('thisforumisdue', 'forum', userdate($forum->get_due_date())),
                     notification::NOTIFY_INFO
-            ))->set_show_closebutton();
-        } else if ($forum->has_due_date()) {
-            $notifications[] = (new notification(
+                ))->set_show_closebutton();
+            } else if ($forum->has_due_date()) {
+                $notifications[] = (new notification(
                     get_string('thisforumhasduedate', 'forum', userdate($forum->get_due_date())),
                     notification::NOTIFY_INFO
-            ))->set_show_closebutton();
+                ))->set_show_closebutton();
+            }
         }
 
         if ($forum->is_discussion_locked($discussion)) {

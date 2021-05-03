@@ -4219,10 +4219,44 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
     }
 
     /**
-     * Test showing group override duedate for admin
+     * Data provider for test_view_group_override
+     *
+     * @return array Provider data
      */
-    public function test_view_group_override() {
-        global $DB, $PAGE;
+    public function view_group_override_provider() {
+        return [
+            'Other users should see their duedate' => [
+                'student',
+                ['group2'],
+                'group1',
+                '7 June 2019, 5:37 PM',
+            ],
+            'Teacher should be able to see all group override duedate' => [
+                'teacher',
+                ['group1'],
+                'group1',
+                '20 September 2019, 10:37 PM',
+            ],
+            'Teacher should be able to see all group override duedate even if they are not member' => [
+                'editingteacher',
+                ['group1'],
+                'group2',
+                '7 June 2019, 5:37 PM',
+            ]
+        ];
+    }
+
+    /**
+     * Test showing group override duedate for admin
+     *
+     * @dataProvider view_group_override_provider
+     * @param string $role the role of the user (teacher, student, etc)
+     * @param string[] $groups the groups the user are member of
+     * @param string $activegroup The selected group
+     * @param string $expecteddate The expected due date
+     */
+    public function test_view_group_override(string $role, array $groups, string $activegroup, string $expecteddate) {
+        global $DB, $PAGE, $SESSION;
 
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -4230,17 +4264,18 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
         $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
 
-        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
-        groups_add_member($group1, $student1);
-        groups_add_member($group1, $teacher);
-
-        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
-        groups_add_member($group2, $student2);
+        $user = $this->getDataGenerator()->create_and_enrol($course, $role);
+        if (in_array('group1', $groups)) {
+            groups_add_member($group1, $user);
+        }
+        if (in_array('group2', $groups)) {
+            groups_add_member($group2, $user);
+        }
+        $activegroup = $$activegroup;
 
         $assign = $this->create_instance($course, [
-            'groupmode' => 1,
-            'duedate' => 1558999899,
+            'groupmode' => SEPARATEGROUPS,
+            'duedate' => 1558999899, // 28 May 2019, 7:31 AM.
         ]);
         $instance = $assign->get_instance();
 
@@ -4251,14 +4286,14 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
                 'groupid' => $group1->id,
                 'userid' => null,
                 'sortorder' => 1,
-                'duedate' => 1568990258,
+                'duedate' => 1568990258, // 20 September 2019, 10:37 PM.
             ],
             (object) [
                 'assignid' => $instance->id,
                 'groupid' => $group2->id,
                 'userid' => null,
                 'sortorder' => 2,
-                'duedate' => 1559900258,
+                'duedate' => 1559900258, // 7 June 2019, 5:37 PM.
             ],
         ];
 
@@ -4266,25 +4301,21 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
             $override->id = $DB->insert_record('assign_overrides', $override);
         }
 
-        $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id));
+        $currenturl = new moodle_url('/mod/assign/view.php', ['id' => $assign->get_course_module()->id]);
         $PAGE->set_url($currenturl);
-        $output1 = '';
-        // Other users should see duedate of the assignment.
-        $this->setUser($student2);
-        $summary = $assign->get_assign_grading_summary_renderable($group1->id);
-        $output1 .= $assign->get_renderer()->render($summary);
-        $this->assertStringContainsStringIgnoringCase('Tuesday, 28 May 2019, 7:31 AM', $output1);
 
-        $output2 = '';
-        // Teacher should be able to see all group override duedate.
-        $this->setUser($teacher);
-        $summary = $assign->get_assign_grading_summary_renderable($group1->id);
-        $output2 .= $assign->get_renderer()->render($summary);
-        $this->assertStringContainsStringIgnoringCase('Friday, 20 September 2019, 10:37 PM', $output2);
-        $summary = $assign->get_assign_grading_summary_renderable($group2->id);
-        $output3 = '';
-        $output3 .= $assign->get_renderer()->render($summary);
-        $this->assertStringContainsStringIgnoringCase('Friday, 7 June 2019, 5:37 PM', $output3);
+        $this->setUser($user);
+        $_GET['group'] = $activegroup->id;
+
+        /** @var assign $assign */
+        $header = new assign_header(
+            $assign->get_instance(),
+            $assign->get_context(),
+            false,
+            $assign->get_course_module()->id
+        );
+        $output = $assign->get_renderer()->render($header);
+        $this->assertStringContainsStringIgnoringCase($expecteddate, $output);
     }
 
     /**
