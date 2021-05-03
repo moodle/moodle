@@ -1408,6 +1408,25 @@ class sqlsrv_native_moodle_database extends moodle_database {
         return "$fieldname COLLATE $collation $LIKE $param ESCAPE '$escapechar'";
     }
 
+    /**
+     * Escape common SQL LIKE special characters like '_' or '%', plus '[' & ']' which are also supported in SQL Server
+     *
+     * Note that '^' and '-' also have meaning within a LIKE, but only when enclosed within square brackets. As this syntax
+     * is not supported on all databases and the brackets are always escaped, we don't need special handling of them
+     *
+     * @param string $text
+     * @param string $escapechar
+     * @return string
+     */
+    public function sql_like_escape($text, $escapechar = '\\') {
+        $text = parent::sql_like_escape($text, $escapechar);
+
+        $text = str_replace('[', $escapechar . '[', $text);
+        $text = str_replace(']', $escapechar . ']', $text);
+
+        return $text;
+    }
+
     public function sql_concat() {
         $arr = func_get_args();
 
