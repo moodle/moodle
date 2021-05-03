@@ -18,7 +18,7 @@
  * Contains the class for building the user's activity completion details.
  *
  * @package   core_completion
- * @copyright Jun Pataleta <jun@moodle.com>
+ * @copyright 2021 Jun Pataleta <jun@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,7 @@ use completion_info;
  * Class for building the user's activity completion details.
  *
  * @package   core_completion
- * @copyright Jun Pataleta <jun@moodle.com>
+ * @copyright 2021 Jun Pataleta <jun@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cm_completion_details {
@@ -79,6 +79,7 @@ class cm_completion_details {
      * Fetches the completion details for a user.
      *
      * @return array An array of completion details for a user containing the completion requirement's description and status.
+     * @throws \coding_exception
      */
     public function get_details(): array {
         if (!$this->is_automatic()) {
@@ -135,6 +136,8 @@ class cm_completion_details {
                         'description' => $this->cmcompletion->get_custom_rule_description($rule),
                     ];
                 }
+
+                $details = $this->sort_completion_details($details);
             }
         } else {
             if (function_exists($this->cminfo->modname . '_get_completion_state')) {
@@ -149,8 +152,34 @@ class cm_completion_details {
             }
         }
 
-
         return $details;
+    }
+
+    /**
+     * Sort completion details in the order specified by the activity's custom completion implementation.
+     *
+     * @param array $details The completion details to be sorted.
+     * @return array
+     * @throws \coding_exception
+     */
+    protected function sort_completion_details(array $details): array {
+        $sortorder = $this->cmcompletion->get_sort_order();
+        $sorteddetails = [];
+
+        foreach ($sortorder as $sortedkey) {
+            if (isset($details[$sortedkey])) {
+                $sorteddetails[$sortedkey] = $details[$sortedkey];
+            }
+        }
+
+        // Make sure the sorted list includes all of the conditions that were set.
+        if (count($sorteddetails) < count($details)) {
+            $exceptiontext = get_class($this->cmcompletion) .'::get_sort_order() is missing one or more completion conditions.' .
+                ' All custom and standard conditions that apply to this activity must be listed.';
+            throw new \coding_exception($exceptiontext);
+        }
+
+        return $sorteddetails;
     }
 
     /**

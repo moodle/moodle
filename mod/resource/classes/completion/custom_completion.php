@@ -79,4 +79,14 @@ class custom_completion extends activity_custom_completion {
 
         return in_array($display, $displaytypes);
     }
+
+    /**
+     * Returns an array of all completion rules, in the order they should be displayed to users.
+     *
+     * @return array
+     */
+    public function get_sort_order(): array {
+        // This module only supports manual completion.
+        return [];
+    }
 }
