@@ -71,9 +71,23 @@ Feature: View activity completion in the forum activity
     And I add a new discussion to "Music history" forum with:
        | Subject | Fun instruments |
        | Message | I like drums    |
+    And I am on "Course 1" course homepage
+    And I follow "Music history"
+    And the "View" completion condition of "Music history" is displayed as "done"
+    And the "Start discussions: 1" completion condition of "Music history" is displayed as "done"
+    And the "Make forum posts: 2" completion condition of "Music history" is displayed as "todo"
+    And the "Post replies: 1" completion condition of "Music history" is displayed as "todo"
+    And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
     And I reply "Fun instruments" post from "Music history" forum with:
       | Subject | Reply 1 to Fun instruments |
       | Message | Guitar is also Fun         |
+    And I am on "Course 1" course homepage
+    And I follow "Music history"
+    And the "View" completion condition of "Music history" is displayed as "done"
+    And the "Start discussions: 1" completion condition of "Music history" is displayed as "done"
+    And the "Make forum posts: 2" completion condition of "Music history" is displayed as "done"
+    And the "Post replies: 1" completion condition of "Music history" is displayed as "done"
+    And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
     And I log out
     # Grade the student
     And I log in as "teacher1"
