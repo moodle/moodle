@@ -1,3 +1,6 @@
+=== 3.11 ===
+The $extradetails parameter in the constructor of the mod_feedback\output\summary class has been deprecated and is not used anymore.
+
 === 3.8 ===
 
 * The following functions have been finally deprecated and can not be used anymore:
