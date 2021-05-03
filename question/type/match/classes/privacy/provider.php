@@ -24,23 +24,60 @@
 
 namespace qtype_match\privacy;
 
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\writer;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for qtype_match implementing null_provider.
+ * Privacy Subsystem for qtype_match implementing user_preference_provider.
  *
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\null_provider {
+class provider implements
+        // This component has data.
+        // We need to return default options that have been set a user preferences.
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\user_preference_provider
+{
 
     /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
+     * Returns meta data about this system.
      *
-     * @return  string
+     * @param   collection     $collection The initialised collection to add items to.
+     * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
+    public static function get_metadata(collection $collection) : collection {
+        $collection->add_user_preference('qtype_match_defaultmark', 'privacy:preference:defaultmark');
+        $collection->add_user_preference('qtype_match_penalty', 'privacy:preference:penalty');
+        $collection->add_user_preference('qtype_match_shuffleanswers', 'privacy:preference:shuffleanswers');
+        return $collection;
+    }
+
+    /**
+     * Export all user preferences for the plugin.
+     *
+     * @param int $userid The userid of the user whose data is to be exported.
+     */
+    public static function export_user_preferences(int $userid) {
+        $preference = get_user_preferences('qtype_match_defaultmark', null, $userid);
+        if (null !== $preference) {
+            $desc = get_string('privacy:preference:defaultmark', 'qtype_match');
+            writer::export_user_preference('qtype_match', 'defaultmark', $preference, $desc);
+        }
+
+        $preference = get_user_preferences('qtype_match_penalty', null, $userid);
+        if (null !== $preference) {
+            $desc = get_string('privacy:preference:penalty', 'qtype_match');
+            writer::export_user_preference('qtype_match', 'penalty', transform::percentage($preference), $desc);
+        }
+
+        $preference = get_user_preferences('qtype_match_shuffleanswers', null, $userid);
+        if (null !== $preference) {
+            $desc = get_string('privacy:preference:shuffleanswers', 'qtype_match');
+            writer::export_user_preference('qtype_match', 'shuffleanswers', transform::yesno($preference), $desc);
+        }
     }
 }
