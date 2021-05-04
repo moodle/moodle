@@ -260,6 +260,8 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
      * @link https://bugs.php.net/bug.php?id=77214
      */
     public function test_zip_entry_path_having_folder_ending_with_dot() {
+        global $CFG;
+
         $this->resetAfterTest(false);
 
         $packer = get_file_packer('application/zip');
@@ -275,6 +277,28 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
             'Data/sub1./sub2/1221' => ['1221'],
             'Data/sub1./sub2./Příliš žluťoučký kůň úpěl Ďábelské Ódy.txt' => [''],
         ];
+
+        if ($CFG->ostype === 'WINDOWS') {
+            // File names cannot end with dots on Windows and trailing dots are replaced with underscore.
+            $filenamemap = [
+                'HOW.TO' => 'HOW.TO',
+                'README.' => 'README_',
+                './Current time' => 'Current time',
+                'Data/sub1./sub2/1221' => 'Data/sub1_/sub2/1221',
+                'Data/sub1./sub2./Příliš žluťoučký kůň úpěl Ďábelské Ódy.txt' =>
+                    'Data/sub1_/sub2_/Příliš žluťoučký kůň úpěl Ďábelské Ódy.txt',
+            ];
+
+        } else {
+            $filenamemap = [
+                'HOW.TO' => 'HOW.TO',
+                'README.' => 'README.',
+                './Current time' => 'Current time',
+                'Data/sub1./sub2/1221' => 'Data/sub1./sub2/1221',
+                'Data/sub1./sub2./Příliš žluťoučký kůň úpěl Ďábelské Ódy.txt' =>
+                    'Data/sub1./sub2./Příliš žluťoučký kůň úpěl Ďábelské Ódy.txt',
+            ];
+        }
 
         // Check that the archive can be created.
         $result = $packer->archive_to_pathname($zipcontents, $zippath, false);
@@ -298,8 +322,8 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
 
         foreach ($zipcontents as $filename => $filecontents) {
             $filecontents = reset($filecontents);
-            $this->assertTrue(is_readable($targetpath . '/' . $filename));
-            $this->assertEquals($filecontents, file_get_contents($targetpath . '/' . $filename));
+            $this->assertTrue(is_readable($targetpath . '/' . $filenamemap[$filename]));
+            $this->assertEquals($filecontents, file_get_contents($targetpath . '/' . $filenamemap[$filename]));
         }
     }
 
