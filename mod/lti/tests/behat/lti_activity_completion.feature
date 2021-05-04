@@ -25,7 +25,7 @@ Feature: View activity completion information in the LTI activity
     And I expand all fieldsets
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-      | Show completion conditions | Yes |
+      | Show activity completion conditions | Yes |
     And I press "Save and display"
     And I turn editing mode on
     When I open "Music history" actions menu

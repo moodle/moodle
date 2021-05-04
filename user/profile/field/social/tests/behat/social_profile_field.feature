@@ -11,13 +11,13 @@ Feature: Social profile fields can not have a duplicate shortname.
     And I click on "Create a new profile field" "link"
     And I click on "Social" "link"
     And I set the following fields to these values:
-      | Networktype                   | Yahoo ID         |
+      | Network type                  | Yahoo ID         |
       | Short name                    | yahoo            |
     And I click on "Save changes" "button"
     And I click on "Create a new profile field" "link"
     And I click on "Social" "link"
     And I set the following fields to these values:
-      | Networktype                   | Yahoo ID         |
+      | Network type                  | Yahoo ID         |
       | Short name                    | yahoo            |
     And I click on "Save changes" "button"
     Then I should see "This short name is already in use"

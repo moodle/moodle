@@ -22,7 +22,7 @@ Feature: View activity completion in the assignment activity
     And I expand all fieldsets
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-      | Show completion conditions | Yes |
+      | Show activity completion conditions | Yes |
     And I press "Save and display"
     And the following "activity" exists:
       | activity                 | assign        |
@@ -35,7 +35,7 @@ Feature: View activity completion in the assignment activity
       | grade[modgrade_point]    | 100           |
 
   @javascript
-  Scenario: The manual completion button will be shown on the course page if the Show completion conditions is set to Yes
+  Scenario: The manual completion button will be shown on the course page if the Show activity completion conditions is set to Yes
     Given I am on "Course 1" course homepage
     # Teacher view.
     And the manual completion button for "Music history" should exist
@@ -50,11 +50,11 @@ Feature: View activity completion in the assignment activity
     And the manual completion button of "Music history" is displayed as "Done"
 
   @javascript
-  Scenario: The manual completion button will not be shown on the course page if the Show completion conditions is set to No
+  Scenario: The manual completion button will not be shown on the course page if the Show activity completion conditions is set to No
     Given I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
-    And I set the field "Show completion conditions" to "No"
+    And I set the field "Show activity completion conditions" to "No"
     And I press "Save and display"
     # Teacher view.
     And the manual completion button for "Music history" should not exist

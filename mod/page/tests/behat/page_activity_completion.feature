@@ -28,7 +28,7 @@ Feature: View activity completion information in the Page resource
     And I expand all fieldsets
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-      | Show completion conditions | Yes |
+      | Show activity completion conditions | Yes |
     And I press "Save and display"
 
   Scenario: View automatic completion items
@@ -69,13 +69,13 @@ Feature: View activity completion information in the Page resource
     And I toggle the manual completion state of "Music history"
     And the manual completion button of "Music history" is displayed as "Done"
 
-  Scenario: The manual completion button will not be shown on the course page if the Show completion conditions is set to No
+  Scenario: The manual completion button will not be shown on the course page if the Show activity completion conditions is set to No
     Given I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-      | Show completion conditions | No  |
+      | Show activity completion conditions | No  |
     And I press "Save and display"
     And I follow "Music history"
     And I navigate to "Edit settings" in current page administration
