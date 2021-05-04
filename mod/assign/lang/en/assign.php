@@ -85,12 +85,12 @@ $string['attemptheading'] = 'Attempt {$a->attemptnumber}: {$a->submissionsummary
 $string['attempthistory'] = 'Previous attempts';
 $string['attemptnumber'] = 'Attempt number';
 $string['attemptsettings'] = 'Attempt settings';
-$string['attemptreopenmethod'] = 'Attempts reopened';
-$string['attemptreopenmethod_help'] = 'Determines how student submission attempts are reopened. The available options are:
+$string['attemptreopenmethod'] = 'Additional attempts';
+$string['attemptreopenmethod_help'] = 'This setting determines whether a student can make additional attempts at the assignment. For each attempt, the grade and feedback are saved, and can be viewed by the teacher and the student. The available options are:
 
-* Never - The submission cannot be reopened.
-* Manually - The submission can be reopened by a teacher.
-* Automatically until pass - The submission is automatically reopened until the student achieves the grade to pass set in the gradebook for this assignment.';
+* Never - Only one attempt is possible.
+* Manually - Additional attempts may be allowed by a teacher.
+* Automatically until pass - Additional attempts are allowed automatically until the student achieves the grade to pass set in the gradebook for this assignment.';
 $string['attemptreopenmethod_manual'] = 'Manually';
 $string['attemptreopenmethod_none'] = 'Never';
 $string['attemptreopenmethod_untilpass'] = 'Automatically until pass';
@@ -271,7 +271,7 @@ $string['filterrequiregrading'] = 'Requires grading';
 $string['filtersubmitted'] = 'Submitted';
 $string['graded'] = 'Graded';
 $string['gradedby'] = 'Graded by';
-$string['gradedfollowupsubmit'] = 'Graded - follow up submission received';
+$string['gradedfollowupsubmit'] = 'Graded - follow-up submission received';
 $string['gradedon'] = 'Graded on';
 $string['gradebelowzero'] = 'Grade must be greater than or equal to zero.';
 $string['gradeabovemaximum'] = 'Grade must be less than or equal to {$a}.';
@@ -465,7 +465,7 @@ $string['revealidentities'] = 'Reveal student identities';
 $string['revealidentitiesconfirm'] = 'Are you sure you want to reveal student identities for this assignment? This operation cannot be undone. Once the student identities have been revealed, the marks will be released to the gradebook.';
 $string['reverttodefaults'] = 'Revert to assignment defaults';
 $string['reverttodraftforstudent'] = 'Revert submission to draft for student: (id={$a->id}, fullname={$a->fullname}).';
-$string['reverttodraft'] = 'Revert the submission to draft status.';
+$string['reverttodraft'] = 'Revert the submission to draft status';
 $string['reverttodraftshort'] = 'Revert the submission to draft';
 $string['reviewed'] = 'Reviewed';
 $string['save'] = 'Save';
