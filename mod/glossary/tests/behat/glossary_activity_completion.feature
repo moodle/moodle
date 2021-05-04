@@ -68,6 +68,9 @@ Feature: View activity completion in the glossary activity
       | Concept    | Blast beats                                               |
       | Definition | Repeated fast tempo hits combining bass, snare and cymbal |
     And I press "Save changes"
+    And the "View" completion condition of "Music history" is displayed as "done"
+    And the "Make entries: 1" completion condition of "Music history" is displayed as "done"
+    And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage

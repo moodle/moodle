@@ -143,6 +143,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $c->update_state($cm);
 
         // Enabled, but current state is same as possible result, do nothing.
+        $cm->completion = COMPLETION_TRACKING_AUTOMATIC;
         $c = $mockbuilder->getMock();
         $current = (object)array('completionstate' => COMPLETION_COMPLETE, 'overrideby' => null);
         $c->expects($this->once())
@@ -151,7 +152,6 @@ class core_completionlib_testcase extends advanced_testcase {
             ->will($this->returnValue(true));
         $c->expects($this->once())
             ->method('get_data')
-            ->with($cm, false, 0)
             ->will($this->returnValue($current));
         $c->update_state($cm, COMPLETION_COMPLETE);
 
@@ -165,7 +165,6 @@ class core_completionlib_testcase extends advanced_testcase {
             ->will($this->returnValue(true));
         $c->expects($this->once())
             ->method('get_data')
-            ->with($cm, false, 0)
             ->will($this->returnValue($current));
         $c->update_state($cm, COMPLETION_COMPLETE);
 
@@ -179,7 +178,6 @@ class core_completionlib_testcase extends advanced_testcase {
             ->will($this->returnValue(true));
         $c->expects($this->once())
             ->method('get_data')
-            ->with($cm, false, 0)
             ->will($this->returnValue($current));
         $c->update_state($cm, COMPLETION_COMPLETE);
 
@@ -191,7 +189,6 @@ class core_completionlib_testcase extends advanced_testcase {
             ->will($this->returnValue(true));
         $c->expects($this->once())
             ->method('get_data')
-            ->with($cm, false, 0)
             ->will($this->returnValue($current));
         $changed = clone($current);
         $changed->timemodified = time();
@@ -213,7 +210,6 @@ class core_completionlib_testcase extends advanced_testcase {
             ->will($this->returnValue(true));
         $c->expects($this->once())
             ->method('get_data')
-            ->with($cm, false, 0)
             ->will($this->returnValue($current));
         $c->expects($this->once())
             ->method('internal_get_state')
