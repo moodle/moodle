@@ -64,7 +64,6 @@ require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);
 require_capability('mod/data:manageentries', $context);
-$form = new mod_data_import_form(new moodle_url('/mod/data/import.php'));
 
 /// Print the page header
 $PAGE->navbar->add(get_string('add', 'data'));
@@ -78,14 +77,10 @@ echo $OUTPUT->heading_with_help(get_string('uploadrecords', 'mod_data'), 'upload
 $currentgroup = groups_get_activity_group($cm);
 $groupmode = groups_get_activity_groupmode($cm);
 
+$form = new mod_data_import_form(new moodle_url('/mod/data/import.php'), ['dataid' => $data->id]);
 if (!$formdata = $form->get_data()) {
     /// Upload records section. Only for teachers and the admin.
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-    require_once('import_form.php');
-    $form = new mod_data_import_form(new moodle_url('/mod/data/import.php'));
-    $formdata = new stdClass();
-    $formdata->d = $data->id;
-    $form->set_data($formdata);
     $form->display();
     echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
