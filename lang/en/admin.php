@@ -300,8 +300,8 @@ $string['configmycoursesperpage'] = 'Maximum number of courses to display in any
 $string['configmymoodleredirect'] = 'This setting forces redirects to /my on login for non-admins and replaces the top level site navigation with /my';
 $string['configmypagelocked'] = 'This setting prevents the default page from being edited by any non-admins';
 $string['confignavcourselimit'] = 'Limits the number of courses shown to the user in the navigation.';
-$string['confignavshowallcourses'] = 'This setting determines whether users who are enrolled in courses can see Courses (listing all courses) in the navigation, in addition to My Courses (listing courses in which they are enrolled).';
-$string['confignavshowcategories'] = 'Show course categories in the navigation bar and navigation blocks. This does not occur with courses the user is currently enrolled in, they will still be listed under mycourses without categories.';
+$string['confignavshowallcourses'] = 'This setting determines whether users who are enrolled in courses can see Courses (listing all courses) in the navigation, in addition to My courses (listing courses in which they are enrolled).';
+$string['confignavshowcategories'] = 'Show course categories in the navigation bar and navigation blocks. This does not occur with courses the user is currently enrolled in; they will still be listed under My courses without categories.';
 $string['confignoreplyaddress'] = 'Emails are sometimes sent out on behalf of a user (eg forum posts). The email address you specify here will be used as the "From" address in those cases when the recipients should not be able to reply directly to the user (eg when a user chooses to keep their address private). This setting will also be used as the envelope sender when sending email.';
 $string['confignotifyloginfailures'] = 'Send login failure notification messages to these selected users. This requires an internal logstore (eg Standard Logstore) to be enabled.';
 $string['confignotifyloginthreshold'] = 'If notifications about failed logins are active, how many failed login attempts by one user or one IP address is it worth notifying about?';
@@ -383,7 +383,7 @@ For example:  standard,orangewhite.';
 $string['configtimezone'] = 'This is the default timezone for displaying dates - each user can override this setting in their profile. Cron tasks and other server settings are specified in this timezone. You should change the setting if it shows as "Invalid timezone"';
 $string['configuseblogassociations'] = 'Should users be able to organize their blog by associating entries with courses and course modules?';
 $string['configuseexternalyui'] = 'Instead of using local files, use online files available on Yahoo&#145;s servers. WARNING: This requires an internet connection, or no AJAX will work on your site. This setting is not compatible with sites using https.';
-$string['configusesitenameforsitepages'] = 'If enabled the site\'s shortname will be used for the site pages node in the navigation rather than the string \'Site pages\'';
+$string['configusesitenameforsitepages'] = 'If enabled the site\'s short name will be used for the site pages node in the navigation rather than the string \'Site pages\'.';
 $string['configusetags'] = 'Should tags functionality across the site be enabled?';
 $string['configvariables'] = 'Variables';
 $string['configverifychangedemail'] = 'Enables verification of changed email addresses using allowed and denied email domains settings. If this setting is disabled the domains are enforced only when creating new users.';
@@ -872,7 +872,7 @@ $string['navshowfrontpagemods_help'] = 'If enabled, front page activities will b
 $string['navshowallcourses'] = 'Show all courses';
 $string['navshowcategories'] = 'Show course categories';
 $string['navshowmycoursecategories'] = 'Show my course categories';
-$string['navshowmycoursecategories_help'] = 'If enabled courses in the users my courses branch will be shown in categories.';
+$string['navshowmycoursecategories_help'] = 'If enabled, courses in the user\'s My courses branch will be shown in categories in the navigation block (Classic-based themes only).';
 $string['navsortmycourseshiddenlast'] = 'Sort my hidden courses last';
 $string['navsortmycourseshiddenlast_help'] = 'If enabled, any hidden courses will be listed after visible courses (for users who can view hidden courses). Otherwise, all courses, regardless of their visibility, will be listed according to the \'Sort my courses\' setting.';
 $string['navsortmycoursessort'] = 'Sort my courses';
@@ -946,7 +946,7 @@ $string['pathtodu'] = 'Path to du';
 $string['pathtogs'] = 'Path to ghostscript';
 $string['pathtogs_help'] = 'On most Linux installs, this can be left as \'/usr/bin/gs\'. On Windows it will be something like \'c:\\gs\\bin\\gswin32c.exe\' (make sure there are no spaces in the path - if necessary copy the files \'gswin32c.exe\' and \'gsdll32.dll\' to a new folder without a space in the path)';
 $string['pathtopdftoppm'] = 'Path to pdftoppm';
-$string['pathtopdftoppm_help'] = '\'pdftoppm\' is a tool that converts PDF pages to PNG at least as fast as \'gs\' does. However, you will probably have a better performance when converting large documents. If present, \'pdftoppm\' will be used instead of \'gs\' for this task. On most Linux installs, this can be left as \'/usr/bin/pdftoppm\'. If not present, install the poppler-utils or poppler package, depending on the Linux distribution. On Windows it will be provided by Cygwin installs. See <a href="https://poppler.freedesktop.org/" target="_blank">Poppler project</a> for more details.';
+$string['pathtopdftoppm_help'] = '<a href="https://poppler.freedesktop.org/">Poppler</a> is a PDF rendering library which includes the tool pdftoppm for converting PDF files to PNG. Performance is generally better than when using Ghostscript, particularly for large files. If available, pdftoppm will be used in preference to Ghostscript. On most Linux installs, the path can be left as /usr/bin/pdftoppm. Otherwise, you need to install the poppler-utils or poppler package, depending on your Linux distribution. On Windows it is provided by Cygwin installs.';
 $string['pathtopgdump'] = 'Path to pg_dump';
 $string['pathtopgdumpdesc'] = 'This is only necessary to enter if you have more than one pg_dump on your system (for example if you have more than one version of postgresql installed)';
 $string['pathtopgdumpinvalid'] = 'Invalid path to pg_dump - either wrong path or not executable';
@@ -1026,12 +1026,13 @@ $string['profilesignup'] = 'Display on signup page?';
 $string['profilespecificsettings'] = 'Specific settings';
 $string['profilevisible'] = 'Who is this field visible to?';
 $string['profilevisible_help'] = '* Not visible - For private data only viewable by administrators
-* Visible to user - For private data only viewable by the user and by administrators
+* Visible to user - For private data only viewable by the user and administrators
+* Visible to user, teachers and admins - For private data only viewable by the user, administrators and teachers (on course profile)
 * Visible to everyone';
 $string['profilevisibleall'] = 'Visible to everyone';
 $string['profilevisiblenone'] = 'Not visible';
 $string['profilevisibleprivate'] = 'Visible to user';
-$string['profilevisibleteachers'] = 'Visible to user teachers and admins';
+$string['profilevisibleteachers'] = 'Visible to user, teachers and admins';
 $string['profiling'] = 'Profiling';
 $string['profilingallowall'] = 'Continuous profiling';
 $string['profilingallowall_help'] = 'If you enable this setting, then, at any moment, you can use the PROFILEALL parameter anywhere (PGC) to enable profiling for all the executed scripts along the Moodle session life. Analogously, you can use the PROFILEALLSTOP parameter to stop it.';

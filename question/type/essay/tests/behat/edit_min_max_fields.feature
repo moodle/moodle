@@ -46,7 +46,7 @@ I need to choose the appropriate minimum and/or maximum number of words for inpu
     And I set the field "maxwordenabled" to "1"
     When I set the field "id_maxwordlimit" to "450"
     And I click on "Save changes" "button"
-    Then I should see "Maximum world limit must be greater than minimum word limit"
+    Then I should see "Maximum word limit must be greater than minimum word limit"
 
   @javascript
   Scenario: Modify the question to see 'Minimum word limit' and  'Maximum word limit' are hidden when 'Require text' field is set to 'Text input is optional'

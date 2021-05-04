@@ -25,7 +25,7 @@ Feature: In an assignment, teacher can view the feedback for a previous attempt.
       | Description | Submit your PDF file |
       | assignsubmission_file_enabled | 1 |
       | Maximum number of uploaded files | 2 |
-      | Attempts reopened | Manually |
+      | Additional attempts | Manually |
       | Maximum attempts | Unlimited |
     And I log out
     And I log in as "student1"

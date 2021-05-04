@@ -25,7 +25,7 @@
 $string['invalidnetwork'] = 'Invalid social network';
 $string['networkinuse'] = 'Social network has already been added';
 $string['pluginname'] = 'Social';
-$string['networktype'] = 'Networktype';
+$string['networktype'] = 'Network type';
 $string['privacy:metadata:profile_field_social:data'] = 'Text area user profile field user data';
 $string['privacy:metadata:profile_field_social:dataformat'] = 'The format of Text area user profile field user data';
 $string['privacy:metadata:profile_field_social:fieldid'] = 'The ID of the profile field';

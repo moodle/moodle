@@ -273,9 +273,9 @@ Feature: Lesson group override
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group             | Group 1 |
-      | Maximum number of attempts | 2 |
+      | Maximum number of attempts per question | 2 |
     And I press "Save"
-    And I should see "Maximum number of attempts"
+    And I should see "Maximum number of attempts per question"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage

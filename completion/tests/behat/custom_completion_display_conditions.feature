@@ -37,7 +37,7 @@ Feature: Allow teachers to edit the visibility of completion conditions in a cou
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
     When I set the following fields to these values:
-      | Show completion conditions | No |
+      | Show activity completion conditions | No |
     And I click on "Save and display" "button"
     # Automatic completion conditions should not be displayed on the course homepage if show completion conditions is disabled.
     And there should be no completion information shown for "Test choice auto"
@@ -54,7 +54,7 @@ Feature: Allow teachers to edit the visibility of completion conditions in a cou
   Scenario Outline: Default showcompletionconditions value in course form on course creation
     Given I log in as "admin"
     And I navigate to "Courses > Course default settings" in site administration
-    And I set the field "Show completion conditions" to "<siteshowcompletion>"
+    And I set the field "Show activity completion conditions" to "<siteshowcompletion>"
     And I press "Save changes"
     When I navigate to "Courses > Add a new course" in site administration
     Then the field "showcompletionconditions" matches value "<expected>"
@@ -67,14 +67,14 @@ Feature: Allow teachers to edit the visibility of completion conditions in a cou
   Scenario Outline: Default showcompletionconditions displayed when editing a course with disabled completion tracking
     Given I log in as "admin"
     And I navigate to "Courses > Course default settings" in site administration
-    And I set the field "Show completion conditions" to "<siteshowcompletion>"
+    And I set the field "Show activity completion conditions" to "<siteshowcompletion>"
     And I press "Save changes"
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Edit settings" in current page administration
     And I set the field "Enable completion tracking" to "No"
     And I press "Save and display"
     And I navigate to "Edit settings" in current page administration
-    Then the field "Show completion conditions" matches value "<expected>"
+    Then the field "Show activity completion conditions" matches value "<expected>"
 
     Examples:
       | siteshowcompletion  | expected  |

@@ -24,11 +24,11 @@ Feature: View activity completion information for file resources
     And I expand all fieldsets
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-      | Show completion conditions | No  |
+      | Show activity completion conditions | No  |
     And I press "Save and display"
 
   @javascript
-  Scenario Outline: The manual completion button will be shown on the course page for Open, In pop-up, New window and Force download display mode if Show completion conditions is set to No
+  Scenario Outline: The manual completion button will be shown on the course page for Open, In pop-up, New window and Force download display mode if Show activity completion conditions is set to No
     Given I am on "Course 1" course homepage with editing mode on
     And I add a "File" to section "1"
     And I set the following fields to these values:
@@ -60,11 +60,11 @@ Feature: View activity completion information for file resources
       | New window     |
 
   @javascript
-  Scenario: The manual completion button will be shown on the activity page and course page if Show completion conditions is set to Yes
+  Scenario: The manual completion button will be shown on the activity page and course page if Show activity completion conditions is set to Yes
     Given I am on "Course 1" course homepage
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
-    And I set the field "Show completion conditions" to "Yes"
+    And I set the field "Show activity completion conditions" to "Yes"
     And I press "Save and display"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "File" to section "1"
@@ -94,7 +94,7 @@ Feature: View activity completion information for file resources
   Scenario: View automatic completion items
     Given I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
-    And I set the field "Show completion conditions" to "Yes"
+    And I set the field "Show activity completion conditions" to "Yes"
     And I press "Save and display"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "File" to section "1"
