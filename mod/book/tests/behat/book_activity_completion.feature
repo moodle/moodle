@@ -22,7 +22,7 @@ Feature: View activity completion information in the book activity
     And I expand all fieldsets
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-      | Show completion conditions | Yes |
+      | Show activity completion conditions | Yes |
     And I press "Save and display"
     And the following "activity" exists:
       | activity       | book          |

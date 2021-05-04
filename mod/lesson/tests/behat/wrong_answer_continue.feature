@@ -25,7 +25,7 @@ Feature: An incorrect response to an answer with multiple attempts show appropri
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Provide option to try a question again | Yes |
-      | Maximum number of attempts | 2 |
+      | Maximum number of attempts per question | 2 |
     And I press "Save and return to course"
     And I follow "Test lesson name"
 

@@ -25,7 +25,7 @@ Feature: Submissions are unlocked when a new attempt is given
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
-      | Attempts reopened | Automatically until pass |
+      | Additional attempts | Automatically until pass |
       | Grade to pass | 50 |
     And I log out
     And I log in as "student1"
@@ -59,7 +59,7 @@ Feature: Submissions are unlocked when a new attempt is given
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
-      | Attempts reopened | Manually |
+      | Additional attempts | Manually |
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage

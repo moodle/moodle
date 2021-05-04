@@ -207,7 +207,7 @@ Feature: Render H5P content using filters
     And I click on "Save and display" "button"
     And I switch to "h5p-iframe" class iframe
 #   Library is disabled, so an error should be displayed.
-    Then I should see "This file can't be displayed because its content-type is disabled."
+    Then I should see "This file can't be displayed because its content type is disabled."
     And I should not see "Lorum ipsum"
     And I switch to the main frame
     And I navigate to "H5P > Manage H5P content types" in site administration
@@ -220,7 +220,7 @@ Feature: Render H5P content using filters
 #   Switch to iframe created by embed.php page.
     And I switch to "h5p-iframe" class iframe
     And I should see "Lorum ipsum"
-    And I should not see "This file can't be displayed because its content-type is disabled."
+    And I should not see "This file can't be displayed because its content type is disabled."
     And I switch to the main frame
     And I navigate to "H5P > Manage H5P content types" in site administration
     And I click on "Disable" "link" in the "Accordion" "table_row"
@@ -228,6 +228,6 @@ Feature: Render H5P content using filters
 #   Library is disabled again, so an error should be displayed.
     And I follow "PageName1"
     And I switch to "h5p-iframe" class iframe
-    And I should see "This file can't be displayed because its content-type is disabled."
+    And I should see "This file can't be displayed because its content type is disabled."
     And I should not see "Lorum ipsum"
     And I switch to the main frame

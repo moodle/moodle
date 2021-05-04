@@ -22,7 +22,7 @@ Feature: View activity completion information for the label
     And I expand all fieldsets
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-      | Show completion conditions | No  |
+      | Show activity completion conditions | No  |
     And I press "Save and display"
     And the following "activity" exists:
       | activity       | label         |
@@ -32,7 +32,7 @@ Feature: View activity completion information for the label
       | completion     | 1             |
 
   @javascript
-  Scenario: The manual completion button will be shown on the course page if the Show completion conditions is set to No
+  Scenario: The manual completion button will be shown on the course page if the Show activity completion conditions is set to No
     Given I am on "Course 1" course homepage
     # Teacher view.
     And the manual completion button for "Test label 1" should exist
@@ -47,11 +47,11 @@ Feature: View activity completion information for the label
     And the manual completion button of "Test label 1" is displayed as "Done"
 
   @javascript
-  Scenario: The manual completion button will be shown on the course page if the Show completion conditions is set to Yes
+  Scenario: The manual completion button will be shown on the course page if the Show activity completion conditions is set to Yes
     Given I am on "Course 1" course homepage
     And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
-    And I set the field "Show completion conditions" to "Yes"
+    And I set the field "Show activity completion conditions" to "Yes"
     And I press "Save and display"
     # Teacher view.
     And the manual completion button for "Test label 1" should exist
