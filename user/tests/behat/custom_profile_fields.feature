@@ -50,7 +50,7 @@ Feature: Custom profile fields should be visible and editable by those with the 
       | Short name                    | teachervisible_field                |
       | Name                          | teachervisible_field                |
       | Display on signup page?       | Yes                                 |
-      | Who is this field visible to? | Visible to user teachers and admins |
+      | Who is this field visible to? | Visible to user, teachers and admins |
     And I click on "Save changes" "button"
 
     And I navigate to "Users > Accounts > Browse list of users" in site administration

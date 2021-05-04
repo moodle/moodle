@@ -22,7 +22,7 @@ Feature: View activity completion information in the h5p activity
     And I expand all fieldsets
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-      | Show completion conditions | Yes |
+      | Show activity completion conditions | Yes |
     And I press "Save and display"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "H5P" to section "1"

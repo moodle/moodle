@@ -133,7 +133,7 @@ class secondary_test extends \advanced_testcase {
      */
     public function test_setting_initialise_provider(): array {
         return [
-            'Testing in a course context' => ['course', 'coursehome', 'courseheader', 'Course Page'],
+            'Testing in a course context' => ['course', 'coursehome', 'courseheader', 'Course page'],
             'Testing in a module context' => ['module', 'modulepage', 'activityheader', 'Activity'],
             'Testing in a site admin' => ['system', 'siteadminnode', 'menu', 'Site administration'],
         ];
