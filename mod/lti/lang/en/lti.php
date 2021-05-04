@@ -171,7 +171,7 @@ external tool or create a new external tool?';
 $string['dynreg_update_warn_dupdomain'] = 'It is not recommended to have multiple external tools under the same domain.';
 $string['dynreg_update_name'] = 'Tool name';
 $string['dynreg_update_url'] = 'Base URL';
-$string['dynreg_update_version'] = 'LTI Version';
+$string['dynreg_update_version'] = 'LTI version';
 $string['dynreg_update_notools'] = 'No tools in context.';
 $string['dynreg_update_btn_update'] = 'Update';
 $string['dynreg_update_btn_new'] = 'Register as a new external tool';
