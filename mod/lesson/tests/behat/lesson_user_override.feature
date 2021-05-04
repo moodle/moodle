@@ -211,7 +211,7 @@ Feature: Lesson user override
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I wait until the page is ready
-    Then the activity date in "Test lesson name" should contain "Closed: 1 January 2000, 8:00 AM"
+    Then the activity date in "Test lesson name" should contain "Closed: Saturday, 1 January 2000, 8:00 AM"
     And I should not see "Cat is an amphibian"
     And I log out
     And I log in as "student1"
@@ -250,7 +250,7 @@ Feature: Lesson user override
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
     And I wait until the page is ready
-    Then the activity date in "Test lesson name" should contain "Opens: 1 January 2030, 8:00 AM"
+    Then the activity date in "Test lesson name" should contain "Opens: Tuesday, 1 January 2030, 8:00 AM"
     And I should not see "Cat is an amphibian"
     And I log out
     And I log in as "student1"
