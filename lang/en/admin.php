@@ -302,8 +302,8 @@ $string['configmycoursesperpage'] = 'Maximum number of courses to display in any
 $string['configmymoodleredirect'] = 'This setting forces redirects to /my on login for non-admins and replaces the top level site navigation with /my';
 $string['configmypagelocked'] = 'This setting prevents the default page from being edited by any non-admins';
 $string['confignavcourselimit'] = 'Limits the number of courses shown to the user in the navigation.';
-$string['confignavshowallcourses'] = 'This setting determines whether users who are enrolled in courses can see Courses (listing all courses) in the navigation, in addition to My Courses (listing courses in which they are enrolled).';
-$string['confignavshowcategories'] = 'Show course categories in the navigation bar and navigation blocks. This does not occur with courses the user is currently enrolled in, they will still be listed under mycourses without categories.';
+$string['confignavshowallcourses'] = 'This setting determines whether users who are enrolled in courses can see Courses (listing all courses) in the navigation, in addition to My courses (listing courses in which they are enrolled).';
+$string['confignavshowcategories'] = 'Show course categories in the navigation bar and navigation blocks. This does not occur with courses the user is currently enrolled in; they will still be listed under My courses without categories.';
 $string['confignoreplyaddress'] = 'Emails are sometimes sent out on behalf of a user (eg forum posts). The email address you specify here will be used as the "From" address in those cases when the recipients should not be able to reply directly to the user (eg when a user chooses to keep their address private). This setting will also be used as the envelope sender when sending email.';
 $string['confignotifyloginfailures'] = 'Send login failure notification messages to these selected users. This requires an internal logstore (eg Standard Logstore) to be enabled.';
 $string['confignotifyloginthreshold'] = 'If notifications about failed logins are active, how many failed login attempts by one user or one IP address is it worth notifying about?';
@@ -383,7 +383,7 @@ For example:  standard,orangewhite.';
 $string['configtimezone'] = 'This is the default timezone for displaying dates - each user can override this setting in their profile. Cron tasks and other server settings are specified in this timezone. You should change the setting if it shows as "Invalid timezone"';
 $string['configuseblogassociations'] = 'Should users be able to organize their blog by associating entries with courses and course modules?';
 $string['configuseexternalyui'] = 'Instead of using local files, use online files available on Yahoo&#145;s servers. WARNING: This requires an internet connection, or no AJAX will work on your site. This setting is not compatible with sites using https.';
-$string['configusesitenameforsitepages'] = 'If enabled the site\'s shortname will be used for the site pages node in the navigation rather than the string \'Site pages\'';
+$string['configusesitenameforsitepages'] = 'If enabled the site\'s short name will be used for the site pages node in the navigation rather than the string \'Site pages\'.';
 $string['configusetags'] = 'Should tags functionality across the site be enabled?';
 $string['configvariables'] = 'Variables';
 $string['configverifychangedemail'] = 'Enables verification of changed email addresses using allowed and denied email domains settings. If this setting is disabled the domains are enforced only when creating new users.';
@@ -871,7 +871,7 @@ $string['navshowfrontpagemods_help'] = 'If enabled, front page activities will b
 $string['navshowallcourses'] = 'Show all courses';
 $string['navshowcategories'] = 'Show course categories';
 $string['navshowmycoursecategories'] = 'Show my course categories';
-$string['navshowmycoursecategories_help'] = 'If enabled courses in the users my courses branch will be shown in categories.';
+$string['navshowmycoursecategories_help'] = 'If enabled, courses in the user\'s My courses branch will be shown in categories in the navigation block (Classic-based themes only).';
 $string['navsortmycourseshiddenlast'] = 'Sort my hidden courses last';
 $string['navsortmycourseshiddenlast_help'] = 'If enabled, any hidden courses will be listed after visible courses (for users who can view hidden courses). Otherwise, all courses, regardless of their visibility, will be listed according to the \'Sort my courses\' setting.';
 $string['navsortmycoursessort'] = 'Sort my courses';
@@ -1023,7 +1023,8 @@ $string['profilesignup'] = 'Display on signup page?';
 $string['profilespecificsettings'] = 'Specific settings';
 $string['profilevisible'] = 'Who is this field visible to?';
 $string['profilevisible_help'] = '* Not visible - For private data only viewable by administrators
-* Visible to user - For private data only viewable by the user and by administrators
+* Visible to user - For private data only viewable by the user and administrators
+* Visible to user, teachers and admins - For private data only viewable by the user, administrators and teachers (on course profile)
 * Visible to everyone';
 $string['profilevisibleall'] = 'Visible to everyone';
 $string['profilevisiblenone'] = 'Not visible';

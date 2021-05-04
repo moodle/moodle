@@ -37,7 +37,7 @@ Feature: The online users block allow you to see who is currently online on fron
     When I log in as "student1"
     And I am on site homepage
     Then I should not see "Admin User" in the "Online users" "block"
-    And I should see "Other Users (1)" in the "Online users" "block"
+    And I should see "Other users (1)" in the "Online users" "block"
     And I should see "Student 1" in the "Online users" "block"
     And I should see "Student 2" in the "Online users" "block"
     And I should see "3 online users" in the "Online users" "block"
@@ -79,7 +79,7 @@ Feature: The online users block allow you to see who is currently online on fron
     And I am on site homepage
     Then I should see "2 online user" in the "Online users" "block"
     And I should not see "Admin" in the "Online users" "block"
-    And I should see "Other Users (1)" in the "Online users" "block"
+    And I should see "Other users (1)" in the "Online users" "block"
     And I should see "Student 2" in the "Online users" "block"
     And I should not see "Student 1" in the "Online users" "block"
     And I log out
@@ -94,7 +94,7 @@ Feature: The online users block allow you to see who is currently online on fron
     And I am on site homepage
     Then I should see "3 online users" in the "Online users" "block"
     And I should not see "Admin" in the "Online users" "block"
-    And I should see "Other Users (1)" in the "Online users" "block"
+    And I should see "Other users (1)" in the "Online users" "block"
     And I should see "Student 2" in the "Online users" "block"
     And I should see "Student 1" in the "Online users" "block"
 
@@ -138,7 +138,7 @@ Feature: The online users block allow you to see who is currently online on fron
     And I am on site homepage
     And I should see "2 online user" in the "Online users" "block"
     And I should not see "Admin" in the "Online users" "block"
-    And I should see "Other Users (1)" in the "Online users" "block"
+    And I should see "Other users (1)" in the "Online users" "block"
     And I should see "Student 2" in the "Online users" "block"
     And I should not see "Student 1" in the "Online users" "block"
     And I log out
@@ -148,6 +148,6 @@ Feature: The online users block allow you to see who is currently online on fron
     When I am on site homepage
     Then I should see "3 online users" in the "Online users" "block"
     And I should not see "Admin" in the "Online users" "block"
-    And I should see "Other Users (1)" in the "Online users" "block"
+    And I should see "Other users (1)" in the "Online users" "block"
     And I should see "Student 2" in the "Online users" "block"
     And I should see "Student 1" in the "Online users" "block"
