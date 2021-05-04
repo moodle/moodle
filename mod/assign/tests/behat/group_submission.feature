@@ -168,7 +168,7 @@ Feature: Group assignment submissions
       | assignsubmission_onlinetext_enabled | 1 |
       | assignsubmission_file_enabled | 0 |
       | Students submit in groups | Yes |
-      | Attempts reopened | Manually |
+      | Additional attempts | Manually |
       | Group mode | No groups |
       | Require group to make submission | No |
     And I log out
