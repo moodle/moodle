@@ -86,7 +86,6 @@ class cm_format implements renderable, templatable {
         // Fetch completion details.
         $showcompletionconditions = $course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS;
         $completiondetails = cm_completion_details::get_instance($mod, $USER->id, $showcompletionconditions);
-        $ismanualcompletion = $completiondetails->has_completion() && !$completiondetails->is_automatic();
 
         // Fetch activity dates.
         $activitydates = [];
@@ -95,11 +94,14 @@ class cm_format implements renderable, templatable {
         }
 
         $activityinfodata = null;
-        // Show the activity information if:
-        // - The course's showcompletionconditions setting is enabled; or
-        // - The activity tracks completion manually; or
-        // - There are activity dates to be shown.
-        if ($showcompletionconditions || $ismanualcompletion || $activitydates) {
+        // - There are activity dates to be shown; or
+        // - Completion info needs to be displayed
+        //   * The activity tracks completion; AND
+        //   * The showcompletionconditions setting is enabled OR an activity that tracks manual completion needs the manual
+        //     completion button to be displayed on the course homepage.
+        $showcompletioninfo = $completiondetails->has_completion() && ($showcompletionconditions ||
+                        (!$completiondetails->is_automatic() && $completiondetails->show_manual_completion()));
+        if ($showcompletioninfo || !empty($activitydates)) {
             $activityinfo = new activity_information($mod, $completiondetails, $activitydates);
             $activityinfodata = $activityinfo->export_for_template($output);
         }
