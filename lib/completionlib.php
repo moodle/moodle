@@ -599,6 +599,24 @@ class completion_info {
             }
         }
 
+        // Default to current user if one is not provided.
+        if ($userid == 0) {
+            $userid = $USER->id;
+        }
+
+        // Delete the cm's cached completion data for this user if automatic completion is enabled.
+        // This ensures any changes to the status of individual completion conditions in the activity will be fetched.
+        if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
+            $completioncache = cache::make('core', 'completion');
+            $completionkey = $userid . '_' . $this->course->id;
+            $completiondata = $completioncache->get($completionkey);
+
+            if ($completiondata !== false) {
+                unset($completiondata[$cm->id]);
+                $completioncache->set($completionkey, $completiondata);
+            }
+        }
+
         // Get current value of completion state and do nothing if it's same as
         // the possible result of this change. If the change is to COMPLETE and the
         // current value is one of the COMPLETE_xx subtypes, ignore that as well
@@ -634,7 +652,7 @@ class completion_info {
             $newstate = $this->internal_get_state($cm, $userid, $current);
         }
 
-        // If changed, update
+        // If the overall completion state has changed, update it in the cache.
         if ($newstate != $current->completionstate) {
             $current->completionstate = $newstate;
             $current->timemodified    = time();

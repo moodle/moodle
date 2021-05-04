@@ -75,6 +75,11 @@ Feature: View activity completion in the lesson activity
     When I am on "Course 1" course homepage
     And I follow "Music history"
     And I wait "2" seconds
+    And I reload the page
+    And the "View" completion condition of "Music history" is displayed as "done"
+    And the "Spend at least 1 sec on this activity" completion condition of "Music history" is displayed as "done"
+    And the "Go through the activity to the end" completion condition of "Music history" is displayed as "todo"
+    And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
     And I press "The history of music part 1"
     And I set the field "Your answer" to "Some drummers play with their sticks flipped around"
     And I press "Submit"

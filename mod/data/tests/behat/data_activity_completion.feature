@@ -98,7 +98,16 @@ Feature: View activity completion in the database activity
       | Instrument types | Drums |
     And I press "Save and view"
     # One entry is not enough to mark as complete.
+    And the "View" completion condition of "Music history" is displayed as "done"
     And the "Make entries: 2" completion condition of "Music history" is displayed as "todo"
+    And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
+    And I am on "Course 1" course homepage
+    And I add an entry to "Music history" database with:
+      | Instrument types | Hurdygurdy |
+    And I press "Save and view"
+    Then the "View" completion condition of "Music history" is displayed as "done"
+    And the "Make entries: 2" completion condition of "Music history" is displayed as "done"
+    And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -109,9 +118,7 @@ Feature: View activity completion in the database activity
     And I log out
     When I log in as "student1"
     And I am on "Course 1" course homepage
-    And I add an entry to "Music history" database with:
-      | Instrument types | Hurdygurdy |
-    And I press "Save and view"
+    And I follow "Music history"
     Then the "View" completion condition of "Music history" is displayed as "done"
     And the "Make entries: 2" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"

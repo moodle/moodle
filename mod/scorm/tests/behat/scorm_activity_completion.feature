@@ -65,29 +65,33 @@ Feature: View activity completion in the SCORM activity
     And I press "Enter"
     And I switch to the main frame
     And I click on "Par?" "list_item"
+    And I wait until the page is ready
     And I click on "Keeping Score" "list_item"
+    And I wait until the page is ready
     And I click on "Other Scoring Systems" "list_item"
+    And I wait until the page is ready
     And I click on "The Rules of Golf" "list_item"
+    And I wait until the page is ready
     And I click on "Playing Golf Quiz" "list_item"
     And I switch to "scorm_object" iframe
     And I click on "[id='question_com.scorm.golfsamples.interactions.playing_1_1']" "css_element"
     And I press "Submit Answers"
     And I switch to the main frame
     And I click on "How to Have Fun Playing Golf" "list_item"
+    And I wait until the page is ready
     And I click on "How to Make Friends Playing Golf" "list_item"
+    And I wait until the page is ready
     And I click on "Having Fun Quiz" "list_item"
     And I switch to "scorm_object" iframe
     And I click on "[id='question_com.scorm.golfsamples.interactions.fun_1_False']" "css_element"
     And I press "Submit Answers"
     And I switch to the main frame
     And I follow "Exit activity"
-    And I am on "Course 1" course homepage
     And I follow "Music history"
     And the "View" completion condition of "Music history" is displayed as "done"
     # Conditions that are not possible to achieve (eg score below requirement but all attempts used) are marked as failed.
     And the "Receive a score of 3 or more" completion condition of "Music history" is displayed as "failed"
-    # This condition caches as failed, which will be investigated as part of MDL-71401.
-    And the "Do all parts of this activity" completion condition of "Music history" is displayed as "failed"
+    And the "Do all parts of this activity" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
     And the "Complete and pass the activity" completion condition of "Music history" is displayed as "failed"
 
