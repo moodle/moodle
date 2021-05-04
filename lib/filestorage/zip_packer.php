@@ -297,11 +297,17 @@ class zip_packer extends file_packer {
 
             $size = $info->size;
             $name = $info->pathname;
+            $origname = $name;
+
+            // File names cannot end with dots on Windows and trailing dots are replaced with underscore.
+            if ($CFG->ostype === 'WINDOWS') {
+                $name = preg_replace('~([^/]+)\.(/|$)~', '\1_\2', $name);
+            }
 
             if ($name === '' or array_key_exists($name, $processed)) {
                 // Probably filename collisions caused by filename cleaning/conversion.
                 continue;
-            } else if (is_array($onlyfiles) && !in_array($name, $onlyfiles)) {
+            } else if (is_array($onlyfiles) && !in_array($origname, $onlyfiles)) {
                 // Skipping files which are not in the list.
                 continue;
             }
@@ -342,7 +348,7 @@ class zip_packer extends file_packer {
 
             $newfile = "$newdir/$filename";
 
-            if (strpos($newfile, './') > 1) {
+            if (strpos($newfile, './') > 1 || $name !== $origname) {
                 // The path to the entry contains a directory ending with dot. We cannot use extract_to() due to
                 // upstream PHP bugs #69477, #74619 and #77214. Extract the file from its stream which is slower but
                 // should work even in this case.
