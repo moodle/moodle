@@ -26,7 +26,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
       | Description | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
       | assignfeedback_comments_enabled | 1 |
-      | Attempts reopened | Manually |
+      | Additional attempts | Manually |
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
