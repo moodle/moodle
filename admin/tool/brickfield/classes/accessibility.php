@@ -17,7 +17,7 @@
 namespace tool_brickfield;
 
 use context_system;
-use core\log\sql_reader;
+use moodle_exception;
 use moodle_url;
 use stdClass;
 use tool_brickfield\local\tool\filter;
@@ -59,11 +59,11 @@ class accessibility {
     /**
      * Throw an error if the toolkit is not enabled.
      * @return bool
-     * @throws \moodle_exception
+     * @throws moodle_exception
      */
     public static function require_accessibility_enabled(): bool {
         if (!static::is_accessibility_enabled()) {
-            print_error('accessibilitydisabled', manager::PLUGINNAME);
+            throw new moodle_exception('accessibilitydisabled', manager::PLUGINNAME);
         }
         return true;
     }
@@ -217,10 +217,8 @@ class accessibility {
      * @param int $contentid The content area ID
      * @param int $processingtime
      * @param int $resultstime
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
-    public static function run_check(string $html = '', int $contentid, int &$processingtime, int &$resultstime) {
+    public static function run_check(string $html, int $contentid, int &$processingtime, int &$resultstime) {
         global $DB;
 
         // Change the limit if 10,000 is not appropriate.

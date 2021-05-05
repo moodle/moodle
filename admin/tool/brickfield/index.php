@@ -58,7 +58,7 @@ $layout = optional_param('layout', 'admin', PARAM_ALPHA);
 if ($courseid != 0) {
     // If accessing a course, check that the user has capability to use toolkit at course level.
     if (!$course = $DB->get_record('course', ['id' => $courseid], '*')) {
-        print_error('invalidcourseid', manager::PLUGINNAME);
+        throw new moodle_exception('invalidcourseid', manager::PLUGINNAME);
     }
     require_login($course);
     $context = context_course::instance($courseid);
@@ -101,7 +101,7 @@ $tools = tool::build_all_accessibilitytools();
 if (isset($tools[$tab])) {
     $tool = $tools[$tab];
 } else {
-    print_error('invalidaccessibilitytool', manager::PLUGINNAME);
+    throw new moodle_exception('invalidaccessibilitytool', manager::PLUGINNAME);
 }
 
 $perpagedefault = $config->perpage;
