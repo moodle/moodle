@@ -39,12 +39,12 @@ class img_has_alt_test extends all_checks {
     private $htmlfail1 = <<<EOD
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<title>Image alt attributes need to be specified - fail</title>
-	</head>
-	<body>
-	<img src="rex.jpg" alt="">
-	</body>
+    <head>
+        <title>Image alt attributes need to be specified - fail</title>
+    </head>
+    <body>
+    <img src="rex.jpg" alt="">
+    </body>
 </html>
 EOD;
 
@@ -52,12 +52,12 @@ EOD;
     private $htmlfail2 = <<<EOD
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<title>Image alt attributes need to be specified - fail</title>
-	</head>
-	<body>
-	<img src="rex.jpg">
-	</body>
+    <head>
+        <title>Image alt attributes need to be specified - fail</title>
+    </head>
+    <body>
+    <img src="rex.jpg">
+    </body>
 </html>
 EOD;
 
@@ -65,12 +65,12 @@ EOD;
     private $htmlpass = <<<EOD
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<title>Image alt attributes need to be specified - fail</title>
-	</head>
-	<body>
-	<img src="rex.jpg" alt="this is an image of rex">
-	</body>
+    <head>
+        <title>Image alt attributes need to be specified - fail</title>
+    </head>
+    <body>
+    <img src="rex.jpg" alt="this is an image of rex">
+    </body>
 </html>
 EOD;
     /**
