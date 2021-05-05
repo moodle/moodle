@@ -93,12 +93,12 @@ Feature: Assign group override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    Then the activity date in "Test assignment name" should contain "Due: 1 January 2000, 8:00 AM"
+    Then the activity date in "Test assignment name" should contain "Due: Saturday, 1 January 2000, 8:00 AM"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And the activity date in "Test assignment name" should contain "Due: 1 January 2020, 8:00 AM"
+    And the activity date in "Test assignment name" should contain "Due: Wednesday, 1 January 2020, 8:00 AM"
 
   Scenario: Allow a group to have a different cut off date
     Given I log in as "teacher1"
@@ -149,13 +149,13 @@ Feature: Assign group override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    Then the activity date in "Test assignment name" should contain "Opens: 1 January 2030, 8:00 AM"
+    Then the activity date in "Test assignment name" should contain "Opens: Tuesday, 1 January 2030, 8:00 AM"
     And I should not see "Add submission"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And I should not see "1 January 2030, 8:00 AM"
+    And I should not see "Tuesday, 1 January 2030, 8:00 AM"
 
   @javascript
   Scenario: Add both a user and group override and verify that both are applied correctly
@@ -187,17 +187,17 @@ Feature: Assign group override
     Then I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And the activity date in "Test assignment name" should contain "Opens: 1 January 2031, 8:00 AM"
+    And the activity date in "Test assignment name" should contain "Opens: Wednesday, 1 January 2031, 8:00 AM"
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And the activity date in "Test assignment name" should contain "Opens: 1 January 2040, 8:00 AM"
+    And the activity date in "Test assignment name" should contain "Opens: Sunday, 1 January 2040, 8:00 AM"
     And I log out
     And I log in as "student3"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    And the activity date in "Test assignment name" should contain "Opens: 1 January 2030, 8:00 AM"
+    And the activity date in "Test assignment name" should contain "Opens: Tuesday, 1 January 2030, 8:00 AM"
 
   Scenario: Override a group when teacher is in no group, and does not have accessallgroups permission, and the activity's group mode is "separate groups"
     Given the following "permission overrides" exist:
