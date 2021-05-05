@@ -1857,6 +1857,9 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
         // Something went wrong, so just return NaN.
         $calculated->answer = NAN;
         return $calculated;
+    } else if (is_nan($answer) || is_infinite($answer)) {
+        $calculated->answer = $answer;
+        return $calculated;
     }
     if ('1' == $answerformat) { // Answer is to have $answerlength decimals.
         // Decimal places.
