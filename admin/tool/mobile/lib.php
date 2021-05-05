@@ -170,32 +170,34 @@ function tool_mobile_myprofile_navigation(\core_user\output\myprofile\tree $tree
     }
 
     // Check if the user is using the app, encouraging him to use it otherwise.
-    $usertoken = tool_mobile_get_token($user->id);
-    $mobilestrconnected = null;
-    $mobilelastaccess = null;
+    if ($iscurrentuser || is_siteadmin()) {
+        $usertoken = tool_mobile_get_token($user->id);
+        $mobilestrconnected = null;
+        $mobilelastaccess = null;
 
-    if ($usertoken) {
-        $mobilestrconnected = get_string('lastsiteaccess');
-        if ($usertoken->lastaccess) {
-            $mobilelastaccess = userdate($usertoken->lastaccess) . "&nbsp; (" . format_time(time() - $usertoken->lastaccess) . ")";
-            // Logout link.
-            $validtoken = empty($usertoken->validuntil) || time() < $usertoken->validuntil;
-            if ($iscurrentuser && $validtoken) {
-                $url = new moodle_url('/'.$CFG->admin.'/tool/mobile/logout.php', ['sesskey' => sesskey()]);
-                $logoutlink = html_writer::link($url, get_string('logout'));
-                $mobilelastaccess .= "&nbsp; ($logoutlink)";
+        if ($usertoken) {
+            $mobilestrconnected = get_string('lastsiteaccess');
+            if ($usertoken->lastaccess) {
+                $mobilelastaccess = userdate($usertoken->lastaccess) . "&nbsp; (" . format_time(time() - $usertoken->lastaccess) . ")";
+                // Logout link.
+                $validtoken = empty($usertoken->validuntil) || time() < $usertoken->validuntil;
+                if ($iscurrentuser && $validtoken) {
+                    $url = new moodle_url('/'.$CFG->admin.'/tool/mobile/logout.php', ['sesskey' => sesskey()]);
+                    $logoutlink = html_writer::link($url, get_string('logout'));
+                    $mobilelastaccess .= "&nbsp; ($logoutlink)";
+                }
+            } else {
+                // We should not reach this point.
+                $mobilelastaccess = get_string("never");
             }
-        } else {
-            // We should not reach this point.
-            $mobilelastaccess = get_string("never");
+        } else if ($url = tool_mobile_create_app_download_url()) {
+             $mobilestrconnected = get_string('mobileappenabled', 'tool_mobile', $url->out());
         }
-    } else if ($url = tool_mobile_create_app_download_url()) {
-         $mobilestrconnected = get_string('mobileappenabled', 'tool_mobile', $url->out());
-    }
 
-    if ($mobilestrconnected) {
-        $newnodes[] = new core_user\output\myprofile\node('mobile', 'mobileappnode', $mobilestrconnected, null, null,
-            $mobilelastaccess);
+        if ($mobilestrconnected) {
+            $newnodes[] = new core_user\output\myprofile\node('mobile', 'mobileappnode', $mobilestrconnected, null, null,
+                $mobilelastaccess);
+        }
     }
 
     // Add nodes, if any.
