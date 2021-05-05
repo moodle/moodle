@@ -56,7 +56,7 @@ I should be able to create an assignment with a due date relative to the course 
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test assignment name"
-    Then the activity date in "Test assignment name" should contain "Due: 7 January 2021, 8:00 AM"
+    Then the activity date in "Test assignment name" should contain "Due: Thursday, 7 January 2021, 8:00 AM"
 
   Scenario: As a teacher, I should see the relative dates when reviewing assignment submissions
     Given the following config values are set as admin:
