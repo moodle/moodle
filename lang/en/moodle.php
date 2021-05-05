@@ -1706,7 +1706,6 @@ for important notifications such as security alerts and new releases of Moodle.<
 <p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.</p>
 <p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.</p>';
 $string['registrationinfotitle'] = 'Registration information';
-$string['registrationno'] = 'No, I do not wish to receive any emails';
 $string['registrationsend'] = 'Send registration information to moodle.org';
 $string['registrationyes'] = 'Yes, notify me of new Moodle releases, security alerts and other important news';
 $string['reject'] = 'Reject';
@@ -2321,3 +2320,4 @@ $string['skypeid'] = 'Skype ID';
 $string['icqnumber'] = 'ICQ number';
 $string['msnid'] = 'MSN ID';
 $string['coursepreferences'] = 'Course preferences';
+$string['registrationno'] = 'No, I do not wish to receive any emails';
