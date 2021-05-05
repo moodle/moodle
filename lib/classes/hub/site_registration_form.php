@@ -63,8 +63,8 @@ class site_registration_form extends \moodleform {
             'regioncode' => '-', // Not supported yet.
             'language' => explode('_', current_language())[0],
             'geolocation' => '',
-            'emailalert' => 1,
-            'commnews' => 1,
+            'emailalert' => 0,
+            'commnews' => 0,
             'policyagreed' => 0
 
         ]);
@@ -138,15 +138,14 @@ class site_registration_form extends \moodleform {
         $mform->hideIf('contactable', 'privacy', 'eq', registration::HUB_SITENOTPUBLISHED);
         unset($options);
 
-        $this->add_select_with_email('emailalert', 'siteregistrationemail', [
-            0 => get_string('registrationno'),
-            1 => get_string('registrationyes'),
-        ]);
+        $this->add_checkbox_with_email('emailalert', 'siteregistrationemail', false, get_string('registrationyes'));
 
-        $this->add_select_with_email('commnews', 'sitecommnews', [
-            0 => get_string('sitecommnewsno', 'hub'),
-            1 => get_string('sitecommnewsyes', 'hub'),
-        ], in_array('commnews', $highlightfields));
+        $this->add_checkbox_with_email(
+            'commnews',
+            'sitecommnews',
+            in_array('commnews', $highlightfields),
+            get_string('sitecommnewsyes', 'hub')
+        );
 
         // TODO site logo.
         $mform->addElement('hidden', 'imageurl', ''); // TODO: temporary.
@@ -222,6 +221,39 @@ class site_registration_form extends \moodleform {
         $mform->hideIf($elementname . 'email', $elementname, 'eq', 0);
         $mform->hideIf($elementname . 'newemail', $elementname, 'eq', 0);
         $mform->hideIf($elementname . 'email', $elementname . 'newemail', 'notchecked');
+        $mform->setType($elementname, PARAM_INT);
+        $mform->setType($elementname . 'email', PARAM_RAW_TRIMMED); // E-mail will be validated in validation().
+        $mform->addHelpButton($elementname . 'group', $stridentifier, 'hub');
+
+    }
+
+    /**
+     * Add yes/no checkbox with additional checkbox allowing to specify another email
+     *
+     * @param string $elementname
+     * @param string $stridentifier
+     * @param bool $highlight highlight as a new field
+     * @param string $checkboxtext The text to show after the text.
+     */
+    protected function add_checkbox_with_email($elementname, $stridentifier, $highlight = false, string $checkboxtext = '') {
+        $mform = $this->_form;
+
+        $group = [
+            $mform->createElement('advcheckbox', $elementname, '', $checkboxtext, ['class' => 'pt-2']),
+            $mform->createElement('static', $elementname . 'sep', '', '<br/>'),
+            $mform->createElement('advcheckbox', $elementname . 'newemail', '', get_string('usedifferentemail', 'hub'),
+                ['onchange' => "this.form.elements['{$elementname}email'].focus();"]),
+            $mform->createElement('static', $elementname . 'sep', '', '<br/>'),
+            $mform->createElement('text', $elementname . 'email', get_string('email'))
+        ];
+
+        $element = $mform->addElement('group', $elementname . 'group', get_string($stridentifier, 'hub'), $group, '', false);
+        if ($highlight) {
+            $element->setAttributes(['class' => $element->getAttribute('class') . ' needsconfirmation mark']);
+        }
+        $mform->hideif($elementname . 'email', $elementname, 'eq', 0);
+        $mform->hideif($elementname . 'newemail', $elementname, 'eq', 0);
+        $mform->hideif($elementname . 'email', $elementname . 'newemail', 'notchecked');
         $mform->setType($elementname, PARAM_INT);
         $mform->setType($elementname . 'email', PARAM_RAW_TRIMMED); // E-mail will be validated in validation().
         $mform->addHelpButton($elementname . 'group', $stridentifier, 'hub');
