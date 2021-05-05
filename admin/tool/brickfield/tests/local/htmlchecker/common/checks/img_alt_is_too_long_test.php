@@ -39,17 +39,17 @@ class img_alt_is_too_long_test extends all_checks {
     private $htmlfail = <<<EOD
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<title>Image alt attributes must not be too long</title>
-	</head>
-	<body>
-	<img src="rex.jpg" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent accumsan, ante varius viverra aliquam,
-	 dolor risus scelerisque massa, ut lacinia ipsum felis id est. Nullam convallis odio ante, in commodo elit fermentum sed.
-	 Vivamus ullamcorper tincidunt sagittis. Sed et semper sapien. Quisque malesuada lacus nec libero cursus, aliquam malesuada
-	 neque ultricies. Cras sit amet enim vel orci tristique porttitor a vitae urna. Suspendisse mi leo, hendrerit et eleifend a,
-	 mollis at ex. Maecenas eget magna nec sem dignissim pharetra vel nec ex. Donec in porta lectus. Aenean porttitor euismod
-	 lectus, sodales eleifend ex egestas in. Donec sed metus sodales, lobortis velit quis, dictum arcu.">
-	</body>
+    <head>
+        <title>Image alt attributes must not be too long</title>
+    </head>
+    <body>
+    <img src="rex.jpg" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent accumsan, ante varius viverra aliquam,
+     dolor risus scelerisque massa, ut lacinia ipsum felis id est. Nullam convallis odio ante, in commodo elit fermentum sed.
+     Vivamus ullamcorper tincidunt sagittis. Sed et semper sapien. Quisque malesuada lacus nec libero cursus, aliquam malesuada
+     neque ultricies. Cras sit amet enim vel orci tristique porttitor a vitae urna. Suspendisse mi leo, hendrerit et eleifend a,
+     mollis at ex. Maecenas eget magna nec sem dignissim pharetra vel nec ex. Donec in porta lectus. Aenean porttitor euismod
+     lectus, sodales eleifend ex egestas in. Donec sed metus sodales, lobortis velit quis, dictum arcu.">
+    </body>
 </html>
 EOD;
 
@@ -57,12 +57,12 @@ EOD;
     private $htmlpass = <<<EOD
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<title>Image alt attributes must not be too long</title>
-	</head>
-	<body>
-	<img src="rex.jpg" alt="this is an image of rex">
-	</body>
+    <head>
+        <title>Image alt attributes must not be too long</title>
+    </head>
+    <body>
+    <img src="rex.jpg" alt="this is an image of rex">
+    </body>
 </html>
 EOD;
     /**
