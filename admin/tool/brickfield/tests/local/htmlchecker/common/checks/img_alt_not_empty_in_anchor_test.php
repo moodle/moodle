@@ -39,12 +39,12 @@ class img_alt_not_empty_in_anchor_test extends all_checks {
     private $htmlfail = <<<EOD
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<title>Anchor tags containing a nested img tag, must not have an empty alt attribute</title>
-	</head>
+    <head>
+        <title>Anchor tags containing a nested img tag, must not have an empty alt attribute</title>
+    </head>
     <body>
     <a href="http://google.com"><img src="rex.jpg" alt=""></a>
-	</body>
+    </body>
 </html>
 EOD;
 
@@ -52,12 +52,12 @@ EOD;
     private $htmlpass = <<<EOD
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<title>Anchor tags containing a nested img tag, must not have an empty alt attribute</title>
-	</head>
-	<body>
+    <head>
+        <title>Anchor tags containing a nested img tag, must not have an empty alt attribute</title>
+    </head>
+    <body>
     <a href="http://google.com"><img src="rex.jpg" alt="Picture of Rex"></a>
-	</body>
+    </body>
 </html>
 EOD;
     /**

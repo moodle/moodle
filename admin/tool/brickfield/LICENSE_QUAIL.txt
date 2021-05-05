@@ -1,11 +1,11 @@
 PLEASE NOTE:
 
 There are included libraries in the directory quail/common/services which might have different (but compatible) licenses than the one covered in this file. Current licenses include:
-	*The current BSD:
-		*services/readability/php-text-statistics
-	*The MIT License:
-		*common/css.php The function parseSelector is from the PHPQuery project:
-			*http://code.google.com/p/phpquery
+    *The current BSD:
+        *services/readability/php-text-statistics
+    *The MIT License:
+        *common/css.php The function parseSelector is from the PHPQuery project:
+            *http://code.google.com/p/phpquery
 
 GNU GENERAL PUBLIC LICENSE
 
