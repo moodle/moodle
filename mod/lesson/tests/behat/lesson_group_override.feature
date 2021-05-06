@@ -216,7 +216,7 @@ Feature: Lesson group override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    Then the activity date in "Test lesson name" should contain "Closed: Saturday, 1 January 2000, 8:00 AM"
+    Then the activity date in "Test lesson name" should contain "Closed: Saturday, 1 January 2000, 8:00"
     And I should not see "Cat is an amphibian"
     And I log out
     And I log in as "student1"
@@ -253,7 +253,7 @@ Feature: Lesson group override
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    Then the activity date in "Test lesson name" should contain "Opens: Tuesday, 1 January 2030, 8:00 AM"
+    Then the activity date in "Test lesson name" should contain "Opens: Tuesday, 1 January 2030, 8:00"
     And I should not see "Cat is an amphibian"
     And I log out
     And I log in as "student1"
@@ -346,17 +346,17 @@ Feature: Lesson group override
     Then I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    And the activity date in "Test lesson name" should contain "Opens: Wednesday, 1 January 2031, 8:00 AM"
+    And the activity date in "Test lesson name" should contain "Opens: Wednesday, 1 January 2031, 8:00"
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    And the activity date in "Test lesson name" should contain "Opens: Sunday, 1 January 2040, 8:00 AM"
+    And the activity date in "Test lesson name" should contain "Opens: Sunday, 1 January 2040, 8:00"
     And I log out
     And I log in as "student3"
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    And the activity date in "Test lesson name" should contain "Opens: Tuesday, 1 January 2030, 8:00 AM"
+    And the activity date in "Test lesson name" should contain "Opens: Tuesday, 1 January 2030, 8:00"
 
   Scenario: Override a group when teacher is in no group, and does not have accessallgroups permission, and the activity's group mode is 'separate groups'
     Given the following "permission overrides" exist:
