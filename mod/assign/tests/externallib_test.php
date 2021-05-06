@@ -574,9 +574,10 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($assignmodule->id, $assignment['assignmentid']);
 
         $this->assertEquals(2, count($assignment['submissions']));
-        [$submission1, $submission2] = $assignment['submissions'];
-        $this->assertEquals("Group 1, Submission 1", $submission1['plugins'][0]['editorfields'][0]['text']);
-        $this->assertEquals("Group 2, Submission 2", $submission2['plugins'][0]['editorfields'][0]['text']);
+        $expectedsubmissions = ['Group 1, Submission 1', 'Group 2, Submission 2'];
+        foreach ($assignment['submissions'] as $submission) {
+            $this->assertContains($submission['plugins'][0]['editorfields'][0]['text'], $expectedsubmissions);
+        }
     }
 
     /**
