@@ -161,6 +161,7 @@ const hideAccessMap = (updatePreference = false) => {
         'block_accessreview_warning',
         'block_accessreview_danger',
         'block_accessreview_view',
+        'alert',
     ];
 
     // Removes the added classes.
