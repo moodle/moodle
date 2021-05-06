@@ -30,10 +30,15 @@ namespace core;
  * @package core
  * @copyright 2020 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 3.11 MDL-71420 - the openssl part of the class only.
+ * @todo MDL-71421 Remove the openssl part in Moodle 4.2.
  */
 class encryption {
     /** @var string Encryption method: Sodium */
     const METHOD_SODIUM = 'sodium';
+
+    // TODO: MDL-71421 - Remove the following openssl constants and all uses once sodium becomes a requirement in Moodle 4.2.
+
     /** @var string Encryption method: hand-coded OpenSSL (less safe) */
     const METHOD_OPENSSL = 'openssl-aes-256-ctr';
 
