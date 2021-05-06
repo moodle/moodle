@@ -8,6 +8,15 @@ Feature: In a report, admin can see loglive data
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1        | 0        | 1         |
+    And the following "users" exist:
+      | username | firstname | lastname    | email                | idnumber | middlename | alternatename | firstnamephonetic | lastnamephonetic |
+      | student1 | Grainne   | Beauchamp   | student1@example.com | s1       | Ann        | Jill          | Gronya            | Beecham          |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | student1 | C1 | student |
+    And the following config values are set as admin:
+      | fullnamedisplay | firstname |
+      | alternativefullnameformat | middlename, alternatename, firstname, lastname |
     And I log in as "admin"
     And I navigate to "Plugins > Logging > Manage log stores" in site administration
     And I click on "Enable" "link" in the "Legacy log" "table_row"
@@ -71,4 +80,25 @@ Feature: In a report, admin can see loglive data
     And I press "Resume live updates"
     And I wait "8" seconds
     And I should see "Test name2"
+    And I log out
+
+  @javascript
+  Scenario: Check course loglive report entries for a user
+    Given I log out
+    And I log in as "student1"
+    And I am on "Course 1" course homepage
+    And I follow "Test name"
+    And I log out
+    And I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I navigate to "Reports > Live logs" in site administration
+    When I set the field "reader" to "Standard log"
+    Then I should see "Course module viewed"
+    And I should see "Test name"
+    And I should see "Ann, Jill, Grainne, Beauchamp"
+    And I set the field "reader" to "Legacy log"
+    And I wait to be redirected
+    And I should see "course_add mod"
+    And I wait "8" seconds
+    And I should see "Test name"
     And I log out
