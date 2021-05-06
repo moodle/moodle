@@ -552,6 +552,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         // Now I have grades.
         $this->assertTrue($result['hasgrade']);
         $this->assertEquals(100.0, $result['grade']);
+        $this->assertEquals(80, $result['gradetopass']);
 
         // We should not see other users grades.
         $anotherstudent = self::getDataGenerator()->create_user();
@@ -572,6 +573,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
 
         $this->assertTrue($result['hasgrade']);
         $this->assertEquals(100.0, $result['grade']);
+        $this->assertEquals(80, $result['gradetopass']);
 
         // Invalid user.
         try {

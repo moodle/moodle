@@ -1,5 +1,10 @@
 This files describes API changes in the quiz code.
 
+=== 3.11 ===
+
+* External function mod_quiz_external::get_user_best_grade now returns and additional optional field:
+  - gradetopass: The grade to pass the quiz (if set)
+
 === 3.10.1 ===
 
 * External functions mod_quiz_external::get_attempt_data, mod_quiz_external::get_attempt_summary
