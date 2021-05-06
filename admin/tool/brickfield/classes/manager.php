@@ -635,7 +635,7 @@ class manager {
         $extrasql = !$courseid ? "" : "WHERE courseid = ?";
         // Count of activities per course.
         $countsql = "SELECT courseid, COUNT(DISTINCT (".$DB->sql_concat('areas.contextid', 'areas.component').")) AS activities
-                FROM {" . self::DB_AREAS . "} areas ". $extrasql ."GROUP BY areas.courseid";
+                FROM {" . self::DB_AREAS . "} areas ". $extrasql ." GROUP BY areas.courseid";
 
         $recordscount = $DB->get_records_sql($countsql, $coursesqlval);
 
@@ -831,7 +831,7 @@ class manager {
          JOIN {" . self::DB_RESULTS . "} res ON res.contentid = ch.id
          JOIN {course_sections} sec ON area.itemid = sec.id
         WHERE area.tablename = :tablename AND area.courseid = :courseid
-     GROUP BY sec.id";
+     GROUP BY sec.section";
 
         $params = [
             'courseid' => $courseid,
