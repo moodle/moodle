@@ -11772,7 +11772,8 @@ ul {
 
 .dropdown-item:active, .dropdown-item:hover, .dropdown-item:focus, .dropdown-item:focus-within {
   outline: 0;
-  background-color: #0f6fc5; }
+  background-color: #0f6fc5;
+  color: #fff; }
   .dropdown-item:active a, .dropdown-item:hover a, .dropdown-item:focus a, .dropdown-item:focus-within a {
     color: #fff; }
 
