@@ -23,12 +23,12 @@ Feature: Any day / month / year combination in date form elements works ok.
     And the activity date in "Assignment 01" should contain "<date_result>"
 
     Examples:
-      | initial_date | final_date        | date_result                               | case_explanation (times Australia/Perth)   |
-      | ##today##    | ##tomorrow noon## | ##tomorrow noon##%A, %d %B %Y, %I:%M %p## | change of day, any day, back and forth     |
-      | ##tomorrow## | ##today noon##    | ##today noon##%A, %d %B %Y, %I:%M %p##    |                                            |
-      | 1617256800   | 1617170400        | Wednesday, 31 March 2021, 2:00 PM         | change of month, back and forth            |
-      | 1617170400   | 1617256800        | Thursday, 1 April 2021, 2:00 PM           |                                            |
-      | 1740808800   | 1709186400        | Thursday, 29 February 2024, 2:00 PM       | change of month, leap year, back and forth |
-      | 1709186400   | 1740808800        | Saturday, 1 March 2025, 2:00 PM           |                                            |
-      | 1577858400   | 1577772000        | Tuesday, 31 December 2019, 2:00 PM        | change of year, back and forth             |
-      | 1577772000   | 1577858400        | Wednesday, 1 January 2020, 2:00 PM        |                                            |
+      | initial_date | final_date        | date_result                            | case_explanation (times Australia/Perth)   |
+      | ##today##    | ##tomorrow noon## | ##tomorrow noon##%A, %d %B %Y, %I:%M## | change of day, any day, back and forth     |
+      | ##tomorrow## | ##today noon##    | ##today noon##%A, %d %B %Y, %I:%M##    |                                            |
+      | 1617256800   | 1617170400        | Wednesday, 31 March 2021, 2:00         | change of month, back and forth            |
+      | 1617170400   | 1617256800        | Thursday, 1 April 2021, 2:00           |                                            |
+      | 1740808800   | 1709186400        | Thursday, 29 February 2024, 2:00       | change of month, leap year, back and forth |
+      | 1709186400   | 1740808800        | Saturday, 1 March 2025, 2:00           |                                            |
+      | 1577858400   | 1577772000        | Tuesday, 31 December 2019, 2:00        | change of year, back and forth             |
+      | 1577772000   | 1577858400        | Wednesday, 1 January 2020, 2:00        |                                            |

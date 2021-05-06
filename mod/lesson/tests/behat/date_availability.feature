@@ -45,7 +45,7 @@ Feature: A teacher can set available from and deadline dates to access a lesson
     And I log in as "student1"
     And I am on "Course 1" course homepage
     When I follow "Test lesson"
-    Then the activity date in "Test lesson" should contain "Opens: Tuesday, 1 January 2030, 8:00 AM"
+    Then the activity date in "Test lesson" should contain "Opens: Tuesday, 1 January 2030, 8:00"
     And I should not see "First page contents"
 
   Scenario: Forbidding lesson accesses after a specified date
@@ -74,5 +74,5 @@ Feature: A teacher can set available from and deadline dates to access a lesson
     And I log in as "student1"
     And I am on "Course 1" course homepage
     When I follow "Test lesson"
-    Then the activity date in "Test lesson" should contain "Closed: Saturday, 1 January 2000, 8:00 AM"
+    Then the activity date in "Test lesson" should contain "Closed: Saturday, 1 January 2000, 8:00"
     And I should not see "First page contents"
