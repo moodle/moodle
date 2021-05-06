@@ -3527,6 +3527,8 @@
           <ON_CHECK message="sixtyfourbitswarning" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_max_input_vars" level="optional">
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>
