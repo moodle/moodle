@@ -137,6 +137,10 @@ const showAccessMap = (courseId, displayFormat, updatePreference = false) => {
             renderTemplate(element, module.numerrors, module.numchecks, displayFormat, minViews, viewDelta);
         });
 
+        // Change the icon display.
+        document.querySelector('.icon-accessmap').classList.remove(...['fa-eye-slash']);
+        document.querySelector('.icon-accessmap').classList.add(...['fa-eye']);
+
         return {
             sectionData,
             moduleData,
@@ -169,6 +173,10 @@ const hideAccessMap = (updatePreference = false) => {
     if (updatePreference) {
         setToggleStatePreference(false);
     }
+
+    // Change the icon display.
+    document.querySelector('.icon-accessmap').classList.remove(...['fa-eye']);
+    document.querySelector('.icon-accessmap').classList.add(...['fa-eye-slash']);
 };
 
 
