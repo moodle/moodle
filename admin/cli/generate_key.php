@@ -39,6 +39,8 @@ if ($unrecognized) {
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
+// TODO: MDL-71421 - Remove the openssl alternative once sodium becomes a requirement in Moodle 4.2.
+
 if ($options['help']) {
     echo "Generate secure key
 
