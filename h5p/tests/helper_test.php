@@ -36,7 +36,7 @@ use advanced_testcase;
  * @copyright  2019 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class helper_testcase extends \advanced_testcase {
+class helper_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of get_display_options().
@@ -378,5 +378,50 @@ class helper_testcase extends \advanced_testcase {
         // Test scenario 4: Get export information from wrong filename.
         $helperfile = helper::get_export_info('nofileexist.h5p', $url);
         $this->assertNull($helperfile);
+    }
+
+    /**
+     * Test the parse_js_array function with a range of content.
+     *
+     * @dataProvider parse_js_array_provider
+     * @param string $content
+     * @param array $expected
+     */
+    public function test_parse_js_array(string $content, array $expected): void {
+        $this->assertEquals($expected, helper::parse_js_array($content));
+    }
+
+    /**
+     * Data provider for test_parse_js_array().
+     *
+     * @return array
+     */
+    public function parse_js_array_provider(): array {
+        $lines = [
+            "{",
+            "  missingTranslation: '[Missing translation :key]',",
+            "  loading: 'Loading, please wait...',",
+            "  selectLibrary: 'Select the library you wish to use for your content.',",
+            "}",
+        ];
+        $expected = [
+            'missingTranslation' => '[Missing translation :key]',
+            'loading' => 'Loading, please wait...',
+            'selectLibrary' => 'Select the library you wish to use for your content.',
+        ];
+        return [
+            'Strings with \n' => [
+                implode("\n", $lines),
+                $expected,
+            ],
+            'Strings with \r\n' => [
+                implode("\r\n", $lines),
+                $expected,
+            ],
+            'Strings with \r' => [
+                implode("\r", $lines),
+                $expected,
+            ],
+        ];
     }
 }
