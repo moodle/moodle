@@ -360,13 +360,14 @@ if ($csv) {
 foreach($progress as $user) {
     // User name
     if ($csv) {
-        print csv_quote(fullname($user));
+        print csv_quote(fullname($user, has_capability('moodle/site:viewfullnames', $context)));
         foreach ($extrafields as $field) {
             echo $sep . csv_quote($user->{$field});
         }
     } else {
-        print '<tr><th scope="row"><a href="'.$CFG->wwwroot.'/user/view.php?id='.
-            $user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></th>';
+        print '<tr><th scope="row"><a href="' . $CFG->wwwroot . '/user/view.php?id=' .
+            $user->id . '&amp;course=' . $course->id . '">' .
+            fullname($user, has_capability('moodle/site:viewfullnames', $context)) . '</a></th>';
         foreach ($extrafields as $field) {
             echo '<td>' . s($user->{$field}) . '</td>';
         }
@@ -414,7 +415,7 @@ foreach($progress as $user) {
         $a=new StdClass;
         $a->state=$describe;
         $a->date=$date;
-        $a->user=fullname($user);
+        $a->user = fullname($user, has_capability('moodle/site:viewfullnames', $context));
         $a->activity = $formattedactivities[$activity->id]->displayname;
         $fulldescribe=get_string('progress-title','completion',$a);
 
