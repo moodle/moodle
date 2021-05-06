@@ -754,14 +754,15 @@ class mod_assign_external extends external_api {
             $placeholders = array('assignid1' => $assign->get_instance()->id,
                                   'assignid2' => $assign->get_instance()->id);
 
-            $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt
+            $submissionmaxattempt = 'SELECT mxs.userid, mxs.groupid, MAX(mxs.attemptnumber) AS maxattempt
                                      FROM {assign_submission} mxs
-                                     WHERE mxs.assignment = :assignid1 GROUP BY mxs.userid';
+                                     WHERE mxs.assignment = :assignid1 GROUP BY mxs.userid, mxs.groupid';
 
             $sql = "SELECT mas.id, mas.assignment,mas.userid,".
                    "mas.timecreated,mas.timemodified,mas.status,mas.groupid,mas.attemptnumber ".
                    "FROM {assign_submission} mas ".
                    "JOIN ( " . $submissionmaxattempt . " ) smx ON mas.userid = smx.userid ".
+                   "AND mas.groupid = smx.groupid ".
                    "WHERE mas.assignment = :assignid2 AND mas.attemptnumber = smx.maxattempt";
 
             if (!empty($params['status'])) {
