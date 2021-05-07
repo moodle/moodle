@@ -972,7 +972,7 @@ class qformat_default {
 
         // continue path for following error checks
         $course = $this->course;
-        $continuepath = "{$CFG->wwwroot}/question/export.php?courseid={$course->id}";
+        $continuepath = "{$CFG->wwwroot}/question/bank/exportquestions/export.php?courseid={$course->id}";
 
         // did we actually process anything
         if ($count==0) {
