@@ -85,6 +85,12 @@ class brickfieldconnect extends curl {
         }
 
         $headers = $this->get_common_headers();
+
+        // Sanity-check $headers 'id' value.
+        if (!isset($headers['id'])) {
+            return false;
+        }
+
         $this->set_headers($headers);
         $summary = accessibility::get_summary_data($headers['id']);
         $body = json_encode($summary, JSON_UNESCAPED_SLASHES);
