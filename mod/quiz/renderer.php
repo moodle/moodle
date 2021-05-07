@@ -1247,10 +1247,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
      *
      * @param \core\chart_base $chart The chart.
      * @param string $title The title to display above the graph.
+     * @param array $attrs extra container html attributes.
      * @return string HTML fragment for the graph.
      */
-    public function chart(\core\chart_base $chart, $title) {
-        return $this->heading($title, 3) . html_writer::tag('div', $this->render($chart), array('class' => 'graph'));
+    public function chart(\core\chart_base $chart, $title, $attrs = []) {
+        return $this->heading($title, 3) . html_writer::tag('div',
+            $this->render($chart), array_merge(['class' => 'graph'], $attrs));
     }
 
     /**
