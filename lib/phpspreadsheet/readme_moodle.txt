@@ -8,7 +8,17 @@ NOTICE:
 
 STEPS:
  * Create a temporary folder outside your moodle installation
+ * Remove the libraries that Moodle already includes from composer.json
+   - ezyang/htmlpurifier
+   - maennchen/zipstream-php
  * Execute `composer require phpoffice/phpspreadsheet`
+ * Check to make sure the following directories haven't been created
+   - /vendor/myclabs/*
+   - /vendor/maennchen/*
+   - /vendor/symfony/polyfill-mbstring
+   - /vendor/ezyang/htmlpurifier
+ * If it has pulled these through, remove them from the required packages and run composer again.
+ * Check any new libraries that have been added and make sure they do not exist in Moodle already.
  * Remove the old 'vendor' directory in lib/phpspreadsheet/
  * Copy contents of 'vendor' directory
  * Create a commit with only the library changes
@@ -63,7 +73,3 @@ located in vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Shared/File.php
  * Remove the next files in vendor/markbaker/ related to external testing that we don't need matrix/:
   - infection.json.dist (PHP mutation testing framework configuration file)
   - phpstan.neon (PHP static analyzer configuration file)
-
- * Remove the following directories if they exist, These imported libraries already exist in Moodle core:
-   - /vendor/myclabs/*
-   - /vendor/maennchen/*
