@@ -15600,7 +15600,7 @@ a.ygtvspacer:hover {
 
 body.path-question-type {
   /* Hacks to display the labels within a form group. */ }
-  body.path-question-type .form-group .sr-only:not(legend) {
+  body.path-question-type .form-group .sr-only:not(legend):not([for="id_category"]) {
     position: static;
     width: auto;
     height: auto;
