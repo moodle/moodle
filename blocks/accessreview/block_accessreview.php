@@ -232,10 +232,16 @@ class block_accessreview extends block_base {
     protected function get_toggle_link(): string {
         global $OUTPUT;
 
+        if (get_user_preferences('block_accessreviewtogglestate')) {
+            $icon = 't/hide';
+        } else {
+            $icon = 't/show';
+        }
+
         // Toggle overlay link.
         return html_writer::link(
             '#',
-            $OUTPUT->pix_icon('t/hide', get_string('togglealt', 'block_accessreview')),
+            $OUTPUT->pix_icon($icon, get_string('togglealt', 'block_accessreview'), 'moodle', ['class' => 'icon-accessmap']),
             [
                 'title' => get_string('togglealt', 'block_accessreview'),
                 'style' => 'cursor: pointer;',
