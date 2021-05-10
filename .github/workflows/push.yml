@@ -9,7 +9,7 @@ on:
       - v[0-9]+.[0-9]+.[0-9]+*
 
 env:
-  php: 7.4
+  php: 8.0
 
 jobs:
   Grunt:
@@ -55,10 +55,12 @@ jobs:
         include:
           - os: ubuntu-18.04
             php: 7.3
+            extensions:
             db: mysqli
           - os: ubuntu-18.04
-            php: 7.4
+            php: 8.0
             db: pgsql
+            extensions: xmlrpc-beta
 
     steps:
       - name: Setting up DB mysql
@@ -88,6 +90,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: ${{ matrix.extensions }}
           ini-values: max_input_vars=5000
           coverage: none
 
