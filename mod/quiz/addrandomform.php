@@ -85,19 +85,22 @@ class quiz_add_random_form extends moodleform {
 
         $mform->addElement('submit', 'existingcategory', get_string('addrandomquestion', 'quiz'));
 
-        // Random from a new category section.
-        $mform->addElement('header', 'newcategoryheader',
-                get_string('randomquestionusinganewcategory', 'quiz'));
+        // If the manage categories plugins is enabled, add the elements to create a new category in the form.
+        if (\core\plugininfo\qbank::is_plugin_enabled(\qbank_managecategories\helper::PLUGINNAME)) {
+            // Random from a new category section.
+            $mform->addElement('header', 'newcategoryheader',
+                    get_string('randomquestionusinganewcategory', 'quiz'));
 
-        $mform->addElement('text', 'name', get_string('name'), 'maxlength="254" size="50"');
-        $mform->setType('name', PARAM_TEXT);
+            $mform->addElement('text', 'name', get_string('name'), 'maxlength="254" size="50"');
+            $mform->setType('name', PARAM_TEXT);
 
-        $mform->addElement('questioncategory', 'parent', get_string('parentcategory', 'question'),
-                array('contexts' => $usablecontexts, 'top' => true));
-        $mform->addHelpButton('parent', 'parentcategory', 'question');
+            $mform->addElement('questioncategory', 'parent', get_string('parentcategory', 'question'),
+                    array('contexts' => $usablecontexts, 'top' => true));
+            $mform->addHelpButton('parent', 'parentcategory', 'question');
 
-        $mform->addElement('submit', 'newcategory',
-                get_string('createcategoryandaddrandomquestion', 'quiz'));
+            $mform->addElement('submit', 'newcategory',
+                    get_string('createcategoryandaddrandomquestion', 'quiz'));
+        }
 
         // Cancel button.
         $mform->addElement('cancel');

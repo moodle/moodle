@@ -69,6 +69,17 @@ information provided here is intended especially for developers.
   rendered. The default icon for "select" types has also changed to a dropdown caret ("t/expanded").
 * The function message_send() in messagelib.php now returns false if there is an error sending the message to the
   message processor (MDL-70046).
+* The following functions are deprecated in questionlib.php and moved to the new location.
+  These are marked for final deprecation on 4.4:
+  - question_remove_stale_questions_from_category() =>
+    qbank_managecategories\helper::question_remove_stale_questions_from_category()
+  - flatten_category_tree() => qbank_managecategories\helper::flatten_category_tree()
+  - add_indented_names() => qbank_managecategories\helper::add_indented_names()
+  - question_category_select_menu() => qbank_managecategories\helper::question_category_select_menu()
+  - get_categories_for_contexts() => qbank_managecategories\helper::get_categories_for_contexts()
+  - question_category_options() => qbank_managecategories\helper::question_category_options()
+  - question_add_context_in_key() => qbank_managecategories\helper::question_add_context_in_key()
+  - question_fix_top_names() => qbank_managecategories\helper::question_fix_top_names()
 
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.

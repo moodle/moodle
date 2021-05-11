@@ -99,15 +99,16 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
  *
  * @param int $categoryid a category id.
  * @return bool
+ * @deprecated since Moodle 4.0 MDL-71585
+ * @see qbank_managecategories\helper
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_is_only_child_of_top_category_in_context($categoryid) {
-    global $DB;
-    return 1 == $DB->count_records_sql("
-            SELECT count(*)
-              FROM {question_categories} c
-              JOIN {question_categories} p ON c.parent = p.id
-              JOIN {question_categories} s ON s.parent = c.parent
-             WHERE c.id = ? AND p.parent = 0", array($categoryid));
+    debugging('Function question_is_only_child_of_top_category_in_context()
+    has been deprecated and moved to qbank_managecategories plugin,
+    Please use qbank_managecategories\helper::question_is_only_child_of_top_category_in_context() instead.',
+        DEBUG_DEVELOPER);
+    return \qbank_managecategories\helper::question_is_only_child_of_top_category_in_contextt($categoryid);
 }
 
 /**
@@ -115,27 +116,28 @@ function question_is_only_child_of_top_category_in_context($categoryid) {
  *
  * @param int $categoryid a category id.
  * @return bool
+ * @deprecated since Moodle 4.0 MDL-71585
+ * @see qbank_managecategories\helper
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_is_top_category($categoryid) {
-    global $DB;
-    return 0 == $DB->get_field('question_categories', 'parent', array('id' => $categoryid));
+    debugging('Function question_is_top_category() has been deprecated and moved to qbank_managecategories plugin,
+    Please use qbank_managecategories\helper::question_is_top_category() instead.', DEBUG_DEVELOPER);
+    return \qbank_managecategories\helper::question_is_top_category($categoryid);
 }
 
 /**
  * Ensures that this user is allowed to delete this category.
  *
  * @param int $todelete a category id.
+ * @deprecated since Moodle 4.0 MDL-71585
+ * @see qbank_managecategories\helper
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_can_delete_cat($todelete) {
-    global $DB;
-    if (question_is_top_category($todelete)) {
-        print_error('cannotdeletetopcat', 'question');
-    } else if (question_is_only_child_of_top_category_in_context($todelete)) {
-        print_error('cannotdeletecate', 'question');
-    } else {
-        $contextid = $DB->get_field('question_categories', 'contextid', array('id' => $todelete));
-        require_capability('moodle/question:managecategory', context::instance_by_id($contextid));
-    }
+    debugging('Function question_can_delete_cat() has been deprecated and moved to qbank_managecategories plugin,
+    Please use qbank_managecategories\helper::question_can_delete_cat() instead.', DEBUG_DEVELOPER);
+    \qbank_managecategories\helper::question_can_delete_cat($todelete);
 }
 
 
