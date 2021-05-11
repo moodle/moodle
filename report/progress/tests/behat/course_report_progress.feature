@@ -30,3 +30,20 @@ Feature: In a course administration page, navigate through report page, test for
     Then "Report" "field" should exist
     And the "Report" select box should contain "Activity completion"
     And the field "Report" matches value "Activity completion"
+
+  Scenario: Custom profile fields selected for identity should display on the activity completion report
+    Given the following "custom profile fields" exist:
+      | datatype | shortname  | name           |
+      | text     | frog       | Favourite frog |
+    And the following "users" exist:
+      | username | firstname | lastname | profile_field_frog |
+      | student2 | Student   | Two      | Kermit             |
+    And the following "course enrolments" exist:
+      | user     | course | role    |
+      | student2 | C1     | student |
+    And the following config values are set as admin:
+      | showuseridentity | email,profile_field_frog |
+    When I am on the "C1" "Course" page logged in as "admin"
+    And I navigate to "Reports > Activity completion" in current page administration
+    Then I should see "Favourite frog"
+    Then I should see "Kermit" in the "Student Two" "table_row"
