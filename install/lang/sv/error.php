@@ -48,4 +48,4 @@ $string['missingrequiredfield'] = 'Det saknas några obligatoriska fält';
 $string['remotedownloaderror'] = 'Nedladdningen av en komponent till din server misslyckades. Vänligen verifiera inställningar för proxy. <br /><br />Du måste ladda ner <a href="{$a->url}">{$a->url}</a> filen manuellt, kopiera den till "{$a->dest}" på din server och packa upp den där.';
 $string['wrongdestpath'] = 'Fel målsökväg';
 $string['wrongsourcebase'] = 'Felaktig käll- URL rot';
-$string['wrongzipfilename'] = 'Fel namn på ZIP-filen';
+$string['wrongzipfilename'] = 'Felaktigt namn på ZIP-fil';
