@@ -76,11 +76,11 @@ function xmldb_tool_usertours_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021052501, 'tool', 'usertours');
     }
 
-    if ($oldversion < 2021052507) {
+    if ($oldversion < 2021052508) {
         // Updating shipped tours.
         manager::update_shipped_tours();
 
-        upgrade_plugin_savepoint(true, 2021052507, 'tool', 'usertours');
+        upgrade_plugin_savepoint(true, 2021052508, 'tool', 'usertours');
     }
 
     return true;
