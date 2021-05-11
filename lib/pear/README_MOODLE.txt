@@ -29,6 +29,9 @@ MDL-70711 - removed unnecessary if-else conditional block in HTML_QuickForm as t
             condition always evaluates to false due to the deprecated get_magic_quotes_gpc()
             which always returns false
 MDL-70457 - PHP 7.4 curly brackets string access fix.
+MDL-71126 - Quiz: Manual grading page size preference can get stuck at 0
+            Including in this change:
+             - New positiveint regex rule to check if the value is a positive integer
 
 Pear
 ====
