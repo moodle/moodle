@@ -41,11 +41,8 @@ class repository_dropbox_generator extends testing_repository_generator {
      */
     protected function prepare_type_record(array $record) {
         $record = parent::prepare_type_record($record);
-        if (!isset($record['dropbox_key'])) {
-            $record['dropbox_key'] = 'key';
-        }
-        if (!isset($record['dropbox_secret'])) {
-            $record['dropbox_secret'] = 'secret';
+        if (!isset($record['dropbox_issuerid'])) {
+            $record['dropbox_issuerid'] = 0;
         }
         if (!isset($record['dropbox_cachelimit'])) {
             $record['dropbox_cachelimit'] = 0;

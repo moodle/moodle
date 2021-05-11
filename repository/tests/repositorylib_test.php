@@ -480,8 +480,7 @@ class core_repositorylib_testcase extends advanced_testcase {
         // Check that a user can view SOME repositories when logged in as someone else.
         $params = new stdClass();
         $params->name = 'Dropbox';
-        $params->dropbox_key = 'key';
-        $params->dropbox_secret = 'secret';
+        $params->dropbox_issuerid = '2';
         $privaterepoid = $this->getDataGenerator()->create_repository('dropbox')->id;
         $notprivaterepoid = $this->getDataGenerator()->create_repository('upload')->id;
 
