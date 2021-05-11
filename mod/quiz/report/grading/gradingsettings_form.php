@@ -72,6 +72,7 @@ class quiz_grading_settings_form extends moodleform {
 
         $mform->addElement('text', 'pagesize', get_string('questionsperpage', 'quiz_grading'),
                 array('size' => 3));
+        $mform->addRule('pagesize', null, 'positiveint', null, 'client');
         $mform->setType('pagesize', PARAM_INT);
 
         $orderoptions = array(
