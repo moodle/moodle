@@ -32,8 +32,8 @@ Feature: Brickfield activityresults
     And I run the scheduled task "\tool_brickfield\task\bulk_process_caches"
     And I navigate to "Accessibility toolkit" in current page administration
     And I should see "Error details: course Course 1"
-    And I should see "Overall page content length"
-    And I should see "\"Bold\" (b) elements should not be used"
+    And I should see "The overall page content length"
+    And I should see "Bold (b) elements should not be used"
     And I should see "Link text should be descriptive"
     And I follow "Activity breakdown"
     Then I should see "Results per activity: course Course 1"
