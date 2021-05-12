@@ -854,10 +854,10 @@ class manager {
         // the format filename => version. The version value needs to
         // be increased if the tour has been updated.
         $shippedtours = [
-            '311_activity_information_activity_page_student.json' => 1,
-            '311_activity_information_activity_page_teacher.json' => 1,
-            '311_activity_information_course_page_student.json' => 1,
-            '311_activity_information_course_page_teacher.json' => 1
+            '311_activity_information_activity_page_student.json' => 2,
+            '311_activity_information_activity_page_teacher.json' => 2,
+            '311_activity_information_course_page_student.json' => 2,
+            '311_activity_information_course_page_teacher.json' => 2
         ];
 
         // These are tours that we used to ship but don't ship any longer.

@@ -79,11 +79,11 @@ function xmldb_tool_usertours_upgrade($oldversion) {
     // Automatically generated Moodle v3.10.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2020110901) {
+    if ($oldversion < 2021051700) {
         // Updating shipped tours.
         manager::update_shipped_tours();
 
-        upgrade_plugin_savepoint(true, 2020110901, 'tool', 'usertours');
+        upgrade_plugin_savepoint(true, 2021051700, 'tool', 'usertours');
     }
 
     return true;
