@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['accessreview:addinstance'] = 'Add an accessibility review block to a course';
+$string['accessreview:addinstance'] = 'Add an accessibility review block';
 $string['accessreview:view'] = 'View the accessibility review';
 $string['checktypes'] = 'Types';
 $string['errors'] = 'Errors';
@@ -54,10 +54,10 @@ $string['status:errorsalt'] = 'Errors';
 $string['toggleaccessreview'] = 'Toggle highlighting';
 $string['toolpage'] = 'Toolkit page to show';
 $string['totalerrors'] = '<em>Total errors:</em> {$a} <br>(total excludes course settings)';
-$string['viewreportalt'] = 'View Brickfield accessibility toolkit';
+$string['viewreportalt'] = 'View accessibility toolkit';
 $string['viewreport'] = 'View';
-$string['downloadreportalt'] = 'Download Brickfield accessibility summary report';
+$string['downloadreportalt'] = 'Download accessibility summary report';
 $string['downloadreport'] = 'Download';
-$string['togglealt'] = 'Toggle Brickfield accessibility heatmap';
+$string['togglealt'] = 'Toggle accessibility heatmap';
 $string['toggle'] = 'Toggle highlighting';
 $string['whattoshow'] = 'What to show on course page';
