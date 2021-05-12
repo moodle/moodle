@@ -142,29 +142,29 @@ Feature: Basic OAuth2 functionality
     And I should see "Identity issuer deleted"
     And I should not see "Testing service modified"
 
-  Scenario: Create, edit and delete standard service for OpenBadges
-    Given I press "OpenBadges"
-    And I should see "Create new service: OpenBadges"
+  Scenario: Create, edit and delete standard service for Open Badges
+    Given I press "Open Badges"
+    And I should see "Create new service: Open Badges"
     And I set the following fields to these values:
       | Client ID                  | thisistheclientid                         |
       | Client secret              | supersecret                               |
       | Service base URL           | https://dc.imsglobal.org/                 |
     When I press "Save changes"
     Then I should see "Changes saved"
-    And I should see "OpenBadges"
-    And "Allow services" "icon" should exist in the "OpenBadges" "table_row"
-    And "Do not allow login" "icon" should exist in the "OpenBadges" "table_row"
-    And "Service discovery successful" "icon" should exist in the "OpenBadges" "table_row"
+    And I should see "Open Badges"
+    And "Allow services" "icon" should exist in the "Open Badges" "table_row"
+    And "Do not allow login" "icon" should exist in the "Open Badges" "table_row"
+    And "Service discovery successful" "icon" should exist in the "Open Badges" "table_row"
     And the "src" attribute of "table.admintable th img" "css_element" should contain "IMS-Global-Logo.png"
-    And I click on "Configure endpoints" "link" in the "OpenBadges" "table_row"
+    And I click on "Configure endpoints" "link" in the "Open Badges" "table_row"
     And I should see "https://dc.imsglobal.org/.well-known/badgeconnect.json" in the "discovery_endpoint" "table_row"
     And I should see "authorization_endpoint"
     And I follow "OAuth 2 services"
-    And I click on "Configure user field mappings" "link" in the "OpenBadges" "table_row"
+    And I click on "Configure user field mappings" "link" in the "Open Badges" "table_row"
     And I should not see "given_name"
     And I should not see "middle_name"
     And I follow "OAuth 2 services"
-    And I click on "Edit" "link" in the "OpenBadges" "table_row"
+    And I click on "Edit" "link" in the "Open Badges" "table_row"
     And I set the following fields to these values:
       | Name                       | IMS Global                                |
     And I press "Save changes"

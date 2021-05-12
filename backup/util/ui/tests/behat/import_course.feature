@@ -39,7 +39,7 @@ Feature: Import course's contents into another course
       | enrol/manual:enrol | Allow      | teacher | Course       | C1        |
     And I log in as "teacher1"
     When I import "Course 1" course into "Course 2" course using this options:
-      | Initial | Include override permissions | 1 |
+      | Initial | Include permission overrides | 1 |
     And I navigate to "Users > Permissions" in current page administration
     Then I should see "Non-editing teacher (1)"
     And I set the field "Advanced role override" to "Non-editing teacher (1)"
@@ -52,6 +52,6 @@ Feature: Import course's contents into another course
       | enrol/manual:enrol | Allow      | teacher | Course       | C1        |
     And I log in as "teacher1"
     When I import "Course 1" course into "Course 2" course using this options:
-      | Initial | Include override permissions | 0 |
+      | Initial | Include permission overrides | 0 |
     And I navigate to "Users > Permissions" in current page administration
     Then I should see "Non-editing teacher (0)"

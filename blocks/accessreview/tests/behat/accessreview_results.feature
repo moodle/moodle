@@ -41,9 +41,9 @@ Feature: Block accessreview results
     And I should see "1" in the "Link" "table_row"
     # We created one text issue, and the standard Behat course generator creates another (too much content).
     And I should see "2" in the "Text" "table_row"
-    And "View Brickfield accessibility toolkit" "icon" should exist in the "Accessibility review" "block"
-    And "Toggle Brickfield accessibility heatmap" "icon" should exist in the "Accessibility review" "block"
-    And "Download Brickfield accessibility summary report" "icon" should exist in the "Accessibility review" "block"
+    And "View accessibility toolkit" "icon" should exist in the "Accessibility review" "block"
+    And "Toggle accessibility heatmap" "icon" should exist in the "Accessibility review" "block"
+    And "Download accessibility summary report" "icon" should exist in the "Accessibility review" "block"
 
   Scenario: Toggle highlighting on/off
     Given I log in as "admin"
@@ -61,7 +61,7 @@ Feature: Block accessreview results
     And I run the scheduled task "\tool_brickfield\task\bulk_process_courses"
     And I run the scheduled task "\tool_brickfield\task\bulk_process_caches"
     And I reload the page
-    And I click on "Toggle Brickfield accessibility heatmap" "icon"
+    And I click on "Toggle accessibility heatmap" "icon"
     And ".block_accessreview_view" "css_element" should be visible
-    And I click on "Toggle Brickfield accessibility heatmap" "icon"
+    And I click on "Toggle accessibility heatmap" "icon"
     And ".block_accessreview_view" "css_element" should not be visible
