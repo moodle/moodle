@@ -44,17 +44,12 @@ class block_accessreview extends block_base {
      * @return array
      */
     public function applicable_formats(): array {
-        // If Brickfield accessibility toolkit has been disabled, do nothing.
-        if (accessibility::is_accessibility_enabled()) {
-            return [
-                'course-view' => true,
-                'site' => true,
-                'mod' => false,
-                'my' => false,
-            ];
-        } else {
-            return [];
-        }
+        return [
+            'course-view' => true,
+            'site' => true,
+            'mod' => false,
+            'my' => false,
+        ];
     }
 
     /**
