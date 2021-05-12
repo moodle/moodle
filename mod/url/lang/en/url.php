@@ -67,7 +67,7 @@ $string['modulenameplural'] = 'URLs';
 $string['page-mod-url-x'] = 'Any URL module page';
 $string['parameterinfo'] = '&amp;parameter=variable';
 $string['parametersheader'] = 'URL variables';
-$string['parametersheader_help'] = 'Some internal Moodle variables may be automatically appended to the URL. Type your name for the parameter into each text box(es) and then select the required matching variable.';
+$string['parametersheader_help'] = 'This section allows you to pass internal information as part of the URL. This is useful if the URL is an interactive web page that takes parameters, and you want to pass something like the name of the current user, for example. Enter the name of the URL\'s parameter in the text box then select the corresponding site variable.';
 $string['pluginadministration'] = 'URL module administration';
 $string['pluginname'] = 'URL';
 $string['popupheight'] = 'Pop-up height (in pixels)';
