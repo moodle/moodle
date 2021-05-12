@@ -35,7 +35,7 @@ class imsobv2p1 extends imsbadgeconnect implements issuer_interface {
      */
     public static function init(): ?issuer {
         $record = (object) [
-            'name' => 'OpenBadges',
+            'name' => 'Open Badges',
             'image' => '',
             'servicetype' => 'imsobv2p1',
         ];
