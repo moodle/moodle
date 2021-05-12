@@ -234,5 +234,17 @@ $string['tour4_content_starred'] = 'You can choose to star particular conversati
 $string['tour4_title_settings'] = 'Messaging settings';
 $string['tour4_content_settings'] = 'You can access your messaging settings via the cog icon. A new privacy setting allows you to restrict who can message you.';
 
+// 3.11 Activity information tour.
+$string['tour_activityinfo_activity_student_title'] = 'New: Activity information';
+$string['tour_activityinfo_activity_student_content'] = 'Activity dates plus what to do to complete the activity are shown on the activity page.';
+$string['tour_activityinfo_activity_teacher_title'] = 'New: Activity information';
+$string['tour_activityinfo_activity_teacher_content'] = 'Activity dates and completion conditions are now displayed for students on each activity page (and optionally on the course page).
+
+For activities requiring students to manually mark an activity as completed, a \'Mark as done\' button is shown on the activity page.';
+$string['tour_activityinfo_course_student_title'] = 'New: Activity information';
+$string['tour_activityinfo_course_student_content'] = 'Activity dates and/or what to do to complete the activity are displayed on the course page.';
+$string['tour_activityinfo_course_teacher_title'] = 'New: Activity information';
+$string['tour_activityinfo_course_teacher_content'] = 'New course settings \'Show completion conditions\' and \'Show activity dates\' enable you to choose whether activity completion conditions (if set) and/or dates are displayed for students on the course page.';
+
 $string['tour_final_step_title'] = 'End of tour';
 $string['tour_final_step_content'] = 'This is the end of your user tour. It won\'t show again unless you reset it using the link in the footer.';
