@@ -75,7 +75,6 @@ chat_view($chat, $course, $cm, $context);
 $strenterchat    = get_string('enterchat', 'chat');
 $stridle         = get_string('idle', 'chat');
 $strcurrentusers = get_string('currentusers', 'chat');
-$strnextsession  = get_string('nextsession', 'chat');
 
 $courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 $title = $courseshortname . ': ' . format_string($chat->name);
