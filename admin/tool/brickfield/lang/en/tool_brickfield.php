@@ -31,7 +31,7 @@ $string['accessibilitydisabled'] = 'The Brickfield accessibility toolkit is not 
 $string['accessibilityreport'] = 'Accessibility toolkit';
 $string['analysistype'] = 'Enable analysis requests';
 $string['analysistypedisabled'] = 'Content analysis is disabled';
-$string['analysistype_desc'] = 'Prevent content analysis from being requested';
+$string['analysistype_desc'] = 'Allow content accessibility analysis to be requested';
 $string['analysis:disabled'] = 'Disabled';
 $string['analysis:byrequest'] = 'By request';
 $string['brickfield'] = 'Brickfield toolkit';
@@ -138,8 +138,6 @@ $string['tblpercentage'] = 'Percentage';
 $string['tblpreview'] = 'Preview';
 $string['tbltarget'] = 'Activity';
 $string['tblupdateto'] = 'Update to';
-$string['termsandconditions'] = '<p>These are the terms and conditions you agree to... blah blah...</p>';
-$string['termsandconditionslink'] = 'terms and conditions';
 $string['titleerrorscount'] = 'Error details: (showing first {$a} errors)';
 $string['titleactivityresultsall'] = 'Results per activity: all reviewed courses ({$a->count} courses)';
 $string['titleactivityresultspartial'] = 'Results per activity: course {$a->name}';
@@ -163,8 +161,6 @@ $string['messageprovider:warningcheckid'] = 'Warning of invalid checkids';
 $string['warningcheckidbody'] = 'There is an issue with a Brickfield check
  which is active but not listed in the database. Please investigate.';
 $string['warningcheckidsubject'] = 'Brickfield Toolkit checkID warning';
-$string['warningscontact'] = 'Email address for receiving warnings';
-$string['warningscontact_desc'] = 'An email address to receive any Brickfield Toolkit warnings';
 
 // Check descriptions.
 $string['checkdesc:alinksdontopennewwindow'] = 'Links opening into a new window should warn users in advance.';
@@ -204,8 +200,7 @@ $string['activate'] = 'Activate';
 $string['activated'] = 'The plugin is activated and ready to use.';
 $string['activationform'] = 'Brickfield registration';
 $string['activationheader'] = 'Brickfield activation';
-$string['activationinfo'] = '<p>In order to use this plugin, you must provide valid keys for this site in this form.</p><p>Please {$a}register your details (opens in new window)</a> to receive those keys if you do not already have them. </p><p>Once activated, your keys will then be validated via scheduled cron tasks.</p>';
-$string['automatedsentdaily'] = '';
+$string['activationinfo'] = '<p>In order to use this plugin, you must provide valid keys for this site in this form.</p><p>Please <a href="{$a}" data-action="send_info" target="_blank">register at the Brickfield Portal (opens in new window)</a> to receive those keys if you do not already have them. </p><p>Once activated, your keys will then be validated via scheduled cron tasks.</p>';
 $string['contenttypeerrors'] = 'Total results of activity content tests per course and per content type.';
 $string['contentyperesults'] = 'Total passed/failed for content areas per course.';
 $string['country'] = 'Country';
@@ -218,35 +213,20 @@ $string['installedcli'] = 'Plugin installed via command line';
 $string['installeddescription'] = 'The plugin has been installed, redirect to activation form.';
 $string['language'] = 'Language';
 $string['language_help'] = 'Language of the site';
-$string['mail'] = 'Email';
-$string['mail_help'] = 'This email will be used to register the account';
 $string['mobileservice'] = 'Mobile services enabled ({$a})';
 $string['moreinfo'] = 'More information';
-$string['notifications'] = 'Receive notifications';
-$string['notifications_help'] = 'Set to "Yes" if you want to receive email notifications. If enabled, you can set another email to receive these notifications.';
 $string['numcourses'] = 'Number of courses ({$a})';
 $string['numfactivities'] = 'Number of activities ({$a})';
 $string['numfiles'] = 'Number of files ({$a})';
 $string['numusers'] = 'Number of users ({$a})';
 $string['percheckerrors'] = 'Number of specific tests and errors per check per course.';
-$string['privacy'] = 'Privacy notice and data processing agreement';
-$string['privacy_help'] = 'Access the link to read the entire policy';
-$string['privacydesc'] = 'I agree to the <a href="{$a}" target="_blank">privacy notice and data processing agreement</a> for someurl.com';
-$string['registerplugin'] = 'Register with {$a}';
 $string['registration'] = 'Registration form';
-$string['registrationheader'] = 'Register here';
-$string['registrationheaderinfo'] = '<p>This registration process allows you to use the Brickfield accessibility toolkit version for your registered Moodle site.</p> <p>This usage is subject to the terms and conditions as stated here and which you agree to, by using this product.</p>';
 $string['release'] = 'Moodle release ({$a})';
 $string['secretkey'] = 'API key';
 $string['secretkey_help'] = 'This code is received by email after registration.';
 $string['sendfollowinginfo'] = '<p>The following information will be periodically sent to contribute to overall statistics only. It will not be made public on any central listing.</p> {$a}';
 $string['sitehash'] = 'Secret key';
 $string['sitehash_help'] = 'This code is received by email after registration.';
-$string['sitename'] = 'Site name';
-$string['sitename_help'] = 'The name of the site';
-$string['siteurl'] = 'Site URL';
-$string['siteurl_help'] = 'The URL of the site';
-$string['usedifferentemail'] = 'Use different email';
 $string['usersmobileregistered'] = 'Number of users with registered mobile devices ({$a})';
 $string['validationerror'] = 'Registration key validation has failed. Check that your registered site URL and keys are correct.';
 
@@ -272,7 +252,7 @@ $string['error:nocoursespecified'] = 'This summary report requires a valid cours
 $string['pdf:filename'] = 'Brickfield_Summaryreport_CourseID-{$a}';
 
 // Advanced page.
-$string['bannercontentone'] = 'The Enterprise Accessibility Toolkit has a full set of features to help your organisation improve accessibility of your courses. {$a} to book a free demo of the advanced features.';
+$string['bannercontentone'] = 'The Enterprise Accessibility Toolkit has a full set of features to help your organisation improve accessibility of your courses. <a href="{$a}">Contact Brickfield Education Labs</a> to book a free demo of the advanced features.';
 $string['bannercontenttwo'] = 'Build an effective and inclusive teaching and learning platform by finding content that does not meet the guidelines, fixing the issues and future-proofing your Moodle course content with accessible files, editor and enhanced features.';
 $string['bannerheadingone'] = 'Upgrade to the Enterprise Accessibility Toolkit';
 $string['contactus'] = 'Contact us';

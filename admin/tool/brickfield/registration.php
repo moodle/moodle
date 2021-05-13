@@ -41,15 +41,6 @@ admin_externalpage_setup('tool_brickfield_activation');
 $thisurl = new moodle_url(\tool_brickfield\accessibility::get_plugin_url().'/registration.php');
 $PAGE->set_url($thisurl);
 
-$termsandconditions = optional_param('terms', 0, PARAM_BOOL);
-if ($termsandconditions) {
-    $PAGE->set_pagelayout('popup');
-    echo $OUTPUT->header();
-    echo format_text(get_string('termsandconditions', 'tool_brickfield'), FORMAT_HTML, ['noclean' => true]);
-    echo $OUTPUT->footer();
-    exit;
-}
-
 $context = context_system::instance();
 $PAGE->set_context($context);
 $PAGE->set_title(get_string('registration', manager::PLUGINNAME));
@@ -85,8 +76,7 @@ if (!$registration->toolkit_is_active()) {
     echo $OUTPUT->notification(get_string('activated', manager::PLUGINNAME), 'success');
 }
 
-$keyinfo = get_string('activationinfo', manager::PLUGINNAME, '<a href="' . $registration->get_regurl() .
-    '" data-action="send_info" target="_blank">');
+$keyinfo = get_string('activationinfo', manager::PLUGINNAME, $registration->get_regurl());
 echo format_text($keyinfo, FORMAT_HTML, ['noclean' => true]);
 
 $registrationform->display();
