@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use core_privacy\local\request\writer;
+use core_privacy\tests\provider_testcase;
 
 /**
  * Unit tests for the privacy API implementation.
@@ -35,7 +36,7 @@ use core_privacy\local\request\writer;
  * @copyright 2018 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class workshopform_numerrors_privacy_provider_testcase extends advanced_testcase {
+class workshopform_numerrors_privacy_provider_testcase extends provider_testcase {
 
     /**
      * Test {@link workshopform_numerrors\privacy\provider::export_assessment_form()} implementation.
