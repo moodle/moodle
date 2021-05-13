@@ -55,6 +55,9 @@ class iomad_commerce {
         if (!empty($user->extragroup->name) && !empty($user->extragroup->action)) {
             $payload['extragroup'] = $user->extragroup->name;
             $payload['extragroupaction'] = $user->extragroup->action;
+        } else {
+            $payload['extragroup'] = null;
+            $payload['extragroupaction'] = null;
         }
 
         $response = self::docall($call, $payload, $companyid);
