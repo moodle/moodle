@@ -5453,7 +5453,16 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Every course accessed, order by shortname DESC. The last create course ($course[2]) should have the greater shortname.
         $result = course_get_recent_courses($student->id, 0, 0, 'shortname DESC');
         $this->assertCount(3, $result);
-        $this->assertEquals($courses[2]->id, array_shift($result)->id);
+        $this->assertEquals($courses[2]->id, array_values($result)[0]->id);
+        $this->assertEquals($courses[1]->id, array_values($result)[1]->id);
+        $this->assertEquals($courses[0]->id, array_values($result)[2]->id);
+
+        // Every course accessed, order by shortname ASC.
+        $result = course_get_recent_courses($student->id, 0, 0, 'shortname ASC');
+        $this->assertCount(3, $result);
+        $this->assertEquals($courses[0]->id, array_values($result)[0]->id);
+        $this->assertEquals($courses[1]->id, array_values($result)[1]->id);
+        $this->assertEquals($courses[2]->id, array_values($result)[2]->id);
 
         $guestcourse = $generator->create_course(
             (object)array('shortname' => 'guestcourse',
