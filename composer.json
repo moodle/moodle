@@ -4,9 +4,15 @@
     "description": "Moodle - the world's open source learning platform",
     "type": "project",
     "homepage": "https://moodle.org",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/moodlehq/MinkExtension.git"
+        }
+    ],
     "require-dev": {
         "phpunit/phpunit": "9.5.*",
-        "moodlehq/behat-extension": "3.311.4",
+        "moodlehq/behat-extension": "3.311.5",
         "mikey179/vfsstream": "^1.6"
     },
     "minimum-stability": "dev",
