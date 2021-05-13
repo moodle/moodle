@@ -147,25 +147,21 @@ class issuer extends persistent {
         $mform->addElement('text', 'loginscopes', get_string('issuerloginscopes', 'tool_oauth2'));
         $mform->addRule('loginscopes', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('loginscopes', 'issuerloginscopes', 'tool_oauth2');
-        $mform->hideIf('loginscopes', 'showonloginpage', 'eq', \core\oauth2\issuer::SERVICEONLY);
 
         // Login scopes offline.
         $mform->addElement('text', 'loginscopesoffline', get_string('issuerloginscopesoffline', 'tool_oauth2'));
         $mform->addRule('loginscopesoffline', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('loginscopesoffline', 'issuerloginscopesoffline', 'tool_oauth2');
-        $mform->hideIf('loginscopesoffline', 'showonloginpage', 'eq', \core\oauth2\issuer::SERVICEONLY);
 
         // Login params.
         $mform->addElement('text', 'loginparams', get_string('issuerloginparams', 'tool_oauth2'));
         $mform->addRule('loginparams', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('loginparams', 'issuerloginparams', 'tool_oauth2');
-        $mform->hideIf('loginparams', 'showonloginpage', 'eq', \core\oauth2\issuer::SERVICEONLY);
 
         // Login params offline.
         $mform->addElement('text', 'loginparamsoffline', get_string('issuerloginparamsoffline', 'tool_oauth2'));
         $mform->addRule('loginparamsoffline', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('loginparamsoffline', 'issuerloginparamsoffline', 'tool_oauth2');
-        $mform->hideIf('loginparamsoffline', 'showonloginpage', 'eq', \core\oauth2\issuer::SERVICEONLY);
 
         // Allowed Domains.
         $mform->addElement('text', 'alloweddomains', get_string('issueralloweddomains', 'tool_oauth2'));
