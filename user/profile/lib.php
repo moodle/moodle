@@ -453,6 +453,8 @@ class profile_field_base {
                     return true;
                 } else if ($this->userid == $USER->id) {
                     return true;
+                } else if ($this->userid > 0) {
+                    return has_capability('moodle/user:viewalldetails', $context);
                 } else {
                     $coursecontext = context_course::instance($COURSE->id);
                     return has_capability('moodle/site:viewuseridentity', $coursecontext);
@@ -468,6 +470,10 @@ class profile_field_base {
                     return has_capability('moodle/user:viewalldetails', $context);
                 }
             default:
+                // PROFILE_VISIBLE_NONE, so let's check capabilities at system level.
+                if ($this->userid > 0) {
+                    $context = context_system::instance();
+                }
                 return has_capability('moodle/user:viewalldetails', $context);
         }
     }
@@ -496,6 +502,12 @@ class profile_field_base {
         }
 
         if (has_capability('moodle/user:update', $systemcontext)) {
+            return true;
+        }
+
+        // Checking for mentors have capability to edit user's profile.
+        $usercontext = context_user::instance($this->userid);
+        if ($this->userid != $USER->id && has_capability('moodle/user:editprofile', $usercontext, $USER->id)) {
             return true;
         }
 
