@@ -1397,6 +1397,12 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         if ($offset || $limit) {
             $sortedids = array_slice($sortedids, $offset, $limit);
         }
+
+        // IOMAD - Do the empty check again.
+        if (empty($sortedids)) {
+            return array();
+        }
+
         if (isset($records)) {
             // Easy, we have already retrieved records.
             if ($offset || $limit) {
