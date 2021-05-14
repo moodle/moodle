@@ -64,6 +64,7 @@ Feature: Award badges based on competency completion
     And I set the following fields to these values:
       | Rating | C |
     And I click on "Rate" "button" in the "Rate" "dialogue"
+    And I should see "The competency rating was manually set in the course"
     And I log out
     # See if we got the badge
     Then I log in as "user1"
@@ -114,8 +115,8 @@ Feature: Award badges based on competency completion
     And I press "Rate"
     And I set the following fields to these values:
       | Rating | C |
-    And I wait until the page is ready
     And I click on "Rate" "button" in the "Rate" "dialogue"
+    And I should see "The competency rating was manually set in the course"
     And I log out
     # See if we got the badge
     Then I log in as "user1"
@@ -168,8 +169,8 @@ Feature: Award badges based on competency completion
     And I press "Rate"
     And I set the following fields to these values:
       | Rating | C |
-    And I wait until the page is ready
     And I click on "Rate" "button" in the "Rate" "dialogue"
+    And I should see "The competency rating was manually set in the course"
     And I log out
     # We should not get the badge yet.
     Then I log in as "user1"
@@ -184,8 +185,8 @@ Feature: Award badges based on competency completion
     And I press "Rate"
     And I set the following fields to these values:
       | Rating | C |
-    And I wait until the page is ready
     And I click on "Rate" "button" in the "Rate" "dialogue"
+    And I should see "The competency rating was manually set in the course"
     And I log out
     # See if we got the badge now.
     Then I log in as "user1"
