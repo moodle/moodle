@@ -38,7 +38,12 @@
                         <div class="mycoursedetails">
                             <div class="mycourseheading">
                                 <h4 class="title">
-                                    <a href="{{ url }}">{{ fullname }}</a>
+                                    {{#visible}}
+                                        <a href="{{ url }}">{{ fullname }}</a>
+                                    {{/visible}}
+                                    {{^visible}}
+                                        {{ fullname }}
+                                    {{/visible}}
                                 </h4>
                             </div>
                             <div class="mycoursesummary">

@@ -37,14 +37,13 @@ function mycourses_get_my_completion($datefrom = 0) {
     }
 
     $mycompletions = new stdclass();
-    $mycompleted = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, cc.finalscore as finalgrade, cc.timecompleted, c.fullname as coursefullname, c.summary as coursesummary
+    $mycompleted = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, cc.finalscore as finalgrade, cc.timecompleted, c.fullname as coursefullname, c.summary as coursesummary, c.visible
                                        FROM {local_iomad_track} cc
                                        JOIN {course} c ON (c.id = cc.courseid)
                                        WHERE cc.userid = :userid
-                                       AND c.visible = 1
                                        AND cc.timecompleted IS NOT NULL",
                                        array('userid' => $USER->id));
-    $myinprogress = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, c.fullname as coursefullname, c.summary as coursesummary
+    $myinprogress = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, c.fullname as coursefullname, c.summary as coursesummary, c.visible
                                           FROM {local_iomad_track} cc
                                           JOIN {course} c ON (c.id = cc.courseid)
                                           JOIN {user_enrolments} ue ON (ue.userid = cc.userid)
@@ -59,7 +58,7 @@ function mycourses_get_my_completion($datefrom = 0) {
     $mynotstartedenrolled = array();
     $unsortedcourses = array();
 
-    $mynotstartedlicense = $DB->get_records_sql("SELECT clu.id, clu.userid, clu.licensecourseid as courseid, c.fullname as coursefullname, c.summary as coursesummary
+    $mynotstartedlicense = $DB->get_records_sql("SELECT clu.id, clu.userid, clu.licensecourseid as courseid, c.fullname as coursefullname, c.summary as coursesummary, c.visible
                                           FROM {companylicense_users} clu
                                           JOIN {course} c ON (c.id = clu.licensecourseid)
                                           WHERE clu.userid = :userid
