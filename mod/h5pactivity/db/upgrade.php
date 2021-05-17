@@ -246,5 +246,8 @@ function xmldb_h5pactivity_upgrade($oldversion) {
     // Automatically generated Moodle v3.10.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Automatically generated Moodle v3.11.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

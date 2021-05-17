@@ -89,5 +89,8 @@ function xmldb_qtype_essay_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021011100, 'qtype', 'essay');
     }
 
+    // Automatically generated Moodle v3.11.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

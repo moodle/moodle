@@ -2654,5 +2654,8 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021043000.01);
     }
 
+    // Automatically generated Moodle v3.11.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
