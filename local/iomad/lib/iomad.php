@@ -396,29 +396,30 @@ class iomad {
             $user->company = company::get_company_byuserid($userid);
         }
 
+        // Get all of the company course categories including children.
+        $allcompanycategories = $DB->get_records_sql("SELECT DISTINCT cc.id
+                                                      FROM {course_categories} cc,
+                                                      {company} c
+                                                      WHERE cc.path like " . $DB->sql_concat('"/"', $DB->sql_concat("c.category", '"%"')));
+
+        // Get the current company course categories.
+        $mycompanycategories = $DB->get_records_sql("SELECT DISTINCT cc.id
+                                                     FROM {course_categories} cc
+                                                     WHERE cc.path like " . $DB->sql_concat('"/"', $DB->sql_concat($user->company->category, '"%"')));
+
+        // Set up the return array;
         $iomadcategories = array();
+
+        // Process the passed categories.
         foreach ($categories as $id => $category) {
 
-            // Try to find category in company list.
-            if ($company = $DB->get_record( 'company', array('category' => $id) ) ) {
-
-                // If this is not the user's company then do not include.
-                if (!empty( $user->company->id )) {
-                    if ($user->company->id == $company->id) {
-                        $iomadcategories[ $id ] = $category;
-                    }
-                }
-            } else {
-                // Is this a sub category?
-                $categoryrec = $DB->get_record('course_categories', array('id' => $id));
-                if ($categoryrec->parent == 0) {
-                    $iomadcategories[ $id ] = $category;
-                } else {
-                    // Is this company category in the path?
-                    if (!empty($user->company->category) && false !== strpos($categoryrec->path, "/".$user->company->category."/")) {
-                        $iomadcategories[ $id ] = $category;
-                    }
-                }
+            // is this a company category?
+            if (!empty($mycompanycategories[$id])) {
+                $iomadcategories[$id] = $category;
+            }
+            // Is this another company category?
+            if (empty($allcompanycategories[$id])) {
+                $iomadcategories[$id] = $category;
             }
         }
 
