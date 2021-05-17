@@ -494,7 +494,11 @@ abstract class user_selector_base {
      *      this uses ? style placeholders.
      */
     protected function search_sql(string $search, string $u): array {
-        return users_search_sql($search, $u, $this->searchanywhere, array_values($this->userfieldsmappings),
+        $extrafields = $this->includecustomfields
+            ? array_values($this->userfieldsmappings)
+            : $this->extrafields;
+
+        return users_search_sql($search, $u, $this->searchanywhere, $extrafields,
                 $this->exclude, $this->validatinguserids);
     }
 
