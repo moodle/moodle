@@ -37,17 +37,19 @@ function mycourses_get_my_completion($datefrom = 0) {
     }
 
     $mycompletions = new stdclass();
-    $mycompleted = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, cc.finalscore as finalgrade, cc.timecompleted, c.fullname as coursefullname, c.summary as coursesummary, c.visible
+    $mycompleted = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, cc.finalscore as finalgrade, cc.timecompleted, c.fullname as coursefullname, c.summary as coursesummary, c.visible, ic.hasgrade
                                        FROM {local_iomad_track} cc
                                        JOIN {course} c ON (c.id = cc.courseid)
+                                       LEFT JOIN {iomad_courses} ic ON (c.id = ic.courseid AND cc.courseid = ic.courseid)
                                        WHERE cc.userid = :userid
                                        AND cc.timecompleted IS NOT NULL",
                                        array('userid' => $USER->id));
-    $myinprogress = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, c.fullname as coursefullname, c.summary as coursesummary, c.visible
+    $myinprogress = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, c.fullname as coursefullname, c.summary as coursesummary, c.visible, ic.hasgrade
                                           FROM {local_iomad_track} cc
                                           JOIN {course} c ON (c.id = cc.courseid)
                                           JOIN {user_enrolments} ue ON (ue.userid = cc.userid)
                                           JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = c.id)
+                                          LEFT JOIN {iomad_courses} ic ON (c.id = ic.courseid AND cc.courseid = ic.courseid)
                                           WHERE cc.userid = :userid
                                           AND c.visible = 1
                                           AND cc.timecompleted IS NULL

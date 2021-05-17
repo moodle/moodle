@@ -61,7 +61,9 @@
                                         {{#timeexpires}}
                                             <strong>({{#str}} timeexpires, local_report_completion {{/str}}</strong> {{ timeexpires }})
                                         {{/timeexpires}}
-                                        <strong>{{#str}} finalscore, block_mycourses,  {{ finalscore }}</strong> {{/str}}
+                                        {{#hasgrade}}
+                                            <strong>{{#str}} finalscore, block_mycourses,  {{ finalscore }}</strong> {{/str}}
+                                        {{/hasgrade}}
                                     </div>
                                 </div>
                                 {{#certificates}}
