@@ -23,10 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
  */
-define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragment',
-        'core/ajax', 'core/str', 'mod_assign/grading_form_change_checker',
-        'mod_assign/grading_events', 'core/event', 'core/toast'],
-       function($, Y, notification, templates, fragment, ajax, str, checker, GradingEvents, Event, Toast) {
+define([
+    'jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragment',
+    'core/ajax', 'core/str', 'mod_assign/grading_form_change_checker',
+    'mod_assign/grading_events', 'core_form/events', 'core/toast'
+],
+function($, Y, notification, templates, fragment, ajax, str, checker, GradingEvents, FormEvents, Toast) {
 
     /**
      * GradingPanel class.
@@ -102,6 +104,7 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
      * @param {Integer} nextUserId
      * @param {Boolean} nextUser optional. Load next user in the grading list.
      * @method _submitForm
+     * @fires event:formSubmittedByJavascript
      */
     GradingPanel.prototype._submitForm = function(event, nextUserId, nextUser) {
         // If the form has data in comment-area, then we need to save that comment
@@ -123,7 +126,7 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
         form.trigger('save-form-state');
 
         // Tell all form fields we are about to submit the form.
-        Event.notifyFormSubmitAjax(form[0]);
+        FormEvents.notifyFormSubmittedByJavascript(form[0]);
 
         // Now we get all the current values from the form.
         var data = form.serialize();

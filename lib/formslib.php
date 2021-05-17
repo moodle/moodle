@@ -2463,12 +2463,19 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
 
         $js = '
 
-require(["core/event", "jquery"], function(Event, $) {
+require([
+    "core/event",
+    "core_form/events",
+    "jquery",
+], function(
+    Event,
+    FormEvents,
+    $
+) {
 
     function qf_errorHandler(element, _qfMsg, escapedName) {
-        var event = $.Event(Event.Events.FORM_FIELD_VALIDATION);
-        $(element).trigger(event, _qfMsg);
-        if (event.isDefaultPrevented()) {
+        const event = FormEvents.notifyFieldValidationFailure(element, _qfMsg);
+        if (event.defaultPrevented) {
             return _qfMsg == \'\';
         } else {
             // Legacy mforms.
@@ -2616,12 +2623,12 @@ require(["core/event", "jquery"], function(Event, $) {
       return ret;
     }
 
-    var form = $(document.getElementById(\'' . $this->_attributes['id'] . '\')).closest(\'form\');
-    form.on(M.core.event.FORM_SUBMIT_AJAX, function() {
+    var form = document.getElementById(\'' . $this->_attributes['id'] . '\').closest(\'form\');
+    form.addEventListener(FormEvents.eventTypes.formSubmittedByJavascript, () => {
         try {
             var myValidator = validate_' . $this->_formName . ';
         } catch(e) {
-            return true;
+            return;
         }
         if (myValidator) {
             myValidator();
