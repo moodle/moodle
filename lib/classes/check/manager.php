@@ -96,6 +96,7 @@ class manager {
         $checks = [
             new environment\environment(),
             new environment\upgradecheck(),
+            new environment\antivirus(),
         ];
 
         // Any plugin can add status checks to this report by implementing a callback

@@ -66,6 +66,14 @@ $string['check_crawlers_error'] = 'Search engine access is allowed but guest acc
 $string['check_crawlers_info'] = 'Search engines may enter as guests.';
 $string['check_crawlers_name'] = 'Open to search engines';
 $string['check_crawlers_ok'] = 'Search engine access is not enabled.';
+
+$string['check_antivirus_details'] = 'This status checks whether or not there has been a recent error detected based on the threshold set in the main antivirus settings.';
+$string['check_antivirus_error'] = '{$a->errors} errors have been detected within the last {$a->lookback}';
+$string['check_antivirus_info'] = 'No antivirus scanners are currently enabled';
+$string['check_antivirus_name'] = 'Antivirus';
+$string['check_antivirus_ok'] = '{$a->scanners} antivirus scanner(s) enabled, no issues have been detected in the last {$a->lookback}';
+$string['check_antivirus_logstore_not_supported'] = 'Unable to verify state of antivirus scanners due to the type of log store chosen';
+
 $string['check_dotfiles_info'] = 'All dotfiles except /.well-known/* should not be public';
 $string['check_dirindex_info'] = 'Directory index should not be enabled';
 $string['check_guestrole_details'] = '<p>The guest role is used for guests, not logged in users and temporary guest course access. Please make sure no risky capabilities are allowed in this role.</p>
