@@ -51,12 +51,6 @@
     border-bottom: $border-width solid $table-border-color;
 }
 
-@include media-breakpoint-up(sm) {
-    .mform > .form-group {
-        margin-left: $spacer * 1.5;
-    }
-}
-
 #adminsettings .form-control[size] {
     width: auto;
 }
@@ -421,12 +415,8 @@ textarea[data-auto-rows] {
 }
 
 @include media-breakpoint-up(sm) {
-    .mform fieldset {
-        margin-left: $spacer * 1.5;
-    }
     .mform fieldset.collapsible legend a.fheader {
         padding: 0 5px 0 ($spacer * 1.5);
-        margin-left: -($spacer * 1.5);
         background: url([[pix:t/expanded]]) 0 center no-repeat;
     }
 
@@ -436,6 +426,9 @@ textarea[data-auto-rows] {
         */
         /*rtl:remove*/
         background-image: url([[pix:t/collapsed]]);
+    }
+    .mform fieldset.collapsible .col-form-label {
+        padding-left: ($spacer * 2.5);
     }
 
     .mform {

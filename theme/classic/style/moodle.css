@@ -16660,10 +16660,6 @@ body.path-question-type .mform fieldset.hidden {
   margin-bottom: 0.5rem;
   border-bottom: 1px solid #dee2e6; }
 
-@media (min-width: 576px) {
-  .mform > .form-group {
-    margin-left: 1.5rem; } }
-
 #adminsettings .form-control[size] {
   width: auto; }
 
@@ -16947,11 +16943,8 @@ textarea[data-auto-rows] {
   flex-grow: 1; }
 
 @media (min-width: 576px) {
-  .mform fieldset {
-    margin-left: 1.5rem; }
   .mform fieldset.collapsible legend a.fheader {
     padding: 0 5px 0 1.5rem;
-    margin-left: -1.5rem;
     background: url([[pix:t/expanded]]) 0 center no-repeat; }
   .mform fieldset.collapsed legend a.fheader {
     /*rtl:raw:
@@ -16959,6 +16952,8 @@ textarea[data-auto-rows] {
         */
     /*rtl:remove*/
     background-image: url([[pix:t/collapsed]]); }
+  .mform fieldset.collapsible .col-form-label {
+    padding-left: 2.5rem; }
   .mform .form-inline .fdefaultcustom label {
     justify-content: initial; } }
 
