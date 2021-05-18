@@ -142,7 +142,7 @@ class core_tablelib_testcase extends advanced_testcase {
         $headers = $this->generate_headers(2);
 
         // Search for pagination controls containing 'page-link"\saria-label="Next"'.
-        $this->expectOutputRegex('/page-link"\saria-label="Next"/');
+        $this->expectOutputRegex('/page-link"\saria-label="Next page"/');
 
         $this->run_table_test(
             $columns,
