@@ -275,7 +275,7 @@ function block_iomad_company_admin_menu() {
                 'name' => get_string('templatesettings', 'block_iomad_company_admin'),
                 'url' => 'iomad_templates_form.php',
                 'cap' => 'block/iomad_company_admin:managetemplates',
-                'icondefault' => 'competency',
+                'icondefault' => 'managecoursesettings',
                 'style' => 'competency',
                 'icon' => 'fa-cubes',
                 'iconsmall' => 'fa-cog'
