@@ -769,9 +769,6 @@ class completion_info {
                         item '{$item->id}', user '{$userid}'");
             }
             return self::internal_get_grade_state($item, reset($grades));
-        } else {
-            $this->internal_systemerror("Cannot find grade item for '{$cm->modname}'
-                    cm '{$cm->id}' matching number '{$cm->completiongradeitemnumber}'");
         }
 
         return COMPLETION_INCOMPLETE;
