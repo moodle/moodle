@@ -22,10 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 use \report_stats\privacy\provider;
 use \core_privacy\local\request\approved_userlist;
+use \core_privacy\tests\provider_testcase;
 
 /**
  * Class report_stats_privacy_testcase
@@ -34,7 +33,7 @@ use \core_privacy\local\request\approved_userlist;
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class report_stats_privacy_testcase extends advanced_testcase {
+class report_stats_privacy_testcase extends provider_testcase {
 
     /**
      * Convenience function to create stats.
