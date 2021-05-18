@@ -175,6 +175,12 @@ M.mod_quiz.nav.init = function(Y) {
             // Automatically submit the form. We do it this strange way because just
             // calling form.submit() does not run the form's submit event handlers.
             var submit = form.one('input[name="next"]');
+
+            // Navigation when button enable.
+            if (submit.get('disabled')) {
+                return;
+            }
+
             submit.set('name', '');
             submit.getDOMNode().click();
         };
