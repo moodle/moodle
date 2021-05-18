@@ -5,29 +5,34 @@ Feature: Add cohorts of users
   I need to create cohorts and add users on them
 
   Background:
-    Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | user1 | First | User | first@example.com |
-      | user2 | Second | User | second@example.com |
-      | user3 | Third | User | third@example.com |
-      | user4 | Forth | User | forth@example.com |
+    Given the following "custom profile fields" exist:
+      | datatype | shortname | name  |
+      | text     | fruit     | Fruit |
+    And the following "users" exist:
+      | username | firstname | lastname | email              | profile_field_fruit |
+      | user1    | First     | User     | first@example.com  | Apple               |
+      | user2    | Second    | User     | second@example.com | Banana              |
+      | user3    | Third     | User     | third@example.com  | Apple               |
+      | user4    | Forth     | User     | forth@example.com  | Pear                |
+    And the following "cohort" exists:
+      | name        | Test cohort name        |
+      | idnumber    | 333                     |
+      | description | Test cohort description |
     And I log in as "admin"
-    And I navigate to "Users > Accounts >Cohorts" in site administration
-    And I follow "Add new cohort"
-    And I set the following fields to these values:
-      | Name | Test cohort name |
-      | Context | System |
-      | Cohort ID | 333 |
-      | Description | Test cohort description |
-    And I press "Save changes"
+    And I navigate to "Users > Accounts > Cohorts" in site administration
 
   @javascript
   Scenario: Add a cohort
-    When I follow "Cohorts"
-    Then I should see "Test cohort name"
-    And I should see "333"
-    And I should see "Test cohort description"
-    And I should see "Created manually"
+    When I follow "Add new cohort"
+    And I set the following fields to these values:
+      | Name        | My new cohort         |
+      | Context     | System                |
+      | Cohort ID   | mynewcohort           |
+      | Description | My new cohort is cool |
+    And I press "Save changes"
+    Then the following should exist in the "generaltable" table:
+      | Name          | Cohort ID   | Description           |
+      | My new cohort | mynewcohort | My new cohort is cool |
 
   @javascript
   Scenario: Add users to a cohort selecting them from the system users list
@@ -38,6 +43,36 @@ Feature: Add cohorts of users
     And the "Current users" select box should contain "First User (first@example.com)"
     And the "Current users" select box should contain "Second User (second@example.com)"
     And the "Current users" select box should not contain "Forth User (forth@example.com)"
+
+  @javascript
+  Scenario: Add user to cohort using custom user field search
+    Given the following config values are set as admin:
+      | showuseridentity | email,profile_field_fruit |
+    When I click on "Assign" "link" in the "Test cohort name" "table_row"
+    And I set the field "addselect_searchtext" to "Apple"
+    And I wait "1" seconds
+    Then the "Potential users" select box should contain "First User (first@example.com\, Apple)"
+    And the "Potential users" select box should not contain "Second User (second@example.com\, Banana)"
+    And the "Potential users" select box should not contain "Forth User (forth@example.com\, Pear)"
+    And I set the field "Potential users" to "Third User (third@example.com\, Apple)"
+    And I press "Add"
+    And the "Current users" select box should contain "Third User (third@example.com\, Apple)"
+
+  @javascript
+  Scenario: Remove user from cohort using custom user field search
+    Given the following config values are set as admin:
+      | showuseridentity | email,profile_field_fruit |
+    And the following "cohort members" exist:
+      | cohort | user  |
+      | 333    | user1 |
+      | 333    | user2 |
+    When I click on "Assign" "link" in the "Test cohort name" "table_row"
+    And I set the field "removeselect_searchtext" to "Apple"
+    And I wait "1" seconds
+    Then the "Current users" select box should not contain "Second User (second@example.com\, Banana)"
+    And I set the field "Current users" to "First User (first@example.com\, Apple)"
+    And I press "Remove"
+    And the "Potential users" select box should contain "First User (first@example.com\, Apple)"
 
   @javascript
   Scenario: Add users to a cohort using a bulk user action
