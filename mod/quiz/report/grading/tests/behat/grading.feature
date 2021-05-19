@@ -87,3 +87,28 @@ Feature: Basic use of the Manual grading report
     Then the following fields match these values:
       | Questions per page | 42      |
       | Order attempts     | By date |
+
+  @javascript
+  Scenario: Manual grading settings are validated
+    Given user "student1" has attempted "Quiz 1" with responses:
+      | slot | response |
+      | 1    | Paris    |
+    And I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "teacher1"
+    And I follow "Also show questions that have been graded automatically"
+    And I click on "update grades" "link" in the "Short answer 001" "table_row"
+    When I set the following fields to these values:
+      | Questions per page | 0 |
+    And I press "Change options"
+    Then I should see "You must enter a number that greater than 0 here"
+    And I set the following fields to these values:
+      | Questions per page | -1 |
+    And I press "Change options"
+    And I should see "You must enter a number that greater than 0 here"
+    And I set the following fields to these values:
+      | Questions per page | abc |
+    And I press "Change options"
+    And I should see "You must enter a number that greater than 0 here"
+    And I set the following fields to these values:
+      | Questions per page | 1 |
+    And I press "Change options"
+    And I should not see "You must enter a number that greater than 0 here"
