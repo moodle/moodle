@@ -86,6 +86,7 @@ $string['newstep'] = 'Create step';
 $string['newstep'] = 'New step';
 $string['newtour'] = 'Create a new tour';
 $string['next'] = 'Next';
+$string['nextstep'] = 'Next';
 $string['options_heading'] = 'Options';
 $string['pathmatch'] = 'Apply to URL match';
 $string['pathmatch_help'] = 'Tours will be displayed on any page whose URL matches this value.
@@ -102,6 +103,7 @@ If you wish to display a tour on the Site Home page, you can use the value: "FRO
 ';
 $string['placement'] = 'Placement';
 $string['pluginname'] = 'User tours';
+$string['previousstep'] = 'Previous';
 $string['resettouronpage'] = 'Reset user tour on this page';
 $string['right'] = 'Right';
 $string['select_block'] = 'Select a block';
