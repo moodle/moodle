@@ -40,7 +40,8 @@ class HTML_QuickForm_Rule_Regex extends HTML_QuickForm_Rule
                     'alphanumeric'  => '/^[a-zA-Z0-9]+$/',
                     'numeric'       => '/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/',
                     'nopunctuation' => '/^[^().\/\*\^\?#!@$%+=,\"\'><~\[\]{}]+$/',
-                    'nonzero'       => '/^-?[1-9][0-9]*/'
+                    'nonzero'       => '/^-?[1-9][0-9]*/',
+                    'positiveint'   => '/^[1-9]\d*$/'
                     );
 
     /**
