@@ -604,7 +604,7 @@ $string['emailalreadysent'] = 'A password reset email has already been sent. Ple
 $string['emailactive'] = 'Email activated';
 $string['emailagain'] = 'Email (again)';
 $string['emailconfirm'] = 'Confirm your account';
-$string['emailconfirmation'] = 'Hi {$a->firstname},
+$string['emailconfirmation'] = 'Hi,
 
 A new account has been requested at \'{$a->sitename}\'
 using your email address.
