@@ -14478,7 +14478,7 @@ body.drawer-ease {
   transition: margin-left 0.5s ease, margin-right 0.5s ease; }
 
 @media (min-width: 768px) {
-  body.drawer-open-left {
+  body:not(.uses-drawers).drawer-open-left {
     margin-left: 285px; } }
 
 @media (min-width: 768px) {
@@ -14557,7 +14557,7 @@ body.drawer-ease {
 
 @media (min-width: 992px) {
   .drawer {
-    z-index: 0; } }
+    z-index: inherit; } }
 
 .drawer-md,
 .drawer-sm {
@@ -14627,6 +14627,7 @@ body.drawer-ease {
     margin-left: auto; }
 
 .drawercontent {
+  position: relative;
   height: calc(100% - 50px);
   display: flex;
   flex-direction: column;
@@ -19512,6 +19513,7 @@ div[data-flexitour="backdrop"] {
 div[data-flexitour="step-background-fader"],
 div[data-flexitour="step-background"] {
   border-radius: 0.3rem;
+  padding: 10px;
   z-index: 1041; }
 
 span[data-flexitour="container"],
@@ -19730,6 +19732,7 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     top: calc(50px + 1px);
     height: calc(100vh - 50px); }
   #page.drawers {
+    position: relative;
     overflow-y: auto;
     transition: 0.2s;
     height: calc(100vh - 50px);
@@ -19746,9 +19749,7 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
       padding-right: 1rem; }
     #page.drawers.show-drawer-left.show-drawer-right {
       margin-left: 285px;
-      margin-right: 285px;
-      padding-left: 1rem;
-      padding-right: 1rem; } }
+      margin-right: 285px; } }
 
 .drawercontrolbuttons {
   margin-top: 92px; }

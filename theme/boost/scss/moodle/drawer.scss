@@ -210,7 +210,7 @@ $right-drawer-width: 320px;
 
 @include media-breakpoint-up(lg) {
     .drawer {
-        z-index: 0;
+        z-index: inherit;
     }
 }
 
@@ -247,6 +247,7 @@ $right-drawer-width: 320px;
 }
 
 .drawercontent {
+    position: relative;
     height: calc(100% - #{$navbar-height});
     display: flex;
     flex-direction: column;
