@@ -33,18 +33,24 @@ class department_edit_form extends company_moodleform {
     protected $output = null;
 
     public function __construct($actionurl, $companyid, $departmentid, $output, $chosenid=0, $action=0) {
-        global $CFG;
+        global $CFG, $DB;
 
         $this->selectedcompany = $companyid;
         $this->departmentid = $departmentid;
         $this->output = $output;
         $this->chosenid = $chosenid;
         $this->action = $action;
+        if (!empty($departmentid)) {
+            $this->department = $DB->get_record('department', array('id' => $departmentid));
+            $this->parentid = $this->department->parent;
+        } else {
+            $this->parentid = 0;
+        }
         parent::__construct($actionurl);
     }
 
     public function definition() {
-        global $CFG, $USER;
+        global $CFG, $output;
 
         $mform =& $this->_form;
         $company = new company($this->selectedcompany);
@@ -54,11 +60,6 @@ class department_edit_form extends company_moodleform {
         } else {
             $ignorecurrentbranch = false;
         }
-        $userdepartment = $company->get_userlevel($USER);
-        $departmentslist = company::get_all_subdepartments($userdepartment->id);
-        $departmenttree = company::get_all_subdepartments_raw($userdepartment->id, $ignorecurrentbranch);
-        $department = company::get_departmentbyid($this->departmentid);
-        $treehtml = $this->output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
 
         // Then show the fields about where this block appears.
         if ($this->action == 0) {
@@ -74,16 +75,8 @@ class department_edit_form extends company_moodleform {
         $mform->setType('action', PARAM_INT);
 
         // Display department select html (create only)
-        //if ($this->action == 0) {
-            $mform->addElement('html', '<p>' . get_string('parentdepartment', 'block_iomad_company_admin') . '</p>');
-            $mform->addElement('html', $treehtml);
-        //}
-
-        // This is getting hidden anyway, so no need for label
-        $mform->addElement('html', "<div style='display:none;'>");
-        $mform->addElement('select', 'deptid', ' ',
-                            $departmentslist, array('class' => 'iomad_department_select'));
-        $mform->addElement('html', "</div></br>");
+        $mform->addElement('html', '<p>' . get_string('parentdepartment', 'block_iomad_company_admin') . '</p>');
+        $output->display_tree_selector_form($company, $mform, $this->parentid);
 
         $mform->addElement('text', 'fullname',
                             get_string('fullnamedepartment', 'block_iomad_company_admin'),

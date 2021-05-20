@@ -58,7 +58,7 @@ class company_users_course_form extends moodleform {
             $userhierarchylevel = $this->parentlevel->id;
         } else {
             $userlevel = $company->get_userlevel($USER);
-            $userhierarchylevel = $userlevel->id;
+            $userhierarchylevel = key($userlevel);
         }
 
         $this->subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
