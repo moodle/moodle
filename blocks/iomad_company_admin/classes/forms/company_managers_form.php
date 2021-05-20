@@ -163,8 +163,11 @@ class company_managers_form extends moodleform {
 
                     if (!$CFG->iomad_autoenrol_managers && $roletype != 3) {
                         // We have to be mindful of educator types here.
-                        $userrec = $DB->get_record('company_users', array('userid' => $adduser->id, 'companyid' => $this->selectedcompany, 'departmentid' => $departmentid));
-                        $educator = $userrec->educator;
+                        if ($userrec = $DB->get_record('company_users', array('userid' => $adduser->id, 'companyid' => $this->selectedcompany, 'departmentid' => $departmentid))) {
+                            $educator = $userrec->educator;
+                        } else {
+                            $educator = false;
+                        }
                     } else if (!$CFG->iomad_autoenrol_managers && $roletype == 3) {
                         $educator = true;
                     } else if ($CFG->iomad_autoenrol_managers && ($roletype == 2 || $roletype == 1)) {
