@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'لا';
 $string['cliansweryes'] = 'نعم';
-$string['cliincorrectvalueerror'] = 'خطأ، القيمة "{$a->value}" غير صحيحة من أجل "{$a->option}"';
+$string['cliincorrectvalueerror'] = 'خطأ، القيمة "{$a->value}" غير صحيحة لـ "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'قيمة غير صحيحة، حاول مرة أخرى';
 $string['clitypevalue'] = 'اكتب قيمة';
 $string['clitypevaluedefault'] = 'اكتب قيمة أو اضغط زر الإدخال لاستخدام القيم الافتراضية ({$a})';
