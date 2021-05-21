@@ -101,15 +101,33 @@ if ($formaction == 'bulkchange.php') {
                         $identityfieldsselect .= ', u.' . $field . ' ';
                     }
 
-                    if (!empty($userids)) {
-                        list($insql, $inparams) = $DB->get_in_or_equal($userids);
+                    // Ensure users are enrolled in this course context, further limiting them by selected userids.
+                    [$enrolledsql, $enrolledparams] = get_enrolled_sql($context);
+                    [$useridsql, $useridparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid');
+
+                    $params = array_merge($enrolledparams, $useridparams);
+
+                    // If user can only view their own groups then they can only export users from those groups too.
+                    $groupmode = groups_get_course_groupmode($course);
+                    if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
+                        $groups = groups_get_all_groups($course->id, $USER->id, 0, 'g.id');
+                        $groupids = array_column($groups, 'id');
+
+                        [$groupmembersql, $groupmemberparams] = groups_get_members_ids_sql($groupids, $context);
+                        $params = array_merge($params, $groupmemberparams);
+
+                        $groupmemberjoin = "JOIN ({$groupmembersql}) jg ON jg.id = u.id";
+                    } else {
+                        $groupmemberjoin = '';
                     }
 
                     $sql = "SELECT u.firstname, u.lastname" . $identityfieldsselect . "
                               FROM {user} u
-                             WHERE u.id $insql";
+                              JOIN ({$enrolledsql}) je ON je.id = u.id
+                                   {$groupmemberjoin}
+                             WHERE u.id {$useridsql}";
 
-                    $rs = $DB->get_recordset_sql($sql, $inparams);
+                    $rs = $DB->get_recordset_sql($sql, $params);
 
                     // Provide callback to pre-process all records ensuring user identity fields are escaped if HTML supported.
                     \core\dataformat::download_data(
