@@ -134,4 +134,12 @@ class qtype_calculated_variable_substituter_test extends advanced_testcase {
         $this->assertSame('0,12', $vs->format_float(0.12345, 2, 2));
         $this->assertSame('0,0012', $vs->format_float(0.0012345, 4, 1));
     }
+
+    public function test_format_float_nan_inf() {
+        $vs = new qtype_calculated_variable_substituter([ ], '.');
+
+        $this->assertSame('NAN', $vs->format_float(NAN));
+        $this->assertSame('INF', $vs->format_float(INF));
+        $this->assertSame('-INF', $vs->format_float(-INF));
+    }
 }
