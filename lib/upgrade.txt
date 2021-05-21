@@ -6,6 +6,7 @@ information provided here is intended especially for developers.
   will be called. The following behaviour will be the new standard for nodes added via callbacks:
    - Module nodes added will be appended to the end and will appear within the hamburger option.
    - Course nodes added will also be appended and appear within the 'More' option/page.
+* Typo3 has now been removed. Use native mbstring or iconv functions.
 
 === 3.11 ===
 * PHPUnit has been upgraded to 9.5 (see MDL-71036 for details).
