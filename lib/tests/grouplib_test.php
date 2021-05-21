@@ -470,6 +470,44 @@ class core_grouplib_testcase extends advanced_testcase {
         list($sql, $params) = groups_get_members_ids_sql(USERSWITHOUTGROUP, $syscontext);
     }
 
+    /**
+     * Test retrieving users with concatenated group names from a course
+     */
+    public function test_groups_get_names_concat_sql(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a course containing two groups.
+        $course = $this->getDataGenerator()->create_course();
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        // Create first user, add them to group 1 and group 2.
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->getDataGenerator()->create_group_member(['userid' => $user1->id, 'groupid' => $group1->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $user1->id, 'groupid' => $group2->id]);
+
+        // Create second user, add them to group 1 only.
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->getDataGenerator()->create_group_member(['userid' => $user2->id, 'groupid' => $group1->id]);
+
+        // Call our method, and assertion.
+        [$sql, $params] = groups_get_names_concat_sql($course->id);
+        $records = $DB->get_records_sql($sql, $params);
+
+        $this->assertEqualsCanonicalizing([
+            (object) [
+                'userid' => $user1->id,
+                'groupnames' => "{$group1->name}, {$group2->name}",
+            ],
+            (object) [
+                'userid' => $user2->id,
+                'groupnames' => $group1->name,
+            ],
+        ], $records);
+    }
+
     public function test_groups_get_group_by_name() {
         $this->resetAfterTest(true);
 
