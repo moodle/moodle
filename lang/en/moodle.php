@@ -2039,6 +2039,7 @@ $string['statusinfo'] = 'Info';
 $string['statusna'] = 'N/A';
 $string['statusok'] = 'OK';
 $string['statuserror'] = 'Error';
+$string['statusunknown'] = 'Unknown';
 $string['statuswarning'] = 'Warning';
 $string['stringsnotset'] = 'The following strings are not defined in {$a}';
 $string['studentnotallowed'] = 'Sorry, but you can not enter this course as \'{$a}\'';
