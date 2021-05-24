@@ -30,3 +30,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'زبان';
+$string['next'] = 'اگلے';
+$string['previous'] = 'پچھلا';
+$string['reload'] = 'دوبارہ لوڈ کریں';
