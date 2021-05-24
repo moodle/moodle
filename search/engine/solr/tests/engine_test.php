@@ -50,6 +50,8 @@ require_once($CFG->dirroot . '/search/engine/solr/tests/fixtures/testable_engine
  * @category    phpunit
  * @copyright   2015 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @runTestsInSeparateProcesses
  */
 class search_solr_engine_testcase extends advanced_testcase {
 
