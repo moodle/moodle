@@ -157,10 +157,6 @@ class section_format implements renderable, templatable {
             $cmlist = new $this->cmlistclass($format, $thissection);
             $data->cmlist = $cmlist->export_for_template($output);
 
-            // Section 0 could have a completion help icon.
-            $completioninfo = new completion_info($course);
-            $data->completioninfo = $completioninfo->display_help_icon();
-
             $header = new $this->headerclass($format, $thissection);
             if (empty($this->hidetitle)) {
                 $data->header = $header->export_for_template($output);

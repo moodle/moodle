@@ -238,4 +238,6 @@ $string['viewingactivity'] = 'Viewing the {$a}';
 $string['withconditions'] = 'With conditions';
 $string['writingcompletiondata'] = 'Writing completion data';
 $string['xdays'] = '{$a} days';
+
+// Deprecated since Moodle 4.0.
 $string['yourprogress'] = 'Your progress';
