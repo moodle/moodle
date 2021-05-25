@@ -164,7 +164,7 @@ class user_edit_form extends \moodleform {
         $mform->addElement('header', 'category_id', get_string('advanced'));
         $mform->addElement('static', 'departmenttext', get_string('department', 'block_iomad_company_admin'));
         $output->display_tree_selector_form($this->company, $mform);
-        
+
         // Add in company/department manager checkboxes.
         $managerarray = array();
         if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $systemcontext)) {

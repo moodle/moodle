@@ -285,7 +285,7 @@ class renderer extends plugin_renderer_base {
         }
 
         $treehtml = $this->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
-        
+
         $departmentselect = new \single_select(new \moodle_url($linkurl, $urlparams), 'deptid', $subhierarchieslist, $departmentid);
         $departmentselect->label = get_string('department', 'block_iomad_company_admin') .
                                    $this->help_icon('department', 'block_iomad_company_admin') . '&nbsp';

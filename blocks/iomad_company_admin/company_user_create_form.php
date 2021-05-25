@@ -127,7 +127,7 @@ if ($mform->is_cancelled()) {
         $userlevel = $company->get_userlevel($USER);
         $userhierarchylevel = key($userlevel);
     }
-    company::assign_user_to_department($data->userdepartment, $userid);
+    company::assign_user_to_department($data->deptid, $userid);
 
     // Enrol the user on the courses.
     if (!empty($createcourses)) {
