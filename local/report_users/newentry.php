@@ -24,8 +24,6 @@
 require_once(dirname(__FILE__).'/../../config.php');
 require_once($CFG->dirroot.'/local/iomad_track/lib.php');
 require_once($CFG->dirroot.'/local/iomad_track/db/install.php');
-require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(__FILE__).'/report_user_completion_table.php');
 
 // Params.
 $userid = required_param('userid', PARAM_INT);
